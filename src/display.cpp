@@ -401,6 +401,42 @@ bool DisplayClass::Passes_Proximity_Check(ObjectTypeClass const * object, Houses
 	return(retval);
 }
 
+static inline Coord Foundation_Cell_Center(Cell const & cell)
+{
+	return(cell.As_Coord());
+}
+
+// FUNCTION: GAMEMD 0x004A9070
+bool DisplayClass::Passes_Shroud_Check(ObjectTypeClass const * object, HousesType house, Cell const * list, Cell const & trycell) const
+{
+	if (house != PlayerPtr->HeapID || Unsorted::ArmageddonMode) {
+		return(true);
+	}
+	if (list == NULL || trycell == CELL_NONE || object == NULL || object->RTTI != RTTI_BUILDINGTYPE) {
+		return(true);
+	}
+
+	BuildingTypeClass const * building = static_cast<BuildingTypeClass const *>(object);
+	Rect footprint = Foundation_Rect(trycell, building);
+	int x = footprint.X;
+	if (x < footprint.X + footprint.Width) {
+		do {
+			for (int y = footprint.Y; y < footprint.Y + footprint.Height; ++y) {
+				Coord coord = Foundation_Cell_Center(Cell(x, y));
+				coord.Z = Map.Get_Height_GL(coord);
+				if (Map.Is_Shrouded(coord)) {
+					if (building->ToTile == NULL) {
+						return(false);
+					}
+					goto done;
+				}
+			}
+		} while (++x < footprint.X + footprint.Width);
+	}
+done:
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x004A94F0
 Cell DisplayClass::Get_Occupy_Dimensions(Cell const * list) const
 {
@@ -908,6 +944,169 @@ ObjectClass * DisplayClass::Prev_Object(ObjectClass * object) const
 		}
 	}
 	return(firstobj);
+}
+
+// FUNCTION: GAMEMD 0x004AA440
+Cell DisplayClass::Calculated_Cell(SourceType dir, Cell const & waypoint, Cell const & cell, SpeedType loco, bool zonecheck, MZoneType mzone) const
+{
+	bool vert = false;
+	bool horz = false;
+	int x;
+	int y;
+	int start;
+	Cell fallback;
+	int zone = -1;
+
+	Cell trycell(0, 0);
+	if (waypoint != CELL_NONE) {
+		trycell = waypoint;
+	}
+	if (trycell == CELL_NONE) {
+		trycell = cell;
+	}
+
+	if (dir == SOURCE_NONE) {
+		dir = SOURCE_NORTH;
+	}
+	if (zonecheck && trycell != CELL_NONE) {
+		zone = Map.Get_Cell_Zone(trycell, mzone, true);
+	}
+
+	Point2D trypoint = Cell_To_LocalRect_Point(Point2D(trycell.X, trycell.Y));
+
+	if (trycell != CELL_NONE) {
+		int left = trypoint.X - LocalRect.X;
+		x = (left < LocalRect.X + (LocalRect.Width - trypoint.X)
+			? left : LocalRect.X + (LocalRect.Width - trypoint.X)) * 2;
+		y = trypoint.Y - 2 * LocalRect.Y;
+		y = min(y, -trypoint.Y + 2 * (LocalRect.Y + LocalRect.Height));
+
+		if (x < y) {
+			vert = true;
+			horz = false;
+			if ((trypoint.X - LocalRect.X) < LocalRect.Width / 2) {
+				x = -1;
+				dir = SOURCE_WEST;
+			} else {
+				x = LocalRect.Width;
+				dir = SOURCE_EAST;
+			}
+			y = 0;
+			start = trypoint.Y - LocalRect.Y;
+		} else {
+			vert = false;
+			horz = true;
+			if ((trypoint.Y - 2 * LocalRect.Y) < (2 * LocalRect.Height) / 2) {
+				y = -1;
+				dir = SOURCE_NORTH;
+			} else {
+				y = 2 * LocalRect.Height;
+				dir = SOURCE_SOUTH;
+			}
+			x = 0;
+			start = trypoint.X - LocalRect.X;
+		}
+	} else {
+		y = x = 0;
+		switch (dir) {
+			default:
+			case SOURCE_NORTH:
+				horz = true;
+				start = Random_Pick(1, LocalRect.Width) - 1;
+				break;
+
+			case SOURCE_SOUTH:
+				horz = true;
+				y = 2 * LocalRect.Height + 2;
+				start = Random_Pick(1, LocalRect.Width) - 1;
+				break;
+
+			case SOURCE_EAST:
+				vert = true;
+				x = LocalRect.Width;
+				start = Random_Pick(1, 2 * LocalRect.Height) - 1;
+				break;
+
+			case SOURCE_WEST:
+				vert = true;
+				start = Random_Pick(0, 2 * LocalRect.Height) - 1;
+				break;
+		}
+	}
+
+	Point2D defaultPoint = LocalRect_To_Cell_Point(Point2D(1, LocalRect.Width / 2));
+	fallback = Cell(defaultPoint.X, defaultPoint.Y);
+
+	if (vert) {
+		int modifier = (dir != SOURCE_EAST) ? 1 : -1;
+
+		for (int index = 0; index < LocalRect.Height * 2; index++) {
+			int yy = (start + index) % (LocalRect.Height * 2);
+
+			Point2D outcellPoint = LocalRect_To_Cell_Point(Point2D(x, yy));
+			Cell outcell(outcellPoint.X, outcellPoint.Y);
+			Point2D incellPoint = LocalRect_To_Cell_Point(Point2D(x + modifier, yy));
+
+			if (!In_Local_Radar(outcell, true)
+				&& Good_Reinforcement_Cell(outcell, Cell(incellPoint.X, incellPoint.Y), loco, zone, mzone)) {
+				return outcell;
+			}
+		}
+	} else if (horz) {
+		int modifier = (dir == SOURCE_NORTH) ? 1 : -1;
+
+		if (dir == SOURCE_SOUTH) {
+			DynamicVectorClass<Cell> cells;
+
+			for (x = 0; x < LocalRect.Width; x++) {
+				for (y = 0; y < 15; y++) {
+					Point2D newcellPoint = LocalRect_To_Cell_Point(Point2D(x, y + 2 * LocalRect.Height));
+					Cell newcell(newcellPoint.X, newcellPoint.Y);
+					if (!In_Local_Radar(newcell, true)
+						&& Good_Reinforcement_Cell(newcell, trycell, loco, zone, mzone)) {
+						cells.Add(newcell);
+						break;
+					}
+				}
+			}
+			int count = cells.Count();
+
+			if (trycell == CELL_NONE) {
+				if (count > 0) {
+					fallback = cells[Random_Pick(0, count - 1)];
+				} else {
+					fallback = CELL_NONE;
+				}
+			} else {
+				int dist = -1;
+				Cell best = CELL_NONE;
+				for (int i = 0; i < count; i++) {
+					int d = trycell.Distance_To(cells[i]);
+					if (dist == -1 || d < dist) {
+						best = cells[i];
+						dist = d;
+					}
+				}
+				fallback = best;
+			}
+
+		} else {
+			for (int index = 0; index < LocalRect.Width; index++) {
+				int xx = (start + index) % LocalRect.Width;
+
+				Point2D outcellPoint = LocalRect_To_Cell_Point(Point2D(xx, y));
+				Cell outcell(outcellPoint.X, outcellPoint.Y);
+				Point2D incellPoint = LocalRect_To_Cell_Point(Point2D(xx, y + modifier));
+
+				if (!In_Local_Radar(outcell, true)
+					&& Good_Reinforcement_Cell(outcell, Cell(incellPoint.X, incellPoint.Y), loco, zone, mzone)) {
+					return outcell;
+				}
+			}
+		}
+	}
+
+	return fallback;
 }
 
 // FUNCTION: GAMEMD 0x004AAB30

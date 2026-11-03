@@ -58,7 +58,6 @@ void __fastcall FUN_00403730(AudioDevice * device, int mode);
 void __fastcall FUN_00403770(AudioDevice * device, int mode);
 void __fastcall FUN_004037C0(AudioDevice * device, int mode);
 void __fastcall FUN_004033C0(AudioDevice * device);
-void FUN_00402990(void);
 int __fastcall FUN_00403ED0(AudioDevice * device, AudioIDXData * idx);
 void AudioEventCloseDown(void);
 void AudioServiceAllEvents(void);
@@ -198,7 +197,7 @@ void FUN_00406D40(void)
 		FUN_004033C0(DAT_0087E728);
 		DAT_0087E728 = NULL;
 	}
-	FUN_00402990();
+	AudioCloseDown();
 }
 
 // FUNCTION: GAMEMD 0x00406DE0

@@ -23,12 +23,16 @@ int audioInitialized = 0;
 AudioAttribs * audioStdChannelAttribs = 0;
 static char * anim = "|/-\\";
 
+static inline void AudioMemFree(void * ptr)
+{
+	operator delete(ptr);
+}
 
 static void __fastcall audioDestroySystem(AudioSystem * system)
 {
 	system->master->unload(system);
 	system->master->flags &= ~mAUDIO_SYSTEM_MASTER_LOADED;
-	operator delete(system);
+	AudioMemFree(system);
 }
 
 #define ListAddToTail(h, n) ListNodeInsert((ListNode *)(h), (n))
@@ -168,6 +172,17 @@ int AudioSetUp(void)
 	AudioAttribsInit(audioStdChannelAttribs);
 	audioInitialized = 1;
 	return vNO_ERROR;
+}
+
+// FUNCTION: GAMEMD 0x00402990
+void AudioCloseDown(void)
+{
+	if (!audioInitialized) {
+		return;
+	}
+	AudioDestroyAllDevices();
+	AudioUnloadAllSystems();
+	audioInitialized = 0;
 }
 
 static AudioSystem * audioCreateSystem(AudioSystemMaster * master)
@@ -310,7 +325,7 @@ void __fastcall audioDestroyDevice(AudioDevice * dev)
 	dev->system->master->close(dev);
 	dev->system->unit[dev->systemUnit] = 0;
 	LockRelease(&dev->system->lock);
-	operator delete(dev);
+	AudioMemFree(dev);
 }
 
 // FUNCTION: GAMEMD 0x00402F60
@@ -571,39 +586,31 @@ AudioChannel * __fastcall AudioDeviceReserveChannel(AudioDevice * dev, int newTy
 	return chan;
 }
 
-// FUNCTION: GAMEMD 0x004036F0
-int __fastcall AudioDeviceDestroyAllChannels(AudioDevice * dev, int type)
+static inline void audioForEachChannel(AudioDevice * dev, int type, void (__fastcall * action)(AudioChannel *))
 {
-	AudioChannel * channel;
-	AudioChannel * next;
 	AudioSearch sh;
-
-	channel = AudioDeviceFirstChannel(dev, &sh);
+	AudioChannel * channel = AudioDeviceFirstChannel(dev, &sh);
 	while (channel) {
-		next = AudioDeviceNextChannel(&sh);
+		// The action can destroy the current channel.
+		AudioChannel * next = AudioDeviceNextChannel(&sh);
 		if (type == AUDIO_CHANNEL_TYPE_ALL || channel->Type == type) {
-			AudioChannelDestroy(channel);
+			action(channel);
 		}
 		channel = next;
 	}
+}
+
+// FUNCTION: GAMEMD 0x004036F0
+int __fastcall AudioDeviceDestroyAllChannels(AudioDevice * dev, int type)
+{
+	audioForEachChannel(dev, type, AudioChannelDestroy);
 	return vNO_ERROR;
 }
 
 // FUNCTION: GAMEMD 0x00403730
 void __fastcall AudioDeviceStopAllChannels(AudioDevice * dev, int type)
 {
-	AudioChannel * channel;
-	AudioChannel * next;
-	AudioSearch sh;
-
-	channel = AudioDeviceFirstChannel(dev, &sh);
-	while (channel) {
-		next = AudioDeviceNextChannel(&sh);
-		if (type == AUDIO_CHANNEL_TYPE_ALL || channel->Type == type) {
-			AudioChannelStop(channel);
-		}
-		channel = next;
-	}
+	audioForEachChannel(dev, type, AudioChannelStop);
 }
 
 // FUNCTION: GAMEMD 0x00403770

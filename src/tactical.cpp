@@ -633,6 +633,96 @@ void Tactical::Render_Shroud(Rect const & xpanrect, Rect const & ypanrect, Rect 
 	}
 }
 
+// FUNCTION: GAMEMD 0x006D3870
+void Tactical::Render_Buildings(Rect const & xpanrect, Rect const & ypanrect, bool fullredraw)
+{
+	if (CellRedrawCount > 0) {
+		for (int i = 0; i < CellRedrawCount; i++) {
+			Coord coord = Coord_Whole(Coord(CellRedraw[i]->Fetch_CellID()));
+			Point2D pixel;
+			Coord_To_Pixel(coord, pixel);
+
+			Rect rect;
+			rect.X = pixel.X - ISO_TILE_PIXEL_W / 2;
+			rect.Width = ISO_TILE_PIXEL_W;
+			rect.Height = ISO_TILE_PIXEL_H;
+			rect.Y = pixel.Y;
+			Rect viewrect = rect;
+			viewrect.Y += TacticalRect.Y;
+
+			Draw_Buildings(true, viewrect, Rect(viewrect));
+		}
+	}
+
+	if (DirtyAreas.Count()) {
+		for (int i = DirtyAreas.Count() - 1; i >= 0; i--) {
+			Rect redraw = DirtyAreas[i].Area;
+			redraw.Y += TacticalRect.Y;
+			redraw = Intersect(TacticalRect, redraw);
+			if (redraw.Is_Valid()) {
+				Rect cliprect = redraw;
+				Draw_Buildings(true, redraw, cliprect);
+			}
+		}
+	}
+
+	if (fullredraw) {
+		Draw_Buildings(true, TacticalRect, TacticalRect);
+	} else {
+		if (xpanrect.Is_Valid()) {
+			Draw_Buildings(true, xpanrect, xpanrect);
+		}
+		if (ypanrect.Is_Valid()) {
+			Draw_Buildings(true, ypanrect, ypanrect);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006D3AC0
+void Tactical::Render_Terrain(Rect const & xpanrect, Rect const & ypanrect, bool fullredraw)
+{
+	if (CellRedrawCount > 0) {
+		for (int i = 0; i < CellRedrawCount; i++) {
+			Coord coord = Coord_Whole(Coord(CellRedraw[i]->Fetch_CellID()));
+			Point2D pixel;
+			Coord_To_Pixel(coord, pixel);
+
+			Rect rect;
+			rect.X = pixel.X - ISO_TILE_PIXEL_W / 2;
+			rect.Width = ISO_TILE_PIXEL_W;
+			rect.Height = ISO_TILE_PIXEL_H;
+			rect.Y = pixel.Y;
+			Rect viewrect = rect;
+			viewrect.Y += TacticalRect.Y;
+
+			Draw_Terrain(true, viewrect, Rect(viewrect));
+		}
+	}
+
+	if (DirtyAreas.Count()) {
+		for (int i = DirtyAreas.Count() - 1; i >= 0; i--) {
+			Rect redraw = DirtyAreas[i].Area;
+			redraw.Y += TacticalRect.Y;
+			redraw = Intersect(TacticalRect, redraw);
+			if (redraw.Is_Valid()) {
+				Rect cliprect = redraw;
+				Draw_Terrain(true, redraw, cliprect);
+			}
+		}
+	}
+
+	if (fullredraw) {
+		Draw_Terrain(true, TacticalRect, TacticalRect);
+	} else {
+		if (xpanrect.Is_Valid()) {
+			Draw_Terrain(true, xpanrect, xpanrect);
+		}
+		if (ypanrect.Is_Valid()) {
+			Draw_Terrain(true, ypanrect, ypanrect);
+		}
+	}
+}
+
 struct TimerFlashSource {
 	int Unused[5];
 	ColorScheme * Scheme;
@@ -1025,6 +1115,186 @@ CellClass * Tactical::Find_Bridge_Owner_Cell(Cell const & cell)
 
 	return(NULL);
 }
+
+static inline void Draw_Cell_Overlay_Shadow(Tactical & view, CellClass * cellptr, Rect const & cliprect, Coord const & coord)
+{
+	Point2D pixel;
+	view.Coord_To_Pixel(coord, pixel);
+	pixel.X -= ISO_TILE_PIXEL_W / 2;
+	cellptr->Draw_Overlay_Shadow(pixel, cliprect);
+}
+
+// FUNCTION: GAMEMD 0x006D6D10
+void Tactical::Draw_Overlays(Rect const & area)
+{
+	Coord lepton = Coord(Pixel_To_Lepton(area.Top_Left() + Point2D(TacPixelX, TacPixelY) - TacticalRect.Top_Left()), 0);
+	if (lepton.Y < 0) {
+		lepton.Y = 0;
+	}
+	if (lepton.X < 0) {
+		lepton.X = 0;
+	}
+
+	Cell base = Map[lepton].Fetch_CellID();
+
+	int ycount = area.Height / (ISO_TILE_PIXEL_H / 2) + 20;
+	int xcount = area.Width / ISO_TILE_PIXEL_W + 4;
+
+	Rect cliprect = Intersect(TacticalRect, area);
+	base.X -= 4;
+	base.Y -= 2;
+
+	int ix, iy;
+	for (iy = ycount + 1; iy >= 0; iy--) {
+		Cell step(iy / 2, (iy + 1) / 2);
+		Cell cell = base + step;
+
+		for (ix = xcount; ix > 0; ix--) {
+			if (Map.In_Radar(cell)) {
+				CellClass * cellptr = &Map[cell];
+				if (cellptr->Overlay != OVERLAY_NONE) {
+					Rect render = cellptr->Overlay_Render_Rect();
+					if (Intersect(cliprect, render).Is_Valid()) {
+						Point2D pixel;
+						Coord coord = Coord_Whole(Coord(cell));
+						Coord_To_Pixel(coord, pixel);
+						pixel.X -= ISO_TILE_PIXEL_W / 2;
+						cellptr->Draw_Overlay(pixel, cliprect);
+					}
+				}
+			}
+			++cell.X;
+			--cell.Y;
+		}
+	}
+
+	// Draw shadows after all overlays in the band.
+	for (iy = ycount + 1; iy >= 0; iy--) {
+		Cell step(iy / 2, (iy + 1) / 2);
+		Cell cell = base + step;
+
+		for (ix = xcount; ix > 0; ix--) {
+			if (Map.In_Radar(cell)) {
+				CellClass * cellptr = &Map[cell];
+				if (cellptr->Overlay != OVERLAY_NONE) {
+					Rect shadow = cellptr->Overlay_Shadow_Render_Rect();
+					if (Intersect(cliprect, shadow).Is_Valid()) {
+						Coord center(cell);
+						Coord coord = Point3D(center.X / CELL_LEPTON_W * CELL_LEPTON_W,
+							center.Y / CELL_LEPTON_H * CELL_LEPTON_H, center.Z);
+						Draw_Cell_Overlay_Shadow(*this, cellptr, cliprect, coord);
+					}
+				}
+			}
+			++cell.X;
+			--cell.Y;
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006D71E0
+void Tactical::Draw_Shroud(Rect const & area)
+{
+	Coord lepton(Pixel_To_Lepton(area.Top_Left() + Point2D(TacPixelX, TacPixelY) - TacticalRect.Top_Left()), 0);
+	if (lepton.Y < 0) {
+		lepton.Y = 0;
+	}
+	if (lepton.X < 0) {
+		lepton.X = 0;
+	}
+
+	Cell base = Map[lepton].Fetch_CellID();
+
+	int ycount = area.Height / (ISO_TILE_PIXEL_H / 2) + 17;
+	int xcount = area.Width / ISO_TILE_PIXEL_W + 4;
+
+	base.X -= 2;
+	Cell cell = base;
+
+	if (Game::hWnd != NULL) {
+		int ix, iy;
+		for (iy = 0; iy < ycount; iy++) {
+			Cell step(iy / 2, (iy + 1) / 2);
+			cell = base + step;
+
+			for (ix = xcount; ix > 0; ix--) {
+				if (Map.In_Radar(cell)) {
+					CellClass * cellptr = &Map[cell];
+
+					Coord coord = Coord_Whole(Coord(cell));
+					Point2D pixel;
+					Coord_To_Pixel(coord, pixel);
+					pixel.X += ISO_TILE_PIXEL_W / -2;
+
+					Rect cellrect;
+					cellrect.X = pixel.X;
+					cellrect.Y = TacticalRect.Y + pixel.Y;
+					cellrect.Width = ISO_TILE_PIXEL_W;
+					cellrect.Height = ISO_TILE_PIXEL_H;
+					Rect inter = Intersect(cellrect, area);
+					Rect drawrect = Intersect(TacticalRect, inter);
+
+					if (drawrect.Is_Valid()) {
+						cellptr->Draw_Shroud_And_Fog(pixel + TacticalRect.Top_Left(), drawrect);
+					}
+				}
+				cell += Cell(1, -1);
+			}
+		}
+	}
+
+	AlphaShapeClass::Draw_All(area);
+}
+
+static inline Point2D Pixel_To_Ground_Point(Matrix3D const & matrix, Point2D const & pixel)
+{
+	Vector3 ground;
+	ground.X = pixel.X;
+	ground.Y = pixel.Y;
+	ground.Z = 0;
+	ground = matrix * ground;
+	return(Point2D(ground.X, ground.Y));
+}
+
+static inline void Project_Tile_Left(Tactical & view, Coord const & coord, Point2D & pixel)
+{
+	view.Coord_To_Pixel(coord, pixel);
+	pixel.X -= ISO_TILE_PIXEL_W / 2;
+}
+
+// FUNCTION: GAMEMD 0x006D7560
+void Tactical::Draw_Tiles(Rect const & area, Rect const & cliprect)
+{
+	Point2D point = Pixel_To_Ground_Point(PixelToCoordMatrix, area.Top_Left() + Point2D(TacPixelX, TacPixelY) - TacticalRect.Top_Left());
+	Coord lepton(point.X, point.Y, 0);
+	Cell origin(lepton.X / CELL_LEPTON_W, lepton.Y / CELL_LEPTON_H);
+	Cell base = origin;
+
+	int ycount = area.Height / (ISO_TILE_PIXEL_H / 2) + 17;
+	int xcount = area.Width / ISO_TILE_PIXEL_W + 4;
+
+	base.X -= 2;
+	int ix, iy;
+	for (iy = 0; iy < ycount; iy++) {
+		Cell step(iy / 2, (iy + 1) / 2);
+		Cell cell = base + step;
+
+		for (ix = xcount; ix > 0; ix--) {
+			if (Map.In_Radar(cell)) {
+				CellClass * cellptr = &Map[cell];
+				Rect render = cellptr->Cell_Render_Rect();
+				Rect inter = Intersect(area, render);
+				Point2D pixel;
+				Project_Tile_Left(*this, Coord_Whole(Coord(cell)), pixel);
+				if (render.Is_Valid() && inter.Is_Valid()) {
+					cellptr->Draw_It(pixel, cliprect, 0);
+				}
+			}
+			cell += Cell(1, -1);
+		}
+	}
+}
+
 
 static inline Coord Tile_Center(Cell const & cell)
 {
