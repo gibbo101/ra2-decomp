@@ -1138,6 +1138,35 @@ bool PlanningTokenClass::Has_Started(void)
 	return PlanningNodes.Count() > 0 && (F8C == -1 || F8C > 0);
 }
 
+static inline void Finish_Consumed_Step(PlanningTokenClass * token)
+{
+	token->F8C = max(-1, token->F8C - 1);
+	if (token->Node_Count() == 0) {
+		FUN_006377B0(token->Get_Owner());
+	}
+}
+
+// FUNCTION: GAMEMD 0x00636590
+EventClass PlanningTokenClass::Pop_Front(void)
+{
+	PlanningNodeClass * node = PlanningNodes[0];
+	EventClass packet = Event_At(0);
+	Popped = packet;
+	PlanningNodes.Delete_Index(0);
+	if (Loop_Start_Zero()) {
+		F99 = true;
+		PlanningNodes.Add(node);
+		FUN_006378B0(node);
+	} else {
+		node->Remove_Member(OwnerUnit);
+		if (Loop_Start_Positive()) {
+			Dec_Loop_Start();
+		}
+	}
+	Finish_Consumed_Step(this);
+	return packet;
+}
+
 // FUNCTION: GAMEMD 0x006367B0
 void PlanningTokenClass::Share_Range(TechnoClass * techno, int start, int count)
 {
