@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 3 November 2026: 18,750 of 19,362 game functions match (97%; 75% of game code
+Status, 3 November 2026: 18,761 of 19,362 game functions match (97%; 75% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,18 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 177 to 179 (3 November 2026)
+
+**11 functions.** The three batches retried 76 near misses of 70 to 80%. They matched
+HouseClass::Place_Object, CaptureManagerClass::DecideUnitFate,
+TeamTypeClass::Suggested_New_Team, HoverLocomotionClass::Motion_AI, the PsyDom update, a
+house's AI reaction to an enemy superweapon, a WDT territory owner lookup, and four WOL
+functions (the two user-list sort comparators, the online-command parser and the channel
+mode update, whose extra slot counter turned out to be read). SessionClass::Trap_Object is
+now declared, as TibSun's main loop calls it; Print_CRCs keeps its match with one
+declaration in queue.cpp moved below it. Four more rose above 90% without matching, the
+closest a bullet function at 98.9%. Merge gate: 18,761 of 18,761 (2,781.0 KB).
 
 ### dk8827's fourth set of pull requests (3 November 2026)
 

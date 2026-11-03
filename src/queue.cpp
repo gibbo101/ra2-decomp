@@ -133,7 +133,6 @@
 // _$E55
 
 extern unsigned int DAT_00B04474[256];
-void FUN_005BC400(void);
 void Add_CRC(unsigned int *crc, unsigned int val);
 HWND FUN_00775B10(void);
 extern int DAT_00B779C4;
@@ -2321,6 +2320,8 @@ void __fastcall FUN_00652110(FrameSyncStruct *their, int index)
 		Session.PlayerLatency[index] = Frame - (FPSCounter::CurrentFrameRate * rtt) / 60 - frame;
 	}
 }
+
+void FUN_005BC400(void);
 
 // FUNCTION: GAMEMD 0x006521C0
 bool __fastcall FUN_006521C0(EventClass event)

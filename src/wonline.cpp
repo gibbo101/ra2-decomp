@@ -815,7 +815,7 @@ struct ChatSink {
 	virtual long __stdcall V36(int index, char const ** nick, char const ** pass);
 	virtual long __stdcall V37(int slot, char const * login, char const * password, int plain);
 	virtual void V38(void);
-	virtual void V39(void);
+	virtual long __stdcall V39(char const * text);
 	virtual void V40(void);
 	virtual long __stdcall V41(char const * name, char const * value);
 	virtual long __stdcall V42(char * info);
@@ -839,6 +839,7 @@ struct ChatSink {
 	virtual long __stdcall V60(wchar_t * text);
 	virtual long __stdcall V61(User * users, wchar_t * text);
 	virtual long __stdcall V62(User * user, wchar_t * text);
+	virtual long __stdcall V63(int mode, int limit);
 };
 extern ChatSink * DAT_00AC116C;
 
@@ -2142,8 +2143,85 @@ int __cdecl FUN_00783570(const char * a, const char * b)
 	return lb > 0;
 }
 
-int __cdecl FUN_007835C0(UserSort const * a, UserSort const * b);
-int __cdecl FUN_007836E0(UserSort const * a, UserSort const * b);
+static inline int Compare_User_Names(UserSort const * a, UserSort const * b)
+{
+	char * bn = b->Name;
+	char * an = a->Name;
+	int la = strlen(an);
+	int lb = strlen(bn);
+	int r;
+	if (la && lb) {
+		r = strcmpi(an, bn);
+		if (r != 0) {
+			goto done;
+		}
+	} else {
+		if (la > 0) {
+			return -1;
+		}
+		if (lb > 0) {
+			return 1;
+		}
+	}
+	User first;
+	User second;
+	memset(&first, 0, sizeof(first));
+	memset(&second, 0, sizeof(second));
+	DAT_00B77900.get(first, a->Index);
+	DAT_00B77900.get(second, b->Index);
+	r = strcmpi(first.Nick, second.Nick);
+done:
+	return r;
+}
+
+// FUNCTION: GAMEMD 0x007835C0
+int __cdecl FUN_007835C0(UserSort const * a, UserSort const * b)
+{
+	if (a->Flag != b->Flag) {
+		return a->Flag ? -1 : 1;
+	}
+	return Compare_User_Names(a, b);
+}
+
+static inline int Compare_User_Names_Reversed(UserSort const * a, UserSort const * b)
+{
+	char * bn = b->Name;
+	char * an = a->Name;
+	int la = strlen(an);
+	int lb = strlen(bn);
+	int r;
+	if (la && lb) {
+		r = strcmpi(bn, an);
+		if (r != 0) {
+			goto done;
+		}
+	} else {
+		if (la > 0) {
+			return -1;
+		}
+		if (lb > 0) {
+			return 1;
+		}
+	}
+	User first;
+	User second;
+	memset(&first, 0, sizeof(first));
+	memset(&second, 0, sizeof(second));
+	DAT_00B77900.get(first, a->Index);
+	DAT_00B77900.get(second, b->Index);
+	r = strcmpi(first.Nick, second.Nick);
+done:
+	return r;
+}
+
+// FUNCTION: GAMEMD 0x007836E0
+int __cdecl FUN_007836E0(UserSort const * a, UserSort const * b)
+{
+	if (a->Flag != b->Flag) {
+		return a->Flag ? -1 : 1;
+	}
+	return Compare_User_Names_Reversed(a, b);
+}
 
 // FUNCTION: GAMEMD 0x00783800
 void __fastcall FUN_00783800(bool ascending)
@@ -3591,6 +3669,54 @@ bool __fastcall FUN_00789960(WolChannel * chan, int extra)
 	return FUN_00788800(chan, name, WideWstring(StringTable::LoadString("TXT_JOINLOB", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2D1B))) == 0;
 }
 
+extern char DAT_00B76E28[];
+
+// FUNCTION: GAMEMD 0x0078A470
+int __fastcall FUN_0078A470(wchar_t * input)
+{
+	wchar_t name[16];
+	wchar_t prefix[64];
+	User user;
+	wchar_t message[256];
+	int result = 0;
+
+	wcscpy(prefix, StringTable::LoadString("TXT_ONLINE_COMMAND", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2E58));
+	if (wcsncmp(input, prefix, wcslen(prefix)) == 0) {
+		int length = 0;
+		wchar_t * cursor = input + wcslen(prefix);
+		while (wcsncmp(cursor, L" ", 1) == 0) {
+			cursor++;
+		}
+		while (*cursor != 0 && wcsncmp(cursor, L" ", 1) != 0 && length < 10) {
+			name[length++] = *cursor++;
+		}
+		name[length] = 0;
+		if (wcslen(name) > 0) {
+			strcpy(user.Nick, FUN_007350C0(name));
+			strcpy(DAT_00B76E28, FUN_007350C0(name));
+			DAT_00AC116C->V24(&user);
+			result = 1;
+		} else {
+			swprintf(message, StringTable::LoadString("TXT_NO_NAME", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2E6C));
+			HWND top = FUN_00775B10();
+			if (top) {
+				if (GetDlgItem(top, 0x53F)) {
+					PMessagePrintf(ColorSystem, message);
+				}
+				if (GetDlgItem(top, 0x5B5)) {
+					SMessagePrintf(ColorSystem, message);
+				}
+			}
+			if (FUN_0069BBE0(&Session)) {
+				int scheme = GadgetClass::Get_Color_Scheme();
+				Session.Messages.Add_Message(NULL, 0, message, scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+			}
+			result = 1;
+		}
+	}
+	return result;
+}
+
 // FUNCTION: GAMEMD 0x0078A6B0
 int __fastcall FUN_0078A6B0(wchar_t * input)
 {
@@ -4607,6 +4733,55 @@ BOOL CALLBACK FUN_0078EBC0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 int __fastcall FUN_005E8D00(wchar_t const * name);
 extern int DAT_00B76440[];
 extern wchar_t DAT_00B75F6C[];
+
+int __fastcall FUN_005E64C0(int index);
+bool __fastcall FUN_005E9440(NodeNameType * slot);
+extern NodeNameType * DAT_00AC119C;
+extern NodeNameType * DAT_00AC11B4;
+extern char DAT_00B76B44[];
+extern char DAT_00822050[];
+
+// FUNCTION: GAMEMD 0x0078F000
+void FUN_0078F000(void)
+{
+	int count = FUN_005E64C0(Session.Options.ScenarioIndex);
+	if (Game::ObserverMode == 1) {
+		count++;
+	}
+	int players = 0;
+	int observers = 0;
+	int extra = 0;
+	int i;
+	for (i = 1; i < count; i++) {
+		NodeNameType * slot = Session.Slots[i];
+		if (slot == DAT_00AC119C || slot == DAT_00AC11B4) {
+			observers++;
+		} else if (FUN_005E93F0(slot)) {
+			players++;
+		} else if (FUN_005E9440(slot)) {
+			extra++;
+		}
+	}
+	for (; i < 8; i++) {
+		NodeNameType * slot = Session.Slots[i];
+		if (slot == DAT_00AC11B4) {
+			observers++;
+		} else if (FUN_005E93F0(slot)) {
+			players++;
+		}
+	}
+	if (DAT_00AC116C) {
+		int total = observers + players + 1;
+		Wstring message = Wstring("mode #") + Wstring(DAT_00B76B44) + Wstring(" +l ") + Wstring_FromInt(total) + Wstring(DAT_00822050);
+		DAT_00AC116C->V39(message.get());
+		char info[80];
+		memset(info, 0, sizeof(info));
+		FUN_0077E7A0(info);
+		info[40] = 0;
+		DAT_00AC116C->V42(info);
+		DAT_00AC116C->V63(1, total + extra);
+	}
+}
 
 // FUNCTION: GAMEMD 0x0078F5C0
 wchar_t * __fastcall FUN_0078F5C0(wchar_t const * name)

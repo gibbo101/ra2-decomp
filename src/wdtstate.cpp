@@ -66,6 +66,22 @@ WorldDominationTour::State::State(rc_ptr<WDTState> const & state, unsigned int t
 	}
 }
 
+// FUNCTION: GAMEMD 0x0076F600
+int WorldDominationTour::State::FUN_0076F600(int territory)
+{
+	if (TourState.operator->() != NULL && Owners != NULL && (unsigned int)territory < TourState.Get()->NumTerritories) {
+		switch (Owners[territory]) {
+			case WDTState::CONTESTED:
+				return(1);
+			case WDTState::GDI:
+				return(2);
+			case WDTState::NOD:
+				return(3);
+		}
+	}
+	return(0);
+}
+
 // FUNCTION: GAMEMD 0x0076F650
 WorldDominationTour::State::~State(void)
 {

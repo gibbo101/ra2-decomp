@@ -907,7 +907,7 @@ void SessionClass::Free_Scenario_Descriptions(void)
 }
 
 // FUNCTION: GAMEMD 0x0069A300
-void FUN_0069A300(void)
+void SessionClass::Trap_Object(void)
 {
 }
 

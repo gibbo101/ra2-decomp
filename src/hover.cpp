@@ -280,6 +280,75 @@ void HoverLocomotionClass::Stop_Driver(void)
 	}
 }
 
+static inline DirType Facing_To(Coord const & from, Coord const & to)
+{
+	return(DirType().Direction(from, to));
+}
+
+// FUNCTION: GAMEMD 0x00515ED0
+void HoverLocomotionClass::Motion_AI(void)
+{
+	if (Is_Moving() && HeadToCoord != COORD_NONE) {
+		DirType newdir = Facing_To(LinkedTo->Center_Coord(), HeadToCoord);
+		if (!WasPushed) {
+			Facing.Set_Desired(newdir);
+		} else {
+			Facing.Set(newdir);
+		}
+
+		if (Is_Powered() && Facing.Current().Is_Complete_Turn(newdir, DIR_STEP_8 << 8) || WasPushed) {
+			if ((DestinationCoord == COORD_NONE && LinkedTo->Distance(HeadToCoord) < CELL_LEPTON) ||
+				 DestinationCoord != COORD_NONE && LinkedTo->Distance(DestinationCoord) < CELL_LEPTON) {
+
+				Height = 0.5;
+			} else {
+				Height = 1;
+				if (WasPushed) {
+					Acceleration = 1;
+				}
+			}
+		} else {
+			Height = 0;
+		}
+
+		if (Height > 0) {
+			Boost = 1;
+			if (LinkedTo->Path[0] != FACING_NONE && LinkedTo->Path[0] == LinkedTo->Path[1]) {
+				Boost = Rule->HoverBoost;
+			}
+		}
+
+		double accel = MIN(1, Boost * Height);
+
+		if (accel > Acceleration) {
+			Acceleration += 1.0 / (Rule->HoverAcceleration * TICKS_PER_MINUTE);
+			Acceleration = MIN(Acceleration, accel);
+		}
+
+		if (accel < Acceleration) {
+			Acceleration -= 1.0 / (Rule->HoverBrake * TICKS_PER_MINUTE);
+			Acceleration = MAX(Acceleration, 0);
+		}
+
+		if (Height > 0 && !WasPushed) {
+			Coord coord = HeadToCoord;
+			if (LinkedTo->Path[0] != FACING_NONE && LinkedTo->Path[0] != FACING_COUNT) {
+				coord = Adjacent_Cell(coord, LinkedTo->Path[0]);
+			}
+			DirType dir = Direction(LinkedTo->Center_Coord(), coord);
+			LinkedTo->PrimaryFacing.Set_Desired(dir);
+		}
+		return;
+	}
+
+	if (Is_Moving() && HeadToCoord == COORD_NONE) {
+		LinkedTo->Set_Speed(1);
+		Start_Of_Move(0);
+		While_Moving(true);
+	}
+}
+
+
 // FUNCTION: GAMEMD 0x00516320
 void STDMETHODCALLTYPE HoverLocomotionClass::Stop_Moving(void)
 {

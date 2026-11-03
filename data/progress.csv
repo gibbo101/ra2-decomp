@@ -2073,6 +2073,7 @@ address,name,result,size,source,symbol
 0x004722E0,CaptureManagerClass::FUN_004722E0,MATCH,12,src/capturemanager.cpp,?FUN_004722E0@CaptureManagerClass@@QBE_NXZ
 0x004722F0,CaptureManagerClass::GetOriginalOwner,MATCH,50,src/capturemanager.cpp,?GetOriginalOwner@CaptureManagerClass@@QBEPAVHouseClass@@PAVTechnoClass@@@Z
 0x00472330,CaptureManagerClass::FUN_00472330,MATCH,117,src/capturemanager.cpp,?FUN_00472330@CaptureManagerClass@@QAE_NPAVTechnoClass@@@Z
+0x004723B0,CaptureManagerClass::DecideUnitFate,MATCH,655,src/capturemanager.cpp,?DecideUnitFate@CaptureManagerClass@@QAEXPAVTechnoClass@@@Z
 0x00472640,CaptureManagerClass::NeedsToDrawLinks,MATCH,119,src/capturemanager.cpp,?NeedsToDrawLinks@CaptureManagerClass@@QBE_NXZ
 0x004726C0,CaptureManagerClass::IsOverloading,MATCH,41,src/capturemanager.cpp,?IsOverloading@CaptureManagerClass@@QAE_NPA_N@Z
 0x004726F0,CaptureManagerClass::Compute_CRC,MATCH,44,src/capturemanager.cpp,?Compute_CRC@CaptureManagerClass@@UBEXAAVCRCEngine@@@Z
@@ -5635,6 +5636,8 @@ address,name,result,size,source,symbol
 0x004FAA10,HouseClass::Abandon_Production,MATCH,784,src/house.cpp,?Abandon_Production@HouseClass@@QAE?AW4ProdFailType@@W4RTTIType@@H_N1@Z
 0x004FAD20,HouseClass::Special_Weapon_AI,MATCH,301,src/house.cpp,?Special_Weapon_AI@HouseClass@@QAEXW4SuperWeaponType@@@Z
 0x004FAE50,HouseClass::Place_Special_Blast,MATCH,166,src/house.cpp,?Place_Special_Blast@HouseClass@@QAE_NW4SuperWeaponType@@ABVCell@@@Z
+0x004FAF00,HouseClass::FUN_004FAF00,MATCH,471,src/house.cpp,?FUN_004FAF00@HouseClass@@QAEXPAVSuperClass@@PBVCell@@@Z
+0x004FB0E0,HouseClass::Place_Object,MATCH,1488,src/house.cpp,?Place_Object@HouseClass@@QAE_NW4RTTIType@@H_NABVCell@@@Z
 0x004FB6B0,HouseClass::Just_Built,MATCH,395,src/house.cpp,?Just_Built@HouseClass@@QAEXPAVTechnoClass@@@Z
 0x004FB840,HouseClass::Manual_Place,MATCH,223,src/house.cpp,?Manual_Place@HouseClass@@QAE_NPAVBuildingClass@@0@Z
 0x004FB920,HouseClass::Clobber_All,MATCH,141,src/house.cpp,?Clobber_All@HouseClass@@QAEXXZ
@@ -6088,6 +6091,7 @@ address,name,result,size,source,symbol
 0x00514D90,HoverLocomotionClass::Move_To,MATCH,474,src/hover.cpp,?Move_To@HoverLocomotionClass@@UAGXUCoordStruct@@@Z
 0x00515E30,HoverLocomotionClass::Stop,MATCH,48,src/hover.cpp,?Stop@HoverLocomotionClass@@AAEXXZ
 0x00515E60,HoverLocomotionClass::Stop_Driver,MATCH,111,src/hover.cpp,?Stop_Driver@HoverLocomotionClass@@AAEXXZ
+0x00515ED0,HoverLocomotionClass::Motion_AI,MATCH,1094,src/hover.cpp,?Motion_AI@HoverLocomotionClass@@AAEXXZ
 0x00516320,HoverLocomotionClass::Stop_Moving,MATCH,77,src/hover.cpp,?Stop_Moving@HoverLocomotionClass@@UAGXXZ
 0x00516370,HoverLocomotionClass::Do_Turn,MATCH,34,src/hover.cpp,?Do_Turn@HoverLocomotionClass@@UAGXUDirStruct@@@Z
 0x005163A0,HoverLocomotionClass::Is_Moving1,MATCH,15,src/hover.cpp,?Is_Moving1@HoverLocomotionClass@@AAE_NXZ
@@ -6836,6 +6840,7 @@ address,name,result,size,source,symbol
 0x0053B400,FUN_0053B400,MATCH,11,src/ion.cpp,?FUN_0053B400@@YI_NXZ
 0x0053B410,FUN_0053B410,MATCH,72,src/ion.cpp,?FUN_0053B410@@YIXXZ
 0x0053AE50,FUN_0053AE50,MATCH,227,src/ion.cpp,?FUN_0053AE50@@YIXPAVHouseClass@@VCell@@@Z
+0x0053AF40,FUN_0053AF40,MATCH,316,src/ion.cpp,?FUN_0053AF40@@YIXXZ
 0x0053B080,FUN_0053B080,MATCH,877,src/ion.cpp,?FUN_0053B080@@YIXXZ
 0x0053B3F0,FUN_0053B3F0,MATCH,1,src/ion.cpp,?FUN_0053B3F0@@YIXXZ
 0x0053B460,FUN_0053B460,MATCH,252,src/ion.cpp,?FUN_0053B460@@YIXH@Z
@@ -12452,7 +12457,7 @@ address,name,result,size,source,symbol
 0x00699450,SessionClass::Write_Chat_Settings,MATCH,159,src/session.cpp,?Write_Chat_Settings@SessionClass@@QAEXXZ
 0x00699980,SessionClass::Read_Scenario_Descriptions,MATCH,2155,src/session.cpp,?Read_Scenario_Descriptions@SessionClass@@QAEXXZ
 0x0069A1F0,SessionClass::Free_Scenario_Descriptions,MATCH,259,src/session.cpp,?Free_Scenario_Descriptions@SessionClass@@QAEXXZ
-0x0069A300,FUN_0069A300,MATCH,1,src/session.cpp,?FUN_0069A300@@YIXXZ
+0x0069A300,SessionClass::Trap_Object,MATCH,1,src/session.cpp,?Trap_Object@SessionClass@@QAEXXZ
 0x0069A310,SessionClass::Color_Index_To_Scheme,MATCH,39,src/session.cpp,?Color_Index_To_Scheme@SessionClass@@QAEHH@Z
 0x0069A340,SessionClass::Compute_Unique_ID,MATCH,104,src/session.cpp,?Compute_Unique_ID@SessionClass@@QAEIXZ
 0x0069A3B0,MultiMission::MultiMission,MATCH,1483,src/session.cpp,??0MultiMission@@QAE@ABVINIClass@@PBD@Z
@@ -14549,6 +14554,7 @@ address,name,result,size,source,symbol
 0x006F08F0,TeamTypeClass::~TeamTypeClass,MATCH,194,src/teamtype.cpp,??1TeamTypeClass@@UAE@XZ
 0x006F09C0,TeamTypeClass::Create_One_Of,MATCH,174,src/teamtype.cpp,?Create_One_Of@TeamTypeClass@@QBEPAVTeamClass@@PAVHouseClass@@@Z
 0x006F0A70,TeamTypeClass::Destroy_All_Of,MATCH,53,src/teamtype.cpp,?Destroy_All_Of@TeamTypeClass@@QBEXXZ
+0x006F0AB0,TeamTypeClass::Suggested_New_Team,MATCH,1288,src/teamtype.cpp,?Suggested_New_Team@TeamTypeClass@@SI?AV?$TypeList@PBVTeamTypeClass@@@@PAVHouseClass@@_N@Z
 0x006F0FC0,TeamTypeClass::From_Name,MATCH,97,src/teamtype.cpp,?From_Name@TeamTypeClass@@SIPAV1@PBD@Z
 0x006F1030,TeamTypeClass::Detach,MATCH,90,src/teamtype.cpp,?Detach@TeamTypeClass@@UAEXPBVAbstractClass@@_N@Z
 0x006F1090,TeamTypeClass::Read_INI,MATCH,1202,src/teamtype.cpp,?Read_INI@TeamTypeClass@@UAE_NAAVCCINIClass@@@Z
@@ -17228,6 +17234,7 @@ address,name,result,size,source,symbol
 0x0076F500,WorldDominationTour::FUN_0076F500,MATCH,94,src/wdtstate.cpp,?FUN_0076F500@WorldDominationTour@@YI?AV?$rc_ptr@VState@WorldDominationTour@@@@XZ
 0x0076F560,WorldDominationTour::State::State,MATCH,51,src/wdtstate.cpp,??0State@WorldDominationTour@@QAE@XZ
 0x0076F5A0,WorldDominationTour::State::State,MATCH,95,src/wdtstate.cpp,??0State@WorldDominationTour@@QAE@ABV?$rc_ptr@VWDTState@@@@I@Z
+0x0076F600,WorldDominationTour::State::FUN_0076F600,MATCH,77,src/wdtstate.cpp,?FUN_0076F600@State@WorldDominationTour@@QAEHH@Z
 0x0076F650,WorldDominationTour::State::~State,MATCH,32,src/wdtstate.cpp,??1State@WorldDominationTour@@UAE@XZ
 0x0076F670,WorldDominationTour::State::FUN_0076F670,MATCH,75,src/wdtstate.cpp,?FUN_0076F670@State@WorldDominationTour@@QAEHH@Z
 0x0076F6C0,??_GState@WorldDominationTour@@UAEPAXI@Z,MATCH,52,src/wdtstate.cpp,??_GState@WorldDominationTour@@UAEPAXI@Z
@@ -17731,6 +17738,8 @@ address,name,result,size,source,symbol
 0x00783270,FUN_00783270,MATCH,675,src/wonline.cpp,?FUN_00783270@@YIX_N@Z
 0x00783520,FUN_00783520,MATCH,79,src/wonline.cpp,?FUN_00783520@@YAHPBD0@Z
 0x00783570,FUN_00783570,MATCH,79,src/wonline.cpp,?FUN_00783570@@YAHPBD0@Z
+0x007835C0,FUN_007835C0,MATCH,284,src/wonline.cpp,?FUN_007835C0@@YAHPBUUserSort@@0@Z
+0x007836E0,FUN_007836E0,MATCH,284,src/wonline.cpp,?FUN_007836E0@@YAHPBUUserSort@@0@Z
 0x00783800,FUN_00783800,MATCH,654,src/wonline.cpp,?FUN_00783800@@YIX_N@Z
 0x00783A90,FUN_00783A90,MATCH,240,src/wonline.cpp,?FUN_00783A90@@YIHH@Z
 0x00783B80,FUN_00783B80,MATCH,245,src/wonline.cpp,?FUN_00783B80@@YIHPAURankedUser@@@Z
@@ -17753,6 +17762,7 @@ address,name,result,size,source,symbol
 0x00789630,FUN_00789630,MATCH,103,src/wonline.cpp,?FUN_00789630@@YI?AVWstring@@PAUServer@@@Z
 0x007896A0,FUN_007896A0,MATCH,702,src/wonline.cpp,?FUN_007896A0@@YI_NPAUHWND__@@_N@Z
 0x00789960,FUN_00789960,MATCH,507,src/wonline.cpp,?FUN_00789960@@YI_NPAUWolChannel@@H@Z
+0x0078A470,FUN_0078A470,MATCH,562,src/wonline.cpp,?FUN_0078A470@@YIHPAG@Z
 0x0078A6B0,FUN_0078A6B0,MATCH,574,src/wonline.cpp,?FUN_0078A6B0@@YIHPAG@Z
 0x0078A8F0,FUN_0078A8F0,MATCH,764,src/wonline.cpp,?FUN_0078A8F0@@YIHPAG@Z
 0x0078ABF0,FUN_0078ABF0,MATCH,18,src/wonline.cpp,?FUN_0078ABF0@@YIX_NPBG@Z
@@ -17763,6 +17773,7 @@ address,name,result,size,source,symbol
 0x0078E230,FUN_0078E230,MATCH,1814,src/wonline.cpp,?FUN_0078E230@@YGHPAUHWND__@@IIJ@Z
 0x0078E950,FUN_0078E950,MATCH,618,src/wonline.cpp,?FUN_0078E950@@YGHPAUHWND__@@IIJ@Z
 0x0078EBC0,FUN_0078EBC0,MATCH,1073,src/wonline.cpp,?FUN_0078EBC0@@YGHPAUHWND__@@IIJ@Z
+0x0078F000,FUN_0078F000,MATCH,507,src/wonline.cpp,?FUN_0078F000@@YIXXZ
 0x0078F5C0,FUN_0078F5C0,MATCH,230,src/wonline.cpp,?FUN_0078F5C0@@YIPAGPBG@Z
 0x0078F6B0,FUN_0078F6B0,MATCH,105,src/wonline.cpp,?FUN_0078F6B0@@YIHH@Z
 0x0078F720,FUN_0078F720,MATCH,200,src/wonline.cpp,?FUN_0078F720@@YIXPAUHWND__@@@Z

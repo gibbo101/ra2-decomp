@@ -184,6 +184,118 @@ void TeamTypeClass::Destroy_All_Of(void) const
 	}
 }
 
+// FUNCTION: GAMEMD 0x006F0AB0
+SUGGESTED_TEAM_LIST TeamTypeClass::Suggested_New_Team(HouseClass * house, bool)
+{
+	int i;
+	bool skip_base_defense;
+
+	SUGGESTED_TEAM_LIST best;
+	HouseClass *enemy = NULL;
+
+	if (house->Enemy != HOUSE_NONE) {
+		enemy = Houses[house->Enemy];
+	}
+	if (Random_Pick(1, 100) <= house->RatioAITriggerTeam && house->IsAITriggersOn) {
+		int team_count = 0;
+		int defense_team_count = 0;
+		for (i = 0; i < Teams.Count(); i++) {
+			if (Teams[i]->House == house) {
+				team_count++;
+				if (Teams[i]->Class->IsBaseDefense) {
+					defense_team_count++;
+				}
+			}
+		}
+
+		skip_base_defense = false;
+		if (team_count < Rule->TotalAITeamCap[house->Difficulty] || defense_team_count < team_count / 2) {
+			if (defense_team_count > Rule->MaximumAIDefensiveTeams[house->Difficulty]) {
+				skip_base_defense = true;
+			}
+		} else {
+			TeamClass *team = NULL;
+			int frame = 0x7FFFFFFF;
+			for (i = 0; i < Teams.Count(); i++) {
+				TeamClass *t = Teams[i];
+				if (t->House == house) {
+					if (t->Class->IsBaseDefense) {
+						if (t->CreationFrame < frame) {
+							team = t;
+							frame = t->CreationFrame;
+						}
+					}
+				}
+			}
+			if (team != NULL) {
+				team_count--;
+				skip_base_defense = true;
+				delete team;
+			}
+		}
+
+		if (team_count < Rule->TotalAITeamCap[house->Difficulty]) {
+			DiscreteDistributionClass<AITriggerTypeClass> trigdist;
+			bool found_override = false;
+			for (i = 0; i < AITriggerTypes.Count(); i++) {
+				AITriggerTypeClass *trig = AITriggerTypes[i];
+				if (trig != NULL) {
+					if (trig->ConditionMet(house, enemy, skip_base_defense) == true) {
+						int weight = (int)trig->Get_Current_Weight();
+						if (weight == 5000) {
+							if (!found_override) {
+								found_override = true;
+								trigdist.Clear();
+							}
+						} else if (found_override) {
+							continue;
+						}
+						trigdist.Add(trig, weight);
+					}
+				}
+			}
+			AITriggerTypeClass *trig = trigdist.Sample();
+			if (trig != NULL) {
+				if (trig->Get_First_TeamType() != NULL) {
+					best.Add(trig->Get_First_TeamType());
+				}
+			}
+			if (trig != NULL) {
+				if (trig->Get_Second_TeamType() != NULL) {
+					best.Add(trig->Get_Second_TeamType());
+				}
+			}
+		}
+	}
+
+	for (i = 0; i < Teams.Count(); i++) {
+		TeamClass * team = Teams[i];
+		if (team->House == house && (team->IsReforming || !team->IsMoving)) {
+			int j = 0;
+			if (j < best.Count()) {
+				TeamTypeClass *cls = team->Class;
+				while (true) {
+					if (cls == best[j]) {
+						best.Clear();
+						return(best);
+					}
+					j++;
+					if (j >= best.Count()) {
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	for (i = 0; i < best.Count(); i++) {
+		TeamTypeClass *ttype = (TeamTypeClass *)best[i];
+		ttype->IsAutocreate = true;
+	}
+
+	return(best);
+}
+
 // FUNCTION: GAMEMD 0x006F0FC0
 TeamTypeClass * TeamTypeClass::From_Name(char const * name)
 {

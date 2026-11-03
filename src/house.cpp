@@ -10,6 +10,7 @@
 #include "house.h"
 #include "_logic.h"
 #include "_map.h"
+#include "_rect.h"
 #include "_rtti.h"
 #include "_rules.h"
 #include "_surface.h"
@@ -51,6 +52,7 @@
 #include "scenario.h"
 #include "scheme.h"
 #include "session.h"
+#include "slavemgr.h"
 #include "stringtable.h"
 #include "sun.h"
 #include "super.h"
@@ -1576,6 +1578,164 @@ bool HouseClass::Place_Special_Blast(SuperWeaponType id, Cell const & cell)
 	}
 
 	return(true);
+}
+
+// FUNCTION: GAMEMD 0x004FAF00
+void HouseClass::FUN_004FAF00(SuperClass * super, Cell const * cell)
+{
+	if (!Class->IsMultiplayPassive && !IsHuman && super != NULL && super->Class->AIDefendAgainst) {
+		CellClass * target = &Map[*cell];
+		if (FUN_0050DF30().Distance_To(target->Center_Coord()) > Rule->AISuperDefenseDistance) return;
+		int probability = Rule->AISuperDefenseProbability[Difficulty];
+		if (Random_Pick(0, 99) > probability) return;
+
+		if (ConYards.Count() > 0) {
+			PreferredDefensiveCell = ConYards[0]->Center_Coord().As_Cell();
+			PreferredDefensiveCellStartTime = Frame;
+		} else {
+			PreferredDefensiveCell = Get_Base_Center();
+			PreferredDefensiveCellStartTime = Frame;
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x004FB0E0
+bool HouseClass::Place_Object(RTTIType type, int id, bool naval, Cell const & cell)
+{
+	bool placed = false;
+	TechnoClass * tech = NULL;
+	int buildcat;
+
+	if (id < 0) {
+		buildcat = 0;
+	} else {
+		TechnoTypeClass const * ttype = Fetch_Techno_Type(type, id);
+		if (type == RTTI_BUILDING || type == RTTI_BUILDINGTYPE) {
+			buildcat = ((BuildingTypeClass const *)ttype)->BuildCat;
+		} else {
+			buildcat = 0;
+		}
+	}
+
+	FactoryClass * factory = Primary_Factory(this, type, naval, buildcat);
+
+	if (factory && factory->Has_Completed()) {
+		tech = factory->Get_Object();
+
+		if (cell == CELL_NONE || cell == Cell(-1, -1)) {
+			if (tech != NULL) {
+				TechnoClass * builder = tech->Who_Can_Build_Me(false, true);
+				if (builder == NULL && tech->Fetch_RTTI() == RTTI_AIRCRAFT) {
+					builder = tech->Who_Can_Build_Me(true, true);
+				}
+
+				if (builder != NULL) {
+					int exit = builder->Exit_Object(tech, CELL_NONE);
+					if (exit == 2 || (exit == 1 && builder->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass *)builder)->Factory != NULL)) {
+						if (Is_Player_Control()) {
+							if (RadarEventClass::Create(RADAREVENT_UNIT_PRODUCED, builder->Center_Coord().As_Cell())) {
+								VoxClass::Play("EVA_UnitReady", -1, -1);
+							}
+						}
+						factory->Completed();
+						Abandon_Production(type, id, naval, false);
+						placed = true;
+					} else {
+						if (tech->Fetch_RTTI() != RTTI_BUILDING) {
+							DebugString("Failed to exit object from factory - refunding money\n");
+							Abandon_Production(type, id, naval, false);
+						}
+						return(false);
+					}
+				}
+			}
+		} else {
+			Cell pos = cell;
+			if (tech) {
+				TechnoClass * builder = tech->Who_Can_Build_Me(false, false);
+				if (builder) {
+					builder->Transmit_Message(RADIO_HELLO, tech);
+					if (tech->Unlimbo(Coord(pos), DIR_N)) {
+						if (tech->Fetch_RTTI() == RTTI_BUILDING) {
+							if (((BuildingClass *)tech)->SlaveManager) {
+								((BuildingClass *)tech)->SlaveManager->Deploy2();
+							}
+							BuildingTypeClass * btype = ((BuildingClass *)tech)->Class;
+							if (btype->IsFirestormWall) {
+								Map.Place_Firestorm_Wall(pos, this, btype);
+							} else if (btype->ToOverlay != NULL && btype->ToOverlay->IsWall) {
+								Map.Place_Wall(pos, this, btype);
+							}
+						}
+						factory->Completed();
+						tech->Transmit_Message(RADIO_COMPLETE, builder);
+						Abandon_Production(type, id, naval, false);
+						placed = true;
+
+						if (PlayerPtr == this) {
+							if (tech->IsActive && !tech->IsDiscoveredByPlayer) {
+								tech->Revealed(this);
+							}
+							VocClass::PlayGlobal(Rule->BuildingSlam, 1.0f, 0x2000);
+							if (!Unsorted::ArmageddonMode) {
+								Map.FUN_004A8D50(0);
+								Map.CurrentBuildingCopy = 0;
+								Map.CurrentBuildingTypeCopy = 0;
+							}
+							Map.SetActiveFoundation(0);
+							Map.PendingObjectPtr = 0;
+							Map.PendingObject = 0;
+							Map.PendingHouse = HOUSE_NONE;
+						}
+					} else {
+						placed = false;
+						if (this == PlayerPtr) {
+							VoxClass::Play("EVA_CannotDeployHere", -1, -1);
+						}
+						if (!Unsorted::ArmageddonMode && this == PlayerPtr) {
+							Map.PendingObjectPtr = Map.CurrentBuildingCopy;
+							Map.PendingObject = Map.CurrentBuildingTypeCopy;
+							Map.PendingHouse = Map.CurrentBuildingOwnerArrayIndexCopy;
+							Map.ZoneCell = Map.CurrentFoundationCopy_CenterCell;
+							Map.ZoneOffset = Map.CurrentFoundationCopy_TopLeftOffset;
+							Map.CursorSize = Map.CurrentFoundationCopy_Data;
+							if (Map.PendingObject != NULL) {
+								Map.SetActiveFoundation(Map.PendingObject->Occupy_List(true));
+								Point2D client = MouseCursor->Get_Mouse_Point();
+								TacticalMap->Pixel_To_Coord(client);
+								client -= TacticalRect.Top_Left();
+								Cell hit;
+								Coord hitcoord;
+								ObjectClass * target = NULL;
+								bool fog;
+								bool shadow;
+								Map.Resolve_Point(client, hit, hitcoord, target, fog, shadow);
+								Map.Set_Cursor_Pos(hit);
+							}
+							Map.FUN_004A8D50(0);
+							Map.CurrentBuildingCopy = 0;
+							Map.CurrentBuildingTypeCopy = 0;
+						}
+					}
+					builder->Transmit_Message(RADIO_OVER_OUT);
+				}
+			}
+		}
+
+		if (placed) {
+			Just_Built(tech);
+
+			TechnoClass * builder = tech->Who_Can_Build_Me(false, true);
+			if (builder != NULL && builder->Fetch_RTTI() == RTTI_BUILDING) {
+				int sound = ((BuildingClass *)builder)->Class->CreateUnitSound;
+				if (sound != -1) {
+					VocClass::PlayIndexAtPos(sound, tech->PositionCoord, 0);
+				}
+			}
+		}
+	}
+
+	return(placed);
 }
 
 // FUNCTION: GAMEMD 0x004FB6B0

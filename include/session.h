@@ -561,6 +561,7 @@ class SessionClass
 		unsigned int Compute_Unique_ID(void);
 		void Update_Progress(int percent);
 		void Init_Fixed_Alliances(void);
+		void Trap_Object(void);
 		int Color_Index_To_Scheme(int id);
 		bool Is_Random_Map(void) const;
 		bool FUN_0069B600(int color) const;

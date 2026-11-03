@@ -40,6 +40,7 @@
 #include "capmgr.h"
 #include "lightcon.h"
 #include <objidl.h>
+#include "msanim.h"
 
 // SYNTHETIC: GAMEMD 0x00539350 SYMBOL
 // _$E2
@@ -681,6 +682,66 @@ void __fastcall FUN_0053AE50(HouseClass * owner, Cell cell)
 	Scen->AmbientChangeTimer = 1;
 	FUN_0053C280();
 }
+
+void FUN_0053B080(void);
+
+static inline float Stage_Ratio(int stage, SHPStruct const * shape)
+{
+	return (float)stage / shape->Get_Count();
+}
+
+// FUNCTION: GAMEMD 0x0053AF40
+void FUN_0053AF40(void)
+{
+	AnimClass * anim;
+	AnimTypeClass * type;
+	switch (PsyDom::Status) {
+		case 0:
+			goto done;
+
+		case 1:
+			PsyDom::Status = 2;
+			break;
+
+		case 2:
+			{
+			anim = PsyDom::Anim;
+			float ratio = Stage_Ratio(anim->Animation.Fetch_Stage(), (SHPStruct const *)PsyDom::Anim->Type->Get_Image_Data());
+			if (ratio >= Rule->DominatorFireAtPercentage * 0.01) {
+				PsyDom::Status = 3;
+				FUN_0053B080();
+			}
+			}
+			break;
+
+		case 3:
+			anim = PsyDom::Anim;
+			type = anim->Type;
+			if (((SHPStruct const *)type->Get_Image_Data())->Count - anim->Animation.Fetch_Stage() <= 10) {
+				PsyDom::Status = 4;
+			}
+			break;
+
+		case 4:
+			anim = PsyDom::Anim;
+			type = anim->Type;
+			if (((SHPStruct const *)type->Get_Image_Data())->Count - anim->Animation.Fetch_Stage() <= 1) {
+				PsyDom::Status = 5;
+				PsyDom::Coords = DAT_00A9F9F8;
+				PsyDom::Anim = NULL;
+				FUN_0053C280();
+			}
+			break;
+
+		case 5:
+			if (Scen->DesiredAmbientLight == Scen->CurrentAmbientLight) {
+				PsyDom::Status = 0;
+			}
+			break;
+	}
+done:;
+}
+
 
 static inline TechnoClass * Cast_Techno(ObjectClass * object)
 {

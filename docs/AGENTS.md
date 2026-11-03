@@ -19,6 +19,9 @@ original compiler turns into that function's exact bytes. MATCH means
   files you created, one by name.
 - A scratch root copies the files it changes; never symlink `orig/`, `toolchain/`, `src/`,
   `include/` or `data/` into it: a write or delete through a link reaches the real repo.
+- A worktree that links `toolchain/` from the main checkout shares its wine prefix, and every
+  check points drive Y: at its own checkout. Never check in a worktree while anything checks
+  in the main checkout: each compiles the other's sources.
 - No recursive delete of any kind, anywhere. The project hook
   (`.claude/hooks/no-recursive-delete.py`) blocks `rm -r`, `find -delete` (except
   `-type d -empty`), `find -exec rm`, `xargs rm`, `rmtree`, `git clean` and

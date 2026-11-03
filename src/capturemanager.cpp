@@ -372,6 +372,99 @@ bool CaptureManagerClass::FUN_00472330(TechnoClass * techno)
 	return true;
 }
 
+#include "temporal.h"
+#include "foot.h"
+#include "team.h"
+#include "teamtype.h"
+void __cdecl FUN_004068E0(char const * format, ...);
+extern char const * DAT_0081B528[];
+extern char const * DAT_0081B538[];
+
+// FUNCTION: GAMEMD 0x004723B0
+void CaptureManagerClass::DecideUnitFate(TechnoClass * techno)
+{
+	if (techno == NULL) {
+		return;
+	}
+	if (techno->AbstractFlags & 4) {
+		if (((FootClass *)techno)->Team != NULL) {
+			((FootClass *)techno)->Team->Remove((FootClass *)techno, -1, false);
+		}
+	}
+	if (techno->TemporalImUsing != NULL && techno->TemporalImUsing->Target != NULL) {
+		techno->TemporalImUsing->LetGo();
+	}
+	if (techno->Techno_Type_Class()->OpenTopped) {
+		techno->SetTargetForPassengers(NULL);
+	}
+
+	bool changed = false;
+	if (techno->House != Owner->House) {
+		changed = true;
+	}
+	if (techno->House->IsHuman) {
+		return;
+	}
+	int decision = 0;
+	int reason;
+	TypeList<int> * list;
+	if (Owner->House->Available_Money() < Rule->AICaptureLowMoneyMark) {
+		reason = 0;
+		list = &Rule->AICaptureLowMoney;
+	} else if (Owner->House->Power_Fraction() < 1.0) {
+		reason = 1;
+		list = &Rule->AICaptureLowPower;
+	} else if ((float)techno->Strength / techno->Techno_Type_Class()->MaxStrength < Rule->AICaptureWoundedMark) {
+		reason = 2;
+		list = &Rule->AICaptureWounded;
+	} else {
+		reason = 3;
+		list = &Rule->AICaptureNormal;
+	}
+
+	int roll = Scen->RandomNumber(1, 100);
+	int sum = 0;
+	int i = 0;
+	while (roll > sum) {
+		if (decision == 6) {
+			return;
+		}
+		if (i == list->Count()) {
+			return;
+		}
+		decision++;
+		sum += list->GetItem(i++);
+	}
+	FUN_004068E0("AICapture: I think (%s) so I roll a %d and decide (%s) with a %s.\n", DAT_0081B528[reason], roll, DAT_0081B538[decision], techno->Techno_Type_Class()->Full_Name());
+
+	if (Owner != NULL && (Owner->AbstractFlags & 4) && ((FootClass *)Owner)->Team != NULL) {
+		int forced = ((FootClass *)Owner)->Team->Class->MindControlDecision;
+		if (forced != 0) {
+			decision = forced;
+			FUN_004068E0("AICapture: Capturer's Team overrides with (%s).\n", DAT_0081B538[forced]);
+		}
+	}
+
+	bool result = false;
+	if (decision == 1) {
+		if (!changed && Owner != NULL && (Owner->AbstractFlags & 4) && ((FootClass *)Owner)->Team != NULL) {
+			FootClass * foot = (techno->AbstractFlags & 4) ? (FootClass *)techno : NULL;
+			result = ((FootClass *)Owner)->Team->Add(foot);
+		}
+	} else if (decision == 2) {
+		result = techno->EnterGrinder();
+	} else if (decision == 3) {
+		result = techno->EnterBioReactor();
+	} else if (decision == 5) {
+		result = true;
+	}
+	if (result) {
+		return;
+	}
+	FUN_004068E0("AICapture: Naw, let's put him in hunt.\n");
+	techno->QueueMission(MISSION_HUNT, false);
+}
+
 // FUNCTION: GAMEMD 0x00472640
 bool CaptureManagerClass::NeedsToDrawLinks(void) const
 {
