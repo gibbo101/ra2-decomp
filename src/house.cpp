@@ -2059,6 +2059,113 @@ Coord HouseClass::Find_Build_Location(BuildingClass * building) const
 	return(COORD_NONE);
 }
 
+// FUNCTION: GAMEMD 0x004FD500
+int HouseClass::Expert_AI(void)
+{
+	if (PickEnemyTimer == 0) {
+		if (Enemy == HOUSE_NONE && Session.Type != GAME_NORMAL && !Class->IsMultiplayPassive) {
+			Coord center = FUN_0050DF30();
+			if (center != COORD_NONE) {
+				int close = INT_MAX;
+				HouseClass * enemy = NULL;
+
+				for (HousesType house = HOUSE_FIRST; house < Houses.Count(); house++) {
+					HouseClass * h = Houses[house];
+					if (h != this && !h->Class->IsMultiplayPassive && !h->IsDefeated) {
+						int value = (FUN_0050DF30() - center).Length();
+						if (value < close) {
+							enemy = h;
+							close = value;
+						}
+					}
+				}
+
+				if (enemy) {
+					Add_Anger(1, enemy);
+				}
+			}
+		}
+	}
+
+	if (Enemy != HOUSE_NONE) {
+		HouseClass * h = Houses[Enemy];
+
+		if (h->IsDefeated) {
+			Clear_Anger(h);
+			Enemy = HOUSE_NONE;
+		}
+	}
+
+	if (Session.Type != GAME_NORMAL || IQ >= Rule->IQSuperWeapons) {
+		AI_TryFireSW();
+	}
+
+	if (State == STATE_ENDGAME) {
+		Fire_Sale();
+		All_To_Hunt();
+	} else {
+		if (State == STATE_BUILDUP) {
+			if (Available_Money() < 25) {
+				State = STATE_BROKE;
+			}
+		}
+		if (State == STATE_BROKE) {
+			if (Available_Money() >= 25) {
+				State = STATE_BUILDUP;
+			}
+		}
+		if (State == STATE_ATTACKED && LATime + TICKS_PER_MINUTE < Frame) {
+			State = STATE_BUILDUP;
+		}
+		if (State != STATE_ATTACKED && LATime + TICKS_PER_MINUTE > Frame) {
+			State = STATE_ATTACKED;
+		}
+	}
+
+	if (Session.Type != GAME_NORMAL) {
+		UrgencyType urgency[STRATEGY_COUNT];
+		StrategyType strat;
+		for (strat = STRATEGY_FIRST; strat < STRATEGY_COUNT; strat++) {
+			urgency[strat] = URGENCY_NONE;
+
+			switch (strat) {
+				case STRATEGY_FIRE_SALE:
+					urgency[strat] = Check_Fire_Sale();
+					break;
+
+				case STRATEGY_RAISE_MONEY:
+					urgency[strat] = Check_Raise_Money();
+					break;
+
+				default:
+					urgency[strat] = URGENCY_NONE;
+					break;
+			}
+		}
+
+		for (UrgencyType u = URGENCY_CRITICAL; u >= URGENCY_LOW; u--) {
+			for (strat = STRATEGY_FIRST; strat < STRATEGY_COUNT; strat++) {
+				if (urgency[strat] == u) {
+					switch (strat) {
+						case STRATEGY_FIRE_SALE:
+							AI_Fire_Sale(u);
+							break;
+
+						case STRATEGY_RAISE_MONEY:
+							AI_Raise_Money(u);
+							break;
+
+						default:
+							break;
+					}
+				}
+			}
+		}
+	}
+
+	return(TICKS_PER_SECOND*7 + Random_Pick(1, TICKS_PER_SECOND/2));
+}
+
 // FUNCTION: GAMEMD 0x004FD940
 UrgencyType HouseClass::Check_Fire_Sale(void)
 {

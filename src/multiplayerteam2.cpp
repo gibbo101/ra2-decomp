@@ -36,6 +36,7 @@ void __cdecl FUN_004068E0(char const * format, ...);
 hostent * __stdcall FUN_007C8980(char const * name);
 int __stdcall FUN_007C897A(void);
 extern int DAT_00B77E1C;
+extern int DAT_00B77E20;
 extern int DAT_00B77E18;
 extern char DAT_00B73E44[64][128];
 extern int DAT_00B76338[64];
@@ -604,4 +605,105 @@ int FirewallHelperClass::Rank_B(int flags)
 		rank += 5;
 	}
 	return rank;
+}
+
+// FUNCTION: GAMEMD 0x005DA0B0
+unsigned short FirewallHelperClass::Get_Next_Mangled_Source_Port(unsigned short source_port)
+{
+	static unsigned long _packet_id = 0x7f100000;
+	CDTimerClass<SystemTimerClass> timeout;
+	int return_port;
+
+	int fw = Detected;
+	if (fw == 0) {
+		return(source_port);
+	}
+	if (fw & 1) {
+		return(source_port);
+	}
+
+	unsigned short mangler_port = 4321;
+	char mangler_name[256];
+	strcpy(mangler_name, "mangler1.westwood.com");
+	unsigned char maddress[4];
+
+	if (DAT_00B77E1C > 0) {
+		strcpy(mangler_name, DAT_00B73E44[DAT_00B77E20]);
+		mangler_port = DAT_00B76338[DAT_00B77E20];
+		FUN_004068E0("Using mangler from servserv\n");
+	}
+
+	FUN_004068E0("Firewall helper - About to call gethostbyname for %s\n", mangler_name);
+	hostent * host_info = FUN_007C8980(mangler_name);
+	if (!host_info) {
+		FUN_004068E0("gethostbyname failed! Error code %d\n", FUN_007C897A());
+		return(source_port);
+	}
+	memcpy(maddress, &host_info->h_addr_list[0][0], 4);
+	FUN_004068E0("Mangler address is %d.%d.%d.%d ; %d\n", maddress[0], maddress[1], maddress[2], maddress[3], (int)mangler_port);
+	IPXAddressClass mangler_address;
+	mangler_address.Set_Node(maddress);
+	mangler_address.Set_Port(mangler_port);
+	FUN_004068E0("Mangler address is %s\n", mangler_address.As_String(NULL));
+	unsigned short port = 0;
+	unsigned short open_port = 0;
+	FUN_004068E0("fw = %08x\n", fw);
+
+	int use_temp = fw & 4;
+	if (use_temp) {
+		port = Next_Port(0);
+		open_port = port;
+		if (!((UDPInterfaceClass *)PacketTransport)->Open_Port_Socket(port)) {
+			return(source_port);
+		}
+		PacketTransport->Start_Listening();
+	}
+
+	FUN_004068E0("FirewallHelper - Getting mangling for port %d\n", (int)port);
+
+	timeout = 180;
+	unsigned short mangled_port = 0;
+	while (timeout() && mangled_port == 0) {
+		Send_Probe(&mangler_address, port, _packet_id, 0);
+		mangled_port = Find_Mangled_Port(_packet_id, 30);
+		FUN_004068E0("FirewallHelper - Mangled port = %d\n", (int)mangled_port);
+	}
+
+	_packet_id++;
+
+	if (open_port) {
+		((UDPInterfaceClass *)PacketTransport)->Close_Port_Socket(open_port);
+	}
+
+	if (mangled_port == 0) {
+		FUN_004068E0("Couldn't find mangled port, returning source port\n");
+		return(source_port);
+	}
+
+	if (!use_temp) {
+		FUN_004068E0("FirewallHelper - Returning next mangled port as %d\n", (int)mangled_port);
+		return(mangled_port);
+	}
+
+	if (fw & 0x10) {
+		return_port = (int)mangled_port + Delta;
+	} else if (Delta == 100) {
+		return_port = mangled_port - port;
+		return_port += Delta;
+		return_port += source_port;
+	} else {
+		return_port = mangled_port / Delta;
+		return_port = (return_port + 1) * Delta;
+		return_port += source_port % Delta;
+	}
+
+	if (return_port > 65535) {
+		return_port -= 65535;
+	}
+	if (return_port < 1024) {
+		return_port += 1024;
+	}
+
+	FUN_004068E0("FirewallHelper - Returning next mangled port as %d\n", return_port);
+	return((unsigned short)return_port);
 }

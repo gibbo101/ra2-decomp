@@ -60,8 +60,13 @@ for a, (b, blk, note) in best.items():
     d += f"; banked: {', '.join(banks[a])}" if banks[a] else "; no banked attempt"
     if b >= 100: d += "; it reached 100% without landing: settle why (label, twin or overlay) with evidence"
     desc[a] = d + ")"
-WONLINE = (" wonline 0x00788180 is sensitive to the compiler's heap: any declaration added to or removed from wonline.cpp "
-           "or a header it includes can flip it, so check it after every such change and keep it MATCH.")
+HEAP = {"wonline": "0x00788180 and 0x007A3100", "ownrdraw": "TrackBarHandler 0x0061D950",
+        "multiplayerteam2": "Analyse_Ports 0x005D9DB0", "queue": "Print_CRCs 0x0064DEA0", "preview": "DrawMap 0x00640A40"}
+def heap(mods):
+    hit = [f"{m} {HEAP[m.lower()]}" for m in mods if m.lower() in HEAP]
+    return (" These matches are sensitive to the compiler's heap: " + "; ".join(hit) + ". Any declaration or include "
+            "added to or removed from their file or a header it includes can flip them, so check them after every such "
+            "change and keep them MATCH.") if hit else ""
 jobs, cur, n = [], {}, 0
 for m in sorted(per, key=lambda m: (-len(per[m]), m.lower())):
     v = sorted(per[m])
@@ -80,7 +85,7 @@ for j in jobs:
                   ". Start from the banked attempt where there is one, keep what it proved, and find the last difference. "
                   "One that matches only when forced out of line (a probe, an explicit instantiation, a pragma) or through a stand-in "
                   "does not land: name the real code it waits for, and land that code too if it is small and in a module you own."
-                  + (WONLINE if "wonline" in j["modules"] else ""))
+                  + heap(j["modules"]))
 sz = lambda j: sum(len(v) for v in j["modules"].values())
 batches = [[] for _ in range(nb)]
 for j in sorted(jobs, key=sz, reverse=True):

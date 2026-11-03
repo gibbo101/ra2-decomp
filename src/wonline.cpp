@@ -1843,6 +1843,24 @@ int __cdecl FUN_007813B0(SortEntry const * a, SortEntry const * b)
 
 typedef int (__cdecl * CompareFn)(const void *, const void *);
 
+// FUNCTION: GAMEMD 0x007813E0
+void __fastcall FUN_007813E0(SortEntry * entries, bool descending)
+{
+	WolChannel chan;
+	memset(&chan, 0, sizeof(chan));
+	int count = DAT_00B76AE0.length();
+	for (int i = 0; i < count; i++) {
+		DAT_00B76AE0.get(chan, i);
+		entries[i].Pad = i;
+		entries[i].Key = chan.Ping;
+	}
+	if (descending) {
+		qsort(entries, count, sizeof(SortEntry), (CompareFn)FUN_00781380);
+	} else {
+		qsort(entries, count, sizeof(SortEntry), (CompareFn)FUN_007813B0);
+	}
+}
+
 struct UserSort {
 	int Index;
 	char * Name;
@@ -6447,6 +6465,105 @@ int __fastcall FUN_00797640(int sku)
 	return result;
 }
 
+extern char DAT_00B76A2C[];
+
+static inline void Close_Wait_Dialog(void)
+{
+	HWND dialog = FUN_00775940(0xC4);
+	if (dialog) {
+		DAT_00B77DC8 = 0;
+		FUN_007757E0(dialog, 0);
+	}
+	HWND top = FUN_00775B10();
+	HWND item = GetDlgItem(top, 0x540);
+	if (item) {
+		SetFocus(item);
+	}
+}
+
+// FUNCTION: GAMEMD 0x00797800
+bool FUN_00797800(void)
+{
+	if (!DAT_00B76A2C) {
+		ODMessageBox(StringTable::LoadString("TXT_WDT_NET_ERR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5F73), 0, FUN_0077D710, 0);
+		return false;
+	}
+	for (int i = 0; i < 18; i++) {
+		ResetEvent(DAT_00B73684[i]);
+	}
+	long result = DAT_00AC1170->V11(DAT_00B73B34, DAT_00B76B0C, 3);
+	FUN_004068E0("WDTHost is %s, port is %d\n", DAT_00B73B34, DAT_00B76B0C);
+	FUN_004068E0("Requesting current WDT cycle\n");
+	if (result != 0) {
+		ODMessageBox(StringTable::LoadString("TXT_WDT_NET_ERR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5F83), 0, FUN_0077D710, 0);
+		return false;
+	}
+	{
+		WideWstring text(StringTable::LoadString("TXT_FETCHING_WDT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5F87));
+		FUN_00792BE0(0x10, text, 0);
+	}
+	DWORD index;
+	while (true) {
+		int timeout = 30000;
+		index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100);
+		while (index == WAIT_TIMEOUT) {
+			timeout -= 100;
+			if (timeout <= 0) {
+				goto failed;
+			}
+			FUN_0077F900();
+			index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100);
+		}
+		ResetEvent(DAT_00B73684[index]);
+		if (index == 0) {
+			Close_Wait_Dialog();
+			return false;
+		}
+		if (index == 5) {
+			ODMessageBox(StringTable::LoadString("TXT_WDT_NET_ERR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5F9A), 0, FUN_0077D710, 0);
+			Close_Wait_Dialog();
+			return false;
+		}
+		if (index == 0x12) {
+failed:
+			ODMessageBox(StringTable::LoadString("TXT_WDT_NET_ERR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5FA0), 0, FUN_0077D710, 0);
+			Close_Wait_Dialog();
+			return false;
+		}
+		if (index == 0xB) {
+			break;
+		}
+	}
+	result = DAT_00AC1170->V11(DAT_00B73B34, DAT_00B76B0C, 5);
+	FUN_004068E0("Requesting Previous Cycle\n");
+	if (result != 0) {
+		Close_Wait_Dialog();
+		return false;
+	}
+	while (true) {
+		index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100);
+		while (index == WAIT_TIMEOUT) {
+			FUN_0077F900();
+			index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100);
+		}
+		ResetEvent(DAT_00B73684[index]);
+		if (index == 0) {
+			Close_Wait_Dialog();
+			return false;
+		}
+		if (index == 5) {
+			ODMessageBox(StringTable::LoadString("TXT_WDT_NET_ERR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5FBB), 0, FUN_0077D710, 0);
+			Close_Wait_Dialog();
+			return false;
+		}
+		if (index == 0xB) {
+			break;
+		}
+	}
+	Close_Wait_Dialog();
+	return true;
+}
+
 extern char DAT_00B77E10;
 
 // FUNCTION: GAMEMD 0x00797C20
@@ -8037,6 +8154,60 @@ void FUN_007A1060(void)
 				if (DAT_00B76AD0.length() == 0) {
 					break;
 				}
+			}
+		}
+	}
+}
+
+extern int DAT_00B736F4;
+
+// FUNCTION: GAMEMD 0x007A1330
+void FUN_007A1330(void)
+{
+	int count = 0;
+	User user;
+	memset(&user, 0, sizeof(user));
+	if (DAT_00B77E28 == 0) {
+		Wstring pings("Pings ");
+		FUN_004068E0("Sending ping list, pending list is %d long\n", DAT_00B76970.length());
+		if (DAT_00B76970.length() != 0) {
+			unsigned long ip = user.IPAddr;
+			do {
+				Wstring name;
+				DAT_00B76970.remove(name, DAT_00B76970.length() - 1);
+				FUN_004068E0("Removed %s from ping pending list\n", name.get());
+				int index;
+				{
+					Wstring key(name.get());
+					index = FUN_0077D240(&key);
+				}
+				if (index == -1) {
+					FUN_004068E0("%s not found in info\n", name.get());
+				} else {
+					DAT_00B77900.get(user, index);
+					ip = user.IPAddr;
+					if (ip == 0) {
+						FUN_004068E0("%s ipaddr is zero\n", name.get());
+					} else {
+						int ping = -1;
+						DAT_00AC1170->V08(ip, &ping);
+						if (ping != -1) {
+							FUN_004068E0("%s avg ping is %d\n", name.get(), ping);
+							pings += name + Wstring(",") + Wstring_FromInt(ping) + Wstring(";");
+							count++;
+						} else {
+							FUN_004068E0("Error measuring %s/'s ping\n", name.get());
+						}
+					}
+				}
+			} while (DAT_00B76970.length() != 0);
+		}
+		DAT_00B736F4 = 0;
+		if (count > 0) {
+			User * host = FUN_007931A0();
+			if (host) {
+				DAT_00AC116C->V12(host, pings.get());
+				FUN_004068E0("Sending ping list : %s\n", pings.get());
 			}
 		}
 	}

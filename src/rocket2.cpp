@@ -209,6 +209,79 @@ unsigned char OwnerTalkClass::Mask_From_ID(int id)
 	return(mask);
 }
 
+// FUNCTION: GAMEMD 0x00663DB0
+bool OwnerTalkClass::Start_Router(unsigned char * ip)
+{
+	CDTimerClass<SystemTimerClass> timer;
+	IPXAddressClass address;
+	STARTUPINFO startup;
+	PROCESS_INFORMATION process;
+	char command[256];
+	char buffer[1024];
+	int length;
+	unsigned short product_id;
+
+	DebugString("Starting packet router process\n");
+	GetStartupInfo(&startup);
+	if (!PacketTransport->Get_Num_Local_Addresses()) {
+		return(false);
+	}
+	if (ip == NULL) {
+		if (Session.Players.Count() == 0) {
+			unsigned char * local = PacketTransport->Get_Local_Address(0);
+			sprintf(command, "mphmd.exe %d.%d.%d.%d", local[0], local[1], local[2], local[3]);
+		} else {
+			IPXAddressClass * player = &Session.Players[0]->Address;
+			if (player != NULL) {
+				NetNumType net;
+				NetNodeType node;
+				player->Get_Address(net, node);
+				sprintf(command, "mphmd.exe %d.%d.%d.%d", node[0], node[1], node[2], node[3]);
+				Session.unknown_2978 = *player;
+				Session.PacketRouterPort = 0;
+				DebugString("Session.PacketRouterAddressTranslate = %s\n", Session.unknown_2978.As_String(0));
+			}
+		}
+	} else {
+		sprintf(command, "mphmd.exe %d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+		IPXAddressClass * player = &Session.Players[0]->Address;
+		if (player != NULL) {
+			NetNumType net;
+			NetNodeType node;
+			player->Get_Address(net, node);
+			node[0] = ip[0];
+			node[1] = ip[1];
+			node[2] = ip[2];
+			node[3] = ip[3];
+			Session.unknown_2978.Set_Address(net, node, 0);
+			Session.unknown_2978.Set_Port(Session.Players[0]->Address.Get_Port());
+			Session.PacketRouterPort = Session.Players[0]->Address.Get_Port();
+			Session.PacketRouterAddress = Session.Players[0]->Address;
+			DebugString("Session.PacketRouterAddressTranslate = %s\n", Session.unknown_2978.As_String(0));
+		}
+	}
+	int result = CreateProcess("mphmd.exe", command, NULL, NULL, FALSE, 0x200, NULL, NULL, &startup, &process);
+	if (!result) {
+		DebugString("CreateProcess failed with error %d, %s\n", GetLastError(), result);
+	} else {
+		RouterProcess = process.hProcess;
+		DebugString("hRouterProcess = %d\n", process.hProcess);
+		SetFocus(Game::hWnd);
+		timer = 1800;
+		result = 0;
+		while (timer) {
+			Call_Back();
+			if (Ipx.Get_Lobby_Message(buffer, &length, &address, &product_id) && buffer[0] == 4) {
+				result = 1;
+				DebugString("Received TALK_HELLO from router\n");
+				IsRouterRunning = true;
+				break;
+			}
+		}
+	}
+	return(result != 0);
+}
+
 // FUNCTION: GAMEMD 0x006640E0
 void OwnerTalkClass::Handle_Router_Messages(void)
 {

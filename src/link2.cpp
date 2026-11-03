@@ -100,6 +100,34 @@ void LineTrail::Update(void)
 	} while (slot != ActiveSlot);
 }
 
+// FUNCTION: GAMEMD 0x00556C00
+void LineTrail::Draw(void)
+{
+	int slot = ActiveSlot + 1;
+	if (slot >= 32) slot = 0;
+
+	LineTrailNode * to = &Trails[ActiveSlot];
+	if (to->Position == COORD_NONE) return;
+
+	for (;;) {
+		LineTrailNode * from = to;
+		to = &Trails[slot];
+		if (from->Value == 0 || to->Position == COORD_NONE) break;
+
+		Point2D start;
+		Point2D end;
+		TacticalMap->Coord_To_Pixel(from->Position, start);
+		TacticalMap->Coord_To_Pixel(to->Position, end);
+		int start_height = -2 - Tactical::Z_Lepton_To_Pixel(from->Position.Z);
+		int end_height = -2 - Tactical::Z_Lepton_To_Pixel(to->Position.Z);
+		DSurface::Composite->FUN_004BEAC0(DSurface::ViewBounds, start, end, Color, from->Value, start_height, end_height);
+
+		slot++;
+		if (slot >= 32) slot = 0;
+		if (slot == ActiveSlot) break;
+	}
+}
+
 // FUNCTION: GAMEMD 0x00556D20
 bool LineTrail::Is_Expired(void) const
 {

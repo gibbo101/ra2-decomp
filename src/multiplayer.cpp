@@ -753,6 +753,43 @@ MPBattleInit::MPBattleInit(void)
 {
 }
 
+#define MP_INIT_CLASS(name) \
+class name : public MultiplayerGameMode::InitializerBase \
+{ \
+	public: \
+		name(void); \
+		virtual MultiplayerGameMode * Allocate(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex); \
+}; \
+name::name(void) \
+{ \
+}
+
+MP_INIT_CLASS(MPManBattleInit)
+MP_INIT_CLASS(MPSiegeInit)
+MP_INIT_CLASS(MPUnholyAllianceInit)
+MP_INIT_CLASS(MPFreeForAllInit)
+MP_INIT_CLASS(MPMegawealthInit)
+
+void Free_Game_Modes(void);
+
+// FUNCTION: GAMEMD 0x005D7CE0
+void Init_Game_Modes(void)
+{
+	Free_Game_Modes();
+	MPBattleInit battle;
+	Read_Game_Modes("Battle", battle);
+	MPManBattleInit manbattle;
+	Read_Game_Modes("ManBattle", manbattle);
+	MPSiegeInit siege;
+	Read_Game_Modes("Siege", siege);
+	MPUnholyAllianceInit unholy;
+	Read_Game_Modes("Unholy", unholy);
+	MPFreeForAllInit freeforall;
+	Read_Game_Modes("FreeForAll", freeforall);
+	MPMegawealthInit cooperative;
+	Read_Game_Modes("Cooperative", cooperative);
+}
+
 // FUNCTION: GAMEMD 0x005D7E50
 void Free_Game_Modes(void)
 {
@@ -770,22 +807,6 @@ void Free_Game_Modes(void)
 // SYNTHETIC: GAMEMD 0x005D7FF0
 // ??_GMPBattleInit@@UAEPAXI@Z
 
-#define MP_INIT_CLASS(name) \
-class name : public MultiplayerGameMode::InitializerBase \
-{ \
-	public: \
-		name(void); \
-		virtual MultiplayerGameMode * Allocate(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex); \
-}; \
-name::name(void) \
-{ \
-}
-
-MP_INIT_CLASS(MPManBattleInit)
-MP_INIT_CLASS(MPSiegeInit)
-MP_INIT_CLASS(MPUnholyAllianceInit)
-MP_INIT_CLASS(MPFreeForAllInit)
-MP_INIT_CLASS(MPMegawealthInit)
 
 // SYNTHETIC: GAMEMD 0x005D8010
 // ??_GMPManBattleInit@@UAEPAXI@Z

@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 3 November 2026: 18,713 of 19,362 game functions match (97%; 74% of game code
+Status, 3 November 2026: 18,726 of 19,362 game functions match (97%; 74% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,17 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 171 to 173 (3 November 2026)
+
+**13 functions.** The three batches retried 57 near misses of 50 to 60%, outside the modules
+open pull requests touch. They matched HouseClass::Expert_AI, Init_Game_Modes,
+Matrix3D::Look_At, FirewallHelperClass::Get_Next_Mangled_Source_Port,
+OwnerTalkClass::Start_Router, LineTrail::Draw, WS_Destroy_Dialog, FoggedObjectClass's
+destructor, ODDrawEdgeGlows, an ownrdraw child-window callback and three WOL functions
+(the ping sort, Request_WDT_Cycle and the ping report). Allocate_Surfaces also matched,
+but only with each surface's memory flag written as `system_memory && true`; it is held
+in build/batch for review rather than landed. Merge gate: 18,726 of 18,726 (2,750.1 KB).
 
 ### Batches 168 to 170 (3 November 2026)
 

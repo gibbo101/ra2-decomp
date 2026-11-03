@@ -244,11 +244,12 @@ FoggedObjectClass::FoggedObjectClass(TerrainClass * object) :
 	FoggedObjectIndex.Add_Index(id, this);
 }
 
+// FUNCTION: GAMEMD 0x004D1650
 FoggedObjectClass::~FoggedObjectClass(void)
 {
 	FoggyObjects.Delete(this);
 
-	Cell cell = Get_Cell();
+	Cell cell = Position.As_Cell();
 	int id = cell.As_Int() - RTTI + INT_MAX;
 	FoggedObjectIndex.Remove_Index(id);
 
@@ -266,7 +267,9 @@ FoggedObjectClass::~FoggedObjectClass(void)
 
 	if (TacticalMap != NULL) {
 		Rect rect = BoundingRect;
-		rect -= Point2D(TacticalMap->TacPixelX, TacticalMap->TacPixelY);
+		Point2D offset(TacticalMap->TacPixelX, TacticalMap->TacPixelY);
+		rect.X -= offset.X;
+		rect.Y -= offset.Y;
 		TacticalMap->Register_Dirty_Area(rect);
 	}
 }

@@ -1550,6 +1550,62 @@ char FUN_006067A0(HWND dialog)
 
 BOOL CALLBACK FUN_00606800(HWND window, LPARAM lparam);
 
+bool __fastcall FUN_00608CD0(HWND parent, HWND child);
+bool FUN_00609730(HWND dialog, HWND control);
+
+inline OwnerDraw::WinData *Get_Data(HWND window)
+{
+	OwnerDraw::WinData *data = NULL;
+	if (!OwnerDraw::Dialogs.getPointer(window, &data)) {
+		return NULL;
+	}
+	return data;
+}
+
+inline bool Is_Plain_Control(HWND window)
+{
+	OwnerDraw::WinData *data = NULL;
+
+	if ((GetWindowLong(window, GWL_STYLE) & 0xb) == 0xb) {
+		HWND key = window;
+		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+inline int Get_Dialog_Type(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		return *(int *)((char *)data + 0x6c);
+	}
+	return 0;
+}
+
+// FUNCTION: GAMEMD 0x00606800
+BOOL CALLBACK FUN_00606800(HWND window, LPARAM lparam)
+{
+	HWND parent = GetParent(window);
+	int type = Get_Dialog_Type(parent);
+	int id = GetDlgCtrlID(window);
+	bool value = lparam != 0;
+
+	if (((type == 0x10c || type == 0x94 || type == 0xa3 || type == 0x73 || type == 0xd8 || type == 0xbbb || type == 0xf5 || type == 0x105 || type == 0xe2 || type == 0xd5 || type == 0x2b5 || type == 0xb7 || type == 0x2b4 || type == 0xbc7 || type == 0x101 || type == 0x129 || type == 0xbc6 || type == 0xd7 || type == 0x108 || type == 0xbc || type == 0xbd || type == 0xbb || type == 0xb5 || type == 0xbba || type == 0xff || type == 0x6b || type == 0x100 || type == 0x102 || type == 0xb8 || type == 0xd6 || type == 0x103 || FUN_00602AE0(type)) && id == 0x694) ||
+		(Is_Owner_Draw_Message(type) && id == 0x695) ||
+		((type == 0x94 || type == 0xd8 || type == 0xf5 || type == 0xe2 || type == 0xd5 || type == 0x101 || type == 0x129 || type == 0xd7 || type == 0xbb || type == 0x100 || type == 0xd6 || type == 0x125 || type == 0x122 || type == 0x112 || type == 0xe7 || type == 0x116 || type == 0x11d || type == 0x11c || type == 0xfe || type == 0x10f || type == 0x117 || type == 0x114 || type == 0xe6 || type == 0xf3 || type == 0xf4 || type == 0x2bc || type == 0x10e || type == 0x108 || type == 0xbc6 || type == 0xbc7) && id == 0x71c) ||
+		((type == 0xbc || type == 0xbd || type == 0x102 || type == 0xc2 || type == 0xc9 || type == 0xbc6 || type == 0x105 || type == 0x6b || type == 0x113) && id == 0x468) ||
+		Is_Flag_Control_B(type, id) ||
+		((type == 0x103 || type == 0xbc7) && (id == 0x6f3 || id == 0x6f4 || id == 0x72b || id == 0x6ef || id == 0x6f1 || id == 0x6f0 || id == 0x6f2 || id == 0x69f || id == 0x6f6 || id == 0x733 || id == 0x735 || id == 0x732 || id == 0x3ea || id == 0x736 || id == 0x737 || id == 0x73c || id == 0x73d || id == 0x73e || id == 0x73f || id == 0x740 || Is_Quick_Control_B(id))) ||
+		((type == 0x108 || type == 0xbc6) && (id == 0x6d2 || id == 0x3ea || id == 0x69d || id == 0x69f || id == 0x69e || id == 0x6a0 || id == 0x78b || id == 0x5c8 || id == 0x411 || id == 0x412 || id == 0x413 || id == 0x414 || id == 0x415 || id == 0x416 || id == 0x417 || id == 0x418 || Is_Quick_Control_D(id) || id == 0x733 || id == 0x732 || id == 0x71b || id == 0x735)) ||
+		(Is_Plain_Control(window) && FUN_00608CD0(parent, window)) ||
+		(Is_Plain_Control(window) && FUN_00609730(parent, window))) {
+		FUN_00606740(window, value);
+	}
+	return TRUE;
+}
+
 // FUNCTION: GAMEMD 0x006071C0
 BOOL FUN_006071C0(HWND window)
 {
@@ -1591,15 +1647,6 @@ namespace OwnerDraw {
 BOOL CALLBACK ClassifyLayoutBand(HWND window, LPARAM lparam);
 BOOL CALLBACK ResetControlDrawModeAndTimerProc(HWND window, LPARAM lparam);
 BOOL CALLBACK InitCompactDialogControlsProc(HWND window, LPARAM lparam);
-}
-
-inline OwnerDraw::WinData *Get_Data(HWND window)
-{
-	OwnerDraw::WinData *data = NULL;
-	if (!OwnerDraw::Dialogs.getPointer(window, &data)) {
-		return NULL;
-	}
-	return data;
 }
 
 // FUNCTION: GAMEMD 0x00608070
@@ -2312,19 +2359,6 @@ bool FUN_00609B30(HWND dialog, HWND control)
 	int id = GetDlgCtrlID(control);
 	if (Is_Owner_Draw_Message(type) && id == 0x695) {
 		return true;
-	}
-	return false;
-}
-
-inline bool Is_Plain_Control(HWND window)
-{
-	OwnerDraw::WinData *data = NULL;
-
-	if ((GetWindowLong(window, GWL_STYLE) & 0xb) == 0xb) {
-		HWND key = window;
-		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
-			return true;
-		}
 	}
 	return false;
 }
@@ -5192,6 +5226,49 @@ void ODCacheImages(void)
 	SurfaceCache.CachePCX("mpyscrnlbar08.pcx");
 	SurfaceCache.CachePCX("mpyscrnlbar09.pcx");
 	SurfaceCache.CachePCX("mpyscrnlbar10.pcx");
+}
+
+bool ODDrawEdgeGlow(Surface & surf, Point2D const & start, Point2D const & end, int color, unsigned char steps);
+
+// FUNCTION: GAMEMD 0x006205D0
+void ODDrawEdgeGlows(Surface & surface, Rect const & rect, BOOL raised, int count, int left_alpha, int top_alpha, int right_alpha, int bottom_alpha)
+{
+	int color2 = 0xFFFF;
+	int color1 = 0;
+	if (!raised) {
+		color1 = 0xFFFF;
+		color2 = 0;
+	}
+	for (int i = 0; i < count; i++) {
+		Point2D end1;
+		Point2D start1;
+		Point2D end2;
+		Point2D start2;
+		Point2D end3;
+		Point2D start3;
+		Point2D end4;
+		Point2D start4;
+		end1.X = rect.Width - i + rect.X - 2;
+		end1.Y = i + rect.Y;
+		start1.Y = i + rect.Y;
+		start1.X = i + rect.X;
+		ODDrawEdgeGlow(surface, start1, end1, color2, top_alpha);
+		end2.X = rect.Width - i + rect.X - 1;
+		end2.Y = rect.Y - i + rect.Height - 1;
+		start2.Y = end2.Y;
+		start2.X = i + rect.X;
+		ODDrawEdgeGlow(surface, start2, end2, color1, bottom_alpha);
+		end3.X = rect.X + i;
+		end3.Y = rect.Y - i + rect.Height - 1;
+		start3.X = rect.X + i;
+		start3.Y = rect.Y + i + 1;
+		ODDrawEdgeGlow(surface, start3, end3, color2, left_alpha);
+		end4.X = rect.X - i + rect.Width - 1;
+		end4.Y = rect.Y - i + rect.Height - 2;
+		start4.X = rect.X - i + rect.Width - 1;
+		start4.Y = i + rect.Y;
+		ODDrawEdgeGlow(surface, start4, end4, color1, right_alpha);
+	}
 }
 
 // FUNCTION: GAMEMD 0x00620720

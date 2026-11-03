@@ -23,6 +23,7 @@ BOOL CALLBACK Resize_Dialog(HWND window, LPARAM lParam);
 extern bool g_PlayingNetGame;
 extern int DAT_00AA0430;
 int __fastcall FUN_0053E770(MSG *msg, HWND wnd, UINT min, UINT max, UINT flags);
+bool FUN_00608070(HWND dialog);
 
 BOOL CALLBACK Resize_Dialog_Proc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -100,6 +101,59 @@ HWND WS_Create_Dialog(HINSTANCE instance, int id, HWND parent, DLGPROC proc, BOO
 	g_TopWindow = window;
 	g_TopWindowID = id;
 	return(window);
+}
+
+// FUNCTION: GAMEMD 0x007757E0
+bool WS_Destroy_Dialog(HWND window, int id)
+{
+	int index;
+	int i;
+	if (window == NULL && g_DialogCount != 0) {
+		window = g_Dialogs[g_DialogCount - 1].handle;
+	}
+	if (window == NULL) {
+		return(false);
+	}
+
+	index = -1;
+	for (i = 0; i < g_DialogCount; i++) {
+		if (g_Dialogs[i].handle == window) {
+			index = i;
+			break;
+		}
+	}
+	if (index == -1) {
+		return(false);
+	}
+
+	FUN_00608070(window);
+
+	for (i = g_DialogCount - 1; i >= index; i--) {
+		Remove_Modeless_Dialog(g_Dialogs[i].handle);
+		DestroyWindow(g_Dialogs[i].handle);
+		_dialog_count--;
+	}
+
+	g_DialogCount = index;
+
+	if (g_DialogCount != 0) {
+		HWND hwnd = g_Dialogs[g_DialogCount - 1].handle;
+		int id = g_Dialogs[g_DialogCount - 1].id;
+		SetForegroundWindow(hwnd);
+		InvalidateRect(hwnd, NULL, FALSE);
+		UpdateWindow(hwnd);
+		g_TopWindow = hwnd;
+		g_TopWindowID = id;
+		SetFocus(hwnd);
+		SendMessage(g_TopWindow, OD_REFOCUS, 0, 0);
+	} else {
+		g_TopWindow = 0;
+		g_TopWindowID = 0;
+		SetFocus(MainWindow);
+	}
+	g_LastResponse = id;
+
+	return(true);
 }
 
 // FUNCTION: GAMEMD 0x00775910

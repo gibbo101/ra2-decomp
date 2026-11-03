@@ -136,9 +136,9 @@ Matrix3D::Matrix3D(const Vector3 & axis, float angle)
 // FUNCTION: GAMEMD 0x005AE860
 void Matrix3D::Make_Identity(void)
 {
-	Row[0].Set(1,0,0,0);
-	Row[1].Set(0,1,0,0);
-	Row[2].Set(0,0,1,0);
+	Row[0].X = 1.0f; Row[0].Y = 0.0f; Row[0].Z = 0.0f; Row[0].W = 0.0f;
+	Row[1].X = 0.0f; Row[1].Y = 1.0f; Row[1].Z = 0.0f; Row[1].W = 0.0f;
+	Row[2].X = 0.0f; Row[2].Y = 0.0f; Row[2].Z = 1.0f; Row[2].W = 0.0f;
 }
 
 // FUNCTION: GAMEMD 0x005AE890
@@ -152,33 +152,33 @@ void Matrix3D::Translate(float x, float y, float z)
 // FUNCTION: GAMEMD 0x005AE8F0
 void Matrix3D::Translate(Vector3 const & t)
 {
-	Translate_X(t[0]);
-	Translate_Y(t[1]);
-	Translate_Z(t[2]);
+	Translate_X(t.X);
+	Translate_Y(t.Y);
+	Translate_Z(t.Z);
 }
 
 // FUNCTION: GAMEMD 0x005AE980
 void Matrix3D::Translate_X(float x)
 {
-	Row[0].W += (float)(Row[0].X*x);
-	Row[1].W += (float)(Row[1].X*x);
-	Row[2].W += (float)(Row[2].X*x);
+	Row[0].W += Row[0].X*x;
+	Row[1].W += Row[1].X*x;
+	Row[2].W += Row[2].X*x;
 }
 
 // FUNCTION: GAMEMD 0x005AE9B0
 void Matrix3D::Translate_Y(float y)
 {
-	Row[0].W += (float)(Row[0].Y*y);
-	Row[1].W += (float)(Row[1].Y*y);
-	Row[2].W += (float)(Row[2].Y*y);
+	Row[0].W += Row[0].Y*y;
+	Row[1].W += Row[1].Y*y;
+	Row[2].W += Row[2].Y*y;
 }
 
 // FUNCTION: GAMEMD 0x005AE9E0
 void Matrix3D::Translate_Z(float z)
 {
-	Row[0].W += (float)(Row[0].Z*z);
-	Row[1].W += (float)(Row[1].Z*z);
-	Row[2].W += (float)(Row[2].Z*z);
+	Row[0].W += Row[0].Z*z;
+	Row[1].W += Row[1].Z*z;
+	Row[2].W += Row[2].Z*z;
 }
 
 // FUNCTION: GAMEMD 0x005AEA10
@@ -483,6 +483,45 @@ Vector3 Matrix3D::Rotate_Vector(Vector3 const & vect)
 		(Row[1].X * vect.X + Row[1].Y * vect.Y + Row[1].Z * vect.Z),
 		(Row[2].X * vect.X + Row[2].Y * vect.Y + Row[2].Z * vect.Z))
 	);
+}
+
+// FUNCTION: GAMEMD 0x005AF550
+void Matrix3D::Look_At(const Vector3 &p, const Vector3 &t, float roll)
+{
+	float sinp, cosp;
+	float siny, cosy;
+
+	float dx = t.X - p.X;
+	float dy = t.Y - p.Y;
+	float dz = t.Z - p.Z;
+
+	float len1 = fastmath::sqrt(dx * dx + dy * dy + dz * dz);
+	float len2 = fastmath::sqrt(dx * dx + dz * dz);
+
+	if ( len1 != 0.0f ) {
+		sinp = dy / len1;
+		cosp = len2 / len1;
+	}
+	else {
+		sinp = 0.0f;
+		cosp = 1.0f;
+	}
+
+	if ( len2 != 0.0f ) {
+		siny = dx / len2;
+		cosy = dz / len2;
+	}
+	else {
+		siny = 0.0f;
+		cosy = 1.0f;
+	}
+
+	Make_Identity();
+	Translate(p);
+
+	Rotate_Y(siny, cosy);
+	Rotate_X(-sinp, cosp);
+	Rotate_Z(roll);
 }
 
 // FUNCTION: GAMEMD 0x005AF710

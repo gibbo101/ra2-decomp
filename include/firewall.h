@@ -23,6 +23,7 @@ public:
 	int Analyse_Ports(int count, unsigned short * original, unsigned short * sorted, bool & relative, bool & reliable);
 	int Rank_A(int flags);
 	int Rank_B(int flags);
+	unsigned short Get_Next_Mangled_Source_Port(unsigned short source_port);
 
 	int Detected;
 	int Settings;
