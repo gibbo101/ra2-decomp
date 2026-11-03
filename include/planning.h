@@ -114,6 +114,8 @@ class PlanningNodeClass
 		void Frame_Lead_Box(int color);
 		int Node_Color(void);
 		int Lead_Color(void);
+		int Branch_Color(int index);
+		int Loop_Color(void);
 		void Reset_Colors(bool all);
 		void FUN_0063C690(void);
 		void FUN_0063CAE0(void);
