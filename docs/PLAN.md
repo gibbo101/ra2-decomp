@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 3 November 2026: 18,726 of 19,362 game functions match (97%; 74% of game code
+Status, 3 November 2026: 18,737 of 19,362 game functions match (97%; 74% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,18 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 174 to 176 (3 November 2026)
+
+**11 functions.** The three batches retried 54 near misses of 40 to 50%. They matched
+TechnoClass::In_Weapon_Range, Scan_Place_Object (with TibSun's Clip_Move and Clip_Scatter
+helpers), init_atan_tab, ODDrawEdgeGlow, MovieSubtitles::Draw_Sub_Title,
+WWMouseClass::Set_Cursor, the WDT faction-select dialog procedure, a WDT territory count by
+faction, and three WOL buddy-list functions (the page request, the list reset, which
+replaces a file-local inline copy of its body, and the friends-list user callback). Two
+more rose above 90% without matching: a techno drawing function with a drop shadow,
+0x00705270 (96%), and the WOL ladder-channel test 0x0079BA60 (90.4%). MapRegionClass's
+deleting destructor 0x005AC290 matches once its caller Generate_Random_Map lands. Merge gate: 18,737 of 18,737 (2,757.2 KB).
 
 ### Batches 171 to 173 (3 November 2026)
 

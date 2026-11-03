@@ -5228,7 +5228,97 @@ void ODCacheImages(void)
 	SurfaceCache.CachePCX("mpyscrnlbar10.pcx");
 }
 
-bool ODDrawEdgeGlow(Surface & surf, Point2D const & start, Point2D const & end, int color, unsigned char steps);
+bool ODDrawEdgeGlow(Surface & surf, Point2D const & start, Point2D const & end, int color, int steps);
+
+// FUNCTION: GAMEMD 0x00620050
+bool ODDrawEdgeGlow(Surface & surf, Point2D const & start, Point2D const & end, int color, int steps)
+{
+	Point2D startpoint = start;
+	Point2D endpoint = end;
+
+	if (startpoint.X > endpoint.X) {
+		swap(startpoint, endpoint);
+	}
+
+	int bpp = surf.Bytes_Per_Pixel();
+	void * buffer = surf.Lock(startpoint);
+	if (buffer != NULL) {
+		if (startpoint.Y == endpoint.Y) {
+			if (bpp == 1) {
+				memset(buffer, color, endpoint.X - startpoint.X + 1);
+			} else {
+				for (int i = 0; i <= endpoint.X - startpoint.X; i++) {
+					*((unsigned short *)buffer + i) = OD_Blend_Color(*((unsigned short *)buffer + i), color, steps);
+				}
+			}
+		} else if (startpoint.X == endpoint.X) {
+			int pitch = startpoint.Y > endpoint.Y ? -surf.Stride() : surf.Stride();
+
+			int dy = abs(endpoint.Y - startpoint.Y);
+			for (int i = 0; i <= dy; i++) {
+				if (bpp == 1) {
+					*(unsigned char *)buffer = color;
+				} else {
+					*(unsigned short *)buffer = OD_Blend_Color(*(unsigned short *)buffer, color, steps);
+				}
+				buffer = (unsigned char *)buffer + pitch;
+			}
+		} else {
+			int dx = endpoint.X - startpoint.X;
+			int dy = endpoint.Y - startpoint.Y;
+			int pitch = surf.Stride();
+			if (dy < 0) {
+				pitch = -pitch;
+			}
+
+			dy = abs(dy);
+			int dx2 = 2 * dx;
+			int dy2 = 2 * dy;
+
+			if (dx > dy) {
+				int delta = dy2 - dx;
+
+				for (int i = 0; i < dx; i++) {
+					if (bpp == 1) {
+						*((unsigned char *)buffer + i) = color;
+					} else {
+						*((unsigned short *)buffer + i) = OD_Blend_Color(*((unsigned short *)buffer + i), color, steps);
+					}
+
+					if (delta > 0) {
+						buffer = (unsigned char *)buffer + pitch;
+						delta -= dx2;
+					}
+
+					delta += dy2;
+				}
+			} else {
+				int delta = dx2 - dy;
+				int k = 0;
+
+				for (int i = 0; i < dy; i++) {
+					if (bpp == 1) {
+						*((unsigned char *)buffer + k) = color;
+					} else {
+						*((unsigned short *)buffer + k) = OD_Blend_Color(*((unsigned short *)buffer + k), color, steps);
+					}
+
+					if (delta > 0) {
+						k++;
+						delta -= dy2;
+					}
+
+					delta += dx2;
+					buffer = (unsigned char *)buffer + pitch;
+				}
+			}
+		}
+
+		surf.Unlock();
+		return(true);
+	}
+	return(false);
+}
 
 // FUNCTION: GAMEMD 0x006205D0
 void ODDrawEdgeGlows(Surface & surface, Rect const & rect, BOOL raised, int count, int left_alpha, int top_alpha, int right_alpha, int bottom_alpha)

@@ -98,6 +98,7 @@
 #include "weapon.h"
 #include "bench.hh"
 #include "tube.hh"
+#include "trajhelp.h"
 
 // SYNTHETIC: GAMEMD 0x006F28A0 SYMBOL
 // _$E2
@@ -1302,6 +1303,91 @@ int TechnoClass::Elevation_Range_Bonus(AbstractClass const * target) const
 	int diff = (mine->GetLevel() - theirs->GetLevel() < 0) ? 0 : mine->GetLevel() - theirs->GetLevel();
 	double bonus = MIN((diff / Rule->ElevationIncrement) * Rule->ElevationIncrementBonus, Rule->ElevationBonusCap);
 	return((int)bonus << 8);
+}
+
+// FUNCTION: GAMEMD 0x006F7220
+bool TechnoClass::In_Weapon_Range(Coord const & coord, AbstractClass * target, WeaponTypeClass * weapon) const
+{
+	if (target == NULL || weapon == NULL) {
+		return(false);
+	}
+	int range = weapon->Range;
+	if (range == -512) {
+		return(true);
+	}
+	if (target->In_Air()) {
+		range += TClass->AirRangeBonus;
+	}
+	if (CanOccupyFire()) {
+		range = (GetOccupyRangeBonus() + Rule->OccupyWeaponRange) << 8;
+	}
+	if (BunkerLinkedItem != NULL && RTTI != RTTI_BUILDING) {
+		range += Rule->BunkerWeaponRangeBonus << 8;
+	}
+	if (InOpenToppedTransport) {
+		range += Rule->OpenToppedRangeBonus << 8;
+	}
+	BulletTypeClass const * bullet = weapon->Bullet;
+	int total = range;
+	if (bullet->SubjectToElevation) {
+		total = Elevation_Distance(target) + range;
+	}
+	Coord tcoord = target->Center_Coord();
+	if (target->On_Ground()) {
+		tcoord.Z = Map.Get_Height_GL(tcoord);
+		if (Map[tcoord].IsUnderBridge) {
+			tcoord.Z += BRIDGE_LEPTON_HEIGHT;
+		}
+	}
+	int minrange = weapon->MinimumRange;
+	if (minrange && (coord - tcoord).Length() < minrange) {
+		return(false);
+	}
+	if (bullet->IsArcing) {
+		Coord diff = tcoord - coord;
+		int dist = diff.TPoint2D<int>::Length();
+		total = range;
+		if (bullet->SubjectToElevation) {
+			total = Elevation_Range_Bonus(target) + range;
+		}
+		if (dist > total) {
+			return(false);
+		}
+		double gravity = weapon->Bullet->IsFloater ? Get_Floater_Gravity() : (double)Rule->Gravity;
+		int speed = Calculate_Projectile_Speed(total, gravity);
+		if (!Is_Projectile_Trajectory_Valid(speed, dist, diff.Z, gravity)) {
+			return(false);
+		}
+		if (Map[tcoord].IsUnderBridge && tcoord.Z - coord.Z >= 3 * LEVEL_LEPTON_H) {
+			return(false);
+		}
+		if (TrajectoryHelper::FindFirstImpenetrableObstacle(coord, tcoord, weapon, House) != NULL) {
+			return(false);
+		}
+		return(true);
+	}
+	if (target->RTTI == RTTI_BUILDING) {
+		total += (((BuildingClass *)target)->Class->Height(false) + ((BuildingClass *)target)->Class->Width()) << 6;
+	}
+	bool inrange;
+	if (RTTI != RTTI_AIRCRAFTTYPE) {
+		inrange = (coord - tcoord).Length() <= total;
+	} else {
+		inrange = (Point2D(coord) - Point2D(tcoord)).Length() <= total;
+	}
+	if (!inrange) {
+		return(false);
+	}
+	if (Map[coord].IsUnderBridge) {
+		int height = Map.Get_Height_GL(coord) + BRIDGE_LEPTON_HEIGHT;
+		if (coord.Z < height && tcoord.Z >= height) {
+			return(false);
+		}
+	}
+	if (TrajectoryHelper::FindFirstImpenetrableObstacle(coord, tcoord, weapon, House) != NULL) {
+		return(false);
+	}
+	return(true);
 }
 
 // FUNCTION: GAMEMD 0x006F7660

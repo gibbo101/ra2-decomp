@@ -71,5 +71,33 @@ WorldDominationTour::State::~State(void)
 {
 }
 
+// FUNCTION: GAMEMD 0x0076F670
+int WorldDominationTour::State::FUN_0076F670(int faction)
+{
+	if (TourState.Get() != NULL && Owners != NULL) {
+		int count = 0;
+		unsigned char * owners = Owners;
+		unsigned int i = TourState->NumTerritories;
+		while (i--) {
+			unsigned int owner = *owners;
+			owners++;
+			switch (owner) {
+				case WDTState::GDI:
+					if (faction == 2) {
+						count++;
+					}
+					break;
+				case WDTState::NOD:
+					if (faction == 3) {
+						count++;
+					}
+					break;
+			}
+		}
+		return count;
+	}
+	return 0;
+}
+
 // SYNTHETIC: GAMEMD 0x0076F6C0
 // ??_GState@WorldDominationTour@@UAEPAXI@Z

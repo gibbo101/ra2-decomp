@@ -20,6 +20,7 @@
 #define TAN_TABLE_SIZE   4096
 #define ASIN_TABLE_SIZE  4096
 #define ATAN_TABLE_SIZE  4096
+#define ATAN_MAX_INDEX   1017
 
 extern "C" {
 	extern float sin_tab[];
@@ -240,6 +241,22 @@ float fastmath::tanf(float f)
 		i += TAN_TABLE_SIZE;
 	}
 	return(tan_tab[i]);
+}
+
+// FUNCTION: GAMEMD 0x004CB360
+float init_atan_tab(void)
+{
+	float size = ATAN_TABLE_SIZE;
+
+	float pi = M_PI;
+	float maxtan = tan_tab[ATAN_MAX_INDEX];
+	atan_tab[ATAN_TABLE_SIZE + 1] = pi/size/pi * maxtan;
+	float value = 0;
+	for (int i = 0; i != ATAN_TABLE_SIZE + 1; i++) {
+		atan_tab[i] = fastmath::atan(value);
+		value += atan_tab[ATAN_TABLE_SIZE + 1];
+	}
+	return maxtan;
 }
 
 // FUNCTION: GAMEMD 0x004CB3D0

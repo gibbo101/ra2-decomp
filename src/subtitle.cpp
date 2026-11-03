@@ -9,6 +9,9 @@
 #include "bsurface.h"
 #include "straw.h"
 #include "vector.h"
+#include "bitfont.h"
+#include "dsurface.h"
+#undef DrawText
 #include <cstddef>
 #include <stdlib.h>
 #include <string.h>
@@ -140,6 +143,48 @@ void MovieSubtitles::Reset(void)
 void MovieSubtitles::SetCallback(void (__fastcall * callback)(void *))
 {
 	Callback = callback;
+}
+
+// FUNCTION: GAMEMD 0x006C9D40
+void MovieSubtitles::Draw_Sub_Title(SubTitle * subtitle)
+{
+	if (SubSurface != NULL) {
+		Rect & caption = CaptionRect;
+		SubSurface->Fill_Rect(caption, 0);
+
+		unsigned long color = subtitle->Get_RGB_Color();
+		BitFont * font = BitFont::Instance;
+		font->SetColor(DSurface::Build_Hicolor_Pixel((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF));
+
+		int width = SubSurface->Get_Width();
+		int height = SubSurface->Get_Height();
+		LTRBStruct bounds;
+		bounds.Left = 0;
+		bounds.Top = 0;
+		bounds.Right = width;
+		bounds.Bottom = height;
+		font->SetBounds(&bounds);
+
+		int text_width;
+		int text_height;
+		wchar_t const * text = subtitle->Get_Caption();
+		font->GetTextDimension(text, &text_width, &text_height, width);
+
+		int y = (subtitle->Get_Line_Position() - 1) * font->field_1C;
+		int x = 0;
+		if (subtitle->Get_Alignment() == SubTitle::Center) {
+			x = (width - text_width) / 2;
+		} else if (subtitle->Get_Alignment() == SubTitle::Right) {
+			x = width - text_width;
+		}
+		BitText::Instance->DrawText(font, SubSurface, text, x, y, width, height, 0, 0, 0);
+
+		PreviousRect = caption;
+		caption.X = x;
+		caption.Y = y;
+		caption.Width = text_width;
+		caption.Height = text_height;
+	}
 }
 
 // FUNCTION: GAMEMD 0x006C9EC0

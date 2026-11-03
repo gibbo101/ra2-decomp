@@ -4613,6 +4613,7 @@ address,size,symbol,source,sha256
 0x004CB290,42,?acosf@fastmath@@YIMM@Z,src/fastmath.cpp,938e4e8305402ecc28707e735b3253fccfafe01d6203aa81e1a573fdc8ba4892
 0x004CB2C0,90,?init_tan_tab@@YIXXZ,src/fastmath.cpp,2a02f7bac6af096c28cbd7d3520cfb6c96edcafd7ac98379c2f17ff4573aceaa
 0x004CB320,51,?tanf@fastmath@@YIMM@Z,src/fastmath.cpp,e05ebfbcda16c6d2b5f3cf3309bc8de4bd931f5a82fe687085a61eb8f5175b35
+0x004CB360,112,?init_atan_tab@@YIMXZ,src/fastmath.cpp,0ebe278b5767c7dc37b6d94052704a7acec91547bcc70282dec0bfef6c6f26a5
 0x004CB3D0,165,?atan2f@fastmath@@YIMMM@Z,src/fastmath.cpp,89a7be970a8096554972a6b174acd4742d64d9058963bed55951eeb00f8107fb
 0x004CB480,64,?atanf@fastmath@@YIMM@Z,src/fastmath.cpp,1391b64cecbe4e4f819af9e1dc7407a45885d92f92ee013b432c977c353cdc9b
 0x004CB4C0,189,?Sabotage_Sine@@YIXXZ,src/fastmath.cpp,d76fd73657265ede9f28ed900db7468b50f146143d7b126aea7e878bd0fb0b18
@@ -10784,6 +10785,7 @@ address,size,symbol,source,sha256
 0x0061EF70,535,?GetKeyboardKeyString@UI@@YIXGPAG@Z,src/ownrdraw.cpp,3329d3c3e3c325012a025f512e2b737372306e9fda16b5e05c39386f5718d5d0
 0x0061F190,118,?ODInitMasks@@YIXXZ,src/ownrdraw.cpp,f054b349319eabe360231aafb03eb5f53b7be85228154a2f6abac06174a83503
 0x0061F210,3646,?ODCacheImages@@YIXXZ,src/ownrdraw.cpp,b31ce31200b90d847622312be122b04b04acd22322d504579337569722220a3f
+0x00620050,1397,?ODDrawEdgeGlow@@YI_NAAVSurface@@ABVPoint2D@@1HH@Z,src/ownrdraw.cpp,0073ee777c55c616df3ee1d3918a7f8a4026b4269a258475a62d875097558296
 0x006205D0,336,?ODDrawEdgeGlows@@YIXAAVSurface@@ABV?$TRect@H@@HHHHHH@Z,src/ownrdraw.cpp,840f3b7d0541ffde41c8779e0d0c797de73d7a61dd17ddf964f23e21f98bd4cc
 0x00620720,235,?ODDrawArrowBitmap@@YIXPAVSurface@@ABV?$TRect@H@@HH_N@Z,src/ownrdraw.cpp,79f42f744e6183173acbde365aee85eb9c3dc57ad0706b7475268d87f7dc7cb5
 0x00620810,87,?ODColorToHiColor@@YIHK@Z,src/ownrdraw.cpp,892a4b6acb1d354e036a682d9abde2be02a6c17c29cab8063c2fed47e51baa80
@@ -12517,6 +12519,7 @@ address,size,symbol,source,sha256
 0x00687F10,1134,?Assign_Houses@@YIXXZ,src/scenario.cpp,20757e30203073d13b129d6aa83c7e9bc4a66e585c68765ea0c669e90730b709
 0x00688380,813,?Build_Start_Waypoint_List@@YI?AV?$DynamicVectorClass@VCell@@@@XZ,src/scenario.cpp,afe3a579e339699dfde7c3a97129e016802553101baa34a4239e24cf6b28d3c3
 0x006886B0,2076,?Create_Units@@YIX_N@Z,src/scenario.cpp,b9a54340936d57e934ef4ca9e31a12562f2a83bbce38ac98cc62756704600e85
+0x00688ED0,1080,?Scan_Place_Object@@YIHPAVObjectClass@@ABVCell@@H@Z,src/scenario.cpp,9e82bcced458f32062fb746d1819dfbb032f1f4ad1171ed902c43dbd3a0254c6
 0x00689310,339,?Save@ScenarioClass@@QBEXPAUIStream@@@Z,src/scenario.cpp,44e754c1572c6da31acd1ba491e32073f2d34b7dbfb9df65c42ff1f388f12911
 0x00689470,511,?Load@ScenarioClass@@QAEXPAUIStream@@@Z,src/scenario.cpp,86da01229b86dabc9bdd1c60e626cd3a3b23893e79069a9fccaf7fa25683af42
 0x00689670,72,?Set_Global_To@ScenarioClass@@QAE_NH_N@Z,src/scenario.cpp,41a44ec3c4615dff4e889de2ca647126ab0d0b4e862bca1a4f39ee3cde2f5225
@@ -14036,6 +14039,7 @@ address,size,symbol,source,sha256
 0x006C9C60,179,?Process@MovieSubtitles@@QAE_NK@Z,src/subtitle.cpp,646098b893e7bd99253d1820ca52affbb8dfe79bdb7a73164905dc33d4507b93
 0x006C9D20,9,?Reset@MovieSubtitles@@QAEXXZ,src/subtitle.cpp,c6544a09bff3f96cf3e6a0896ca06f2135c2decda6b222e78cfb28cc909422bb
 0x006C9D30,10,?SetCallback@MovieSubtitles@@QAEXP6IXPAX@Z@Z,src/subtitle.cpp,0a5b1a6d212e0caedbf2d98dea5a75fa8dba9f19919dae6658f37365af35e72f
+0x006C9D40,378,?Draw_Sub_Title@MovieSubtitles@@QAEXPAVSubTitle@@@Z,src/subtitle.cpp,b9e812dbb052423a6dd5a4729a1c236981fbc8db97f7ca7d1c2792f3b18ea644
 0x006C9EC0,61,??0SubTitleParserClass@@QAE@AAVStraw@@@Z,src/subtitle.cpp,53f0f52092068675a3d49e0a1b433e8b65bc6524caaba57a228484c8c4cead13
 0x006C9F00,1,??1SubTitleParserClass@@QAE@XZ,src/subtitle.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x006CA1E0,302,?Find_Movie_Entry@SubTitleParserClass@@AAE_NPBD@Z,src/subtitle.cpp,b1d273555265db34ab9dde7e2519e8f3e98f6ce1e48a32db2ca275ca94b38058
@@ -14965,6 +14969,7 @@ address,size,symbol,source,sha256
 0x006F6F40,28,?Get_Sight_Bonus@TechnoClass@@QAEHABVCoord@@@Z,src/techno.cpp,b1611e89c7b2f7448a2a8445e5ade9174c0666f2b91434c8498bd1e761bb40b1
 0x006F6F60,369,?Elevation_Distance@TechnoClass@@QBEHPBVAbstractClass@@@Z,src/techno.cpp,d41abd8184f42f96a677528549a3f88a17e93a8455ed655728db80deef60b5b9
 0x006F70E0,317,?Elevation_Range_Bonus@TechnoClass@@QBEHPBVAbstractClass@@@Z,src/techno.cpp,59afcf497284feafe3f0965f37fd3e54f4a0985b357b53e146d8ed7edce0294a
+0x006F7220,1088,?In_Weapon_Range@TechnoClass@@QBE_NABVCoord@@PAVAbstractClass@@PAVWeaponTypeClass@@@Z,src/techno.cpp,e47553bcf838be5b8fac98378663914e14c912b7ffbf261001f262929187e1c8
 0x006F7660,287,?TriggersCellInset@TechnoClass@@UAE_NPAVAbstractClass@@@Z,src/techno.cpp,68e1fad9abf9f38586b2c0259e91bea8e55828432c8cd71d2532b62311ad4fd2
 0x006F7780,34,?IsCloseEnoughToAttack@TechnoClass@@UBE_NPAVAbstractClass@@@Z,src/techno.cpp,63800a088293c408b9d282ffa37d556d412a2590b10d393de8af7bea3bca3c07
 0x006F77B0,278,?In_Range@TechnoClass@@UBE_NPAVAbstractClass@@H@Z,src/techno.cpp,a1927bc512bbedbbfd146725b20898c3efafaa303ab9819f16576ba9b264c205
@@ -17463,6 +17468,7 @@ address,size,symbol,source,sha256
 0x0076F560,51,??0State@WorldDominationTour@@QAE@XZ,src/wdtstate.cpp,886d0b8d28a6f23532f9b51976cfeea61beb3d8ff28ecd35ac193bed6beb99db
 0x0076F5A0,95,??0State@WorldDominationTour@@QAE@ABV?$rc_ptr@VWDTState@@@@I@Z,src/wdtstate.cpp,95d00a020a8bd7614f57b0b06470324c3751091a3cd4ef9df4f753e536f51540
 0x0076F650,32,??1State@WorldDominationTour@@UAE@XZ,src/wdtstate.cpp,041024ff135b953071c36e825c652b9ae4157bf4a334a74cd2dcc3f13902be1e
+0x0076F670,75,?FUN_0076F670@State@WorldDominationTour@@QAEHH@Z,src/wdtstate.cpp,816ddd4cf09fa1da2b73e56ce0722daa72fbe3144fe6c6bbef4187f886560e5b
 0x0076F6C0,52,??_GState@WorldDominationTour@@UAEPAXI@Z,src/wdtstate.cpp,142f88f287f6243152e88b9c7ebd483937125296e7321138a7f618810e4ab83a
 0x0076F700,23,_$E7,src/wdtterr.cpp,e12151908c1b48c646a7ff3b3742fe9b0bcff208eea077364817c4c872efe819
 0x0076F720,40,_$E10,src/wdtterr.cpp,f65a93dbe68cf65f06835e042c9bf31b8549ed33f8d9b06b6ec5ab8247d3dc03
@@ -18058,8 +18064,10 @@ address,size,symbol,source,sha256
 0x0079C650,629,?FUN_0079C650@@YIXPAVWstring@@@Z,src/wonline.cpp,357ccd5f79bdd4832fc3441f27f35c9e72f873684a50fd0d33dd9df855c824ec
 0x0079C8D0,713,?FUN_0079C8D0@@YIXPAVWstring@@@Z,src/wonline.cpp,9376e0f1d66c3314a6f40769049bb63e33f50b84dc5f03fbf7d9f5216d18b9ea
 0x0079CBA0,707,?FUN_0079CBA0@@YIXPAVWstring@@@Z,src/wonline.cpp,96a575b057ee6aa9195fb209cf64d162e5e518ff842825b153091d792df8adbe
+0x0079CE70,657,?FUN_0079CE70@@YIXXZ,src/wonline.cpp,50d14fb5df9cf496514edc815fcd2a47379ff782111d08a36a569fa918b137cb
 0x0079D110,471,?FUN_0079D110@@YIXXZ,src/wonline.cpp,ec2d917e48714536bbe092ba67923b56bdc4f6afe2b5fd239619c996e80d6564
 0x0079D2F0,491,?FUN_0079D2F0@@YIXXZ,src/wonline.cpp,c2ce06387a10554ece0657c09d91e82d8dda8786683674122475e0bf39548b1f
+0x0079D4E0,565,?FUN_0079D4E0@@YIXXZ,src/wonline.cpp,940906b9e568d1409f50bb2a68ec5c7a0a8326299531e287929f895a97a08c6d
 0x0079D720,877,?FUN_0079D720@@YGHPAUHWND__@@IIJ@Z,src/wonline.cpp,bd29282c95d28fb522437abb3e207053aef971f882e6ce392bf2457fdb930992
 0x0079DA90,192,?FUN_0079DA90@@YI?AVWstring@@PAUHWND__@@@Z,src/wonline.cpp,52b7c7773014b0f54f2a359997f3da86cfd3506454c293b293707440cf77bf12
 0x0079DB50,1162,?FUN_0079DB50@@YGHPAUHWND__@@IIJ@Z,src/wonline.cpp,925d98f0a63cd6d7e8e8c2adcaa73509ec9f88fedc2e382390ba5fdbfd3d402b
@@ -18134,6 +18142,7 @@ address,size,symbol,source,sha256
 0x007ABAF0,586,?FUN_007ABAF0@@YGJPAXJH@Z,src/wonline.cpp,96168de8472846c079d1f1908d1d5a92f0019c297ca43b68287b0c944b6ea06a
 0x007ABD40,607,?FUN_007ABD40@@YGJPAXJPAUUser@@@Z,src/wonline.cpp,238711f50578e046317dcea8623f1e6e9d461fd8861316a36f3733ce0f42eb4c
 0x007ABFA0,633,?FUN_007ABFA0@@YGJPAXJH@Z,src/wonline.cpp,28742f4f713b1178e1b12a4e170afa7e0d3ebb95d773744f8b17a5d4d7803900
+0x007AC220,637,?FUN_007AC220@@YGJPAXJPAUUser@@@Z,src/wonline.cpp,60edd580da1fb905bd8451ba6cc39bc5eaa73d2f51432fd788b86e49e8c20f89
 0x007AC4A0,5,?FUN_007AC4A0@@YGJPAXJ0@Z,src/wonline.cpp,531db4852a682340f10d91199822e1a1aed030bae016ff1e2c9f32d13b9cc9a1
 0x007AC4B0,5,?FUN_007AC4B0@@YGJPAXJ0@Z,src/wonline.cpp,531db4852a682340f10d91199822e1a1aed030bae016ff1e2c9f32d13b9cc9a1
 0x007AC4C0,5,?FUN_007AC4C0@@YGJPAXJ0@Z,src/wonline.cpp,531db4852a682340f10d91199822e1a1aed030bae016ff1e2c9f32d13b9cc9a1
@@ -18242,6 +18251,7 @@ address,size,symbol,source,sha256
 0x007AF500,57,??1FactionSelectDialogControl@WorldDominationTour@@UAE@XZ,src/worlddom.cpp,d54dd5b98232cb59e6a32ff6231b398acfcd98d96bd468ce2d123945de21f9ca
 0x007AF540,244,?Update_Hover@FactionSelectDialogControl@WorldDominationTour@@QAEXPAUHWND__@@PAUtagPOINT@@@Z,src/worlddom.cpp,c0ad4e6c6f01fcb3086d4afc80875d680667cdf06dc40f4296be82c23ce1ae07
 0x007AF640,113,?Draw@FactionSelectDialogControl@WorldDominationTour@@QAEXH@Z,src/worlddom.cpp,321f7507596c44732220687a9dd003f66f5754862f19e2d358850fb1e65d3ace
+0x007AF6C0,686,?FUN_007AF6C0@@YGHPAUHWND__@@IIJ@Z,src/worlddom.cpp,8bee105d4348071a7d5f033d2f66bbc0234c3d4c7a80f4adf0ab1aacc85e44e9
 0x007AF970,345,?FUN_007AF970@@YIHXZ,src/worlddom.cpp,21f0bd4801306f5c173ee127c8977f57926a79460d633e4737f751cdcd73baac
 0x007AFAD0,187,?WDT_Theater_Choice_Menu@@YIHH@Z,src/worlddom.cpp,32b5fb6141314c2ad7808cd8a28108e91e9868f78b9288cbf933eb134c5b8ca9
 0x007AFB90,1272,?FUN_007AFB90@@YIH_N@Z,src/worlddom.cpp,c1869a5e5b77d044297ac05557bd1a48a347c99464149dbe5836173329977672
@@ -18519,6 +18529,7 @@ address,size,symbol,source,sha256
 0x007B88D0,144,??1WWMouseClass@@UAE@XZ,src/wwmous.cpp,492d59c4d4bf573ad413a8898addf9c37637d3c80cba9f0de94b36a9fc811996
 0x007B8960,139,?FUN_007B8960@WWMouseClass@@QAEXXZ,src/wwmous.cpp,c939fe3311d0eea16483b2def2eae0521300dc60549c4ba5c5c175b953aaf910
 0x007B89F0,4,?Get_Mouse_State@WWMouseClass@@UBEHXZ,src/wwmous.cpp,2e339cdc5de837ec151dbde90057caeabba18ac3ea32e7c2cffc8f95df41a6ff
+0x007B8A00,583,?Set_Cursor@WWMouseClass@@UAEXABVPoint2D@@PBVShapeSet@@H@Z,src/wwmous.cpp,f4edb3d63e83bd0ba5fc799dbafe4d3a47b129072991a14ba01a3d1e878505e8
 0x007B8C50,9,?FUN_007B8C50@WWMouseClass@@QAE_NXZ,src/wwmous.cpp,4e9617f121a937fa61475f9b9d78b83f5cc24ca25f5b116a1ad15bd48bcb1d6a
 0x007B8C60,532,?FUN_007B8C60@WWMouseClass@@QAE_NXZ,src/wwmous.cpp,282d0fe52d947fb63532f451d0d9641c747885255920a86eea6ee9cc82179191
 0x007B8E80,166,?FUN_007B8E80@WWMouseClass@@QAE?AV?$TRect@H@@XZ,src/wwmous.cpp,fdab89dacf1bf4635bcd86e914e9f80d649c1304be115e2559a8fb319b565352

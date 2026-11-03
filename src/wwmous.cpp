@@ -223,6 +223,28 @@ int WWMouseClass::Get_Mouse_State(void) const
 	return RefCount;
 }
 
+// FUNCTION: GAMEMD 0x007B8A00
+void WWMouseClass::Set_Cursor(Point2D const & hotspot, ShapeSet const * cursor, int shape)
+{
+	if (cursor != 0) {
+		if (Is_Captured()) {
+			Block_Mouse();
+			if (!Is_Hidden()) Low_Hide_Mouse();
+			Image = (SHPStruct *)cursor;
+			ImageFrameIndex = shape;
+			MouseXHot = hotspot.X;
+			MouseYHot = hotspot.Y;
+			if (!Is_Hidden()) Low_Show_Mouse();
+			Unblock_Mouse();
+		} else {
+			Image = (SHPStruct *)cursor;
+			ImageFrameIndex = shape;
+			MouseXHot = hotspot.X;
+			MouseYHot = hotspot.Y;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x007B8C50
 bool WWMouseClass::FUN_007B8C50(void)
 {

@@ -285,6 +285,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - Deleting destructor (`test flags,1`, then `operator delete`; callers `push 1` to a
   vtable slot): declare the destructor virtual and annotate `~Class`; check.py tries
   `??1`, `??_G` and `??_E`. `??_G` is emitted only if something `delete`s the class.
+  A class with no vptr gets one too, beside a caller that keeps its `delete` out of line
+  (0x005AC290 waits on Generate_Random_Map).
 - A destructor that stores no vptr before calling the base destructor means the class
   declares none: remove the declaration. Even an empty declared one adds the store.
 - Dialog procedures: `LOWORD(wparam)`/`HIWORD(wparam)` keep compares unmasked and put

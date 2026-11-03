@@ -7329,6 +7329,30 @@ void __fastcall FUN_0079CBA0(Wstring * name)
 	}
 }
 
+extern int DAT_00B778C8;
+
+static inline bool Request_Buddy_Pages(void)
+{
+	return FUN_0077F320(0x29, 1, false);
+}
+
+// FUNCTION: GAMEMD 0x0079CE70
+void FUN_0079CE70(void)
+{
+	DAT_00B778C8 = time(NULL);
+	if (!Request_Buddy_Pages()) {
+		SetEvent(DAT_00B73684[5]);
+		return;
+	}
+	DAT_00B76980.clear();
+	for (int i = 0; i < DAT_00B73AA8.length(); i++) {
+		Wstring node;
+		DAT_00B73AA8.get(node, i);
+		DAT_00B76980.addTail(node);
+	}
+	FUN_0079C3A0();
+}
+
 // FUNCTION: GAMEMD 0x0079D110
 void FUN_0079D110(void)
 {
@@ -7365,6 +7389,20 @@ void FUN_0079D2F0(void)
 
 void FUN_00623F60(HWND listbox, int index, WideWstring & text);
 int __fastcall FUN_00623EA0(HWND window, WideWstring * text);
+
+// FUNCTION: GAMEMD 0x0079D4E0
+void FUN_0079D4E0(void)
+{
+	DAT_00B73AA8.clear();
+	DAT_00B76980.clear();
+	DAT_00B76990.clear();
+	DAT_00B76608.clear();
+	DAT_00AC116C->V55();
+	if (Session.unknown_0C != 3 && Session.unknown_0C != 1 && Session.unknown_0C != 2) {
+		FUN_0079CE70();
+	}
+	FUN_0079D2F0();
+}
 
 // FUNCTION: GAMEMD 0x0079D720
 BOOL CALLBACK FUN_0079D720(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -7702,19 +7740,6 @@ bool FUN_007A1BB0(void);
 BOOL CALLBACK FUN_007A2110(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 BOOL CALLBACK FUN_007A2600(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-static inline void Reset_Ladder_Lists(void)
-{
-	DAT_00B73AA8.clear();
-	DAT_00B76980.clear();
-	DAT_00B76990.clear();
-	DAT_00B76608.clear();
-	DAT_00AC116C->V55();
-	if (Session.unknown_0C != 3 && Session.unknown_0C != 1 && Session.unknown_0C != 2) {
-		FUN_0079CE70();
-	}
-	FUN_0079D2F0();
-}
-
 // FUNCTION: GAMEMD 0x0079FC40
 int FUN_0079FC40(void)
 {
@@ -7765,7 +7790,7 @@ int FUN_0079FC40(void)
 	ShowWindow(dialog, SW_SHOWNORMAL);
 	FUN_00798340();
 	int result = 0;
-	Reset_Ladder_Lists();
+	FUN_0079D4E0();
 
 	while (true) {
 		if (DAT_00B73A20 == 2) {
@@ -10454,6 +10479,27 @@ long __stdcall FUN_007ABFA0(void * sink, long result, int newteam)
 	FUN_004068E0("OnSetTeam FAILED: %d\n", newteam);
 	return 0;
 }
+
+// FUNCTION: GAMEMD 0x007AC220
+long __stdcall FUN_007AC220(void * sink, long result, User * users)
+{
+	if (result >= 0) {
+		for (User * user = users; user != NULL; user = user->Next) {
+			Wstring name(user->Nick);
+			FUN_0079C650(&name);
+		}
+		FUN_0079D110();
+		Close_Wait_Window(0x200);
+		HWND list = FUN_00775940(0x116);
+		if (list) {
+			FUN_0079AF10(list);
+			KillTimer(list, 0x704);
+			EnableWindow(GetDlgItem(list, 0x704), TRUE);
+		}
+	}
+	return 0;
+}
+
 
 // FUNCTION: GAMEMD 0x007AC4A0
 long __stdcall FUN_007AC4A0(void * sink, long result, void * arg)

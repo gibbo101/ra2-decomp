@@ -170,7 +170,91 @@ void WorldDominationTour::FactionSelectDialogControl::Draw(int unused)
 
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 int __fastcall Run_Dialog_Control(int resource, DLGPROC proc, OwnerDraw::DialogControl * control);
-BOOL CALLBACK FUN_007AF6C0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+#include <stddef.h>
+#include "stringtable.h"
+
+void FUN_00607FD0(HWND dialog);
+
+struct TooltipRequest {
+	HWND Window;
+	int Index;
+	WideWstring Text;
+};
+
+// FUNCTION: GAMEMD 0x007AF6C0
+BOOL CALLBACK FUN_007AF6C0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message == WM_INITDIALOG && lparam != 0) {
+		SetWindowLong(window, DWL_USER, ((LONG *)lparam)[1]);
+	}
+
+	int rc = OwnerDraw::Default_Dialog_Proc(window, message, wparam, lparam);
+	if (rc == 0) {
+		WorldDominationTour::FactionSelectDialogControl * control = (WorldDominationTour::FactionSelectDialogControl *)GetWindowLong(window, DWL_USER);
+
+		switch (message) {
+			case WM_NCHITTEST: {
+				POINT point;
+				point.x = LOWORD(lparam);
+				point.y = HIWORD(lparam);
+				control->Update_Hover(window, &point);
+				return FALSE;
+			}
+
+			case WM_DRAWITEM:
+				OwnerDraw::Draw_Item((LPDRAWITEMSTRUCT)lparam);
+				return TRUE;
+
+			case WM_PAINT:
+				OwnerDraw::Draw_Dialog_Back(window);
+				control->Draw(0);
+				FUN_00607FD0(window);
+				ValidateRect(window, NULL);
+				return TRUE;
+
+			case WM_ERASEBKGND:
+				return TRUE;
+
+			case WM_COMMAND:
+				if (LOWORD(wparam) == 0x686) {
+					control->F1(window, -1);
+				}
+				return FALSE;
+
+			case 0x497:
+				return FALSE;
+
+			case 0x4E9: {
+				TooltipRequest * request = (TooltipRequest *)lparam;
+				if (request->Window == window) {
+					wchar_t const * text;
+					switch (control->FieldC) {
+						case 2:
+							text = StringTable::LoadString("WDT:FactionSelectAlliesToolTip", NULL, "D:\\ra2mdpost\\WorldDom.cpp", 0xb0);
+							break;
+						case 3:
+							text = StringTable::LoadString("WDT:FactionSelectSovietToolTip", NULL, "D:\\ra2mdpost\\WorldDom.cpp", 0xb3);
+							break;
+						default:
+							text = StringTable::LoadString("WDT:FactionSelectToolTip", NULL, "D:\\ra2mdpost\\WorldDom.cpp", 0xb6);
+							break;
+					}
+					WideWstring tip(text);
+					request->Text = tip;
+				}
+				return FALSE;
+			}
+
+			case WM_LBUTTONUP:
+				if (control->FieldC != 0) {
+					control->F1(window, 1);
+				}
+				return FALSE;
+		}
+		return FALSE;
+	}
+	return rc;
+}
 
 static inline void Load_Image(WorldDominationTour::FactionImage *& image, char const * name)
 {
@@ -211,8 +295,6 @@ int __fastcall WDT_Theater_Choice_Menu(int side)
 
 
 #include "goptions.h"
-#include <stddef.h>
-#include "stringtable.h"
 
 namespace Drawing { extern int RenderWidth; }
 int ODMessageBox(const wchar_t * text, int type, bool (*callback)(void), bool large);

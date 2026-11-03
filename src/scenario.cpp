@@ -2465,6 +2465,174 @@ void Create_Units(bool official)
 	DebugString("Finished unit generation. Random number is %d\n", Scen->RandomNumber(0, 65535));
 }
 
+static Cell const Clip_Scatter(Cell const & cell, int maxdist)
+{
+	int x = cell.X;
+	int y = cell.Y;
+
+	int xmin = Map.MapRect.X;
+	int xmax = xmin + Map.MapRect.Width - 1;
+	int ymin = Map.MapRect.Y;
+	int ymax = ymin + Map.MapRect.Height - 1;
+
+	int xdist = Random_Pick(0, maxdist);
+	if (Percent_Chance(50)) {
+		x += xdist;
+		if (x > xmax) {
+			x = xmax;
+		}
+	} else {
+		x -= xdist;
+		if (x < xmin) {
+			x = xmin;
+		}
+	}
+
+	int ydist = Random_Pick(0, maxdist);
+	if (Percent_Chance(50)) {
+		y += ydist;
+		if (y > ymax) {
+			y = ymax;
+		}
+	} else {
+		y -= ydist;
+		if (y < ymin) {
+			y = ymin;
+		}
+	}
+
+	Cell result;
+	result.X = x;
+	result.Y = y;
+	return(result);
+}
+
+static Cell const Clip_Move(Cell const & cell, FacingType facing, int dist)
+{
+	int x = cell.X;
+	int y = cell.Y;
+
+	int xmin = Map.MapRect.X;
+	int xmax = xmin + Map.MapRect.Width - 1;
+	int ymin = Map.MapRect.Y;
+	int ymax = ymin + Map.MapRect.Height - 1;
+
+	switch (facing) {
+		case FACING_N:
+			y -= dist;
+			break;
+
+		case FACING_NE:
+			x += dist;
+			y -= dist;
+			break;
+
+		case FACING_E:
+			x += dist;
+			break;
+
+		case FACING_SE:
+			x += dist;
+			y += dist;
+			break;
+
+		case FACING_S:
+			y += dist;
+			break;
+
+		case FACING_SW:
+			x -= dist;
+			y += dist;
+			break;
+
+		case FACING_W:
+			x -= dist;
+			break;
+
+		case FACING_NW:
+			x -= dist;
+			y -= dist;
+			break;
+	}
+
+	if (x > xmax) {
+		x = xmax;
+	}
+	if (x < xmin) {
+		x = xmin;
+	}
+
+	if (y > ymax) {
+		y = ymax;
+	}
+	if (y < ymin) {
+		y = ymin;
+	}
+
+	return(Cell(x, y));
+}
+
+// FUNCTION: GAMEMD 0x00688ED0
+int Scan_Place_Object(ObjectClass * obj, Cell const & cell, int start)
+{
+	int dist;
+	FacingType rot;
+	FacingType fcounter;
+	int tryval;
+	Cell newcell;
+	TechnoClass * techno;
+	int skipit;
+
+	if (Map.In_Local_Radar(cell)) {
+		techno = Map[cell].Cell_Techno();
+		if (!techno || (techno->RTTI == RTTI_INFANTRY &&
+			obj->RTTI == RTTI_INFANTRY)) {
+			if (obj->Unlimbo(Coord(cell, Map.Get_Height_GL(Coord(cell))))) {
+				return(true);
+			}
+		}
+	}
+
+	for (dist = start; dist < 32; dist++) {
+		rot = Random_Pick(FACING_N, FACING_NW);
+
+		for (tryval = 0; tryval < 2; tryval++) {
+			for (fcounter = FACING_N; fcounter <= FACING_NW; fcounter++) {
+
+				skipit = false;
+
+				newcell = Clip_Move(cell, rot, dist);
+
+				if (tryval > 0) {
+					newcell = Clip_Scatter(newcell, 1);
+				}
+
+				if (newcell == cell) {
+					skipit = true;
+				}
+
+				if (Map.In_Local_Radar(newcell) && !skipit) {
+					techno = Map[newcell].Cell_Techno();
+					if (techno == NULL || (techno->RTTI == RTTI_INFANTRY &&
+						obj->RTTI == RTTI_INFANTRY)) {
+						if (obj->Unlimbo(Coord(newcell, Map.Get_Height_GL(Coord(newcell))))) {
+							return(true);
+						}
+					}
+				}
+
+				rot++;
+				if (rot > FACING_NW) {
+					rot = FACING_N;
+				}
+			}
+		}
+	}
+
+	return(false);
+}
+
+
 // FUNCTION: GAMEMD 0x00689310
 void ScenarioClass::Save(IStream * stream) const
 {
