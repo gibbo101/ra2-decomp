@@ -7,7 +7,7 @@
 #include "abstract.h"
 #include "rect.h"
 
-class ShapeSet;
+class SHPStruct;
 template<class T> class DynamicVectorClass;
 
 class AlphaShapeClass : public AbstractClass
@@ -41,7 +41,7 @@ class AlphaShapeClass : public AbstractClass
 
 		Rect DrawRect;
 
-		ShapeSet const * ImageData;
+		SHPStruct const * ImageData;
 
 		bool IsToDelete;
 

@@ -271,6 +271,71 @@ BuildingClass::BuildingClass(BuildingTypeClass const * type, HouseClass * house)
 	}
 }
 
+extern DynamicVectorClass<BuildingClass *> DAT_008B41E0;
+
+// FUNCTION: GAMEMD 0x0043BCF0
+BuildingClass::~BuildingClass(void)
+{
+	Audio8.EndLooping();
+	Audio7.EndLooping();
+	Audio8.FUN_00405C00();
+	Audio7.FUN_00405C00();
+
+	if (LightSource != NULL) {
+		LightSource->Disable();
+		delete LightSource;
+		LightSource = NULL;
+	}
+
+	Detach_This_From_All(this, true);
+	Limbo();
+	Buildings.Delete(this);
+	DAT_008B41E0.Delete(this);
+	DestroyNthAnim(BANIM_ALL);
+	Class->Free_Buildup_Data();
+	FUN_0043C2A0();
+
+	if (GameActive && Class != NULL && Class->IsCloakGenerator) {
+		Disable_Cloak_Generator();
+		CurrentCloakRadius = 1;
+		Cloaking_AI(true);
+	}
+
+	if (FirstActiveSWIdx() != -1 || SecondActiveSWIdx() != -1) {
+		House->Update_Present_Super_Weapons();
+	}
+
+	if (GameActive) {
+		if (Strength != LastStrength) {
+			House->RecalcPower = true;
+		}
+		if (GameActive && Class) {
+			if (House) {
+				House->Tracking_Remove(this);
+			}
+			Limbo();
+		}
+	}
+
+	delete Factory;
+	Factory = NULL;
+
+	AnimPtrTracker.Delete(this);
+	FactoryPtrTracker.Delete(this);
+	TargetTracker.Remove_Index(Fetch_ID());
+
+	Class = NULL;
+	IsActive = false;
+
+	DynamicVectorClass<InfantryClass *> & overpowerers = Overpowerers;
+	int max = overpowerers.Length();
+	overpowerers.Clear();
+	overpowerers.Resize(max, 0);
+	max = Occupants.Length();
+	Occupants.Clear();
+	Occupants.Resize(max, 0);
+}
+
 // FUNCTION: GAMEMD 0x0043C0D0
 void BuildingClass::FUN_0043C0D0(void)
 {
@@ -1175,8 +1240,6 @@ bool BuildingClass::Unlimbo(Coord const & coord, Dir256 dir)
 	}
 	return(false);
 }
-
-extern DynamicVectorClass<BuildingClass *> DAT_008B41E0;
 
 inline void Register_Dirty(Rect const & area)
 {

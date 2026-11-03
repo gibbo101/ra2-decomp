@@ -645,6 +645,28 @@ bool MultiplayerGameMode::GenerateStartingUnits(HouseClass * house, int & amount
 	return(true);
 }
 
+int __stdcall House_Team(int index);
+
+// FUNCTION: GAMEMD 0x005D74A0
+bool MultiplayerGameMode::AllyTeams(void)
+{
+	for (int i = 0; i < Houses.Count(); i++) {
+		HouseClass * house = Houses[i];
+		if (!house->Class->IsMultiplayPassive) {
+			if (House_Team(i) != -2 && House_Team(i) != -1) {
+				for (int j = i + 1; j < Houses.Count(); j++) {
+					HouseClass * other = Houses[j];
+					if (!other->Class->IsMultiplayPassive && House_Team(i) == House_Team(j)) {
+						house->Make_Ally(other, false);
+						other->Make_Ally(house, false);
+					}
+				}
+			}
+		}
+	}
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x005D7550
 int __stdcall House_Team(int index)
 {

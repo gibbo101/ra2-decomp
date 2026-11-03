@@ -1521,6 +1521,68 @@ BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return(0);
 }
 
+extern CCINIClass DAT_008870C0;
+extern int DAT_00ABFED8;
+
+// FUNCTION: GAMEMD 0x0052F3F0
+bool FUN_0052F3F0(void)
+{
+	if (PacketTransport != NULL) {
+		delete PacketTransport;
+		PacketTransport = NULL;
+	}
+
+	for (int house = 0; house < HouseTypes.Count(); house++) {
+		HouseTypes[house]->Read_INI(*RuleINI);
+	}
+
+	if (PacketTransport == NULL) {
+		PacketTransport = new UDPInterfaceClass;
+	}
+
+	Session.CommProtocol = COMM_PROTOCOL_MULTI_E_COMP;
+	PacketTransport->Open_Socket(0);
+	Ipx.Set_Timing(30, (unsigned int)-1, 600, true);
+	FUN_004068E0("About to initialise the network code\n");
+	bool success = Init_Network();
+	PacketTransport->Start_Listening();
+
+	memset(Session.PlayerPorts, 0, sizeof(Session.PlayerPorts));
+	Session.unknown_3078 = false;
+	Session.unknown_306C = false;
+	Session.PacketRouterPort = 0;
+	Session.unknown_306E = 0;
+	Session.unknown_308C = 0;
+	Session.unknown_3094 = -1;
+	Session.unknown_309C = 20;
+	Session.unknown_30A0 = 0;
+	Session.unknown_30A4 = 0;
+	Session.unknown_30A8 = -1;
+	memset(Session.unknown_2A14, 0, sizeof(Session.unknown_2A14));
+	memset(Session.unknown_2C14, -1, sizeof(Session.unknown_2C14));
+	memset(Session.unknown_2E18, 0, sizeof(Session.unknown_2E18));
+	memset(Session.unknown_2FF8, 0, sizeof(Session.unknown_2FF8));
+	Session.unknown_2E14 = 0;
+
+	if (Session.ForcePortBase) {
+		Session.PortBase = Session.ForcePortBase;
+	} else if (Session.unknown_3018) {
+		Session.PortBase += 7;
+		if (Session.PortBase >= 1950) {
+			Session.PortBase = 1250;
+		}
+		Session.unknown_3018 = false;
+	}
+
+	RawFileClass file("RA2MD.INI");
+	DAT_008870C0.Put_Int("MultiPlayer", "PortBase", Session.PortBase, 0);
+	DAT_008870C0.Put_Int("MultiPlayer", "PortPool", DAT_00ABFED8, 0);
+	DAT_008870C0.Save(file, false);
+	OwnerTalk.Reset();
+	Session.NetOpen = true;
+	return(success);
+}
+
 // FUNCTION: GAMEMD 0x0052F610
 void Anim_Init(void)
 {

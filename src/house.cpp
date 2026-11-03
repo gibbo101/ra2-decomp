@@ -4565,6 +4565,54 @@ BuildingTypeClass const * HouseClass::Get_First_Ownable(DynamicVectorClass<Build
 	return(NULL);
 }
 
+// FUNCTION: GAMEMD 0x00505360
+bool HouseClass::AI_Has_Prerequisites(TechnoTypeClass const * type, DynamicVectorClass<BuildingTypeClass const *> & owned, int ownedcount) const
+{
+	for (int i = 0; i < type->Prerequisite.Count(); i++) {
+		int pre = type->Prerequisite[i];
+		if (pre >= 0) {
+			bool found = false;
+			for (int j = 0; j < ownedcount; j++) {
+				if (owned[j] == BuildingTypes[pre]) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				return(false);
+			}
+		} else {
+			TypeList<BuildingTypeClass const *> * group = NULL;
+			switch (pre) {
+				case -1: group = &Rule->BuildPower; break;
+				case -2: group = &Rule->BuildWeapons; break;
+				case -3: group = &Rule->BuildBarracks; break;
+				case -4: group = &Rule->BuildRadar; break;
+				case -5: group = &Rule->BuildTech; break;
+				case -6: group = &Rule->BuildRefinery; break;
+				default: break;
+			}
+			bool found = false;
+			for (int k = 0; k < group->Count(); k++) {
+				BuildingTypeClass const * entry = group->GetItem(k);
+				for (int j = 0; j < ownedcount; j++) {
+					if (owned[j] == entry) {
+						found = true;
+						break;
+					}
+				}
+				if (found) {
+					break;
+				}
+			}
+			if (!found) {
+				return(false);
+			}
+		}
+	}
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x00505F80
 int HouseClass::Base_Cell_Weight_By_Distance(HouseClass const & house, Cell const & cell, int tie_breaker, int context)
 {

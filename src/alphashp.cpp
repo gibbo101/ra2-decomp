@@ -12,7 +12,7 @@
 #include "globals.h"
 #include "object.h"
 #include "objtype.h"
-#include "shapeset.h"
+#include "msanim.h"
 #include "sun.h"
 #include "swizzle.h"
 #include "tactical.h"
@@ -69,7 +69,7 @@ AlphaShapeClass::AlphaShapeClass(ObjectClass * owner, int x, int y) :
 	ImageData(NULL),
 	IsToDelete(false)
 {
-	ShapeSet const * image = (ShapeSet const *)owner->Class_Of()->AlphaImageData;
+	SHPStruct const * image = (SHPStruct const *)owner->Class_Of()->AlphaImageData;
 	ImageData = image;
 	DrawRect = Rect(x, y, image->Get_Width(), image->Get_Height());
 	AlphaShapes.Add(this);

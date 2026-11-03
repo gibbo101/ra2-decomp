@@ -7168,6 +7168,34 @@ BOOL CALLBACK FUN_007988C0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return FALSE;
 }
 
+void FUN_0072C7E0(void);
+void FUN_0072C830(void);
+
+// FUNCTION: GAMEMD 0x00798DE0
+int FUN_00798DE0(void)
+{
+	WOLOptionsClass options;
+	FUN_0052FEC0(NULL, true);
+	if (DAT_00AC1170 && strlen(DAT_00B761A8) != 0 && DAT_00B73E40.length() > 0) {
+		DAT_00AC1170->V05(DAT_00B761A8, DAT_00B77A90, DAT_00B73E40.get(), DAT_0084A234 & 0xFFFF00, -1, NULL, NULL);
+		DAT_00AC1170->V14(DAT_00B761A8, DAT_00B77A90, DAT_00B73E40.get(), DAT_0084A234 & 0xFFFF00);
+	}
+	FUN_0072C7E0();
+	if (options.Is_Bit1_Clear()) {
+		SimpleWonlineDialogControl dialog;
+		FUN_006241F0(0x10E, FUN_007988C0, &dialog);
+		FUN_0072C830();
+		int chosen = Session.unknown_0C;
+		return chosen != 0;
+	}
+	SimpleWonlineDialogControl dialog;
+	FUN_006241F0(0x11C, FUN_007983E0, &dialog);
+	FUN_0072C830();
+	int chosen = Session.unknown_0C;
+	return chosen != 0;
+}
+
+
 // FUNCTION: GAMEMD 0x00798F50
 void __fastcall FUN_00798F50(HWND combo)
 {
@@ -8609,6 +8637,62 @@ void __fastcall FUN_007A2230(char * name, char * ip, unsigned long second, unsig
 	}
 }
 
+
+#include "preview.h"
+#include "progress.h"
+#include "mapgen.h"
+void __fastcall FUN_00607FD0(HWND window);
+
+// FUNCTION: GAMEMD 0x007A2600
+BOOL CALLBACK FUN_007A2600(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	BOOL rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	switch (message) {
+		case WM_COMMAND:
+			if (LOWORD(wparam) == 0x5C0) {
+				SetEvent(DAT_00B73684[0]);
+				FUN_007757E0(window, 0x5C0);
+			}
+			break;
+
+		case WM_DESTROY:
+			if (MultiplayerMapPreview) {
+				delete MultiplayerMapPreview;
+				MultiplayerMapPreview = NULL;
+			}
+			return FALSE;
+
+		case WM_PAINT:
+			{
+				OwnerDraw::Paint(window);
+				FUN_00607FD0(window);
+				if (MultiplayerMapPreview != NULL) {
+					MultiplayerMapPreview->DrawStartPoints(window);
+				} else if (Session.Options.ScenarioIndex == -1 && RandomMapGen.MapPreview != NULL) {
+					RandomMapGen.MapPreview->DrawStartPoints(window);
+				}
+				if (Progress.Has_Dialog()) {
+					Progress.Display_Progress();
+				}
+				ValidateRect(window, NULL);
+			}
+			return TRUE;
+
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case 0x5C0:
+			return FALSE;
+	}
+	return FALSE;
+}
 
 // FUNCTION: GAMEMD 0x007A2730
 void FUN_007A2730(void)

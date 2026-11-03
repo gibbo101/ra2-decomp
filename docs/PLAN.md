@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 3 November 2026: 18,768 of 19,362 game functions match (97%; 75% of game code
+Status, 3 November 2026: 18,777 of 19,362 game functions match (97%; 75% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,19 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 183 to 185 (3 November 2026)
+
+**9 functions.** The three batches retried 39 near misses of 30 to 40%. They matched
+BuildingClass's destructor, HouseClass::AI_Has_Prerequisites, the network init that writes
+the port settings back to RA2MD.INI, a passenger loop and a team check, two WOL dialog
+functions, and the two subtitle loaders. Those last two needed the subtitle module split:
+the manager calls the parser's constructor and destructor out of line, which VC6 does only
+across files, and Renegade keeps subtitlemanager.cpp and subtitleparser.cpp apart, so the
+parser half is now src/subtitle2.cpp. AlphaShapeClass::ImageData is an SHPStruct, as the
+exe's calls on it show. One WOL dialog procedure matches with a `case 0x5C0: return FALSE;`
+for its own button ID, a form kept as plausible source. Merge gate: 18,777 of 18,777
+(2,792.5 KB).
 
 ### Batches 180 to 182 (3 November 2026)
 

@@ -7140,6 +7140,17 @@ void TechnoClass::ExitedOpenTopped(TechnoClass * who)
 	}
 }
 
+// FUNCTION: GAMEMD 0x007104C0
+void TechnoClass::MarkPassengersAsExited(void)
+{
+	TechnoClass * passenger = Cargo.Attached_Object();
+	while (passenger != NULL) {
+		ExitedOpenTopped(passenger);
+		ObjectClass * next = passenger->Next;
+		passenger = (next != NULL && (next->AbstractFlags & 4)) ? (TechnoClass *)next : NULL;
+	}
+}
+
 // FUNCTION: GAMEMD 0x007104F0
 void FootClass::UpdatePassengerCoords(void)
 {
