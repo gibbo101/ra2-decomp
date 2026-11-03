@@ -22,6 +22,7 @@
 #include "target.h"
 #include "planning.h"
 #include <stddef.h>
+#undef LoadString
 #include "stringtable.h"
 #include "voc.h"
 #include "_rules.h"
@@ -488,7 +489,8 @@ Rect __fastcall FUN_00634510(Point2D center, int size);
 // FUNCTION: GAMEMD 0x006342E0
 EventClass PlanningNodeClass::Get_Event(int index)
 {
-	return *PlanningMembers[index]->Packet;
+	PlanningMemberClass * member = PlanningMembers[index];
+	return *member->Get_Packet();
 }
 
 // FUNCTION: GAMEMD 0x00634310
@@ -2584,6 +2586,59 @@ bool __stdcall FUN_0063A8E0(Point2D point)
 		FUN_0063AD30(NULL);
 	}
 	return selected || hit;
+}
+
+AbstractClass * __fastcall FUN_0063B050(EventClass * event);
+
+static inline void Connect_Node_Target(PlanningNodeClass * node, TechnoClass * techno)
+{
+	EventClass packet = node->Get_Event(0);
+	AbstractClass * target = FUN_0063B050(&packet);
+	if (target) {
+		EventClass event(PlayerPtr->HeapID, EventClass::PLAN_CONNECT, TargetClass(techno), TargetClass(target));
+		FUN_006521C0(event);
+	}
+}
+
+// FUNCTION: GAMEMD 0x0063AD50
+void __fastcall FUN_0063AD50(void)
+{
+	PlanningNodeClass * selected = FUN_0063AD40();
+	FUN_0063AD30(NULL);
+	int count = CurrentObject.Count();
+	if (count > 0) {
+		DynamicVectorClass<TechnoClass *> units;
+		for (int i = 0; i < count; ++i) {
+			ObjectClass * object = CurrentObject[i];
+			if (object->Is_Techno()) {
+				TechnoClass * techno = (TechnoClass *)object;
+				PlanningTokenClass * token = techno->FUN_00705D20();
+				if (token) {
+					PlanningNodeClass * last = token->Last_Node();
+					if (!last) {
+						units.Add(techno);
+					} else {
+						int members = last->Get_Count();
+						for (int j = 0; j < members; ++j) {
+							TechnoClass * owner = last->Member_Owner(j);
+							if (units.ID(owner) == -1) units.Add(owner);
+						}
+					}
+				} else {
+					units.Add(techno);
+				}
+			}
+		}
+		int total = units.Count();
+		for (int j = 0; j < total; ++j) {
+			TechnoClass * techno = units[j];
+			Connect_Node_Target(selected, techno);
+		}
+		if (total > 0) FUN_0063A1B0(3);
+	} else {
+		DAT_00AC4BF0 = selected;
+		FUN_0063A1B0(4);
+	}
 }
 
 // FUNCTION: GAMEMD 0x0063B050
