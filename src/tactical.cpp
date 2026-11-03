@@ -2067,7 +2067,7 @@ int Tactical::Selectable_Count(void)
 }
 
 // FUNCTION: GAMEMD 0x006DC430
-ObjectClass * __stdcall Tactical::Selectable_Object(int index)
+ObjectClass * Tactical::Selectable_Object(int index)
 {
 	return(SelectableObjects[index].Object);
 }
