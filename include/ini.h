@@ -173,8 +173,8 @@ class INIClass {
 		static void Strip_Comments(char * buffer);
 		static char * Scan_Line_For_Columns(char * buffer, int & assign_pos, int & value_pos, int & comment_pos);
 
-		char * CurrentSectionName;
-		INISection * CurrentSection;
+		mutable char const * CurrentSectionName;
+		mutable INISection * CurrentSection;
 
 		List<INISection *> SectionList;
 
