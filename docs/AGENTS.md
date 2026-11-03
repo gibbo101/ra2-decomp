@@ -175,6 +175,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   itself and then allocates registers as the original does (0x006F6AC0).
 - A clamp that merges two stores or lands in the wrong register: `MAX(v, 0)` where the
   ternary `(v <= 0) ? 0 : v` failed (0x0047F250).
+- A block order no inverted test or early return fixes: write the inner test with the same
+  inline helper the outer condition uses (0x0060B950 rose from 62% to 99.8%).
+- A search loop the original leaves unrotated: `while (!found) { if (out of range) break;
+  step; if (ok) found = true; }` (0x00457DE0).
 
 ### Registers
 - ESI and EDI swapped with every other byte identical: add one real use of a variable
@@ -260,6 +264,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   `Cell(int, int)` constructor a call in 0x004684E0.
 - `member.Type::Type();` in a constructor body builds a member with no null test and
   after the statements before it; placement new adds the test.
+- A file-local helper whose body is a real function in the exe (a callback): define that
+  function under its own marker and call it; VC6 inlines it where the original does (0x00610570).
 
 ### Constructs
 - `(x & 2) >> 1` that the exe computes as `and eax,2; shr eax,1`: write

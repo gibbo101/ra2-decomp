@@ -122,6 +122,82 @@ void STDMETHODCALLTYPE TeleportLocomotionClass::Stop_Moving(void)
 	Unknown36 = false;
 }
 
+// FUNCTION: GAMEMD 0x00718260
+bool TeleportLocomotionClass::FUN_00718260(Coord to, bool flag)
+{
+	if (!flag) {
+		ObjectClass * obj;
+		if (Map[to].IsUnderBridge) {
+			obj = Map[to].Cell_Bridge_Occupier();
+		} else {
+			obj = Map[to].Cell_Occupier();
+		}
+		int overlay = Map[to].Overlay;
+		bool skip = false;
+		while (obj != NULL) {
+			if (!obj->IsIronCurtained() && obj->RTTI == RTTI_INFANTRY && LinkedTo->RTTI == RTTI_INFANTRY) {
+				if (to == obj->Center_Coord()) {
+					int damage = obj->Techno_Type_Class()->MaxStrength;
+					obj->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, false, NULL);
+				}
+			} else if (!obj->IsIronCurtained() && obj->Is_Foot()) {
+				int damage = obj->Techno_Type_Class()->MaxStrength;
+				obj->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, false, NULL);
+			} else if (obj->IsIronCurtained()) {
+				int damage = LinkedTo->Techno_Type_Class()->MaxStrength;
+				LinkedTo->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, false, NULL);
+			} else if (!obj->Is_Foot()) {
+				skip = true;
+			}
+			obj = obj->Next;
+		}
+
+		if (Map[to].IsUnderBridge) {
+			if (!Map[to].IsBridgeTraversable) {
+				skip = true;
+			}
+		}
+
+		CellClass * cptr = &Map[Cell(LinkedTo->Center_Coord())];
+		bool bridge = cptr->Is_Bridge_Here;
+		if ((overlay != -1 && !OverlayTypes[overlay]->IsTiberium && !bridge) || skip) {
+			MZoneType mzone = LinkedTo->Techno_Type_Class()->MZone;
+			if (mzone == MZONE_FLYER) {
+				mzone = MZONE_NORMAL;
+			} else if (mzone == MZONE_DESTROYER) {
+				mzone = MZONE_NORMAL;
+			} else if (mzone == MZONE_AMPHIBIOUS_DESTROYER) {
+				mzone = MZONE_AMPHIBIOUS;
+			}
+			Cell nearby = Map.Nearby_Location(Cell(to), SPEED_TRACK, Map.Get_Cell_Zone(cptr->CellID, mzone, bridge), mzone, Map[Cell(to)].IsUnderBridge, Point2D(1, 1), false, false, false, true, Cell(0, 0));
+			Coord offset = to - Map[to].Center_Coord();
+			LinkedTo->ChronoDestCoords = offset + Map[nearby].Center_Coord();
+			return(false);
+		}
+	} else {
+		if (LastCoords != COORD_NONE) {
+			LinkedTo->Clear_Occupy_Bit(LastCoords);
+		} else {
+			LinkedTo->Clear_Occupy_Bit(LinkedTo->PositionCoord);
+		}
+		LastCoords = LinkedTo->ChronoDestCoords;
+		LastCoords.Z = Map.Get_Height_GL(LastCoords);
+		if (Map[LastCoords].IsUnderBridge && !LinkedTo->IsOnBridge) {
+			LinkedTo->IsOnBridge = true;
+			LastCoords.Z += BRIDGE_LEPTON_HEIGHT;
+		} else {
+			LinkedTo->IsOnBridge = false;
+		}
+		LinkedTo->Set_Occupy_Bit(LastCoords);
+	}
+	if (LastCoords != COORD_NONE) {
+		LinkedTo->Set_Occupy_Bit(LastCoords);
+	} else {
+		LinkedTo->Set_Occupy_Bit(LinkedTo->PositionCoord);
+	}
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x007187A0
 void TeleportLocomotionClass::Check_Landing(Coord to)
 {

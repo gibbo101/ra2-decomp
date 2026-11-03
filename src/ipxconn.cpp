@@ -95,6 +95,17 @@ ShortPair DAT_00AA0520;
 // _$E54
 IntTriple DAT_00AA0550;
 
+unsigned short IPXConnClass::Socket;
+int IPXConnClass::ConnectionNum;
+IPXHeaderType * IPXConnClass::ListenHeader;
+char * IPXConnClass::ListenBuf;
+IPXHeaderType * IPXConnClass::SendHeader;
+char * IPXConnClass::SendBuf;
+int IPXConnClass::Configured = 0;
+int IPXConnClass::SocketOpen = 0;
+int IPXConnClass::Listening = 0;
+int IPXConnClass::PacketLen;
+
 // FUNCTION: GAMEMD 0x0053F410
 void FUN_0053F410(void)
 {
@@ -143,6 +154,23 @@ void IPXConnClass::Configure (unsigned short socket, int conn_num,
 	PacketLen = maxpacketlen;
 
 	Configured = 1;
+}
+
+// FUNCTION: GAMEMD 0x0053F540
+int IPXConnClass::Start_Listening(void)
+{
+	SocketOpen = Open_Socket(Socket);
+	if (!SocketOpen)
+		return(false);
+
+	if ( PacketTransport->Start_Listening () ) {
+		Listening =1;
+		return(true);
+	} else {
+		Close_Socket(Socket);
+		SocketOpen = false;
+		return(false);
+	}
 }
 
 // FUNCTION: GAMEMD 0x0053F5B0

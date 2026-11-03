@@ -76,6 +76,30 @@ void LineTrail::Set_Decrement(int value)
 	Decrement = value;
 }
 
+// FUNCTION: GAMEMD 0x00556B70
+void LineTrail::Update(void)
+{
+	if (Owner != NULL) {
+		Coord position = Owner->Position;
+		if (position != Trails[ActiveSlot].Position) {
+			int & active = ActiveSlot;
+			if (--active < 0) active = 31;
+			LineTrailNode * node = &Trails[active];
+			node->Position = position;
+			node->Value = 255;
+		}
+	}
+
+	int slot = ActiveSlot;
+	do {
+		LineTrailNode * fade = &Trails[slot];
+		fade->Value -= Decrement;
+		if (fade->Value < 0) fade->Value = 0;
+		slot++;
+		if (slot >= 32) slot = 0;
+	} while (slot != ActiveSlot);
+}
+
 // FUNCTION: GAMEMD 0x00556D20
 bool LineTrail::Is_Expired(void) const
 {

@@ -2096,6 +2096,42 @@ void TechnoClass::FUN_006FF950(void)
 {
 }
 
+static inline Rect Target_Laser_Rect(Point2D const & point)
+{
+	return(Rect(point - Point2D(2, 2), 3, 3));
+}
+
+// FUNCTION: GAMEMD 0x006FF960
+void TechnoClass::Draw_Target_Laser(void) const
+{
+	static bool _pattern[16] = {
+		true, false, true, false, true, false, true, false,
+		true, false, true, false, true, false, true, false
+	};
+
+	if (TarCom != NULL) {
+		Coord coord = Turret_Coord(0);
+		Coord predicted = Predict_Target_Coord();
+
+		Point2D point;
+		Point2D point2;
+
+		TacticalMap->Coord_To_Pixel(coord, point);
+		TacticalMap->Coord_To_Pixel(predicted, point2);
+
+		point.Y += DSurface::ViewBounds.Y;
+		point2.Y += DSurface::ViewBounds.Y;
+
+		DSurface::Temp->Fill_Rect(Intersect(DSurface::ViewBounds, Rect(point, 3, 3) - Point2D(2, 2)), NormalDrawer->Convert_Pixel(RED));
+		DSurface::Temp->Fill_Rect(Intersect(DSurface::ViewBounds, Target_Laser_Rect(point2)), NormalDrawer->Convert_Pixel(RED));
+
+		Rect tacticalr = DSurface::ViewBounds;
+		if (Clip_Line_To_Rect(point, point2, tacticalr)) {
+			DSurface::Temp->Draw_Dashed_Line(point, point2, NormalDrawer->Convert_Pixel(RED), _pattern, 7 * Frame % 16);
+		}
+	}
+}
+
 bool FUN_00731BF0(void);
 bool FUN_00637AA0(void);
 void FUN_00637DD0(EventClass event);

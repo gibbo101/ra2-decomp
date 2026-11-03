@@ -1455,6 +1455,76 @@ ProdFailType HouseClass::Suspend_Production(RTTIType type, int id, bool naval)
 	return(PROD_OK);
 }
 
+// FUNCTION: GAMEMD 0x004FAA10
+ProdFailType HouseClass::Abandon_Production(RTTIType type, int id, bool naval, bool all)
+{
+	int buildcat;
+
+	if (id < 0) {
+		buildcat = 0;
+	} else {
+		TechnoTypeClass const * tech = Fetch_Techno_Type(type, id);
+		if (type == RTTI_BUILDING || type == RTTI_BUILDINGTYPE) {
+			buildcat = ((BuildingTypeClass const *)tech)->BuildCat;
+		} else {
+			buildcat = 0;
+		}
+	}
+
+	FactoryClass * fptr = Primary_Factory(this, type, naval, buildcat);
+
+	if (fptr == NULL) {
+		return(PROD_CANT);
+	}
+
+	if (fptr->QueuedObjects.Count() > 0 && id >= 0 && buildcat == 0) {
+		TechnoTypeClass const * tech = Fetch_Techno_Type(type, id);
+		bool removed = fptr->Remove_From_Queue(tech);
+		if (all && removed) {
+			do {
+			} while (fptr->Remove_From_Queue(tech));
+		}
+		if (removed) {
+			Map.RepaintSidebar(SidebarClass::GetObjectTabIdx(type, id, false));
+			if (!all) {
+				goto done;
+			}
+		}
+	} else if (buildcat != 0 && fptr->Object == NULL) {
+		goto abandon;
+	}
+
+	if (id != -1) {
+		TechnoClass * obj = fptr->Object;
+		if (obj == NULL || id != obj->Class_Of()->Fetch_Heap_ID()) {
+			return(PROD_OK);
+		}
+	}
+
+abandon:
+	if (PlayerPtr == this) {
+		Map.Abandon_Production(type, id, fptr);
+
+		if (type == RTTI_BUILDINGTYPE || type == RTTI_BUILDING) {
+			Map.PendingObjectPtr = 0;
+			Map.PendingObject = 0;
+			Map.PendingHouse = HOUSE_NONE;
+			Map.SetActiveFoundation(0);
+		}
+	}
+
+	fptr->Abandon();
+	if (fptr->QueuedObjects.Count() == 0) {
+		Assign_Primary_Factory(this, type, naval, buildcat, NULL);
+		delete fptr;
+	} else {
+		fptr->Resume_Queue();
+	}
+
+done:
+	return(PROD_OK);
+}
+
 // FUNCTION: GAMEMD 0x004FAD20
 void HouseClass::Special_Weapon_AI(SuperWeaponType id)
 {
@@ -2002,6 +2072,95 @@ UrgencyType HouseClass::Check_Fire_Sale(void)
 		return(URGENCY_CRITICAL);
 	}
 	return(URGENCY_NONE);
+}
+
+// FUNCTION: GAMEMD 0x004FD9A0
+UrgencyType HouseClass::Check_Raise_Money(void)
+{
+	int i;
+	int j;
+
+	UrgencyType urgency = URGENCY_NONE;
+
+	if (Is_Human_Player()) {
+		return(URGENCY_NONE);
+	}
+
+	if (!Can_Make_Money()) {
+		bool hasdest = CountResourceDestinations > 0;
+		UnitTypeClass const * harv = First_Ownable(this, Rule->HarvesterUnit);
+
+		if (hasdest) {
+			for (i = 0; i < Buildings.Count(); i++) {
+				BuildingClass * b = ::Buildings[i];
+				if ((b->Class == Rule->BuildRefinery[0] || b->Class == Rule->BuildRefinery[1]) && b->CurrentMission == MISSION_CONSTRUCTION) {
+					return(URGENCY_NONE);
+				}
+			}
+
+			if (harv == NULL) {
+				urgency = URGENCY_LOW;
+			} else if (harv->HeapID != BuildUnit) {
+				if (Available_Money() < harv->Cost_Of(this)) {
+					urgency = URGENCY_LOW;
+				}
+			} else {
+				FactoryClass * fptr = NULL;
+				for (j = 0; j < Factories.Count(); j++) {
+					FactoryClass * factory = Factories[j];
+					if (factory->House == this && Factories[j]->Get_Object() != NULL) {
+						TechnoClass * object = Factories[j]->Get_Object();
+						if (object->Fetch_RTTI() == RTTI_UNIT && object->Techno_Type_Class()->ResourceGatherer) {
+							fptr = Factories[j];
+							break;
+						}
+					}
+				}
+				if (fptr == NULL) {
+					urgency = URGENCY_LOW;
+				} else {
+					int owed = fptr->Balance;
+					if (Available_Money() < owed) {
+						urgency = URGENCY_LOW;
+					}
+				}
+			}
+		} else {
+			BuildingTypeClass const * type = (BuildingTypeClass const *)FirstBuildableFromArray(Rule->BuildRefinery);
+			if (type == NULL) {
+				type = (BuildingTypeClass const *)FirstBuildableFromArray(Rule->BuildWeapons);
+			}
+
+			if (type == NULL) {
+				urgency = URGENCY_LOW;
+			} else if (BuildStructure == type->HeapID) {
+				FactoryClass * fptr = NULL;
+				for (j = 0; j < Factories.Count(); j++) {
+					FactoryClass * factory = Factories[j];
+					if (factory->House == this && Factories[j]->Get_Object() != NULL) {
+						BuildingClass * object = (BuildingClass *)Factories[j]->Get_Object();
+						if (object->Fetch_RTTI() == RTTI_BUILDING && object->Class_Of() == type) {
+							fptr = Factories[j];
+							break;
+						}
+					}
+				}
+				if (fptr == NULL) {
+					urgency = URGENCY_LOW;
+				} else {
+					int owed = fptr->Balance;
+					if (Available_Money() < owed) {
+						urgency = URGENCY_LOW;
+					}
+				}
+			} else {
+				if (type == NULL || Available_Money() < type->Cost_Of(this)) {
+					urgency = URGENCY_LOW;
+				}
+			}
+		}
+	}
+	return(urgency);
 }
 
 // FUNCTION: GAMEMD 0x004FDCE0
@@ -4885,6 +5044,61 @@ void HouseClass::FUN_00509EC0(SuperClass * super)
 	}
 	if (target != CELL_NONE) {
 		Place_Special_Blast((SuperWeaponType)SuperWeapon.ID(super), target);
+	}
+}
+
+extern int DAT_007ED3D0[];
+
+// FUNCTION: GAMEMD 0x00509F60
+void HouseClass::Fire_GenMutator(SuperClass * super)
+{
+	Cell target = CELL_NONE;
+	int bestcount = 0;
+
+	if (PreferredTargetCell == CELL_NONE) {
+		for (int i = Infantry.Count() - 1; i >= 0; i--) {
+			InfantryClass * infantry = Infantry[i];
+			int count = 0;
+			if (!infantry->IsInLimbo) {
+				bool bridge = false;
+				if (infantry->IsOnBridge) {
+					bridge = true;
+				}
+				CellClass * cellptr = Infantry[i]->Get_Cell_Ptr();
+				for (int j = 0; j <= DAT_007ED3D0[1]; j++) {
+					Cell cell = cellptr->CellID + Unsorted::CellSpreadTable[j];
+					CellClass * cc = &Map[cell];
+					ObjectClass * object = cc->Cell_Infantry(bridge);
+					if (object == NULL) {
+						continue;
+					}
+					for (;;) {
+						if (!Is_Ally(object)) {
+							if (!object->In_Air()) {
+								count++;
+							}
+						}
+						if (object->Next == NULL) {
+							break;
+						}
+						object = object->Next;
+						if (object->Fetch_RTTI() != RTTI_INFANTRY) {
+							break;
+						}
+					}
+				}
+				if (count > bestcount) {
+					bestcount = count;
+					target = cellptr->CellID;
+				}
+			}
+		}
+
+		if (bestcount != 0) {
+			if (target != CELL_NONE && Map.In_Local_Radar(target, true)) {
+				Place_Special_Blast((SuperWeaponType)SuperWeapon.ID(super), target);
+			}
+		}
 	}
 }
 

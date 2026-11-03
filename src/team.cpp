@@ -1421,6 +1421,41 @@ void TeamClass::TMission_GARRISON_STRUCTURE(TeamMissionClass * mission, bool)
 	IsNextMission = true;
 }
 
+// FUNCTION: GAMEMD 0x006ECCE0
+void TeamClass::TMission_PATROL(TeamMissionClass * mission, bool first_time)
+{
+	CellClass * trgt = (CellClass *)Scen->Get_Waypoint_Target(mission->Data.Value);
+	if (first_time) {
+		Assign_Mission_Target(trgt);
+	}
+
+	if (Target == NULL) {
+		TeamMissionClass mission = Script->Get_Current_Mission();
+		if ((unsigned)mission.Data.Value < WAYPT_COUNT) {
+			Assign_Mission_Target(trgt);
+		}
+	}
+
+	if (Frame % int(Rule->PatrolTime * TICKS_PER_MINUTE) == 0) {
+		FootClass * leader = _Team_Leader(this);
+		if (leader != NULL) {
+			AbstractClass * target = leader->Greatest_Threat(ThreatType(THREAT_NORMAL | THREAT_RANGE), leader->PositionCoord, false);
+
+			if (target != NULL) {
+				Assign_Mission_Target(target);
+			} else if (Target != trgt) {
+				Assign_Mission_Target(NULL);
+			}
+		}
+	}
+
+	if (Target != NULL && (Target->AbstractFlags & 2)) {
+		Coordinate_Attack();
+	} else {
+		Coordinate_Move();
+	}
+}
+
 // FUNCTION: GAMEMD 0x006ECE60
 void TeamClass::TMission_SPY(TeamMissionClass * mission, bool first_time)
 {

@@ -168,6 +168,25 @@ void WorldDominationTour::FactionSelectDialogControl::Draw(int unused)
 	}
 }
 
+void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
+int __fastcall Run_Dialog_Control(int resource, DLGPROC proc, OwnerDraw::DialogControl * control);
+BOOL CALLBACK FUN_007AF6C0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+static inline void Load_Image(WorldDominationTour::FactionImage *& image, char const * name)
+{
+	CCFileClass file(name);
+	image = Read_PCX_File(file);
+}
+
+// FUNCTION: GAMEMD 0x007AF970
+int FUN_007AF970(void)
+{
+	FUN_0052FEC0(NULL, true);
+	WorldDominationTour::FactionSelectDialogControl control;
+	Run_Dialog_Control(0x125, FUN_007AF6C0, &control);
+	return control.FieldC;
+}
+
 GraphicMenu * __fastcall FUN_004F1B80(Wstring const & ini, Wstring const & name);
 
 // FUNCTION: GAMEMD 0x007AFAD0
@@ -191,40 +210,165 @@ int __fastcall WDT_Theater_Choice_Menu(int side)
 }
 
 
+#include "goptions.h"
+#include <stddef.h>
+#include "stringtable.h"
+
+namespace Drawing { extern int RenderWidth; }
+int ODMessageBox(const wchar_t * text, int type, bool (*callback)(void), bool large);
+bool FUN_0077F900(void);
+bool Test_Display_Mode_Dialog(int width, int height);
+bool FUN_00797800(void);
+int FUN_0079FC40(void);
+void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before, bool fullscreen);
+extern int DAT_00B77F94;
+extern int DAT_00B77F98;
+extern int DAT_00B77DC4;
+rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0370(void);
+rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0380(void);
+
+// FUNCTION: GAMEMD 0x007AFB90
+int __fastcall FUN_007AFB90(bool first_time)
+{
+	using namespace WorldDominationTour;
+
+	if (Drawing::RenderWidth > 640) {
+		WideWstring query(StringTable::LoadString("WOL:WDTResolutionQuery", NULL, "D:\\ra2mdpost\\WorldDom.cpp", 0x181));
+		if (ODMessageBox(query.get(), 4, FUN_0077F900, true) != 6) {
+			return 0;
+		}
+		if (!Test_Display_Mode_Dialog(640, 480)) {
+			return 0;
+		}
+		Options.ScreenWidth = 640;
+		Options.ScreenHeight = 480;
+		Options.Save_Settings();
+	}
+
+	MFCD * wdtmix = NULL;
+	MFCD * wdtvoxmix = NULL;
+	MFCD * localmix = NULL;
+
+	if (CCFileClass("WDT.MIX").Is_Available()) {
+		wdtmix = new MFCD("WDT.MIX", &FastKey);
+	}
+	if (CCFileClass("WDTVOX.MIX").Is_Available()) {
+		wdtvoxmix = new MFCD("WDTVOX.MIX", &FastKey);
+	}
+	if (CCFileClass("Local.MIX").Is_Available()) {
+		localmix = new MFCD("Local.MIX", &FastKey);
+	}
+
+	if (wdtmix != NULL && localmix != NULL) {
+		int state = first_time ? 4 : 1;
+		while (state != 0 && state != 6) {
+			switch (state) {
+				case 1: {
+					int side = FUN_007AF970();
+					DAT_00B77F94 = side;
+					state = side ? 4 : 0;
+					break;
+				}
+
+				case 2: {
+					char name[128];
+					sprintf(name, "WDTTheater%02.VQA", DAT_00B77F94);
+					if (CCFileClass(name).Is_Available()) {
+						Play_Movie(name, THEME_NONE, false, true, false, false);
+					}
+					state = 3;
+					break;
+				}
+
+				case 3:
+					DAT_00B77F98 = WDT_Theater_Choice_Menu(DAT_00B77F94);
+					state = DAT_00B77F98 ? 4 : 1;
+					break;
+
+				case 4:
+					if (!FUN_00797800()) {
+						state = 0;
+					} else {
+						rc_ptr<Campaign> campaign = *FUN_007B0370();
+						if (campaign.Get() == NULL) {
+							return 0;
+						}
+						campaign.Get()->Set_Faction(DAT_00B77F94);
+						if (campaign.Get()->Is_Different_Cycle()) {
+							rc_ptr<Campaign> rcampaign = *FUN_007B0380();
+							if (rcampaign.Get() != NULL && !rcampaign.Get()->Is_Different_Cycle()) {
+								FUN_0076ECD0(&rcampaign, DAT_00B77F98);
+							}
+						}
+						Session.House = DAT_00B77F94 == 3;
+						if (FUN_0076ED10(&campaign, DAT_00B77F98)) {
+							DAT_00B77DC4 = 0;
+							RandomMapGen.SeedData.Fixup_WDT_Settings();
+							state = 5;
+						} else {
+							state = 1;
+						}
+					}
+					break;
+
+				case 5:
+					if (FUN_0079FC40() == 1) {
+						state = 6;
+					} else {
+						state = 4;
+					}
+					break;
+			}
+		}
+
+		delete wdtmix;
+		delete localmix;
+		delete wdtvoxmix;
+
+		return state == 6;
+	}
+
+	delete wdtmix;
+	delete localmix;
+	delete wdtvoxmix;
+
+	return 0;
+}
+
 // SYNTHETIC: GAMEMD 0x007B0090 SYMBOL
-// _$E86
+// _$E91
 // SYNTHETIC: GAMEMD 0x007B00B0 SYMBOL
-// _$E84
+// _$E89
 WDTPointer<void> g_WDTUnusedPointer1;
 
 // SYNTHETIC: GAMEMD 0x007B00D0 SYMBOL
-// _$E91
+// _$E96
 // SYNTHETIC: GAMEMD 0x007B00F0 SYMBOL
-// _$E89
+// _$E94
 WDTPointer<void> g_WDTUnusedPointer2;
 
 // SYNTHETIC: GAMEMD 0x007B0110 SYMBOL
-// _$E96
+// _$E101
 // SYNTHETIC: GAMEMD 0x007B0130 SYMBOL
-// _$E94
+// _$E99
 rc_ptr<WDTState> DAT_00B77F58;
 
 // SYNTHETIC: GAMEMD 0x007B0150 SYMBOL
-// _$E101
+// _$E106
 // SYNTHETIC: GAMEMD 0x007B0170 SYMBOL
-// _$E99
+// _$E104
 rc_ptr<WDTState> DAT_00B77F70;
 
 // SYNTHETIC: GAMEMD 0x007B0190 SYMBOL
-// _$E106
+// _$E111
 // SYNTHETIC: GAMEMD 0x007B01B0 SYMBOL
-// _$E104
+// _$E109
 rc_ptr<WorldDominationTour::Campaign> DAT_00B77F68;
 
 // SYNTHETIC: GAMEMD 0x007B01D0 SYMBOL
-// _$E111
+// _$E116
 // SYNTHETIC: GAMEMD 0x007B01F0 SYMBOL
-// _$E109
+// _$E114
 rc_ptr<WorldDominationTour::Campaign> DAT_00B77F78;
 
 extern Wstring DAT_00B73E40;
@@ -313,20 +457,17 @@ bool __cdecl FUN_007B0430(void)
 // ??_GFactionSelectDialogControl@WorldDominationTour@@UAEPAXI@Z
 
 // FUNCTION: GAMEMD 0x007B0490
-WorldDominationTour::FactionSelectDialogControl::FactionSelectDialogControl(void)
+inline WorldDominationTour::FactionSelectDialogControl::FactionSelectDialogControl(void)
 	: FieldC(0), Image1(NULL), Image2(NULL), Image3(NULL)
 {
 	if (Image1 == NULL) {
-		CCFileClass file("WDTFSBSm.pcx");
-		Image1 = Read_PCX_File(file);
+		Load_Image(Image1, "WDTFSBSm.pcx");
 	}
 	if (Image2 == NULL) {
-		CCFileClass file("WDTFSAsm.pcx");
-		Image2 = Read_PCX_File(file);
+		Load_Image(Image2, "WDTFSAsm.pcx");
 	}
 	if (Image3 == NULL) {
-		CCFileClass file("WDTFSSsm.pcx");
-		Image3 = Read_PCX_File(file);
+		Load_Image(Image3, "WDTFSSsm.pcx");
 	}
 	Current = Image1;
 }

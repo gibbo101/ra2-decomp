@@ -189,6 +189,26 @@ char OwnerTalkClass::Mask_From_Address(IPXAddressClass * address)
 	return(mask);
 }
 
+// FUNCTION: GAMEMD 0x00663D60
+unsigned char OwnerTalkClass::Mask_From_ID(int id)
+{
+	unsigned char mask = 0;
+
+	if (id == -1) {
+		return(0xFF);
+	}
+	for (int i = 0; i < ConnectionList.Count(); i++) {
+		if (id == ConnectionList[i]->ID) {
+			mask = ConnectionList[i]->Mask;
+			break;
+		}
+	}
+	if (mask == 0) {
+		mask = 0xFF;
+	}
+	return(mask);
+}
+
 // FUNCTION: GAMEMD 0x006640E0
 void OwnerTalkClass::Handle_Router_Messages(void)
 {

@@ -387,7 +387,7 @@ struct GlobalPacketType {
 		struct {
 			unsigned char Recipients;
 			unsigned char ID;
-			unsigned int : 32;
+			int Color;
 			unsigned int NameCRC;
 		} Taunt;
 

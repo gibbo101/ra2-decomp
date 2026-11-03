@@ -799,7 +799,7 @@ struct ChatSink {
 	virtual long __stdcall V20(unsigned long * version);
 	virtual long __stdcall V21(User * user);
 	virtual void V22(void);
-	virtual void V23(void);
+	virtual long __stdcall V23(long type, int size, unsigned char ** bitmap, int * bytes, char const ** name, char const ** url);
 	virtual long __stdcall V24(User * user);
 	virtual void V25(void);
 	virtual long __stdcall V26(int find, int page);
@@ -809,7 +809,7 @@ struct ChatSink {
 	virtual void V30(void);
 	virtual long __stdcall V31(int filter);
 	virtual void V32(void);
-	virtual void V33(void);
+	virtual long __stdcall V33(char const ** gametypes);
 	virtual void V34(void);
 	virtual long __stdcall V35(unsigned long sku);
 	virtual long __stdcall V36(int index, char const ** nick, char const ** pass);
@@ -1852,6 +1852,7 @@ struct UserSort {
 struct PCX {
 	static PCX Instance;
 	int GetSurface(char const * name, void * palette);
+	bool CacheBMP(char const * name, void * bitmap, int bytes, int bpp = 2);
 };
 namespace Game { extern int ObserverMode; }
 extern int DAT_007EEF28;
@@ -9136,6 +9137,92 @@ long __stdcall FUN_007A5240(void * sink, long result, void * unused)
 
 extern char DAT_0083F328[];
 extern wchar_t DAT_00830174[];
+
+extern int DAT_00B77EA4;
+extern int DAT_0084A1C0;
+
+// FUNCTION: GAMEMD 0x007A5290
+long __stdcall FUN_007A5290(void * sink, long result, char const * motd)
+{
+	DAT_00B77DF8 = result;
+	if (result < 0) {
+		DAT_00B77DC0 = 1;
+	}
+	switch (result) {
+	case (long)0x80040064:
+		wcscpy(DAT_00B77AD0, StringTable::LoadString("TXT_LOGIN_USED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1669));
+		SetEvent(DAT_00B73684[0]);
+		break;
+	case (long)0x80040065:
+		wcscpy(DAT_00B77AD0, StringTable::LoadString("TXT_BADPASS", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x166E));
+		SetEvent(DAT_00B73684[0]);
+		break;
+	case (long)0x80040072:
+		wcscpy(DAT_00B77AD0, StringTable::LoadString("TXT_BANNED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1673));
+		SetEvent(DAT_00B73684[0]);
+		break;
+	case (long)0x80040074:
+		wcscpy(DAT_00B77AD0, StringTable::LoadString("TXT_DISABLED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1679));
+		SetEvent(DAT_00B73684[0]);
+		break;
+	case (long)0x80040075:
+		wcscpy(DAT_00B77AD0, StringTable::LoadString("TXT_BANNED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x167E));
+		SetEvent(DAT_00B73684[0]);
+		break;
+	case (long)0x80040076:
+		wcscpy(DAT_00B77AD0, StringTable::LoadString("TXT_SERIALDUP", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1683));
+		SetEvent(DAT_00B73684[0]);
+		break;
+	case (long)0x80040077:
+		wcscpy(DAT_00B77AD0, StringTable::LoadString("TXT_SERIALUNKNOWN", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1688));
+		SetEvent(DAT_00B73684[0]);
+		break;
+	case (long)0x80040078:
+		wcscpy(DAT_00B77AD0, StringTable::LoadString("TXT_SKUSERIALMISMATCH", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x168D));
+		SetEvent(DAT_00B73684[0]);
+		break;
+	default:
+		wcscpy(DAT_00B77AD0, StringTable::LoadString("TXT_CANT_CONNECT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1693));
+		SetEvent(DAT_00B73684[0]);
+		break;
+	case 0:
+		if (DAT_00B77EA4 == 0) {
+			char const * gametypes;
+			DAT_00AC116C->V33(&gametypes);
+			char * buffer = new char[strlen(gametypes) + 32];
+			strcpy(buffer, gametypes);
+			strcat(buffer, ",-1,0,18");
+			char * token = strtok(buffer, ",");
+			while (token) {
+				long type = atol(token);
+				unsigned char * bitmap;
+				int bytes;
+				char const * name;
+				char const * url;
+				DAT_00AC116C->V23(type, DAT_0084A1C0, &bitmap, &bytes, &name, &url);
+				char bitmap_name[64];
+				sprintf(bitmap_name, "gt%d.bmp", type);
+				PCX::Instance.CacheBMP(bitmap_name, bitmap, bytes, 2);
+				token = strtok(NULL, ",");
+			}
+			delete[] buffer;
+			DAT_00B77EA4 = 1;
+		}
+		if (DAT_0084A1B8) {
+			DAT_00B73AE0 = motd;
+		} else {
+			DAT_00B73AE0.clear();
+		}
+		DAT_00B77DC2 = 0;
+		DAT_00B77DD0 = 0;
+		memset(&DAT_00B76B10, 0, 0x10C);
+		memset(&DAT_00B73BE8, 0, 0x10C);
+		SetEvent(DAT_00B73684[2]);
+		FUN_00795650(&Session.unknown_2988);
+		break;
+	}
+	return 0;
+}
 
 // FUNCTION: GAMEMD 0x007A55F0
 long __stdcall FUN_007A55F0(void * sink, long result, char const * motd)

@@ -596,6 +596,66 @@ bool Put_All(IStream * stream, int save_net)
 	return(true);
 }
 
+_COM_SMARTPTR_TYPEDEF(ILinkStream, __uuidof(ILinkStream));
+
+void __fastcall FUN_0072DEF0(void);
+bool Get_All(IStream * stream, bool save_net);
+
+// FUNCTION: GAMEMD 0x0067E440
+bool Load_Game(const char * file_name)
+{
+	WCHAR name[64];
+
+	FUN_004068E0("\nLOADING GAME [%s]\n", file_name);
+
+	SaveVersionInfo info;
+	if (!Get_Savefile_Info(file_name, &info)) {
+		return(false);
+	}
+
+	Session.Type = (GameType)info.Get_Game_Type();
+	Swizzler.Reset();
+
+	IStoragePtr storage = NULL;
+	MultiByteToWideChar(0, 0, file_name, -1, name, (sizeof(name) / sizeof(WCHAR)));
+
+	if (FAILED(StgOpenStorage(name, 0, STGM_SHARE_DENY_WRITE, 0, 0, &storage))) {
+		return(false);
+	}
+
+	IStreamPtr content;
+	if (FAILED(storage->OpenStream(L"CONTENTS", 0, STGM_SHARE_EXCLUSIVE, 0, &content))) {
+		return(false);
+	}
+
+	ILinkStreamPtr link;
+	link.CreateInstance(CLSID_CompressStream, NULL, CLSCTX_INPROC | CLSCTX_LOCAL_SERVER);
+	link->Link_Stream(content);
+	IStreamPtr stream(link);
+
+	Progress.Initialize(100.0, 0, 0);
+	Get_All(stream, false);
+
+	link->Unlink_Stream(NULL);
+
+	Swizzler.Reset();
+
+	Post_Load_Game();
+
+	Map.Init_IO();
+	Map.Activate(1);
+	Map.Reposition_Sidebar();
+	TiberiumClass::Init_Tiberium_Growth_System();
+	TiberiumClass::Init_Tiberium_Spread_System();
+	Map.sub_657CE0();
+	ScenarioActive = true;
+	TacticalActive = true;
+	Toggle_Display_Mode(true);
+	FUN_0072DEF0();
+	FUN_004068E0("LOADING GAME [%s] - Complete\n\n", file_name);
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x0067E730
 bool Get_All(IStream * stream, bool save_net)
 {

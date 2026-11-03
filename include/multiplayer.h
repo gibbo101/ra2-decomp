@@ -70,7 +70,7 @@ class MultiplayerGameMode
 		virtual bool vt_entry_40(void);
 		virtual int FirstValidMapIndex(void);
 		virtual void PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team);
-		virtual void DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team);
+		virtual void DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MultiMission const *> * maps, MultiMission const * map);
 		virtual void PopulateTeamDropdownForPlayer(HWND hwnd, int index);
 		virtual bool vt_entry_54(int index, DynamicVectorClass<int> picks);
 		virtual bool vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name);

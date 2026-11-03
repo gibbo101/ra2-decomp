@@ -2369,6 +2369,10 @@ void __fastcall FUN_007336C0(bool redraw);
 void FUN_00734120(void);
 BuildingClass * FUN_007342A0(void);
 BuildingClass * FUN_007342B0(void);
+void __fastcall FUN_00752B70(unsigned char code);
+unsigned int __fastcall FUN_005DAC00(wchar_t const * name);
+extern int DAT_00825C88;
+namespace Unsorted { extern int MuteSWLaunches; }
 
 
 class CreateTeamCommandClass : public CommandClass
@@ -2643,7 +2647,54 @@ class TauntCommandClass : public CommandClass
 			swprintf(DAT_00A8F654, StringTable::LoadString("TXT_TAUNT_DESC", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1909), Team);
 			return DAT_00A8F654;
 		}
-		virtual void Execute(int key) const;
+		virtual void Execute(int key) const
+		{
+			if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+				if (!Unsorted::MuteSWLaunches) {
+					int now = timeGetTime();
+					if (DAT_00825C88 == -1 || now - DAT_00825C88 > 5000) {
+						if ((Session.LANTaunts && Session.Type == GAME_IPX) || (Session.WOLTaunts && Session.Type == GAME_INTERNET)) {
+							DAT_00825C88 = now;
+
+							GlobalPacketType packet;
+							packet.Command = NetCommandType(0x1D);
+							strcpy(packet.Name, FUN_007350C0(Session.Players[0]->Name));
+							packet.Taunt.Color = Session.PrefColor;
+							packet.Taunt.NameCRC = FUN_005DAC00(Session.GameName);
+							unsigned char house = Session.Players[0]->Player.House << 4;
+							packet.Taunt.ID = house ^ ((house ^ Team) & 0x0F);
+							FUN_00752B70(packet.Taunt.ID);
+
+							packet.Taunt.Recipients = 0;
+							int house_count = Houses.Count();
+							for (int i = 0; i < house_count; i++) {
+								HouseClass * house = Houses[i];
+								if (house != NULL && house->Class->IsMultiplay && Session.PlayerChatEnabled[i]) {
+									int count = Ipx.Num_Connections();
+									for (int j = 0; j < count; j++) {
+										int id = Ipx.Connection_ID(j);
+										if (wcscmp(house->UIName, Ipx.Connection_Name(id)) == 0) {
+											IPXAddressClass * address = Ipx.Connection_Address(id);
+											if (Session.ViaPacketRouter) {
+												packet.Taunt.Recipients |= OwnerTalk.Mask_From_ID(id);
+											} else {
+												Ipx.Send_Global_Message(&packet, sizeof(packet), 1, address);
+												Ipx.Service();
+											}
+										}
+									}
+								}
+							}
+
+							if (Session.ViaPacketRouter && packet.Taunt.Recipients) {
+								Ipx.Send_Global_Message(&packet, sizeof(packet), 1, &Session.Players[0]->Address);
+								Ipx.Service();
+							}
+						}
+					}
+				}
+			}
+		}
 
 	private:
 		int Team;
@@ -4660,6 +4711,8 @@ int FUN_005355D0(void)
 // TauntCommandClass::Get_Category
 // FUNCTION: GAMEMD 0x00536320
 // TauntCommandClass::Get_Description
+// FUNCTION: GAMEMD 0x00536350
+// TauntCommandClass::Execute
 // SYNTHETIC: GAMEMD 0x00536580
 // ??_GTauntCommandClass@@UAEPAXI@Z
 // FUNCTION: GAMEMD 0x005365A0

@@ -178,6 +178,101 @@ void BitFont::FUN_00434110(int x)
 	field_20 = x;
 }
 
+#define BLIT_CLIPPED(mask) \
+	if (cx >= clipL && cx <= clipR && (bits & (mask))) *d = color; \
+	d++; cx++; w--;
+
+#define BLIT_PLAIN(mask) \
+	if (bits & (mask)) *d = color; \
+	d++; w--;
+
+// FUNCTION: GAMEMD 0x00434120
+int BitFont::Blit(unsigned short ch, int x, int y, int unknown)
+{
+	if (ch == 9) {
+		x += Unknown_28;
+		return x - (x - field_20) % Unknown_28;
+	}
+	unsigned short color = Color;
+	if (unknown != -1) color = unknown;
+	unsigned char * glyph = GetCharacterBitmap(ch);
+	if (!glyph) {
+		glyph = (unsigned char *)FUN_00434790(&color);
+		if (!glyph) return x;
+	}
+	if (!pGraphBuffer) return x;
+	unsigned char * data = glyph + 1;
+	int width = *glyph;
+	int height = InternalPTR->FontHeight;
+	if (field_41) {
+		LTRBStruct rect;
+		LTRBStruct clipped;
+		SetRect((RECT *)&rect, x, y, x + width - 1, y + height - 1);
+		if (!FUN_00434840(&clipped, &rect, &Bounds)) return State_2C + width + x;
+		if (rect.Left < clipped.Left || rect.Right > clipped.Right || rect.Top < clipped.Top || rect.Bottom > clipped.Bottom) {
+			int skip = clipped.Top - rect.Top;
+			int rows = clipped.Bottom - clipped.Top + 1;
+			y += skip;
+			data += field_18 * skip;
+			short * line = pGraphBuffer + (PitchDiv2 * y + x);
+			int clipL = clipped.Left;
+			int clipR = clipped.Right;
+			while (rows--) {
+				int w = width;
+				int cx = x;
+				short * d = line;
+				unsigned char * p = data;
+				do {
+					unsigned char bits = *p++;
+					if (bits == 0) {
+						d += 8;
+						w -= 8;
+						cx += 8;
+						continue;
+					}
+					BLIT_CLIPPED(0x80) if (w <= 0) break;
+					BLIT_CLIPPED(0x40) if (w <= 0) break;
+					BLIT_CLIPPED(0x20) if (w <= 0) break;
+					BLIT_CLIPPED(0x10) if (w <= 0) break;
+					BLIT_CLIPPED(8) if (w <= 0) break;
+					BLIT_CLIPPED(4) if (w <= 0) break;
+					BLIT_CLIPPED(2) if (w <= 0) break;
+					BLIT_CLIPPED(1)
+				} while (w > 0);
+				data += field_18;
+				line += PitchDiv2;
+				y++;
+			}
+			return State_2C + width + x;
+		}
+	}
+	short * line = pGraphBuffer + (PitchDiv2 * y + x);
+	while (height--) {
+		int w = width;
+		unsigned char * p = data;
+		short * d = line;
+		do {
+			unsigned char bits = *p++;
+			if (bits == 0) {
+				d += 8;
+				w -= 8;
+				continue;
+			}
+			BLIT_PLAIN(0x80) if (w <= 0) break;
+			BLIT_PLAIN(0x40) if (w <= 0) break;
+			BLIT_PLAIN(0x20) if (w <= 0) break;
+			BLIT_PLAIN(0x10) if (w <= 0) break;
+			BLIT_PLAIN(8) if (w <= 0) break;
+			BLIT_PLAIN(4) if (w <= 0) break;
+			BLIT_PLAIN(2) if (w <= 0) break;
+			BLIT_PLAIN(1)
+		} while (w > 0);
+		data += field_18;
+		line += PitchDiv2;
+	}
+	return State_2C + width + x;
+}
+
 struct Drawing {
 	static int RedShiftLeft;
 	static int RedShiftRight;

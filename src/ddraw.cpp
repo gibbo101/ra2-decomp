@@ -256,6 +256,55 @@ void Destroy_Direct_Draw(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x004A4130
+DWORD GetVideoMemory(void)
+{
+	HRESULT result;
+	bool created = false;
+	DDCAPS video_capabilities;
+	DDSURFACEDESC desc;
+
+	if (DirectDrawObject == NULL) {
+		result = DirectDrawCreate(NULL, &DirectDrawObject, NULL);
+		Process_DD_Result(result, FALSE);
+		if (result == DD_OK) {
+			created = true;
+		} else {
+			DirectDrawObject = NULL;
+		}
+	}
+
+	DWORD video_memory = 0;
+	if (DirectDrawObject) {
+		video_capabilities.dwSize = sizeof (video_capabilities);
+		if (DD_OK == DirectDrawObject->GetCaps (&video_capabilities , NULL)){
+			video_memory = video_capabilities.dwVidMemTotal;
+			DebugString("DDraw returnded actual VRAM of %d bytes (%dMb)\n", video_memory, video_memory >> 20);
+
+			memset(&desc, 0, sizeof(desc));
+			desc.dwSize = sizeof(desc);
+			if (DirectDrawObject->GetDisplayMode(&desc) == 0) {
+				DebugString("Current display size is %dx%dx%d. Pitch is %d\n", desc.dwWidth, desc.dwHeight, desc.ddpfPixelFormat.dwRGBBitCount, desc.lPitch);
+				video_memory += desc.dwWidth * desc.dwHeight * (desc.ddpfPixelFormat.dwRGBBitCount >> 3);
+			}
+
+			video_memory += 512 * 256;
+			video_memory &= 0xfff00000;
+			DebugString("Adjusted VRAM size is %d bytes (%dMb)\n", video_memory, video_memory >> 20);
+		}
+	}
+
+	if (created) {
+		if (DirectDrawObject != NULL) {
+			result = DirectDrawObject->Release();
+			Process_DD_Result(result, FALSE);
+			DirectDrawObject = NULL;
+		}
+	}
+
+	return(video_memory);
+}
+
 // FUNCTION: GAMEMD 0x004A42F0
 bool Set_Video_Mode(HWND , int w, int h, int bits_per_pixel)
 {

@@ -196,6 +196,9 @@ namespace OwnerDraw { Dictionary<HWND, WNDPROC> SubclassProcs(Hash_HWND); }
 // _$E113
 namespace OwnerDraw { Dictionary<HWND, OwnerDraw::WinData> Dialogs(Hash_HWND); }
 
+// SYNTHETIC: GAMEMD 0x00600AF0 SYMBOL
+// _$E111
+
 // FUNCTION: GAMEMD 0x00600C70
 bool Focus_Next_Tab_Item(HWND window, bool previous)
 {
@@ -3258,7 +3261,16 @@ static inline char Remove_Entry(Dictionary<HWND, OwnerDraw::WinData> & dict, HWN
 	return(dict.remove(window, data));
 }
 
-static inline BOOL RemoveFromDicts(HWND window)
+// FUNCTION: GAMEMD 0x00610360
+BOOL __fastcall FUN_00610360(HWND window)
+{
+	EnumChildWindows(window, FUN_00610570, 0);
+	FUN_00610570(window, 0);
+	return TRUE;
+}
+
+// FUNCTION: GAMEMD 0x00610570
+BOOL CALLBACK FUN_00610570(HWND window, LPARAM lparam)
 {
 	Remove_Entry(OwnerDraw::DialogProcs, window);
 	Remove_Entry(OwnerDraw::Dialogs, window);
@@ -3270,14 +3282,6 @@ static inline BOOL RemoveFromDicts(HWND window)
 	}
 	SetWindowLong(window, GWL_USERDATA, 0);
 	FUN_0053E420(window);
-	return TRUE;
-}
-
-// FUNCTION: GAMEMD 0x00610360
-BOOL __fastcall FUN_00610360(HWND window)
-{
-	EnumChildWindows(window, FUN_00610570, 0);
-	RemoveFromDicts(window);
 	return TRUE;
 }
 
@@ -5362,6 +5366,56 @@ float ODCalcTextRemapFactor(int hue)
 		}
 	}
 	return(val);
+}
+
+extern bool GameInFocus;
+
+// FUNCTION: GAMEMD 0x006211D0
+// OwnerDraw::PrintTextFixedLength
+int __fastcall OwnerDraw::PrintTextFixedLength(unsigned color, BitFont * font, Rect const & rect, wchar_t const * text, int length, int x_alignment, int y_alignment, Surface * surface, int unknown)
+{
+	if (!GameInFocus) {
+		return 0;
+	}
+	if (surface == NULL) {
+		surface = DAT_00887310;
+	}
+	int pixel = DSurface::Build_Hicolor_Pixel(GetRValue(color), GetGValue(color), GetBValue(color));
+	int x = rect.X;
+	int y = rect.Y;
+	int width = rect.Width;
+	int height = rect.Height;
+	if (font == NULL) {
+		font = BitFont::Instance;
+	}
+	int tw;
+	int th;
+	font->GetTextDimension(text, &tw, &th, width);
+	if (x_alignment == 1) {
+		x += (width - tw + 1) / 2;
+	} else if (x_alignment == 2) {
+		x += -((tw + 1) / 2);
+	} else if (x_alignment == 3) {
+		x += -1 - tw;
+	} else if (x_alignment == 4) {
+		x += width - tw - 1;
+	}
+	if (y_alignment == 1) {
+		y += (height - th + 1) / 2;
+	} else if (y_alignment == 2) {
+		y += -((th + 1) / 2);
+	} else if (y_alignment == 3) {
+		y += -1 - th;
+	}
+	LTRBStruct bounds;
+	bounds.Left = rect.X;
+	bounds.Top = rect.Y;
+	bounds.Right = rect.X + width;
+	bounds.Bottom = rect.Y + height;
+	font->SetClipMode(true);
+	font->SetBounds(&bounds);
+	font->SetColor(pixel);
+	return BitText::Instance->Print(font, surface, text, x, y, length, unknown) - x;
 }
 
 // FUNCTION: GAMEMD 0x006213A0

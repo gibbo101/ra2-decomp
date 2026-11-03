@@ -46,6 +46,7 @@ class MPCooperative : public MultiplayerGameMode
 		virtual int FirstValidMapIndex(void) override;
 		virtual bool vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name) override;
 		virtual void vt_entry_38(unsigned a) override;
+		virtual void DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MultiMission const *> * maps, MultiMission const * map) override;
 		virtual void PopulateTeamDropdownForPlayer(HWND hwnd, int index) override;
 		virtual bool vt_entry_5C(unsigned a, unsigned b, unsigned c) override;
 		virtual bool vt_entry_60(void) override;

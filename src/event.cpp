@@ -68,6 +68,18 @@
 // SYNTHETIC: GAMEMD 0x004C6550 SYMBOL
 // _$E41
 
+extern int DAT_008209D8;
+extern unsigned char DAT_008A39FC;
+
+// FUNCTION: GAMEMD 0x004C6570
+unsigned char FUN_004C6570(void)
+{
+	if (Frame != DAT_008209D8) {
+		DAT_008A39FC = 0;
+	}
+	return DAT_008A39FC++;
+}
+
 // FUNCTION: GAMEMD 0x004C65A0
 EventClass::EventClass(int index, SpecialClass data)
 {

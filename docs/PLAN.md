@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 3 November 2026: 18,693 of 19,362 game functions match (97%; 73% of game code
+Status, 3 November 2026: 18,713 of 19,362 game functions match (97%; 74% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,20 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 168 to 170 (3 November 2026)
+
+**19 functions.** The three batches retried 60 near misses of 60 to 70%, staying out of the
+modules open pull requests touch. They matched HouseClass::Abandon_Production,
+Check_Raise_Money and Fire_GenMutator, three ownrdraw functions (the Dialogs atexit stub,
+the child-window removal callback and PrintTextFixedLength), event.cpp's frame-keyed
+counter, LineTrail::Update, TauntCommandClass::Execute (after naming the Taunt packet's
+Color field), WDT_Setup_Game, Load_Game, the WOL connection handler, BitFont::Blit,
+GetVideoMemory, OwnerTalkClass::Mask_From_ID, IPXConnClass::Start_Listening,
+TeamClass::TMission_PATROL, TechnoClass::Draw_Target_Laser and a teleport locomotor helper.
+MPCooperative's team dropdown override is now declared with the const MultiMission vector
+the exe's RTTI names. Eight more near misses rose above 90% without matching, the closest
+at 99.8% (0x0060B950) and 99.7% (Init_Game). Merge gate: 18,713 of 18,713 (2,740.5 KB).
 
 ### dk8827's third set of pull requests (3 November 2026)
 

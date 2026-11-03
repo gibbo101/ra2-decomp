@@ -326,13 +326,13 @@ void MultiplayerGameMode::PopulateTeamDropdown(HWND hwnd, DynamicVectorClass<Mul
 }
 
 // FUNCTION: GAMEMD 0x005D64C0
-void MultiplayerGameMode::DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MultiplayerTeam *> * teams, MultiplayerTeam * team)
+void MultiplayerGameMode::DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MultiMission const *> * maps, MultiMission const * map)
 {
 	SendMessage(hwnd, LB_RESETCONTENT, 0, 0);
-	for (int i = 0; i < teams->Count(); i++) {
-		MultiplayerTeam * entry = (*teams)[i];
+	for (int i = 0; i < maps->Count(); i++) {
+		MultiMission const * entry = (*maps)[i];
 		int item = SendMessage(hwnd, 0x4CD, 0, (LPARAM)entry);
-		if (entry == team) {
+		if (entry == map) {
 			SendMessage(hwnd, LB_SETCURSEL, item, 0);
 		}
 		SendMessage(hwnd, LB_SETITEMDATA, item, (LPARAM)entry);
