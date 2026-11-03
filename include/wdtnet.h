@@ -817,8 +817,8 @@ namespace WorldDominationTour
 			MSAnimEntry * ZoomingTarget;
 			MSAnimEntry * ThrobbingTarget;
 			int ThrobbingTargetDividingFrame;
-			YRTextAnim * TextAnim;
-			YRTextAnim * TooltipAnim;
+			MSBitPrintAnim * TextAnim;
+			MSBitPrintAnim * TooltipAnim;
 			MSFont * Font;
 			rc_ptr<State> CurrentState;
 			Wstring ThemeName;
