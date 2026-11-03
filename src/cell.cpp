@@ -525,6 +525,186 @@ void CellClass::Set_Wall_Owner(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0047D2B0
+void CellClass::Recalc_Attributes(int cell_height)
+{
+	if (this == &InvalidCell) {
+		return;
+	}
+
+	CellZoneStruct * zone = &Map.CellZones[Map.Get_Cell_Zone_Index(CellID)];
+	CellSubzoneStruct * subzone = &Map.CellSubzones[Map.Get_Cell_Zone_Index(CellID)];
+
+	OverlayType overlay = Overlay;
+
+	// Check for wall effects.
+	if (overlay != OVERLAY_NONE) {
+		OverlayTypeClass const * otype = OverlayTypes[overlay];
+		Land = otype->Land;
+		if (Land == LAND_WALL || Land == LAND_RAILROAD || otype->IsNoUseTileLandType) {
+			if (ITType != ISOTILE_NONE && ITType < IsometricTileTypes.Count()) {
+				IsometricTileTypeClass * itype = IsometricTileTypes[ITType];
+				Ramp = itype->Ramp_Type(SubTile);
+			}
+			if (Ramp != RAMP_NONE && otype->IsTiberium) {
+				Overlay = OVERLAY_NONE;
+				OverlayData = 0;
+			}
+			if (Rule->CliffBackImpassability != 0) {
+				if (Height + 4 <= Map[CellID + Cell(+0, -1)].Height
+				|| (Height + 4 <= Map[CellID + Cell(-1, +0)].Height)
+				|| (Height + 4 <= Map[CellID + Cell(+2, +2)].Height)
+				|| (Height + 4 <= Map[CellID + Cell(+1, +1)].Height)
+				|| (Height + 4 <= Map[CellID + Cell(-1, +1)].Height)
+				|| (Height + 4 <= Map[CellID + Cell(+1, -1)].Height)) {
+					if (Rule->CliffBackImpassability == 2) {
+						Land = LAND_ROCK;
+					}
+				}
+			}
+			Fixup_LAT();
+			Recalc_Passability();
+			zone->Height = Height;
+			subzone->Height = Height;
+			zone->Passability = Passability;
+			return;
+		}
+	}
+
+	if (ITType >= IsometricTileTypes.Count()) {
+		ITType = ISOTILE_NONE;
+	}
+
+	// Determine the land type from the template and its icon number.
+	if (ITType != ISOTILE_NONE) {
+		IsometricTileTypeClass * itype = IsometricTileTypes[ITType];
+		bool valid = itype->Is_Tile_Index_Valid(SubTile, false);
+
+		if (Ramp != RAMP_NONE && !valid) {
+			valid = itype->Is_Tile_Index_Valid(SubTile, true);
+		}
+
+		if (!valid) {
+			ITType = ISOTILE_NONE;
+			SubTile = 0;
+			Land = LAND_CLEAR;
+			Ramp = RAMP_NONE;
+			if (Rule->CliffBackImpassability != 0) {
+				if (Height + 4 <= Map[CellID + Cell(+0, -1)].Height
+				|| (Height + 4 <= Map[CellID + Cell(-1, +0)].Height)
+				|| (Height + 4 <= Map[CellID + Cell(+2, +2)].Height)
+				|| (Height + 4 <= Map[CellID + Cell(+1, +1)].Height)
+				|| (Height + 4 <= Map[CellID + Cell(-1, +1)].Height)
+				|| (Height + 4 <= Map[CellID + Cell(+1, -1)].Height)) {
+					if (Rule->CliffBackImpassability == 2 && Land == LAND_CLEAR) {
+						Land = LAND_ROCK;
+					}
+				}
+			}
+			Recalc_Passability();
+			zone->Height = Height;
+			subzone->Height = Height;
+			zone->Passability = Passability;
+			return;
+		}
+
+		Ramp = itype->Ramp_Type(SubTile);
+		Fixup_LAT();
+		if (Overlay != OVERLAY_NONE) {
+			if (Which_Tiberium_Type(Overlay) != TIBERIUM_NONE) {
+				if (Ramp > RAMP_SOUTH) {
+					Land = itype->Land_Type(SubTile);
+					Overlay = OVERLAY_NONE;
+					OverlayData = 0;
+				} else if (!OverlayTypes[Overlay]->Land) {
+					Land = LAND_TIBERIUM;
+				}
+			} else if (!OverlayTypes[Overlay]->IsNoUseTileLandType) {
+				Land = itype->Land_Type(SubTile);
+			}
+		} else {
+			Land = itype->Land_Type(SubTile);
+		}
+
+		if (Land == LAND_TUNNEL) {
+			if (Tube < TUBE_FIRST || Tube >= Tubes.Count()) {
+				int tunnel_dir = -1;
+
+				if (ITType >= IsometricTileTypeClass::Tunnels && ITType <= IsometricTileTypeClass::Tunnels + 3) {
+					tunnel_dir = ITType - IsometricTileTypeClass::Tunnels;
+				} else if (ITType >= IsometricTileTypeClass::TrackTunnels && ITType <= IsometricTileTypeClass::TrackTunnels + 3) {
+					tunnel_dir = ITType - IsometricTileTypeClass::TrackTunnels;
+				} else if (ITType >= IsometricTileTypeClass::DirtTunnels && ITType <= IsometricTileTypeClass::DirtTunnels + 3) {
+					tunnel_dir = ITType - IsometricTileTypeClass::DirtTunnels;
+				} else if (ITType >= IsometricTileTypeClass::DirtTrackTunnels && ITType <= IsometricTileTypeClass::DirtTrackTunnels + 3) {
+					tunnel_dir = ITType - IsometricTileTypeClass::DirtTrackTunnels;
+				}
+
+				if (tunnel_dir != -1) {
+					static FacingType const _facings[] = { FACING_E, FACING_S, FACING_W, FACING_N };
+					new TubeClass(CellID, _facings[tunnel_dir]);
+				}
+			}
+		}
+
+		if (cell_height != -1) {
+			Height = cell_height;
+		}
+
+		int width;
+		int height;
+		itype->Get_Tile_Pixel_Dimensions(SubTile, width, height);
+		Elevation = (height - ISO_TILE_PIXEL_H) / (ISO_TILE_PIXEL_H / 2);
+		if (!IsAnimAttached && itype->Anim != ANIM_NONE && itype->AttachesTo == SubTile) {
+			Coord anim_coord = Coord(CellID, LEVEL_LEPTON_H * Height) + TacticalMap->Pixel_To_Coord_Absolute(itype->Offset);
+			AnimClass * anim = new AnimClass(AnimTypes[itype->Anim], anim_coord, 0, -1, ShapeFlags_Type(SHAPE_ZREAD | SHAPE_WIN_REL | SHAPE_CENTER), 0);
+			anim->ZAdjust = itype->ZAdjust;
+			anim->UseCellLightConvert = true;
+			anim->DeleteOnMapCleanup = true;
+			IsAnimAttached = true;
+		}
+
+		if (itype->IsShadowCaster) {
+			const Cell * list = itype->Shadow_Caster_List();
+			if (list) {
+				while (*list != REFRESH_EOL && *list != CELL_NONE) {
+					Cell pos = *list + CellID;
+					Map[pos].IsOvershadowed = true;
+					list++;
+				}
+			}
+		}
+	} else {
+		// Treat a missing template as clear terrain.
+		if (overlay == OVERLAY_NONE || OverlayTypes[overlay]->IsNoUseTileLandType) {
+			Land = LAND_CLEAR;
+		} else {
+			Land = OverlayTypes[overlay]->Land;
+		}
+		Ramp = RAMP_NONE;
+	}
+
+	if (Rule->CliffBackImpassability != 0) {
+		if (Height + 4 <= Map[CellID + Cell(+0, -1)].Height
+		|| (Height + 4 <= Map[CellID + Cell(-1, +0)].Height)
+		|| (Height + 4 <= Map[CellID + Cell(+2, +2)].Height)
+		|| (Height + 4 <= Map[CellID + Cell(+1, +1)].Height)
+		|| (Height + 4 <= Map[CellID + Cell(-1, +1)].Height)
+		|| (Height + 4 <= Map[CellID + Cell(+1, -1)].Height)) {
+			if (Rule->CliffBackImpassability == 2) {
+				if (Land == LAND_CLEAR || Land == LAND_WATER || Land == LAND_BEACH || Land == LAND_ICE) {
+					Land = LAND_ROCK;
+				}
+			}
+		}
+	}
+
+	Recalc_Passability();
+	zone->Height = Height;
+	zone->Passability = Passability;
+	subzone->Height = Height;
+}
+
 // FUNCTION: GAMEMD 0x0047DD70
 void CellClass::Destroy_Bridge(void)
 {
@@ -651,6 +831,8 @@ InfantryClass * CellClass::Cell_Infantry(bool bridge) const
 }
 
 struct FileSystem {
+	static ConvertClass * PALETTE_PAL;
+	static ConvertClass * x_PAL;
 	static void const * LoadFile(char const * name, bool flag);
 };
 
@@ -665,6 +847,73 @@ class SHPStruct
 		Rect GetFrameBounds(int frame) const;
 		void * GetPixels(int frame) const;
 };
+
+// FUNCTION: GAMEMD 0x0047EC90
+bool CellClass::Draw_Placement_Cursor(Point2D const & xpoint, Rect const & cliprect, bool zeroalpha)
+{
+	Point2D point = Point2D(30, -1);
+
+	bool ok = false;
+	if (IsCursorHere || IsFoundationCopyHere) {
+		ObjectTypeClass const * pending = IsCursorHere ? Map.PendingObject : Map.CurrentBuildingTypeCopy;
+		SpeedType loco = SPEED_NONE;
+		if (pending != NULL && pending->RTTI == RTTI_BUILDINGTYPE) {
+			loco = ((BuildingTypeClass const *)pending)->Speed;
+		}
+
+		int lift = 15 * Height;
+		point -= Point2D(0, lift);
+		int height_offset = -2 - lift;
+		if (Ramp) {
+			height_offset -= 10;
+		}
+
+		if (IsCursorHere && Map.PendingObject->RTTI == RTTI_BUILDINGTYPE) {
+			Coord coord = Coord(CellID);
+			coord.Z = Map.Get_Height_GL(coord);
+
+			if (Map.Is_Shrouded(coord)) {
+				if (Map.ProximityCheck && Map.PendingObject != NULL
+						&& Map.PendingObject->RTTI == RTTI_BUILDINGTYPE
+						&& ((BuildingTypeClass *)Map.PendingObject)->ToTile != NULL) {
+					ok = true;
+				} else {
+					ok = false;
+				}
+			} else if (((BuildingTypeClass *)Map.PendingObject)->PowersUpBuilding[0] != '\0') {
+				BuildingClass * building = (BuildingClass *)Cell_Object();
+				if (building != NULL && building->RTTI == RTTI_BUILDING) {
+					BuildingTypeClass * ptype = (BuildingTypeClass *)Map.PendingObject;
+					if (building->Can_Upgrade(ptype, PlayerPtr)) {
+						ok = true;
+					}
+				}
+			} else {
+				if (Map.ProximityCheck && Map.PendingObject != NULL
+						&& Map.PendingObject->RTTI == RTTI_BUILDINGTYPE
+						&& Is_Clear_To_Build(loco, (BuildingTypeClass *)Map.PendingObject, PlayerPtr)
+						&& !(((BuildingTypeClass *)Map.PendingObject)->ToTile != NULL && Land == LAND_ROAD)) {
+					ok = true;
+				}
+			}
+		}
+
+		ShapeFlags_Type flags = ShapeFlags_Type(zeroalpha ? 0x10600 : 0x20600);
+
+		if (IsFoundationCopyHere) {
+			Draw_Shape(*DSurface::Temp, *FileSystem::PALETTE_PAL, (ShapeSet *)DisplayClass::PlacementShapes,
+				1, point + xpoint, cliprect, flags, 0, height_offset);
+		} else if (ok) {
+			Draw_Shape(*DSurface::Temp, *FileSystem::PALETTE_PAL, (ShapeSet *)DisplayClass::PlacementShapes,
+				0, point + xpoint, cliprect, flags, 0, height_offset);
+		} else {
+			Draw_Shape(*DSurface::Temp, *FileSystem::PALETTE_PAL, (ShapeSet *)DisplayClass::PlacementShapes,
+				Ramp + 2, point + xpoint, cliprect, flags, 0, height_offset);
+		}
+	}
+
+	return(ok);
+}
 
 // FUNCTION: GAMEMD 0x0047F250
 void CellClass::Draw_Fog_Shape(Point2D const & drawpoint, Rect const & cliprect, int shapenum)
@@ -769,6 +1018,97 @@ void CellClass::Draw_Overlay_Shadow(Point2D const & xpoint, Rect const & cliprec
 	}
 	Draw_Shape(*LogicalSurface, *Drawer, shape, frame + shape->Get_Count() / 2, point, cliprect,
 		ShapeFlags_Type(0x4601), NULL, -2 - yoffset);
+}
+
+// FUNCTION: GAMEMD 0x0047F6A0
+void CellClass::Draw_Overlay(Point2D const & xpoint, Rect const & cliprect)
+{
+	ShapeFlags_Type const flags = ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_ALPHA | SHAPE_ZWRITE);
+	if (Overlay == OVERLAY_VEINHOLE || Overlay == OVERLAY_VEINHOLE_DUMMY) {
+		return;
+	}
+
+	OverlayTypeClass * otype = OverlayTypes[Overlay];
+
+	Point2D point = Overlay_Draw_Offset() + xpoint;
+	int yoffset = 15 * (Height + (IsBridgeDeck ? BRIDGE_CELL_HEIGHT : 0));
+	point -= cliprect.Top_Left();
+
+	if (Drawer == NULL) {
+		Init_Drawer();
+	}
+
+	ShapeSet const * shape = (ShapeSet const *)otype->Get_Image_Data();
+
+	if (IsBridgeDeck) {
+		if (LastBridgeDrawFrame != Frame || LastBridgeDrawRedraws != Map.Redraws || LastBridgeDrawRect != cliprect) {
+			int shapenum = OverlayData;
+			if (shapenum == 0 || shapenum == 9) {
+				// Vary intact bridge frames over a four-by-four cell pattern.
+				static int _bridge_variation[16] = {
+					0, 1, 2, 3,
+					3, 2, 1, 0,
+					2, 3, 0, 1,
+					1, 0, 3, 2
+				};
+				shapenum += _bridge_variation[(CellID.X & 3) | (4 * (CellID.Y & 3))];
+			}
+
+			Draw_Shape(*DSurface::Temp, *Drawer, shape, shapenum, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, AltBrightness);
+			LastBridgeDrawFrame = Frame;
+			LastBridgeDrawRect = TacticalRect;
+			LastBridgeDrawRedraws = Map.Redraws;
+		}
+		return;
+	}
+
+	if (otype->IsTiberium) {
+		TiberiumType tibtype = Which_Tiberium_Type(Overlay);
+		if (tibtype == TIBERIUM_NONE) {
+			return;
+		}
+
+		TiberiumClass * tiberium = Tiberiums[tibtype];
+
+		OverlayTypeClass * overlaytodisplay = NULL;
+		if (Ramp != RAMP_NONE) {
+			overlaytodisplay = OverlayTypes[tiberium->Overlay->HeapID + tiberium->Variety + tiberium->RampVariety / 4 * (Ramp - 1) + CellID.X * CellID.Y % (tiberium->RampVariety / 4)];
+		} else {
+			overlaytodisplay = OverlayTypes[tiberium->Overlay->HeapID + ((CellID.Y * CellID.X) % tiberium->Variety)];
+		}
+
+		ShapeSet const * tibshape = (ShapeSet const *)overlaytodisplay->Get_Image_Data();
+
+		if (Ramp != RAMP_NONE) {
+			Draw_Shape(*DSurface::Temp, *FileSystem::x_PAL, tibshape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, NORMAL_LIGHT, 0, SlopeZShapes[Ramp - 1]);
+		} else {
+			Draw_Shape(*DSurface::Temp, *FileSystem::x_PAL, tibshape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, NORMAL_LIGHT);
+		}
+	} else if (otype->IsWall) {
+		Draw_Shape(*DSurface::Temp, *ColorSchemes[PlayerPtr->Scheme]->Converter, shape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_90DEG, Brightness);
+	} else if (otype->HeapID == OVERLAY_VEINS) {
+		if (Ramp != RAMP_NONE) {
+			Draw_Shape(*DSurface::Temp, *FileSystem::x_PAL, shape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, TileBrightness, 0, SlopeZShapes[Ramp - 1], 0, Point2D(30, -2));
+		} else {
+			Draw_Shape(*DSurface::Temp, *FileSystem::x_PAL, shape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, TileBrightness);
+		}
+	} else {
+		bool flat = otype->IsDrawFlat;
+		int offsetY = flat ? 0 : -15;
+		if (otype->IsARock) {
+			offsetY = 0;
+		}
+		if (otype->IsCrate) {
+			Draw_Shape(*DSurface::Temp, *Drawer, shape, 0, point, cliprect, flags, 0, offsetY - yoffset - 2, flat ? ZGRAD_GROUND : ZGRAD_90DEG, TileBrightness);
+		} else if (otype->IsRubble) {
+			ShapeSet const * rubble_shape;
+			int frame;
+			if (!Rubble || !Rubble->FUN_0045F160(&rubble_shape, &frame)) return;
+			Draw_Shape(*DSurface::Temp, *Drawer, rubble_shape, frame, point, cliprect, flags, 0, offsetY - yoffset - 2, flat ? ZGRAD_GROUND : ZGRAD_90DEG, TileBrightness);
+		} else {
+			Draw_Shape(*DSurface::Temp, *Drawer, shape, OverlayData, point, cliprect, flags, 0, offsetY - yoffset - 2, flat ? ZGRAD_GROUND : ZGRAD_90DEG, TileBrightness);
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x0047FB90
@@ -1031,6 +1371,95 @@ bool CellClass::Has_Wall_Or_Gate(OverlayType type, FacingType facing) const
 	}
 
 	return(false);
+}
+
+static inline int Wall_Frame(CellClass & cell, FacingType const * offsets)
+{
+	int icon = 0;
+	for (unsigned i = 0; i < FACING_COUNT / 2; i++) {
+		CellClass & adjacent = cell.Adjacent_Cell(offsets[i]);
+		if (adjacent.Has_Wall_Or_Gate(cell.Overlay, offsets[i])) {
+			icon |= 1 << i;
+		}
+	}
+	return(icon);
+}
+
+// FUNCTION: GAMEMD 0x00480630
+void CellClass::Wall_Update(bool justneighbors)
+{
+	static FacingType _offsets[FACING_COUNT / 2 + 1] = {FACING_N, FACING_E, FACING_S, FACING_W, FACING_NONE};
+
+	for (unsigned index = 0; index < ARRAY_SIZE(_offsets); index++) {
+		CellClass & newcell = Adjacent_Cell(_offsets[index]);
+		Rect rect;
+		if (!justneighbors || _offsets[index] != FACING_NONE) {
+			rect = Union(newcell.Overlay_Render_Rect(), newcell.Overlay_Shadow_Render_Rect()) - TacticalRect.TopLeft;
+		}
+		newcell.Register_For_Redraw();
+
+		if (newcell.Overlay != OVERLAY_NONE && OverlayTypes[newcell.Overlay]->IsWall) {
+			int icon = Wall_Frame(newcell, _offsets);
+			newcell.OverlayData = (newcell.OverlayData & 0xFFF0) | icon;
+
+			bool recalc_around = false;
+			PassabilityType old_passability = newcell.Passability;
+
+			if ((newcell.Overlay == OVERLAY_BRICK_WALL || newcell.Overlay == OVERLAY_NOD_WALL) &&
+				(newcell.OverlayData == 3 * OVERLAYDATA_WALL_DAMAGE_STAGE || newcell.OverlayData == 2 * OVERLAYDATA_WALL_DAMAGE_STAGE)) {
+				newcell.Overlay = OVERLAY_NONE;
+				newcell.OverlayData = 0;
+				Detach_This_From_All(&newcell, true);
+				recalc_around = true;
+			}
+			if (newcell.Overlay == OVERLAY_SANDBAG_WALL &&
+				(newcell.OverlayData == OVERLAYDATA_WALL_DAMAGE_STAGE || newcell.OverlayData == 2 * OVERLAYDATA_WALL_DAMAGE_STAGE)) {
+				newcell.Overlay = OVERLAY_NONE;
+				newcell.OverlayData = 0;
+				newcell.Owner = HOUSE_NONE;
+				Detach_This_From_All(&newcell, true);
+				recalc_around = true;
+			}
+			if (newcell.Overlay == OVERLAY_CYCLONE_WALL && newcell.OverlayData == 2 * OVERLAYDATA_WALL_DAMAGE_STAGE) {
+				newcell.Overlay = OVERLAY_NONE;
+				newcell.OverlayData = 0;
+				newcell.Owner = HOUSE_NONE;
+				Detach_This_From_All(&newcell, true);
+				recalc_around = true;
+			}
+			if (newcell.Overlay == OVERLAY_FENCE &&
+				(newcell.OverlayData == OVERLAYDATA_WALL_DAMAGE_STAGE || newcell.OverlayData == 2 * OVERLAYDATA_WALL_DAMAGE_STAGE)) {
+				newcell.Overlay = OVERLAY_NONE;
+				newcell.OverlayData = 0;
+				newcell.Owner = HOUSE_NONE;
+				Detach_This_From_All(&newcell, true);
+				recalc_around = true;
+			}
+			if (newcell.Overlay == OVERLAY_BARBWIRE_WALL && newcell.OverlayData == OVERLAYDATA_WALL_DAMAGE_STAGE) {
+				newcell.Overlay = OVERLAY_NONE;
+				newcell.OverlayData = 0;
+				newcell.Owner = HOUSE_NONE;
+				Detach_This_From_All(&newcell, true);
+				recalc_around = true;
+			}
+
+			newcell.Recalc_Attributes();
+
+			if (newcell.Passability != old_passability) {
+				if (recalc_around) {
+					Map.ResetZones(newcell.CellID);
+					Map.RecalculateSubZones(newcell.CellID);
+					for (int dir = FACING_FIRST; (unsigned)dir < FACING_COUNT; dir++) {
+						CellClass & adjacent = Map[::Adjacent_Cell(newcell.CellID, (FacingType)dir)];
+						adjacent.AdjacentObjectCount--;
+					}
+				} else {
+					Map.Update_Cell_Zone_Constructively(newcell.CellID);
+					Map.RecalculateSubZones(newcell.CellID);
+				}
+			}
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x00480A30
@@ -1889,6 +2318,44 @@ void CellClass::Recalc_Light(void)
 	Brightness = MAX(Brightness, 0);
 	TileBrightness = MAX(TileBrightness, 0);
 	AltBrightness = MAX(AltBrightness, 0);
+}
+
+// FUNCTION: GAMEMD 0x004848B0
+FacingType CellClass::Bounce_Direction(Coord const & xorigin) const
+{
+	Cell origin = Map[xorigin].CellID;
+
+	int dx = CellID.X - origin.X;
+	int dy = CellID.Y - origin.Y;
+
+	static FacingType const facing_lookup[9] = {
+		FACING_NW, FACING_N,    FACING_NE,
+		FACING_W,  FACING_NONE, FACING_E,
+		FACING_SW, FACING_S,    FACING_SE
+	};
+	FacingType base_direction = facing_lookup[(CellID.X - origin.X) + 3 * (CellID.Y - origin.Y) + 4];
+
+	if (dx != 0 && dy != 0) {
+		bool bounce_left;
+		bool bounce_right;
+
+		if (dx == dy) {
+			bounce_left = Map[origin + Cell(dx, 0)].Height >= Map[xorigin].Height + 2;
+			bounce_right = Map[origin + Cell(0, dy)].Height >= Map[xorigin].Height + 2;
+		} else {
+			bounce_left = Map[origin + Cell(dy, 0)].Height >= Map[xorigin].Height + 2;
+			bounce_right = Map[origin + Cell(0, dx)].Height >= Map[xorigin].Height + 2;
+		}
+
+		if (bounce_left) {
+			if (!bounce_right) {
+				base_direction = Facing_Sub(base_direction, FACING_45);
+			}
+		} else if (bounce_right) {
+			++base_direction;
+		}
+	}
+	return base_direction;
 }
 
 // FUNCTION: GAMEMD 0x00484A80

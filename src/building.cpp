@@ -4846,19 +4846,27 @@ void BuildingClass::Toggle_Laser_Fence_Post(bool force)
 }
 
 
+static inline Coord Ground_Fire_Offset(Point2D const & point)
+{
+	Coord offset;
+	static_cast<TPoint2D<int> &>(offset) = point;
+	offset.Z = 0;
+	return(offset);
+}
+
 // FUNCTION: GAMEMD 0x00453840
 Coord BuildingClass::Fire_Coord(int which, Coord base) const
 {
 	if (Class->CanBeOccupied && GetOccupantCount() > 0) {
-		Coord pt(TacticalMap->Pixel_To_Lepton(Class->MuzzleFlash[FiringOccupantIndex]), 0);
+		Coord pt = Ground_Fire_Offset(TacticalMap->Pixel_To_Lepton(Class->MuzzleFlash[FiringOccupantIndex]));
 		return(pt + Render_Coord());
 	}
 	if (Class->PrimaryFirePixelOffset != Point2D(0xFFFF, 0xFFFF)) {
 		if (Class->PrimaryFireDualOffset) {
-			Coord pt(TacticalMap->Pixel_To_Lepton(Class->PrimaryFirePixelOffset), 0);
+			Coord pt = Ground_Fire_Offset(TacticalMap->Pixel_To_Lepton(Class->PrimaryFirePixelOffset));
 			return(BASECLASS::Fire_Coord(which, Coord(0, 0, 0)) + pt);
 		}
-		Coord pt(TacticalMap->Pixel_To_Lepton(Class->PrimaryFirePixelOffset), 0);
+		Coord pt = Ground_Fire_Offset(TacticalMap->Pixel_To_Lepton(Class->PrimaryFirePixelOffset));
 		return(pt + Render_Coord());
 	}
 	if (Class->IsBarrelAnimAVoxel) {

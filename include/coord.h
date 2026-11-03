@@ -51,7 +51,7 @@ class Coord : public Point3D
 
 	public:
 		Coord(void) : BASECLASS() {}
-		Coord(Point2D const & pt, LEPTON z) {X=pt.X; Y=pt.Y; Z=z;}
+		Coord(Point2D const & pt, LEPTON z) : BASECLASS(pt.X, pt.Y, z) {}
 		Coord(Cell const & cell, LEPTON z = 0);
 		Coord(CoordStruct const & coord) { X = coord.X; Y = coord.Y; Z = coord.Z; }
 		Coord(int x, int y, int z = 0) : BASECLASS(x, y, z) {}
