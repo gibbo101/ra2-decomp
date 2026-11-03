@@ -943,6 +943,73 @@ static int audioEventPrep(AudioEvent * event)
 	return 1;
 }
 
+static void eventCheckStart(AudioEvent * event, int succeeded)
+{
+	if (!succeeded) {
+		AudioEventKill(event);
+	}
+}
+
+// FUNCTION: GAMEMD 0x004055C0
+void __fastcall AudioEventService(AudioEvent * event)
+{
+	if (!eventsOn) {
+		event->state = AUDIO_EVENT_DONE;
+	}
+
+retry:
+	switch (event->state) {
+	case AUDIO_EVENT_WAITING:
+		if (event->flags & mAUDIO_EVENT_DO_END) {
+			goto do_ending;
+		}
+		if (!AudioEventIsPaused(event) && AudioGetTime() > event->timeOut) {
+			event->state = event->nextState;
+			goto retry;
+		}
+		break;
+
+	case AUDIO_EVENT_NEW:
+		eventCheckStart(event, audioEventPrep(event));
+		return;
+
+	case AUDIO_EVENT_PLAYING:
+		if ((event->eclass->Control & AUDIO_EVENT_CTRL_LOOP) && !event->eclass->Loop
+			&& !(event->flags & mAUDIO_EVENT_END)) {
+			AudioController * controller = event->handle;
+			if (!controller || controller->GetEvent() != event) {
+				AudioEventKill(event);
+			}
+		}
+		if (!(event->flags & mAUDIO_EVENT_DO_END)) {
+			break;
+		}
+do_ending:
+		{
+			AudioChannel * channel = event->channel;
+			if (channel) {
+				AudioChannelLock(channel);
+				event->flags &= ~mAUDIO_EVENT_DO_END;
+				AudioChannelStop(event->channel);
+				if ((event->eclass->Control & AUDIO_EVENT_CTRL_DECAY) && !(event->flags & mAUDIO_EVENT_NO_DECAY)) {
+					event->state = AUDIO_EVENT_START_PLAYING;
+					event->startSample = eventNextSample(event);
+					if (!AudioEventIsPaused(event)) {
+						eventCheckStart(event, audioEventStart(event));
+					}
+				}
+				AudioChannelUnlock(channel);
+			} else {
+				event->flags &= ~mAUDIO_EVENT_DO_END;
+			}
+		}
+		break;
+
+	case AUDIO_EVENT_DONE:
+		AudioEventKill(event);
+		return;
+	}
+}
 
 // FUNCTION: GAMEMD 0x004059F0
 int __fastcall audioEventStop(AudioChannel * chan)

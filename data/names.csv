@@ -189,6 +189,8 @@ address,name,symbol,evidence
 0x0043AE50,Buffer::~Buffer,??1Buffer@@QAE@XZ,"destroys BSurface's Buff in 0x00411650 BSurface's scalar deleting destructor, matched"
 0x004A17C0,CrateClass::Create_Crate,,"called by 0x0056BD40 MapClass::Place_Random_Crate, matched with TibSun source"
 0x004A1AA0,CrateClass::Get_Crate,,"called by 0x004A1750 CrateClass::Remove_It, matched with TibSun source"
+0x00489280,Explosion_Damage,?Explosion_Damage@@YIHABVCoord@@HPAVTechnoClass@@PBVWarheadTypeClass@@_NPAVHouseClass@@@Z,"YRpp MapClass::DamageArea at 0x00489280 takes the explosion coordinates, damage, attacker, warhead, chain-reaction flag and source house. Goodie_Check calls it for gas, explosives and napalm."
+0x00505310,HouseClass::Get_First_Ownable,?Get_First_Ownable@HouseClass@@QBEPBVUnitTypeClass@@ABV?$DynamicVectorClass@PBVUnitTypeClass@@@@@Z,The unit-type overload compiles to the same 79 bytes as the matched building-type overload at 0x00505310. Goodie_Check passes the BaseUnit and HarvesterUnit vectors.
 0x004A2600,CreditClass::AI,,"called for Credits.AI(false) in 0x006D0680 TabClass::AI, matched"
 0x00551E50,LCW_Comp,,"called for LCW_Comp in 0x005522D0 LCWPipe::Flush and 0x00552490 LCWStraw::Get, matched with TibSun source"
 0x0055C0E0,lzo1x_decompress,,"called by 0x0055C350 LZOPipe::Put and 0x0055C7C0 LZOStraw::Get, matched with TibSun source"
@@ -230,6 +232,17 @@ address,name,symbol,evidence
 0x00ABC2B8,IsometricTileTypeClass::RoughTile,,stored from the RoughTile lookup result in 0x00545150 (isotype.h static)
 0x00ABB104,IsometricTileTypeClass::SandTile,,stored from the SandTile lookup result in 0x00545150 (isotype.h static)
 0x00AA0E18,IsometricTileTypeClass::GreenTile,,stored from the GreenTile lookup result in 0x00545150 (isotype.h static)
+0x00AA1090,IsometricTileTypeClass::WaterBridge,?WaterBridge@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/WaterBridge and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
+0x00ABAD28,IsometricTileTypeClass::ShorePieces,?ShorePieces@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/ShorePieces and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
+0x00AA1134,IsometricTileTypeClass::ClearToRoughLat,?ClearToRoughLat@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/ClearToRoughLat and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
+0x00AA0E24,IsometricTileTypeClass::ClearToSandLat,?ClearToSandLat@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/ClearToSandLat and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
+0x00AA0748,IsometricTileTypeClass::ClearToGreenLat,?ClearToGreenLat@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/ClearToGreenLat and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
+0x00AA10A8,IsometricTileTypeClass::ClearToPaveLat,?ClearToPaveLat@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/ClearToPaveLat and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
+0x00ABBEC8,IsometricTileTypeClass::PavedRoads,?PavedRoads@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/PavedRoads and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
+0x00AA0E20,IsometricTileTypeClass::Medians,?Medians@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/Medians and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
+0x00AA1058,IsometricTileTypeClass::RampSmooth,?RampSmooth@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/RampSmooth and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
+0x00ABC1D8,IsometricTileTypeClass::RampStart,?RampStart@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/RampBase and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
+0x00ABC2B0,IsometricTileTypeClass::PaveTile,?PaveTile@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/PaveTile and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
 0x008B4138,Tubes,,0x00727FD0 TubeClass::TubeClass adds this to the vector at 0x008B4138 (mov ecx and call through [0x8b4138])
 0x00B1CFC0,UnitCompositeDirtyRect,,0x0073B470 UnitClass::Unit_Draw_Voxel reads and writes it at +0/+4/+8/+C
 0x00816328,_AUD_driver,,"drv_dsnd static AudioDriver: NULL then the 11 driver entry points 0x0040A260-0x0040A790; held by _AUD_system_master"
@@ -237,6 +250,10 @@ address,name,symbol,evidence
 0x00816380,AUD_log_table,,"drv_dsnd static int[101] {-10000,-6644,...,0}, EA AUD_DSoundDriver.cpp's table; read by audioUpdate 0x0040A6D0"
 0x00815E98,audioData,,"auddev static AudioData * initialised to &audioDataStruct (0x0087DD88); read by AudioSetUp 0x00402940"
 0x0087DD88,audioDataStruct,,"auddev static AudioData; only 0x00815E98 holds its address"
+0x0087DE2C,audioInitialized,,AudioSetUp at 0x00402940 sets this flag and AudioCloseDown at 0x00402990 clears it after unloading all devices and systems
+0x0087DE28,audioExclusiveSystemLoaded,,AudioLoadSystem at 0x00402AF0 sets this flag for an exclusive system and AudioUnloadSystem at 0x00402B80 clears it
+0x00402990,AudioCloseDown,,The final call from audio shutdown at 0x00406D40 destroys all devices and unloads all systems
+0x00816108,eventsOn,,AudioEventTurnOff 0x00406730 clears this flag; AudioEventTurnOn 0x00406740 sets it and AudioEventOn 0x00406750 returns it
 0x0087E8A8,AlphaLightingRemapInit,,"TibSun _alpha.cpp global; static initialiser 0x0040AD60 builds it and registers its atexit 0x0040AD80"
 0x0087E294,AudioIDXData::Instance,,"YRpp AudioIDXData::Instance; set by AudioIDXData::Create in audevent.cpp"
 0x00822D80,FPU_FLAG,_FPU_FLAG,set_control_word and _ftol share the archive FPU flag initialized to 0xE7F
@@ -274,11 +291,14 @@ address,name,symbol,evidence
 0x00ABC2D0,ShadowCasterCliffInfo,,0x00547230 indexes 40 records of Frame/Index/XOffset/YOffset at 16-byte stride; canonical isotype table and initializer 0x00543F10
 0x00ABC554,IsometricTileTypeClass::CellShadowShapes,,0x00547230 passes this SHP storage to Draw_Shape; TibSun CellShadowShapes and theater C_SHADOW.SHP loading
 0x0087F698,TileDrawers,,0x00547230 dereferences Items at base+4 and its first LightConvertClass pointer; canonical dynamic vector and matched Get_Light_Convert
+0x00480350,CellClass::Draw_It,?Draw_It@CellClass@@QBEXABVPoint2D@@ABV?$TRect@H@@_N@Z,"The clipped tile loop calls this method at 0x006D77FF with the pixel, clip rectangle and object flag. It initializes the cell drawer at 0x00480384 and draws the isometric tile at 0x00480499, as in TibSun CellClass::Draw_It."
 0x00A8ECB8,CurrentObject,,"YRpp ObjectClass.h CurrentObjects; canonical DynamicVectorClass<ObjectClass*> selection vector, Count/Items in matched 0x006DA770 and 0x006DA740"
+0x008A0360,DisplayClass::Layer,?Layer@DisplayClass@@2PAVLayerClass@@A,YRpp MapClass::ObjectsInLayers at 0x008A0360 is the five-element LayerClass array. Goodie_Check reads the ground layer count and object list.
 0x00B0EA80,TechnoClass::ActionLineTimer,,Matched Reset_Action_Line_Timer 0x0070D150 writes current Frame and duration25 at base/base+8; TibSun TechnoClass::ActionLineTimer and actual frame timer initializer0x006F2AB0
 0x006D7C00,"Tactical::Draw_Tile_Shadows(Rect const &, Rect const &)",?Draw_Tile_Shadows@Tactical@@QAEXABV?$TRect@H@@0@Z,0x006D3040 four thiscall sites push two Rect references; retail callee ret8 walks shadow-casting map cells; TibSun matching two-Rect overload. Exact symbol avoids conflating int overload.
 0x00B0CE78,Tactical::DirtyAreas,?DirtyAreas@Tactical@@2V?$DynamicVectorClass@UDirtyAreaStruct@@@@A,YRpp Drawing.h DirtyAreas alias at0x00B0CE78; canonical DynamicVectorClass count+0x10/items+4 and 20-byte DirtyAreaStruct records in matched0x006D3040
 0x00886FA0,TacticalRect,,YRpp Surface.h ViewBounds; TibSun _rect.h TacticalRect; matched CCToolTip::Reset 0x00478DB0 uses the same X/Width fields
+0x00421350,AlphaShapeClass::Draw_All,,TibSun AlphaShapeClass::Draw_All; the callee iterates the AlphaShapes vector at 0x0088A0F0 and clips each DrawRect at +0x28 to the rectangle passed by Draw_Shroud.
 0x00ABE890,RMGRandom,,0x005A78D0 Generate_Urban_Pavement passes this Random2Class to both Random calls; TibSun mapgen.cpp Pick_Random_UInt names this generator
 0x00AA10A4,IsometricTileTypeClass::MiscPaveTile,,0x005A78D0 adds this tile base plus 8 to its random pavement choice; TibSun Generate_Urban_Pavement and the MiscPaveTile theater INI binding
 0x0089C2DC,MapCellStride,,0x0058C2A0 MapRegionClass::Get_Cell_Data(Cell) and 0x0058C270 MapRegionClass::CellData::Clear_Inviolates use this global as the grid stride

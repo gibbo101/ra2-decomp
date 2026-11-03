@@ -62,6 +62,7 @@
 #include "unittype.h"
 #include "vein.h"
 #include "vox.h"
+#include "voc.h"
 #include "warhead.h"
 #include "bench.hh"
 #include "ramp.hh"
@@ -504,6 +505,228 @@ ObjectClass * CellClass::Cell_Object(Point2D const & xy, bool bridge) const
 	ptr = Cell_Terrain();
 	return(ptr);
 }
+
+static inline Cell Ramp_Neighbor(Cell const & cell, FacingType dir)
+{
+	return Cell(cell.X + AdjacentCell[dir].X, cell.Y + AdjacentCell[dir].Y);
+}
+
+static inline CellClass const & LAT_Neighbor(CellClass const & cell, FacingType face)
+{
+	if ((unsigned)face >= FACING_COUNT) {
+		return cell;
+	}
+	Cell adjacent = AdjacentCell[(int)face & 7] + cell.Fetch_CellID();
+	return Map[adjacent];
+}
+
+// FUNCTION: GAMEMD 0x0047CA80
+bool CellClass::Fixup_LAT(void)
+{
+	IsometricTileType waterbridge1 = IsometricTileTypeClass::WaterBridge;
+	IsometricTileType waterbridge2 = IsometricTileType(waterbridge1 + 1);
+	if (waterbridge1 == ISOTILE_INVALID) waterbridge2 = ISOTILE_INVALID;
+	IsometricTileType shore1 = IsometricTileTypeClass::ShorePieces;
+	IsometricTileType shore2 = IsometricTileType(shore1 + 41);
+	if (shore1 == ISOTILE_INVALID) shore2 = ISOTILE_INVALID;
+	IsometricTileType cleartorough1 = IsometricTileTypeClass::ClearToRoughLat;
+	IsometricTileType cleartorough2 = IsometricTileType(cleartorough1 + 15);
+	if (cleartorough1 == ISOTILE_INVALID) {
+		cleartorough2 = ISOTILE_INVALID;
+	}
+	IsometricTileType cleartosand1 = IsometricTileTypeClass::ClearToSandLat;
+	IsometricTileType cleartosand2 = IsometricTileType(cleartosand1 + 15);
+	if (cleartosand1 == ISOTILE_INVALID) {
+		cleartosand2 = ISOTILE_INVALID;
+	}
+	IsometricTileType cleartogreen1 = IsometricTileTypeClass::ClearToGreenLat;
+	IsometricTileType cleartogreen2 = IsometricTileType(cleartogreen1 + 15);
+	if (cleartogreen1 == ISOTILE_INVALID) {
+		cleartogreen2 = ISOTILE_INVALID;
+	}
+	IsometricTileType cleartopave1 = IsometricTileTypeClass::ClearToPaveLat;
+	IsometricTileType cleartopave2 = IsometricTileType(cleartopave1 + 15);
+	if (cleartopave1 == ISOTILE_INVALID) {
+		cleartopave2 = ISOTILE_INVALID;
+	}
+	IsometricTileType miscpave2 = IsometricTileTypeClass::MiscPaveTile;
+	IsometricTileType miscpave1 = miscpave2;
+	miscpave2 = IsometricTileType(miscpave2 + 13);
+	if (miscpave1 == ISOTILE_INVALID) {
+		miscpave2 = ISOTILE_INVALID;
+	}
+	IsometricTileType pavedroad2 = IsometricTileTypeClass::PavedRoads;
+	IsometricTileType pavedroad1 = pavedroad2;
+	pavedroad2 = IsometricTileType(pavedroad2 + 20);
+	if (pavedroad1 == ISOTILE_INVALID) {
+		pavedroad2 = ISOTILE_INVALID;
+	}
+	IsometricTileType median2 = IsometricTileTypeClass::Medians;
+	IsometricTileType median1 = median2;
+	median2 = IsometricTileType(median2 + 13);
+	if (median1 == ISOTILE_INVALID) {
+		median2 = ISOTILE_INVALID;
+	}
+	IsometricTileType rampsmooth1 = IsometricTileTypeClass::RampSmooth;
+	IsometricTileType rampsmooth2 = IsometricTileType(rampsmooth1 + 11);
+	if (rampsmooth1 == ISOTILE_INVALID) {
+		rampsmooth2 = ISOTILE_INVALID;
+	}
+	IsometricTileType ramp1 = IsometricTileTypeClass::RampStart;
+	IsometricTileType ramp2 = IsometricTileType(ramp1 + 19);
+	if (ramp1 == ISOTILE_INVALID) {
+		ramp2 = ISOTILE_INVALID;
+	}
+	IsometricTileType old_ittype = ITType;
+
+	if (old_ittype == IsometricTileTypeClass::RoughTile || old_ittype >= cleartorough1 && old_ittype <= cleartorough2) {
+		int offset = 0;
+		unsigned int facing = 0;
+		for (int i = 0; i < FACING_COUNT / 2; i++) {
+			CellClass const & cptr = Adjacent_Cell((FacingType)facing);
+			IsometricTileType ittype = cptr.ITType;
+			if (ittype != IsometricTileTypeClass::RoughTile && (ittype < cleartorough1 || ittype > cleartorough2)) {
+				offset |= 1 << i;
+			}
+			facing = Facing_Add(facing, FACING_90);
+		}
+		if (offset != 0) {
+			ITType = IsometricTileType(cleartorough1 + offset);
+		} else {
+			ITType = IsometricTileTypeClass::RoughTile;
+		}
+	}
+
+	IsometricTileType type;
+	if (cleartosand1 != ISOTILE_INVALID) {
+		type = ITType;
+		if (type == IsometricTileTypeClass::SandTile || type >= cleartosand1 && type <= cleartosand2) {
+			int offset = 0;
+			unsigned int facing = 0;
+			for (int i = 0; i < FACING_COUNT / 2; i++) {
+				CellClass const & cptr = LAT_Neighbor(*this, (FacingType)facing);
+				IsometricTileType ittype = cptr.ITType;
+				if (ittype != IsometricTileTypeClass::SandTile && (ittype < cleartosand1 || ittype > cleartosand2)) {
+					offset |= 1 << i;
+				}
+				facing = Facing_Add(facing, FACING_90);
+			}
+			if (offset != 0) {
+				ITType = IsometricTileType(cleartosand1 + offset);
+			} else {
+				ITType = IsometricTileTypeClass::SandTile;
+			}
+		}
+	}
+
+	if (cleartogreen1 != ISOTILE_INVALID) {
+		type = ITType;
+		if (type == IsometricTileTypeClass::GreenTile || type >= cleartogreen1 && type <= cleartogreen2) {
+			int offset = 0;
+			unsigned int facing = 0;
+			for (int i = 0; i < FACING_COUNT / 2; i++) {
+				CellClass const & cptr = LAT_Neighbor(*this, (FacingType)facing);
+				IsometricTileType ittype = cptr.ITType;
+				if (ittype != IsometricTileTypeClass::GreenTile && (ittype < cleartogreen1 || ittype > cleartogreen2) && (ittype < shore1 || ittype > shore2) && (ittype < waterbridge1 || ittype > waterbridge2)) {
+					offset |= 1 << i;
+				}
+				facing = Facing_Add(facing, FACING_90);
+			}
+			if (offset != 0) {
+				ITType = IsometricTileType(cleartogreen1 + offset);
+			} else {
+				ITType = IsometricTileTypeClass::GreenTile;
+			}
+		}
+	}
+
+	if (cleartopave1 != ISOTILE_INVALID) {
+		type = ITType;
+		if (type == IsometricTileTypeClass::PaveTile || type >= cleartopave1 && type <= cleartopave2) {
+			int offset = 0;
+			unsigned int facing = 0;
+			for (int i = 0; i < FACING_COUNT / 2; i++) {
+				CellClass const & cptr = LAT_Neighbor(*this, (FacingType)facing);
+				IsometricTileType ittype = cptr.ITType;
+				if (ittype != IsometricTileTypeClass::PaveTile
+				&& (ittype < cleartopave1 || ittype > cleartopave2)
+				&& (ittype < miscpave1 || ittype > miscpave2)
+				&& (ittype < median1 || ittype > median2)
+				&& (ittype < pavedroad1 || ittype > pavedroad2)) {
+					offset |= 1 << i;
+				}
+				facing = Facing_Add(facing, FACING_90);
+			}
+			if (offset != 0) {
+				ITType = IsometricTileType(cleartopave1 + offset);
+			} else {
+				ITType = IsometricTileTypeClass::PaveTile;
+			}
+		}
+	}
+
+	type = ITType;
+	if (type >= ramp1 && type <= ramp2 || type >= rampsmooth1 && type <= rampsmooth2) {
+		int offset = 0;
+		if (Ramp == RAMP_WEST) {
+			if (Map[Ramp_Neighbor(Fetch_CellID(), FACING_W)].Ramp == RAMP_NONE) {
+				offset |= 1;
+			}
+			if (Map[Ramp_Neighbor(Fetch_CellID(), FACING_E)].Ramp == RAMP_NONE) {
+				offset |= 2;
+			}
+			if (offset != 0) {
+				ITType = IsometricTileType(offset + rampsmooth1 - 1);
+			}
+		}
+		if (Ramp == RAMP_NORTH) {
+			if (Map[Ramp_Neighbor(Fetch_CellID(), FACING_N)].Ramp == RAMP_NONE) {
+				offset |= 1;
+			}
+			if (Map[Ramp_Neighbor(Fetch_CellID(), FACING_S)].Ramp == RAMP_NONE) {
+				offset |= 2;
+			}
+			if (offset != 0) {
+				ITType = IsometricTileType(offset + rampsmooth1 + 2);
+			}
+		}
+		if (Ramp == RAMP_EAST) {
+			if (Map[Ramp_Neighbor(Fetch_CellID(), FACING_E)].Ramp == RAMP_NONE) {
+				offset |= 1;
+			}
+			if (Map[Ramp_Neighbor(Fetch_CellID(), FACING_W)].Ramp == RAMP_NONE) {
+				offset |= 2;
+			}
+			if (offset != 0) {
+				ITType = IsometricTileType(offset + rampsmooth1 + 5);
+			}
+		}
+		if (Ramp == RAMP_SOUTH) {
+			if (Map[Ramp_Neighbor(Fetch_CellID(), FACING_S)].Ramp == RAMP_NONE) {
+				offset |= 1;
+			}
+			if (Map[Ramp_Neighbor(Fetch_CellID(), FACING_N)].Ramp == RAMP_NONE) {
+				offset |= 2;
+			}
+			if (offset != 0) {
+				ITType = IsometricTileType(offset + rampsmooth1 + 8);
+			}
+		}
+		if (offset == 0) {
+			ITType = IsometricTileType(Ramp + ramp1 - 1);
+		}
+	}
+
+	if (old_ittype != ITType) {
+		IsometricTileTypeClass * ttype = IsometricTileTypes[ITType];
+		if (ttype->Get_Image_Data() == NULL) {
+			ttype->Load_Tile_Image();
+		}
+	}
+	return(old_ittype != ITType);
+}
+
+
 
 // FUNCTION: GAMEMD 0x0047D210
 void CellClass::Set_Wall_Owner(void)
@@ -1715,6 +1938,414 @@ int CellClass::Tiberium_Adjust(bool pregame)
 		}
 	}
 	return(0);
+}
+
+static inline Coord Crate_Sound_Coord(CellClass const & cell)
+{
+	return(cell.Cell_Coord());
+}
+
+namespace Powerups {
+	extern int Weights[CRATE_COUNT];
+	extern AnimType Anims[CRATE_COUNT];
+	extern bool Naval[CRATE_COUNT];
+	extern double Arguments[CRATE_COUNT];
+}
+
+// FUNCTION: GAMEMD 0x00481A00
+bool CellClass::Goodie_Check(FootClass * object)
+{
+	if (object != NULL && Overlay != OVERLAY_NONE && OverlayTypes[Overlay]->IsCrate) {
+		bool force_mcv = false;
+		int force_money = 0;
+		int damage;
+		Coord coord;
+
+		if (Session.Type != GAME_NORMAL && object->House->Class->IsMultiplayPassive) {
+			return(true);
+		}
+
+		if (OverlayTypes[Overlay]->IsCrateTrigger) {
+			if (object->Tag != NULL) {
+				FUN_004068E0("Springing trigger on crate at %d,%d\n", CellID.X, CellID.Y);
+				object->Tag->Spring(TEVENT_PICKUP_CRATE, object);
+				if (!object->IsActive) {
+					return(false);
+				}
+			}
+			Scen->IsCrateBeenPickedUp = true;
+		}
+
+		int index;
+		CrateType powerup;
+		if (OverlayData >= CRATE_COUNT) {
+			int total_shares = 0;
+			for (index = 0; index < CRATE_COUNT; ++index) {
+				total_shares += Powerups::Weights[index];
+			}
+			int pick = Random_Pick(1, total_shares);
+			int count = 0;
+			for (index = CRATE_FIRST; index < CRATE_COUNT; ++index) {
+				count += Powerups::Weights[index];
+				if (pick <= count) break;
+			}
+			powerup = (CrateType)index;
+		} else {
+			powerup = (CrateType)OverlayData;
+		}
+		if (Session.Type == GAME_NORMAL) {
+			if (OverlayData == 0) {
+				force_money = Rule->SoloCrateMoney;
+				if (OverlayTypes[Overlay] == Rule->CrateImg) powerup = Rule->SilverCrate;
+				if (OverlayTypes[Overlay] == Rule->WoodCrateImg) powerup = Rule->WoodCrate;
+				if (OverlayTypes[Overlay] == Rule->WaterCrateImg) powerup = Rule->WaterCrate;
+			}
+		} else {
+			HouseClass * house = object->House;
+			UnitTypeClass const * base_unit = house->Get_First_Ownable(Rule->BaseUnit);
+			if (house->CurBuildings == 0 &&
+					house->Available_Money() > 1500 &&
+					house->UQuantity.Value(base_unit->HeapID) == 0 &&
+					Session.Options.Bases) {
+				powerup = CRATE_UNIT;
+				force_mcv = true;
+			}
+
+			switch (powerup) {
+				case CRATE_UNIT:
+					if (object->House->CurUnits > 50) powerup = CRATE_MONEY;
+					if (Land == LAND_WATER || Land == LAND_BEACH) powerup = CRATE_MONEY;
+					break;
+				case CRATE_SQUAD:
+					if (object->House->CurInfantry > 100) powerup = CRATE_MONEY;
+					if (Land == LAND_WATER || Land == LAND_BEACH) powerup = CRATE_MONEY;
+					break;
+				case CRATE_ARMOR:
+					if (object->ArmorBias != 1) powerup = CRATE_MONEY;
+					break;
+				case CRATE_VETERAN:
+					if ((object->AbstractFlags & 1) && !object->Techno_Type_Class()->IsTrainable) {
+						powerup = CRATE_MONEY;
+						break;
+					}
+					if ((object->AbstractFlags & 1) && object->Veterancy.Is_Elite()) powerup = CRATE_MONEY;
+					break;
+
+				case CRATE_SPEED:
+					if (object->SpeedBias != 1 || object->Fetch_RTTI() == RTTI_AIRCRAFT) powerup = CRATE_MONEY;
+					break;
+				case CRATE_FIREPOWER:
+					if (object->FirepowerBias != 1 || !object->Is_Weapon_Equipped()) powerup = CRATE_MONEY;
+					break;
+				case CRATE_CLOAK:
+					if (object->IsCloakable) powerup = CRATE_MONEY;
+					break;
+			}
+
+			if (Land == LAND_WATER && !Powerups::Naval[powerup]) powerup = CRATE_MONEY;
+			if (Session.Type == GAME_INTERNET) {
+				object->House->TotalCrates.Increment_Unit_Total(powerup);
+			}
+		}
+
+		Map.Remove_Crate(Fetch_CellID());
+
+		if (Session.Type != GAME_NORMAL && Session.Options.Goodies) {
+			Map.Place_Random_Crate();
+		}
+
+		if (powerup == CRATE_SQUAD) {
+			powerup = CRATE_MONEY;
+		}
+
+		double data = Powerups::Arguments[powerup];
+		bool tospeak = false;
+		switch (powerup) {
+
+			case CRATE_GAS: {
+				FUN_004068E0("Crate at %d,%d contains poison gas\n", CellID.X, CellID.Y);
+				WarheadTypeClass * gas = WarheadTypeClass::From_Name("GAS");
+				damage = data;
+				Explosion_Damage(Center_Coord(), damage, NULL, gas, false);
+				for (FacingType facing = FACING_N; facing < FACING_COUNT; facing++) {
+					Explosion_Damage(Adjacent_Cell(facing).Center_Coord(), damage, NULL, gas, false);
+				}
+				break;
+			}
+
+			case CRATE_TIBERIUM: {
+				FUN_004068E0("Crate at %d,%d contains tiberium\n", CellID.X, CellID.Y);
+				TiberiumType tibtype = (TiberiumType)Random_Pick(0, Tiberiums.Count() - 1);
+				if (tibtype == TIBERIUM_CRUENTUS) {
+					tibtype = TIBERIUM_RIPARIUS;
+				}
+				Place_Tiberium(tibtype, 1);
+				int count = Random_Pick(10, 20);
+				while (count--) {
+					Coord scatter = Coord_Scatter(Center_Coord(), Random_Pick(0, 3 * CELL_LEPTON), true);
+					Map[scatter].Place_Tiberium(tibtype, 1);
+				}
+				break;
+			}
+
+			case CRATE_DARKNESS:
+				FUN_004068E0("Crate at %d,%d contains 'shroud'\n", CellID.X, CellID.Y);
+				Map.Reshroud(object->House);
+				break;
+
+			case CRATE_REVEAL:
+				FUN_004068E0("Crate at %d,%d contains 'reveal'\n", CellID.X, CellID.Y);
+				Map.Reveal(object->House);
+				VocClass::PlayAt(Rule->CrateRevealSound, Crate_Sound_Coord(*this));
+				break;
+
+			case CRATE_UNIT: {
+				FUN_004068E0("Crate at %d,%d contains a unit\n", CellID.X, CellID.Y);
+				UnitTypeClass const * utp = NULL;
+
+				if (force_mcv) {
+					utp = object->House->Get_First_Ownable(Rule->BaseUnit);
+				}
+
+				if (utp == NULL && (object->House->BQuantity.Value(Rule->BuildRefinery[0]->HeapID) > 0 ||
+						object->House->BQuantity.Value(Rule->BuildRefinery[1]->HeapID) > 0) &&
+						object->House->UQuantity.Value(Rule->HarvesterUnit[0]->HeapID) == 0 &&
+						object->House->UQuantity.Value(Rule->HarvesterUnit[1]->HeapID) == 0) {
+					utp = object->House->Get_First_Ownable(Rule->HarvesterUnit);
+				}
+
+				if (Rule->UnitCrateType != NULL) {
+					utp = Rule->UnitCrateType;
+				}
+
+				while (utp == NULL) {
+					utp = UnitTypes[Random_Pick(UNIT_FIRST, (UnitType)(UnitTypes.Count() - 1))];
+					bool is_base = Rule->BaseUnit.Is_In_List(utp);
+					bool human = object->House->FUN_0050B730();
+					if (utp->CrateGoodie && (Session.Options.Bases || !is_base) &&
+							(!Session.Options.Bases || !is_base || human || force_mcv)) {
+						break;
+					}
+					utp = NULL;
+				}
+
+				if (utp != NULL) {
+					UnitClass * goodie_unit = (UnitClass *)utp->Create_One_Of(object->House);
+					if (goodie_unit != NULL) {
+						if (goodie_unit->Unlimbo(Cell_Coord())) {
+							if (object->House->Is_Player_Control()) {
+								VocClass::PlayAt(Rule->CrateUnitSound, Cell_Coord());
+							}
+							return(false);
+						}
+
+						Cell cell = Map.Nearby_Location(Fetch_CellID(), goodie_unit->Class->Speed);
+						if (cell != CELL_NONE && goodie_unit->Unlimbo(cell)) {
+							if (object->House->Is_Player_Control()) {
+								VocClass::PlayAt(Rule->CrateUnitSound, Cell_Coord());
+							}
+							return(false);
+						}
+						delete goodie_unit;
+						powerup = CRATE_MONEY;
+						goto crate_money;
+					}
+				}
+			}
+			break;
+
+			case CRATE_SQUAD:
+				break;
+
+			case CRATE_MONEY:
+crate_money:
+				FUN_004068E0("Crate at %d,%d contains money\n", CellID.X, CellID.Y);
+				if (!force_money) {
+					force_money = Random_Pick((int)data, (int)data + 900);
+				}
+				if (!object->House->Is_Player_Control() || Session.Type != GAME_NORMAL) {
+					object->House->Refund_Money(force_money);
+				} else {
+					PlayerPtr->Refund_Money(force_money);
+				}
+				if (object->House->Is_Player_Control()) {
+					VocClass::PlayAt(Rule->CrateMoneySound, Crate_Sound_Coord(*this));
+				}
+				break;
+
+			case CRATE_EXPLOSION:
+				FUN_004068E0("Crate at %d,%d contains explosives\n", CellID.X, CellID.Y);
+				damage = data;
+				if (object != NULL) {
+					int d = damage;
+					object->Take_Damage(d, 0, Rule->C4Warhead, 0, true);
+				}
+				for (index = 0; index < 5; index++) {
+					Coord frag_coord = Coord_Scatter(Cell_Coord(), Random_Pick(0, 2 * CELL_LEPTON));
+					Explosion_Damage(frag_coord, damage, NULL, Rule->C4Warhead);
+					AnimTypeClass const * anim = Combat_Anim(damage, Rule->C4Warhead, LAND_CLEAR, frag_coord);
+					new AnimClass(anim, frag_coord, 0, 1,
+						ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ZGRAD), Get_Explosion_Z(frag_coord));
+					Combat_Lighting(frag_coord, damage, Rule->C4Warhead, false);
+				}
+				break;
+
+			case CRATE_NAPALM:
+				FUN_004068E0("Crate at %d,%d contains napalm\n", CellID.X, CellID.Y);
+				coord = (object->Center_Coord() + Cell_Coord()) / 2;
+				new AnimClass(AnimTypes[0], coord);
+				damage = data;
+				if (object != NULL) {
+					int d = damage;
+					object->Take_Damage(d, 0, Rule->FlameDamage, NULL, true);
+				}
+				Explosion_Damage(coord, damage, NULL, Rule->FlameDamage);
+				break;
+
+			case CRATE_CLOAK: {
+				FUN_004068E0("Crate at %d,%d contains cloaking device\n", CellID.X, CellID.Y);
+				int i;
+				for (i = 0; i < DisplayClass::Layer[LAYER_GROUND].Count(); i++) {
+					ObjectClass * obj = DisplayClass::Layer[LAYER_GROUND][i];
+
+					if (obj != NULL && obj->IsDown && obj->Is_Techno() &&
+							Distance(Cell_Coord(), obj->Center_Coord()) < Rule->CrateRadius) {
+						((TechnoClass *)obj)->IsCloakable = true;
+					}
+				}
+				break;
+			}
+
+			case CRATE_VETERAN: {
+				FUN_004068E0("Crate at %d,%d contains veterancy(TM)\n", CellID.X, CellID.Y);
+				int i;
+				for (i = 0; i < DisplayClass::Layer[LAYER_GROUND].Count(); i++) {
+					ObjectClass * obj = DisplayClass::Layer[LAYER_GROUND][i];
+
+					if (obj != NULL && obj->IsDown && obj->Is_Techno() &&
+							Distance(Cell_Coord(), obj->Center_Coord()) < Rule->CrateRadius &&
+							((TechnoClass *)obj)->Techno_Type_Class()->IsTrainable) {
+						for (int count = 0; count < data; count++) {
+							VeterancyClass * vet = &((TechnoClass *)obj)->Veterancy;
+							if (vet->Is_Veteran()) vet->Set_Elite(true);
+							if (vet->Is_Rookie()) vet->Set_Veteran(true);
+							if (vet->Is_Dumbass()) vet->Set_Rookie(true);
+						}
+					}
+				}
+				if (object->House->Is_Player_Control()) {
+					VocClass::PlayAt(Rule->CratePromoteSound, Cell_Coord());
+				}
+				break;
+			}
+
+			case CRATE_HEAL_BASE:
+				FUN_004068E0("Crate at %d,%d contains base healing\n", CellID.X, CellID.Y);
+				if (object->House->Is_Player_Control()) {
+					VocClass::PlayAt(Rule->HealCrateSound, Cell_Coord());
+				}
+				for (index = 0; index < Logic.Count(); index++) {
+					ObjectClass * obj = Logic[index];
+
+					if (obj && object->Is_Techno() && object->House == obj->Owner_HouseClass()) {
+						int damage = obj->Strength - obj->Class_Of()->MaxStrength;
+						obj->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true, true);
+					}
+				}
+				break;
+
+			case CRATE_ICBM: {
+				FUN_004068E0("Crate at %d,%d contains ICBM\n", CellID.X, CellID.Y);
+				SuperWeaponTypeClass * super = SuperWeaponTypeClass::From_Action(ACTION_NUKE_BOMB);
+				int sindex = -1;
+				for (index = 0; index < object->House->SuperWeapon.Count(); index++) {
+					if (object->House->SuperWeapon[index]->Class->Type == SUPER_FIRST) {
+						sindex = index;
+						break;
+					}
+				}
+				if (sindex != -1 && object->House->SuperWeapon[super->HeapID]->Grant(true, false, false) &&
+						object->IsOwnedByPlayer) {
+					Map.AddCameo(RTTI_SPECIAL, super->HeapID);
+				}
+				break;
+			}
+
+			case CRATE_ARMOR:
+				FUN_004068E0("Crate at %d,%d contains armor\n", CellID.X, CellID.Y);
+				for (index = 0; index < DisplayClass::Layer[LAYER_GROUND].Count(); index++) {
+					ObjectClass * obj = DisplayClass::Layer[LAYER_GROUND][index];
+
+					if (obj != NULL && obj->Is_Techno() &&
+							Distance(Cell_Coord(), obj->Center_Coord()) < Rule->CrateRadius &&
+							((TechnoClass *)obj)->ArmorBias == 1) {
+						double val = ((TechnoClass *)obj)->ArmorBias * data;
+						((TechnoClass *)obj)->ArmorBias = val;
+						if (obj->Owner_HouseClass()->Is_Player_Control()) tospeak = true;
+					}
+				}
+				if (tospeak) VoxClass::Play("EVA_UnitArmorUpgraded");
+				if (object->House->Is_Player_Control()) {
+					VocClass::PlayAt(Rule->CrateArmourSound, Cell_Coord());
+				}
+				break;
+
+			case CRATE_SPEED:
+				FUN_004068E0("Crate at %d,%d contains speed\n", CellID.X, CellID.Y);
+				for (index = 0; index < DisplayClass::Layer[LAYER_GROUND].Count(); index++) {
+					ObjectClass * obj = DisplayClass::Layer[LAYER_GROUND][index];
+
+					if (obj && obj->Is_Foot() &&
+							Distance(Cell_Coord(), obj->Center_Coord()) < Rule->CrateRadius &&
+							((FootClass *)obj)->SpeedBias == 1 &&
+							obj->Fetch_RTTI() != RTTI_AIRCRAFT) {
+						double val = ((FootClass *)obj)->SpeedBias * data;
+						((FootClass *)obj)->SpeedBias = val;
+						if (((FootClass *)obj)->House->IsPlayerControl) tospeak = true;
+					}
+				}
+				if (tospeak) VoxClass::Play("EVA_UnitSpeedUpgraded");
+				if (object->House->Is_Player_Control()) {
+					VocClass::PlayAt(Rule->CrateSpeedSound, Cell_Coord());
+				}
+				break;
+
+			case CRATE_FIREPOWER:
+				FUN_004068E0("Crate at %d,%d contains firepower\n", CellID.X, CellID.Y);
+				for (index = 0; index < DisplayClass::Layer[LAYER_GROUND].Count(); index++) {
+					ObjectClass * obj = DisplayClass::Layer[LAYER_GROUND][index];
+
+					if (obj && obj->Is_Techno() &&
+							Distance(Cell_Coord(), obj->Center_Coord()) < Rule->CrateRadius &&
+							((TechnoClass *)obj)->FirepowerBias == 1) {
+						double val = ((TechnoClass *)obj)->FirepowerBias * data;
+						((TechnoClass *)obj)->FirepowerBias = val;
+						if (obj->Owner_HouseClass()->Is_Player_Control()) tospeak = true;
+					}
+				}
+				if (tospeak) VoxClass::Play("EVA_UnitFirePowerUpgraded");
+				if (object->House->Is_Player_Control()) {
+					VocClass::PlayAt(Rule->CrateFireSound, Cell_Coord());
+				}
+				break;
+
+			case CRATE_INVULN:
+				break;
+
+			case CRATE_ION_STORM:
+				break;
+
+			default:
+				break;
+		}
+
+		if (Powerups::Anims[powerup] != ANIM_NONE) {
+			Coord const animation_coord = Cell_Coord() + Coord(0, 0, 200);
+			new AnimClass(AnimTypes[Powerups::Anims[powerup]], animation_coord);
+		}
+	}
+
+	return(true);
 }
 
 // FUNCTION: GAMEMD 0x00483410
