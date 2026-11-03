@@ -5581,6 +5581,77 @@ static inline CellSubzoneStruct * Zone_Entry(MapClass * map, Cell const & cell)
 	return(&map->CellSubzones[map->FUN_0056D3F0(cell)]);
 }
 
+static inline CellSubzoneStruct * Clamped_Subzone_Entry(MapClass * map, Cell const & cell)
+{
+	int index = map->FUN_0056D430(cell);
+	if (index < 0) {
+		index = 0;
+	} else if (index >= map->CellZoneCount) {
+		index = map->CellZoneCount - 1;
+	}
+	return(&map->CellSubzones[index]);
+}
+
+
+// FUNCTION: GAMEMD 0x00584E50
+void MapClass::Unregister_Subzone_Connection(ZoneConnectionClass * connection)
+{
+	Cell from = connection->From;
+	Cell to = connection->To;
+
+	CellClass * from_cptr = &Map[from];
+	Cell none = CELL_NONE;
+	Cell from_adj1 = none;
+	Cell from_adj2 = none;
+	Cell to_adj1 = none;
+	Cell to_adj2 = none;
+
+	if (from_cptr->Is_Tile_Bridge() || from_cptr->Is_Tile_Train_Bridge()) {
+		int faceindex;
+		if (from_cptr->Is_Tile_Bridge()) {
+			faceindex = from_cptr->ITType - IsometricTileTypeClass::BridgeSet;
+		} else {
+			faceindex = from_cptr->ITType - IsometricTileTypeClass::TrainBridgeSet;
+		}
+		FacingType facing = DAT_0082A944[faceindex];
+		from_adj1 = Adjacent_Cell(from, facing);
+		from_adj2 = Adjacent_Cell(from, Facing_Sub(facing, FACING_180));
+		to_adj1 = Adjacent_Cell(to, facing);
+		to_adj2 = Adjacent_Cell(to, Facing_Sub(facing, FACING_180));
+	}
+
+	int sidx1;
+	int sidx2;
+	for (int i = 0; i < ARRAY_SIZE(SubzoneTracking); i++) {
+		{
+			sidx1 = Zone_Entry(this, from)->SubzoneID[i];
+			sidx2 = Zone_Entry(this, to)->SubzoneID[i];
+
+			SubzoneTracking[i][sidx1].Connections.Delete(SubzoneConnectionStruct(sidx2));
+
+			SubzoneTracking[i][sidx2].Connections.Delete(SubzoneConnectionStruct(sidx1));
+		}
+
+		{
+			sidx1 = Zone_Entry(this, from_adj1)->SubzoneID[i];
+			sidx2 = Zone_Entry(this, to_adj1)->SubzoneID[i];
+
+			SubzoneTracking[i][sidx1].Connections.Delete(SubzoneConnectionStruct(sidx2));
+
+			SubzoneTracking[i][sidx2].Connections.Delete(SubzoneConnectionStruct(sidx1));
+		}
+
+		{
+			sidx1 = Clamped_Subzone_Entry(this, from_adj2)->SubzoneID[i];
+			sidx2 = Clamped_Subzone_Entry(this, to_adj2)->SubzoneID[i];
+
+			SubzoneTracking[i][sidx1].Connections.Delete(SubzoneConnectionStruct(sidx2));
+
+			SubzoneTracking[i][sidx2].Connections.Delete(SubzoneConnectionStruct(sidx1));
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x005851B0
 void MapClass::Register_Subzone_Connection(ZoneConnectionClass * connection)
 {

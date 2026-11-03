@@ -1436,13 +1436,13 @@ void FUN_00603D30(HWND dialog, int value)
 }
 
 // FUNCTION: GAMEMD 0x00603DB0
-LRESULT FUN_00603DB0(HWND window, int value)
+LRESULT FUN_00603DB0(HWND window, bool value)
 {
 	return SendMessage(window, 0x4e5, 0, value & 0xff);
 }
 
 // FUNCTION: GAMEMD 0x00603DD0
-LRESULT FUN_00603DD0(HWND window, int value)
+LRESULT FUN_00603DD0(HWND window, bool value)
 {
 	return SendMessage(window, 0x4e6, 0, value & 0xff);
 }

@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "multiplayer.h"
 #include "radar.h"
 #include "_convert.h"
 #include "_keyboar.h"
@@ -40,12 +41,17 @@
 #include "tactical.h"
 #include "voc.h"
 #include "vox.h"
+#include "zbuffer.h"
 #include "vqa.h"
 #include "fastmath.h"
 #include "coord.h"
 
 // SYNTHETIC: GAMEMD 0x00652660 SYMBOL
 // _$E2
+
+extern ObjectClass * __fastcall FUN_005353D0(Cell const * cell, ObjectClass const * target);
+extern bool __fastcall FUN_00637AA0();
+extern int __fastcall FUN_00639DA0();
 
 extern const double ONE_RAD;
 extern const double DAT_007F02A8;
@@ -609,6 +615,162 @@ void RadarClass::AI(KeyNumType & input, Point2D const & xy)
 	}
 }
 
+// FUNCTION: GAMEMD 0x006539D0
+int RadarClass::RTacticalClass::Action(unsigned flags, KeyNumType & key, int modifier)
+{
+	if (flags & (RIGHTHELD | LEFTHELD)) {
+		return(false);
+	}
+	if (Map.Is_Playing_Movie()) {
+		return(false);
+	}
+	if (!Map.Is_Radar_Tactical()) {
+		return(false);
+	}
+
+	int x, y;
+	if (flags & (LEFTPRESS | LEFTRELEASE | RIGHTPRESS | RIGHTRELEASE)) {
+		x = Keyboard->MouseQX;
+		y = Keyboard->MouseQY;
+	} else {
+		x = Get_Mouse_X();
+		y = Get_Mouse_Y();
+	}
+	x -= Options.IsSidebarOnRight ? TacticalRect.Width : 0;
+	if (x < Map.RadarRect.X || x >= Map.RadarRect.X + Map.RadarRect.Width ||
+	    y < Map.RadarRect.Y || y >= Map.RadarRect.Y + Map.RadarRect.Height) {
+		Map.Override_Mouse_Shape(MOUSE_NORMAL);
+		return(false);
+	}
+
+	Point2D click(x, y);
+	Cell cell(0, 0);
+	bool shadow;
+	ObjectClass * object = NULL;
+	ActionType action;
+	Map.Resolve_Radar_Point(click, cell, object);
+	if (cell != CELL_NONE) {
+		Coord coord = cell.As_Coord();
+		coord.Z = Map.Get_Height_GL(coord);
+		shadow = (Map.Is_Shrouded(coord) && MainWindow);
+
+		bool multi_missile = Map.IsTargettingMode == SUPER_MULTI_MISSILE;
+		bool iron_curtain = Map.IsTargettingMode == SUPER_IRON_CURTAIN;
+		bool lightning_storm = Map.IsTargettingMode == SUPER_LIGHTNING_STORM;
+		bool para_drop = Map.IsTargettingMode == SUPER_PARA_DROP;
+		bool amer_para_drop = Map.IsTargettingMode == SUPER_AMER_PARA_DROP;
+		bool psychic_dominator = Map.IsTargettingMode == SUPER_PSYCHIC_DOMINATOR;
+		bool spy_plane = Map.IsTargettingMode == SUPER_SPY_PLANE;
+		bool genetic_converter = Map.IsTargettingMode == SUPER_GENETIC_CONVERTER;
+		bool psychic_reveal = Map.IsTargettingMode == SUPER_PSYCHIC_REVEAL;
+		bool right = (flags & (RIGHTPRESS | RIGHTRELEASE)) != 0;
+		if (!right && (CurrentObject.Count() || multi_missile || iron_curtain || lightning_storm ||
+	               para_drop || psychic_dominator || spy_plane || genetic_converter ||
+	               psychic_reveal || amer_para_drop)) {
+			if (multi_missile) {
+				action = ACTION_NUKE_BOMB;
+			} else if (iron_curtain) {
+				action = ACTION_IRON_CURTAIN;
+			} else if (lightning_storm) {
+				action = ACTION_LIGHTNING_STORM;
+			} else if (psychic_dominator) {
+				action = ACTION_PSYCHIC_DOMINATOR;
+			} else if (spy_plane) {
+				action = ACTION_SPY_PLANE;
+			} else if (genetic_converter) {
+				action = ACTION_GENETIC_CONVERTER;
+			} else if (psychic_reveal) {
+				action = ACTION_PSYCHIC_REVEAL;
+			} else if (para_drop) {
+				action = ACTION_PARA_DROP;
+			} else if (amer_para_drop) {
+				action = ACTION_AMER_PARA_DROP;
+			} else if (object) {
+				action = FUN_005353D0(NULL, object)->What_Action(object);
+			} else {
+				action = FUN_005353D0(&cell, NULL)->What_Action(cell);
+			}
+
+			switch (action) {
+				case ACTION_MOVE:
+				case ACTION_NOMOVE:
+				case ACTION_ENTER:
+				case ACTION_ATTACK:
+				case ACTION_HARVEST:
+				case ACTION_CAPTURE:
+				case ACTION_SABOTAGE:
+				case ACTION_NUKE_BOMB:
+				case ACTION_GUARD_AREA:
+				case ACTION_LIGHTNING_STORM:
+				case ACTION_PARA_DROP:
+				case ACTION_AMER_PARA_DROP:
+				case ACTION_PSYCHIC_DOMINATOR:
+				case ACTION_SPY_PLANE:
+				case ACTION_PSYCHIC_REVEAL:
+					break;
+				default:
+					action = ACTION_NONE;
+					object = NULL;
+					break;
+			}
+			if ((!FUN_00637AA0() || FUN_00639DA0() == -1) && action != ACTION_NONE) {
+				if (flags & LEFTUP) {
+					Map.Mouse_Left_Up(cell, shadow, object, action, true);
+				}
+				if (flags & LEFTRELEASE && !drag_select_aborted) {
+					Map.Mouse_Left_Release(Coord(cell), cell, object, action, true);
+				}
+				goto finish_input;
+			}
+		}
+		if (!right) {
+			Map.Set_Default_Mouse(MOUSE_NORMAL, true);
+		}
+		if ((flags & LEFTPRESS) || (flags & RIGHTPRESS)) {
+			if (cell != Cell(0, 0)) {
+				const int tactical_tile_width = 60;
+				const int tactical_tile_height = 30;
+				int side_edge = Map.PlayRect.Width - (TacticalRect.Width / tactical_tile_width + 2) / 2 - 1;
+				int half_view_height = TacticalRect.Height / (2 * tactical_tile_height);
+				int top_edge = half_view_height + Map.PlayRect.Width + 1;
+				int bottom_edge = 2 * Map.PlayRect.Height - half_view_height + Map.PlayRect.Width - 1;
+				int adjust;
+
+				if ((cell.Y - cell.X) > side_edge) {
+					adjust = (cell.Y - cell.X) - side_edge;
+					cell.Y -= adjust;
+					cell.X += adjust;
+				}
+				if ((cell.X - cell.Y) > side_edge - 1) {
+					adjust = (cell.X - cell.Y) - side_edge + 1;
+					cell.Y += adjust;
+					cell.X -= adjust;
+				}
+				if (cell.X + cell.Y < top_edge) {
+					adjust = top_edge - cell.Y - cell.X;
+					cell.X += adjust;
+					cell.Y += adjust;
+				}
+				if ((cell.X + cell.Y) > bottom_edge) {
+					adjust = (cell.X + cell.Y) - bottom_edge;
+					cell.X -= adjust;
+					cell.Y -= adjust;
+				}
+				Coord coord = Map[cell].Cell_Coord();
+				TacticalMap->Set_Tactical_Position(coord);
+				Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+				if (DepthBuffer) {
+					DepthBuffer->Set_Scroll(ZBUFFER_MAX);
+				}
+			}
+		}
+	}
+
+finish_input:
+	GadgetClass::Action(0, key, 0);
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x00653F50
 void RadarClass::Set_Map_Dimensions(Rect const & size, bool reset_cells, int cell_height, bool refresh_map)
 {
@@ -1125,6 +1287,60 @@ void RadarClass::Post_Load_Radar_Fixup(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00655C50
+void RadarClass::Plot_Radar_Pixel(Point2D const & point)
+{
+	if (PlayerPtr == NULL || !RadarSurface->Get_Rect().Is_Point_Within(point)) {
+		return;
+	}
+
+	Coord coord = Radar_Pixel_To_Cell(point);
+	coord.Z = Map.Get_Height_GL(coord);
+	bool shadow = MainWindow && Map.Is_Shrouded(coord);
+	bool fog = MainWindow && Map.FUN_005864A0(coord);
+
+	int hash = (point.X - 5 * point.Y) & 0xFF;
+	RADAR_HASH_TABLE::BucketType & bucket = RadarTrackingTable->Buckets[hash];
+	int count = bucket.Count();
+	RADAR_HASH_TABLE::ObjectType * entries = &bucket[0];
+	TechnoClass * techno = NULL;
+	for (int index = 0; index < count; ++index) {
+		RadarTrackingStruct & track = entries[index].Key;
+		TechnoClass * candidate = track.Object;
+		if (track.Position != point) continue;
+		if (shadow && !candidate->House->Is_Player_Control()) continue;
+		if (candidate->Techno_Type_Class()->IsStealthy && !PlayerPtr->Is_Ally(candidate)) continue;
+		if (candidate->Techno_Type_Class()->IsInsignificant && !candidate->Techno_Type_Class()->IsRadarVisible &&
+		    (candidate->House == NULL || candidate->House->Class->IsMultiplayPassive)) continue;
+
+		techno = candidate;
+		break;
+	}
+
+	if (techno != NULL) {
+		HouseClass * house = techno->House;
+		if (techno->IsDisguised()) {
+			house = techno->GetDisguiseHouse(false);
+		}
+		int color = house ? DSurface::Build_Hicolor_Pixel(house->RemapColorRGB) : Fetch_Scheme_By_Name("LightGrey", 1)->Bright;
+		int flash = techno->RadarFlashTimer;
+		if (flash > 0 && (flash - 1) / Rule->FlashFrameTime % 2 == 1 && techno->House == PlayerPtr) {
+			RadarSurface->Put_Pixel(point, ~color);
+		} else {
+			RadarSurface->Put_Pixel(point, color);
+		}
+	} else if (fog) {
+		RGBClass rgb = DSurface::Deconstruct_Hicolor_Pixel(BackgroundSurface->Get_Pixel(point));
+		RadarSurface->Put_Pixel(point, DSurface::Build_Hicolor_Pixel(rgb.Get_Red() / 2, rgb.Get_Green() / 2, rgb.Get_Blue() / 2));
+	} else if (!shadow) {
+		RadarSurface->Put_Pixel(point, BackgroundSurface->Get_Pixel(point));
+	} else {
+		RadarSurface->Put_Pixel(point, 0);
+	}
+
+	LastDrawRect = Union(LastDrawRect, Rect(point, 1, 1) + RadarRect.Top_Left());
+}
+
 // FUNCTION: GAMEMD 0x00656150
 void RadarClass::Render_Tracked_Objects(void)
 {
@@ -1279,6 +1495,31 @@ void RadarClass::Radar_Cell(Cell const & cell)
 				}
 			}
 		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00656750
+void RadarClass::Resolve_Radar_Point(Point2D const & point, Cell & cell, ObjectClass *& object)
+{
+	Point2D pt = point - RadarRect.TopLeft;
+	RadarTrackingStruct track;
+	track.Position = pt;
+
+	RADAR_HASH_TABLE::BucketType & bucket = RadarTrackingTable->Buckets[track.Hash()];
+	int count = bucket.Count();
+	object = NULL;
+	for (int index = count - 1; index >= 0; --index) {
+		RadarTrackingStruct entry = bucket[index].Key;
+		if (entry == track) {
+			object = entry.Object;
+			break;
+		}
+	}
+
+	if (object != NULL) {
+		cell = object->Destination_Coord();
+	} else {
+		cell = Radar_Pixel_To_Cell(pt);
 	}
 }
 
@@ -1653,6 +1894,193 @@ void RadarClass::Complete_Radar_Refresh(void)
 	}
 }
 
+extern HouseClass * DAT_00AC1198;
+int FUN_004E3320(int side);
+LRESULT FUN_00603DD0(HWND window, bool allied);
+namespace UI
+{
+int StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+}
+void FUN_00731840(int);
+LRESULT FUN_00603DB0(HWND window, bool enabled);
+extern wchar_t DAT_00887734[];
+static const int DiplomacyNameIDs[8] = {1041, 1042, 1043, 1044, 1045, 1046, 1047, 1048};
+static const int DiplomacyKillsIDs[8] = {1049, 1050, 1051, 1052, 1053, 1054, 1055, 1056};
+static const int DiplomacyAllianceIDs[8] = {-1, 1743, 1744, 1745, 1746, 1747, 1748, 1749};
+static const int DiplomacyChatIDs[8] = {-1, 1750, 1751, 1752, 1753, 1762, 1763, 1764};
+
+static inline void Clear_Diplomacy_Label(HWND dialog, int id)
+{
+	HWND item = GetDlgItem(dialog, id);
+	SendMessage(item, 0x4b2, 0, (LPARAM)DAT_00887734);
+}
+static void Hide_Diplomacy_Control(HWND parent, int id)
+{
+	HWND control = GetDlgItem(parent, id);
+	EnableWindow(control, FALSE);
+	ShowWindow(control, SW_HIDE);
+}
+static int Find_Diplomacy_Control(int const (&controls)[8], int id)
+{
+	for (int i = 0; i < 8; ++i) {
+		if (controls[i] == id) {
+			return i;
+		}
+	}
+	return -1;
+}
+static bool Is_Diplomacy_Control(int const (&controls)[8], int id)
+{
+	for (int i = 0; i < 8; ++i) {
+		if (controls[i] == id) {
+			return true;
+		}
+	}
+	return false;
+}
+// FUNCTION: GAMEMD 0x00657DA0
+LRESULT CALLBACK Diplomacy_Dialog_Proc(HWND dialog, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int handled = UI::StandardWndProc(dialog, message, wparam, lparam);
+	if (handled) {
+		return handled;
+	}
+	switch (message) {
+	case 0x497: {
+		int slot;
+		for (slot = 0; slot < 8; ++slot) {
+			Clear_Diplomacy_Label(dialog, DiplomacyNameIDs[slot]);
+			Clear_Diplomacy_Label(dialog, DiplomacyKillsIDs[slot]);
+		}
+		bool hasAllianceControls = false, hasChatControls = false;
+		int count = Houses.Count();
+		for (slot = 1; slot < 8; slot++) {
+			int allianceID = DiplomacyAllianceIDs[slot];
+			HWND allianceControl = GetDlgItem(dialog, allianceID);
+			int chatID = DiplomacyChatIDs[slot];
+			HWND chatControl = GetDlgItem(dialog, chatID);
+			int houseIndex = slot;
+			if (houseIndex == PlayerPtr->HeapID) {
+				houseIndex = 0;
+			}
+			HouseClass * house;
+			if (houseIndex < count && (house = Houses[houseIndex]) != NULL && house->Class->IsMultiplay) {
+				if (!Rule->AlliesAllowed || DAT_00AC1198 == PlayerPtr || Session.unknown_0C == 2) {
+					ShowWindow(allianceControl, SW_HIDE);
+				} else {
+					FUN_00603DB0(allianceControl, true);
+					bool ally = PlayerPtr->Is_Ally(house);
+					SendMessage(allianceControl, BM_SETCHECK, ally, 0);
+					FUN_00603DD0(allianceControl, house->Is_Ally(PlayerPtr));
+					hasAllianceControls = true;
+					if (Unsorted::MuteSWLaunches || !house->FUN_0050B730()) {
+						EnableWindow(allianceControl, FALSE);
+					}
+				}
+				if (!house->FUN_0050B730()) {
+					ShowWindow(chatControl, SW_HIDE);
+				} else {
+					if (!Unsorted::MuteSWLaunches) {
+						SendMessage(chatControl, BM_SETCHECK, Session.PlayerChatEnabled[houseIndex], 0);
+					} else {
+						SendMessage(chatControl, BM_SETCHECK, 1, 0);
+						EnableWindow(chatControl, 0);
+					}
+					hasChatControls = true;
+				}
+			} else {
+				Hide_Diplomacy_Control(dialog, FUN_004E3320(slot));
+				Hide_Diplomacy_Control(dialog, DiplomacyNameIDs[slot]);
+				EnableWindow(allianceControl, 0);
+				ShowWindow(allianceControl, SW_HIDE);
+				EnableWindow(chatControl, 0);
+				ShowWindow(chatControl, SW_HIDE);
+				Hide_Diplomacy_Control(dialog, DiplomacyKillsIDs[slot]);
+			}
+		}
+		if (!hasAllianceControls) {
+			HWND heading = GetDlgItem(dialog, 0x597);
+			ShowWindow(heading, SW_HIDE);
+		}
+		if (!hasChatControls) {
+			HWND heading = GetDlgItem(dialog, 0x425);
+			ShowWindow(heading, SW_HIDE);
+		}
+		HWND taunts = GetDlgItem(dialog, 0x730);
+		if (taunts) {
+			if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+				ShowWindow(taunts, SW_SHOW);
+				if (Session.Type == GAME_IPX) {
+					SendMessage(taunts, BM_SETCHECK, Session.LANTaunts, 0);
+				} else if (Session.Type == GAME_INTERNET) {
+					SendMessage(taunts, BM_SETCHECK, Session.WOLTaunts, 0);
+				}
+			} else {
+				ShowWindow(taunts, SW_HIDE);
+			}
+		}
+		Map.FUN_00658640(dialog);
+		if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+			HWND modeLabel = GetDlgItem(dialog, 0x426);
+			SendMessage(modeLabel, 0x4b2, 0, (LPARAM)Session.MPGameMode->UIName.text());
+		}
+		HWND label = GetDlgItem(dialog, 0x71B);
+		SendMessage(label, 0x4b2, 0, (LPARAM)Session.Options.ScenarioDescription);
+		SetTimer(dialog, 0, 250, NULL);
+		break;
+	}
+	case WM_TIMER:
+		Map.FUN_00658640(dialog);
+		InvalidateRect(dialog, NULL, TRUE);
+		break;
+	case WM_COMMAND: {
+		HWND control = (HWND)lparam;
+		int id = GetDlgCtrlID(control);
+		if (id == 0x423) {
+			if (!HIWORD(wparam)) {
+				KillTimer(dialog, 0);
+				*(int *)GetWindowLong(dialog, DWL_USER) = 0x423;
+			}
+		} else if (Is_Diplomacy_Control(DiplomacyAllianceIDs, id)) {
+			int code = HIWORD(wparam);
+			if (code == 1 || code == 0) {
+				int houseIndex = Find_Diplomacy_Control(DiplomacyAllianceIDs, id);
+				if (houseIndex == PlayerPtr->HeapID) {
+					houseIndex = 0;
+				}
+				if (code == 0) {
+					SendMessage(control, BM_SETCHECK, 1, 0);
+				} else if (code == 1) {
+					SendMessage(control, BM_SETCHECK, 0, 0);
+				}
+				FUN_00731840(houseIndex);
+			}
+		} else if (Is_Diplomacy_Control(DiplomacyChatIDs, id)) {
+			int code = HIWORD(wparam);
+			if (code == 1 || code == 0) {
+				bool listen = HIWORD(wparam) == 1;
+				int houseIndex = Find_Diplomacy_Control(DiplomacyChatIDs, id);
+				if (houseIndex == PlayerPtr->HeapID) {
+					houseIndex = 0;
+				}
+				Session.PlayerChatEnabled[houseIndex] = listen;
+			}
+		} else if (id == 0x730) {
+			int code = HIWORD(wparam);
+			if (code == 1 || code == 0) {
+				if (Session.Type == GAME_IPX) {
+					Session.LANTaunts = code == 1;
+				} else if (Session.Type == GAME_INTERNET) {
+					Session.WOLTaunts = code == 1;
+				}
+			}
+		}
+		break;
+	}
+	}
+	return 0;
+}
+
 // FUNCTION: GAMEMD 0x00658640
 void RadarClass::FUN_00658640(HWND dialog)
 {
@@ -1688,14 +2116,13 @@ class InputManagerClass {
 };
 extern bool UserInputLocked;
 #include "scenario.h"
-LRESULT CALLBACK FUN_00657DA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x006586D0
 void RadarClass::FUN_006586D0(void)
 {
 	int result;
 
-	HWND dialog = UI::BeginDialog(0x73, FUN_00657DA0, 0);
+	HWND dialog = UI::BeginDialog(0x73, Diplomacy_Dialog_Proc, 0);
 	UserInputLocked = true;
 	InputManagerClass::Instance->DoSomething();
 	if (dialog) {

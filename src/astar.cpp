@@ -487,6 +487,100 @@ void AStarClass::Update_Map_Dimensions(Rect const & dimensions)
 	AStarFacingToOffset[FACING_NW]	= -1 - MapCellStride;
 }
 
+inline Cell Blocker_Path_Cell(Cell const & cell, FacingType facing)
+{
+	if (facing == TUNNEL) {
+		TubeType tube = (TubeType)Map[cell].Tube;
+		if (tube != TUBE_NONE) {
+			return(Cell(Tubes[tube]->Exit));
+		}
+		return(Cell(0,0));
+	}
+	return(AdjacentCell[facing] + cell);
+}
+
+static inline Cell Forward_Cell(Cell const & cell, DirType const & dir)
+{
+	FacingType facing = dir.As_Dir8();
+	return Cell(cell + AdjacentCell[facing]);
+}
+
+// FUNCTION: GAMEMD 0x0042ACF0
+void AStarClass::Apply_Path_Collision_Avoidance(FootClass * foot)
+{
+	if (IsAvoidPathCollision) {
+		Cell current_cell = foot->Get_Cell();
+		CellClass * current_cell_ptr = &Map[current_cell];
+		CellClass * next_cell_ptr = &Map[Forward_Cell(current_cell, foot->PrimaryFacing.Current())];
+
+		FootClass * blocker;
+		bool on_bridge;
+		if (next_cell_ptr->IsUnderBridge && (abs(current_cell_ptr->Height - next_cell_ptr->Height) > 3 || foot->IsOnBridge)) {
+			blocker = (FootClass *)next_cell_ptr->Cell_Bridge_Occupier();
+			on_bridge = true;
+		} else {
+			blocker = (FootClass *)next_cell_ptr->Cell_Occupier();
+			on_bridge = false;
+		}
+		if (blocker == NULL) {
+			blocker = Find_Moving_Blocker(next_cell_ptr->CellID, next_cell_ptr->Height + (on_bridge ? BRIDGE_CELL_HEIGHT : 0));
+		}
+
+		bool marked_path = false;
+		const TechnoTypeClass * foot_type = foot->TClass;
+
+		while (blocker != NULL) {
+			if (blocker->RTTI == RTTI_UNIT || blocker->RTTI == RTTI_INFANTRY) {
+
+				int index = 0;
+				Cell blocker_cell = blocker->LastPathingCell;
+				const TechnoTypeClass * blocker_type = blocker->TClass;
+
+				if (Avoidance == AVOIDANCE_HARD || (foot_type != blocker_type && foot_type->MaxSpeed > blocker_type->MaxSpeed && Map.In_Local_Radar(blocker_cell, true))) {
+					if (blocker->RTTI == RTTI_UNIT) {
+						if (blocker->Path[0] == FACING_NONE || blocker->Path[1] == FACING_NONE) {
+							blocker = (FootClass *)blocker->Next;
+							continue;
+						}
+					} else {
+						if (blocker->Path[0] == FACING_NONE || blocker->Path[1] == FACING_NONE || blocker->Path[2] == FACING_NONE) {
+							blocker = (FootClass *)blocker->Next;
+							continue;
+						}
+					}
+				} else {
+					blocker = (FootClass *)blocker->Next;
+					continue;
+				}
+
+				marked_path = true;
+				while (blocker->Path[index] != FACING_NONE && index < ARRAY_SIZE(blocker->Path)) {
+					blocker_cell = Blocker_Path_Cell(blocker_cell, blocker->Path[index]);
+					Map[blocker_cell].IsPredictedPath = !Map[blocker_cell].IsPredictedPath;
+					index++;
+				}
+			}
+			blocker = (FootClass *)blocker->Next;
+		}
+
+		if (!marked_path && Avoidance == AVOIDANCE_SOFT) {
+			Avoidance = AVOIDANCE_NONE;
+			return;
+		}
+
+		for (int x = -2; x < 3; x++) {
+			for (int y = -2; y < 3; y++) {
+				CellClass * cellptr = &Map[next_cell_ptr->Fetch_CellID() + Cell(x, y)];
+				if (cellptr->Flag.Composite && cellptr->Fetch_CellID() != current_cell) {
+					cellptr->IsPredictedPath = !cellptr->IsPredictedPath;
+				}
+			}
+		}
+
+		next_cell_ptr->IsPredictedPath = !next_cell_ptr->IsPredictedPath;
+	}
+}
+
 // FUNCTION: GAMEMD 0x0042B080
 FootClass * AStarClass::Find_Moving_Blocker(Cell const & cell, int cell_height)
 {
@@ -670,6 +764,122 @@ int AStarClass::Try_Diagonal_Shortcut(FootClass * foot, FacingType * moves, unsi
 	return(first_leg_length);
 }
 
+// FUNCTION: GAMEMD 0x0042B7F0
+void AStarClass::Optimize_Moves(PathStruct * path, FootClass * foot)
+{
+	int splice_index;
+	Cell splice_cell;
+	FacingType * moves = path->Command;
+	int max_len = path->Length;
+	max_len--;
+	int scan_index = 0;
+	int prev_turn_index = 0;
+	Cell cursor_cell = path->Start;
+	unsigned int * heights = path->Height;
+	int index;
+	int last_turn_index = 0;
+	int max_axis;
+	int max_axis_extent = 0;
+	Cell path_offset(0, 0);
+	Cell last_turn_cell(0, 0);
+	int max_dev_x = 0;
+	int max_dev_y = 0;
+	Cell candidate_offset(0, 0);
+	while (scan_index < max_len && scan_index < 20) {
+		FacingType move = moves[scan_index];
+		FacingType step = moves[scan_index];
+
+		if (step == TUNNEL) {
+			cursor_cell = Adjacent_Cell(cursor_cell, FACING_N);
+			path_offset = Cell(0, 0);
+			scan_index++;
+			prev_turn_index = scan_index;
+			max_axis_extent = 0;
+			max_dev_x = 0;
+			max_dev_y = 0;
+			candidate_offset = Cell(0, 0);
+			last_turn_index = scan_index;
+			last_turn_cell = Cell(0, 0);
+			continue;
+		}
+
+		if (move == EMPTY) {
+			scan_index++;
+			continue;
+		}
+
+		Cell new_offset = Cell(path_offset + AdjacentCell[(int)move & 7]);
+		Cell new_candidate_offset = AdjacentCell[(int)move & 7] + candidate_offset;
+		if (abs(new_candidate_offset.X) >= max_dev_x && abs(new_candidate_offset.Y) >= max_dev_y) {
+
+			candidate_offset = new_candidate_offset;
+
+			max_dev_x = abs(new_candidate_offset.X);
+			max_dev_y = abs(new_candidate_offset.Y);
+
+			max_axis = max(abs(new_offset.X), abs(new_offset.Y));
+
+			cursor_cell = Adjacent_Cell(cursor_cell, step);
+			if (max_axis_extent < max_axis) {
+				max_axis_extent = max_axis;
+			} else {
+				splice_cell = cursor_cell;
+				Splice_Path(moves, scan_index, prev_turn_index, splice_index, splice_cell);
+
+				Plot_Straight_Line(&moves[splice_index], scan_index - splice_index + 1, splice_cell,
+				Cell(cursor_cell - splice_cell), foot, heights[splice_index], false);
+			}
+
+			path_offset = new_offset;
+			++scan_index;
+		} else {
+			if (last_turn_cell == Cell(0, 0)) {
+				max_dev_x = 0;
+				max_dev_y = 0;
+				last_turn_cell = cursor_cell;
+				last_turn_index = scan_index;
+				candidate_offset = Cell(0, 0);
+			} else {
+				prev_turn_index = last_turn_index;
+				path_offset = last_turn_cell - cursor_cell;
+				max_dev_x = 0;
+				max_dev_y = 0;
+				candidate_offset = Cell(0, 0);
+				max_axis_extent = max(abs(path_offset.X), abs(path_offset.Y));
+				last_turn_cell = cursor_cell;
+				last_turn_index = scan_index;
+			}
+		}
+	}
+	if (last_turn_cell != Cell(0, 0)) {
+		Cell diff = cursor_cell - last_turn_cell;
+		max_axis = max(abs(diff.X), abs(diff.Y));
+		if ((scan_index - last_turn_index - 1) > max_axis) {
+			scan_index--;
+			splice_cell = cursor_cell;
+			Splice_Path(moves, scan_index, last_turn_index, splice_index, splice_cell);
+
+			Plot_Straight_Line(&moves[splice_index], scan_index - splice_index + 1, splice_cell,
+				Cell(cursor_cell - splice_cell), foot, heights[splice_index], true);
+		}
+	}
+	index = 0;
+	int new_len = 0;
+	FacingType dir = moves[index];
+	while (dir != END && index < max_len) {
+		if (dir != EMPTY) {
+			moves[new_len++] = moves[index];
+		}
+		dir = moves[++index];
+	}
+	int fill = new_len;
+	while (fill < path->Length + 1) {
+		moves[fill++] = END;
+	}
+
+	path->Length = new_len + 1;
+}
+
 // FUNCTION: GAMEMD 0x0042BCA0
 void AStarClass::Splice_Path(FacingType * moves, int start_index, int end_index, int & splice_index, Cell & cell)
 {
@@ -710,6 +920,128 @@ void AStarClass::Splice_Path(FacingType * moves, int start_index, int end_index,
 	splice_index = end_index;
 	cell = base;
 	return;
+}
+
+// FUNCTION: GAMEMD 0x0042BE20
+bool AStarClass::Plot_Straight_Line(FacingType * moves, int move_count, Cell const & from, Cell const & to, FootClass * foot, int cell_height, bool fearless)
+{
+	int first_dist;
+	int second_dist;
+	int tries = 0;
+
+	const int x = to.X;
+	const int y = to.Y;
+
+	FacingType first_dir;
+	if (to.X < 0) {
+		first_dir = to.Y < 0 ? FACING_NW : FACING_SW;
+	} else {
+		first_dir = to.Y < 0 ? FACING_NE : FACING_SE;
+	}
+
+	const int sub_xy = (int)to.X - (int)to.Y;
+	const int sum_xy = (int)to.X + (int)to.Y;
+
+	FacingType second_dir;
+	if (sub_xy > 0) {
+		second_dir = sum_xy > 0 ? FACING_E : FACING_N;
+	} else {
+		second_dir = sum_xy > 0 ? FACING_S : FACING_W;
+	}
+
+	int y_dist = abs(y);
+	int x_dist = abs(x);
+
+	first_dist = MIN(x_dist, y_dist);
+	second_dist = MAX(x_dist, y_dist) - first_dist;
+
+	double avoidance = foot->Threat_Avoidance_Value();
+	int threats = 0;
+	HouseClass * house = foot->House;
+	bool avoid_threats = avoidance > 0.00001;
+
+	bool blocked = false;
+
+	while (tries < 2) {
+
+		threats = 0;
+
+		if (first_dist != 0) {
+			int height = cell_height;
+
+			blocked = false;
+			Cell current = from;
+			int count1 = first_dist;
+			int count2 = second_dist;
+
+			while (count1 > 0 && !blocked) {
+
+				current = current + AdjacentCell[(int)first_dir & 7];
+				CellClass * cellptr = &Map[current];
+
+				if (avoid_threats && Map.GetThreatPosed(current, house) * avoidance >= 0.01) {
+					threats++;
+				}
+
+				blocked = foot->Can_Enter_Cell(cellptr, first_dir, height) != MOVE_OK || cellptr->IsPredictedPath || threats > 3 || (!fearless && threats > 0);
+				count1--;
+
+				int step_height = cellptr->Height;
+
+				if (height - step_height == BRIDGE_CELL_HEIGHT) {
+					height = step_height + BRIDGE_CELL_HEIGHT;
+					if (cellptr->IsUnderBridge) {
+						continue;
+					}
+				}
+
+				height = step_height;
+			}
+
+			while (count2 > 0 && !blocked) {
+
+				current = Cell(current + AdjacentCell[(int)second_dir & 7]);
+				CellClass * cellptr = &Map[current];
+
+				if (avoid_threats && Map.GetThreatPosed(current, house) * avoidance >= 0.01) {
+					threats++;
+				}
+
+				blocked = foot->Can_Enter_Cell(cellptr, second_dir, height) != MOVE_OK || cellptr->IsPredictedPath || threats > 3 || (!fearless && threats > 0);
+				count2--;
+
+				int step_height = cellptr->Height;
+
+				if (height - step_height == BRIDGE_CELL_HEIGHT) {
+					height = step_height + BRIDGE_CELL_HEIGHT;
+					if (cellptr->IsUnderBridge) {
+						continue;
+					}
+				}
+
+				height = step_height;
+			}
+		}
+
+		if (first_dist == 0 || blocked) {
+			swap(second_dir, first_dir);
+			swap(second_dist, first_dist);
+		} else {
+			int i;
+			for (i = 0; i < first_dist; i++) {
+				moves[i] = first_dir;
+			}
+			for (i = 0; i < second_dist; i++) {
+				moves[first_dist + i] = second_dir;
+			}
+			for (i = 0; i < move_count - first_dist - second_dist; i++) {
+				moves[first_dist + second_dist + i] = EMPTY;
+			}
+			return(true);
+		}
+		tries++;
+	}
+	return(false);
 }
 
 // FUNCTION: GAMEMD 0x0042C1C0

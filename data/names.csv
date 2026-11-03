@@ -337,3 +337,10 @@ address,name,symbol,evidence
 0x00430F70,BeaconManagerClass::SelectBeacon,?SelectBeacon@BeaconManagerClass@@QAE_NVCoord@@@Z,Mouse_Left_Release passes the coordinate by value. SelectBeacon receives its three components in consecutive stack slots.
 0x00430BA0,BeaconManagerClass::PlaceBeacon,?PlaceBeacon@BeaconManagerClass@@QAEXHVCoord@@H@Z,YRpp BeaconManagerClass::PlaceBeacon. Mouse_Left_Release passes a house ID followed by the coordinate and beacon ID.
 0x0043A0B0,"Vector3::Vector3(float, float, float)",??0Vector3@@QAE@MMM@Z,The three-float constructor emitted by Draw_Tile_Shadows matches all 25 bytes at this address. Both calls in the 0x006D7C00 overload resolve here.
+0x008391FC,DiplomacyNameIDs,_DiplomacyNameIDs,0x00657DA0 indexes these eight diplomacy dialog control IDs by player slot
+0x0083921C,DiplomacyKillsIDs,_DiplomacyKillsIDs,0x00657DA0 indexes these eight diplomacy dialog control IDs by player slot
+0x0083923C,DiplomacyAllianceIDs,_DiplomacyAllianceIDs,0x00657DA0 indexes these eight diplomacy dialog control IDs by player slot
+0x0083925C,DiplomacyChatIDs,_DiplomacyChatIDs,0x00657DA0 indexes these eight diplomacy dialog control IDs by player slot
+0x00ABBEC8,IsometricTileTypeClass::PavedRoads,,CellClass::Is_Tile_Paved_Road reads the base at 0x004866D0 and theater initialization stores the PavedRoads set here
+0x00ABBEC4,IsometricTileTypeClass::PavedRoadEnds,,CellClass::Is_Tile_Paved_Road_End reads the base at 0x004866F0 and theater initialization stores the PavedRoadEnds set here
+0x00B73550,MainWindow,?MainWindow@@3PAUHWND__@@A,Matched ScrollClass::Message_Handler (0x006930A0) passes this HWND to SetCapture and YRpp identifies Game::hWnd at this address
