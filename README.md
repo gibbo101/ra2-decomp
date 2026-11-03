@@ -10,8 +10,8 @@ when the checker shows its compiled bytes equal the original's, and stand-ins su
 over real objects or hard-coded addresses are rejected however well they score.
 `docs/AGENTS.md` holds the rules the agents follow and every lesson learned.
 
-**Status (2 November 2026):** 18,596 of the game's 19,368 functions match byte for byte
-(96%), covering 2.74 MB of its 3.81 MB of game code (72%). Each function is checked on
+**Status (3 November 2026):** 18,693 of the game's 19,362 functions match byte for byte
+(97%), covering 2.79 MB of its 3.81 MB of game code (73%). Each function is checked on
 its own; linking a whole executable that matches comes later. `docs/PLAN.md` has the
 method and a record of every batch.
 
@@ -69,7 +69,9 @@ out of history.
 - [dk8827](https://github.com/dk8827): matched functions in jumpjet, the capture manager,
   house, team, foot, planning, tactical, isotype, techno, the random map generator,
   netshare, the co-op campaign, text and subtitles, the sidebar and radar, custom dialogs
-  and load progress, and the checker's completion checks and function-map callbacks.
+  and load progress, cells, the display, pathfinding, the INI readers, UI commands and
+  the World Domination Tour; brought Westwood's archived assembly into the build with
+  MASM; and added the checker's completion checks and function-map callbacks.
 
 ## You need your own copy of the game
 

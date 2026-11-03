@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 2 November 2026: 18,596 of 19,368 game functions match (96%; 72% of game code
+Status, 3 November 2026: 18,693 of 19,362 game functions match (97%; 73% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,20 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### dk8827's third set of pull requests (3 November 2026)
+
+**97 functions, 58 KB.** Seven pull requests merged once rebuilt on our copy and gated
+together: cells, the display, the tactical map and the audio service (19); pathfinding,
+MapGen and radar (12); the cached INI lookup and typed readers (20); UI selection and
+navigation commands (5); Westwood's archived assembly (31); World Domination Tour
+selection text (2); and planning orders (9). The assembly arrived with tooling:
+setup_toolchain.sh now extracts MASM 6.15 alone from the VC6 Processor Pack (the C++
+compiler stays SP3), check.py assembles each archive file beside its .inc files, and
+functions.py places procedures from the assembled sections, which merges six fragments
+(19,362 game functions). Coord(Point2D, LEPTON) became a base-class initialiser, with
+Fire_Coord still matching. A further one waits on a rebase. Merge gate: 18,693 of
+18,693 (2,729.4 KB).
 
 ### Batches 165 to 167 (2 November 2026)
 
