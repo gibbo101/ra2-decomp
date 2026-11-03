@@ -1105,6 +1105,41 @@ void STDMETHODCALLTYPE FlyLocomotionClass::Acquire_Hunter_Seeker_Target(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x004D0180
+bool FlyLocomotionClass::Needs_To_Land(void)
+{
+	AircraftClass * aircraft = (AircraftClass *)LinkedTo;
+	if (aircraft != NULL) {
+		if (aircraft->Fetch_RTTI() != RTTI_AIRCRAFT) {
+			aircraft = NULL;
+		} else if (aircraft->Is_Locked()) {
+			return(false);
+		}
+	}
+
+	if (IsLanding) {
+		return(true);
+	}
+
+	if (!IsElevating) {
+		return(true);
+	}
+
+	if (aircraft != NULL && aircraft->Class->IsFlyBy) {
+		return(false);
+	}
+
+	IFlyControlPtr flyctrl(LinkedTo);
+	if (flyctrl != NULL && !flyctrl->Is_Strafe() && !flyctrl->Is_Fighter()) {
+		return(true);
+	}
+
+	if (LinkedTo->Ammo == 0) {
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x004D02B0
 bool FlyLocomotionClass::Is_Locked_To_Straight_Flight(void)
 {

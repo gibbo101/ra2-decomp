@@ -105,6 +105,154 @@ SideType FUN_006A46D0(char const * name);
 // SYNTHETIC: GAMEMD 0x00421E80 SYMBOL
 // _$E142
 
+// FUNCTION: GAMEMD 0x00421EA0
+AnimClass::AnimClass(AnimTypeClass const * type, Coord const & coord, int timedelay, int loop, ShapeFlags_Type flags, int zadjust, bool reverse) :
+	BASECLASS(),
+	Animation(),
+	Type((AnimTypeClass *)type),
+	OwnerObject(NULL),
+	unknown_D0(-1),
+	LightConvert(NULL),
+	LightConvertIndex(-1),
+	TintColor(1000),
+	ZAdjust(0),
+	YSortAdjust(0),
+	FlamingGuyCoords(COORD_NONE),
+	FlamingGuyRetries(0),
+	IsBuildingAnim(false),
+	UnderTemporal(false),
+	Paused(false),
+	Unpaused(false),
+	PausedAnimFrame(0),
+	Reverse(false),
+	Bounce(),
+	TranslucencyLevel(0),
+	TimeToDie(false),
+	AttachedBullet(NULL),
+	Owner(NULL),
+	LoopDelay(timedelay),
+	Accum(1.0),
+	AnimFlags(flags),
+	HasExtras(false),
+	RemainingIterations(1),
+	UseCellLightConvert(false),
+	DeleteOnMapCleanup(false),
+	IsInert(false),
+	IsFogged(false),
+	FlamingGuyExpire(false),
+	UnableToContinue(false),
+	SkipProcessOnce(true),
+	Invisible(false),
+	PowerOff(false)
+{
+	PaletteName[0] = 0;
+	Create_ID();
+	StartSoundAudioController.FUN_00405BE0();
+	StopSoundAudioController.FUN_00405BE0();
+	Array.Add(this);
+	IsActive = true;
+
+	if (Type == NULL) {
+		Delete_Me();
+		return;
+	}
+
+	YSortAdjust = Type->YSortAdjust;
+
+	if (Type->End == -1) {
+		Type->End = ((ShapeSet const *)Type->Get_Image_Data())->Get_Count();
+		if (Type->Shadow) {
+			Type->End /= 2;
+		}
+	}
+	if (Type->LoopEnd == -1) {
+		Type->LoopEnd = Type->End;
+	}
+
+	if (zadjust != 0) {
+		ZAdjust = zadjust;
+	} else {
+		ZAdjust = Type->ZAdjust;
+	}
+
+	int delay = Type->Rate;
+	if (Type->RandomRate.Min != 0 || Type->RandomRate.Max != 0) {
+		if (Type->RandomRate.Min <= Type->RandomRate.Max) {
+			delay = Random_Pick(Type->RandomRate.Min, Type->RandomRate.Max);
+		}
+	}
+	if (Type->Normalized) {
+		Animation.Set_Rate(Options.Normalize_Delay(delay));
+	} else {
+		Animation.Set_Rate(delay);
+	}
+
+	Animation.Set_Stage(0);
+
+	if (Type->Layer == LAYER_AIR || Type->Layer == LAYER_TOP) {
+		Height = Rule->FlightLevel;
+	} else {
+		HeightAGL = 0;
+	}
+
+	if (reverse) {
+		Reverse = true;
+	}
+	if (Type->Reverse || Reverse) {
+		Animation.Set_Stage(Type->LoopEnd - 1);
+		Animation.Set_Step(-Animation.Fetch_Step());
+	}
+
+	if (!Type->Bouncer && !Type->IsMeteor) {
+		BASECLASS::Unlimbo(coord, DIR_N);
+	} else {
+		HasExtras = true;
+		if (Type->IsMeteor) {
+			Vector3 velocity((abs(Scen->RandomNumber) % int(Type->MaxXYVel * 2)) - Type->MaxXYVel,
+							(float)((abs(Scen->RandomNumber) % int(Type->MaxXYVel * 2)) - Type->MaxXYVel), Type->MinZVel);
+
+			float negy = -velocity.Y;
+			if (velocity.X < negy) {
+				velocity.X = -velocity.X;
+				velocity.Y = -velocity.Y;
+			}
+
+			int time = 70 - abs(Scen->RandomNumber() % 20);
+			int x = coord.X - time * velocity.X;
+			int y = coord.Y - time * velocity.Y;
+			int z = coord.Z - time * velocity.Z;
+			Coord ucoord(x, y, z);
+			BASECLASS::Unlimbo(ucoord, DIR_N);
+
+			Bounce.Init(Center_Coord(), Type->Elasticity, 1.4f, 0.0, velocity, 0.0);
+		} else {
+			BASECLASS::Unlimbo(coord, DIR_N);
+
+			Coord center = Center_Coord() + Coord(0, 0, 10);
+			int r1 = Scen->RandomNumber, r2 = Scen->RandomNumber, r3 = Scen->RandomNumber;
+			float x = (abs(r3) % int(Type->MaxXYVel * 2)) - Type->MaxXYVel;
+			float y = (abs(r2) % int(Type->MaxXYVel * 2)) - Type->MaxXYVel;
+			float z = (abs(r1) % int(Type->MaxZVel - Type->MinZVel + 1.0)) + Type->MinZVel;
+
+			Vector3 velocity(x, y, z);
+			Bounce.Init(center, Type->Elasticity, 1.4f, 0.0, velocity, 0.0);
+		}
+	}
+
+	if (Type == Rule->FlareAnim) {
+		Map.RevealArea2((Coord *)&coord, Rule->DropZoneRadius / 256, PlayerPtr, 0, 0, 0, 1, 0);
+		Map.RevealArea2((Coord *)&coord, Rule->DropZoneRadius / 256, PlayerPtr, 0, 0, 0, 1, 1);
+	}
+
+	loop = (loop > 1) ? loop : 1;
+	RemainingIterations = loop * Type->LoopCount;
+	RemainingIterations = (RemainingIterations > 1) ? RemainingIterations : 1;
+
+	if (LoopDelay == 0) {
+		Start();
+	}
+}
+
 // FUNCTION: GAMEMD 0x00422720
 AnimClass::AnimClass(void) :
 	BASECLASS(),

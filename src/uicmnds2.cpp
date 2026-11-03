@@ -93,8 +93,80 @@ char const * __fastcall StringTable::GetLanguageName(CSFLanguages language)
 	return "unknown";
 }
 
-extern void * DAT_00B1CF8C;
+#include "ccfile.h"
+#include "session.h"
+#include "mapgen.h"
+
+extern char DAT_00B13EB0[];
 void __cdecl FUN_004068E0(char const * format, ...);
+
+static inline int _Read_Header(char const * name)
+{
+	CSFHeader header;
+	CCFileClass file(name);
+	int ok = 0;
+	if (!file.Is_Available(0) || !file.Open()) {
+		return 0;
+	}
+	if (file.Read(&header, sizeof(header)) == sizeof(CSFHeader) && header.Signature == CSF_SIGNATURE) {
+		StringTable::LabelCount = header.NumLabels;
+		StringTable::ValueCount = header.NumValues;
+		StringTable::Language = (CSFLanguages)((header.CSFVersion < 2) ? 0 : header.Language);
+		ok = 1;
+	}
+	return ok;
+}
+
+// FUNCTION: GAMEMD 0x007346A0
+int __fastcall StringTable::LoadFile(char const * filename)
+{
+	if (IsLoaded) {
+		return 1;
+	}
+	if (!filename || !*filename) {
+		return 0;
+	}
+	FileName = (char *)filename;
+	IsLoaded = 1;
+	MaxLabelLen = 0;
+	strcpy(DAT_00B13EB0, filename);
+	char * dot = strchr(DAT_00B13EB0, '.');
+	if (dot) {
+		*dot = '\0';
+	}
+	strcat(DAT_00B13EB0, ".csf");
+
+	int ok = _Read_Header(DAT_00B13EB0);
+	if (!ok || !ValueCount || !LabelCount) {
+		return 0;
+	}
+
+	Labels = new CSFLabel[LabelCount];
+	if (!Labels) {
+		return 0;
+	}
+	memset(Labels, 0, LabelCount * sizeof(CSFLabel));
+	Values = new wchar_t *[ValueCount];
+	if (!Values) {
+		return 0;
+	}
+	memset(Values, 0, ValueCount * sizeof(wchar_t *));
+	ExtraValues = new char *[ValueCount];
+	if (!ExtraValues) {
+		return 0;
+	}
+	memset(ExtraValues, 0, ValueCount * sizeof(char *));
+
+	ReadFile(DAT_00B13EB0);
+	qsort(Labels, LabelCount, sizeof(CSFLabel), (int (__cdecl *)(const void *, const void *))stricmp);
+	FUN_004068E0("MaxLabelLen = %d\n", MaxLabelLen);
+	FUN_004068E0("Language: %s\n", GetLanguageName(Language));
+	Session.Load_Call_Wait_Strings();
+	RandomMapGen.SeedData.Reload_Description();
+	return 1;
+}
+
+extern void * DAT_00B1CF8C;
 
 // FUNCTION: GAMEMD 0x00734D30
 void StringTable::Unload(void)

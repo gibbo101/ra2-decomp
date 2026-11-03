@@ -328,6 +328,9 @@ Each entry: what the diff showed, then the source change that fixed it.
 - Byte-identical template instances with no vtable (`_com_ptr_t::_Release`) can be folded:
   label one only from a caller whose type proves it, or leave it unlabelled. The IID the
   caller passes to QueryInterface names the interface (each GUID is in the exe twice).
+- Two byte-identical template instances from one file (TVelocity2D::Speed and
+  TVelocity3D::Horizontal_Speed) follow VC6's emission order: compile their caller with no
+  explicit instantiation and read the COMDAT order with tools/coff.py.
 - A null test then `push 1; call` on a class with no virtual destructor is `delete p`:
   annotate the callee as SYNTHETIC `??_GClass@@QAEPAXI@Z`, never a new member.
 - One address called with two argument types is two overloads the linker folded: declare

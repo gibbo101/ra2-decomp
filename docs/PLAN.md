@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 3 November 2026: 18,761 of 19,362 game functions match (97%; 75% of game code
+Status, 3 November 2026: 18,768 of 19,362 game functions match (97%; 75% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,16 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 180 to 182 (3 November 2026)
+
+**7 functions.** The three batches retried 53 near misses of 80 to 90%. They matched
+AnimClass's constructor, BuildingClass::Mark (a clean port of TibSun's, once
+Set_Anim_Coords adds its pixel offset first), FlyLocomotionClass::Needs_To_Land,
+MapGeneratorClass::Generate_Urban_Buildings (its banked source matched unchanged after
+other landings), StringTable::LoadFile, UnVQ2_4x4_Table and the quaternion product. The
+labels of TVelocity2D::Speed and TVelocity3D::Horizontal_Speed, byte-identical twins, were
+swapped to follow VC6's emission order. Merge gate: 18,768 of 18,768 (2,788.8 KB).
 
 ### Batches 177 to 179 (3 November 2026)
 

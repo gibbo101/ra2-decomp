@@ -764,6 +764,140 @@ int BuildingClass::Shape_Number(void) const
 	return(shapenum);
 }
 
+// FUNCTION: GAMEMD 0x0043F180
+bool BuildingClass::Mark(MarkType mark)
+{
+	if (BASECLASS::Mark(mark)) {
+		Cell cell = PositionCell;
+
+		switch (mark) {
+			case MARK_UP:
+				Map.RemoveContentAt(&cell, this);
+				break;
+
+			case MARK_DOWN:
+			case MARK_DOWN_FORCED:
+
+				if (Class->ToTile != NULL) {
+					if (Can_Enter_Cell(&Map[cell]) == MOVE_OK) {
+						int w = Class->Width();
+						int h = Class->Height(false);
+						bool any_created = false;
+						int x;
+						int y;
+
+						for (y = 0; y < h; y++) {
+							for (x = 0; x < w; x++) {
+								Cell newcell = cell + Cell(x, y);
+								if (Map[newcell].Is_Clear_To_Build(Class->Speed, Class, House)) {
+									if (Map[newcell].ITType != Class->ToTile->HeapID && Map[newcell].Land_Type() != LAND_ROAD) {
+										CellClass * cptr = &Map[newcell];
+										if (cptr->Smudge != SMUDGE_NONE) {
+											SmudgeTypeClass * sptr = SmudgeTypes[cptr->Smudge];
+											Cell position = cptr->CellID;
+											int width = sptr->Width;
+											int xx = cptr->SmudgeData % width;
+											int yy = cptr->SmudgeData / width;
+											position -= Cell(xx, yy);
+											for (int smy = 0; smy < sptr->Height; smy++) {
+												for (int smx = 0; smx < sptr->Width; smx++) {
+													Map[position + Cell(smx, smy)].Smudge = SMUDGE_NONE;
+													Map[position + Cell(smx, smy)].Register_As_Dirty();
+												}
+											}
+										}
+										IsometricTileClass * iptr = (IsometricTileClass *)Class->ToTile->Create_One_Of(House);
+										iptr->Unlimbo(Coord(newcell));
+										if (House == PlayerPtr) {
+											Map.RevealArea2(&Coord(newcell), 1, PlayerPtr, false, false, false, true, false);
+											Map.RevealArea2(&Coord(newcell), 1, PlayerPtr, false, false, false, true, true);
+										}
+										any_created = true;
+									}
+								}
+							}
+						}
+
+						for (y = 0; y < h + 2; y++) {
+							for (x = 0; x < w + 2; x++) {
+								Cell snewcell = cell + Cell(x - 1, y - 1);
+								Map[snewcell].Register_For_Redraw();
+							}
+						}
+
+						if (any_created) {
+							SendToEachLink(RADIO_OVER_OUT);
+							Delete_Me();
+							return(true);
+						} else {
+							BASECLASS::Mark(MARK_UP);
+							return(false);
+						}
+					} else {
+						BASECLASS::Mark(MARK_UP);
+						return(false);
+					}
+				} else if (Class->IsWall) {
+					new OverlayClass(Class->ToOverlay, cell, House->Class->House);
+					SendToEachLink(RADIO_OVER_OUT);
+					Delete_Me();
+
+				} else {
+					if (mark != MARK_DOWN_FORCED) {
+						if (Can_Enter_Cell(&Map[cell]) != MOVE_OK) {
+							return(false);
+						}
+					}
+					Map.AddContentAt(&cell, this);
+					PositionCoord = Class->Coord_Fixup(Coord(cell));
+					Set_Anim_Coords();
+
+					int w = Class->Width();
+					int h = Class->Height(false);
+					int x;
+					int y;
+					for (y = 0; y < h; y++) {
+						for (x = 0; x < w; x++) {
+							Cell newcell = cell + Cell(x, y);
+							CellClass * cptr = &Map[newcell];
+							if (cptr->Smudge != SMUDGE_NONE) {
+								SmudgeTypeClass * sptr = SmudgeTypes[cptr->Smudge];
+								Cell position = cptr->CellID;
+								int width = sptr->Width;
+								int xx = cptr->SmudgeData % width;
+								int yy = cptr->SmudgeData / width;
+								position -= Cell(xx, yy);
+								for (int smy = 0; smy < sptr->Height; smy++) {
+									for (int smx = 0; smx < sptr->Width; smx++) {
+										Map[position + Cell(smx, smy)].Smudge = SMUDGE_NONE;
+										Map[position + Cell(smx, smy)].Register_As_Dirty();
+									}
+								}
+							}
+						}
+					}
+
+					for (y = 0; y < h + 2; y++) {
+						for (x = 0; x < w + 2; x++) {
+							Cell snewcell = cell + Cell(x - 1, y - 1);
+							Map[snewcell].Register_For_Redraw();
+						}
+					}
+				}
+				break;
+
+			case MARK_CHANGE:
+				Update_Anim_Appearance();
+				break;
+
+			default:
+				break;
+		}
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x00440580
 bool BuildingClass::Unlimbo(Coord const & coord, Dir256 dir)
 {
@@ -4107,7 +4241,7 @@ void BuildingClass::Set_Anim_Coords(void)
 	for (int i = 0; i < BANIM_COUNT; i++) {
 		AnimClass * anim = Anims[i];
 		if (anim != NULL) {
-			anim->Set_Coord(render + TacticalMap->Pixel_To_Coord_Absolute(Class->AnimData[i].Location));
+			anim->Set_Coord(TacticalMap->Pixel_To_Coord_Absolute(Class->AnimData[i].Location) + render);
 		}
 	}
 }

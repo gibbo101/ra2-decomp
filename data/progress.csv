@@ -649,11 +649,11 @@ address,name,result,size,source,symbol
 0x0041C230,??0?$TPoint3D@H@@QAE@HHH@Z,MATCH,25,src/aircraft.cpp,??0?$TPoint3D@H@@QAE@HHH@Z
 0x0041C250,?CreateInstance@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@QAEJABU_GUID@@PAUIUnknown@@K@Z,MATCH,136,src/aircraft.cpp,?CreateInstance@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@QAEJABU_GUID@@PAUIUnknown@@K@Z
 0x0041C2E0,?Get_Pitch@?$TVelocity3D@N@@QBE?AVDirType@@XZ,MATCH,99,src/aircraft.cpp,?Get_Pitch@?$TVelocity3D@N@@QBE?AVDirType@@XZ
-0x0041C350,?Speed@?$TVelocity2D@N@@QBENXZ,MATCH,34,src/aircraft.cpp,?Speed@?$TVelocity2D@N@@QBENXZ
+0x0041C350,?Horizontal_Speed@?$TVelocity3D@N@@QBENXZ,MATCH,34,src/aircraft.cpp,?Horizontal_Speed@?$TVelocity3D@N@@QBENXZ
 0x0041C380,?Length@?$TPoint3D@H@@QBEHXZ,MATCH,49,src/aircraft.cpp,?Length@?$TPoint3D@H@@QBEHXZ
 0x0041C3C0,?Speed@?$TVelocity3D@N@@QBENXZ,MATCH,45,src/aircraft.cpp,?Speed@?$TVelocity3D@N@@QBENXZ
 0x0041C3F0,?Nonzero_Check@?$TVelocity3D@N@@QAEXXZ,MATCH,61,src/aircraft.cpp,?Nonzero_Check@?$TVelocity3D@N@@QAEXXZ
-0x0041C430,?Horizontal_Speed@?$TVelocity3D@N@@QBENXZ,MATCH,34,src/aircraft.cpp,?Horizontal_Speed@?$TVelocity3D@N@@QBENXZ
+0x0041C430,?Speed@?$TVelocity2D@N@@QBENXZ,MATCH,34,src/aircraft.cpp,?Speed@?$TVelocity2D@N@@QBENXZ
 0x0041C460,?Nonzero_Check@?$TVelocity2D@N@@QAEXXZ,MATCH,45,src/aircraft.cpp,?Nonzero_Check@?$TVelocity2D@N@@QAEXXZ
 0x0041C490,??_EWaypointClass@@QAEPAXI@Z,MATCH,97,src/aircraft.cpp,??_EWaypointClass@@QAEPAXI@Z
 0x0041C500,?Increase_Table_Size@?$IndexClass@HPAVAbstractClass@@@@AAE_NH@Z,MATCH,134,src/aircraft.cpp,?Increase_Table_Size@?$IndexClass@HPAVAbstractClass@@@@AAE_NH@Z
@@ -885,6 +885,7 @@ address,name,result,size,source,symbol
 0x00421E50,_$E136,MATCH,15,src/anim.cpp,_$E136
 0x00421E60,_$E139,MATCH,18,src/anim.cpp,_$E139
 0x00421E80,_$E142,MATCH,26,src/anim.cpp,_$E142
+0x00421EA0,AnimClass::AnimClass,MATCH,2162,src/anim.cpp,??0AnimClass@@QAE@PBVAnimTypeClass@@ABVCoord@@HHW4ShapeFlags_Type@@H_N@Z
 0x00422720,AnimClass::AnimClass,MATCH,439,src/anim.cpp,??0AnimClass@@QAE@XZ
 0x00425530,AnimClass::Limbo,MATCH,126,src/anim.cpp,?Limbo@AnimClass@@UAE_NXZ
 0x004228E0,AnimClass::~AnimClass,MATCH,573,src/anim.cpp,??1AnimClass@@UAE@XZ
@@ -1516,6 +1517,7 @@ address,name,result,size,source,symbol
 0x0043EE50,BuildingClass::Set_Turret_Frame,MATCH,93,src/building.cpp,?Set_Turret_Frame@BuildingClass@@QAEHXZ
 0x0043EEB0,BuildingClass::Set_Turret_Index,MATCH,215,src/building.cpp,?Set_Turret_Index@BuildingClass@@QAEXH@Z
 0x0043EF90,BuildingClass::Shape_Number,MATCH,484,src/building.cpp,?Shape_Number@BuildingClass@@QBEHXZ
+0x0043F180,BuildingClass::Mark,MATCH,2460,src/building.cpp,?Mark@BuildingClass@@UAE_NW4MarkType@@@Z
 0x00440580,BuildingClass::Unlimbo,MATCH,4201,src/building.cpp,?Unlimbo@BuildingClass@@UAE_NABVCoord@@W4Dir256@@@Z
 0x004415F0,BuildingClass::Do_Destruction,MATCH,2407,src/building.cpp,?Do_Destruction@BuildingClass@@UAEXPAVTechnoClass@@0_NPBVCell@@@Z
 0x00441F60,BuildingClass::AfterDestruction,MATCH,718,src/building.cpp,?AfterDestruction@BuildingClass@@QAEXXZ
@@ -4367,6 +4369,7 @@ address,name,result,size,source,symbol
 0x004CFE20,FlyLocomotionClass::Apparent_Speed,MATCH,34,src/fly.cpp,?Apparent_Speed@FlyLocomotionClass@@UAGHXZ
 0x004CFE50,FlyLocomotionClass::Get_Status,MATCH,47,src/fly.cpp,?Get_Status@FlyLocomotionClass@@UAGHXZ
 0x004CFE80,FlyLocomotionClass::Acquire_Hunter_Seeker_Target,MATCH,754,src/fly.cpp,?Acquire_Hunter_Seeker_Target@FlyLocomotionClass@@UAGXXZ
+0x004D0180,FlyLocomotionClass::Needs_To_Land,MATCH,303,src/fly.cpp,?Needs_To_Land@FlyLocomotionClass@@QAE_NXZ
 0x004D02B0,FlyLocomotionClass::Is_Locked_To_Straight_Flight,MATCH,215,src/fly.cpp,?Is_Locked_To_Straight_Flight@FlyLocomotionClass@@QAE_NXZ
 0x004D0390,FlyLocomotionClass::Fetch_Object_Size,MATCH,6,src/fly.cpp,?Fetch_Object_Size@FlyLocomotionClass@@UBEHXZ
 0x004D03A0,??_GFlyLocomotionClass@@UAEPAXI@Z,MATCH,43,src/fly.cpp,??_GFlyLocomotionClass@@UAEPAXI@Z
@@ -8258,6 +8261,7 @@ address,name,result,size,source,symbol
 0x005A5020,MapGeneratorClass::Generate_Urban_Areas,MATCH,827,src/mapgen.cpp,?Generate_Urban_Areas@MapGeneratorClass@@QAEXXZ
 0x005A5360,MapGeneratorClass::Create_Urban_Area,MATCH,1913,src/mapgen.cpp,?Create_Urban_Area@MapGeneratorClass@@QAEPAV?$DynamicVectorClass@VCell@@@@ABVCell@@H@Z
 0x005A5AE0,MapGeneratorClass::Get_Urban_Score,MATCH,107,src/mapgen.cpp,?Get_Urban_Score@MapGeneratorClass@@QBENABVCell@@0@Z
+0x005A6510,MapGeneratorClass::Generate_Urban_Buildings,MATCH,1036,src/mapgen.cpp,?Generate_Urban_Buildings@MapGeneratorClass@@QAEXABV?$DynamicVectorClass@VCell@@@@@Z
 0x005A6920,MapGeneratorClass::Generate_Urban_Units,MATCH,640,src/mapgen.cpp,?Generate_Urban_Units@MapGeneratorClass@@QAEXABV?$DynamicVectorClass@VCell@@@@@Z
 0x005A6BA0,MapGeneratorClass::Is_Area_Cliff_Free,MATCH,110,src/mapgen.cpp,?Is_Area_Cliff_Free@MapGeneratorClass@@SI_NABVCell@@@Z
 0x005A6C10,MapGeneratorClass::Place_Tile,MATCH,358,src/mapgen.cpp,?Place_Tile@MapGeneratorClass@@SIXW4IsometricTileType@@ABVCell@@HH@Z
@@ -11314,6 +11318,7 @@ address,name,result,size,source,symbol
 0x00645D00,Quaternion::operator[],MATCH,10,src/quat.cpp,??AQuaternion@@QAEAAMH@Z
 0x00645D10,Quaternion::operator[],MATCH,10,src/quat.cpp,??AQuaternion@@QBE?BMH@Z
 0x00645D20,Quaternion::operator=,MATCH,59,src/quat.cpp,??4Quaternion@@QAE?AV0@ABV0@@Z
+0x00645ED0,operator*,MATCH,367,src/quat.cpp,??D@YI?AVQuaternion@@ABV0@0@Z
 0x00646040,operator/,MATCH,122,src/quat.cpp,??K@YI?AVQuaternion@@ABV0@0@Z
 0x006460C0,Inverse,MATCH,69,src/quat.cpp,?Inverse@@YI?AVQuaternion@@ABV1@@Z
 0x00646110,Conjugate,MATCH,69,src/quat.cpp,?Conjugate@@YI?AVQuaternion@@ABV1@@Z
@@ -15947,6 +15952,7 @@ address,name,result,size,source,symbol
 0x00734620,_$E41,MATCH,23,src/uicmnds2.cpp,_$E41
 0x00734640,StringTable::GetLanguage,MATCH,34,src/uicmnds2.cpp,?GetLanguage@StringTable@@SIPBUCSFLanguage@@W4CSFLanguages@@@Z
 0x00734670,StringTable::GetLanguageName,MATCH,44,src/uicmnds2.cpp,?GetLanguageName@StringTable@@SIPBDW4CSFLanguages@@@Z
+0x007346A0,StringTable::LoadFile,MATCH,752,src/uicmnds2.cpp,?LoadFile@StringTable@@SIHPBD@Z
 0x00734D30,StringTable::Unload,MATCH,246,src/uicmnds2.cpp,?Unload@StringTable@@SIXXZ
 0x00734E30,FUN_00734E30,MATCH,34,src/uicmnds2.cpp,?FUN_00734E30@@YIHPBG@Z
 0x00734E60,StringTable::LoadString,MATCH,180,src/uicmnds2.cpp,?LoadString@StringTable@@SIPBGPBDPAPAD0H@Z
@@ -16121,6 +16127,7 @@ address,name,result,size,source,symbol
 0x00748220,Hicolor_Init_Table,MATCH,320,src/unvqtblc.cpp,?Hicolor_Init_Table@@YI_NH@Z
 0x00748360,Hicolor_Clear_Table,MATCH,29,src/unvqtblc.cpp,?Hicolor_Clear_Table@@YIXXZ
 0x00748380,Hicolor_Translate,MATCH,34,src/unvqtblc.cpp,?Hicolor_Translate@@YIXPAXH@Z
+0x007483B0,UnVQ2_4x4_Table,MATCH,916,src/unvqtblc.cpp,?UnVQ2_4x4_Table@@YAXPAE00KKK@Z
 0x00748FD0,UnitTrackerClass::UnitTrackerClass,MATCH,49,src/utracker.cpp,??0UnitTrackerClass@@QAE@XZ
 0x00749010,UnitTrackerClass::~UnitTrackerClass,MATCH,1,src/utracker.cpp,??1UnitTrackerClass@@QAE@XZ
 0x00749020,UnitTrackerClass::Increment_Unit_Total,MATCH,20,src/utracker.cpp,?Increment_Unit_Total@UnitTrackerClass@@QAEXH@Z

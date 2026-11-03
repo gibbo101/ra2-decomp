@@ -5183,6 +5183,78 @@ double MapGeneratorClass::Get_Urban_Score(const Cell & cell1, const Cell & cell2
 	return(RMG_RANDOM_DOUBLE(_random_range) + dist);
 }
 
+extern char const * DAT_0082B138[18];
+
+// FUNCTION: GAMEMD 0x005A6510
+void MapGeneratorClass::Generate_Urban_Buildings(const DynamicVectorClass<Cell> & cells)
+{
+	int count = Pick_Random_UInt(cells.Count() / 20, cells.Count() / 10) / 2;
+	int tries = 0;
+	int placed = 0;
+
+	DynamicVectorClass<char *> names;
+	for (int i = 0; i < ARRAY_SIZE(DAT_0082B138); i++) {
+		names.Add((char *&)DAT_0082B138[i]);
+	}
+
+	HouseClass * neutral = House_From_HousesType(HouseTypeClass::From_Name("Neutral"));
+
+	if (count > 0) {
+		while (true) {
+			if (tries >= 2 * count || names.Count() <= 1) {
+				break;
+			}
+			int name_index = Pick_Random_UInt(0, names.Count() - 1);
+			StructType bindex = BuildingTypeClass::From_Name(names[name_index]);
+			BuildingClass * building = new BuildingClass(BuildingTypes[bindex], neutral);
+
+			int tries_here = 0;
+			bool was_placed = false;
+			while (!was_placed) {
+				if (tries_here >= 60) {
+					break;
+				}
+
+				Cell building_cell = cells[Pick_Random_UInt(0, cells.Count() - 1)];
+
+				Cell const * list = building->Class->Occupy_List(true);
+				bool ok = true;
+				while (*list != REFRESH_EOL) {
+					CellClass * cellptr = &Map[building_cell + *list];
+					if (!cellptr->Is_Tile_Pavement() && !cellptr->Is_Tile_Misc_Pavement() || cellptr->Cell_Occupier() != NULL || cellptr->Land_Type() == LAND_ROCK || !Map.In_Local_Radar(cellptr)) {
+						ok = false;
+					}
+					list++;
+					if (!ok) break;
+				}
+
+				if (ok) {
+					if (building->Unlimbo(Coord(building_cell, 0))) {
+						building->Strength = building->Class->MaxStrength;
+						building->EstimatedHealth = building->Strength;
+						building->Mark(MARK_CHANGE);
+						was_placed = true;
+						placed++;
+						if (name_index > 17) {
+							names.Delete_Index(name_index);
+						}
+					}
+				}
+				tries_here++;
+			}
+
+			if (!was_placed) {
+				delete building;
+			}
+
+			tries++;
+			if (placed >= count) {
+				break;
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x005A6920
 void MapGeneratorClass::Generate_Urban_Units(const DynamicVectorClass<Cell> & cells)
 {

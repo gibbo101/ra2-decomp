@@ -2831,7 +2831,7 @@ ObjectTypeClass const * AircraftClass::Class_Of(void) const
 // ?Get_Pitch@?$TVelocity3D@N@@QBE?AVDirType@@XZ
 
 // TEMPLATE: GAMEMD 0x0041C350
-// ?Speed@?$TVelocity2D@N@@QBENXZ
+// ?Horizontal_Speed@?$TVelocity3D@N@@QBENXZ
 
 // TEMPLATE: GAMEMD 0x0041C380
 // ?Length@?$TPoint3D@H@@QBEHXZ
@@ -2843,7 +2843,7 @@ ObjectTypeClass const * AircraftClass::Class_Of(void) const
 // ?Nonzero_Check@?$TVelocity3D@N@@QAEXXZ
 
 // TEMPLATE: GAMEMD 0x0041C430
-// ?Horizontal_Speed@?$TVelocity3D@N@@QBENXZ
+// ?Speed@?$TVelocity2D@N@@QBENXZ
 
 // TEMPLATE: GAMEMD 0x0041C460
 // ?Nonzero_Check@?$TVelocity2D@N@@QAEXXZ
