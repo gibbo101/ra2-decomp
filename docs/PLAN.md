@@ -1116,16 +1116,19 @@ of game functions.
 
 ### dk8827's sixth set of pull requests (4 November 2026)
 
-**1 function, 10 tool changes.** Eleven pull requests were merged once gated together:
+**1 function, 11 tool changes.** Twelve pull requests were merged once gated together:
 - ShipLocomotionClass::Is_Piggybacking.
 - In the checker:
-  - Partial-match diffs read call targets from our own relocations, so a shifted call no
-    longer shows a false target.
+  - Partial-match diffs align the two listings first and label each jump by its retail
+    destination and each call by its target, so a shifted call no longer shows a false
+    target. `--score` is a little stricter as a result.
   - Overload lookups are indexed once per object.
   - COFF function extents are built once per object.
 - The gate takes `--baseline COMMIT`, which also protects the matches recorded at a trusted
-  revision, and `tools/build_receipt.py` rechecks a captured cold build against changed
-  address tables.
+  revision. `tools/build_receipt.py` rechecks a captured cold build against changed
+  address tables, and can reuse the objects of modules whose sources and headers are
+  unchanged.
+- `tools/emitted.py` lists unrecorded functions that a module already emits byte for byte.
 - The permuter now:
   - checks the call targets of a match;
   - rewrites operators only on scalar operands;
