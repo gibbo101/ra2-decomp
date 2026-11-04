@@ -11,7 +11,7 @@ ADDRESS = 0x402000
 CALLEE = 0x405000
 
 
-def compare_call(original_prefix, compiled_prefix, original_suffix=b"\xc3", target=CALLEE):
+def compare_call(original_prefix, compiled_prefix, original_suffix=b"\xc3", target=CALLEE, names=None):
     disp = CALLEE - (ADDRESS + len(original_prefix) + 5)
     original = original_prefix + b"\xe8" + struct.pack("<i", disp) + original_suffix
     compiled = compiled_prefix + b"\xe8\0\0\0\0\xc3"
@@ -22,7 +22,7 @@ def compare_call(original_prefix, compiled_prefix, original_suffix=b"\xc3", targ
     obj.symbols = [Symbol(0, "_caller", 0, 1, 0x20, STORAGE_EXTERNAL),
                    Symbol(1, "_callee", 0, 0, 0x20, STORAGE_EXTERNAL)]
     obj.by_index = {s.index: s for s in obj.symbols}
-    return check.compare(orig, obj, b"", ADDRESS, "caller", {}, {"_callee": target})
+    return check.compare(orig, obj, b"", ADDRESS, "caller", names or {}, {"_callee": target} if target else {})
 
 
 class RelocationDiffTests(unittest.TestCase):
@@ -61,6 +61,10 @@ class RelocationDiffTests(unittest.TestCase):
         self.assertIn("+call 0x00405001 (_callee)", result.diff)
         result = compare_call(b"\x90", b"", target=None)
         self.assertIn("+call <unresolved:_callee>", result.diff)
+
+    def test_unique_library_callee_is_visible_without_a_local_annotation(self):
+        result = compare_call(b"\x90", b"", target=None, names={"callee": CALLEE})
+        self.assertIn(" call 0x00405000 (_callee)", result.diff)
 
     def test_matching_bytes_still_require_the_right_call_target(self):
         self.assertTrue(compare_call(b"", b"").matched)

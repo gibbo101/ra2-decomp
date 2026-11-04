@@ -448,7 +448,7 @@ DIRECT = re.compile(r"(?P<op>call|j[a-z]+|loop[a-z]*) (?P<target>0x[0-9a-f]+)$")
 
 
 def aligned_listings(orig: Original, obj: CoffObject, sec, start: int, ours: bytes, address: int,
-                        theirs: bytes, local=None) -> tuple[list[str], list[str]]:
+                        theirs: bytes, local=None, names=None) -> tuple[list[str], list[str]]:
     """Align instructions first; label direct edges by their destinations in that alignment."""
     linked = placeholder_linked(orig, obj, sec, start, ours, address, len(theirs))
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
@@ -463,10 +463,11 @@ def aligned_listings(orig: Original, obj: CoffObject, sec, start: int, ours: byt
         for k in range(n):
             ids[1][insns[1][b + k].address] = ids[0][insns[0][a + k].address]
 
-    # Only decorated bindings identify an external COFF target here: a qualified
-    # name alone may denote several overloads. Do not label an unknown as equal.
+    # Use the same unambiguous name evidence as the checker. Cache per symbol:
+    # one large function may call the same CRT or parser helper hundreds of times.
     relocs = {r.offset - start: r for r in sec.relocs if r.type == REL_REL32}
-    names = {}
+    local, names = local or {}, names or {}
+    labels_by_dest, resolved = {}, {}
     for side, code in enumerate((theirs, ours)):
         for n, (line, ins) in enumerate(zip(text[side], insns[side])):
             m = DIRECT.fullmatch(line)
@@ -478,12 +479,18 @@ def aligned_listings(orig: Original, obj: CoffObject, sec, start: int, ours: byt
             if ref is not None:
                 target = obj.by_index[ref.symbol]
                 if target.section != sec.number:
-                    known = (local or {}).get(target.name)
+                    if target.name not in resolved:
+                        known = local.get(target.name)
+                        name = qualified(target.name)
+                        if known is None and name in names and not overloaded(target.name, local, function_symbols(obj)):
+                            known = names[name]
+                        resolved[target.name] = known
+                    known = resolved[target.name]
                     if not isinstance(known, int):
                         lists[side][n] = f"{op} <unresolved:{target.name}>"
                         continue
                     dest = (known + struct.unpack_from("<i", ours, off)[0]) & 0xFFFFFFFF
-                    names.setdefault(dest, set()).add(target.name)
+                    labels_by_dest.setdefault(dest, set()).add(target.name)
             if address <= dest < address + len(code):
                 tag = ids[side].get(dest, f"unaligned-{'ours' if side else 'retail'}:0x{dest:08X}")
                 lists[side][n] = f"{op} <{tag}>"
@@ -492,13 +499,13 @@ def aligned_listings(orig: Original, obj: CoffObject, sec, start: int, ours: byt
     for side in lists:
         for n, line in enumerate(side):
             m = DIRECT.fullmatch(line.lower())
-            if m and (labels := names.get(int(m[2], 16))):
+            if m and (labels := labels_by_dest.get(int(m[2], 16))):
                 side[n] += " (" + ", ".join(sorted(labels)) + ")"
     return lists[0], lists[1]
 
 
-def normalised_listings(orig, obj, sec, start, ours, address, theirs, stack=True, local=None):
-    a, b = aligned_listings(orig, obj, sec, start, ours, address, theirs, local)
+def normalised_listings(orig, obj, sec, start, ours, address, theirs, stack=True, local=None, names=None):
+    a, b = aligned_listings(orig, obj, sec, start, ours, address, theirs, local, names)
     return (mask_stack(a), mask_stack(b)) if stack else (a, b)
 
 
@@ -571,7 +578,7 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
         b = disasm(bytes(shown), address)
         res.ratio = similarity(a, b)
         if masked or score:
-            left, right = normalised_listings(orig, obj, sec, start, ours, address, theirs, stack=False, local=local)
+            left, right = normalised_listings(orig, obj, sec, start, ours, address, theirs, stack=False, local=local, names=names)
             if score:
                 res.norm_ratio = similarity(mask_stack(left), mask_stack(right))
             a, b = left, right
