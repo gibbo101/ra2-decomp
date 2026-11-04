@@ -1182,7 +1182,7 @@ bool MPCooperative::IsAIAllowed(void)
 }
 
 // FUNCTION: GAMEMD 0x005C3710
-void MPCooperative::vt_entry_A0(unsigned a)
+void MPCooperative::vt_entry_A0(bool playerWon)
 {
 	bool playerWins = false;
 	for (int i = 0; i < Houses.Count(); i++) {
@@ -1190,7 +1190,7 @@ void MPCooperative::vt_entry_A0(unsigned a)
 			playerWins = true;
 		}
 	}
-	FUN_004068E0("@@@@ End-of-Game: PlayerWins:%d, win:%d\n", (unsigned char)a, playerWins);
+	FUN_004068E0("@@@@ End-of-Game: PlayerWins:%d, win:%d\n", playerWon, playerWins);
 	if (playerWins) {
 		int scheme = GadgetClass::Get_Color_Scheme();
 		if (Current != NULL) {

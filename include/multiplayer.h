@@ -91,7 +91,7 @@ class MultiplayerGameMode
 		virtual void vt_entry_94(void);
 		virtual int vt_entry_98(void);
 		virtual void vt_entry_9C(void);
-		virtual void vt_entry_A0(unsigned a);
+		virtual void vt_entry_A0(bool playerWon);
 		virtual void vt_entry_A4(unsigned a);
 		virtual bool vt_entry_A8(void);
 		virtual void vt_entry_AC(void);

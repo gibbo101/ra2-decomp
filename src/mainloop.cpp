@@ -16,6 +16,8 @@
 #include "_timer.h"
 #include "_xmouse.h"
 #include "bench.h"
+#include "cctooltip.h"
+#include "_tooltip.h"
 #include "command.h"
 #include "conquer.h"
 #include "data.h"
@@ -271,6 +273,104 @@ void FUN_0055CF10(void)
 			FUN_006523A0();
 		}
 	}
+}
+
+extern int DAT_00A8DAB4;
+extern unsigned char DAT_00A8F900;
+void __fastcall FUN_0072DFB0(void);
+void __fastcall Send_Statistics_Packet(bool);
+namespace CopyProtection { bool CheckProtectedData(void); }
+
+static inline void Report_End_Game_Statistics(void)
+{
+	if (Session.Type == GAME_INTERNET && !DAT_00A8F900) {
+		if (WestwoodOnline_Tournament) {
+			Session.SawGameCompletion = true;
+		}
+		Register_Game_End_Time();
+		Send_Statistics_Packet(false);
+	}
+}
+
+// FUNCTION: GAMEMD 0x0055CFD0
+bool __fastcall FUN_0055CFD0(void)
+{
+	if ((Frame & 1023) == 0 && !CopyProtection::CheckProtectedData()) {
+		OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::DESTRUCT));
+	}
+
+	if (PlayerWins || PlayerLoses || PlayerRestarts || PlayerAborts) {
+		++DAT_00A8DAB4;
+		Lock_Scenario_Input();
+		if (PlayerWins || PlayerLoses) {
+			if (ToolTips != NULL) {
+				ToolTips->Activate(false);
+			}
+
+			if (PlayerWins || PlayerLoses) {
+				if (Session.MPGameMode != NULL && (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET)) {
+					Session.MPGameMode->vt_entry_A0(PlayerWins);
+				}
+
+				if (PlayerWins) {
+					Report_End_Game_Statistics();
+					PlayerLoses = false;
+					PlayerWins = false;
+					PlayerRestarts = false;
+					PlayerAborts = false;
+					FUN_0072DFB0();
+					Session.FUN_0069BB40();
+					Do_Win();
+					Session.Resume();
+					DAT_00ABCD58 = false;
+					if (ToolTips != NULL) {
+						ToolTips->Activate(Options.ToolTips);
+					}
+					goto done;
+				} else if (PlayerLoses) {
+					Report_End_Game_Statistics();
+					PlayerWins = false;
+					PlayerLoses = false;
+					PlayerRestarts = false;
+					PlayerAborts = false;
+					FUN_0072DFB0();
+					Session.FUN_0069BB40();
+					Do_Lose();
+					Session.Resume();
+					DAT_00ABCD58 = false;
+					if (ToolTips != NULL) {
+						ToolTips->Activate(Options.ToolTips);
+					}
+					goto done;
+				}
+			}
+		}
+
+		if (PlayerRestarts) {
+			PlayerWins = false;
+			PlayerLoses = false;
+			PlayerRestarts = false;
+			PlayerAborts = false;
+			Session.FUN_0069BB40();
+			Do_Restart();
+			Session.Resume();
+			DAT_00ABCD58 = false;
+		} else if (PlayerAborts) {
+			PlayerWins = false;
+			PlayerLoses = false;
+			PlayerRestarts = false;
+			PlayerAborts = false;
+			FUN_0072DFB0();
+			Session.FUN_0069BB40();
+			Do_Abort();
+			Session.Resume();
+			DAT_00ABCD58 = false;
+			FUN_0055CF10();
+		}
+	done:
+		--DAT_00A8DAB4;
+	}
+	return(!GameActive);
 }
 
 extern bool UserInputLocked;
