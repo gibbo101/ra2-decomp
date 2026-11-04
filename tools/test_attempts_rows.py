@@ -69,6 +69,21 @@ class JournalTests(unittest.TestCase):
             with table.open() as f:
                 self.assertEqual(next(csv.DictReader(f))["checks"], "108")
 
+    def test_zero_checks_survive_legacy_adoption_and_new_import(self):
+        from coord.attempts_rows import merge
+        with tempfile.TemporaryDirectory() as tmp:
+            table, journal = Path(tmp) / "table", Path(tmp) / "journal"
+            old, new = "0x005B2930", "0x005B2950"
+            table.write_text("date,address,function,model,result,best,checks,minutes,blocker,notes\n"
+                             f"day,{old},,model,failed,0,0,,,\n")
+            items = [dict(address=old, result="failed", best_percent=0, checks=0),
+                     dict(address=new, result="failed", best_percent=0)]
+            journal.write_text(json.dumps({"type": "result", "result": {"functions": items}}))
+            self.assertEqual(merge(table, "day", [journal], {old, new}, set()), 2)
+            with table.open() as f:
+                self.assertEqual({r["address"]: r["checks"] for r in csv.DictReader(f)},
+                                 {old: "0", new: "0"})
+
     def test_two_legacy_rows_for_one_day_do_not_adopt_each_others_observations(self):
         from coord.attempts_rows import merge
         with tempfile.TemporaryDirectory() as tmp:

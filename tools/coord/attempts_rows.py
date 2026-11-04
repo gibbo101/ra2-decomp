@@ -130,8 +130,7 @@ def merge(table, date, paths, known, done):
                 writer = csv.writer(f, lineterminator="\n")
                 writer.writerow(fields)
                 for row in rows:
-                    values = [row.get(k) or "" for k in fields]
-                    writer.writerow(values)
+                    writer.writerow(row.get(k, "") for k in fields)
                 f.flush()
                 os.replace(f.name, table)
             finally:
