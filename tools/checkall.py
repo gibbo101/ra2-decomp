@@ -1,6 +1,6 @@
 """Re-check every annotated function under src/, C++ and assembly: the merge gate.
 
-Usage: uv run tools/checkall.py [--record]
+Usage: uv run tools/checkall.py [--record] [--baseline COMMIT]
 
 Prints one line per function. Fails if a function data/progress.csv records as MATCH no
 longer matches or disappears, since a header edit can change the code of functions it never touches,
@@ -11,7 +11,9 @@ An incomplete checker run fails; a completed run containing new partials is allo
 --record rewrites data/progress.csv with the results.
 """
 
+import argparse
 import csv
+import io
 import re
 import subprocess
 import sys
@@ -27,9 +29,21 @@ SUMMARY = re.compile(r"^CHECK-SUMMARY: checked=(\d+) failed=(\d+)$")
 
 
 def main() -> None:
-    record = "--record" in sys.argv[1:]
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--record", action="store_true")
+    parser.add_argument("--baseline", metavar="COMMIT", help="protect matches from this revision's progress table")
+    args = parser.parse_args()
     before = set()
-    if PROGRESS.exists():
+    if args.baseline:
+        try:
+            commit = subprocess.check_output(["git", "rev-parse", "--verify", "--end-of-options",
+                                              args.baseline + "^{commit}"], cwd=ROOT, text=True).strip()
+            table = subprocess.check_output(["git", "show", commit + ":data/progress.csv"], cwd=ROOT, text=True)
+        except subprocess.CalledProcessError:
+            parser.exit(1, "could not load the requested baseline progress table\n")
+        with io.StringIO(table) as f:
+            before = {r["address"] for r in csv.DictReader(f) if r["result"] == "MATCH"}
+    elif PROGRESS.exists():
         with PROGRESS.open() as f:
             before = {r["address"] for r in csv.DictReader(f) if r["result"] == "MATCH"}
     sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext))
@@ -85,7 +99,7 @@ def main() -> None:
           f"({sum(int(r[3]) for r in matched)} of {sum(int(r[3]) for r in rows)} bytes)")
     if broken:
         print("no longer matching: " + ", ".join(broken))
-    if record and not broken:
+    if args.record and not broken:
         with PROGRESS.open("w", newline="") as f:
             w = csv.writer(f, lineterminator="\n")
             w.writerow(["address", "name", "result", "size", "source", "symbol"])

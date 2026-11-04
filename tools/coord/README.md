@@ -34,3 +34,6 @@ the repository root; generated round files go to `build/coord/`, which is not tr
 Other helpers: `comments.py` (comment-rule scan), `near.py` (near-miss list), `vtowner.py`
 and `vtname.py` (vtable owners from RTTI), `rank.py`, `pick.py`, `mkbatch.py`, `jsum.py`
 and `segcount.py` from earlier rounds.
+
+When checking a contribution, pass `--baseline BASE_COMMIT` to `tools/checkall.py`.
+Use the trusted base revision even if the contribution edits its own progress table.
