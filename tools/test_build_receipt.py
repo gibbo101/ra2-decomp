@@ -33,3 +33,20 @@ class ReceiptTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "object missing from receipt or changed"):
                     receipt.gate(root, False, {"inputs": {}, "objects": {"src/unit.cpp.obj": "old"}})
                 report.assert_not_called()
+
+    def test_source_changes_invalidate_only_that_unit_unless_sources_include_sources(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for d in ("src", "include", "reference/tibsun/code", "toolchain/vc6sp3", "tools"):
+                (root / d).mkdir(parents=True)
+            for f in ("tools/check.py", "tools/wcl", "tools/wml", "tools/wineenv.sh", "src/a.cpp", "src/b.cpp"):
+                (root / f).touch()
+            first = receipt.inputs(root)
+            (root / "src/b.cpp").write_text("int b;")
+            second = receipt.inputs(root)
+            self.assertTrue(receipt.can_reuse(first, second, "src/a.cpp.obj"))
+            self.assertFalse(receipt.can_reuse(first, second, "src/b.cpp.obj"))
+            (root / "include/unit.h").write_text('#include "b.cpp"')
+            included = receipt.inputs(root)
+            (root / "src/b.cpp").write_text("float b;")
+            self.assertFalse(receipt.can_reuse(included, receipt.inputs(root), "src/a.cpp.obj"))

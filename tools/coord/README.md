@@ -39,3 +39,6 @@ For a landing gate with unchanged compilation inputs, `tools/build_receipt.py ca
 runs a cold build and saves verified objects. Use `tools/build_receipt.py recheck build/gates/BATCH --record`
 and then `tools/build_receipt.py recheck build/gates/BATCH` to check the current address tables from those
 objects. A changed input or damaged object fails the gate.
+
+After source edits, capture into a new directory with `tools/build_receipt.py capture build/gates/next --reuse build/gates/previous`.
+Every current module is checked. Changed modules compile again. A shared input change rebuilds all modules.
