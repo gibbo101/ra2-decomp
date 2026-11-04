@@ -32,6 +32,17 @@ class LandingTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "completed"):
                 land.check_log(self.root, self.gate)
 
+    def test_address_summary_cannot_hide_a_missing_source_row(self):
+        with (self.data / "progress.csv").open("a") as f:
+            f.write("0x00401000,Alias,MATCH,1,src/alias.cpp,_Alias\n")
+        count = ("1 of 1 functions match (1 of 1 bytes)", [])
+        with patch.object(land, "fingerprint", return_value="valid"), \
+             patch.object(land.checkall, "retail_totals", create=True, return_value=count):
+            with self.assertRaisesRegex(ValueError, "cover"):
+                land.check_log(self.root, self.gate)
+            self.gate.write_text("0x00401000 Alias: MATCH (1/1 bytes) _Alias\n" + self.gate.read_text())
+            self.assertEqual(land.check_log(self.root, self.gate), "LANDING-GATE valid")
+
     def test_generator_failure_never_publishes_or_cleans(self):
         with patch.object(land, "ROOT", self.root), patch.object(land, "fingerprint", return_value="valid"), \
                 patch.object(land.sys, "argv", ["land.py", "date", str(self.gate), str(self.journal)]), \
