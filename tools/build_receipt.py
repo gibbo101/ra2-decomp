@@ -58,7 +58,12 @@ def inputs(root):
             logical = data.replace(b"\\\r\n", b"").replace(b"\\\n", b"")
             for directive in re.findall(rb"(?m)^\s*#\s*include\b([^\n]*)", logical):
                 literal = re.match(rb'\s*[<"]([^>"\n]+)[>"]', directive)
-                if not literal or os.path.splitext(literal[1].lower())[1] not in include_suffixes:
+                if not literal:
+                    independent = False
+                    continue
+                include = literal[1].replace(b"\\", b"/")
+                if (include.startswith(b"/") or b":" in include or b".." in include.split(b"/")
+                        or os.path.splitext(include.lower())[1] not in include_suffixes):
                     independent = False
     env = {key: os.environ.get(key) for key in ("CL", "_CL_", "ML", "_ML_")}
     return {"units": units, "shared": shared.hexdigest() if independent and not any(env.values()) else h.hexdigest(),
