@@ -16,15 +16,22 @@ LITERAL = re.compile(rb'\s*(?:"([^"]+)"|<([^>]+)>)\s*$')
 
 
 def includes(data):
-    data = data.replace(b"\\\r\n", b"").replace(b"\\\n", b"")
+    data = data.replace(b"\r\n", b"\n").replace(b"\r", b"\n").replace(b"\\\n", b"")
     # Alternative directive spellings and MSVC header aliases need a
     # conservative fallback rather than approximating their preprocessor semantics.
-    if any(s in data for s in (b"%:", b"??=", b"??/", b"\x00", b"include_alias")):
+    if data.startswith(b"\xef\xbb\xbf") or any(s in data for s in (b"%:", b"??=", b"??/", b"\x00", b"include_alias")):
         return None
-    data = TOKENS.sub(lambda m: (b" " + b"\n" * m[0].count(b"\n")
-                                 if m[0].startswith(b"/") else m[0]), data)
+    # Compilers differ in how they retain newlines inside a block comment.
+    # Scan both interpretations when a comment crosses a line boundary.
+    def strip(m):
+        return b" " if m[0].startswith(b"/") else m[0]
+    collapsed = TOKENS.sub(strip, data)
+    directives = DIRECTIVE.findall(collapsed)
+    if collapsed.count(b"\n") != data.count(b"\n"):
+        kept = TOKENS.sub(lambda m: strip(m) + (b"\n" * m[0].count(b"\n") if m[0].startswith(b"/") else b""), data)
+        directives.extend(DIRECTIVE.findall(kept))
     edges = set()
-    for directive, operand in DIRECTIVE.findall(data):
+    for directive, operand in directives:
         m = LITERAL.fullmatch(operand)
         if directive.lower() != b"include" or not m:
             return None
