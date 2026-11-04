@@ -40,7 +40,7 @@ def inputs(root):
         files.extend(p.relative_to(root).as_posix() for p in base.rglob("*") if p.is_file())
     headers = HeaderInputs()
     h = hashlib.sha256()
-    units = {}
+    units = []
     for name in sorted(files):
         data = (root / name).read_bytes()
         content = hashlib.sha256(data).digest()
@@ -49,10 +49,9 @@ def inputs(root):
         headers.add(name, data, entry)
         path = Path(name)
         if name.startswith("src/") and path.suffix in (".cpp", ".asm"):
-            units[name + ".obj"] = content.hex()
+            units.append(name + ".obj")
     env = {key: os.environ.get(key) for key in ("CL", "_CL_", "ML", "_ML_")}
     return {"header_keys": headers.keys(units, h.hexdigest()) if not any(env.values()) else {},
-
             "tree": h.hexdigest(), "cpp": check.FLAGS, "asm": check.ASM_FLAGS, "environment": env}
 
 
@@ -100,8 +99,7 @@ def gate(directory, capture, manifest, reuse=None):
         current = inputs(check.ROOT)
         # Older receipts stored different auxiliary keys. The full input tree,
         # flags and environment are sufficient for rechecking an unchanged build.
-        if any(current[k] != manifest["inputs"].get(k) for k in ("tree", "cpp", "asm", "environment")
-               if k in current):
+        if any(current[k] != manifest["inputs"].get(k) for k in ("tree", "cpp", "asm", "environment")):
             raise ValueError("compilation inputs changed; run a fresh capture")
 
     if not capture:

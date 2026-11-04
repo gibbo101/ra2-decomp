@@ -17,9 +17,9 @@ LITERAL = re.compile(rb'\s*(?:"([^"]+)"|<([^>]+)>)\s*$')
 
 def includes(data):
     data = data.replace(b"\\\r\n", b"").replace(b"\\\n", b"")
-    # Alternative directive spellings and generated #line filenames need a
+    # Alternative directive spellings and MSVC header aliases need a
     # conservative fallback rather than approximating their preprocessor semantics.
-    if any(s in data for s in (b"%:", b"??=", b"??/", b"\x00")):
+    if any(s in data for s in (b"%:", b"??=", b"??/", b"\x00", b"include_alias")):
         return None
     data = TOKENS.sub(lambda m: (b" " + b"\n" * m[0].count(b"\n")
                                  if m[0].startswith(b"/") else m[0]), data)

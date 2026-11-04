@@ -23,15 +23,16 @@ class ReceiptTests(unittest.TestCase):
     def test_recheck_rejects_changed_object_before_scoring(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
+            self.inputs = dict(tree="fixed", cpp=[], asm=[], environment={})
             obj = root / "src/unit.cpp.obj"
             obj.parent.mkdir()
             obj.write_bytes(b"stale")
             with patch.object(receipt.check, "ROOT", root), patch.object(receipt.check, "Original"), \
-                    patch.object(receipt.check, "known_names"), patch.object(receipt, "inputs", return_value={}), \
+                    patch.object(receipt.check, "known_names"), patch.object(receipt, "inputs", return_value=self.inputs), \
                     patch.object(receipt.checkall, "main", side_effect=lambda run, validate: run(root / "src/unit.cpp")), \
                     patch.object(receipt.check, "report") as report:
                 with self.assertRaisesRegex(ValueError, "object missing from receipt or changed"):
-                    receipt.gate(root, False, {"inputs": {}, "objects": {"src/unit.cpp.obj": "old"}})
+                    receipt.gate(root, False, {"inputs": self.inputs, "objects": {"src/unit.cpp.obj": "old"}})
                 report.assert_not_called()
 
     def test_source_changes_invalidate_only_that_unit_unless_sources_include_sources(self):
