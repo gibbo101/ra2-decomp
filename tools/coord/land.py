@@ -12,6 +12,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools"))
+import checkall
 from checkall import LINE
 from landing_inputs import fingerprint
 
@@ -28,6 +29,11 @@ def check_log(root, path):
     matched = [r for r in rows if r["result"] == "MATCH"]
     summary = (f"{len(matched)} of {len(rows)} functions match "
                f"({sum(int(r['size']) for r in matched)} of {sum(int(r['size']) for r in rows)} bytes)")
+    if hasattr(checkall, "retail_totals"):
+        fields = ("address", "name", "result", "size", "source", "symbol")
+        summary, errors = checkall.retail_totals([[r[k] for k in fields] for r in rows])
+        if errors:
+            raise ValueError("; ".join(errors))
     if not rows or found != expected or len(lines) < 2 or lines[-2] != summary:
         raise ValueError("gate results do not cover the recorded progress table")
     return stamp
