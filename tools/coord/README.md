@@ -22,6 +22,9 @@ the repository root; generated round files go to `build/coord/`, which is not tr
 
 ## Landing a round
 
+When checking a contribution, pass `--baseline BASE_COMMIT` to `tools/checkall.py`.
+Use the trusted base revision even if the contribution edits its own progress table.
+
 1. `uv run tools/checkall.py` (the gate; no regressions allowed), then `--record`, then a
    plain re-run.
 2. `bash tools/coord/land.sh DATE GATE.txt JOURNAL...`: rule scans (`landscan.sh`), the
@@ -34,6 +37,3 @@ the repository root; generated round files go to `build/coord/`, which is not tr
 Other helpers: `comments.py` (comment-rule scan), `near.py` (near-miss list), `vtowner.py`
 and `vtname.py` (vtable owners from RTTI), `rank.py`, `pick.py`, `mkbatch.py`, `jsum.py`
 and `segcount.py` from earlier rounds.
-
-When checking a contribution, pass `--baseline BASE_COMMIT` to `tools/checkall.py`.
-Use the trusted base revision even if the contribution edits its own progress table.

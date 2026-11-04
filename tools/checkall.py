@@ -29,23 +29,12 @@ SUMMARY = re.compile(r"^CHECK-SUMMARY: checked=(\d+) failed=(\d+)$")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--record", action="store_true")
-    parser.add_argument("--baseline", metavar="COMMIT", help="protect matches from this revision's progress table")
-    args = parser.parse_args()
+    record = "--record" in sys.argv[1:]
     before = set()
-    if args.baseline:
-        try:
-            commit = subprocess.check_output(["git", "rev-parse", "--verify", "--end-of-options",
-                                              args.baseline + "^{commit}"], cwd=ROOT, text=True).strip()
-            table = subprocess.check_output(["git", "show", commit + ":data/progress.csv"], cwd=ROOT, text=True)
-        except subprocess.CalledProcessError:
-            parser.exit(1, "could not load the requested baseline progress table\n")
-        with io.StringIO(table) as f:
-            before = {r["address"] for r in csv.DictReader(f) if r["result"] == "MATCH"}
-    elif PROGRESS.exists():
+    if PROGRESS.exists():
         with PROGRESS.open() as f:
             before = {r["address"] for r in csv.DictReader(f) if r["result"] == "MATCH"}
+    before.update(baseline_matches(sys.argv[1:]))
     sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext))
     rows, broken, warnings = [], [], 0
     for src in sources:
@@ -99,12 +88,28 @@ def main() -> None:
           f"({sum(int(r[3]) for r in matched)} of {sum(int(r[3]) for r in rows)} bytes)")
     if broken:
         print("no longer matching: " + ", ".join(broken))
-    if args.record and not broken:
+    if record and not broken:
         with PROGRESS.open("w", newline="") as f:
             w = csv.writer(f, lineterminator="\n")
             w.writerow(["address", "name", "result", "size", "source", "symbol"])
             w.writerows(rows)
     sys.exit(1 if broken else 0)
+
+
+def baseline_matches(argv):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--record", action="store_true")
+    parser.add_argument("--baseline", metavar="COMMIT", help="protect matches from this revision's progress table")
+    args = parser.parse_args(argv)
+    if not args.baseline:
+        return set()
+    try:
+        commit = subprocess.check_output(["git", "rev-parse", "--verify", "--end-of-options",
+                                          args.baseline + "^{commit}"], cwd=ROOT, text=True).strip()
+        table = subprocess.check_output(["git", "show", commit + ":data/progress.csv"], cwd=ROOT, text=True)
+    except subprocess.CalledProcessError:
+        parser.exit(1, "could not load the requested baseline progress table\n")
+    return {r["address"] for r in csv.DictReader(io.StringIO(table)) if r["result"] == "MATCH"}
 
 
 if __name__ == "__main__":
