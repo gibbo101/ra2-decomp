@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 4 November 2026: 18,799 of 19,362 game functions match (97%; 76% of game code
+Status, 4 November 2026: 18,800 of 19,362 game functions match (97%; 76% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,14 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### dk8827's tenth pull request (4 November 2026)
+
+**1 function.** HouseClass::Make_Base_Nodes (2,755 bytes), which builds an AI house's base
+list. Its unit-type Get_First_Ownable overload compiles to the same code as the building one
+and folds into 0x00505310. HouseClass::Zone_Cell went back: it matched only after a
+reference in an already-matching helper changed how that helper was inlined. Merge gate:
+18,800 of 18,800 functions (2,828.3 KB).
 
 ### dk8827's ninth set of pull requests (4 November 2026)
 

@@ -6083,6 +6083,7 @@ address,size,symbol,source,sha256
 0x005051E0,291,?FirstBuildableFromArray@HouseClass@@QBEPBVTechnoTypeClass@@ABV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z,src/house.cpp,72f87b189ac38a75c3c4f7b4bcc2bf39534cf0cb951b5d43fd234c19e7ea2e85
 0x00505310,79,?Get_First_Ownable@HouseClass@@QBEPBVBuildingTypeClass@@ABV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z,src/house.cpp,9379e9613688c83bfdfe9d40983b9ae45bcd5683d89bfc7e88c28f3cc5c65331
 0x00505360,324,?AI_Has_Prerequisites@HouseClass@@QBE_NPBVTechnoTypeClass@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@H@Z,src/house.cpp,38ea8cfc31d55488372e7355fd5a973efef144d54fd9e3dcf1f5a8cc9acca5c0
+0x005054B0,2755,?Make_Base_Nodes@HouseClass@@QAEXXZ,src/house.cpp,977aedf7e15d28968cc04ce026d300a71b189edaf31ccee1311cce7376953d1e
 0x00505F80,66,?Base_Cell_Weight_By_Distance@HouseClass@@SIHABV1@ABVCell@@HH@Z,src/house.cpp,9d75bf44bac3974f01b45ea26cc079f835f71cbc805713843be8de588fe6eee7
 0x00505FD0,212,?Base_Cell_Weight_By_Defense_Coverage@HouseClass@@SIHABV1@ABVCell@@HH@Z,src/house.cpp,c51e8a67e054be28a2620bf7ef5acdb4c3bb84d952a277c7757587c988d4dbb0
 0x00506B70,1,?FUN_00506B70@@YIXXZ,src/house.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e

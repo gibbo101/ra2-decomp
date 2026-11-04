@@ -5731,6 +5731,7 @@ address,name,result,size,source,symbol
 0x005051E0,HouseClass::FirstBuildableFromArray,MATCH,291,src/house.cpp,?FirstBuildableFromArray@HouseClass@@QBEPBVTechnoTypeClass@@ABV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z
 0x00505310,HouseClass::Get_First_Ownable,MATCH,79,src/house.cpp,?Get_First_Ownable@HouseClass@@QBEPBVBuildingTypeClass@@ABV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z
 0x00505360,HouseClass::AI_Has_Prerequisites,MATCH,324,src/house.cpp,?AI_Has_Prerequisites@HouseClass@@QBE_NPBVTechnoTypeClass@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@H@Z
+0x005054B0,HouseClass::Make_Base_Nodes,MATCH,2755,src/house.cpp,?Make_Base_Nodes@HouseClass@@QAEXXZ
 0x00505F80,HouseClass::Base_Cell_Weight_By_Distance,MATCH,66,src/house.cpp,?Base_Cell_Weight_By_Distance@HouseClass@@SIHABV1@ABVCell@@HH@Z
 0x00506B70,FUN_00506B70,MATCH,1,src/house.cpp,?FUN_00506B70@@YIXXZ
 0x00506B80,FUN_00506B80,MATCH,1,src/house.cpp,?FUN_00506B80@@YIXXZ
