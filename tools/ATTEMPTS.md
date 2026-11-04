@@ -14,3 +14,10 @@ The near-miss selectors keep partial progress rows eligible. Their banked paths
 include local replay bundles whose recorded SHA-256 and target address still
 agree, as well as legacy loose C++ files. Use `tools/attempt.py replay BUNDLE`
 to reproduce a saved bundle.
+
+To extend a date already imported by the old journal tool, import its original
+journals together first. An address whose aggregate checks, best score and
+saved notes agree gains observation IDs without adding those checks again.
+An incomplete import leaves that legacy address alone and names it on stderr.
+Subsequent imports count only new IDs. Tables with missing or extra fields
+are rejected before a write.

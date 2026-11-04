@@ -1,5 +1,6 @@
 """Import distinct journal observations into the daily attempts table."""
 import argparse
+from collections import defaultdict
 import csv
 import fcntl
 import hashlib
@@ -7,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import re
+import sys
 from tempfile import NamedTemporaryFile
 
 
@@ -37,54 +39,85 @@ def observations(paths, date):
                 yield addr, token, model, item
 
 
+def legacy_total_matches(row, observations):
+    # The old importer summed checks and retained the maximum score, but
+    # saved the result, blocker and notes from the last contributing entry.
+    total, best, last = 0, None, None
+    for _, _, item in observations:
+        score = float(item["best_percent"])
+        checks = int(item.get("checks", 0))
+        if best is not None and not checks and item["result"] != "MATCH" and score <= best:
+            continue
+        total += checks
+        best = max(best, score) if best is not None else score
+        last = item
+    if last is None or not row["best"]:
+        return False
+    exact = last["result"] == "MATCH"
+    blocker = clean(last.get("blocker")) or ("matched in a banked file but not landed" if exact else "")
+    return (total == int(row["checks"] or 0) and best == float(row["best"])
+            and row["result"] == ("partial" if exact else last["result"])
+            and row["blocker"] == blocker and row["notes"] == clean(last.get("note")))
+
+
 def merge(table, date, paths, known, done):
     with table.open(newline="") as f:
-        reader = csv.DictReader(f)
-        fields = list(reader.fieldnames)
-        rows = list(reader)
+        reader = csv.DictReader(f, strict=True)
+        fields = list(reader.fieldnames or ())
+        if not fields or len(set(fields)) != len(fields):
+            raise ValueError(f"{table}: missing or duplicate column names")
+        rows = []
+        for row in reader:
+            if None in row or None in row.values():
+                raise ValueError(f"{table}:{reader.line_num}: expected {len(fields)} columns")
+            rows.append(row)
     for col in ("attempt_ids", "replays"):
         if col not in fields:
             fields.append(col)
     today = {r["address"]: r for r in rows if r["date"] == date}
-    added = 0
+    by_address = defaultdict(dict)
     for addr, token, model, item in observations(paths, date):
-        if addr in done or addr not in known:
-            continue
+        if addr in known and addr not in done:
+            by_address[addr].setdefault(token, (token, model, item))
+
+    added = 0
+    for addr, items in by_address.items():
         row = today.get(addr)
+        adopt = row is not None and not row.get("attempt_ids")
         if row is None:
             row = dict.fromkeys(fields, "")
             row.update(address=addr, date=date)
             rows.append(row)
             today[addr] = row
-        ids = (row.get("attempt_ids") or "").split()
-        if token in ids:
+        if adopt and not legacy_total_matches(row, items.values()):
+            print(f"{addr}: preserving legacy total; import its complete original journals first", file=sys.stderr)
             continue
-        score = float(item["best_percent"])
-        checks = int(item.get("checks", 0))
-        # Legacy rows have no observation IDs. An exact re-import of their
-        # winning observation establishes its ID without counting it twice.
-        legacy_repeat = (not ids and row["best"] and float(row["best"]) == score
-                         and row["blocker"] == clean(item.get("blocker"))
-                         and checks <= int(row["checks"] or 0))
-        row["attempt_ids"] = " ".join([*ids, token])
-        row["checks"] = int(row["checks"] or 0) + (0 if legacy_repeat else checks)
-        if item.get("replay"):
-            bundle = Path(item["replay"])
-            if bundle.is_absolute() or ".." in bundle.parts:
-                raise ValueError("replay must be a repository-relative bundle")
-            raw = bundle.read_bytes()
-            data = json.loads(raw)
-            if data["address"] != addr or data["version"] not in (1, 2) or not data.get("expected"):
-                raise ValueError(f"{bundle}: wrong replay bundle for {addr}")
-            links = json.loads(row.get("replays") or "{}")
-            links[token] = [bundle.as_posix(), hashlib.sha256(raw).hexdigest()]
-            row["replays"] = json.dumps(links, sort_keys=True, separators=(",", ":"))
-        if not row["best"] or score > float(row["best"]) or (score == float(row["best"]) and item["result"] == "MATCH"):
-            exact = item["result"] == "MATCH"
-            row.update(best=f"{score:g}", result="partial" if exact else item["result"], model=model,
-                       blocker=clean(item.get("blocker")) or ("matched in a banked file but not landed" if exact else ""),
-                       notes=clean(item.get("note")))
-        added += 1
+        for token, model, item in items.values():
+            ids = (row.get("attempt_ids") or "").split()
+            if token in ids:
+                continue
+            score = float(item["best_percent"])
+            checks = int(item.get("checks", 0))
+            row["attempt_ids"] = " ".join([*ids, token])
+            row["checks"] = int(row["checks"] or 0) + (0 if adopt else checks)
+            if item.get("replay"):
+                bundle = Path(item["replay"])
+                if bundle.is_absolute() or ".." in bundle.parts:
+                    raise ValueError("replay must be a repository-relative bundle")
+                raw = bundle.read_bytes()
+                data = json.loads(raw)
+                if data["address"] != addr or data["version"] not in (1, 2) or not data.get("expected"):
+                    raise ValueError(f"{bundle}: wrong replay bundle for {addr}")
+                links = json.loads(row.get("replays") or "{}")
+                links[token] = [bundle.as_posix(), hashlib.sha256(raw).hexdigest()]
+                row["replays"] = json.dumps(links, sort_keys=True, separators=(",", ":"))
+            if not adopt and (not row["best"] or score > float(row["best"])
+                              or (score == float(row["best"]) and item["result"] == "MATCH")):
+                exact = item["result"] == "MATCH"
+                row.update(best=f"{score:g}", result="partial" if exact else item["result"], model=model,
+                           blocker=clean(item.get("blocker")) or ("matched in a banked file but not landed" if exact else ""),
+                           notes=clean(item.get("note")))
+            added += 1
     if added:
         with NamedTemporaryFile("w", newline="", dir=table.parent, delete=False) as f:
             try:
@@ -92,7 +125,7 @@ def merge(table, date, paths, known, done):
                 writer.writerow(fields)
                 for row in rows:
                     values = [row.get(k) or "" for k in fields]
-                    writer.writerow(values if row.get("attempt_ids") else values[:-2])
+                    writer.writerow(values)
                 f.flush()
                 os.replace(f.name, table)
             finally:
