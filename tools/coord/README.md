@@ -27,7 +27,7 @@ When checking a contribution, pass `--baseline BASE_COMMIT` to `tools/checkall.p
 Use the trusted base revision even if the contribution edits its own progress table.
 
 1. `uv run tools/checkall.py` (the gate; no regressions allowed), then `--record`, then a
-   plain re-run.
+   final re-run with `uv run tools/coord/landing_gate.py` and save its output as GATE.txt.
 2. `bash tools/coord/land.sh DATE GATE.txt JOURNAL...`: rule scans (`landscan.sh`), the
    round's claimed matches against the tree (`tally.py`), attempts.csv rows
    (`attempts_rows.py`), modules and manifest, stale banked attempts (`stale.py`), stray
