@@ -522,11 +522,11 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
         a = disasm(theirs, address)
         b = disasm(bytes(shown), address)
         res.ratio = similarity(a, b)
-        if relocs or score:
+        if masked or score:
             left, right = normalised_listings(orig, obj, sec, start, ours, address, theirs, stack=False)
             if score:
                 res.norm_ratio = similarity(mask_stack(left), mask_stack(right))
-            if relocs:
+            if masked:
                 a, b = left, right
         for line in difflib.unified_diff(a, b, "original", "ours", n=2, lineterm=""):
             res.diff.append(line)
