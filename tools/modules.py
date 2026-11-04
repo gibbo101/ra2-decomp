@@ -734,7 +734,7 @@ def sole_users(refs, kept, module_at, segment_of, open_fns) -> dict[int, tuple[s
 
 
 def main(output=None, code_dir=None) -> None:
-    if len(sys.argv) > 1 and (sys.argv[1].startswith("-") or not Path(sys.argv[1]).is_dir()):
+    if code_dir is not None and not code_dir.is_dir():
         raise SystemExit(__doc__)
     code_dir = code_dir or ROOT / "../cnc-remastered-mods/reference/OpenTS/code"
     pe = pefile.PE(str(ROOT / "orig/gamemd.exe"), fast_load=True)
