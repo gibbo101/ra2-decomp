@@ -12,6 +12,7 @@ An incomplete checker run fails; a completed run containing new partials is allo
 """
 
 import csv
+import os
 import re
 import subprocess
 import sys
@@ -28,6 +29,12 @@ SUMMARY = re.compile(r"^CHECK-SUMMARY: checked=(\d+) failed=(\d+)$")
 
 def main() -> None:
     record = "--record" in sys.argv[1:]
+    stamp = None
+    if os.environ.get("RA2_LANDING_GATE") == "1":
+        from landing_inputs import fingerprint
+        if record:
+            raise SystemExit("stamp the final verification after --record")
+        stamp = fingerprint(ROOT)
     before = set()
     if PROGRESS.exists():
         with PROGRESS.open() as f:
@@ -90,6 +97,10 @@ def main() -> None:
             w = csv.writer(f, lineterminator="\n")
             w.writerow(["address", "name", "result", "size", "source", "symbol"])
             w.writerows(rows)
+    if stamp is not None and not broken:
+        if fingerprint(ROOT) != stamp:
+            raise SystemExit("checkout inputs changed during the landing gate")
+        print("LANDING-GATE " + stamp)
     sys.exit(1 if broken else 0)
 
 

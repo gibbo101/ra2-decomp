@@ -13,3 +13,6 @@ echo "== Session/Options aliases"; echo "$D" | grep -E '^\+.*DAT_00A8(B2[3-9A-F]
 echo "== block comments"; echo "$D" | grep -E '^\+.*/\*' | head
 echo "== 3+ comment lines"; for f in $F; do [ -f "$f" ] && awk -v f="$f" '/^[ \t]*\/\/ (FUNCTION|TEMPLATE|SYNTHETIC|LIBRARY|GLOBAL|VTABLE|STRING|SYMBOL)/{n=0;next} /^[ \t]*\/\/ [?_]/{n=0;next} /^[ \t]*\/\//{n++; if(n==3) print f":"NR; next} {n=0}' "$f"; done | head -30
 echo "== new local classes/structs (review)"; echo "$D" | grep -E '^\+(struct|class) [A-Za-z_0-9]+' | grep -v ';$' | head -30
+
+# Findings are advisory. An empty final search is also a successful scan.
+exit 0

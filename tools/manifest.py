@@ -21,12 +21,12 @@ from check import Original  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def main() -> None:
+def main(output=None) -> None:
     orig = Original()
     with (ROOT / "data/progress.csv").open() as f:
         rows = [r for r in csv.DictReader(f) if r["result"] == "MATCH"]
     rows.sort(key=lambda r: int(r["address"], 16))
-    out = ROOT / "data/manifest.csv"
+    out = output or ROOT / "data/manifest.csv"
     with out.open("w", newline="") as f:
         w = csv.writer(f, lineterminator="\n")
         w.writerow(["address", "size", "symbol", "source", "sha256"])
@@ -34,8 +34,11 @@ def main() -> None:
             address, size = int(r["address"], 16), int(r["size"])
             digest = hashlib.sha256(orig.read(address, size)).hexdigest()
             w.writerow([f"0x{address:08X}", size, r["symbol"], r["source"], digest])
-    print(f"{len(rows)} functions -> {out.relative_to(ROOT)}")
+    print(f"{len(rows)} functions -> {out}")
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", type=Path)
+    main(parser.parse_args().out)

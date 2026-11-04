@@ -23,7 +23,7 @@ the repository root; generated round files go to `build/coord/`, which is not tr
 ## Landing a round
 
 1. `uv run tools/checkall.py` (the gate; no regressions allowed), then `--record`, then a
-   plain re-run.
+   final re-run with `RA2_LANDING_GATE=1` and save its output as GATE.txt.
 2. `bash tools/coord/land.sh DATE GATE.txt JOURNAL...`: rule scans (`landscan.sh`), the
    round's claimed matches against the tree (`tally.py`), attempts.csv rows
    (`attempts_rows.py`), modules and manifest, stale banked attempts (`stale.py`), stray
