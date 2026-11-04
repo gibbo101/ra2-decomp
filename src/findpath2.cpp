@@ -109,6 +109,38 @@ CellClass * TrajectoryHelper::FindFirstImpenetrableObstacle(Coord const & source
 	return(cell);
 }
 
+// FUNCTION: GAMEMD 0x004CC360
+CellClass * TrajectoryHelper::GetObstacle(CellClass const * source, CellClass const * target, CellClass const * bullet, Coord current, BulletTypeClass const * type, HouseClass const * owner)
+{
+	Cell cell = current.As_Cell();
+	CellClass * first = &Map[cell];
+	if ((type->SubjectToCliffs && IsCliffHit(source, bullet, first)) ||
+		(type->SubjectToWalls && IsWallHit(source, first, target, owner))) {
+		Coord center = first->Center_Coord();
+		if (current.Distance_To(center) > CELL_LEPTON_W / 3) {
+			Coord from = source->Center_Coord();
+			Coord to = target->Center_Coord();
+			int dx = abs(from.X - to.X);
+			int dy = abs(from.Y - to.Y);
+			int ox = abs(current.X - center.X);
+			int oy = abs(current.Y - center.Y);
+			if ((dx > dy && oy > ox) || (dy > dx && ox > oy)) {
+				CellClass * check = &Map[cell];
+				if (type->SubjectToCliffs && IsCliffHit(source, bullet, check)) {
+					return(first);
+				}
+				if (type->SubjectToWalls && IsWallHit(source, check, target, owner)) {
+					return(first);
+				}
+				return(NULL);
+			}
+			return(first);
+		}
+		return(first);
+	}
+	return(NULL);
+}
+
 // FUNCTION: GAMEMD 0x004CC680
 bool TrajectoryHelper::IsCliffHit(CellClass const * source, CellClass const * before, CellClass const * after)
 {
