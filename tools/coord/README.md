@@ -11,6 +11,7 @@ the repository root; generated round files go to `build/coord/`, which is not tr
   each the smallest untried function of 1.5 KB or more in a module no other job takes.
 - `python3 tools/coord/mknear.py tools/coord/nearT.js FIRST NBATCHES MIN [PER [MAX]]`: near
   misses whose best attempt is MIN% or more (and under MAX%), grouped by module.
+- [Evidence-driven retries](CHOICES.md) group a caller with its blocked helpers and test bounded source alternatives.
 - `batchT.js` and `nearT.js` are the workflow templates; the generators fill in the
   repository path, the other batches' modules and the description. The workflow's args are
   the generated `build/coord/batchN.json`.
@@ -34,31 +35,3 @@ the repository root; generated round files go to `build/coord/`, which is not tr
 Other helpers: `comments.py` (comment-rule scan), `near.py` (near-miss list), `vtowner.py`
 and `vtname.py` (vtable owners from RTTI), `rank.py`, `pick.py`, `mkbatch.py`, `jsum.py`
 and `segcount.py` from earlier rounds.
-
-## Retrying functions with new evidence
-
-`mknear.py` leaves addresses with two or more attempt records out of automatic
-percentage-based rounds. Put a caller, its dependent helpers, a concrete hypothesis
-and the new evidence in a JSON list instead. For example:
-
-```json
-[{
-  "name": "missile",
-  "address": "0x005B20F0",
-  "helpers": {"0x005B2930": "DirType::operator+"},
-  "hypothesis": "Materializing the boost before the turn may restore the missing call.",
-  "evidence": "The retail caller calls the addition helper once.",
-  "source": "build/spike/0x005B20F0/missile.cpp",
-  "choices": [{"find": "(rot + 256) / 2", "alternatives": ["(rot + DirType(256)) / 2"]}]
-}]
-```
-
-`uv run tools/coord/choices.py plan jobs.json` writes near-workflow job arguments,
-keeping callers and helpers together and excluding groups claimed on GitHub.
-`uv run tools/coord/choices.py run jobs.json missile build/trials/missile --budget 12`
-tests the original and combinations of the choices, up to 12 compiler invocations
-including errors. Each find string must be unique in the source. Optional `overlay`
-selects the header overrides. Each distinct source and its per-target code/relocation
-fingerprints are kept locally. Use the regular whole-module checker on winning sources.
-To benchmark a search, start with a perturbed known match, conceal the winning choice
-among the alternatives, and count recovered functions and actual compiler invocations.

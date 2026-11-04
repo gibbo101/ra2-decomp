@@ -11,6 +11,7 @@ import csv
 import hashlib
 import itertools
 import json
+import re
 from pathlib import Path
 import sys
 import tempfile
@@ -70,6 +71,22 @@ def plan(jobs, taken, done, known, owner):
         out.append(dict(name=job["name"], modules=modules, model="opus", effort="high",
                         note=job["evidence"] + "\n" + job["hypothesis"]))
     return {"jobs": out}
+
+
+def waiting_groups(attempts, taken, done, known):
+    """Use only the latest recorded blocker and an explicitly named dependency."""
+    latest = {int(r["address"], 16): r for r in attempts}
+    groups = defaultdict(list)
+    for addr, row in sorted(latest.items()):
+        blocker = row["blocker"]
+        match = re.search(r"waits (?:on|for) (?:caller )?(0x[0-9a-f]{8})\b", blocker, re.I)
+        if not match or addr not in known or addr in taken or addr in done:
+            continue
+        caller = int(match[1], 16)
+        if caller == addr or caller not in known or caller in taken or caller in done:
+            continue
+        groups[caller].append((addr, blocker))
+    return sorted(groups.items(), key=lambda item: (-len(item[1]), item[0]))
 
 
 def code_digest(obj, pick):
@@ -149,6 +166,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     sub = p.add_subparsers(dest="command", required=True)
     sub.add_parser("plan").add_argument("jobs", type=Path)
+    sub.add_parser("suggest", help="list explicitly blocked groups for review")
     run_parser = sub.add_parser("run")
     run_parser.add_argument("jobs", type=Path)
     run_parser.add_argument("job")
@@ -156,15 +174,24 @@ def main():
     run_parser.add_argument("--budget", type=int, required=True)
     args = p.parse_args()
     try:
-        jobs = json.loads(args.jobs.read_text())
+        jobs = json.loads(args.jobs.read_text()) if args.command != "suggest" else []
         if len({job["name"] for job in jobs}) != len(jobs):
             raise ValueError("job names must be unique")
-        if args.command == "plan":
+        if args.command in ("suggest", "plan"):
             with (check.ROOT / "data/progress.csv").open() as f:
                 done = {int(r["address"], 16) for r in csv.DictReader(f) if r["result"] == "MATCH"}
             with (check.ROOT / "data/functions.csv").open() as f:
                 known = {int(r["address"], 16) for r in csv.DictReader(f)}
-            print(json.dumps(plan(jobs, claimed(), done, known, module_lookup()), indent=2))
+            taken = claimed()
+            if args.command == "suggest":
+                with (check.ROOT / "data/attempts.csv").open() as f:
+                    groups = waiting_groups(csv.DictReader(f), taken, done, known)
+                for caller, helpers in groups:
+                    print(f"0x{caller:08X}: {len(helpers)} waiting")
+                    for addr, evidence in helpers:
+                        print(f"  0x{addr:08X} {evidence}")
+            else:
+                print(json.dumps(plan(jobs, taken, done, known, module_lookup()), indent=2))
         else:
             selected = next((j for j in jobs if j["name"] == args.job), None)
             if selected is None:
