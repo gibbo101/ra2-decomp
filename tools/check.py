@@ -466,13 +466,19 @@ def compare(orig: Original, obj: CoffObject, raw: bytes, address: int, name: str
                                        prefer.get(r.symbol) == address, r.symbol not in taken))
 
 
-def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) -> Result:
-    sym, sec, start, end = pick
+def function_bytes(pick):
+    _, sec, start, end = pick
     relocs = [r for r in sec.relocs if start <= r.offset < end]
     masked = {r.offset - start + k for r in relocs for k in range(4)}
     ours = sec.data[start:end]
     while ours and ours[-1] in PADDING and len(ours) - 1 not in masked:
         ours = ours[:-1]
+    return ours, masked
+
+
+def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) -> Result:
+    sym, sec, start, end = pick
+    ours, masked = function_bytes(pick)
     size = orig.sizes.get(address)
     if size is None:
         raise SystemExit(f"0x{address:08X} is not a function start in data/functions.csv")
