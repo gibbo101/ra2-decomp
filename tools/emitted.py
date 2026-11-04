@@ -10,6 +10,7 @@ import csv
 from pathlib import Path
 
 import check
+from savedobj import SavedObjects
 from tier0 import MIN_SIZE, module_lookup
 
 
@@ -18,6 +19,7 @@ def same_bytes(code, original, masked):
 
 
 def scan(objects):
+    saved = SavedObjects(objects)
     orig, names = check.Original(), check.known_names()
     with (check.ROOT / "data/progress.csv").open() as f:
         recorded = {int(r["address"], 16) for r in csv.DictReader(f) if r["result"] == "MATCH"}
@@ -33,7 +35,7 @@ def scan(objects):
         module = src.relative_to(check.ROOT / "src").with_suffix("").as_posix().lower()
         if not any(key[0] == module for key in targets):
             continue
-        raw = (objects / rel.with_suffix(".obj")).read_bytes()
+        raw = saved.read(rel)
         obj = check.CoffObject(raw)
         local = None
         held = check.vftable_holders(obj)
