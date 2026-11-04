@@ -13013,6 +13013,7 @@ address,size,symbol,source,sha256
 0x006A4250,10,?Get_Speed_Accum@ShipLocomotionClass@@UAGHXZ,src/ship.cpp,83f416a7a1cb09c3058472d551ffeb9f24e4a8c49215db13838a2f3e95b1e46f
 0x006A4260,13,?AddRef@ShipLocomotionClass@@UAGKXZ,src/ship.cpp,f82811f655e745fc3a233a1ddd925e965e3a72de5cfbf60b0517f9b5043c194f
 0x006A4270,13,?Release@ShipLocomotionClass@@UAGKXZ,src/ship.cpp,0c8a5bf48415d57ab0a98076e9b10983de07824b70edcceda229322d221bb4ac
+0x006A4280,17,?Is_Piggybacking@ShipLocomotionClass@@UAGEXZ,src/ship.cpp,7a7fbeedf5866b8176b462ea8c7386637d1233f9aa33a0618865168c408405e9
 0x006A42A0,6,?Fetch_Object_Size@ShipLocomotionClass@@UBEHXZ,src/ship.cpp,8d258eb00a7b982a463e2fce557d91d035bf96ef018384ee252fbd4141536838
 0x006A42B0,65,??_GShipLocomotionClass@@UAEPAXI@Z,src/ship.cpp,2b80db9efb94d283b0bc85c71e324de146c731ed1b6602a10045cfc0209b0f23
 0x006A4300,10,?QueryInterface@ShipLocomotionClass@@W3AGJABU_GUID@@PAPAX@Z,src/ship.cpp,16dde13847d0e70ba0a424fe84fff90df7e8e9b463194e1653ca4f31df2e7fd5

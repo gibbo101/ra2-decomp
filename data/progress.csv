@@ -12665,6 +12665,7 @@ address,name,result,size,source,symbol
 0x006A4250,ShipLocomotionClass::Get_Speed_Accum,MATCH,10,src/ship.cpp,?Get_Speed_Accum@ShipLocomotionClass@@UAGHXZ
 0x006A4260,ShipLocomotionClass::AddRef,MATCH,13,src/ship.cpp,?AddRef@ShipLocomotionClass@@UAGKXZ
 0x006A4270,ShipLocomotionClass::Release,MATCH,13,src/ship.cpp,?Release@ShipLocomotionClass@@UAGKXZ
+0x006A4280,ShipLocomotionClass::Is_Piggybacking,MATCH,17,src/ship.cpp,?Is_Piggybacking@ShipLocomotionClass@@UAGEXZ
 0x006A42A0,ShipLocomotionClass::Fetch_Object_Size,MATCH,6,src/ship.cpp,?Fetch_Object_Size@ShipLocomotionClass@@UBEHXZ
 0x006A42B0,??_GShipLocomotionClass@@UAEPAXI@Z,MATCH,65,src/ship.cpp,??_GShipLocomotionClass@@UAEPAXI@Z
 0x006A4300,ShipLocomotionClass::QueryInterface,MATCH,10,src/ship.cpp,?QueryInterface@ShipLocomotionClass@@W3AGJABU_GUID@@PAPAX@Z

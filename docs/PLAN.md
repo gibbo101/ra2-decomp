@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 4 November 2026: 18,788 of 19,362 game functions match (97%; 75% of game code
+Status, 4 November 2026: 18,789 of 19,362 game functions match (97%; 75% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,30 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### dk8827's sixth set of pull requests (4 November 2026)
+
+**1 function, 10 tool changes.** Eleven pull requests were merged once gated together:
+- ShipLocomotionClass::Is_Piggybacking.
+- In the checker:
+  - Partial-match diffs read call targets from our own relocations, so a shifted call no
+    longer shows a false target.
+  - Overload lookups are indexed once per object.
+  - COFF function extents are built once per object.
+- The gate takes `--baseline COMMIT`, which also protects the matches recorded at a trusted
+  revision, and `tools/build_receipt.py` rechecks a captured cold build against changed
+  address tables.
+- The permuter now:
+  - checks the call targets of a match;
+  - rewrites operators only on scalar operands;
+  - can aim declaration moves at named stack differences (`tools/stackslots.py`).
+- `tools/refaudit.py` ranks unresolved references by how many modules agree on their base,
+  and `data/names.csv` gains Swizzler and ScenarioInit.
+- `tools/coord/choices.py` groups evidence-backed retries, and `mknear.py` leaves out
+  targets whose recorded retries stopped improving.
+- A GitHub workflow runs the tool tests on every push and pull request.
+
+Merge gate: 18,789 of 18,789 (2,804.0 KB).
 
 ### Batches 189 to 191 (4 November 2026)
 
