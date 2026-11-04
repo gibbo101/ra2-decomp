@@ -467,16 +467,11 @@ int INIClass::Entry_Count(Wstring const & section) const
 	return(Entry_Count(section.text()));
 }
 
-static inline void Reset_Cache(char const * & name, INIClass::INISection * & section)
-{
-	name = NULL;
-	section = NULL;
-}
-
 // FUNCTION: GAMEMD 0x00526B00
 void INIClass::Reset(void)
 {
-	Reset_Cache(CurrentSectionName, CurrentSection);
+	CurrentSectionName = NULL;
+	CurrentSection = NULL;
 }
 
 // FUNCTION: GAMEMD 0x00526B10
@@ -491,7 +486,7 @@ INIClass::INIEntry * INIClass::Find_Entry(char const * section, char const * ent
 			CurrentSection = secptr;
 			CurrentSectionName = section;
 		} else {
-			Reset_Cache(CurrentSectionName, CurrentSection);
+			const_cast<INIClass *>(this)->Reset();
 		}
 	}
 
@@ -618,6 +613,34 @@ bool INIClass::Put_TextBlock(char const * section, char const * text)
 		}
 	}
 	return(true);
+}
+
+// FUNCTION: GAMEMD 0x005272B0
+int INIClass::Get_TextBlock(char const * section, char * buffer, int len) const
+{
+	if (len <= 0) return(0);
+
+	buffer[0] = '\0';
+	if (len <= 1) return(0);
+
+	int elen = Entry_Count(section);
+	int total = 0;
+	for (int index = 0; index < elen; index++) {
+		if (index > 0) {
+			*buffer++ = ' ';
+			len--;
+			total++;
+		}
+
+		Get_String(section, Get_Entry(section, index), "", buffer, len);
+
+		int partial = strlen(buffer);
+		total += partial;
+		buffer += partial;
+		len -= partial;
+		if (len <= 1) break;
+	}
+	return(total);
 }
 
 // FUNCTION: GAMEMD 0x005275C0
