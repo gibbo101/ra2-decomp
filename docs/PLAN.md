@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 3 November 2026: 18,777 of 19,362 game functions match (97%; 75% of game code
+Status, 4 November 2026: 18,782 of 19,362 game functions match (97%; 75% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,19 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 186 to 188 (4 November 2026)
+
+**5 functions.** This round went after the callers that 37 already-matching functions wait
+on: each of those reaches 100% alone but is emitted only beside a caller that keeps it out
+of line. It landed the laser drawing function 0x005509F0 with its 1-byte initialiser, the
+WOL server login 0x007864C0 with the Dictionary<Wstring,int>::add only it calls out of
+line, and the _com_ptr_t QueryInterface 0x0045AEA0, whose other caller had already
+matched. Set_Map_Dimensions rose to 99.7% (one register choice in the occupy-list loop),
+Do_MISSION_UNLOAD was written for the first time (72.9%), and ListBoxHandler (14.7 KB) and
+the rules general-section reader (18.8 KB) are now ported in full and banked: the reader
+matches only with two filler statements, so it does not land. Merge gate: 18,782 of 18,782
+(2,797.3 KB).
 
 ### Batches 183 to 185 (3 November 2026)
 

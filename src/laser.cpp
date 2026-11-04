@@ -244,6 +244,174 @@ void LaserDrawClass::Draw_It(void)
 // SYNTHETIC: GAMEMD 0x005509E0 SYMBOL
 // _$E121
 
+#include <d3d.h>
+#include "zbuffer.h"
+
+namespace FPSCounter { extern unsigned CurrentFrameRate; }
+namespace Detail { unsigned GetMinFrameRate(void); }
+namespace Game { extern bool bDirect3DIsUseable; }
+
+struct Triangle3D {
+	void Set_Color(int a, int b, int c);
+	void Set_Vertex(int index, float x, float y, float z, float u, float v);
+
+	D3DTLVERTEX Vertex[3];
+};
+
+class Texture3DCache {
+	public:
+		int Add(Triangle3D const & triangle);
+};
+
+extern Texture3DCache * DAT_008A0E10;
+
+// FUNCTION: GAMEMD 0x005509F0
+void LaserDrawClass::FUN_005509F0(void)
+{
+	static Point2D _offsets[16] = {
+		Point2D(-1, -1),
+		Point2D(1, 1),
+		Point2D(0, -1),
+		Point2D(0, 1),
+		Point2D(-1, 1),
+		Point2D(1, -1),
+		Point2D(-1, 0),
+		Point2D(1, 0),
+		Point2D(-1, -1),
+		Point2D(1, 1),
+		Point2D(0, -1),
+		Point2D(0, 1),
+		Point2D(-1, 1),
+		Point2D(1, -1),
+		Point2D(-1, 0),
+		Point2D(1, 0)
+	};
+
+	DirType dir = Direction(Start, End);
+	FacingType facing = dir.As_Facing();
+
+	Point2D start_pixel;
+	TacticalMap->Coord_To_Pixel(Start, start_pixel);
+	Point2D end_pixel;
+	TacticalMap->Coord_To_Pixel(End, end_pixel);
+
+	int start_z = ZAdjust - TacticalMap->Z_Lepton_To_Pixel(Start.Z) - 2;
+	int end_z = -TacticalMap->Z_Lepton_To_Pixel(End.Z) - 2;
+
+	bool high_detail = FPSCounter::CurrentFrameRate >= Detail::GetMinFrameRate() && Options.DetailLevel != 0;
+
+	float current_intensity = 1.0;
+	if (Fades) {
+		current_intensity = (StartIntensity - EndIntensity) * (Duration - Fetch_Stage()) / Duration + EndIntensity;
+	}
+	int ratio = current_intensity * 255.0f;
+
+	RGBClass adjusted;
+	RGBClass white(255, 255, 255);
+	NoInitClass noinit;
+	RGBClass bright(noinit);
+	RGBClass color(noinit);
+
+	if (IsSupported) {
+		unsigned red = InnerColor.Get_Red() * 2;
+		unsigned green = InnerColor.Get_Green() * 2;
+		unsigned blue = InnerColor.Get_Blue() * 2;
+		bright.RGBClass::RGBClass(MIN(255, red), MIN(255, green), MIN(255, blue));
+		color = bright;
+	} else {
+		bright = InnerColor;
+		color.Set_Red(InnerColor.Get_Red() >> 1);
+		color.Set_Green(InnerColor.Get_Green() >> 1);
+		color.Set_Blue(InnerColor.Get_Blue() >> 1);
+	}
+
+	Point2D start1 = start_pixel;
+	Point2D start0 = start_pixel;
+	Point2D end1 = end_pixel;
+	Point2D end0 = end_pixel;
+
+	for (int i = 1; i <= Thickness; i++) {
+		if (facing & 1) {
+			start0.X += _offsets[facing * 2].X;
+			start0.Y += _offsets[facing * 2].Y;
+			start1.X += _offsets[facing * 2 + 1].X;
+			start1.Y += _offsets[facing * 2 + 1].Y;
+			end0.X += _offsets[facing * 2].X;
+			end0.Y += _offsets[facing * 2].Y;
+			end1.X += _offsets[facing * 2 + 1].X;
+			end1.Y += _offsets[facing * 2 + 1].Y;
+		} else if (i & 1) {
+			start0.X += _offsets[facing * 2].X;
+			start1.Y += _offsets[facing * 2 + 1].Y;
+			end0.X += _offsets[facing * 2].X;
+			end1.Y += _offsets[facing * 2 + 1].Y;
+		} else {
+			start0.Y += _offsets[facing * 2].Y;
+			start1.X += _offsets[facing * 2 + 1].X;
+			end0.Y += _offsets[facing * 2].Y;
+			end1.X += _offsets[facing * 2 + 1].X;
+		}
+
+		if (!Game::bDirect3DIsUseable) {
+			if (high_detail) {
+				DSurface::Temp->DrawRGBMultiplyingLine(DSurface::ViewBounds, start0, end0, color, current_intensity, start_z, end_z);
+				DSurface::Temp->DrawRGBMultiplyingLine(DSurface::ViewBounds, start1, end1, color, current_intensity, start_z, end_z);
+			} else {
+				adjusted = color;
+				adjusted.Adjust(ratio, white);
+				int pixel = DSurface::Build_Hicolor_Pixel(adjusted);
+				DSurface::Temp->Draw_Depth_Shaded_Line(DSurface::ViewBounds, start0, end0, pixel, start_z, end_z);
+				DSurface::Temp->Draw_Depth_Shaded_Line(DSurface::ViewBounds, start1, end1, pixel, start_z, end_z);
+			}
+
+			if (IsSupported && i == 1) {
+				color = InnerColor;
+			} else {
+				unsigned red = (unsigned)color.Get_Red() >> 1;
+				unsigned green = (unsigned)color.Get_Green() >> 1;
+				unsigned blue = (unsigned)color.Get_Blue() >> 1;
+				unsigned limit = high_detail ? 8 : 64;
+				if (red < limit && green < limit && blue < limit) break;
+				color.Set_Red(red);
+				color.Set_Green(green);
+				color.Set_Blue(blue);
+			}
+		}
+	}
+
+	if (Game::bDirect3DIsUseable && DAT_008A0E10 != NULL && DepthBuffer != NULL) {
+		float start_depth = (((unsigned)(unsigned short)(DepthBuffer->Get_Scroll() + DepthBuffer->Bounds.Y - start_pixel.Y - DSurface::ViewBounds.Y) + start_z) & 0xFFFF);
+		float start_zf = start_depth / 65535.0f;
+		float end_depth = (((unsigned)(unsigned short)(DepthBuffer->Get_Scroll() + DepthBuffer->Bounds.Y - end_pixel.Y - DSurface::ViewBounds.Y) + end_z) & 0xFFFF);
+		float end_zf = end_depth / 65535.0f;
+
+		int red = bright.Get_Red() * ratio >> 8;
+		int green = bright.Get_Green() * ratio >> 8;
+		int blue = bright.Get_Blue() * ratio >> 8;
+
+		Triangle3D tri[2];
+		tri[0].Set_Color(red, green, blue);
+		tri[1].Set_Color(red, green, blue);
+		tri[0].Set_Vertex(0, start0.X, start0.Y, start_zf, 0.0f, 0.0f);
+		tri[0].Set_Vertex(1, start1.X, start1.Y, start_zf, 0.0f, 1.0f);
+		tri[0].Set_Vertex(2, end0.X, end0.Y, end_zf, 1.0f, 0.0f);
+		tri[1].Set_Vertex(0, start1.X, start1.Y, start_zf, 0.0f, 1.0f);
+		tri[1].Set_Vertex(1, end1.X, end1.Y, end_zf, 1.0f, 1.0f);
+		tri[1].Set_Vertex(2, end0.X, end0.Y, end_zf, 1.0f, 0.0f);
+		DAT_008A0E10->Add(tri[0]);
+		DAT_008A0E10->Add(tri[1]);
+	} else if (high_detail) {
+		DSurface::Temp->DrawRGBMultiplyingLine(DSurface::ViewBounds, start_pixel, end_pixel, bright, current_intensity, start_z, end_z);
+	} else {
+		adjusted = bright;
+		adjusted.Adjust(ratio, white);
+		DSurface::Temp->Draw_Depth_Shaded_Line(DSurface::ViewBounds, start_pixel, end_pixel, DSurface::Build_Hicolor_Pixel(adjusted), start_z, end_z, false);
+	}
+}
+
+// SYNTHETIC: GAMEMD 0x005512C0 SYMBOL
+// _$E123
+
 // TEMPLATE: GAMEMD 0x005512D0
 // ?Clear@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEXXZ
 template class DynamicVectorClass<LaserDrawClass *>;

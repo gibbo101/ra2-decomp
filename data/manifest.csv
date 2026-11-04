@@ -2143,6 +2143,7 @@ address,size,symbol,source,sha256
 0x0045ADD0,49,?Delete_Index@?$DynamicVectorClass@PAVAbstractClass@@@@QAE_NH@Z,src/building.cpp,e5dcf659a32b8282fe49c79a5bb461bedcd94ef7e4528d5ebcb9ba3d225d3005
 0x0045AE10,49,?Delete_Index@?$DynamicVectorClass@PAVBuildingClass@@@@QAE_NH@Z,src/building.cpp,e5dcf659a32b8282fe49c79a5bb461bedcd94ef7e4528d5ebcb9ba3d225d3005
 0x0045AE50,74,??0?$VectorClass@PAVReestablish@@@@QAE@HPBQAVReestablish@@@Z,src/building.cpp,9210e4c66913afcf54e8ca11480a155c60b76b94e8d3eddf03901f1ba1384212
+0x0045AEA0,117,?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@@Z,src/building.cpp,415dcdb352674459817b2ac8389b40c1847b16d2de403cbbb260429329c5b016
 0x0045AFA0,40,_$E2,src/builtype.cpp,9cea242b3510f3bd7426ad35c2bfe76774e15dacc895f254f85955845ae7738c
 0x0045AFD0,19,_$E5,src/builtype.cpp,88d43ef4904bcbe94fcfdae9dd479c4308972bb0136a4e94a1a8788dad9b8afd
 0x0045AFF0,19,_$E8,src/builtype.cpp,f33bcda29c1c39a57837bf0445c79c68f743419284a52318bed7f5ceb66ee103
@@ -7698,6 +7699,8 @@ address,size,symbol,source,sha256
 0x00550240,32,?Draw_All@LaserDrawClass@@SIXXZ,src/laser.cpp,b88910de92c056e1b1c9f4514537c9796bda0b18e446e42a000993fcee69862d
 0x00550260,1906,?Draw_It@LaserDrawClass@@QAEXXZ,src/laser.cpp,7517b1c5fb117d3d228d7700901ec03cb8df66486c12b0dcd8171e91344163fc
 0x005509E0,1,_$E121,src/laser.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x005509F0,2245,?FUN_005509F0@LaserDrawClass@@QAEXXZ,src/laser.cpp,350a5084010c7bd586e6198c5f95438052e62220bfc34afacafeffadbc49c627
+0x005512C0,1,_$E123,src/laser.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x005512D0,42,?Clear@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEXXZ,src/laser.cpp,824983a18bc707dfb5a682f2b17890e2282ea6c8fa83549a4971753117704227
 0x00551300,27,?ID@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEHPBQAVLaserDrawClass@@@Z,src/laser.cpp,eeb29d112613b0653ee85b4ff58bddb59157c8b4fc65a386db3052b948d71bbb
 0x00551320,13,?GetItem@?$VectorClass@PAVLaserDrawClass@@@@UBEPAVLaserDrawClass@@H@Z,src/laser.cpp,da1c0b5074b32d4e80b5f5f042a075a73f60de8e9432201ad45100959599be93
@@ -18015,6 +18018,7 @@ address,size,symbol,source,sha256
 0x00786080,496,?FUN_00786080@@YIXXZ,src/wonline.cpp,9ccae6476f40c1ff04c79f7c48b1ea4d4a5fce4f8fcca8ff9f44c371aca23e03
 0x00786270,278,?FUN_00786270@@YI_NXZ,src/wonline.cpp,4569b0f5e1646a9cd6c1ece5134b0c9a116a03d083b8b00fcdbcfe11ba930719
 0x00786390,300,?FUN_00786390@@YIHXZ,src/wonline.cpp,ca903dac74c28d6acf51fc3de8b0539a9a1826a361d957c91dc726d9d959d31d
+0x007864C0,2250,?FUN_007864C0@@YI_NPAUServer@@@Z,src/wonline.cpp,2bfabfaf25ff90c6baa15dd8341a4cda0b0c912b966e2bdc9f3ab3fff75e7aa2
 0x00786D90,48,?FUN_00786D90@@YI_NXZ,src/wonline.cpp,030464924dc7a16b020e796a432acd72a155bb48969ea8eeeac3287ad2da2abc
 0x00786DC0,164,?FUN_00786DC0@@YI_NAAVWstring@@@Z,src/wonline.cpp,4ac12b5687e39b7a0dd5737527f3338620144153df8b98d564026a311e1304ce
 0x00786E70,117,?FUN_00786E70@@YIHAAVWstring@@@Z,src/wonline.cpp,6fdc417c1d5efa8de5cbcb4b6fc974f4e73d66e1eaca5bd251071dca8a8f8be3
@@ -18206,6 +18210,7 @@ address,size,symbol,source,sha256
 0x007ACA00,390,?add@?$ArrayList@UUser@@@@QAEDAAUUser@@H@Z,src/wonline.cpp,c038daa252d6a3afafec552a344c1cba4bd3a29db6a6d8a8d5f95f59c8939e44
 0x007ACB90,50,?get@?$ArrayList@UUser@@@@QBEDAAUUser@@H@Z,src/wonline.cpp,94013daf092ff603ef6a45379e974cd17fc13174ef0f9d0b636647c34a9bf76d
 0x007ACBD0,7,?clear@?$ArrayList@H@@QAEXXZ,src/wonline.cpp,92eb3b367d6ee91190fb0a8be2e0959e6ee590dca281c332dfc805ffe6f846d2
+0x007ACBE0,321,?add@?$Dictionary@VWstring@@H@@QAEDAAVWstring@@AAH@Z,src/wonline.cpp,b2a27c69b5f89ee391963d4f7a822df399709d9d67560fec6c13821593d01551
 0x007ACD30,38,?clear@?$ArrayList@VWstring@@@@QAEXXZ,src/wonline.cpp,c8fd935d05a64c34715deeaa06af749ede4116344f9e782c4daba9f9eb8dd690
 0x007ACD60,207,?remove@?$ArrayList@VWstring@@@@QAEDH@Z,src/wonline.cpp,75184e074352be683c1ed0e1477ae64a43d55dd979532c4c64e28b87f9023b1e
 0x007ACE30,38,?get@?$ArrayList@VWstring@@@@QBEDAAVWstring@@H@Z,src/wonline.cpp,5219d6271250a02f027f761af7cbf5e854ab36458012af9b3136a6df79d8f355

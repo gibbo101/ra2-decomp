@@ -1784,6 +1784,7 @@ address,name,result,size,source,symbol
 0x0045ADD0,?Delete_Index@?$DynamicVectorClass@PAVAbstractClass@@@@QAE_NH@Z,MATCH,49,src/building.cpp,?Delete_Index@?$DynamicVectorClass@PAVAbstractClass@@@@QAE_NH@Z
 0x0045AE10,?Delete_Index@?$DynamicVectorClass@PAVBuildingClass@@@@QAE_NH@Z,MATCH,49,src/building.cpp,?Delete_Index@?$DynamicVectorClass@PAVBuildingClass@@@@QAE_NH@Z
 0x0045AE50,??0?$VectorClass@PAVReestablish@@@@QAE@HPBQAVReestablish@@@Z,MATCH,74,src/building.cpp,??0?$VectorClass@PAVReestablish@@@@QAE@HPBQAVReestablish@@@Z
+0x0045AEA0,?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@@Z,MATCH,117,src/building.cpp,?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@@Z
 0x0045AFA0,_$E2,MATCH,40,src/builtype.cpp,_$E2
 0x0045AFD0,_$E5,MATCH,19,src/builtype.cpp,_$E5
 0x0045AFF0,_$E8,MATCH,19,src/builtype.cpp,_$E8
@@ -7348,6 +7349,8 @@ address,name,result,size,source,symbol
 0x00550240,LaserDrawClass::Draw_All,MATCH,32,src/laser.cpp,?Draw_All@LaserDrawClass@@SIXXZ
 0x00550260,LaserDrawClass::Draw_It,MATCH,1906,src/laser.cpp,?Draw_It@LaserDrawClass@@QAEXXZ
 0x005509E0,_$E121,MATCH,1,src/laser.cpp,_$E121
+0x005509F0,LaserDrawClass::FUN_005509F0,MATCH,2245,src/laser.cpp,?FUN_005509F0@LaserDrawClass@@QAEXXZ
+0x005512C0,_$E123,MATCH,1,src/laser.cpp,_$E123
 0x005512D0,?Clear@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEXXZ,MATCH,42,src/laser.cpp,?Clear@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEXXZ
 0x00551300,?ID@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEHPBQAVLaserDrawClass@@@Z,MATCH,27,src/laser.cpp,?ID@?$DynamicVectorClass@PAVLaserDrawClass@@@@UAEHPBQAVLaserDrawClass@@@Z
 0x00551320,?GetItem@?$VectorClass@PAVLaserDrawClass@@@@UBEPAVLaserDrawClass@@H@Z,MATCH,13,src/laser.cpp,?GetItem@?$VectorClass@PAVLaserDrawClass@@@@UBEPAVLaserDrawClass@@H@Z
@@ -17763,6 +17766,7 @@ address,name,result,size,source,symbol
 0x00786080,FUN_00786080,MATCH,496,src/wonline.cpp,?FUN_00786080@@YIXXZ
 0x00786270,FUN_00786270,MATCH,278,src/wonline.cpp,?FUN_00786270@@YI_NXZ
 0x00786390,FUN_00786390,MATCH,300,src/wonline.cpp,?FUN_00786390@@YIHXZ
+0x007864C0,FUN_007864C0,MATCH,2250,src/wonline.cpp,?FUN_007864C0@@YI_NPAUServer@@@Z
 0x00786D90,FUN_00786D90,MATCH,48,src/wonline.cpp,?FUN_00786D90@@YI_NXZ
 0x00786DC0,FUN_00786DC0,MATCH,164,src/wonline.cpp,?FUN_00786DC0@@YI_NAAVWstring@@@Z
 0x00786E70,FUN_00786E70,MATCH,117,src/wonline.cpp,?FUN_00786E70@@YIHAAVWstring@@@Z
@@ -17957,6 +17961,7 @@ address,name,result,size,source,symbol
 0x007ACA00,?add@?$ArrayList@UUser@@@@QAEDAAUUser@@H@Z,MATCH,390,src/wonline.cpp,?add@?$ArrayList@UUser@@@@QAEDAAUUser@@H@Z
 0x007ACB90,?get@?$ArrayList@UUser@@@@QBEDAAUUser@@H@Z,MATCH,50,src/wonline.cpp,?get@?$ArrayList@UUser@@@@QBEDAAUUser@@H@Z
 0x007ACBD0,?clear@?$ArrayList@H@@QAEXXZ,MATCH,7,src/wonline.cpp,?clear@?$ArrayList@H@@QAEXXZ
+0x007ACBE0,?add@?$Dictionary@VWstring@@H@@QAEDAAVWstring@@AAH@Z,MATCH,321,src/wonline.cpp,?add@?$Dictionary@VWstring@@H@@QAEDAAVWstring@@AAH@Z
 0x007ACD30,?clear@?$ArrayList@VWstring@@@@QAEXXZ,MATCH,38,src/wonline.cpp,?clear@?$ArrayList@VWstring@@@@QAEXXZ
 0x007ACD60,?remove@?$ArrayList@VWstring@@@@QAEDH@Z,MATCH,207,src/wonline.cpp,?remove@?$ArrayList@VWstring@@@@QAEDH@Z
 0x007ACE30,?get@?$ArrayList@VWstring@@@@QBEDAAVWstring@@H@Z,MATCH,38,src/wonline.cpp,?get@?$ArrayList@VWstring@@@@QBEDAAVWstring@@H@Z

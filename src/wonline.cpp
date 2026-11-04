@@ -2896,20 +2896,11 @@ static inline void Focus_Chat_Input_After(unsigned int event)
 int __fastcall FUN_006241F0(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
 BOOL CALLBACK FUN_00796B90(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name);
-extern char DAT_0084A238;
 extern int DAT_00B77A90;
 extern char DAT_00B761A8[];
 #include "wolopt.h"
-
-static inline int Pick_Locale(void)
-{
-	FUN_007F7624_Class dialog;
-	int result = FUN_006241F0(0xFE, FUN_00796B90, (OwnerDraw::DialogControl *)&dialog);
-	if (result < 0) {
-		return 0;
-	}
-	return result;
-}
+void __fastcall FUN_00779F10(Wstring const * value);
+bool DAT_0084A238 = true;
 
 static inline Wstring Strip_Server_Prefix(Server * server)
 {
@@ -2922,6 +2913,16 @@ static inline Wstring Strip_Server_Prefix(Server * server)
 	return text;
 }
 
+static inline int Pick_Locale(void)
+{
+	FUN_007F7624_Class dialog;
+	int result = FUN_006241F0(0xFE, FUN_00796B90, (OwnerDraw::DialogControl *)&dialog);
+	if (result < 0) {
+		return 0;
+	}
+	return result;
+}
+
 static inline void Set_Locale_Entry(Wstring & key, int locale)
 {
 	int old;
@@ -2930,8 +2931,166 @@ static inline void Set_Locale_Entry(Wstring & key, int locale)
 	}
 }
 
+static inline void Apply_Locale(Wstring & key, int locale, User & user)
+{
+	DAT_00AC116C->V46(locale);
+	DAT_00AC116C->V47(&user);
+	Set_Locale_Entry(key, locale);
+}
+
+static inline void Check_Locale(Wstring & key, int & locale, rc_ptr<PlayerProfile> & profile, User & user)
+{
+	if (profile.Get() != NULL && profile->Field10 != locale) {
+		if (profile->Field10 == 0) {
+			profile->SetLocale(locale, 2);
+			profile->Save(&DAT_00B73E40);
+		}
+		int value = profile->Field10;
+		DAT_00AC116C->V46(value);
+		DAT_00AC116C->V47(&user);
+		locale = value;
+		int old;
+		if (DAT_00B76530.remove(key, old)) {
+			DAT_00B76530.add(key, locale);
+		}
+	}
+}
+
+static inline int Wait_For_Event(void)
+{
+	int timeout = 30000;
+	int wait;
+	while ((wait = WaitForMultipleObjects(0x12, DAT_00B73684, FALSE, 100)) == WAIT_TIMEOUT) {
+		timeout -= 100;
+		if (timeout <= 0) {
+			return 0x12;
+		}
+		FUN_0077F900();
+	}
+	ResetEvent(DAT_00B73684[wait]);
+	return wait;
+}
+
 bool __fastcall FUN_007864C0(Server * server);
 
+// FUNCTION: GAMEMD 0x007864C0
+bool __fastcall FUN_007864C0(Server * server)
+{
+	strcpy(server->login, DAT_00B73E40.get());
+	strcpy(server->password, DAT_00B7778C.get());
+	for (int i = 0; i < 18; i++) {
+		ResetEvent(DAT_00B73684[i]);
+	}
+	{
+		WideWstring text(StringTable::LoadString("TXT_CONNECTING_SERVER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x25E6));
+		FUN_00792BE0(0x10, text, 0);
+	}
+	DAT_00AC116C->V05(server, 0x14, DAT_0084A238);
+	int tries = 0x14;
+	for (;;) {
+		int wait = Wait_For_Event();
+		if (wait == 0) {
+			Focus_Chat_Input_After(0xFFFFFFFF);
+			return false;
+		}
+		if (wait == 5) {
+			ODMessageBox(StringTable::LoadString("TXT_CANT_CONNECT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x25F3), 0, FUN_0077D710, 0);
+			Focus_Chat_Input_After(0xFFFFFFFF);
+			return false;
+		}
+		if (wait == 0x12) {
+			Focus_Chat_Input_After(0xFFFFFFFF);
+			return false;
+		}
+		if (tries-- < 0) {
+			ODMessageBox(StringTable::LoadString("TXT_CANT_CONNECT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x25FA), 0, FUN_0077D710, 0);
+			Focus_Chat_Input_After(0xFFFFFFFF);
+			return false;
+		}
+		if (wait == 2) {
+			break;
+		}
+	}
+	Focus_Chat_Input_After(0xFFFFFFFF);
+	DAT_00AC116C->V53(0x10010);
+	DAT_00B77DC0 = 0;
+	Session.Read_MultiPlayer_Settings();
+	WOLOptionsClass options;
+	rc_ptr<PlayerProfile> profile;
+	if (options.Is_Bit1_Clear()) {
+		profile = FUN_00778A20(&DAT_00B73E40);
+	} else {
+		profile = DAT_00B75E48;
+	}
+	if (Session.unknown_0C == 4 || Session.unknown_0C == 5) {
+		{
+			Wstring name = Strip_Server_Prefix(server);
+			profile->SetName(&name);
+		}
+		if (options.Is_Bit1_Clear()) {
+			profile->Save(&DAT_00B73E40);
+		}
+	}
+	strcpy(Session.Handle, DAT_00B73E40.get());
+	Session.FUN_0069B760(profile.Get()->Field1C, false);
+	Session.FUN_0069B7E0(profile.Get()->Field20, false);
+	Session.Write_MultiPlayer_Settings();
+	FUN_00779F10(&DAT_00B73E40);
+	if (DAT_00AC1170 != NULL && strlen(DAT_00B761A8) != 0) {
+		DAT_00AC1170->V05(DAT_00B761A8, DAT_00B77A90, DAT_00B73E40.get(), DAT_0084A234 & 0xFFFF00, -1, 0, 0);
+		DAT_00AC1170->V14(DAT_00B761A8, DAT_00B77A90, DAT_00B73E40.get(), DAT_0084A234 & 0xFFFF00);
+	}
+	for (int j = 0; j < 18; j++) {
+		ResetEvent(DAT_00B73684[j]);
+	}
+	User user;
+	memset(&user, 0, sizeof(user));
+	strcpy(user.Nick, DAT_00B73E40.get());
+	DAT_00AC116C->V47(&user);
+	for (;;) {
+		int wait = Wait_For_Event();
+		if (wait == 0) {
+			Focus_Chat_Input_After(0xFFFFFFFF);
+			break;
+		}
+		if (wait == 5) {
+			ODMessageBox(StringTable::LoadString("TXT_WDT_NET_ERR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x264F), 0, FUN_0077D710, 0);
+			Focus_Chat_Input_After(0xFFFFFFFF);
+			break;
+		}
+		if (wait == 0x12) {
+			Focus_Chat_Input_After(0xFFFFFFFF);
+			break;
+		}
+		if (wait == 0xE) {
+			break;
+		}
+	}
+	Wstring key = ((Wstring const &)DAT_00B73E40).toLower();
+	if (DAT_00B76530.contains(key)) {
+		int locale = 0;
+		DAT_00B76530.getValue(key, locale);
+		if (locale != 0) {
+			Check_Locale(key, locale, profile, user);
+			return true;
+		}
+	}
+	int pick = 0;
+	if (profile.Get() != NULL) {
+		pick = profile->Field10;
+	}
+	if (pick == 0) {
+		pick = Pick_Locale();
+		if (profile.Get() != NULL) {
+			profile->SetLocale(pick, 3);
+			profile->Save(&DAT_00B73E40);
+		}
+	}
+	if (pick != 0) {
+		Apply_Locale(key, pick, user);
+	}
+	return true;
+}
 // FUNCTION: GAMEMD 0x00786D90
 bool FUN_00786D90(void)
 {
@@ -3150,7 +3309,6 @@ int __fastcall FUN_00789500(char const * login, char const * password, int plain
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void __fastcall FUN_00779C90(Wstring const * value);
 extern char DAT_00889F64[];
-extern char DAT_0084A238;
 int __fastcall FUN_00797640(int sku);
 BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 int FUN_00787010(void);
@@ -3188,7 +3346,6 @@ bool __fastcall FUN_00788710(int id, int flag)
 	return DAT_00B77DD0 == 0;
 }
 
-void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag);
 
 // FUNCTION: GAMEMD 0x00788800
 long __fastcall FUN_00788800(WolChannel * chan, Wstring & key, WideWstring text)
@@ -3206,7 +3363,6 @@ long __fastcall FUN_00788800(WolChannel * chan, Wstring & key, WideWstring text)
 	return DAT_00AC116C->V08(chan);
 }
 
-void FUN_00781480(void);
 
 // FUNCTION: GAMEMD 0x00788A30
 int __fastcall FUN_00788A30(bool flag)
@@ -3251,7 +3407,6 @@ extern int DAT_00B7782C;
 extern int DAT_00B76228;
 extern long DAT_00B77DF0;
 extern int DAT_00B77DF4;
-extern char DAT_00889F64[];
 
 struct NetUtilAccount {
 	virtual void S00(void);
@@ -3542,7 +3697,6 @@ Wstring __fastcall FUN_00789630(Server * server)
 
 #include "wolopt.h"
 
-rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name);
 void __fastcall FUN_00623840(HWND hwnd);
 
 static inline bool Same_Name(Wstring const & a, Wstring const & b)
@@ -3875,7 +4029,6 @@ void __fastcall FUN_00623E40(HWND window, Wstring & text);
 int __fastcall FUN_00623EA0(HWND window, WideWstring * text);
 WideWstring __fastcall FUN_005EDD00(HWND edit);
 bool __fastcall Focus_Next_Tab_Item(HWND window, bool previous);
-void __cdecl FUN_005E2790(int color, wchar_t const * text, ...);
 extern int DAT_00B77E8C;
 extern int DAT_007EEF44;
 extern wchar_t DAT_0084B94C[];
@@ -4136,8 +4289,6 @@ BOOL CALLBACK FUN_0078DA30(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return TRUE;
 }
 
-void __fastcall FUN_00623E40(HWND window, Wstring & text);
-extern char DAT_00889F64[];
 extern int DAT_00B77DC4;
 
 class WonlineGameControl : public SimpleWonlineDialogControl
@@ -4340,7 +4491,6 @@ BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 int __fastcall FUN_0060D320(HWND dialog);
-bool __fastcall Focus_Next_Tab_Item(HWND window, bool previous);
 
 extern int DAT_00B73A1C;
 extern int DAT_00B73AB8;
@@ -10896,6 +11046,9 @@ template class VectorClass<tConnInfoStruct *>;
 
 // TEMPLATE: GAMEMD 0x007ACBD0
 // ?clear@?$ArrayList@H@@QAEXXZ
+
+// TEMPLATE: GAMEMD 0x007ACBE0
+// ?add@?$Dictionary@VWstring@@H@@QAEDAAVWstring@@AAH@Z
 
 // TEMPLATE: GAMEMD 0x007ACD30
 // ?clear@?$ArrayList@VWstring@@@@QAEXXZ

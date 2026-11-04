@@ -7288,5 +7288,7 @@ template class VectorClass<BuildingClass *>;
 // ?Delete_Index@?$DynamicVectorClass@PAVBuildingClass@@@@QAE_NH@Z
 // TEMPLATE: GAMEMD 0x0045AE50
 // ??0?$VectorClass@PAVReestablish@@@@QAE@HPBQAVReestablish@@@Z
+// TEMPLATE: GAMEMD 0x0045AEA0
+// ?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@@Z
 template class VectorClass<Reestablish *>;
 template class DynamicVectorClass<AbstractClass *>;
