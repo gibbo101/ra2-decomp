@@ -33,8 +33,10 @@ for i, m in enumerate(mods):
         mods[i] = (m[0], m[1], spelling.get(segfile[m[2]]["file"], segfile[m[2]]["file"]))
 firsts = [m[0] for m in mods]
 best = {}
+attempts = collections.Counter()
 for r in csv.DictReader(open(f"{D}/attempts.csv")):
     a = int(r["address"], 16)
+    attempts[a] += 1
     try: b = float(r["best"] or 0)
     except ValueError: continue
     if a not in best or b > best[a][0]:
@@ -47,7 +49,8 @@ hx = lambda a: f"0x{a:08X}"
 per = collections.defaultdict(list)
 desc = {}
 for a, (b, blk, note) in best.items():
-    if a in done or a >= lib0 or b < MIN or b >= MAX or a not in size:
+    # Repeated misses require an explicit hypothesis in choices.py plan.
+    if attempts[a] >= 2 or a in done or a >= lib0 or b < MIN or b >= MAX or a not in size:
         continue
     i = bisect.bisect_right(firsts, a) - 1
     m = mods[i][2] if i >= 0 and a <= mods[i][1] else "?"
