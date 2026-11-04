@@ -133,7 +133,7 @@ def caller_regions(orig, obj, pick, addr, size, local, names):
         for i, j, count in difflib.SequenceMatcher(None, a, b, autojunk=False).get_matching_blocks():
             for n in range(count):
                 old, new = left[i + n], right[j + n]
-                if old != new and "<unresolved:" not in new and "<unaligned-" not in new + old:
+                if old != new and not any(s in old + new for s in ("<unresolved:", "<unaligned-", "<ambiguous-")):
                     changed.append([ins[i + n].address, old, new])
     return regions, changed
 
