@@ -11,6 +11,7 @@ import csv
 from pathlib import Path
 
 import check
+from savedobj import SavedObjects
 
 
 def collect(objects):
@@ -19,17 +20,18 @@ def collect(objects):
         for row in csv.DictReader(f):
             if row["result"] == "MATCH":
                 sources[row["source"]].append((int(row["address"], 16), row["symbol"]))
+    saved = SavedObjects(objects) if objects is not None else None
     bases = defaultdict(lambda: defaultdict(Counter))
     orig, names = check.Original(), check.known_names()
     for path, targets in sorted(sources.items()):
         src = check.ROOT / path
-        if objects is None:
+        if saved is None:
             p, log = check.compile_source(src)
             if p is None:
                 raise ValueError(log)
+            raw = p.read_bytes()
         else:
-            p = objects / Path(path).with_suffix(".obj")
-        raw = p.read_bytes()
+            raw = saved.read(path)
         obj = check.CoffObject(raw)
         local, dup = check.bind_annotations(orig, obj, raw, src)
         if dup:
