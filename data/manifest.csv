@@ -12273,6 +12273,7 @@ address,size,symbol,source,sha256
 0x0066D270,302,?Difficulty_Get@@YIXABVCCINIClass@@AAVDifficultyClass@@PBD@Z,src/rules.cpp,bad4d9a688fda0e5b51e2754224df8f585d45d13e5b50f7134e2b31049eb6df9
 0x0066D3A0,222,?Color_Schemes@RulesClass@@QAE_NABVCCINIClass@@@Z,src/rules.cpp,b44ff5756383c1e19a436da70e6de21f9014e9906d87e3e79851f2ef5eb5f1e6
 0x0066D480,170,?Read_ColorAdd@RulesClass@@QAE_NABVCCINIClass@@@Z,src/rules.cpp,1820df69bade161965ff094ba3b3f067ce37d37f617a0eff380b24bc5e2ef1c6
+0x0066D530,18793,?General@RulesClass@@QAE_NABVCCINIClass@@@Z,src/rules.cpp,7562c49086fd7bb2c5e56fcf39b9db6f4727658a85ad8201e2af016aebd91374
 0x00671EA0,903,?MPlayer@RulesClass@@QAE_NABVCCINIClass@@@Z,src/rules.cpp,608f108171b5c6b112ac3b8b424b14af640838623659b08610c8023827a07fdc
 0x00672230,69,?Heap_Maximums@RulesClass@@QAE_NABVCCINIClass@@@Z,src/rules.cpp,63a2053813de0bdc7992eb8c2b5c8eceb1154cdc34bef55088042c67ed59c5b8
 0x00672280,106,?Do_InfantryTypes@RulesClass@@QAE_NABVCCINIClass@@@Z,src/rules.cpp,1323781a70265d6366df61e20e43fd14f1e218417a5b2d85023f4254a0674c99
@@ -12381,10 +12382,15 @@ address,size,symbol,source,sha256
 0x0067B480,80,?Add@?$DynamicVectorClass@PBVTerrainTypeClass@@@@QAE_NABQBVTerrainTypeClass@@@Z,src/rules.cpp,30af68b9c6a673326067624c6aebf06e6d7145fa754b7738b9265393be87482f
 0x0067B4D0,38,?ID@?$DynamicVectorClass@PBVTerrainTypeClass@@@@UAEHABQBVTerrainTypeClass@@@Z,src/rules.cpp,f26d5ad5016911e9e8163dda6581e871aa8f94e75e09d2fd64ca9407bd4ef804
 0x0067B500,73,?TGet_Class@@YIPAVWarheadTypeClass@@ABVCCINIClass@@PBD1PAV1@@Z,src/rules.cpp,e6ffac388c65f6c6705606dd22147f570bb41d2f6ca049f3b9f3800908dea6e8
+0x0067B550,464,?TGet_TypeList@@YI?AV?$TypeList@PBVBuildingTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z,src/rules.cpp,209e6d92d27aa41e31e9be67a216ab7bdd7e2ef3bf5801bb266f243db675c4f5
+0x0067B720,464,?TGet_TypeList@@YI?AV?$TypeList@PBVUnitTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z,src/rules.cpp,33737a34d788fe9839bd07df72c0f8f66e3813883347c576164eae6bfde0e851
+0x0067B8F0,464,?TGet_TypeList@@YI?AV?$TypeList@PBVAircraftTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z,src/rules.cpp,3af3e1da38afe9693df963449beaf9a91b6cde844ba2326517435e3ad492b08d
 0x0067BAC0,73,?TGet_Class@@YIPAVInfantryTypeClass@@ABVCCINIClass@@PBD1PAV1@@Z,src/rules.cpp,44914e2c4d20d2cc26088e08c2e4068ffc649ce71b6b8d2a1ea9ca8912670052
+0x0067BB10,464,?TGet_TypeList@@YI?AV?$TypeList@PBVInfantryTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z,src/rules.cpp,aec3cf7c76f9b2664a26b42b77bd01de3bef56943406529fcd3468b9c9228b67
 0x0067BCE0,73,?TGet_Class@@YIPAVBuildingTypeClass@@ABVCCINIClass@@PBD1PAV1@@Z,src/rules.cpp,c09d72f827e43850f146ac2432ae63aec99524a1c412088a44a4339bb087e936
 0x0067BD30,73,?TGet_Class@@YIPAVAircraftTypeClass@@ABVCCINIClass@@PBD1PAV1@@Z,src/rules.cpp,20eb0ca9a5653692e2384472993883050dfd4052bd591cde9287f437c1a6f3b9
 0x0067BD80,73,?TGet_Class@@YIPAVTerrainTypeClass@@ABVCCINIClass@@PBD1PAV1@@Z,src/rules.cpp,294e94265a0dd36b882f0c3ec539c2dbe3a2221819406f662ac24fd846a5ab14
+0x0067BDD0,464,?TGet_TypeList@@YI?AV?$TypeList@PBVTerrainTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z,src/rules.cpp,0445c7f10a7c27d4d724c8e8cd8613e1c36d1bfe46297b27e2bee86d0849cd74
 0x0067BFA0,108,??4?$VectorClass@PBVTerrainTypeClass@@@@QAEAAV0@ABV0@@Z,src/rules.cpp,67717883b161a52f82ab08e5291e782cf9d14f17a349d84a5682543f4abb6259
 0x0067C010,73,??_G?$VectorClass@PBVVoxelAnimTypeClass@@@@UAEPAXI@Z,src/rules.cpp,693bbf30b8b400f400954ca88db485ac63b90ca22c69a8b5fa0a9ac058d47e0f
 0x0067C060,73,??_G?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@UAEPAXI@Z,src/rules.cpp,efdcdcc28cc21e19208b2e19f5d2dc3248bf543f0b737ffab52fbf8d71660b8d

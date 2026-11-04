@@ -33,9 +33,8 @@ WARNING = re.compile(r"^(0x[0-9A-F]{8}) .+: warning: ")
 SUMMARY = re.compile(r"^CHECK-SUMMARY: checked=(\d+) failed=(\d+)$")
 
 
-# Both objects emit this initializer; the boundary in modules.csv is uncertain.
-# Acknowledge only this exact pair until ownership is established. Keep both
-# records for symbol lookup; never count one retail function twice.
+# Both objects emit this initializer: keep both records for symbol lookup but count
+# it once. Any other address claimed twice fails the gate.
 SHARED = {"0x004F2C50": {("src/grphmenu.cpp", "_$E12"), ("src/grphmenu2.cpp", "_$E41")}}
 
 

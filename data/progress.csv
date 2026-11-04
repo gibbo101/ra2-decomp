@@ -11925,6 +11925,7 @@ address,name,result,size,source,symbol
 0x0066D270,Difficulty_Get,MATCH,302,src/rules.cpp,?Difficulty_Get@@YIXABVCCINIClass@@AAVDifficultyClass@@PBD@Z
 0x0066D3A0,RulesClass::Color_Schemes,MATCH,222,src/rules.cpp,?Color_Schemes@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x0066D480,RulesClass::Read_ColorAdd,MATCH,170,src/rules.cpp,?Read_ColorAdd@RulesClass@@QAE_NABVCCINIClass@@@Z
+0x0066D530,RulesClass::General,MATCH,18793,src/rules.cpp,?General@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x00671EA0,RulesClass::MPlayer,MATCH,903,src/rules.cpp,?MPlayer@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x00672230,RulesClass::Heap_Maximums,MATCH,69,src/rules.cpp,?Heap_Maximums@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x00672280,RulesClass::Do_InfantryTypes,MATCH,106,src/rules.cpp,?Do_InfantryTypes@RulesClass@@QAE_NABVCCINIClass@@@Z
@@ -12039,10 +12040,15 @@ address,name,result,size,source,symbol
 0x0067B480,?Add@?$DynamicVectorClass@PBVTerrainTypeClass@@@@QAE_NABQBVTerrainTypeClass@@@Z,MATCH,80,src/rules.cpp,?Add@?$DynamicVectorClass@PBVTerrainTypeClass@@@@QAE_NABQBVTerrainTypeClass@@@Z
 0x0067B4D0,?ID@?$DynamicVectorClass@PBVTerrainTypeClass@@@@UAEHABQBVTerrainTypeClass@@@Z,MATCH,38,src/rules.cpp,?ID@?$DynamicVectorClass@PBVTerrainTypeClass@@@@UAEHABQBVTerrainTypeClass@@@Z
 0x0067B500,TGet_Class,MATCH,73,src/rules.cpp,?TGet_Class@@YIPAVWarheadTypeClass@@ABVCCINIClass@@PBD1PAV1@@Z
+0x0067B550,?TGet_TypeList@@YI?AV?$TypeList@PBVBuildingTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z,MATCH,464,src/rules.cpp,?TGet_TypeList@@YI?AV?$TypeList@PBVBuildingTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
+0x0067B720,?TGet_TypeList@@YI?AV?$TypeList@PBVUnitTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z,MATCH,464,src/rules.cpp,?TGet_TypeList@@YI?AV?$TypeList@PBVUnitTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
+0x0067B8F0,?TGet_TypeList@@YI?AV?$TypeList@PBVAircraftTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z,MATCH,464,src/rules.cpp,?TGet_TypeList@@YI?AV?$TypeList@PBVAircraftTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
 0x0067BAC0,TGet_Class@@YIPAVInfantryTypeClass,MATCH,73,src/rules.cpp,?TGet_Class@@YIPAVInfantryTypeClass@@ABVCCINIClass@@PBD1PAV1@@Z
+0x0067BB10,?TGet_TypeList@@YI?AV?$TypeList@PBVInfantryTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z,MATCH,464,src/rules.cpp,?TGet_TypeList@@YI?AV?$TypeList@PBVInfantryTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
 0x0067BCE0,TGet_Class@@YIPAVBuildingTypeClass,MATCH,73,src/rules.cpp,?TGet_Class@@YIPAVBuildingTypeClass@@ABVCCINIClass@@PBD1PAV1@@Z
 0x0067BD30,TGet_Class@@YIPAVAircraftTypeClass,MATCH,73,src/rules.cpp,?TGet_Class@@YIPAVAircraftTypeClass@@ABVCCINIClass@@PBD1PAV1@@Z
 0x0067BD80,TGet_Class@@YIPAVTerrainTypeClass,MATCH,73,src/rules.cpp,?TGet_Class@@YIPAVTerrainTypeClass@@ABVCCINIClass@@PBD1PAV1@@Z
+0x0067BDD0,?TGet_TypeList@@YI?AV?$TypeList@PBVTerrainTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z,MATCH,464,src/rules.cpp,?TGet_TypeList@@YI?AV?$TypeList@PBVTerrainTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
 0x0067BFA0,??4?$VectorClass@PBVTerrainTypeClass@@@@QAEAAV0@ABV0@@Z,MATCH,108,src/rules.cpp,??4?$VectorClass@PBVTerrainTypeClass@@@@QAEAAV0@ABV0@@Z
 0x0067C010,??_G?$VectorClass@PBVVoxelAnimTypeClass@@@@UAEPAXI@Z,MATCH,73,src/rules.cpp,??_G?$VectorClass@PBVVoxelAnimTypeClass@@@@UAEPAXI@Z
 0x0067C060,??_G?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@UAEPAXI@Z,MATCH,73,src/rules.cpp,??_G?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@UAEPAXI@Z

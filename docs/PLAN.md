@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 4 November 2026: 18,792 of 19,362 game functions match (97%; 75% of game code
+Status, 4 November 2026: 18,798 of 19,362 game functions match (97%; 76% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,20 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### dk8827's eighth set of pull requests (4 November 2026)
+
+**6 functions, 1 tool change.** Two pull requests were merged once gated together:
+- RulesClass::General (18,793 bytes), now defined between Read_ColorAdd and MPlayer as in
+  the exe, and the five TGet_TypeList instances it emits (464 bytes each). It adopts
+  TibSun's findmake.h without its assert, which retail's parsers lack. BarrelDebris is
+  assigned through a const reference to the parsed list; a plain assignment checks at
+  74.0%.
+- checkall counts each retail address once and fails when two annotations claim one
+  address, except the grphmenu initialiser at 0x004F2C50 that both objects emit.
+
+The attempt-tracking pull request went back once more: its writer turned a zero `checks`
+count into a blank. Merge gate: 18,798 of 18,798 functions (2,825.6 KB).
 
 ### dk8827's seventh set of pull requests (4 November 2026)
 
