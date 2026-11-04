@@ -1,5 +1,5 @@
 name: Tool tests
-on: [pull_request, push]
+on: [pull_request, push, workflow_dispatch]
 permissions:
   contents: read
 jobs:
