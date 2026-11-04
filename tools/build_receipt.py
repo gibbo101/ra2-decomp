@@ -70,8 +70,12 @@ def object_name(src):
 
 
 def can_reuse(previous, current, name):
-    return ("units" in previous and previous["units"].get(name) == current["units"][name]
-            and all(previous.get(key) == current[key] for key in ("shared", "cpp", "asm", "environment")))
+    if any(previous.get(key) != current[key] for key in ("cpp", "asm", "environment")):
+        return False
+    if previous["tree"] == current["tree"]:
+        return True
+    return (previous.get("shared") == current["shared"]
+            and previous.get("units", {}).get(name) == current["units"][name])
 
 
 def gate(directory, capture, manifest, reuse=None):
