@@ -53,6 +53,7 @@ remain visible. --score also compares instructions with stack displacements mask
 
 import csv
 import difflib
+from functools import cached_property
 import hashlib
 import os
 import re
@@ -107,6 +108,10 @@ class Original:
                         raise SystemExit(f"exe_patches.csv: bytes at {r['address']} are not EA's patch")
                     img[at:at + len(orig)] = orig
             self.image = bytes(img)
+
+    @cached_property
+    def decorated_addresses(self):
+        return decorated_addresses()
 
     def imports(self) -> dict[str, int]:
         """Import-table slot address of each imported function, by name."""
@@ -240,7 +245,7 @@ def annotations(src: Path) -> list[tuple[int, str]]:
     return out
 
 
-def known_decorated() -> dict[str, int]:
+def decorated_addresses() -> dict[str, set[int]]:
     """Decorated symbol -> address, from data/progress.csv and data/names.csv."""
     out = {}
     for path in (ROOT / "data/progress.csv", ROOT / "data/names.csv"):
@@ -249,8 +254,15 @@ def known_decorated() -> dict[str, int]:
                 for r in csv.DictReader(f):
                     # Initialiser and static-guard names are local to their own source file.
                     if r.get("symbol") and not re.match(r"^_?\$[ES]\d|^\?\$S\d", r["symbol"]):
-                        out[r["symbol"]] = int(r["address"], 16)
+                        out.setdefault(r["symbol"], set()).add(int(r["address"], 16))
     return out
+
+
+def known_decorated(addresses=None) -> dict[str, int]:
+    """Only symbols with one proven global address can bind an external reference."""
+    if addresses is None:
+        addresses = decorated_addresses()
+    return {name: next(iter(values)) for name, values in addresses.items() if len(values) == 1}
 
 
 def known_names() -> dict[str, int]:
@@ -659,7 +671,7 @@ def ref_checks(orig, obj, raw, pick, ours: bytes, theirs: bytes, address: int, n
 def bind_annotations(orig, obj, raw, src: Path) -> tuple[dict[str, int], list[str]]:
     """Decorated symbol -> address for every known match, with each annotated function of
     `src` bound to the compiled function its bytes pick; and a line per double claim."""
-    local = known_decorated()
+    local = known_decorated(orig.decorated_addresses)
     known = dict(local)
     claimed: dict[str, int] = {}
     duplicates = []
@@ -713,6 +725,11 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     if target.name in local:
         want = local[target.name]
         return ("ok" if got == want else "mismatch"), want
+    if names or local:
+        candidates = orig.decorated_addresses.get(target.name, ())
+        if len(candidates) > 1:
+            # A call to one of these copies needs independent local binding evidence.
+            return ("unverified" if got in candidates else "mismatch"), None
     if target.section > 0:
         tsec = obj.sections[target.section - 1]
         if not tsec.is_code:
