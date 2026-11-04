@@ -8,6 +8,7 @@ See tools/coord/README.md for the input format.
 import argparse
 from collections import defaultdict
 import csv
+import difflib
 import hashlib
 import itertools
 import json
@@ -116,19 +117,25 @@ def caller_regions(orig, obj, pick, addr, size, local, names):
     _, sec, lo, _ = pick
     code = sec.data[lo:lo + size]
     retail = orig.read(addr, orig.sizes[addr])
-    if hasattr(check, "aligned_listings"):
-        a, b = check.aligned_listings(orig, obj, sec, lo, code, addr, retail, local, names)
-    else:
-        # Older checkers expose the relocation linker but only return listings
-        # with stack slots masked. Keep stack offsets in the region comparison.
-        candidate = check.placeholder_linked(orig, obj, sec, lo, code, addr, len(retail))
-        image = (orig.base, orig.end)
-        a, b = (check.mask_addresses(check.disasm(c, addr), addr, addr + len(c), image)
-                for c in (retail, candidate))
+    # Rank structural differences separately from destination evidence: an
+    # unresolved COFF call does not establish a mismatch at each call site.
+    candidate = check.placeholder_linked(orig, obj, sec, lo, code, addr, len(retail))
+    image = (orig.base, orig.end)
+    a, b = (check.mask_addresses(check.disasm(c, addr), addr, addr + len(c), image)
+            for c in (retail, candidate))
     md = check.capstone.Cs(check.capstone.CS_ARCH_X86, check.capstone.CS_MODE_32)
     ins = list(md.disasm(retail, addr))
     end = ins[-1].address + ins[-1].size if ins else addr
-    return differences(a, b, [i.address for i in ins] + [end])
+    regions = differences(a, b, [i.address for i in ins] + [end])
+    changed = []
+    if hasattr(check, "aligned_listings"):
+        left, right = check.aligned_listings(orig, obj, sec, lo, code, addr, retail, local, names)
+        for i, j, count in difflib.SequenceMatcher(None, a, b, autojunk=False).get_matching_blocks():
+            for n in range(count):
+                old, new = left[i + n], right[j + n]
+                if old != new and "<unresolved:" not in new and "<unaligned-" not in new + old:
+                    changed.append([ins[i + n].address, old, new])
+    return regions, changed
 
 
 def observations(src, raw, job, orig, names):
@@ -159,7 +166,8 @@ def observations(src, raw, job, orig, names):
                                        raw=1.0 if exact else r.ratio, normalized=r.norm_ratio,
                                        unverified=r.unverified, size=r.ours)
         if addr == caller:
-            results[f"0x{addr:08X}"]["regions"] = [] if exact else caller_regions(orig, obj, pick, addr, r.ours, local, names)
+            regions, changed = ([], []) if exact else caller_regions(orig, obj, pick, addr, r.ours, local, names)
+            results[f"0x{addr:08X}"].update(regions=regions, changed_targets=changed)
     return results
 
 

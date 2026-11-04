@@ -56,3 +56,6 @@ class TrialsTests(unittest.TestCase):
         y = row(2, [[104, 105, 1, 1]], .75, "match")
         z = row(3, [[104, 105, 1, 1]], .99, "absent")
         self.assertEqual(representatives([x, y, z, {**y, "compile": 4}, {"error": "failed"}], "main"), [y, z, x])
+        edge = row(5, [[104, 105, 1, 1]], .75, "match")
+        edge["targets"]["main"]["changed_targets"] = [[104, "je retail:a", "je retail:b"]]
+        self.assertEqual(representatives([y, edge], "main"), [y, edge])

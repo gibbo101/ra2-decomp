@@ -20,8 +20,9 @@ def representatives(rows, caller):
         if regions is None:
             continue  # Old logs and failed/ambiguous caller observations cannot be aligned.
         helpers = tuple(sorted((a, r["status"]) for a, r in targets.items() if a != caller))
-        key = target["status"], tuple(tuple(r) for r in regions), helpers
-        rank = (target["status"] != "match", sum(r[2] for r in regions), sum(r[3] for r in regions),
+        edges = tuple(tuple(e) for e in target.get("changed_targets", ()))
+        key = target["status"], tuple(tuple(r) for r in regions), edges, helpers
+        rank = (target["status"] != "match", sum(r[2] for r in regions), len(edges), sum(r[3] for r in regions),
                 -sum(status == "match" for _, status in helpers), -target["raw"], row["compile"])
         if key not in keep or rank < keep[key][0]:
             keep[key] = rank, row
@@ -40,3 +41,5 @@ def report(dest, caller):
         helpers = ", ".join(f"{a} {r['status']}" for a, r in sorted(row["targets"].items()) if a != caller)
         print(f"{dest / (row['source'] + '.cpp')} [{target['status']}, raw {target['raw']:.2%}] "
               f"{regions or 'no aligned instruction differences'}" + (f"; helpers: {helpers}" if helpers else ""))
+        for addr, old, new in target.get("changed_targets", ()):
+            print(f"  0x{addr:08X}: {old} -> {new}")

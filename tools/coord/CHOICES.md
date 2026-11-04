@@ -35,7 +35,9 @@ Give related sites the same optional `"group"` string to try their corresponding
 `choices.py report build/trials/JOB` compares saved alternatives without compiling.
 Each row gives a candidate source, half-open retail byte ranges, the number of
 retail/candidate instructions in each range, and every requested helper's status.
-An insertion has a zero-length retail range. The report keeps one representative
+An insertion has a zero-length retail range. When the checker exposes aligned branch
+destinations, changed known targets are listed separately; an unresolved call alone
+is not counted as an instruction change. The report keeps one representative
 per distinct set of differences and helper outcomes. An empty list of differences
 is not a byte match: instruction encodings and unresolved targets still need the
 checker. Older logs without alignments are reported as such.
