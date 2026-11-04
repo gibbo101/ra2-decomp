@@ -112,12 +112,12 @@ def code_digest(obj, pick):
     return hashlib.sha256(sec.data[lo:hi] + json.dumps([sym.name, refs]).encode()).hexdigest()
 
 
-def caller_regions(orig, obj, pick, addr, size, local):
+def caller_regions(orig, obj, pick, addr, size, local, names):
     _, sec, lo, _ = pick
     code = sec.data[lo:lo + size]
     retail = orig.read(addr, orig.sizes[addr])
     if hasattr(check, "aligned_listings"):
-        a, b = check.aligned_listings(orig, obj, sec, lo, code, addr, retail, local)
+        a, b = check.aligned_listings(orig, obj, sec, lo, code, addr, retail, local, names)
     else:
         # Older checkers expose the relocation linker but only return listings
         # with stack slots masked. Keep stack offsets in the region comparison.
@@ -159,7 +159,7 @@ def observations(src, raw, job, orig, names):
                                        raw=1.0 if exact else r.ratio, normalized=r.norm_ratio,
                                        unverified=r.unverified, size=r.ours)
         if addr == caller:
-            results[f"0x{addr:08X}"]["regions"] = [] if exact else caller_regions(orig, obj, pick, addr, r.ours, local)
+            results[f"0x{addr:08X}"]["regions"] = [] if exact else caller_regions(orig, obj, pick, addr, r.ours, local, names)
     return results
 
 
