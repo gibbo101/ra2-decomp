@@ -5,7 +5,7 @@ Byte Tactics (Total Annihilation). Active: about 93% of the game's functions mat
 in rounds of agent batches.
 
 **Read `docs/PLAN.md` first** for the method, the binary's measured facts, the prior art
-(OpenTS, YRpp, the recomp), the legal footing and a record of every round. Then
+(OpenTS, YRpp, the recomp) and the legal footing; `docs/rounds/` records every round. Then
 `docs/AGENTS.md`: how a function is matched and every lesson learned. The README covers
 setup and the checker.
 

@@ -32,8 +32,9 @@ Use the trusted base revision even if the contribution edits its own progress ta
    round's claimed matches against the tree (`tally.py`), attempts.csv rows
    (`attempts_rows.py`), modules and manifest, stale banked attempts (`stale.py`), stray
    files and the game totals.
-3. Update the status lines and the round's section in README.md and docs/PLAN.md, add any
-   lessons to docs/AGENTS.md, then commit and push.
+3. Update the status lines in README.md and docs/PLAN.md, add the round's section at the
+   top of the current month's file in docs/rounds/ (a new month starts a new file, listed
+   under Rounds in docs/PLAN.md), add any lessons to docs/AGENTS.md, then commit and push.
 
 Other helpers: `comments.py` (comment-rule scan), `near.py` (near-miss list), `vtowner.py`
 and `vtname.py` (vtable owners from RTTI), `rank.py`, `pick.py`, `mkbatch.py`, `jsum.py`

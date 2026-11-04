@@ -13,7 +13,7 @@ over real objects or hard-coded addresses are rejected however well they score.
 **Status (4 November 2026):** 18,800 of the game's 19,362 functions match byte for byte
 (97%), covering 2.90 MB of its 3.81 MB of game code (76%). Each function is checked on
 its own; linking a whole executable that matches comes later. `docs/PLAN.md` has the
-method and a record of every batch.
+method, and `docs/rounds/` records every batch.
 
 ## Getting started
 
@@ -43,8 +43,10 @@ method and a record of every batch.
   (`progress.csv`), proven names for globals (`names.csv`), and every attempt that fell
   short (`attempts.csv`).
 - `tools/`: the checker and its helpers.
-- `docs/`: `PLAN.md` (method, facts about the binary, progress), `AGENTS.md` (how a
-  function is matched, and the lessons learned), `COMMIT_GUARD.md`.
+- `docs/`: `PLAN.md` (method, facts about the binary, status), `rounds/` (a record of
+  each round of batches and each set of merged pull requests, one file per month, newest
+  first), `AGENTS.md` (how a function is matched, and the lessons learned),
+  `MANIFEST.md` (the crosscheck manifest's format) and `COMMIT_GUARD.md`.
 
 ## Verifying a claim
 
