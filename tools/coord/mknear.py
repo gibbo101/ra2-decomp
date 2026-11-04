@@ -36,7 +36,6 @@ firsts = [m[0] for m in mods]
 best = {}
 with open(f"{D}/attempts.csv") as f:
     attempts = list(csv.DictReader(f))
-exhausted = exhausted_retries(attempts, size)
 for r in attempts:
     a = int(r["address"], 16)
     try: b = float(r["best"] or 0)
@@ -50,6 +49,7 @@ for p in glob.glob("build/batch/*/0x*.cpp"):
 hx = lambda a: f"0x{a:08X}"
 per = collections.defaultdict(list)
 desc = {}
+exhausted = exhausted_retries(attempts, size)
 for a, (b, blk, note) in best.items():
     # Exhausted retries require an explicit hypothesis in choices.py plan.
     if a in exhausted or a in done or a >= lib0 or b < MIN or b >= MAX or a not in size:
