@@ -6325,6 +6325,7 @@ address,name,result,size,source,symbol
 0x00526E80,INIClass::Put_UUBlock,MATCH,304,src/ini.cpp,?Put_UUBlock@INIClass@@QAE_NPBDPBXH@Z
 0x00526FB0,INIClass::Get_UUBlock,MATCH,523,src/ini.cpp,?Get_UUBlock@INIClass@@QBEHPBDPAXH@Z
 0x005271C0,INIClass::Put_TextBlock,MATCH,225,src/ini.cpp,?Put_TextBlock@INIClass@@QAE_NPBD0@Z
+0x005272B0,INIClass::Get_TextBlock,MATCH,777,src/ini.cpp,?Get_TextBlock@INIClass@@QBEHPBDPADH@Z
 0x005275C0,INIClass::Put_Int,MATCH,123,src/ini.cpp,?Put_Int@INIClass@@QAE_NPBD0HH@Z
 0x00527640,INIClass::Put_Int,MATCH,144,src/ini.cpp,?Put_Int@INIClass@@QAE_NABVWstring@@0HH@Z
 0x005276D0,INIClass::Get_Int,MATCH,532,src/ini.cpp,?Get_Int@INIClass@@QBEHPBD0H@Z
@@ -11038,6 +11039,7 @@ address,name,result,size,source,symbol
 0x006394E0,FUN_006394E0,MATCH,193,src/planmgr.cpp,?FUN_006394E0@@YIXPAVAbstractClass@@PAVPlanningNodeClass@@@Z
 0x006395B0,FUN_006395B0,MATCH,388,src/planmgr.cpp,?FUN_006395B0@@YIXPAVTechnoClass@@PAVPlanningNodeClass@@@Z
 0x00639740,FUN_00639740,MATCH,185,src/planmgr.cpp,?FUN_00639740@@YIXPAVTechnoClass@@PAVPlanningNodeClass@@@Z
+0x00639800,FUN_00639800,MATCH,587,src/planmgr.cpp,?FUN_00639800@@YIXPAVTechnoClass@@PAVPlanningNodeClass@@@Z
 0x00639A50,FUN_00639A50,MATCH,354,src/planmgr.cpp,?FUN_00639A50@@YIXPAVPlanningNodeClass@@0VEventClass@@@Z
 0x00639BC0,FUN_00639BC0,MATCH,238,src/planmgr.cpp,?FUN_00639BC0@@YIXPAVPlanningNodeClass@@@Z
 0x00639DA0,FUN_00639DA0,MATCH,131,src/planmgr.cpp,?FUN_00639DA0@@YIHXZ
