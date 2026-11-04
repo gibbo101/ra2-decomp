@@ -11278,7 +11278,7 @@ address,name,result,size,source,symbol
 0x006447E0,ParticleSystemTypeClass::Load,MATCH,69,src/psystype.cpp,?Load@ParticleSystemTypeClass@@UAGJPAUIStream@@@Z
 0x00644830,ParticleSystemTypeClass::Save,MATCH,25,src/psystype.cpp,?Save@ParticleSystemTypeClass@@UAGJPAUIStream@@H@Z
 0x00644850,Particle_System_Behavior_From_Name,MATCH,53,src/psystype.cpp,?Particle_System_Behavior_From_Name@@YI?AW4ParticleSystemBehaviorType@@PBD@Z
-0x00644890,ParticleSystemTypeClass::FindOrAllocate,MATCH,131,src/psystype.cpp,?FindOrAllocate@ParticleSystemTypeClass@@SIPAV1@PBD@Z
+0x00644890,ParticleSystemTypeClass::Find_Or_Make,MATCH,131,src/psystype.cpp,?Find_Or_Make@ParticleSystemTypeClass@@SIPAV1@PBD@Z
 0x00644920,ParticleSystemTypeClass::Fetch_Object_Size,MATCH,6,src/psystype.cpp,?Fetch_Object_Size@ParticleSystemTypeClass@@UBEHXZ
 0x00644930,ParticleSystemTypeClass::Fetch_RTTI,MATCH,6,src/psystype.cpp,?Fetch_RTTI@ParticleSystemTypeClass@@UBE?AW4RTTIType@@XZ
 0x00644940,ParticleSystemTypeClass::Create_And_Place,MATCH,5,src/psystype.cpp,?Create_And_Place@ParticleSystemTypeClass@@UBE_NABVCell@@PAVHouseClass@@@Z

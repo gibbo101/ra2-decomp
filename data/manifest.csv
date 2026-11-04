@@ -11626,7 +11626,7 @@ address,size,symbol,source,sha256
 0x006447E0,69,?Load@ParticleSystemTypeClass@@UAGJPAUIStream@@@Z,src/psystype.cpp,5bd4039478a1c36ed8e3b5042f209e3082939dc9dbb3243d937820cd733b9410
 0x00644830,25,?Save@ParticleSystemTypeClass@@UAGJPAUIStream@@H@Z,src/psystype.cpp,eb186f6465c8ec3f56d87c00fa3839766d3e4a13ef152a4c201115508ec3c4e3
 0x00644850,53,?Particle_System_Behavior_From_Name@@YI?AW4ParticleSystemBehaviorType@@PBD@Z,src/psystype.cpp,fcea4002e5a8ce6d5f519b724d1c579e310b35166b3739fe94c59200e1c43ae9
-0x00644890,131,?FindOrAllocate@ParticleSystemTypeClass@@SIPAV1@PBD@Z,src/psystype.cpp,e53fc461aca4ca2404fa61a2c8d88c7248fb5c33e206cccba2529b4e55da3e24
+0x00644890,131,?Find_Or_Make@ParticleSystemTypeClass@@SIPAV1@PBD@Z,src/psystype.cpp,e53fc461aca4ca2404fa61a2c8d88c7248fb5c33e206cccba2529b4e55da3e24
 0x00644920,6,?Fetch_Object_Size@ParticleSystemTypeClass@@UBEHXZ,src/psystype.cpp,4669c70abf6c9b2f81080b7b62ea8775937a4d6a286e839bf4afe04f741f4e2a
 0x00644930,6,?Fetch_RTTI@ParticleSystemTypeClass@@UBE?AW4RTTIType@@XZ,src/psystype.cpp,49284e5a57f3a3975d45904142e135f007e997b81a88671e86fdbff4313ea7e3
 0x00644940,5,?Create_And_Place@ParticleSystemTypeClass@@UBE_NABVCell@@PAVHouseClass@@@Z,src/psystype.cpp,8cad4061f7462df3586af0942fd0de860c94376587768a065839209dcaf67fd5

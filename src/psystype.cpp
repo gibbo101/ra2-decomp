@@ -219,7 +219,7 @@ ParticleSystemBehaviorType Particle_System_Behavior_From_Name(char const * name)
 }
 
 // FUNCTION: GAMEMD 0x00644890
-ParticleSystemTypeClass * ParticleSystemTypeClass::FindOrAllocate(char const * name)
+ParticleSystemTypeClass * ParticleSystemTypeClass::Find_Or_Make(char const * name)
 {
 	if (stricmp("<none>", name) && stricmp("none", name)) {
 		for (int index = 0; index < ParticleSystemTypes.Count(); index++) {
