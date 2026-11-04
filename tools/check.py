@@ -367,6 +367,7 @@ class Result:
     ratio: float = 0.0
     norm_ratio: float = 0.0
     diff: list[str] = field(default_factory=list)
+    proven: list[str] = field(default_factory=list)
 
     @property
     def matched(self) -> bool:
@@ -490,6 +491,8 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
                 ref.status = "mismatch"
             elif f"warning: stores the vftable of {exe_class}, not of .?AV{body}" not in res.warnings:
                 res.warnings.append(f"warning: stores the vftable of {exe_class}, not of .?AV{body}")
+        if ref.status == "ok":
+            res.proven.append(f"{ref.offset:X}/{ref.type:X}/{ref.addend}/{ref.got:X}")
         if ref.status == "mismatch":
             res.mismatched_refs += 1
         if ref.status == "unverified":
@@ -740,6 +743,9 @@ def main() -> None:
         extra = f", {res.unverified} unverified" if res.unverified else ""
         print(f"0x{address:08X} {name.lstrip('=') or res.symbol}: {verdict} ({res.ours}/{res.size} bytes{extra}) "
               f"{res.symbol}")
+        if os.environ.get("RA2_SAVE_REFERENCES") or os.environ.get("RA2_REQUIRE_REFERENCES"):
+            sites = res.proven if res.matched else ()
+            print(f"CHECK-REFERENCES {address:08X} " + " ".join(sites))
         if score:
             raw_ratio = 1.0 if res.matched else res.ratio
             print(f"normalised score: {res.norm_ratio * 100:.1f}% (raw {raw_ratio * 100:.1f}%)")

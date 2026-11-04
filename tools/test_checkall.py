@@ -160,5 +160,30 @@ sys.exit(case['exit'])
         self.assertIn("WRONG TARGETS", self.progress.read_text())
 
 
+    def test_lost_reference_cannot_be_offset_by_a_new_one(self):
+        import os
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            exe = self.root / "orig/gamemd.exe"
+            exe.parent.mkdir()
+            exe.write_bytes(b"fixture")
+            self.addCleanup(exe.parent.rmdir)
+            self.addCleanup(exe.unlink)
+            path = str(Path(tmp) / "base.json")
+            def output(site):
+                return (self.match() + "CHECK-REFERENCES 00401000 " + site + "\n"
+                        + self.match("0x00401010", "Second") + "CHECK-REFERENCES 00401010 \n"
+                        + self.complete(2))
+            self.child(output("1/6/0/405000"))
+            with patch.dict(os.environ, RA2_SAVE_REFERENCES=path):
+                self.assertEqual(self.run_gate()[0], 0)
+            with patch.dict(os.environ, RA2_REQUIRE_REFERENCES=path):
+                self.assertEqual(self.run_gate()[0], 0)
+                self.child(output("2/6/0/406000"))
+                code, log = self.run_gate(record=True)
+                self.assertEqual(code, 1)
+                self.assertIn("lost proven reference 00401000 1/6/0/405000", log)
+
+
 if __name__ == "__main__":
     unittest.main()
