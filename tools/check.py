@@ -586,6 +586,23 @@ def overloaded(sym: str, decorated, declared=()) -> bool:
     return any(d != sym and qualified(d) == name for d in (*decorated, *declared))
 
 
+class ReferenceNames(dict):
+    """Name addresses and overloads for one fully bound object comparison."""
+
+    def __init__(self, names, local, declared):
+        super().__init__(names)
+        self.overloads = {}
+        for symbol in (*local, *declared):
+            name = qualified(symbol)
+            if name in names:
+                previous = self.overloads.setdefault(name, symbol)
+                if previous != symbol:
+                    self.overloads[name] = None
+
+    def ambiguous(self, symbol, name):
+        return self.overloads.get(name, symbol) != symbol
+
+
 def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     """Whether a linker-filled field points where the original's does."""
     if target.section == sec.number:
@@ -611,9 +628,12 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     if placeholder:
         want = int(placeholder.group(1), 16)
         return ("ok" if got == want else "mismatch"), want
-    if name in names and not overloaded(target.name, local, function_symbols(obj)):
-        want = names[name]
-        return ("ok" if got == want else "mismatch"), want
+    if name in names:
+        ambiguous = (names.ambiguous(target.name, name) if isinstance(names, ReferenceNames)
+                     else overloaded(target.name, local, function_symbols(obj)))
+        if not ambiguous:
+            want = names[name]
+            return ("ok" if got == want else "mismatch"), want
     return "unverified", None
 
 
@@ -725,6 +745,7 @@ def main() -> None:
     # Which compiled function each annotation is decides what its own symbol resolves to,
     # so pick them first, by bytes alone.
     local, duplicates = bind_annotations(orig, obj, raw, src)
+    names = ReferenceNames(names, local, function_symbols(obj))
     for line in duplicates:
         print(line)
     failed = len(duplicates)
