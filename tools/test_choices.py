@@ -34,3 +34,12 @@ class TrialsTests(unittest.TestCase):
         self.assertEqual(exhausted_retries(rows + [row(80, 1)], {16: 2000}), {16})
         self.assertFalse(exhausted_retries(rows + [row(80, 1)], {16: 2001}))
         self.assertFalse(exhausted_retries(rows + [row(81, 60)], {16: 2000}))
+
+    def test_coherent_group_precedes_mixed_exceptions(self):
+        sites = [{"find": c, "alternatives": [c.upper()], "group": "access"} for c in "abc"]
+        trial = [s for _, s in variants("abc", sites)]
+        self.assertEqual(trial[:2], ["abc", "ABC"])
+        self.assertEqual(len(set(trial)), 8)
+        sites[0]["alternatives"].append("x")
+        with self.assertRaisesRegex(ValueError, "corresponding"):
+            list(variants("abc", sites))

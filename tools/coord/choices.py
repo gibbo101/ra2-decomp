@@ -35,14 +35,30 @@ def variants(source, choices):
         if not text or source.count(text) != 1:
             raise ValueError("each find string must occur exactly once")
         start = source.index(text)
-        sites.append((start, start + len(text), list(dict.fromkeys([text, *site["alternatives"]]))))
+        sites.append((start, start + len(text), [text, *site["alternatives"]], site.get("group")))
     sites.sort()
     if any(first[1] > second[0] for first, second in zip(sites, sites[1:])):
         raise ValueError("overlapping choice sites")
+    groups = defaultdict(list)
+    for index, (_, _, alternatives, group) in enumerate(sites):
+        if group:
+            groups[group].append(index)
+    baseline = tuple(site[2][0] for site in sites)
+    coherent = []
+    for group, indices in groups.items():
+        width = len(sites[indices[0]][2])
+        if any(len(sites[i][2]) != width for i in indices):
+            raise ValueError(f"{group}: grouped sites need corresponding alternatives")
+        for choice in range(1, width):
+            seed = list(baseline)
+            for i in indices:
+                seed[i] = sites[i][2][choice]
+            coherent.append(tuple(seed))
     seen = set()
-    for replacements in itertools.product(*(site[2] for site in sites)):
+    mixed = itertools.product(*(dict.fromkeys(site[2]) for site in sites))
+    for replacements in itertools.chain([baseline], coherent, mixed):
         text = source
-        for (begin, end, _), replacement in reversed(list(zip(sites, replacements))):
+        for (begin, end, _, _), replacement in reversed(list(zip(sites, replacements))):
             text = text[:begin] + replacement + text[end:]
         digest = hashlib.sha256(text.encode("latin-1")).hexdigest()
         if digest not in seen:

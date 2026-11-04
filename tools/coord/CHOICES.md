@@ -29,3 +29,5 @@ selects the header overrides. Each distinct source and its per-target code/reloc
 fingerprints are kept locally. Use the regular whole-module checker on winning sources.
 To benchmark a search, start with a perturbed known match, conceal the winning choice
 among the alternatives, and count recovered functions and actual compiler invocations.
+
+Give related sites the same optional `"group"` string to try their corresponding alternatives together immediately after the baseline. For example, group three accesses through the same pointer and give each one alternative using the other spelling. Each member must list the same number of alternatives in corresponding order. Independent exceptions are still tried within the compiler budget.
