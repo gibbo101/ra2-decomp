@@ -1171,8 +1171,7 @@ EventClass PlanningTokenClass::Pop_Front(void)
 void PlanningTokenClass::Share_Range(TechnoClass * techno, int start, int count)
 {
 	if (techno->FUN_00705D20()) {
-		int end = start + count;
-		for (int i = start; i < end; i++) {
+		for (int i = start; i < count + start; i++) {
 			PlanningNodeClass * node = PlanningNodes[i];
 			EventClass event = node->Get_Event_For(OwnerUnit);
 			event.Data.Target.Whom = TargetClass(techno);
@@ -1185,14 +1184,7 @@ void PlanningTokenClass::Share_Range(TechnoClass * techno, int start, int count)
 void PlanningTokenClass::Share_From(TechnoClass * techno, int start)
 {
 	int count = PlanningNodes.Count() - start;
-	if (techno->FUN_00705D20()) {
-		for (int i = start; i < count + start; i++) {
-			PlanningNodeClass * node = PlanningNodes[i];
-			EventClass event = node->Get_Event_For(OwnerUnit);
-			event.Data.Target.Whom = TargetClass(techno);
-			node->Add_Member(techno, &event);
-		}
-	}
+	Share_Range(techno, start, count);
 }
 
 // FUNCTION: GAMEMD 0x00636B50
@@ -1287,7 +1279,7 @@ PlanningNodeClass * PlanningTokenClass::Node_At(int index)
 	if (count == 0) return 0;
 	if (index >= count) {
 		int start = StepsToClosedLoop;
-		if (start <= 0 && start != 0) return 0;
+		if (!Loop_Start_Valid()) return 0;
 		index = (index - start) % ClosedLoopNodeCount + start;
 	}
 	if (index < 0 || index >= count) return 0;
@@ -2189,6 +2181,49 @@ void __fastcall FUN_00639740(TechnoClass * techno, PlanningNodeClass * node)
 	Close_Loop(techno, node);
 }
 
+
+// FUNCTION: GAMEMD 0x00639800
+void __fastcall FUN_00639800(TechnoClass * techno, PlanningNodeClass * node)
+{
+	TechnoClass * owner = node->Member_Owner(0);
+	PlanningTokenClass * initial = owner->FUN_00705D20();
+	int from = initial->Node_Index(node);
+	PlanningTokenClass * source = owner->FUN_00705D20();
+	source->Share_From(techno, from);
+
+	int start = -1;
+	int loop_count = -1;
+	PlanningNodeClass * update = NULL;
+	PlanningTokenClass * target = techno->FUN_00705D20();
+	if (source->Loop_Start_Valid()) {
+		int const source_loop_count = source->Get_Loop_Count();
+		int step = source->Get_Loop_Start();
+		if (source->Loop_Start_Positive() && from < step) {
+			PlanningNodeClass * loop = source->Node_At(step);
+			start = target->Node_Index(loop);
+			update = loop;
+		} else {
+			source->Share_Range(techno, step, from - step);
+			start = target->Node_Index(node);
+			update = node;
+		}
+		loop_count = source_loop_count;
+	}
+	target->Set_Loop(loop_count, start);
+	if (update) {
+		update->Update_Active();
+	}
+
+	if (!DAT_00AC4CD0 && techno->House->Is_Player_Control()) {
+		DAT_00AC4CD0 = true;
+		PlanningNodeClass * last = target->Last_Node();
+		if (!update) {
+			last->Select_All();
+		} else {
+			last->Unselect_All();
+		}
+	}
+}
 
 // FUNCTION: GAMEMD 0x00639A50
 void __fastcall FUN_00639A50(PlanningNodeClass * node, PlanningNodeClass * last, EventClass event)
