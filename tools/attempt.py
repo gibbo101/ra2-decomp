@@ -42,7 +42,7 @@ def inputs():
     if git("diff", "HEAD", "--name-only", "--", "data", "tools/check.py", "tools/coff.py", "tools/rtti.py",
            "tools/wcl", "tools/wineenv.sh"):
         raise ValueError("recorded checker inputs must match the base commit")
-    files = ["orig/gamemd.exe", *("toolchain/vc6sp3/BIN/" + name for name in
+    files = ["orig/gamemd.exe", "data/symbols.csv", *("toolchain/vc6sp3/BIN/" + name for name in
                                   ("CL.EXE", "C1XX.DLL", "C2.DLL"))]
     return {"commit": git("rev-parse", "HEAD").decode().strip(), "flags": FLAGS,
             "files": {name: digest((ROOT / name).read_bytes()) for name in files},
@@ -91,7 +91,7 @@ def module_bytes(module, commit):
 
 def reproduce(data):
     if data["version"] != 1 or data["inputs"] != inputs():
-        raise ValueError("base commit, compiler, flags or executable differ from the recorded inputs")
+        raise ValueError("base commit, headers, symbols, compiler, flags or executable differ from the recorded inputs")
     address = data["address"]
     if not re.fullmatch(r"0x[0-9A-F]{8}", address):
         raise ValueError("invalid target address")
