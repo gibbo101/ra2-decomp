@@ -1968,7 +1968,7 @@ int TechnoClass::Rearm_Delay(int which) const
 }
 
 // FUNCTION: GAMEMD 0x006FD210
-LaserDrawClass * TechnoClass::CreateLaser(ObjectClass * target, int which, WeaponTypeClass * weapon, Coord const & source_coord)
+LaserDrawClass * TechnoClass::CreateLaser(AbstractClass * target, int which, WeaponTypeClass * weapon, Coord const & source_coord)
 {
 	RGBClass color;
 	int duration = weapon->LaserDuration;
@@ -2005,7 +2005,7 @@ LaserDrawClass * TechnoClass::CreateLaser(ObjectClass * target, int which, Weapo
 	}
 
 	if (target != NULL && (target->AbstractFlags & 2)) {
-		dest = target->Target_Coord();
+		dest = ((ObjectClass *)target)->Target_Coord();
 	} else {
 		dest = target->As_Coord();
 	}
@@ -2018,7 +2018,7 @@ LaserDrawClass * TechnoClass::CreateLaser(ObjectClass * target, int which, Weapo
 }
 
 // FUNCTION: GAMEMD 0x006FD460
-EBolt * TechnoClass::CreateEBolt(ObjectClass * target, WeaponTypeClass * weapon, Coord const & source_coord)
+EBolt * TechnoClass::CreateEBolt(AbstractClass * target, WeaponTypeClass * weapon, Coord const & source_coord)
 {
 	int zadjust = 0;
 	Coord dest;
@@ -2037,7 +2037,7 @@ EBolt * TechnoClass::CreateEBolt(ObjectClass * target, WeaponTypeClass * weapon,
 	}
 
 	if (target != NULL && (target->AbstractFlags & 2)) {
-		dest = target->Target_Coord();
+		dest = ((ObjectClass *)target)->Target_Coord();
 	} else {
 		dest = target->As_Coord();
 	}

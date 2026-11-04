@@ -1519,6 +1519,7 @@ address,name,result,size,source,symbol
 0x0043EEB0,BuildingClass::Set_Turret_Index,MATCH,215,src/building.cpp,?Set_Turret_Index@BuildingClass@@QAEXH@Z
 0x0043EF90,BuildingClass::Shape_Number,MATCH,484,src/building.cpp,?Shape_Number@BuildingClass@@QBEHXZ
 0x0043F180,BuildingClass::Mark,MATCH,2460,src/building.cpp,?Mark@BuildingClass@@UAE_NW4MarkType@@@Z
+0x0043FB20,BuildingClass::AI,MATCH,2651,src/building.cpp,?AI@BuildingClass@@UAEXXZ
 0x00440580,BuildingClass::Unlimbo,MATCH,4201,src/building.cpp,?Unlimbo@BuildingClass@@UAE_NABVCoord@@W4Dir256@@@Z
 0x004415F0,BuildingClass::Do_Destruction,MATCH,2407,src/building.cpp,?Do_Destruction@BuildingClass@@UAEXPAVTechnoClass@@0_NPBVCell@@@Z
 0x00441F60,BuildingClass::AfterDestruction,MATCH,718,src/building.cpp,?AfterDestruction@BuildingClass@@QAEXXZ
@@ -1620,6 +1621,7 @@ address,name,result,size,source,symbol
 0x00452A40,BuildingClass::Update_Laser_Fence_Connections,MATCH,362,src/building.cpp,?Update_Laser_Fence_Connections@BuildingClass@@QAEXH@Z
 0x00452BB0,BuildingClass::Find_Laser_Fence_Post,MATCH,394,src/building.cpp,?Find_Laser_Fence_Post@BuildingClass@@QAEPAV1@W4FacingType@@_NH@Z
 0x00452D40,BuildingClass::Init_All_Laser_Fences,MATCH,128,src/building.cpp,?Init_All_Laser_Fences@BuildingClass@@SIXXZ
+0x00452DC0,BuildingClass::Connect_Laser_Fence,MATCH,660,src/building.cpp,?Connect_Laser_Fence@BuildingClass@@QAEXW4FacingType@@@Z
 0x00453240,BuildingClass::Unlimbo_Laser_Fence_Helper,MATCH,296,src/building.cpp,?Unlimbo_Laser_Fence_Helper@BuildingClass@@SIXABVCell@@@Z
 0x00453370,BuildingClass::Init_Laser_Fence_Frame,MATCH,36,src/building.cpp,?Init_Laser_Fence_Frame@BuildingClass@@QAEXXZ
 0x004533A0,BuildingClass::Toggle_Laser_Fence_Post,MATCH,1180,src/building.cpp,?Toggle_Laser_Fence_Post@BuildingClass@@QAEX_N@Z
@@ -14684,8 +14686,8 @@ address,name,result,size,source,symbol
 0x006FCD40,TechnoClass::Stun,MATCH,109,src/techno.cpp,?Stun@TechnoClass@@UAEXXZ
 0x006FCDB0,TechnoClass::Assign_Target,MATCH,485,src/techno.cpp,?Assign_Target@TechnoClass@@UAEXPAVAbstractClass@@@Z
 0x006FCFA0,TechnoClass::Rearm_Delay,MATCH,613,src/techno.cpp,?Rearm_Delay@TechnoClass@@UBEHH@Z
-0x006FD210,TechnoClass::CreateLaser,MATCH,588,src/techno.cpp,?CreateLaser@TechnoClass@@QAEPAVLaserDrawClass@@PAVObjectClass@@HPAVWeaponTypeClass@@ABVCoord@@@Z
-0x006FD460,TechnoClass::CreateEBolt,MATCH,269,src/techno.cpp,?CreateEBolt@TechnoClass@@QAEPAVEBolt@@PAVObjectClass@@PAVWeaponTypeClass@@ABVCoord@@@Z
+0x006FD210,TechnoClass::CreateLaser,MATCH,588,src/techno.cpp,?CreateLaser@TechnoClass@@QAEPAVLaserDrawClass@@PAVAbstractClass@@HPAVWeaponTypeClass@@ABVCoord@@@Z
+0x006FD460,TechnoClass::CreateEBolt,MATCH,269,src/techno.cpp,?CreateEBolt@TechnoClass@@QAEPAVEBolt@@PAVAbstractClass@@PAVWeaponTypeClass@@ABVCoord@@@Z
 0x006FD570,TechnoClass::FireEBolt,MATCH,167,src/techno.cpp,?FireEBolt@TechnoClass@@QAEPAVEBolt@@PAVObjectClass@@@Z
 0x006FD620,TechnoClass::CreateRadBeam,MATCH,465,src/techno.cpp,?CreateRadBeam@TechnoClass@@QAEPAVRadBeam@@PAVObjectClass@@H@Z
 0x006FDA00,TechnoClass::Barrel_Pitch,MATCH,376,src/techno.cpp,?Barrel_Pitch@TechnoClass@@UBE?AVDirType@@PAVAbstractClass@@@Z
@@ -16167,6 +16169,7 @@ address,name,result,size,source,symbol
 0x007498D0,VoxelAnimClass::VoxelAnimClass,MATCH,275,src/vanim.cpp,??0VoxelAnimClass@@QAE@XZ
 0x007499F0,VoxelAnimClass::~VoxelAnimClass,MATCH,292,src/vanim.cpp,??1VoxelAnimClass@@UAE@XZ
 0x00749B20,VoxelAnimClass::Render,MATCH,71,src/vanim.cpp,?Render@VoxelAnimClass@@UBE_NAAV?$TRect@H@@_N1@Z
+0x00749B70,VoxelAnimClass::Draw_It,MATCH,902,src/vanim.cpp,?Draw_It@VoxelAnimClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x00749F00,VoxelAnimClass::Init_Clear,MATCH,37,src/vanim.cpp,?Init_Clear@VoxelAnimClass@@SIXXZ
 0x0074A960,VoxelAnimClass::In_Which_Layer,MATCH,6,src/vanim.cpp,?In_Which_Layer@VoxelAnimClass@@UBE?AW4LayerType@@XZ
 0x0074A970,VoxelAnimClass::Load,MATCH,146,src/vanim.cpp,?Load@VoxelAnimClass@@UAGJPAUIStream@@@Z
@@ -17142,6 +17145,7 @@ address,name,result,size,source,symbol
 0x0076B080,WDTState::Has_Owner_History,MATCH,9,src/wdtnet.cpp,?Has_Owner_History@WDTState@@QAE_NXZ
 0x0076B090,WDTState::Is_Previous_Cycle,MATCH,4,src/wdtnet.cpp,?Is_Previous_Cycle@WDTState@@QAE_NXZ
 0x0076B0A0,WDTState::Create_History,MATCH,216,src/wdtnet.cpp,?Create_History@WDTState@@QAE_NPAXH@Z
+0x0076B180,WDTState::Create_Territories,MATCH,1338,src/wdtnet.cpp,?Create_Territories@WDTState@@QAE_NPAXH@Z
 0x0076B6C0,??_GWDTTerritory@@UAEPAXI@Z,MATCH,36,src/wdtnet.cpp,??_GWDTTerritory@@UAEPAXI@Z
 0x0076B6F0,??_GWDTState@@UAEPAXI@Z,MATCH,30,src/wdtnet.cpp,??_GWDTState@@UAEPAXI@Z
 0x0076B710,?Clear@?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEXXZ,MATCH,43,src/wdtnet.cpp,?Clear@?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEXXZ

@@ -1878,6 +1878,7 @@ address,size,symbol,source,sha256
 0x0043EEB0,215,?Set_Turret_Index@BuildingClass@@QAEXH@Z,src/building.cpp,fc71cde683bafd0f2035faeade47a7a83d13214913eb47714020f6f7c530f58d
 0x0043EF90,484,?Shape_Number@BuildingClass@@QBEHXZ,src/building.cpp,d0737717f60aec8c22c00e7fc6ef28fac09aff34aaa686c50265e41b20d69b14
 0x0043F180,2460,?Mark@BuildingClass@@UAE_NW4MarkType@@@Z,src/building.cpp,ff2d2cea0ce405aec66935a480d04428a890fcd866daead53966049b2f532456
+0x0043FB20,2651,?AI@BuildingClass@@UAEXXZ,src/building.cpp,b376b8e3e442bf70dfa5ba8c90b9f9587ffaf52e2a7cafcf98043bd44e0762f8
 0x00440580,4201,?Unlimbo@BuildingClass@@UAE_NABVCoord@@W4Dir256@@@Z,src/building.cpp,4e6ce3235c270c59feab460b566df833f108fc3e61869501e3b5d7acb8476e02
 0x004415F0,2407,?Do_Destruction@BuildingClass@@UAEXPAVTechnoClass@@0_NPBVCell@@@Z,src/building.cpp,465c09e23b8c6de4c9ff2721d61fc8d03983164e69bf2c8a92ff251e1e5fd850
 0x00441F60,718,?AfterDestruction@BuildingClass@@QAEXXZ,src/building.cpp,12c196a5b75ec89e81ff5d0075c5d63277a4da6219e761394e599bdaab233c6e
@@ -1979,6 +1980,7 @@ address,size,symbol,source,sha256
 0x00452A40,362,?Update_Laser_Fence_Connections@BuildingClass@@QAEXH@Z,src/building.cpp,5c010e2fad62eaace9de00c363b5e88c36ba3689aefa44604540dcad42179f07
 0x00452BB0,394,?Find_Laser_Fence_Post@BuildingClass@@QAEPAV1@W4FacingType@@_NH@Z,src/building.cpp,39925e98861c20f54d3d5c16dafd818f4cdb1659cda74351159a87c8b79119d4
 0x00452D40,128,?Init_All_Laser_Fences@BuildingClass@@SIXXZ,src/building.cpp,3958081fcf0989ea0b234c2f419d795f7ed3644ae29f9bd9c22bbe02298243f6
+0x00452DC0,660,?Connect_Laser_Fence@BuildingClass@@QAEXW4FacingType@@@Z,src/building.cpp,0a3f297e5a0386a9f7b8f4051ac7108a664b7d9ddb157c82f8190ffd4b049761
 0x00453240,296,?Unlimbo_Laser_Fence_Helper@BuildingClass@@SIXABVCell@@@Z,src/building.cpp,14d6b3aa67d947b873d95831219f9bf100534163450be0f7ff90fd2dd2d07af9
 0x00453370,36,?Init_Laser_Fence_Frame@BuildingClass@@QAEXXZ,src/building.cpp,f8bba30a6d021ee5a369f919c0382d5502b4ff2264b65db5b9a47ce1be7aedeb
 0x004533A0,1180,?Toggle_Laser_Fence_Post@BuildingClass@@QAEX_N@Z,src/building.cpp,ea87bf7b9ecb3fc5fb0d705fd68e8ac71435596ad289fda7c64922d0db15a6de
@@ -15031,8 +15033,8 @@ address,size,symbol,source,sha256
 0x006FCD40,109,?Stun@TechnoClass@@UAEXXZ,src/techno.cpp,59fc3c02d8d73acccace170099f3e49355aa2a233e429d994aedbc43bb3d0615
 0x006FCDB0,485,?Assign_Target@TechnoClass@@UAEXPAVAbstractClass@@@Z,src/techno.cpp,fe3e3887eb28e550bbc2e20eb325bce77c27a466c6e3e333f88b8ebbcecf62e1
 0x006FCFA0,613,?Rearm_Delay@TechnoClass@@UBEHH@Z,src/techno.cpp,bac04a141dda1393f8df43ef9f3f7de0ea1a3bb7fce193764a87428e99e152b3
-0x006FD210,588,?CreateLaser@TechnoClass@@QAEPAVLaserDrawClass@@PAVObjectClass@@HPAVWeaponTypeClass@@ABVCoord@@@Z,src/techno.cpp,91e321914659ccbc6da8e38624ef71d5fd86e9df5c344edb1bfc5f19b69e5434
-0x006FD460,269,?CreateEBolt@TechnoClass@@QAEPAVEBolt@@PAVObjectClass@@PAVWeaponTypeClass@@ABVCoord@@@Z,src/techno.cpp,86f8b96df6951964d0560c698501451a2b51ef3428b702dfd956d388a7ffb626
+0x006FD210,588,?CreateLaser@TechnoClass@@QAEPAVLaserDrawClass@@PAVAbstractClass@@HPAVWeaponTypeClass@@ABVCoord@@@Z,src/techno.cpp,91e321914659ccbc6da8e38624ef71d5fd86e9df5c344edb1bfc5f19b69e5434
+0x006FD460,269,?CreateEBolt@TechnoClass@@QAEPAVEBolt@@PAVAbstractClass@@PAVWeaponTypeClass@@ABVCoord@@@Z,src/techno.cpp,86f8b96df6951964d0560c698501451a2b51ef3428b702dfd956d388a7ffb626
 0x006FD570,167,?FireEBolt@TechnoClass@@QAEPAVEBolt@@PAVObjectClass@@@Z,src/techno.cpp,41bfdcafd42b6aaccefe03dca4bed68d8e2b0f7178ee25ec3c114415a5cfb097
 0x006FD620,465,?CreateRadBeam@TechnoClass@@QAEPAVRadBeam@@PAVObjectClass@@H@Z,src/techno.cpp,dacc6cf2b080738431951c70ab271bf463741eb21b1002aa8c1d378fa180bef0
 0x006FDA00,376,?Barrel_Pitch@TechnoClass@@UBE?AVDirType@@PAVAbstractClass@@@Z,src/techno.cpp,da7511eb31f2bfa3d5371d1df63af5fa15a39dadfc5f743d9b29764ccea01486
@@ -16502,6 +16504,7 @@ address,size,symbol,source,sha256
 0x007498D0,275,??0VoxelAnimClass@@QAE@XZ,src/vanim.cpp,46cc2f6c2e385c6bae81a8556c3cf47cd1b8776e09dc5981399543e8a2e496ca
 0x007499F0,292,??1VoxelAnimClass@@UAE@XZ,src/vanim.cpp,40d93d3eff8f6e44d1212174664d069dba7d4f4ba10785ecba746445b5ed9e1c
 0x00749B20,71,?Render@VoxelAnimClass@@UBE_NAAV?$TRect@H@@_N1@Z,src/vanim.cpp,0bdca33eef37162f6fda0cbb92d94ffef21eddfa273c4c71197e01976d4a7682
+0x00749B70,902,?Draw_It@VoxelAnimClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/vanim.cpp,1204d0d19fa4d3e69a16f46a84f9e4cb5bbe56617269e0a44fe504ae56974e76
 0x00749F00,37,?Init_Clear@VoxelAnimClass@@SIXXZ,src/vanim.cpp,2c5d6de9b2c43bce1ef40c7ae1dc3f7c7594928d909d18b14e93034ed8c9132a
 0x0074A960,6,?In_Which_Layer@VoxelAnimClass@@UBE?AW4LayerType@@XZ,src/vanim.cpp,7adb2a5467d3718ab3b55c6851599af573d4fbeadcd90dd961cfd69d4f94cc9f
 0x0074A970,146,?Load@VoxelAnimClass@@UAGJPAUIStream@@@Z,src/vanim.cpp,b30bb493cfdd1322d028600fa85fc12b8b93eafaa28e059c4efba32434e1b40d
@@ -17394,6 +17397,7 @@ address,size,symbol,source,sha256
 0x0076B080,9,?Has_Owner_History@WDTState@@QAE_NXZ,src/wdtnet.cpp,0f3e36e7ab7cab6e4b9e178c53ea7ee323f08462722ebe41c4a608f44a313cfb
 0x0076B090,4,?Is_Previous_Cycle@WDTState@@QAE_NXZ,src/wdtnet.cpp,22f30aee0bb810601c21971bdf99678fe5c5e99d1a9857b16d4954a66161f321
 0x0076B0A0,216,?Create_History@WDTState@@QAE_NPAXH@Z,src/wdtnet.cpp,3e76ea4e4c7d98737da444c0bfd4a2e3de6208720118c90a188631067f67d20e
+0x0076B180,1338,?Create_Territories@WDTState@@QAE_NPAXH@Z,src/wdtnet.cpp,0a8c8703e1afbc36598e6e309721e97b0ef6b81b8e0f5b8066798ca4f87935cb
 0x0076B6C0,36,??_GWDTTerritory@@UAEPAXI@Z,src/wdtnet.cpp,1cf43e8c611a1ac4c018d54c5575e109548bad5619c76983f234258c521c2b02
 0x0076B6F0,30,??_GWDTState@@UAEPAXI@Z,src/wdtnet.cpp,1bfb128351de6295e7d610b3dab46c89804c9f5604051974d26a9ce31c01eeb7
 0x0076B710,43,?Clear@?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEXXZ,src/wdtnet.cpp,48610c29e7a5d4cefba3d64b58fd183e3031e8a8a747301896a619c4e7e5f27b

@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 4 November 2026: 18,784 of 19,362 game functions match (97%; 75% of game code
+Status, 4 November 2026: 18,788 of 19,362 game functions match (97%; 75% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,18 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### Batches 189 to 191 (4 November 2026)
+
+**4 functions.** The three batches took a second pass at the 52 closest near misses, 97 to
+99.9%. They matched BuildingClass::AI (the banked body was right; one #include belonged
+with the file's other declarations, not beside the function),
+BuildingClass::Connect_Laser_Fence, VoxelAnimClass::Draw_It and
+WDTState::Create_Territories. TechnoClass::CreateLaser and CreateEBolt now take an
+AbstractClass target, as TibSun's Laser_Zap does and as Fire_At's calls show, and rc_ptr
+gained operator*. Wait_For_Players still needs GlobalPacketType::StillHere, a member that
+cannot land: any new member of that union shifts four heap-sensitive matches. Merge gate:
+18,788 of 18,788 (2,804.0 KB).
 
 ### dk8827's fifth set of pull requests (4 November 2026)
 

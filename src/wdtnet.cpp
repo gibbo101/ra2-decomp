@@ -58,10 +58,15 @@
 
 #define PEEK_AT(data, pos) (*((unsigned char*)(data) + pos))
 
+static inline rc_ptr<WDTTerritory> Make_Territory0(WDTTerritory *t)
+{
+	return rc_ptr<WDTTerritory>(t);
+}
+
 // FUNCTION: GAMEMD 0x0076AAB0
 rc_ptr<WDTTerritory> FUN_0076AAB0(void)
 {
-	return rc_ptr<WDTTerritory>(new WDTTerritory);
+	return Make_Territory0(new WDTTerritory);
 }
 
 // FUNCTION: GAMEMD 0x0076AAF0
@@ -319,6 +324,90 @@ bool WDTState::Create_History(void *data, int count)
 			index = 0;
 			pos++;
 		}
+	}
+	return(true);
+}
+
+// FUNCTION: GAMEMD 0x0076B180
+bool WDTState::Create_Territories(void *data, int size)
+{
+	NumTerritories = 0;
+
+	if (size < MIN_TERRITORY_DATA_SIZE) {
+		return(false);
+	}
+
+	int offset = 0;
+	while (offset < size) {
+		if (offset + MIN_TERRITORY_DATA_SIZE > size) {
+			return(false);
+		}
+
+		rc_ptr<WDTTerritory> h = FUN_0076AAB0();
+
+		int pos = offset;
+		(*h).Index = NumTerritories;
+
+		(*h).Seed = PEEK_AT(data, pos++) << 8;
+		(*h).Seed += PEEK_AT(data, pos++);
+		(*h).UnitCount = PEEK_AT(data, pos++) - 0x80;
+		(*h).TechLevel = PEEK_AT(data, pos++) - 0x80;
+		(*h).StartingCredits = PEEK_AT(data, pos++) << 8;
+		(*h).StartingCredits += PEEK_AT(data, pos++);
+		unsigned int packed = PEEK_AT(data, pos++) - 0x80;
+		(*h).Biome = packed & 0xF;
+		(*h).Time = (packed >> 4) & 0xF;
+		(*h).Field1E = PEEK_AT(data, pos++) - 0x80;
+		(*h).Width = PEEK_AT(data, pos++) - 0x80;
+		(*h).Height = PEEK_AT(data, pos++) - 0x80;
+		(*h).NumPlayers = PEEK_AT(data, pos++) - 0x80;
+		(*h).Veinholes = PEEK_AT(data, pos++) - 0x80;
+
+		(*h).CliffsMin = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).CliffsMax = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).CliffsDefault = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+
+		(*h).AccessibilityMin = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).AccessibilityMax = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).AccessibilityDefault = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+
+		(*h).HillsMin = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).HillsMax = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).HillsDefault = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+
+		(*h).TiberiumAmountMin = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).TiberiumAmountMax = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).TiberiumAmountDefault = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+
+		(*h).TiberiumFieldsMin = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).TiberiumFieldsMax = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).TiberiumFieldsDefault = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+
+		(*h).WaterMin = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).WaterMax = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).WaterDefault = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+
+		(*h).VegetationMin = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).VegetationMax = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).VegetationDefault = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+
+		(*h).CitiesMin = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).CitiesMax = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+		(*h).CitiesDefault = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
+
+		(*h).UserModBooleans = PEEK_AT(data, pos++) << 24;
+		(*h).UserModBooleans += PEEK_AT(data, pos++) << 16;
+		(*h).UserModBooleans += PEEK_AT(data, pos++) << 8;
+		(*h).UserModBooleans += PEEK_AT(data, pos++);
+
+		(*h).Booleans = PEEK_AT(data, pos++) << 24;
+		(*h).Booleans += PEEK_AT(data, pos++) << 16;
+		(*h).Booleans += PEEK_AT(data, pos++) << 8;
+		(*h).Booleans += PEEK_AT(data, pos++);
+
+		Territories.Add(h);
+		NumTerritories++;
+		offset = pos;
 	}
 	return(true);
 }

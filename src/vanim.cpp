@@ -116,6 +116,88 @@ bool VoxelAnimClass::Render(Rect &cliprect, bool forced, bool extras_only) const
 	return(BASECLASS::Render(cliprect, forced, false));
 }
 
+// FUNCTION: GAMEMD 0x00749B70
+void VoxelAnimClass::Draw_It(Point2D const & xpoint, Rect const & cliprect) const
+{
+	int x, y;
+	Coord pos;
+	int z;
+	Point2D pixel;
+	Rect fromrect;
+	Matrix3D matrix;
+
+	if (Scen->Special.IsFogOfWar && Map.IsLocationFogged(Coord(Position))) {
+		return;
+	}
+
+	Point2D point = xpoint;
+	pos = Position;
+	pos.Z = Map.Get_Height_GL(pos);
+
+	if (Map[pos].IsUnderBridge && Coord(Position).Z >= pos.Z + BRIDGE_LEPTON_HEIGHT) {
+		z = pos.Z + BRIDGE_LEPTON_HEIGHT;
+		Coord coord = pos + Coord(0, 0, BRIDGE_LEPTON_HEIGHT + 1);
+		TacticalMap->Coord_To_Pixel(coord, pixel);
+	} else {
+		z = pos.Z;
+		TacticalMap->Coord_To_Pixel(pos, pixel);
+	}
+
+	if (IsInvisible) {
+		return;
+	}
+	VoxelLibrary * voxlib = Class->Voxel.VoxLib;
+	if (voxlib == NULL) {
+		return;
+	}
+
+	matrix = BounceClass::Get_Matrix();
+	VoxelDrawSystem::Reset();
+	VoxelDrawSystem::Prep_For_Shadow(voxlib, Class->VoxelIndex, 0, VoxelCameraMatrix, matrix, VoxelShadowLightVector);
+
+	VoxelDrawSystem::Render(fromrect, x, y);
+
+	{
+		Point2D drawpoint;
+		drawpoint.X = pixel.X + x;
+		drawpoint.Y = y + pixel.Y;
+
+		Blit_Block(*LogicalSurface, *VoxelDrawer, *VoxelDrawSystem::Get_Surface(), fromrect, drawpoint, cliprect, 0, VoxelDrawer->Blitter_From_Flags(ShapeFlags_Type(SHAPE_DARKEN|SHAPE_ZGRAD)), -4 - TacticalMap->Z_Lepton_To_Pixel(z));
+	}
+
+	matrix = BounceClass::Get_Matrix();
+	VoxelDrawSystem::Precalculate_Light(voxlib, 0, 0, matrix, VoxelLightSource);
+	VoxelDrawSystem::Reset();
+	VoxelDrawSystem::Prep_For_Object(voxlib, Class->VoxelIndex, 0, VoxelCameraMatrix * matrix);
+
+	VoxelDrawSystem::Render(fromrect, x, y);
+
+	ShapeFlags_Type flags = ShapeFlags_Type(SHAPE_ALPHA|SHAPE_ZGRAD);
+	if (Class->IsTranslucent) {
+		flags = ShapeFlags_Type(SHAPE_TRANSLUCENT50|SHAPE_ALPHA|SHAPE_ZGRAD);
+	}
+
+	int brightness = Map[Coord(Position)].Brightness;
+
+	ConvertClass * drawer;
+	if (House != NULL) {
+		drawer = ColorSchemes[House->Scheme]->Converter;
+	} else if (Class->IsTiberium) {
+		drawer = TiberiumDrawer;
+	} else {
+		drawer = VoxelDrawer;
+		brightness = NORMAL_LIGHT;
+	}
+
+	{
+		Point2D drawpoint;
+		drawpoint.X = point.X + x;
+		drawpoint.Y = y + point.Y;
+
+		Blit_Block(*LogicalSurface, *drawer, *VoxelDrawSystem::Get_Surface(), fromrect, drawpoint, cliprect, 0, drawer->Blitter_From_Flags(flags), -2 - TacticalMap->Z_Lepton_To_Pixel(Height), ZGRAD_GROUND, brightness);
+	}
+}
+
 // FUNCTION: GAMEMD 0x00749F00
 void VoxelAnimClass::Init_Clear(void)
 {

@@ -121,6 +121,7 @@ extern int __fastcall FUN_0050C170(char const * name);
 extern TPoint3D<int> DAT_0089C870;
 SideType FUN_006A46D0(char const * name);
 void __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
+#include "temporal.h"
 
 
 // FUNCTION: GAMEMD 0x0043B4C0
@@ -962,6 +963,235 @@ bool BuildingClass::Mark(MarkType mark)
 	}
 	return(false);
 }
+
+// FUNCTION: GAMEMD 0x0043FB20
+void BuildingClass::AI(void)
+{
+	bool powered;
+	if (IsPowerOnline() && Get_Mission() != MISSION_CONSTRUCTION && Get_Mission() != MISSION_DECONSTRUCTION) {
+		powered = true;
+	} else {
+		powered = false;
+	}
+
+	if (powered != WasOnline) {
+		if (Class->WorkingSound != -1 || Class->NotWorkingSound != -1) {
+			Audio8.End();
+			if (powered) {
+				VocClass::PlayAt(Class->WorkingSound, Get_Coord(), &Audio8);
+			} else {
+				VocClass::PlayAt(Class->NotWorkingSound, Get_Coord(), &Audio8);
+			}
+		}
+		FUN_004549B0();
+		WasOnline = powered;
+	} else if (Class->WorkingSound != -1 || Class->NotWorkingSound != -1) {
+		FUN_00750D40(Get_Coord(), &Audio8);
+	}
+
+	bool damaged;
+	if (Class->CanBeOccupied) {
+		damaged = HealthRatio <= Rule->ConditionRed;
+	} else {
+		damaged = HealthRatio <= Rule->ConditionYellow;
+	}
+	if (damaged != RequiresDamageFires) {
+		if (damaged) {
+			FUN_0043C0D0();
+		} else {
+			FUN_0043C2A0();
+		}
+		RequiresDamageFires = damaged;
+	}
+
+	if (Class->IsTurretEquipped) {
+		TurretIsRotating = PrimaryFacing.Is_Rotating();
+	} else {
+		TurretIsRotating = 0;
+	}
+
+	if (TemporalTargetingMe != NULL) {
+		TemporalTargetingMe->AI();
+	}
+
+	if (!IsBeingWarpedOut() && !IsWarpingIn()) {
+		if (CashProductionTimer == 1) {
+			CashProductionTimer = 0;
+			CashProductionTimer = Class->ProduceCashDelay;
+			if (!House->Class->IsMultiplayPassive && IsPowerOnline()) {
+				int amount = Class->ProduceCashAmount;
+				if (amount > 0) {
+					House->Refund_Money(amount);
+				} else {
+					House->Spend_Money(-amount);
+				}
+			}
+		}
+
+		if (Airstrike != NULL && Airstrike->Target == this) {
+			Mark(MARK_CHANGE);
+		}
+
+		if (Class->IsSAM && TarCom != NULL && !TarCom->In_Air()) {
+			Assign_Target(NULL);
+		}
+
+		Animation_AI();
+
+		if (Ready_To_Next_Mission() && BState != BSTATE_CONSTRUCTION && Commence()) {
+			IsReadyToCommence = false;
+		}
+
+		BASECLASS::AI();
+
+		if (!IsActive) return;
+
+		if (Techno_Type_Class()->IsGattling && FUN_0070DDF0() > 0) {
+			TurretAnimFrame++;
+		}
+
+		if (!Ammo && !Class->IsHospital && !Class->IsArmory) {
+			Ammo = Class->MaxAmmo;
+		}
+
+		if (Get_Mission() != MISSION_ATTACK) {
+			if (Techno_Type_Class()->IsGattling) {
+				if (Frame - LastFireBulletFrame > Rule->GuardAreaTargetingDelay + 5) {
+					FUN_0070DE40(Class->RateDown);
+					int stage = FUN_0070DDF0();
+					int current = FUN_0070DDC0();
+					if (current > 0) {
+						int threshold = Veterancy.Is_Elite() ? Class->EliteStage[current - 1] : Class->WeaponStage[current - 1];
+						if (stage < threshold) {
+							SetCurrentWeaponStage(current - 1);
+						}
+					}
+				}
+			}
+			if (Techno_Type_Class()->IsGattling && FUN_0070DDF0() > 0) {
+				TurretAnimFrame++;
+			}
+		}
+
+		if (Ready_To_Next_Mission() && Commence()) {
+			IsReadyToCommence = false;
+		}
+
+		if (QueueBState != BSTATE_NONE) {
+			if (BState != QueueBState) {
+				BState = QueueBState;
+				BuildingTypeClass::AnimControlType const * ctrl = &Class->Anims[BState];
+				if (BState == BSTATE_CONSTRUCTION || BState == BSTATE_IDLE) {
+					Animation.Set_Rate(Options.Normalize_Delay(ctrl->Rate));
+				} else {
+					Animation.Set_Rate(ctrl->Rate);
+				}
+				Animation.Set_Stage(ctrl->Start);
+			}
+			QueueBState = BSTATE_NONE;
+		}
+
+		if (Strength != LastStrength) {
+			House->RecalcPower = true;
+			House->RecalcRadar = true;
+			LastStrength = Strength;
+		}
+
+		if (Strength == 0) {
+			FUN_0043C2A0();
+			if (CountDown == 0) {
+				Limbo();
+				Drop_Debris(WhomToRepay);
+				Delete_Me();
+				AfterDestruction();
+				return;
+			}
+			return;
+		}
+
+		FUN_004503F0();
+
+		if (Class->Overpowerable) {
+			for (int i = Overpowerers.Count() - 1; i >= 0; i--) {
+				if (Overpowerers[i]->TarCom != this) {
+					Overpowerers.Delete_Index(i);
+				}
+			}
+			int count = Overpowerers.Count();
+			if (count >= 3 || (House->Power_Fraction() == 1.0 && IsOn && count >= 1)) {
+				IsOverpowered = true;
+			} else {
+				IsOverpowered = false;
+			}
+		}
+
+		if (Class->CanBeOccupied) {
+			FUN_00458200();
+		}
+
+		Repair_AI();
+
+		if (Class->ToBuild != RTTI_NONE) {
+			Factory_AI();
+		}
+
+		if (IsGoingToBlow && CountDown == 0) {
+			int damage = Strength;
+			if (Class->IsBridgeRepairHut) {
+				bool wood = false;
+				for (int y = -2; y < 3; y++) {
+					for (int x = -2; x < 3; x++) {
+						IsometricTileType tile = Map[Get_Cell() + Cell(x, y)].ITType;
+						int overlay = Map[Get_Cell() + Cell(x, y)].Overlay;
+						if ((tile >= IsometricTileTypeClass::TrainBridgeSet && tile < IsometricTileTypeClass::TrainBridgeSet + 16) || (overlay >= 0x4a && overlay <= 0x65)) {
+							wood = true;
+						}
+					}
+				}
+				if (wood) {
+					Map.DestroyWoodBridgeAt(Get_Cell());
+				} else {
+					Map.DestroyConcreteBridgeAt(Get_Cell());
+				}
+				IsGoingToBlow = false;
+				WhomToRepay = NULL;
+			} else {
+				Take_Damage(damage, 0, Rule->C4Warhead, (TechnoClass *)WhomToRepay, true, false, false);
+			}
+			if (!IsActive) return;
+			Mark(MARK_CHANGE);
+		}
+
+		if (TarCom != NULL && !IsCloseEnoughToAttack(TarCom)) {
+			if (TarCom->Fetch_RTTI() != RTTI_AIRCRAFT) {
+				Assign_Target(NULL);
+			} else if (TarCom->On_Ground()) {
+				Assign_Target(NULL);
+			}
+		}
+	} else {
+		if (Class->MaxNumberOccupants != 0 && Rule->ChronoSparkle1 != NULL) {
+			for (int i = 0; i < Class->MaxNumberOccupants; i++) {
+				if ((Frame + i) % 24 == 0 && Rule->ChronoSparkle1 != NULL) {
+					Coord coord(TacticalMap->Pixel_To_Lepton(Class->MuzzleFlash[i]), 0);
+					coord = coord + Render_Coord();
+					AnimClass * anim = new AnimClass(Rule->ChronoSparkle1, coord, 0, 1, ShapeFlags_Type(0x600), 0, false);
+					anim->ZAdjust = -200;
+				}
+			}
+		} else {
+			if (Frame % 24 == 0 && Rule->ChronoSparkle1 != NULL) {
+				new AnimClass(Rule->ChronoSparkle1, Get_Coord(), 0, 1, ShapeFlags_Type(0x600), 0, false);
+			}
+		}
+		if (TarCom != NULL) {
+			Assign_Target(NULL);
+		}
+	}
+}
+
+
+
 
 // FUNCTION: GAMEMD 0x00440580
 bool BuildingClass::Unlimbo(Coord const & coord, Dir256 dir)
@@ -4859,6 +5089,71 @@ void BuildingClass::Init_All_Laser_Fences(void)
 		}
 	}
 }
+
+// FUNCTION: GAMEMD 0x00452DC0
+void BuildingClass::Connect_Laser_Fence(FacingType dir)
+{
+	BuildingClass * building;
+
+	if (!ScenarioInit && Class->IsLaserFencePost) {
+		int range;
+		if (Class->IsLaserFencePost) {
+			range = Class->ThreatRange >> 8;
+			range = MAX(range, 1);
+		} else {
+			range = 1;
+		}
+
+		BuildingClass * post = Find_Laser_Fence_Post(dir, false, -1);
+		if (post != NULL && post->Mission != MISSION_DECONSTRUCTION) {
+			int fenceid;
+			for (fenceid = 0; fenceid < BuildingTypes.Count(); fenceid++) {
+				if (BuildingTypes[fenceid]->IsLaserFence) {
+					break;
+				}
+			}
+
+			if (fenceid < BuildingTypes.Count()) {
+				Cell working_cell = Center_Coord().As_Cell();
+				bool linked = false;
+				while (range > 0) {
+					working_cell = Adjacent_Cell(Cell(working_cell), dir);
+					building = Map[working_cell].Cell_Building();
+					if (building == post) {
+						linked = true;
+						break;
+					}
+
+					building = (BuildingClass *)BuildingTypes[fenceid]->Create_One_Of(Owner_HouseClass());
+					if (!building->Unlimbo(Coord(working_cell), DirType((FacingType)(dir & 3)).As_Dir256())) {
+						delete building;
+						break;
+					}
+				}
+
+				if (!linked) {
+					Disconnect_Laser_Fence(dir, false);
+					return;
+				}
+
+				working_cell = Center_Coord();
+				do {
+					CellClass * cptr = &Map[working_cell];
+					if (cptr->Tiberium_Type_Here() != TIBERIUM_NONE) {
+						cptr->Reduce_Tiberium(12);
+					}
+					if (cptr->Overlay == OVERLAY_VEINS) {
+						cptr->Reduce_Weed();
+					}
+					working_cell = Adjacent_Cell(working_cell, dir);
+					building = Map[working_cell].Cell_Building();
+				} while (building != post);
+			}
+		}
+	}
+}
+
+
 
 // FUNCTION: GAMEMD 0x00453240
 void BuildingClass::Unlimbo_Laser_Fence_Helper(Cell const & cell)
