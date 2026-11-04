@@ -36,8 +36,13 @@ def check_log(root, path):
 def generate(root, stage, date, journals):
     data = stage / "data"
     data.mkdir()
-    for name in ("functions.csv", "progress.csv"):
-        (data / name).symlink_to(root / "data" / name)
+    # Relative replay paths in a journal still refer to the original checkout.
+    for entry in root.iterdir():
+        if entry.name not in (".git", "data"):
+            (stage / entry.name).symlink_to(entry)
+    for entry in (root / "data").iterdir():
+        if entry != stage and entry.name not in ("attempts.csv", "manifest.csv", "modules.csv"):
+            (data / entry.name).symlink_to(entry)
     shutil.copy2(root / "data/attempts.csv", data / "attempts.csv")
     subprocess.run([sys.executable, root / "tools/coord/attempts_rows.py", date, *journals], cwd=stage, check=True)
     for name in ("modules", "manifest"):
