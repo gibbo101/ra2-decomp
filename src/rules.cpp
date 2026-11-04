@@ -1125,6 +1125,415 @@ bool RulesClass::Read_ColorAdd(CCINIClass const & ini)
 	return(false);
 }
 
+// FUNCTION: GAMEMD 0x0066D530
+bool RulesClass::General(CCINIClass const & ini)
+{
+	static char const * const GENERAL = "General";
+	if (ini.Is_Present(GENERAL)) {
+		DamageFireTypes = TGet_TypeList<AnimTypeClass>(ini, GENERAL, "DamageFireTypes", DamageFireTypes);
+		OreTwinkle = TGet_Class(ini, GENERAL, "OreTwinkle", OreTwinkle);
+		BarrelExplode = TGet_Class(ini, GENERAL, "BarrelExplode", BarrelExplode);
+		{
+			TypeList<VoxelAnimTypeClass const *> const & parsed = TGet_TypeList<VoxelAnimTypeClass>(ini, GENERAL, "BarrelDebris", BarrelDebris);
+			BarrelDebris = parsed;
+		}
+		BarrelParticle = TGet_Class(ini, GENERAL, "BarrelParticle", BarrelParticle);
+		NukeTakeOff = TGet_Class(ini, GENERAL, "NukeTakeOff", NukeTakeOff);
+		Wake = TGet_Class(ini, GENERAL, "Wake", Wake);
+		DropPod = TGet_TypeList<AnimTypeClass>(ini, GENERAL, "DropPod", DropPod);
+		DeadBodies = TGet_TypeList<AnimTypeClass>(ini, GENERAL, "DeadBodies", DeadBodies);
+		MetallicDebris = TGet_TypeList<AnimTypeClass>(ini, GENERAL, "MetallicDebris", MetallicDebris);
+		BridgeExplosions = TGet_TypeList<AnimTypeClass>(ini, GENERAL, "BridgeExplosions", BridgeExplosions);
+		IonBlast = TGet_Class(ini, GENERAL, "IonBlast", IonBlast);
+		IonBeam = TGet_Class(ini, GENERAL, "IonBeam", IonBeam);
+		WeatherConClouds = TGet_TypeList<AnimTypeClass>(ini, GENERAL, "WeatherConClouds", WeatherConClouds);
+		WeatherConBolts = TGet_TypeList<AnimTypeClass>(ini, GENERAL, "WeatherConBolts", WeatherConBolts);
+		WeatherConBoltExplosion = TGet_Class(ini, GENERAL, "WeatherConBoltExplosion", WeatherConBoltExplosion);
+		DominatorWarhead = TGet_Class(ini, GENERAL, "DominatorWarhead", DominatorWarhead);
+		DominatorFirstAnim = TGet_Class(ini, GENERAL, "DominatorFirstAnim", DominatorFirstAnim);
+		DominatorSecondAnim = TGet_Class(ini, GENERAL, "DominatorSecondAnim", DominatorSecondAnim);
+		DominatorFireAtPercentage = ini.Get_Int(GENERAL, "DominatorFireAtPercentage", DominatorFireAtPercentage);
+		DominatorCaptureRange = ini.Get_Int(GENERAL, "DominatorCaptureRange", DominatorCaptureRange);
+		DominatorDamage = ini.Get_Int(GENERAL, "DominatorDamage", DominatorDamage);
+		ChronoPlacement = TGet_Class(ini, GENERAL, "ChronoPlacement", ChronoPlacement);
+		ChronoBeam = TGet_Class(ini, GENERAL, "ChronoBeam", ChronoBeam);
+		ChronoBlast = TGet_Class(ini, GENERAL, "ChronoBlast", ChronoBlast);
+		ChronoBlastDest = TGet_Class(ini, GENERAL, "ChronoBlastDest", ChronoBlastDest);
+		WarpIn = TGet_Class(ini, GENERAL, "WarpIn", WarpIn);
+		WarpOut = TGet_Class(ini, GENERAL, "WarpOut", WarpOut);
+		WarpAway = TGet_Class(ini, GENERAL, "WarpAway", WarpAway);
+		IronCurtainInvokeAnim = TGet_Class(ini, GENERAL, "IronCurtainInvokeAnim", IronCurtainInvokeAnim);
+		ForceShieldInvokeAnim = TGet_Class(ini, GENERAL, "ForceShieldInvokeAnim", ForceShieldInvokeAnim);
+		WeaponNullifyAnim = TGet_Class(ini, GENERAL, "WeaponNullifyAnim", WeaponNullifyAnim);
+		ChronoSparkle1 = TGet_Class(ini, GENERAL, "ChronoSparkle1", ChronoSparkle1);
+		InfantryExplode = TGet_Class(ini, GENERAL, "InfantryExplode", InfantryExplode);
+		FlamingInfantry = TGet_Class(ini, GENERAL, "FlamingInfantry", FlamingInfantry);
+		InfantryHeadPop = TGet_Class(ini, GENERAL, "InfantryHeadPop", InfantryHeadPop);
+		InfantryNuked = TGet_Class(ini, GENERAL, "InfantryNuked", InfantryNuked);
+		InfantryVirus = TGet_Class(ini, GENERAL, "InfantryVirus", InfantryVirus);
+		InfantryBrute = TGet_Class(ini, GENERAL, "InfantryBrute", InfantryBrute);
+		InfantryMutate = TGet_Class(ini, GENERAL, "InfantryMutate", InfantryMutate);
+		Behind = TGet_Class(ini, GENERAL, "Behind", Behind);
+		MoveFlash = TGet_Class(ini, GENERAL, "MoveFlash", MoveFlash);
+		Parachute = TGet_Class(ini, GENERAL, "Parachute", Parachute);
+		BombParachute = TGet_Class(ini, GENERAL, "BombParachute", BombParachute);
+		FlareAnim = TGet_Class(ini, GENERAL, "DropZoneAnim", FlareAnim);
+		EMPulseSparkles = TGet_Class(ini, GENERAL, "EMPulseSparkles", EMPulseSparkles);
+		LargeVisceroid = TGet_Class(ini, GENERAL, "LargeVisceroid", LargeVisceroid);
+		SmallVisceroid = TGet_Class(ini, GENERAL, "SmallVisceroid", SmallVisceroid);
+
+		TiberiumHeal = ini.Get_Float(GENERAL, "TiberiumHeal", TiberiumHeal);
+		SelfHealInfantryFrames = ini.Get_Int(GENERAL, "SelfHealInfantryFrames", SelfHealInfantryFrames);
+		SelfHealInfantryAmount = ini.Get_Int(GENERAL, "SelfHealInfantryAmount", SelfHealInfantryAmount);
+		SelfHealUnitFrames = ini.Get_Int(GENERAL, "SelfHealUnitFrames", SelfHealUnitFrames);
+		SelfHealUnitAmount = ini.Get_Int(GENERAL, "SelfHealUnitAmount", SelfHealUnitAmount);
+
+		{
+			TypeList<int> const & current = PrerequisitePower;
+			PrerequisitePower = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisitePower", current);
+		}
+		{
+			TypeList<int> const & current = PrerequisiteFactory;
+			PrerequisiteFactory = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteFactory", current);
+		}
+		{
+			TypeList<int> const & current = PrerequisiteBarracks;
+			PrerequisiteBarracks = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteBarracks", current);
+		}
+		{
+			TypeList<int> const & current = PrerequisiteRadar;
+			PrerequisiteRadar = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteRadar", current);
+		}
+		{
+			TypeList<int> const & current = PrerequisiteTech;
+			PrerequisiteTech = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteTech", current);
+		}
+		PrerequisiteProc = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteProc", PrerequisiteProc);
+
+		ZoomInFactor = ini.Get_Float(GENERAL, "ZoomInFactor", ZoomInFactor);
+		IsRevealByHeight = ini.Get_Bool(GENERAL, "RevealByHeight", IsRevealByHeight);
+		IsShroudedSubteranneanMovesAllowed = ini.Get_Bool(GENERAL, "AllowShroudedSubteranneanMoves", IsShroudedSubteranneanMovesAllowed);
+		AircraftFogReveal = ini.Get_Int(GENERAL, "AircraftFogReveal", AircraftFogReveal);
+		MinLowPowerProductionSpeed = ini.Get_Float(GENERAL, "MinLowPowerProductionSpeed", MinLowPowerProductionSpeed);
+		MaxLowPowerProductionSpeed = ini.Get_Float(GENERAL, "MaxLowPowerProductionSpeed", MaxLowPowerProductionSpeed);
+		LowPowerPenaltyModifier = ini.Get_Float(GENERAL, "LowPowerPenaltyModifier", LowPowerPenaltyModifier);
+		MultipleFactory = ini.Get_Float(GENERAL, "MultipleFactory", MultipleFactory);
+		MaximumCheerRate = ini.Get_Int(GENERAL, "MaximumCheerRate", MaximumCheerRate);
+		TreeFlammability = ini.Get_Float(GENERAL, "TreeFlammability", TreeFlammability);
+		MissileROTVar = ini.Get_Float(GENERAL, "MissileROTVar", MissileROTVar);
+		MissileSafetyAltitude = ini.Get_Int(GENERAL, "MissileSafetyAltitude", MissileSafetyAltitude);
+		MissileSpeedVar = ini.Get_Float(GENERAL, "MissileSpeedVar", MissileSpeedVar);
+		DropPodWeapon = TGet_Class(ini, GENERAL, "DropPodWeapon", DropPodWeapon);
+		DropPodHeight = ini.Get_Int(GENERAL, "DropPodHeight", DropPodHeight);
+		DropPodSpeed = ini.Get_Int(GENERAL, "DropPodSpeed", DropPodSpeed);
+
+		DropPodAngle = ini.Get_Float(GENERAL, "DropPodAngle", DropPodAngle);
+		DropPodAngle = MIN(DropPodAngle, DEG_TO_RAD(67.5));
+		DropPodAngle = MAX(DropPodAngle, DEG_TO_RAD(22.5));
+		CrewEscape = ini.Get_Float(GENERAL, "CrewEscape", CrewEscape);
+		TunnelSpeed = ini.Get_Float(GENERAL, "TunnelSpeed", TunnelSpeed);
+		HoverDampen = ini.Get_Float(GENERAL, "HoverDampen", HoverDampen);
+		HoverBob = ini.Get_Float(GENERAL, "HoverBob", HoverBob);
+		HoverHeight = ini.Get_Int(GENERAL, "HoverHeight", HoverHeight);
+		HoverBoost = ini.Get_Float(GENERAL, "HoverBoost", HoverBoost);
+		HoverAcceleration = ini.Get_Float(GENERAL, "HoverAcceleration", HoverAcceleration);
+		HoverBrake = ini.Get_Float(GENERAL, "HoverBrake", HoverBrake);
+		VeteranRatio = ini.Get_Float(GENERAL, "VeteranRatio", VeteranRatio);
+		VeteranCombat = ini.Get_Float(GENERAL, "VeteranCombat", VeteranCombat);
+		VeteranSpeed = ini.Get_Float(GENERAL, "VeteranSpeed", VeteranSpeed);
+		VeteranSight = ini.Get_Float(GENERAL, "VeteranSight", VeteranSight);
+		VeteranArmor = ini.Get_Float(GENERAL, "VeteranArmor", VeteranArmor);
+		VeteranROF = ini.Get_Float(GENERAL, "VeteranROF", VeteranROF);
+		VeteranCap = ini.Get_Float(GENERAL, "VeteranCap", VeteranCap);
+
+		ExplosiveVoxelDebris = TGet_TypeList<VoxelAnimTypeClass>(ini, GENERAL, "ExplosiveVoxelDebris", ExplosiveVoxelDebris);
+		BridgeVoxelMax = ini.Get_Int(GENERAL, "BridgeVoxelMax", BridgeVoxelMax);
+		TireVoxelDebris = TGet_Class(ini, GENERAL, "TireVoxelDebris", TireVoxelDebris);
+		ScrapVoxelDebris = TGet_Class(ini, GENERAL, "ScrapVoxelDebris", ScrapVoxelDebris);
+		CloakingStages = ini.Get_Int(GENERAL, "CloakingStages", CloakingStages);
+		ShipSinkingWeight = ini.Get_Float(GENERAL, "ShipSinkingWeight", ShipSinkingWeight);
+		IceCrackingWeight = ini.Get_Float(GENERAL, "IceCrackingWeight", IceCrackingWeight);
+		IceBreakingWeight = ini.Get_Float(GENERAL, "IceBreakingWeight", IceBreakingWeight);
+		CliffBackImpassability = ini.Get_Int(GENERAL, "CliffBackImpassability", CliffBackImpassability);
+		PlacementDelay = ini.Get_Float(GENERAL, "PlacementDelay", PlacementDelay);
+		TrackedUphill = ini.Get_Float(GENERAL, "TrackedUphill", TrackedUphill);
+		TrackedDownhill = ini.Get_Float(GENERAL, "TrackedDownhill", TrackedDownhill);
+		WheeledUphill = ini.Get_Float(GENERAL, "WheeledUphill", WheeledUphill);
+		WheeledDownhill = ini.Get_Float(GENERAL, "WheeledDownhill", WheeledDownhill);
+		WindDirection = (FacingType)ini.Get_Int(GENERAL, "WindDirection", WindDirection);
+		CameraRange = ini.Get_Lepton(GENERAL, "CameraRange", CameraRange);
+		FlightLevel = ini.Get_Int(GENERAL, "FlightLevel", FlightLevel);
+		ParachuteMaxFallRate = ini.Get_Int(GENERAL, "ParachuteMaxFallRate", ParachuteMaxFallRate);
+		NoParachuteMaxFallRate = ini.Get_Int(GENERAL, "NoParachuteMaxFallRate", NoParachuteMaxFallRate);
+
+		RepairBay = TGet_TypeList<BuildingTypeClass>(ini, GENERAL, "RepairBay", RepairBay);
+		GDIGateOne = TGet_Class(ini, GENERAL, "GDIGateOne", GDIGateOne);
+		GDIGateTwo = TGet_Class(ini, GENERAL, "GDIGateTwo", GDIGateTwo);
+		NodGateOne = TGet_Class(ini, GENERAL, "NodGateOne", NodGateOne);
+		NodGateTwo = TGet_Class(ini, GENERAL, "NodGateTwo", NodGateTwo);
+		WallTower = TGet_Class(ini, GENERAL, "WallTower", WallTower);
+		Shipyard = TGet_TypeList<BuildingTypeClass>(ini, GENERAL, "Shipyard", Shipyard);
+		GDIPowerPlant = TGet_Class(ini, GENERAL, "GDIPowerPlant", GDIPowerPlant);
+		NodRegularPower = TGet_Class(ini, GENERAL, "NodRegularPower", NodRegularPower);
+		NodAdvancedPower = TGet_Class(ini, GENERAL, "NodAdvancedPower", NodAdvancedPower);
+		ThirdPowerPlant = TGet_Class(ini, GENERAL, "ThirdPowerPlant", ThirdPowerPlant);
+		PrerequisiteProcAlternate = TGet_Class(ini, GENERAL, "PrerequisiteProcAlternate", PrerequisiteProcAlternate);
+
+		BaseUnit = TGet_TypeList<UnitTypeClass>(ini, GENERAL, "BaseUnit", BaseUnit);
+		HarvesterUnit = TGet_TypeList<UnitTypeClass>(ini, GENERAL, "HarvesterUnit", HarvesterUnit);
+		PadAircraft = TGet_TypeList<AircraftTypeClass>(ini, GENERAL, "PadAircraft", PadAircraft);
+		Paratrooper = TGet_Class(ini, GENERAL, "Paratrooper", Paratrooper);
+
+		SecretInfantry = TGet_TypeList<InfantryTypeClass>(ini, GENERAL, "SecretInfantry", SecretInfantry);
+		SecretUnits = TGet_TypeList<UnitTypeClass>(ini, GENERAL, "SecretUnits", SecretUnits);
+		SecretBuildings = TGet_TypeList<BuildingTypeClass>(ini, GENERAL, "SecretBuildings", SecretBuildings);
+		SecretSum = SecretInfantry.Count() + SecretUnits.Count() + SecretBuildings.Count();
+		ChronoDelay = ini.Get_Int(GENERAL, "ChronoDelay", ChronoDelay);
+		ChronoReinfDelay = ini.Get_Int(GENERAL, "ChronoReinfDelay", ChronoReinfDelay);
+		ChronoDistanceFactor = ini.Get_Int(GENERAL, "ChronoDistanceFactor", ChronoDistanceFactor);
+		ChronoTrigger = ini.Get_Bool(GENERAL, "ChronoTrigger", ChronoTrigger);
+		ChronoMinimumDelay = ini.Get_Int(GENERAL, "ChronoMinimumDelay", ChronoMinimumDelay);
+		ChronoRangeMinimum = ini.Get_Int(GENERAL, "ChronoRangeMinimum", ChronoRangeMinimum);
+		AlliedDisguise = TGet_Class(ini, GENERAL, "AlliedDisguise", AlliedDisguise);
+		SovietDisguise = TGet_Class(ini, GENERAL, "SovietDisguise", SovietDisguise);
+		ThirdDisguise = TGet_Class(ini, GENERAL, "ThirdDisguise", ThirdDisguise);
+		SpyPowerBlackout = ini.Get_Int(GENERAL, "SpyPowerBlackout", SpyPowerBlackout);
+		SpyMoneyStealPercent = ini.Get_Float(GENERAL, "SpyMoneyStealPercent", SpyMoneyStealPercent);
+		AttackCursorOnDisguise = ini.Get_Bool(GENERAL, "AttackCursorOnDisguise", AttackCursorOnDisguise);
+		PurifierBonus = ini.Get_Float(GENERAL, "PurifierBonus", PurifierBonus);
+		Engineer = TGet_Class(ini, GENERAL, "Engineer", Engineer);
+		Technician = TGet_Class(ini, GENERAL, "Technician", Technician);
+		Pilot = TGet_Class(ini, GENERAL, "Pilot", Pilot);
+		AlliedCrew = TGet_Class(ini, GENERAL, "AlliedCrew", AlliedCrew);
+		SovietCrew = TGet_Class(ini, GENERAL, "SovietCrew", SovietCrew);
+		ThirdCrew = TGet_Class(ini, GENERAL, "ThirdCrew", ThirdCrew);
+		IsCurleyShuffle = ini.Get_Bool(GENERAL, "CurleyShuffle", IsCurleyShuffle);
+		IsFineDifficulty = ini.Get_Bool(GENERAL, "FineDiffControl", IsFineDifficulty);
+		TeamDelays = ini.Get_IntList(GENERAL, "TeamDelays", TeamDelays);
+		AIHateDelays = ini.Get_IntList(GENERAL, "AIHateDelays", AIHateDelays);
+		AIAlternateProductionCreditCutoff = ini.Get_Int(GENERAL, "AIAlternateProductionCreditCutoff", AIAlternateProductionCreditCutoff);
+		AIUseTurbineUpgradeChance = ini.Get_Float(GENERAL, "AIUseTurbineUpgradeProbability", AIUseTurbineUpgradeChance);
+		NodAIBuildsWalls = ini.Get_Bool(GENERAL, "NodAIBuildsWalls", NodAIBuildsWalls);
+		AIBuildsWalls = ini.Get_Bool(GENERAL, "AIBuildsWalls", AIBuildsWalls);
+		FillEarliestTeamProbability = ini.Get_IntList(GENERAL, "FillEarliestTeamProbability", FillEarliestTeamProbability);
+		MinimumAIDefensiveTeams = ini.Get_IntList(GENERAL, "MinimumAIDefensiveTeams", MinimumAIDefensiveTeams);
+		MaximumAIDefensiveTeams = ini.Get_IntList(GENERAL, "MaximumAIDefensiveTeams", MaximumAIDefensiveTeams);
+		TotalAITeamCap = ini.Get_IntList(GENERAL, "TotalAITeamCap", TotalAITeamCap);
+		UseMinDefenseRule = ini.Get_Bool(GENERAL, "UseMinDefenseRule", UseMinDefenseRule);
+		DissolveUnfilledTeamDelay = ini.Get_Int(GENERAL, "DissolveUnfilledTeamDelay", DissolveUnfilledTeamDelay);
+		AISafeDistance = ini.Get_Int(GENERAL, "AISafeDistance", AISafeDistance);
+		AIMinorSuperReadyPercent = ini.Get_Float(GENERAL, "AIMinorSuperReadyPercent", AIMinorSuperReadyPercent);
+		HarvesterTooFarDistance = ini.Get_Int(GENERAL, "HarvesterTooFarDistance", HarvesterTooFarDistance);
+		ChronoHarvTooFarDistance = ini.Get_Int(GENERAL, "ChronoHarvTooFarDistance", ChronoHarvTooFarDistance);
+		AlliedBaseDefenseCounts = ini.Get_IntList(GENERAL, "AlliedBaseDefenseCounts", AlliedBaseDefenseCounts);
+		SovietBaseDefenseCounts = ini.Get_IntList(GENERAL, "SovietBaseDefenseCounts", SovietBaseDefenseCounts);
+		ThirdBaseDefenseCounts = ini.Get_IntList(GENERAL, "ThirdBaseDefenseCounts", ThirdBaseDefenseCounts);
+		AIPickWallDefensePercent = ini.Get_IntList(GENERAL, "AIPickWallDefensePercent", AIPickWallDefensePercent);
+		AIRestrictReplaceTime = ini.Get_Int(GENERAL, "AIRestrictReplaceTime", AIRestrictReplaceTime);
+		ThreatPerOccupant = ini.Get_Int(GENERAL, "ThreatPerOccupant", ThreatPerOccupant);
+		ApproachTargetResetMultiplier = ini.Get_Int(GENERAL, "ApproachTargetResetMultiplier", ApproachTargetResetMultiplier);
+		CampaignMoneyDeltaEasy = ini.Get_Int(GENERAL, "CampaignMoneyDeltaEasy", CampaignMoneyDeltaEasy);
+		CampaignMoneyDeltaHard = ini.Get_Int(GENERAL, "CampaignMoneyDeltaHard", CampaignMoneyDeltaHard);
+		GuardAreaTargetingDelay = ini.Get_Int(GENERAL, "GuardAreaTargetingDelay", GuardAreaTargetingDelay);
+		NormalTargetingDelay = ini.Get_Int(GENERAL, "NormalTargetingDelay", NormalTargetingDelay);
+		AINavalYardAdjacency = ini.Get_Int(GENERAL, "AINavalYardAdjacency", AINavalYardAdjacency);
+		DisabledDisguiseDetectionPercent = ini.Get_IntList(GENERAL, "DisabledDisguiseDetectionPercent", DisabledDisguiseDetectionPercent);
+		AIAutoDeployFrameDelay = ini.Get_IntList(GENERAL, "AIAutoDeployFrameDelay", AIAutoDeployFrameDelay);
+		MaximumBuildingPlacementFailures = ini.Get_Int(GENERAL, "MaximumBuildingPlacementFailures", MaximumBuildingPlacementFailures);
+		TiberiumShortScan = ini.Get_Lepton(GENERAL, "TiberiumShortScan", TiberiumShortScan);
+		TiberiumLongScan = ini.Get_Lepton(GENERAL, "TiberiumLongScan", TiberiumLongScan);
+		SlaveMinerShortScan = ini.Get_Lepton(GENERAL, "SlaveMinerShortScan", SlaveMinerShortScan);
+		SlaveMinerSlaveScan = ini.Get_Lepton(GENERAL, "SlaveMinerSlaveScan", SlaveMinerSlaveScan);
+		SlaveMinerLongScan = ini.Get_Lepton(GENERAL, "SlaveMinerLongScan", SlaveMinerLongScan);
+		SlaveMinerScanCorrection = ini.Get_Lepton(GENERAL, "SlaveMinerScanCorrection", SlaveMinerScanCorrection);
+		SlaveMinerKickFrameDelay = ini.Get_Int(GENERAL, "SlaveMinerKickFrameDelay", SlaveMinerKickFrameDelay);
+		AISuperDefenseProbability = ini.Get_IntList(GENERAL, "AISuperDefenseProbability", AISuperDefenseProbability);
+		AISuperDefenseFrames = ini.Get_Int(GENERAL, "AISuperDefenseFrames", AISuperDefenseFrames);
+		AISuperDefenseDistance = ini.Get_Lepton(GENERAL, "AISuperDefenseDistance", AISuperDefenseDistance);
+		AICaptureNormal = ini.Get_IntList(GENERAL, "AICaptureNormal", AICaptureNormal);
+		AICaptureWounded = ini.Get_IntList(GENERAL, "AICaptureWounded", AICaptureWounded);
+		AICaptureLowPower = ini.Get_IntList(GENERAL, "AICaptureLowPower", AICaptureLowPower);
+		AICaptureLowMoney = ini.Get_IntList(GENERAL, "AICaptureLowMoney", AICaptureLowMoney);
+		AICaptureLowMoneyMark = ini.Get_Int(GENERAL, "AICaptureLowMoneyMark", AICaptureLowMoneyMark);
+		AICaptureWoundedMark = ini.Get_Float(GENERAL, "AICaptureWoundedMark", AICaptureWoundedMark);
+		MultiplayerAICreditMultipliers = ini.Get_IntList(GENERAL, "MultiplayerAICM", MultiplayerAICreditMultipliers);
+		AIVirtualPurifiers = ini.Get_IntList(GENERAL, "AIVirtualPurifiers", AIVirtualPurifiers);
+		AISlaveMinerNumber = ini.Get_IntList(GENERAL, "AISlaveMinerNumber", AISlaveMinerNumber);
+		HarvestersPerRefinery = ini.Get_IntList(GENERAL, "HarvestersPerRefinery", HarvestersPerRefinery);
+		AIExtraRefineries = ini.Get_IntList(GENERAL, "AIExtraRefineries", AIExtraRefineries);
+
+		AmerParaDropInf = TGet_TypeList<InfantryTypeClass>(ini, GENERAL, "AmerParaDropInf", AmerParaDropInf);
+		AmerParaDropNum = ini.Get_IntList(GENERAL, "AmerParaDropNum", AmerParaDropNum);
+		AllyParaDropInf = TGet_TypeList<InfantryTypeClass>(ini, GENERAL, "AllyParaDropInf", AllyParaDropInf);
+		AllyParaDropNum = ini.Get_IntList(GENERAL, "AllyParaDropNum", AllyParaDropNum);
+		SovParaDropInf = TGet_TypeList<InfantryTypeClass>(ini, GENERAL, "SovParaDropInf", SovParaDropInf);
+		SovParaDropNum = ini.Get_IntList(GENERAL, "SovParaDropNum", SovParaDropNum);
+		YuriParaDropInf = TGet_TypeList<InfantryTypeClass>(ini, GENERAL, "YuriParaDropInf", YuriParaDropInf);
+		YuriParaDropNum = ini.Get_IntList(GENERAL, "YuriParaDropNum", YuriParaDropNum);
+		AnimToInfantry = TGet_TypeList<InfantryTypeClass>(ini, GENERAL, "AnimToInfantry", AnimToInfantry);
+		AIIonCannonConYardValue = ini.Get_IntList(GENERAL, "AIIonCannonConYardValue", AIIonCannonConYardValue);
+		AIIonCannonWarFactoryValue = ini.Get_IntList(GENERAL, "AIIonCannonWarFactoryValue", AIIonCannonWarFactoryValue);
+		AIIonCannonPowerValue = ini.Get_IntList(GENERAL, "AIIonCannonPowerValue", AIIonCannonPowerValue);
+		AIIonCannonTechCenterValue = ini.Get_IntList(GENERAL, "AIIonCannonTechCenterValue", AIIonCannonTechCenterValue);
+		AIIonCannonEngineerValue = ini.Get_IntList(GENERAL, "AIIonCannonEngineerValue", AIIonCannonEngineerValue);
+		AIIonCannonThiefValue = ini.Get_IntList(GENERAL, "AIIonCannonThiefValue", AIIonCannonThiefValue);
+		AIIonCannonHarvesterValue = ini.Get_IntList(GENERAL, "AIIonCannonHarvesterValue", AIIonCannonHarvesterValue);
+		AIIonCannonMCVValue = ini.Get_IntList(GENERAL, "AIIonCannonMCVValue", AIIonCannonMCVValue);
+		AIIonCannonAPCValue = ini.Get_IntList(GENERAL, "AIIonCannonAPCValue", AIIonCannonAPCValue);
+		AIIonCannonBaseDefenseValue = ini.Get_IntList(GENERAL, "AIIonCannonBaseDefenseValue", AIIonCannonBaseDefenseValue);
+		AIIonCannonPlugValue = ini.Get_IntList(GENERAL, "AIIonCannonPlugValue", AIIonCannonPlugValue);
+		AIIonCannonHelipadValue = ini.Get_IntList(GENERAL, "AIIonCannonHelipadValue", AIIonCannonHelipadValue);
+		AIIonCannonTempleValue = ini.Get_IntList(GENERAL, "AIIonCannonTempleValue", AIIonCannonTempleValue);
+		CloakDelay = ini.Get_Float(GENERAL, "CloakDelay", CloakDelay);
+		GameSpeedBias = ini.Get_Float(GENERAL, "GameSpeedBias", GameSpeedBias);
+		NervousBias = ini.Get_Float(GENERAL, "BaseBias", NervousBias);
+		IsSeparate = ini.Get_Bool(GENERAL, "SeparateAircraft", IsSeparate);
+		BaseDefenseDelay = ini.Get_Float(GENERAL, "BaseDefenseDelay", BaseDefenseDelay);
+		SuspendPriority = ini.Get_Int(GENERAL, "SuspendPriority", SuspendPriority);
+		SuspendDelay = ini.Get_Float(GENERAL, "SuspendDelay", SuspendDelay);
+		SurvivorFraction = ini.Get_Float(GENERAL, "SurvivorRate", SurvivorFraction);
+		AlliedSurvivorDivisor = ini.Get_Int(GENERAL, "AlliedSurvivorDivisor", AlliedSurvivorDivisor);
+		SovietSurvivorDivisor = ini.Get_Int(GENERAL, "SovietSurvivorDivisor", SovietSurvivorDivisor);
+		ThirdSurvivorDivisor = ini.Get_Int(GENERAL, "ThirdSurvivorDivisor", ThirdSurvivorDivisor);
+		ReloadRate = ini.Get_Float(GENERAL, "ReloadRate", ReloadRate);
+		BuildupTime = ini.Get_Float(GENERAL, "BuildupTime", BuildupTime);
+		HarvesterDumpRate = ini.Get_Float(GENERAL, "HarvesterDumpRate", HarvesterDumpRate);
+		HarvesterLoadRate = ini.Get_Int(GENERAL, "HarvesterLoadRate", HarvesterLoadRate);
+		BuildSpeedBias = ini.Get_Float(GENERAL, "BuildSpeed", BuildSpeedBias);
+		DamageDelay = ini.Get_Float(GENERAL, "DamageDelay", DamageDelay);
+		GrowthRate = ini.Get_Float(GENERAL, "GrowthRate", GrowthRate);
+		RefundPercent = ini.Get_Float(GENERAL, "RefundPercent", RefundPercent);
+		RepairPercent = ini.Get_Float(GENERAL, "RepairPercent", RepairPercent);
+		RepairStep = ini.Get_Int(GENERAL, "RepairStep", RepairStep);
+		IRepairStep = ini.Get_Int(GENERAL, "IRepairStep", IRepairStep);
+		RepairRate = ini.Get_Float(GENERAL, "RepairRate", RepairRate);
+		URepairRate = ini.Get_Float(GENERAL, "URepairRate", URepairRate);
+		IRepairRate = ini.Get_Float(GENERAL, "IRepairRate", IRepairRate);
+		StrayDistance = ini.Get_Lepton(GENERAL, "Stray", StrayDistance);
+		RelaxedStray = ini.Get_Lepton(GENERAL, "RelaxedStray", RelaxedStray);
+		GuardModeStray = ini.Get_Lepton(GENERAL, "GuardModeStray", GuardModeStray);
+		CloseEnoughDistance = ini.Get_Lepton(GENERAL, "CloseEnough", CloseEnoughDistance);
+		IsBlendedFog = ini.Get_Bool(GENERAL, "BlendedFog", IsBlendedFog);
+		AttackingAircraftSightRange = ini.Get_Int(GENERAL, "AttackingAircraftSightRange", AttackingAircraftSightRange);
+		LeptonsPerSightIncrease = ini.Get_Int(GENERAL, "LeptonsPerSightIncrease", LeptonsPerSightIncrease);
+		TiberiumTransmogrify = ini.Get_Int(GENERAL, "TiberiumTransmogrify", TiberiumTransmogrify);
+		LightningDeferment = ini.Get_Int(GENERAL, "LightningDeferment", LightningDeferment);
+		LightningDamage = ini.Get_Int(GENERAL, "LightningDamage", LightningDamage);
+		LightningStormDuration = ini.Get_Int(GENERAL, "LightningStormDuration", LightningStormDuration);
+		LightningHitDelay = ini.Get_Int(GENERAL, "LightningHitDelay", LightningHitDelay);
+		LightningScatterDelay = ini.Get_Int(GENERAL, "LightningScatterDelay", LightningScatterDelay);
+		LightningCellSpread = ini.Get_Int(GENERAL, "LightningCellSpread", LightningCellSpread);
+		LightningSeparation = ini.Get_Int(GENERAL, "LightningSeparation", LightningSeparation);
+		LightningWarhead = TGet_Class(ini, GENERAL, "LightningWarhead", LightningWarhead);
+		LightningPrintText = ini.Get_Bool(GENERAL, "LightningPrintText", LightningPrintText);
+		ForceShieldRadius = ini.Get_Int(GENERAL, "ForceShieldRadius", ForceShieldRadius);
+		ForceShieldDuration = ini.Get_Int(GENERAL, "ForceShieldDuration", ForceShieldDuration);
+		ForceShieldBlackoutDuration = ini.Get_Int(GENERAL, "ForceShieldBlackoutDuration", ForceShieldBlackoutDuration);
+		ForceShieldPlayFadeSoundTime = ini.Get_Int(GENERAL, "ForceShieldPlayFadeSoundTime", ForceShieldPlayFadeSoundTime);
+		MutateExplosion = ini.Get_Bool(GENERAL, "MutateExplosion", MutateExplosion);
+		PrismType = TGet_Class(ini, GENERAL, "PrismType", PrismType);
+
+		PrismSupportModifier = int(ini.Get_Float(GENERAL, "PrismSupportModifier", PrismSupportModifier) * 100.0);
+		PrismSupportMax = ini.Get_Int(GENERAL, "PrismSupportMax", PrismSupportMax);
+		PrismSupportDelay = ini.Get_Int(GENERAL, "PrismSupportDelay", PrismSupportDelay);
+		PrismSupportDuration = ini.Get_Int(GENERAL, "PrismSupportDuration", PrismSupportDuration);
+		PrismSupportHeight = ini.Get_Int(GENERAL, "PrismSupportHeight", PrismSupportHeight);
+		V3Rocket.PauseFrames = ini.Get_Int(GENERAL, "V3RocketPauseFrames", V3Rocket.PauseFrames);
+		V3Rocket.TiltFrames = ini.Get_Int(GENERAL, "V3RocketTiltFrames", V3Rocket.TiltFrames);
+		V3Rocket.PitchInitial = ini.Get_Float(GENERAL, "V3RocketPitchInitial", V3Rocket.PitchInitial);
+		V3Rocket.PitchFinal = ini.Get_Float(GENERAL, "V3RocketPitchFinal", V3Rocket.PitchFinal);
+		V3Rocket.TurnRate = ini.Get_Float(GENERAL, "V3RocketTurnRate", V3Rocket.TurnRate);
+		V3Rocket.RaiseRate = ini.Get_Float(GENERAL, "V3RocketRaiseRate", V3Rocket.RaiseRate);
+		V3Rocket.Acceleration = ini.Get_Float(GENERAL, "V3RocketAcceleration", V3Rocket.Acceleration);
+		V3Rocket.Altitude = ini.Get_Int(GENERAL, "V3RocketAltitude", V3Rocket.Altitude);
+		V3Rocket.Damage = ini.Get_Int(GENERAL, "V3RocketDamage", V3Rocket.Damage);
+		V3Rocket.EliteDamage = ini.Get_Int(GENERAL, "V3RocketEliteDamage", V3Rocket.EliteDamage);
+		V3Rocket.BodyLength = ini.Get_Int(GENERAL, "V3RocketBodyLength", V3Rocket.BodyLength);
+		V3Rocket.LazyCurve = ini.Get_Bool(GENERAL, "V3RocketLazyCurve", V3Rocket.LazyCurve);
+		V3Rocket.Type = TGet_Class(ini, GENERAL, "V3RocketType", V3Rocket.Type);
+		DMisl.PauseFrames = ini.Get_Int(GENERAL, "DMislPauseFrames", DMisl.PauseFrames);
+		DMisl.TiltFrames = ini.Get_Int(GENERAL, "DMislTiltFrames", DMisl.TiltFrames);
+		DMisl.PitchInitial = ini.Get_Float(GENERAL, "DMislPitchInitial", DMisl.PitchInitial);
+		DMisl.PitchFinal = ini.Get_Float(GENERAL, "DMislPitchFinal", DMisl.PitchFinal);
+		DMisl.TurnRate = ini.Get_Float(GENERAL, "DMislTurnRate", DMisl.TurnRate);
+		DMisl.RaiseRate = ini.Get_Float(GENERAL, "DMislRaiseRate", DMisl.RaiseRate);
+		DMisl.Acceleration = ini.Get_Float(GENERAL, "DMislAcceleration", DMisl.Acceleration);
+		DMisl.Altitude = ini.Get_Int(GENERAL, "DMislAltitude", DMisl.Altitude);
+		DMisl.Damage = ini.Get_Int(GENERAL, "DMislDamage", DMisl.Damage);
+		DMisl.EliteDamage = ini.Get_Int(GENERAL, "DMislEliteDamage", DMisl.EliteDamage);
+		DMisl.BodyLength = ini.Get_Int(GENERAL, "DMislBodyLength", DMisl.BodyLength);
+		DMisl.LazyCurve = ini.Get_Bool(GENERAL, "DMislLazyCurve", DMisl.LazyCurve);
+		DMisl.Type = TGet_Class(ini, GENERAL, "DMislType", DMisl.Type);
+		CMisl.PauseFrames = ini.Get_Int(GENERAL, "CMislPauseFrames", CMisl.PauseFrames);
+		CMisl.TiltFrames = ini.Get_Int(GENERAL, "CMislTiltFrames", CMisl.TiltFrames);
+		CMisl.PitchInitial = ini.Get_Float(GENERAL, "CMislPitchInitial", CMisl.PitchInitial);
+		CMisl.PitchFinal = ini.Get_Float(GENERAL, "CMislPitchFinal", CMisl.PitchFinal);
+		CMisl.TurnRate = ini.Get_Float(GENERAL, "CMislTurnRate", CMisl.TurnRate);
+		CMisl.RaiseRate = ini.Get_Float(GENERAL, "CMislRaiseRate", CMisl.RaiseRate);
+		CMisl.Acceleration = ini.Get_Float(GENERAL, "CMislAcceleration", DMisl.Acceleration);
+		CMisl.Altitude = ini.Get_Int(GENERAL, "CMislAltitude", CMisl.Altitude);
+		CMisl.Damage = ini.Get_Int(GENERAL, "CMislDamage", CMisl.Damage);
+		CMisl.EliteDamage = ini.Get_Int(GENERAL, "CMislEliteDamage", CMisl.EliteDamage);
+		CMisl.BodyLength = ini.Get_Int(GENERAL, "CMislBodyLength", CMisl.BodyLength);
+		CMisl.LazyCurve = ini.Get_Bool(GENERAL, "CMislLazyCurve", CMisl.LazyCurve);
+		CMisl.Type = TGet_Class(ini, GENERAL, "CMislType", CMisl.Type);
+		ParadropRadius = ini.Get_Int(GENERAL, "ParadropRadius", ParadropRadius);
+		SpotlightMovementRadius = ini.Get_Int(GENERAL, "SpotlightMovementRadius", SpotlightMovementRadius);
+		SpotlightLocationRadius = ini.Get_Int(GENERAL, "SpotlightLocationRadius", SpotlightLocationRadius);
+		SpotlightSpeed = ini.Get_Float(GENERAL, "SpotlightSpeed", SpotlightSpeed);
+		SpotlightAcceleration = ini.Get_Float(GENERAL, "SpotlightAcceleration", SpotlightAcceleration);
+		SpotlightAngle = ini.Get_Float(GENERAL, "SpotlightAngle", SpotlightAngle);
+		SpotlightRadius = ini.Get_Int(GENERAL, "SpotlightRadius", SpotlightRadius);
+		RevealTriggerRadius = ini.Get_Int(GENERAL, "RevealTriggerRadius", RevealTriggerRadius);
+		ChargeToDrainRatio = ini.Get_Float(GENERAL, "ChargeToDrainRatio", ChargeToDrainRatio);
+		WallBuildSpeedCoefficient = ini.Get_Float(GENERAL, "WallBuildSpeedCoefficient", WallBuildSpeedCoefficient);
+		ConditionYellowSparkingProbability = ini.Get_Float(GENERAL, "ConditionYellowSparkingProbability", ConditionYellowSparkingProbability);
+		ConditionRedSparkingProbability = ini.Get_Float(GENERAL, "ConditionRedSparkingProbability", ConditionRedSparkingProbability);
+		AITriggerSuccessWeightDelta = ini.Get_Float(GENERAL, "AITriggerSuccessWeightDelta", AITriggerSuccessWeightDelta);
+		AITriggerFailureWeightDelta = ini.Get_Float(GENERAL, "AITriggerFailureWeightDelta", AITriggerFailureWeightDelta);
+		AITriggerTrackRecordCoefficient = ini.Get_Float(GENERAL, "AITriggerTrackRecordCoefficient", AITriggerTrackRecordCoefficient);
+		WeedCapacity = ini.Get_Int(GENERAL, "WeedCapacity", WeedCapacity);
+		FlashFrameTime = ini.Get_Int(GENERAL, "FlashFrameTime", FlashFrameTime);
+		RadarCombatFlashTime = ini.Get_Int(GENERAL, "RadarCombatFlashTime", RadarCombatFlashTime);
+		RadarEventSpeed = ini.Get_Float(GENERAL, "RadarEventSpeed", RadarEventSpeed);
+		RadarEventRotationSpeed = ini.Get_Float(GENERAL, "RadarEventRotationSpeed", RadarEventRotationSpeed);
+		RadarEventSuppressionDistances = ini.Get_IntList(GENERAL, "RadarEventSuppressionDistances", RadarEventSuppressionDistances);
+		RadarEventVisibilityDurations = ini.Get_IntList(GENERAL, "RadarEventVisibilityDurations", RadarEventVisibilityDurations);
+		RadarEventDurations = ini.Get_IntList(GENERAL, "RadarEventDurations", RadarEventDurations);
+		RadarEventMinRadius = ini.Get_Int(GENERAL, "RadarEventMinRadius", RadarEventMinRadius);
+		RadarEventColorSpeed = ini.Get_Float(GENERAL, "RadarEventColorSpeed", RadarEventColorSpeed);
+		MyEffectivenessCoefficientDefault = ini.Get_Float(GENERAL, "MyEffectivenessCoefficientDefault", MyEffectivenessCoefficientDefault);
+		TargetEffectivenessCoefficientDefault = ini.Get_Float(GENERAL, "TargetEffectivenessCoefficientDefault", TargetEffectivenessCoefficientDefault);
+		TargetSpecialThreatCoefficientDefault = ini.Get_Float(GENERAL, "TargetSpecialThreatCoefficientDefault", TargetSpecialThreatCoefficientDefault);
+		TargetStrengthCoefficientDefault = ini.Get_Float(GENERAL, "TargetStrengthCoefficientDefault", TargetStrengthCoefficientDefault);
+		TargetDistanceCoefficientDefault = ini.Get_Float(GENERAL, "TargetDistanceCoefficientDefault", TargetDistanceCoefficientDefault);
+		DumbMyEffectivenessCoefficient = ini.Get_Float(GENERAL, "DumbMyEffectivenessCoefficient", DumbMyEffectivenessCoefficient);
+		DumbTargetEffectivenessCoefficient = ini.Get_Float(GENERAL, "DumbTargetEffectivenessCoefficient", DumbTargetEffectivenessCoefficient);
+		DumbTargetSpecialThreatCoefficient = ini.Get_Float(GENERAL, "DumbTargetSpecialThreatCoefficient", DumbTargetSpecialThreatCoefficient);
+		DumbTargetStrengthCoefficient = ini.Get_Float(GENERAL, "DumbTargetStrengthCoefficient", DumbTargetStrengthCoefficient);
+		DumbTargetDistanceCoefficient = ini.Get_Float(GENERAL, "DumbTargetDistanceCoefficient", DumbTargetDistanceCoefficient);
+		EnemyHouseThreatBonus = ini.Get_Float(GENERAL, "EnemyHouseThreatBonus", EnemyHouseThreatBonus);
+		VeinholeMonsterStrength = ini.Get_Int(GENERAL, "VeinholeMonsterStrength", VeinholeMonsterStrength);
+		MaxVeinholeGrowth = ini.Get_Int(GENERAL, "MaxVeinholeGrowth", MaxVeinholeGrowth);
+		VeinholeGrowthRate = ini.Get_Int(GENERAL, "VeinholeGrowthRate", VeinholeGrowthRate);
+		VeinholeShrinkRate = ini.Get_Int(GENERAL, "VeinholeShrinkRate", VeinholeShrinkRate);
+		VeinDamage = ini.Get_Int(GENERAL, "VeinDamage", VeinDamage);
+		VeinholeTypeClass = TGet_Class(ini, GENERAL, "VeinholeTypeClass", VeinholeTypeClass);
+
+		DefaultMirageDisguises = TGet_TypeList<TerrainTypeClass>(ini, GENERAL, "DefaultMirageDisguises", DefaultMirageDisguises);
+		InfantryBlinkDisguiseTime = ini.Get_Int(GENERAL, "InfantryBlinkDisguiseTime", InfantryBlinkDisguiseTime);
+		MaximumQueuedObjects = ini.Get_Int(GENERAL, "MaximumQueuedObjects", MaximumQueuedObjects);
+
+		MaxWaypointPathLength = ini.Get_Int(GENERAL, "MaxWaypointPathLength", MaxWaypointPathLength);
+		TreeStrength = ini.Get_Int(GENERAL, "TreeStrength", TreeStrength);
+		EngineerCaptureLevel = ini.Get_Float(GENERAL, "EngineerCaptureLevel", EngineerCaptureLevel);
+		EngineerCaptureLevel_ = ini.Get_Float(GENERAL, "EngineerCaptureLevel", EngineerCaptureLevel_);
+		TalkBubbleTime = int(TIMER_SECOND * ini.Get_Float(GENERAL, "TalkBubbleTime", TalkBubbleTime * (1.0f / TIMER_SECOND)));
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x00671EA0
 bool RulesClass::MPlayer(CCINIClass const & ini)
 {
@@ -2200,9 +2609,21 @@ template class DynamicVectorClass<TerrainTypeClass const *>;
 // TGet_Class
 template WarheadTypeClass * TGet_Class<WarheadTypeClass>(CCINIClass const &, char const *, char const *, WarheadTypeClass *);
 
+// TEMPLATE: GAMEMD 0x0067B550
+// ?TGet_TypeList@@YI?AV?$TypeList@PBVBuildingTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
+
+// TEMPLATE: GAMEMD 0x0067B720
+// ?TGet_TypeList@@YI?AV?$TypeList@PBVUnitTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
+
+// TEMPLATE: GAMEMD 0x0067B8F0
+// ?TGet_TypeList@@YI?AV?$TypeList@PBVAircraftTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
+
 // FUNCTION: GAMEMD 0x0067BAC0
 // TGet_Class@@YIPAVInfantryTypeClass
 template InfantryTypeClass * TGet_Class<InfantryTypeClass>(CCINIClass const &, char const *, char const *, InfantryTypeClass *);
+
+// TEMPLATE: GAMEMD 0x0067BB10
+// ?TGet_TypeList@@YI?AV?$TypeList@PBVInfantryTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
 
 // FUNCTION: GAMEMD 0x0067BCE0
 // TGet_Class@@YIPAVBuildingTypeClass
@@ -2215,6 +2636,9 @@ template AircraftTypeClass * TGet_Class<AircraftTypeClass>(CCINIClass const &, c
 // FUNCTION: GAMEMD 0x0067BD80
 // TGet_Class@@YIPAVTerrainTypeClass
 template TerrainTypeClass * TGet_Class<TerrainTypeClass>(CCINIClass const &, char const *, char const *, TerrainTypeClass *);
+
+// TEMPLATE: GAMEMD 0x0067BDD0
+// ?TGet_TypeList@@YI?AV?$TypeList@PBVTerrainTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
 
 // TEMPLATE: GAMEMD 0x0067BFA0
 // ??4?$VectorClass@PBVTerrainTypeClass@@@@QAEAAV0@ABV0@@Z
