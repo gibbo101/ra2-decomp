@@ -646,6 +646,12 @@ def ref_checks(orig, obj, raw, pick, ours: bytes, theirs: bytes, address: int, n
         else:
             continue
         status, want = check_ref(orig, obj, raw, target_sym, sec, start, address, got, names, local)
+        if status == "unverified" and names and r.type == REL_DIR32 and target_sym.name.endswith("@@6B@"):
+            body = vftable_type(target_sym.name)
+            if body:
+                want = orig.rtti().unique_primary_tables.get(body)
+                if want is not None:
+                    status = "ok" if got == want else "mismatch"
         out.append(RefCheck(off, r.type, addend, target_sym, got, status, want))
     return out
 

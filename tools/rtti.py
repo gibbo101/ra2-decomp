@@ -3,6 +3,7 @@ class a vtable or a decorated member symbol names."""
 
 from __future__ import annotations
 
+from functools import cached_property
 import struct
 
 import capstone
@@ -53,6 +54,19 @@ class Rtti:
                 self.slot_of.setdefault(s, []).append(name)
         # The linker folded every pure virtual's slot into _purecall, the most common slot.
         self.purecall = max(self.slot_of, key=lambda s: len(self.slot_of[s]))
+
+    @cached_property
+    def unique_primary_tables(self) -> dict[str, int]:
+        primary = {}
+        seen = set()
+        for address, (name, offset, _) in self.vtables.items():
+            body = name[4:]
+            if body in seen:
+                primary.pop(body, None)
+            elif offset == 0:
+                primary[body] = address
+            seen.add(body)
+        return primary
 
     def base_classes(self, hierarchy: int, names: dict[int, str]) -> set[str]:
         """Every class in a class hierarchy descriptor's base class array, itself included."""
