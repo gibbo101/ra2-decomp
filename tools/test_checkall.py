@@ -55,10 +55,10 @@ sys.exit(case['exit'])
     def baseline(self):
         return self.match() + self.match("0x00401010", "Second")
 
-    def run_gate(self, record=False):
+    def run_gate(self, record=False, baseline=None):
         original = self.progress.read_bytes()
         output = io.StringIO()
-        argv = ["checkall.py", *(["--record"] if record else [])]
+        argv = ["checkall.py", *(["--record"] if record else []), *(["--baseline", baseline] if baseline else [])]
         with patch.object(checkall, "ROOT", self.root), \
              patch.object(checkall, "PROGRESS", self.progress), \
              patch.object(checkall.sys, "argv", argv), contextlib.redirect_stdout(output):
@@ -80,6 +80,16 @@ sys.exit(case['exit'])
         code, output = self.run_gate(record=True)
         self.assertEqual(code, 1)
         self.assertIn("0x00401010: previously matched function missing", output)
+
+    def test_base_protects_match_removed_from_working_table(self):
+        table = self.progress.read_text()
+        self.progress.write_text(table.splitlines(True)[0] + table.splitlines(True)[1])
+        self.child(self.match() + self.complete(1))
+        with patch.object(checkall.subprocess, "check_output", side_effect=["a" * 40, table]) as git:
+            code, output = self.run_gate(record=True, baseline="upstream/main")
+        self.assertEqual(code, 1)
+        self.assertIn("0x00401010: previously matched function missing", output)
+        self.assertEqual(git.call_args.args[0][-1], "a" * 40 + ":data/progress.csv")
 
     def test_deleted_source_fails_without_rewriting_progress(self):
         self.assertEqual(self.run_gate(record=True)[0], 1)
@@ -158,6 +168,32 @@ sys.exit(case['exit'])
         self.child(self.baseline() + partial + self.complete(3, 1), exit_code=1)
         self.assertEqual(self.run_gate(record=True)[0], 0)
         self.assertIn("WRONG TARGETS", self.progress.read_text())
+
+
+    def test_lost_reference_cannot_be_offset_by_a_new_one(self):
+        import os
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            exe = self.root / "orig/gamemd.exe"
+            exe.parent.mkdir()
+            exe.write_bytes(b"fixture")
+
+            path = str(Path(tmp) / "base.json")
+            def output(site):
+                return (self.match() + "CHECK-REFERENCES 00401000 " + site + "\n"
+                        + self.match("0x00401010", "Second") + "CHECK-REFERENCES 00401010 \n"
+                        + self.complete(2))
+            self.child(output("1/6/0/405000"))
+            with patch.dict(os.environ, RA2_SAVE_REFERENCES=path):
+                self.assertEqual(self.run_gate()[0], 0)
+            with patch.dict(os.environ, RA2_REQUIRE_REFERENCES=path):
+                self.assertEqual(self.run_gate()[0], 0)
+                self.child(output("2/6/0/406000"))
+                code, log = self.run_gate(record=True)
+                self.assertEqual(code, 1)
+                self.assertIn("lost proven reference 00401000 1/6/0/405000", log)
+            exe.unlink()
+            exe.parent.rmdir()
 
 
 if __name__ == "__main__":

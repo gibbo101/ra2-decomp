@@ -733,10 +733,10 @@ def sole_users(refs, kept, module_at, segment_of, open_fns) -> dict[int, tuple[s
     return out
 
 
-def main() -> None:
-    if len(sys.argv) > 1 and (sys.argv[1].startswith("-") or not Path(sys.argv[1]).is_dir()):
+def main(output=None, code_dir=None) -> None:
+    if code_dir is not None and not code_dir.is_dir():
         raise SystemExit(__doc__)
-    code_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "../cnc-remastered-mods/reference/OpenTS/code"
+    code_dir = code_dir or ROOT / "../cnc-remastered-mods/reference/OpenTS/code"
     pe = pefile.PE(str(ROOT / "orig/gamemd.exe"), fast_load=True)
     with (ROOT / "data/functions.csv").open() as f:
         rows = list(csv.DictReader(f))
@@ -973,7 +973,7 @@ def main() -> None:
             else:
                 rng[0], rng[3] = f"seg_{rng[1][0]:08X}", "seg"
 
-    out = ROOT / "data/modules.csv"
+    out = output or ROOT / "data/modules.csv"
     with out.open("w", newline="") as f:
         w = csv.writer(f, lineterminator="\n")
         w.writerow(["module", "first", "last", "functions", "certain"])
@@ -1005,4 +1005,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", type=Path)
+    parser.add_argument("code_dir", nargs="?", type=Path)
+    args = parser.parse_args()
+    main(args.out, args.code_dir)

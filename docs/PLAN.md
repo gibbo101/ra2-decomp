@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 4 November 2026: 18,788 of 19,362 game functions match (97%; 75% of game code
+Status, 4 November 2026: 18,792 of 19,362 game functions match (97%; 75% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,57 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### dk8827's seventh set of pull requests (4 November 2026)
+
+**4 functions, 4 tool changes.** Seven pull requests were merged once gated together:
+- New functions:
+  - TrajectoryHelper::GetObstacle, 788 bytes.
+  - The Rules building-type vector assignment.
+  - Blowfish's and Light's static initialisers.
+- Reference checks are stricter:
+  - A vtable reference resolves through retail RTTI when its class has a single primary
+    table.
+  - A symbol with two known addresses no longer binds by row order.
+  - `RA2_SAVE_REFERENCES` and `RA2_REQUIRE_REFERENCES` protect the relocation sites
+    proven at a trusted revision.
+- Landing:
+  - `land.sh` accepts only a gate log that `tools/coord/landing_gate.py` stamped for the
+    same checkout and progress table.
+  - It generates attempts, modules and manifest in staging and publishes them together.
+
+A pull request restoring RulesClass::General was held: it matches only when defined after
+rules.cpp's explicit instantiations, and at its exe position it checks at 73.5%. A second
+finding corrects the totals: 0x004F2C50 is annotated in both grphmenu files, so the counts
+since 28 October were one too high. Merge gate: 18,793 annotations, 18,792 functions
+(2,804.9 KB).
+
+### dk8827's sixth set of pull requests (4 November 2026)
+
+**1 function, 11 tool changes.** Twelve pull requests were merged once gated together:
+- ShipLocomotionClass::Is_Piggybacking.
+- In the checker:
+  - Partial-match diffs align the two listings first and label each jump by its retail
+    destination and each call by its target, so a shifted call no longer shows a false
+    target. `--score` is a little stricter as a result.
+  - Overload lookups are indexed once per object.
+  - COFF function extents are built once per object.
+- The gate takes `--baseline COMMIT`, which also protects the matches recorded at a trusted
+  revision. `tools/build_receipt.py` rechecks a captured cold build against changed
+  address tables, and can reuse the objects of modules whose sources and headers are
+  unchanged.
+- `tools/emitted.py` lists unrecorded functions that a module already emits byte for byte.
+- The permuter now:
+  - checks the call targets of a match;
+  - rewrites operators only on scalar operands;
+  - can aim declaration moves at named stack differences (`tools/stackslots.py`).
+- `tools/refaudit.py` ranks unresolved references by how many modules agree on their base,
+  and `data/names.csv` gains Swizzler and ScenarioInit.
+- `tools/coord/choices.py` groups evidence-backed retries, and `mknear.py` leaves out
+  targets whose recorded retries stopped improving.
+- A GitHub workflow runs the tool tests on every push and pull request.
+
+Merge gate: 18,789 of 18,789 (2,804.0 KB).
 
 ### Batches 189 to 191 (4 November 2026)
 

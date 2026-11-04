@@ -11,6 +11,7 @@ the repository root; generated round files go to `build/coord/`, which is not tr
   each the smallest untried function of 1.5 KB or more in a module no other job takes.
 - `python3 tools/coord/mknear.py tools/coord/nearT.js FIRST NBATCHES MIN [PER [MAX]]`: near
   misses whose best attempt is MIN% or more (and under MAX%), grouped by module.
+- [Evidence-driven retries](CHOICES.md) group a caller with its blocked helpers and test bounded source alternatives.
 - `batchT.js` and `nearT.js` are the workflow templates; the generators fill in the
   repository path, the other batches' modules and the description. The workflow's args are
   the generated `build/coord/batchN.json`.
@@ -22,8 +23,11 @@ the repository root; generated round files go to `build/coord/`, which is not tr
 
 ## Landing a round
 
+When checking a contribution, pass `--baseline BASE_COMMIT` to `tools/checkall.py`.
+Use the trusted base revision even if the contribution edits its own progress table.
+
 1. `uv run tools/checkall.py` (the gate; no regressions allowed), then `--record`, then a
-   plain re-run.
+   final re-run with `uv run tools/coord/landing_gate.py` and save its output as GATE.txt.
 2. `bash tools/coord/land.sh DATE GATE.txt JOURNAL...`: rule scans (`landscan.sh`), the
    round's claimed matches against the tree (`tally.py`), attempts.csv rows
    (`attempts_rows.py`), modules and manifest, stale banked attempts (`stale.py`), stray
@@ -34,3 +38,11 @@ the repository root; generated round files go to `build/coord/`, which is not tr
 Other helpers: `comments.py` (comment-rule scan), `near.py` (near-miss list), `vtowner.py`
 and `vtname.py` (vtable owners from RTTI), `rank.py`, `pick.py`, `mkbatch.py`, `jsum.py`
 and `segcount.py` from earlier rounds.
+
+For a landing gate with unchanged compilation inputs, `tools/build_receipt.py capture build/gates/BATCH`
+runs a cold build and saves verified objects. Use `tools/build_receipt.py recheck build/gates/BATCH --record`
+and then `tools/build_receipt.py recheck build/gates/BATCH` to check the current address tables from those
+objects. A changed input or damaged object fails the gate.
+
+After source edits, capture into a new directory with `tools/build_receipt.py capture build/gates/next --reuse build/gates/previous`.
+Every current module is checked. Changed modules compile again. A shared input change rebuilds all modules.

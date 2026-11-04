@@ -1362,6 +1362,7 @@ address,name,result,size,source,symbol
 0x004370B0,BuildingLightClass::Fetch_RTTI,MATCH,6,src/blight.cpp,?Fetch_RTTI@BuildingLightClass@@UBE?AW4RTTIType@@XZ
 0x00435B50,BuildingLightClass::~BuildingLightClass,MATCH,134,src/blight.cpp,??1BuildingLightClass@@UAE@XZ
 0x004370C0,BuildingLightClass::~BuildingLightClass,MATCH,154,src/blight.cpp,??_GBuildingLightClass@@UAEPAXI@Z
+0x00437190,_$E2,MATCH,23,src/blowfish.cpp,_$E2
 0x004371B0,Buffer_Size,MATCH,20,src/blowfish.cpp,?Buffer_Size@@YIHAAVSurface@@HH@Z
 0x004371D0,To_Buffer,MATCH,178,src/blowfish.cpp,?To_Buffer@@YI_NABVSurface@@ABV?$TRect@H@@AAVBuffer@@@Z
 0x00437290,From_Buffer,MATCH,180,src/blowfish.cpp,?From_Buffer@@YI_NAAVSurface@@ABV?$TRect@H@@ABVBuffer@@@Z
@@ -4321,6 +4322,7 @@ address,name,result,size,source,symbol
 0x004CC0E0,_$E41,MATCH,26,src/findpath2.cpp,_$E41
 0x004CC100,TrajectoryHelper::FindFirstObstacle,MATCH,526,src/findpath2.cpp,?FindFirstObstacle@TrajectoryHelper@@SIPAVCellClass@@ABVCoord@@0PBVBulletTypeClass@@PBVHouseClass@@@Z
 0x004CC310,TrajectoryHelper::FindFirstImpenetrableObstacle,MATCH,74,src/findpath2.cpp,?FindFirstImpenetrableObstacle@TrajectoryHelper@@SIPAVCellClass@@ABVCoord@@0PBVWeaponTypeClass@@PBVHouseClass@@@Z
+0x004CC360,TrajectoryHelper::GetObstacle,MATCH,788,src/findpath2.cpp,?GetObstacle@TrajectoryHelper@@SIPAVCellClass@@PBV2@00VCoord@@PBVBulletTypeClass@@PBVHouseClass@@@Z
 0x004CC680,TrajectoryHelper::IsCliffHit,MATCH,73,src/findpath2.cpp,?IsCliffHit@TrajectoryHelper@@SI_NPBVCellClass@@00@Z
 0x004CC6D0,TrajectoryHelper::IsWallHit,MATCH,121,src/findpath2.cpp,?IsWallHit@TrajectoryHelper@@SI_NPBVCellClass@@00PBVHouseClass@@@Z
 0x004CC750,_$E43,MATCH,23,src/flasher.cpp,_$E43
@@ -7437,6 +7439,7 @@ address,name,result,size,source,symbol
 0x00554570,_$E26,MATCH,44,src/light.cpp,_$E26
 0x005545A0,_$E29,MATCH,39,src/light.cpp,_$E29
 0x005545D0,_$E32,MATCH,15,src/light.cpp,_$E32
+0x005545E0,_$E35,MATCH,18,src/light.cpp,_$E35
 0x00554600,_$E38,MATCH,26,src/light.cpp,_$E38
 0x00554620,_$E49,MATCH,23,src/light.cpp,_$E49
 0x00554640,_$E170,MATCH,61,src/light.cpp,_$E170
@@ -11957,6 +11960,7 @@ address,name,result,size,source,symbol
 0x00679EE0,RulesClass::Load_Art_INI,MATCH,96,src/rules.cpp,?Load_Art_INI@RulesClass@@SIXXZ
 0x00679F70,??1?$VectorClass@H@@UAE@XZ,MATCH,45,src/rules.cpp,??1?$VectorClass@H@@UAE@XZ
 0x00679FA0,??1?$VectorClass@PBVBuildingTypeClass@@@@UAE@XZ,MATCH,45,src/rules.cpp,??1?$VectorClass@PBVBuildingTypeClass@@@@UAE@XZ
+0x0067B180,??4?$VectorClass@PBVBuildingTypeClass@@@@QAEAAV0@ABV0@@Z,MATCH,108,src/rules.cpp,??4?$VectorClass@PBVBuildingTypeClass@@@@QAEAAV0@ABV0@@Z
 0x00679FD0,??1?$VectorClass@PBVUnitTypeClass@@@@UAE@XZ,MATCH,45,src/rules.cpp,??1?$VectorClass@PBVUnitTypeClass@@@@UAE@XZ
 0x0067A000,??1?$VectorClass@PBVAircraftTypeClass@@@@UAE@XZ,MATCH,45,src/rules.cpp,??1?$VectorClass@PBVAircraftTypeClass@@@@UAE@XZ
 0x0067A030,??1?$VectorClass@PBVInfantryTypeClass@@@@UAE@XZ,MATCH,45,src/rules.cpp,??1?$VectorClass@PBVInfantryTypeClass@@@@UAE@XZ
@@ -12665,6 +12669,7 @@ address,name,result,size,source,symbol
 0x006A4250,ShipLocomotionClass::Get_Speed_Accum,MATCH,10,src/ship.cpp,?Get_Speed_Accum@ShipLocomotionClass@@UAGHXZ
 0x006A4260,ShipLocomotionClass::AddRef,MATCH,13,src/ship.cpp,?AddRef@ShipLocomotionClass@@UAGKXZ
 0x006A4270,ShipLocomotionClass::Release,MATCH,13,src/ship.cpp,?Release@ShipLocomotionClass@@UAGKXZ
+0x006A4280,ShipLocomotionClass::Is_Piggybacking,MATCH,17,src/ship.cpp,?Is_Piggybacking@ShipLocomotionClass@@UAGEXZ
 0x006A42A0,ShipLocomotionClass::Fetch_Object_Size,MATCH,6,src/ship.cpp,?Fetch_Object_Size@ShipLocomotionClass@@UBEHXZ
 0x006A42B0,??_GShipLocomotionClass@@UAEPAXI@Z,MATCH,65,src/ship.cpp,??_GShipLocomotionClass@@UAEPAXI@Z
 0x006A4300,ShipLocomotionClass::QueryInterface,MATCH,10,src/ship.cpp,?QueryInterface@ShipLocomotionClass@@W3AGJABU_GUID@@PAPAX@Z

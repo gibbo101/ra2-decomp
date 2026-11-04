@@ -8,6 +8,7 @@ Functions claimed by open pull requests or the claims issue (claims.py) are neve
 from shortlist_inputs import finished_addresses, banked_paths
 import bisect, collections, csv, glob, json, os, re, sys
 from claims import claimed
+from retry_budget import exhausted_retries
 from pathlib import Path
 
 D = "data"
@@ -46,8 +47,10 @@ banks = banked_paths(attempts)
 hx = lambda a: f"0x{a:08X}"
 per = collections.defaultdict(list)
 desc = {}
+exhausted = exhausted_retries(attempts, size)
 for a, (b, blk, note) in best.items():
-    if a in done or a >= lib0 or b < MIN or b >= MAX or a not in size:
+    # Exhausted retries require an explicit hypothesis in choices.py plan.
+    if a in exhausted or a in done or a >= lib0 or b < MIN or b >= MAX or a not in size:
         continue
     i = bisect.bisect_right(firsts, a) - 1
     m = mods[i][2] if i >= 0 and a <= mods[i][1] else "?"

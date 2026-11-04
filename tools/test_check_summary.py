@@ -30,7 +30,7 @@ class CompletionTests(unittest.TestCase):
                 "compile_source": (self.obj, ""), "CoffObject": object(),
                 "Original": SimpleNamespace(rtti=lambda: None), "known_names": {},
                 "bind_annotations": ({}, []),
-                "vftable_holders": {}, "class_problem": None,
+                "function_symbols": set(), "vftable_holders": {}, "class_problem": None,
             }.items():
                 stack.enter_context(patch.object(check, name, return_value=value))
             stack.enter_context(patch.object(check, "compare", side_effect=results))
