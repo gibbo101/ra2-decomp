@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 4 November 2026: 18,798 of 19,362 game functions match (97%; 76% of game code
+Status, 4 November 2026: 18,799 of 19,362 game functions match (97%; 76% of game code
 by size), landed in batches module by module. The rounds below record each one.
 
 ## The goal
@@ -1113,6 +1113,18 @@ Session.Players. Recording then exposed three UI-command functions building char
 ObjectClass * vectors where the exe builds char const * and TechnoClass * ones; their RTTI
 fixed them. Merge gate: 11,543 of 11,543 (1,541.3 KB), about 59%
 of game functions.
+
+### dk8827's ninth set of pull requests (4 November 2026)
+
+**1 function, 1 tool change.** Two pull requests were merged once gated together:
+- SuperClass's scalar deleting destructor; the destructor now calls DetachAnimation.
+- Attempt tracking: `tools/attempt.py` banks a near match with its source and checker
+  inputs so it can be replayed, and `attempts_rows.py` merges repeat imports by
+  observation, so re-importing a journal changes no existing row.
+
+The main loop's end-of-game handler (0x0055CFD0) matches but went back: it counts through
+a raw global inside the Session object instead of a SessionClass member. Merge gate:
+18,799 of 18,799 functions (2,825.6 KB).
 
 ### dk8827's eighth set of pull requests (4 November 2026)
 

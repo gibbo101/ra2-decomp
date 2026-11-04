@@ -14157,6 +14157,7 @@ address,size,symbol,source,sha256
 0x006CE1F0,8,?What_Am_I@SuperClass@@UBGHXZ,src/super.cpp,ebbe9dc730a0454b277e1f9fa4cbee9443f4df6dfe7b2e6f30fedd673f3988ca
 0x006CE200,6,?Fetch_RTTI@SuperClass@@UBE?AW4RTTIType@@XZ,src/super.cpp,070cae7a0364c096d63212469205fe7ea561c63032069f70e238a7a2683ca5d7
 0x006CE210,6,?Fetch_Object_Size@SuperClass@@UBEHXZ,src/super.cpp,c5264b41ff2cd91ca34fc5b460d7a9373bf0f98ec1b6f41fec25d8e1abff46b4
+0x006CE220,30,??_GSuperClass@@UAEPAXI@Z,src/super.cpp,063cf22c078aea58968003984ff6c7632f0e5aef33ca2c41e59e1b40660b0905
 0x006CE240,47,??H?$TPoint3D@H@@QBE?BV0@ABV0@@Z,src/super.cpp,f2fc48bfb59ebdf9195fd89c455f4278f0dfd173bd2afedff282d4d8a712ed64
 0x006CE270,13,?_AddRef@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ,src/super.cpp,0310496e9b6d6517e26630c4417fbb7034f19d8d4ccaae6a45fa39a8ccbf41ae
 0x006CE280,54,?Stop@?$CDTimerClass@VFrameTimerClass@@@@QAEXXZ,src/super.cpp,f6f37589fff3d6704b70b1a3972a56135431909fa783a586d1ebac23e70e312f
