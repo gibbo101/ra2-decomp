@@ -11,6 +11,7 @@ the repository root; generated round files go to `build/coord/`, which is not tr
   each the smallest untried function of 1.5 KB or more in a module no other job takes.
 - `python3 tools/coord/mknear.py tools/coord/nearT.js FIRST NBATCHES MIN [PER [MAX]]`: near
   misses whose best attempt is MIN% or more (and under MAX%), grouped by module.
+- [Evidence-driven retries](CHOICES.md) group a caller with its blocked helpers and test bounded source alternatives.
 - `batchT.js` and `nearT.js` are the workflow templates; the generators fill in the
   repository path, the other batches' modules and the description. The workflow's args are
   the generated `build/coord/batchN.json`.
