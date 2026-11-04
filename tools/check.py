@@ -720,8 +720,12 @@ def main() -> None:
     if objpath is None:
         print(log)
         raise SystemExit(1)
-    raw = objpath.read_bytes()
-    obj, orig, names = CoffObject(raw), Original(), known_names()
+    raise SystemExit(report(src, objpath.read_bytes(), Original(), known_names(), targets, score, summary))
+
+
+def report(src, raw, orig, names, targets, score=False, summary=False):
+    """Verify one compiled source object and print the normal checker result."""
+    obj = CoffObject(raw)
     # Which compiled function each annotation is decides what its own symbol resolves to,
     # so pick them first, by bytes alone.
     local, duplicates = bind_annotations(orig, obj, raw, src)
@@ -756,7 +760,7 @@ def main() -> None:
             print("\n".join(res.diff[:400]))
     if summary:
         print(f"CHECK-SUMMARY: checked={len(targets)} failed={failed}")
-    raise SystemExit(1 if failed else 0)
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":

@@ -26,7 +26,12 @@ WARNING = re.compile(r"^(0x[0-9A-F]{8}) .+: warning: ")
 SUMMARY = re.compile(r"^CHECK-SUMMARY: checked=(\d+) failed=(\d+)$")
 
 
-def main() -> None:
+def run_checker(src):
+    return subprocess.run([sys.executable, str(ROOT / "tools/check.py"), str(src), "--summary"],
+                          capture_output=True, text=True, cwd=ROOT)
+
+
+def main(run_source=run_checker, validate=None) -> None:
     record = "--record" in sys.argv[1:]
     before = set()
     if PROGRESS.exists():
@@ -35,8 +40,7 @@ def main() -> None:
     sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext))
     rows, broken, warnings = [], [], 0
     for src in sources:
-        proc = subprocess.run([sys.executable, str(ROOT / "tools/check.py"), str(src), "--summary"],
-                              capture_output=True, text=True, cwd=ROOT)
+        proc = run_source(src)
         found = False
         checked, partials, summaries = 0, 0, []
         for line in proc.stdout.splitlines():
@@ -85,6 +89,8 @@ def main() -> None:
           f"({sum(int(r[3]) for r in matched)} of {sum(int(r[3]) for r in rows)} bytes)")
     if broken:
         print("no longer matching: " + ", ".join(broken))
+    if validate is not None:
+        validate()
     if record and not broken:
         with PROGRESS.open("w", newline="") as f:
             w = csv.writer(f, lineterminator="\n")

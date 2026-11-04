@@ -34,3 +34,8 @@ the repository root; generated round files go to `build/coord/`, which is not tr
 Other helpers: `comments.py` (comment-rule scan), `near.py` (near-miss list), `vtowner.py`
 and `vtname.py` (vtable owners from RTTI), `rank.py`, `pick.py`, `mkbatch.py`, `jsum.py`
 and `segcount.py` from earlier rounds.
+
+For a landing gate with unchanged compilation inputs, `tools/build_receipt.py capture build/gates/BATCH`
+runs a cold build and saves verified objects. Use `tools/build_receipt.py recheck build/gates/BATCH --record`
+and then `tools/build_receipt.py recheck build/gates/BATCH` to check the current address tables from those
+objects. A changed input or damaged object fails the gate.
