@@ -2,8 +2,10 @@
 
 Run `uv run tools/coord/choices.py suggest` to list unclaimed callers with explicitly waiting helpers in the latest attempt records. Review each dependency before planning work.
 
-`mknear.py` leaves addresses with two or more attempt records out of automatic
-percentage-based rounds. Put a caller, its dependent helpers, a concrete hypothesis
+`mknear.py` leaves exhausted retries out of automatic percentage-based rounds. Count recorded
+compiler checks in non-improving rounds since the best score rose (30 checks, or 60
+for functions over 2,000 bytes). Checks in a round that raised the best are excluded
+because the ledger does not say when the gain occurred. Put a caller, its dependent helpers, a concrete hypothesis
 and the new evidence in a JSON list instead. For example:
 
 ```json

@@ -24,3 +24,13 @@ class TrialsTests(unittest.TestCase):
         self.assertEqual(waiting_groups(rows, set(), set(), {1, 2, 16}),
                          [(16, [(2, "waits on caller 0x00000010")])])
         self.assertFalse(waiting_groups(rows, {16}, set(), {1, 2, 16}))
+
+    def test_budget_resets_only_on_improvement(self):
+        from coord.retry_budget import exhausted_retries
+        def row(score, checks):
+            return {"address": "0x10", "best": str(score), "checks": str(checks)}
+        rows = [row(80, 30), row(80, 0), row(70, 29)]
+        self.assertFalse(exhausted_retries(rows, {16: 2000}))
+        self.assertEqual(exhausted_retries(rows + [row(80, 1)], {16: 2000}), {16})
+        self.assertFalse(exhausted_retries(rows + [row(80, 1)], {16: 2001}))
+        self.assertFalse(exhausted_retries(rows + [row(81, 60)], {16: 2000}))
