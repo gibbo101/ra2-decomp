@@ -8,7 +8,8 @@ if two annotations in one file claim the same compiled function, or if a templat
 instance's label names a class whose vtables in the exe do not hold the function
 (check.py's class check). The class check's warnings are counted.
 An incomplete checker run fails; a completed run containing new partials is allowed.
---record rewrites data/progress.csv with the results.
+--record rewrites data/progress.csv with the results. For proven relocation sites, see
+tools/REFERENCE_BASELINE.md.
 """
 
 import argparse
@@ -18,6 +19,8 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+
+from reference_baseline import ReferenceBaseline
 
 ROOT = Path(__file__).resolve().parent.parent
 PROGRESS = ROOT / "data/progress.csv"
@@ -41,12 +44,19 @@ def main(run_source=run_checker, validate=None) -> None:
             before = {r["address"] for r in csv.DictReader(f) if r["result"] == "MATCH"}
     before.update(baseline_matches(sys.argv[1:]))
     sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext))
+    refs = ReferenceBaseline(ROOT, record)
     rows, broken, warnings = [], [], 0
     for src in sources:
         proc = run_source(src)
         found = False
         checked, partials, summaries = 0, 0, []
+        reported, proofs = [], []
         for line in proc.stdout.splitlines():
+            if refs.enabled and line.startswith("CHECK-REFERENCES "):
+                _, address, *sites = line.split()
+                proofs.append("0x" + address)
+                refs.sites.update(f"{address} {site}" for site in sites)
+                continue
             summary = SUMMARY.fullmatch(line)
             if summary:
                 summaries.append(tuple(map(int, summary.groups())))
@@ -67,9 +77,12 @@ def main(run_source=run_checker, validate=None) -> None:
             print(line)
             addr, name, result, size, symbol = m.group(1), m.group(2), m.group(3), m.group(5), m.group(6)
             rows.append([addr, name, result, size, src.relative_to(ROOT).as_posix(), symbol])
+            reported.append(addr)
             partials += result != "MATCH"
             if addr in before and result != "MATCH":
                 broken.append(f"{addr} {name}")
+        if refs.enabled and reported != proofs:
+            broken.append(f"{src.relative_to(ROOT)}: incomplete relocation report")
         if (len(summaries) != 1 or summaries[0] != (checked, partials)
                 or proc.returncode != (1 if partials else 0)):
             problem = f"{src.relative_to(ROOT)}: incomplete or failed checker run (exit {proc.returncode})"
@@ -85,6 +98,8 @@ def main(run_source=run_checker, validate=None) -> None:
         problem = f"{addr}: previously matched function missing from results"
         print(problem)
         broken.append(problem)
+    for lost in sorted(refs.expected - refs.sites):
+        broken.append(f"lost proven reference {lost}")
     matched = [r for r in rows if r[2] == "MATCH"]
     if warnings:
         print(f"{warnings} class warnings: labels or stored vftables of a class the exe's RTTI does not name there")
@@ -99,6 +114,8 @@ def main(run_source=run_checker, validate=None) -> None:
             w = csv.writer(f, lineterminator="\n")
             w.writerow(["address", "name", "result", "size", "source", "symbol"])
             w.writerows(rows)
+    if not broken:
+        refs.save()
     sys.exit(1 if broken else 0)
 
 
