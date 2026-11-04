@@ -55,10 +55,10 @@ sys.exit(case['exit'])
     def baseline(self):
         return self.match() + self.match("0x00401010", "Second")
 
-    def run_gate(self, record=False):
+    def run_gate(self, record=False, baseline=None):
         original = self.progress.read_bytes()
         output = io.StringIO()
-        argv = ["checkall.py", *(["--record"] if record else [])]
+        argv = ["checkall.py", *(["--record"] if record else []), *(["--baseline", baseline] if baseline else [])]
         with patch.object(checkall, "ROOT", self.root), \
              patch.object(checkall, "PROGRESS", self.progress), \
              patch.object(checkall.sys, "argv", argv), contextlib.redirect_stdout(output):
@@ -80,6 +80,16 @@ sys.exit(case['exit'])
         code, output = self.run_gate(record=True)
         self.assertEqual(code, 1)
         self.assertIn("0x00401010: previously matched function missing", output)
+
+    def test_base_protects_match_removed_from_working_table(self):
+        table = self.progress.read_text()
+        self.progress.write_text(table.splitlines(True)[0] + table.splitlines(True)[1])
+        self.child(self.match() + self.complete(1))
+        with patch.object(checkall.subprocess, "check_output", side_effect=["a" * 40, table]) as git:
+            code, output = self.run_gate(record=True, baseline="upstream/main")
+        self.assertEqual(code, 1)
+        self.assertIn("0x00401010: previously matched function missing", output)
+        self.assertEqual(git.call_args.args[0][-1], "a" * 40 + ":data/progress.csv")
 
     def test_deleted_source_fails_without_rewriting_progress(self):
         self.assertEqual(self.run_gate(record=True)[0], 1)
