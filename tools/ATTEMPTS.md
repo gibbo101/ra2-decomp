@@ -9,3 +9,8 @@ Replay succeeds when the checker reproduces the saved result, including a saved 
 A journal function may supply a repository-relative `replay` bundle and a stable `attempt_id`.
 The daily CSV retains every distinct bundle path and SHA-256, even if another attempt has a higher score.
 Version 2 bundles record matching siblings, lost prior matches and module failures alongside the target verdict.
+
+The near-miss selectors keep partial progress rows eligible. Their banked paths
+include local replay bundles whose recorded SHA-256 and target address still
+agree, as well as legacy loose C++ files. Use `tools/attempt.py replay BUNDLE`
+to reproduce a saved bundle.

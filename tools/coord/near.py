@@ -1,23 +1,23 @@
 """List unmatched game functions whose best attempt is >= MIN percent, with module and banked file."""
+from shortlist_inputs import finished_addresses, banked_paths
 import bisect, csv, glob, os, sys, collections
 D = "data"
 MIN = float(sys.argv[1]) if len(sys.argv) > 1 else 98
-done = {int(r["address"], 16) for r in csv.DictReader(open(f"{D}/progress.csv"))}
+done = finished_addresses(f"{D}/progress.csv")
 lib0 = min(int(r["address"], 16) for r in csv.DictReader(open(f"{D}/library.csv")))
 size = {int(r["address"], 16): int(r["size"]) for r in csv.DictReader(open(f"{D}/functions.csv"))}
 mods = [(int(r["first"], 16), int(r["last"], 16), r["module"]) for r in csv.DictReader(open(f"{D}/modules.csv"))]
 firsts = [m[0] for m in mods]
 best = {}
-for r in csv.DictReader(open(f"{D}/attempts.csv")):
+with open(f"{D}/attempts.csv") as f:
+    attempts = list(csv.DictReader(f))
+for r in attempts:
     a = int(r["address"], 16)
     try: b = float(r["best"] or 0)
     except ValueError: continue
     if a not in best or b > best[a][0]:
         best[a] = (b, r["blocker"], r["notes"], r["function"])
-banks = collections.defaultdict(list)
-for p in glob.glob("build/batch/*/0x*.cpp") + glob.glob("build/batch/*/0X*.cpp"):
-    try: banks[int(os.path.basename(p)[:-4], 16)].append(p)
-    except ValueError: pass
+banks = banked_paths(attempts)
 for a in sorted(best):
     b = best[a]
     if a in done or a >= lib0 or b[0] < MIN or a not in size: continue

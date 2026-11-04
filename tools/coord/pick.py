@@ -1,7 +1,8 @@
+from shortlist_inputs import finished_addresses
 import csv, bisect, collections, json, sys
 D="data"
 fn=[(int(r["address"],16),int(r["size"])) for r in csv.DictReader(open(f"{D}/functions.csv"))]
-done={int(r["address"],16) for r in csv.DictReader(open(f"{D}/progress.csv"))}
+done = finished_addresses(f"{D}/progress.csv")
 lib={int(r["address"],16) for r in csv.DictReader(open(f"{D}/library.csv"))}
 patch=[int(r["address"],16) for r in csv.DictReader(open(f"{D}/exe_patches.csv"))]
 tried={int(r["address"],16) for r in csv.DictReader(open(f"{D}/attempts.csv"))}
