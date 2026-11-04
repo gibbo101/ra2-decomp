@@ -5,7 +5,8 @@
     uv run tools/build_receipt.py recheck build/gates/batch
 
 Use capture NEW --reuse OLD after edits. Every module is verified. An unchanged
-source can reuse its verified object if all shared inputs still agree. Symbol and progress tables are
+C++ source can reuse its verified object if its possible headers and the toolchain still agree.
+Assembly and unrecognised include directives require an unchanged tree. Symbol and progress tables are
 read again on every recheck. Receipts contain local objects and belong under build/.
 """
 
@@ -15,7 +16,6 @@ import hashlib
 import io
 import json
 import os
-import re
 import subprocess
 import sys
 import tempfile
@@ -23,6 +23,7 @@ from pathlib import Path
 
 import check
 import checkall
+from header_inputs import HeaderInputs
 
 
 def digest(data):
@@ -37,36 +38,21 @@ def inputs(root):
         if not base.is_dir():
             raise ValueError(f"missing compilation input: {directory}")
         files.extend(p.relative_to(root).as_posix() for p in base.rglob("*") if p.is_file())
+    headers = HeaderInputs()
     h = hashlib.sha256()
-    shared = hashlib.sha256()
     units = {}
-    independent = True
-    include_suffixes = {b"", b".h", b".hh", b".hpp", b".inl", b".c", b".inc", b".rh"}
     for name in sorted(files):
         data = (root / name).read_bytes()
         content = hashlib.sha256(data).digest()
         entry = name.encode() + b"\0" + content
         h.update(entry)
+        headers.add(name, data, entry)
         path = Path(name)
         if name.startswith("src/") and path.suffix in (".cpp", ".asm"):
             units[name + ".obj"] = content.hex()
-        else:
-            shared.update(entry)
-        if (path.suffix.lower().encode() in include_suffixes or path.suffix.lower() == ".cpp") and b"#" in data:
-            # A compiled source may itself be included. Fall back to a whole-tree
-            # key for source or computed includes rather than guessing dependencies.
-            logical = data.replace(b"\\\r\n", b"").replace(b"\\\n", b"")
-            for directive in re.findall(rb"(?m)^\s*#\s*include\b([^\n]*)", logical):
-                literal = re.match(rb'\s*[<"]([^>"\n]+)[>"]', directive)
-                if not literal:
-                    independent = False
-                    continue
-                include = literal[1].replace(b"\\", b"/")
-                if (include.startswith(b"/") or b":" in include or b".." in include.split(b"/")
-                        or os.path.splitext(include.lower())[1] not in include_suffixes):
-                    independent = False
     env = {key: os.environ.get(key) for key in ("CL", "_CL_", "ML", "_ML_")}
-    return {"units": units, "shared": shared.hexdigest() if independent and not any(env.values()) else h.hexdigest(),
+    return {"header_keys": headers.keys(units, h.hexdigest()) if not any(env.values()) else {},
+
             "tree": h.hexdigest(), "cpp": check.FLAGS, "asm": check.ASM_FLAGS, "environment": env}
 
 
@@ -79,8 +65,8 @@ def can_reuse(previous, current, name):
         return False
     if previous["tree"] == current["tree"]:
         return True
-    return (previous.get("shared") == current["shared"]
-            and previous.get("units", {}).get(name) == current["units"][name])
+    keys = previous.get("header_keys", {})
+    return name in keys and keys[name] == current.get("header_keys", {}).get(name)
 
 
 def gate(directory, capture, manifest, reuse=None):
@@ -112,10 +98,10 @@ def gate(directory, capture, manifest, reuse=None):
 
     def validate():
         current = inputs(check.ROOT)
-        if "units" not in manifest["inputs"]:  # Receipts from before per-source keys.
-            current.pop("units", None)
-            current.pop("shared", None)
-        if current != manifest["inputs"]:
+        # Older receipts stored different auxiliary keys. The full input tree,
+        # flags and environment are sufficient for rechecking an unchanged build.
+        if any(current[k] != manifest["inputs"].get(k) for k in ("tree", "cpp", "asm", "environment")
+               if k in current):
             raise ValueError("compilation inputs changed; run a fresh capture")
 
     if not capture:
