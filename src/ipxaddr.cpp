@@ -140,6 +140,38 @@ int __fastcall FUN_0053DE00(int count, int size)
 	return 0;
 }
 
+// FUNCTION: GAMEMD 0x0053E070
+DWORD WINAPI FUN_0053E070(StreamerThreadData * data)
+{
+	data->Flag = 1;
+	data->Done = 0;
+	while (!data->Stop) {
+		AudioServicePerform(&data->Timer, AudioGetTime());
+		STM_STREAM * stream = DAT_00AA045C;
+		if (DAT_00AA045C && DAT_00AA0444 && DAT_00AA0468) {
+			EnterCriticalSection(&DAT_00AA0418);
+			if (DAT_00AA0444 == 2 && STM_StreamTotalBytesIn(stream) < (unsigned int)STM_StreamTotalBytes(stream) / 2) {
+				if (DAT_00AA0460) {
+					int transferred;
+					if (STM_AccessCRTFileTransfer(DAT_00AA0460, DAT_00AA0468, STM_StreamTotalBytesTillFull(stream), &transferred) != 1) {
+						DAT_00AA046C = 1;
+					}
+				}
+			} else if (DAT_00AA0444 == 1 && STM_StreamTotalBytesTillFull(stream) < (unsigned int)STM_StreamTotalBytes(stream) / 2) {
+				if (DAT_00AA0464) {
+					STM_AccessCRTFileTransfer(DAT_00AA0464, DAT_00AA0468, (unsigned int)STM_StreamTotalBytes(stream) / 2, 0);
+					fflush(DAT_00AA0468);
+				}
+			}
+			LeaveCriticalSection(&DAT_00AA0418);
+		}
+		Sleep((DWORD)data->Period);
+		++data->Ticks;
+	}
+	data->Done = 1;
+	return 0;
+}
+
 // FUNCTION: GAMEMD 0x0053E1D0
 void __fastcall FUN_0053E1D0(void)
 {
