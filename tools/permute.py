@@ -430,7 +430,7 @@ def pick_mutation_count(rng: random.Random) -> int:
 
 def permute(src: Path, address: int, overlay: Path | None, minutes: float, jobs: int, seed: int | None,
             elite_size: int = 12, keep_going: bool = False, weights: dict | None = None,
-            cleanup: float = 2.0, stall: float = 0.0, focus: bool = True) -> int:
+            cleanup: float = 2.0, stall: float = 0.0, focus: bool = True, stack_focus: bool = False) -> int:
     say = lambda *a: print(*a, flush=True)  # noqa: E731
     tag = f"0x{address:08X}"
     out = OUT / tag
@@ -451,6 +451,10 @@ def permute(src: Path, address: int, overlay: Path | None, minutes: float, jobs:
     if base_obj_path is None:
         raise SystemExit("the starting file does not compile:\n" + log)
     raw = base_obj_path.read_bytes()
+    if stack_focus:
+        from stackslots import diagnose
+        spec.stack_names = {row[0] for row in diagnose(src, address, overlay, raw)}
+        say(f"stack locals: {sorted(spec.stack_names)}")
     base_obj = CoffObject(raw)
     guards, symbols = [], []
     local, duplicates = bind_annotations(orig, base_obj, raw, src)
@@ -642,6 +646,7 @@ def main() -> None:
     ap.add_argument("--stall", type=float, default=0.0, help="stop once this many minutes pass without a gain")
     ap.add_argument("--jobs", type=int, default=min(12, os.cpu_count() or 1), help="parallel compiles (default 12)")
     ap.add_argument("--seed", type=int)
+    ap.add_argument("--stack-focus", action="store_true", help="prefer local declarations identified by stackslots")
     ap.add_argument("--no-focus", action="store_true",
                     help="do not aim rewrites at the source lines behind differing instructions")
     ap.add_argument("--keep-going", action="store_true", help="do not stop at the first MATCH")
@@ -666,7 +671,7 @@ def main() -> None:
     overlay = args.overlay.resolve() if args.overlay else None
     raise SystemExit(permute(src, args.address, overlay, args.minutes, args.jobs, args.seed,
                              keep_going=args.keep_going, weights=weights, cleanup=args.cleanup,
-                             stall=args.stall, focus=not args.no_focus))
+                             stall=args.stall, focus=not args.no_focus, stack_focus=args.stack_focus))
 
 
 if __name__ == "__main__":
