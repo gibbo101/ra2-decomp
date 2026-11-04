@@ -55,6 +55,14 @@ class RelocationDiffTests(unittest.TestCase):
         a, b = edges(left, bytes.fromhex("7400 90 40 c3"))
         self.assertIn("unaligned-ours", b[0])
 
+    def test_repeated_destinations_are_not_identified_by_an_arbitrary_alignment(self):
+        left = bytes.fromhex("7400 90 90 c3")
+        right = bytes.fromhex("7400 90 90 90 c3")
+        orig = SimpleNamespace(base=0x400000, end=0x500000)
+        _, ours = check.normalised_listings(orig, None, Section(1, ".text", right, CODE, []),
+                                            0, right, ADDRESS, left, False)
+        self.assertIn("ambiguous-ours", ours[0])
+
     def test_changed_or_unknown_external_target_is_visible(self):
         result = compare_call(b"\x90", b"", target=CALLEE + 1)
         self.assertIn("-call 0x00405000", result.diff)

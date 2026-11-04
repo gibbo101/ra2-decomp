@@ -456,9 +456,23 @@ def aligned_listings(orig: Original, obj: CoffObject, sec, start: int, ours: byt
     # Use retail instruction addresses as shared labels, never candidate offsets.
     # An unaligned or mid-instruction destination has no proven counterpart.
     ids = [{i.address: f"retail:0x{i.address:08X}" for i in insns[0]}, {}]
-    for a, b, n in difflib.SequenceMatcher(None, *lists, autojunk=False).get_matching_blocks():
+    forward = difflib.SequenceMatcher(None, *lists, autojunk=False).get_matching_blocks()
+    # Runs of identical instructions can match on either side of an insertion.
+    # Only assign a shared destination when alignment in both directions agrees.
+    reverse = {}
+    shifted = lists[0] != lists[1]
+    if shifted:
+        backward = difflib.SequenceMatcher(None, lists[0][::-1], lists[1][::-1], autojunk=False)
+        for a, b, n in backward.get_matching_blocks():
+            for k in range(n):
+                reverse[len(lists[1]) - 1 - b - k] = len(lists[0]) - 1 - a - k
+    for a, b, n in forward:
         for k in range(n):
-            ids[1][insns[1][b + k].address] = ids[0][insns[0][a + k].address]
+            here = insns[1][b + k].address
+            if shifted and reverse.get(b + k) != a + k:
+                ids[1][here] = f"ambiguous-ours:0x{here:08X}"
+            else:
+                ids[1][here] = ids[0][insns[0][a + k].address]
 
     # Use the same unambiguous name evidence as the checker. Cache per symbol:
     # one large function may call the same CRT or parser helper hundreds of times.
