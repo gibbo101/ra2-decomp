@@ -169,7 +169,7 @@ SuperClass::SuperClass(SuperWeaponTypeClass * type, HouseClass * owner) :
 // SuperClass::~SuperClass
 SuperClass::~SuperClass(void)
 {
-	Release_Animation(this);
+	DetachAnimation();
 	ShowTimers.Delete(this);
 	SuperWeapons.Delete(this);
 	PointerExpiredNotification::NotifyInvalidType.Delete(this);
@@ -712,6 +712,9 @@ done:
 // SuperClass::Fetch_RTTI
 // FUNCTION: GAMEMD 0x006CE210
 // SuperClass::Fetch_Object_Size
+
+// SYNTHETIC: GAMEMD 0x006CE220
+// ??_GSuperClass@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x006CE240
 // ??H?$TPoint3D@H@@QBE?BV0@ABV0@@Z
