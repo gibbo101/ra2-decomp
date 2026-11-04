@@ -283,14 +283,15 @@ def tier0_anchors() -> dict[int, str]:
 
 def landed_modules() -> dict[int, str]:
     """Function -> the module whose src/ file holds it (data/progress.csv), lowercase."""
-    out = {}
+    sources = collections.defaultdict(set)
     path = ROOT / "data/progress.csv"
     if path.exists():
         with path.open() as f:
             for r in csv.DictReader(f):
                 if r["source"].startswith("src/"):
-                    out[int(r["address"], 16)] = r["source"][4:].rsplit(".", 1)[0].lower()
-    return out
+                    sources[int(r["address"], 16)].add(r["source"][4:].rsplit(".", 1)[0].lower())
+    # Two source claims are not evidence for either module boundary.
+    return {a: next(iter(stems)) for a, stems in sources.items() if len(stems) == 1}
 
 
 def yr_stems(cls: str) -> list[str]:
