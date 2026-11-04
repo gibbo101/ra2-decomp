@@ -47,8 +47,8 @@ fails like a double claim. Either finding for any other function is printed as a
 For a partial function with relocations, the instruction diff masks image addresses and local
 jump targets. Stack displacements remain visible.
 
---score adds a line with a normalised similarity: the instruction lists compared with every
-address in the image, every jump target inside the function and every stack-slot
+--score adds a line with a normalised similarity: the instruction lists compared with data addresses masked,
+aligned local branch destinations identified, and stack-slot
 displacement ([esp+N], [ebp-N], and [ebp+N] in a function with a frame) masked, so a
 changed frame size or a shifted jump does not hide progress.
 --summary adds a completion record after all targets have been checked.
@@ -444,13 +444,61 @@ def placeholder_linked(orig: Original, obj: CoffObject, sec, start: int, ours: b
     return bytes(out)
 
 
-def normalised_listings(orig: Original, obj: CoffObject, sec, start: int, ours: bytes, address: int,
-                        theirs: bytes, stack: bool = True) -> tuple[list[str], list[str]]:
-    """(theirs, ours) as instruction lists with addresses masked, and stack slots too if `stack`."""
-    image = (orig.base, orig.end)
-    a = mask_addresses(disasm(theirs, address), address, address + len(theirs), image)
+DIRECT = re.compile(r"(?P<op>call|j[a-z]+|loop[a-z]*) (?P<target>0x[0-9a-f]+)$")
+
+
+def aligned_listings(orig: Original, obj: CoffObject, sec, start: int, ours: bytes, address: int,
+                        theirs: bytes, local=None) -> tuple[list[str], list[str]]:
+    """Align instructions first; label direct edges by their destinations in that alignment."""
     linked = placeholder_linked(orig, obj, sec, start, ours, address, len(theirs))
-    b = mask_addresses(disasm(linked, address), address, address + len(ours), image)
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    insns = [list(md.disasm(code, address)) for code in (theirs, linked)]
+    text = [[f"{i.mnemonic} {i.op_str}".strip() for i in side] for side in insns]
+    lists = [mask_addresses(lines, address, address + len(code), (orig.base, orig.end))
+             for lines, code in zip(text, (theirs, ours))]
+    # Use retail instruction addresses as shared labels, never candidate offsets.
+    # An unaligned or mid-instruction destination has no proven counterpart.
+    ids = [{i.address: f"retail:0x{i.address:08X}" for i in insns[0]}, {}]
+    for a, b, n in difflib.SequenceMatcher(None, *lists, autojunk=False).get_matching_blocks():
+        for k in range(n):
+            ids[1][insns[1][b + k].address] = ids[0][insns[0][a + k].address]
+
+    # Only decorated bindings identify an external COFF target here: a qualified
+    # name alone may denote several overloads. Do not label an unknown as equal.
+    relocs = {r.offset - start: r for r in sec.relocs if r.type == REL_REL32}
+    names = {}
+    for side, code in enumerate((theirs, ours)):
+        for n, (line, ins) in enumerate(zip(text[side], insns[side])):
+            m = DIRECT.fullmatch(line)
+            if not m:
+                continue
+            op, dest = m[1], int(m[2], 16)
+            off = ins.address - address + ins.size - 4
+            ref = relocs.get(off) if side and ins.size >= 5 else None
+            if ref is not None:
+                target = obj.by_index[ref.symbol]
+                if target.section != sec.number:
+                    known = (local or {}).get(target.name)
+                    if not isinstance(known, int):
+                        lists[side][n] = f"{op} <unresolved:{target.name}>"
+                        continue
+                    dest = (known + struct.unpack_from("<i", ours, off)[0]) & 0xFFFFFFFF
+                    names.setdefault(dest, set()).add(target.name)
+            if address <= dest < address + len(code):
+                tag = ids[side].get(dest, f"unaligned-{'ours' if side else 'retail'}:0x{dest:08X}")
+                lists[side][n] = f"{op} <{tag}>"
+            else:
+                lists[side][n] = f"{op} 0x{dest:08X}"
+    for side in lists:
+        for n, line in enumerate(side):
+            m = DIRECT.fullmatch(line.lower())
+            if m and (labels := names.get(int(m[2], 16))):
+                side[n] += " (" + ", ".join(sorted(labels)) + ")"
+    return lists[0], lists[1]
+
+
+def normalised_listings(orig, obj, sec, start, ours, address, theirs, stack=True, local=None):
+    a, b = aligned_listings(orig, obj, sec, start, ours, address, theirs, local)
     return (mask_stack(a), mask_stack(b)) if stack else (a, b)
 
 
@@ -523,11 +571,10 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
         b = disasm(bytes(shown), address)
         res.ratio = similarity(a, b)
         if masked or score:
-            left, right = normalised_listings(orig, obj, sec, start, ours, address, theirs, stack=False)
+            left, right = normalised_listings(orig, obj, sec, start, ours, address, theirs, stack=False, local=local)
             if score:
                 res.norm_ratio = similarity(mask_stack(left), mask_stack(right))
-            if masked:
-                a, b = left, right
+            a, b = left, right
         for line in difflib.unified_diff(a, b, "original", "ours", n=2, lineterm=""):
             res.diff.append(line)
         if a == b:

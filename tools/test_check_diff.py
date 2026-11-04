@@ -34,12 +34,33 @@ class RelocationDiffTests(unittest.TestCase):
         self.assertIn("+mov eax, dword ptr [esp + 0x14]", result.diff)
         calls = [line[1:] for line in result.diff if "call " in line]
         self.assertTrue(calls)
-        self.assertEqual(set(calls), {"call <addr>"})
+        self.assertEqual(set(calls), {"call 0x00405000 (_callee)"})
 
     def test_different_inc_encoding_moves_the_call(self):
         result = compare_call(b"\x40", b"\xff\xc0")
         self.assertFalse(result.matched)
         self.assertEqual(result.diff, ["0x00402000 inc eax: original 40, ours ffc0"])
+
+    def test_local_edges_survive_motion_but_not_retargeting(self):
+        orig = SimpleNamespace(base=0x400000, end=0x500000)
+        def edges(left, right):
+            sec = Section(1, ".text", right, CODE, [])
+            return check.normalised_listings(orig, None, sec, 0, right, ADDRESS, left, False)
+        left = bytes.fromhex("7401 40 c3")
+        a, b = edges(left, bytes.fromhex("7402 90 40 c3"))
+        self.assertEqual(a[0], b[0])
+        a, b = edges(left, bytes.fromhex("7400 40 c3"))
+        self.assertNotEqual(a[0], b[0])
+        self.assertLess(check.similarity(a, b), 1)
+        a, b = edges(left, bytes.fromhex("7400 90 40 c3"))
+        self.assertIn("unaligned-ours", b[0])
+
+    def test_changed_or_unknown_external_target_is_visible(self):
+        result = compare_call(b"\x90", b"", target=CALLEE + 1)
+        self.assertIn("-call 0x00405000", result.diff)
+        self.assertIn("+call 0x00405001 (_callee)", result.diff)
+        result = compare_call(b"\x90", b"", target=None)
+        self.assertIn("+call <unresolved:_callee>", result.diff)
 
     def test_matching_bytes_still_require_the_right_call_target(self):
         self.assertTrue(compare_call(b"", b"").matched)
