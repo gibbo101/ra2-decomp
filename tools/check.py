@@ -44,13 +44,10 @@ hold must be held there for a class whose vftable holds it in our object (or, wi
 here, the class of a virtual symbol); a template instance's label naming another class
 fails like a double claim. Either finding for any other function is printed as a warning.
 
-For a partial function with relocations, the instruction diff masks image addresses and local
-jump targets. Stack displacements remain visible.
-
---score adds a line with a normalised similarity: the instruction lists compared with data addresses masked,
-aligned local branch destinations identified, and stack-slot
-displacement ([esp+N], [ebp-N], and [ebp+N] in a function with a frame) masked, so a
-changed frame size or a shifted jump does not hide progress.
+For a partial function the normalized diff labels jumps by their aligned retail
+destination and direct calls by address or known symbol. An unresolved external
+call is identified by its COFF symbol. Data addresses are masked; stack displacements
+remain visible. --score also compares instructions with stack displacements masked.
 --summary adds a completion record after all targets have been checked.
 """
 
@@ -448,7 +445,7 @@ DIRECT = re.compile(r"(?P<op>call|j[a-z]+|loop[a-z]*) (?P<target>0x[0-9a-f]+)$")
 
 
 def aligned_listings(orig: Original, obj: CoffObject, sec, start: int, ours: bytes, address: int,
-                        theirs: bytes, local=None, names=None) -> tuple[list[str], list[str]]:
+                     theirs: bytes, local=None, names=None) -> tuple[list[str], list[str]]:
     """Align instructions first; label direct edges by their destinations in that alignment."""
     linked = placeholder_linked(orig, obj, sec, start, ours, address, len(theirs))
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
@@ -466,6 +463,7 @@ def aligned_listings(orig: Original, obj: CoffObject, sec, start: int, ours: byt
     # Use the same unambiguous name evidence as the checker. Cache per symbol:
     # one large function may call the same CRT or parser helper hundreds of times.
     relocs = {r.offset - start: r for r in sec.relocs if r.type == REL_REL32}
+    show_callees = local is not None or names is not None
     local, names = local or {}, names or {}
     labels_by_dest, resolved = {}, {}
     for side, code in enumerate((theirs, ours)):
@@ -479,6 +477,9 @@ def aligned_listings(orig: Original, obj: CoffObject, sec, start: int, ours: byt
             if ref is not None:
                 target = obj.by_index[ref.symbol]
                 if target.section != sec.number:
+                    if not show_callees:
+                        lists[side][n] = f"{op} <addr>"
+                        continue
                     if target.name not in resolved:
                         known = local.get(target.name)
                         name = qualified(target.name)
@@ -495,7 +496,7 @@ def aligned_listings(orig: Original, obj: CoffObject, sec, start: int, ours: byt
                 tag = ids[side].get(dest, f"unaligned-{'ours' if side else 'retail'}:0x{dest:08X}")
                 lists[side][n] = f"{op} <{tag}>"
             else:
-                lists[side][n] = f"{op} 0x{dest:08X}"
+                lists[side][n] = f"{op} 0x{dest:08X}" if show_callees else f"{op} <addr>"
     for side in lists:
         for n, line in enumerate(side):
             m = DIRECT.fullmatch(line.lower())
