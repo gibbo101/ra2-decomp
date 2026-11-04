@@ -3,11 +3,12 @@
 Matches build/batch/**/<addr>.cpp and <addr>_*.cpp, with or without the 0x prefix; overlay
 include/ directories are left alone.
 """
-import csv, os, re, sys
+import os, re, sys
+from shortlist_inputs import finished_addresses
 from pathlib import Path
 
 dry = "--dry" in sys.argv
-done = {int(r["address"], 16) for r in csv.DictReader(open("data/progress.csv")) if r["result"] == "MATCH"}
+done = finished_addresses("data/progress.csv")
 n = 0
 for p in sorted(Path("build/batch").rglob("*.cpp")):
     if "include" in p.parts:
