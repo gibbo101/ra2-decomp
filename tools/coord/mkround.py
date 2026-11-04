@@ -7,6 +7,7 @@ tools/coord/segfiles.json gives it (its src/ file), with that file's note. big=K
 the smallest untried function of 1,536 bytes or more in a module no other job touches.
 Functions claimed by open pull requests or the claims issue (claims.py) are never picked.
 """
+from shortlist_inputs import finished_addresses
 import os, bisect, collections, csv, json, re, sys
 from claims import claimed
 from pathlib import Path
@@ -19,7 +20,7 @@ OUT = Path("build/coord")
 OUT.mkdir(parents=True, exist_ok=True)
 
 fn = [(int(r["address"], 16), int(r["size"])) for r in csv.DictReader(open(f"{D}/functions.csv"))]
-done = {int(r["address"], 16) for r in csv.DictReader(open(f"{D}/progress.csv"))}
+done = finished_addresses(f"{D}/progress.csv")
 lib = {int(r["address"], 16) for r in csv.DictReader(open(f"{D}/library.csv"))}
 tried = {int(r["address"], 16) for r in csv.DictReader(open(f"{D}/attempts.csv"))}
 tried |= claimed()

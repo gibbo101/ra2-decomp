@@ -5,6 +5,7 @@ MAX, if given, keeps only near misses whose best is below it. skip= leaves out m
 One Opus job per module with PER_JOB or more near misses, smaller modules grouped to about PER_JOB.
 Functions claimed by open pull requests or the claims issue (claims.py) are never picked.
 """
+from shortlist_inputs import finished_addresses, banked_paths
 import bisect, collections, csv, glob, json, os, re, sys
 from claims import claimed
 from retry_budget import exhausted_retries
@@ -22,7 +23,7 @@ template = Path(sys.argv[1]).read_text()
 first, nb, MIN = int(sys.argv[2]), int(sys.argv[3]), float(sys.argv[4])
 PER = int(sys.argv[5]) if len(sys.argv) > 5 else 6
 MAX = float(sys.argv[6]) if len(sys.argv) > 6 else 1000.0
-done = {int(r["address"], 16) for r in csv.DictReader(open(f"{D}/progress.csv"))}
+done = finished_addresses(f"{D}/progress.csv")
 done |= claimed()
 lib0 = min(int(r["address"], 16) for r in csv.DictReader(open(f"{D}/library.csv")))
 size = {int(r["address"], 16): int(r["size"]) for r in csv.DictReader(open(f"{D}/functions.csv"))}
@@ -42,10 +43,7 @@ for r in attempts:
     except ValueError: continue
     if a not in best or b > best[a][0]:
         best[a] = (b, r["blocker"].strip(), r["notes"].strip())
-banks = collections.defaultdict(list)
-for p in glob.glob("build/batch/*/0x*.cpp"):
-    try: banks[int(os.path.basename(p)[:-4], 16)].append(p)
-    except ValueError: pass
+banks = banked_paths(attempts)
 hx = lambda a: f"0x{a:08X}"
 per = collections.defaultdict(list)
 desc = {}
@@ -62,7 +60,7 @@ for a, (b, blk, note) in best.items():
     d = f"{hx(a)} ({size[a]} B, best {b:g}%"
     if blk: d += f", blocker: {blk[:160]}"
     if note: d += f"; {note[:240]}"
-    d += f"; banked: {', '.join(banks[a])}" if banks[a] else "; no banked attempt"
+    d += f"; banked: {', '.join(banks[a])}" if banks.get(a) else "; no banked attempt"
     if b >= 100: d += "; it reached 100% without landing: settle why (label, twin or overlay) with evidence"
     desc[a] = d + ")"
 HEAP = {"wonline": "0x00788180 and 0x007A3100", "ownrdraw": "TrackBarHandler 0x0061D950",
