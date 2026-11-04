@@ -167,8 +167,7 @@ sys.exit(case['exit'])
             exe = self.root / "orig/gamemd.exe"
             exe.parent.mkdir()
             exe.write_bytes(b"fixture")
-            self.addCleanup(exe.parent.rmdir)
-            self.addCleanup(exe.unlink)
+
             path = str(Path(tmp) / "base.json")
             def output(site):
                 return (self.match() + "CHECK-REFERENCES 00401000 " + site + "\n"
@@ -183,6 +182,8 @@ sys.exit(case['exit'])
                 code, log = self.run_gate(record=True)
                 self.assertEqual(code, 1)
                 self.assertIn("lost proven reference 00401000 1/6/0/405000", log)
+            exe.unlink()
+            exe.parent.rmdir()
 
 
 if __name__ == "__main__":
