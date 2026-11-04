@@ -4565,6 +4565,18 @@ BuildingTypeClass const * HouseClass::Get_First_Ownable(DynamicVectorClass<Build
 	return(NULL);
 }
 
+UnitTypeClass const * HouseClass::Get_First_Ownable(DynamicVectorClass<UnitTypeClass const *> const & vector) const
+{
+	int owners = 1 << HouseTypeClass::From_Name(Class->ParentCountry);
+	for (int i = 0; i < vector.Count(); i++) {
+		if (owners & vector[i]->Ownable) {
+			return(vector[i]);
+		}
+	}
+
+	return(NULL);
+}
+
 // FUNCTION: GAMEMD 0x00505360
 bool HouseClass::AI_Has_Prerequisites(TechnoTypeClass const * type, DynamicVectorClass<BuildingTypeClass const *> & owned, int ownedcount) const
 {
@@ -4611,6 +4623,167 @@ bool HouseClass::AI_Has_Prerequisites(TechnoTypeClass const * type, DynamicVecto
 		}
 	}
 	return(true);
+}
+
+// FUNCTION: GAMEMD 0x005054B0
+void HouseClass::Make_Base_Nodes(void)
+{
+	int index;
+
+	int side = Class->Side;
+	Base.Init();
+	int owners = 1 << HouseTypeClass::From_Name(Class->ParentCountry);
+
+	DynamicVectorClass<BuildingTypeClass const *> buildables;
+	DynamicVectorClass<bool> isadded;
+	for (index = 0; index < BuildingTypes.Count(); ++index) {
+		BuildingTypeClass const * b = BuildingTypes[index];
+		if (!(owners & b->Ownable) || (b->AIBasePlanningSide != Class->Side && b->AIBasePlanningSide != -1) ||
+			!b->CanAIBuildThis || b->Level > Control.TechLevel) {
+			continue;
+		}
+		if (b->RequiredHouses != -1 && !((1 << Class->House) & b->RequiredHouses)) {
+			continue;
+		}
+		if (b->ForbiddenHouses != -1 && ((1 << Class->House) & b->ForbiddenHouses)) {
+			continue;
+		}
+		if (!Session.Options.SWAllowed && b->SuperWeapon != -1) {
+			bool allowed = false;
+			for (int k = 0; k < Rule->BuildTech.Count(); ++k) {
+				if (Rule->BuildTech[k] == b) {
+					allowed = true;
+					break;
+				}
+			}
+			if (!allowed && SuperWeapon[b->SuperWeapon]->Class->DisableableFromShell) {
+				continue;
+			}
+		}
+		buildables.Add(b);
+		isadded.Add(false);
+	}
+	int buildable_count = buildables.Count();
+	DynamicVectorClass<BuildingTypeClass const *> startingqueue;
+
+	BuildingTypeClass const * conyard = (BuildingTypeClass const *)FirstBuildableFromArray(Rule->BuildConst);
+	for (index = 0; index < buildable_count; index++) {
+		if (conyard == buildables[index]) {
+			isadded[index] = true;
+			startingqueue.Add(conyard);
+			break;
+		}
+	}
+
+	startingqueue.Add((BuildingTypeClass const *)FirstBuildableFromArray(Rule->BuildPower));
+
+	BuildingTypeClass const * barracks =
+		(BuildingTypeClass const *)FirstBuildableFromArray(Rule->BuildBarracks);
+	for (index = 0; index < buildables.Count(); index++) {
+		if (buildables[index] == barracks) {
+			BuildingTypeClass const * temp = buildables[0];
+			buildables[0] = barracks;
+			isadded[index] = isadded[0];
+			isadded[0] = false;
+			buildables[index] = temp;
+			break;
+		}
+	}
+
+	BuildingTypeClass const * weapons =
+		(BuildingTypeClass const *)FirstBuildableFromArray(Rule->BuildWeapons);
+	for (index = 0; index < buildables.Count(); index++) {
+		if (buildables[index] == weapons) {
+			BuildingTypeClass const * temp = buildables[1];
+			buildables[1] = weapons;
+			isadded[index] = isadded[1];
+			isadded[1] = false;
+			buildables[index] = temp;
+			break;
+		}
+	}
+
+	int unprocessed = buildable_count - 1;
+	while (unprocessed > 0) {
+
+		int plugid = -1;
+		bool added = false;
+		int queued = startingqueue.Count();
+		for (index = 0; index < buildable_count; index++) {
+
+			if (isadded[index]) {
+				continue;
+			}
+
+			BuildingTypeClass const * b = buildables[index];
+			if (stricmp(b->IniName, "GAPLUG") == 0) {
+				plugid = index;
+				continue;
+			}
+
+			if (AI_Has_Prerequisites(b, startingqueue, queued)) {
+				isadded[index] = true;
+				startingqueue.Add(b);
+
+				added = true;
+				unprocessed--;
+			}
+		}
+
+		if (!added) {
+			if (plugid != -1) {
+				isadded[plugid] = true;
+				startingqueue.Add(buildables[plugid]);
+				unprocessed--;
+			} else {
+				break;
+			}
+		}
+	}
+
+	BuildingTypeClass const * ref = (BuildingTypeClass const *)FirstBuildableFromArray(Rule->BuildRefinery);
+	int refcount = Get_First_Ownable(Rule->HarvesterUnit) ? Rule->AIExtraRefineries[Difficulty]
+														  : Rule->AISlaveMinerNumber[Difficulty] - 1;
+	int refpos = 0;
+	for (index = 0; index < startingqueue.Count() - 1; index++) {
+		if (startingqueue[index] == ref) {
+			if (refpos != -1 && refcount > 0) {
+				for (int i = 0; i < refcount; i++) {
+					startingqueue.Insert_After(Random_Pick(refpos, startingqueue.Count() - 1), ref);
+				}
+			}
+			break;
+		}
+		refpos++;
+	}
+
+	DynamicVectorClass<BuildingTypeClass const *> finalqueue;
+	finalqueue.Add(startingqueue[0]);
+	finalqueue.Add(startingqueue[1]);
+	finalqueue.Add(startingqueue[2]);
+
+	for (index = 3; index < startingqueue.Count(); ++index) {
+		finalqueue.Add(startingqueue[index]);
+	}
+	int defenses = 0;
+	if (side == 0) {
+		defenses = Rule->AlliedBaseDefenseCounts[Difficulty];
+	} else if (side == 1) {
+		defenses = Rule->SovietBaseDefenseCounts[Difficulty];
+	} else if (side == 2) {
+		defenses = Rule->ThirdBaseDefenseCounts[Difficulty];
+	}
+	for (int j = 0; j < defenses; ++j) {
+		finalqueue.Insert_After(Random_Pick(3, finalqueue.Count() - 1), (BuildingTypeClass const *)-1);
+	}
+	for (index = 0; index < finalqueue.Count(); index++) {
+		BuildingTypeClass const * b = finalqueue[index];
+		if ((int)b < 0 && (int)b >= -4) {
+			Base.Nodes.Add(BaseNodeClass((StructType)(int)b, Cell(0, 0)));
+		} else {
+			Base.Nodes.Add(BaseNodeClass(b->HeapID, Cell(0, 0)));
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x00505F80
