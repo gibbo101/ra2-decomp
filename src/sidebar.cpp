@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "rect.h"
+#include "_rect.h"
 #include "geometry.h"
 #include "sidebar.h"
 #include "_bench.h"
@@ -39,6 +40,7 @@
 #include "palette.h"
 #include "queue.h"
 #include "rect.h"
+#include "_rect.h"
 #include "rules.h"
 #include "scenario.h"
 #include "session.h"
@@ -1713,7 +1715,7 @@ int SidebarClass::Max_Visible(void)
 	} else {
 		reserved = 0x12;
 	}
-	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
+	return (SidebarRect.Y - DAT_00B0B4F8 - reserved + SidebarRect.Height - 7) / 50;
 }
 
 // FUNCTION: GAMEMD 0x006AC430
@@ -1897,5 +1899,61 @@ void SidebarClass::StripClass::FUN_006A8710(RTTIType type, int id)
 			Buildables[index].FlashEndFrame = 0;
 			return;
 		}
+	}
+}
+
+extern Rect __fastcall FUN_0072AD90(void);
+extern int DAT_007F5BF8;
+extern int DAT_007F5BFC;
+extern int DAT_00B0B508;
+extern int DAT_00B0B50C;
+extern int DAT_00B0B510;
+extern int DAT_00B0B514;
+
+// FUNCTION: GAMEMD 0x006A5130
+void SidebarClass::FUN_006A5130(bool full)
+{
+	if (!full) {
+		if (Options.IsSidebarOnRight) {
+			SidebarRect.X = TacticalRect.X + TacticalRect.Width;
+			SidebarRect.Y = 158;
+			SidebarRect.Width = DAT_007F5BF8;
+			SidebarRect.Height = TacticalRect.Y + TacticalRect.Height + DAT_007F5BFC - 158;
+		}
+	} else {
+		Rect bounds = FUN_0072AD90();
+		SidebarRect.X = bounds.X + bounds.Width;
+		SidebarRect.Y = 158;
+		SidebarRect.Width = DAT_007F5BF8;
+		SidebarRect.Height = bounds.Y + DAT_007F5BFC + bounds.Height - 158;
+	}
+
+	int side = Scen->PlayerSideIndex;
+	DAT_00B0B500 = 50;
+	DAT_00B0B504 = Max_Visible() * 50;
+	if (side == 0) {
+		DAT_00B0B50C = DAT_00B0B4F8 + DAT_00B0B504 + 7;
+		DAT_00B0B510 = 46;
+	} else if (side == 1) {
+		DAT_00B0B50C = DAT_00B0B4F8 + DAT_00B0B504 + 7;
+		DAT_00B0B510 = 45;
+	} else {
+		DAT_00B0B50C = DAT_00B0B4F8 + DAT_00B0B504 + 7;
+		DAT_00B0B510 = 45;
+	}
+	DAT_00B0B514 = 50;
+	DAT_00B0B4F4 = SidebarRect.X + 22;
+	if (side == 0) {
+		DAT_00B0B4DC = SidebarRect.X + 20;
+		DAT_00B0B4E8 = SidebarRect.X + 26;
+		DAT_00B0B508 = SidebarRect.X + 39;
+	} else if (side == 1) {
+		DAT_00B0B4DC = SidebarRect.X + 33;
+		DAT_00B0B4E8 = SidebarRect.X + 20;
+		DAT_00B0B508 = SidebarRect.X + 39;
+	} else {
+		DAT_00B0B4DC = SidebarRect.X + 33;
+		DAT_00B0B4E8 = SidebarRect.X + 20;
+		DAT_00B0B508 = SidebarRect.X + 39;
 	}
 }
