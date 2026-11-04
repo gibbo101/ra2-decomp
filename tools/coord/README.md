@@ -34,3 +34,11 @@ the repository root; generated round files go to `build/coord/`, which is not tr
 Other helpers: `comments.py` (comment-rule scan), `near.py` (near-miss list), `vtowner.py`
 and `vtname.py` (vtable owners from RTTI), `rank.py`, `pick.py`, `mkbatch.py`, `jsum.py`
 and `segcount.py` from earlier rounds.
+
+## Replaying a near match
+
+Run `uv run tools/attempt.py save CANDIDATE.cpp ADDRESS attempt.json --module src/MODULE.cpp`
+to bank a C++ candidate as a source patch. Add `--overlay DIR` when the attempt uses header
+overrides. Save measures the candidate and rebuilds the patch in isolation before writing
+the bundle. To retry it on the recorded commit, run `uv run tools/attempt.py replay attempt.json`.
+Replay succeeds when the checker reproduces the saved result, including a saved partial.

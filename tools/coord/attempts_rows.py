@@ -1,7 +1,6 @@
 """Append attempts.csv rows for a round's misses: python3 tools/coord/attempts_rows.py DATE JOURNAL...
 
-Each journal is a workflow journal.jsonl. The last result per address wins (Opus over
-Sonnet); addresses that progress.csv records as MATCH are skipped. The model comes from
+Each journal is a workflow journal.jsonl. Keep the best result and its own blocker and notes; addresses that progress.csv records as MATCH are skipped. The model comes from
 each agent's label in the journal ("opus ...", "sonnet ...").
 """
 import csv, json, re, sys
@@ -39,9 +38,13 @@ for path in journals:
             m = model or agent
             if prev and prev["model"].startswith("sonnet") and agent.startswith("opus"):
                 m = "sonnet-5.5 + opus-5.5"
+            if prev and (prev["best"] > f["best_percent"] or
+                         (prev["best"] == f["best_percent"] and prev["result"] == "MATCH")):
+                prev["checks"] += f.get("checks", 0)
+                continue
             if prev and f["result"] != "MATCH" and f.get("checks", 0) == 0 and f["best_percent"] <= prev["best"]:
                 continue
-            final[a] = dict(model=m, result=f["result"], best=max(f["best_percent"], prev["best"] if prev else 0),
+            final[a] = dict(model=m, result=f["result"], best=f["best_percent"],
                             checks=f.get("checks", 0) + (prev["checks"] if prev else 0),
                             blocker=clean(f.get("blocker")), notes=clean(f.get("note")))
 
