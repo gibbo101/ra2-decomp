@@ -9,6 +9,7 @@ and hashes only. Replay requires the recorded commit, toolchain and retail execu
 """
 
 import argparse
+import csv
 import hashlib
 import json
 import os
@@ -65,13 +66,31 @@ def source_patch(original, candidate):
         return diff.stdout.decode("latin-1")
 
 
-def verdict(src, address, overlay):
+def verdict(src, address, overlay, module=None):
     cmd = [sys.executable, str(ROOT / "tools/check.py"), str(src), address, "--score", "--summary"]
+    if module is not None:
+        cmd.remove(address)
     if overlay is not None:
         cmd += ["--overlay", str(overlay)]
     run = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     lines = run.stdout.splitlines()
     rows = [m for line in lines if (m := LINE.match(line))]
+    if module is not None:
+        summary = SUMMARY.fullmatch(lines[-1]) if lines else None
+        targets = [r for r in rows if r[1] == address]
+        if (not summary or int(summary[1]) != len(rows) or len(targets) != 1
+                or run.returncode != int(int(summary[2]) > 0)):
+            raise ValueError("incomplete module verification:\n" + run.stdout + run.stderr)
+        pos = next(i for i, line in enumerate(lines) if line == targets[0].string)
+        score = lines[pos + 1]
+        if not score.startswith("normalised score:"):
+            raise ValueError("missing candidate score")
+        matches = sorted(r[1] for r in rows if r[3] == "MATCH")
+        with (ROOT / "data/progress.csv").open() as f:
+            prior = {r["address"] for r in csv.DictReader(f) if r["source"] == module and r["result"] == "MATCH"}
+        return {"result": targets[0][0], "score": score, "matched_annotations": matches,
+                "regressed": sorted(prior - set(matches)), "module_failures": int(summary[2]),
+                "output_sha256": digest(run.stdout.encode())}
     if (len(rows) != 1 or rows[0][1] != address or not lines or not SUMMARY.fullmatch(lines[-1])
             or lines[-1] != f"CHECK-SUMMARY: checked=1 failed={run.returncode}"
             or run.returncode not in (0, 1) or (run.returncode == 0) != (rows[0][3] == "MATCH")):
@@ -90,7 +109,7 @@ def module_bytes(module, commit):
 
 
 def reproduce(data):
-    if data["version"] != 1 or data["inputs"] != inputs():
+    if data["version"] not in (1, 2) or data["inputs"] != inputs():
         raise ValueError("base commit, headers, symbols, compiler, flags or executable differ from the recorded inputs")
     address = data["address"]
     if not re.fullmatch(r"0x[0-9A-F]{8}", address):
@@ -120,7 +139,8 @@ def reproduce(data):
             dest = overlay / path
             dest.parent.mkdir(parents=True, exist_ok=True)
             dest.write_bytes(content.encode("latin-1"))
-        actual = verdict(src, address, overlay if data["overlay"] else None)
+        actual = verdict(src, address, overlay if data["overlay"] else None,
+                         data["module"] if data["version"] >= 2 else None)
         if actual != data["expected"]:
             raise ValueError(f"candidate did not replay: expected {data['expected']}, got {actual}")
         return actual
@@ -150,9 +170,9 @@ def save(args):
                    for p in sorted(args.overlay.rglob("*")) if p.is_file()
                    and p.suffix.lower() in HEADERS}
     address = f"0x{args.address:08X}"
-    data = {"version": 1, "address": address, "module": module, "inputs": pinned,
+    data = {"version": 2, "address": address, "module": module, "inputs": pinned,
             "source_sha256": digest(candidate), "patch": source_patch(original, candidate),
-            "overlay": overlay, "expected": verdict(src, address, args.overlay)}
+            "overlay": overlay, "expected": verdict(src, address, args.overlay, module)}
     reproduce(data)
     with tempfile.NamedTemporaryFile(dir=args.bundle.parent, delete=False) as tmp:
         try:

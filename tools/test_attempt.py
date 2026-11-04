@@ -28,7 +28,7 @@ class ReplayTests(unittest.TestCase):
             (inc / "sub/layout.h").write_bytes(b"// \xff\n")
             args = SimpleNamespace(source=src, address=0x401000, bundle=root / "attempt.json", overlay=inc, module=None)
 
-            def verify(source, address, overlay):
+            def verify(source, address, overlay, module=None):
                 self.assertEqual(source.read_bytes(), src.read_bytes())
                 self.assertEqual((overlay / "sub/layout.h").read_bytes(), b"// \xff\n")
                 return {"result": "partial", "score": "99.0%"}
