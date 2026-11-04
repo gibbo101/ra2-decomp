@@ -74,7 +74,10 @@ def merge(table, date, paths, known, done):
     for col in ("attempt_ids", "replays"):
         if col not in fields:
             fields.append(col)
-    today = {r["address"]: r for r in rows if r["date"] == date}
+    today = defaultdict(list)
+    for row in rows:
+        if row["date"] == date:
+            today[row["address"]].append(row)
     by_address = defaultdict(dict)
     for addr, token, model, item in observations(paths, date):
         if addr in known and addr not in done:
@@ -82,13 +85,16 @@ def merge(table, date, paths, known, done):
 
     added = 0
     for addr, items in by_address.items():
-        row = today.get(addr)
+        previous = today[addr]
+        if len(previous) > 1:
+            print(f"{addr}: multiple existing rows on {date}; preserving their totals", file=sys.stderr)
+            continue
+        row = previous[0] if previous else None
         adopt = row is not None and not row.get("attempt_ids")
         if row is None:
             row = dict.fromkeys(fields, "")
             row.update(address=addr, date=date)
             rows.append(row)
-            today[addr] = row
         if adopt and not legacy_total_matches(row, items.values()):
             print(f"{addr}: preserving legacy total; import its complete original journals first", file=sys.stderr)
             continue

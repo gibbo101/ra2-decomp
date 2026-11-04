@@ -69,6 +69,20 @@ class JournalTests(unittest.TestCase):
             with table.open() as f:
                 self.assertEqual(next(csv.DictReader(f))["checks"], "108")
 
+    def test_two_legacy_rows_for_one_day_do_not_adopt_each_others_observations(self):
+        from coord.attempts_rows import merge
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            table, journal = root / "table", root / "journal"
+            original = ("date,address,function,model,result,best,checks,minutes,blocker,notes\n"
+                        "day,0x00000010,,model,partial,80,2,,block,note\n"
+                        "day,0x00000010,,model,partial,90,3,,other,later\n")
+            table.write_text(original)
+            item = dict(address="0x10", checks=3, best_percent=90, result="partial", blocker="other", note="later")
+            journal.write_text(json.dumps({"type": "result", "result": {"functions": [item]}}))
+            merge(table, "day", [journal], {"0x00000010"}, set())
+            self.assertEqual(table.read_text(), original)
+
     def test_ragged_rows_are_rejected_before_writing_and_legacy_rows_get_full_width(self):
         from coord.attempts_rows import merge
         with tempfile.TemporaryDirectory() as tmp:
