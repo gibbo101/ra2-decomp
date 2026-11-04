@@ -44,6 +44,9 @@ hold must be held there for a class whose vftable holds it in our object (or, wi
 here, the class of a virtual symbol); a template instance's label naming another class
 fails like a double claim. Either finding for any other function is printed as a warning.
 
+For a partial function with relocations, the instruction diff masks image addresses and local
+jump targets. Stack displacements remain visible.
+
 --score adds a line with a normalised similarity: the instruction lists compared with every
 address in the image, every jump target inside the function and every stack-slot
 displacement ([esp+N], [ebp-N], and [ebp+N] in a function with a frame) masked, so a
@@ -378,11 +381,21 @@ def disasm(code: bytes, va: int) -> list[str]:
     return [f"{ins.mnemonic} {ins.op_str}".strip() for ins in md.disasm(code, va)]
 
 
-def encoding_diff(theirs: bytes, ours: bytes, va: int) -> list[str]:
+def encoding_diff(theirs: bytes, ours: bytes, va: int, masked: set[int]) -> list[str]:
     """The instructions that read the same but are encoded differently, as hex."""
+    def hex_bytes(data, offset):
+        return "".join("??" if offset + i in masked else f"{b:02x}" for i, b in enumerate(data))
+
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
-    return [f"0x{x.address:08X} {x.mnemonic} {x.op_str}: original {x.bytes.hex()}, ours {y.bytes.hex()}"
-            for x, y in zip(md.disasm(theirs, va), md.disasm(ours, va)) if x.bytes != y.bytes]
+    lines = []
+    for x, y in zip(md.disasm(theirs, va), md.disasm(ours, va)):
+        # Ignore linker fields within corresponding instructions, even if the instructions moved.
+        offset = y.address - va
+        old = hex_bytes(x.bytes, offset)
+        new = hex_bytes(y.bytes, offset)
+        if old != new:
+            lines.append(f"0x{x.address:08X} {x.mnemonic} {x.op_str}: original {old}, ours {new}")
+    return lines
 
 
 HEX = re.compile(r"0x[0-9a-f]+")
@@ -501,20 +514,24 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
                             + f" [{ref.status}]")
 
     if not res.matched:
-        # Our linker-filled fields take the original's values, so only real differences show.
+        # Keep the historical raw score used to rank overloads.
         shown = bytearray(ours)
         for k in masked:
             if k < len(shown) and k < len(theirs):
                 shown[k] = theirs[k]
         a = disasm(theirs, address)
         b = disasm(bytes(shown), address)
-        res.ratio = difflib.SequenceMatcher(None, a, b, autojunk=False).ratio()
+        res.ratio = similarity(a, b)
+        if relocs or score:
+            left, right = normalised_listings(orig, obj, sec, start, ours, address, theirs, stack=False)
+            if score:
+                res.norm_ratio = similarity(mask_stack(left), mask_stack(right))
+            if relocs:
+                a, b = left, right
         for line in difflib.unified_diff(a, b, "original", "ours", n=2, lineterm=""):
             res.diff.append(line)
         if a == b:
-            res.diff += encoding_diff(theirs, bytes(shown), address)
-        if score:
-            res.norm_ratio = similarity(*normalised_listings(orig, obj, sec, start, ours, address, theirs))
+            res.diff += encoding_diff(theirs, ours, address, masked)
     else:
         res.norm_ratio = 1.0
     return res
