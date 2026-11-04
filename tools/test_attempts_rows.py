@@ -24,7 +24,17 @@ class JournalTests(unittest.TestCase):
                                   checks=3, blocker=blocker, note=blocker + " candidate")
                     journal.write(json.dumps({"type": "result", "result": {"functions": [target]}}) + "\n")
             subprocess.run([sys.executable, script, "2026-11-04", "journal"], cwd=root, check=True, capture_output=True)
+            journal = root / "journal"
+            later = dict(address="0x00637270", result="partial", best_percent=97.4, checks=4,
+                         blocker="remaining stores", note="changed candidate")
+            second = root / "second"
+            second.write_text(json.dumps({"type": "result", "result": {"functions": [later]}}) + "\n")
+            subprocess.run([sys.executable, script, "2026-11-04", str(second)], cwd=root, check=True, capture_output=True)
+            before = attempts.read_bytes()
+            subprocess.run([sys.executable, script, "2026-11-04", str(second), str(journal)], cwd=root,
+                           check=True, capture_output=True)
+            self.assertEqual(attempts.read_bytes(), before)
             with attempts.open() as f:
                 row, = csv.DictReader(f)
             self.assertEqual((row["best"], row["blocker"], row["notes"], row["checks"]),
-                             ("95.9", "stack", "stack candidate", "6"))
+                             ("97.4", "remaining stores", "changed candidate", "10"))
