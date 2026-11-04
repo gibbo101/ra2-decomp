@@ -41,6 +41,7 @@ def inputs(root):
     shared = hashlib.sha256()
     units = {}
     independent = True
+    include_suffixes = {b"", b".h", b".hh", b".hpp", b".inl", b".c", b".inc"}
     for name in sorted(files):
         data = (root / name).read_bytes()
         content = hashlib.sha256(data).digest()
@@ -51,13 +52,13 @@ def inputs(root):
             units[name + ".obj"] = content.hex()
         else:
             shared.update(entry)
-        if b"#" in data and b"\0" not in data:
+        if (path.suffix.lower().encode() in include_suffixes or path.suffix.lower() == ".cpp") and b"#" in data:
             # A compiled source may itself be included. Fall back to a whole-tree
             # key for source or computed includes rather than guessing dependencies.
             logical = data.replace(b"\\\r\n", b"").replace(b"\\\n", b"")
             for directive in re.findall(rb"(?m)^\s*#\s*include\b([^\n]*)", logical):
                 literal = re.match(rb'\s*[<"]([^>"\n]+)[>"]', directive)
-                if not literal or literal[1].lower().endswith((b".cpp", b".asm")):
+                if not literal or os.path.splitext(literal[1].lower())[1] not in include_suffixes:
                     independent = False
     env = {key: os.environ.get(key) for key in ("CL", "_CL_", "ML", "_ML_")}
     return {"units": units, "shared": shared.hexdigest() if independent and not any(env.values()) else h.hexdigest(),
@@ -103,8 +104,8 @@ def gate(directory, capture, manifest, reuse=None):
     def validate():
         current = inputs(check.ROOT)
         if "units" not in manifest["inputs"]:  # Receipts from before per-source keys.
-            current.pop("units")
-            current.pop("shared")
+            current.pop("units", None)
+            current.pop("shared", None)
         if current != manifest["inputs"]:
             raise ValueError("compilation inputs changed; run a fresh capture")
 
