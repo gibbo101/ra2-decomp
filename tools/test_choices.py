@@ -43,3 +43,16 @@ class TrialsTests(unittest.TestCase):
         sites[0]["alternatives"].append("x")
         with self.assertRaisesRegex(ValueError, "corresponding"):
             list(variants("abc", sites))
+
+    def test_region_report_retains_insertions_and_distinct_helper_outcomes(self):
+        from coord.regions import differences, representatives
+        a = ["mov eax, [esp+4]", "ret"]
+        self.assertEqual(differences(a, [a[0], "nop", a[1], "nop"], [100, 104, 105]),
+                         [[104, 104, 0, 1], [105, 105, 0, 1]])
+        def row(i, regions, raw, helper):
+            return {"compile": i, "targets": {"main": {"status": "partial", "regions": regions, "raw": raw},
+                                              "h": {"status": helper}}}
+        x = row(1, [[100, 105, 2, 2]], .995, "match")
+        y = row(2, [[104, 105, 1, 1]], .75, "match")
+        z = row(3, [[104, 105, 1, 1]], .99, "absent")
+        self.assertEqual(representatives([x, y, z, {**y, "compile": 4}, {"error": "failed"}], "main"), [y, z, x])

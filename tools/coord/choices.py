@@ -19,6 +19,7 @@ import tempfile
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import check
 from coord.claims import claimed
+from coord.regions import differences, report
 from tier0 import module_lookup
 
 
@@ -111,6 +112,25 @@ def code_digest(obj, pick):
     return hashlib.sha256(sec.data[lo:hi] + json.dumps([sym.name, refs]).encode()).hexdigest()
 
 
+def caller_regions(orig, obj, pick, addr, size, local):
+    _, sec, lo, _ = pick
+    code = sec.data[lo:lo + size]
+    retail = orig.read(addr, orig.sizes[addr])
+    if hasattr(check, "aligned_listings"):
+        a, b = check.aligned_listings(orig, obj, sec, lo, code, addr, retail, local)
+    else:
+        # Older checkers expose the relocation linker but only return listings
+        # with stack slots masked. Keep stack offsets in the region comparison.
+        candidate = check.placeholder_linked(orig, obj, sec, lo, code, addr, len(retail))
+        image = (orig.base, orig.end)
+        a, b = (check.mask_addresses(check.disasm(c, addr), addr, addr + len(c), image)
+                for c in (retail, candidate))
+    md = check.capstone.Cs(check.capstone.CS_ARCH_X86, check.capstone.CS_MODE_32)
+    ins = list(md.disasm(retail, addr))
+    end = ins[-1].address + ins[-1].size if ins else addr
+    return differences(a, b, [i.address for i in ins] + [end])
+
+
 def observations(src, raw, job, orig, names):
     obj = check.CoffObject(raw)
     local, conflicts = check.bind_annotations(orig, obj, raw, src)
@@ -138,6 +158,8 @@ def observations(src, raw, job, orig, names):
         results[f"0x{addr:08X}"] = dict(status="match" if exact else "partial", code=code_digest(obj, pick),
                                        raw=1.0 if exact else r.ratio, normalized=r.norm_ratio,
                                        unverified=r.unverified, size=r.ours)
+        if addr == caller:
+            results[f"0x{addr:08X}"]["regions"] = [] if exact else caller_regions(orig, obj, pick, addr, r.ours, local)
     return results
 
 
@@ -175,12 +197,14 @@ def run(job, dest, budget):
                     row["error"] = str(exc)
             log.write(json.dumps(row) + "\n")
             log.flush()
+    report(dest, f"0x{int(job['address'], 16):08X}")
     print(f"{calls} compiler invocations, {len(outputs)} distinct target outputs, {wins} exact combinations")
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     sub = p.add_subparsers(dest="command", required=True)
+    sub.add_parser("report", help="compare saved alternatives without compiling").add_argument("dest", type=Path)
     sub.add_parser("plan").add_argument("jobs", type=Path)
     sub.add_parser("suggest", help="list explicitly blocked groups for review")
     run_parser = sub.add_parser("run")
@@ -190,6 +214,10 @@ def main():
     run_parser.add_argument("--budget", type=int, required=True)
     args = p.parse_args()
     try:
+        if args.command == "report":
+            job = json.loads((args.dest / "job.json").read_text())
+            report(args.dest, f"0x{int(job['address'], 16):08X}")
+            return
         jobs = json.loads(args.jobs.read_text()) if args.command != "suggest" else []
         if len({job["name"] for job in jobs}) != len(jobs):
             raise ValueError("job names must be unique")

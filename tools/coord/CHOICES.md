@@ -31,3 +31,11 @@ To benchmark a search, start with a perturbed known match, conceal the winning c
 among the alternatives, and count recovered functions and actual compiler invocations.
 
 Give related sites the same optional `"group"` string to try their corresponding alternatives together immediately after the baseline. For example, group three accesses through the same pointer and give each one alternative using the other spelling. Each member must list the same number of alternatives in corresponding order. Independent exceptions are still tried within the compiler budget.
+
+`choices.py report build/trials/JOB` compares saved alternatives without compiling.
+Each row gives a candidate source, half-open retail byte ranges, the number of
+retail/candidate instructions in each range, and every requested helper's status.
+An insertion has a zero-length retail range. The report keeps one representative
+per distinct set of differences and helper outcomes. An empty list of differences
+is not a byte match: instruction encodings and unresolved targets still need the
+checker. Older logs without alignments are reported as such.
