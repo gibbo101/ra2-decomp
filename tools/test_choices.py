@@ -34,3 +34,28 @@ class TrialsTests(unittest.TestCase):
         self.assertEqual(exhausted_retries(rows + [row(80, 1)], {16: 2000}), {16})
         self.assertFalse(exhausted_retries(rows + [row(80, 1)], {16: 2001}))
         self.assertFalse(exhausted_retries(rows + [row(81, 60)], {16: 2000}))
+
+    def test_coherent_group_precedes_mixed_exceptions(self):
+        sites = [{"find": c, "alternatives": [c.upper()], "group": "access"} for c in "abc"]
+        trial = [s for _, s in variants("abc", sites)]
+        self.assertEqual(trial[:2], ["abc", "ABC"])
+        self.assertEqual(len(set(trial)), 8)
+        sites[0]["alternatives"].append("x")
+        with self.assertRaisesRegex(ValueError, "corresponding"):
+            list(variants("abc", sites))
+
+    def test_region_report_retains_insertions_and_distinct_helper_outcomes(self):
+        from coord.regions import differences, representatives
+        a = ["mov eax, [esp+4]", "ret"]
+        self.assertEqual(differences(a, [a[0], "nop", a[1], "nop"], [100, 104, 105]),
+                         [[104, 104, 0, 1], [105, 105, 0, 1]])
+        def row(i, regions, raw, helper):
+            return {"compile": i, "targets": {"main": {"status": "partial", "regions": regions, "raw": raw},
+                                              "h": {"status": helper}}}
+        x = row(1, [[100, 105, 2, 2]], .995, "match")
+        y = row(2, [[104, 105, 1, 1]], .75, "match")
+        z = row(3, [[104, 105, 1, 1]], .99, "absent")
+        self.assertEqual(representatives([x, y, z, {**y, "compile": 4}, {"error": "failed"}], "main"), [y, z, x])
+        edge = row(5, [[104, 105, 1, 1]], .75, "match")
+        edge["targets"]["main"]["changed_targets"] = [[104, "je retail:a", "je retail:b"]]
+        self.assertEqual(representatives([y, edge], "main"), [y, edge])
