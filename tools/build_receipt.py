@@ -41,7 +41,7 @@ def inputs(root):
     shared = hashlib.sha256()
     units = {}
     independent = True
-    include_suffixes = {b"", b".h", b".hh", b".hpp", b".inl", b".c", b".inc"}
+    include_suffixes = {b"", b".h", b".hh", b".hpp", b".inl", b".c", b".inc", b".rh"}
     for name in sorted(files):
         data = (root / name).read_bytes()
         content = hashlib.sha256(data).digest()
