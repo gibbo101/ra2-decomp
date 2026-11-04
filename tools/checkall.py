@@ -4,6 +4,7 @@ Usage: uv run tools/checkall.py [--record] [--baseline COMMIT]
 
 Prints one line per function. Fails if a function data/progress.csv records as MATCH no
 longer matches or disappears, since a header edit can change the code of functions it never touches,
+if annotations claim the same retail address without an explicit exception,
 if two annotations in one file claim the same compiled function, or if a template
 instance's label names a class whose vtables in the exe do not hold the function
 (check.py's class check). The class check's warnings are counted.
@@ -13,6 +14,7 @@ tools/REFERENCE_BASELINE.md.
 """
 
 import argparse
+from collections import defaultdict
 import csv
 import io
 import re
@@ -29,6 +31,33 @@ DUPLICATE = re.compile(r"^(0x[0-9A-F]{8}) .+: same compiled function as ")
 WRONG_CLASS = re.compile(r"^(0x[0-9A-F]{8}) .+: a slot of .+ in the exe, not of ")
 WARNING = re.compile(r"^(0x[0-9A-F]{8}) .+: warning: ")
 SUMMARY = re.compile(r"^CHECK-SUMMARY: checked=(\d+) failed=(\d+)$")
+
+
+# Both objects emit this initializer; the boundary in modules.csv is uncertain.
+# Acknowledge only this exact pair until ownership is established. Keep both
+# records for symbol lookup; never count one retail function twice.
+SHARED = {"0x004F2C50": {("src/grphmenu.cpp", "_$E12"), ("src/grphmenu2.cpp", "_$E41")}}
+
+
+def retail_totals(rows):
+    by_address = defaultdict(list)
+    for row in rows:
+        by_address[row[0]].append(row)
+    matched = size = matched_size = 0
+    problems = []
+    for addr, group in by_address.items():
+        if len(group) > 1:
+            owners = [(r[4], r[5]) for r in group]
+            if (set(owners) != SHARED.get(addr) or len(owners) != len(set(owners))
+                    or len({r[3] for r in group}) != 1):
+                problems.append(f"{addr}: duplicate retail address: " +
+                                ", ".join(f"{path} {sym}" for path, sym in owners))
+        n = int(group[0][3])
+        size += n
+        if all(r[2] == "MATCH" for r in group):
+            matched += 1
+            matched_size += n
+    return (f"{matched} of {len(by_address)} functions match ({matched_size} of {size} bytes)", problems)
 
 
 def run_checker(src):
@@ -100,11 +129,11 @@ def main(run_source=run_checker, validate=None) -> None:
         broken.append(problem)
     for lost in sorted(refs.expected - refs.sites):
         broken.append(f"lost proven reference {lost}")
-    matched = [r for r in rows if r[2] == "MATCH"]
+    summary, duplicates = retail_totals(rows)
+    broken.extend(duplicates)
     if warnings:
         print(f"{warnings} class warnings: labels or stored vftables of a class the exe's RTTI does not name there")
-    print(f"{len(matched)} of {len(rows)} functions match "
-          f"({sum(int(r[3]) for r in matched)} of {sum(int(r[3]) for r in rows)} bytes)")
+    print(summary)
     if broken:
         print("no longer matching: " + ", ".join(broken))
     if validate is not None:

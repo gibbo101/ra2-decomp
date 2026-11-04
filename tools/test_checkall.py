@@ -91,6 +91,27 @@ sys.exit(case['exit'])
         self.assertIn("0x00401010: previously matched function missing", output)
         self.assertEqual(git.call_args.args[0][-1], "a" * 40 + ":data/progress.csv")
 
+    def test_duplicate_across_sources_fails_without_recording(self):
+        self.child(self.baseline() + self.complete(2))
+        self.child(self.match(name="Other") + self.complete(1), name="other.cpp")
+        code, out = self.run_gate(record=True)
+        self.assertEqual(code, 1)
+        self.assertIn("duplicate retail address: src/example.cpp _First, src/other.cpp _Other", out)
+        self.assertIn("2 of 2 functions match (2 of 2 bytes)", out)
+
+    def test_acknowledged_pair_counts_once_and_does_not_hide_a_third_owner(self):
+        for module, symbol in checkall.SHARED["0x004F2C50"]:
+            self.child(f"0x004F2C50 Init: MATCH (23/23 bytes) {symbol}\n" + self.complete(1),
+                       name=Path(module).name)
+        self.child(self.baseline() + self.complete(2))
+        code, out = self.run_gate(record=True)
+        self.assertEqual(code, 0)
+        self.assertIn("3 of 3 functions match (25 of 25 bytes)", out)
+        with self.progress.open() as f:
+            self.assertEqual(len(list(csv.DictReader(f))), 4)
+        self.child("0x004F2C50 Init: MATCH (23/23 bytes) _Third\n" + self.complete(1), name="extra.cpp")
+        self.assertEqual(self.run_gate(record=True)[0], 1)
+
     def test_deleted_source_fails_without_rewriting_progress(self):
         self.assertEqual(self.run_gate(record=True)[0], 1)
 
