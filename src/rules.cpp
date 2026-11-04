@@ -1976,6 +1976,8 @@ class InfantryTypeClass;
 
 // TEMPLATE: GAMEMD 0x00679FA0
 // ??1?$VectorClass@PBVBuildingTypeClass@@@@UAE@XZ
+// TEMPLATE: GAMEMD 0x0067B180
+// ??4?$VectorClass@PBVBuildingTypeClass@@@@QAEAAV0@ABV0@@Z
 template class VectorClass<BuildingTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x00679FD0
