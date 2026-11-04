@@ -15,6 +15,8 @@
 #include "iblowfish.h"
 #endif
 
+// SYNTHETIC: GAMEMD 0x00437190 SYMBOL
+// _$E2
 // FUNCTION: GAMEMD 0x004371B0
 int Buffer_Size(Surface & surface, int width, int height)
 {

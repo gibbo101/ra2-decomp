@@ -82,8 +82,8 @@ import capstone
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from check import (FORBIDDEN, PADDING, ROOT, Original, annotations, compare, compile_source,  # noqa: E402
-                   known_decorated, known_names, normalised_listings, prepare_headers, similarity)
+from check import (FORBIDDEN, PADDING, ROOT, Original, annotations, bind_annotations, compare, compile_source,  # noqa: E402
+                   known_names, normalised_listings, prepare_headers, similarity)
 from coff import CoffObject  # noqa: E402
 from permute_mutate import MUTATIONS, SIMPLIFY, Ctx, Mutator, TargetSpec, helper_names  # noqa: E402
 
@@ -152,13 +152,13 @@ def unmatched_after(side: Counter, matched: Counter, key) -> Counter:
     return out
 
 
-def slot_differences(norm_a, norm_b, semi_a, semi_b) -> int:
+def slot_differences(norm_a, norm_b, semi_a, semi_b) -> set[int]:
     """Instructions equal once stack slots are masked but not before."""
-    n = 0
+    slots = set()
     for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, norm_a, norm_b, autojunk=False).get_opcodes():
         if tag == "equal":
-            n += sum(1 for k in range(i2 - i1) if semi_a[i1 + k] != semi_b[j1 + k])
-    return n
+            slots.update(j1 + k for k in range(i2 - i1) if semi_a[i1 + k] != semi_b[j1 + k])
+    return slots
 
 
 def line_table(raw: bytes, sec_number: int, symbol: str) -> list[tuple[int, int]]:
@@ -237,7 +237,7 @@ class Scorer:
     def score(self, raw: bytes) -> Score:
         obj = CoffObject(raw)
         for g_addr, g_name in self.guards:
-            if not compare(self.orig, obj, raw, g_addr, g_name, {}, {}).bytes_match:
+            if not compare(self.orig, obj, raw, g_addr, g_name, self.names, self.local).matched:
                 return Score(INF, 0.0, 0.0, "guard", note=f"0x{g_addr:08X} no longer matches")
         res = compare(self.orig, obj, raw, self.address, self.qualname, self.names, self.local)
         if res.matched:
@@ -248,8 +248,10 @@ class Scorer:
         semi_a, semi_b = normalised_listings(self.orig, obj, sec, start, ours, self.address, self.theirs, False)
         norm_a, norm_b = normalised_listings(self.orig, obj, sec, start, ours, self.address, self.theirs)
         hot_idx: set = set()
-        value = (fine_score(norm_a, norm_b, hot_idx) + PENALTY_SLOT * slot_differences(norm_a, norm_b, semi_a, semi_b)
+        slots = slot_differences(norm_a, norm_b, semi_a, semi_b)
+        value = (fine_score(norm_a, norm_b, hot_idx) + PENALTY_SLOT * len(slots)
                  + PENALTY_BYTE * abs(len(ours) - len(self.theirs)))
+        hot_idx.update(slots)
         hot: tuple = ()
         if hot_idx:
             table = line_table(raw, sec.number, res.symbol)
@@ -264,7 +266,7 @@ class Scorer:
                         if k >= 0:
                             lines.add(table[k][1])
                 hot = tuple(sorted(lines))
-        return Score(max(value, 1), similarity(norm_a, norm_b), res.ratio, "partial", len(ours), hot=hot)
+        return Score(1 + value, similarity(norm_a, norm_b), res.ratio, "partial", len(ours), hot=hot)
 
 
 # --- worker processes ---------------------------------------------------------------
@@ -428,7 +430,7 @@ def pick_mutation_count(rng: random.Random) -> int:
 
 def permute(src: Path, address: int, overlay: Path | None, minutes: float, jobs: int, seed: int | None,
             elite_size: int = 12, keep_going: bool = False, weights: dict | None = None,
-            cleanup: float = 2.0, stall: float = 0.0, focus: bool = True) -> int:
+            cleanup: float = 2.0, stall: float = 0.0, focus: bool = True, stack_focus: bool = False) -> int:
     say = lambda *a: print(*a, flush=True)  # noqa: E731
     tag = f"0x{address:08X}"
     out = OUT / tag
@@ -443,22 +445,30 @@ def permute(src: Path, address: int, overlay: Path | None, minutes: float, jobs:
     spec = TargetSpec(address)
     spec.helpers = helper_names(base_text, spec)
 
-    # Other annotated functions in the file whose bytes match now must keep matching.
+    # Protect the exact symbols that match before the search, including their relocation targets.
     orig = Original()
     base_obj_path, log = compile_source(src, overlay, out=out / "base.obj")
     if base_obj_path is None:
         raise SystemExit("the starting file does not compile:\n" + log)
     raw = base_obj_path.read_bytes()
+    if stack_focus:
+        from stackslots import diagnose
+        spec.stack_names = {row[0] for row in diagnose(src, address, overlay, raw)}
+        say(f"stack locals: {sorted(spec.stack_names)}")
     base_obj = CoffObject(raw)
     guards, symbols = [], []
-    local = known_decorated()
+    local, duplicates = bind_annotations(orig, base_obj, raw, src)
+    if duplicates:
+        raise SystemExit("\n".join(duplicates))
+    names = known_names()
     for a, q in ann:
-        res = compare(orig, base_obj, raw, a, q, {}, {})
-        local[res.symbol] = a
-        if a == address or res.bytes_match:
+        res = compare(orig, base_obj, raw, a, q, names, local, prefer=local)
+        if a == address:
+            qualname = "=" + res.symbol
+        if a == address or res.matched:
             symbols.append(res.symbol)
-        if a != address and res.bytes_match:
-            guards.append((a, q))
+        if a != address and res.matched:
+            guards.append((a, "=" + res.symbol))
     # #line renumbers the COFF line table, so hot lines would point at the wrong statements.
     focus = focus and not re.search(r"^\s*#\s*line\b", base_text, re.M) \
         and same_code_with_lines(src, overlay, symbols)
@@ -519,7 +529,7 @@ def permute(src: Path, address: int, overlay: Path | None, minutes: float, jobs:
         with (out / "log.txt").open("a") as fh:
             fh.write(f"# {time.strftime('%Y-%m-%d %H:%M')} start {src} at {start.pct}, score {start.value:g}\n")
         say(f"{tag}: start {start.pct}, score {start.value:g}, {start.size} bytes")
-        if start.status in ("match", "bytes"):
+        if start.status == "match":
             write_best(best, start, True)
             return 0
 
@@ -601,7 +611,7 @@ def permute(src: Path, address: int, overlay: Path | None, minutes: float, jobs:
                     best = e
                     write_best(best, start, False)
                     say(f"{tag}: {line}")
-                    if sc.status in ("match", "bytes") and not keep_going:
+                    if sc.status == "match" and not keep_going:
                         done_matching = True
         for fut in inflight:
             fut.cancel()
@@ -636,6 +646,7 @@ def main() -> None:
     ap.add_argument("--stall", type=float, default=0.0, help="stop once this many minutes pass without a gain")
     ap.add_argument("--jobs", type=int, default=min(12, os.cpu_count() or 1), help="parallel compiles (default 12)")
     ap.add_argument("--seed", type=int)
+    ap.add_argument("--stack-focus", action="store_true", help="prefer local declarations identified by stackslots")
     ap.add_argument("--no-focus", action="store_true",
                     help="do not aim rewrites at the source lines behind differing instructions")
     ap.add_argument("--keep-going", action="store_true", help="do not stop at the first MATCH")
@@ -660,7 +671,7 @@ def main() -> None:
     overlay = args.overlay.resolve() if args.overlay else None
     raise SystemExit(permute(src, args.address, overlay, args.minutes, args.jobs, args.seed,
                              keep_going=args.keep_going, weights=weights, cleanup=args.cleanup,
-                             stall=args.stall, focus=not args.no_focus))
+                             stall=args.stall, focus=not args.no_focus, stack_focus=args.stack_focus))
 
 
 if __name__ == "__main__":

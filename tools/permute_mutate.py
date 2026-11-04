@@ -905,10 +905,12 @@ class Func:
             return None
         if t == "binary_expression":
             op = T(n.child_by_field_name("operator"))
-            if op in ("<", ">", "<=", ">=", "==", "!=", "&&", "||"):
-                return "bool"
             lt = self.type_of(n.child_by_field_name("left"), depth + 1)
             rt = self.type_of(n.child_by_field_name("right"), depth + 1)
+            if not (is_scalar(lt) and is_scalar(rt)):
+                return None
+            if op in ("<", ">", "<=", ">=", "==", "!=", "&&", "||"):
+                return "bool"
             if op in ("<<", ">>"):
                 return promote(lt) if lt else None
             if lt is None or rt is None:
@@ -922,9 +924,11 @@ class Func:
             return arith(lt, rt)
         if t == "unary_expression":
             op = T(n.child_by_field_name("operator"))
+            at = self.type_of(n.child_by_field_name("argument"), depth + 1)
+            if not is_scalar(at):
+                return None
             if op == "!":
                 return "bool"
-            at = self.type_of(n.child_by_field_name("argument"), depth + 1)
             return promote(at) if at else None
         if t == "update_expression":
             return self.type_of(n.child_by_field_name("argument"), depth + 1)
@@ -1494,6 +1498,8 @@ def negate(ctx: Ctx, f: Func, c: Node) -> str:
     """Text of the logical negation of condition expression c."""
     while c.type == "parenthesized_expression" and len(c.named_children) == 1:
         c = c.named_children[0]
+    if not is_scalar(f.type_of(c)):
+        raise ValueError("condition may use an overloaded operator")
     if c.type == "unary_expression" and ctx.T(c.child_by_field_name("operator")) == "!":
         a = c.child_by_field_name("argument")
         inner = a
@@ -1868,6 +1874,8 @@ def paren_for(ctx: Ctx, operand: Node, parent: Node) -> str:
 
 def swappable(f: Func, a: Node, b: Node) -> bool:
     """Can a and b be evaluated in the other order?"""
+    if not (is_scalar(f.type_of(a)) and is_scalar(f.type_of(b))):
+        return False
     ea, eb = f.effects(a), f.effects(b)
     if ea.control or eb.control:
         return False
@@ -2281,6 +2289,8 @@ def m_compound_assign(ctx: Ctx):
     f, n = ctx.pick(sites)
     op = ctx.T(n.child_by_field_name("operator"))
     left, right = n.child_by_field_name("left"), n.child_by_field_name("right")
+    if not (is_scalar(f.type_of(left)) and is_scalar(f.type_of(right))):
+        return None
     # the left side is evaluated once in `x op= y` and twice in `x = x op y`
     if has_type(left, {"update_expression", "assignment_expression", "call_expression",
                        "new_expression", "delete_expression"}):
@@ -2331,6 +2341,8 @@ def m_incdec(ctx: Ctx):
         arg = n.child_by_field_name("argument")
         op = ctx.T(n.child_by_field_name("operator"))
         a = ctx.T(arg)
+        if not is_scalar(f.type_of(arg)):
+            return None
         if has_type(arg, {"call_expression", "assignment_expression", "update_expression"}):
             return None
         sign = "+" if op == "++" else "-"
@@ -2340,6 +2352,8 @@ def m_incdec(ctx: Ctx):
             forms.append(f"{a} = {a} {sign} 1")
         return [(n.start_byte, n.end_byte, ctx.rng.choice(forms))]
     left = n.child_by_field_name("left")
+    if not is_scalar(f.type_of(left)):
+        return None
     if has_type(left, {"call_expression", "assignment_expression", "update_expression"}):
         return None
     op = ctx.T(n.child_by_field_name("operator"))
@@ -2620,7 +2634,7 @@ def m_zero_compare(ctx: Ctx):
     if not sites:
         return None
     kind, f, n = ctx.pick(sites)
-    if constant(n):
+    if constant(n) or not is_scalar(f.type_of(n)):
         return None
     if kind == "not":
         a = n.child_by_field_name("argument")

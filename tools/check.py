@@ -44,15 +44,16 @@ hold must be held there for a class whose vftable holds it in our object (or, wi
 here, the class of a virtual symbol); a template instance's label naming another class
 fails like a double claim. Either finding for any other function is printed as a warning.
 
---score adds a line with a normalised similarity: the instruction lists compared with every
-address in the image, every jump target inside the function and every stack-slot
-displacement ([esp+N], [ebp-N], and [ebp+N] in a function with a frame) masked, so a
-changed frame size or a shifted jump does not hide progress.
+For a partial function the normalized diff labels jumps by their aligned retail
+destination and direct calls by address or known symbol. An unresolved external
+call is identified by its COFF symbol. Data addresses are masked; stack displacements
+remain visible. --score also compares instructions with stack displacements masked.
 --summary adds a completion record after all targets have been checked.
 """
 
 import csv
 import difflib
+from functools import cached_property
 import hashlib
 import os
 import re
@@ -107,6 +108,10 @@ class Original:
                         raise SystemExit(f"exe_patches.csv: bytes at {r['address']} are not EA's patch")
                     img[at:at + len(orig)] = orig
             self.image = bytes(img)
+
+    @cached_property
+    def decorated_addresses(self):
+        return decorated_addresses()
 
     def imports(self) -> dict[str, int]:
         """Import-table slot address of each imported function, by name."""
@@ -240,7 +245,7 @@ def annotations(src: Path) -> list[tuple[int, str]]:
     return out
 
 
-def known_decorated() -> dict[str, int]:
+def decorated_addresses() -> dict[str, set[int]]:
     """Decorated symbol -> address, from data/progress.csv and data/names.csv."""
     out = {}
     for path in (ROOT / "data/progress.csv", ROOT / "data/names.csv"):
@@ -249,8 +254,15 @@ def known_decorated() -> dict[str, int]:
                 for r in csv.DictReader(f):
                     # Initialiser and static-guard names are local to their own source file.
                     if r.get("symbol") and not re.match(r"^_?\$[ES]\d|^\?\$S\d", r["symbol"]):
-                        out[r["symbol"]] = int(r["address"], 16)
+                        out.setdefault(r["symbol"], set()).add(int(r["address"], 16))
     return out
+
+
+def known_decorated(addresses=None) -> dict[str, int]:
+    """Only symbols with one proven global address can bind an external reference."""
+    if addresses is None:
+        addresses = decorated_addresses()
+    return {name: next(iter(values)) for name, values in addresses.items() if len(values) == 1}
 
 
 def known_names() -> dict[str, int]:
@@ -367,6 +379,7 @@ class Result:
     ratio: float = 0.0
     norm_ratio: float = 0.0
     diff: list[str] = field(default_factory=list)
+    proven: list[str] = field(default_factory=list)
 
     @property
     def matched(self) -> bool:
@@ -378,11 +391,21 @@ def disasm(code: bytes, va: int) -> list[str]:
     return [f"{ins.mnemonic} {ins.op_str}".strip() for ins in md.disasm(code, va)]
 
 
-def encoding_diff(theirs: bytes, ours: bytes, va: int) -> list[str]:
+def encoding_diff(theirs: bytes, ours: bytes, va: int, masked: set[int]) -> list[str]:
     """The instructions that read the same but are encoded differently, as hex."""
+    def hex_bytes(data, offset):
+        return "".join("??" if offset + i in masked else f"{b:02x}" for i, b in enumerate(data))
+
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
-    return [f"0x{x.address:08X} {x.mnemonic} {x.op_str}: original {x.bytes.hex()}, ours {y.bytes.hex()}"
-            for x, y in zip(md.disasm(theirs, va), md.disasm(ours, va)) if x.bytes != y.bytes]
+    lines = []
+    for x, y in zip(md.disasm(theirs, va), md.disasm(ours, va)):
+        # Ignore linker fields within corresponding instructions, even if the instructions moved.
+        offset = y.address - va
+        old = hex_bytes(x.bytes, offset)
+        new = hex_bytes(y.bytes, offset)
+        if old != new:
+            lines.append(f"0x{x.address:08X} {x.mnemonic} {x.op_str}: original {old}, ours {new}")
+    return lines
 
 
 HEX = re.compile(r"0x[0-9a-f]+")
@@ -431,13 +454,86 @@ def placeholder_linked(orig: Original, obj: CoffObject, sec, start: int, ours: b
     return bytes(out)
 
 
-def normalised_listings(orig: Original, obj: CoffObject, sec, start: int, ours: bytes, address: int,
-                        theirs: bytes, stack: bool = True) -> tuple[list[str], list[str]]:
-    """(theirs, ours) as instruction lists with addresses masked, and stack slots too if `stack`."""
-    image = (orig.base, orig.end)
-    a = mask_addresses(disasm(theirs, address), address, address + len(theirs), image)
+DIRECT = re.compile(r"(?P<op>call|j[a-z]+|loop[a-z]*) (?P<target>0x[0-9a-f]+)$")
+
+
+def aligned_listings(orig: Original, obj: CoffObject, sec, start: int, ours: bytes, address: int,
+                     theirs: bytes, local=None, names=None) -> tuple[list[str], list[str]]:
+    """Align instructions first; label direct edges by their destinations in that alignment."""
     linked = placeholder_linked(orig, obj, sec, start, ours, address, len(theirs))
-    b = mask_addresses(disasm(linked, address), address, address + len(ours), image)
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    insns = [list(md.disasm(code, address)) for code in (theirs, linked)]
+    text = [[f"{i.mnemonic} {i.op_str}".strip() for i in side] for side in insns]
+    lists = [mask_addresses(lines, address, address + len(code), (orig.base, orig.end))
+             for lines, code in zip(text, (theirs, ours))]
+    # Use retail instruction addresses as shared labels, never candidate offsets.
+    # An unaligned or mid-instruction destination has no proven counterpart.
+    ids = [{i.address: f"retail:0x{i.address:08X}" for i in insns[0]}, {}]
+    forward = difflib.SequenceMatcher(None, *lists, autojunk=False).get_matching_blocks()
+    # Runs of identical instructions can match on either side of an insertion.
+    # Only assign a shared destination when alignment in both directions agrees.
+    reverse = {}
+    shifted = lists[0] != lists[1]
+    if shifted:
+        backward = difflib.SequenceMatcher(None, lists[0][::-1], lists[1][::-1], autojunk=False)
+        for a, b, n in backward.get_matching_blocks():
+            for k in range(n):
+                reverse[len(lists[1]) - 1 - b - k] = len(lists[0]) - 1 - a - k
+    for a, b, n in forward:
+        for k in range(n):
+            here = insns[1][b + k].address
+            if shifted and reverse.get(b + k) != a + k:
+                ids[1][here] = f"ambiguous-ours:0x{here:08X}"
+            else:
+                ids[1][here] = ids[0][insns[0][a + k].address]
+
+    # Use the same unambiguous name evidence as the checker. Cache per symbol:
+    # one large function may call the same CRT or parser helper hundreds of times.
+    relocs = {r.offset - start: r for r in sec.relocs if r.type == REL_REL32}
+    show_callees = local is not None or names is not None
+    local, names = local or {}, names or {}
+    labels_by_dest, resolved = {}, {}
+    for side, code in enumerate((theirs, ours)):
+        for n, (line, ins) in enumerate(zip(text[side], insns[side])):
+            m = DIRECT.fullmatch(line)
+            if not m:
+                continue
+            op, dest = m[1], int(m[2], 16)
+            off = ins.address - address + ins.size - 4
+            ref = relocs.get(off) if side and ins.size >= 5 else None
+            if ref is not None:
+                target = obj.by_index[ref.symbol]
+                if target.section != sec.number:
+                    if not show_callees:
+                        lists[side][n] = f"{op} <addr>"
+                        continue
+                    if target.name not in resolved:
+                        known = local.get(target.name)
+                        name = qualified(target.name)
+                        if known is None and name in names and not overloaded(target.name, local, function_symbols(obj)):
+                            known = names[name]
+                        resolved[target.name] = known
+                    known = resolved[target.name]
+                    if not isinstance(known, int):
+                        lists[side][n] = f"{op} <unresolved:{target.name}>"
+                        continue
+                    dest = (known + struct.unpack_from("<i", ours, off)[0]) & 0xFFFFFFFF
+                    labels_by_dest.setdefault(dest, set()).add(target.name)
+            if address <= dest < address + len(code):
+                tag = ids[side].get(dest, f"unaligned-{'ours' if side else 'retail'}:0x{dest:08X}")
+                lists[side][n] = f"{op} <{tag}>"
+            else:
+                lists[side][n] = f"{op} 0x{dest:08X}" if show_callees else f"{op} <addr>"
+    for side in lists:
+        for n, line in enumerate(side):
+            m = DIRECT.fullmatch(line.lower())
+            if m and (labels := labels_by_dest.get(int(m[2], 16))):
+                side[n] += " (" + ", ".join(sorted(labels)) + ")"
+    return lists[0], lists[1]
+
+
+def normalised_listings(orig, obj, sec, start, ours, address, theirs, stack=True, local=None, names=None):
+    a, b = aligned_listings(orig, obj, sec, start, ours, address, theirs, local, names)
     return (mask_stack(a), mask_stack(b)) if stack else (a, b)
 
 
@@ -466,13 +562,19 @@ def compare(orig: Original, obj: CoffObject, raw: bytes, address: int, name: str
                                        prefer.get(r.symbol) == address, r.symbol not in taken))
 
 
-def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) -> Result:
-    sym, sec, start, end = pick
+def function_bytes(pick):
+    _, sec, start, end = pick
     relocs = [r for r in sec.relocs if start <= r.offset < end]
     masked = {r.offset - start + k for r in relocs for k in range(4)}
     ours = sec.data[start:end]
     while ours and ours[-1] in PADDING and len(ours) - 1 not in masked:
         ours = ours[:-1]
+    return ours, masked
+
+
+def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) -> Result:
+    sym, sec, start, end = pick
+    ours, masked = function_bytes(pick)
     size = orig.sizes.get(address)
     if size is None:
         raise SystemExit(f"0x{address:08X} is not a function start in data/functions.csv")
@@ -490,6 +592,8 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
                 ref.status = "mismatch"
             elif f"warning: stores the vftable of {exe_class}, not of .?AV{body}" not in res.warnings:
                 res.warnings.append(f"warning: stores the vftable of {exe_class}, not of .?AV{body}")
+        if ref.status == "ok":
+            res.proven.append(f"{ref.offset:X}/{ref.type:X}/{ref.addend}/{ref.got:X}")
         if ref.status == "mismatch":
             res.mismatched_refs += 1
         if ref.status == "unverified":
@@ -501,20 +605,23 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
                             + f" [{ref.status}]")
 
     if not res.matched:
-        # Our linker-filled fields take the original's values, so only real differences show.
+        # Keep the historical raw score used to rank overloads.
         shown = bytearray(ours)
         for k in masked:
             if k < len(shown) and k < len(theirs):
                 shown[k] = theirs[k]
         a = disasm(theirs, address)
         b = disasm(bytes(shown), address)
-        res.ratio = difflib.SequenceMatcher(None, a, b, autojunk=False).ratio()
+        res.ratio = similarity(a, b)
+        if masked or score:
+            left, right = normalised_listings(orig, obj, sec, start, ours, address, theirs, stack=False, local=local, names=names)
+            if score:
+                res.norm_ratio = similarity(mask_stack(left), mask_stack(right))
+            a, b = left, right
         for line in difflib.unified_diff(a, b, "original", "ours", n=2, lineterm=""):
             res.diff.append(line)
         if a == b:
-            res.diff += encoding_diff(theirs, bytes(shown), address)
-        if score:
-            res.norm_ratio = similarity(*normalised_listings(orig, obj, sec, start, ours, address, theirs))
+            res.diff += encoding_diff(theirs, ours, address, masked)
     else:
         res.norm_ratio = 1.0
     return res
@@ -551,6 +658,12 @@ def ref_checks(orig, obj, raw, pick, ours: bytes, theirs: bytes, address: int, n
         else:
             continue
         status, want = check_ref(orig, obj, raw, target_sym, sec, start, address, got, names, local)
+        if status == "unverified" and names and r.type == REL_DIR32 and target_sym.name.endswith("@@6B@"):
+            body = vftable_type(target_sym.name)
+            if body:
+                want = orig.rtti().unique_primary_tables.get(body)
+                if want is not None:
+                    status = "ok" if got == want else "mismatch"
         out.append(RefCheck(off, r.type, addend, target_sym, got, status, want))
     return out
 
@@ -558,7 +671,7 @@ def ref_checks(orig, obj, raw, pick, ours: bytes, theirs: bytes, address: int, n
 def bind_annotations(orig, obj, raw, src: Path) -> tuple[dict[str, int], list[str]]:
     """Decorated symbol -> address for every known match, with each annotated function of
     `src` bound to the compiled function its bytes pick; and a line per double claim."""
-    local = known_decorated()
+    local = known_decorated(orig.decorated_addresses)
     known = dict(local)
     claimed: dict[str, int] = {}
     duplicates = []
@@ -586,6 +699,23 @@ def overloaded(sym: str, decorated, declared=()) -> bool:
     return any(d != sym and qualified(d) == name for d in (*decorated, *declared))
 
 
+class ReferenceNames(dict):
+    """Name addresses and overloads for one fully bound object comparison."""
+
+    def __init__(self, names, local, declared):
+        super().__init__(names)
+        self.overloads = {}
+        for symbol in (*local, *declared):
+            name = qualified(symbol)
+            if name in names:
+                previous = self.overloads.setdefault(name, symbol)
+                if previous != symbol:
+                    self.overloads[name] = None
+
+    def ambiguous(self, symbol, name):
+        return self.overloads.get(name, symbol) != symbol
+
+
 def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     """Whether a linker-filled field points where the original's does."""
     if target.section == sec.number:
@@ -595,6 +725,11 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     if target.name in local:
         want = local[target.name]
         return ("ok" if got == want else "mismatch"), want
+    if names or local:
+        candidates = orig.decorated_addresses.get(target.name, ())
+        if len(candidates) > 1:
+            # A call to one of these copies needs independent local binding evidence.
+            return ("unverified" if got in candidates else "mismatch"), None
     if target.section > 0:
         tsec = obj.sections[target.section - 1]
         if not tsec.is_code:
@@ -611,9 +746,12 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     if placeholder:
         want = int(placeholder.group(1), 16)
         return ("ok" if got == want else "mismatch"), want
-    if name in names and not overloaded(target.name, local, function_symbols(obj)):
-        want = names[name]
-        return ("ok" if got == want else "mismatch"), want
+    if name in names:
+        ambiguous = (names.ambiguous(target.name, name) if isinstance(names, ReferenceNames)
+                     else overloaded(target.name, local, function_symbols(obj)))
+        if not ambiguous:
+            want = names[name]
+            return ("ok" if got == want else "mismatch"), want
     return "unverified", None
 
 
@@ -720,11 +858,16 @@ def main() -> None:
     if objpath is None:
         print(log)
         raise SystemExit(1)
-    raw = objpath.read_bytes()
-    obj, orig, names = CoffObject(raw), Original(), known_names()
+    raise SystemExit(report(src, objpath.read_bytes(), Original(), known_names(), targets, score, summary))
+
+
+def report(src, raw, orig, names, targets, score=False, summary=False):
+    """Verify one compiled source object and print the normal checker result."""
+    obj = CoffObject(raw)
     # Which compiled function each annotation is decides what its own symbol resolves to,
     # so pick them first, by bytes alone.
     local, duplicates = bind_annotations(orig, obj, raw, src)
+    names = ReferenceNames(names, local, function_symbols(obj))
     for line in duplicates:
         print(line)
     failed = len(duplicates)
@@ -740,6 +883,9 @@ def main() -> None:
         extra = f", {res.unverified} unverified" if res.unverified else ""
         print(f"0x{address:08X} {name.lstrip('=') or res.symbol}: {verdict} ({res.ours}/{res.size} bytes{extra}) "
               f"{res.symbol}")
+        if os.environ.get("RA2_SAVE_REFERENCES") or os.environ.get("RA2_REQUIRE_REFERENCES"):
+            sites = res.proven if res.matched else ()
+            print(f"CHECK-REFERENCES {address:08X} " + " ".join(sites))
         if score:
             raw_ratio = 1.0 if res.matched else res.ratio
             print(f"normalised score: {res.norm_ratio * 100:.1f}% (raw {raw_ratio * 100:.1f}%)")
@@ -756,7 +902,7 @@ def main() -> None:
             print("\n".join(res.diff[:400]))
     if summary:
         print(f"CHECK-SUMMARY: checked={len(targets)} failed={failed}")
-    raise SystemExit(1 if failed else 0)
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":

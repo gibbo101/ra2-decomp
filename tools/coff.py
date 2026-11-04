@@ -1,6 +1,7 @@
 """Read the parts of an i386 COFF object the checker needs: sections, relocations, symbols."""
 
 import struct
+from functools import cached_property
 from dataclasses import dataclass, field
 
 REL_DIR32 = 0x06
@@ -76,15 +77,23 @@ class CoffObject:
             self.by_index[i] = sym
             i += 1 + naux
 
-    def functions(self):
-        """(symbol, section, start, end) for every function defined in a code section: a
-        symbol typed as a function, or any public one (an assembler's PROC)."""
+    @cached_property
+    def _functions(self):
+        by_section = {}
+        for sym in self.symbols:
+            if sym.type == 0x20 or sym.storage == STORAGE_EXTERNAL:
+                by_section.setdefault(sym.section, []).append(sym)
+
+        functions = []
         for sec in self.sections:
             if not sec.is_code:
                 continue
-            defs = sorted((s for s in self.symbols if s.section == sec.number
-                           and (s.type == 0x20 or s.storage == STORAGE_EXTERNAL)),
-                          key=lambda s: s.value)
-            for k, s in enumerate(defs):
-                end = defs[k + 1].value if k + 1 < len(defs) else len(sec.data)
-                yield s, sec, s.value, end
+            defs = sorted(by_section.get(sec.number, ()), key=lambda sym: sym.value)
+            for i, sym in enumerate(defs):
+                end = defs[i + 1].value if i + 1 < len(defs) else len(sec.data)
+                functions.append((sym, sec, sym.value, end))
+        return tuple(functions)
+
+    def functions(self):
+        """Iterate the object's function extents in section and symbol-offset order."""
+        return iter(self._functions)

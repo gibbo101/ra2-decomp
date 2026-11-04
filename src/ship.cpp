@@ -714,6 +714,9 @@ ULONG STDMETHODCALLTYPE ShipLocomotionClass::Release(void)
 	return(BASECLASS::Release());
 }
 
+// FUNCTION: GAMEMD 0x006A4280
+// ShipLocomotionClass::Is_Piggybacking
+
 // FUNCTION: GAMEMD 0x006A42A0
 // ShipLocomotionClass::Fetch_Object_Size
 
