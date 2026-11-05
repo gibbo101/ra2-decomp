@@ -47,6 +47,111 @@
 // SYNTHETIC: GAMEMD 0x00543310 SYMBOL
 // _$E47
 
+// FUNCTION: GAMEMD 0x00543330
+bool IsometricTileClass::Mark(MarkType mark)
+{
+	IsoTileSet * set = (IsoTileSet *)Get_Image_Data();
+	if (set != NULL && BASECLASS::Mark(mark)) {
+
+		for (int y = 0; y < Class->Height; y++) {
+			for (int x = 0; x < Class->Width; x++) {
+				Cell cell = PositionCell + Cell(x, y);
+
+				if (Map.In_Radar(cell)) {
+					CellClass *cptr = &Map[cell];
+					int subtile = Class->SubTile_Index(x, y);
+					if (set->Tiles[subtile] != NULL) {
+						if (mark == MARK_UP) {
+							if (cptr->ITType == Class->HeapID && cptr->SubTile == subtile) {
+								cptr->ITType = TILE_NONE;
+								cptr->SubTile = 0;
+								cptr->Height -= set->Tiles[subtile]->Height;
+							}
+						} else if (mark == MARK_DOWN || mark == MARK_DOWN_FORCED) {
+							const IsometricTileType tile_type = Class->HeapID;
+							if (tile_type == TILE_CLEAR) {
+								cptr->ITType = TILE_NONE;
+								cptr->SubTile = 0;
+							} else {
+								cptr->ITType = tile_type;
+								cptr->SubTile = subtile;
+								cptr->Ramp = Class->Ramp_Type(subtile);
+								if (cptr->ITType == IsometricTileTypeClass::SlopeSetPieces + 5) {
+									switch (cptr->SubTile) {
+										case 0:
+										case 3:
+										case 6:
+										case 9:
+											cptr->ITType = IsometricTileType(IsometricTileTypeClass::RampStart + 1);
+											cptr->SubTile = 0;
+											break;
+										default:
+											break;
+									}
+								}
+								if (cptr->ITType == IsometricTileTypeClass::SlopeSetPieces2 + 5) {
+									switch (cptr->SubTile) {
+										case 0:
+										case 3:
+										case 6:
+										case 9:
+											cptr->ITType = IsometricTileType(IsometricTileTypeClass::MMRampBase + 1);
+											cptr->SubTile = 0;
+											break;
+										default:
+											break;
+									}
+								}
+								if (cptr->ITType == IsometricTileTypeClass::SlopeSetPieces + 8 && cptr->SubTile <= 3) {
+									cptr->ITType = IsometricTileTypeClass::RampStart;
+									cptr->SubTile = 0;
+								}
+								if (cptr->ITType == IsometricTileTypeClass::SlopeSetPieces2 + 8 && cptr->SubTile <= 3) {
+									cptr->ITType = IsometricTileTypeClass::MMRampBase;
+									cptr->SubTile = 0;
+								}
+							}
+							cptr->Smudge = SMUDGE_NONE;
+							cptr->SmudgeData = 0;
+							const OverlayType overlay = cptr->Overlay;
+							if (overlay >= OVERLAY_LARGE_TIBERIUM01 && overlay < OVERLAY_LARGE_TIBERIUM12) {
+								cptr->IsAnimAttached = false;
+								Coord ccoord = cptr->Center_Coord() + Coord(CELL_LEPTON_W + (CELL_LEPTON_W >> 1), CELL_LEPTON_H + (CELL_LEPTON_H >> 1), 0);
+								for (int i = 0; i < Anims.Count(); i++) {
+									AnimClass *anim = Anims[i];
+									if (anim->Type == OverlayTypes[cptr->Overlay]->CellAnim) {
+										const Coord position = anim->PositionCoord;
+										if (position == ccoord) {
+											delete anim;
+											break;
+										}
+									}
+								}
+							}
+							cptr->Overlay = OVERLAY_NONE;
+							cptr->OverlayData = 0;
+							cptr->Height += set->Tiles[subtile]->Height;
+							cptr->Fixup_LAT();
+							cptr->Adjacent_Cell(FACING_N).Fixup_LAT();
+							cptr->Adjacent_Cell(FACING_E).Fixup_LAT();
+							cptr->Adjacent_Cell(FACING_S).Fixup_LAT();
+							cptr->Adjacent_Cell(FACING_W).Fixup_LAT();
+						}
+						cptr->Recalc_Attributes();
+					}
+				}
+			}
+		}
+
+		if (mark == MARK_DOWN || mark == MARK_DOWN_FORCED) {
+			IsDown = false;
+			delete this;
+		}
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x00543780
 IsometricTileClass::IsometricTileClass(IsometricTileType type, Cell const & cell) :
 	BASECLASS(),
