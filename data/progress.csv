@@ -5581,6 +5581,7 @@ address,name,result,size,source,symbol
 0x004F4DA0,rgb24_clamp,MATCH,19,src/hicolor.cpp,?rgb24_clamp@@YIXPAEH@Z
 0x004F4DC0,rgb32_to_rgb24_clamped,MATCH,38,src/hicolor.cpp,?rgb32_to_rgb24_clamped@@YIXPAEH@Z
 0x004F4DF0,rgb24_to_rgb555,MATCH,80,src/hicolor.cpp,?rgb24_to_rgb555@@YIXPAEHHH@Z
+0x004F4E40,rgb24_to_rgb1555,MATCH,108,src/hicolor.cpp,?rgb24_to_rgb1555@@YIXPAEHHHH@Z
 0x004F4EB0,rgb32_to_rgb24,MATCH,46,src/hicolor.cpp,?rgb32_to_rgb24@@YIXPAEHHH@Z
 0x004F4EE0,_$E2,MATCH,23,src/house.cpp,_$E2
 0x004F4F00,_$E5,MATCH,40,src/house.cpp,_$E5
@@ -6918,6 +6919,7 @@ address,name,result,size,source,symbol
 0x0053DDA0,?Delete_Index@?$DynamicVectorClass@PAVIonBlastClass@@@@QAE_NH@Z,MATCH,49,src/ionblast.cpp,?Delete_Index@?$DynamicVectorClass@PAVIonBlastClass@@@@QAE_NH@Z
 0x0053DDE0,_$E2,MATCH,23,src/ipxaddr.cpp,_$E2
 0x0053DE00,FUN_0053DE00,MATCH,609,src/ipxaddr.cpp,?FUN_0053DE00@@YIHHH@Z
+0x0053E070,FUN_0053E070,MATCH,344,src/ipxaddr.cpp,?FUN_0053E070@@YGKPAUStreamerThreadData@@@Z
 0x0053E1D0,FUN_0053E1D0,MATCH,488,src/ipxaddr.cpp,?FUN_0053E1D0@@YIXXZ
 0x0053E3C0,FUN_0053E3C0,MATCH,85,src/ipxaddr.cpp,?FUN_0053E3C0@@YIXPAUHWND__@@@Z
 0x0053E420,FUN_0053E420,MATCH,67,src/ipxaddr.cpp,?FUN_0053E420@@YIXPAUHWND__@@@Z
@@ -12814,6 +12816,7 @@ address,name,result,size,source,symbol
 0x006A6AF0,SidebarClass::Page,MATCH,319,src/sidebar.cpp,?Page@SidebarClass@@QAE_N_NH@Z
 0x006AC210,SidebarClass::Help_Text,MATCH,454,src/sidebar.cpp,?Help_Text@SidebarClass@@UAEPBDH@Z
 0x006A8710,SidebarClass::StripClass::FUN_006A8710,MATCH,218,src/sidebar.cpp,?FUN_006A8710@StripClass@SidebarClass@@QAEXW4RTTIType@@H@Z
+0x006A5130,SidebarClass::FUN_006A5130,MATCH,472,src/sidebar.cpp,?FUN_006A5130@SidebarClass@@QAEX_N@Z
 0x006AC950,_$E5,MATCH,23,src/skirmish.cpp,_$E5
 0x006AC970,_$E70,MATCH,40,src/skirmish.cpp,_$E70
 0x006AC9A0,_$E73,MATCH,19,src/skirmish.cpp,_$E73
