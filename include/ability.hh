@@ -57,9 +57,6 @@ struct AbilityFlagsType {
 		bool & operator[](AbilityType type) { return(AbilitiesFlag[type]); }
 
 	private:
-		/*
-		 * These are the abilities present in this set, one flag per AbilityType. A unit type
-		 * keeps one such set for the abilities its veterans earn and another for its elites.
-		 */
+		// Veterans and elites each have a separate set of ability flags.
 		bool AbilitiesFlag[ABILITY_COUNT];
 };
