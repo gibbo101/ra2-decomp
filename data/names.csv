@@ -389,3 +389,4 @@ address,name,symbol,evidence
 0x007F6BB4,WaveLengthFactor,_WaveLengthFactor,Indexed by WaveType for both endpoints in 0x00761640 and 0x00762070 with four image values 1.0 1.05 1.05 1.0
 0x00B45DA8,WaveClass::Draw_NonMagnetic::WaveSize,_?WaveSize@?1??Draw_NonMagnetic@WaveClass@@AAEXABVCoord@@0@Z@4PAY03VVector3@@A,0x00761640 initializes sixteen local Vector3 corners and indexes four corners per wave type
 0x00B45CA0,WaveClass::Draw_Magnetic::WaveSize,_?WaveSize@?1??Draw_Magnetic@WaveClass@@AAEXABVCoord@@0@Z@4PAY03VVector3@@A,0x00762070 initializes sixteen local Vector3 corners and indexes four corners per wave type
+0x0048DED0,Shake_The_Screen,?Shake_The_Screen@@YIXH@Z,Called by matched BuildingClass::Do_Destruction at 0x00441C34 and UnitClass::Explode at 0x007387FC
