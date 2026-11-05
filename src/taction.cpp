@@ -360,7 +360,7 @@ void TActionClass::Read_INI(void)
 			break;
 
 		case 7:
-			Data.Value = VocClass::From_Name(text);
+			Data.Value = VocClass::FindIndex(text);
 			break;
 
 		case 8:

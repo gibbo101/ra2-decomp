@@ -8,7 +8,96 @@
 #include "globals.h"
 #include "version.h"
 
+#include <mmsystem.h>
+
+void __cdecl FUN_004068E0(char const *fmt, ...);
+
 namespace CopyProtection {
+
+static char *LauncherMessage;
+static const UINT LauncherMessageID = 0xBEEF;
+
+// FUNCTION: GAMEMD 0x0049F5C0
+// CopyProtection::IsLauncherRunning
+bool IsLauncherRunning(void)
+{
+	FUN_004068E0("COPYPROTECTION - Checking if launcher is running\n");
+	HANDLE mutex = CreateMutex(NULL, FALSE, "48BC11BD-C4D7-466b-8A31-C6ABBAD47B3E");
+	bool running = GetLastError() == ERROR_ALREADY_EXISTS;
+	if (mutex) {
+		CloseHandle(mutex);
+	}
+	FUN_004068E0("result was %d\n", running);
+	return running;
+}
+
+// FUNCTION: GAMEMD 0x0049F620
+// CopyProtection::NotifyLauncher
+bool NotifyLauncher(void)
+{
+	MSG msg;
+	FUN_004068E0("COPYPROTECTION - Notify launcher\n");
+	PeekMessage(&msg, NULL, WM_USER, WM_USER, PM_NOREMOVE);
+	DWORD deadline = timeGetTime() + 60000;
+	HANDLE event = NULL;
+	while (timeGetTime() < deadline) {
+		event = OpenEvent(EVENT_MODIFY_STATE, TRUE, "D6E7FC97-64F9-4d28-B52C-754EDF721C6F");
+		if (event) {
+			break;
+		}
+		Sleep(0);
+	}
+	if (event) {
+		SetEvent(event);
+		CloseHandle(event);
+		FUN_004068E0("Launcher notified.\n");
+		FUN_004068E0("Waiting for message from launcher.\n");
+		deadline = timeGetTime() + 10000;
+		while (timeGetTime() <= deadline) {
+			if (PeekMessage(&msg, NULL, LauncherMessageID, LauncherMessageID, PM_REMOVE) && msg.message == LauncherMessageID) {
+				LauncherMessage = (char *)MapViewOfFileEx((HANDLE)msg.lParam, FILE_MAP_ALL_ACCESS, 0, 0, 0, NULL);
+				if (LauncherMessage) {
+					return true;
+				}
+				break;
+			}
+			Sleep(0);
+		}
+	}
+	FUN_004068E0("***** Failed to notify launcher!\n");
+	return false;
+}
+
+// FUNCTION: GAMEMD 0x0049F740
+// CopyProtection::DispatchLauncherMessage
+void __fastcall DispatchLauncherMessage(MSG *msg)
+{
+	if (msg->message == LauncherMessageID) {
+		FUN_004068E0("COPYPROTECTION - Received message from launcher.\n");
+		LauncherMessage = (char *)MapViewOfFileEx((HANDLE)msg->lParam, FILE_MAP_ALL_ACCESS, 0, 0, 0, NULL);
+		if (!LauncherMessage) {
+			FUN_004068E0("***** MapViewOfFileEx() Failed!");
+		} else {
+			FUN_004068E0("The message says: %s\n", LauncherMessage);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0049F8B0
+// CopyProtection::ShutDown
+void ShutDown(void)
+{
+	FUN_004068E0("COPYPROTECTION - Shutdown\n");
+	if (LauncherMessage) {
+		UnmapViewOfFile(LauncherMessage);
+		LauncherMessage = NULL;
+	}
+	HKEY key;
+	if (RegOpenKeyEx(HKEY_CLASSES_ROOT, "WChat\\SysID", 0, KEY_ALL_ACCESS, &key) == ERROR_SUCCESS) {
+		RegDeleteValue(key, "ID");
+		RegCloseKey(key);
+	}
+}
 
 // FUNCTION: GAMEMD 0x0049F920
 // CopyProtection::CheckVersion

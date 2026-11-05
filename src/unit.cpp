@@ -1072,10 +1072,6 @@ void UnitClass::Explode(void)
 	if (Class->Explosion.Count() > 0) {
 		AnimTypeClass const * anim = Class->Explosion.Pick(Scen->RandomNumber);
 
-		/*
-		**	SSM launchers will really explode big if they are carrying
-		**	missiles at the time of the explosion.
-		*/
 		if (Class->IsExploding || Has_Ability(ABILITY_EXPLODES)) {
 			if (Class->MaxAmmo == -1 || Ammo > 0) {
 				anim = Class->Explosion[Class->Explosion.Count() - 1];
@@ -1092,10 +1088,6 @@ void UnitClass::Explode(void)
 			}
 		}
 
-		/*
-		**	Very strong units that have an explosion will also rock the
-		**	screen when they are destroyed.
-		*/
 		Shake_On_Explosion(Class->MaxStrength);
 	}
 
