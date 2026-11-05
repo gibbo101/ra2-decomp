@@ -917,6 +917,7 @@ address,name,result,size,source,symbol
 0x004255B0,AnimClass::Delete_Me,MATCH,121,src/anim.cpp,?Delete_Me@AnimClass@@UAEXXZ
 0x00425630,AnimClass::Get_Height,MATCH,63,src/anim.cpp,?Get_Height@AnimClass@@UBEHXZ
 0x00425670,AnimClass::Flaming_Guy_AI,MATCH,1688,src/anim.cpp,?Flaming_Guy_AI@AnimClass@@QAEXXZ
+0x00425D10,AnimClass::Next_Flaming_Guy_Coord,MATCH,988,src/anim.cpp,?Next_Flaming_Guy_Coord@AnimClass@@QAE?AVCoord@@XZ
 0x004260F0,AnimClass::Is_Valid_Flaming_Guy_Cell,MATCH,213,src/anim.cpp,?Is_Valid_Flaming_Guy_Cell@AnimClass@@QAE_NABVCell@@@Z
 0x004261D0,AnimClass::Post_Load_Game,MATCH,160,src/anim.cpp,?Post_Load_Game@AnimClass@@SIXXZ
 0x00426270,AnimClass::Set_Occupy_Bit,MATCH,143,src/anim.cpp,?Set_Occupy_Bit@AnimClass@@UAEXABVCoord@@@Z
@@ -1515,6 +1516,7 @@ address,name,result,size,source,symbol
 0x0043D030,BuildingClass::Editor_Draw_It,MATCH,599,src/building.cpp,?Editor_Draw_It@BuildingClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x0043E7B0,BuildingClass::DrawInfoTipAndSpiedSelection,MATCH,325,src/building.cpp,?DrawInfoTipAndSpiedSelection@BuildingClass@@QBEXPAVPoint2D@@PAV?$TRect@H@@@Z
 0x0043E900,BuildingClass::Get_Z_Adjust,MATCH,52,src/building.cpp,?Get_Z_Adjust@BuildingClass@@UBEHXZ
+0x0043E940,BuildingClass::Barrel_Pitch,MATCH,1012,src/building.cpp,?Barrel_Pitch@BuildingClass@@UBE?AVDirType@@PAVAbstractClass@@@Z
 0x0043ED40,BuildingClass::Aim_Direction,MATCH,260,src/building.cpp,?Aim_Direction@BuildingClass@@UBE?AVDirType@@PAVAbstractClass@@@Z
 0x0043EE50,BuildingClass::Set_Turret_Frame,MATCH,93,src/building.cpp,?Set_Turret_Frame@BuildingClass@@QAEHXZ
 0x0043EEB0,BuildingClass::Set_Turret_Index,MATCH,215,src/building.cpp,?Set_Turret_Index@BuildingClass@@QAEXH@Z
@@ -3282,6 +3284,10 @@ address,name,result,size,source,symbol
 0x0049F3A0,_$E95,MATCH,116,src/coord.cpp,_$E95
 0x0049F420,Coord_Scatter,MATCH,289,src/coord.cpp,?Coord_Scatter@@YI?AVCoord@@ABV1@H_N@Z
 0x0049F550,Adjacent_Coord_With_Height,MATCH,111,src/coord.cpp,?Adjacent_Coord_With_Height@@YI?AVCoord@@ABV1@W4FacingType@@@Z
+0x0049F5C0,CopyProtection::IsLauncherRunning,MATCH,91,src/copyprotection.cpp,?IsLauncherRunning@CopyProtection@@YI_NXZ
+0x0049F620,CopyProtection::NotifyLauncher,MATCH,276,src/copyprotection.cpp,?NotifyLauncher@CopyProtection@@YI_NXZ
+0x0049F740,CopyProtection::DispatchLauncherMessage,MATCH,88,src/copyprotection.cpp,?DispatchLauncherMessage@CopyProtection@@YIXPAUtagMSG@@@Z
+0x0049F8B0,CopyProtection::ShutDown,MATCH,101,src/copyprotection.cpp,?ShutDown@CopyProtection@@YIXXZ
 0x0049F920,CopyProtection::CheckVersion,MATCH,135,src/copyprotection.cpp,?CheckVersion@CopyProtection@@YI_NXZ
 0x0049F9B0,CounterClass::CounterClass,MATCH,27,src/counter.cpp,??0CounterClass@@QAE@XZ
 0x0049F9D0,CounterClass::~CounterClass,MATCH,45,src/counter.cpp,??1CounterClass@@UAE@XZ
@@ -7236,6 +7242,7 @@ address,name,result,size,source,symbol
 0x0054B8D0,JumpjetLocomotionClass::In_Which_Layer,MATCH,173,src/jumpjet.cpp,?In_Which_Layer@JumpjetLocomotionClass@@UAG?AW4LayerType@@XZ
 0x0054B980,JumpjetLocomotionClass::Process_Grounded,MATCH,175,src/jumpjet.cpp,?Process_Grounded@JumpjetLocomotionClass@@QAEXXZ
 0x0054BA30,JumpjetLocomotionClass::Process_Ascent,MATCH,765,src/jumpjet.cpp,?Process_Ascent@JumpjetLocomotionClass@@QAEXXZ
+0x0054BD30,JumpjetLocomotionClass::Process_Hover,MATCH,693,src/jumpjet.cpp,?Process_Hover@JumpjetLocomotionClass@@QAEXXZ
 0x0054BFF0,JumpjetLocomotionClass::Process_Cruise,MATCH,1372,src/jumpjet.cpp,?Process_Cruise@JumpjetLocomotionClass@@QAEXXZ
 0x0054C550,JumpjetLocomotionClass::Process_Descent,MATCH,1332,src/jumpjet.cpp,?Process_Descent@JumpjetLocomotionClass@@QAEXXZ
 0x0054CA90,JumpjetLocomotionClass::Process_Crashing,MATCH,1573,src/jumpjet.cpp,?Process_Crashing@JumpjetLocomotionClass@@QAEXXZ
@@ -11929,7 +11936,9 @@ address,name,result,size,source,symbol
 0x006686C0,RulesClass::Initialize,MATCH,1320,src/rules.cpp,?Initialize@RulesClass@@QAEXAAVCCINIClass@@@Z
 0x00668BF0,RulesClass::Addition,MATCH,949,src/rules.cpp,?Addition@RulesClass@@QAE_NAAVCCINIClass@@@Z
 0x00668FB0,RulesClass::Special_Weapons,MATCH,545,src/rules.cpp,?Special_Weapons@RulesClass@@QAE_NAAVCCINIClass@@@Z
+0x006691E0,RulesClass::Audio_Visual_Rules,MATCH,10016,src/rules.cpp,?Audio_Visual_Rules@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x0066B900,RulesClass::Crate_Rules,MATCH,674,src/rules.cpp,?Crate_Rules@RulesClass@@QAE_NABVCCINIClass@@@Z
+0x0066BBB0,RulesClass::Combat_Damage,MATCH,5045,src/rules.cpp,?Combat_Damage@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x0066CF70,RulesClass::Radiation,MATCH,471,src/rules.cpp,?Radiation@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x0066D150,RulesClass::Elevation_Model,MATCH,154,src/rules.cpp,?Elevation_Model@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x0066D1F0,RulesClass::Wall_Model,MATCH,115,src/rules.cpp,?Wall_Model@RulesClass@@QAE_NABVCCINIClass@@@Z
@@ -11955,6 +11964,7 @@ address,name,result,size,source,symbol
 0x00672990,RulesClass::Do_WarheadTypes,MATCH,102,src/rules.cpp,?Do_WarheadTypes@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x00672A00,RulesClass::Do_ParticleTypes,MATCH,102,src/rules.cpp,?Do_ParticleTypes@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x00672A70,RulesClass::Do_ParticleSystemTypes,MATCH,102,src/rules.cpp,?Do_ParticleSystemTypes@RulesClass@@QAE_NABVCCINIClass@@@Z
+0x00672AE0,RulesClass::AI,MATCH,5015,src/rules.cpp,?AI@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x00673E80,RulesClass::Powerups,MATCH,374,src/rules.cpp,?Powerups@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x00674000,RulesClass::Land_Types,MATCH,568,src/rules.cpp,?Land_Types@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x00674240,RulesClass::IQ,MATCH,397,src/rules.cpp,?IQ@RulesClass@@QAE_NABVCCINIClass@@@Z
@@ -11963,6 +11973,7 @@ address,name,result,size,source,symbol
 0x00674550,RulesClass::Do_Movies,MATCH,252,src/rules.cpp,?Do_Movies@RulesClass@@QAE_NABVCCINIClass@@@Z
 0x00674650,RulesClass::Read_AdvancedCommandBar,MATCH,219,src/rules.cpp,?Read_AdvancedCommandBar@RulesClass@@QAE_NABVCCINIClass@@_N@Z
 0x00674730,RulesClass::Save,MATCH,2779,src/rules.cpp,?Save@RulesClass@@QAEXPAUIStream@@@Z
+0x00675210,RulesClass::Load,MATCH,13883,src/rules.cpp,?Load@RulesClass@@QAEXPAUIStream@@@Z
 0x00678850,RulesClass::Detach,MATCH,4531,src/rules.cpp,?Detach@RulesClass@@QAEXPBVAbstractClass@@_N@Z
 0x00679A10,RulesClass::Objects,MATCH,679,src/rules.cpp,?Objects@RulesClass@@QAE_NAAVCCINIClass@@@Z
 0x00679CC0,FUN_00679CC0,MATCH,204,src/rules.cpp,?FUN_00679CC0@@YIHXZ
@@ -14715,6 +14726,7 @@ address,name,result,size,source,symbol
 0x006FD460,TechnoClass::CreateEBolt,MATCH,269,src/techno.cpp,?CreateEBolt@TechnoClass@@QAEPAVEBolt@@PAVAbstractClass@@PAVWeaponTypeClass@@ABVCoord@@@Z
 0x006FD570,TechnoClass::FireEBolt,MATCH,167,src/techno.cpp,?FireEBolt@TechnoClass@@QAEPAVEBolt@@PAVObjectClass@@@Z
 0x006FD620,TechnoClass::CreateRadBeam,MATCH,465,src/techno.cpp,?CreateRadBeam@TechnoClass@@QAEPAVRadBeam@@PAVObjectClass@@H@Z
+0x006FD800,TechnoClass::CreateRadBeams,MATCH,501,src/techno.cpp,?CreateRadBeams@TechnoClass@@QAEXH@Z
 0x006FDA00,TechnoClass::Barrel_Pitch,MATCH,376,src/techno.cpp,?Barrel_Pitch@TechnoClass@@UBE?AVDirType@@PAVAbstractClass@@@Z
 0x006FDB80,TechnoClass::Estimate_Damage,MATCH,450,src/techno.cpp,?Estimate_Damage@TechnoClass@@QBEHPAV1@PBVWeaponTypeClass@@@Z
 0x006FF950,TechnoClass::FUN_006FF950,MATCH,1,src/techno.cpp,?FUN_006FF950@TechnoClass@@QAEXXZ
@@ -16834,8 +16846,10 @@ address,name,result,size,source,symbol
 0x007610A0,WaveClass::FUN_007610A0,MATCH,44,src/wave.cpp,?FUN_007610A0@WaveClass@@AAEXXZ
 0x007610D0,WaveClass::Laser_AI,MATCH,31,src/wave.cpp,?Laser_AI@WaveClass@@AAEXXZ
 0x007610F0,WaveClass::Wave_Recalc_Affected_Cells,MATCH,1359,src/wave.cpp,?Wave_Recalc_Affected_Cells@WaveClass@@AAEXXZ
-0x00762060,WaveClass::FUN_00762060,MATCH,1,src/wave.cpp,?FUN_00762060@WaveClass@@AAEXXZ
-0x00762AE0,WaveClass::FUN_00762AE0,MATCH,1,src/wave.cpp,?FUN_00762AE0@WaveClass@@AAEXXZ
+0x00761640,WaveClass::Draw_NonMagnetic,MATCH,2580,src/wave.cpp,?Draw_NonMagnetic@WaveClass@@AAEXABVCoord@@0@Z
+0x00762060,_$E138,MATCH,1,src/wave.cpp,_$E138
+0x00762070,WaveClass::Draw_Magnetic,MATCH,2661,src/wave.cpp,?Draw_Magnetic@WaveClass@@AAEXABVCoord@@0@Z
+0x00762AE0,_$E140,MATCH,1,src/wave.cpp,_$E140
 0x00762AF0,WaveClass::Update_Wave,MATCH,1786,src/wave.cpp,?Update_Wave@WaveClass@@AAEXXZ
 0x007631F0,WaveClass::Fetch_RTTI,MATCH,6,src/wave.cpp,?Fetch_RTTI@WaveClass@@UBE?AW4RTTIType@@XZ
 0x00763200,??_GWaveClass@@UAEPAXI@Z,MATCH,208,src/wave.cpp,??_GWaveClass@@UAEPAXI@Z
