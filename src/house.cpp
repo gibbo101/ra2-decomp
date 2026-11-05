@@ -2879,6 +2879,31 @@ ZoneType HouseClass::Which_Zone(Cell const & cell) const
 	return(Which_Zone((Coord)cell));
 }
 
+// FUNCTION: GAMEMD 0x004FFDD0
+Cell HouseClass::Zone_Cell(ZoneType zone) const
+{
+	switch (zone) {
+		case ZONE_CORE:
+			return(Get_Base_Center());
+
+		case ZONE_NORTH:
+			return(Coord(Move_Coord(FUN_0050DF30(), DIR_N, Radius * 3)).As_Cell());
+
+		case ZONE_EAST:
+			return(Coord(Move_Coord(FUN_0050DF30(), DIR_E, Radius * 3)).As_Cell());
+
+		case ZONE_WEST:
+			return(Coord(Move_Coord(FUN_0050DF30(), DIR_W, Radius * 3)).As_Cell());
+
+		case ZONE_SOUTH:
+			return(Coord(Move_Coord(FUN_0050DF30(), DIR_S, Radius * 3)).As_Cell());
+
+		default:
+			break;
+	}
+	return(CELL_NONE);
+}
+
 // FUNCTION: GAMEMD 0x00500200
 Cell HouseClass::Where_To_Go(FootClass const * object) const
 {
@@ -6807,7 +6832,8 @@ Cell HouseClass::Get_Base_Center(void) const
 // FUNCTION: GAMEMD 0x0050DF30
 Coord HouseClass::FUN_0050DF30(void) const
 {
-	Cell base = Get_Base_Center();
+	Cell base;
+	base = Get_Base_Center();
 	if (base == CELL_NONE) {
 		return(COORD_NONE);
 	}
@@ -6938,6 +6964,9 @@ int HouseClass::Fetch_Heap_ID(void) const
 
 // SYNTHETIC: GAMEMD 0x0050E380
 // ??_GHouseClass@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x0050E3A0
+// ?Move_Coord@@YI?AVCoord@@ABV1@ABVDirType@@H@Z
 
 // FUNCTION: GAMEMD 0x0050E430
 // RGBClass::FUN_0050E430
