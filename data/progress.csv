@@ -5682,6 +5682,7 @@ address,name,result,size,source,symbol
 0x004FD940,HouseClass::Check_Fire_Sale,MATCH,88,src/house.cpp,?Check_Fire_Sale@HouseClass@@QAE?AW4UrgencyType@@XZ
 0x004FD9A0,HouseClass::Check_Raise_Money,MATCH,819,src/house.cpp,?Check_Raise_Money@HouseClass@@QAE?AW4UrgencyType@@XZ
 0x004FDCE0,HouseClass::AI_Fire_Sale,MATCH,35,src/house.cpp,?AI_Fire_Sale@HouseClass@@QAE_NW4UrgencyType@@@Z
+0x004FE3E0,HouseClass::AI_Building,MATCH,1653,src/house.cpp,?AI_Building@HouseClass@@AAEHXZ
 0x004FEA60,HouseClass::AI_Unit,MATCH,1147,src/house.cpp,?AI_Unit@HouseClass@@AAEHXZ
 0x004FEEE0,HouseClass::AI_Infantry,MATCH,805,src/house.cpp,?AI_Infantry@HouseClass@@AAEHXZ
 0x004FF210,HouseClass::AI_Aircraft,MATCH,805,src/house.cpp,?AI_Aircraft@HouseClass@@AAEHXZ
@@ -7107,6 +7108,7 @@ address,name,result,size,source,symbol
 0x005432D0,_$E35,MATCH,18,src/isotile.cpp,_$E35
 0x005432F0,_$E38,MATCH,26,src/isotile.cpp,_$E38
 0x00543310,_$E47,MATCH,23,src/isotile.cpp,_$E47
+0x00543330,IsometricTileClass::Mark,MATCH,1090,src/isotile.cpp,?Mark@IsometricTileClass@@UAE_NW4MarkType@@@Z
 0x00543780,IsometricTileClass::IsometricTileClass,MATCH,253,src/isotile.cpp,??0IsometricTileClass@@QAE@W4IsometricTileType@@ABVCell@@@Z
 0x00543880,IsometricTileClass::~IsometricTileClass,MATCH,271,src/isotile.cpp,??1IsometricTileClass@@UAE@XZ
 0x00543B10,??_GIsometricTileClass@@UAEPAXI@Z,MATCH,291,src/isotile.cpp,??_GIsometricTileClass@@UAEPAXI@Z

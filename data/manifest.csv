@@ -6034,6 +6034,7 @@ address,size,symbol,source,sha256
 0x004FD940,88,?Check_Fire_Sale@HouseClass@@QAE?AW4UrgencyType@@XZ,src/house.cpp,da97ee446eb45d9b1dc0b1f0e7a4dd6c766823177bb76593882f4904aed23e75
 0x004FD9A0,819,?Check_Raise_Money@HouseClass@@QAE?AW4UrgencyType@@XZ,src/house.cpp,1d30e8e9f063bd343c497b4cf00abac29739b3cfc67bbfbb13c609693bab1ba2
 0x004FDCE0,35,?AI_Fire_Sale@HouseClass@@QAE_NW4UrgencyType@@@Z,src/house.cpp,461df85bd74345835d9ad80319e3a795a6354d3130b5ced9650e7e5d6c8e4ac7
+0x004FE3E0,1653,?AI_Building@HouseClass@@AAEHXZ,src/house.cpp,3b2ce8e7ff668d15c453dd290ae3fd6da25685320d99f1dbb622f1e4ec09673e
 0x004FEA60,1147,?AI_Unit@HouseClass@@AAEHXZ,src/house.cpp,1734d22f68bf02d90fb80c15272ae061f0c6a3d0facc3c6c7b173e10c98b7b92
 0x004FEEE0,805,?AI_Infantry@HouseClass@@AAEHXZ,src/house.cpp,0356fdc68a9ef84be81cd2c078bb62b140b9082091d7f3d85d2a0ed7eb42206a
 0x004FF210,805,?AI_Aircraft@HouseClass@@AAEHXZ,src/house.cpp,140229bf646eda576503598faa7ab1a78b90308e7e6a0d24b29677a6898e9cac
@@ -7457,6 +7458,7 @@ address,size,symbol,source,sha256
 0x005432D0,18,_$E35,src/isotile.cpp,fbec4f8b4a13ff60dac44884e20799cff31156588bef5f924e1f7ca717c685a4
 0x005432F0,26,_$E38,src/isotile.cpp,92371fe9f41baf8ba959ecc3ce5e8d932a30e8ca31ae7395dd376180378b65e9
 0x00543310,23,_$E47,src/isotile.cpp,bf538c97dca2ece1e6a7163570d760d5f70343228dd7c15409ba9454a6de15d9
+0x00543330,1090,?Mark@IsometricTileClass@@UAE_NW4MarkType@@@Z,src/isotile.cpp,c1c55a4a53fa6ff8a9e1246a0a1e202c35d7891dc91e69a7ac779a44cc2c652b
 0x00543780,253,??0IsometricTileClass@@QAE@W4IsometricTileType@@ABVCell@@@Z,src/isotile.cpp,2454518044d1c5c1918297eea76b11eaef2d172c47adf301fa06aac00facbae5
 0x00543880,271,??1IsometricTileClass@@UAE@XZ,src/isotile.cpp,623a98248a37c80dbe399cb47af817482dc46f11864e0f7ac46e5f92438eb153
 0x00543990,90,?Load@IsometricTileClass@@UAGJPAUIStream@@@Z,src/isotile.cpp,9765369fa8be80ea1896aea06d9ee04172a55bffdb7b20ca15cdc84617e5ec94

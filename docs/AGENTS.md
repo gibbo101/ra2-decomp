@@ -92,6 +92,8 @@ Every compile counts as a check, including those your own scripts run.
   prove a member: a free `__fastcall` function also takes its first argument there.
 - `WRONG TARGETS` means the bytes match but a call or global is declared as the wrong
   thing: fix the declaration, not the code.
+- A bug in the original is matched as it is; add it to `docs/BUGS.md` with its address
+  and effect.
 
 ## What has worked
 
