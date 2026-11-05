@@ -2441,6 +2441,94 @@ bool HouseClass::AI_Fire_Sale(UrgencyType urgency)
 	return(false);
 }
 
+// FUNCTION: GAMEMD 0x004FE3E0
+int HouseClass::AI_Building(void)
+{
+	enum { WALL = -3, STOP = -2, DEFENSE = -1 };
+
+	if (BuildStructure != STRUCT_NONE) return(TICKS_PER_SECOND);
+	if (ConYards.Count() == 0) return(TICKS_PER_SECOND);
+
+	BaseNodeClass * node = Base.Next_Buildable();
+	if (node == NULL) return(TICKS_PER_SECOND);
+	if (node->Type >= 0 && BuildingTypes[node->Type]->Naval && !NodeLogic_1F0) {
+		Base.Nodes.Delete_Index(Base.Nodes.ID(node));
+		node = Base.Next_Buildable();
+	}
+
+	if (node != NULL) {
+		if (node->Type == WALL) {
+			Base.Nodes.Delete_Index(Base.Nodes.ID(node));
+			AI_Build_Wall();
+			return(1);
+		}
+
+		BaseNodeClass saved(*node);
+		if (node->Type == DEFENSE || (BuildingTypes[node->Type] == Rule->WallTower && node->CellID == Cell(0, 0))) {
+			int nodeid = Base.Nodes.ID(node);
+			if (Random_Pick(0, 99) < Rule->AIPickWallDefensePercent[Difficulty] && FUN_0050C340(nodeid)) {
+				Base.Nodes.Delete_Index(Base.Nodes.ID(saved));
+				return(1);
+			}
+
+			DynamicVectorClass<Cell> * cells = NULL;
+			if (Base.OuterCells.Count() > 0) {
+				cells = &Base.OuterCells;
+			}
+			if (!AI_Build_Defense(nodeid, cells)) {
+				if (node->Type == Rule->WallTower->HeapID) {
+					Base.Nodes.Delete_Index(nodeid);
+				}
+				Base.Nodes.Delete_Index(nodeid);
+				return(1);
+			}
+		}
+
+		if (node->Type == STOP) return(TICKS_PER_SECOND);
+		BuildingTypeClass * b = BuildingTypes[node->Type];
+		if (b->Drain + Drain > Power - PowerSurplus && !Rule->BuildConst.Is_In_List(b) && b->Drain > 0
+				&& PowerBlackoutTimer == 0 && !IsBeingDrained) {
+			BuildingTypeClass const * choice;
+			if (ActLike == 0) {
+				choice = Rule->GDIPowerPlant;
+			} else if (ActLike == 2) {
+				choice = Rule->ThirdPowerPlant;
+			} else {
+				DynamicVectorClass<BuildingTypeClass const *> owned_buildings;
+				for (int i = Buildings.Count() - 1; i >= 0; i--) {
+					// The game passes the building instance addresses to the prerequisite check.
+					owned_buildings.Add(reinterpret_cast<BuildingTypeClass const *>(Buildings[i]));
+				}
+				if (AI_Has_Prerequisites(Rule->NodAdvancedPower, owned_buildings, owned_buildings.Count())) {
+					choice = Rule->NodAdvancedPower;
+				} else {
+					choice = Rule->NodRegularPower;
+				}
+			}
+
+			int id = Base.Nodes.ID(node);
+			Base.Nodes.Insert_After(BaseNodeClass(choice->HeapID, Cell(0, 0)), id - 1);
+			return(1);
+		}
+
+		if (b->PowersUpToLevel <= 0 && b->PowersUpToLevel == -1 && node->CellID != CELL_NONE && b->PowersUpBuilding[0]) {
+			char const * upgrade_name = b->PowersUpBuilding;
+			BuildingClass * existing_building = Map[node->CellID].Cell_Building();
+			BuildingTypeClass * powerup = BuildingTypes[BuildingTypeClass::From_Name(upgrade_name)];
+			if (existing_building == NULL) {
+				node->CellID = Cell(0, 0);
+			} else if (existing_building->Class != powerup) {
+				node->CellID = Cell(0, 0);
+			} else if ((existing_building->Class->PowersUpToLevel == -1 && existing_building->UpgradeLevel >= existing_building->Class->Upgrades)
+					|| (existing_building->Class->PowersUpToLevel > 0 && existing_building->UpgradeLevel > 0)) {
+				node->CellID = Cell(0, 0);
+			}
+		}
+		BuildStructure = node->Type;
+	}
+	return(TICKS_PER_SECOND);
+}
+
 // FUNCTION: GAMEMD 0x004FEA60
 int HouseClass::AI_Unit(void)
 {
