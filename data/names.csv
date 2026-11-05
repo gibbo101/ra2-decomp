@@ -386,3 +386,6 @@ address,name,symbol,evidence
 0x00A8E7AC,ScenarioInit,?ScenarioInit@@3HA,Unsorted::ScenarioInit in YRpp; 208 references across 30 translation units agree on this base
 0x007F0C7C,AUDIOVISUAL,_AUDIOVISUAL,RulesClass::Audio_Visual_Rules reads this section pointer at 0x006691E0. It points to the AudioVisual string at 0x00839EA8.
 0x0089F75C,LauncherMessage,_LauncherMessage,NotifyLauncher and DispatchLauncherMessage store the mapped view here and ShutDown unmaps it.
+0x007F6BB4,WaveLengthFactor,_WaveLengthFactor,Indexed by WaveType for both endpoints in 0x00761640 and 0x00762070 with four image values 1.0 1.05 1.05 1.0
+0x00B45DA8,WaveClass::Draw_NonMagnetic::WaveSize,_?WaveSize@?1??Draw_NonMagnetic@WaveClass@@AAEXABVCoord@@0@Z@4PAY03VVector3@@A,0x00761640 initializes sixteen local Vector3 corners and indexes four corners per wave type
+0x00B45CA0,WaveClass::Draw_Magnetic::WaveSize,_?WaveSize@?1??Draw_Magnetic@WaveClass@@AAEXABVCoord@@0@Z@4PAY03VVector3@@A,0x00762070 initializes sixteen local Vector3 corners and indexes four corners per wave type

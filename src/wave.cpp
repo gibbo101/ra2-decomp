@@ -78,6 +78,7 @@ extern short SineTable2[496];
 extern int IntensityTable[_INTENSITY_TABLE_SIZE];
 extern bool _tables_calculated;
 
+static const float WaveLengthFactor[] = { 1.0f, 1.05f, 1.05f, 1.0f };
 const float WaveStep = 0.05f;
 
 FacingType Facing_Between_Points(Point2D const & pt1, Point2D const & pt2);
@@ -659,15 +660,227 @@ void WaveClass::Wave_Recalc_Affected_Cells(void)
 	}
 }
 
-// FUNCTION: GAMEMD 0x00762060
-void WaveClass::FUN_00762060(void)
+static inline void Lerp_From(Coord & point, Coord const & origin, float t)
 {
+	double inv = 1.0 - t;
+	point = Coord(origin.X * inv + point.X * t, origin.Y * inv + point.Y * t, origin.Z * inv + point.Z * t);
 }
 
-// FUNCTION: GAMEMD 0x00762AE0
-void WaveClass::FUN_00762AE0(void)
+// FUNCTION: GAMEMD 0x00761640
+void WaveClass::Draw_NonMagnetic(Coord const & source_coord, Coord const & target_coord)
 {
+	static Vector3 WaveSize[][4] = {
+		{Vector3(-30.0, -100.0, 0.0), Vector3(-30.0, 100.0, 0.0), Vector3(30.0, -100.0, 0.0),
+		 Vector3(30.0, 100.0, 0.0)},
+		{Vector3(-34.0, -44.0, 0.0), Vector3(-34.0, 44.0, 0.0), Vector3(34.0, -44.0, 0.0),
+		 Vector3(34.0, 44.0, 0.0)},
+		{Vector3(-27.0, -34.0, 0.0), Vector3(-27.0, 34.0, 0.0), Vector3(27.0, -34.0, 0.0),
+		 Vector3(27.0, 34.0, 0.0)},
+		{Vector3(-30, -50, 0), Vector3(-30, 50, 0), Vector3(30, -50, 0), Vector3(30, 50, 0)}};
+
+	Coord start_coord = source_coord;
+	Coord end_coord = Lerp(start_coord, target_coord, WaveLengthFactor[Type]);
+	if (Type == WAVE_SONIC) {
+		end_coord.Z += 50;
+	}
+
+	if (Type == 3) { // Magnetic wave
+		end_coord.Z += 50;
+	}
+	Lerp_From(start_coord, target_coord, WaveLengthFactor[Type]);
+
+	TPoint3D<float> planar_delta(start_coord.X - end_coord.X, start_coord.Y - end_coord.Y, 0);
+	int distance2d =
+		fastmath::sqrt((double)planar_delta.Y * planar_delta.Y + (double)planar_delta.X * planar_delta.X);
+
+	// Set initial coordinates
+	StartCoord = start_coord;
+	Set_Coord(StartCoord);
+	EndCoord = end_coord;
+
+	WaveShape.Count = 6;
+	WaveShape.Vertices = &ActiveWave.StartMiddle;
+
+	// Calculate wave points
+	TacticalMap->Coord_To_Pixel(start_coord, WaveStartMiddle);
+	TacticalMap->Coord_To_Pixel(end_coord, WaveEndMiddle);
+
+	WaveShape.Vertices[PolygonShapeStruct::END_MIDDLE] = WaveEndMiddle;
+	WaveShape.Vertices[PolygonShapeStruct::START_MIDDLE] = WaveStartMiddle;
+
+	double distance2d_f = distance2d;
+
+	Vector3 far_offset(distance2d_f, 0, 0);
+	Vector3 near_offset(0, 0, 0);
+	Vector3 end_left = WaveSize[Type][0] + far_offset;
+	Vector3 end_right = WaveSize[Type][1] + far_offset;
+	Vector3 start_left = WaveSize[Type][2] + near_offset;
+	Vector3 start_right = WaveSize[Type][3] + near_offset;
+
+	double dz = end_coord.Z - start_coord.Z;
+
+	end_left.Z = end_left.X * dz / distance2d_f + start_coord.Z;
+	end_right.Z = end_right.X * dz / distance2d_f + start_coord.Z;
+	start_left.Z = start_left.X * dz / distance2d_f + start_coord.Z;
+	start_right.Z = start_right.X * dz / distance2d_f + start_coord.Z;
+
+	TPoint3D<float> heading(end_coord.X - start_coord.X, end_coord.Y - start_coord.Y, 0);
+	double dx = heading.X;
+	double dist = heading.Length();
+
+	if (dist < dx) {
+		dx = dist;
+	}
+	if (-dx > dist) {
+		dx = -dist;
+	}
+
+	double theta = fastmath::acos(dx / dist);
+	if (start_coord.Y > end_coord.Y) {
+		theta = -theta;
+	}
+
+	// Calculate wave vectors
+	Matrix3D matrix;
+	matrix.Make_Identity();
+	matrix.Rotate_Z(theta);
+
+	end_left = matrix * end_left;
+	end_right = matrix * end_right;
+	start_left = matrix * start_left;
+	start_right = matrix * start_right;
+
+	// Set wave coordinates
+	WaveEndLeftCoord = Coord(start_coord.X + end_left.X, start_coord.Y + end_left.Y, end_left.Z);
+	WaveEndRightCoord = Coord(start_coord.X + end_right.X, start_coord.Y + end_right.Y, end_right.Z);
+	WaveStartLeftCoord = Coord(start_coord.X + start_left.X, start_coord.Y + start_left.Y, start_left.Z);
+	WaveStartRightCoord = Coord(start_coord.X + start_right.X, start_coord.Y + start_right.Y, start_right.Z);
+
+	// Convert coordinates to pixels
+	TacticalMap->Coord_To_Pixel(WaveEndLeftCoord, WaveEndLeft);
+	TacticalMap->Coord_To_Pixel(WaveEndRightCoord, WaveEndRight);
+	TacticalMap->Coord_To_Pixel(WaveStartLeftCoord, WaveStartLeft);
+	TacticalMap->Coord_To_Pixel(WaveStartRightCoord, WaveStartRight);
+
+	// Set wave points
+	WaveShape.Vertices[PolygonShapeStruct::END_LEFT] = WaveEndLeft;
+	WaveShape.Vertices[PolygonShapeStruct::END_RIGHT] = WaveEndRight;
+	WaveShape.Vertices[PolygonShapeStruct::START_RIGHT] = WaveStartRight;
+	WaveShape.Vertices[PolygonShapeStruct::START_LEFT] = WaveStartLeft;
+
+	// Copy facing
+	Facing = Source->SecondaryFacing;
 }
+
+// SYNTHETIC: GAMEMD 0x00762060 SYMBOL
+// _$E138
+
+// FUNCTION: GAMEMD 0x00762070
+void WaveClass::Draw_Magnetic(Coord const & source_coord, Coord const & target_coord)
+{
+	static Vector3 WaveSize[][4] = {
+		{Vector3(-30.0, -100.0, 0.0), Vector3(-30.0, 100.0, 0.0), Vector3(30.0, -100.0, 0.0),
+		 Vector3(30.0, 100.0, 0.0)},
+		{Vector3(-34.0, -44.0, 0.0), Vector3(-34.0, 44.0, 0.0), Vector3(34.0, -44.0, 0.0),
+		 Vector3(34.0, 44.0, 0.0)},
+		{Vector3(-27.0, -34.0, 0.0), Vector3(-27.0, 34.0, 0.0), Vector3(27.0, -34.0, 0.0),
+		 Vector3(27.0, 34.0, 0.0)},
+		{Vector3(0, -50, 0), Vector3(0, 50, 0), Vector3(0, -50, 0), Vector3(0, 50, 0)}};
+
+	Coord start_coord = source_coord;
+	Coord end_coord = Lerp(start_coord, target_coord, WaveLengthFactor[Type]);
+	if (Type == WAVE_SONIC) {
+		end_coord.Z += 50;
+	}
+
+	if (Type == 3) { // Magnetic wave
+		end_coord.Z += 50;
+	}
+	Lerp_From(start_coord, target_coord, WaveLengthFactor[Type]);
+
+	float distance2d = TPoint3D<float>(start_coord.X - end_coord.X, start_coord.Y - end_coord.Y, 0).Length();
+	int distance3d =
+		TPoint3D<float>(start_coord.X - end_coord.X, start_coord.Y - end_coord.Y, start_coord.Z - end_coord.Z)
+			.Length();
+
+	// Set initial coordinates
+	StartCoord = start_coord;
+	Set_Coord(StartCoord);
+	EndCoord = end_coord;
+
+	WaveShape.Count = 4;
+	WaveShape.Vertices = (Point2D *)MagPoints;
+
+	// Calculate wave points
+	TacticalMap->Coord_To_Pixel(start_coord, WaveStartMiddle);
+	TacticalMap->Coord_To_Pixel(end_coord, WaveEndMiddle);
+
+	double distance2d_f = int(distance2d);
+	Vector3 far_offset(distance2d_f, 0, 0);
+	Vector3 near_offset(0, 0, 0);
+
+	Vector3 end_left = WaveSize[Type][0] + far_offset;
+	Vector3 end_right = WaveSize[Type][1] + far_offset;
+	Vector3 start_left = WaveSize[Type][2] + near_offset;
+	Vector3 start_right = WaveSize[Type][3] + near_offset;
+
+	double dz = end_coord.Z - start_coord.Z;
+
+	end_left.Z = end_left.X * dz / distance3d + start_coord.Z;
+	end_right.Z = end_right.X * dz / distance3d + start_coord.Z;
+	start_left.Z = start_left.X * dz / distance3d + start_coord.Z;
+	start_right.Z = start_right.X * dz / distance3d + start_coord.Z;
+
+	TPoint3D<float> heading(end_coord.X - start_coord.X, end_coord.Y - start_coord.Y, 0);
+	double dx = heading.X;
+	double dist = heading.Length();
+
+	if (dist < dx) {
+		dx = dist;
+	}
+	if (-dx > dist) {
+		dx = -dist;
+	}
+
+	double theta = fastmath::acos(dx / dist);
+	if (start_coord.Y > end_coord.Y) {
+		theta = -theta;
+	}
+
+	// Calculate wave vectors
+	Matrix3D matrix;
+	matrix.Make_Identity();
+	matrix.Rotate_Z(theta);
+
+	end_left = matrix * end_left;
+	end_right = matrix * end_right;
+	start_left = matrix * start_left;
+	start_right = matrix * start_right;
+
+	// Set wave coordinates
+	WaveEndLeftCoord = Coord(start_coord.X + end_left.X, start_coord.Y + end_left.Y, end_left.Z);
+	WaveEndRightCoord = Coord(start_coord.X + end_right.X, start_coord.Y + end_right.Y, end_right.Z);
+	WaveStartLeftCoord = Coord(start_coord.X + start_left.X, start_coord.Y + start_left.Y, start_left.Z);
+	WaveStartRightCoord = Coord(start_coord.X + start_right.X, start_coord.Y + start_right.Y, start_right.Z);
+
+	// Convert coordinates to pixels
+	TacticalMap->Coord_To_Pixel(WaveEndLeftCoord, WaveEndLeft);
+	TacticalMap->Coord_To_Pixel(WaveEndRightCoord, WaveEndRight);
+	TacticalMap->Coord_To_Pixel(WaveStartLeftCoord, WaveStartLeft);
+	TacticalMap->Coord_To_Pixel(WaveStartRightCoord, WaveStartRight);
+
+	// Set wave points
+	WaveShape.Vertices[0] = WaveEndLeft;
+	WaveShape.Vertices[1] = WaveEndRight;
+	WaveShape.Vertices[2] = WaveStartRight;
+	WaveShape.Vertices[3] = WaveStartLeft;
+
+	// Copy facing
+	Facing = Source->SecondaryFacing;
+}
+
+// SYNTHETIC: GAMEMD 0x00762AE0 SYMBOL
+// _$E140
 
 // FUNCTION: GAMEMD 0x00762AF0
 void WaveClass::Update_Wave(void)
