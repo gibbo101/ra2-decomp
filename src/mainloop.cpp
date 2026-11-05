@@ -275,7 +275,6 @@ void FUN_0055CF10(void)
 	}
 }
 
-extern int DAT_00A8DAB4;
 extern unsigned char DAT_00A8F900;
 void __fastcall FUN_0072DFB0(void);
 void __fastcall Send_Statistics_Packet(bool);
@@ -300,7 +299,7 @@ bool __fastcall FUN_0055CFD0(void)
 	}
 
 	if (PlayerWins || PlayerLoses || PlayerRestarts || PlayerAborts) {
-		++DAT_00A8DAB4;
+		++Session.Suspended;
 		Lock_Scenario_Input();
 		if (PlayerWins || PlayerLoses) {
 			if (ToolTips != NULL) {
@@ -368,7 +367,7 @@ bool __fastcall FUN_0055CFD0(void)
 			FUN_0055CF10();
 		}
 	done:
-		--DAT_00A8DAB4;
+		--Session.Suspended;
 	}
 	return(!GameActive);
 }
