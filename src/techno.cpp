@@ -1683,10 +1683,6 @@ void TechnoClass::AI(void)
 		return;
 	}
 
-	/*
-	**	If this is a vehicle that heals itself (e.g., Mammoth Tank), then it will perform
-	**	the heal logic here.
-	*/
 	if (Should_Self_Heal_Now()) {
 		Strength++;
 		if (HealthRatio > Rule->ConditionYellow || HeightAGL < -10) {
@@ -1736,10 +1732,6 @@ void TechnoClass::AI(void)
 		}
 	}
 
-	/*
-	**	If for some strange reason, the computer is firing upon itself, then
-	**	tell it not to.
-	*/
 	if (Session.Type == GAME_NORMAL && !House->Is_Player_Control() && TarCom && !House->CanOverpower(TarCom) &&
 		Combat_Damage() < 0) {
 		Assign_Target(NULL);
@@ -1758,10 +1750,6 @@ void TechnoClass::AI(void)
 		}
 	}
 
-	/*
-	**	Perform a maintenance check to see that if somehow this object is trying to fire
-	**	upon an object it can never hit (because it can't reach it), then abort the tarcom
-	*/
 	if (RTTI != RTTI_AIRCRAFT && TarCom != NULL && !Is_In_Team()) {
 		FootClass * foot = NULL;
 		if (Is_Foot()) {
@@ -1782,19 +1770,10 @@ void TechnoClass::AI(void)
 		}
 	}
 
-	/*
-	**	Update the animation timer system. If the animation stage
-	**	changes, then flag the object to be redrawn as well as determine
-	**	if the current animation process needs to change.
-	*/
 	if (RTTI != RTTI_BUILDING) {
 		Animation.Graphic_Logic();
 	}
 
-	/*
-	**	If the object is flashing and a change of flash state has occurred, then mark the
-	**	object to be redrawn.
-	*/
 	unsigned int oldflash = Flashing.FlashCount;
 	bool was_flash_on = ((oldflash / 2) % 2) == 1;
 
