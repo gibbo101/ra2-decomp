@@ -939,7 +939,7 @@ int Owner_From_Name(char const * text)
 }
 
 // FUNCTION: GAMEMD 0x0048DED0
-void Conquer_Nop3(void)
+void Shake_The_Screen(int)
 {
 }
 

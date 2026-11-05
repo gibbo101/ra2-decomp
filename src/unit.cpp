@@ -1058,6 +1058,53 @@ ResultType UnitClass::Take_Damage(int & damage, int distance, WarheadTypeClass c
 	return(res);
 }
 
+static void Shake_On_Explosion(int strength)
+{
+	if (strength > Rule->ShakeScreen) {
+		int shakes = strength / (Rule->ShakeScreen / 2) + 3;
+		Shake_The_Screen(MIN(shakes, 6));
+	}
+}
+
+// FUNCTION: GAMEMD 0x00738680
+void UnitClass::Explode(void)
+{
+	if (Class->Explosion.Count() > 0) {
+		AnimTypeClass const * anim = Class->Explosion.Pick(Scen->RandomNumber);
+
+		/*
+		**	SSM launchers will really explode big if they are carrying
+		**	missiles at the time of the explosion.
+		*/
+		if (Class->IsExploding || Has_Ability(ABILITY_EXPLODES)) {
+			if (Class->MaxAmmo == -1 || Ammo > 0) {
+				anim = Class->Explosion[Class->Explosion.Count() - 1];
+			}
+		}
+
+		new AnimClass(anim, PositionCoord);
+
+		// The game sums the cargo power here without applying area damage.
+		if (Storage.Get_Total_Amount() > 0 && Rule->IsExplosiveHarvester && !Scen->Special.IsHarvesterImmune) {
+			int power = 0;
+			for (int i = 0; i < Tiberiums.Count(); i++) {
+				power += Storage.Get_Amount(i) * Tiberiums[i]->Power;
+			}
+		}
+
+		/*
+		**	Very strong units that have an explosion will also rock the
+		**	screen when they are destroyed.
+		*/
+		Shake_On_Explosion(Class->MaxStrength);
+	}
+
+	if (Class->DestroyAnim.Count() > 0) {
+		AnimTypeClass const * anim = Class->DestroyAnim.Pick(Scen->RandomNumber);
+		new AnimClass(anim, PositionCoord);
+	}
+}
+
 // FUNCTION: GAMEMD 0x00738890
 bool UnitClass::Active_Click_With(ActionType action, ObjectClass * object, bool is_waypoint)
 {

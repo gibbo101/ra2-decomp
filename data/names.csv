@@ -383,3 +383,4 @@ address,name,symbol,evidence
 0x00B73550,MainWindow,?MainWindow@@3PAUHWND__@@A,Matched ScrollClass::Message_Handler (0x006930A0) passes this HWND to SetCapture and YRpp identifies Game::hWnd at this address
 0x00B0C110,Swizzler,?Swizzler@@3VSwizzleManagerClass@@A,SwizzleManagerClass::Instance in YRpp; 340 references across 74 translation units agree on this base
 0x00A8E7AC,ScenarioInit,?ScenarioInit@@3HA,Unsorted::ScenarioInit in YRpp; 208 references across 30 translation units agree on this base
+0x0048DED0,Shake_The_Screen,?Shake_The_Screen@@YIXH@Z,Called by matched BuildingClass::Do_Destruction at 0x00441C34 and UnitClass::Explode at 0x007387FC
