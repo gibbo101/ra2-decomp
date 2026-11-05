@@ -2126,6 +2126,41 @@ none:
 	return(beam);
 }
 
+// FUNCTION: GAMEMD 0x006FD800
+void TechnoClass::CreateRadBeams(int spread)
+{
+	Coord source = Center_Coord();
+	Cell cell = source.As_Cell();
+	RGBClass color = Rule->RadColor;
+	int longest = 0;
+	for (int x = -1; x <= 1; x++) {
+		for (int y = -1; y <= 1; y++) {
+			if (x == 0 && y == 0) continue;
+			int ox = x * spread;
+			int oy = y * spread;
+			Cell offset(ox, oy);
+			Cell newcell = cell + offset;
+			Coord dest = Map[newcell].Cell_Coord();
+			int dx = NonCriticalRandomNumber(-128, 128);
+			int dy = NonCriticalRandomNumber(-128, 128);
+			dest.X += dx;
+			dest.Y += dy;
+			RadBeam * beam = RadBeam::Allocate(2);
+			beam->FUN_00659470(color);
+			int period = NonCriticalRandomNumber(5, 20);
+			int amplitude = NonCriticalRandomNumber(100, 500);
+			int end = NonCriticalRandomNumber(0, 20);
+			beam->FUN_006594A0(source);
+			beam->FUN_006594C0(dest);
+			beam->FUN_006594E0(period);
+			beam->FUN_006594F0(amplitude);
+			beam->FUN_00659510(0.0);
+			beam->FUN_00659530(end);
+			if (longest <= period) longest = period;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x006FDA00
 DirType TechnoClass::Barrel_Pitch(AbstractClass * target) const
 {
