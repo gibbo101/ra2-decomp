@@ -1490,6 +1490,373 @@ bool TechnoClass::Is_Voxel_Loaded(void) const
 	return(true);
 }
 
+AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
+
+static inline Coord Spark_Coord(TechnoClass const & unit)
+{
+	return unit.Center_Coord() + unit.TClass->GetParticleSysOffset();
+}
+
+// FUNCTION: GAMEMD 0x006F9E50
+void TechnoClass::AI(void)
+{
+	if (IsMouseHovering) {
+		IsMouseHovering = false;
+	}
+	if (Techno_Type_Class()->IsGattling) {
+		FUN_00750D40(PositionCoord, &GattlingSoundController);
+	}
+	FUN_0070E5A0();
+	FUN_0070E920();
+	if (QueuedVoiceIndex != -1) {
+		if (!QueuedVoiceSoundController.GetEvent()) {
+			unknown_4F4 = QueuedVoiceIndex;
+			VocClass::PlayGlobal(unknown_4F4, 1.0f, 0x2000, &QueuedVoiceSoundController);
+			QueuedVoiceIndex = -1;
+		} else if (unknown_4F4 == QueuedVoiceIndex) {
+			QueuedVoiceIndex = -1;
+		}
+	}
+	if (Berzerk && --BerzerkDurationLeft <= 0) {
+		Berzerk = false;
+		BerzerkDurationLeft = 0;
+		Assign_Target(NULL);
+		if (House->IsHuman) {
+			QueueMission(MISSION_GUARD, false);
+		} else {
+			QueueMission(MISSION_HUNT, false);
+		}
+	}
+	if (EstimatedHealth > Strength) {
+		EstimatedHealth = Strength;
+	}
+	if ((Frame & 4) && EstimatedHealth < Strength) {
+		if (EstimatedHealth + 30 < 0) {
+			EstimatedHealth = -30;
+		}
+		++EstimatedHealth;
+	}
+	if (Techno_Type_Class()->IsTurretEquipped) {
+		if (TurretIsRotating) {
+			if (IsTurretRotateSoundPlaying) {
+				TurretRotateSoundController.Stop();
+				VocClass::PlayAt(Techno_Type_Class()->TurretRotateSound, PositionCoord,
+								 &TurretRotateSoundController);
+				IsTurretRotateSoundPlaying = false;
+			}
+		} else {
+			TurretRotateSoundController.EndLooping();
+			IsTurretRotateSoundPlaying = true;
+		}
+		FUN_00750D40(PositionCoord, &TurretRotateSoundController);
+	}
+	if (CurrentRanking != Veterancy.Remaining_Levels()) {
+		if (CurrentRanking != -1) {
+			if (Veterancy.Remaining_Levels() == 0) {
+				if (House->Is_Player_Control()) {
+					VocClass::PlayAt(Rule->UpgradeEliteSound, PositionCoord);
+					VoxClass::Play("EVA_UnitPromoted");
+				}
+				Flashing.FlashCount = Rule->EliteFlashTimer;
+			} else if (Veterancy.Remaining_Levels() == 1 && House->Is_Player_Control()) {
+				VocClass::PlayAt(Rule->UpgradeVeteranSound, PositionCoord);
+				VoxClass::Play("EVA_UnitPromoted");
+			}
+		}
+		CurrentRanking = Veterancy.Remaining_Levels();
+	}
+	if (DrainingMe && Techno_Type_Class()->ResourceDestination && Frame % Rule->DrainMoneyFrameDelay == 0) {
+		int amount = Rule->DrainMoneyAmount;
+		if (House->Available_Money() < amount) {
+			amount = House->Available_Money();
+		}
+		House->Spend_Money(amount);
+		DrainingMe->House->Refund_Money(amount);
+	}
+	if (DrainTarget && DrainTarget->House->Is_Ally(this)) {
+		if (DrainAnim) {
+			DrainAnim->Delete_Me();
+			DrainAnim = NULL;
+		}
+		if (DrainTarget) {
+			DrainTarget->DrainingMe = NULL;
+			if (DrainTarget->House) {
+				DrainTarget->House->RecalcPower = true;
+			}
+			DrainTarget = NULL;
+		}
+	}
+
+	if (Is_Voxel_Loaded()) {
+		Try_To_Cloak();
+		if (!IsActive) {
+			return;
+		}
+	}
+
+	Rect rect;
+	Point2D point;
+	Cell cell = Center_Coord().As_Cell();
+	CellClass & cover = Map[cell];
+	if (Techno_Type_Class()->CanBeHidden && cover.FUN_00487E00() && !Is_Target_Aircraft(this)) {
+		FUN_0070F1D0(point, rect);
+	} else if (BehindAnim) {
+		if (RTTI != RTTI_BUILDING) {
+			// The type lookup also occurs on the cleanup path.
+			Techno_Type_Class();
+		}
+		BehindAnim->Delete_Me();
+		BehindAnim = NULL;
+	}
+	bool use_controller = false;
+	HouseClass * controller = NULL;
+	if (Transporter && Transporter->Techno_Type_Class()->OpenTopped && Transporter->MindControlledBy) {
+		controller = Transporter->MindControlledBy->House;
+		use_controller = true;
+	}
+	if (((!use_controller && !House->FUN_0050B730()) || (use_controller && !controller->FUN_0050B730())) &&
+		TarCom &&
+		((!use_controller && House->CanOverpower(TarCom)) ||
+		 (use_controller && controller->CanOverpower(TarCom)))) {
+		bool infantry = RTTI == RTTI_INFANTRY;
+		bool building = TarCom->Fetch_RTTI() == RTTI_BUILDING;
+		bool occupy = infantry && building && ((BuildingClass *)TarCom)->CanBeOccupiedBy((InfantryClass *)this);
+		bool engineer = infantry && ((InfantryClass *)this)->Class->IsEngineer;
+		bool assault = Get_Class_Weapon_Data(1)->Weapon &&
+					   Get_Class_Weapon_Data(1)->Weapon->WarheadPtr->ElectricAssault && building &&
+					   ((BuildingClass *)TarCom)->Class->Overpowerable;
+		if (!engineer && !assault && !occupy && !Berzerk) {
+			Assign_Target(NULL);
+		}
+	}
+	if (TarCom && Frame % 16 == 0 && CurrentMission != MISSION_CAPTURE && CurrentMission != MISSION_SABOTAGE) {
+		int error = GetFireErrorWithoutRange(TarCom, What_Weapon_Should_I_Use(TarCom));
+		if (error == FIRE_ILLEGAL || error == FIRE_CANT) {
+			Assign_Target(NULL);
+		}
+	}
+
+	if (Techno_Type_Class()->TurretRecoil) {
+		TurretRecoil.Update();
+		BarrelRecoil.Update();
+	}
+
+	if (Techno_Type_Class()->IsChargeTurret && Techno_Type_Class()->HasMultipleTurrets() &&
+		!Techno_Type_Class()->IsGattling) {
+		int n = 0;
+		if (ChargeTurretDelay > 0) {
+			n = Techno_Type_Class()->TurretCount * Arm.Value() / ChargeTurretDelay;
+			if (n >= Techno_Type_Class()->TurretCount) {
+				n = Techno_Type_Class()->TurretCount - 1;
+			} else if (n < 0) {
+				n = 0;
+			}
+		}
+		CurrentTurretNumber = n;
+	}
+	Door.AI();
+	if (unknown_41E) {
+		--unknown_41E;
+	}
+	if (TarCom && ShouldLoseTargetNow && FUN_00709500()) {
+		Assign_Target(NULL);
+	}
+	++MissionAccumulateTime;
+	MissionClass::AI();
+	if (TargetingTimer.Value() == 0) {
+		if (MegaMissionIsAttackMove()) {
+			UpdateAttackMove();
+		} else if (FUN_007094E0()) {
+			FUN_00709480();
+		}
+	}
+	if (AttachedBomb && !IsInLimbo && AttachedBomb->Time_To_Explode()) {
+		AttachedBomb->Detonate();
+	}
+	if (SlaveManager) {
+		SlaveManager->AI();
+	}
+	if (CaptureManager) {
+		CaptureManager->HandleOverload();
+	}
+	if (!IsActive) {
+		return;
+	}
+
+	/*
+	**	If this is a vehicle that heals itself (e.g., Mammoth Tank), then it will perform
+	**	the heal logic here.
+	*/
+	if (Should_Self_Heal_Now()) {
+		Strength++;
+		if (HealthRatio > Rule->ConditionYellow || HeightAGL < -10) {
+			if (ParticleSystems[ATTACHED_PARTICLE_DAMAGE] != NULL) {
+				ParticleSystems[ATTACHED_PARTICLE_DAMAGE]->Delete_Me();
+			}
+		}
+	}
+
+	bool skip_self_heal = false;
+	if (Strength >= Techno_Type_Class()->MaxStrength) {
+		skip_self_heal = true;
+	}
+	if (Strength == 0) {
+		skip_self_heal = true;
+	}
+	if (RTTI == RTTI_UNIT && !Techno_Type_Class()->Organic && !skip_self_heal) {
+		if (Frame % Rule->SelfHealUnitFrames == 0 && House->FUN_0050D9D0()) {
+			Strength += (House->GetUnitSelfHealStep() < Techno_Type_Class()->MaxStrength - Strength
+							 ? House->GetUnitSelfHealStep()
+							 : Techno_Type_Class()->MaxStrength - Strength);
+			if ((HealthRatio > Rule->ConditionYellow || HeightAGL < -10) &&
+				ParticleSystems[ATTACHED_PARTICLE_DAMAGE]) {
+				ParticleSystems[ATTACHED_PARTICLE_DAMAGE]->Delete_Me();
+			}
+		}
+	} else if ((RTTI == RTTI_INFANTRY || (RTTI == RTTI_UNIT && Techno_Type_Class()->Organic)) && !skip_self_heal &&
+			   Frame % Rule->SelfHealInfantryFrames == 0 && House->FUN_0050D9C0()) {
+		Strength += (House->GetInfSelfHealStep() < Techno_Type_Class()->MaxStrength - Strength
+						 ? House->GetInfSelfHealStep()
+						 : Techno_Type_Class()->MaxStrength - Strength);
+	}
+	Cloaking_AI();
+	if (SpawnManager) {
+		SpawnManager->AI();
+	}
+
+	if (Cloak == UNCLOAKED) {
+		if (Map[Center_Coord()].Is_Cloaked(House->HeapID)) {
+			Sensed();
+		}
+	}
+
+	if (Cloak == CLOAKED) {
+		if (!Map[Center_Coord()].Is_Cloaked(House->HeapID)) {
+			Sensed();
+		}
+	}
+
+	/*
+	**	If for some strange reason, the computer is firing upon itself, then
+	**	tell it not to.
+	*/
+	if (Session.Type == GAME_NORMAL && !House->Is_Player_Control() && TarCom && !House->CanOverpower(TarCom) &&
+		Combat_Damage() < 0) {
+		Assign_Target(NULL);
+	}
+	if (TarCom != NULL && Session.Type != GAME_NORMAL && House->IsHuman) {
+		if (Combat_Damage() < 0 && !House->CanOverpower(TarCom)) {
+			Assign_Target(NULL);
+		}
+	}
+
+	if (TarCom != NULL && TarCom->RTTI == RTTI_AIRCRAFT) {
+		AircraftClass * tarcom = (AircraftClass *)TarCom;
+		if (RTTI == RTTI_UNIT && Combat_Damage() < 0 &&
+			(tarcom->HeightAGL > 0 || Map[tarcom->Get_Coord()].Cell_Building() != NULL)) {
+			Assign_Target(NULL);
+		}
+	}
+
+	/*
+	**	Perform a maintenance check to see that if somehow this object is trying to fire
+	**	upon an object it can never hit (because it can't reach it), then abort the tarcom
+	*/
+	if (RTTI != RTTI_AIRCRAFT && TarCom != NULL && !Is_In_Team()) {
+		FootClass * foot = NULL;
+		if (Is_Foot()) {
+			foot = (FootClass *)this;
+		}
+		if (foot == NULL || foot->NavCom == NULL) {
+			if (!Is_In_Same_Zone_As((ObjectClass *)TarCom) || InOpenToppedTransport) {
+				if (Is_Foot()) {
+					foot->Approach_Target();
+				}
+				if (foot == NULL || foot->NavCom == NULL) {
+					int primary = What_Weapon_Should_I_Use(TarCom);
+					if (!In_Range(TarCom, primary)) {
+						Assign_Target(NULL);
+					}
+				}
+			}
+		}
+	}
+
+	/*
+	**	Update the animation timer system. If the animation stage
+	**	changes, then flag the object to be redrawn as well as determine
+	**	if the current animation process needs to change.
+	*/
+	if (RTTI != RTTI_BUILDING) {
+		Animation.Graphic_Logic();
+	}
+
+	/*
+	**	If the object is flashing and a change of flash state has occurred, then mark the
+	**	object to be redrawn.
+	*/
+	unsigned int oldflash = Flashing.FlashCount;
+	bool was_flash_on = ((oldflash / 2) % 2) == 1;
+
+	if (Flashing.Process()) {
+		Mark(MARK_CHANGE);
+	}
+
+	if (oldflash != 0 && oldflash != Flashing.FlashCount && RTTI == RTTI_BUILDING) {
+		if (was_flash_on != (((Flashing.FlashCount / 2) % 2) == 1)) {
+			TacticalMap->Register_Dirty_Area(Get_Render_Rect(), false);
+			((BuildingClass *)this)->Update_Anim_Appearance();
+		}
+	}
+
+	TechnoTypeClass const * tclass = TClass;
+	if (tclass->IsDamageSparks && HealthRatio < Rule->ConditionYellow && HeightAGL > -10) {
+		DynamicVectorClass<ParticleSystemTypeClass const *> sparks;
+		for (int i = 0; i < tclass->DamageParticleSystems.Count(); i++) {
+			if (tclass->DamageParticleSystems[i]->BehavesLike == PSYS_BEHAVIOR_SPARK) {
+				sparks.Add(tclass->DamageParticleSystems[i]);
+			}
+		}
+
+		if (ParticleSystems[ATTACHED_PARTICLE_SPARK] == NULL && sparks.Count() > 0) {
+			double probability = HealthRatio < Rule->ConditionRed ? Rule->ConditionRedSparkingProbability
+																  : Rule->ConditionYellowSparkingProbability;
+			if (Random_Double(0.0, 1.0) < probability) {
+				ParticleSystems[ATTACHED_PARTICLE_SPARK] = new ParticleSystemClass(
+					sparks[Random_Pick(0, sparks.Count() - 1)], Spark_Coord(*this), NULL, this);
+			}
+		}
+	}
+
+	Update_Radar_Position();
+
+	if ((int)EMPLockRemaining > 0) {
+		EMPLockRemaining--;
+		if (EMPLockRemaining == 0) {
+			if (RTTI == RTTI_BUILDING) {
+				BuildingClass * building = (BuildingClass *)this;
+				if (building != NULL && !building->Class->IsInvisibleInGame) {
+					building->EnableStuff();
+					if (building->Class->IsRadar) {
+						building->House->RecalcRadar = true;
+					}
+				}
+			} else if (Is_Foot()) {
+				FootClass * foot = (FootClass *)this;
+				if (foot->Locomotion != NULL) {
+					foot->Locomotion->Power_On();
+				}
+				for (int i = 0; i < AnimClass::Array.Count(); i++) {
+					AnimClass * anim = AnimClass::Array[i];
+					if (anim != NULL && anim->OwnerObject == this && anim->Type == Rule->EMPulseSparkles) {
+						anim->RemainingIterations = 0;
+					}
+				}
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x006FB010
 void TechnoClass::Reload(void)
 {
