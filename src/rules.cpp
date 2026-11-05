@@ -57,6 +57,10 @@
 #include "bench.hh"
 #include <cstring>
 
+struct FileSystem {
+	static void const * LoadFile(char const * name, bool as_shape);
+};
+
 namespace Powerups {
 extern char const * Effects[19];
 extern int Weights[19];
@@ -1070,6 +1074,112 @@ bool RulesClass::Crate_Rules(CCINIClass const & ini)
 	return(false);
 }
 
+// FUNCTION: GAMEMD 0x0066BBB0
+bool RulesClass::Combat_Damage(CCINIClass const & ini)
+{
+	static char const * COMBATDAMAGE = "CombatDamage";
+	if (ini.Is_Present(COMBATDAMAGE)) {
+		AmmoCrateDamage = ini.Get_Int(COMBATDAMAGE, "AmmoCrateDamage", AmmoCrateDamage);
+		IonCannonDamage = ini.Get_Int(COMBATDAMAGE, "IonCannonDamage", IonCannonDamage);
+		RailgunDamageRadius = ini.Get_Int(COMBATDAMAGE, "RailgunDamageRadius", RailgunDamageRadius);
+		TiberiumExplosionDamage = ini.Get_Int(COMBATDAMAGE, "TiberiumExplosionDamage", TiberiumExplosionDamage);
+		TiberiumStrength = ini.Get_Int(COMBATDAMAGE, "TiberiumStrength", TiberiumStrength);
+		Scorches = TGet_TypeList<SmudgeTypeClass>(ini, COMBATDAMAGE, "Scorches", Scorches);
+		Scorches1 = TGet_TypeList<SmudgeTypeClass>(ini, COMBATDAMAGE, "Scorches1", Scorches1);
+		Scorches2 = TGet_TypeList<SmudgeTypeClass>(ini, COMBATDAMAGE, "Scorches2", Scorches2);
+		Scorches3 = TGet_TypeList<SmudgeTypeClass>(ini, COMBATDAMAGE, "Scorches3", Scorches3);
+		Scorches4 = TGet_TypeList<SmudgeTypeClass>(ini, COMBATDAMAGE, "Scorches4", Scorches4);
+		SplashList = TGet_TypeList<AnimTypeClass>(ini, COMBATDAMAGE, "SplashList", SplashList);
+		FlameDamage = TGet_Class(ini, COMBATDAMAGE, "FlameDamage", FlameDamage);
+		FlameDamage2 = TGet_Class(ini, COMBATDAMAGE, "FlameDamage2", FlameDamage2);
+		C4Warhead = TGet_Class(ini, COMBATDAMAGE, "C4Warhead", C4Warhead);
+		CrushWarhead = TGet_Class(ini, COMBATDAMAGE, "CrushWarhead", CrushWarhead);
+		V3Warhead = TGet_Class(ini, COMBATDAMAGE, "V3Warhead", V3Warhead);
+		DMislWarhead = TGet_Class(ini, COMBATDAMAGE, "DMislWarhead", DMislWarhead);
+		{
+			char name[128];
+			WarheadTypeClass const * fallback = V3Warhead;
+			V3EliteWarhead = ini.Get_String(COMBATDAMAGE, "V3EliteWarhead", "", name, sizeof(name))
+				? WarheadTypeClass::Find_Or_Make(name) : fallback;
+		}
+		{
+			char name[128];
+			WarheadTypeClass const * fallback = DMislWarhead;
+			DMislEliteWarhead = ini.Get_String(COMBATDAMAGE, "DMislEliteWarhead", "", name, sizeof(name))
+				? WarheadTypeClass::Find_Or_Make(name) : fallback;
+		}
+		CMislWarhead = TGet_Class(ini, COMBATDAMAGE, "CMislWarhead", CMislWarhead);
+		{
+			char name[128];
+			WarheadTypeClass const * fallback = CMislWarhead;
+			CMislEliteWarhead = ini.Get_String(COMBATDAMAGE, "CMislEliteWarhead", "", name, sizeof(name))
+				? WarheadTypeClass::Find_Or_Make(name) : fallback;
+		}
+		IvanWarhead = TGet_Class(ini, COMBATDAMAGE, "IvanWarhead", IvanWarhead);
+		CanDetonateTimeBomb = ini.Get_Bool(COMBATDAMAGE, "CanDetonateTimeBomb", CanDetonateTimeBomb);
+		CanDetonateDeathBomb = ini.Get_Bool(COMBATDAMAGE, "CanDetonateDeathBomb", CanDetonateDeathBomb);
+		DeathWeapon = TGet_Class(ini, COMBATDAMAGE, "DeathWeapon", DeathWeapon);
+		IvanDamage = ini.Get_Int(COMBATDAMAGE, "IvanDamage", IvanDamage);
+		IvanTimedDelay = ini.Get_Int(COMBATDAMAGE, "IvanTimedDelay", IvanTimedDelay);
+		BOMBCURS_SHP = (ShapeSet const *)FileSystem::LoadFile("BOMBCURS.SHP", false);
+		CHRONOSK_SHP = (ShapeSet const *)FileSystem::LoadFile("CHRONOSK.SHP", false);
+		IvanIconFlickerRate = ini.Get_Int(COMBATDAMAGE, "IvanIconFlickerRate", IvanIconFlickerRate);
+		IronCurtainDuration = ini.Get_Int(COMBATDAMAGE, "IronCurtainDuration", IronCurtainDuration);
+		PsychicRevealRadius = ini.Get_Int(COMBATDAMAGE, "PsychicRevealRadius", PsychicRevealRadius);
+		OccupyDamageMultiplier = ini.Get_Float(COMBATDAMAGE, "OccupyDamageMultiplier", OccupyDamageMultiplier);
+		OccupyROFMultiplier = ini.Get_Float(COMBATDAMAGE, "OccupyROFMultiplier", OccupyROFMultiplier);
+		OccupyWeaponRange = ini.Get_Int(COMBATDAMAGE, "OccupyWeaponRange", OccupyWeaponRange);
+		BunkerDamageMultiplier = ini.Get_Float(COMBATDAMAGE, "BunkerDamageMultiplier", BunkerDamageMultiplier);
+		BunkerROFMultiplier = ini.Get_Float(COMBATDAMAGE, "BunkerROFMultiplier", BunkerROFMultiplier);
+		BunkerWeaponRangeBonus = ini.Get_Int(COMBATDAMAGE, "BunkerWeaponRangeBonus", BunkerWeaponRangeBonus);
+		OpenToppedDamageMultiplier = ini.Get_Float(COMBATDAMAGE, "OpenToppedDamageMultiplier", OpenToppedDamageMultiplier);
+		OpenToppedRangeBonus = ini.Get_Int(COMBATDAMAGE, "OpenToppedRangeBonus", OpenToppedRangeBonus);
+		OpenToppedWarpDistance = ini.Get_Int(COMBATDAMAGE, "OpenToppedWarpDistance", OpenToppedWarpDistance);
+		OverloadCount = ini.Get_IntList(COMBATDAMAGE, "OverloadCount", OverloadCount);
+		OverloadDamage = ini.Get_IntList(COMBATDAMAGE, "OverloadDamage", OverloadDamage);
+		OverloadFrames = ini.Get_IntList(COMBATDAMAGE, "OverloadFrames", OverloadFrames);
+		MindControlAttackLineFrames = ini.Get_Int(COMBATDAMAGE, "MindControlAttackLineFrames", MindControlAttackLineFrames);
+		DrainAnimationType = TGet_Class(ini, COMBATDAMAGE, "DrainAnimationType", DrainAnimationType);
+		DrainMoneyFrameDelay = ini.Get_Int(COMBATDAMAGE, "DrainMoneyFrameDelay", DrainMoneyFrameDelay);
+		DrainMoneyAmount = ini.Get_Int(COMBATDAMAGE, "DrainMoneyAmount", DrainMoneyAmount);
+		FallingDamageMultiplier = ini.Get_Float(COMBATDAMAGE, "FallingDamageMultiplier", FallingDamageMultiplier);
+		CurrentStrengthDamage = ini.Get_Bool(COMBATDAMAGE, "CurrentStrengthDamage", CurrentStrengthDamage);
+		ControlledAnimationType = TGet_Class(ini, COMBATDAMAGE, "ControlledAnimationType", ControlledAnimationType);
+		PermaControlledAnimationType = TGet_Class(ini, COMBATDAMAGE, "PermaControlledAnimationType", PermaControlledAnimationType);
+		IonCannonWarhead = TGet_Class(ini, COMBATDAMAGE, "IonCannonWarhead", IonCannonWarhead);
+		DefaultLargeGreySmokeSystem = TGet_Class(ini, COMBATDAMAGE, "DefaultLargeGreySmokeSystem", DefaultLargeGreySmokeSystem);
+		DefaultSmallGreySmokeSystem = TGet_Class(ini, COMBATDAMAGE, "DefaultSmallGreySmokeSystem", DefaultSmallGreySmokeSystem);
+		DefaultSparkSystem = TGet_Class(ini, COMBATDAMAGE, "DefaultSparkSystem", DefaultSparkSystem);
+		DefaultLargeRedSmokeSystem = TGet_Class(ini, COMBATDAMAGE, "DefaultLargeRedSmokeSystem", DefaultLargeRedSmokeSystem);
+		DefaultSmallRedSmokeSystem = TGet_Class(ini, COMBATDAMAGE, "DefaultSmallRedSmokeSystem", DefaultSmallRedSmokeSystem);
+		DefaultDebrisSmokeSystem = TGet_Class(ini, COMBATDAMAGE, "DefaultDebrisSmokeSystem", DefaultDebrisSmokeSystem);
+		DefaultFireStreamSystem = TGet_Class(ini, COMBATDAMAGE, "DefaultFireStreamSystem", DefaultFireStreamSystem);
+		DefaultTestParticleSystem = TGet_Class(ini, COMBATDAMAGE, "DefaultTestParticleSystem", DefaultTestParticleSystem);
+		DefaultRepairParticleSystem = TGet_Class(ini, COMBATDAMAGE, "DefaultRepairParticleSystem", DefaultRepairParticleSystem);
+		IsBerzerkAllowed = ini.Get_Bool(COMBATDAMAGE, "BerzerkAllowed", IsBerzerkAllowed);
+		TurboBoost = ini.Get_Float(COMBATDAMAGE, "TurboBoost", TurboBoost);
+		AtomDamage = ini.Get_Int(COMBATDAMAGE, "AtomDamage", AtomDamage);
+		BallisticScatter = ini.Get_Lepton(COMBATDAMAGE, "BallisticScatter", BallisticScatter);
+		BridgeStrength = ini.Get_Int(COMBATDAMAGE, "BridgeStrength", BridgeStrength);
+		C4Delay = ini.Get_Float(COMBATDAMAGE, "C4Delay", C4Delay);
+		CrushDistance = ini.Get_Lepton(COMBATDAMAGE, "Crush", CrushDistance);
+		ExplosionSpread = ini.Get_Float(COMBATDAMAGE, "ExpSpread", ExplosionSpread);
+		SupressRadius = ini.Get_Lepton(COMBATDAMAGE, "FireSupress", SupressRadius);
+		HomingScatter = ini.Get_Lepton(COMBATDAMAGE, "HomingScatter", HomingScatter);
+		MaxDamage = ini.Get_Int(COMBATDAMAGE, "MaxDamage", MaxDamage);
+		MinDamage = ini.Get_Int(COMBATDAMAGE, "MinDamage", MinDamage);
+		IsExplosiveHarvester = ini.Get_Bool(COMBATDAMAGE, "TiberiumExplosive", IsExplosiveHarvester);
+		IsAutoCrush = ini.Get_Bool(COMBATDAMAGE, "PlayerAutoCrush", IsAutoCrush);
+		IsSmartDefense = ini.Get_Bool(COMBATDAMAGE, "PlayerReturnFire", IsSmartDefense);
+		IsScatter = ini.Get_Bool(COMBATDAMAGE, "PlayerScatter", IsScatter);
+		IsTreeTarget = ini.Get_Bool(COMBATDAMAGE, "TreeTargeting", IsTreeTarget);
+		Incoming = ini.Get_MPHType(COMBATDAMAGE, "Incoming", Incoming);
+		CollapseChance = ini.Get_Int(COMBATDAMAGE, "CollapseChance", CollapseChance);
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x0066CF70
 bool RulesClass::Radiation(CCINIClass const & ini)
 {
@@ -1236,17 +1346,14 @@ bool RulesClass::General(CCINIClass const & ini)
 			TypeList<int> const & current = PrerequisitePower;
 			PrerequisitePower = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisitePower", current);
 		}
+		PrerequisiteFactory = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteFactory", PrerequisiteFactory);
 		{
-			TypeList<int> const & current = PrerequisiteFactory;
-			PrerequisiteFactory = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteFactory", current);
+			TypeList<int> const & current = PrerequisiteBarracks;
+			PrerequisiteBarracks = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteBarracks", current);
 		}
-		PrerequisiteBarracks = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteBarracks", PrerequisiteBarracks);
 		PrerequisiteRadar = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteRadar", PrerequisiteRadar);
 		PrerequisiteTech = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteTech", PrerequisiteTech);
-		{
-			TypeList<int> const & current = PrerequisiteProc;
-			PrerequisiteProc = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteProc", current);
-		}
+		PrerequisiteProc = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteProc", PrerequisiteProc);
 
 		ZoomInFactor = ini.Get_Float(GENERAL, "ZoomInFactor", ZoomInFactor);
 		IsRevealByHeight = ini.Get_Bool(GENERAL, "RevealByHeight", IsRevealByHeight);
@@ -1319,10 +1426,7 @@ bool RulesClass::General(CCINIClass const & ini)
 
 		BaseUnit = TGet_TypeList<UnitTypeClass>(ini, GENERAL, "BaseUnit", BaseUnit);
 		HarvesterUnit = TGet_TypeList<UnitTypeClass>(ini, GENERAL, "HarvesterUnit", HarvesterUnit);
-		{
-			TypeList<AircraftTypeClass const *> const & current = PadAircraft;
-			PadAircraft = TGet_TypeList<AircraftTypeClass>(ini, GENERAL, "PadAircraft", current);
-		}
+		PadAircraft = TGet_TypeList<AircraftTypeClass>(ini, GENERAL, "PadAircraft", PadAircraft);
 		Paratrooper = TGet_Class(ini, GENERAL, "Paratrooper", Paratrooper);
 
 		SecretInfantry = TGet_TypeList<InfantryTypeClass>(ini, GENERAL, "SecretInfantry", SecretInfantry);
@@ -1853,6 +1957,104 @@ bool RulesClass::Do_ParticleSystemTypes(CCINIClass const & ini)
 		}
 	}
 	return(count > 0);
+}
+
+// FUNCTION: GAMEMD 0x00672AE0
+bool RulesClass::AI(CCINIClass const & ini)
+{
+	static char const * AI = "AI";
+	if (ini.Is_Present(AI)) {
+		{
+			TypeList<BuildingTypeClass const *> const & parsed = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildConst", BuildConst);
+			BuildConst = parsed;
+		}
+		{
+			TypeList<BuildingTypeClass const *> const & parsed = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildPower", BuildPower);
+			BuildPower = parsed;
+		}
+		{
+			TypeList<BuildingTypeClass const *> const & parsed = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildRefinery", BuildRefinery);
+			BuildRefinery = parsed;
+		}
+		{
+			TypeList<BuildingTypeClass const *> const & parsed = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildBarracks", BuildBarracks);
+			BuildBarracks = parsed;
+		}
+		{
+			TypeList<BuildingTypeClass const *> const & parsed = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildTech", BuildTech);
+			BuildTech = parsed;
+		}
+		{
+			TypeList<BuildingTypeClass const *> const & parsed = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildWeapons", BuildWeapons);
+			BuildWeapons = parsed;
+		}
+		{
+			TypeList<BuildingTypeClass const *> const & parsed = TGet_TypeList<BuildingTypeClass>(ini, AI, "AlliedBaseDefenses", AlliedBaseDefenses);
+			AlliedBaseDefenses = parsed;
+		}
+		{
+			TypeList<BuildingTypeClass const *> const & parsed = TGet_TypeList<BuildingTypeClass>(ini, AI, "SovietBaseDefenses", SovietBaseDefenses);
+			SovietBaseDefenses = parsed;
+		}
+		{
+			TypeList<BuildingTypeClass const *> const & parsed = TGet_TypeList<BuildingTypeClass>(ini, AI, "ThirdBaseDefenses", ThirdBaseDefenses);
+			ThirdBaseDefenses = parsed;
+		}
+		AIForcePredictionFudge = ini.Get_IntList(AI, "AIForcePredictionFudge", AIForcePredictionFudge);
+		{
+			TypeList<BuildingTypeClass const *> const & parsed = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildDefense", BuildDefense);
+			BuildDefense = parsed;
+		}
+		BuildPDefense = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildPDefense", BuildPDefense);
+		BuildAA = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildAA", BuildAA);
+		BuildHelipad = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildHelipad", BuildHelipad);
+		BuildRadar = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildRadar", BuildRadar);
+		ConcreteWalls = TGet_TypeList<BuildingTypeClass>(ini, AI, "ConcreteWalls", ConcreteWalls);
+		NSGates = TGet_TypeList<BuildingTypeClass>(ini, AI, "NSGates", NSGates);
+		EWGates = TGet_TypeList<BuildingTypeClass>(ini, AI, "EWGates", EWGates);
+		BuildNavalYard = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildNavalYard", BuildNavalYard);
+		BuildDummy = TGet_TypeList<BuildingTypeClass>(ini, AI, "BuildDummy", BuildDummy);
+		NeutralTechBuildings = TGet_TypeList<BuildingTypeClass>(ini, AI, "NeutralTechBuildings", NeutralTechBuildings);
+		AttackInterval = ini.Get_Float(AI, "AttackInterval", AttackInterval);
+		AttackDelay = ini.Get_Float(AI, "AttackDelay", AttackDelay);
+		PatrolTime = ini.Get_Float(AI, "PatrolScan", PatrolTime);
+		RepairThreshhold = ini.Get_Int(AI, "CreditReserve", RepairThreshhold);
+		PathDelay = ini.Get_Float(AI, "PathDelay", PathDelay);
+		BlockagePathDelay = ini.Get_Int(AI, "BlockagePathDelay", BlockagePathDelay);
+		AutocreateTime = ini.Get_Float(AI, "AutocreateTime", AutocreateTime);
+		InfantryReserve = ini.Get_Int(AI, "InfantryReserve", InfantryReserve);
+		InfantryBaseMult = ini.Get_Int(AI, "InfantryBaseMult", InfantryBaseMult);
+		PowerSurplus = ini.Get_Int(AI, "PowerSurplus", PowerSurplus);
+		BaseSizeAdd = ini.Get_Int(AI, "BaseSizeAdd", BaseSizeAdd);
+		RefineryRatio = ini.Get_Float(AI, "RefineryRatio", RefineryRatio);
+		RefineryLimit = ini.Get_Int(AI, "RefineryLimit", RefineryLimit);
+		BarracksRatio = ini.Get_Float(AI, "BarracksRatio", BarracksRatio);
+		BarracksLimit = ini.Get_Int(AI, "BarracksLimit", BarracksLimit);
+		WarRatio = ini.Get_Float(AI, "WarRatio", WarRatio);
+		WarLimit = ini.Get_Int(AI, "WarLimit", WarLimit);
+		DefenseRatio = ini.Get_Float(AI, "DefenseRatio", DefenseRatio);
+		DefenseLimit = ini.Get_Int(AI, "DefenseLimit", DefenseLimit);
+		AARatio = ini.Get_Float(AI, "AARatio", AARatio);
+		AALimit = ini.Get_Int(AI, "AALimit", AALimit);
+		TeslaRatio = ini.Get_Float(AI, "TeslaRatio", TeslaRatio);
+		TeslaLimit = ini.Get_Int(AI, "TeslaLimit", TeslaLimit);
+		HelipadRatio = ini.Get_Float(AI, "HelipadRatio", HelipadRatio);
+		HelipadLimit = ini.Get_Int(AI, "HelipadLimit", HelipadLimit);
+		AirstripRatio = ini.Get_Float(AI, "AirstripRatio", AirstripRatio);
+		AirstripLimit = ini.Get_Int(AI, "AirstripLimit", AirstripLimit);
+		IsCompEasyBonus = ini.Get_Bool(AI, "CompEasyBonus", IsCompEasyBonus);
+		IsComputerParanoid = ini.Get_Bool(AI, "Paranoid", IsComputerParanoid);
+		PowerEmergencyFraction = ini.Get_Float(AI, "PowerEmergency", PowerEmergencyFraction);
+		AIBaseSpacing = ini.Get_Int(AI, "AIBaseSpacing", AIBaseSpacing);
+		GDIWallDefense = ini.Get_Float(AI, "GDIWallDefense", GDIWallDefense);
+		GDIWallDefenseCoefficient = ini.Get_Float(AI, "GDIWallDefenseCoefficient", GDIWallDefenseCoefficient);
+		NodBaseDefenseCoefficient = ini.Get_Float(AI, "NodBaseDefenseCoefficient", NodBaseDefenseCoefficient);
+		GDIBaseDefenseCoefficient = ini.Get_Float(AI, "GDIBaseDefenseCoefficient", GDIBaseDefenseCoefficient);
+		MaximumBaseDefenseValue = ini.Get_Int(AI, "MaximumBaseDefenseValue", MaximumBaseDefenseValue);
+		ComputerBaseDefenseResponse = ini.Get_Int(AI, "ComputerBaseDefenseResponse", ComputerBaseDefenseResponse);
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: GAMEMD 0x00673E80
