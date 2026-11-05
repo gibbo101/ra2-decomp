@@ -724,6 +724,66 @@ int BuildingClass::Get_Z_Adjust(void) const
 	return(pixel);
 }
 
+// FUNCTION: GAMEMD 0x0043E940
+DirType BuildingClass::Barrel_Pitch(AbstractClass * target) const
+{
+	if (PrimaryWeapon->IsLaser) {
+		Techno_Type_Class();
+		if (target != NULL) {
+			Coord predicted = Predict_Target_Coord();
+			WeaponDataStruct const * weap = Get_Class_Weapon_Data();
+			int z = weap->FireFLH.Z;
+			Coord coord = Render_Coord() + Coord(0, 0, z);
+			Coord pt(TacticalMap->Pixel_To_Lepton(Point2D(Class->AnimData[BANIM_TURRET].Location.X,
+				Class->AnimData[BANIM_TURRET].Location.Y)), 0);
+			coord += pt;
+			Coord fire = predicted - coord;
+
+			if (fire.Z == 0) {
+				return(DIR_E);
+			}
+
+			double dr;
+			int d;
+
+			d = fire.X * fire.X + fire.Y * fire.Y;
+			dr = fastmath::sqrt(d);
+			d = fire.Length();
+			dr = dr / d;
+			if (dr > 1) {
+				dr = 1;
+			}
+
+			DirType dir = (int)((fastmath::asin(dr) * 16384.0) * M_2_PI);
+			if (fire.Z < 0) {
+				dir = DirType(DIR_S) - dir;
+			}
+
+			return(dir);
+		} else {
+			return(BarrelPitch.Current());
+		}
+	} else if (Class->IsEMPulseCannon) {
+		Point3D ground_target(target->Center_Coord(), Map.Get_Height_GL(target->Center_Coord()));
+		Coord fcoord = Fire_Coord(0, Coord(0, 0, 0));
+		::Direction(fcoord, ground_target);
+		int max_speed = Calculate_Projectile_Speed(Distance(target), Rule->Gravity);
+
+		Coord ucoord = Turret_Coord();
+		Coord disp = target->Center_Coord() - ucoord;
+		int distance2 = disp.X * disp.X + disp.Y * disp.Y;
+
+		DirType pitch;
+		bool valid = Calculate_Projectile_Pitch(Should_Use_High_Arc(0), max_speed, fastmath::sqrt(distance2), disp.Z, Rule->Gravity, pitch);
+		if (!valid) {
+			valid = Calculate_Projectile_Pitch(Should_Use_High_Arc(0), max_speed * 10 / 8, fastmath::sqrt(distance2), disp.Z, Rule->Gravity, pitch);
+		}
+		return(pitch);
+	} else {
+		return(BASECLASS::Barrel_Pitch(target));
+	}
+}
+
 // FUNCTION: GAMEMD 0x0043ED40
 DirType BuildingClass::Aim_Direction(AbstractClass * target) const
 {
