@@ -6659,9 +6659,9 @@ Cell HouseClass::Get_Base_Center(void) const
 // FUNCTION: GAMEMD 0x0050DF30
 Coord HouseClass::FUN_0050DF30(void) const
 {
-	Cell base = Get_Base_Center();
-	TPoint2D<short> const & position = base;
-	if (position == CELL_NONE) {
+	Cell base;
+	base = Get_Base_Center();
+	if (base == CELL_NONE) {
 		return(COORD_NONE);
 	}
 	return(Map[base].Center_Coord());
