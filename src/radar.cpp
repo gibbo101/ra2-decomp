@@ -1000,6 +1000,131 @@ void RadarClass::Compute_Radar_Image(void)
 	Compute_Foundations();
 }
 
+static inline void Radar_Pixel_Bounds(Rect const &rect, float zoom, int width, int height,
+                                     int &left, int &right, int &top, int &bottom)
+{
+	left = (int)(rect.X * zoom);
+	right = MIN((int)((rect.X + rect.Width) * zoom) + 1, width);
+	top = (int)(rect.Y * zoom);
+	bottom = MIN((int)((rect.Y + rect.Height) * zoom) + 1, height);
+}
+
+// FUNCTION: GAMEMD 0x006547C0
+Rect RadarClass::Compute_Background(Rect const & cell_rect, Rect & update_rect, bool fill_in)
+{
+	if (fill_in && !update_rect.Is_Valid()) {
+		update_rect = cell_rect;
+	}
+	if (BackgroundColors == NULL) {
+		BackgroundColors = new RGBClass[cell_rect.Height * cell_rect.Width];
+		memset(BackgroundColors, 0, cell_rect.Height * cell_rect.Width * sizeof(RGBClass));
+		RadarCellWidth = cell_rect.Width;
+		RadarCellHeight = cell_rect.Height;
+	}
+	if (fill_in) {
+		Fill_In_Background(cell_rect, update_rect);
+	}
+
+	int cell_width = cell_rect.Width;
+	float zoom_scale = ZoomFactor;
+	int surface_width;
+	int surface_height;
+	if (BackgroundSurface == NULL) {
+		zoom_scale = 140 / (float)cell_width;
+		float scaled_height = cell_rect.Height * zoom_scale;
+		if (scaled_height < 108) {
+			surface_width = 140;
+			surface_height = scaled_height;
+		} else {
+			zoom_scale = 108 / (float)cell_rect.Height;
+			float scaled_width = cell_width * zoom_scale;
+			surface_width = scaled_width;
+			surface_height = 108;
+		}
+		ZoomFactor = zoom_scale;
+		BackgroundSurface = new BSurface(surface_width, surface_height, 2);
+		BackgroundSurface->Fill(TBLACK);
+	} else {
+		surface_width = BackgroundSurface->Get_Width();
+		surface_height = BackgroundSurface->Get_Height();
+	}
+
+	float pixels_per_cell_x = (float)cell_rect.Width / (float)surface_width;
+	float pixels_per_cell_y = (float)cell_rect.Height / (float)surface_height;
+	float inv_area = 1.0 / (pixels_per_cell_x * pixels_per_cell_y);
+	unsigned short *data = (unsigned short *)BackgroundSurface->Lock();
+	int surf_left, surf_right, surf_top, surf_bottom;
+	Radar_Pixel_Bounds(update_rect, zoom_scale, surface_width, surface_height, surf_left, surf_right, surf_top, surf_bottom);
+	float src_x = surf_left / zoom_scale;
+	float src_y = surf_top / zoom_scale;
+	if (surf_top < surf_bottom) {
+		for (int surfy = surf_top; surfy < surf_bottom; ++surfy) {
+			int src_y_min = MIN(RadarCellHeight, (int)src_y);
+			float src_y_end = src_y + pixels_per_cell_y;
+			int src_y_max = MIN(RadarCellHeight, (int)src_y_end + 1);
+			if (surf_left < surf_right) {
+				unsigned short *pixel_data = data + surf_left + surface_width * surfy;
+				for (int surfx = surf_left; surfx < surf_right; ++surfx) {
+					float accum_r = 0.0f;
+					float accum_g = 0.0f;
+					float accum_b = 0.0f;
+					int src_x_min = MIN(RadarCellWidth, (int)src_x);
+					float src_x_end = src_x + pixels_per_cell_x;
+					int src_x_max = MIN(RadarCellWidth, (int)src_x_end + 1);
+					for (int srcy = src_y_min; srcy < src_y_max; ++srcy) {
+						float y_weight;
+						if (src_y_max - src_y_min <= 1) {
+							y_weight = pixels_per_cell_y;
+						} else if (srcy == src_y_min) {
+							y_weight = (float)(srcy + 1) - src_y;
+						} else if (srcy == src_y_max - 1) {
+							y_weight = src_y_end - (float)srcy;
+						} else {
+							y_weight = 1.0f;
+						}
+						int idx = src_x_min + srcy * cell_width;
+						for (int srcx = src_x_min; srcx < src_x_max; ++srcx, ++idx) {
+							float x_weight;
+							if (src_x_max - src_x_min <= 1) {
+								x_weight = pixels_per_cell_x;
+							} else if (srcx == src_x_min) {
+								x_weight = (float)(srcx + 1) - src_x;
+							} else if (srcx == src_x_max - 1) {
+								x_weight = src_x_end - (float)srcx;
+							} else {
+								x_weight = 1.0f;
+							}
+							float weight = x_weight * y_weight * inv_area;
+							if (idx < RadarCellHeight * RadarCellWidth) {
+								RGBClass &color = BackgroundColors[idx];
+								accum_r += (float)color.Get_Red() * weight;
+								accum_g += (float)color.Get_Green() * weight;
+								accum_b += (float)color.Get_Blue() * weight;
+							}
+						}
+					}
+					*pixel_data++ = DSurface::Build_Hicolor_Pixel(
+						MIN(255, (int)(accum_r + 0.5)),
+						MIN(255, (int)(accum_g + 0.5)),
+						MIN(255, (int)(accum_b + 0.5)));
+					src_x = src_x_end;
+				}
+			}
+			src_x = surf_left / zoom_scale;
+			src_y = src_y_end;
+		}
+	}
+
+	BackgroundSurface->Unlock();
+	int pixel_count = (surface_width * surface_height) / 8 + 1;
+	if (PixelFlags == NULL) {
+		PixelFlags = new unsigned char[pixel_count];
+		memset(PixelFlags, 0, pixel_count);
+	}
+	Rect result(surf_left, surf_top, surf_right - surf_left, surf_bottom - surf_top);
+	return result;
+}
+
 // FUNCTION: GAMEMD 0x00654EA0
 void RadarClass::Fill_In_Background(Rect const & cell_rect, Rect const & update_rect)
 {
