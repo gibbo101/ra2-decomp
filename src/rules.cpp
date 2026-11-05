@@ -1046,6 +1046,194 @@ bool RulesClass::Special_Weapons(CCINIClass & ini)
 	return(false);
 }
 
+static char const * AUDIOVISUAL = "AudioVisual";
+
+static inline int Sound_From_Name(char const * name, int fallback)
+{
+	int index = VocClass::FindIndex(name);
+	return index == -1 ? fallback : index;
+}
+
+static inline int Read_Sound(CCINIClass const & ini, char const * section, char const * key, int fallback)
+{
+	char name[128];
+	if (ini.Get_String(section, key, "", name, sizeof(name)))
+		return Sound_From_Name(name, fallback);
+	return fallback;
+}
+
+// FUNCTION: GAMEMD 0x006691E0
+bool RulesClass::Audio_Visual_Rules(CCINIClass const & ini)
+{
+	if (ini.Is_Present(AUDIOVISUAL)) {
+		DetailMinFrameRateNormal = ini.Get_Int(AUDIOVISUAL, "DetailMinFrameRateNormal", DetailMinFrameRateNormal);
+		DetailMinFrameRateMovie = ini.Get_Int(AUDIOVISUAL, "DetailMinFrameRateMovie", DetailMinFrameRateMovie);
+		DetailBufferZoneWidth = ini.Get_Int(AUDIOVISUAL, "DetailBufferZoneWidth", DetailBufferZoneWidth);
+		PoseDir = (Dir256)ini.Get_Int(AUDIOVISUAL, "PoseDir", PoseDir);
+		DeployDir = ini.Get_Int(AUDIOVISUAL, "DeployDir", DeployDir >> 5) << 5;
+		DropPodPuff = TGet_Class(ini, AUDIOVISUAL, "DropPodPuff", DropPodPuff);
+		WaypointAnimationSpeed = ini.Get_Int(AUDIOVISUAL, "WaypointAnimationSpeed", WaypointAnimationSpeed);
+		VeinAttack = TGet_Class(ini, AUDIOVISUAL, "VeinAttack", VeinAttack);
+		DigSound = ini.Get_VocType(AUDIOVISUAL, "DigSound", DigSound);
+		GUIMainButtonSound = Read_Sound(ini, AUDIOVISUAL, "GUIMainButtonSound", GUIMainButtonSound);
+		GUIBuildSound = Read_Sound(ini, AUDIOVISUAL, "GUIBuildSound", GUIBuildSound);
+		GUITabSound = Read_Sound(ini, AUDIOVISUAL, "GUITabSound", GUITabSound);
+		GUIOpenSound = Read_Sound(ini, AUDIOVISUAL, "GUIOpenSound", GUIOpenSound);
+		GUICloseSound = Read_Sound(ini, AUDIOVISUAL, "GUICloseSound", GUICloseSound);
+		GUIMoveOutSound = Read_Sound(ini, AUDIOVISUAL, "GUIMoveOutSound", GUIMoveOutSound);
+		GUIMoveInSound = Read_Sound(ini, AUDIOVISUAL, "GUIMoveInSound", GUIMoveInSound);
+		GUIComboOpenSound = Read_Sound(ini, AUDIOVISUAL, "GUIComboOpenSound", GUIComboOpenSound);
+		GUIComboCloseSound = Read_Sound(ini, AUDIOVISUAL, "GUIComboCloseSound", GUIComboCloseSound);
+		GUICheckboxSound = Read_Sound(ini, AUDIOVISUAL, "GUICheckboxSound", GUICheckboxSound);
+		ScoreAnimSound = Read_Sound(ini, AUDIOVISUAL, "ScoreAnimSound", ScoreAnimSound);
+		CheerSound = Read_Sound(ini, AUDIOVISUAL, "CheerSound", CheerSound);
+		DefaultChronoSound = Read_Sound(ini, AUDIOVISUAL, "DefaultChronoSound", DefaultChronoSound);
+		StartPlanningModeSound = Read_Sound(ini, AUDIOVISUAL, "StartPlanningModeSound", StartPlanningModeSound);
+		EndPlanningModeSound = Read_Sound(ini, AUDIOVISUAL, "EndPlanningModeSound", EndPlanningModeSound);
+		CrateMoneySound = Read_Sound(ini, AUDIOVISUAL, "CrateMoneySound", CrateMoneySound);
+		CrateRevealSound = Read_Sound(ini, AUDIOVISUAL, "CrateRevealSound", CrateRevealSound);
+		CrateFireSound = Read_Sound(ini, AUDIOVISUAL, "CrateFireSound", CrateFireSound);
+		CrateArmourSound = Read_Sound(ini, AUDIOVISUAL, "CrateArmourSound", CrateArmourSound);
+		CrateSpeedSound = Read_Sound(ini, AUDIOVISUAL, "CrateSpeedSound", CrateSpeedSound);
+		CrateUnitSound = Read_Sound(ini, AUDIOVISUAL, "CrateUnitSound", CrateUnitSound);
+		CratePromoteSound = Read_Sound(ini, AUDIOVISUAL, "CratePromoteSound", CratePromoteSound);
+		ImpactWaterSound = Read_Sound(ini, AUDIOVISUAL, "ImpactWaterSound", ImpactWaterSound);
+		ImpactLandSound = Read_Sound(ini, AUDIOVISUAL, "ImpactLandSound", ImpactLandSound);
+		SinkingSound = Read_Sound(ini, AUDIOVISUAL, "SinkingSound", SinkingSound);
+		ChronoInSound = Read_Sound(ini, AUDIOVISUAL, "ChronoInSound", ChronoInSound);
+		ChronoOutSound = Read_Sound(ini, AUDIOVISUAL, "ChronoOutSound", ChronoOutSound);
+		BombTickingSound = Read_Sound(ini, AUDIOVISUAL, "BombTickingSound", BombTickingSound);
+		BombAttachSound = Read_Sound(ini, AUDIOVISUAL, "BombAttachSound", BombAttachSound);
+		YuriMindControlSound = Read_Sound(ini, AUDIOVISUAL, "YuriMindControlSound", YuriMindControlSound);
+		AddPlanningModeCommandSound = Read_Sound(ini, AUDIOVISUAL, "AddPlanningModeCommandSound", AddPlanningModeCommandSound);
+		ExecutePlanSound = Read_Sound(ini, AUDIOVISUAL, "ExecutePlanSound", ExecutePlanSound);
+		PlaceBeaconSound = Read_Sound(ini, AUDIOVISUAL, "PlaceBeaconSound", PlaceBeaconSound);
+		BuildingGarrisonedSound = Read_Sound(ini, AUDIOVISUAL, "BuildingGarrisonedSound", BuildingGarrisonedSound);
+		BuildingAbandonedSound = Read_Sound(ini, AUDIOVISUAL, "BuildingAbandonedSound", BuildingAbandonedSound);
+		BuildingRepairedSound = Read_Sound(ini, AUDIOVISUAL, "BuildingRepairedSound", BuildingRepairedSound);
+		BaseUnderAttackSound = Read_Sound(ini, AUDIOVISUAL, "BaseUnderAttackSound", BaseUnderAttackSound);
+		UpgradeVeteranSound = Read_Sound(ini, AUDIOVISUAL, "UpgradeVeteranSound", UpgradeVeteranSound);
+		UpgradeEliteSound = Read_Sound(ini, AUDIOVISUAL, "UpgradeEliteSound", UpgradeEliteSound);
+		VoiceIFVRepair = Read_Sound(ini, AUDIOVISUAL, "VoiceIFVRepair", VoiceIFVRepair);
+		SlavesFreeSound = Read_Sound(ini, AUDIOVISUAL, "SlavesFreeSound", SlavesFreeSound);
+		SlaveMinerDeploySound = Read_Sound(ini, AUDIOVISUAL, "SlaveMinerDeploySound", SlaveMinerDeploySound);
+		SlaveMinerUndeploySound = Read_Sound(ini, AUDIOVISUAL, "SlaveMinerUndeploySound", SlaveMinerUndeploySound);
+		BunkerWallsUpSound = Read_Sound(ini, AUDIOVISUAL, "BunkerWallsUpSound", BunkerWallsUpSound);
+		BunkerWallsDownSound = Read_Sound(ini, AUDIOVISUAL, "BunkerWallsDownSound", BunkerWallsDownSound);
+		RepairBridgeSound = Read_Sound(ini, AUDIOVISUAL, "RepairBridgeSound", RepairBridgeSound);
+		PsychicDominatorActivateSound = Read_Sound(ini, AUDIOVISUAL, "PsychicDominatorActivateSound", PsychicDominatorActivateSound);
+		GeneticMutatorActivateSound = Read_Sound(ini, AUDIOVISUAL, "GeneticMutatorActivateSound", GeneticMutatorActivateSound);
+		PsychicRevealActivateSound = Read_Sound(ini, AUDIOVISUAL, "PsychicRevealActivateSound", PsychicRevealActivateSound);
+		MasterMindOverloadDeathSound = Read_Sound(ini, AUDIOVISUAL, "MasterMindOverloadDeathSound", MasterMindOverloadDeathSound);
+		AirstrikeAbortSound = Read_Sound(ini, AUDIOVISUAL, "AirstrikeAbortSound", AirstrikeAbortSound);
+		AirstrikeAttackVoice = Read_Sound(ini, AUDIOVISUAL, "AirstrikeAttackVoice", AirstrikeAttackVoice);
+		MindClearedSound = Read_Sound(ini, AUDIOVISUAL, "MindClearedSound", MindClearedSound);
+		EnterGrinderSound = Read_Sound(ini, AUDIOVISUAL, "EnterGrinderSound", EnterGrinderSound);
+		LeaveGrinderSound = Read_Sound(ini, AUDIOVISUAL, "LeaveGrinderSound", LeaveGrinderSound);
+		EnterBioReactorSound = Read_Sound(ini, AUDIOVISUAL, "EnterBioReactorSound", EnterBioReactorSound);
+		LeaveBioReactorSound = Read_Sound(ini, AUDIOVISUAL, "LeaveBioReactorSound", LeaveBioReactorSound);
+		ActivateSound = Read_Sound(ini, AUDIOVISUAL, "ActivateSound", ActivateSound);
+		DeactivateSound = Read_Sound(ini, AUDIOVISUAL, "DeactivateSound", DeactivateSound);
+		SpyPlaneCamera = Read_Sound(ini, AUDIOVISUAL, "SpyPlaneCamera", SpyPlaneCamera);
+		LetsDoTheTimeWarpOutAgain = Read_Sound(ini, AUDIOVISUAL, "LetsDoTheTimeWarpOutAgain", LetsDoTheTimeWarpOutAgain);
+		LetsDoTheTimeWarpInAgain = Read_Sound(ini, AUDIOVISUAL, "LetsDoTheTimeWarpInAgain", LetsDoTheTimeWarpInAgain);
+		DiskLaserChargeUp = Read_Sound(ini, AUDIOVISUAL, "DiskLaserChargeUp", DiskLaserChargeUp);
+		SpyPlaneCameraFrames = ini.Get_Int(AUDIOVISUAL, "SpyPlaneCameraFrames", SpyPlaneCameraFrames);
+		CreateUnitSound = Read_Sound(ini, AUDIOVISUAL, "CreateUnitSound", CreateUnitSound);
+		CreateInfantrySound = Read_Sound(ini, AUDIOVISUAL, "CreateInfantrySound", CreateInfantrySound);
+		CreateAircraftSound = Read_Sound(ini, AUDIOVISUAL, "CreateAircraftSound", CreateAircraftSound);
+		IFVTransformSound = Read_Sound(ini, AUDIOVISUAL, "IFVTransformSound", IFVTransformSound);
+		PsychicSensorDetectSound = Read_Sound(ini, AUDIOVISUAL, "PsychicSensorDetectSound", PsychicSensorDetectSound);
+		SpySatActivationSound = Read_Sound(ini, AUDIOVISUAL, "SpySatActivationSound", SpySatActivationSound);
+		SpySatDeactivationSound = Read_Sound(ini, AUDIOVISUAL, "SpySatDeactivationSound", SpySatDeactivationSound);
+		Dig = TGet_Class(ini, AUDIOVISUAL, "Dig", Dig);
+		AtmosphereEntry = TGet_Class(ini, AUDIOVISUAL, "AtmosphereEntry", AtmosphereEntry);
+		GateUpSound = ini.Get_VocType(AUDIOVISUAL, "GateUp", GateUpSound);
+		GateDownSound = ini.Get_VocType(AUDIOVISUAL, "GateDown", GateDownSound);
+		IsShroudGrow = ini.Get_Bool(AUDIOVISUAL, "ShroudGrow", IsShroudGrow);
+		ScrollMultiplier = ini.Get_Float(AUDIOVISUAL, "ScrollMultiplier", ScrollMultiplier);
+		ShakeScreen = ini.Get_Int(AUDIOVISUAL, "ShakeScreen", ShakeScreen);
+		CloakSound = ini.Get_VocType(AUDIOVISUAL, "CloakSound", CloakSound);
+		SellSound = ini.Get_VocType(AUDIOVISUAL, "SellSound", SellSound);
+		GameClosed = ini.Get_VocType(AUDIOVISUAL, "GameClosed", GameClosed);
+		IncomingMessage = ini.Get_VocType(AUDIOVISUAL, "IncomingMessage", IncomingMessage);
+		MessageCharTyped = Read_Sound(ini, AUDIOVISUAL, "MessageCharTyped", MessageCharTyped);
+		SystemError = ini.Get_VocType(AUDIOVISUAL, "SystemError", SystemError);
+		OptionsChanged = ini.Get_VocType(AUDIOVISUAL, "OptionsChanged", OptionsChanged);
+		GameForming = ini.Get_VocType(AUDIOVISUAL, "GameForming", GameForming);
+		PlayerLeft = ini.Get_VocType(AUDIOVISUAL, "PlayerLeft", PlayerLeft);
+		PlayerJoined = ini.Get_VocType(AUDIOVISUAL, "PlayerJoined", PlayerJoined);
+		Construction = ini.Get_VocType(AUDIOVISUAL, "Construction", Construction);
+		CreditTicks = ini.Get_VocType_List(ini, AUDIOVISUAL, "CreditTicks", CreditTicks);
+		BuildingDieSound = Read_Sound(ini, AUDIOVISUAL, "BuildingDieSound", BuildingDieSound);
+		BuildingSlam = ini.Get_VocType(AUDIOVISUAL, "BuildingSlam", BuildingSlam);
+		RadarOn = ini.Get_VocType(AUDIOVISUAL, "RadarOn", RadarOn);
+		RadarOff = ini.Get_VocType(AUDIOVISUAL, "RadarOff", RadarOff);
+		MovieOn = Read_Sound(ini, AUDIOVISUAL, "MovieOn", MovieOn);
+		MovieOff = Read_Sound(ini, AUDIOVISUAL, "MovieOff", MovieOff);
+		ScoldSound = ini.Get_VocType(AUDIOVISUAL, "ScoldSound", ScoldSound);
+		TeslaCharge = ini.Get_VocType(AUDIOVISUAL, "TeslaCharge", TeslaCharge);
+		TeslaZap = ini.Get_VocType(AUDIOVISUAL, "TeslaZap", TeslaZap);
+		BuildingDamageSound = Read_Sound(ini, AUDIOVISUAL, "BuildingDamageSound", BuildingDamageSound);
+		ChuteSound = ini.Get_VocType(AUDIOVISUAL, "ChuteSound", ChuteSound);
+		GenericClick = ini.Get_VocType(AUDIOVISUAL, "GenericClick", GenericClick);
+		GenericBeep = ini.Get_VocType(AUDIOVISUAL, "GenericBeep", GenericBeep);
+		BuildingDrop = ini.Get_VocType(AUDIOVISUAL, "BuildingDrop", BuildingDrop);
+		StopSound = ini.Get_VocType(AUDIOVISUAL, "StopSound", StopSound);
+		GuardSound = ini.Get_VocType(AUDIOVISUAL, "GuardSound", GuardSound);
+		ScatterSound = ini.Get_VocType(AUDIOVISUAL, "ScatterSound", ScatterSound);
+		StormSound = Read_Sound(ini, AUDIOVISUAL, "StormSound", StormSound);
+		LightningSounds = ini.Get_VocType_List(ini, AUDIOVISUAL, "LightningSounds", LightningSounds);
+		ShellButtonSlideSound = Read_Sound(ini, AUDIOVISUAL, "ShellButtonSlideSound", ShellButtonSlideSound);
+		TreeFire = TGet_TypeList<AnimTypeClass>(ini, AUDIOVISUAL, "TreeFire", TreeFire);
+		OnFire = TGet_TypeList<AnimTypeClass>(ini, AUDIOVISUAL, "OnFire", OnFire);
+		Smoke1 = TGet_Class(ini, AUDIOVISUAL, "Smoke", Smoke1);
+		Smoke_ = TGet_Class(ini, AUDIOVISUAL, "Smoke", Smoke_);
+		EliteFlashTimer = ini.Get_Int(AUDIOVISUAL, "EliteFlashTimer", EliteFlashTimer);
+		SmallFire = TGet_Class(ini, AUDIOVISUAL, "SmallFire", SmallFire);
+		LargeFire = TGet_Class(ini, AUDIOVISUAL, "LargeFire", LargeFire);
+		IsAllyReveal = ini.Get_Bool(AUDIOVISUAL, "AllyReveal", IsAllyReveal);
+		ConditionGreen = 1.0;
+		ConditionRed = ini.Get_Float(AUDIOVISUAL, "ConditionRed", ConditionRed);
+		ConditionYellow = ini.Get_Float(AUDIOVISUAL, "ConditionYellow", ConditionYellow);
+		DropZoneRadius = ini.Get_Lepton(AUDIOVISUAL, "DropZoneRadius", DropZoneRadius);
+		IsHealthBar = ini.Get_Bool(AUDIOVISUAL, "EnemyHealth", IsHealthBar);
+		Gravity = ini.Get_Int(AUDIOVISUAL, "Gravity", Gravity);
+		RandomAnimateTime = ini.Get_Float(AUDIOVISUAL, "IdleActionFrequency", RandomAnimateTime);
+		MessageDelay = ini.Get_Float(AUDIOVISUAL, "MessageDelay", MessageDelay);
+		MovieTime = ini.Get_Float(AUDIOVISUAL, "MovieTime", MovieTime);
+		IsNamed = ini.Get_Bool(AUDIOVISUAL, "NamedCivilians", IsNamed);
+		SavourDelay = ini.Get_Float(AUDIOVISUAL, "SavourDelay", SavourDelay);
+		ShroudRate = ini.Get_Float(AUDIOVISUAL, "ShroudRate", ShroudRate);
+		FogRate = ini.Get_Float(AUDIOVISUAL, "FogRate", FogRate);
+		VeinGrowthRate = ini.Get_Float(AUDIOVISUAL, "VeinGrowthRate", VeinGrowthRate);
+		IceGrowthRate = ini.Get_Float(AUDIOVISUAL, "IceGrowthRate", IceGrowthRate);
+		IceSolidifyDelay = ini.Get_Int(AUDIOVISUAL, "IceSolidifyFrameTime", IceSolidifyDelay);
+		IceCrackSounds.Clear();
+		IceCrackSounds = ini.Get_VocType_List(ini, AUDIOVISUAL, "IceCrackSounds", IceCrackSounds);
+		AmbientLightChangeRate = ini.Get_Float(AUDIOVISUAL, "AmbientChangeRate", AmbientLightChangeRate);
+		AmbientLightChangeStep = ini.Get_Float(AUDIOVISUAL, "AmbientChangeStep", AmbientLightChangeStep);
+		SpeakDelay = ini.Get_Float(AUDIOVISUAL, "SpeakDelay", SpeakDelay);
+		TimerWarning = ini.Get_Float(AUDIOVISUAL, "TimerWarning", TimerWarning);
+		ExtraUnitLight = (int)(NORMAL_LIGHT * ini.Get_Float(AUDIOVISUAL, "ExtraUnitLight", ExtraUnitLight / NORMAL_LIGHT));
+		ExtraInfantryLight = (int)(NORMAL_LIGHT * ini.Get_Float(AUDIOVISUAL, "ExtraInfantryLight", ExtraInfantryLight / NORMAL_LIGHT));
+		ExtraAircraftLight = (int)(NORMAL_LIGHT * ini.Get_Float(AUDIOVISUAL, "ExtraAircraftLight", ExtraAircraftLight / NORMAL_LIGHT));
+		LocalRadarColor = ini.Get_RGBClass(AUDIOVISUAL, "LocalRadarColor", LocalRadarColor);
+		LineTrailColorOverride = ini.Get_RGBClass(AUDIOVISUAL, "LineTrailColorOverride", LineTrailColorOverride);
+		ChronoBeamColor = ini.Get_RGBClass(AUDIOVISUAL, "ChronoBeamColor", ChronoBeamColor);
+		MagnaBeamColor = ini.Get_RGBClass(AUDIOVISUAL, "MagnaBeamColor", MagnaBeamColor);
+		OreTwinkleChance = ini.Get_Int(AUDIOVISUAL, "OreTwinkleChance", OreTwinkleChance);
+		LaserTargetColor = ini.Get_Int(AUDIOVISUAL, "LaserTargetColor", LaserTargetColor);
+		IronCurtainColor = ini.Get_Int(AUDIOVISUAL, "IronCurtainColor", IronCurtainColor);
+		BerserkColor = ini.Get_Int(AUDIOVISUAL, "BerserkColor", BerserkColor);
+		ForceShieldColor = ini.Get_Int(AUDIOVISUAL, "ForceShieldColor", ForceShieldColor);
+		DirectRockingCoefficient = ini.Get_Float(AUDIOVISUAL, "DirectRockingCoefficient", DirectRockingCoefficient);
+		FallBackCoefficient = ini.Get_Float(AUDIOVISUAL, "FallBackCoefficient", FallBackCoefficient);
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x0066B900
 bool RulesClass::Crate_Rules(CCINIClass const & ini)
 {
