@@ -1138,6 +1138,77 @@ void AnimClass::Flaming_Guy_AI(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00425D10
+Coord AnimClass::Next_Flaming_Guy_Coord(void)
+{
+	bool any = false;
+
+	Cell cell = PositionCoord.As_Cell();
+	int mindist = 10000;
+	Cell mincell = CELL_NONE;
+
+	for (int x = cell.X - 5; x < cell.X + 5; x++) {
+		any = true;
+		for (int y = cell.Y - 5; y < cell.Y + 5; y++) {
+			if (Map.In_Local_Radar(Cell(x, y))) {
+				CellClass * cellptr = &Map[Cell(x, y)];
+				if (cellptr->Land_Type() == LAND_WATER && !cellptr->IsUnderBridge && !cellptr->Adjacent_Cell(FACING_W).IsUnderBridge && !cellptr->Adjacent_Cell(FACING_N).IsUnderBridge) {
+					int dist = cellptr->CellID != cell ? Point2D(x - cell.X, y - cell.Y).Length() : 0;
+					if (x > cell.X || y > cell.Y) {
+						dist -= 3;
+					}
+					if (dist < mindist) {
+						mindist = dist;
+						mincell = Cell(x, y);
+					}
+				}
+			}
+		}
+	}
+
+	if (any && mincell != CELL_NONE) {
+		int dx = mincell.X - cell.X;
+		int dy = mincell.Y - cell.Y;
+		Point2D step(0, 0);
+		if (dx < 0) {
+			step.X = -1;
+		} else if (dx > 0) {
+			step.X = 1;
+		}
+		if (dy < 0) {
+			step.Y = -1;
+		} else if (dy > 0) {
+			step.Y = 1;
+		}
+
+		if (Is_Valid_Flaming_Guy_Cell(cell + Cell(step.X, step.Y))) {
+			return(Coord(Cell(cell.X + step.X, cell.Y + step.Y)));
+		}
+
+		if (Is_Valid_Flaming_Guy_Cell(cell + Cell(step.X, 0))) {
+			return(Cell(cell.X + step.X, cell.Y).As_Coord());
+		}
+
+		if (Is_Valid_Flaming_Guy_Cell(cell + Cell(0, step.Y))) {
+			return(Cell(cell.X, cell.Y + step.Y).As_Coord());
+		}
+	}
+
+	if (CELL_NONE == Cell(0, 0)) {
+		FacingType dir = Random_Pick(FACING_FIRST, FacingType(FACING_COUNT - 1));
+		for (int i = 0; i < FACING_COUNT; i++) {
+			FacingType facing = FacingType((dir + i) % FACING_COUNT);
+			Cell const & offset = AdjacentCell[(int)facing & 7];
+			Cell newcell = cell + offset;
+			if (Is_Valid_Flaming_Guy_Cell(newcell)) {
+				return(newcell.As_Coord());
+			}
+		}
+	}
+
+	return(COORD_NONE);
+}
+
 // FUNCTION: GAMEMD 0x004260F0
 bool AnimClass::Is_Valid_Flaming_Guy_Cell(Cell const & cell)
 {
