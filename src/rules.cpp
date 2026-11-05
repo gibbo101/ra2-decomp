@@ -983,6 +983,49 @@ void RulesClass::Initialize(CCINIClass & ini)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00668BF0
+bool RulesClass::Addition(CCINIClass & ini)
+{
+	Color_Schemes(ini);
+	Read_ColorAdd(ini);
+	Do_HouseTypes(ini);
+	Do_Sides(ini);
+	Do_OverlayTypes(ini);
+	Do_SuperWeaponTypes(ini);
+	Do_WarheadTypes(ini);
+	Do_SmudgeTypes(ini);
+	Do_TerrainTypes(ini);
+	Do_BuildingTypes(ini);
+	Do_VehicleTypes(ini);
+	Do_AircraftTypes(ini);
+	Do_InfantryTypes(ini);
+	Do_AnimTypes(ini);
+	Do_VoxelAnimTypes(ini);
+	Do_ParticleTypes(ini);
+	Do_ParticleSystemTypes(ini);
+
+	Jumpjet_Controls(ini);
+	MPlayer(ini);
+	AI(ini);
+	Powerups(ini);
+	Land_Types(ini);
+	IQ(ini);
+
+	General(ini);
+	Objects(ini);
+	Difficulty(ini);
+	Crate_Rules(ini);
+	Combat_Damage(ini);
+	Radiation(ini);
+	Elevation_Model(ini);
+	Wall_Model(ini);
+	Audio_Visual_Rules(ini);
+	Special_Weapons(ini);
+	TiberiumClass::Process(ini);
+
+	return(Read_AdvancedCommandBar(ini, Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH));
+}
+
 // FUNCTION: GAMEMD 0x00668FB0
 bool RulesClass::Special_Weapons(CCINIClass & ini)
 {
@@ -1116,8 +1159,9 @@ bool RulesClass::Read_ColorAdd(CCINIClass const & ini)
 	if (ini.Is_Present(COLORADD)) {
 		int count = ini.Entry_Count(COLORADD);
 		for (int index = 0; index < count; index++) {
+			RGBClass color;
 			char const * key = ini.Get_Entry(COLORADD, index);
-			RGBClass color = ini.Get_RGBClass(COLORADD, key, RGBClass(0, 0, 0));
+			color = ini.Get_RGBClass(COLORADD, key, RGBClass(0, 0, 0));
 			ColorAdd[index] = color;
 		}
 		return(true);
@@ -1196,19 +1240,13 @@ bool RulesClass::General(CCINIClass const & ini)
 			TypeList<int> const & current = PrerequisiteFactory;
 			PrerequisiteFactory = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteFactory", current);
 		}
+		PrerequisiteBarracks = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteBarracks", PrerequisiteBarracks);
+		PrerequisiteRadar = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteRadar", PrerequisiteRadar);
+		PrerequisiteTech = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteTech", PrerequisiteTech);
 		{
-			TypeList<int> const & current = PrerequisiteBarracks;
-			PrerequisiteBarracks = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteBarracks", current);
+			TypeList<int> const & current = PrerequisiteProc;
+			PrerequisiteProc = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteProc", current);
 		}
-		{
-			TypeList<int> const & current = PrerequisiteRadar;
-			PrerequisiteRadar = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteRadar", current);
-		}
-		{
-			TypeList<int> const & current = PrerequisiteTech;
-			PrerequisiteTech = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteTech", current);
-		}
-		PrerequisiteProc = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteProc", PrerequisiteProc);
 
 		ZoomInFactor = ini.Get_Float(GENERAL, "ZoomInFactor", ZoomInFactor);
 		IsRevealByHeight = ini.Get_Bool(GENERAL, "RevealByHeight", IsRevealByHeight);
@@ -1281,7 +1319,10 @@ bool RulesClass::General(CCINIClass const & ini)
 
 		BaseUnit = TGet_TypeList<UnitTypeClass>(ini, GENERAL, "BaseUnit", BaseUnit);
 		HarvesterUnit = TGet_TypeList<UnitTypeClass>(ini, GENERAL, "HarvesterUnit", HarvesterUnit);
-		PadAircraft = TGet_TypeList<AircraftTypeClass>(ini, GENERAL, "PadAircraft", PadAircraft);
+		{
+			TypeList<AircraftTypeClass const *> const & current = PadAircraft;
+			PadAircraft = TGet_TypeList<AircraftTypeClass>(ini, GENERAL, "PadAircraft", current);
+		}
 		Paratrooper = TGet_Class(ini, GENERAL, "Paratrooper", Paratrooper);
 
 		SecretInfantry = TGet_TypeList<InfantryTypeClass>(ini, GENERAL, "SecretInfantry", SecretInfantry);
@@ -2373,6 +2414,9 @@ void RulesClass::Load_Art_INI(void)
 	CCFileClass art("ARTMD.INI");
 	ArtINI.ReadCCFile(art, false, false);
 }
+
+// FUNCTION: GAMEMD 0x00679F40
+// INIClass::Is_Present
 
 // TEMPLATE: GAMEMD 0x00679F70
 // ??1?$VectorClass@H@@UAE@XZ
