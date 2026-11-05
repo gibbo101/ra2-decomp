@@ -206,6 +206,191 @@ void MouseClass::Init_Clear(void)
 	NormalMouseShape = MOUSE_NORMAL;
 }
 
+static HRESULT Read_Cell(IStream * stream, Cell & cell)
+{
+	return stream->Read(&cell, sizeof(cell), NULL);
+}
+
+// FUNCTION: GAMEMD 0x005BDF70
+HRESULT MouseClass::Load(IStream * stream)
+{
+	int i;
+
+	TaggedCells.Clear();
+	PendingBridgeCells.Clear();
+
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		int theater;
+		result = stream->Read(&theater, sizeof(theater), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		LastTheater = THEATER_NONE;
+
+		Free_Cells();
+
+		delete CellSubzones;
+		CellSubzones = NULL;
+		delete CellZones;
+		CellZones = NULL;
+		delete ZoneAdjacency;
+		ZoneAdjacency = NULL;
+
+		for (i = 0; i < SUBZONE_COUNT; i++) {
+			SubzoneTracking[i].Clear();
+		}
+
+		for (i = 0; i < MZONE_COUNT; i++) {
+			delete Zones[i];
+			Zones[i] = NULL;
+		}
+
+		for (i = 0; i < SUBZONE_COUNT; i++) {
+			if (SubzoneConnectionHashTable[i] != NULL) {
+				delete SubzoneConnectionHashTable[i];
+				SubzoneConnectionHashTable[i] = NULL;
+			}
+		}
+
+		Array.Clear();
+
+		result = stream->Read(this, sizeof(*this), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		new (this) MouseClass(NoInitClass());
+
+		for (i = 0; i < SidebarClass::STRIPS; i++) {
+			for (int j = 0; j < SidebarClass::StripClass::MAX_BUILDABLES; j++) {
+				Swizzle_Pointer(&Column[i].Buildables[j].Factory);
+			}
+		}
+
+		Swizzle_Pointer(&PendingObjectPtr);
+		Swizzle_Pointer(&PendingObject);
+		Swizzle_Pointer(&FollowingObjectPtr);
+
+		Alloc_Cells();
+		Init_Cells();
+
+		CellSubzones = NULL;
+		CellZones = NULL;
+
+		Set_Map_Dimensions(PlayRect, 1, 0, false);
+
+		if (CellSubzones) {
+			delete CellSubzones;
+			CellSubzones = NULL;
+		}
+		if (CellZones) {
+			delete CellZones;
+			CellZones = NULL;
+		}
+
+		CellSubzones = new CellSubzoneStruct[CellZoneCount];
+		CellZones = new CellZoneStruct[CellZoneCount];
+		ZoneAdjacency = new ZONE_PAIR_HASH_SET(20, 256, SubzoneHash);
+
+		for (i = 0; i < SUBZONE_COUNT; i++) {
+			int v = (1 << (i + 1));
+			SubzoneTracking[i].Clear();
+			SubzoneTracking[i].Set_Growth_Step((4 * PlayRect.Width * PlayRect.Height) / (v * v));
+			SUBZONE_CONNECTION_HASH_SET * connections = new SUBZONE_CONNECTION_HASH_SET(20, 256, SubzoneHash);
+			SubzoneConnectionHashTable[i] = connections;
+		}
+
+		result = stream->Read(CellZones, sizeof(*CellZones) * CellZoneCount, NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+
+		for (i = 0; i < MZONE_COUNT; i++) {
+			Zones[i] = new unsigned short[ZoneCount];
+			result = stream->Read(Zones[i], sizeof(unsigned short) * ZoneCount, NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+		}
+
+		int zcount = 0;
+		result = stream->Read(&zcount, sizeof(zcount), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		ZoneConnections.Clear();
+		for (i = 0; i < zcount; i++) {
+			ZoneConnectionClass zcon;
+			result = stream->Read(&zcon, sizeof(zcon), NULL);
+			if (FAILED(result)) {
+				return(result);
+			}
+			ZoneConnections.Add(zcon);
+		}
+
+		for (i = 0; i < Array.Length(); i++) {
+			if (Array[i] != NULL) {
+				delete Array[i];
+				Array[i] = NULL;
+			}
+		}
+		int count;
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (i = 0; i < count; i++) {
+			LPVOID ptr;
+			OleLoadFromStream(stream, IID_IUnknown, &ptr);
+		}
+
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (i = 0; i < count; i++) {
+			Cell cell;
+			result = Read_Cell(stream, cell);
+			if (FAILED(result)) {
+				return(result);
+			}
+			TaggedCells.Add(cell);
+		}
+
+		result = stream->Read(&count, sizeof(count), NULL);
+		if (FAILED(result)) {
+			return(result);
+		}
+		for (i = 0; i < count; i++) {
+			Cell cell;
+			result = Read_Cell(stream, cell);
+			if (FAILED(result)) {
+				return(result);
+			}
+			PendingBridgeCells.Add(cell);
+		}
+
+		TerrainTypeClass::Init(Scen->Theater);
+		if (Scen->Theater != LastTheater) {
+			IsometricTileTypeClass::Read_Control_File(Scen->Theater, true);
+		} else {
+			IsometricTileTypeClass::Clear_Use_Counts();
+		}
+		IsometricTileTypeClass::Load_Tiles(false, false);
+		OverlayTypeClass::Init(Scen->Theater);
+		BuildingTypeClass::Init(Scen->Theater);
+		AnimTypeClass::Init(Scen->Theater);
+		SmudgeTypeClass::Init(Scen->Theater);
+		DraggedWaypoint = NULL;
+		LastTheater = Scen->Theater;
+
+		result = S_OK;
+	}
+	return(result);
+}
+
 // FUNCTION: GAMEMD 0x005BE6D0
 HRESULT MouseClass::Save(IStream * stream)
 {
@@ -329,11 +514,16 @@ int MouseClass::Get_Mouse_Frame_Count(MouseType mouse) const
 	return(MouseControl[mouse].FrameCount);
 }
 
-// FUNCTION: GAMEMD 0x005BE9B0
 MouseClass::MouseClass(NoInitClass const & x) :
 	BASECLASS(x)
 {
 }
+
+// FUNCTION: GAMEMD 0x005BE9B0
+// ??0TabClass@@QAE@ABVNoInitClass@@@Z
+
+// SYNTHETIC: GAMEMD 0x005BE9E0
+// ??_GTabClass@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x005BEA30
 // ??0?$DynamicVectorClass@U?$HashObject@II@@@@QAE@IPBU?$HashObject@II@@@Z
