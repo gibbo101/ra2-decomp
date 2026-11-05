@@ -17,6 +17,7 @@
 #include "wwfont.h"
 #include "color.hh"
 #include <math.h>
+#include "bitfont.h"
 
 // SYNTHETIC: GAMEMD 0x00478990 SYMBOL
 // _$E2
@@ -46,6 +47,76 @@
 // _$E97
 // SYNTHETIC: GAMEMD 0x00478B80 SYMBOL
 // _$E100
+
+// FUNCTION: GAMEMD 0x00478BA0
+bool CCToolTip::Update(ToolTipText * text)
+{
+	if (Get_Mouse_State() >= 0) {
+		BitFont *font = BitFont::Instance;
+		Rect *trect;
+		POINT &position = text->Pos;
+		if (Options.IsSidebarOnRight == true) {
+			if (position.x <= TacticalRect.X + TacticalRect.Width) {
+				trect = &TacticalRect;
+			} else {
+				trect = &SidebarRect;
+				Map.SidebarClass::IsToRedraw = true;
+			}
+		} else {
+			if (position.x <= SidebarRect.X + SidebarRect.Width) {
+				trect = &SidebarRect;
+				Map.SidebarClass::IsToRedraw = true;
+			} else {
+				trect = &TacticalRect;
+			}
+		}
+
+		if (trect) {
+			int width;
+			int height;
+			font->GetTextDimension(text->Text, &width, &height, trect->Width);
+			width += 4;
+			height += 3;
+			text->TextWidth = max(width, text->TextWidth);
+			text->TextHeight = max(height, text->TextHeight);
+			if (text->TextWidth >= trect->Width) {
+				font->GetTextDimension(text->Text, &width, &height, trect->Width - 4);
+				width += 4;
+				height += 3;
+				text->TextWidth = max(width, text->TextWidth);
+				text->TextHeight = max(height, text->TextHeight);
+			}
+			if (CurrentToolTip && CurrentToolTip->Flag) {
+				Rect owner = CurrentToolTip->Region;
+				if (owner.X < trect->X + trect->Width / 2) {
+					position.x = owner.X + owner.Width - 5;
+				} else {
+					position.x = owner.X - width + 5;
+				}
+				position.x = MAX(trect->X, position.x);
+				if (owner.Y < trect->Y + trect->Height / 2) {
+					position.y = owner.Y + owner.Height - 5;
+				} else {
+					position.y = owner.Y - height + 5;
+				}
+				position.y = MAX(trect->Y, position.y);
+			} else {
+				int x = position.x + text->TextWidth - trect->Width - trect->X;
+				if (x > 0) {
+					position.x -= x;
+				}
+
+				position.y += 16;
+				if (position.y + text->TextHeight - trect->Height - trect->Y > 0) {
+					position.y = position.y - text->TextHeight - 16;
+				}
+			}
+		}
+		return(true);
+	}
+
+	return(false);
+}
 
 // FUNCTION: GAMEMD 0x00478DB0
 void CCToolTip::Reset(const ToolTipText * text)
@@ -85,7 +156,6 @@ const char * CCToolTip::ToolTip_Text(int id)
 	return(Map.Help_Text(id));
 }
 
-#include "bitfont.h"
 namespace Drawing { extern RGBClass TooltipColor; }
 
 // FUNCTION: GAMEMD 0x00478E30
