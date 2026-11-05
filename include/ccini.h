@@ -211,20 +211,15 @@ class CCINIClass : public INIClass
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-inline VocType CCINIClass::Get_VocType(char const * section, char const * entry, VocType defvalue) const
+inline VocType CCINIClass::Get_VocType(char const * section, char const * key, VocType fallback) const
 {
-	char buffer[128];
+	char name[128];
+	if (!Get_String(section, key, "", name, sizeof(name)))
+		return fallback;
 
-	if (Get_String(section, entry, "", buffer, sizeof(buffer)) == 0) {
-		return(defvalue);
-	}
-	VocType voc = VocClass::From_Name(buffer);
-	if (voc == VOC_NONE) {
-		return(defvalue);
-	}
-	return(voc);
+	int id = VocClass::FindIndex(name);
+	return id == -1 ? fallback : (VocType)id;
 }
-
 
 inline TypeList<int> CCINIClass::Get_VocType_List(CCINIClass const & ini, const char * section, const char * entry, TypeList<int> defvalue)
 {
