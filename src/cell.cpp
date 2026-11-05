@@ -963,6 +963,157 @@ void CellClass::Destroy_Bridge(void)
 	}
 }
 
+static inline void Set_Bridge_Deck_Flags(CellClass & cell, bool state, bool east_west)
+{
+	cell.IsBridgeDeck = state;
+	cell.IsUnderBridge = state;
+	cell.IsBridgeTraversable = state;
+	cell.IsBridgeSurface = state;
+	cell.IsOvershadowed = state;
+	cell.WasUnderBridge = !state;
+	cell.IsBridgeEastWest = east_west;
+}
+
+// FUNCTION: GAMEMD 0x0047E040
+void CellClass::Set_Under_Bridge(FacingType facing, bool state)
+{
+	if (facing == FACING_N) {
+		OverlayData = OVERLAYDATA_BRIDGE_EW_FULL1;
+	} else {
+		OverlayData = OVERLAYDATA_BRIDGE_NS_FULL1;
+	}
+	bool east_west = facing == FACING_N;
+	Set_Bridge_Deck_Flags(*this, state, facing == FACING_N);
+	if (state) {
+		OverlayData = (facing != FACING_N) ? OVERLAYDATA_BRIDGE_NS_FULL1 : OVERLAYDATA_BRIDGE_EW_FULL1;
+	} else {
+		OverlayData = 0;
+		Destroy_Bridge();
+	}
+	Map.Radar_Background(CellID);
+	CellClass * across = &Adjacent_Cell(facing);
+	across->BridgeDeckCell = state ? this : NULL;
+	across->IsUnderBridge = state;
+	across->IsBridgeTraversable = state;
+	across->IsBridgeSurface = state;
+	across->IsOvershadowed = state;
+	across->WasUnderBridge = !state;
+	across->IsBridgeEastWest = east_west;
+	if (state) {
+		across->OverlayData = (facing != FACING_N) ? OVERLAYDATA_BRIDGE_NS_FULL1 : OVERLAYDATA_BRIDGE_EW_FULL1;
+	} else {
+		across->OverlayData = 0;
+		across->Destroy_Bridge();
+	}
+	Map.Radar_Background(across->CellID);
+	across = &across->Adjacent_Cell(facing);
+	across->BridgeDeckCell = state ? this : NULL;
+	across->IsUnderBridge = state;
+	across->IsBridgeTraversable = false;
+	across->IsBridgeSurface = state;
+	across->IsOvershadowed = state;
+	across->WasUnderBridge = !state;
+	across->IsBridgeEastWest = east_west;
+	if (state) {
+		across->OverlayData = (facing != FACING_N) ? OVERLAYDATA_BRIDGE_NS_FULL1 : OVERLAYDATA_BRIDGE_EW_FULL1;
+	} else {
+		across->OverlayData = 0;
+		across->Destroy_Bridge();
+	}
+	Map.Radar_Background(across->CellID);
+	across->Adjacent_Cell(facing).IsBridgeSurface = state;
+	CellClass * back = &Adjacent_Cell(Facing_Sub(facing, FACING_180));
+	back->BridgeDeckCell = state ? this : NULL;
+	back->IsUnderBridge = state;
+	back->IsBridgeTraversable = state;
+	back->WasUnderBridge = !state;
+	back->IsBridgeSurface = false;
+	back->IsOvershadowed = state;
+	back->IsBridgeEastWest = east_west;
+	if (state) {
+		back->OverlayData = (facing != FACING_N) ? OVERLAYDATA_BRIDGE_NS_FULL1 : OVERLAYDATA_BRIDGE_EW_FULL1;
+	} else {
+		back->OverlayData = 0;
+		back->Destroy_Bridge();
+	}
+	Map.Radar_Background(back->CellID);
+	if (facing == FACING_W) {
+		CellClass & far_back = back->Adjacent_Cell(FACING_E);
+		far_back.BridgeDeckCell = state ? this : NULL;
+		far_back.IsOvershadowed = state;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0047E470
+void CellClass::Set_Under_Rail_Bridge(FacingType facing, bool state)
+{
+	if (facing == FACING_N) {
+		OverlayData = OVERLAYDATA_BRIDGE_EW_FULL1;
+	} else {
+		OverlayData = OVERLAYDATA_BRIDGE_NS_FULL1;
+	}
+	bool east_west = facing == FACING_N;
+	Set_Bridge_Deck_Flags(*this, state, facing == FACING_N);
+	if (state) {
+		OverlayData = (facing != FACING_N) ? OVERLAYDATA_BRIDGE_NS_FULL1 : OVERLAYDATA_BRIDGE_EW_FULL1;
+	} else {
+		OverlayData = 0;
+		Destroy_Bridge();
+	}
+	Map.Radar_Background(CellID);
+	CellClass * across = &Adjacent_Cell(facing);
+	across->BridgeDeckCell = state ? this : NULL;
+	across->IsUnderBridge = state;
+	across->IsBridgeTraversable = state;
+	across->IsBridgeSurface = state;
+	across->IsOvershadowed = state;
+	across->WasUnderBridge = !state;
+	across->IsBridgeEastWest = east_west;
+	if (state) {
+		across->OverlayData = (facing != FACING_N) ? OVERLAYDATA_BRIDGE_NS_FULL1 : OVERLAYDATA_BRIDGE_EW_FULL1;
+	} else {
+		across->OverlayData = 0;
+		across->Destroy_Bridge();
+	}
+	Map.Radar_Background(across->CellID);
+	across = &across->Adjacent_Cell(facing);
+	across->BridgeDeckCell = state ? this : NULL;
+	across->IsUnderBridge = state;
+	across->IsBridgeTraversable = false;
+	across->IsBridgeSurface = state;
+	across->IsOvershadowed = state;
+	across->WasUnderBridge = !state;
+	across->IsBridgeEastWest = east_west;
+	if (state) {
+		across->OverlayData = (facing != FACING_N) ? OVERLAYDATA_BRIDGE_NS_FULL1 : OVERLAYDATA_BRIDGE_EW_FULL1;
+	} else {
+		across->OverlayData = 0;
+		across->Destroy_Bridge();
+	}
+	Map.Radar_Background(across->CellID);
+	across->Adjacent_Cell(facing).IsBridgeSurface = state;
+	CellClass * back = &Adjacent_Cell(Facing_Sub(facing, FACING_180));
+	back->BridgeDeckCell = state ? this : NULL;
+	back->IsUnderBridge = state;
+	back->IsBridgeTraversable = state;
+	back->WasUnderBridge = !state;
+	back->IsBridgeSurface = false;
+	back->IsOvershadowed = state;
+	back->IsBridgeEastWest = east_west;
+	if (state) {
+		back->OverlayData = (facing != FACING_N) ? OVERLAYDATA_BRIDGE_NS_FULL1 : OVERLAYDATA_BRIDGE_EW_FULL1;
+	} else {
+		back->OverlayData = 0;
+		back->Destroy_Bridge();
+	}
+	Map.Radar_Background(back->CellID);
+	if (facing == FACING_W) {
+		CellClass & far_back = back->Adjacent_Cell(FACING_E);
+		far_back.BridgeDeckCell = state ? this : NULL;
+		far_back.IsOvershadowed = state;
+	}
+}
+
 // FUNCTION: GAMEMD 0x0047E8A0
 void CellClass::Occupy_Down(ObjectClass * object, bool bridge)
 {
