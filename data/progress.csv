@@ -2343,6 +2343,7 @@ address,name,result,size,source,symbol
 0x00478B50,_$E94,MATCH,15,src/cctooltip.cpp,_$E94
 0x00478B60,_$E97,MATCH,18,src/cctooltip.cpp,_$E97
 0x00478B80,_$E100,MATCH,26,src/cctooltip.cpp,_$E100
+0x00478BA0,CCToolTip::Update,MATCH,526,src/cctooltip.cpp,?Update@CCToolTip@@UAE_NPAUToolTipText@@@Z
 0x00478DB0,CCToolTip::Reset,MATCH,95,src/cctooltip.cpp,?Reset@CCToolTip@@UAEXPBUToolTipText@@@Z
 0x00478E10,CCToolTip::Draw_Current,MATCH,24,src/cctooltip.cpp,?Draw_Current@CCToolTip@@UAEX_N@Z
 0x00479050,CCToolTip::ToolTip_Text,MATCH,38,src/cctooltip.cpp,?ToolTip_Text@CCToolTip@@UAEPBDH@Z
@@ -2713,7 +2714,7 @@ address,name,result,size,source,symbol
 0x0048DD50,Disk_Space_Available,MATCH,284,src/conquer.cpp,?Disk_Space_Available@@YIIXZ
 0x0048DE70,Crate_From_Name,MATCH,56,src/conquer.cpp,?Crate_From_Name@@YI?AW4CrateType@@PBD@Z
 0x0048DEB0,Owner_From_Name,MATCH,28,src/conquer.cpp,?Owner_From_Name@@YIHPBD@Z
-0x0048DED0,Conquer_Nop3,MATCH,1,src/conquer.cpp,?Conquer_Nop3@@YIXXZ
+0x0048DED0,Shake_The_Screen,MATCH,1,src/conquer.cpp,?Shake_The_Screen@@YIXH@Z
 0x0048DEE0,List_Copy,MATCH,71,src/conquer.cpp,?List_Copy@@YIXPBVCell@@HPAV1@@Z
 0x0048DF30,VQ_From_Name,MATCH,80,src/conquer.cpp,?VQ_From_Name@@YI?AW4VQType@@PBD@Z
 0x0048DF80,Land_From_Name,MATCH,75,src/conquer.cpp,?Land_From_Name@@YI?AW4LandType@@PBD@Z
@@ -9436,6 +9437,7 @@ address,name,result,size,source,symbol
 0x005D1DF0,MSEngine::Wait_For_Anim,MATCH,88,src/msengine.cpp,?Wait_For_Anim@MSEngine@@QAEXPAVMSAnim@@I@Z
 0x005D1E50,MSEngine::Restore_And_Advance,MATCH,19,src/msengine.cpp,?Restore_And_Advance@MSEngine@@QAEXXZ
 0x005D1E70,MSEngine::Advance,MATCH,343,src/msengine.cpp,?Advance@MSEngine@@QAEXPAVSurface@@@Z
+0x005D1FD0,MSEngine::Add_Update_Rect,MATCH,650,src/msengine.cpp,?Add_Update_Rect@MSEngine@@QAEXABV?$TRect@H@@@Z
 0x005D2260,MSEngine::Blit_All,MATCH,226,src/msengine.cpp,?Blit_All@MSEngine@@QAEXPAVSurface@@@Z
 0x005D2350,MSEngine::Blit_Rect,MATCH,179,src/msengine.cpp,?Blit_Rect@MSEngine@@QAEXPAVSurface@@ABV?$TRect@H@@@Z
 0x005D2410,MSEngine::Wait_Delay,MATCH,273,src/msengine.cpp,?Wait_Delay@MSEngine@@QAEXH@Z
@@ -10255,6 +10257,11 @@ address,name,result,size,source,symbol
 0x005FC380,OverlayClass::OverlayClass,MATCH,329,src/overlay.cpp,??0OverlayClass@@QAE@PBVOverlayTypeClass@@ABVCell@@W4HousesType@@@Z
 0x005FC4D0,OverlayClass::~OverlayClass,MATCH,147,src/overlay.cpp,??1OverlayClass@@UAE@XZ
 0x005FDF70,OverlayClass::~OverlayClass,MATCH,167,src/overlay.cpp,??_GOverlayClass@@UAEPAXI@Z
+0x005FC570,OverlayClass::Mark,MATCH,3256,src/overlay.cpp,?Mark@OverlayClass@@UAE_NW4MarkType@@@Z
+0x005FD230,_$E151,MATCH,1,src/overlay.cpp,_$E151
+0x005FD240,_$E150,MATCH,1,src/overlay.cpp,_$E150
+0x005FD250,_$E149,MATCH,1,src/overlay.cpp,_$E149
+0x005FD260,_$E148,MATCH,1,src/overlay.cpp,_$E148
 0x005FD270,OverlayClass::Unlimbo,MATCH,108,src/overlay.cpp,?Unlimbo@OverlayClass@@UAE_NABVCoord@@W4Dir256@@@Z
 0x005FD2E0,OverlayClass::Read_INI,MATCH,955,src/overlay.cpp,?Read_INI@OverlayClass@@SIXAAVCCINIClass@@@Z
 0x005FD6A0,OverlayClass::Write_INI,MATCH,588,src/overlay.cpp,?Write_INI@OverlayClass@@SIXAAVCCINIClass@@@Z
@@ -11466,6 +11473,7 @@ address,name,result,size,source,symbol
 0x00654320,RadarClass::Reposition_Sidebar,MATCH,364,src/radar.cpp,?Reposition_Sidebar@RadarClass@@UAEXXZ
 0x00654490,RadarClass::Set_Local_Dimensions,MATCH,439,src/radar.cpp,?Set_Local_Dimensions@RadarClass@@UAEXABV?$TRect@H@@@Z
 0x00654650,RadarClass::Compute_Radar_Image,MATCH,362,src/radar.cpp,?Compute_Radar_Image@RadarClass@@QAEXXZ
+0x006547C0,RadarClass::Compute_Background,MATCH,1746,src/radar.cpp,?Compute_Background@RadarClass@@QAE?AV?$TRect@H@@ABV2@AAV2@_N@Z
 0x00654EA0,RadarClass::Fill_In_Background,MATCH,420,src/radar.cpp,?Fill_In_Background@RadarClass@@QAEXABV?$TRect@H@@0@Z
 0x00655050,RadarClass::Cell_Radar_Rect,MATCH,97,src/radar.cpp,?Cell_Radar_Rect@RadarClass@@QAE?AV?$TRect@H@@ABVCell@@@Z
 0x006550C0,RadarClass::Cell_To_Radar_Pixel,MATCH,142,src/radar.cpp,?Cell_To_Radar_Pixel@RadarClass@@QAE?AV?$TRect@H@@ABVCell@@@Z
@@ -14710,6 +14718,7 @@ address,name,result,size,source,symbol
 0x006F9DC0,TechnoClass::Owner_HouseClass,MATCH,7,src/techno.cpp,?Owner_HouseClass@TechnoClass@@UBEPAVHouseClass@@XZ
 0x006F9DD0,TechnoClass::Clicked_As_Target,MATCH,54,src/techno.cpp,?Clicked_As_Target@TechnoClass@@UAEXH@Z
 0x006F9E10,TechnoClass::Is_Voxel_Loaded,MATCH,49,src/techno.cpp,?Is_Voxel_Loaded@TechnoClass@@UBE_NXZ
+0x006F9E50,TechnoClass::AI,MATCH,4533,src/techno.cpp,?AI@TechnoClass@@UAEXXZ
 0x006FB010,TechnoClass::Reload,MATCH,97,src/techno.cpp,?Reload@TechnoClass@@UAEXXZ
 0x006FB080,TechnoClass::StartReloading,MATCH,229,src/techno.cpp,?StartReloading@TechnoClass@@QAEXXZ
 0x006FB170,TechnoClass::CreateGap,MATCH,753,src/techno.cpp,?CreateGap@TechnoClass@@UAEXXZ
@@ -14971,6 +14980,7 @@ address,name,result,size,source,symbol
 0x007120D0,TechnoTypeClass::Repair_Cost,MATCH,74,src/techtype.cpp,?Repair_Cost@TechnoTypeClass@@UBEHXZ
 0x00712120,TechnoTypeClass::Repair_Step,MATCH,12,src/techtype.cpp,?Repair_Step@TechnoTypeClass@@UBEHXZ
 0x00712130,TechnoTypeClass::Is_Two_Shooter,MATCH,52,src/techtype.cpp,?Is_Two_Shooter@TechnoTypeClass@@QBE_NXZ
+0x00712170,TechnoTypeClass::Read_INI,MATCH,16337,src/techtype.cpp,?Read_INI@TechnoTypeClass@@UAE_NAAVCCINIClass@@@Z
 0x00716150,TechnoTypeClass::Legal_Placement,MATCH,313,src/techtype.cpp,?Legal_Placement@TechnoTypeClass@@UBE_NABVCell@@PAVHouseClass@@@Z
 0x00716290,TechnoTypeClass::Max_Pips,MATCH,96,src/techtype.cpp,?Max_Pips@TechnoTypeClass@@UBEHXZ
 0x007162F0,TechnoTypeClass::Load,MATCH,2761,src/techtype.cpp,?Load@TechnoTypeClass@@UAGJPAUIStream@@@Z
@@ -14986,7 +14996,8 @@ address,name,result,size,source,symbol
 0x00717890,TechnoTypeClass::FUN_00717890,MATCH,18,src/techtype.cpp,?FUN_00717890@TechnoTypeClass@@QAEXHH@Z
 0x007178B0,TechnoTypeClass::FUN_007178B0,MATCH,14,src/techtype.cpp,?FUN_007178B0@TechnoTypeClass@@QBEHH@Z
 0x007179A0,??_GTechnoTypeClass@@UAEPAXI@Z,MATCH,30,src/techtype.cpp,??_GTechnoTypeClass@@UAEPAXI@Z
-0x007179C0,FUN_007179C0,MATCH,1,src/techtype.cpp,?FUN_007179C0@@YIXXZ
+0x007179C0,??1AbilityFlagsType@@QAE@XZ,MATCH,1,src/techtype.cpp,??1AbilityFlagsType@@QAE@XZ
+0x007179D0,AbilityFlagsType::operator=,MATCH,81,src/techtype.cpp,??4AbilityFlagsType@@QAE?AU0@ABU0@@Z
 0x00717A30,TurretControl::FUN_00717A30,MATCH,9,src/techtype.cpp,?FUN_00717A30@TurretControl@@QAEXH@Z
 0x00717A40,TurretControl::FUN_00717A40,MATCH,3,src/techtype.cpp,?FUN_00717A40@TurretControl@@QBEHXZ
 0x00717A50,TurretControl::FUN_00717A50,MATCH,19,src/techtype.cpp,?FUN_00717A50@TurretControl@@QAEXH@Z
@@ -16047,6 +16058,7 @@ address,name,result,size,source,symbol
 0x00737430,UnitClass::Receive_Message,MATCH,1898,src/unit.cpp,?Receive_Message@UnitClass@@UAE?AW4RadioMessageType@@PAVRadioClass@@W42@AAH@Z
 0x00737BA0,UnitClass::Unlimbo,MATCH,232,src/unit.cpp,?Unlimbo@UnitClass@@UAE_NABVCoord@@W4Dir256@@@Z
 0x00737C90,UnitClass::Take_Damage,MATCH,2540,src/unit.cpp,?Take_Damage@UnitClass@@UAE?AW4ResultType@@AAHHPBVWarheadTypeClass@@PAVTechnoClass@@_N3PAVHouseClass@@@Z
+0x00738680,UnitClass::Explode,MATCH,516,src/unit.cpp,?Explode@UnitClass@@QAEXXZ
 0x00738890,UnitClass::Active_Click_With,MATCH,125,src/unit.cpp,?Active_Click_With@UnitClass@@UAE_NW4ActionType@@PAVObjectClass@@_N@Z
 0x00738910,UnitClass::Active_Click_With,MATCH,88,src/unit.cpp,?Active_Click_With@UnitClass@@UAE_NW4ActionType@@ABVCell@@1_N@Z
 0x00738970,UnitClass::Enter_Idle_Mode,MATCH,959,src/unit.cpp,?Enter_Idle_Mode@UnitClass@@UAE_N_N0@Z
