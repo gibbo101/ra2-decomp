@@ -398,6 +398,56 @@ static inline void Release_Jumpjet(FootClass * const & foot)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0054BD30
+void JumpjetLocomotionClass::Process_Hover(void)
+{
+	if (Is_Moving()) {
+		Coord headto = HeadToCoord;
+		Coord position = LinkedTo->PositionCoord;
+		if (Point2D(headto) == Point2D(position)) {
+			if (LinkedTo->TarCom == NULL) {
+				FootClass * foot = LinkedTo;
+				if (foot != NULL && foot->Fetch_RTTI() == RTTI_UNIT && ((UnitClass *)foot)->Class->IsSimpleDeployer && !LinkedTo->IsAttackedByLocomotor) {
+					if (foot->Techno_Type_Class()->DeployToLand && !foot->InAir && !LinkedTo->IsAttackedByLocomotor) {
+						FlightLevel = Height;
+						bool down = LinkedTo->IsDown;
+						LinkedTo->Mark(MARK_UP);
+						LinkedTo->IsDown = down;
+						CurrentState = HOVERING;
+					} else {
+						if (LinkedTo->Get_Cell_Ptr()->Jumpjet == LinkedTo) {
+							LinkedTo->Get_Cell_Ptr()->TryAssignJumpjet(NULL);
+						}
+						CurrentState = DESCENDING;
+					}
+				} else if (LinkedTo->Techno_Type_Class()->BalloonHover) {
+					bool down = LinkedTo->IsDown;
+					LinkedTo->Mark(MARK_UP);
+					LinkedTo->IsDown = down;
+					CurrentState = HOVERING;
+				} else {
+					if (LinkedTo->Get_Cell_Ptr()->Jumpjet == LinkedTo) {
+						LinkedTo->Get_Cell_Ptr()->TryAssignJumpjet(NULL);
+					}
+					CurrentState = DESCENDING;
+				}
+				LinkedTo->FUN_00705D60();
+			}
+		} else {
+			DirType dir;
+			Facing.Set_Desired(Direction_To(dir, LinkedTo->PositionCoord, HeadToCoord));
+			if (LinkedTo->Get_Cell_Ptr()->Jumpjet == NULL && Map[LinkedTo->LastFlightMapCoords].Jumpjet == LinkedTo) {
+				Map[LinkedTo->LastFlightMapCoords].TryAssignJumpjet(NULL);
+			}
+			LinkedTo->Get_Cell_Ptr()->TryAssignJumpjet(NULL);
+			bool down = LinkedTo->IsDown;
+			LinkedTo->Mark(MARK_UP);
+			LinkedTo->IsDown = down;
+			CurrentState = CRUISING;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0054BFF0
 void JumpjetLocomotionClass::Process_Cruise(void)
 {
