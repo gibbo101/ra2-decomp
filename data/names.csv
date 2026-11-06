@@ -402,3 +402,5 @@ address,name,symbol,evidence
 0x00ABED04,MapRegionClass::MapStartDiagonal,?MapStartDiagonal@MapRegionClass@@2HA,0x005AC230 My_In_Radar exact archived inline; agrees with 64 independently rechecked existing src/mapgen.cpp inline-reference sites including MapRegionClass::Flatten_Area
 0x00ABED08,MapRegionClass::MapEndDiagonal,?MapEndDiagonal@MapRegionClass@@2HA,0x005AC230 My_In_Radar exact archived inline; agrees with 54 independently rechecked existing src/mapgen.cpp inline-reference sites including MapRegionClass::Flatten_Area
 0x007CA090,memmove,_memmove,The pinned VC6 SP3 LIBCMT.LIB memmove.obj matches all 821 bytes after its 46 internal relocations; also named CRT::_memmove in functions.csv.
+0x00AC4F58,Progress,?Progress@@3VProgressScreenClass@@A,Matched static initializer at 0x00642980 passes 0x00AC4F58 to ProgressScreenClass::ProgressScreenClass; the destructor at 0x006429A0 uses the same object.
+0x0087F770,InputManagerInstance,?InputManagerInstance@@3PAXA,Matched Wonline dialog at 0x0077D840 passes the pointer stored at 0x0087F770 to the input flush routine at 0x0054F720 before and after the modal loop.
