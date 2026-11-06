@@ -26,3 +26,28 @@ new features, refactors or ports at this time.
   pull request's own "N of N match" counts only once our checker agrees.
 - Pull requests that stack on unmerged pull requests are hard to review: keep each one
   independent where you can.
+
+## Never commit game data
+
+No executables, game assets (MIX, SHP, VXL, HVA, PAL, AUD, BIK, CSF, maps), extracted
+strings or tables, disassembly, or decompiler output and databases. Names, addresses,
+sizes, hashes and evidence only. Data the code needs is written as source, as the
+original declares it.
+
+## Matches must be honest
+
+Source matches because it is equivalent code, not because the compiler was steered:
+
+- No no-op constructs: empty statements, casts that change nothing, `&& true`.
+- No casts that only make a guessed type compile; fix the declaration instead.
+- No local copies of types the headers already define.
+- Changing a function that already matches is fine when it stays ordinary C++ and a copy
+  inlined elsewhere needs it; say which functions and why in the pull request.
+- Bugs stay as shipped; record them in `docs/BUGS.md`.
+
+## Pull request habits
+
+- Don't rebase or force-push once a pull request is open; we resolve `data/names.csv`
+  conflicts ourselves.
+- Tabs, and comments of two `//` lines at most that state behaviour.
+- Code ported from another project names its source and licence in the pull request.

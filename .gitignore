@@ -10,6 +10,23 @@ build/
 __pycache__/
 .venv/
 
+# Game assets and extracted game data: the player brings the game.
+*.mix
+*.shp
+*.vxl
+*.hva
+*.pal
+*.aud
+*.wav
+*.bik
+*.vqa
+*.csf
+*.mpr
+*.yrm
+*.mmx
+*.pcx
+*.fnt
+
 # Reverse-engineering databases embed the original exe.
 *.gpr
 *.rep/
