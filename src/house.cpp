@@ -1845,6 +1845,57 @@ void HouseClass::Clobber_All(void)
 	delete this;
 }
 
+// FUNCTION: GAMEMD 0x004FB9B0
+void HouseClass::Detach(AbstractClass const * pointer, bool removed)
+{
+	if (ToCapture == pointer)
+		ToCapture = 0;
+
+	TagClass * tag = ((AbstractClass *)pointer)->As_TagClass();
+	if (tag) {
+		int index = HouseTags.ID(tag);
+		if (index != -1) HouseTags.Delete_Index(index);
+	}
+
+	if (pointer->Fetch_RTTI() == RTTI_BUILDING && removed) {
+		ConYards.Delete((BuildingClass*)pointer);
+		UnitRepairStations.Delete((BuildingClass*)pointer);
+		Grinders.Delete((BuildingClass*)pointer);
+		Absorbers.Delete((BuildingClass*)pointer);
+		Bunkers.Delete((BuildingClass*)pointer);
+		Occupiables.Delete((BuildingClass*)pointer);
+		CloningVats.Delete((BuildingClass*)pointer);
+		SecretLabs.Delete((BuildingClass*)pointer);
+		PsychicDetectionBuildings.Delete((BuildingClass*)pointer);
+		FactoryPlants.Delete((BuildingClass*)pointer);
+		Buildings.Delete((BuildingClass*)pointer);
+		CalculateCostMultipliers();
+	}
+
+	for (int i = 0; i < PATH_COUNT; i++) {
+		if (Paths[i] == pointer)
+			Paths[i] = 0;
+	}
+	if (AircraftFactory == pointer)
+		AircraftFactory = 0;
+	if (InfantryFactory == pointer)
+		InfantryFactory = 0;
+	if (UnitFactory == pointer)
+		UnitFactory = 0;
+	if (Primary_ForShips == pointer)
+		Primary_ForShips = 0;
+	if (BuildingFactory == pointer)
+		BuildingFactory = 0;
+	if (Primary_Unused1 == pointer)
+		Primary_Unused1 = 0;
+	if (Primary_Unused2 == pointer)
+		Primary_Unused2 = 0;
+	if (Primary_Unused3 == pointer)
+		Primary_Unused3 = 0;
+	if (Primary_ForDefenses == pointer)
+		Primary_ForDefenses = 0;
+}
+
 // FUNCTION: GAMEMD 0x004FBD00
 bool HouseClass::Does_Enemy_Building_Exist(StructType btype) const
 {
