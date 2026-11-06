@@ -2166,6 +2166,291 @@ FireErrorType TechnoClass::FUN_006FC090(AbstractClass * target, int which) const
 	return(Can_Fire(target, which, false));
 }
 
+#include "temporal.h"
+
+// FUNCTION: GAMEMD 0x006FC0B0
+FireErrorType TechnoClass::Can_Fire(AbstractClass * target, int weaponIndex, bool ignoreRange) const
+{
+	if (!target) {
+		return FIRE_ILLEGAL;
+	}
+	if (SlaveOwner) {
+		return FIRE_ILLEGAL;
+	}
+	if (IsWarpingIn()) {
+		return FIRE_REARM;
+	}
+	if (LocomotorTarget == target) {
+		return FIRE_REARM;
+	}
+	if (IsBeingWarpedOut()) {
+		return FIRE_ILLEGAL;
+	}
+	if (Deactivated) {
+		return FIRE_ILLEGAL;
+	}
+	if (IsSinking) {
+		return FIRE_ILLEGAL;
+	}
+	if (target == DrainTarget) {
+		return FIRE_ILLEGAL;
+	}
+	if (target == Transporter) {
+		return FIRE_ILLEGAL;
+	}
+	if (IsWarpingSomethingOut() && TemporalImUsing && target == TemporalImUsing->Target) {
+		return FIRE_REARM;
+	}
+	TechnoClass* techno = ((target->AbstractFlags & 1) ? (TechnoClass *)target : NULL);
+	CellClass* cell = &Map[target->Center_Coord()];
+	if ((this && (AbstractFlags & 4)) && ((FootClass*)this)->IsAttackedByLocomotor) {
+		return FIRE_ILLEGAL;
+	}
+	if (techno) {
+		if (techno->IsInLimbo) {
+			return FIRE_ILLEGAL;
+		}
+		if (Berzerk && techno->Techno_Type_Class()->BerserkFriendly) {
+			return FIRE_ILLEGAL;
+		}
+		if (Techno_Type_Class()->Natural && techno->Techno_Type_Class()->Unnatural) {
+			return FIRE_ILLEGAL;
+		}
+		if (techno->IsImmobilized) {
+			return FIRE_ILLEGAL;
+		}
+		if (!House->IsHuman && techno->IsIronCurtained()) {
+			return FIRE_ILLEGAL;
+		}
+		if (techno->Visual_Character(true, House) == VISUAL_HIDDEN && !cell->Is_Sensed(House->HeapID)) {
+			if (Combat_Damage(-1) > 0 || !techno->House->Is_Ally(House)) {
+				return FIRE_CANT;
+			}
+		}
+		if (techno->IsTethered && techno->Techno_Type_Class()->BalloonHover && !techno->In_Air()) {
+			return FIRE_ILLEGAL;
+		}
+	}
+	if (IsFalling) {
+		return FIRE_ILLEGAL;
+	}
+	if (IsUnderEMP()) {
+		if (Fetch_RTTI() != RTTI_UNIT
+			|| (!((UnitClass const *)this)->Class->LargeVisceroid
+				&& !((UnitClass const *)this)->Class->SmallVisceroid)) {
+			return FIRE_CANT;
+		}
+	}
+	WeaponTypeClass const * weapon = Get_Class_Weapon_Data(weaponIndex)->Weapon;
+	if (!weapon || (weapon->IsIonSensitive && House->IonSensitivesShouldBeOffline())) {
+		return FIRE_CANT;
+	}
+	if (weapon->DrainWeapon && techno && techno->DrainingMe) {
+		return FIRE_ILLEGAL;
+	}
+	if (weapon->DrainWeapon && techno && !techno->Techno_Type_Class()->Drainable) {
+		return FIRE_ILLEGAL;
+	}
+	if (techno && techno->BunkerLinkedItem && techno->Fetch_RTTI() == RTTI_UNIT && weapon->Range < 384.0) {
+		return FIRE_ILLEGAL;
+	}
+
+	if (this && Fetch_RTTI() == RTTI_UNIT) {
+		UnitClass const * unit;
+		if (Fetch_RTTI() == RTTI_UNIT) unit = (UnitClass const *)this;
+		else unit = NULL;
+		if (unit->FUN_00746DB0()) {
+			return FIRE_ILLEGAL;
+		}
+	}
+	if (weapon->WarheadPtr && weapon->WarheadPtr->Psychedelic && techno && techno->Techno_Type_Class()->ImmuneToPsionics) {
+		return FIRE_ILLEGAL;
+	}
+	if (weapon->WarheadPtr && weapon->WarheadPtr->Psychedelic && techno && techno->BunkerLinkedItem) {
+		return FIRE_ILLEGAL;
+	}
+	if (weapon->WarheadPtr && weapon->WarheadPtr->IsLocomotor && target->Fetch_RTTI() == RTTI_UNIT) {
+		UnitClass * unit;
+		if (target->Fetch_RTTI() == RTTI_UNIT) unit = (UnitClass *)target;
+		else unit = NULL;
+		if (unit->FUN_00746DB0()) {
+			return FIRE_ILLEGAL;
+		}
+	}
+	if (weapon->WarheadPtr && weapon->WarheadPtr->IsLocomotor && (target->AbstractFlags & 4) && ((ObjectClass*)target)->Techno_Type_Class()->JumpJet) {
+		FootClass* foot = ((target->AbstractFlags & 4) ? (FootClass *)target : NULL);
+		if (foot->Locomotion == NULL) _com_issue_error(E_POINTER);
+		ILocomotion * locomotion = foot->Locomotion;
+		if (locomotion->Is_Moving_Now()) {
+			return FIRE_ILLEGAL;
+		}
+	}
+	if (weapon->WarheadPtr && weapon->WarheadPtr->IsLocomotor && target->Fetch_RTTI() == RTTI_UNIT
+		&& ((target->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass *)target : NULL)->Class->IsSimpleDeployer
+		&& ((target->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass *)target : NULL)->CurrentMission == MISSION_UNLOAD) {
+		return FIRE_ILLEGAL;
+	}
+	if (weapon->WarheadPtr && weapon->WarheadPtr->IsLocomotor && techno && techno->Techno_Type_Class()->Organic) {
+		return FIRE_ILLEGAL;
+	}
+	if (InOpenToppedTransport) {
+		if (!weapon->FireInTransport) {
+			return FIRE_ILLEGAL;
+		}
+	}
+	if (InOpenToppedTransport && Transporter && Transporter->IsBeingWarpedOut()) {
+		return FIRE_ILLEGAL;
+	}
+	if (InOpenToppedTransport && Transporter && Transporter->Transporter) {
+		return FIRE_ILLEGAL;
+	}
+	if (techno && weapon->WarheadPtr && techno->IsBeingWarpedOut() && !weapon->WarheadPtr->Temporal) {
+		return FIRE_ILLEGAL;
+	}
+	if (weapon->Spawner) {
+		if (Is_Z_Fudge_Bridge() || IsParalyzed()) {
+			return FIRE_CANT;
+		}
+		if (!SpawnManager->CountAliveSpawns()) {
+			return FIRE_REARM;
+		}
+	}
+	if (weapon->WarheadPtr->Temporal && techno && techno->Fetch_RTTI() == RTTI_AIRCRAFT && techno->Techno_Type_Class()->Spawned) {
+		return FIRE_ILLEGAL;
+	}
+	WeaponTypeClass const * other = Get_Class_Weapon_Data(weaponIndex == 0)->Weapon;
+	if (other) {
+		if ((other->UseFireParticles && ParticleSystems[0]) || (other->IsRailgun && ParticleSystems[4])
+			|| (other->UseSparkParticles && ParticleSystems[1]) || (other->IsSonic && Wave)) {
+			return FIRE_CANT;
+		}
+	}
+	if (target->In_Air() && !weapon->Bullet->IsAntiAircraft) {
+		return LocomotorTarget != target ? FIRE_ILLEGAL : FIRE_REARM;
+	}
+	if ((target->AbstractFlags & 4) && ((ObjectClass*)target)->In_Which_Layer() != LAYER_GROUND && !weapon->Bullet->IsAntiAircraft) {
+		return FIRE_ILLEGAL;
+	}
+	if (techno) {
+		CellClass* below = techno->Get_Cell_Ptr();
+		bool onWater = below->Land_Type() == LAND_WATER || techno->Get_Cell_Ptr()->Land_Type() == LAND_BEACH;
+		if (techno->In_Air()) {
+			onWater = false;
+		}
+		if (techno->IsOnBridge) {
+			onWater = false;
+		} else if (onWater && SelectNavalTargeting(target) == -1) {
+			return FIRE_ILLEGAL;
+		}
+		if (((ObjectClass*)target)->On_Ground() && !onWater) {
+			if (Techno_Type_Class()->LandTargeting == 1) {
+				return FIRE_ILLEGAL;
+			}
+		}
+	} else {
+		if (!target->In_Air() && !weapon->Bullet->IsAntiGround) {
+			return FIRE_ILLEGAL;
+		}
+		if (target->Fetch_RTTI() == RTTI_CELL
+			&& ((CellClass*)(target->Fetch_RTTI() == RTTI_CELL ? target : 0))->Land_Type() != LAND_WATER
+			&& ((CellClass*)(target->Fetch_RTTI() == RTTI_CELL ? target : 0))->Land_Type() != LAND_BEACH) {
+			if (Techno_Type_Class()->LandTargeting == 1) {
+				return FIRE_ILLEGAL;
+			}
+		}
+	}
+	if (weapon->IsMagBeam && LocomotorTarget && LocomotorTarget != target && Wave && target->Fetch_RTTI() != RTTI_BUILDING) {
+		return FIRE_REARM;
+	}
+	if (weapon->IsMagBeam && LocomotorTarget && LocomotorTarget == target && target->Fetch_RTTI() != RTTI_BUILDING) {
+		return FIRE_REARM;
+	}
+	int phase;
+	int syncFrame;
+
+	if (weaponIndex == 0 && this && Fetch_RTTI() == RTTI_UNIT
+		&& (phase = BurstIndex % weapon->Burst) < 2
+		&& (syncFrame = ((UnitClass const *)this)->Class->FiringSyncFrame[phase]) != -1
+		&& ((UnitClass*)this)->FiringSyncDelay != -1) {
+		if (((UnitClass*)this)->FiringSyncDelay != syncFrame) {
+			return FIRE_REARM;
+		}
+	} else {
+		if (Arm.Value()) {
+			return FIRE_REARM;
+		}
+	}
+	if (weapon->UseFireParticles && ParticleSystems[0]) {
+		return FIRE_REARM;
+	}
+	if (weapon->IsRailgun && ParticleSystems[4]) {
+		return FIRE_REARM;
+	}
+	if (weapon->UseSparkParticles && ParticleSystems[1]) {
+		return FIRE_REARM;
+	}
+	if (weapon->IsSonic && Wave) {
+		return FIRE_REARM;
+	}
+	if (Ammo == 0) {
+		return FIRE_AMMO;
+	}
+	if (weapon->DecloakToFire && Cloak != UNCLOAKED && (Fetch_RTTI() != RTTI_AIRCRAFT || Cloak == CLOAKED)) {
+		return FIRE_CLOAKED;
+	}
+	if (Techno_Type_Class()->IsHunterSeeker) {
+		return FIRE_RANGE;
+	}
+	if (weapon->WarheadPtr->Parasite && (this && (AbstractFlags & 4))) {
+		FootClass* victim = (target->AbstractFlags & 4) ? (FootClass*)target : 0;
+		if (!((FootClass const *)this)->ParasiteImUsing->CanInfect(victim)) {
+			return FIRE_ILLEGAL;
+		}
+	}
+	if (weapon->WarheadPtr->Parasite && (target->AbstractFlags & 4)
+		&& Frame < ((FootClass*)target)->LastBeParasitedStartFrame) {
+		return FIRE_ILLEGAL;
+	}
+	if (techno) {
+		if (weapon->WarheadPtr->Parasite && techno->IsIronCurtained()) {
+			return FIRE_ILLEGAL;
+		}
+		if (weapon->WarheadPtr->MindControl && !CaptureManager->CanCapture(techno)) {
+			return FIRE_ILLEGAL;
+		}
+		if (weapon->WarheadPtr->Modifier[techno->Techno_Type_Class()->Armor] == 0.0) {
+			return FIRE_ILLEGAL;
+		}
+		if (weapon->WarheadPtr->BombDisarm && !techno->AttachedBomb) {
+			return FIRE_ILLEGAL;
+		}
+		if (weapon->WarheadPtr->IvanBomb && techno->AttachedBomb) {
+			return FIRE_ILLEGAL;
+		}
+		if (techno->IsSinking) {
+			return FIRE_ILLEGAL;
+		}
+		if (IsOnBridge != techno->IsOnBridge) {
+			if (Get_Cell_Ptr() && Get_Cell_Ptr()->IsUnderBridge && !In_Air()
+				&& techno->Get_Cell_Ptr() && techno->Get_Cell_Ptr()->IsUnderBridge) {
+				return FIRE_ILLEGAL;
+			}
+			Coord here = Position;
+			Coord there = techno->Position;
+			if (weapon->WarheadPtr->Parasite && abs(here.Z - there.Z) > LEVEL_LEPTON_H * 2) {
+				return FIRE_ILLEGAL;
+			}
+		}
+	}
+	if (Techno_Type_Class()->Organic && IsParalyzed()) {
+		return FIRE_ILLEGAL;
+	}
+	if (ignoreRange && !In_Range(target, weaponIndex)) {
+		return FIRE_RANGE;
+	}
+	return FIRE_OK;
+}
+
 // FUNCTION: GAMEMD 0x006FCD40
 void TechnoClass::Stun(void)
 {
