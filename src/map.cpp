@@ -2228,6 +2228,115 @@ void MapClass::Internal_Destroy_Train_Bridge_NS_TopRight(Cell const & cell, Faci
 }
 
 
+// FUNCTION: GAMEMD 0x00571050
+void MapClass::Destroy_Train_Bridge_Connections(Cell const & cell)
+{
+	CellClass * cellptr = &BlubCell;
+	int facing = FACING_N;
+	for (int index = 0; index < 8; index++) {
+		Cell adjacent = Adjacent_Cell(cell, FacingType(facing));
+		cellptr = &Map[adjacent];
+		if (cellptr->IsUnderBridge || cellptr->WasUnderBridge) {
+			break;
+		}
+		facing = Facing_Add(facing, FACING_NE);
+	}
+
+	if (!cellptr->IsUnderBridge && !cellptr->WasUnderBridge) {
+		return;
+	}
+
+	Cell origin;
+	if (cellptr->IsUnderBridge) {
+		origin = cellptr->Get_Bridge_Deck_Cell();
+	} else {
+		Cell walk = cellptr->Fetch_CellID();
+		int count = 0;
+		int step;
+		if (cellptr->IsBridgeEastWest) {
+			step = FACING_S;
+		} else {
+			step = FACING_E;
+		}
+		CellClass * walkptr;
+		while (true) {
+			Cell next = Adjacent_Cell(walk, FacingType(step));
+			walk = next;
+			walkptr = &Map[next];
+			if (walkptr->WasUnderBridge) {
+				if (++count >= 4) {
+					return;
+				}
+			} else {
+				break;
+			}
+		}
+		FacingType back = Facing_Sub(step, FACING_S);
+		origin = Adjacent_Cell(walk + AdjacentCell[back & 7], back);
+	}
+
+	int advance = cellptr->IsBridgeEastWest ? FACING_W : FACING_N;
+	Rect dirty = RECT_NONE;
+	Cell current = origin;
+
+	while (current.X >= MapRect.X) {
+		if (current.X > MapRect.X + MapRect.Width) {
+			return;
+		}
+		if (current.Y < MapRect.Y || current.Y > MapRect.Y + MapRect.Height) {
+			return;
+		}
+
+		int cellnum = current.X + current.Y * MAP_CELL_W;
+		if (Array[cellnum] != NULL) {
+			CellClass * spanptr = &Map[current];
+			int ittype = spanptr->ITType - IsometricTileTypeClass::TrainBridgeSet + 1;
+
+			if ((ittype == IsometricTileTypeClass::BridgeTopLeft1 || ittype == IsometricTileTypeClass::BridgeTopLeft2) && spanptr->SubTile == 8) {
+				if (Destroy_Train_Bridge_Span(current, FACING_E, &dirty)) {
+					if (dirty != RECT_NONE) {
+						TacticalMap->Register_Dirty_Area(dirty, false);
+					}
+				}
+				return;
+			}
+
+			if ((ittype == IsometricTileTypeClass::BridgeMiddle1 || ittype == IsometricTileTypeClass::BridgeMiddle1 + 3 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle1 + 1 || ittype == IsometricTileTypeClass::BridgeMiddle1 + 2) &&
+				spanptr->SubTile == 5) {
+				if (Destroy_Train_Bridge_Span(current, FACING_E, &dirty)) {
+					if (dirty != RECT_NONE) {
+						TacticalMap->Register_Dirty_Area(dirty, false);
+					}
+				}
+				return;
+			}
+
+			if ((ittype == IsometricTileTypeClass::BridgeTopRight1 || ittype == IsometricTileTypeClass::BridgeTopRight2) && spanptr->SubTile == 12) {
+				if (Destroy_Train_Bridge_Span(current, FACING_S, &dirty)) {
+					if (dirty != RECT_NONE) {
+						TacticalMap->Register_Dirty_Area(dirty, false);
+					}
+				}
+				return;
+			}
+
+			if ((ittype == IsometricTileTypeClass::BridgeMiddle2 || ittype == IsometricTileTypeClass::BridgeMiddle2 + 3 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle2 + 2 || ittype == IsometricTileTypeClass::BridgeMiddle2 + 1) &&
+				spanptr->SubTile == 7) {
+				if (Destroy_Train_Bridge_Span(current, FACING_S, &dirty)) {
+					if (dirty != RECT_NONE) {
+						TacticalMap->Register_Dirty_Area(dirty, false);
+					}
+				}
+				return;
+			}
+		}
+
+		current = Adjacent_Cell(current, FacingType(advance));
+	}
+}
+
 // FUNCTION: GAMEMD 0x00572230
 void MapClass::Internal_Damage_High_Bridge_EW_BottomRight(Cell const & cell, FacingType dir)
 {
@@ -2883,6 +2992,112 @@ void MapClass::Spring_Bridge_Destruction_Triggers(Cell cell1, Cell cell2)
 			}
 			current.Y++;
 		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00576770
+void MapClass::Destroy_High_Bridge_Connections(Cell const & cell)
+{
+	CellClass * cellptr = &BlubCell;
+	int facing = FACING_N;
+	for (int index = 0; index < 8; index++) {
+		Cell adjacent = Adjacent_Cell(cell, FacingType(facing));
+		cellptr = &Map[adjacent];
+		if (cellptr->IsUnderBridge || cellptr->WasUnderBridge) {
+			break;
+		}
+		facing = Facing_Add(facing, FACING_NE);
+	}
+
+	if (!cellptr->IsUnderBridge && !cellptr->WasUnderBridge) {
+		return;
+	}
+
+	Cell origin;
+	if (cellptr->IsUnderBridge) {
+		origin = cellptr->Get_Bridge_Deck_Cell();
+	} else {
+		Cell walk = cellptr->Fetch_CellID();
+		int count = 0;
+		int step;
+		if (cellptr->IsBridgeEastWest) {
+			step = FACING_S;
+		} else {
+			step = FACING_E;
+		}
+		CellClass * walkptr;
+		while (true) {
+			Cell next = Adjacent_Cell(walk, FacingType(step));
+			walk = next;
+			walkptr = &Map[next];
+			if (walkptr->WasUnderBridge) {
+				if (++count >= 4) {
+					return;
+				}
+			} else {
+				break;
+			}
+		}
+		FacingType back = Facing_Sub(step, FACING_S);
+		origin = Adjacent_Cell(Adjacent_Cell(walk, back), back);
+	}
+
+	int advance = cellptr->IsBridgeEastWest ? FACING_W : FACING_N;
+	Cell current = origin;
+	Rect dirty = RECT_NONE;
+
+	while (true) {
+		if (!Map.In_Radar(current)) {
+			return;
+		}
+
+		int cellnum = current.X + current.Y * MAP_CELL_W;
+		if (Array[cellnum] != NULL) {
+			CellClass * spanptr = &Map[current];
+			int ittype = spanptr->ITType - IsometricTileTypeClass::BridgeSet + 1;
+
+			if ((ittype == IsometricTileTypeClass::BridgeTopLeft1 || ittype == IsometricTileTypeClass::BridgeTopLeft2) && spanptr->SubTile == 8) {
+				if (Destroy_High_Bridge_Span(current, FACING_E, &dirty)) {
+					if (dirty != RECT_NONE) {
+						TacticalMap->Register_Dirty_Area(dirty, false);
+					}
+				}
+				return;
+			}
+
+			if ((ittype == IsometricTileTypeClass::BridgeMiddle1 || ittype == IsometricTileTypeClass::BridgeMiddle1 + 3 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle1 + 1 || ittype == IsometricTileTypeClass::BridgeMiddle1 + 2) &&
+				spanptr->SubTile == 5) {
+				if (Destroy_High_Bridge_Span(current, FACING_E, &dirty)) {
+					if (dirty != RECT_NONE) {
+						TacticalMap->Register_Dirty_Area(dirty, false);
+					}
+				}
+				return;
+			}
+
+			if ((ittype == IsometricTileTypeClass::BridgeTopRight1 || ittype == IsometricTileTypeClass::BridgeTopRight2) && spanptr->SubTile == 12) {
+				if (Destroy_High_Bridge_Span(current, FACING_S, &dirty)) {
+					if (dirty != RECT_NONE) {
+						TacticalMap->Register_Dirty_Area(dirty, false);
+					}
+				}
+				return;
+			}
+
+			if ((ittype == IsometricTileTypeClass::BridgeMiddle2 || ittype == IsometricTileTypeClass::BridgeMiddle2 + 3 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle2 + 2 || ittype == IsometricTileTypeClass::BridgeMiddle2 + 1) &&
+				spanptr->SubTile == 7) {
+				if (Destroy_High_Bridge_Span(current, FACING_S, &dirty)) {
+					if (dirty != RECT_NONE) {
+						TacticalMap->Register_Dirty_Area(dirty, false);
+					}
+				}
+				return;
+			}
+		}
+
+		current = Adjacent_Cell(current, FacingType(advance));
 	}
 }
 
@@ -3684,6 +3899,53 @@ bool MapClass::Place_Cliff(CellClass * cellptr, int region_id)
 
 done:
 	return(true);
+}
+
+// FUNCTION: GAMEMD 0x00579B70
+int MapClass::Get_High_Ground_Mask(CellClass * cellptr)
+{
+	int mask = 0;
+	int height = cellptr->Height;
+	Cell origin = cellptr->Fetch_CellID();
+
+	if (!Map.In_Radar(origin) || !MapRegionClass::Get_Cell_Data(origin).InFillReach) {
+		return(0);
+	}
+
+	CellClass * cptr_ne = &Map[(Cell)(origin + Cell(1, -1))];
+	CellClass * cptr_e = &Map[(Cell)(origin + Cell(1, 0))];
+	CellClass * cptr_se = &Map[(Cell)(origin + Cell(1, 1))];
+	CellClass * cptr_s = &Map[(Cell)(origin + Cell(0, 1))];
+	CellClass * cptr_sw = &Map[(Cell)(origin + Cell(-1, 1))];
+	CellClass * cptr_w = &Map[(Cell)(origin + Cell(-1, 0))];
+	CellClass * cptr_nw = &Map[(Cell)(origin + Cell(-1, -1))];
+	CellClass * cptr_n = &Map[(Cell)(origin + Cell(0, -1))];
+
+	if (Map.In_Radar(origin + Cell(-1, -1)) && cptr_nw->Height == height + 4 && !cptr_nw->Is_Tile_Cliff()) {
+		mask |= MG_FACINGF_NW;
+	}
+	if (Map.In_Radar(origin + Cell(0, -1)) && cptr_n->Height == height + 4 && !cptr_n->Is_Tile_Cliff()) {
+		mask |= MG_FACINGF_N;
+	}
+	if (Map.In_Radar(origin + Cell(1, -1)) && cptr_ne->Height == height + 4 && !cptr_ne->Is_Tile_Cliff()) {
+		mask |= MG_FACINGF_NE;
+	}
+	if (Map.In_Radar(origin + Cell(-1, 0)) && cptr_w->Height == height + 4 && !cptr_w->Is_Tile_Cliff()) {
+		mask |= MG_FACINGF_W;
+	}
+	if (Map.In_Radar(origin + Cell(1, 0)) && cptr_e->Height == height + 4 && !cptr_e->Is_Tile_Cliff()) {
+		mask |= MG_FACINGF_E;
+	}
+	if (Map.In_Radar(origin + Cell(-1, 1)) && cptr_sw->Height == height + 4 && !cptr_sw->Is_Tile_Cliff()) {
+		mask |= MG_FACINGF_SW;
+	}
+	if (Map.In_Radar(origin + Cell(0, 1)) && cptr_s->Height == height + 4 && !cptr_s->Is_Tile_Cliff()) {
+		mask |= MG_FACINGF_S;
+	}
+	if (Map.In_Radar(origin + Cell(1, 1)) && cptr_se->Height == height + 4 && !cptr_se->Is_Tile_Cliff()) {
+		mask |= MG_FACINGF_SE;
+	}
+	return(mask);
 }
 
 // FUNCTION: GAMEMD 0x0057A0C0
@@ -5558,15 +5820,52 @@ int MapClass::Find_Largest_Water_Zone(int * zone)
 	return(0);
 }
 
+// FUNCTION: GAMEMD 0x00583C60
+void MapClass::Find_Water_Cells_Around(Cell const * center, int max_radius, int max_cells, MZoneType mzone, int zone, DynamicVectorClass<Cell> * found, int width, int height)
+{
+	for (int radius = 1; radius <= max_radius; radius++) {
+		int negative_radius = -radius;
+		for (int offset = negative_radius; offset <= radius; ++offset) {
+			Cell candidate = (Cell)(*center + Cell(radius, offset));
+			if (Get_Cell_Zone(candidate, mzone, false) == zone) {
+				if (Is_Area_Shore_Or_Water(Rect(candidate.X, candidate.Y, width, height)))
+					found->Add(candidate);
+			}
+			candidate = (Cell)(*center + Cell(-radius, offset));
+			if (Get_Cell_Zone(candidate, mzone, false) == zone) {
+				if (Is_Area_Shore_Or_Water(Rect(candidate.X, candidate.Y, width, height)))
+					found->Add(candidate);
+			}
+			if (offset != radius && offset != negative_radius) {
+				candidate = (Cell)(*center + Cell(offset, radius));
+				if (Get_Cell_Zone(candidate, mzone, false) == zone) {
+					if (Is_Area_Shore_Or_Water(Rect(candidate.X, candidate.Y, width, height)))
+						found->Add(candidate);
+				}
+				candidate = (Cell)(*center + Cell(offset, negative_radius));
+				if (Get_Cell_Zone(candidate, mzone, false) == zone) {
+					if (Is_Area_Shore_Or_Water(Rect(candidate.X, candidate.Y, width, height)))
+						found->Add(candidate);
+				}
+			}
+		}
+		if (found->Count() > max_cells) return;
+	}
+}
+
 // FUNCTION: GAMEMD 0x00584030
 bool MapClass::Is_Area_Shore_Or_Water(Rect const & rect)
 {
-	int width = rect.Width;
 	int height = rect.Height;
+	int width = rect.Width;
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			CellClass * cptr = &Map[Cell(rect.X + x, rect.Y + y)];
-			if (cptr->Passability != PASSABLE_WATER && cptr->Passability != PASSABLE_BEACH) {
+			int left = rect.X;
+			int top = rect.Y;
+			int cx = left + x;
+			int cy = top + y;
+			PassabilityType kind = Map[Cell(cx, cy)].Passability;
+			if (kind != PASSABLE_WATER && kind != PASSABLE_BEACH) {
 				return(false);
 			}
 		}
