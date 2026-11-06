@@ -129,7 +129,7 @@ unverified before. They now resolve to these addresses.
 | seg_007483B0 (4) | unvqtblc .. utracker | unvqtblc | L: names rows for the four UnVQ functions (TibSun unvqtblc.cpp). |
 | seg_0074BB20 (2) | vanimtype .. vector | vanimtype 1, vector 1 | U. D: `BooleanVectorClass`'s first constructor. |
 | seg_0074F6F0 (1) | vein .. version | vein | U |
-| seg_00751C30 (1) | voc .. volinfo | stays | A CD-volume query patched by EA, called by CD. No proof. |
+| seg_00751C30 (1) | voc .. volinfo | volinfo | L: VolumeCheck in TibSun volinfo.cpp; its complete 407-byte body matches with RA volume labels and the inlined GetVolInfo. |
 | seg_007678F0 (21) | WDTGameOptions .. seg_ | **wdthistory** | L: the `History@WorldDominationTour` RTTI vtable. TibSun wdthistory.cpp defines History. |
 | seg_00767C80 (82) | seg_ .. wdtnet | **wdtmap** | L: the `Map@WorldDominationTour` RTTI vtable. TibSun wdtmap.cpp defines Map. |
 | seg_0077B070 (17) | WOLPersonaInformation .. wonline | stays | A header run, then an intro and theme routine using WOLOptions. No class. |

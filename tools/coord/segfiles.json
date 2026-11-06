@@ -112,7 +112,7 @@
   "note": "Module shastraw here includes the unnamed range seg_0069E9F0 in data/modules.csv (ctx.py reports seg_0069E9F0). It has no header run, so it is taken as the start of shastraw's module: land it in src/shastraw.cpp in address order."
  },
  "seg_00751C30": {
-  "file": "voc",
-  "note": "Module voc here includes the unnamed range seg_00751C30 in data/modules.csv (ctx.py reports seg_00751C30). It has no header run, so it is taken as the end of voc's module: land it in src/voc.cpp in address order."
+  "file": "volinfo",
+  "note": "The unnamed range seg_00751C30 is VolumeCheck from TibSun volinfo.cpp. Its complete 407-byte body matches with the RA volume labels, including the inlined GetVolInfo immediately following it. Land it in src/volinfo.cpp in address order."
  }
 }

@@ -19,6 +19,7 @@
 #include "msgbox.h"
 #include "theme.h"
 #include "stringtable.h"
+#include "volinfo.h"
 
 // SYNTHETIC: GAMEMD 0x00479080 SYMBOL
 // _$E4
@@ -26,7 +27,6 @@
 bool __fastcall FUN_00623CD0(wchar_t const * text);
 
 void __cdecl FUN_004068E0(char const * format, ...);
-bool __cdecl FUN_00751C30(void);
 
 extern MixFileClass * DAT_00884E2C;
 extern MixFileClass * DAT_0087E738;
@@ -36,14 +36,10 @@ extern MixFileClass * DAT_00884E64;
 extern MixFileClass * DAT_00884E60;
 extern MixFileClass * DAT_00884E34;
 
-struct CDDriveManagerClass {
-	static int __fastcall GetCDNumber(int drive, int seconds);
-};
-
 // FUNCTION: GAMEMD 0x004790A0
 DiskID CD::Get_Current_Disk(int timeout)
 {
-	return (DiskID)CDDriveManagerClass::GetCDNumber(CDFileClass::Get_CD_Drive(), timeout);
+	return DiskSwap::Get_Disk_ID(CDFileClass::Get_CD_Drive(), timeout);
 }
 
 // FUNCTION: GAMEMD 0x004790B0
@@ -169,7 +165,7 @@ bool CD::Swap(DiskID disk)
 		DAT_00884E34 = NULL;
 	}
 
-	if (!FUN_00751C30()) {
+	if (!VolumeCheck()) {
 		return(true);
 	}
 
@@ -229,7 +225,7 @@ bool CD::Swap(DiskID disk)
 		}
 	}
 
-	return(FUN_00751C30());
+	return(VolumeCheck());
 }
 
 struct CDDriveTable {

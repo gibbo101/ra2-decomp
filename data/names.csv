@@ -390,3 +390,7 @@ address,name,symbol,evidence
 0x00B45DA8,WaveClass::Draw_NonMagnetic::WaveSize,_?WaveSize@?1??Draw_NonMagnetic@WaveClass@@AAEXABVCoord@@0@Z@4PAY03VVector3@@A,0x00761640 initializes sixteen local Vector3 corners and indexes four corners per wave type
 0x00B45CA0,WaveClass::Draw_Magnetic::WaveSize,_?WaveSize@?1??Draw_Magnetic@WaveClass@@AAEXABVCoord@@0@Z@4PAY03VVector3@@A,0x00762070 initializes sixteen local Vector3 corners and indexes four corners per wave type
 0x0048DED0,Shake_The_Screen,?Shake_The_Screen@@YIXH@Z,Called by matched BuildingClass::Do_Destruction at 0x00441C34 and UnitClass::Explode at 0x007387FC
+0x004A80D0,DiskSwap::Get_Disk_ID,?Get_Disk_ID@DiskSwap@@SI?AW4DiskID@@HH@Z,"TibSun diskswap.cpp disc query; recovered 406-byte body uses YR1 and YR1.dsk, with drive and timeout in ECX and EDX."
+0x00751C30,VolumeCheck,?VolumeCheck@@YI_NXZ,TibSun volinfo.cpp volume scan; recovered 407-byte body checks RA1 through RA8 and calls CD::Force_Available.
+0x00751DD0,GetVolInfo,?GetVolInfo@@YI_NPBDPAUVolInfo@@@Z,"TibSun volinfo.cpp and VolInfo layout; preserved 201-byte body, also inlined in VolumeCheck."
+0x0081C1D0,CD::RequiredCD,?RequiredCD@CD@@0W4DiskID@@A,CD::Set_Required_Disk at 0x004790B0 stores DISK_LOCAL or the requested disc here; VolumeCheck passes it to CD::Force_Available.
