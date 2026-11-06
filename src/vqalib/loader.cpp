@@ -1729,6 +1729,238 @@ long Load_LINF(VQAHandleP *vqap)
 	return(VQAERR_NONE);
 }
 
+static long Load_MFCH(VQAHandleP *vqap, unsigned long iffsize)
+{
+	if (vqap->Config.StreamHandler((VQAHandle *)vqap, VQACMD_READ, &vqap->MFCInfo.Header, PADSIZE(iffsize))) {
+		return(VQAERR_READ);
+	}
+	return(VQAERR_NONE);
+}
+
+static long Load_MFCD(VQAHandleP *vqap, unsigned long iffsize)
+{
+	if (vqap->Config.StreamHandler((VQAHandle *)vqap, VQACMD_READ, vqap->MFCInfo.StaticData, PADSIZE(iffsize))) {
+		return(VQAERR_READ);
+	}
+	return(VQAERR_NONE);
+}
+
+static long Load_MFCT(VQAHandleP *vqap, unsigned long iffsize)
+{
+	if (vqap->Config.StreamHandler((VQAHandle *)vqap, VQACMD_READ, vqap->MFCInfo.Table, PADSIZE(iffsize))) {
+		return(VQAERR_READ);
+	}
+	return(VQAERR_NONE);
+}
+
+static VQABool VQA_MFCISpansLoop(VQAHandleP *vqap, unsigned long chunkid, unsigned long interval)
+{
+	int distance_to_end = 0;
+	int distance_from_start = 0;
+	unsigned loop_count = vqap->LoopInfo.Header.Count;
+	VQALoopInfo::DATA *loops = vqap->LoopInfo.Data;
+	unsigned key_count = vqap->MFCInfo.Header.StaticCount;
+	VQAMFCInfo::DATA *keys = vqap->MFCInfo.StaticData;
+	for (unsigned loop = 0; loop < loop_count; ++loop) {
+		unsigned short *loop_end = &loops[loop].EndFrame;
+		distance_from_start = -1;
+		for (unsigned key = 0; key < key_count; ++key) {
+			if (keys[key].ChunkID == chunkid) {
+				unsigned frame = keys[key].KeyFrame;
+				unsigned start = loop_end[-1];
+				if (frame >= start) {
+					unsigned end = *loop_end;
+					if (frame > end) break;
+					if (distance_from_start < 0) {
+						distance_from_start = frame - start;
+						distance_to_end = end - frame;
+					} else {
+						distance_to_end = end - frame;
+					}
+				}
+			}
+		}
+		if (distance_from_start > 0 &&
+				distance_from_start + distance_to_end + 1 < interval) return(1);
+	}
+	return(0);
+}
+
+static long VQA_MFCICalcCount(VQAHandleP *vqap, unsigned long chunkid, long count, unsigned long interval)
+{
+	if (!interval) return(0);
+	long slots = (count - 1) / interval + 1;
+	if (VQA_MFCISpansLoop(vqap, chunkid, interval)) ++slots;
+	return(slots);
+}
+
+static long VQA_MFCIPrepare(VQAHandleP *vqap, unsigned long index)
+{
+	VQAConfig *config = &vqap->Config;
+	VQAMFCInfo *info = &vqap->MFCInfo;
+	VQAMFCInfo::TABLE *table = vqap->MFCInfo.Table;
+	VQAMFCInfo::DATA2 *data2 = info->Data2;
+	int entry_size = table[index].EntrySize;
+	int slots = VQA_MFCICalcCount(vqap, table[index].ChunkID, config->NumFrameBufs, table[index].FrameInterval);
+	if (slots > 0) {
+		data2[index].Count = slots;
+		data2[index].WriteIndex = 0;
+		unsigned long size = sizeof(VQAMFCInfo::DATA2::DATA) * slots;
+		VQAMFCInfo::DATA2::DATA *records = (VQAMFCInfo::DATA2::DATA *)config->MemoryHandler((VQAHandle *)vqap, VQAMEM_ALLOC, 0, size);
+		if (!records) return(VQAERR_NOMEM);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_LOCK, records, size);
+		vqap->MemUsed += size;
+		data2[index].Data = records;
+		size = slots * PADSIZE(entry_size);
+		char *buffer = (char *)config->MemoryHandler((VQAHandle *)vqap, VQAMEM_ALLOC, 0, size);
+		if (!buffer) return(VQAERR_NOMEM);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_LOCK, buffer, size);
+		vqap->MemUsed += size;
+		for (int slot = 0; slot < slots; ++slot) {
+			data2[index].Data[slot].Buffer = buffer;
+			data2[index].Data[slot].Frame = -1;
+			buffer += entry_size;
+		}
+	}
+	return(VQAERR_NONE);
+}
+
+// FUNCTION: GAMEMD 0x007C12B0
+long Load_MFCI(VQAHandleP *vqap)
+{
+	ChunkHeader chunk;
+	VQAConfig *config = &vqap->Config;
+	long size;
+	unsigned long count, iffsize;
+	if (config->StreamHandler((VQAHandle *)vqap, VQACMD_READ, &chunk, sizeof(chunk))) return(VQAERR_EOF);
+	if (chunk.id != ID_MFCH) return(VQAERR_READ);
+	iffsize = REVERSE_LONG(chunk.size);
+	if (Load_MFCH(vqap, iffsize) != VQAERR_NONE) return(VQAERR_READ);
+	count = vqap->MFCInfo.Header.StaticCount;
+	if (count > 0) {
+		size = count * sizeof(VQAMFCInfo::DATA);
+		vqap->MFCInfo.StaticData = (VQAMFCInfo::DATA *)config->MemoryHandler((VQAHandle *)vqap, VQAMEM_ALLOC, 0, size);
+		if (!vqap->MFCInfo.StaticData) return(VQAERR_NOMEM);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_LOCK, vqap->MFCInfo.StaticData, size);
+		vqap->MemUsed += size;
+		if (config->StreamHandler((VQAHandle *)vqap, VQACMD_READ, &chunk, sizeof(chunk))) return(VQAERR_EOF);
+		if (chunk.id != ID_MFCD) return(VQAERR_READ);
+		size = REVERSE_LONG(chunk.size);
+		if (Load_MFCD(vqap, size) != VQAERR_NONE) return(VQAERR_READ);
+	}
+	count = vqap->MFCInfo.Header.Count;
+	if (count > 0) {
+		size = count * sizeof(VQAMFCInfo::TABLE);
+		vqap->MFCInfo.Table = (VQAMFCInfo::TABLE *)config->MemoryHandler((VQAHandle *)vqap, VQAMEM_ALLOC, 0, size);
+		if (!vqap->MFCInfo.Table) return(VQAERR_NOMEM);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_LOCK, vqap->MFCInfo.Table, size);
+		vqap->MemUsed += size;
+		if (config->StreamHandler((VQAHandle *)vqap, VQACMD_READ, &chunk, sizeof(chunk))) return(VQAERR_EOF);
+		if (chunk.id != ID_MFCT) return(VQAERR_READ);
+		size = REVERSE_LONG(chunk.size);
+		if (Load_MFCT(vqap, size) != VQAERR_NONE) return(VQAERR_READ);
+	}
+	count = vqap->MFCInfo.Header.Count;
+	if (count > 0) {
+		size = count * sizeof(VQAMFCInfo::DATA2);
+		vqap->MFCInfo.Data2 = (VQAMFCInfo::DATA2 *)config->MemoryHandler((VQAHandle *)vqap, VQAMEM_ALLOC, 0, size);
+		if (!vqap->MFCInfo.Data2) return(VQAERR_NOMEM);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_LOCK, vqap->MFCInfo.Data2, size);
+		vqap->MemUsed += size;
+		for (unsigned long entry = 0; entry < count; ++entry) {
+			long result = VQA_MFCIPrepare(vqap, entry);
+			if (result != VQAERR_NONE) return(result);
+		}
+	}
+	return(VQAERR_NONE);
+}
+
+static long Load_MSCH(VQAHandleP *vqap, unsigned long iffsize)
+{
+	if (vqap->Config.StreamHandler((VQAHandle *)vqap, VQACMD_READ, &vqap->MSCInfo.Header, PADSIZE(iffsize))) {
+		return(VQAERR_READ);
+	}
+	return(VQAERR_NONE);
+}
+
+static long Load_MSCT(VQAHandleP *vqap, unsigned long iffsize)
+{
+	if (vqap->Config.StreamHandler((VQAHandle *)vqap, VQACMD_READ, vqap->MSCInfo.Table, PADSIZE(iffsize))) {
+		return(VQAERR_READ);
+	}
+	return(VQAERR_NONE);
+}
+
+static long VQA_MSCIPrepare(VQAHandleP *vqap, unsigned long index)
+{
+	VQAConfig *config = &vqap->Config;
+	int slots = config->NumFrameBufs;
+	VQAMSCInfo *info = &vqap->MSCInfo;
+	VQAMSCInfo::DATA2 *data2 = info->Data2;
+	VQAMSCInfo::TABLE *table = vqap->MSCInfo.Table;
+	int entry_size = table[index].EntrySize;
+	if (slots > 0) {
+		data2[index].Count = slots;
+		data2[index].WriteIndex = 0;
+		unsigned long size = sizeof(VQAMSCInfo::DATA2::DATA) * slots;
+		VQAMSCInfo::DATA2::DATA *records = (VQAMSCInfo::DATA2::DATA *)config->MemoryHandler((VQAHandle *)vqap, VQAMEM_ALLOC, 0, size);
+		if (!records) return(VQAERR_NOMEM);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_LOCK, records, size);
+		vqap->MemUsed += size;
+		data2[index].Data = records;
+		size = PADSIZE(entry_size) * slots;
+		char *buffer = (char *)config->MemoryHandler((VQAHandle *)vqap, VQAMEM_ALLOC, 0, size);
+		if (!buffer) return(VQAERR_NOMEM);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_LOCK, buffer, size);
+		vqap->MemUsed += size;
+		for (int slot = 0; slot < slots; ++slot) {
+			data2[index].Data[slot].Buffer = buffer;
+			data2[index].Data[slot].Frame = -1;
+			buffer += entry_size;
+		}
+	}
+	return(VQAERR_NONE);
+}
+
+// FUNCTION: GAMEMD 0x007C1730
+long Load_MSCI(VQAHandleP *vqap)
+{
+	ChunkHeader chunk;
+	VQAConfig *config = &vqap->Config;
+	long size;
+	unsigned long count, iffsize;
+	if (config->StreamHandler((VQAHandle *)vqap, VQACMD_READ, &chunk, sizeof(chunk))) return(VQAERR_EOF);
+	if (chunk.id != ID_MSCH) return(VQAERR_READ);
+	iffsize = REVERSE_LONG(chunk.size);
+	if (Load_MSCH(vqap, iffsize) != VQAERR_NONE) return(VQAERR_READ);
+	VQAMSCInfo::HEADER *header = &vqap->MSCInfo.Header;
+	count = header->Count;
+	if (count > 0) {
+		size = count * sizeof(VQAMSCInfo::TABLE);
+		vqap->MSCInfo.Table = (VQAMSCInfo::TABLE *)config->MemoryHandler((VQAHandle *)vqap, VQAMEM_ALLOC, 0, size);
+		if (!vqap->MSCInfo.Table) return(VQAERR_NOMEM);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_LOCK, vqap->MSCInfo.Table, size);
+		vqap->MemUsed += size;
+		if (config->StreamHandler((VQAHandle *)vqap, VQACMD_READ, &chunk, sizeof(chunk))) return(VQAERR_EOF);
+		if (chunk.id != ID_MSCT) return(VQAERR_READ);
+		size = REVERSE_LONG(chunk.size);
+		if (Load_MSCT(vqap, size) != VQAERR_NONE) return(VQAERR_READ);
+	}
+	count = header->Count;
+	if (count > 0) {
+		size = count * sizeof(VQAMSCInfo::DATA2);
+		vqap->MSCInfo.Data2 = (VQAMSCInfo::DATA2 *)config->MemoryHandler((VQAHandle *)vqap, VQAMEM_ALLOC, 0, size);
+		if (!vqap->MSCInfo.Data2) return(VQAERR_NOMEM);
+		config->MemoryHandler((VQAHandle *)vqap, VQAMEM_LOCK, vqap->MSCInfo.Data2, size);
+		vqap->MemUsed += size;
+		for (unsigned long entry = 0; entry < count; ++entry) {
+			long result = VQA_MSCIPrepare(vqap, entry);
+			if (result != VQAERR_NONE) return(result);
+		}
+	}
+	return(VQAERR_NONE);
+}
+
 // FUNCTION: GAMEMD 0x007C19F0
 long VQA_GetCodebookFrameRange(VQAHandleP *vqap, long framenum, long *first_frame, long *last_frame)
 {
