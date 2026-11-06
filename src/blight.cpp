@@ -263,3 +263,7 @@ BuildingLightClass::~BuildingLightClass(void)
 	Limbo();
 	BuildingLights.Delete(this);
 }
+
+// TEMPLATE: GAMEMD 0x00437160
+// ??G?$TPoint3D@H@@QBE?BV0@ABV0@@Z
+template class TPoint3D<int>;
