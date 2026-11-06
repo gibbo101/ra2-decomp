@@ -595,6 +595,36 @@ char const * VocEntry::Name(void)
 	return Voc != NULL ? Voc->FUN_00405170() : "Invalid Voc";
 }
 
+// FUNCTION: GAMEMD 0x00751620
+HRESULT __fastcall FUN_00751620(IStream * stream)
+{
+	int count = DAT_00B1D320.FUN_004073B0();
+	HRESULT result = stream->Write(&count, sizeof(count), NULL);
+	if (SUCCEEDED(result)) {
+		SoundNode * node = (SoundNode *)DAT_00B1D320.FUN_004073C0();
+		while (node) {
+			struct VocStaticRecord {
+				int Index;
+				Coord Position;
+			} entry;
+			int index = -1;
+			entry.Index = index;
+			if (node->Controller.EventType) {
+				char const * name = node->Controller.EventType->FUN_00405170();
+				if (name) index = VocClass::FindIndex(name);
+				entry.Index = index;
+			}
+			entry.Position.X = node->Position.X;
+			entry.Position.Y = node->Position.Y;
+			entry.Position.Z = node->Position.Z;
+			result = stream->Write(&entry, sizeof(entry), NULL);
+			if (FAILED(result)) return result;
+			node = (SoundNode *)node->FUN_004073E0();
+		}
+	}
+	return result;
+}
+
 // FUNCTION: GAMEMD 0x007518A0
 void __fastcall FUN_007518A0(AudioController * controller, int voc)
 {
