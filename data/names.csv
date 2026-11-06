@@ -394,3 +394,7 @@ address,name,symbol,evidence
 0x00751C30,VolumeCheck,?VolumeCheck@@YI_NXZ,TibSun volinfo.cpp volume scan; recovered 407-byte body checks RA1 through RA8 and calls CD::Force_Available.
 0x00751DD0,GetVolInfo,?GetVolInfo@@YI_NPBDPAUVolInfo@@@Z,"TibSun volinfo.cpp and VolInfo layout; preserved 201-byte body, also inlined in VolumeCheck."
 0x0081C1D0,CD::RequiredCD,?RequiredCD@CD@@0W4DiskID@@A,CD::Set_Required_Disk at 0x004790B0 stores DISK_LOCAL or the requested disc here; VolumeCheck passes it to CD::Force_Available.
+0x007BF470,VQA_LoadFrame,?VQA_LoadFrame@@YIJPAU_VQAHandleP@@J@Z,TibSun vqalib/loader.cpp loop-cache wrapper; recovered 706-byte body calls VQA_LoadFrame_Internal at 0x007BF740.
+0x007BF740,VQA_LoadFrame_Internal,?VQA_LoadFrame_Internal@@YIJPAU_VQAHandleP@@J@Z,TibSun vqalib/loader.cpp frame-chunk loader; recovered 3397-byte body and its call from VQA_LoadFrame.
+0x007C39C0,UnVQ2_C1_4x4,?UnVQ2_C1_4x4@@YAXPAE00KKK@Z,TibSun vqalib/unvq.cpp 4x4 C1 decoder; recovered 918-byte body with the original cdecl signature.
+0x00B78198,VQA_LoadFrame_Internal::iffsize,_?iffsize@?1??VQA_LoadFrame_Internal@@YIJPAU_VQAHandleP@@J@Z@4KA,All 25 DIR32 references to the function-local static iffsize in recovered VQA_LoadFrame_Internal resolve to this original address.
