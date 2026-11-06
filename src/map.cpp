@@ -3912,14 +3912,14 @@ int MapClass::Get_High_Ground_Mask(CellClass * cellptr)
 		return(0);
 	}
 
-	CellClass * cptr_ne = &Map[(Cell)(origin + Cell(1, -1))];
-	CellClass * cptr_e = &Map[(Cell)(origin + Cell(1, 0))];
-	CellClass * cptr_se = &Map[(Cell)(origin + Cell(1, 1))];
-	CellClass * cptr_s = &Map[(Cell)(origin + Cell(0, 1))];
-	CellClass * cptr_sw = &Map[(Cell)(origin + Cell(-1, 1))];
-	CellClass * cptr_w = &Map[(Cell)(origin + Cell(-1, 0))];
-	CellClass * cptr_nw = &Map[(Cell)(origin + Cell(-1, -1))];
-	CellClass * cptr_n = &Map[(Cell)(origin + Cell(0, -1))];
+	CellClass * cptr_ne = &Map[Cell(origin + Cell(1, -1))];
+	CellClass * cptr_e = &Map[Cell(origin + Cell(1, 0))];
+	CellClass * cptr_se = &Map[Cell(origin + Cell(1, 1))];
+	CellClass * cptr_s = &Map[Cell(origin + Cell(0, 1))];
+	CellClass * cptr_sw = &Map[Cell(origin + Cell(-1, 1))];
+	CellClass * cptr_w = &Map[Cell(origin + Cell(-1, 0))];
+	CellClass * cptr_nw = &Map[Cell(origin + Cell(-1, -1))];
+	CellClass * cptr_n = &Map[Cell(origin + Cell(0, -1))];
 
 	if (Map.In_Radar(origin + Cell(-1, -1)) && cptr_nw->Height == height + 4 && !cptr_nw->Is_Tile_Cliff()) {
 		mask |= MG_FACINGF_NW;
@@ -5826,23 +5826,23 @@ void MapClass::Find_Water_Cells_Around(Cell const * center, int max_radius, int 
 	for (int radius = 1; radius <= max_radius; radius++) {
 		int negative_radius = -radius;
 		for (int offset = negative_radius; offset <= radius; ++offset) {
-			Cell candidate = (Cell)(*center + Cell(radius, offset));
+			Cell candidate = Cell(*center + Cell(radius, offset));
 			if (Get_Cell_Zone(candidate, mzone, false) == zone) {
 				if (Is_Area_Shore_Or_Water(Rect(candidate.X, candidate.Y, width, height)))
 					found->Add(candidate);
 			}
-			candidate = (Cell)(*center + Cell(-radius, offset));
+			candidate = Cell(*center + Cell(-radius, offset));
 			if (Get_Cell_Zone(candidate, mzone, false) == zone) {
 				if (Is_Area_Shore_Or_Water(Rect(candidate.X, candidate.Y, width, height)))
 					found->Add(candidate);
 			}
 			if (offset != radius && offset != negative_radius) {
-				candidate = (Cell)(*center + Cell(offset, radius));
+				candidate = Cell(*center + Cell(offset, radius));
 				if (Get_Cell_Zone(candidate, mzone, false) == zone) {
 					if (Is_Area_Shore_Or_Water(Rect(candidate.X, candidate.Y, width, height)))
 						found->Add(candidate);
 				}
-				candidate = (Cell)(*center + Cell(offset, negative_radius));
+				candidate = Cell(*center + Cell(offset, negative_radius));
 				if (Get_Cell_Zone(candidate, mzone, false) == zone) {
 					if (Is_Area_Shore_Or_Water(Rect(candidate.X, candidate.Y, width, height)))
 						found->Add(candidate);
