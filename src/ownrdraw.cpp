@@ -6,6 +6,181 @@
 #define NDEBUG
 #include "always.h"
 #include "ownrdraw.h"
+
+namespace OwnerDraw {
+	struct WinData {
+
+		LPARAM userData;
+		int scrollBarWidth;
+		HWND ownerWindow;
+		HWND attachedWindow;
+		Surface *cachedSurface;
+		Surface *image;
+		Surface *altImage;
+		int itemHeightSet;
+		int paintDisabled;
+		int toolTipsEnabled;
+
+		union {
+			struct {
+				wchar_t *text;
+				int hasText;
+				int asciiOnly;
+				WinNode *nodes;
+				int hasFocus;
+				WideWstring *editText;
+				int caretIndex;
+				int scrollStart;
+				int textLimit;
+				int caretBlink;
+				wchar_t *rejectChars;
+				int styleFlags;
+				unsigned char reserved58[0xC];
+				BitFont *font;
+			} Wide;
+
+			struct {
+				ArrayList<int> *rowColors;
+				ArrayList<int> *selStates;
+				int topIndex;
+				int curSel;
+				ArrayList<ColumnData> *columns;
+			} ListBox;
+
+			struct {
+				unsigned char reserved28[0x94];
+				bool skipDraw;
+				unsigned char reservedBD[0xB];
+				unsigned char alpha;
+				unsigned char reservedC9[4];
+				bool disabled;
+				unsigned char reservedCE[0x1A];
+				int result;
+				int dragging;
+				int range;
+				int position;
+				int upPressed;
+				int downPressed;
+				int keepCapture;
+			} ScrollBar;
+
+			struct {
+				unsigned char reserved28[0xC0];
+				int result;
+				int dragging;
+				int range;
+				int value;
+				int minimum;
+				int thumbPos;
+				int step;
+				int showNumbers;
+				int clickSuppress;
+			} TrackBar;
+
+			struct {
+				int selIndex;
+				int reserved2C;
+				int reserved30;
+				HWND dropdown;
+				int reserved38[6];
+				COLORREF itemColors[50];
+			} ComboBox;
+
+			struct {
+				char *text;
+				COLORREF textColor;
+			} Static;
+
+			struct {
+				int state;
+			} Button;
+
+			struct {
+				unsigned char reserved28[0xB1];
+				unsigned char skinned;
+				unsigned char variant;
+				unsigned char reservedDB[13];
+				int checkState;
+			} CheckBox;
+
+			struct {
+				unsigned char reserved28[0x1C];
+				int scrollStart;
+				unsigned char reserved48[0x80];
+				int alpha;
+				unsigned char reservedCC[0x24];
+				int focusPending;
+				int focusEnabled;
+				int hadTabStop;
+			} Edit;
+
+			struct {
+				int selection;
+				int reserved2C;
+				int scrollTop;
+			} ComboDrop;
+
+			struct {
+				unsigned char reserved28[0xC0];
+				int itemState;
+			} DrawItem;
+
+			struct {
+				unsigned char reserved28[0xC0];
+				int minimum;
+				int maximum;
+				int position;
+			} ProgressBar;
+
+			struct {
+				unsigned char reserved28[0x44];
+				int DialogID;
+				unsigned char reserved70[0x40];
+				int LayoutBand;
+				unsigned char reservedB4[9];
+				bool HasOpenAnimation;
+			} Dialog;
+
+			unsigned char _size[0x100];
+		};
+
+		HFONT font;
+		int bkMode;
+		COLORREF bkColor;
+		COLORREF textColor;
+		int field_138;
+		int animState;
+		unsigned char reserved[0xC0];
+
+		WinData(void);
+		WinData(WinData const & that);
+		~WinData(void)
+		{
+			Set_Text((wchar_t const *)0);
+			while (Wide.nodes) {
+				Remove_Node(Wide.nodes);
+			}
+			if (Wide.editText) {
+				delete Wide.editText;
+			}
+		}
+		WinData & operator=(WinData const & that);
+
+		WinNode *Add_Node(int length);
+		void Copy_Nodes(WinNode const *source);
+		void Set_Text(wchar_t const *text);
+		void Set_Text(char const *text);
+		void Remove_Node(WinNode *node);
+		void Remove_All_Nodes(void)
+		{
+			while (Wide.nodes) {
+				Remove_Node(Wide.nodes);
+			}
+		}
+	};
+
+}
+
 #include "tiprequest.h"
 #include "_keyboar.h"
 #include "_rules.h"
@@ -1636,7 +1811,6 @@ void FUN_00607FD0(HWND dialog)
 
 bool __fastcall FUN_0055CBF0(void);
 void __fastcall FUN_005D4D50(void);
-bool __fastcall FUN_0069BBE0(SessionClass *session);
 bool __fastcall FUN_00602490(HWND parent, HWND child);
 namespace OwnerDraw {
 BOOL CALLBACK ClassifyLayoutBand(HWND window, LPARAM lparam);
@@ -2799,6 +2973,35 @@ int __fastcall FUN_0060C4E0(HWND dialog)
 		return *(int *)((char *)data + 0x74);
 	}
 	return 0;
+}
+
+namespace OwnerDraw {
+// FUNCTION: GAMEMD 0x0060C540
+// OwnerDraw::TrySetDialogLayoutBand1
+bool __fastcall TrySetDialogLayoutBand1(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data == NULL) {
+		return false;
+	}
+	int type = data->Dialog.DialogID;
+	bool match = type == 0x10c || type == 0x94 || type == 0xb6 || type == 0xa3 || type == 0x73 ||
+		type == 0xd8 || type == 0xbbb || type == 0xf5 || type == 0x105 || type == 0xd5 ||
+		type == 0xe2 || type == 0x2b5 || type == 0xb7 || type == 0x2b4 || type == 0x101 ||
+		type == 0x129 || type == 0xbc6 || type == 0xbc7 || type == 0x10b || type == 0xd7 ||
+		type == 0x108 || type == 0xbc || type == 0xbd || type == 0xbb || type == 0xb5 ||
+		type == 0xbba || type == 0xff || type == 0xea || type == 0x6b || type == 0x100 ||
+		type == 0x102 || type == 0xb8 || type == 0xd6 || type == 0x103 || type == 0xd4 ||
+		type == 0x125 || type == 0x122 || type == 0x112 || type == 0xe7 || type == 0x116 ||
+		type == 0xc2 || type == 0xc9 || type == 0x113 || type == 0xfe || type == 0x10f ||
+		type == 0x11d || type == 0x11c || type == 0x117 || type == 0x114 || type == 0xe6 ||
+		type == 0xf3 || type == 0xf4 || type == 0x2bc || type == 0x10e || type == 0xfb;
+	if (match) {
+		data->Dialog.LayoutBand = 1;
+		data->Dialog.HasOpenAnimation = true;
+	}
+	return match;
+}
 }
 
 namespace OwnerDraw {
@@ -4555,7 +4758,6 @@ LRESULT CALLBACK OwnerDraw::ProgressHandler(HWND window, UINT message, WPARAM wp
 }
 
 namespace OwnerDraw {
-int __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int style, int p5, int p6, int p7, int p8);
 LRESULT CALLBACK TrackBarHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 }
 
@@ -4911,10 +5113,6 @@ inline int Draw_Hotkey_Text4(Surface *surface, wchar_t const *text, RECT *rect, 
 inline int Draw_Hotkey_Text5(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text4(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text6(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text5(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text7(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text6(surface, text, rect, font, color, flags); }
-namespace OwnerDraw {
-void __fastcall DrawBeveledBorder(Surface & surface, Rect const & rect, int offset, int color);
-}
-
 // FUNCTION: GAMEMD 0x0061ECA0
 // OwnerDraw::HotkeyHandler
 LRESULT CALLBACK OwnerDraw::HotkeyHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -5903,15 +6101,12 @@ BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam);
 BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam);
 }
 BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam);
-bool __fastcall FUN_0060C540(HWND dialog);
 void __fastcall FUN_0060CF00(HWND dialog);
 void __fastcall Resize_Dialogs(HWND window);
 void __fastcall Center_Window_Within_Window(HWND window);
 extern int DAT_007F5BE0;
 
 namespace UI { bool Updated(void); }
-void __fastcall FUN_005D4D50(void);
-bool __fastcall FUN_0055CBF0(void);
 
 // FUNCTION: GAMEMD 0x00623120
 // UI::Updated
@@ -6412,6 +6607,12 @@ template class Dictionary<HWND, WNDPROC>;
 // TEMPLATE: GAMEMD 0x00624760
 // ?getPointer@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@QAEDAAPAUHWND__@@PAPAUWinData@OwnerDraw@@@Z
 
+// FUNCTION: GAMEMD 0x006247D0
+// ??0CellData@OwnerDraw@@QAE@ABU01@@Z
+
+// TEMPLATE: GAMEMD 0x00624810
+// ?growVector@?$ArrayList@UCellData@OwnerDraw@@@@AAEDXZ
+
 // TEMPLATE: GAMEMD 0x00624930
 // ?getPointer@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@QAEDAAPAUHWND__@@PAPAP6GJPAU2@IIJ@Z@Z
 
@@ -6449,6 +6650,12 @@ template class Dictionary<OwnerDraw::CtrlMsgData, bool>;
 // TEMPLATE: GAMEMD 0x00625440
 // ?shrinkVector@?$ArrayList@H@@AAEDXZ
 template class ArrayList<int>;
+
+// FUNCTION: GAMEMD 0x006255F0
+OwnerDraw::ColumnData::ColumnData(ColumnData & that)
+	: xPos(that.xPos), width(that.width), cells(that.cells)
+{
+}
 
 // TEMPLATE: GAMEMD 0x00625780
 // ?shrink@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEXXZ
