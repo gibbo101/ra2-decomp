@@ -11320,6 +11320,7 @@ address,size,symbol,source,sha256
 0x00635310,49,?Unselect_All@PlanningNodeClass@@QAEXXZ,src/planmgr.cpp,568076e3f184b779aebc155c80dededa128cb2ee7059df2fada4062fa7f9dd98
 0x00635490,202,?Fill_Lead_Box@PlanningNodeClass@@QAEXH@Z,src/planmgr.cpp,f7c9d7fca651380cd156b542feac09b461d6e72aed69ceb4a581671bc7957982
 0x00635560,281,?Frame_Lead_Box@PlanningNodeClass@@QAEXH@Z,src/planmgr.cpp,69f41a6c1f2f7dcbc049e505dc187fd010a372078c86bd34bfbc1b81ce2a4d7e
+0x00635680,324,?FUN_00635680@PlanningNodeClass@@QAEXH@Z,src/planmgr.cpp,d9d47cd86100d87619ddc543776c48c7a7c7756834d0e22071b0234b53c570ac
 0x006357D0,81,?FUN_006357D0@@YIXPAV?$TRect@H@@H@Z,src/planmgr.cpp,6bb932f4e84d64d34ff9d61b54f28c9aa403c280e4e455e487a2707e4120ca43
 0x00635830,519,?Node_Color@PlanningNodeClass@@QAEHXZ,src/planmgr.cpp,1ec56601d65b8f32ba7f1f4b155b1b556d8eedad74f8a7c8fc2b662c991cd51c
 0x00635A40,462,?Branch_Color@PlanningNodeClass@@QAEHH@Z,src/planmgr.cpp,92bd7d16648be00894e0d888b01d62c6605b44b84305cced71b294ccda3c9eff
