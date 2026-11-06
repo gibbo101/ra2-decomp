@@ -5686,6 +5686,7 @@ address,name,result,size,source,symbol
 0x004FD940,HouseClass::Check_Fire_Sale,MATCH,88,src/house.cpp,?Check_Fire_Sale@HouseClass@@QAE?AW4UrgencyType@@XZ
 0x004FD9A0,HouseClass::Check_Raise_Money,MATCH,819,src/house.cpp,?Check_Raise_Money@HouseClass@@QAE?AW4UrgencyType@@XZ
 0x004FDCE0,HouseClass::AI_Fire_Sale,MATCH,35,src/house.cpp,?AI_Fire_Sale@HouseClass@@QAE_NW4UrgencyType@@@Z
+0x004FDD10,HouseClass::AI_Raise_Money,MATCH,1736,src/house.cpp,?AI_Raise_Money@HouseClass@@QAE_NW4UrgencyType@@@Z
 0x004FE3E0,HouseClass::AI_Building,MATCH,1653,src/house.cpp,?AI_Building@HouseClass@@AAEHXZ
 0x004FEA60,HouseClass::AI_Unit,MATCH,1147,src/house.cpp,?AI_Unit@HouseClass@@AAEHXZ
 0x004FEEE0,HouseClass::AI_Infantry,MATCH,805,src/house.cpp,?AI_Infantry@HouseClass@@AAEHXZ

@@ -6038,6 +6038,7 @@ address,size,symbol,source,sha256
 0x004FD940,88,?Check_Fire_Sale@HouseClass@@QAE?AW4UrgencyType@@XZ,src/house.cpp,da97ee446eb45d9b1dc0b1f0e7a4dd6c766823177bb76593882f4904aed23e75
 0x004FD9A0,819,?Check_Raise_Money@HouseClass@@QAE?AW4UrgencyType@@XZ,src/house.cpp,1d30e8e9f063bd343c497b4cf00abac29739b3cfc67bbfbb13c609693bab1ba2
 0x004FDCE0,35,?AI_Fire_Sale@HouseClass@@QAE_NW4UrgencyType@@@Z,src/house.cpp,461df85bd74345835d9ad80319e3a795a6354d3130b5ced9650e7e5d6c8e4ac7
+0x004FDD10,1736,?AI_Raise_Money@HouseClass@@QAE_NW4UrgencyType@@@Z,src/house.cpp,d89e07c6b0e5b7e6e2383009ad0873f659a828396b97e9d6a49b4bc776761c19
 0x004FE3E0,1653,?AI_Building@HouseClass@@AAEHXZ,src/house.cpp,3b2ce8e7ff668d15c453dd290ae3fd6da25685320d99f1dbb622f1e4ec09673e
 0x004FEA60,1147,?AI_Unit@HouseClass@@AAEHXZ,src/house.cpp,1734d22f68bf02d90fb80c15272ae061f0c6a3d0facc3c6c7b173e10c98b7b92
 0x004FEEE0,805,?AI_Infantry@HouseClass@@AAEHXZ,src/house.cpp,0356fdc68a9ef84be81cd2c078bb62b140b9082091d7f3d85d2a0ed7eb42206a
