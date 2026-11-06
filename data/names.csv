@@ -398,3 +398,4 @@ address,name,symbol,evidence
 0x007BF740,VQA_LoadFrame_Internal,?VQA_LoadFrame_Internal@@YIJPAU_VQAHandleP@@J@Z,TibSun vqalib/loader.cpp frame-chunk loader; recovered 3397-byte body and its call from VQA_LoadFrame.
 0x007C39C0,UnVQ2_C1_4x4,?UnVQ2_C1_4x4@@YAXPAE00KKK@Z,TibSun vqalib/unvq.cpp 4x4 C1 decoder; recovered 918-byte body with the original cdecl signature.
 0x00B78198,VQA_LoadFrame_Internal::iffsize,_?iffsize@?1??VQA_LoadFrame_Internal@@YIJPAU_VQAHandleP@@J@Z@4KA,All 25 DIR32 references to the function-local static iffsize in recovered VQA_LoadFrame_Internal resolve to this original address.
+0x007CA090,memmove,_memmove,The pinned VC6 SP3 LIBCMT.LIB memmove.obj matches all 821 bytes after its 46 internal relocations; also named CRT::_memmove in functions.csv.
