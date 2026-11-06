@@ -8,12 +8,14 @@ executable, function by function.
 under human direction. That does not loosen what counts as a match: a function counts only
 when the checker shows its compiled bytes equal the original's, and stand-ins such as casts
 over real objects or hard-coded addresses are rejected however well they score.
-`docs/AGENTS.md` holds the rules the agents follow and every lesson learned.
+`docs/AGENTS.md` holds the rules the agents follow and every lesson learned. Pull requests
+from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
-**Status (6 November 2026):** 18,870 of the game's 19,362 functions match byte for byte
-(97%), covering 3.01 MB of its 3.81 MB of game code (79%). Each function is checked on
-its own; linking a whole executable that matches comes later. `docs/PLAN.md` has the
-method, and `docs/rounds/` records every batch.
+**Status (6 November 2026):** 3.01 MB of the game's 3.81 MB of code matches byte for byte
+(79%), in 18,870 of its 19,362 functions (97%). Counting each unmatched function at its best
+attempt so far, the fuzzy match is 92%. Each function is checked on its own; linking a whole
+executable that matches comes later. `docs/PLAN.md` has the method, and `docs/rounds/`
+records every batch.
 
 ## Getting started
 
