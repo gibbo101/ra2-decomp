@@ -4273,6 +4273,10 @@ template class DynamicVectorClass<CELL_DIST_OBJ>;
 // ??_G?$DynamicVectorClass@PAVAbstractClass@@@@UAEPAXI@Z
 
 
+// TEMPLATE: GAMEMD 0x004E02C0
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
+template class _com_ptr_t<_com_IIID<ILocomotion, &__uuidof(ILocomotion)> >;
+
 // SYNTHETIC: GAMEMD 0x004E02D0
 // ??_G?$VectorClass@PAVAbstractClass@@@@UAEPAXI@Z
 
