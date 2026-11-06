@@ -1690,9 +1690,9 @@ WideWstring FUN_00603FC0(HWND window, HWND control, WORD low, WORD high)
 }
 
 // FUNCTION: GAMEMD 0x00604060
-WideWstring FUN_00604060(int type, int id)
+WideWstring FUN_00604060(HWND window, HWND control)
 {
-	char const * label = OwnerDraw::GetTooltipStringLabel((HWND)type, (HWND)id);
+	char const * label = OwnerDraw::GetTooltipStringLabel(window, control);
 	if (label != NULL) {
 		return WideWstring(StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\ownrdraw.cpp", 0x7a5));
 	}
