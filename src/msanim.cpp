@@ -696,6 +696,35 @@ bool MSBitPrintAnim::Has_Finished(void) const
 	return(FlagA);
 }
 
+#include "bitfont.h"
+
+// FUNCTION: GAMEMD 0x005CD410
+bool MSBitPrintAnim::Advance(Surface * surface, Rect & rect)
+{
+	if (BitText::Instance != NULL && BitFont::Instance != NULL) {
+		LTRBStruct bounds = { Area.X, Area.Y, Area.X + Area.Width - 1, Area.Y + Area.Height - 1 };
+		BitFont::Instance->SetBounds(&bounds);
+		int alignment = FlagB ? 1 : 0;
+		BitText::Instance->DrawText(BitFont::Instance, surface, Text.get(), Area.X, Area.Y,
+			Area.Width, Area.Height, alignment, 0, 0);
+	}
+	rect = Area;
+	return !FlagA;
+}
+
+// FUNCTION: GAMEMD 0x005CD4D0
+void MSBitPrintAnim::Redraw(Surface * surface, Rect const * rect)
+{
+	if (BitText::Instance != NULL && BitFont::Instance != NULL) {
+		if (rect == NULL) rect = &Area;
+		LTRBStruct bounds = { rect->X, rect->Y, rect->X + rect->Width - 1, rect->Y + rect->Height - 1 };
+		BitFont::Instance->SetBounds(&bounds);
+		int alignment = FlagB ? 1 : 0;
+		BitText::Instance->DrawText(BitFont::Instance, surface, Text.get(), Area.X, Area.Y,
+			Area.Width, Area.Height, alignment, 0, 0);
+	}
+}
+
 // FUNCTION: GAMEMD 0x005CD570
 MSPrintAnim::MSPrintAnim(WideWstring const & text, int x, int y, MSFont * font, Rect const & rect, int start_delay, int print_delay, bool fade_effect, bool center) :
 	MSAnim(x, y, true),
