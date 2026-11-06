@@ -6602,6 +6602,10 @@ void __fastcall FUN_00588AC0(MapClass * map)
 // SYNTHETIC: GAMEMD 0x00588BF0
 // ??_GMapClass@@UAEPAXI@Z
 
+// TEMPLATE: GAMEMD 0x00588C40
+// ??Y?$TPoint2D@F@@QAEABV0@ABV0@@Z
+template class TPoint2D<short>;
+
 // TEMPLATE: GAMEMD 0x00588C60
 // ??G?$TPoint2D@F@@QBE?BV0@ABV0@@Z
 
