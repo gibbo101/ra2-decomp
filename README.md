@@ -78,8 +78,9 @@ out of history.
   the World Domination Tour; brought Westwood's archived assembly into the build with
   MASM; and added the checker's completion checks and function-map callbacks.
 - [meastes](https://github.com/meastes): matched functions in the map, VQA loading,
-  static-sound saving and Techno line drawing, ported from their matching decompilation of Red Alert 2
-  ([meastes/redalert2-decomp](https://github.com/meastes/redalert2-decomp), GPL-3.0-or-later).
+  static-sound saving and Techno line drawing, ported from their matching decompilation
+  of Red Alert 2 ([meastes/redalert2-decomp](https://github.com/meastes/redalert2-decomp),
+  GPL-3.0-or-later).
 
 ## You need your own copy of the game
 
