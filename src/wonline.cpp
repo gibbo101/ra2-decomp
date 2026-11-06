@@ -11289,11 +11289,7 @@ extern wchar_t DAT_0084B224[], DAT_0084B94C[], DAT_0084B9B0[];
 void FUN_0072CF90(void);
 void __fastcall FUN_005E74E0(HWND window);
 wchar_t *__fastcall FUN_0078F200(wchar_t const *name);
-struct WOLTooltipRequest {
-	HWND Window;
-	int Index;
-	WideWstring Text;
-};
+#include "tiprequest.h"
 int __fastcall FUN_004E3830(int id);
 wchar_t const *__fastcall FUN_004E38A0(int side);
 void __fastcall FUN_004E3B90(HWND dialog);
@@ -11584,7 +11580,7 @@ BOOL CALLBACK FUN_00791B10(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 		OwnerDraw::SetNeedsControlImage(window, 1);
 		return FALSE;
 	case 0x4E9: {
-		WOLTooltipRequest *request = (WOLTooltipRequest *)lparam;
+		TooltipRequest *request = (TooltipRequest *)lparam;
 		request->Text = (wchar_t const *)NULL;
 		if (request->Window) {
 			int control = GetDlgCtrlID(request->Window);
