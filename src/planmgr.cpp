@@ -521,8 +521,9 @@ Coord PlanningNodeClass::Lead_Coord(void)
 // FUNCTION: GAMEMD 0x00634400
 Point2D PlanningNodeClass::Lead_Pixel(void)
 {
-	Coord coord = FUN_00633BC0(*PlanningMembers[0]->Packet);
-	return FUN_006339E0(coord);
+	Coord coord = Lead_Coord();
+	Point2D pixel = FUN_006339E0(coord);
+	return pixel;
 }
 
 static inline Coord Event_Coord(EventClass const & e) { return FUN_00633BC0(e); }
@@ -548,8 +549,7 @@ static inline Rect Around(int size, Point2D p) { return Around_7(size, p); }
 // FUNCTION: GAMEMD 0x00634470
 bool PlanningNodeClass::Hit_Test(int x, int y)
 {
-	Rect rect = Lead_Box_Rect();
-	return rect.Is_Point_Within(Point2D(x, y));
+	return Lead_Box_Rect().Is_Point_Within(Point2D(x, y));
 }
 
 // FUNCTION: GAMEMD 0x00634510
@@ -559,7 +559,9 @@ Rect __fastcall FUN_00634510(Point2D center, int size)
 	Point2D corner = center;
 	corner.X += offset;
 	corner.Y += offset;
-	return Rect(corner, size, size);
+	Rect rect;
+	rect = Rect(corner, size, size);
+	return rect;
 }
 
 // FUNCTION: GAMEMD 0x00634550
@@ -572,7 +574,9 @@ bool PlanningNodeClass::Lead_At(Coord coord)
 // FUNCTION: GAMEMD 0x006345A0
 Rect PlanningNodeClass::Lead_Rect(void)
 {
-	return FUN_00634510(Lead_Pixel(), 8);
+	Point2D pixel;
+	pixel = Lead_Pixel();
+	return FUN_00634510(pixel, 8);
 }
 
 // FUNCTION: GAMEMD 0x00634630
@@ -904,6 +908,17 @@ void PlanningNodeClass::Frame_Lead_Box(int color)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00635680
+void PlanningNodeClass::FUN_00635680(int color)
+{
+	Rect clip = FUN_0072AD20();
+	Rect rect = Lead_Box_Rect2();
+	for (int i = 0; i < 3; i++) {
+		DSurface::Composite->Draw_Rect(clip, rect, color);
+		Shrink_Rect(rect);
+	}
+}
+
 // FUNCTION: GAMEMD 0x006357D0
 void __fastcall FUN_006357D0(Rect * rect, int amount)
 {
@@ -1055,7 +1070,7 @@ Rect PlanningNodeClass::Lead_Box_Rect(void)
 // FUNCTION: GAMEMD 0x00635E90
 Rect PlanningNodeClass::Lead_Box_Rect2(void)
 {
-	return Inflated(Inflated(Around(8, Pixel_Of(Event_Coord(*PlanningMembers[0]->Packet))), 4), 4);
+	return Inflated(Lead_Box_Rect(), 4);
 }
 
 // FUNCTION: GAMEMD 0x00635F20
@@ -1853,24 +1868,23 @@ extern bool DAT_00AC4C08;
 int __fastcall FUN_0063AC70(PlanningNodeClass * node);
 void __fastcall FUN_00634B20(PlanningNodeClass * node);
 
+static inline PlanningNodeClass * Find_Planning_Node(int x, int y)
+{
+	int count = PlanningNodeClass::Unknown2.Count();
+	for (int i = 0; i < count; i++) {
+		PlanningNodeClass * node = PlanningNodeClass::Unknown2[i];
+		if (node->Hit_Test(x, y)) return node;
+	}
+	return NULL;
+}
+
 // FUNCTION: GAMEMD 0x00638E60
 void __fastcall FUN_00638E60(void)
 {
 	if (!DAT_00AC4CB0) {
 		int x = MouseCursor->Get_Mouse_X();
 		int y = MouseCursor->Get_Mouse_Y();
-		int count = PlanningNodeClass::Unknown2.Count();
-		PlanningNodeClass * node;
-		int i = 0;
-		if (count > 0) {
-			do {
-				node = PlanningNodeClass::Unknown2[i];
-				if (node->Hit_Test(x, y)) goto found;
-				i++;
-			} while (i < count);
-		}
-		node = 0;
-found:
+		PlanningNodeClass * node = Find_Planning_Node(x, y);
 		if (node != DAT_00AC4CCC) {
 			DAT_00AC4C3C = 0;
 			if (node) {

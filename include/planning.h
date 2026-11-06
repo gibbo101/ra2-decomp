@@ -112,6 +112,7 @@ class PlanningNodeClass
 		void Draw_Lead_Box(int color);
 		void Fill_Lead_Box(int color);
 		void Frame_Lead_Box(int color);
+		void FUN_00635680(int color);
 		int Node_Color(void);
 		int Lead_Color(void);
 		int Branch_Color(int index);
