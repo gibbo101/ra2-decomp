@@ -1975,7 +1975,7 @@ void TechnoClass::FUN_007049C0(Coord start, Coord end, RGBClass color, unsigned 
 	shadow_start.Y += 1;
 	Point2D shadow_end = end_point;
 	shadow_end.Y += 1;
-	char shadow = (char)b;
+	char shadow = b;
 	if (shadow) {
 		int black = FileSystem::PALETTE_PAL->Convert_Pixel(0);
 		DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), shadow_start)), black);
@@ -1989,7 +1989,7 @@ void TechnoClass::FUN_007049C0(Coord start, Coord end, RGBClass color, unsigned 
 	int pixel = ((color.Get_Red() >> DSurface::RedLeft) << DSurface::RedRight) | ((color.Get_Blue() >> DSurface::BlueLeft) << DSurface::BlueRight) | ((color.Get_Green() >> DSurface::GreenLeft) << DSurface::GreenRight);
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), start_point)), pixel);
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), end_point)), pixel);
-	if ((char)a) {
+	if (a) {
 		int offset = (0x7FFFFFFF - Frame) % 15;
 		if (Clip_Line_To_Rect(start_point, end_point, clip)) {
 			DSurface::Composite->Draw_Masked_Dashed_Line(start_point, end_point, pixel, DAT_00843128, offset, false);
