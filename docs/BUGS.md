@@ -9,3 +9,8 @@ effect, so it can be fixed in a separate build later.
   owned list for its prerequisite check with BuildingClass instances instead of their
   types. An instance never equals a type, so the check fails whenever NodAdvancedPower
   has a prerequisite, and the AI always picks NodRegularPower.
+
+- **HouseClass::AI_Raise_Money (0x004FDD10).** The weapons-factory branch removes a
+  later base node only when its type equals both the first refinery type and the
+  selected weapons-factory type. The comparisons at 0x004FE25A and 0x004FE262 prevent
+  that duplicate-node cleanup when the two building types differ.

@@ -2441,6 +2441,105 @@ bool HouseClass::AI_Fire_Sale(UrgencyType urgency)
 	return(false);
 }
 
+void __fastcall FUN_00454CE0(HouseClass * house);
+
+// FUNCTION: GAMEMD 0x004FDD10
+bool HouseClass::AI_Raise_Money(UrgencyType urgency)
+{
+	int i;
+	int j;
+	int refund = 0;
+	int needed = 0;
+	bool can_build_harvester = CountResourceDestinations > 0 && CountWarfactories > 0;
+	bool can_build_refinery = true;
+	if (FirstBuildableFromArray(Rule->BuildRefinery) == NULL) can_build_refinery = false;
+	bool has_harvester = First_Ownable(this, Rule->HarvesterUnit) != NULL;
+	bool build_harvester = false;
+	bool build_weapons = false;
+	if (has_harvester && (can_build_harvester || (!can_build_refinery && CountWarfactories > 0))) {
+		needed = First_Ownable(this, Rule->HarvesterUnit)->Cost_Of(this);
+		build_harvester = true;
+	} else if (!can_build_refinery) {
+		if (CountWarfactories != 0) return false;
+		needed = FirstBuildableFromArray(Rule->BuildWeapons)->Cost_Of(this);
+		build_weapons = true;
+	} else {
+		needed = FirstBuildableFromArray(Rule->BuildRefinery)->Cost_Of(this);
+	}
+	i = Base.Nodes.Count() - 1;
+	for (; i >= 0; i--) {
+		BuildingClass * bptr = Base.Get_Building(i);
+		if (bptr != NULL && bptr->Can_Demolish()) {
+			char level = bptr->UpgradeLevel;
+			if (level != 0) {
+				int cost = bptr->Upgrades[level - 1]->GetRefund(this, true);
+				Credits += cost;
+				bptr->Remove_Upgrade();
+				RecalcPower = true;
+				RecalcRadar = true;
+				FUN_00454CE0(this);
+			} else {
+				bptr->Sell_Back(1);
+				if (bptr->Class->IsGate) Base.Nodes.Delete_Index(i);
+				refund += bptr->Refund_Amount();
+			}
+		} else if (Base.Is_Built(i)) {
+			Sell_Wall(Base.Nodes[i].CellID, false);
+			Base.Nodes.Delete_Index(i);
+		}
+		if (refund + Credits > needed) {
+			for (j = Factories.Count() - 1; j >= 0; j--) {
+				if (Factories[j]->Get_House() == this) {
+					Factories[j]->Suspend();
+					Factories[j]->Abandon();
+					delete Factories[j];
+				}
+			}
+			BuildUnit = UNIT_NONE;
+			BuildInfantry = INFANTRY_NONE;
+			BuildAircraft = AIRCRAFT_NONE;
+			BuildStructure = STRUCT_NONE;
+			if (build_harvester) {
+				BuildUnit = First_Ownable(this, Rule->HarvesterUnit)->HeapID;
+				ProductionMode = UNITS;
+			} else if (build_weapons) {
+				int next = Base.Next_Buildable_Index();
+				if (next == 0) goto GO_HUNT;
+				if (next == -1) {
+					if (Base.Nodes.Length() < 2) goto GO_HUNT;
+					next = 1;
+				}
+				StructType type = ((BuildingTypeClass const *)FirstBuildableFromArray(Rule->BuildWeapons))->HeapID;
+				Base.Nodes.Insert_After(next - 1, BaseNodeClass(type, Cell(0, 0)));
+				for (j = Base.Nodes.Count() - 1; j > next; j--) {
+					BaseNodeClass * nodes = &Base.Nodes[0];
+					if (nodes[j].Type == Rule->BuildRefinery[0]->HeapID && nodes[j].Type == type) {
+						Base.Nodes.Delete_Index(j);
+					}
+				}
+				ProductionMode = BUILDINGS;
+				AI_Building();
+			} else {
+				int next = Base.Next_Buildable_Index();
+				if (next == 0) goto GO_HUNT;
+				if (next == -1) {
+					if (Base.Nodes.Length() < 2) goto GO_HUNT;
+					next = 1;
+				}
+				Base.Nodes.Insert_After(next - 1, BaseNodeClass(((BuildingTypeClass const *)FirstBuildableFromArray(Rule->BuildRefinery))->HeapID, Cell(0, 0)));
+				ProductionMode = BUILDINGS;
+				AI_Building();
+			}
+			break;
+		}
+	}
+	if (i <= 0) {
+GO_HUNT:
+		All_To_Hunt();
+	}
+	return false;
+}
+
 // FUNCTION: GAMEMD 0x004FE3E0
 int HouseClass::AI_Building(void)
 {
@@ -5109,8 +5208,6 @@ fallback:
 		EnemyInfantryForcePrediction = (float)infantry / total;
 	}
 }
-
-void __fastcall FUN_00454CE0(HouseClass * house);
 
 // FUNCTION: GAMEMD 0x00508C30
 void HouseClass::Recalc_Power_Drain(void)
