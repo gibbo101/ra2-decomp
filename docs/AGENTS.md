@@ -22,6 +22,8 @@ original compiler turns into that function's exact bytes. MATCH means
 - A worktree that links `toolchain/` from the main checkout shares its wine prefix, and every
   check points drive Y: at its own checkout. Never check in a worktree while anything checks
   in the main checkout: each compiles the other's sources.
+- A new worktree has no copy of the gitignored `data/symbols.csv` and `data/layouts.csv`:
+  copy them from the main checkout, or `landing_gate.py` fails with FileNotFoundError.
 - No recursive delete of any kind, anywhere. The project hook
   (`.claude/hooks/no-recursive-delete.py`) blocks `rm -r`, `find -delete` (except
   `-type d -empty`), `find -exec rm`, `xargs rm`, `rmtree`, `git clean` and
