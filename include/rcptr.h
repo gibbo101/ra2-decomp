@@ -37,7 +37,12 @@ class rc_ptr : public rc_ptr_base
 		rc_ptr & operator=(T * ptr) { FUN_0065D480(ptr); return(*this); }
 		T * Get(void) const { return((T *)Ptr); }
 		T & operator*(void) const { return(*Get()); }
-		T * operator->(void) const { return(Ptr ? (T *)Ptr : NULL); }
+		T * operator->(void) const
+		{
+			if (Ptr == NULL) {
+			}
+			return((T *)Ptr);
+		}
 };
 
 template<class T>
