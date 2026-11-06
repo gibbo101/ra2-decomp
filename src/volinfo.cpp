@@ -4,23 +4,49 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "volinfo.h"
+#include "cd.h"
 #include <windows.h>
 #include <string.h>
-
-struct DiskInfo
-{
-	int DriveType;
-	char VolumeName[64];
-	DWORD Serial;
-	char FileSystem[64];
-	unsigned FreeBytes;
-	unsigned TotalBytes;
-};
+#include <stdio.h>
 
 void __cdecl FUN_004068E0(char const * format, ...);
 
+// FUNCTION: GAMEMD 0x00751C30
+bool VolumeCheck(void)
+{
+	char buffer[260];
+	VolInfo info;
+	if (!GetLogicalDriveStrings(sizeof(buffer), buffer)) {
+		return (false);
+	}
+	const char * drive_root_name = buffer;
+	while (strlen(drive_root_name) != 0) {
+		if (GetDriveType(drive_root_name) == DRIVE_CDROM) {
+			if (!GetVolInfo(drive_root_name, &info)) {
+				FUN_004068E0("VolumeCheck() - GetVolInfo failed\n");
+				drive_root_name += strlen(drive_root_name) + 1;
+				continue;
+			} else {
+				char name[32];
+				for (int i = 0; i < 8; i++) {
+					sprintf(name, "RA%d", i + 1);
+					if (!stricmp(name, info.VolumeName)) {
+						return (true);
+					}
+				}
+			}
+		}
+		drive_root_name += strlen(drive_root_name) + 1;
+	}
+	if (CD().Force_Available()) {
+		return (true);
+	}
+	return (false);
+}
+
 // FUNCTION: GAMEMD 0x00751DD0
-bool __fastcall FUN_00751DD0(char const * root, DiskInfo * info)
+inline bool GetVolInfo(char const * root, VolInfo * info)
 {
 	DWORD sectorsPerCluster;
 	DWORD bytesPerSector;
@@ -29,20 +55,20 @@ bool __fastcall FUN_00751DD0(char const * root, DiskInfo * info)
 	DWORD flags;
 	DWORD maxComponent;
 
-	memset(info, 0, sizeof(DiskInfo));
+	memset(info, 0, sizeof(VolInfo));
 	info->DriveType = GetDriveType(root);
 
 	if (!GetDiskFreeSpace(root, &sectorsPerCluster, &bytesPerSector, &freeClusters, &totalClusters)) {
 		FUN_004068E0("GetDiskFreeSpace() failed: %s\n", 0);
 		return false;
 	}
-	info->FreeBytes = sectorsPerCluster * bytesPerSector * freeClusters;
+	info->FreeSpace = sectorsPerCluster * bytesPerSector * freeClusters;
 	if (freeClusters) {
 		return false;
 	}
-	info->TotalBytes = sectorsPerCluster * bytesPerSector * totalClusters;
+	info->TotalSpace = sectorsPerCluster * bytesPerSector * totalClusters;
 
-	if (!GetVolumeInformation(root, info->VolumeName, sizeof(info->VolumeName), &info->Serial, &maxComponent, &flags, info->FileSystem, sizeof(info->FileSystem))) {
+	if (!GetVolumeInformation(root, info->VolumeName, sizeof(info->VolumeName), (DWORD *)&info->VolumeSerialNumber, &maxComponent, &flags, info->FileSystemName, sizeof(info->FileSystemName))) {
 		FUN_004068E0("GetVolumeInformation() - failed: %s\n", 0);
 		return false;
 	}

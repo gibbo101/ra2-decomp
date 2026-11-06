@@ -63,10 +63,6 @@ void CDFileClass::Refresh_Search_Drives (void)
 	Set_Search_Drives(RawPath);
 }
 
-struct CDDriveManagerClass {
-	static int __fastcall GetCDNumber(int drive, int seconds);
-};
-
 // FUNCTION: GAMEMD 0x0047AB10
 int CDFileClass::Set_Search_Drives(char * pathlist)
 {
@@ -100,7 +96,7 @@ int CDFileClass::Set_Search_Drives(char * pathlist)
 			if (strncmp(path, "?:", 2) == 0) {
 				if (CurrentCDDrive) {
 					found = true;
-					if (CDDriveManagerClass::GetCDNumber(CurrentCDDrive, 2*60) > -1) {
+					if (DiskSwap::Get_Disk_ID(CurrentCDDrive, 2*60) > -1) {
 						path[0] = (char)(CurrentCDDrive + 'A');
 						Add_Search_Drive(path);
 					}
@@ -110,7 +106,7 @@ int CDFileClass::Set_Search_Drives(char * pathlist)
 			}
 
 			int drive = path[0] - 'A';
-			if (drive > 0 && CDDriveManagerClass::GetCDNumber(drive, 2*60) == 2) {
+			if (drive > 0 && DiskSwap::Get_Disk_ID(drive, 2*60) == 2) {
 				found = true;
 				Add_Search_Drive(path);
 			}

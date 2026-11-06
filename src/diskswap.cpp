@@ -14,6 +14,65 @@
 #include "win.h"
 #include <stdio.h>
 
+// FUNCTION: GAMEMD 0x004A80D0
+DiskID DiskSwap::Get_Disk_ID(int cd_drive, int timeout)
+{
+	char		volume_name[128];
+	char		buffer[128];
+	unsigned	filename_length;
+	unsigned	misc_dword;
+	CDTimerClass<SystemTimerClass> timer;
+	timer = timeout;
+	int cd = cd_drive + 'A';
+	int index = -1;
+	for (;;)
+	{
+		wsprintf(buffer,"%c:\\",cd);
+		if (GetVolumeInformation ((char const *)buffer, &volume_name[0] ,
+				(DWORD)sizeof(volume_name) - 1, (DWORD *)NULL ,
+				(DWORD *)&filename_length, (DWORD *)&misc_dword,
+				(char *)NULL, (DWORD)0))
+		  {
+			if (!stricmp("YR1",volume_name)) {
+				index = 2;
+			}
+			break;
+		}
+		else
+		{
+			if (!timer)
+			{
+				return(DISK_ANY);
+			}
+			int val = GetLastError();
+			if (val != ERROR_NOT_READY)
+			{
+				return(DISK_ANY);
+			}
+		}
+	}
+	if (index > -1) {
+		int count = 0;
+		for (;;) {
+			wsprintf(buffer, "%c:\\YR1.dsk", cd);
+			HANDLE handle = CreateFile(buffer, GENERIC_READ, FILE_SHARE_READ,NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+			if (handle != INVALID_HANDLE_VALUE)
+			{
+				CloseHandle(handle);
+				return((DiskID)index);
+			}
+			else
+			{
+				count++;
+				if (count >= 2) {
+					 return(DISK_ANY);
+				}
+			}
+		}
+	}
+	return(DISK_ANY);
+}
+
 // FUNCTION: GAMEMD 0x004A8270
 bool DiskSwap::Force_Available(DiskID disk)
 {
