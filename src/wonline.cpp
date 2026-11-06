@@ -11038,6 +11038,9 @@ template class DynamicVectorClass<tConnInfoStruct *>;
 // ?Clear@?$VectorClass@PAUtConnInfoStruct@@@@UAEXXZ
 template class VectorClass<tConnInfoStruct *>;
 
+// TEMPLATE: GAMEMD 0x007AC9D0
+// ?getPointer@?$ArrayList@UServer@@@@QBEDPAPAUServer@@H@Z
+
 // TEMPLATE: GAMEMD 0x007ACA00
 // ?add@?$ArrayList@UUser@@@@QAEDAAUUser@@H@Z
 
@@ -11193,6 +11196,9 @@ template class Dictionary<Wstring, WolChannel>;
 
 // TEMPLATE: GAMEMD 0x007AECD0
 // ??0?$VectorClass@PAUtConnInfoStruct@@@@QAE@HPBQAUtConnInfoStruct@@@Z
+
+// SYNTHETIC: GAMEMD 0x007AED20
+// ??_G?$DNode@VWstring@@UHighscore@@@@QAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x007AED40
 // ?growVector@?$ArrayList@UServer@@@@AAEDXZ
