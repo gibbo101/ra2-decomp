@@ -29,21 +29,34 @@ class Rtti:
         for tag in (b".?AV", b".?AU"):
             at = image.find(tag)
             while at >= 0:
-                names[orig.base + at - 8] = image[at:image.index(b"\0", at)].decode("latin1")
+                end = image.find(b"\0", at)
+                if end < 0:
+                    raise ValueError(f"Unterminated RTTI type at 0x{orig.base + at:08X}")
+                if at >= 8:
+                    names[orig.base + at - 8] = image[at:end].decode("latin1")
                 at = image.find(tag, at + 1)
         words = struct.unpack_from(f"<{len(data) // 4}I", data)
+        referenced = {words[k] for k in range(len(words) - 1) if words[k + 1] in self.text}
         self.cols = {}
         self.bases = {}
         for k in range(len(words) - 4):
             if words[k] == 0 and words[k + 3] in names:
-                self.cols[r0 + 4 * k] = (names[words[k + 3]], words[k + 1])
-                self.bases[names[words[k + 3]]] = self.base_classes(words[k + 4], names)
+                address = r0 + 4 * k
+                try:
+                    bases = self.base_classes(words[k + 4], names)
+                except ValueError as exc:
+                    if address in referenced:
+                        raise ValueError(f"Invalid RTTI locator at 0x{address:08X}: {exc}") from exc
+                    continue
+                self.cols[address] = (names[words[k + 3]], words[k + 1])
+                self.bases[names[words[k + 3]]] = bases
         self.vtables = {}
         for k, w in enumerate(words):
             if w in self.cols:
                 vt = r0 + 4 * (k + 1)
                 slots = []
-                while orig.u32(vt + 4 * len(slots)) in self.text:
+                while (vt + 4 * (len(slots) + 1) <= r0 + len(data)
+                       and orig.u32(vt + 4 * len(slots)) in self.text):
                     slots.append(orig.u32(vt + 4 * len(slots)))
                 self.vtables[vt] = (*self.cols[w], slots)
         self.types = {name for name, _, _ in self.vtables.values()}
@@ -53,6 +66,8 @@ class Rtti:
             for s in slots:
                 self.slot_of.setdefault(s, []).append(name)
         # The linker folded every pure virtual's slot into _purecall, the most common slot.
+        if not self.slot_of:
+            raise ValueError("No valid RTTI vtable slots in the image")
         self.purecall = max(self.slot_of, key=lambda s: len(self.slot_of[s]))
 
     @cached_property
@@ -70,8 +85,24 @@ class Rtti:
 
     def base_classes(self, hierarchy: int, names: dict[int, str]) -> set[str]:
         """Every class in a class hierarchy descriptor's base class array, itself included."""
+        def readable(address, size):
+            if not self.orig.base <= address <= self.orig.base + len(self.orig.image) - size:
+                raise ValueError(f"RTTI range 0x{address:08X}+{size} is outside the image")
+
+        readable(hierarchy, 16)
         count, array = self.orig.u32(hierarchy + 8), self.orig.u32(hierarchy + 12)
-        return {names.get(self.orig.u32(self.orig.u32(array + 4 * i)), "") for i in range(min(count, 256))}
+        if not 1 <= count <= 256:
+            raise ValueError(f"Invalid RTTI base count {count}")
+        readable(array, 4 * count)
+        result = set()
+        for i in range(count):
+            descriptor = self.orig.u32(array + 4 * i)
+            readable(descriptor, 24)
+            name = names.get(self.orig.u32(descriptor))
+            if name is None:
+                raise ValueError(f"Unknown RTTI type at 0x{descriptor:08X}")
+            result.add(name)
+        return result
 
     def owner(self, address: int) -> str | None:
         """The class whose vtables hold `address` and from which every other class holding it
