@@ -227,7 +227,9 @@ namespace OwnerDraw {
 
 int _mouse_counter;
 
-char const * __fastcall GetTooltipStringLabel(int type, int id);
+namespace OwnerDraw {
+char const * __fastcall GetTooltipStringLabel(HWND dialog, HWND control);
+}
 extern wchar_t const DAT_00887734[];
 
 bool Is_Owner_Draw_Message(unsigned int msg);
@@ -1690,11 +1692,1351 @@ WideWstring FUN_00603FC0(HWND window, HWND control, WORD low, WORD high)
 // FUNCTION: GAMEMD 0x00604060
 WideWstring FUN_00604060(int type, int id)
 {
-	char const * label = GetTooltipStringLabel(type, id);
+	char const * label = OwnerDraw::GetTooltipStringLabel((HWND)type, (HWND)id);
 	if (label != NULL) {
 		return WideWstring(StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\ownrdraw.cpp", 0x7a5));
 	}
 	return WideWstring(DAT_00887734);
+}
+
+inline OwnerDraw::WinData *Get_Data(HWND window)
+{
+	OwnerDraw::WinData *data = NULL;
+	if (!OwnerDraw::Dialogs.getPointer(window, &data)) {
+		return NULL;
+	}
+	return data;
+}
+
+inline int Get_Dialog_Type(HWND dialog)
+{
+	OwnerDraw::WinData *data = Get_Data(dialog);
+	if (data != NULL) {
+		return data->Dialog.DialogID;
+	}
+	return 0;
+}
+
+struct Game { static HINSTANCE hInstance; static bool __cdecl CallBack(void); static bool __fastcall MainLoop(void); static int ObserverMode; };
+
+// FUNCTION: GAMEMD 0x006040B0
+char const * __fastcall OwnerDraw::GetTooltipStringLabel(HWND window, HWND control)
+{
+	int type = Get_Dialog_Type(window);
+	int id = GetDlgCtrlID(control);
+	if (id == 0) return NULL;
+	if (id == -1) return NULL;
+	if (type == 0xe2) {
+		if (id == 0x683) {
+			return "STT:MainButtonSinglePlayer";
+		}
+		if (id == 0x684) {
+			return "STT:MainButtonWWOnline";
+		}
+		if (id == 0x578) {
+			return "STT:MainButtonNetwork";
+		}
+		if (id == 0x686) {
+			return "STT:MainButtonMovies";
+		}
+		if (id == 0x55c) {
+			return "STT:MainButtonOptions";
+		}
+		if (id == 0x55f) {
+			return "STT:MainButtonYuriWebSite";
+		}
+		if (id == 0x3ee) {
+			return "STT:MainButtonExitGamemd";
+		}
+	}
+	else if (type == 0x100) {
+		if (id == 0x688) {
+			return "STT:SingleButtonNewCampaign";
+		}
+		if (id == 0x689) {
+			return "STT:SingleButtonLoadSavedGame";
+		}
+		if (id == 0x579) {
+			return "STT:SingleButtonSkirmish";
+		}
+		if (id == 0x686) {
+			return "STT:SingleButtonBack";
+		}
+	}
+	else if (type == 0x94) {
+		if (id == 0x6ea) {
+			return "STT:AlliedCampaignIcon";
+		}
+		if (id == 0x6eb) {
+			return "STT:CampaignAnimTutorial";
+		}
+		if (id == 0x6ec) {
+			return "STT:SovietCampaignIcon";
+		}
+		if (id == 0x50f) {
+			return "STT:CampaignSliderDifficulty";
+		}
+		if (id == 0x40e) {
+			return "STT:CampaignButtonLoad";
+		}
+		if (id == 0x455) {
+			return "STT:CampaignList";
+		}
+		if (id == 0x686) {
+			return "STT:CampaignButtonBack";
+		}
+	}
+	else if (type == 0xb7) {
+		if (id == 0x525) {
+			return "STT:LoadList";
+		}
+		if (id == 0x40f) {
+			return "STT:LoadButtonLoad";
+		}
+		if (id == 0x686) {
+			return "STT:LoadButtonBack";
+		}
+	}
+	else if (type == 0x102) {
+		if (id == 0x6a0) {
+			return "STT:SkirmishEditPlayer";
+		}
+		if (id == 0x50b || id == 0x50e || id == 0x516 || id == 0x51a || id == 0x51b || id == 0x51c || id == 0x51d) {
+			return "STT:SkirmishComboAIPlayer";
+		}
+		if (id == 0x6da || id == 0x6db || id == 0x6dc || id == 0x6dd || id == 0x6de || id == 0x6df || id == 0x6e0 || id == 0x6e1) {
+			return "STT:SkirmishPictureFlag";
+		}
+		if (id == 0x6a1 || id == 0x510 || id == 0x513 || id == 0x51e || id == 0x514 || id == 0x51f || id == 0x520 || id == 0x521) {
+			return "STT:SkirmishComboCountry";
+		}
+		if (id == 0x6a2 || id == 0x522 || id == 0x523 || id == 0x524 || id == 0x525 || id == 0x526 || id == 0x527 || id == 0x528) {
+			return "STT:SkirmishComboColor";
+		}
+		if (id == 0x6a3 || id == 0x6a4 || id == 0x6a5 || id == 0x6a6 || id == 0x6a7 || id == 0x6a8 || id == 0x6aa || id == 0x6ab) {
+			return "STT:HostComboStart";
+		}
+		if (id == 0x76d || id == 0x76e || id == 0x76f || id == 0x770 || id == 0x771 || id == 0x772 || id == 0x773 || id == 0x774) {
+			return "STT:HostComboTeam";
+		}
+		if (id == 0x529) {
+			return "STT:SkirmishSliderSpeed";
+		}
+		if (id == 0x511) {
+			return "STT:SkirmishSliderCredits";
+		}
+		if (id == 0x50c) {
+			return "STT:SkirmishSliderUnit";
+		}
+		if (id == 0x5aa) {
+			return "STT:SkirmishButtonChooseMap";
+		}
+		if (id == 0x693) {
+			return "STT:SkirmishCBoxRedeploys";
+		}
+		if (id == 0x54e) {
+			return "STT:SkirmishCBoxShortGame";
+		}
+		if (id == 0x69a) {
+			return "STT:SkirmishCBoxSWAllowed";
+		}
+		if (id == 0x69d) {
+			return "STT:SkirmishCBoxBuildOffAlly";
+		}
+		if (id == 0x696) {
+			return "STT:SkirmishCBoxCrates";
+		}
+		if (id == 0x468) {
+			return "STT:SkirmishMapThumbnail";
+		}
+		if (id == 0x6ec) {
+			return "STT:SkirmishLabelGameType";
+		}
+		if (id == 0x5a8) {
+			return "STT:SkirmishLabelScenario";
+		}
+		if (id == 0x617) {
+			return "STT:SkirmishButtonStartGame";
+		}
+		if (id == 0x5c0) {
+			return "STT:SkirmishButtonBack";
+		}
+	}
+	else if (type == 0xbb) {
+		if (id == 0x541) {
+			return "STT:LobbyEditYourName";
+		}
+		if (id == 0x53e) {
+			return "STT:LobbyListUsers";
+		}
+		if (id == 0x549) {
+			return "STT:LobbyListGames";
+		}
+		if (id == 0x53f) {
+			return "STT:LobbyEditOutput";
+		}
+		if (id == 0x540) {
+			return "STT:LobbyEditInput";
+		}
+		if (id == 0x6cc) {
+			return "STT:LobbyButtonNew";
+		}
+		if (id == 0x6cd) {
+			if (!Game::ObserverMode) {
+				return "STT:LobbyButtonJoin";
+			}
+			return "STT:LobbyButtonObserve";
+		}
+		if (id == 0x760) {
+			return "STT:ObserverToggle";
+		}
+		if (id == 0x6ce) {
+			return "STT:LobbyButtonObserve";
+		}
+		if (id == 0x5c0) {
+			return "STT:LobbyButtonBack";
+		}
+	}
+	else if (type == 0xbc || type == 0xc2) {
+		if (id == 0x6d2 || id == 0x6d3 || id == 0x6d4 || id == 0x6d5 || id == 0x6d6 || id == 0x6d7 || id == 0x6d8 || id == 0x6d9) {
+			return "STT:HostPictureAcceptance";
+		}
+		if (id == 0x411 || id == 0x412 || id == 0x413 || id == 0x414 || id == 0x415 || id == 0x416 || id == 0x417 || id == 0x418) {
+			return "STT:HostComboPlayer";
+		}
+		if (id == 0x6da || id == 0x6db || id == 0x6dc || id == 0x6dd || id == 0x6de || id == 0x6df || id == 0x6e0 || id == 0x6e1) {
+			return "STT:HostPictureFlag";
+		}
+		if (id == 0x6a1 || id == 0x510 || id == 0x513 || id == 0x51e || id == 0x514 || id == 0x51f || id == 0x520 || id == 0x521) {
+			return "STT:HostComboCountry";
+		}
+		if (id == 0x6a2 || id == 0x522 || id == 0x523 || id == 0x524 || id == 0x525 || id == 0x526 || id == 0x527 || id == 0x528) {
+			return "STT:HostComboColor";
+		}
+		if (id == 0x6a3 || id == 0x6a4 || id == 0x6a5 || id == 0x6a6 || id == 0x6a7 || id == 0x6a8 || id == 0x6aa || id == 0x6ab) {
+			return "STT:HostComboStart";
+		}
+		if (id == 0x76d || id == 0x76e || id == 0x76f || id == 0x770 || id == 0x771 || id == 0x772 || id == 0x773 || id == 0x774) {
+			return "STT:HostComboTeam";
+		}
+		if (id == 0x529) {
+			return "STT:HostSliderSpeed";
+		}
+		if (id == 0x402) {
+			return "STT:HostSliderCredits";
+		}
+		if (id == 0x54f) {
+			return "STT:HostSliderUnit";
+		}
+		if (id == 0x3e8) {
+			return "STT:HostCBoxRedeploys";
+		}
+		if (id == 0x54e) {
+			return "STT:HostCBoxShortGame";
+		}
+		if (id == 0x69a) {
+			return "STT:HostCBoxSWAllowed";
+		}
+		if (id == 0x69d) {
+			return "STT:HostCBoxBuildOffAlly";
+		}
+		if (id == 0x54d) {
+			return "STT:HostCBoxCrates";
+		}
+		if (id == 0x53f) {
+			return "STT:HostEditOutput";
+		}
+		if (id == 0x540) {
+			return "STT:HostEditInput";
+		}
+		if (id == 0x468) {
+			return "STT:HostMapThumbnail";
+		}
+		if (id == 0x5a8) {
+			return "STT:HostLabelScenario";
+		}
+		if (id == 0x588) {
+			return "STT:HostButtonGo";
+		}
+		if (id == 0x5aa) {
+			return "STT:HostButtonChooseMap";
+		}
+		if (id == 2) {
+			if (type == 0xc2) {
+				return "STT:WOLNewGameCancel";
+			}
+			return "STT:HostButtonBack";
+		}
+		if (id == 0x5c2) {
+			return "STT:WOLPageButton";
+		}
+		if (id == 0x3ed) {
+			return "STT:EmoteButton";
+		}
+	}
+	else if (type == 0xbd || type == 0xc9) {
+		if (id == 0x6d2 || id == 0x6d3 || id == 0x6d4 || id == 0x6d5 || id == 0x6d6 || id == 0x6d7 || id == 0x6d8 || id == 0x6d9) {
+			return "STT:GuestPictureAcceptance";
+		}
+		if (id == 0x411 || id == 0x412 || id == 0x413 || id == 0x414 || id == 0x415 || id == 0x416 || id == 0x417 || id == 0x418) {
+			return "STT:GuestComboPlayer";
+		}
+		if (id == 0x6da || id == 0x6db || id == 0x6dc || id == 0x6dd || id == 0x6de || id == 0x6df || id == 0x6e0 || id == 0x6e1) {
+			return "STT:GuestPictureFlag";
+		}
+		if (id == 0x6a1 || id == 0x510 || id == 0x513 || id == 0x51e || id == 0x514 || id == 0x51f || id == 0x520 || id == 0x521) {
+			return "STT:GuestComboCountry";
+		}
+		if (id == 0x6a2 || id == 0x522 || id == 0x523 || id == 0x524 || id == 0x525 || id == 0x526 || id == 0x527 || id == 0x528) {
+			return "STT:GuestComboColor";
+		}
+		if (id == 0x6a3 || id == 0x6a4 || id == 0x6a5 || id == 0x6a6 || id == 0x6a7 || id == 0x6a8 || id == 0x6aa || id == 0x6ab) {
+			return "STT:GuestComboStart";
+		}
+		if (id == 0x76d || id == 0x76e || id == 0x76f || id == 0x770 || id == 0x771 || id == 0x772 || id == 0x773 || id == 0x774) {
+			return "STT:GuestComboTeam";
+		}
+		if (id == 0x529) {
+			return "STT:GuestSliderSpeed";
+		}
+		if (id == 0x402) {
+			return "STT:GuestSliderCredits";
+		}
+		if (id == 0x54f) {
+			return "STT:GuestSliderUnit";
+		}
+		if (id == 0x3e8) {
+			return "STT:GuestCBoxRedeploys";
+		}
+		if (id == 0x54e) {
+			return "STT:GuestCBoxShortGame";
+		}
+		if (id == 0x69a) {
+			return "STT:GuestCBoxSWAllowed";
+		}
+		if (id == 0x69d) {
+			return "STT:GuestCBoxBuildOffAlly";
+		}
+		if (id == 0x54d) {
+			return "STT:GuestCBoxCrates";
+		}
+		if (id == 0x53f) {
+			return "STT:GuestEditOutput";
+		}
+		if (id == 0x540) {
+			return "STT:GuestEditInput";
+		}
+		if (id == 0x468) {
+			return "STT:GuestMapThumbnail";
+		}
+		if (id == 0x5a8) {
+			return "STT:GuestLabelScenario";
+		}
+		if (id == 0x59f) {
+			return "STT:GuestButtonAccept";
+		}
+		if (id == 2) {
+			if (type == 0xc9) {
+				return "STT:WOLNewGameCancel";
+			}
+			return "STT:GuestButtonBack";
+		}
+		if (id == 0x5c2) {
+			return "STT:WOLPageButton";
+		}
+		if (id == 0x3ed) {
+			return "STT:EmoteButton";
+		}
+	}
+	else if (type == 0x101) {
+		if (id == 0x68d) {
+			return "STT:OptionsButtonSneak";
+		}
+		if (id == 0x68e) {
+			return "STT:OptionsButtonMovies";
+		}
+		if (id == 0x68f) {
+			return "STT:OptionsButtonCredits";
+		}
+		if (id == 0x686) {
+			return "STT:OptionsButtonBack";
+		}
+	}
+	else if (type == 0x129) {
+		if (id == 0x745) {
+			return "GUI:PlayMovie";
+		}
+		if (id == 0x686) {
+			return "STT:MsnDltButtonBack";
+		}
+		if (id == 0x744) {
+			return "GUI:SelectMovie";
+		}
+	}
+	else if (type == 0xd5) {
+		if (id == 0x5ce) {
+			return "STT:MainOptButtonKeyboard";
+		}
+		if (id == 0x5cd) {
+			return "STT:MainOptButtonNetwork";
+		}
+		if (id == 0x686) {
+			return "STT:MainOptButtonBack";
+		}
+		if (id == 0x674) {
+			return "STT:MainOptCBoxStretch";
+		}
+		if (id == 0x52b) {
+			return "STT:MainOptSliderVisual";
+		}
+		if (id == 0x6ed) {
+			return "STT:MainOptComboModes";
+		}
+		if (id == 0x529) {
+			return "STT:MainOptSliderSpeed";
+		}
+		if (id == 0x50f) {
+			return "STT:MainOptSliderDifficulty";
+		}
+		if (id == 0x601) {
+			return "STT:MainOptCBoxTargetLines";
+		}
+		if (id == 0x604) {
+			return "STT:MainOptCBoxHidden";
+		}
+		if (id == 0x602) {
+			return "STT:MainOptCBoxTooltips";
+		}
+		if (id == 0x52a) {
+			return "STT:MainOptSliderScroll";
+		}
+		if (id == 0x51a) {
+			return "STT:MainOptCBoxScrollCoasting";
+		}
+		if (id == 0x52f) {
+			return "STT:MainOptSliderMusic";
+		}
+		if (id == 0x532) {
+			return "STT:MainOptSliderSound";
+		}
+		if (id == 0x536) {
+			return "STT:MainOptSliderVoice";
+		}
+	}
+	else if (type == 0xd7) {
+		if (id == 0x5d4) {
+			return "STT:MultiOptComboCard";
+		}
+		if (id == 0x5d1) {
+			return "STT:MultiOptEditSocketNum";
+		}
+		if (id == 0x5d3) {
+			return "STT:MultiOptEditDestAddr";
+		}
+		if (id == 0x762) {
+			return "STT:MultiOptSendDelay";
+		}
+		if (id == 0x5d7) {
+			return "STT:MultiOptPortNumber";
+		}
+		if (id == 1) {
+			return "STT:MultiOptButtonOk";
+		}
+		if (id == 2) {
+			return "STT:MultiOptButtonCancel";
+		}
+	}
+	else if (type == 0xa3) {
+		if (id == 0x4c7) {
+			return "STT:KeyboardComboCategory";
+		}
+		if (id == 0x6e9) {
+			return "STT:KeyboardGroupDescription";
+		}
+		if (id == 0x4c8) {
+			return "STT:KeyboardListCommands";
+		}
+		if (id == 0x63c) {
+			return "STT:KeyboardLabelShortcut";
+		}
+		if (id == 0x63d) {
+			return "STT:KeyboardLabelError";
+		}
+		if (id == 0x4cd) {
+			return "STT:KeyboardEditEntry";
+		}
+		if (id == 0x4cf) {
+			return "STT:KeyboardButtonAssign";
+		}
+		if (id == 0x63b) {
+			return "STT:KeyboardLabelAssigned";
+		}
+		if (id == 0x4d0) {
+			return "STT:KeyboardButtonResetAll";
+		}
+		if (id == 0x686) {
+			return "STT:KeyboardButtonBack";
+		}
+	}
+	else if (type == 0x10c) {
+		if (id == 0x6e7) {
+			return "STT:BriefingLabelContent";
+		}
+		if (id == 0x423) {
+			return "STT:BriefingButtonReturn";
+		}
+	}
+	else if (type == 0xb6) {
+		if (id == 0x6c9) {
+			int action = FUN_00603EA0((HWND)control);
+			if (action == 3) return "STT:ConfirmExitButtonLeaveEx";
+			if (action == 2) return "STT:ConfirmExitButtonLeave";
+			return "STT:Empty";
+		}
+		if (id == 0x712) {
+			int action = FUN_00603EA0((HWND)control);
+			if (action == 4) return "STT:ConfirmExitButtonObserve";
+			if (action == 5) return "STT:ConfirmExitButtonRestart";
+			return "STT:Empty";
+		}
+		if (id == 0x686) {
+			return "STT:ConfirmExitButtonResume";
+		}
+	}
+	else if (type == 0xd9) {
+		if (id == 0x5c1) {
+			return "STT:ConfirmModeButtonOk";
+		}
+		if (id == 0x6ca) {
+			return "STT:ConfirmModeButtonCancel";
+		}
+	}
+	else if (type == 0x73) {
+		if (id == 0x411 || id == 0x412 || id == 0x413 || id == 0x414 || id == 0x415 || id == 0x416 || id == 0x417 || id == 0x418) {
+			return "STT:DiplomacyLabelPlayer";
+		}
+		if (id == 0x6cf || id == 0x6d0 || id == 0x6d1 || id == 0x6d2 || id == 0x6d3 || id == 0x6d4 || id == 0x6d5) {
+			return "STT:DiplomacyCBoxAllies";
+		}
+		if (id == 0x6d6 || id == 0x6d7 || id == 0x6d8 || id == 0x6d9 || id == 0x6e2 || id == 0x6e3 || id == 0x6e4) {
+			return "STT:DiplomacyCBoxListeners";
+		}
+		if (id == 0x419 || id == 0x41a || id == 0x41b || id == 0x41c || id == 0x41d || id == 0x41e || id == 0x41f || id == 0x420) {
+			return "STT:DiplomacyCBoxKills";
+		}
+		if (id == 0x423) {
+			return "STT:DiplomacyButtonReturn";
+		}
+		if (id == 0x730) {
+			return "STT:TauntsOn";
+		}
+	}
+	else if (type == 0xbbb) {
+		if (id == 0x529) {
+			return "STT:IGGameOptSliderSpeed";
+		}
+		if (id == 0x52a) {
+			return "STT:IGGameOptSliderScroll";
+		}
+		if (id == 0x52b) {
+			return "STT:IGGameOptSliderVisual";
+		}
+		if (id == 0x602) {
+			return "STT:IGGameOptCBoxTooltips";
+		}
+		if (id == 0x601) {
+			return "STT:IGGameOptCBoxTargetLines";
+		}
+		if (id == 0x604) {
+			return "STT:IGGameOptCBoxHidden";
+		}
+		if (id == 0x51a) {
+			return "STT:IGGameOptCBoxScrollCoast";
+		}
+		if (id == 0x52d) {
+			return "STT:IGGameOptButtonSound";
+		}
+		if (id == 0x52c) {
+			return "STT:IGGameOptButtonKeyboard";
+		}
+		if (id == 0x686) {
+			return "STT:IGGameOptButtonBack";
+		}
+	}
+	else if (type == 0x105) {
+		if (id == 0x405) {
+			return "STT:GenerateCBoxEnvironment";
+		}
+		if (id == 0x3ea) {
+			return "STT:GenerateCBoxTime";
+		}
+		if (id == 0x407) {
+			return "STT:GenerateCBoxTheater";
+		}
+		if (id == 0x406) {
+			return "STT:GenerateCBoxMapSize";
+		}
+		if (id == 0x408) {
+			return "STT:GenerateCBoxResources";
+		}
+		if (id == 0x3eb) {
+			return "STT:GenerateSliderNumPlayers";
+		}
+		if (id == 0x621) {
+			return "STT:GenerateButtonSurprise";
+		}
+		if (id == 0x620) {
+			return "STT:GenerateButtonPreview";
+		}
+		if (id == 0x6c2) {
+			return "STT:GenerateButtonLoadMap";
+		}
+		if (id == 0x6c3) {
+			return "STT:GenerateButtonSaveMap";
+		}
+		if (id == 0x6c4) {
+			return "STT:GenerateButtonDeleteMap";
+		}
+		if (id == 0x6c5) {
+			return "STT:GenerateButtonUseMap";
+		}
+		if (id == 0x5c0) {
+			return "STT:GenerateButtonCancel";
+		}
+	}
+	else if (type == 0x2b5) {
+		if (id == 0x528) {
+			return "STT:MsnDltListMission";
+		}
+		if (id == 0x6c8) {
+			return "STT:MsnDltButtonDelete";
+		}
+		if (id == 0x686) {
+			return "STT:MsnDltButtonBack";
+		}
+	}
+	else if (type == 0x2b4) {
+		if (id == 0x527) {
+			return "STT:MsnSaveListMission";
+		}
+		if (id == 0x526) {
+			return "STT:MsnSaveEditName";
+		}
+		if (id == 0x6c7) {
+			return "STT:MsnSaveButtonSave";
+		}
+		if (id == 0x686) {
+			return "STT:MsnSaveButtonBack";
+		}
+	}
+	else if (type == 0x108) {
+		if (id == 0x6d2) {
+			return "STT:MPScoreLabelGame";
+		}
+		if (id == 0x3ea) {
+			return "STT:MPScoreLabelTime";
+		}
+		if (id == 0x411 || id == 0x412 || id == 0x413 || id == 0x414 || id == 0x415 || id == 0x416 || id == 0x417 || id == 0x418) {
+			return "STT:MPScoreLabelPlayer";
+		}
+		if (id == 0x419 || id == 0x41a || id == 0x41b || id == 0x41c || id == 0x41d || id == 0x41e || id == 0x41f || id == 0x420) {
+			return "STT:MPScoreLabelKills";
+		}
+		if (id == 0x6a3 || id == 0x6a4 || id == 0x6a9 || id == 0x6ac || id == 0x6af || id == 0x6b2 || id == 0x6b5 || id == 0x6b8) {
+			return "STT:MPScoreLabelLosses";
+		}
+		if (id == 0x6a5 || id == 0x6a7 || id == 0x6aa || id == 0x6ad || id == 0x6b0 || id == 0x6b3 || id == 0x6b6 || id == 0x6b9) {
+			return "STT:MPScoreLabelBuilt";
+		}
+		if (id == 0x6a6 || id == 0x6a8 || id == 0x6ab || id == 0x6ae || id == 0x6b1 || id == 0x6b4 || id == 0x6b7 || id == 0x6ba) {
+			return "STT:MPScoreLabelScore";
+		}
+		if (id == 0x6d1) {
+			return "STT:MPScoreButtonContinue";
+		}
+	}
+	else if (type == 0xb5) {
+		if (id == 0x521) {
+			return "STT:IGSingleOptButtonControls";
+		}
+		if (id == 0x51e) {
+			return "STT:IGSingleOptButtonLoad";
+		}
+		if (id == 0x51f) {
+			return "STT:IGSingleOptButtonSave";
+		}
+		if (id == 0x520) {
+			return "STT:IGSingleOptButtonDelete";
+		}
+		if (id == 0x522) {
+			return "STT:IGSingleOptButtonAbort";
+		}
+		if (id == 0x686) {
+			return "STT:IGSingleOptButtonBack";
+		}
+	}
+	else if (type == 0xbba) {
+		if (id == 0x521) {
+			return "STT:IGMultiOptButtonControls";
+		}
+		if (id == 0x522) {
+			return "STT:IGMultiOptButtonAbort";
+		}
+		if (id == 0x686) {
+			return "STT:IGMultiOptButtonResume";
+		}
+	}
+	else if (type == 0xea) {
+		if (id == 0x640 || id == 0x642 || id == 0x641 || id == 0x643 || id == 0x644 || id == 0x645 || id == 0x646 || id == 0x647) {
+			return "STT:ReconnectButtonPlayer";
+		}
+		if (id == 0x648 || id == 0x649 || id == 0x64a || id == 0x64b || id == 0x64c || id == 0x64d || id == 0x64e || id == 0x64f) {
+			return "STT:ReconnectProgressPlayer";
+		}
+		if (id == 0x650) {
+			return "STT:ReconnectLabelTime";
+		}
+		if (id == 0x651) {
+			return "STT:ReconnectEditInfo";
+		}
+		if (id == 2) {
+			return "STT:ReconnectButtonLeaveGame";
+		}
+	}
+	else if (type == 0x6b) {
+		if (id == 0x6eb) {
+			return "STT:ScenarioListGameType";
+		}
+		if (id == 0x553) {
+			return "STT:ScenarioListMaps";
+		}
+		if (id == 0x468) {
+			return "STT:ScenarioMapThumbnail";
+		}
+		if (id == 0x6c5) {
+			return "STT:ScenarioButtonUseMap";
+		}
+		if (id == 0x583) {
+			return "STT:ScenarioButtonRandom";
+		}
+		if (id == 0x5c0) {
+			return "STT:ScenarioButtonCancel";
+		}
+	}
+	else if (type == 0xb8) {
+		if (id == 0x52f) {
+			return "STT:SoundOptSliderMusic";
+		}
+		if (id == 0x532) {
+			return "STT:SoundOptSliderSound";
+		}
+		if (id == 0x536) {
+			return "STT:SoundOptSliderVoice";
+		}
+		if (id == 0x530) {
+			return "STT:SoundOptListScore";
+		}
+		if (id == 0x533) {
+			return "STT:SoundOptCBoxShuffle";
+		}
+		if (id == 0x534) {
+			return "STT:SoundOptCBoxRepeat";
+		}
+		if (id == 0x531) {
+			return "STT:SoundOptButtonPlay";
+		}
+		if (id == 0x535) {
+			return "STT:SoundOptButtonStop";
+		}
+		if (id == 0x686) {
+			return "STT:SoundOptButtonBack";
+		}
+	}
+	else if (type == 0x103) {
+		if (id == 0x6f1) {
+			return "STT:StandScoreParTime";
+		}
+		if (id == 0x6f2) {
+			return "STT:StandScoreYourTime";
+		}
+		if (id == 0x6f3) {
+			return "STT:StandScoreTitle";
+		}
+		if (id == 0x6f4) {
+			return "STT:StandScoreMessage";
+		}
+		if (id == 0x6f6) {
+			return "STT:StandScoreKills";
+		}
+		if (id == 0x423) {
+			return "STT:StandScoreButtonReturn";
+		}
+	}
+	else if (type == 0xff) {
+		if (id == 0x3ef) {
+			return "STT:OptionInternetLatency";
+		}
+		if (id == 0x529) {
+			return "STT:OptionInternetSpeedSlider";
+		}
+		if (id == 0x521) {
+			return "STT:OptionInternetGameControls";
+		}
+		if (id == 0x522) {
+			return "STT:OptionInternetAbortMission";
+		}
+		if (id == 0x675) {
+			return "STT:IGMultiOptButtonResume";
+		}
+	}
+	else if (type == 0x122) {
+		if (id == 0x6f9) {
+			return "STT:WOLAddBuddyQueryDoNotAsk";
+		}
+		if (id == 1) {
+			return "STT:WOLAddBuddyQueryYes";
+		}
+		if (id == 2) {
+			return "STT:WOLAddBuddyQueryNo";
+		}
+	}
+	else if (type == 0x112) {
+		if (id == 0x6f9) {
+			return "STT:WOLAutoLoginDoNotAsk";
+		}
+		if (id == 1) {
+			return "STT:WOLAutoLoginYes";
+		}
+		if (id == 2) {
+			return "STT:WOLAutoLoginNo";
+		}
+	}
+	else if (type == 0x116) {
+		if (id == 0x689) {
+			return "STT:WOLBuddyBuddyList";
+		}
+		if (id == 0x6f0) {
+			return "STT:WOLBuddyWins";
+		}
+		if (id == 0x6f1) {
+			return "STT:WOLBuddyLosses";
+		}
+		if (id == 0x701) {
+			return "STT:WOLBuddyDisconnects";
+		}
+		if (id == 0x6f4) {
+			return "STT:WOLBuddyRank";
+		}
+		if (id == 0x6f5) {
+			return "STT:WOLBuddyPoints";
+		}
+		if (id == 0x62b) {
+			return "STT:WOLBuddyCreateGame";
+		}
+		if (id == 0x62d) {
+			return "STT:WOLBuddyJoin";
+		}
+		if (id == 0x760) {
+			return "STT:ObserverToggle";
+		}
+		if (id == 0x5c2) {
+			return "STT:WOLBuddyPage";
+		}
+		if (id == 0x702) {
+			return "STT:WOLBuddyAdd";
+		}
+		if (id == 0x703) {
+			return "STT:WOLBuddyRemove";
+		}
+		if (id == 0x704) {
+			return "STT:WOLBuddyRefresh";
+		}
+		if (id == 0x686) {
+			return "STT:WOLBuddyBack";
+		}
+	}
+	else if (type == 0x113) {
+		if (id == 0x55d) {
+			return "STT:WOLLobbyRefreshChannels";
+		}
+		if (id == 0x53f) {
+			return "STT:LobbyEditOutput";
+		}
+		if (id == 0x540) {
+			return "STT:LobbyEditInput";
+		}
+		if (id == 0x3ed) {
+			return "STT:EmoteButton";
+		}
+		if (id == 0x53d) {
+			return "STT:WOLLobbyChannelList";
+		}
+		if (id == 0x62b) {
+			return "STT:LobbyButtonNew";
+		}
+		if (id == 0x62d) {
+			if (!Game::ObserverMode) {
+				return "STT:LobbyButtonJoin";
+			}
+			return "STT:LobbyButtonObserve";
+		}
+		if (id == 0x760) {
+			return "STT:ObserverToggle";
+		}
+		if (id == 0x689) {
+			return "STT:WOLBuddy";
+		}
+		if (id == 0x688) {
+			return "STT:WOLClan";
+		}
+		if (id == 0x7a3) {
+			return "STT:WOLTournament";
+		}
+		if (id == 0x7a6) {
+			return "STT:WOLNews";
+		}
+		if (id == 0x61f) {
+			return "STT:WOLLobbyOptions";
+		}
+		if (id == 0x686) {
+			return "STT:WOLLobbyBack";
+		}
+		if (id == 0x769) {
+			return "STT:WOLGamesortGametype";
+		}
+		if (id == 0x768) {
+			return "STT:WOLGamesortPassword";
+		}
+		if (id == 0x767) {
+			return "STT:WOLGamesortReslock";
+		}
+		if (id == 0x765) {
+			return "STT:WOLGamesortAlpha";
+		}
+		if (id == 0x766) {
+			return "STT:WOLGamesortPing";
+		}
+		if (id == 0x76a) {
+			return "STT:WOLPlayersortAlpha";
+		}
+		if (id == 0x76b) {
+			return "STT:WOLPlayersortRank";
+		}
+		if (id == 0x76c) {
+			return "STT:WOLPlayersortClan";
+		}
+		if (id == 0x5c2) {
+			return "STT:WOLPageButton";
+		}
+	}
+	else if (type == 0xfe) {
+		if (id == 0x3f0) {
+			return "STT:WOLMyInformationLocale";
+		}
+		if (id == 1) {
+			return "STT:WOLLocaleOK";
+		}
+		if (id == 2) {
+			return "STT:WOLLocaleCancel";
+		}
+	}
+	else if (type == 0x10f) {
+		if (id == 0x628) {
+			return "STT:WOLLoginNickname";
+		}
+		if (id == 0x72c) {
+			return "STT:WOLLoginPassword";
+		}
+		if (id == 0x72d) {
+			return "STT:WOLLoginRemember";
+		}
+		if (id == 0x539) {
+			return "STT:WOLLoginLogin";
+		}
+		if (id == 0x6ea) {
+			return "STT:WOLNewAccount";
+		}
+		if (id == 0x6eb) {
+			return "STT:WOLLoginForget";
+		}
+		if (id == 0x686) {
+			return "STT:WOLLoginBack";
+		}
+		if (id == 0x6ec) {
+			return "STT:WOLManageAccount";
+		}
+	}
+	else if (type == 0x11d) {
+		if (id == 0x628) {
+			return "STT:IGRLogin";
+		}
+		if (id == 0x72c) {
+			return "STT:WOLLoginPassword";
+		}
+		if (id == 0x539) {
+			return "STT:WOLLoginLogin";
+		}
+		if (id == 0x6ea) {
+			return "STT:WOLNewAccount";
+		}
+		if (id == 0x686) {
+			return "STT:WOLLoginBack";
+		}
+		if (id == 0x6ec) {
+			return "STT:WOLManageAccount";
+		}
+		if (id == 0x629) {
+			return "STT:WOLMyInformationServer";
+		}
+		if (id == 0x62a) {
+			return "STT:WOLMyInformationLocale";
+		}
+		if (id == 0x6a1) {
+			return "STT:WOLMyInformationCountry";
+		}
+		if (id == 0x6a2) {
+			return "STT:WOLMyInformationColor";
+		}
+	}
+	else if (type == 0x117) {
+		if (id == 0x53f) {
+			return "STT:WOLMatchOutput";
+		}
+		if (id == 0x5c0) {
+			return (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) ? "WOL:WDTMatchBack" : "STT:WOLMatchCancel";
+		}
+	}
+	else if (type == 0x114) {
+		if (id == 0x628) {
+			return "STT:WOLMyInformationName";
+		}
+		if (id == 0x629) {
+			return "STT:WOLMyInformationServer";
+		}
+		if (id == 0x62a) {
+			return "STT:WOLMyInformationLocale";
+		}
+		if (id == 0x6a1) {
+			return "STT:WOLMyInformationCountry";
+		}
+		if (id == 0x6a2) {
+			return "STT:WOLMyInformationColor";
+		}
+		if (id == 0x6ff) {
+			return "STT:WOLMyInformationAutoLogin";
+		}
+		if (id == 0x6f0) {
+			return "STT:WOLMyInformationWins";
+		}
+		if (id == 0x6f1) {
+			return "STT:WOLMyInformationLosses";
+		}
+		if (id == 0x701) {
+			return "STT:WOLMyInformationDisconnects";
+		}
+		if (id == 0x6f4) {
+			return "STT:WOLMyInformationRank";
+		}
+		if (id == 0x6f5) {
+			return "STT:WOLMyInformationPoints";
+		}
+		if (id == 0x687) {
+			return "STT:WOLBuddy";
+		}
+		if (id == 0x688) {
+			return "STT:WOLClan";
+		}
+		if (id == 0x7a3) {
+			return "STT:WOLTournament";
+		}
+		if (id == 0x686) {
+			return "STT:WOLMyInformationBack";
+		}
+		if (id == 0x6ea) {
+			return "STT:WOLNewAccount";
+		}
+		if (id == 0x6eb) {
+			return "STT:WOLLoginForget";
+		}
+		if (id == 0x6ec) {
+			return "STT:WOLManageAccount";
+		}
+		if (id == 0x773) {
+			return "STT:MatchSameRes";
+		}
+	}
+	else if (type == 0xc3) {
+		if (id == 0x548) {
+			return "STT:WOLNewGameMaxPlayers";
+		}
+		if (id == 0x72c) {
+			return "STT:WOLNewGamePassword";
+		}
+		if (id == 0x629) {
+			return "STT:WOLNewGameTournament";
+		}
+		if (id == 0x66c) {
+			return "STT:WOLNewGameClanTournament";
+		}
+		if (id == 1) {
+			return "STT:WOLNewGameOK";
+		}
+		if (id == 2) {
+			return "STT:WOLNewGameCancel";
+		}
+		if (id == 0x71e) {
+			return "STT:WOLLimitScreenResolution";
+		}
+	}
+	else if (type == 0x2bc) {
+		if (id == 0x5f5) {
+			return "STT:WOLOptionsPage";
+		}
+		if (id == 0x5f6) {
+			return "STT:WOLOptionsLanguageFilter";
+		}
+		if (id == 0x5f7) {
+			return "STT:WOLOptionsFind";
+		}
+		if (id == 0x5f8) {
+			return "STT:WOLOptionsMusic";
+		}
+		if (id == 0x5f9) {
+			return "STT:WOLOptionsShowAllInLobby";
+		}
+		if (id == 1) {
+			return "STT:WOLOptionsOk";
+		}
+		if (id == 0x63a) {
+			return "STT:WOLOptionsSoundOptions";
+		}
+		if (id == 2) {
+			return "STT:WOLOptionsCancel";
+		}
+		if (id == 0x6ed) {
+			return "STT:MainOptComboModes";
+		}
+		if (id == 0x5fa) {
+			return "STT:WOLOptionFilterAsian";
+		}
+		if (id == 0x5fb) {
+			return "STT:WOLOptionFilterNonAsian";
+		}
+		if (id == 0x775) {
+			return "STT:WOLOptionFilterClan";
+		}
+		if (id == 0x774) {
+			return "STT:WOLOptionFilterBuddies";
+		}
+	}
+	else if (type == 0x10e) {
+		if (id == 0x6f0) {
+			return "STT:WOLMyInformationWins";
+		}
+		if (id == 0x6f1) {
+			return "STT:WOLMyInformationLosses";
+		}
+		if (id == 0x701) {
+			return "STT:WOLMyInformationDisconnects";
+		}
+		if (id == 0x6f4) {
+			return "STT:WOLMyInformationRank";
+		}
+		if (id == 0x6f5) {
+			return "STT:WOLMyInformationPoints";
+		}
+		if (id == 0x6e0) {
+			return "STT:WOLWelcomeQuickMatch";
+		}
+		if (id == 0x6e1) {
+			return "STT:WOLWelcomeCustomMatch";
+		}
+		if (id == 0x6e2) {
+			return "STT:WOLBuddy";
+		}
+		if (id == 0x6e3) {
+			return "STT:WOLWelcomeWDT";
+		}
+		if (id == 0x6e4) {
+			return "STT:WOLWelcomeMyInformation";
+		}
+		if (id == 0x686) {
+			return "STT:WOLWelcomeBack";
+		}
+		if (id == 0x771) {
+			return "STT:QuickCoop";
+		}
+		if (id == 0x797) {
+			return "STT:WelcomeUpdate";
+		}
+		if (id == 0x55f) {
+			return "STT:MainButtonYuriWebSite";
+		}
+	}
+	else if (type == 0x11c) {
+		if (id == 0x6e0) {
+			return "STT:WOLWelcomeQuickMatch";
+		}
+		if (id == 0x6e1) {
+			return "STT:WOLWelcomeCustomMatch";
+		}
+		if (id == 0x6e2) {
+			return "STT:WOLBuddy";
+		}
+		if (id == 0x6e3) {
+			return "STT:WOLWelcomeWDT";
+		}
+		if (id == 0x686) {
+			return "STT:WOLWelcomeBack";
+		}
+		if (id == 0x771) {
+			return "STT:QuickCoop";
+		}
+		if (id == 0x55f) {
+			return "STT:MainButtonYuriWebSite";
+		}
+	}
+	else if (type == 0xe7) {
+		if (id == 0x62e) {
+			return "STT:WOLBeginNickMonth";
+		}
+		if (id == 0x62f) {
+			return "STT:WOLBeginNickDay";
+		}
+		if (id == 0x630) {
+			return "STT:WOLBeginNickYear";
+		}
+		if (id == 0x626) {
+			return "STT:WOLBeginNickEmail";
+		}
+		if (id == 0x631 || id == 0x70a) {
+			return "STT:WOLBeginNickNewsletter";
+		}
+		if (id == 1) {
+			return "STT:WOLBeginNickContinue";
+		}
+		if (id == 0x576) {
+			return "STT:WOLBeginNickViewPrivacy";
+		}
+		if (id == 2) {
+			return "STT:WOLBeginNickCancel";
+		}
+	}
+	else if (type == 0xe6 || type == 0xf3 || type == 0xf4) {
+		if (id == 1) {
+			return "STT:WOLNewNickOk";
+		}
+		if (id == 2) {
+			return "STT:WOLNewNickCancel";
+		}
+		if (id == 0x628) {
+			return "STT:WOLNewNickNickname";
+		}
+		if (id == 0x72c) {
+			return "STT:WOLNewNickPassword";
+		}
+		if (id == 0x627) {
+			return "STT:WOLNewNickVerify";
+		}
+		if (id == 0x5e5) {
+			return "STT:WOLNewNickParentEMail";
+		}
+		if (id == 0x66b || id == 0x70b) {
+			return "STT:WOLNewNickSellInfo";
+		}
+	}
+	else if (type == 0x125) {
+		if (id == 0x686) {
+			return "WOL:WDTFactionBack";
+		}
+		return "WDT:FactionSelectToolTip";
+	}
+	else if (type == 0xbc6) {
+		if (id == 0x781 || id == 0x782) {
+			return "STT:MPScoreLabelPlayer";
+		}
+		if (id == 0x783 || id == 0x784) {
+			return "STT:MPScoreLabelKills";
+		}
+		if (id == 0x785 || id == 0x786) {
+			return "STT:MPScoreLabelLosses";
+		}
+		if (id == 0x787 || id == 0x788) {
+			return "STT:MPScoreLabelBuilt";
+		}
+		if (id == 0x789 || id == 0x78a) {
+			return "STT:MPScoreLabelScore";
+		}
+		if (id == 0x733) {
+			return "STT:MPScoreLabelCampaignName";
+		}
+		if (id == 0x71b) {
+			return "STT:MPScoreLabelMapName";
+		}
+		if (id == 0x732) {
+			return "STT:MPScoreLabelDifficulty";
+		}
+		if (id == 0x6d1) {
+			return "STT:MPCampScoreContinue";
+		}
+		if (id == 0x5c0) {
+			return "STT:MPCampScoreQuit";
+		}
+		if (id == 0x3ea) {
+			return "STT:MPScoreLabelTime";
+		}
+		if (id == 0x411 || id == 0x412) {
+			return "STT:MPScoreLabelPlayer";
+		}
+		if (id == 0x6da || id == 0x6db) {
+			return "STT:HostPictureFlag";
+		}
+		if (id == 0x6a1 || id == 0x510) {
+			return "STT:HostComboCountry";
+		}
+		if (id == 0x6a2 || id == 0x522) {
+			return "STT:HostComboColor";
+		}
+		if (id == 0x540) {
+			return "STT:HostEditInput";
+		}
+		if (id == 0x53f) {
+			return "STT:HostEditOutput";
+		}
+	}
+	else if (type == 0xbc7) {
+		if (id == 0x733) {
+			return "STT:MPScoreLabelCampaignName";
+		}
+		if (id == 0x735) {
+			return "STT:MPCampEndCampaignNumber";
+		}
+		if (id == 0x732) {
+			return "STT:MPScoreLabelDifficulty";
+		}
+		if (id == 0x3ea) {
+			return "STT:MPCampEndTime";
+		}
+		if (id == 0x411 || id == 0x412 || id == 0x73a || id == 0x739) {
+			return "STT:MPScoreLabelPlayer";
+		}
+		if (id == 0x419 || id == 0x41a) {
+			return "STT:MPScoreLabelKills";
+		}
+		if (id == 0x6a3 || id == 0x6a4) {
+			return "STT:MPScoreLabelLosses";
+		}
+		if (id == 0x6a5 || id == 0x6a7) {
+			return "STT:MPScoreLabelBuilt";
+		}
+		if (id == 0x6a6 || id == 0x6a8 || id == 0x73b || id == 0x738) {
+			return "STT:MPScoreLabelScore";
+		}
+		if (id == 0x6d1) {
+			return "STT:MPScoreButtonContinue";
+		}
+	}
+	return NULL;
 }
 
 // FUNCTION: GAMEMD 0x00606740
@@ -1723,14 +3065,6 @@ BOOL CALLBACK FUN_00606800(HWND window, LPARAM lparam);
 bool __fastcall FUN_00608CD0(HWND parent, HWND child);
 bool FUN_00609730(HWND dialog, HWND control);
 
-inline OwnerDraw::WinData *Get_Data(HWND window)
-{
-	OwnerDraw::WinData *data = NULL;
-	if (!OwnerDraw::Dialogs.getPointer(window, &data)) {
-		return NULL;
-	}
-	return data;
-}
 
 inline bool Is_Plain_Control(HWND window)
 {
@@ -1745,14 +3079,6 @@ inline bool Is_Plain_Control(HWND window)
 	return false;
 }
 
-inline int Get_Dialog_Type(HWND dialog)
-{
-	OwnerDraw::WinData *data = Get_Data(dialog);
-	if (data != NULL) {
-		return *(int *)((char *)data + 0x6c);
-	}
-	return 0;
-}
 
 // FUNCTION: GAMEMD 0x00606800
 BOOL CALLBACK FUN_00606800(HWND window, LPARAM lparam)
@@ -1788,7 +3114,6 @@ BOOL FUN_006071D0(HWND window)
 	return EnumChildWindows(window, FUN_00606800, 0);
 }
 
-struct Game { static HINSTANCE hInstance; static bool __cdecl CallBack(void); static bool __fastcall MainLoop(void); };
 void __fastcall DrawCampaignMenuTransition(HWND window, bool reverse);
 
 // FUNCTION: GAMEMD 0x00607FD0
@@ -2791,6 +4116,55 @@ extern Rect *DAT_00B0FC28;
 extern Rect *DAT_00B0FC50;
 extern int DAT_007F5BF8;
 
+#include "msanim.h"
+namespace OwnerDraw {
+extern SHPStruct *SmallButtonAnimShape;
+extern SHPStruct *SideButtonShape;
+}
+extern Rect *DAT_00B0FC24;
+extern Rect *DAT_00B0FC4C;
+
+// FUNCTION: GAMEMD 0x0060B350
+void __fastcall FUN_0060B350(HWND window)
+{
+	HWND parent = GetParent(window);
+	bool compact = Session.FUN_0069BBE0();
+	RECT frame;
+	RECT own;
+	GetWindowRect(parent, &frame);
+	GetWindowRect(window, &own);
+	int span = frame.right - frame.left;
+	int dx = 0;
+	if (!compact) {
+		int half = (span - DAT_007F5BE4) / 2;
+		dx = (((span - DAT_007F5BE4) / 2) < 0) ? 0 : half;
+	}
+	int w;
+	int h;
+	int x;
+	int y;
+	if (compact) {
+		goto compact_button;
+	}
+	w = OwnerDraw::SmallButtonAnimShape->Get_Width();
+	h = OwnerDraw::SmallButtonAnimShape->Get_Height();
+	x = frame.right - dx - frame.left - 156;
+	{
+		int top = DAT_00B0FC24->Y;
+		int height = DAT_00B0FC24->Height;
+		y = top + ((DAT_00B0FC28->Y - top) / height - 1) * height;
+	}
+move_button:
+	MoveWindow(window, x, y, w, h, FALSE);
+	return;
+compact_button:
+	w = OwnerDraw::SideButtonShape->Get_Width();
+	h = OwnerDraw::SideButtonShape->Get_Height();
+	x = frame.right - dx - frame.left - 147;
+	y = DAT_00B0FC4C->Y - h;
+	goto move_button;
+}
+
 // FUNCTION: GAMEMD 0x0060B420
 void __fastcall FUN_0060B420(HWND window)
 {
@@ -3528,7 +4902,7 @@ union ODColorBits {
 };
 
 // SYNTHETIC: GAMEMD 0x006107A0 SYMBOL
-// _$E118
+// _$E119
 OwnerDraw::Tooltip ODTooltip;
 
 // FUNCTION: GAMEMD 0x006107E0
@@ -3654,11 +5028,11 @@ bool OwnerDraw::End_Tooltip(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00612910 SYMBOL
-// _$E121
+// _$E122
 static ArrayList<HWND> ActiveWindows;
 
 // SYNTHETIC: GAMEMD 0x00612930 SYMBOL
-// _$E126
+// _$E127
 static Dictionary<OwnerDraw::CtrlMsgData, bool> ProcessedMessages(Hash_CtrlMsg);
 
 // FUNCTION: GAMEMD 0x00612A60
