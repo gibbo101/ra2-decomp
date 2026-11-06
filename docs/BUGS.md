@@ -14,3 +14,7 @@ effect, so it can be fixed in a separate build later.
   later base node only when its type equals both the first refinery type and the
   selected weapons-factory type. The comparisons at 0x004FE25A and 0x004FE262 prevent
   that duplicate-node cleanup when the two building types differ.
+
+- **Wonline guest-game dialog (0x00791B10).** The page and reply command paths
+  allocate their temporary text buffers with array new and release them with scalar
+  delete, preserving the original allocation/deallocation mismatch.

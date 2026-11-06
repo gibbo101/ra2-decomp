@@ -4973,7 +4973,8 @@ int __fastcall FUN_0078F6B0(int id)
 	if (id == 0x75A) {
 		return 6;
 	}
-	return id == 0x75B ? 7 : -1;
+	if (id == 0x75B) return 7;
+	return -1;
 }
 
 // FUNCTION: GAMEMD 0x0078F720
@@ -11276,4 +11277,396 @@ long __stdcall FUN_007AD580(void * sink, int state)
 long __stdcall FUN_007AD610(void * sink)
 {
 	return 0;
+}
+
+
+#include "multiplayer.h"
+#include "progress.h"
+#include "firewall.h"
+extern bool DAT_00AC11C2;
+extern int DAT_007EEF30, DAT_007EEF34, DAT_007EEF38, DAT_007EEF44;
+extern wchar_t DAT_0084B224[], DAT_0084B94C[], DAT_0084B9B0[];
+void FUN_0072CF90(void);
+void __fastcall FUN_005E74E0(HWND window);
+wchar_t *__fastcall FUN_0078F200(wchar_t const *name);
+#include "tiprequest.h"
+int __fastcall FUN_004E3830(int id);
+wchar_t const *__fastcall FUN_004E38A0(int side);
+void __fastcall FUN_004E3B90(HWND dialog);
+int __fastcall FUN_004E4230(int id);
+wchar_t const *__fastcall FUN_004E42A0(int color);
+void FUN_004E43C0(void);
+void __fastcall FUN_004E4820(HWND dialog);
+int __fastcall FUN_004E4E20(HWND dialog, int id, int index);
+int __fastcall FUN_004E4EC0(int id);
+void FUN_004E4F50(void);
+void __fastcall FUN_004E4FC0(int count);
+void __fastcall FUN_004E5310(HWND dialog);
+int __fastcall FUN_004E5900(HWND dialog, int id, int index);
+int __fastcall FUN_004E59A0(int id);
+void FUN_004E5AC0(void);
+void __fastcall FUN_004E5D60(HWND dialog);
+int __fastcall FUN_004E6030(HWND dialog, int id, int index);
+MultiplayerGameMode *First_Game_Mode(void);
+void FUN_005E2EF0(HWND dialog, MultiplayerGameMode *mode);
+void __fastcall FUN_005E2F60(HWND dialog);
+int __fastcall FUN_005E9950(int id);
+wchar_t const *__fastcall FUN_005E99C0(NodeNameType *slot);
+int __fastcall FUN_005E9B20(HWND dialog, int id, int index);
+void __fastcall FUN_005E9B60(HWND dialog, int combo);
+void __fastcall FUN_005E9C00(HWND dialog, int combo);
+void __fastcall FUN_005E9CE0(HWND dialog, int combo);
+void __fastcall FUN_005E9DB0(HWND dialog, int combo);
+void __fastcall FUN_005EE510(int arg);
+WideWstring FUN_00603F60(HWND window, HWND control);
+WideWstring FUN_00604060(HWND window, HWND control);
+
+// FUNCTION: GAMEMD 0x00791B10
+BOOL CALLBACK FUN_00791B10(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int result = UI::StandardWndProc(window, message, wparam, lparam);
+	if (result) return result;
+	switch (message) {
+	case WM_NCHITTEST: {
+		HWND label = GetDlgItem(window, 0x695);
+		if (!label) return FALSE;
+		RECT rect;
+		POINT point = {LOWORD(lparam), HIWORD(lparam)};
+		GetWindowRect(window, &rect);
+		point.x -= rect.left;
+		point.y -= rect.top;
+		WideWstring text;
+		HWND control = ChildWindowFromPointEx(window, point, CWP_SKIPINVISIBLE);
+		if (control) {
+			text = FUN_00603F60(window, control);
+			if (wcscmp(text.get(), L"") == 0) text = FUN_00604060(window, control);
+		}
+		SendMessage(label, 0x4B2, 0, (LPARAM)text.text());
+		return FALSE;
+	}
+
+	case WM_DESTROY:
+		if (Progress.Has_Dialog()) Progress.Clear_Dialog();
+		if (MultiplayerMapPreview) {
+			delete MultiplayerMapPreview;
+			MultiplayerMapPreview = NULL;
+		}
+		return FALSE;
+	case WM_PAINT:
+		OwnerDraw::Paint(window);
+		FUN_00607FD0(window);
+		if (MultiplayerMapPreview) MultiplayerMapPreview->DrawStartPoints(window);
+		if (Progress.Has_Dialog()) Progress.Display_Progress();
+		ValidateRect(window, NULL);
+		return FALSE;
+	case WM_DRAWITEM:
+		OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+		return TRUE;
+	case WM_COMMAND:
+		switch (LOWORD(wparam)) {
+		case 0x3ED: {
+			HWND edit = GetDlgItem(window, 0x540);
+			WideWstring text = FUN_005EDD00(edit);
+			SendMessage(edit, 0x4B2, 0, (LPARAM)DAT_00887734);
+			SetFocus(edit);
+			InvalidateRect(edit, NULL, FALSE);
+			int color = DAT_007EEF38;
+			if (strlen(DAT_00B76B10.Name) == 0) {
+				PMessagePrintf(-1, StringTable::LoadString("TXT_NOT_IN_CHAN", NULL,
+														   "D:\\ra2mdpost\\wonline.cpp", 17692));
+			} else {
+				if (text.length() > 0) {
+					if (FUN_0077E300(text)) color = DAT_007EEF34;
+					wchar_t *message_text = text.get();
+					PMessagePrintf(color, DAT_0084B224, DAT_00B73E40.c_str(), message_text);
+				} else {
+					PMessagePrintf(-1, StringTable::LoadString("TXT_ENTER_MESSAGE", NULL,
+															   "D:\\ra2mdpost\\wonline.cpp", 17700));
+				}
+			}
+			return FALSE;
+		}
+		case 0x540: {
+			HWND edit = (HWND)lparam;
+			WideWstring text = FUN_005EDD00(edit);
+			if (HIWORD(wparam) == 0x501) {
+				SendMessage(edit, 0x4B2, 0, (LPARAM)DAT_00887734);
+				if (text.length() > 0) {
+					int page = FUN_0078A6B0(text.get());
+					if (page) {
+						if (page == 1) {
+							int count = 0;
+							int length = text.length() + 1;
+							wchar_t *copy = new wchar_t[length];
+							wchar_t command[64];
+							wcscpy(command, StringTable::LoadString("TXT_PAGE_COMMAND", NULL,
+																	"D:\\ra2mdpost\\wonline.cpp", 17577));
+							if (!copy) return FALSE;
+							{
+								wchar_t *start = wcsncpy(copy, text.get(), length);
+								if (!start) return FALSE;
+								{
+									wchar_t *message_text = start + wcslen(command);
+									while (*message_text && wcsncmp(message_text, L" ", 1) == 0)
+										++message_text;
+									wchar_t name[16];
+									while (*message_text && wcsncmp(message_text, L" ", 1) != 0 &&
+										   count <= 10) {
+										name[count++] = *message_text++;
+									}
+									name[count] = 0;
+									while (*message_text && wcsncmp(message_text, L" ", 1) == 0)
+										++message_text;
+									if (count > 10) {
+										PMessagePrintf(
+											-1, StringTable::LoadString("TXT_NAME_TOO_LONG", NULL,
+																		"D:\\ra2mdpost\\wonline.cpp", 17607));
+									} else if (!count) {
+										PMessagePrintf(
+											-1, StringTable::LoadString("TXT_NO_NAME_SPECIFIED", NULL,
+																		"D:\\ra2mdpost\\wonline.cpp", 17609));
+									} else if (wcslen(message_text) > 0) {
+										PMessagePrintf(DAT_007EEF30, DAT_0084B9B0, DAT_00B73E40.c_str(), name,
+													   message_text);
+									} else {
+										PMessagePrintf(
+											-1, StringTable::LoadString("TXT_CANT_SEND_BLANK_PAGE", NULL,
+																		"D:\\ra2mdpost\\wonline.cpp", 17615));
+									}
+									delete start;
+								}
+							}
+						}
+					} else if (FUN_0078A8F0(text.get())) {
+						int length = text.length() + 1;
+						wchar_t *copy = new wchar_t[length];
+						wchar_t command[64], short_command[64];
+						wcscpy(command, StringTable::LoadString("TXT_REPLY_COMMAND", NULL,
+																"D:\\ra2mdpost\\wonline.cpp", 17633));
+						wcscpy(short_command, StringTable::LoadString("TXT_REPLY_COMMAND_SHORT", NULL,
+																	  "D:\\ra2mdpost\\wonline.cpp", 17634));
+						if (!copy) return FALSE;
+						{
+							wchar_t *start = wcsncpy(copy, text.get(), length);
+							if (!start) return FALSE;
+							{
+								int command_length;
+								if (wcsncmp(start, command, wcslen(command)) == 0)
+									command_length = wcslen(command);
+								else
+									command_length = wcslen(short_command);
+								wchar_t *message_text = start + command_length;
+								while (*message_text && wcsncmp(message_text, L" ", 1) == 0)
+									++message_text;
+								wchar_t name[16];
+								wcscpy(name, FUN_00735120(DAT_00B77E30));
+								if (wcslen(name) > 0 && wcslen(message_text) > 0) {
+									PMessagePrintf(DAT_007EEF30, DAT_0084B9B0, DAT_00B73E40.c_str(), name,
+												   message_text);
+								} else if (wcslen(name) > 0) {
+									PMessagePrintf(
+										-1, StringTable::LoadString("TXT_CANT_SEND_BLANK_PAGE", NULL,
+																	"D:\\ra2mdpost\\wonline.cpp", 17663));
+								}
+								delete start;
+							}
+						}
+					} else if (!FUN_0078A470(text.get())) {
+						int color = DAT_007EEF44;
+						if (FUN_0077E1D0(text) == 1) color = DAT_007EEF30;
+						wchar_t *message_text = text.get();
+						PMessagePrintf(color, DAT_0084B94C, DAT_00B73E40.c_str(), message_text);
+					}
+				}
+			}
+			return FALSE;
+		}
+
+		case IDCANCEL:
+			if (!DAT_00B77E28 && DAT_00AC116C->V09() < 0) {
+				FUN_007757E0(window, 2);
+				FUN_0072CF90();
+			}
+			return FALSE;
+		case 0x5C2:
+			FUN_0077D840();
+			return FALSE;
+		case 0x59F: {
+			char options[80];
+			Session.Players[0]->Slot.Unknown77 = 1;
+			sprintf(options, "A1");
+			SendPublicGameopts(options);
+			FUN_005EDDE0(window, false);
+			HWND accept = GetDlgItem(window, 0x59F);
+			EnableWindow(accept, FALSE);
+			InvalidateRect(accept, NULL, FALSE);
+			SendMessage(accept, 0x4DC, 0, 0);
+			FUN_00783C80(0, false);
+			SetFocus(GetDlgItem(window, 0x540));
+			return FALSE;
+		}
+		case 0x510:
+		case 0x513:
+		case 0x514:
+		case 0x51E:
+		case 0x51F:
+		case 0x520:
+		case 0x521:
+		case 0x522:
+		case 0x523:
+		case 0x524:
+		case 0x525:
+		case 0x526:
+		case 0x527:
+		case 0x528:
+		case 0x6A1:
+		case 0x6A2:
+		case 0x6A3:
+		case 0x6A4:
+		case 0x6A5:
+		case 0x6A6:
+		case 0x6A7:
+		case 0x6A8:
+		case 0x6AA:
+		case 0x6AB:
+		case 0x76D:
+		case 0x76E:
+		case 0x76F:
+		case 0x770:
+		case 0x771:
+		case 0x772:
+		case 0x773:
+		case 0x774:
+			if (HIWORD(wparam) == CBN_SELCHANGE) {
+				int country_slot = FUN_004E3830(LOWORD(wparam));
+				int color_slot = FUN_004E4230(LOWORD(wparam));
+				int start_slot = FUN_004E4EC0(LOWORD(wparam));
+				int team_slot = FUN_004E59A0(LOWORD(wparam));
+				int slot = country_slot > color_slot ? country_slot : color_slot;
+				slot = slot > start_slot ? slot : start_slot;
+				slot = slot > team_slot ? slot : team_slot;
+				int country_id = FUN_004E37D0(slot);
+				int color_id = FUN_004E41D0(slot);
+				int start_id = FUN_004E4E60(slot);
+				int team_id = FUN_004E5940(slot);
+				if (slot == country_slot)
+					FUN_005E9B60(window, country_id);
+				else if (slot == color_slot)
+					FUN_005E9C00(window, color_id);
+				else if (slot == start_slot)
+					FUN_005E9CE0(window, start_id);
+				else
+					FUN_005E9DB0(window, team_id);
+				int country = FUN_004E4170(window, country_id, -1);
+				int color = FUN_004E4E20(window, color_id, -1);
+				int start = FUN_004E5900(window, start_id, -1);
+				int team = FUN_004E6030(window, team_id, -1);
+				NetNumType net;
+				NetNodeType node;
+				unsigned short port;
+				Session.unknown_2988.Get_Address(net, node, &port);
+				char options[128];
+				sprintf(options, "R%d,%d,%d,%d,%X,%x,%x", country, color, start, team, *(int *)node,
+						(unsigned short)DAT_00ABFEC8.Detected, Session.PortBase);
+				FUN_004068E0("Sending private game options (%s)\n", options);
+				Wstring host = FUN_007B7F90(Session.GameName);
+				SendPrivateGameopts(host.get(), options);
+			}
+			return FALSE;
+		}
+		return FALSE;
+	case 0x4ED:
+		ShowWindow(window, SW_HIDE);
+		OwnerDraw::SetNeedsControlImage(window, 1);
+		return FALSE;
+	case 0x4E9: {
+		TooltipRequest *request = (TooltipRequest *)lparam;
+		request->Text = (wchar_t const *)NULL;
+		if (request->Window) {
+			int control = GetDlgCtrlID(request->Window);
+			if (request->Index != -1) {
+				if (FUN_005E9950(control) == -1) {
+					if (FUN_004E3830(control) == -1) {
+						if (FUN_004E4230(control) != -1)
+							request->Text = FUN_004E42A0(FUN_004E4E20(window, control, request->Index));
+					} else {
+						int country = FUN_004E4170(window, control, request->Index);
+						if (country != -1) request->Text = FUN_004E38A0(country);
+					}
+				} else {
+					NodeNameType *slot = (NodeNameType *)FUN_005E9B20(window, control, request->Index);
+					request->Text = FUN_005E99C0(slot);
+				}
+				goto tooltip_done;
+			}
+			if (FUN_005E9950(control) != -1) {
+				NodeNameType *slot = (NodeNameType *)FUN_005E9B20(window, control, -1);
+				if (slot) {
+					WideWstring text = FUN_00604060(window, request->Window);
+					if (wcscmp(text.get(), StringTable::LoadString("STT:GuestComboPlayer", NULL,
+																   "D:\\ra2mdpost\\wonline.cpp", 17364)) ==
+							0 ||
+						wcscmp(text.get(), StringTable::LoadString("STT:HostComboPlayer", NULL,
+																   "D:\\ra2mdpost\\wonline.cpp", 17364)) ==
+							0) {
+						if (FUN_005E93F0(slot)) text = FUN_0078F200(slot->Name);
+					}
+					request->Text = text.get();
+				}
+			}
+			{
+				int slot_index = FUN_0078F6B0(control);
+				if (slot_index != -1) {
+					WideWstring text;
+					int combo = FUN_005E98F0(slot_index);
+					if (combo != -1) {
+						NodeNameType *slot = (NodeNameType *)FUN_005E9B20(window, combo, -1);
+						if (slot && FUN_005E93F0(slot)) {
+							text = FUN_0078F5C0(slot->Name);
+							request->Text = text;
+						}
+					}
+				}
+			}
+		}
+
+	tooltip_done:
+		return TRUE;
+	}
+	case 0x497: {
+		SetFocus(GetDlgItem(window, 0x540));
+		SendDlgItemMessage(window, 0x3ED, 0x49C, 0, (LPARAM)PCX::Instance.GetSurface("wodact.pcx", NULL));
+		SendDlgItemMessage(window, 0x3ED, 0x4AA, 0, (LPARAM)PCX::Instance.GetSurface("wouact.pcx", NULL));
+		MultiplayerGameMode *mode = First_Game_Mode();
+		Session.Options.MPModeIndex = mode->MPModeIndex;
+		FUN_005E2EF0(window, mode);
+		int scenario = mode->FirstValidMapIndex();
+		Session.Options.ScenarioIndex = scenario;
+		Set_Scenario_Info_From_Index(scenario);
+		FUN_004E3B90(window);
+		FUN_004E43C0();
+		FUN_004E4820(window);
+		FUN_004E4F50();
+		FUN_004E5AC0();
+		FUN_004E5D60(window);
+		FUN_005EE510(-1);
+		Set_Scenario_Info_From_Index(-1);
+		DAT_00AC11C2 = false;
+		Session.unknown_8D4 = 8;
+		FUN_005E2F60(window);
+		FUN_005E74E0(window);
+		if (Session.MPGameMode && Session.MPGameMode->vt_entry_04() &&
+			Scen->NumCoopHumanStartSpots <= RandomMapWaypointCount(scenario))
+			FUN_004E4FC0(Scen->NumCoopHumanStartSpots);
+		else
+			FUN_004E4FC0(RandomMapWaypointCount(scenario));
+		FUN_004E5310(window);
+		FUN_004E5D60(window);
+		FUN_005EE510(-1);
+		DisplayGameopts(window, TRUE);
+		FUN_00783C80(0, false);
+		return FALSE;
+	}
+	}
+	return FALSE;
 }

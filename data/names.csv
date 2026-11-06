@@ -407,3 +407,5 @@ address,name,symbol,evidence
 0x008177C8,AbstractClass RTTI type descriptor,??_R0?AVAbstractClass@@@8,retail type descriptor contains .?AVAbstractClass@@; referenced by HouseClass::Detach
 0x006FC0B0,TechnoClass::Can_Fire,?Can_Fire@TechnoClass@@UBE?AW4FireErrorType@@PAVAbstractClass@@H_N@Z,TechnoClass vtable slot 240; matched function
 0x007DC720,_com_issue_error,?_com_issue_error@@YGXJ@Z,COM error helper forwards HRESULT and null IErrorInfo; referenced by TechnoClass::Can_Fire
+0x00AC4F58,Progress,?Progress@@3VProgressScreenClass@@A,Matched static initializer at 0x00642980 passes 0x00AC4F58 to ProgressScreenClass::ProgressScreenClass; the destructor at 0x006429A0 uses the same object.
+0x0087F770,InputManagerInstance,?InputManagerInstance@@3PAXA,Matched Wonline dialog at 0x0077D840 passes the pointer stored at 0x0087F770 to the input flush routine at 0x0054F720 before and after the modal loop.
