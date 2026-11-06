@@ -1359,10 +1359,6 @@ void __cdecl FUN_005BD1F0(DebugPage * page, char const * format, ...);
 void __fastcall Print_CRCs(EventClass *ev)
 {
 	int i, j;
-	InfantryClass *infp;
-	UnitClass *unitp;
-	BuildingClass *bldgp;
-	AircraftClass *airp;
 	ObjectClass *objp;
 	FILE *fp;
 	HousesType house;
@@ -1465,7 +1461,7 @@ void __fastcall Print_CRCs(EventClass *ev)
 		DAT_00AC51FC = 0;
 		fprintf(fp, "-------------------- %s (%d) Infantry -------------------\n", housep->Class->Name(), housep->HeapID);
 		for (i = 0; i < Infantry.Count(); i++) {
-			infp = Infantry[i];
+			InfantryClass *infp = Infantry[i];
 			if (infp->House == housep) {
 				Add_CRC(&DAT_00AC51FC, (int)infp->PositionCoord.As_Int() + (int)infp->PrimaryFacing.Current().As_Dir256());
 
@@ -1502,7 +1498,7 @@ void __fastcall Print_CRCs(EventClass *ev)
 		DAT_00AC51FC = 0;
 		fprintf(fp, "-------------------- %s (%d) Units -------------------\n", housep->Class->Name(), housep->HeapID);
 		for (i = 0; i < Units.Count(); i++) {
-			unitp = (UnitClass *)Units[i];
+			UnitClass *unitp = Units[i];
 			if (unitp->House == housep) {
 				Add_CRC(&DAT_00AC51FC, (int)unitp->PositionCoord.As_Int() + (int)unitp->PrimaryFacing.Current().As_Dir256() +
 					(int)unitp->SecondaryFacing.Current().As_Dir256());
