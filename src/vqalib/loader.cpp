@@ -84,6 +84,7 @@ _STATIC long VQA_LoadFrame_Internal(VQAHandleP *vqap, long flags);
 
 long VQA_SeekGroup(VQAHandleP *vqap, long framenum, long groupsize, VQABool preloadaudio, VQABool reset_state, VQABool &skipcodebook);
 
+// FUNCTION: GAMEMD 0x007BF470
 long VQA_LoadFrame(VQAHandleP *vqap, long flags)
 {
 	VQAConfig *config;
@@ -191,13 +192,14 @@ long VQA_LoadFrame(VQAHandleP *vqap, long flags)
 
 	rc = VQA_LoadFrame_Internal(vqap, flags);
 
-	if (restore_handler == true) {
+	if (restore_handler) {
 		config->StreamHandler = oldhandler;
 	}
 
 	return rc;
 }
 
+// FUNCTION: GAMEMD 0x007BF740
 long VQA_LoadFrame_Internal(VQAHandleP *vqap, long flags)
 {
 	VQAConfig     *config;
@@ -207,7 +209,7 @@ long VQA_LoadFrame_Internal(VQAHandleP *vqap, long flags)
 	ChunkHeader   *chunk;
 	static unsigned long iffsize;
 
-	VQABool      frame_loaded = 0;
+	int          frame_loaded = 0;
 	VQABool      loop_loaded = 0;
 
 	long          rc;
@@ -224,7 +226,7 @@ long VQA_LoadFrame_Internal(VQAHandleP *vqap, long flags)
 				long endjump = vqap->LoopEndFrameJump;
 				long end2 = vqap->LoopEndFrameMode2;
 
-				flags = vqap->StopFrame;
+				long stopframe = vqap->StopFrame;
 
 				if (endjump != -1) {
 					vqap->LoopEndFrameMode2 = endjump;
@@ -258,7 +260,7 @@ long VQA_LoadFrame_Internal(VQAHandleP *vqap, long flags)
 				} else {
 					vqap->LoopEndFrameMode2 = end2;
 					vqap->LoopEndFrameJump = endjump;
-					vqap->StopFrame = flags;
+					vqap->StopFrame = stopframe;
 					loader->CurFrameNum = vqap->LoopEndFrameMode2 + 1;
 				}
 				return(rc);
@@ -278,7 +280,7 @@ long VQA_LoadFrame_Internal(VQAHandleP *vqap, long flags)
 		return(VQAERR_EOF);
 	}
 
-	VQABool skip;
+	int skip;
 
 	if ((curframe->Flags & VQAFRMF_LOADED) && !(curframe->Flags & VQAFRMF_11)) {
 		loader->WaitsOnDrawer++;
@@ -672,9 +674,10 @@ long VQA_MFCIReadData(VQAHandleP *vqap, unsigned long iffsize, long index)
 
 	write_index = data2->WriteIndex;
 
-	buf = data2->Data[write_index].Buffer;
-	data2->Data[write_index].Size = iffsize;
-	data2->Data[write_index].Frame = loader->CurFrameNum;
+	VQAMFCInfo::DATA2::DATA * const & data = data2->Data;
+	buf = data[write_index].Buffer;
+	data[write_index].Size = iffsize;
+	data[write_index].Frame = loader->CurFrameNum;
 	write_index++;
 	if (write_index >= data2->Count) {
 		write_index = 0;
@@ -725,9 +728,10 @@ long VQA_MSCIReadData(VQAHandleP *vqap, unsigned long iffsize, long index)
 
 	write_index = data2->WriteIndex;
 
-	buf = data2->Data[write_index].Buffer;
-	data2->Data[write_index].Size = iffsize;
-	data2->Data[write_index].Frame = loader->CurFrameNum;
+	VQAMSCInfo::DATA2::DATA * const & data = data2->Data;
+	buf = data[write_index].Buffer;
+	data[write_index].Size = iffsize;
+	data[write_index].Frame = loader->CurFrameNum;
 	write_index++;
 	if (write_index >= data2->Count) {
 		write_index = 0;

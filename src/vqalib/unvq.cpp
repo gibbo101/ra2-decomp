@@ -13,6 +13,191 @@ typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 
+// FUNCTION: GAMEMD 0x007C39C0
+void __cdecl UnVQ2_C1_4x4(unsigned char * codebook, unsigned char * pointers, unsigned char * buffer, unsigned long blocksperrow, unsigned long numrows, unsigned long bufwidth)
+{
+	bufwidth *= 2u;
+	uint32_t block_row_stride = bufwidth * 4u;
+	uint8_t * data_end = (uint8_t *)buffer + ((uint32_t)numrows * bufwidth * 4u);
+	uint8_t * row_base = (uint8_t *)buffer;
+	uint8_t * row_end = row_base + ((uint32_t)blocksperrow * 8u);
+	uint16_t * src = (uint16_t *)pointers;
+	uint8_t * dst = row_base;
+	while (dst < data_end) {
+		uint16_t command = *src;
+		int tag = command & 0xF000;
+		uint32_t count = command;
+		count &= 0xFFFF0FFFu;
+		src += 1;
+		switch (tag) {
+		case 0x0000u: {
+			uint32_t n = 2u * count;
+			uint32_t w = *src;
+			uint32_t v = (w << 16) | w;
+			src += 1;
+			{
+				unsigned int * p = (unsigned int *)(dst);
+				unsigned int left = n;
+				while (left > 0) {
+					*p++ = v;
+					left--;
+				}
+			}
+			{
+				unsigned int * p = (unsigned int *)(dst + bufwidth);
+				unsigned int left = n;
+				while (left > 0) {
+					*p++ = v;
+					left--;
+				}
+			}
+			{
+				unsigned int * p = (unsigned int *)(dst + 2u * bufwidth);
+				unsigned int left = n;
+				while (left > 0) {
+					*p++ = v;
+					left--;
+				}
+			}
+			{
+				unsigned int * p = (unsigned int *)(dst + 3u * bufwidth);
+				unsigned int left = n;
+				while (left > 0) {
+					*p++ = v;
+					left--;
+				}
+			}
+			dst += 8u * count;
+		} break;
+		case 0x1000u: {
+			dst += 8u * count;
+		} break;
+		case 0x2000u: {
+			const uint8_t * cb = codebook + ((uint32_t)*src << 5);
+			src += 1;
+			for (uint32_t r = 0; r < 4; r++) {
+				uint32_t lo = ((uint32_t)*(const uint16_t *)(cb + 2) << 16) | *(const uint16_t *)(cb + 0);
+				cb += 4;
+				uint32_t i;
+				{
+					uint8_t * p = dst;
+					for (i = 0; i < count; i++) {
+						*(uint32_t *)p = lo;
+						p += 8;
+					}
+				}
+				uint32_t hi = ((uint32_t)*(const uint16_t *)(cb + 2) << 16) | *(const uint16_t *)(cb + 0);
+				cb += 4;
+				{
+					uint8_t * p = dst + 4;
+					for (i = 0; i < count; i++) {
+						*(uint32_t *)p = hi;
+						p += 8;
+					}
+				}
+				dst += bufwidth;
+			}
+			dst += (count * 8u) - block_row_stride;
+		} break;
+		case 0x3000u: {
+			uint16_t cb_index = *src;
+			const uint8_t * cb = codebook + 32u * (uint32_t)cb_index;
+			uint32_t r;
+			src += 1;
+			for (r = 0; r < 4; ++r) {
+				uint8_t * rowp = dst;
+				uint32_t c;
+				for (c = 0; c < 4; ++c) {
+					uint16_t px = *(const uint16_t *)cb;
+					if ((px & 0x8000u) == 0) {
+						uint8_t * p = rowp;
+						uint32_t i;
+						for (i = 0; i < count; ++i) {
+							*(uint16_t *)p = px;
+							p += 8;
+						}
+					}
+					rowp += 2;
+					cb += 2;
+				}
+				dst += bufwidth;
+			}
+			dst += 8u * count - block_row_stride;
+		} break;
+		case 0x5000u: {
+			uint32_t i;
+			for (i = 0; i < count; i++) {
+				uint32_t step = 4u * (bufwidth >> 2);
+				uint32_t j;
+				uint32_t v;
+				uint32_t r = 4;
+				uint8_t * p;
+				{
+					uint32_t w = *src;
+					v = (w << 16) | w;
+					src += 1;
+				}
+				p = dst;
+				for (j = 0; j < r; j++) {
+					*(uint32_t *)(p + 0) = v;
+					*(uint32_t *)(p + 4) = v;
+					p += step;
+				}
+				dst += 8;
+			}
+		} break;
+		case 0x6000u: {
+			uint32_t i;
+			for (i = 0; i < count; i++) {
+				uint32_t step = 4u * (bufwidth >> 2);
+				const uint8_t * cb = codebook + ((uint32_t)*src << 5);
+				src += 1;
+				uint8_t * p = dst;
+				for (uint32_t r = 0; r < 4; ++r) {
+					uint32_t lo;
+					uint32_t hi;
+					lo = ((uint32_t)*(const uint16_t *)(cb + 2) << 16) | *(const uint16_t *)(cb + 0);
+					cb += 4;
+					*(uint32_t *)(p + 0) = lo;
+					hi = ((uint32_t)*(const uint16_t *)(cb + 2) << 16) | *(const uint16_t *)(cb + 0);
+					cb += 4;
+					*(uint32_t *)(p + 4) = hi;
+					p += step;
+				}
+				dst += 8;
+			}
+		} break;
+		case 0x7000u: {
+			uint32_t i;
+			for (i = 0; i < count; ++i) {
+				uint16_t cb_index = *src;
+				const uint8_t * cb = codebook + 32u * (uint32_t)cb_index;
+				src += 1;
+				uint8_t * p = dst;
+				for (uint32_t r = 0; r < 4; ++r) {
+					uint8_t * q = p;
+					for (uint32_t c = 0; c < 4; ++c) {
+						uint16_t px = *(const uint16_t *)cb;
+						if ((px & 0x8000u) == 0) {
+							*(uint16_t *)q = px;
+						}
+						q += 2;
+						cb += 2;
+					}
+					p += 2u * (bufwidth >> 1);
+				}
+				dst += 8;
+			}
+		} break;
+		}
+		if (dst == row_end) {
+			row_base += block_row_stride;
+			dst = row_base;
+			row_end = row_base + (8u * (uint32_t)blocksperrow);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x007C3D60
 void __cdecl UnVQ1_C4_4x4(unsigned char * codebook, unsigned char * pointers, unsigned char * buffer, unsigned long blocksperrow, unsigned long numrows, unsigned long bufwidth)
 {
