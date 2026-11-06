@@ -10,8 +10,8 @@ when the checker shows its compiled bytes equal the original's, and stand-ins su
 over real objects or hard-coded addresses are rejected however well they score.
 `docs/AGENTS.md` holds the rules the agents follow and every lesson learned.
 
-**Status (6 November 2026):** 18,860 of the game's 19,362 functions match byte for byte
-(97%), covering 3.00 MB of its 3.81 MB of game code (79%). Each function is checked on
+**Status (6 November 2026):** 18,869 of the game's 19,362 functions match byte for byte
+(97%), covering 3.01 MB of its 3.81 MB of game code (79%). Each function is checked on
 its own; linking a whole executable that matches comes later. `docs/PLAN.md` has the
 method, and `docs/rounds/` records every batch.
 
@@ -75,6 +75,9 @@ out of history.
   and load progress, cells, the display, pathfinding, the INI readers, UI commands and
   the World Domination Tour; brought Westwood's archived assembly into the build with
   MASM; and added the checker's completion checks and function-map callbacks.
+- [meastes](https://github.com/meastes): matched functions in the map, VQA loading and
+  static-sound saving, ported from their matching decompilation of Red Alert 2
+  ([meastes/redalert2-decomp](https://github.com/meastes/redalert2-decomp), GPL-3.0-or-later).
 
 ## You need your own copy of the game
 

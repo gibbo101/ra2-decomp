@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 6 November 2026: 18,860 of 19,362 game functions match (97%; 79% of game code
+Status, 6 November 2026: 18,869 of 19,362 game functions match (97%; 79% of game code
 by size), landed in batches module by module. `docs/rounds/` records each round.
 
 ## The goal
@@ -252,8 +252,13 @@ share stays invisible to this comparison. TFD's TS and RA2 exes are kept too
 Scale against Byte Tactics: `.text` is about 4.8 times TA's whole exe. The recomp project
 counted about 24,900 functions and 954 classes in `gamemd.exe`, including library code.
 
-## Other RA2 projects (none of them a matching decomp)
+## Other RA2 projects
 
+- [meastes/redalert2-decomp](https://github.com/meastes/redalert2-decomp): a matching
+  decompilation of base Red Alert 2 (`game.exe` 1.006, a disc build), VC6 under Wine and
+  agent-driven, linking the whole exe with original bytes for what is still unmatched;
+  GPL-3.0-or-later. Many YR functions are byte-identical to RA2's apart from addresses,
+  so matched source carries over in both directions.
 - [redalert2-recomp](https://github.com/sp00nznet/redalert2-recomp): static
   recompilation of `gamemd.exe` to 5.8M lines of machine-lifted C. Playable (menus,
   skirmish, both campaigns), D3D11 presenter, 2× voxel units. Windows only. The lifted C
