@@ -1363,6 +1363,7 @@ address,name,result,size,source,symbol
 0x004370B0,BuildingLightClass::Fetch_RTTI,MATCH,6,src/blight.cpp,?Fetch_RTTI@BuildingLightClass@@UBE?AW4RTTIType@@XZ
 0x00435B50,BuildingLightClass::~BuildingLightClass,MATCH,134,src/blight.cpp,??1BuildingLightClass@@UAE@XZ
 0x004370C0,BuildingLightClass::~BuildingLightClass,MATCH,154,src/blight.cpp,??_GBuildingLightClass@@UAEPAXI@Z
+0x00437160,??G?$TPoint3D@H@@QBE?BV0@ABV0@@Z,MATCH,47,src/blight.cpp,??G?$TPoint3D@H@@QBE?BV0@ABV0@@Z
 0x00437190,_$E2,MATCH,23,src/blowfish.cpp,_$E2
 0x004371B0,Buffer_Size,MATCH,20,src/blowfish.cpp,?Buffer_Size@@YIHAAVSurface@@HH@Z
 0x004371D0,To_Buffer,MATCH,178,src/blowfish.cpp,?To_Buffer@@YI_NABVSurface@@ABV?$TRect@H@@AAVBuffer@@@Z
@@ -4625,6 +4626,7 @@ address,name,result,size,source,symbol
 0x004E0C40,?Add@?$DynamicVectorClass@V?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@@QAE_NABV?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@Z,MATCH,87,src/foot.cpp,?Add@?$DynamicVectorClass@V?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@@QAE_NABV?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@Z
 0x004E0CA0,?ID@?$DynamicVectorClass@V?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@@UAEHABV?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@Z,MATCH,54,src/foot.cpp,?ID@?$DynamicVectorClass@V?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@@UAEHABV?$DistributionObject@PAVCellClass@@@?$DiscreteDistributionClass@VCellClass@@@@@Z
 0x004E0270,??_G?$DynamicVectorClass@PAVAbstractClass@@@@UAEPAXI@Z,MATCH,73,src/foot.cpp,??_G?$DynamicVectorClass@PAVAbstractClass@@@@UAEPAXI@Z
+0x004E02C0,?_Release@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ,MATCH,13,src/foot.cpp,?_Release@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
 0x004E02D0,??_G?$VectorClass@PAVAbstractClass@@@@UAEPAXI@Z,MATCH,73,src/foot.cpp,??_G?$VectorClass@PAVAbstractClass@@@@UAEPAXI@Z
 0x004E0320,??8?$VectorClass@PAVAbstractClass@@@@UBE_NABV0@@Z,MATCH,62,src/foot.cpp,??8?$VectorClass@PAVAbstractClass@@@@UBE_NABV0@@Z
 0x004E0360,?Resize@?$VectorClass@PAVAbstractClass@@@@UAE_NHPBQAVAbstractClass@@@Z,MATCH,174,src/foot.cpp,?Resize@?$VectorClass@PAVAbstractClass@@@@UAE_NHPBQAVAbstractClass@@@Z
@@ -8019,6 +8021,7 @@ address,name,result,size,source,symbol
 0x005889F0,FUN_005889F0,MATCH,203,src/map.cpp,?FUN_005889F0@@YIHHH@Z
 0x00588AC0,FUN_00588AC0,MATCH,289,src/map.cpp,?FUN_00588AC0@@YIXPAVMapClass@@@Z
 0x00588BF0,??_GMapClass@@UAEPAXI@Z,MATCH,30,src/map.cpp,??_GMapClass@@UAEPAXI@Z
+0x00588C40,??Y?$TPoint2D@F@@QAEABV0@ABV0@@Z,MATCH,23,src/map.cpp,??Y?$TPoint2D@F@@QAEABV0@ABV0@@Z
 0x00588C60,??G?$TPoint2D@F@@QBE?BV0@ABV0@@Z,MATCH,41,src/map.cpp,??G?$TPoint2D@F@@QBE?BV0@ABV0@@Z
 0x00588C90,?Clear@?$DynamicVectorClass@USubzoneConnectionStruct@@@@UAEXXZ,MATCH,42,src/map.cpp,?Clear@?$DynamicVectorClass@USubzoneConnectionStruct@@@@UAEXXZ
 0x00588CC0,?ID@?$DynamicVectorClass@USubzoneConnectionStruct@@@@UAEHPBUSubzoneConnectionStruct@@@Z,MATCH,27,src/map.cpp,?ID@?$DynamicVectorClass@USubzoneConnectionStruct@@@@UAEHPBUSubzoneConnectionStruct@@@Z
@@ -9304,6 +9307,8 @@ address,name,result,size,source,symbol
 0x005CD3C0,MSBitPrintAnim::Set_Flag,MATCH,10,src/msanim.cpp,?Set_Flag@MSBitPrintAnim@@QAEX_N@Z
 0x005CD3D0,MSBitPrintAnim::Get_Rect,MATCH,36,src/msanim.cpp,?Get_Rect@MSBitPrintAnim@@UBE?AV?$TRect@H@@XZ
 0x005CD400,MSBitPrintAnim::Has_Finished,MATCH,4,src/msanim.cpp,?Has_Finished@MSBitPrintAnim@@UBE_NXZ
+0x005CD410,MSBitPrintAnim::Advance,MATCH,182,src/msanim.cpp,?Advance@MSBitPrintAnim@@UAE_NPAVSurface@@AAV?$TRect@H@@@Z
+0x005CD4D0,MSBitPrintAnim::Redraw,MATCH,158,src/msanim.cpp,?Redraw@MSBitPrintAnim@@UAEXPAVSurface@@PBV?$TRect@H@@@Z
 0x005CD570,MSPrintAnim::MSPrintAnim,MATCH,277,src/msanim.cpp,??0MSPrintAnim@@QAE@ABVWideWstring@@HHPAVMSFont@@ABV?$TRect@H@@HH_N3@Z
 0x005CD690,MSPrintAnim::Set_Dimensions,MATCH,439,src/msanim.cpp,?Set_Dimensions@MSPrintAnim@@IAEXABV?$TRect@H@@@Z
 0x005CD850,MSPrintAnim::Word_Wrap,MATCH,821,src/msanim.cpp,?Word_Wrap@MSPrintAnim@@SIHAAVWideWstring@@PAVMSFont@@H@Z
@@ -10446,6 +10451,7 @@ address,name,result,size,source,symbol
 0x0060B880,FUN_0060B880,MATCH,204,src/ownrdraw.cpp,?FUN_0060B880@@YI_NPAUHWND__@@0@Z
 0x0060C4A0,OwnerDraw::UpdateControlPosition,MATCH,54,src/ownrdraw.cpp,?UpdateControlPosition@OwnerDraw@@YIXPAUHWND__@@J@Z
 0x0060C4E0,FUN_0060C4E0,MATCH,90,src/ownrdraw.cpp,?FUN_0060C4E0@@YIHPAUHWND__@@@Z
+0x0060C540,OwnerDraw::TrySetDialogLayoutBand1,MATCH,648,src/ownrdraw.cpp,?TrySetDialogLayoutBand1@OwnerDraw@@YI_NPAUHWND__@@@Z
 0x0060C7D0,OwnerDraw::TrySetDialogLayoutBand2,MATCH,247,src/ownrdraw.cpp,?TrySetDialogLayoutBand2@OwnerDraw@@YI_NPAUHWND__@@@Z
 0x0060C8D0,FUN_0060C8D0,MATCH,93,src/ownrdraw.cpp,?FUN_0060C8D0@@YIEPAUHWND__@@@Z
 0x0060C930,FUN_0060C930,MATCH,157,src/ownrdraw.cpp,?FUN_0060C930@@YIEPAUHWND__@@@Z
@@ -10554,6 +10560,8 @@ address,name,result,size,source,symbol
 0x006244C0,??_GSimpleDialogControl@OwnerDraw@@UAEPAXI@Z,MATCH,32,src/ownrdraw.cpp,??_GSimpleDialogControl@OwnerDraw@@UAEPAXI@Z
 0x00624530,?add@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@QAEDAAPAUHWND__@@AAUWinData@OwnerDraw@@@Z,MATCH,546,src/ownrdraw.cpp,?add@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@QAEDAAPAUHWND__@@AAUWinData@OwnerDraw@@@Z
 0x00624760,?getPointer@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@QAEDAAPAUHWND__@@PAPAUWinData@OwnerDraw@@@Z,MATCH,106,src/ownrdraw.cpp,?getPointer@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@QAEDAAPAUHWND__@@PAPAUWinData@OwnerDraw@@@Z
+0x006247D0,??0CellData@OwnerDraw@@QAE@ABU01@@Z,MATCH,61,src/ownrdraw.cpp,??0CellData@OwnerDraw@@QAE@ABU01@@Z
+0x00624810,?growVector@?$ArrayList@UCellData@OwnerDraw@@@@AAEDXZ,MATCH,135,src/ownrdraw.cpp,?growVector@?$ArrayList@UCellData@OwnerDraw@@@@AAEDXZ
 0x00624930,?getPointer@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@QAEDAAPAUHWND__@@PAPAP6GJPAU2@IIJ@Z@Z,MATCH,103,src/ownrdraw.cpp,?getPointer@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@QAEDAAPAUHWND__@@PAPAP6GJPAU2@IIJ@Z@Z
 0x006249A0,?remove@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@QAEDAAPAUHWND__@@AAP6GJPAU2@IIJ@Z@Z,MATCH,575,src/ownrdraw.cpp,?remove@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@QAEDAAPAUHWND__@@AAP6GJPAU2@IIJ@Z@Z
 0x00624BE0,?expand@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEXXZ,MATCH,156,src/ownrdraw.cpp,?expand@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEXXZ
@@ -10566,6 +10574,7 @@ address,name,result,size,source,symbol
 0x00625390,?keyHash@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEIAAUCtrlMsgData@OwnerDraw@@@Z,MATCH,29,src/ownrdraw.cpp,?keyHash@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEIAAUCtrlMsgData@OwnerDraw@@@Z
 0x006253B0,?growVector@?$ArrayList@H@@AAEDXZ,MATCH,143,src/ownrdraw.cpp,?growVector@?$ArrayList@H@@AAEDXZ
 0x00625440,?shrinkVector@?$ArrayList@H@@AAEDXZ,MATCH,134,src/ownrdraw.cpp,?shrinkVector@?$ArrayList@H@@AAEDXZ
+0x006255F0,OwnerDraw::ColumnData::ColumnData,MATCH,388,src/ownrdraw.cpp,??0ColumnData@OwnerDraw@@QAE@AAU01@@Z
 0x00625780,?shrink@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEXXZ,MATCH,168,src/ownrdraw.cpp,?shrink@?$Dictionary@PAUHWND__@@P6GJPAU1@IIJ@Z@@AAEXXZ
 0x00625830,?shrink@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEXXZ,MATCH,174,src/ownrdraw.cpp,?shrink@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEXXZ
 0x006258E0,?shrink@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEXXZ,MATCH,168,src/ownrdraw.cpp,?shrink@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEXXZ
