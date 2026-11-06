@@ -3597,6 +3597,7 @@ address,name,result,size,source,symbol
 0x004A7FE0,?Add@?$DynamicVectorClass@PAVDiskLaserClass@@@@QAE_NABQAVDiskLaserClass@@@Z,MATCH,80,src/disklaser.cpp,?Add@?$DynamicVectorClass@PAVDiskLaserClass@@@@QAE_NABQAVDiskLaserClass@@@Z
 0x004A8030,??_G?$VectorClass@PAVDiskLaserClass@@@@UAEPAXI@Z,MATCH,73,src/disklaser.cpp,??_G?$VectorClass@PAVDiskLaserClass@@@@UAEPAXI@Z
 0x004A8080,??_G?$DynamicVectorClass@PAVDiskLaserClass@@@@UAEPAXI@Z,MATCH,73,src/disklaser.cpp,??_G?$DynamicVectorClass@PAVDiskLaserClass@@@@UAEPAXI@Z
+0x004A80D0,DiskSwap::Get_Disk_ID,MATCH,406,src/diskswap.cpp,?Get_Disk_ID@DiskSwap@@SI?AW4DiskID@@HH@Z
 0x004A8270,DiskSwap::Force_Available,MATCH,341,src/diskswap.cpp,?Force_Available@DiskSwap@@UAE_NW4DiskID@@@Z
 0x004A83D0,DiskSwap::Swap,MATCH,64,src/diskswap.cpp,?Swap@DiskSwap@@UAE_NW4DiskID@@@Z
 0x004A8410,DiskSwap::Request_Disk,MATCH,5,src/diskswap.cpp,?Request_Disk@DiskSwap@@UAE_NW4DiskID@@@Z
@@ -16417,7 +16418,8 @@ address,name,result,size,source,symbol
 0x00751B60,?ID@?$DynamicVectorClass@PAVVocClass@@@@UAEHABQAVVocClass@@@Z,MATCH,38,src/voc.cpp,?ID@?$DynamicVectorClass@PAVVocClass@@@@UAEHABQAVVocClass@@@Z
 0x00751B90,??_G?$VectorClass@PAVVocClass@@@@UAEPAXI@Z,MATCH,73,src/voc.cpp,??_G?$VectorClass@PAVVocClass@@@@UAEPAXI@Z
 0x00751BE0,??_G?$DynamicVectorClass@PAVVocClass@@@@UAEPAXI@Z,MATCH,73,src/voc.cpp,??_G?$DynamicVectorClass@PAVVocClass@@@@UAEPAXI@Z
-0x00751DD0,FUN_00751DD0,MATCH,201,src/volinfo.cpp,?FUN_00751DD0@@YI_NPBDPAUDiskInfo@@@Z
+0x00751C30,VolumeCheck,MATCH,407,src/volinfo.cpp,?VolumeCheck@@YI_NXZ
+0x00751DD0,GetVolInfo,MATCH,201,src/volinfo.cpp,?GetVolInfo@@YI_NPBDPAUVolInfo@@@Z
 0x00751EA0,FUN_00751EA0,MATCH,369,src/volinfo.cpp,?FUN_00751EA0@@YIXPBDPAH1PAK@Z
 0x00752020,_$E2,MATCH,40,src/vox.cpp,_$E2
 0x00752050,_$E5,MATCH,19,src/vox.cpp,_$E5
@@ -16681,6 +16683,8 @@ address,name,result,size,source,symbol
 0x007BF230,PageFlip_Nop,MATCH,4,src/vqalib/drawer.cpp,?PageFlip_Nop@@YIJPAU_VQAHandle@@@Z
 0x007BF240,Disk_VQA_Stream_Handler,MATCH,344,src/vqalib/dstream.cpp,?Disk_VQA_Stream_Handler@@YAJPAU_VQAHandle@@JPAXJ@Z
 0x007BF3A0,Memory_VQA_Stream_Handler,MATCH,208,src/vqalib/dstream.cpp,?Memory_VQA_Stream_Handler@@YAJPAU_VQAHandle@@JPAXJ@Z
+0x007BF470,VQA_LoadFrame,MATCH,706,src/vqalib/loader.cpp,?VQA_LoadFrame@@YIJPAU_VQAHandleP@@J@Z
+0x007BF740,VQA_LoadFrame_Internal,MATCH,3397,src/vqalib/loader.cpp,?VQA_LoadFrame_Internal@@YIJPAU_VQAHandleP@@J@Z
 0x007C0C80,Load_VQF,MATCH,1196,src/vqalib/loader.cpp,?Load_VQF@@YIJPAU_VQAHandleP@@KD@Z
 0x007C0490,PrimeBuffers,MATCH,65,src/vqalib/loader.cpp,?PrimeBuffers@@YIJPAU_VQAHandle@@@Z
 0x007C04E0,VQA_IsFrameStartOfLoop,MATCH,71,src/vqalib/loader.cpp,?VQA_IsFrameStartOfLoop@@YI_NPAU_VQAHandleP@@J@Z
@@ -16723,6 +16727,7 @@ address,name,result,size,source,symbol
 0x007C3950,VQA_StepTimer,MATCH,7,src/vqalib/timer.cpp,?VQA_StepTimer@@YIXPAU_VQAHandleP@@J@Z
 0x007C3960,VQA_GetTime,MATCH,36,src/vqalib/timer.cpp,?VQA_GetTime@@YIKPAU_VQAHandleP@@@Z
 0x007C3990,VQA_GetMovieTime,MATCH,40,src/vqalib/timer.cpp,?VQA_GetMovieTime@@YIKPAU_VQAHandle@@@Z
+0x007C39C0,UnVQ2_C1_4x4,MATCH,918,src/vqalib/unvq.cpp,?UnVQ2_C1_4x4@@YAXPAE00KKK@Z
 0x007C3D60,UnVQ1_C4_4x4,MATCH,326,src/vqalib/unvq.cpp,?UnVQ1_C4_4x4@@YAXPAE00KKK@Z
 0x007C3EB0,UnVQ2_C4_4x4,MATCH,929,src/vqalib/unvq.cpp,?UnVQ2_C4_4x4@@YAXPAE00KKK@Z
 0x007C4260,UnVQ1_C4_4x2,MATCH,317,src/vqalib/unvq.cpp,?UnVQ1_C4_4x2@@YAXPAE00KKK@Z
@@ -18017,6 +18022,7 @@ address,name,result,size,source,symbol
 0x007AD090,??8?$VectorClass@PAUtConnInfoStruct@@@@UBE_NABV0@@Z,MATCH,62,src/wonline.cpp,??8?$VectorClass@PAUtConnInfoStruct@@@@UBE_NABV0@@Z
 0x007AD0D0,?Resize@?$VectorClass@PAUtConnInfoStruct@@@@UAE_NHPBQAUtConnInfoStruct@@@Z,MATCH,174,src/wonline.cpp,?Resize@?$VectorClass@PAUtConnInfoStruct@@@@UAE_NHPBQAUtConnInfoStruct@@@Z
 0x007AD180,?Clear@?$VectorClass@PAUtConnInfoStruct@@@@UAEXXZ,MATCH,39,src/wonline.cpp,?Clear@?$VectorClass@PAUtConnInfoStruct@@@@UAEXXZ
+0x007AC9D0,?getPointer@?$ArrayList@UServer@@@@QBEDPAPAUServer@@H@Z,MATCH,41,src/wonline.cpp,?getPointer@?$ArrayList@UServer@@@@QBEDPAPAUServer@@H@Z
 0x007ACA00,?add@?$ArrayList@UUser@@@@QAEDAAUUser@@H@Z,MATCH,390,src/wonline.cpp,?add@?$ArrayList@UUser@@@@QAEDAAUUser@@H@Z
 0x007ACB90,?get@?$ArrayList@UUser@@@@QBEDAAUUser@@H@Z,MATCH,50,src/wonline.cpp,?get@?$ArrayList@UUser@@@@QBEDAAUUser@@H@Z
 0x007ACBD0,?clear@?$ArrayList@H@@QAEXXZ,MATCH,7,src/wonline.cpp,?clear@?$ArrayList@H@@QAEXXZ
@@ -18065,6 +18071,7 @@ address,name,result,size,source,symbol
 0x007AEC00,?shrink@?$Dictionary@VWstring@@UWolChannel@@@@AAEXXZ,MATCH,174,src/wonline.cpp,?shrink@?$Dictionary@VWstring@@UWolChannel@@@@AAEXXZ
 0x007AECB0,?keyHash@?$Dictionary@VWstring@@UWolChannel@@@@AAEIAAVWstring@@@Z,MATCH,29,src/wonline.cpp,?keyHash@?$Dictionary@VWstring@@UWolChannel@@@@AAEIAAVWstring@@@Z
 0x007AECD0,??0?$VectorClass@PAUtConnInfoStruct@@@@QAE@HPBQAUtConnInfoStruct@@@Z,MATCH,74,src/wonline.cpp,??0?$VectorClass@PAUtConnInfoStruct@@@@QAE@HPBQAUtConnInfoStruct@@@Z
+0x007AED20,??_G?$DNode@VWstring@@UHighscore@@@@QAEPAXI@Z,MATCH,30,src/wonline.cpp,??_G?$DNode@VWstring@@UHighscore@@@@QAEPAXI@Z
 0x007AED40,?growVector@?$ArrayList@UServer@@@@AAEDXZ,MATCH,142,src/wonline.cpp,?growVector@?$ArrayList@UServer@@@@AAEDXZ
 0x007AEDD0,?remove@?$ArrayList@H@@QAEDH@Z,MATCH,190,src/wonline.cpp,?remove@?$ArrayList@H@@QAEDH@Z
 0x007AEE90,?get@?$ArrayList@H@@QBEDAAHH@Z,MATCH,34,src/wonline.cpp,?get@?$ArrayList@H@@QBEDAAHH@Z

@@ -3948,6 +3948,7 @@ address,size,symbol,source,sha256
 0x004A7FE0,80,?Add@?$DynamicVectorClass@PAVDiskLaserClass@@@@QAE_NABQAVDiskLaserClass@@@Z,src/disklaser.cpp,30af68b9c6a673326067624c6aebf06e6d7145fa754b7738b9265393be87482f
 0x004A8030,73,??_G?$VectorClass@PAVDiskLaserClass@@@@UAEPAXI@Z,src/disklaser.cpp,50029f6098699110931bc23bc335fd6c64e889a656a9660e3ede63c817454810
 0x004A8080,73,??_G?$DynamicVectorClass@PAVDiskLaserClass@@@@UAEPAXI@Z,src/disklaser.cpp,38a5115e1c52a0a9c37a763c0aaa125db68608b8ff7c2216ea6d95b0bd7a69c4
+0x004A80D0,406,?Get_Disk_ID@DiskSwap@@SI?AW4DiskID@@HH@Z,src/diskswap.cpp,99281dbe6b7ebcd873971af6e3fe252403bbb3b073173c1e537aded8d397b60f
 0x004A8270,341,?Force_Available@DiskSwap@@UAE_NW4DiskID@@@Z,src/diskswap.cpp,16739fb5f184df61430b1004eeda205adf9fbac74f00592af35f8450a71d126e
 0x004A83D0,64,?Swap@DiskSwap@@UAE_NW4DiskID@@@Z,src/diskswap.cpp,b234eb0a2cce51177b66fed7505cba53b9ea35c1bd5ebb98cd152b128c5c79b5
 0x004A8410,5,?Request_Disk@DiskSwap@@UAE_NW4DiskID@@@Z,src/diskswap.cpp,f4c6d7ae520f88aecb3ea65952e885437fa4a6ce4b5c3439a161d1c5d8e42863
@@ -16752,7 +16753,8 @@ address,size,symbol,source,sha256
 0x00751B60,38,?ID@?$DynamicVectorClass@PAVVocClass@@@@UAEHABQAVVocClass@@@Z,src/voc.cpp,f26d5ad5016911e9e8163dda6581e871aa8f94e75e09d2fd64ca9407bd4ef804
 0x00751B90,73,??_G?$VectorClass@PAVVocClass@@@@UAEPAXI@Z,src/voc.cpp,20aa497d283f71f19027bfc20e3f0d1e8a8af4ab6503a5584e85fe4233bac6f7
 0x00751BE0,73,??_G?$DynamicVectorClass@PAVVocClass@@@@UAEPAXI@Z,src/voc.cpp,d760d6e21bbcb8721fb78548b63900cf1cef11229a0d6ef8563891507a8c4fe7
-0x00751DD0,201,?FUN_00751DD0@@YI_NPBDPAUDiskInfo@@@Z,src/volinfo.cpp,1b31f60b1f98d8aa969207fe50708a24ebdad068d13816d0f749c18f02b06a7d
+0x00751C30,407,?VolumeCheck@@YI_NXZ,src/volinfo.cpp,f80604756b5f9a382049fa60765725dbc538a7f70e68604e63e8b26ca4dc814c
+0x00751DD0,201,?GetVolInfo@@YI_NPBDPAUVolInfo@@@Z,src/volinfo.cpp,1b31f60b1f98d8aa969207fe50708a24ebdad068d13816d0f749c18f02b06a7d
 0x00751EA0,369,?FUN_00751EA0@@YIXPBDPAH1PAK@Z,src/volinfo.cpp,2fe96045dd7e7aa8639706273682cce69db0e948792e3500a39ce131618933d8
 0x00752020,40,_$E2,src/vox.cpp,8c3381b047db2e35106e3ca0986e0ad46d9c9ec9791c91716d7e7ec9d286d64b
 0x00752050,19,_$E5,src/vox.cpp,a90b8f7a66926f0a7d41c8dd9c6153b5e7564edeb7b2c2c0aa3c1dae7693495a
@@ -18266,6 +18268,7 @@ address,size,symbol,source,sha256
 0x007AC970,42,?Clear@?$DynamicVectorClass@PAUtConnInfoStruct@@@@UAEXXZ,src/wonline.cpp,2f7124804a1b3484c840f81351a19a314308613bf53862b05a9a4b306933c6b0
 0x007AC9A0,27,?ID@?$DynamicVectorClass@PAUtConnInfoStruct@@@@UAEHPBQAUtConnInfoStruct@@@Z,src/wonline.cpp,eeb29d112613b0653ee85b4ff58bddb59157c8b4fc65a386db3052b948d71bbb
 0x007AC9C0,13,?GetItem@?$VectorClass@PAUtConnInfoStruct@@@@UBEPAUtConnInfoStruct@@H@Z,src/wonline.cpp,da1c0b5074b32d4e80b5f5f042a075a73f60de8e9432201ad45100959599be93
+0x007AC9D0,41,?getPointer@?$ArrayList@UServer@@@@QBEDPAPAUServer@@H@Z,src/wonline.cpp,d08a3d2e90cce74a4fb9f2b7c30a25b14df338654cdb3bc4e5805329b112f665
 0x007ACA00,390,?add@?$ArrayList@UUser@@@@QAEDAAUUser@@H@Z,src/wonline.cpp,c038daa252d6a3afafec552a344c1cba4bd3a29db6a6d8a8d5f95f59c8939e44
 0x007ACB90,50,?get@?$ArrayList@UUser@@@@QBEDAAUUser@@H@Z,src/wonline.cpp,94013daf092ff603ef6a45379e974cd17fc13174ef0f9d0b636647c34a9bf76d
 0x007ACBD0,7,?clear@?$ArrayList@H@@QAEXXZ,src/wonline.cpp,92eb3b367d6ee91190fb0a8be2e0959e6ee590dca281c332dfc805ffe6f846d2
@@ -18322,6 +18325,7 @@ address,size,symbol,source,sha256
 0x007AEC00,174,?shrink@?$Dictionary@VWstring@@UWolChannel@@@@AAEXXZ,src/wonline.cpp,b5aefe95b19152a45ed07654de85f6286539cf5e896b7ce644745e6732f09ce7
 0x007AECB0,29,?keyHash@?$Dictionary@VWstring@@UWolChannel@@@@AAEIAAVWstring@@@Z,src/wonline.cpp,58a4c5b0c37ea0fae7ba547fe504f10da549c102ceae5629ab0dbbb411e642d5
 0x007AECD0,74,??0?$VectorClass@PAUtConnInfoStruct@@@@QAE@HPBQAUtConnInfoStruct@@@Z,src/wonline.cpp,f7cba8b72481c6e38db1b16ecad509bfa11f445903a5b415383b50c5813b0f26
+0x007AED20,30,??_G?$DNode@VWstring@@UHighscore@@@@QAEPAXI@Z,src/wonline.cpp,7792fec42bec41b5b3e26f17714a0ac0dfb2dedf8338d15ebba6d21bfbc2ee4d
 0x007AED40,142,?growVector@?$ArrayList@UServer@@@@AAEDXZ,src/wonline.cpp,0cc5d71211c08a0ac6202afe1d9f327814e709296e4f779670d974eb68cd4c52
 0x007AEDD0,190,?remove@?$ArrayList@H@@QAEDH@Z,src/wonline.cpp,cc85fb05ae3368836130076f0ea7b3b5fb9a6f1277d0d9855d008fffdd650794
 0x007AEE90,34,?get@?$ArrayList@H@@QBEDAAHH@Z,src/wonline.cpp,526bd45e236058150771be744cc1499162ca047c2a0e890e59bf273c5a4f6c11
@@ -18760,6 +18764,8 @@ address,size,symbol,source,sha256
 0x007BF230,4,?PageFlip_Nop@@YIJPAU_VQAHandle@@@Z,src/vqalib/drawer.cpp,031a1d90a8a2c46993613c8b2828efd0c52f20f2852d5f2ff930bc6acc0090c8
 0x007BF240,344,?Disk_VQA_Stream_Handler@@YAJPAU_VQAHandle@@JPAXJ@Z,src/vqalib/dstream.cpp,997e1e89e4cfaf31096d67d97c5a746a701811684012db74734fcbfd30a60e0a
 0x007BF3A0,208,?Memory_VQA_Stream_Handler@@YAJPAU_VQAHandle@@JPAXJ@Z,src/vqalib/dstream.cpp,4cd1d1693eafac087f3b0a9fd1ddcfa6786d2277aad41a0addc7deacb7775bb9
+0x007BF470,706,?VQA_LoadFrame@@YIJPAU_VQAHandleP@@J@Z,src/vqalib/loader.cpp,d34329fde85cae7ae3d49b4a1eada6f4556f491a71cdc0c969e2e70bea0a2ada
+0x007BF740,3397,?VQA_LoadFrame_Internal@@YIJPAU_VQAHandleP@@J@Z,src/vqalib/loader.cpp,352bcf144929423191dd43d16435216f081d67b3a9cac21dbf18463d9ca6089c
 0x007C0490,65,?PrimeBuffers@@YIJPAU_VQAHandle@@@Z,src/vqalib/loader.cpp,c5b3addb6980faa2830ae8e27bfaad9e6cbba33673a5ba8c043907065083bc99
 0x007C04E0,71,?VQA_IsFrameStartOfLoop@@YI_NPAU_VQAHandleP@@J@Z,src/vqalib/loader.cpp,70cb067efb0823cde62bd9d2f009b1db5db5402d53d95e6eb1e57620d95b19b1
 0x007C0530,377,?VQA_ReloadPalette@@YIJPAU_VQAHandleP@@JH@Z,src/vqalib/loader.cpp,ccc880b4222adb22a799c7f465da95c9463610f09633d08494bcac11d4b65e8c
@@ -18802,6 +18808,7 @@ address,size,symbol,source,sha256
 0x007C3950,7,?VQA_StepTimer@@YIXPAU_VQAHandleP@@J@Z,src/vqalib/timer.cpp,2fa018b40f5983a8db549f6772e4bf4ca0d07dac0c0df4dd3393b5b9439b5bdb
 0x007C3960,36,?VQA_GetTime@@YIKPAU_VQAHandleP@@@Z,src/vqalib/timer.cpp,8aa3881e154c7c6820fb4febe5815602c349d4c38d3ab9bddd7de66b3604bfee
 0x007C3990,40,?VQA_GetMovieTime@@YIKPAU_VQAHandle@@@Z,src/vqalib/timer.cpp,a8fc312fd9fe1aaf6ff9569a0119b8db4ce606e6dc9883f9f06be491f73cabca
+0x007C39C0,918,?UnVQ2_C1_4x4@@YAXPAE00KKK@Z,src/vqalib/unvq.cpp,021c549b0d2e44d339ad7c7448ef668b3e5af9d8d55a79ba1743e850f5617ff8
 0x007C3D60,326,?UnVQ1_C4_4x4@@YAXPAE00KKK@Z,src/vqalib/unvq.cpp,34fe76d5ef6dedbcc5c1d66c7ecd4f4b72033c5faa729ff6664cadcc7030baea
 0x007C3EB0,929,?UnVQ2_C4_4x4@@YAXPAE00KKK@Z,src/vqalib/unvq.cpp,1b5f0d8db7b97b6b72bf7a691a868937d2f60f8f6ba04e8e5020a3e1403dc672
 0x007C4260,317,?UnVQ1_C4_4x2@@YAXPAE00KKK@Z,src/vqalib/unvq.cpp,d80656cc52fb5f7450091cecda6cd1412392ebb008f610a22fac65c1ab741622
