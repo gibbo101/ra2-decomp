@@ -315,12 +315,10 @@ ArrayList<Wstring> DAT_00B76970;
 Wstring DAT_00B76AC4;
 
 // FUNCTION: GAMEMD 0x0077CF40
-int FUN_0077CF40(void)
+bool FUN_0077CF40(void)
 {
 	int t = Session.unknown_0C;
-	if (t == 3 || t == 1 || t == 2)
-		return 1;
-	return 0;
+	return(t == 3 || t == 1 || t == 2);
 }
 
 // FUNCTION: GAMEMD 0x0077CF60
@@ -2726,7 +2724,7 @@ namespace OwnerDraw {
 int __fastcall FUN_00788A30(bool flag);
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
 extern char DAT_00B76E40[0x940];
-int FUN_0077CF40(void);
+bool FUN_0077CF40(void);
 void __fastcall FUN_007A0EA0(char const * name, int ping);
 #include "multiplayer.h"
 
@@ -3326,7 +3324,7 @@ extern int DAT_007EEF2C;
 void __cdecl FUN_005E2790(int color, wchar_t const * text, ...);
 extern int DAT_00B76C20;
 extern int DAT_00B77E90;
-bool __fastcall FUN_0079BA60(WolChannel * chan, bool flag, int extra);
+bool __fastcall FUN_0079BA60(WolChannel * chan, bool flag, bool extra);
 
 // FUNCTION: GAMEMD 0x00788710
 bool __fastcall FUN_00788710(int id, int flag)
@@ -3777,7 +3775,7 @@ class WonlineStringDialogControl : public SimpleWonlineDialogControl
 };
 
 // FUNCTION: GAMEMD 0x00789960
-bool __fastcall FUN_00789960(WolChannel * chan, int extra)
+bool __fastcall FUN_00789960(WolChannel * chan, bool extra)
 {
 	if (!FUN_0079BA60(chan, true, extra)) {
 		return false;
@@ -7493,6 +7491,34 @@ BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 BOOL CALLBACK FUN_0079DB50(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+bool __fastcall FUN_0079F0A0(Wstring * name, ArrayList<WolChannel> * channels, WolChannel * result);
+
+// FUNCTION: GAMEMD 0x0079BC80
+bool FUN_0079BC80(void)
+{
+	if (DAT_00B76E24.length() == 0) {
+		return false;
+	}
+	WolEntryState state = WOL_ENTRY_STATE_NONE;
+	DAT_00B76990.getValue(DAT_00B76E24, state);
+	if (state == 4) {
+		return true;
+	}
+	if (state != 5) {
+		return false;
+	}
+	WolChannel channel;
+	if (!DAT_00B76608.getValue(DAT_00B76E24, channel)) {
+		return false;
+	}
+	Wstring game_name(channel.Name);
+	WolChannel game;
+	if (!FUN_0079F0A0(&game_name, &DAT_00B76AE0, &game)) {
+		return false;
+	}
+	return(FUN_0079BA60(&game, false, Game::ObserverMode != 0));
+}
 
 // FUNCTION: GAMEMD 0x0079BE70
 void FUN_0079BE70(void)
