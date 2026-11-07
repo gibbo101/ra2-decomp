@@ -7717,6 +7717,168 @@ int __fastcall FUN_00623840(HWND list)
 int CALLBACK FUN_00623DA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 namespace UI { int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
 
+namespace OwnerDraw {
+extern wchar_t IMECompositionString[];
+extern int IMECompositionStringLength;
+extern int IMECompositionCursorPos;
+extern int IMEComposing;
+void UpdateIMECompositionString(void);
+}
+extern int DAT_00AC48C8;
+
+template<class T>
+inline T Edit_Text_Maximum(T a, T b)
+{
+	return a < b ? b : a;
+}
+
+// FUNCTION: GAMEMD 0x00623880
+void __fastcall FUN_00623880(
+	Surface *surface, Rect *rect, wchar_t *text, int caret,
+	BitFont *font, unsigned int color, int *scroll, int ime,
+	int password, int frame, int unknown9)
+{
+	wchar_t buffer[0x800];
+	int caret_x = -1;
+	int composition_length = 0;
+	int composing = 0;
+	if (text == 0) {
+		text = L"";
+	}
+	int text_length = wcslen(text);
+	if (caret < 0 || caret > text_length) {
+		caret = 0;
+	}
+	if (ime) {
+		OwnerDraw::UpdateIMECompositionString();
+		composition_length = OwnerDraw::IMECompositionStringLength;
+		composing = OwnerDraw::IMEComposing;
+	}
+	buffer[0] = 0;
+	wcsncpy(buffer, text, 0x800);
+	if (composition_length) {
+		wcsncpy(&buffer[caret], OwnerDraw::IMECompositionString,
+				0x800 - caret);
+		wcsncpy(&buffer[composition_length + caret], &text[caret],
+				0x800 - composition_length - caret);
+	}
+	buffer[0x7FF] = 0;
+	int length = wcslen(buffer);
+	if (password && length > 0) {
+		wchar_t *p = buffer;
+		for (int i = length; i != 0; i--) {
+			*p++ = '*';
+		}
+	}
+	int cursor;
+	if (composing || composition_length) {
+		cursor = OwnerDraw::IMECompositionCursorPos + caret;
+	} else {
+		cursor = caret;
+	}
+	if (cursor < *scroll + 5) {
+		if (cursor >= 5) {
+			*scroll = cursor - 5;
+		} else {
+			*scroll = 0;
+		}
+	}
+	while (*scroll < length) {
+		if (font->FUN_00433F50(&buffer[*scroll],
+							  rect->Width - 5, 0, 0) >= cursor - *scroll) {
+			break;
+		}
+		(*scroll)++;
+	}
+	int before = caret - *scroll;
+	int lead = Edit_Text_Maximum(before, 0);
+	int composed = composition_length;
+	if (before < 0) {
+		before += composition_length;
+		composed = Edit_Text_Maximum(before, 0);
+	}
+	int after = length - composition_length - caret;
+	if (before < 0) {
+		after += before;
+	}
+	if (after < 0) {
+		after = 0;
+	}
+	text = &buffer[*scroll];
+	if (frame) {
+		Rect area(rect->X - 1, rect->Y - 1,
+				  font->FUN_00433ED0(text, 0) + 5, rect->Height + 2);
+		surface->Fill_Rect(area, 0);
+	}
+	if (lead) {
+		int width = OwnerDraw::PrintTextFixedLength(
+			color, font, *rect, text, lead, 0, 0, surface, unknown9);
+		rect->X += width;
+		rect->Width -= width;
+		if (rect->Width < 0) {
+			rect->Width = 0;
+		}
+		text += lead;
+	}
+	if (composed) {
+		cursor -= *scroll + lead;
+		int rest;
+		if (cursor < 0 || cursor > composed) {
+			rest = -1;
+		} else {
+			rest = composed - cursor;
+			composed -= rest;
+		}
+		if (composed > 0) {
+			int width = OwnerDraw::PrintTextFixedLength(
+				OwnerDraw::ImeCompositionTextColor, font, *rect,
+				text, composed, 0, 0, surface, unknown9);
+			rect->X += width;
+			rect->Width -= width;
+			if (rect->Width < 0) {
+				rect->Width = 0;
+			}
+			text += composed;
+		}
+		if (rest >= 0) {
+			caret_x = rect->X;
+			if (rest) {
+				int width = OwnerDraw::PrintTextFixedLength(
+					OwnerDraw::ImeCompositionTextColor, font, *rect,
+					text, rest, 0, 0, surface, unknown9);
+				rect->X += width;
+				rect->Width -= width;
+				if (rect->Width < 0) {
+					rect->Width = 0;
+				}
+				text += rest;
+			}
+		}
+	} else {
+		caret_x = rect->X;
+	}
+	if (after) {
+		int width = OwnerDraw::PrintTextFixedLength(
+			color, font, *rect, text, after, 0, 0, surface, unknown9);
+		rect->X += width;
+		rect->Width -= width;
+		if (rect->Width < 0) {
+			rect->Width = 0;
+		}
+	}
+	if (ime && caret_x > 0 && !DAT_00AC48C8) {
+		ODDrawEdgeGlow(
+			*surface, Point2D(caret_x, rect->Y),
+			Point2D(caret_x, rect->Y + rect->Height - 2),
+			OwnerDraw::CaretColor, 0xFF);
+		ODDrawEdgeGlow(
+			*surface, Point2D(caret_x + 1, rect->Y),
+			Point2D(caret_x + 1, rect->Y + rect->Height - 2),
+			OwnerDraw::CaretColor, 0xFF);
+	}
+	DAT_00AC48C8 = 0;
+}
+
 // FUNCTION: GAMEMD 0x00623CD0
 int __fastcall FUN_00623CD0(wchar_t const * text)
 {
