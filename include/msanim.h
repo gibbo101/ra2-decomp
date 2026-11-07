@@ -33,7 +33,7 @@ class SHPStruct
 		SHPStruct * GetData(void);
 		Rect GetFrameBounds(int frame) const;
 		RGBClass GetColor(int frame) const;
-		void * GetPixels(int frame) const;
+		unsigned char * GetPixels(int frame) const;
 		bool HasCompression(int frame) const;
 		bool HasTransparency(int frame) const;
 		int Get_Width(void) const {return(Width);}
