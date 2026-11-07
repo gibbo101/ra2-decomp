@@ -139,6 +139,8 @@ namespace OwnerDraw {
 				int LayoutBand;
 				unsigned char reservedB4[9];
 				bool HasOpenAnimation;
+				unsigned char reservedBE[0x1E];
+				int ExtraWidth;
 			} Dialog;
 
 			unsigned char _size[0x100];
@@ -4124,6 +4126,96 @@ extern SHPStruct *SideButtonShape;
 extern Rect *DAT_00B0FC24;
 extern Rect *DAT_00B0FC4C;
 
+extern Rect *DAT_00B0FC48;
+
+// FUNCTION: GAMEMD 0x0060B000
+void __fastcall FUN_0060B000(HWND window, Point2D const &size)
+{
+	HWND parent = GetParent(window);
+	bool compact = Session.FUN_0069BBE0();
+	RECT parent_rect;
+	RECT rect;
+	GetWindowRect(parent, &parent_rect);
+	GetWindowRect(window, &rect);
+	Rect area(parent_rect.left, parent_rect.top, parent_rect.right - parent_rect.left, parent_rect.bottom - parent_rect.top);
+	int offset = 0;
+	if (!compact) {
+		offset = (area.Width - DAT_007F5BE4) / 2;
+		offset = offset < 0 ? 0 : offset;
+	}
+	int frameHeight = parent_rect.bottom - parent_rect.top;
+	int shift = 0;
+	if (!compact) {
+		shift = Centre_Y(frameHeight, compact);
+		shift -= Centre_Y(size.Y, compact);
+	}
+	int x;
+	int y;
+	int width;
+	int height;
+	if (compact) {
+		width = OwnerDraw::SideButtonShape->Get_Width();
+		height = OwnerDraw::SideButtonShape->Get_Height();
+		Rect *strip = DAT_00B0FC48;
+		x = parent_rect.right - offset - parent_rect.left - 147;
+		HWND dialog = GetParent(window);
+		RECT parent2;
+		RECT rect2;
+		GetWindowRect(dialog, &parent2);
+		GetWindowRect(window, &rect2);
+		int top = rect2.top - parent2.top;
+		y = ((rect2.bottom - parent2.top - top) / 2 - 198 + top) / 44 * height + strip->Y;
+	} else {
+		width = OwnerDraw::SmallButtonAnimShape->Get_Width();
+		height = OwnerDraw::SmallButtonAnimShape->Get_Height();
+		Rect *strip = DAT_00B0FC24;
+		x = parent_rect.right - offset - parent_rect.left - 156;
+		int top = strip->Y;
+		int pos = rect.top - top - parent_rect.top + shift;
+		int row = pos / strip->Height;
+		int prod = strip->Height * row;
+		int up = abs(strip->Height - pos + prod);
+		int down = abs(pos - prod);
+		y = (down < up ? row : row + 1) * strip->Height + top;
+	}
+	MoveWindow(window, x, y, width, height, FALSE);
+}
+
+static inline int Sidebar_Margin(HWND window, int width)
+{
+	OwnerDraw::WinData *data = Get_Data(window);
+	if (data && data->Dialog.ExtraWidth) {
+		return data->Dialog.ExtraWidth;
+	}
+	return (DAT_007F5BF8 - width) / 2;
+}
+
+// FUNCTION: GAMEMD 0x0060B1D0
+void __fastcall FUN_0060B1D0(HWND window, Point2D const &size)
+{
+	HWND parent = GetParent(window);
+	bool compact = Session.FUN_0069BBE0();
+	RECT parent_rect;
+	RECT rect;
+	GetWindowRect(parent, &parent_rect);
+	GetWindowRect(window, &rect);
+	Rect area(parent_rect.left, parent_rect.top, parent_rect.right - parent_rect.left, parent_rect.bottom - parent_rect.top);
+	int offset = 0;
+	if (!compact) {
+		int excess = (area.Width - DAT_007F5BE4) / 2;
+		offset = excess < 0 ? 0 : excess;
+	}
+	int frameHeight = parent_rect.bottom - parent_rect.top;
+	int shift = 0;
+	if (!compact) {
+		shift = MAX(0, (frameHeight - DAT_007F5BF0) / 2);
+		shift -= MAX(0, (size.Y - DAT_007F5BF0) / 2);
+	}
+	int width = rect.right - rect.left;
+	int height = rect.bottom - rect.top;
+	MoveWindow(window, parent_rect.right - Sidebar_Margin(window, width) - width - offset - parent_rect.left, rect.top - parent_rect.top + shift, width, height, FALSE);
+}
+
 // FUNCTION: GAMEMD 0x0060B350
 void __fastcall FUN_0060B350(HWND window)
 {
@@ -4182,13 +4274,7 @@ void __fastcall FUN_0060B420(HWND window)
 	}
 	int w = own.right - own.left;
 	int h = own.bottom - own.top;
-	OwnerDraw::WinData *data = Get_Data(window);
-	int half;
-	if (data != NULL && *(int *)((char *)data + 0xdc) != 0) {
-		half = *(int *)((char *)data + 0xdc);
-	} else {
-		half = (DAT_007F5BF8 - w) / 2;
-	}
+	int half = Sidebar_Margin(window, w);
 	int x = client.right - half - w - dx - client.left;
 	MoveWindow(window, x, compact ? DAT_00B0FC50->Y - h : DAT_00B0FC28->Y - h, w, h, FALSE);
 }
@@ -4236,13 +4322,7 @@ void __fastcall FUN_0060B610(HWND window)
 	}
 	int w = own.right - own.left;
 	int h = own.bottom - own.top;
-	OwnerDraw::WinData *data = Get_Data(window);
-	int half;
-	if (data != NULL && *(int *)((char *)data + 0xdc) != 0) {
-		half = *(int *)((char *)data + 0xdc);
-	} else {
-		half = (DAT_007F5BF8 - w) / 2;
-	}
+	int half = Sidebar_Margin(window, w);
 	int x = client.right - half - w - dx - client.left;
 	MoveWindow(window, x, compact ? DAT_00B0FC50->Height + DAT_00B0FC50->Y - h : DAT_00B0FC28->Height + DAT_00B0FC28->Y - h, w, h, FALSE);
 }
