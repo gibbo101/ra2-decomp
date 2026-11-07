@@ -76,6 +76,9 @@ address,name,symbol,evidence
 0x00481A00,CellClass::Goodie_Check,,TS name (cell.h); returns bool in al with ret 4 as called by 0x0054C550
 0x00B0CEC8,Tactical::SelectableObjects,,TS name (tactical.h); the selectable-object array 0x006DC430 walks
 0x0057A0C0,MapClass::FUN_0057A0C0,,two-argument map function (ret 8) called by Seed_Land 0x0059A6C0; distinct from Build_All_Cliffs 0x00578E60
+0x0057BCF0,MapClass::Damage_Low_Bridge_EW,?Damage_Low_Bridge_EW@MapClass@@AAE_NABVCell@@@Z,East-west damage branch of MapClass::Damage_Low_Bridge
+0x0057C2B0,MapClass::Damage_Low_Bridge_NS,?Damage_Low_Bridge_NS@MapClass@@AAE_NABVCell@@@Z,North-south damage branch of MapClass::Damage_Low_Bridge
+0x0057CF60,MapClass::FUN_0057CF60,?FUN_0057CF60@MapClass@@QAE_NABVCell@@@Z,East-west damage branch of the second low-bridge overlay family
 0x0054F530,WWKeyboardClass::FUN_0054F530,,keyboard thiscall (ret 4) that ScoreClass::Input_Name 0x0068FBB0 calls on the key from Get; distinct from To_ASCII 0x0054F450
 0x0069DCF0,ShapeButtonClass::ShapeButtonClass,??0ShapeButtonClass@@QAE@XZ,no-argument constructor (plain ret); YRpp ShapeButtonClass.h JMP_THIS(0x69DCF0)
 0x0069DD30,ShapeButtonClass::ShapeButtonClass,??0ShapeButtonClass@@QAE@IPBVShapeSet@@HHHH_N@Z,seven-argument constructor (ret 0x1C); called by DropListClass::DropListClass 0x004B4E10
@@ -169,6 +172,7 @@ address,name,symbol,evidence
 0x008469F4,VoxelNormalTableEntryCount,,{0, 16, 36, 64, 245}: entries per normal table, matching the 12-byte table spacing
 0x00A8E9C0,Ipx,,TibSun globals.h IPXManagerClass Ipx; YRpp IPXManagerClass::Instance; beacon Send_Global_Message reads it
 0x0056D230,MapClass::Get_Cell_Zone,?Get_Cell_Zone@MapClass@@QAEHABVCell@@W4MZoneType@@_N@Z,"TibSun Get_Cell_Zone: bridge walk then zone array at +0x18 by mzone, -1 when none; ret 0xC; called by matched 0x0041FEE0"
+0x0056C510,MapClass::Zone_Reset,?Zone_Reset@MapClass@@QAEHXZ,The low-bridge damage routines call the pathfinding zone reset after a span collapses
 0x00887368,ToolTips,,TibSun _tooltip.cpp CCToolTip * ToolTips; YRpp CCToolTip::Instance; read by matched 0x005D4D50
 0x00ABFC90,_ModelessDialogs,,initialiser 0x005D4C50 stores vtable 0x007EEC8C (DynamicVectorClass<HWND__ *>); 4-byte dialog loop in 0x005D4D50
 0x00ABFCB8,_Accelerators,,initialiser 0x005D4CD0 stores vtable 0x007EECCC (DynamicVectorClass<AcceleratorTracker>); 8-byte loop in 0x005D4D50

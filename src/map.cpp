@@ -4596,22 +4596,165 @@ bool MapClass::Damage_Low_Bridge(Cell const & cell)
 	return(false);
 }
 
+// FUNCTION: GAMEMD 0x0057BCF0
+bool MapClass::Damage_Low_Bridge_EW(Cell const & cell)
+{
+	CellClass * cellptr1 = &Map[cell];
+	CellClass * cellptr2 = &Map[cell - Cell(0, 1)];
+	CellClass * cellptr3 = &Map[cell + Cell(0, 1)];
+
+	OverlayType otype = cellptr1->Overlay;
+	bool kill = false;
+	bool didwork = false;
+
+	Rect draw_rect = Union(cellptr1->Overlay_Render_Rect(), cellptr1->Overlay_Shadow_Render_Rect());
+	Rect recalc_rect(0, 0, 0, 0);
+
+	do {
+		if (otype == OVERLAY_LOWBRIDGE_19) {
+			cellptr2->Overlay = OVERLAY_LOWBRIDGE_20;
+			cellptr3->Overlay = OVERLAY_LOWBRIDGE_20;
+			cellptr1->Overlay = OVERLAY_LOWBRIDGE_20;
+			Damage_Low_Bridge_Piece_EW(cell - Cell(1, 0));
+		} else if (otype == OVERLAY_LOWBRIDGE_21) {
+			cellptr2->Overlay = OVERLAY_LOWBRIDGE_22;
+			cellptr3->Overlay = OVERLAY_LOWBRIDGE_22;
+			cellptr1->Overlay = OVERLAY_LOWBRIDGE_22;
+			Damage_Low_Bridge_Piece_EW(cell + Cell(1, 0));
+		} else if (otype < OVERLAY_LOWBRIDGE_07) {
+			cellptr2->Overlay = OVERLAY_LOWBRIDGE_07;
+			cellptr3->Overlay = OVERLAY_LOWBRIDGE_07;
+			cellptr1->Overlay = OVERLAY_LOWBRIDGE_07;
+			Damage_Low_Bridge_Piece_EW(cell - Cell(1, 0));
+			Damage_Low_Bridge_Piece_EW(cell + Cell(1, 0));
+		} else if (otype < OVERLAY_LOWBRIDGE_10) {
+			cellptr2->Overlay = OVERLAY_LOWBRIDGE_27;
+			cellptr3->Overlay = OVERLAY_LOWBRIDGE_27;
+			cellptr1->Overlay = OVERLAY_LOWBRIDGE_27;
+			Map.Radar_Background(cellptr2->CellID);
+			Map.Radar_Background(cellptr3->CellID);
+			Map.Radar_Background(cellptr1->CellID);
+			kill = true;
+			Damage_Low_Bridge_Piece_EW(cell - Cell(1, 0));
+			Damage_Low_Bridge_Piece_EW(cell + Cell(1, 0));
+			Spring_Low_Bridge_Destroyed_EW(cell);
+			didwork = true;
+			recalc_rect = Rect(cell.X - 1, cell.Y - 1, 3, 3);
+		} else {
+			break;
+		}
+
+		draw_rect = Union(draw_rect, Union(cellptr1->Overlay_Render_Rect(), cellptr1->Overlay_Shadow_Render_Rect())) - TacticalRect.TopLeft;
+		TacticalMap->Register_Dirty_Area(draw_rect);
+
+		cellptr1->Recalc_Attributes(-1);
+		cellptr2->Recalc_Attributes(-1);
+		cellptr3->Recalc_Attributes(-1);
+		cellptr1->Kill_Illegal_Occupiers(kill);
+		cellptr2->Kill_Illegal_Occupiers(kill);
+		cellptr3->Kill_Illegal_Occupiers(kill);
+
+		if (didwork) {
+			Zone_Reset();
+		}
+
+		if (recalc_rect.Is_Valid()) {
+			Recalc_Cells_In_Rect(recalc_rect);
+		}
+	} while (false);
+
+	return(didwork);
+}
+
+// FUNCTION: GAMEMD 0x0057C2B0
+bool MapClass::Damage_Low_Bridge_NS(Cell const & cell)
+{
+	CellClass * cellptr1 = &Map[cell];
+	CellClass * cellptr2 = &Map[cell - Cell(1, 0)];
+	CellClass * cellptr3 = &Map[cell + Cell(1, 0)];
+
+	OverlayType otype = cellptr1->Overlay;
+	bool kill = false;
+	bool didwork = false;
+
+	Rect draw_rect = Union(cellptr1->Overlay_Render_Rect(), cellptr1->Overlay_Shadow_Render_Rect());
+	Rect recalc_rect(0, 0, 0, 0);
+
+	do {
+		if (otype == OVERLAY_LOWBRIDGE_23) {
+			cellptr2->Overlay = OVERLAY_LOWBRIDGE_24;
+			cellptr3->Overlay = OVERLAY_LOWBRIDGE_24;
+			cellptr1->Overlay = OVERLAY_LOWBRIDGE_24;
+			Damage_Low_Bridge_Piece_NS(cell + Cell(0, 1));
+		} else if (otype == OVERLAY_LOWBRIDGE_25) {
+			cellptr2->Overlay = OVERLAY_LOWBRIDGE_26;
+			cellptr3->Overlay = OVERLAY_LOWBRIDGE_26;
+			cellptr1->Overlay = OVERLAY_LOWBRIDGE_26;
+			Damage_Low_Bridge_Piece_NS(cell - Cell(0, 1));
+		} else if (otype < OVERLAY_LOWBRIDGE_16) {
+			cellptr2->Overlay = OVERLAY_LOWBRIDGE_16;
+			cellptr3->Overlay = OVERLAY_LOWBRIDGE_16;
+			cellptr1->Overlay = OVERLAY_LOWBRIDGE_16;
+			Damage_Low_Bridge_Piece_NS(cell - Cell(0, 1));
+			Damage_Low_Bridge_Piece_NS(cell + Cell(0, 1));
+		} else if (otype < OVERLAY_LOWBRIDGE_19) {
+			cellptr2->Overlay = OVERLAY_LOWBRIDGE_28;
+			cellptr3->Overlay = OVERLAY_LOWBRIDGE_28;
+			cellptr1->Overlay = OVERLAY_LOWBRIDGE_28;
+			Map.Radar_Background(cellptr2->CellID);
+			Map.Radar_Background(cellptr3->CellID);
+			Map.Radar_Background(cellptr1->CellID);
+			kill = true;
+			Damage_Low_Bridge_Piece_NS(cell - Cell(0, 1));
+			Damage_Low_Bridge_Piece_NS(cell + Cell(0, 1));
+			Spring_Low_Bridge_Destroyed_NS(cell);
+			didwork = true;
+			recalc_rect = Rect(cell.X - 1, cell.Y - 1, 3, 3);
+		} else {
+			break;
+		}
+
+		draw_rect = Union(draw_rect, Union(cellptr1->Overlay_Render_Rect(), cellptr1->Overlay_Shadow_Render_Rect())) - TacticalRect.TopLeft;
+		TacticalMap->Register_Dirty_Area(draw_rect);
+
+		cellptr1->Recalc_Attributes(-1);
+		cellptr2->Recalc_Attributes(-1);
+		cellptr3->Recalc_Attributes(-1);
+		cellptr1->Kill_Illegal_Occupiers(kill);
+		cellptr2->Kill_Illegal_Occupiers(kill);
+		cellptr3->Kill_Illegal_Occupiers(kill);
+
+		if (didwork) {
+			Zone_Reset();
+		}
+
+		if (recalc_rect.Is_Valid()) {
+			Recalc_Cells_In_Rect(recalc_rect);
+		}
+	} while (false);
+
+	return(didwork);
+}
+
 #define LB2(n) ((OverlayType)(204 + (n)))
 
 // FUNCTION: GAMEMD 0x0057C870
 void MapClass::Spring_Low_Bridge_Destroyed_NS(Cell cell)
 {
 	Cell tmp = cell;
+	OverlayType overlay;
 	do {
 		tmp = Adjacent_Cell(tmp, FACING_N);
-	} while (Is_Low_Bridge(tmp));
+		overlay = Map[tmp].Overlay;
+	} while (overlay >= OVERLAY_LOWBRIDGE_01 && overlay <= OVERLAY_LOWBRIDGE_28);
 
 	Cell start = Adjacent_Cell(tmp, FACING_S);
 
 	tmp = cell;
 	do {
 		tmp = Adjacent_Cell(tmp, FACING_S);
-	} while (Is_Low_Bridge(tmp));
+		overlay = Map[tmp].Overlay;
+	} while (overlay >= OVERLAY_LOWBRIDGE_01 && overlay <= OVERLAY_LOWBRIDGE_28);
 
 	Cell end = Adjacent_Cell(tmp, FACING_N);
 
@@ -4622,16 +4765,19 @@ void MapClass::Spring_Low_Bridge_Destroyed_NS(Cell cell)
 void MapClass::Spring_Low_Bridge_Destroyed_EW(Cell cell)
 {
 	Cell tmp = cell;
+	OverlayType overlay;
 	do {
 		tmp = Adjacent_Cell(tmp, FACING_W);
-	} while (Is_Low_Bridge(tmp));
+		overlay = Map[tmp].Overlay;
+	} while (overlay >= OVERLAY_LOWBRIDGE_01 && overlay <= OVERLAY_LOWBRIDGE_28);
 
 	Cell start = Adjacent_Cell(tmp, FACING_E);
 
 	tmp = cell;
 	do {
 		tmp = Adjacent_Cell(tmp, FACING_E);
-	} while (Is_Low_Bridge(tmp));
+		overlay = Map[tmp].Overlay;
+	} while (overlay >= OVERLAY_LOWBRIDGE_01 && overlay <= OVERLAY_LOWBRIDGE_28);
 
 	Cell end = Adjacent_Cell(tmp, FACING_W);
 
@@ -4746,6 +4892,76 @@ bool MapClass::FUN_0057CCF0(Cell const & cell)
 	return(false);
 }
 
+// FUNCTION: GAMEMD 0x0057CF60
+bool MapClass::FUN_0057CF60(Cell const & cell)
+{
+	CellClass * cellptr1 = &Map[cell];
+	CellClass * cellptr2 = &Map[cell - Cell(0, 1)];
+	CellClass * cellptr3 = &Map[cell + Cell(0, 1)];
+
+	OverlayType otype = cellptr1->Overlay;
+	bool kill = false;
+	bool didwork = false;
+
+	Rect draw_rect = Union(cellptr1->Overlay_Render_Rect(), cellptr1->Overlay_Shadow_Render_Rect());
+	Rect recalc_rect(0, 0, 0, 0);
+
+	do {
+		if (otype == LB2(19)) {
+			cellptr2->Overlay = LB2(20);
+			cellptr3->Overlay = LB2(20);
+			cellptr1->Overlay = LB2(20);
+			FUN_0057E7A0(cell - Cell(1, 0));
+		} else if (otype == LB2(21)) {
+			cellptr2->Overlay = LB2(22);
+			cellptr3->Overlay = LB2(22);
+			cellptr1->Overlay = LB2(22);
+			FUN_0057E7A0(cell + Cell(1, 0));
+		} else if (otype < LB2(7)) {
+			cellptr2->Overlay = LB2(7);
+			cellptr3->Overlay = LB2(7);
+			cellptr1->Overlay = LB2(7);
+			FUN_0057E7A0(cell - Cell(1, 0));
+			FUN_0057E7A0(cell + Cell(1, 0));
+		} else if (otype < LB2(10)) {
+			cellptr2->Overlay = LB2(27);
+			cellptr3->Overlay = LB2(27);
+			cellptr1->Overlay = LB2(27);
+			Map.Radar_Background(cellptr2->CellID);
+			Map.Radar_Background(cellptr3->CellID);
+			Map.Radar_Background(cellptr1->CellID);
+			kill = true;
+			FUN_0057E7A0(cell - Cell(1, 0));
+			FUN_0057E7A0(cell + Cell(1, 0));
+			FUN_0057DC20(cell);
+			didwork = true;
+			recalc_rect = Rect(cell.X - 1, cell.Y - 1, 3, 3);
+		} else {
+			break;
+		}
+
+		draw_rect = Union(draw_rect, Union(cellptr1->Overlay_Render_Rect(), cellptr1->Overlay_Shadow_Render_Rect())) - TacticalRect.TopLeft;
+		TacticalMap->Register_Dirty_Area(draw_rect);
+
+		cellptr1->Recalc_Attributes(-1);
+		cellptr2->Recalc_Attributes(-1);
+		cellptr3->Recalc_Attributes(-1);
+		cellptr1->Kill_Illegal_Occupiers(kill);
+		cellptr2->Kill_Illegal_Occupiers(kill);
+		cellptr3->Kill_Illegal_Occupiers(kill);
+
+		if (didwork) {
+			Zone_Reset();
+		}
+
+		if (recalc_rect.Is_Valid()) {
+			Recalc_Cells_In_Rect(recalc_rect);
+		}
+	} while (false);
+
+	return(didwork);
+}
+
 // FUNCTION: GAMEMD 0x0057DAF0
 void MapClass::FUN_0057DAF0(Cell cell)
 {
@@ -4770,16 +4986,19 @@ void MapClass::FUN_0057DAF0(Cell cell)
 void MapClass::FUN_0057DC20(Cell cell)
 {
 	Cell tmp = cell;
+	OverlayType overlay;
 	do {
 		tmp = Adjacent_Cell(tmp, FACING_W);
-	} while (Is_Low_Bridge2(tmp));
+		overlay = Map[tmp].Overlay;
+	} while (overlay >= LB2(1) && overlay <= LB2(28));
 
 	Cell start = Adjacent_Cell(tmp, FACING_E);
 
 	tmp = cell;
 	do {
 		tmp = Adjacent_Cell(tmp, FACING_E);
-	} while (Is_Low_Bridge2(tmp));
+		overlay = Map[tmp].Overlay;
+	} while (overlay >= LB2(1) && overlay <= LB2(28));
 
 	Cell end = Adjacent_Cell(tmp, FACING_W);
 
