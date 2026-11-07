@@ -1733,6 +1733,33 @@ int SidebarClass::GetVisibleCameoCount(void)
 	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50 * 2;
 }
 
+#include "bitfont.h"
+
+// FUNCTION: GAMEMD 0x006AC480
+void __fastcall FUN_006AC480(wchar_t const * text, Point2D const & point, Rect const & window, int width)
+{
+	if (DAT_00884B8C && text != NULL) {
+		Point2D xy = point;
+		BitFont * font = BitFont::Instance;
+		ColorScheme * scheme = Fetch_Scheme_By_Name("DarkRed", 1);
+		RGBClass color = scheme->HSV;
+		unsigned pixel = DSurface::Build_Hicolor_Pixel(color);
+		LTRBStruct box;
+		box.Left = window.X;
+		box.Top = window.Y;
+		box.Right = window.X + window.Width;
+		box.Bottom = window.Y + window.Height;
+		font->SetClipMode(true);
+		font->SetBounds(&box);
+		font->SetColor(pixel);
+		int text_width;
+		int text_height;
+		font->GetTextDimension(text, &text_width, &text_height, width);
+		xy.Y += font->field_1C - text_height;
+		BitText::Instance->DrawText(font, SidebarSurface, text, xy.X, xy.Y, width, 0, 0, 0, 0);
+	}
+}
+
 // FUNCTION: GAMEMD 0x006AC5D0
 HRESULT SidebarClass::Load(IStream * stream)
 {
