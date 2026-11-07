@@ -409,3 +409,8 @@ address,name,symbol,evidence
 0x007DC720,_com_issue_error,?_com_issue_error@@YGXJ@Z,COM error helper forwards HRESULT and null IErrorInfo; referenced by TechnoClass::Can_Fire
 0x00AC4F58,Progress,?Progress@@3VProgressScreenClass@@A,Matched static initializer at 0x00642980 passes 0x00AC4F58 to ProgressScreenClass::ProgressScreenClass; the destructor at 0x006429A0 uses the same object.
 0x0087F770,InputManagerInstance,?InputManagerInstance@@3PAXA,Matched Wonline dialog at 0x0077D840 passes the pointer stored at 0x0087F770 to the input flush routine at 0x0054F720 before and after the modal loop.
+0x0060A330,OwnerDraw::ClassifyLayoutBand,?ClassifyLayoutBand@OwnerDraw@@YGHPAUHWND__@@J@Z,EnumChildWindows callback at 0x0060A5A0 that assigns the control layout band
+0x0060AAB0,OwnerDraw::InitCompactDialogControlsProc,?InitCompactDialogControlsProc@OwnerDraw@@YGHPAUHWND__@@J@Z,EnumChildWindows callback at 0x0060AF40 that sets the sidebar margin and control alpha
+0x0060F9A0,OwnerDraw::RegisterChildControlProc,?RegisterChildControlProc@OwnerDraw@@YGHPAUHWND__@@J@Z,YRpp OwnerDraw.h identifies this callback; called by UI::RegisterWindow and OwnerDraw::PrepareDialogChildControls
+0x00AC48B8,ODMasks,?ODMasks@@3UODComponentMasks@@A,ODInitMasks initializes the red and green masks in adjacent words at 0x00AC48B8 and 0x00AC48BA
+0x00AC48BC,ODBComponentMask,?ODBComponentMask@@3GA,ODInitMasks constructs the blue mask from the surface shifts; OD_Blend_Color uses it for the blue channel
