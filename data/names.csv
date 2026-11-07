@@ -1,5 +1,9 @@
 address,name,symbol,evidence
 0x00A83D10,Theme,,0x006EDEF0 TeamClass::TMission_PLAY_MUSIC matched with TibSun source
+0x00886080,CCPalette,?CCPalette@@3VPaletteClass@@A,CCPalette static initializer 0x0040D8A0 in _palette.cpp constructs the PaletteClass at this address
+0x00B05584,StillUpdating,?StillUpdating@@3_NA,Animate_Score_Objs at 0x00690360 clears this byte and ScorePrintClass::Update at 0x00690D60 sets it
+0x007D5408,strdup,_strdup,YRpp CRT.h strdup and the name duplication in SfxEntry::SfxEntry at 0x00690EF0
+0x00691160,DynamicVectorClass<ScoreAnimClass *>::Add,?Add@?$DynamicVectorClass@PAVScoreAnimClass@@@@QAE_NABQAVScoreAnimClass@@@Z,All 80 bytes of this specialization are identical to the matched SfxEntry pointer specialization at this address and contain no relocations
 0x00720B20,ThemeClass::Queue_Song,,0x006EDEF0 TeamClass::TMission_PLAY_MUSIC matched with TibSun source
 0x00578460,MapClass::In_Local_Radar,?In_Local_Radar@MapClass@@QBE_NABVCell@@_N@Z,"called by 0x00578390 MapClass::In_Local_Radar(Rect const &, bool), matched with TibSun source"
 0x007C8E17,operator new,??2@YAPAXI@Z,YRpp CRT.h _new; the call target of operator new in matched 0x0043C0D0 and 0x00733E10
@@ -153,6 +157,7 @@ address,name,symbol,evidence
 0x006292B0,ParasiteClass::ParasiteClass,??0ParasiteClass@@QAE@PAVFootClass@@@Z,constructor taking the owner FootClass * (ret 4); called by TechnoClass::Init 0x006F3F40
 0x0053EE70,IPXAddressClass::operator==,??8IPXAddressClass@@QAE_NAAV0@@Z,TibSun full address compare; called by IPXGlobalConnClass::Send_To 0x005403F0 at +0x107 and +0x174
 0x008872B0,Scripts,,DynamicVectorClass<ScriptClass *>: its initialiser stores vtable 0x007E1B24 (RTTI .?AV?$DynamicVectorClass@PAVScriptClass@@@@); TibSun _script.cpp
+0x00887310,AlternateSurface,,TibSun _surface.h AlternateSurface; YRpp DSurface::Alternate; GraphicMenu::Presentation clears this surface and takes its rectangle
 0x0088730C,HiddenSurface,,TibSun HiddenSurface (gscreen.h, _surface.h); YRpp DSurface::Hidden; read by 0x00642A60 and 0x00554400
 0x00643E90,ProgressScreenClass::Get_Current_Progress,,thiscall ret 4: PlayerProgress[i]/MainProgress, or MainProgress when index >= PlayerCount; called by SessionClass::Update_Progress 0x0069AE90
 0x00B077B0,SHPHead,,head of the SHPReference list: the constructor 0x0069E430 links each new reference here; 0x0069E500/0x0069E180/0x0069E930 read it
