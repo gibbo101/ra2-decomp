@@ -164,6 +164,16 @@ address,name,symbol,evidence
 0x00775700,WS_Create_Dialog,,"windlg WS_Create_Dialog (TibSun windlg.h), called by wonline"
 0x00887628,PacketTransport,,YRpp WinsockInterfaceClass::Instance (UDPInterfaceClass); wonline and ipxgconn Send_To use it
 0x0053F0E0,IPXAddressClass::As_String,,called by wonline; not yet defined in src/ipxaddr.cpp
+0x007E841C,Dropship_Screen::_loadout_slot_ys,_?_loadout_slot_ys@?1??Dropship_Screen@@YIXXZ@4QAY124$$CBHA,Complete 180-byte literal table equals original .rdata; SHA-256 ca19e5e09e594cc59c7be5fd0fd723dc630ac4f31c3b48968f11aa27b93974d7.
+0x007E84D0,Dropship_Screen::_green_light_ys,_?_green_light_ys@?1??Dropship_Screen@@YIXXZ@4QBHB,Complete 16-byte literal table equals original .rdata; SHA-256 c48fe75b2d30b0504b1711fd307431f1235d6c2bf6cde0baf9d825c33dd6e141.
+0x007E840C,Dropship_Screen::_pilot_chance,_?_pilot_chance@?1??Dropship_Screen@@YIXXZ@4MB,Complete 4-byte float equals original .rdata; SHA-256 8b35fe1a9b331dc0217e0419be35288af59676e9c57022a334110ab0e4799df4.
+0x00820328,Dropship_Screen::_drop_btn_names,_?_drop_btn_names@?1??Dropship_Screen@@YIXXZ@4PAPBDA,All three original pointer-table entries independently resolve to the corresponding compiled filename literals in order.
+0x00820334,Dropship_Screen::_green_btn_names,_?_green_btn_names@?1??Dropship_Screen@@YIXXZ@4PAPBDA,All four original pointer-table entries independently resolve to the corresponding compiled filename literals in order.
+0x0087E8A4,AlphaBuffer,?AlphaBuffer@@3PAVABuffer@@A,YRpp Drawing.h ABuffer::Instance at 0x87E8A4; data/symbols.csv agrees; existing real ABuffer type constructor and Fill contracts
+0x00887644,DepthBuffer,?DepthBuffer@@3PAVZBuffer@@A,YRpp Drawing.h ZBuffer::Instance at 0x887644; data/symbols.csv agrees; existing real ZBuffer type
+0x00887314,LogicalSurface,?LogicalSurface@@3PAVSurface@@A,YRpp Surface.h DSurface::Temp at 0x887314; independently matched GScreenClass::Input 0x004F4320 saves/restores LogicalSurface around Buttons->Input
+0x008A00A0,SurfacesRestored,?SurfacesRestored@@3_NA,Independent matched MSEngine::Restore_And_Advance 0x005D1E50 stores byte 1 at 0x008A00A0; matched Title_Screen_Restore 0x00532100 tests and clears same byte; same source global SurfacesRestored
+0x0069E740,SHPStruct::GetPixels,?GetPixels@SHPStruct@@QBEPAEH@Z,Independently matched complete 152-byte SHPStruct::GetPixels body and all 14 shapipe annotations with the YRpp unsigned-byte pointer return contract; existing layout and calling convention unchanged.
 0x00887300,SidebarSurface,,TibSun SidebarSurface (_surface.h); YRpp DSurface::Sidebar; read by 0x0069DEB0
 0x008469E0,VoxelNormalTables,,five table pointers {0, 0x846A08, 0x846AC8, 0x846C78, 0x846F78}: TibSun voxlib NULL plus VoxelNormals1..4
 0x008469F4,VoxelNormalTableEntryCount,,{0, 16, 36, 64, 245}: entries per normal table, matching the 12-byte table spacing

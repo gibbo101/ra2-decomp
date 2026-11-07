@@ -1219,7 +1219,7 @@ class SHPStruct
 		short Count;
 		void Load(void);
 		Rect GetFrameBounds(int frame) const;
-		void * GetPixels(int frame) const;
+		unsigned char * GetPixels(int frame) const;
 };
 
 // FUNCTION: GAMEMD 0x0047EC90
@@ -1318,7 +1318,7 @@ void CellClass::Draw_Fog_Shape(Point2D const & drawpoint, Rect const & cliprect,
 	int shape_skip = drawpoint.X - inter_right + shaperect.X + shaperect.Width + src_x;
 	int alpha_skip = inter_left - inter_right + AlphaBuffer->Get_Buffer_Width();
 
-	unsigned char * shapeptr = (unsigned char *)shapes->GetPixels(shapenum);
+	unsigned char * shapeptr = shapes->GetPixels(shapenum);
 	unsigned short * alphaptr = (unsigned short *)AlphaBuffer->Get_Buffer_Offset(Point2D(inter_left, inter_top - TacticalRect.Y));
 
 	shapeptr += src_x + src_y * shaperect.Width;
