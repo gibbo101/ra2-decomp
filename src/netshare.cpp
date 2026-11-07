@@ -848,6 +848,25 @@ void FUN_005E3AB0(void)
 
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
 
+template<>
+inline char Dictionary<WideWstring,bool>::add(
+	WideWstring &key, bool &value)
+{
+	DNode<WideWstring,bool> *item = new DNode<WideWstring,bool>;
+	item->key = key;
+	item->value = value;
+	item->hashNext = NULL;
+	unsigned int offset = keyHash(key);
+	DNode<WideWstring,bool> *head = table[offset];
+	table[offset] = item;
+	if (head) item->hashNext = head;
+	++entries;
+	float percent = (float)entries;
+	percent /= (float)getSize();
+	if (percent >= EXPAND_THRESHOLD) expand();
+	return(TRUE);
+}
+
 static inline void LBGetText(HWND win, int index, wchar_t * wide, char * narrow)
 {
 	if (SendMessage(win, 0x4cf, index, 0) != 0) {
@@ -864,6 +883,44 @@ static inline void LBSelectText(HWND win, WideWstring & key, wchar_t * wide)
 	int index = SendMessage(win, 0x4ca, -1, (LPARAM)wide);
 	if (index != LB_ERR) {
 		ListBox_SetCurSel(win, index);
+	}
+}
+
+// FUNCTION: GAMEMD 0x005E5F10
+void LBSaveSelections(HWND win, Dictionary<WideWstring,bool> &lbdict)
+{
+	int count = ListBox_GetCount(win);
+	WideWstring key;
+	wchar_t wide[0x400];
+	char narrow[0x400];
+	if (count == 0) {
+		return;
+	}
+
+	LONG style = GetWindowLong(win, GWL_STYLE);
+	if (style & LBS_MULTIPLESEL) {
+		for (int i = 0; i < count; i++) {
+			if (ListBox_GetSel(win, i)) {
+				if (SendMessage(win, 0x4cf, i, 0)) {
+					SendMessage(win, 0x4b6, i, (LPARAM)wide);
+				} else {
+					SendMessage(win, 0x4b7, i, (LPARAM)narrow);
+					FUN_00735060(wide, narrow, -1);
+				}
+				key = wide;
+				bool selected = true;
+				lbdict.add(key, selected);
+			}
+		}
+	} else if (!(style & LBS_NOSEL)) {
+		int i = ListBox_GetCurSel(win);
+		if (i >= 0) {
+			wide[0] = 0;
+			LBGetText(win, i, wide, narrow);
+			key = wide;
+			bool selected = true;
+			lbdict.add(key, selected);
+		}
 	}
 }
 
