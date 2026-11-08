@@ -59,7 +59,7 @@ TextLabelClass::TextLabelClass(wchar_t * txt, int x, int y, int color, TextPrint
 	Style(style),
 	Color(color),
 	PixWidth(-1),
-	AnimDword3C(0),
+	ScrollPosition(0),
 	SkipDraw(false),
 	Animate(false),
 	AnimPos(0),
@@ -114,7 +114,7 @@ int TextLabelClass::Draw_Me(int forced)
 						VocClass::PlayGlobal(Rule->MessageCharTyped, 1.0f, 0x2000, 0);
 					}
 				}
-				FUN_00623880(LogicalSurface, &rect, Text, length, font, color, (int *)&AnimDword3C, Has_Focus(), 0, 1,
+				FUN_00623880(LogicalSurface, &rect, Text, length, font, color, &ScrollPosition, Has_Focus(), 0, 1,
 				             AnimPos);
 				return true;
 			}
