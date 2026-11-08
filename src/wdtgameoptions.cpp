@@ -157,6 +157,20 @@ rc_ptr<MapSizeGameOption> __fastcall FUN_007676F0(unsigned int bitmask)
 	return(rc_ptr<MapSizeGameOption>(new MapSizeGameOption(bitmask)));
 }
 
+extern char const *DAT_007F7088[4];
+
+// TEMPLATE: GAMEMD 0x00767740
+// ?Get_String@MapSizeGameOption@WorldDominationTour@@UAE?AVWideWstring@@ABV?$rc_ptr@VWDTTerritory@@@@ABV3@@Z
+WideWstring MapSizeGameOption::Get_String(const rc_ptr<WDTTerritory> &territory, const WideWstring &prefix)
+{
+	if (prefix.length() > 0) {
+		return FUN_007B8170(prefix, L", ") +
+		       StringTable::LoadString(DAT_007F7088[territory.Get()->Width], 0, "D:\\ra2mdpost\\WDTGameOptions.cpp", 129);
+	}
+	return WideWstring(
+	    StringTable::LoadString(DAT_007F7088[territory.Get()->Height], 0, "D:\\ra2mdpost\\WDTGameOptions.cpp", 131));
+}
+
 // TEMPLATE: GAMEMD 0x00767800
 // ?Get_Display_Priority@MapSizeGameOption@WorldDominationTour@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z
 int MapSizeGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territory)
@@ -183,4 +197,3 @@ const Rect RECT_NONE_2(0, 0, 0, 0);
 
 // SYNTHETIC: GAMEMD 0x007678C0
 // ??_GMapSizeGameOption@WorldDominationTour@@UAEPAXI@Z
-
