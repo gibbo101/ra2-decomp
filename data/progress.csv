@@ -5677,6 +5677,7 @@ address,name,result,size,source,symbol
 0x004FBE40,HouseClass::Flag_Remove,MATCH,281,src/house.cpp,?Flag_Remove@HouseClass@@QAE_NPAVAbstractClass@@_N@Z
 0x004FBF60,HouseClass::Flag_Attach,MATCH,252,src/house.cpp,?Flag_Attach@HouseClass@@QAE_NABVCell@@_N@Z
 0x004FC060,HouseClass::Flag_Attach,MATCH,78,src/house.cpp,?Flag_Attach@HouseClass@@QAE_NPAVUnitClass@@_N@Z
+0x004FC0B0,HouseClass::MPlayer_Defeated,MATCH,1559,src/house.cpp,?MPlayer_Defeated@HouseClass@@QAEXXZ
 0x004FC6D0,HouseClass::Destroy_All,MATCH,181,src/house.cpp,?Destroy_All@HouseClass@@QAEXXZ
 0x004FC790,HouseClass::Destroy_All_Buildings,MATCH,143,src/house.cpp,?Destroy_All_Buildings@HouseClass@@QAEXXZ
 0x004FC820,HouseClass::Destroy_All_Non_Buildings_Non_Naval,MATCH,171,src/house.cpp,?Destroy_All_Non_Buildings_Non_Naval@HouseClass@@QAEXXZ
@@ -8951,7 +8952,7 @@ address,name,result,size,source,symbol
 0x005C0ED0,MPBattleClass::vt_entry_5C,MATCH,5,src/movies.cpp,?vt_entry_5C@MPBattleClass@@UAE_NIII@Z
 0x005C0EE0,MPBattleClass::vt_entry_68,MATCH,3,src/movies.cpp,?vt_entry_68@MPBattleClass@@UAE_NXZ
 0x005C0EF0,MPBattleClass::vt_entry_74,MATCH,3,src/movies.cpp,?vt_entry_74@MPBattleClass@@UAEXII@Z
-0x005C0F00,MPBattleClass::vt_entry_78,MATCH,3,src/movies.cpp,?vt_entry_78@MPBattleClass@@UAEXI@Z
+0x005C0F00,MPBattleClass::vt_entry_78,MATCH,3,src/movies.cpp,?vt_entry_78@MPBattleClass@@UAEXPAUHWND__@@@Z
 0x005C0F10,MPBattleClass::vt_entry_90,MATCH,1,src/movies.cpp,?vt_entry_90@MPBattleClass@@UAEXXZ
 0x005C0F20,MPBattleClass::vt_entry_94,MATCH,1,src/movies.cpp,?vt_entry_94@MPBattleClass@@UAEXXZ
 0x005C0F30,MPBattleClass::vt_entry_98,MATCH,4,src/movies.cpp,?vt_entry_98@MPBattleClass@@UAEHXZ
@@ -8998,7 +8999,7 @@ address,name,result,size,source,symbol
 0x005C1FA0,MPCooperative::vt_entry_28,MATCH,159,src/mpcoop.cpp,?vt_entry_28@MPCooperative@@UAEHXZ
 0x005C2040,MPCooperative::vt_entry_58,MATCH,182,src/mpcoop.cpp,?vt_entry_58@MPCooperative@@UAE_NHV?$DynamicVectorClass@H@@PBD1@Z
 0x005C2100,MPCooperative::vt_entry_5C,MATCH,145,src/mpcoop.cpp,?vt_entry_5C@MPCooperative@@UAE_NIII@Z
-0x005C21A0,MPCooperative::vt_entry_78,MATCH,44,src/mpcoop.cpp,?vt_entry_78@MPCooperative@@UAEXI@Z
+0x005C21A0,MPCooperative::vt_entry_78,MATCH,44,src/mpcoop.cpp,?vt_entry_78@MPCooperative@@UAEXPAUHWND__@@@Z
 0x005C21D0,MPCooperative::FUN_005C21D0,MATCH,469,src/mpcoop.cpp,?FUN_005C21D0@MPCooperative@@QAEXPAUHWND__@@_N@Z
 0x005C23B0,MPCooperative::FUN_005C23B0,MATCH,335,src/mpcoop.cpp,?FUN_005C23B0@MPCooperative@@QAEXPAUHWND__@@H@Z
 0x005C2500,MPCooperative::FUN_005C2500,MATCH,317,src/mpcoop.cpp,?FUN_005C2500@MPCooperative@@QAEXPAUHWND__@@@Z
@@ -9777,6 +9778,7 @@ address,name,result,size,source,symbol
 0x005DAF20,Net2Callback,MATCH,13,src/netdlg2.cpp,?Net2Callback@@YI_NXZ
 0x005DAF30,FUN_005DAF30,MATCH,152,src/netdlg2.cpp,?FUN_005DAF30@@YIXXZ
 0x005DAFD0,Net2DisplayUsers,MATCH,7,src/netdlg2.cpp,?Net2DisplayUsers@@YIXXZ
+0x005DAFE0,FUN_005DAFE0,MATCH,1564,src/netdlg2.cpp,?FUN_005DAFE0@@YIX_N@Z
 0x005DB600,FUN_005DB600,MATCH,72,src/netdlg2.cpp,?FUN_005DB600@@YIXPAUNodeNameType@@@Z
 0x005DB650,FUN_005DB650,MATCH,36,src/netdlg2.cpp,?FUN_005DB650@@YI_NH_N0@Z
 0x005DB680,Net2Init_Network,MATCH,97,src/netdlg2.cpp,?Net2Init_Network@@YI_NXZ
@@ -9862,7 +9864,7 @@ address,name,result,size,source,symbol
 0x005E7BF0,Set_Scenario_Info_From_Index,MATCH,699,src/netshare.cpp,?Set_Scenario_Info_From_Index@@YI_NH@Z
 0x005E8590,CreateRandomMap,MATCH,400,src/netshare.cpp,?CreateRandomMap@@YIHXZ
 0x005E8720,FUN_005E8720,MATCH,20,src/netshare.cpp,?FUN_005E8720@@YIHPBG@Z
-0x005E8740,FUN_005E8740,MATCH,28,src/netshare.cpp,?FUN_005E8740@@YIHH@Z
+0x005E8740,FUN_005E8740,MATCH,28,src/netshare.cpp,?FUN_005E8740@@YI_NH@Z
 0x005E8760,FUN_005E8760,MATCH,30,src/netshare.cpp,?FUN_005E8760@@YIHXZ
 0x005E8780,FUN_005E8780,MATCH,30,src/netshare.cpp,?FUN_005E8780@@YIHPBG@Z
 0x005E87A0,FUN_005E87A0,MATCH,636,src/netshare.cpp,?FUN_005E87A0@@YIXXZ
@@ -13993,6 +13995,7 @@ address,name,result,size,source,symbol
 0x006CFE20,TabClass::TabClass,MATCH,1074,src/tab.cpp,??0TabClass@@QAE@XZ
 0x006D0260,TabClass::One_Time,MATCH,5,src/tab.cpp,?One_Time@TabClass@@UAEXXZ
 0x006D0270,TabClass::DisposeOfArt,MATCH,63,src/tab.cpp,?DisposeOfArt@TabClass@@UAEXXZ
+0x006D02B0,TabClass::Init_For_House,MATCH,228,src/tab.cpp,?Init_For_House@TabClass@@UAEXXZ
 0x006D03A0,TabClass::Init_IO,MATCH,244,src/tab.cpp,?Init_IO@TabClass@@UAEXXZ
 0x006D04A0,TabClass::FUN_006D04A0,MATCH,38,src/tab.cpp,?FUN_006D04A0@TabClass@@QAEXXZ
 0x006D04D0,TabClass::FUN_006D04D0,MATCH,31,src/tab.cpp,?FUN_006D04D0@TabClass@@QAEXXZ
@@ -14000,7 +14003,7 @@ address,name,result,size,source,symbol
 0x006D0680,TabClass::AI,MATCH,822,src/tab.cpp,?AI@TabClass@@UAEXAAW4KeyNumType@@ABVPoint2D@@@Z
 0x006D09C0,FUN_006D09C0,MATCH,83,src/tab.cpp,?FUN_006D09C0@@YIXPAVShapeButtonClass@@PBD@Z
 0x006D0A20,TabClass::Draw_It,MATCH,1063,src/tab.cpp,?Draw_It@TabClass@@UAEX_N@Z
-0x006D0E50,_$E136,MATCH,1,src/tab.cpp,_$E136
+0x006D0E50,_$E137,MATCH,1,src/tab.cpp,_$E137
 0x006D0E60,TabClass::Draw_Credits_Tab,MATCH,90,src/tab.cpp,?Draw_Credits_Tab@TabClass@@QAEXXZ
 0x006D0EC0,TabClass::Flash_Money,MATCH,53,src/tab.cpp,?Flash_Money@TabClass@@QAEXXZ
 0x006D0F00,TabClass::Redraw_Tab,MATCH,15,src/tab.cpp,?Redraw_Tab@TabClass@@QAEXXZ

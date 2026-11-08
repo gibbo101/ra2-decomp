@@ -559,9 +559,9 @@ bool MPCooperative::vt_entry_5C(unsigned a, unsigned b, unsigned c)
 }
 
 // FUNCTION: GAMEMD 0x005C21A0
-void MPCooperative::vt_entry_78(unsigned a)
+void MPCooperative::vt_entry_78(HWND dialog)
 {
-	HWND button = GetDlgItem((HWND)a, 0x732);
+	HWND button = GetDlgItem(dialog, 0x732);
 	if (button) {
 		PostMessage(button, 0x405, 1, Options.CampDifficulty);
 	}

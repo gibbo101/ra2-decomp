@@ -1412,7 +1412,7 @@ int __fastcall FUN_005E8720(wchar_t const * name)
 }
 
 // FUNCTION: GAMEMD 0x005E8740
-int __fastcall FUN_005E8740(int index)
+bool __fastcall FUN_005E8740(int index)
 {
 	return(wcscmp(Session.Players[index]->Name, Session.GameName) == 0);
 }

@@ -228,6 +228,45 @@ void TabClass::DisposeOfArt(void)
 	}
 }
 
+#include "scenario.h"
+extern Rect * DAT_00B0FC58;
+extern int DAT_00B0CD38;
+extern int DAT_00B0CB50;
+extern int DAT_00B0CD10;
+
+// FUNCTION: GAMEMD 0x006D02B0
+void TabClass::Init_For_House(void)
+{
+	BASECLASS::Init_For_House();
+
+	bool loaded = false;
+	for (int i = 0; i < 25; i++) {
+		char name[256];
+		sprintf(name, "Button%02d.SHP", i);
+		DAT_00B0C148[i] = FileSystem::LoadWholeFileEx(name, loaded);
+		DAT_00B0CBDC[i] = loaded;
+	}
+
+	DAT_00B0CD38 = ((ShapeSet const *)DAT_00B0C148[0])->Get_Width();
+	DAT_00B0CB50 = ((ShapeSet const *)DAT_00B0C148[0])->Get_Height();
+
+	Rect r = *DAT_00B0FC68;
+	DAT_00B0CC2C = DAT_00B0FC6C->X - DAT_00B0CB54 * r.Width;
+	int side = Scen->PlayerSideIndex;
+	int yoff;
+	if (side == 0) {
+		yoff = 0;
+	} else if (side == 1) {
+		yoff = 0;
+	} else {
+		yoff = 0;
+	}
+	DAT_00B0CC24 = DAT_00B0FC58->Y + yoff;
+	DAT_00B0CD10 = r.Width - DAT_00B0CD38;
+	DAT_00B0CC38 = DAT_00B0CD10 + DAT_00B0CD38;
+	Credits.Current = 0;
+}
+
 // FUNCTION: GAMEMD 0x006D03A0
 void TabClass::Init_IO(void)
 {
@@ -571,7 +610,7 @@ drawn:
 }
 
 // SYNTHETIC: GAMEMD 0x006D0E50 SYMBOL
-// _$E136
+// _$E137
 
 // FUNCTION: GAMEMD 0x006D0E60
 void TabClass::Draw_Credits_Tab(void)

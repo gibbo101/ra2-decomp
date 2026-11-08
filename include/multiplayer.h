@@ -81,7 +81,7 @@ class MultiplayerGameMode
 		virtual int RandomHumanCountryIndex(void);
 		virtual int RandomAICountryIndex(void);
 		virtual void vt_entry_74(unsigned a, unsigned b);
-		virtual void vt_entry_78(unsigned a);
+		virtual void vt_entry_78(HWND dialog);
 		virtual bool UnfixAlliances(void);
 		virtual bool StartingPositionsToHouseBaseCells(char unused);
 		virtual bool StartingPositionsToHouseBaseCells2(bool arg);
