@@ -1866,16 +1866,215 @@ struct UserSort {
 	int Flag;
 };
 
-struct PCX {
-	static PCX Instance;
-	int GetSurface(char const * name, void * palette);
-	bool CacheBMP(char const * name, void * bitmap, int bytes, int bpp = 2);
-};
+#include "srfcache.h"
 namespace Game { extern int ObserverMode; }
 extern int DAT_007EEF28;
 
-void FUN_00781480(void);
 void __fastcall FUN_0079AF10(HWND dialog);
+
+extern int DAT_00B77A8C;
+extern char DAT_00B77E74;
+extern int DAT_00B778D0;
+extern int DAT_00B778CC;
+extern int DAT_00B76AF4;
+extern int DAT_00B7643C;
+extern int DAT_007EEF48;
+extern wchar_t DAT_0084A724[];
+extern wchar_t DAT_0084A6E0[];
+
+// FUNCTION: GAMEMD 0x00781480
+void FUN_00781480(void)
+{
+	HWND dialog = FUN_00775940(0x113);
+	if (dialog == NULL) {
+		return;
+	}
+	HWND list = GetDlgItem(dialog, 0x6EE);
+	if (list == NULL) {
+		return;
+	}
+	Wstring selected;
+	int cur = SendMessage(list, 0x188, 0, 0);
+	if (cur != -1) {
+		FUN_00623F00(list, cur, &selected);
+	}
+	Wstring top;
+	int topIndex = SendMessage(list, 0x18E, 0, 0);
+	if (topIndex != -1) {
+		FUN_00623F00(list, topIndex, &top);
+	}
+	SendMessage(list, 0x49D, 0, 1);
+	DAT_00B77E74 = 1;
+	SendMessage(list, 0x184, 0, 0);
+	int filter = DAT_00B77E44;
+	int count = DAT_00B76AE0.length();
+	int passes = 1;
+	if (filter == 2 || filter == 3 || filter == 8 || filter == 9 || filter == 10 || filter == 11 || filter == 6 || filter == 7 || filter == 4 || filter == 5 || filter == 12 || filter == 13) {
+		passes = 2;
+	}
+	SortEntry * entries = new SortEntry[count];
+	WolChannel chan;
+	if (entries == NULL) {
+		DAT_00B77E44 = 0;
+	}
+	if (DAT_00B77E44 == 0xF) {
+		int n = DAT_00B76AE0.length();
+		memset(&chan, 0, sizeof(chan));
+		for (int i = 0; i < n; i++) {
+			DAT_00B76AE0.get(chan, i);
+			int ping = chan.Ping;
+			entries[i].Pad = i;
+			entries[i].Key = ping;
+		}
+		qsort(entries, n, 8, (CompareFn)FUN_007813B0);
+	} else {
+		int n = DAT_00B76AE0.length();
+		memset(&chan, 0, sizeof(chan));
+		for (int i = 0; i < n; i++) {
+			DAT_00B76AE0.get(chan, i);
+			int ping = chan.Ping;
+			entries[i].Pad = i;
+			entries[i].Key = ping;
+		}
+		qsort(entries, n, 8, (CompareFn)FUN_00781380);
+	}
+
+	for (int pass = 0; pass < 2; pass++) {
+		for (int k = 0; k < passes; k++) {
+			for (int j = 0; j < count; j++) {
+				memset(&chan, 0, sizeof(chan));
+				int idx = j;
+				if (DAT_00B77E44 != 1) {
+					if (DAT_00B77E44 != 0) {
+						int s = entries[j].Pad;
+						if (s >= 0 && s < count) {
+							idx = s;
+						}
+					}
+				} else {
+					idx = count - 1 - j;
+				}
+				DAT_00B76AE0.get(chan, idx);
+				if (FUN_0077D9B0(&chan) || FUN_0077D9D0(&chan)) {
+					continue;
+				}
+				char details[132];
+				strncpy(details, chan.Info, 0x80);
+				int first = 0;
+				int second = 0;
+				int third = 0;
+				int fourth = 0;
+				int fifth = 0;
+				Wstring file;
+				FUN_0077E820(details, &first, &second, &third, &fourth, &fifth, &file);
+				int players = chan.CurrentUsers - fourth + third;
+				int maxplayers = chan.MaxUsers - ((fourth != 0 || fifth != 0) ? 1 : 0);
+				if (Game::ObserverMode) {
+					if (fifth != 0 && fourth == 0) {
+						if (pass != 0) continue;
+					} else {
+						if (pass != 1) continue;
+					}
+				} else {
+					if (players == maxplayers) {
+						if (pass != 1) continue;
+					} else {
+						if (pass != 0) continue;
+					}
+				}
+				if (FUN_00781130(&chan, k, fifth, fourth)) {
+					continue;
+				}
+				wchar_t text[80];
+				swprintf(text, DAT_0084A724, chan.Name, players, maxplayers);
+				int row = SendMessage(list, 0x4C7, -1, (LPARAM)chan.Name);
+				SendMessage(list, LB_SETITEMDATA, row, idx);
+				OwnerDraw::CellData cell;
+				cell.type = OwnerDraw::CellData::TEXT;
+				cell.string.set(text);
+				cell.hint.set(DAT_00887734);
+				cell.color = DAT_007EEF28;
+				if (Game::ObserverMode) {
+					if (fifth == 0 || fourth != 0) {
+						cell.color = DAT_007EEF48;
+					}
+				} else if (players == maxplayers) {
+					cell.color = DAT_007EEF48;
+				}
+				SendMessage(list, 0x4A8, MAKEWPARAM(DAT_00B77A8C, row), (LPARAM)&cell);
+
+				cell.type = OwnerDraw::CellData::INVALID;
+				cell.hint.set(DAT_00887734);
+				cell.type = OwnerDraw::CellData::SURFACE;
+				cell.hint.set(DAT_00887734);
+				if (FUN_0077D990(&chan)) {
+					cell.surf = SurfaceCache.GetSurface("wolclan.pcx", NULL);
+					cell.hint.set(StringTable::LoadString("TXT_BATTLECLAN_GAME", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xD17));
+				} else if (FUN_0077D910(&chan)) {
+					cell.surf = SurfaceCache.GetSurface("woltrny.pcx", NULL);
+					cell.hint.set(StringTable::LoadString("TXT_TOURNAMENT_GAME", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xD1C));
+				} else {
+					cell.surf = SurfaceCache.GetSurface("gt18.pcx", NULL);
+					cell.hint.set(DAT_00887734);
+				}
+				SendMessage(list, 0x4A8, MAKEWPARAM(DAT_00B778D0, row), (LPARAM)&cell);
+
+				cell.type = OwnerDraw::CellData::SURFACE;
+				cell.hint.set(DAT_00887734);
+				if (chan.Squad & 0x100) {
+					cell.surf = SurfaceCache.GetSurface("wolpriv.pcx", NULL);
+					cell.hint.set(StringTable::LoadString("TXT_GAME_PASSWORD", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xD2A));
+				} else {
+					cell.type = OwnerDraw::CellData::INVALID;
+					cell.hint.set(DAT_00887734);
+				}
+				SendMessage(list, 0x4A8, MAKEWPARAM(DAT_00B778CC, row), (LPARAM)&cell);
+
+				cell.type = OwnerDraw::CellData::INVALID;
+				cell.string.set(DAT_00887734);
+				cell.hint.set(DAT_00887734);
+				if ((chan.Reserved >> 9) & 3) {
+					if (fourth == 0 && fifth != 0) {
+						cell.type = OwnerDraw::CellData::SURFACE;
+						cell.surf = SurfaceCache.GetSurface("wolrslkob.pcx", NULL);
+					} else {
+						cell.type = OwnerDraw::CellData::SURFACE;
+						cell.surf = SurfaceCache.GetSurface("wolreslk.pcx", NULL);
+					}
+				} else if (fourth == 0 && fifth != 0) {
+					cell.type = OwnerDraw::CellData::SURFACE;
+					cell.surf = SurfaceCache.GetSurface("wolob.pcx", NULL);
+				}
+				SendMessage(list, 0x4A8, MAKEWPARAM(DAT_00B76AF4, row), (LPARAM)&cell);
+
+				if (chan.Ping == -1) {
+					cell.type = OwnerDraw::CellData::TEXT;
+					cell.string.set(DAT_0084A6E0);
+				} else {
+					cell.pingtime = chan.Ping;
+					cell.type = OwnerDraw::CellData::PING;
+				}
+				swprintf(text, StringTable::LoadString("WOL:GamePing", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xD52), chan.Ping);
+				cell.hint.set(text);
+				SendMessage(list, 0x4A8, MAKEWPARAM(DAT_00B7643C, row), (LPARAM)&cell);
+			}
+		}
+	}
+	if (entries != NULL) {
+		delete entries;
+	}
+	int found = SendMessage(list, 0x4C5, 0, (LPARAM)selected.text());
+	SendMessage(list, 0x186, found, 0);
+	found = SendMessage(list, 0x4C5, 0, (LPARAM)top.text());
+	if (found != -1) {
+		SendMessage(list, 0x197, found, 0);
+	}
+	SendMessage(list, 0x49D, 0, 0);
+	InvalidateRect(list, NULL, 0);
+	if (dialog == FUN_00775B10()) {
+		SetFocus(GetDlgItem(dialog, 0x540));
+	}
+}
 
 // FUNCTION: GAMEMD 0x00781CC0
 int __cdecl FUN_00781CC0(UserSort const * a, UserSort const * b)
@@ -2264,29 +2463,29 @@ void __fastcall FUN_00783800(bool ascending)
 }
 
 // FUNCTION: GAMEMD 0x00783A90
-int __fastcall FUN_00783A90(int digit)
+Surface * __fastcall FUN_00783A90(int digit)
 {
 	switch (digit) {
 		case 0:
-			return PCX::Instance.GetSurface("number0.pcx", NULL);
+			return SurfaceCache.GetSurface("number0.pcx", NULL);
 		case 1:
-			return PCX::Instance.GetSurface("number1.pcx", NULL);
+			return SurfaceCache.GetSurface("number1.pcx", NULL);
 		case 2:
-			return PCX::Instance.GetSurface("number2.pcx", NULL);
+			return SurfaceCache.GetSurface("number2.pcx", NULL);
 		case 3:
-			return PCX::Instance.GetSurface("number3.pcx", NULL);
+			return SurfaceCache.GetSurface("number3.pcx", NULL);
 		case 4:
-			return PCX::Instance.GetSurface("number4.pcx", NULL);
+			return SurfaceCache.GetSurface("number4.pcx", NULL);
 		case 5:
-			return PCX::Instance.GetSurface("number5.pcx", NULL);
+			return SurfaceCache.GetSurface("number5.pcx", NULL);
 		case 6:
-			return PCX::Instance.GetSurface("number6.pcx", NULL);
+			return SurfaceCache.GetSurface("number6.pcx", NULL);
 		case 7:
-			return PCX::Instance.GetSurface("number7.pcx", NULL);
+			return SurfaceCache.GetSurface("number7.pcx", NULL);
 		case 8:
-			return PCX::Instance.GetSurface("number8.pcx", NULL);
+			return SurfaceCache.GetSurface("number8.pcx", NULL);
 		case 9:
-			return PCX::Instance.GetSurface("number9.pcx", NULL);
+			return SurfaceCache.GetSurface("number9.pcx", NULL);
 	}
 	return 0;
 }
@@ -2297,40 +2496,40 @@ struct RankedUser {
 };
 
 // FUNCTION: GAMEMD 0x00783B80
-int __fastcall FUN_00783B80(RankedUser * user)
+Surface * __fastcall FUN_00783B80(RankedUser * user)
 {
 	if (!user) {
 		return 0;
 	}
 	unsigned int points = user->Points;
 	if (points > 2000) {
-		return PCX::Instance.GetSurface("comchief.pcx", NULL);
+		return SurfaceCache.GetSurface("comchief.pcx", NULL);
 	}
 	if (points > 1500) {
-		return PCX::Instance.GetSurface("stargen.pcx", NULL);
+		return SurfaceCache.GetSurface("stargen.pcx", NULL);
 	}
 	if (points > 1000) {
-		return PCX::Instance.GetSurface("general.pcx", NULL);
+		return SurfaceCache.GetSurface("general.pcx", NULL);
 	}
 	if (points > 500) {
-		return PCX::Instance.GetSurface("briggenr.pcx", NULL);
+		return SurfaceCache.GetSurface("briggenr.pcx", NULL);
 	}
 	if (points > 250) {
-		return PCX::Instance.GetSurface("colonel.pcx", NULL);
+		return SurfaceCache.GetSurface("colonel.pcx", NULL);
 	}
 	if (points > 150) {
-		return PCX::Instance.GetSurface("major.pcx", NULL);
+		return SurfaceCache.GetSurface("major.pcx", NULL);
 	}
 	if (points > 80) {
-		return PCX::Instance.GetSurface("lieutena.pcx", NULL);
+		return SurfaceCache.GetSurface("lieutena.pcx", NULL);
 	}
 	if (points > 60) {
-		return PCX::Instance.GetSurface("sergeant.pcx", NULL);
+		return SurfaceCache.GetSurface("sergeant.pcx", NULL);
 	}
 	if (points > 31) {
-		return PCX::Instance.GetSurface("corporal.pcx", NULL);
+		return SurfaceCache.GetSurface("corporal.pcx", NULL);
 	}
-	return PCX::Instance.GetSurface("private.pcx", NULL);
+	return SurfaceCache.GetSurface("private.pcx", NULL);
 }
 
 // FUNCTION: GAMEMD 0x00785360
@@ -3309,7 +3508,6 @@ void __fastcall FUN_00779C90(Wstring const * value);
 extern char DAT_00889F64[];
 int __fastcall FUN_00797640(int sku);
 BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
-int FUN_00787010(void);
 
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 int __fastcall FUN_006241F0(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
@@ -6945,7 +7143,7 @@ void FUN_00797C20(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00798120 SYMBOL
-// _$E367
+// _$E366
 // FUNCTION: GAMEMD 0x00798140
 void FUN_00798140(void)
 {
@@ -7007,7 +7205,7 @@ void FUN_00798360(void)
 	}
 }
 
-void __fastcall FUN_00603D30(HWND item, int surface);
+void __fastcall FUN_00603D30(HWND item, Surface * surface);
 
 // FUNCTION: GAMEMD 0x007983E0
 BOOL CALLBACK FUN_007983E0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -7090,67 +7288,67 @@ BOOL CALLBACK FUN_007983E0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 		case 0x497:
 			{
 				HWND item = GetDlgItem(window, 0x746);
-				int surface = PCX::Instance.GetSurface("gt18.pcx", NULL);
+				Surface * surface = SurfaceCache.GetSurface("gt18.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x748);
-				surface = PCX::Instance.GetSurface("wolclan.pcx", NULL);
+				surface = SurfaceCache.GetSurface("wolclan.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x749);
-				surface = PCX::Instance.GetSurface("wolreslk.pcx", NULL);
+				surface = SurfaceCache.GetSurface("wolreslk.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x74A);
-				surface = PCX::Instance.GetSurface("wolob.pcx", NULL);
+				surface = SurfaceCache.GetSurface("wolob.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x752);
-				surface = PCX::Instance.GetSurface("wolpriv.pcx", NULL);
+				surface = SurfaceCache.GetSurface("wolpriv.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x75C);
-				surface = PCX::Instance.GetSurface("pingg.pcx", NULL);
+				surface = SurfaceCache.GetSurface("pingg.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x75D);
-				surface = PCX::Instance.GetSurface("pingy.pcx", NULL);
+				surface = SurfaceCache.GetSurface("pingy.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x75E);
-				surface = PCX::Instance.GetSurface("pingr.pcx", NULL);
+				surface = SurfaceCache.GetSurface("pingr.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x79E);
-				surface = PCX::Instance.GetSurface("number1.pcx", NULL);
+				surface = SurfaceCache.GetSurface("number1.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x79F);
-				surface = PCX::Instance.GetSurface("number0.pcx", NULL);
+				surface = SurfaceCache.GetSurface("number0.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x7A0);
-				surface = PCX::Instance.GetSurface("number0.pcx", NULL);
+				surface = SurfaceCache.GetSurface("number0.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x7A1);
-				surface = PCX::Instance.GetSurface("cooperat.pcx", NULL);
+				surface = SurfaceCache.GetSurface("cooperat.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x7A2);
-				surface = PCX::Instance.GetSurface("comchief.pcx", NULL);
+				surface = SurfaceCache.GetSurface("comchief.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
@@ -7247,67 +7445,67 @@ BOOL CALLBACK FUN_007988C0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					}
 				}
 				HWND item = GetDlgItem(window, 0x746);
-				int surface = PCX::Instance.GetSurface("gt18.pcx", NULL);
+				Surface * surface = SurfaceCache.GetSurface("gt18.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x748);
-				surface = PCX::Instance.GetSurface("wolclan.pcx", NULL);
+				surface = SurfaceCache.GetSurface("wolclan.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x749);
-				surface = PCX::Instance.GetSurface("wolreslk.pcx", NULL);
+				surface = SurfaceCache.GetSurface("wolreslk.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x74A);
-				surface = PCX::Instance.GetSurface("wolob.pcx", NULL);
+				surface = SurfaceCache.GetSurface("wolob.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x752);
-				surface = PCX::Instance.GetSurface("wolpriv.pcx", NULL);
+				surface = SurfaceCache.GetSurface("wolpriv.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x75C);
-				surface = PCX::Instance.GetSurface("pingg.pcx", NULL);
+				surface = SurfaceCache.GetSurface("pingg.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x75D);
-				surface = PCX::Instance.GetSurface("pingy.pcx", NULL);
+				surface = SurfaceCache.GetSurface("pingy.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x75E);
-				surface = PCX::Instance.GetSurface("pingr.pcx", NULL);
+				surface = SurfaceCache.GetSurface("pingr.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x79E);
-				surface = PCX::Instance.GetSurface("number1.pcx", NULL);
+				surface = SurfaceCache.GetSurface("number1.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x79F);
-				surface = PCX::Instance.GetSurface("number0.pcx", NULL);
+				surface = SurfaceCache.GetSurface("number0.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x7A0);
-				surface = PCX::Instance.GetSurface("number0.pcx", NULL);
+				surface = SurfaceCache.GetSurface("number0.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x7A1);
-				surface = PCX::Instance.GetSurface("cooperat.pcx", NULL);
+				surface = SurfaceCache.GetSurface("cooperat.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
 				item = GetDlgItem(window, 0x7A2);
-				surface = PCX::Instance.GetSurface("comchief.pcx", NULL);
+				surface = SurfaceCache.GetSurface("comchief.pcx", NULL);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
@@ -9834,7 +10032,7 @@ long __stdcall FUN_007A5290(void * sink, long result, char const * motd)
 				DAT_00AC116C->V23(type, DAT_0084A1C0, &bitmap, &bytes, &name, &url);
 				char bitmap_name[64];
 				sprintf(bitmap_name, "gt%d.bmp", type);
-				PCX::Instance.CacheBMP(bitmap_name, bitmap, bytes, 2);
+				SurfaceCache.CacheBMP(bitmap_name, bitmap, bytes, 2);
 				token = strtok(NULL, ",");
 			}
 			delete[] buffer;
@@ -11661,8 +11859,8 @@ BOOL CALLBACK FUN_00791B10(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	}
 	case 0x497: {
 		SetFocus(GetDlgItem(window, 0x540));
-		SendDlgItemMessage(window, 0x3ED, 0x49C, 0, (LPARAM)PCX::Instance.GetSurface("wodact.pcx", NULL));
-		SendDlgItemMessage(window, 0x3ED, 0x4AA, 0, (LPARAM)PCX::Instance.GetSurface("wouact.pcx", NULL));
+		SendDlgItemMessage(window, 0x3ED, 0x49C, 0, (LPARAM)SurfaceCache.GetSurface("wodact.pcx", NULL));
+		SendDlgItemMessage(window, 0x3ED, 0x4AA, 0, (LPARAM)SurfaceCache.GetSurface("wouact.pcx", NULL));
 		MultiplayerGameMode *mode = First_Game_Mode();
 		Session.Options.MPModeIndex = mode->MPModeIndex;
 		FUN_005E2EF0(window, mode);
