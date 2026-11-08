@@ -7459,6 +7459,23 @@ void __fastcall OwnerDraw::BlendGradientRect(Rect const & rect, Surface & surfac
 	surface.Unlock();
 }
 
+// FUNCTION: GAMEMD 0x00621B80
+void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha)
+{
+	unsigned short * pixels = (unsigned short *)surface->Lock();
+	if (pixels) {
+		int stride = surface->Stride() / 2;
+		for (int y = rect->Y; y < rect->Y + rect->Height; ++y) {
+			int index = y * stride + rect->X;
+			for (int x = rect->X; x < rect->X + rect->Width; ++x) {
+				pixels[index] = OD_Blend_Color(pixels[index], color, alpha);
+				++index;
+			}
+		}
+		surface->Unlock();
+	}
+}
+
 // FUNCTION: GAMEMD 0x00621D30
 void ODDrawBitsStrand(Rect const & rect, Surface & surface)
 {

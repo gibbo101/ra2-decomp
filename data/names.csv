@@ -325,6 +325,10 @@ address,name,symbol,evidence
 0x00886F90,SidebarRect,,YRpp Surface.h SidebarBounds; TibSun _rect.h SidebarRect; matched CCToolTip::Reset 0x00478DB0 uses the same X/Width fields
 0x0088731C,CompositeSurface,,YRpp Surface.h Composite; TibSun _surface.h CompositeSurface; CCToolTip::Draw 0x00478E30
 0x00B0B518,SidebarClass::IsToBlitSidebar,,"Matched Blit_Sidebar 0x006A70E0 reads at 0x006A7143, clears at 0x006A7166 and sets at 0x006A723A; TibSun sidebar.cpp static flag"
+0x00AC48B8,ODMasks,?ODMasks@@3UODComponentMasks@@A,YRpp OwnerDraw.h ColorShiftRed/Green at +0/+2; existing matched ODInitMasks 0x0061F190 independently confirms both component references
+0x00AC48BC,ODBComponentMask,?ODBComponentMask@@3GA,YRpp OwnerDraw.h ColorShiftBlue; existing matched ODInitMasks 0x0061F190 +0x4A/+0x62/+0x71
+0x00B78834,OD_Blend_Color::blend_color_alpha,?blend_color_alpha@?1??OD_Blend_Color@@YIGGGE@Z@4IA,Existing matched OwnerDraw::BlendGradientRect 0x006217E0 +0x11D/+0x13F/+0x158/+0x174 store and use alpha in the shared inline blender
+0x00B78838,OD_Blend_Color::blend_pixel_alpha,?blend_pixel_alpha@?1??OD_Blend_Color@@YIGGGE@Z@4IA,Existing matched OwnerDraw::BlendGradientRect 0x006217E0 +0x12A stores 255-alpha in the shared inline blender
 0x008A0DDC,DSurface::BlueLeft,,YRpp Drawing.h BlueShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x008A0DD8,DSurface::BlueRight,,YRpp Drawing.h BlueShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x008A0DE4,DSurface::GreenLeft,,YRpp Drawing.h GreenShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
