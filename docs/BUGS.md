@@ -18,3 +18,7 @@ effect, so it can be fixed in a separate build later.
 - **Wonline guest-game dialog (0x00791B10).** The page and reply command paths
   allocate their temporary text buffers with array new and release them with scalar
   delete, preserving the original allocation/deallocation mismatch.
+
+- **MapClass::Build_Reachable_Subzones (0x005840C0).** The final grid scan tests each
+  visited flag against the subzone of the same cell. The cell offset comes from the
+  starting coordinates and never advances with the row or column.
