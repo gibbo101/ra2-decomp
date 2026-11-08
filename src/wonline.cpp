@@ -10130,6 +10130,103 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 	return 0;
 }
 
+// FUNCTION: GAMEMD 0x00793BB0
+void FUN_00793BB0(void)
+{
+	for (int i = 0; i < Session.unknown_2FEC; ++i) {
+		if (Session.unknown_2F8C[i] == 0) {
+			GlobalPacketType packet;
+			memset(&packet, 0, sizeof(packet));
+			packet.Command = NET_PING;
+			strcpy(packet.Name, DAT_00B73E40.get());
+			char const *name = FUN_007350C0(Session.Slots[Session.unknown_2F6C[i]]->Name);
+			FUN_004068E0("Sending keepalive NET_PING packet to %s\n", name);
+			Ipx.Send_Global_Message_To_Name(&packet, 0x2F, 0, Session.Slots[Session.unknown_2F6C[i]]->Name);
+			Session.unknown_2F8C[i] = CDTimerClass<SystemTimerClass>(1200);
+		}
+	}
+}
+
+namespace Game
+{
+namespace Network
+{
+extern int GameStockKeepingUnit;
+extern long PlanetWestwoodStartTime;
+} // namespace Network
+} // namespace Game
+extern char DAT_00B779E0[];
+
+// FUNCTION: GAMEMD 0x007A7B60
+long __stdcall FUN_007A7B60(void *sink, long result, WolChannel *channel, User *users, int game_id)
+{
+	bool all_found = true;
+	int count = DAT_00B77900.length();
+	int listed = 0;
+	DAT_00B76478 = CDTimerClass<SystemTimerClass>(0);
+	if (DAT_00B77E27)
+		return S_OK;
+	DAT_00B77DCC = 1;
+	User *user = users;
+	while (user) {
+		++listed;
+		Wstring name(user->Nick);
+		name.toLower();
+		int i;
+		for (i = 0; i < count; ++i) {
+			User entry;
+			DAT_00B77900.get(entry, i);
+			Wstring other(entry.Nick);
+			other.toLower();
+			if (name == other)
+				break;
+		}
+		if (i >= count) {
+			all_found = false;
+			break;
+		}
+		user = user->Next;
+	}
+	bool ok = listed == count && all_found;
+	if (!ok) {
+		DAT_00B77DEC = false;
+		DAT_00B77E28 = 0;
+	} else {
+		if (FUN_0077CF40()) {
+			HWND dialog = FUN_00775940(0x117);
+			FUN_007757E0(dialog, 0);
+		}
+		HWND dialog = FUN_00775940(0xCF);
+		FUN_007757E0(dialog, 0);
+		Game::Network::WOLGameID = game_id;
+		DAT_00B77D6C = DAT_0084A234;
+		Game::Network::GameStockKeepingUnit = 0x2300;
+		Game::Network::Tournament = DAT_00B76B10.Tournament;
+		if (FUN_0077D970())
+			Game::Network::Tournament = 2;
+		strcpy(DAT_00B77830, DAT_00B73E40.get());
+		User *first = NULL;
+		DAT_00B77900.getPointer(&first, 0);
+		if (first)
+			strcpy(DAT_00B779E0, first->Nick);
+		Game::Network::PlanetWestwoodStartTime = time(0);
+		FUN_004068E0("OnGameStart\n");
+		if (channel)
+			DAT_00B77DD4 = channel->Reserved & 0xFF;
+		DAT_00B77E26 = false;
+		DAT_00B77E27 = true;
+		FUN_00792F10(users);
+		DAT_00B77E28 = 2;
+		FUN_004068E0("Starting a %d player game.\n", Session.NumPlayers);
+		User *host = FUN_007931A0();
+		if (host)
+			FUN_00735060(Session.MasterPlayerName, host->Nick, -1);
+		Session.MasterPlayerID = -1;
+		Session.unknown_2E14 = FUN_007937B0(Session.unknown_2A14);
+	}
+	return S_OK;
+}
+
 // FUNCTION: GAMEMD 0x007A8DA0
 long __stdcall FUN_007A8DA0(void * sink, long result, void * channel, User * user, char const * text)
 {
