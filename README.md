@@ -25,8 +25,14 @@ records every batch.
    and builds two local tables from it (`data/symbols.csv`, `data/layouts.csv`, needs
    `clang`). YRpp serves only as a guide to names and layouts; nothing derived from it is
    shipped here.
-2. Copy your Yuri's Revenge 1.001 `gamemd.exe` (the Steam copy, MD5
-   `2a1307f6f57c9c492f985b4e3afb88e6`) to `orig/gamemd.exe`.
+2. Copy your Yuri's Revenge 1.001 `gamemd.exe` to `orig/gamemd.exe`. Any of these builds
+   will do; the checker puts back the few bytes the later ones changed after linking:
+
+   | build | size | MD5 |
+   |---|---:|---|
+   | retail CD, updated with the official 1.001 patch | 4,813,072 | `937b14db32f07ee47e92a8114ebdbdde` |
+   | The First Decade | 4,813,072 | `6604fd6f4ab71a11c708ea423dc0a29e` |
+   | Steam | 5,286,208 | `2a1307f6f57c9c492f985b4e3afb88e6` |
 3. Check one file, or everything:
 
    ```sh

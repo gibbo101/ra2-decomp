@@ -36,7 +36,8 @@ right target:
   - a function annotated in the same file: its annotated address;
   - any other name: its address in data/symbols.csv, or in another annotated file.
 A name with no known address is reported as unverified, not as a mismatch.
-Bytes EA patched after linking are first put back from data/exe_patches.csv.
+The target is retail 1.001: bytes a Steam or First Decade exe changed after linking are
+first put back from data/exe_patches.csv.
 
 Labels are also checked against the exe's RTTI. A member of a template instance that stores
 a vftable the RTTI names for another class does not match. A function the exe's vtables
@@ -69,6 +70,7 @@ import pefile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from coff import REL_DIR32, REL_REL32, CoffObject  # noqa: E402
+from exebuild import build_of, restore  # noqa: E402
 from rtti import VIRTUAL_CODES, Rtti, vftable_type  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -87,7 +89,9 @@ TIBSUN = ROOT / "reference/tibsun/code"
 
 class Original:
     def __init__(self, path: Path = ROOT / "orig/gamemd.exe"):
-        self.pe = pefile.PE(str(path), fast_load=True)
+        data = path.read_bytes()
+        build = build_of(data)
+        self.pe = pefile.PE(data=data, fast_load=True)
         self._imports = None
         self._rtti = None
         self.base = self.pe.OPTIONAL_HEADER.ImageBase
@@ -97,17 +101,9 @@ class Original:
         with (ROOT / "data/functions.csv").open() as f:
             for r in csv.DictReader(f):
                 self.sizes[int(r["address"], 16)] = int(r["size"])
-        patches = ROOT / "data/exe_patches.csv"
-        if patches.exists():
-            img = bytearray(self.image)
-            with patches.open() as f:
-                for r in csv.DictReader(f):
-                    at = int(r["address"], 16) - self.base
-                    orig = bytes.fromhex(r["original"])
-                    if img[at:at + len(orig)] != bytes.fromhex(r["patched"]):
-                        raise SystemExit(f"exe_patches.csv: bytes at {r['address']} are not EA's patch")
-                    img[at:at + len(orig)] = orig
-            self.image = bytes(img)
+        img = bytearray(self.image)
+        restore(img, self.base, build)
+        self.image = bytes(img)
 
     @cached_property
     def decorated_addresses(self):
