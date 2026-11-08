@@ -686,6 +686,137 @@ struct FileSystem {
 	static ConvertClass * PALETTE_PAL;
 };
 
+static inline bool Is_Deconstructing(TechnoClass const *object)
+{
+	if (!object || object->Fetch_RTTI() != RTTI_BUILDING)
+		return false;
+	BuildingClass const *building = static_cast<BuildingClass const *>(object);
+	return building->BState == BSTATE_CONSTRUCTION && building->Mission == MISSION_DECONSTRUCTION;
+}
+
+// FUNCTION: GAMEMD 0x0043D290
+void BuildingClass::Draw_It(Point2D const &drawpoint, Rect const &cliprect) const
+{
+	Cell cell = PositionCell;
+	ShapeSet const *shapefile = (ShapeSet const *)Get_Image_Data();
+	if (shapefile == NULL)
+		return;
+
+	if (Is_Deconstructing(this)) {
+		for (int i = 0; i < BANIM_COUNT; i++) {
+			if (Anims[i] != NULL) {
+				Anims[i]->Invisible = true;
+			}
+		}
+	}
+	if (Class->IsInvisibleInGame)
+		return;
+
+	Point2D zdrawpoint(198, 446);
+	int zadjust = Class->NormalZAdjust;
+	bool air_product = false;
+	if (Mission == MISSION_UNLOAD) {
+		TechnoClass *product = FUN_0065AD40(0);
+		if (product != NULL && (product->Techno_Type_Class()->JumpJet || product->Techno_Type_Class()->BalloonHover)) {
+			air_product = true;
+		}
+	}
+
+	WORD tint = 0;
+	if (Airstrike != NULL) {
+		BYTE red = Rule->ColorAdd[Rule->LaserTargetColor].Get_Red();
+		BYTE green = Rule->ColorAdd[Rule->LaserTargetColor].Get_Green();
+		BYTE blue = Rule->ColorAdd[Rule->LaserTargetColor].Get_Blue();
+		switch (DSurface::Get_Primary_Color_Mode()) {
+		case 2:
+			tint = (((red << 6) | green) << 5) | blue;
+		case 1:
+			tint |= (((green >> 1) | (red << 5)) << 6) | blue;
+		default:
+			tint |= (((green >> 1) | (red << 5)) << 5) | blue;
+		}
+	}
+	if (IsIronCurtained() && ForceShielded == 1) {
+		BYTE red = Rule->ColorAdd[Rule->ForceShieldColor].Get_Red();
+		BYTE green = Rule->ColorAdd[Rule->ForceShieldColor].Get_Green();
+		BYTE blue = Rule->ColorAdd[Rule->ForceShieldColor].Get_Blue();
+		switch (DSurface::Get_Primary_Color_Mode()) {
+		case 2:
+			tint |= (((red << 6) | green) << 5) | blue;
+		case 1:
+			tint |= (((green >> 1) | (red << 5)) << 6) | blue;
+		default:
+			tint |= (((green >> 1) | (red << 5)) << 5) | blue;
+		}
+	}
+	if (Map[Center_Coord().As_Cell()].Is_Shrouded())
+		tint = 0;
+
+	if (Mission == MISSION_OPEN && (Door.Is_Door_Opening() || Door.Is_Door_Closing() || Door.Is_Door_Open())) {
+		int shapenum = (int)(Door.Percent_Complete() * Class->GateStages);
+		if (Door.Is_Door_Closing())
+			shapenum = Class->GateStages - shapenum;
+		if (Door.Is_Door_Closed())
+			shapenum = 0;
+		if (Door.Is_Door_Open())
+			shapenum = Class->GateStages - 1;
+		if (shapenum >= Class->GateStages)
+			shapenum = Class->GateStages - 1;
+		if (shapenum < 0)
+			shapenum = 0;
+		ShapeSet const *gate_shape = (ShapeSet const *)Get_Image_Data();
+		shapenum += (HealthRatio <= Rule->ConditionYellow ? Class->GateStages + 1 : 0);
+		Techno_Draw_Object(gate_shape, shapenum, drawpoint, cliprect, DIR_N, 256,
+		                   zadjust - TacticalMap->Z_Lepton_To_Pixel(Height), ZGRAD_90DEG, true, Map[cell].Brightness, tint);
+		return;
+	}
+
+	if (Mission == MISSION_UNLOAD &&
+	    ((air_product && Class->RoofDeployingAnim != NULL) || (!air_product && Class->DeployingAnim != NULL))) {
+		if (air_product) {
+			shapefile = Class->RoofDeployingAnim;
+			zadjust = -40;
+		} else {
+			shapefile = Class->DeployingAnim;
+			zadjust = -20;
+		}
+	}
+
+	MissionType mission = Mission;
+	if (mission != MISSION_CONSTRUCTION && mission != MISSION_DECONSTRUCTION) {
+		zdrawpoint += Class->ZShapePointMove;
+	}
+	Point2D zsizeoffset(Class->Width() * CELL_LEPTON - CELL_LEPTON, Class->Height(false) * CELL_LEPTON - CELL_LEPTON);
+	zdrawpoint -= TacticalMap->Coord_To_Pixel_Absolute(zsizeoffset);
+	ShapeSet const *zshapefile = (ShapeSet const *)BuildingTypeClass::BuildingZShape;
+	if (Class->Width() >= 8)
+		zshapefile = NULL;
+
+	if (cliprect.Height > 0) {
+		int shapenum = Shape_Number() < shapefile->Get_Count() / 2 ? Shape_Number() : shapefile->Get_Count() / 2;
+		Techno_Draw_Object(shapefile, shapenum, drawpoint, cliprect, DIR_N, 256,
+		                   zadjust - TacticalMap->Z_Lepton_To_Pixel(Height), ZGRAD_90DEG, true,
+		                   Map[cell].Brightness + Class->ExtraLight, tint, zshapefile, 0, zdrawpoint);
+	}
+	if (Class->BibShape != NULL && BState != BSTATE_CONSTRUCTION) {
+		Techno_Draw_Object(Class->BibShape, Shape_Number(), drawpoint, cliprect, DIR_N, 256,
+		                   -1 - TacticalMap->Z_Lepton_To_Pixel(Height), ZGRAD_GROUND, true,
+		                   Map[cell].Brightness + Class->ExtraLight, tint);
+	}
+	if (Mission == MISSION_UNLOAD &&
+	    ((air_product && Class->UnderRoofDoorAnim != NULL) || (!air_product && Class->UnderDoorAnim != NULL))) {
+		if (air_product) {
+			Techno_Draw_Object(Class->UnderRoofDoorAnim, HealthRatio <= Rule->ConditionYellow, drawpoint, cliprect, DIR_N,
+			                   256, -TacticalMap->Z_Lepton_To_Pixel(Height), ZGRAD_GROUND, true,
+			                   Map[cell].Brightness + Class->ExtraLight, tint);
+		} else {
+			Techno_Draw_Object(Class->UnderDoorAnim, HealthRatio <= Rule->ConditionYellow, drawpoint, cliprect, DIR_N, 256,
+			                   -TacticalMap->Z_Lepton_To_Pixel(Height), ZGRAD_GROUND, true,
+			                   Map[cell].Brightness + Class->ExtraLight, tint);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0043E7B0
 void BuildingClass::DrawInfoTipAndSpiedSelection(Point2D * location, Rect * rect) const
 {
@@ -6879,6 +7010,41 @@ void BuildingClass::FUN_00458330(void)
 	if (Anims[BANIM_ACTIVE_FOUR] != NULL) {
 		Begin_Anim(BANIM_ACTIVE_FOUR, HealthRatio <= Rule->ConditionYellow);
 	}
+}
+
+static inline void Occupant_Offset_To_Coord(Coord &coord, Point2D const &point)
+{
+	int y = point.Y;
+	int x = point.X;
+	coord.X = x;
+	coord.Y = y;
+	coord.Z = 0;
+}
+
+// FUNCTION: GAMEMD 0x004585C0
+void BuildingClass::KillOccupants(TechnoClass *killer)
+{
+	FiringOccupantIndex = 0;
+	if (killer == NULL) {
+		for (int index = Occupants.Count() - 1; index >= 0; --index) {
+			Occupants[index]->Delete_Me();
+		}
+	} else {
+		for (int index = Occupants.Count() - 1; index >= 0; --index) {
+			Coord coord;
+			Occupant_Offset_To_Coord(coord, TacticalMap->Pixel_To_Lepton(Class->MuzzleFlash[index]));
+			coord = coord + Render_Coord();
+			AnimClass *anim = new AnimClass(killer->Get_Class_Weapon_Data(0)->Weapon->AssaultAnim, coord, 0, 1,
+			                                ShapeFlags_Type(0x600), 0, false);
+			anim->ZAdjust = -200;
+			killer->RegisterDestruction(Occupants[index]);
+			Occupants[index]->Delete_Me();
+		}
+	}
+	int capacity = Occupants.Length();
+	Occupants.Clear();
+	Occupants.Resize(capacity, 0);
+	UpdateThreatInCell(Get_Cell_Ptr());
 }
 
 // FUNCTION: GAMEMD 0x00458750
