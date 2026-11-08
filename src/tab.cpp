@@ -570,6 +570,9 @@ drawn:
 	SidebarClass::Draw_It(complete);
 }
 
+// SYNTHETIC: GAMEMD 0x006D0E50 SYMBOL
+// _$E136
+
 // FUNCTION: GAMEMD 0x006D0E60
 void TabClass::Draw_Credits_Tab(void)
 {
