@@ -305,7 +305,7 @@ void ScoreClass::Presentation()
 		hallfame[8].score = 0;
 	}
 	for (index = 0; index < 9; index++) {
-		// The original compares with the wipe index (10) instead of the hall-of-fame index.
+		// Compares with the wipe index (10), not the hall-of-fame index.
 		if (total > hallfame[i].score) {
 			if (index < 8) {
 				for (i = 8; i > index; i--) {

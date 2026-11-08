@@ -438,5 +438,3 @@ address,name,symbol,evidence
 0x0060A330,OwnerDraw::ClassifyLayoutBand,?ClassifyLayoutBand@OwnerDraw@@YGHPAUHWND__@@J@Z,EnumChildWindows callback at 0x0060A5A0 that assigns the control layout band
 0x0060AAB0,OwnerDraw::InitCompactDialogControlsProc,?InitCompactDialogControlsProc@OwnerDraw@@YGHPAUHWND__@@J@Z,EnumChildWindows callback at 0x0060AF40 that sets the sidebar margin and control alpha
 0x0060F9A0,OwnerDraw::RegisterChildControlProc,?RegisterChildControlProc@OwnerDraw@@YGHPAUHWND__@@J@Z,YRpp OwnerDraw.h identifies this callback; called by UI::RegisterWindow and OwnerDraw::PrepareDialogChildControls
-0x00AC48B8,ODMasks,?ODMasks@@3UODComponentMasks@@A,ODInitMasks initializes the red and green masks in adjacent words at 0x00AC48B8 and 0x00AC48BA
-0x00AC48BC,ODBComponentMask,?ODBComponentMask@@3GA,ODInitMasks constructs the blue mask from the surface shifts; OD_Blend_Color uses it for the blue channel
