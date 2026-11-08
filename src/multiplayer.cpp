@@ -63,7 +63,7 @@ class MPHouse
 };
 
 bool __cdecl FUN_0077D940(void);
-void __fastcall FUN_00623840(HWND hwnd);
+int __fastcall FUN_00623840(HWND hwnd);
 int __fastcall FUN_0069B670(SessionClass * session);
 MultiplayerTeam * __fastcall FUN_005C1030(int index);
 extern int DAT_00822CF4;
@@ -214,6 +214,57 @@ MultiplayerGameMode * __fastcall MultiplayerGameMode::Get(int index)
 		}
 	}
 	return(NULL);
+}
+
+static inline WideWstring const & Game_Mode_Name(MultiplayerGameMode const & mode)
+{
+	return mode.UIName;
+}
+
+static inline int Game_Mode_ID(MultiplayerGameMode const & mode)
+{
+	return mode.MPModeIndex;
+}
+
+// FUNCTION: GAMEMD 0x005D6000
+void __fastcall Fill_Game_Mode_List(HWND combo, int id)
+{
+	FUN_00623840(combo);
+	bool listed = Session.Type == 5;
+	for (int i = 0; i < Game_Mode_Count(); i++) {
+		MultiplayerGameMode *mode = Game_Modes()[i];
+		if (!listed || mode->vt_entry_40()) {
+			int item = SendMessage(combo, CB_ADDSTRING, 0, (LPARAM)Game_Mode_Name(*mode).text());
+			if (Game_Mode_ID(*mode) == id)
+				SendMessage(combo, CB_SETCURSEL, item, 0);
+			SendMessage(combo, CB_SETITEMDATA, item, (LPARAM)mode);
+		}
+	}
+}
+
+bool __cdecl FUN_0077D970(void);
+extern int DAT_008316A4;
+
+// FUNCTION: GAMEMD 0x005D6130
+void __fastcall FUN_005D6130(HWND list, int id)
+{
+	SendMessage(list, LB_RESETCONTENT, 0, 0);
+	bool listed = Session.Type == 5;
+	for (int i = 0; i < Game_Mode_Count(); i++) {
+		MultiplayerGameMode *mode = Game_Modes()[i];
+		if (!mode->wolTourney && Session.Type == GAME_INTERNET && FUN_0077D940())
+			continue;
+		if (!mode->wolClanTourney && Session.Type == GAME_INTERNET && FUN_0077D970())
+			continue;
+		if (DAT_008316A4 == 0 && Session.Slots[0]->Slot.SpectatorFlag == -1 && !mode->vt_entry_BC())
+			continue;
+		if (!listed || mode->vt_entry_40()) {
+			int item = SendMessage(list, 0x4CD, 0, (LPARAM)Game_Mode_Name(*mode).text());
+			if (Game_Mode_ID(*mode) == id)
+				SendMessage(list, LB_SETCURSEL, item, 0);
+			SendMessage(list, LB_SETITEMDATA, item, (LPARAM)mode);
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x005D62C0
