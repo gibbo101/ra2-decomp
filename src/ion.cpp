@@ -475,6 +475,61 @@ void __fastcall FUN_0053A140(Cell cell)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0053A300
+void __fastcall FUN_0053A300(Coord coord)
+{
+	CellClass &cellptr = Map[coord];
+	Coord center = Coord(cellptr.Cell_Coord());
+	int pick = Scen->RandomNumber();
+	AnimTypeClass const *type = Rule->WeatherConBolts[(unsigned)pick % Rule->WeatherConBolts.Count()];
+	AnimClass *bolt = new AnimClass(type, center, 0, 1, ShapeFlags_Type(0x600), 0, false);
+	LightningStorm::BoltsPresent.Add(bolt);
+
+	Cell cell = cellptr.CellID;
+	int level = cellptr.Height;
+	Coord where(cell.X * CELL_LEPTON_W + CELL_LEPTON_W / 2, cell.Y * CELL_LEPTON_H + CELL_LEPTON_H / 2,
+	            (cellptr.IsUnderBridge ? BRIDGE_LEPTON_HEIGHT : 0) + level * LEVEL_LEPTON_H);
+	if (where == COORD_NONE) {
+		return;
+	}
+	if (Rule->LightningSounds.Count() > 0) {
+		int sound = Scen->RandomNumber();
+		VocClass::PlayAt(Rule->LightningSounds[(unsigned)sound % Rule->LightningSounds.Count()], where, NULL);
+	}
+	LandType land = cellptr.Land_Type();
+	int damage = Rule->LightningDamage;
+	AnimTypeClass const *anim = Combat_Anim(damage, Rule->LightningWarhead, land, where);
+	new AnimClass(anim, where, 0, 1, ShapeFlags_Type(0x2600), Get_Explosion_Z(where), false);
+
+	bool changed = false;
+	BuildingClass *building = cellptr.Cell_Building();
+	TechnoClass *object = cellptr.Cell_Techno(Point2D(0, 0), false, NULL);
+	bool sheltered = object != NULL && object->Fetch_RTTI() == RTTI_INFANTRY;
+	if (building == NULL && object == NULL) {
+		switch (cellptr.Land_Type()) {
+		case LAND_ROAD:
+		case LAND_ROCK:
+		case LAND_WALL:
+		case LAND_WEEDS:
+			changed = true;
+			break;
+		}
+	}
+	Combat_Lighting(where, damage, Rule->LightningWarhead, false, 0);
+	Explosion_Damage(where, damage, NULL, Rule->LightningWarhead, true, LightningStorm::Owner);
+	if (building != cellptr.Cell_Building() || object != cellptr.Cell_Techno(Point2D(0, 0), false, NULL) ||
+	    cellptr.Height != level) {
+		changed = true;
+	}
+	if (!sheltered && changed) {
+		int count = Random_Pick(2, 4);
+		for (int index = 0; index < count; index++) {
+			new AnimClass(Rule->MetallicDebris[Random_Pick(0, Rule->MetallicDebris.Count() - 1)], where, 0, 1,
+			              ShapeFlags_Type(0x600), 0, false);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0053A6C0
 void FUN_0053A6C0(void)
 {
