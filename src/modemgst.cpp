@@ -267,6 +267,173 @@ BOOL CALLBACK Modem_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, 
 	return(rc);
 }
 
+extern char ModemRXString[];
+extern wchar_t const DAT_00887734[];
+void __cdecl FUN_004068E0(char const *format, ...);
+
+static inline LRESULT Send_Control_Message(HWND window, UINT message, WPARAM wparam = 0, LPARAM lparam = 0)
+{
+	return SendMessageA(window, message, wparam, lparam);
+}
+
+// FUNCTION: GAMEMD 0x005B4EE0
+void ModemGuest::InitDialog(void)
+{
+	wchar_t text[1024];
+	FUN_004068E0("ModemGuest.InitDialog(enter)\n");
+	HWND control = GetDlgItem(_Dialog, IDC_DROPSHIP_OK);
+	if (control) {
+		Send_Control_Message(control, EM_LIMITTEXT, 19);
+		Send_Control_Message(control, 0x4B2, 0, (LPARAM)FUN_00735120(Session.Handle));
+	}
+	FUN_004068E0("Name: %ls\n", Session.Handle);
+	control = GetDlgItem(_Dialog, IDC_MODEM_YOURCOLOR);
+	if (control) {
+		Send_Control_Message(control, CB_RESETCONTENT);
+		Send_Control_Message(control, 0x4C1, -1,
+		             (LPARAM)StringTable::LoadString("TXT_GOLD", 0, "D:\\ra2mdpost\\ModemGst.cpp", 0x118));
+		Send_Control_Message(control, 0x4C1, -1,
+		             (LPARAM)StringTable::LoadString("TXT_RED", 0, "D:\\ra2mdpost\\ModemGst.cpp", 0x119));
+		Send_Control_Message(control, 0x4C1, -1,
+		             (LPARAM)StringTable::LoadString("TXT_BLUE", 0, "D:\\ra2mdpost\\ModemGst.cpp", 0x11A));
+		Send_Control_Message(control, 0x4C1, -1,
+		             (LPARAM)StringTable::LoadString("TXT_GREEN", 0, "D:\\ra2mdpost\\ModemGst.cpp", 0x11B));
+		Send_Control_Message(control, 0x4C1, -1,
+		             (LPARAM)StringTable::LoadString("TXT_ORANGE", 0, "D:\\ra2mdpost\\ModemGst.cpp", 0x11C));
+		Send_Control_Message(control, 0x4C1, -1,
+		             (LPARAM)StringTable::LoadString("TXT_SKY_BLUE", 0, "D:\\ra2mdpost\\ModemGst.cpp", 0x11D));
+		Send_Control_Message(control, 0x4C1, -1,
+		             (LPARAM)StringTable::LoadString("TXT_PURPLE", 0, "D:\\ra2mdpost\\ModemGst.cpp", 0x11E));
+		Send_Control_Message(control, 0x4C1, -1,
+		             (LPARAM)StringTable::LoadString("TXT_PINK", 0, "D:\\ra2mdpost\\ModemGst.cpp", 0x11F));
+		for (int index = 0; index < 8; index++) {
+			Send_Control_Message(control, OD_SETCOLOR, index, PlayerColorTable[index]);
+		}
+		Session.PrefColor = Session.Color;
+		Send_Control_Message(control, CB_SETCURSEL, Session.PrefColor);
+	}
+	FUN_004068E0("Color: %d\n", Session.PrefColor);
+	control = GetDlgItem(_Dialog, IDC_MODEM_YOURSIDE);
+	if (control) {
+		Send_Control_Message(control, CB_RESETCONTENT);
+		for (int house = 0; house < HouseTypes.Count(); house++) {
+			if (HouseTypes[house]->IsMultiplay) {
+				LPARAM name = (LPARAM)HouseTypes[house]->UIName;
+				int row = Send_Control_Message(control, 0x4C2, 0, name);
+				Send_Control_Message(control, CB_SETITEMDATA, row, house);
+			}
+		}
+		int row = ComboBox_Find_Item_Data(control, -1, Session.House);
+		Send_Control_Message(control, CB_SETCURSEL, row);
+	}
+	control = GetDlgItem(_Dialog, IDC_MODEM_UNITCOUNT);
+	if (control) {
+		Send_Control_Message(control, 0x406, 1,
+		             ((unsigned long)(unsigned short)Rule->MaxUnitCount << 16) | (unsigned short)Rule->MinUnitCount);
+		Send_Control_Message(control, 0x405, 1, Session.Options.UnitCount);
+	}
+	FUN_004068E0("UnitCount: %d\n", Session.Options.UnitCount);
+	control = GetDlgItem(_Dialog, IDC_TECHLEVEL);
+	if (control) {
+		Send_Control_Message(control, 0x406, 1, 0xA0001);
+		Send_Control_Message(control, 0x405, 1, BuildLevel);
+	}
+	FUN_004068E0("TechLevel: %d\n", BuildLevel);
+	control = GetDlgItem(_Dialog, IDC_CREDITS);
+	if (control) {
+		Send_Control_Message(control, 0x406, 1,
+		             ((unsigned long)(unsigned short)Rule->MPMaxMoney << 16) | (unsigned short)Rule->MinMoney);
+		Send_Control_Message(control, 0x405, 1, Session.Options.Credits);
+	}
+	FUN_004068E0("Credits: %d\n", Session.Options.Credits);
+	control = GetDlgItem(_Dialog, IDC_AIPLAYERS);
+	if (control) {
+		Send_Control_Message(control, 0x406, 1, 0x60000);
+		Send_Control_Message(control, 0x405, 1, Session.Options.AIPlayers);
+	}
+	FUN_004068E0("AIPlayers: %d\n", Session.Options.AIPlayers);
+	control = GetDlgItem(_Dialog, IDC_GAME_SPEED_SLIDER);
+	if (control) {
+		Send_Control_Message(control, 0x406, 1, 0x60000);
+		Send_Control_Message(control, 0x405, 1, 6 - Session.Options.GameSpeed);
+	}
+	FUN_004068E0("Game Speed: %d\n", Session.Options.GameSpeed);
+	control = GetDlgItem(_Dialog, IDC_AILEVEL_SLIDER);
+	if (control) {
+		Send_Control_Message(control, 0x406, 1, 0x20000);
+		Send_Control_Message(control, 0x405, 1, Session.Options.AIDifficulty);
+	}
+	FUN_004068E0("AIDifficulty: %d\n", Session.Options.AIDifficulty);
+	control = GetDlgItem(_Dialog, IDC_MODEM_REDEPLOY_MCV);
+	if (control) {
+		Send_Control_Message(control, BM_SETCHECK, Session.Options.MCVRedeploy == true);
+	}
+	FUN_004068E0("MCVRedeploy: %s\n", Session.Options.MCVRedeploy == true ? "ON" : "OFF");
+	control = GetDlgItem(_Dialog, IDC_MODEM_BASES);
+	if (control) {
+		Send_Control_Message(control, BM_SETCHECK, Session.Options.Bases == true);
+	}
+	FUN_004068E0("Bases: %s\n", Session.Options.Bases == true ? "ON" : "OFF");
+	control = GetDlgItem(_Dialog, IDC_SHORT_GAME);
+	if (control) {
+		Send_Control_Message(control, BM_SETCHECK, Session.Options.ShortGame == true);
+	}
+	FUN_004068E0("Short Game: %s\n", Session.Options.ShortGame == true ? "ON" : "OFF");
+	control = GetDlgItem(_Dialog, 0x69A);
+	if (control) {
+		Send_Control_Message(control, BM_SETCHECK, Session.Options.SWAllowed == true);
+	}
+	FUN_004068E0("SuperWeapons: %s\n", Session.Options.SWAllowed == true ? "ON" : "OFF");
+	control = GetDlgItem(_Dialog, 0x69D);
+	if (control) {
+		Send_Control_Message(control, BM_SETCHECK, Session.Options.BuildOffAlly == true);
+	}
+	FUN_004068E0("BuildOffAlly: %s\n", Session.Options.BuildOffAlly == true ? "ON" : "OFF");
+	control = GetDlgItem(_Dialog, IDC_MULTI_ENGINEER);
+	if (control) {
+		Send_Control_Message(control, BM_SETCHECK, Session.Options.CrapEngineers == true);
+	}
+	FUN_004068E0("Crap Engineers: %s\n", Session.Options.CrapEngineers == true ? "ON" : "OFF");
+	control = GetDlgItem(_Dialog, IDC_GOODIES);
+	if (control) {
+		Send_Control_Message(control, BM_SETCHECK, Session.Options.Goodies == true);
+	}
+	FUN_004068E0("Crates: %s\n", Session.Options.Goodies == true ? "ON" : "OFF");
+	control = GetDlgItem(_Dialog, IDC_MODEM_FOG);
+	if (control) {
+		Send_Control_Message(control, BM_SETCHECK, Session.Options.FogOfWar == true);
+	}
+	FUN_004068E0("FogOfWar: %s\n", Session.Options.FogOfWar == true ? "ON" : "OFF");
+	control = GetDlgItem(_Dialog, IDC_BRIDGE_DESTROY);
+	if (control) {
+		Send_Control_Message(control, BM_SETCHECK, Session.Options.BridgeDestruction == true);
+	}
+	FUN_004068E0("BridgeDestroy: %s\n", Session.Options.BridgeDestruction == true ? "ON" : "OFF");
+	control = GetDlgItem(_Dialog, IDC_HARVTRUCE);
+	if (control) {
+		Send_Control_Message(control, BM_SETCHECK, Session.Options.HarvTruce == true);
+	}
+	FUN_004068E0("Harvester Truce: %s\n", Session.Options.HarvTruce == true ? "ON" : "OFF");
+	VerNum.Init_Clipping();
+	if (MultiplayerMapPreview) {
+		delete MultiplayerMapPreview;
+		MultiplayerMapPreview = 0;
+	}
+	if (strlen(ModemRXString) > 78) {
+		ModemRXString[79] = 0;
+	}
+	if (strlen(ModemRXString)) {
+		FUN_00735060(text, ModemRXString, -1);
+		DrawMessage(text, -1, DAT_00887734);
+	}
+	ModemRXString[0] = 0;
+	NullModem.Reset_Response_Time(true);
+	Session.NetOpen = 1;
+	Clear_Vector(&Session.Players);
+	Session.Options.ScenarioDescription[0] = 0;
+	FUN_004068E0("ModemGuest.InitDialog(exit)\n");
+}
+
 // FUNCTION: GAMEMD 0x005B56F0
 void ModemGuest::ReadDialog(void)
 {
