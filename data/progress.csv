@@ -3291,6 +3291,7 @@ address,name,result,size,source,symbol
 0x0049F5C0,CopyProtection::IsLauncherRunning,MATCH,91,src/copyprotection.cpp,?IsLauncherRunning@CopyProtection@@YI_NXZ
 0x0049F620,CopyProtection::NotifyLauncher,MATCH,276,src/copyprotection.cpp,?NotifyLauncher@CopyProtection@@YI_NXZ
 0x0049F740,CopyProtection::DispatchLauncherMessage,MATCH,88,src/copyprotection.cpp,?DispatchLauncherMessage@CopyProtection@@YIXPAUtagMSG@@@Z
+0x0049F7A0,CopyProtection::CheckProtectedData,MATCH,264,src/copyprotection.cpp,?CheckProtectedData@CopyProtection@@YI_NXZ
 0x0049F8B0,CopyProtection::ShutDown,MATCH,101,src/copyprotection.cpp,?ShutDown@CopyProtection@@YIXXZ
 0x0049F920,CopyProtection::CheckVersion,MATCH,135,src/copyprotection.cpp,?CheckVersion@CopyProtection@@YI_NXZ
 0x0049F9B0,CounterClass::CounterClass,MATCH,27,src/counter.cpp,??0CounterClass@@QAE@XZ
