@@ -173,6 +173,69 @@ int FUN_00730AE0(void)
 }
 
 
+// FUNCTION: GAMEMD 0x00730AF0
+void FUN_00730AF0(void)
+{
+	ObjectClass * object;
+	bool played = false;
+	if (DAT_00A8ECB8.Count() <= 0) return;
+	if (DAT_00A8ECB8[0] != NULL) {
+		BuildingClass * first = (BuildingClass *)DAT_00A8ECB8[0];
+		if (Is_Target_Building(first) && first->GetOccupantCount() > 0 && first->House->Is_Player_Control()) {
+			object = DAT_00A8ECB8[0];
+			if (object && (object->AbstractFlags & 1) && ((TechnoClass *)object)->ClickedEvent(EventClass::DEPLOY)) {
+				VocClass::PlayGlobal(Rule->DeploySound, 1.0f, 0x2000);
+			}
+			return;
+		}
+	}
+	bool deployed = false;
+	bool undeployed = false;
+	int count = DAT_00A8ECB8.Count();
+	for (int i = 0; i < count; i++) {
+		object = DAT_00A8ECB8[i];
+		if (object) {
+			if (object->RTTI == RTTI_INFANTRY && ((InfantryClass *)object)->FUN_005224E0()) {
+				if (((InfantryClass *)object)->FUN_00522510()) {
+					deployed = true;
+				} else {
+					undeployed = true;
+				}
+				if (deployed && undeployed) break;
+			} else if (object->RTTI == RTTI_UNIT && ((UnitClass *)object)->Class->IsSimpleDeployer) {
+				if (((UnitClass *)object)->FUN_00746D90()) {
+					deployed = true;
+				} else {
+					undeployed = true;
+				}
+				if (deployed && undeployed) break;
+			}
+		}
+	}
+	for (int j = 0; j < count; j++) {
+		object = DAT_00A8ECB8[j];
+		if (object && (object->Can_Player_Move() || object->Can_Player_Fire()) && (object->AbstractFlags & 1)) {
+			TechnoClass * techno = (TechnoClass *)object;
+			if (techno->Can_Attack_Now() && techno->Can_Deploy_Now() && !techno->Berzerk) {
+				InfantryClass * infantry = (object->RTTI == RTTI_INFANTRY) ? (InfantryClass *)object : NULL;
+				UnitClass * unit = (object->RTTI == RTTI_UNIT) ? (UnitClass *)object : NULL;
+				if (infantry && infantry->FUN_005224E0() && deployed && undeployed && infantry->FUN_00522510()) {
+					continue;
+				}
+				if (unit && unit->Class->IsSimpleDeployer && deployed && undeployed && unit->FUN_00746D90()) {
+					continue;
+				}
+				if (techno->ClickedEvent(EventClass::DEPLOY)) {
+					played = true;
+				}
+			}
+		}
+	}
+	if (played) {
+		VocClass::PlayGlobal(Rule->DeploySound, 1.0f, 0x2000);
+	}
+}
+
 static inline UnitClass * Unit_Of(ObjectClass * object)
 {
 	return (object->RTTI == RTTI_UNIT) ? (UnitClass *)object : NULL;
