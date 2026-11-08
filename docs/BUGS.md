@@ -23,3 +23,11 @@ effect, so it can be fixed in a separate build later.
 - **Wonline guest-game dialog (0x00791B10).** The page and reply command paths
   allocate their temporary text buffers with array new and release them with scalar
   delete, preserving the original allocation/deallocation mismatch.
+
+- **Dropship_Screen (0x004B6C30).** The dropship and four green-light shape files
+  are loaded into raw unsigned-byte arrays, but cleanup deletes them through
+  `SHPReference *` array pointers. The original reads an array cookie at pointer
+  minus four (0x004B93C8 and 0x004B9409), destroys 36-byte elements and frees the
+  cookie base, although the byte-array allocations created no such cookie. This
+  can read an invalid count and destroy or free unrelated memory; the recovered
+  source preserves the original allocation/deallocation mismatch.

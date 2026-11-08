@@ -100,13 +100,13 @@ SHPStruct::~SHPStruct(void)
 }
 
 // FUNCTION: GAMEMD 0x0069E740
-void * SHPStruct::GetPixels(int frame) const
+unsigned char * SHPStruct::GetPixels(int frame) const
 {
 	((SHPStruct *)this)->Load();
 	SHPFile * file = (SHPFile *)((SHPStruct *)this)->GetData();
 	if (file && (unsigned)frame < (unsigned)file->Count) {
 		SHPFrame * header = &file->Frames[frame];
-		if (header && header->Offset) return((char *)file + header->Offset);
+		if (header && header->Offset) return((unsigned char *)file + header->Offset);
 	}
 	return(NULL);
 }
