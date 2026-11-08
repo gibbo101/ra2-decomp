@@ -11,8 +11,8 @@ over real objects or hard-coded addresses are rejected however well they score.
 `docs/AGENTS.md` holds the rules the agents follow and every lesson learned. Pull requests
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
-**Status (6 November 2026):** 3.01 MB of the game's 3.81 MB of code matches byte for byte
-(79%), in 18,871 of its 19,362 functions (97%). Counting each unmatched function at its best
+**Status (8 November 2026):** 3.06 MB of the game's 3.81 MB of code matches byte for byte
+(80%), in 18,909 of its 19,362 functions (98%). Counting each unmatched function at its best
 attempt so far, the fuzzy match is 92%. Each function is checked on its own; linking a whole
 executable that matches comes later. `docs/PLAN.md` has the method, and `docs/rounds/`
 records every batch.
@@ -74,9 +74,10 @@ out of history.
 - [dk8827](https://github.com/dk8827): matched functions in jumpjet, the capture manager,
   house, team, foot, planning, tactical, isotype, techno, the random map generator,
   netshare, the co-op campaign, text and subtitles, the sidebar and radar, custom dialogs
-  and load progress, cells, the display, pathfinding, the INI readers, UI commands and
-  the World Domination Tour; brought Westwood's archived assembly into the build with
-  MASM; and added the checker's completion checks and function-map callbacks.
+  and load progress, cells, the display, pathfinding, the INI readers, UI commands, the
+  World Domination Tour and the dropship and score screens; brought Westwood's archived
+  assembly into the build with MASM; and added the checker's completion checks and
+  function-map callbacks.
 - [meastes](https://github.com/meastes): matched functions in the map, VQA loading,
   static-sound saving and Techno line drawing, ported from their matching decompilation
   of Red Alert 2 ([meastes/redalert2-decomp](https://github.com/meastes/redalert2-decomp),

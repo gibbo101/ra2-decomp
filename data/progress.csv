@@ -1515,6 +1515,7 @@ address,name,result,size,source,symbol
 0x0043C2D0,BuildingClass::Receive_Message,MATCH,3019,src/building.cpp,?Receive_Message@BuildingClass@@UAE?AW4RadioMessageType@@PAVRadioClass@@W42@AAH@Z
 0x0043CEA0,BuildingClass::Render,MATCH,387,src/building.cpp,?Render@BuildingClass@@UBE_NAAV?$TRect@H@@_N1@Z
 0x0043D030,BuildingClass::Editor_Draw_It,MATCH,599,src/building.cpp,?Editor_Draw_It@BuildingClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
+0x0043D290,BuildingClass::Draw_It,MATCH,2022,src/building.cpp,?Draw_It@BuildingClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x0043E7B0,BuildingClass::DrawInfoTipAndSpiedSelection,MATCH,325,src/building.cpp,?DrawInfoTipAndSpiedSelection@BuildingClass@@QBEXPAVPoint2D@@PAV?$TRect@H@@@Z
 0x0043E900,BuildingClass::Get_Z_Adjust,MATCH,52,src/building.cpp,?Get_Z_Adjust@BuildingClass@@UBEHXZ
 0x0043E940,BuildingClass::Barrel_Pitch,MATCH,1012,src/building.cpp,?Barrel_Pitch@BuildingClass@@UBE?AVDirType@@PAVAbstractClass@@@Z
@@ -1687,6 +1688,7 @@ address,name,result,size,source,symbol
 0x004581F0,BuildingClass::GetOccupantCount,MATCH,7,src/building.cpp,?GetOccupantCount@BuildingClass@@UBEHXZ
 0x00458200,BuildingClass::FUN_00458200,MATCH,301,src/building.cpp,?FUN_00458200@BuildingClass@@QAEXXZ
 0x00458330,BuildingClass::FUN_00458330,MATCH,656,src/building.cpp,?FUN_00458330@BuildingClass@@QAEXXZ
+0x004585C0,BuildingClass::KillOccupants,MATCH,385,src/building.cpp,?KillOccupants@BuildingClass@@QAEXPAVTechnoClass@@@Z
 0x00458750,BuildingClass::FUN_00458750,MATCH,126,src/building.cpp,?FUN_00458750@BuildingClass@@QAEXXZ
 0x004587D0,BuildingClass::FUN_004587D0,MATCH,49,src/building.cpp,?FUN_004587D0@BuildingClass@@QAE_NPBVObjectTypeClass@@@Z
 0x00458810,BuildingClass::Get_Barrel_Matrix,MATCH,432,src/building.cpp,?Get_Barrel_Matrix@BuildingClass@@QBE?AVMatrix3D@@XZ
@@ -3885,6 +3887,7 @@ address,name,result,size,source,symbol
 0x004B6BB0,DropshipLoadoutClass::Swizzle,MATCH,43,src/dropship.cpp,?Swizzle@DropshipLoadoutClass@@QAEXXZ
 0x004B6BE0,DropshipLoadoutClass::Fetch,MATCH,11,src/dropship.cpp,?Fetch@DropshipLoadoutClass@@QAEPAVTechnoTypeClass@@H@Z
 0x004B6BF0,DropshipLoadoutClass::Get_Allowable_Index,MATCH,60,src/dropship.cpp,?Get_Allowable_Index@DropshipLoadoutClass@@CIHPAVTechnoTypeClass@@@Z
+0x004B6C30,Dropship_Screen,MATCH,10849,src/dropship.cpp,?Dropship_Screen@@YIXXZ
 0x004B96A0,Draw_Cost,MATCH,486,src/dropship.cpp,?Draw_Cost@@YIXHHAAVSurface@@ABVPoint2D@@PBG_NAAVConvertClass@@PBVBlitter@@@Z
 0x004B9890,Draw_Unit_Info,MATCH,828,src/dropship.cpp,?Draw_Unit_Info@@YIXPAVSurface@@PAVConvertClass@@PAVTechnoTypeClass@@_N@Z
 0x004B9BE0,?Clear@?$DynamicVectorClass@PAUButtonFadeEffect@@@@UAEXXZ,MATCH,42,src/dropship.cpp,?Clear@?$DynamicVectorClass@PAUButtonFadeEffect@@@@UAEXXZ
@@ -3914,6 +3917,7 @@ address,name,result,size,source,symbol
 0x004BA2A0,??_G?$DynamicVectorClass@PAUCrossDissolveEffect@@@@UAEPAXI@Z,MATCH,73,src/dropship.cpp,??_G?$DynamicVectorClass@PAUCrossDissolveEffect@@@@UAEPAXI@Z
 0x004BA2F0,??0?$VectorClass@PAUButtonFadeEffect@@@@QAE@HPBQAUButtonFadeEffect@@@Z,MATCH,74,src/dropship.cpp,??0?$VectorClass@PAUButtonFadeEffect@@@@QAE@HPBQAUButtonFadeEffect@@@Z
 0x004BA340,??0?$VectorClass@PAUCrossDissolveEffect@@@@QAE@HPBQAUCrossDissolveEffect@@@Z,MATCH,74,src/dropship.cpp,??0?$VectorClass@PAUCrossDissolveEffect@@@@QAE@HPBQAUCrossDissolveEffect@@@Z
+0x004B9BD0,RGBClass::RGBClass,MATCH,13,src/dropship.cpp,??0RGBClass@@QAE@XZ
 0x004BA390,_$E41,MATCH,23,src/dsurface.cpp,_$E41
 0x004BA3B0,_$E2,MATCH,40,src/dsurface.cpp,_$E2
 0x004BA3E0,_$E5,MATCH,19,src/dsurface.cpp,_$E5
@@ -4317,6 +4321,7 @@ address,name,result,size,source,symbol
 0x004CBB60,_$E38,MATCH,18,src/findpath.cpp,_$E38
 0x004CBB80,_$E41,MATCH,26,src/findpath.cpp,_$E41
 0x004CBBA0,FootClass::Find_Path,MATCH,158,src/findpath.cpp,?Find_Path@FootClass@@AAEPAUPathStruct@@ABVCell@@PAW4FacingType@@HW4MoveType@@HH@Z
+0x004CBC40,FootClass::Safety_Point,MATCH,677,src/findpath.cpp,?Safety_Point@FootClass@@QAE?AVCell@@ABV2@0HH@Z
 0x004CBEF0,_$E2,MATCH,23,src/findpath2.cpp,_$E2
 0x004CBF10,_$E5,MATCH,40,src/findpath2.cpp,_$E5
 0x004CBF40,_$E8,MATCH,19,src/findpath2.cpp,_$E8
@@ -4680,6 +4685,7 @@ address,name,result,size,source,symbol
 0x004E1530,GadgetClass::Action,MATCH,31,src/gadget.cpp,?Action@GadgetClass@@MAEHIAAW4KeyNumType@@H@Z
 0x004E1550,GadgetClass::Draw_Me,MATCH,32,src/gadget.cpp,?Draw_Me@GadgetClass@@UAEHH@Z
 0x004E1570,GadgetClass::Draw_All,MATCH,44,src/gadget.cpp,?Draw_All@GadgetClass@@UAEX_N@Z
+0x004E15A0,GadgetClass::Extract_Gadget_At,MATCH,148,src/gadget.cpp,?Extract_Gadget_At@GadgetClass@@QAEPAV1@HH@Z
 0x004E1640,GadgetClass::Input,MATCH,732,src/gadget.cpp,?Input@GadgetClass@@UAE?AW4KeyNumType@@XZ
 0x004E1920,GadgetClass::Extract_Gadget,MATCH,54,src/gadget.cpp,?Extract_Gadget@GadgetClass@@UAEPAVControlClass@@I@Z
 0x004E1960,GadgetClass::Flag_To_Redraw,MATCH,5,src/gadget.cpp,?Flag_To_Redraw@GadgetClass@@UAEXXZ
@@ -5487,6 +5493,7 @@ address,name,result,size,source,symbol
 0x004F2140,GraphicMenu::GraphicMenu,MATCH,82,src/grphmenu.cpp,??0GraphicMenu@@QAE@XZ
 0x004F21A0,GraphicMenu::~GraphicMenu,MATCH,210,src/grphmenu.cpp,??1GraphicMenu@@UAE@XZ
 0x004F2280,GraphicMenu::Set_Item_Enabled,MATCH,115,src/grphmenu.cpp,?Set_Item_Enabled@GraphicMenu@@QAEXH_N@Z
+0x004F2300,GraphicMenu::Presentation,MATCH,826,src/grphmenu.cpp,?Presentation@GraphicMenu@@QAEHXZ
 0x004F2640,GraphicMenu::Set_Animation,MATCH,49,src/grphmenu.cpp,?Set_Animation@GraphicMenu@@QAEXPAVMSAnim@@@Z
 0x004F2680,GraphicMenu::Set_Theme_Name,MATCH,16,src/grphmenu.cpp,?Set_Theme_Name@GraphicMenu@@QAEXABVWstring@@@Z
 0x004F2690,GraphicMenu::Add_Item,MATCH,71,src/grphmenu.cpp,?Add_Item@GraphicMenu@@QAEXPAVGraphicMenuItem@@@Z
@@ -6302,6 +6309,7 @@ address,name,result,size,source,symbol
 0x005247C0,InfantryTypeClass::CanAttackMove,MATCH,5,src/infatype.cpp,?CanAttackMove@InfantryTypeClass@@UBE_NXZ
 0x005247D0,InfantryTypeClass::Coord_Fixup,MATCH,97,src/infatype.cpp,?Coord_Fixup@InfantryTypeClass@@UBE?BVCoord@@ABV2@@Z
 0x00524840,InfantryTypeClass::Compute_CRC,MATCH,276,src/infatype.cpp,?Compute_CRC@InfantryTypeClass@@UBEXAAVCRCEngine@@@Z
+0x00524960,InfantryTypeClass::Load,MATCH,510,src/infatype.cpp,?Load@InfantryTypeClass@@UAGJPAUIStream@@@Z
 0x00524B60,InfantryTypeClass::Save,MATCH,257,src/infatype.cpp,?Save@InfantryTypeClass@@UAGJPAUIStream@@H@Z
 0x00524C70,InfantryTypeClass::GetClassID,MATCH,56,src/infatype.cpp,?GetClassID@InfantryTypeClass@@UAGJPAU_GUID@@@Z
 0x00524CB0,InfantryTypeClass::Find_Or_Make,MATCH,131,src/infatype.cpp,?Find_Or_Make@InfantryTypeClass@@SIPAV1@PBD@Z
@@ -6861,6 +6869,7 @@ address,name,result,size,source,symbol
 0x0053A120,FUN_0053A120,MATCH,15,src/ion.cpp,?FUN_0053A120@@YI_NXZ
 0x0053A130,FUN_0053A130,MATCH,3,src/ion.cpp,?FUN_0053A130@@YI_NXZ
 0x0053A140,FUN_0053A140,MATCH,436,src/ion.cpp,?FUN_0053A140@@YIXVCell@@@Z
+0x0053A300,FUN_0053A300,MATCH,947,src/ion.cpp,?FUN_0053A300@@YIXVCoord@@@Z
 0x0053A6C0,FUN_0053A6C0,MATCH,1165,src/ion.cpp,?FUN_0053A6C0@@YIXXZ
 0x0053AB50,FUN_0053AB50,MATCH,18,src/ion.cpp,?FUN_0053AB50@@YIXXZ
 0x0053AB70,FUN_0053AB70,MATCH,224,src/ion.cpp,?FUN_0053AB70@@YIXXZ
@@ -7968,11 +7977,14 @@ address,name,result,size,source,symbol
 0x0057B870,MapClass::Get_Low_Bridge_EW_Neighbor_Mask,MATCH,282,src/map.cpp,?Get_Low_Bridge_EW_Neighbor_Mask@MapClass@@CIHABVCell@@@Z
 0x0057B990,MapClass::Get_Low_Bridge_NS_Neighbor_Mask,MATCH,262,src/map.cpp,?Get_Low_Bridge_NS_Neighbor_Mask@MapClass@@CIHABVCell@@@Z
 0x0057BAA0,MapClass::Damage_Low_Bridge,MATCH,582,src/map.cpp,?Damage_Low_Bridge@MapClass@@QAE_NABVCell@@@Z
+0x0057BCF0,MapClass::Damage_Low_Bridge_EW,MATCH,1471,src/map.cpp,?Damage_Low_Bridge_EW@MapClass@@AAE_NABVCell@@@Z
+0x0057C2B0,MapClass::Damage_Low_Bridge_NS,MATCH,1471,src/map.cpp,?Damage_Low_Bridge_NS@MapClass@@AAE_NABVCell@@@Z
 0x0057C870,MapClass::Spring_Low_Bridge_Destroyed_NS,MATCH,287,src/map.cpp,?Spring_Low_Bridge_Destroyed_NS@MapClass@@AAEXVCell@@@Z
 0x0057C990,MapClass::Spring_Low_Bridge_Destroyed_EW,MATCH,287,src/map.cpp,?Spring_Low_Bridge_Destroyed_EW@MapClass@@AAEXVCell@@@Z
 0x0057CAB0,MapClass::FUN_0057CAB0,MATCH,290,src/map.cpp,?FUN_0057CAB0@MapClass@@SIHABVCell@@@Z
 0x0057CBE0,MapClass::FUN_0057CBE0,MATCH,266,src/map.cpp,?FUN_0057CBE0@MapClass@@SIHABVCell@@@Z
 0x0057CCF0,MapClass::FUN_0057CCF0,MATCH,618,src/map.cpp,?FUN_0057CCF0@MapClass@@QAE_NABVCell@@@Z
+0x0057CF60,MapClass::FUN_0057CF60,MATCH,1477,src/map.cpp,?FUN_0057CF60@MapClass@@QAE_NABVCell@@@Z
 0x0057DAF0,MapClass::FUN_0057DAF0,MATCH,295,src/map.cpp,?FUN_0057DAF0@MapClass@@QAEXVCell@@@Z
 0x0057DC20,MapClass::FUN_0057DC20,MATCH,295,src/map.cpp,?FUN_0057DC20@MapClass@@QAEXVCell@@@Z
 0x0057DD50,MapClass::Damage_Low_Bridge_Piece_EW,MATCH,1357,src/map.cpp,?Damage_Low_Bridge_Piece_EW@MapClass@@AAEXABVCell@@@Z
@@ -8663,6 +8675,7 @@ address,name,result,size,source,symbol
 0x005B4990,FUN_005B4990,MATCH,26,src/modemgst.cpp,?FUN_005B4990@@YIXXZ
 0x005B49B0,ModemGuest::Dialog,MATCH,351,src/modemgst.cpp,?Dialog@ModemGuest@@QAE_NXZ
 0x005B4B10,Modem_Guest_Dialog_Proc,MATCH,976,src/modemgst.cpp,?Modem_Guest_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
+0x005B4EE0,ModemGuest::InitDialog,MATCH,2058,src/modemgst.cpp,?InitDialog@ModemGuest@@AAEXXZ
 0x005B56F0,ModemGuest::ReadDialog,MATCH,210,src/modemgst.cpp,?ReadDialog@ModemGuest@@AAEXXZ
 0x005B57D0,ModemGuest::SendCurrentMessage,MATCH,390,src/modemgst.cpp,?SendCurrentMessage@ModemGuest@@AAEXXZ
 0x005B5960,ModemGuest::SetHouse,MATCH,76,src/modemgst.cpp,?SetHouse@ModemGuest@@AAEXXZ
@@ -9598,6 +9611,8 @@ address,name,result,size,source,symbol
 0x005D5E10,First_Game_Mode,MATCH,192,src/multiplayer.cpp,?First_Game_Mode@@YIPAVMultiplayerGameMode@@XZ
 0x005D5ED0,Game_Mode_Total,MATCH,88,src/multiplayer.cpp,?Game_Mode_Total@@YIHXZ
 0x005D5F30,MultiplayerGameMode::Get,MATCH,201,src/multiplayer.cpp,?Get@MultiplayerGameMode@@SIPAV1@H@Z
+0x005D6000,Fill_Game_Mode_List,MATCH,304,src/multiplayer.cpp,?Fill_Game_Mode_List@@YIXPAUHWND__@@H@Z
+0x005D6130,FUN_005D6130,MATCH,396,src/multiplayer.cpp,?FUN_005D6130@@YIXPAUHWND__@@H@Z
 0x005D62C0,MultiplayerGameMode::vt_entry_10,MATCH,73,src/multiplayer.cpp,?vt_entry_10@MultiplayerGameMode@@UAE_NXZ
 0x005D6310,MultiplayerGameMode::vt_entry_14,MATCH,5,src/multiplayer.cpp,?vt_entry_14@MultiplayerGameMode@@UAE_NPAVWideWstring@@@Z
 0x005D6320,MultiplayerGameMode::vt_entry_04,MATCH,3,src/multiplayer.cpp,?vt_entry_04@MultiplayerGameMode@@UAE_NXZ
@@ -9767,6 +9782,7 @@ address,name,result,size,source,symbol
 0x005DB6F0,Net2Shutdown_Network,MATCH,39,src/netdlg2.cpp,?Net2Shutdown_Network@@YIXXZ
 0x005DB720,Net2ServiceGameList,MATCH,651,src/netdlg2.cpp,?Net2ServiceGameList@@YIXXZ
 0x005DB9B0,Net2DisplayGameList,MATCH,425,src/netdlg2.cpp,?Net2DisplayGameList@@YIXXZ
+0x005DBB60,FUN_005DBB60,MATCH,689,src/netdlg2.cpp,?FUN_005DBB60@@YIXPAD@Z
 0x005DBE20,Net2SetAccept,MATCH,155,src/netdlg2.cpp,?Net2SetAccept@@YIXPADH@Z
 0x005DBEC0,Net2GetAccept,MATCH,129,src/netdlg2.cpp,?Net2GetAccept@@YIHPAD@Z
 0x005DBF50,Net2SetHouseAndColor,MATCH,539,src/netdlg2.cpp,?Net2SetHouseAndColor@@YIHPADHHHH@Z
@@ -10444,12 +10460,16 @@ address,name,result,size,source,symbol
 0x0060A230,FUN_0060A230,MATCH,30,src/ownrdraw.cpp,?FUN_0060A230@@YIHPAUHWND__@@@Z
 0x0060A250,FUN_0060A250,MATCH,168,src/ownrdraw.cpp,?FUN_0060A250@@YGHPAUHWND__@@J@Z
 0x0060A300,FUN_0060A300,MATCH,39,src/ownrdraw.cpp,?FUN_0060A300@@YIHPAUHWND__@@@Z
+0x0060A330,OwnerDraw::ClassifyLayoutBand,MATCH,610,src/ownrdraw.cpp,?ClassifyLayoutBand@OwnerDraw@@YGHPAUHWND__@@J@Z
 0x0060A5A0,FUN_0060A5A0,MATCH,15,src/ownrdraw.cpp,?FUN_0060A5A0@@YIXPAUHWND__@@@Z
 0x0060AA50,FUN_0060AA50,MATCH,15,src/ownrdraw.cpp,?FUN_0060AA50@@YIXPAUHWND__@@@Z
 0x0060AA60,OwnerDraw::SendTransitionCompleteToCustomTextChildProc,MATCH,50,src/ownrdraw.cpp,?SendTransitionCompleteToCustomTextChildProc@OwnerDraw@@YGHPAUHWND__@@J@Z
 0x0060AAA0,FUN_0060AAA0,MATCH,15,src/ownrdraw.cpp,?FUN_0060AAA0@@YIXPAUHWND__@@@Z
+0x0060AAB0,OwnerDraw::InitCompactDialogControlsProc,MATCH,1156,src/ownrdraw.cpp,?InitCompactDialogControlsProc@OwnerDraw@@YGHPAUHWND__@@J@Z
 0x0060AF40,FUN_0060AF40,MATCH,15,src/ownrdraw.cpp,?FUN_0060AF40@@YIXPAUHWND__@@@Z
 0x0060AF50,FUN_0060AF50,MATCH,173,src/ownrdraw.cpp,?FUN_0060AF50@@YIXPAUHWND__@@PAUtagRECT@@@Z
+0x0060B000,FUN_0060B000,MATCH,463,src/ownrdraw.cpp,?FUN_0060B000@@YIXPAUHWND__@@ABVPoint2D@@@Z
+0x0060B1D0,FUN_0060B1D0,MATCH,370,src/ownrdraw.cpp,?FUN_0060B1D0@@YIXPAUHWND__@@ABVPoint2D@@@Z
 0x0060B350,FUN_0060B350,MATCH,206,src/ownrdraw.cpp,?FUN_0060B350@@YIXPAUHWND__@@@Z
 0x0060B420,FUN_0060B420,MATCH,298,src/ownrdraw.cpp,?FUN_0060B420@@YIXPAUHWND__@@@Z
 0x0060B550,FUN_0060B550,MATCH,182,src/ownrdraw.cpp,?FUN_0060B550@@YIXPAUHWND__@@@Z
@@ -10484,16 +10504,17 @@ address,name,result,size,source,symbol
 0x0060D450,UI::RegisterComboDropAndNewEditClasses,MATCH,201,src/ownrdraw.cpp,?RegisterComboDropAndNewEditClasses@UI@@YIXXZ
 0x0060D520,FUN_0060D520,MATCH,29,src/ownrdraw.cpp,?FUN_0060D520@@YGJPAUHWND__@@IIJ@Z
 0x0060F320,FUN_0060F320,MATCH,385,src/ownrdraw.cpp,?FUN_0060F320@@YGHPAUHWND__@@J@Z
+0x0060F9A0,OwnerDraw::RegisterChildControlProc,MATCH,2481,src/ownrdraw.cpp,?RegisterChildControlProc@OwnerDraw@@YGHPAUHWND__@@J@Z
 0x00610360,FUN_00610360,MATCH,518,src/ownrdraw.cpp,?FUN_00610360@@YIHPAUHWND__@@@Z
 0x00610570,FUN_00610570,MATCH,548,src/ownrdraw.cpp,?FUN_00610570@@YGHPAUHWND__@@J@Z
-0x006107A0,_$E119,MATCH,49,src/ownrdraw.cpp,_$E119
+0x006107A0,_$E120,MATCH,49,src/ownrdraw.cpp,_$E120
 0x006107E0,OwnerDraw::Tooltip::Tooltip,MATCH,41,src/ownrdraw.cpp,??0Tooltip@OwnerDraw@@QAE@XZ
 0x00610810,OwnerDraw::Start_Tooltip,MATCH,306,src/ownrdraw.cpp,?Start_Tooltip@OwnerDraw@@YI_NABV?$TRect@H@@PBGPAUHWND__@@@Z
 0x00610950,OwnerDraw::DrawTooltip,MATCH,500,src/ownrdraw.cpp,?DrawTooltip@OwnerDraw@@YI_N_N@Z
 0x00610B50,OwnerDraw::RestoreTooltipBackground,MATCH,151,src/ownrdraw.cpp,?RestoreTooltipBackground@OwnerDraw@@YI_NXZ
 0x00610BF0,OwnerDraw::End_Tooltip,MATCH,173,src/ownrdraw.cpp,?End_Tooltip@OwnerDraw@@YI_NXZ
-0x00612910,_$E122,MATCH,23,src/ownrdraw.cpp,_$E122
-0x00612930,_$E127,MATCH,291,src/ownrdraw.cpp,_$E127
+0x00612910,_$E123,MATCH,23,src/ownrdraw.cpp,_$E123
+0x00612930,_$E128,MATCH,291,src/ownrdraw.cpp,_$E128
 0x00612A60,OwnerDraw::SysListViewHandler,MATCH,264,src/ownrdraw.cpp,?SysListViewHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x00614190,OwnerDraw::EditHandler,MATCH,2075,src/ownrdraw.cpp,?EditHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x006149B0,FUN_006149B0,MATCH,373,src/ownrdraw.cpp,?FUN_006149B0@@YIHPAUHWND__@@PAGHPAH@Z
@@ -10519,6 +10540,7 @@ address,name,result,size,source,symbol
 0x006213A0,OwnerDraw::Draw_Item,MATCH,266,src/ownrdraw.cpp,?Draw_Item@OwnerDraw@@YIXPAUtagDRAWITEMSTRUCT@@@Z
 0x006214B0,OwnerDraw::CopyDimmedBackground,MATCH,806,src/ownrdraw.cpp,?CopyDimmedBackground@OwnerDraw@@YIXABV?$TRect@H@@PAUHWND__@@H@Z
 0x006217E0,OwnerDraw::BlendGradientRect,MATCH,489,src/ownrdraw.cpp,?BlendGradientRect@OwnerDraw@@YIXABV?$TRect@H@@AAVSurface@@HH@Z
+0x00621B80,FUN_00621B80,MATCH,425,src/ownrdraw.cpp,?FUN_00621B80@@YIXPAV?$TRect@H@@PAVSurface@@GH@Z
 0x00621D30,ODDrawBitsStrand,MATCH,341,src/ownrdraw.cpp,?ODDrawBitsStrand@@YIXABV?$TRect@H@@AAVSurface@@@Z
 0x006223C0,On_WM_NCDESTROY,MATCH,119,src/ownrdraw.cpp,?On_WM_NCDESTROY@@YIXPAUHWND__@@@Z
 0x00622440,ODUpdateWindowRect,MATCH,35,src/ownrdraw.cpp,?ODUpdateWindowRect@@YGHPAUHWND__@@PAUtagRECT@@@Z
@@ -10543,6 +10565,7 @@ address,name,result,size,source,symbol
 0x00623610,OwnerDraw::WinData::operator=,MATCH,277,src/ownrdraw.cpp,??4WinData@OwnerDraw@@QAEAAU01@ABU01@@Z
 0x00623730,OwnerDraw::WinData::WinData,MATCH,257,src/ownrdraw.cpp,??0WinData@OwnerDraw@@QAE@ABU01@@Z
 0x00623840,FUN_00623840,MATCH,54,src/ownrdraw.cpp,?FUN_00623840@@YIHPAUHWND__@@@Z
+0x00623880,FUN_00623880,MATCH,1094,src/ownrdraw.cpp,?FUN_00623880@@YIXPAVSurface@@PAV?$TRect@H@@PAGHPAVBitFont@@IPAHHHHH@Z
 0x00623CD0,FUN_00623CD0,MATCH,205,src/ownrdraw.cpp,?FUN_00623CD0@@YIHPBG@Z
 0x00623DA0,FUN_00623DA0,MATCH,83,src/ownrdraw.cpp,?FUN_00623DA0@@YGHPAUHWND__@@IIJ@Z
 0x00623E00,FUN_00623E00,MATCH,54,src/ownrdraw.cpp,?FUN_00623E00@@YIHPAUHWND__@@@Z
@@ -10613,6 +10636,7 @@ address,name,result,size,source,symbol
 0x00626290,SchemeNode::Release,MATCH,93,src/palette.cpp,?Release@SchemeNode@@QAEXXZ
 0x006262F0,SchemeNode::Replace,MATCH,119,src/palette.cpp,?Replace@SchemeNode@@QAEXPAV?$DynamicVectorClass@PAVColorScheme@@@@@Z
 0x00626370,SchemeNode::~SchemeNode,MATCH,93,src/palette.cpp,??1SchemeNode@@QAE@XZ
+0x006263D0,ColorScheme::GeneratePalette,MATCH,650,src/palette.cpp,?GeneratePalette@ColorScheme@@SIPAV?$DynamicVectorClass@PAVColorScheme@@@@PBD@Z
 0x00626660,SchemeHash,MATCH,40,src/palette.cpp,?SchemeHash@@YIHPBD@Z
 0x00626690,GetPaletteSchemesFromIterator,MATCH,257,src/palette.cpp,?GetPaletteSchemesFromIterator@@YIPAV?$DynamicVectorClass@PAVColorScheme@@@@PAUHashIterator@@@Z
 0x006269A0,SchemeLibrary_Free,MATCH,268,src/palette.cpp,?SchemeLibrary_Free@@YIXXZ
@@ -11381,6 +11405,7 @@ address,name,result,size,source,symbol
 0x00646040,operator/,MATCH,122,src/quat.cpp,??K@YI?AVQuaternion@@ABV0@0@Z
 0x006460C0,Inverse,MATCH,69,src/quat.cpp,?Inverse@@YI?AVQuaternion@@ABV1@@Z
 0x00646110,Conjugate,MATCH,69,src/quat.cpp,?Conjugate@@YI?AVQuaternion@@ABV1@@Z
+0x00646160,Trackball,MATCH,785,src/quat.cpp,?Trackball@@YI?AVQuaternion@@MMMMM@Z
 0x00646480,Axis_To_Quat,MATCH,266,src/quat.cpp,?Axis_To_Quat@@YI?AVQuaternion@@ABVVector3@@M@Z
 0x00646590,Slerp,MATCH,409,src/quat.cpp,?Slerp@@YI?AVQuaternion@@ABV1@0M@Z
 0x00646730,Build_Quaternion,MATCH,581,src/quat.cpp,?Build_Quaternion@@YI?AVQuaternion@@ABVMatrix3D@@@Z
@@ -12330,6 +12355,7 @@ address,name,result,size,source,symbol
 0x0068CCD0,_$E32,MATCH,15,src/score.cpp,_$E32
 0x0068CCE0,_$E35,MATCH,18,src/score.cpp,_$E35
 0x0068CD00,_$E38,MATCH,26,src/score.cpp,_$E38
+0x0068CD20,ScoreClass::Presentation,MATCH,7790,src/score.cpp,?Presentation@ScoreClass@@QAEXXZ
 0x0068EB90,ScoreClass::Alloc_Object,MATCH,103,src/score.cpp,?Alloc_Object@ScoreClass@@AAEHPAVScoreAnimClass@@@Z
 0x0068EC00,ScoreClass::Score_Object_Not_Present,MATCH,23,src/score.cpp,?Score_Object_Not_Present@ScoreClass@@AAE_NPAVScoreAnimClass@@@Z
 0x0068EC20,ScoreClass::Cycle_Wait_Click,MATCH,339,src/score.cpp,?Cycle_Wait_Click@ScoreClass@@AAEX_N@Z
@@ -12533,6 +12559,7 @@ address,name,result,size,source,symbol
 0x00698F90,SessionOptionsClass::Write,MATCH,266,src/session.cpp,?Write@SessionOptionsClass@@QAEXAAVCCINIClass@@PBD@Z
 0x006990A0,SessionClass::Write_MultiPlayer_Settings,MATCH,936,src/session.cpp,?Write_MultiPlayer_Settings@SessionClass@@QAEXXZ
 0x00699450,SessionClass::Write_Chat_Settings,MATCH,159,src/session.cpp,?Write_Chat_Settings@SessionClass@@QAEXXZ
+0x006994F0,FUN_006994F0,MATCH,1165,src/session.cpp,?FUN_006994F0@@YIXPBDPAGPAD2PA_NPAH4@Z
 0x00699980,SessionClass::Read_Scenario_Descriptions,MATCH,2155,src/session.cpp,?Read_Scenario_Descriptions@SessionClass@@QAEXXZ
 0x0069A1F0,SessionClass::Free_Scenario_Descriptions,MATCH,259,src/session.cpp,?Free_Scenario_Descriptions@SessionClass@@QAEXXZ
 0x0069A300,SessionClass::Trap_Object,MATCH,1,src/session.cpp,?Trap_Object@SessionClass@@QAEXXZ
@@ -12657,7 +12684,7 @@ address,name,result,size,source,symbol
 0x0069E180,SHPFreeAll,MATCH,142,src/shapipe.cpp,?SHPFreeAll@@YIXXZ
 0x0069E430,SHPReference::SHPReference,MATCH,200,src/shapipe.cpp,??0SHPReference@@QAE@PBD@Z
 0x0069E500,SHPStruct::~SHPStruct,MATCH,113,src/shapipe.cpp,??1SHPStruct@@QAE@XZ
-0x0069E740,SHPStruct::GetPixels,MATCH,152,src/shapipe.cpp,?GetPixels@SHPStruct@@QBEPAXH@Z
+0x0069E740,SHPStruct::GetPixels,MATCH,152,src/shapipe.cpp,?GetPixels@SHPStruct@@QBEPAEH@Z
 0x0069E7E0,SHPStruct::GetFrameBounds,MATCH,117,src/shapipe.cpp,?GetFrameBounds@SHPStruct@@QBE?AV?$TRect@H@@H@Z
 0x0069E860,SHPStruct::GetColor,MATCH,106,src/shapipe.cpp,?GetColor@SHPStruct@@QBE?AVRGBClass@@H@Z
 0x0069E8D0,SHPStruct::HasTransparency,MATCH,46,src/shapipe.cpp,?HasTransparency@SHPStruct@@QBE_NH@Z
@@ -12851,6 +12878,7 @@ address,name,result,size,source,symbol
 0x006ABD10,SidebarClass::FUN_006ABD10,MATCH,29,src/sidebar.cpp,?FUN_006ABD10@SidebarClass@@QAEHXZ
 0x006AC3E0,SidebarClass::Max_Visible,MATCH,71,src/sidebar.cpp,?Max_Visible@SidebarClass@@QAEHXZ
 0x006AC430,SidebarClass::GetVisibleCameoCount,MATCH,73,src/sidebar.cpp,?GetVisibleCameoCount@SidebarClass@@QAEHXZ
+0x006AC480,FUN_006AC480,MATCH,321,src/sidebar.cpp,?FUN_006AC480@@YIXPBGABVPoint2D@@ABV?$TRect@H@@H@Z
 0x006AC5D0,SidebarClass::Load,MATCH,13,src/sidebar.cpp,?Load@SidebarClass@@UAEJPAUIStream@@@Z
 0x006AC5E0,SidebarClass::Save,MATCH,13,src/sidebar.cpp,?Save@SidebarClass@@UAEJPAUIStream@@@Z
 0x006AC5F0,SidebarClass::FUN_006AC5F0,MATCH,323,src/sidebar.cpp,?FUN_006AC5F0@SidebarClass@@QAEXPBVTechnoTypeClass@@H@Z
@@ -13970,6 +13998,8 @@ address,name,result,size,source,symbol
 0x006D04F0,TabClass::Activate,MATCH,396,src/tab.cpp,?Activate@TabClass@@UAE_NH@Z
 0x006D0680,TabClass::AI,MATCH,822,src/tab.cpp,?AI@TabClass@@UAEXAAW4KeyNumType@@ABVPoint2D@@@Z
 0x006D09C0,FUN_006D09C0,MATCH,83,src/tab.cpp,?FUN_006D09C0@@YIXPAVShapeButtonClass@@PBD@Z
+0x006D0A20,TabClass::Draw_It,MATCH,1063,src/tab.cpp,?Draw_It@TabClass@@UAEX_N@Z
+0x006D0E50,_$E136,MATCH,1,src/tab.cpp,_$E136
 0x006D0E60,TabClass::Draw_Credits_Tab,MATCH,90,src/tab.cpp,?Draw_Credits_Tab@TabClass@@QAEXXZ
 0x006D0EC0,TabClass::Flash_Money,MATCH,53,src/tab.cpp,?Flash_Money@TabClass@@QAEXXZ
 0x006D0F00,TabClass::Redraw_Tab,MATCH,15,src/tab.cpp,?Redraw_Tab@TabClass@@QAEXXZ
@@ -15624,6 +15654,7 @@ address,name,result,size,source,symbol
 0x00729370,TunnelLocomotionClass::ProcessDiggingIn,MATCH,257,src/tunnel.cpp,?ProcessDiggingIn@TunnelLocomotionClass@@QAEXXZ
 0x00729480,TunnelLocomotionClass::ProcessDugOut,MATCH,93,src/tunnel.cpp,?ProcessDugOut@TunnelLocomotionClass@@QAEXXZ
 0x007294E0,TunnelLocomotionClass::ProcessDugIn,MATCH,155,src/tunnel.cpp,?ProcessDugIn@TunnelLocomotionClass@@QAEXXZ
+0x00729580,TunnelLocomotionClass::ProcessDigging,MATCH,874,src/tunnel.cpp,?ProcessDigging@TunnelLocomotionClass@@QAEXXZ
 0x007298F0,TunnelLocomotionClass::ProcessPreDigOut,MATCH,425,src/tunnel.cpp,?ProcessPreDigOut@TunnelLocomotionClass@@QAEXXZ
 0x00729AA0,TunnelLocomotionClass::ProcessDiggingOut,MATCH,151,src/tunnel.cpp,?ProcessDiggingOut@TunnelLocomotionClass@@QAEXXZ
 0x00729B40,TunnelLocomotionClass::Draw_Matrix,MATCH,780,src/tunnel.cpp,?Draw_Matrix@TunnelLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z
@@ -15653,8 +15684,9 @@ address,name,result,size,source,symbol
 0x0072A3F0,_$E58,MATCH,15,src/txtlabel.cpp,_$E58
 0x0072A400,_$E61,MATCH,18,src/txtlabel.cpp,_$E61
 0x0072A420,_$E64,MATCH,26,src/txtlabel.cpp,_$E64
-0x0072A690,_$E67,MATCH,23,src/txtlabel.cpp,_$E67
+0x0072A690,_$E82,MATCH,23,src/txtlabel.cpp,_$E82
 0x0072A440,TextLabelClass::TextLabelClass,MATCH,91,src/txtlabel.cpp,??0TextLabelClass@@QAE@PAGHHHW4TextPrintType@@@Z
+0x0072A4A0,TextLabelClass::Draw_Me,MATCH,439,src/txtlabel.cpp,?Draw_Me@TextLabelClass@@UAEHH@Z
 0x0072A660,TextLabelClass::Set_Text,MATCH,10,src/txtlabel.cpp,?Set_Text@TextLabelClass@@UAEXPAG@Z
 0x0072A670,??_GTextLabelClass@@UAEPAXI@Z,MATCH,30,src/txtlabel.cpp,??_GTextLabelClass@@UAEPAXI@Z
 0x0072A6B0,_$E2,MATCH,40,src/txtlabel2.cpp,_$E2
@@ -15894,6 +15926,7 @@ address,name,result,size,source,symbol
 0x0072EAD0,FUN_0072EAD0,MATCH,114,src/txtlabel2.cpp,?FUN_0072EAD0@@YIXPAVSurface@@PBV?$TRect@H@@@Z
 0x0072EB50,FUN_0072EB50,MATCH,211,src/txtlabel2.cpp,?FUN_0072EB50@@YIXXZ
 0x0072EC30,FUN_0072EC30,MATCH,64,src/txtlabel2.cpp,?FUN_0072EC30@@YIXXZ
+0x0072EC70,FUN_0072EC70,MATCH,740,src/txtlabel2.cpp,?FUN_0072EC70@@YIXHH@Z
 0x0072EF60,FUN_0072EF60,MATCH,477,src/txtlabel2.cpp,?FUN_0072EF60@@YIXXZ
 0x0072F140,FUN_0072F140,MATCH,143,src/txtlabel2.cpp,?FUN_0072F140@@YIXXZ
 0x0072F1D0,FUN_0072F1D0,MATCH,149,src/txtlabel2.cpp,?FUN_0072F1D0@@YIXXZ
@@ -15947,6 +15980,7 @@ address,name,result,size,source,symbol
 0x00730A90,FUN_00730A90,MATCH,58,src/uicmnds.cpp,?FUN_00730A90@@YIXPBGH@Z
 0x00730AD0,FUN_00730AD0,MATCH,6,src/uicmnds.cpp,?FUN_00730AD0@@YIHXZ
 0x00730AE0,FUN_00730AE0,MATCH,6,src/uicmnds.cpp,?FUN_00730AE0@@YIHXZ
+0x00730AF0,FUN_00730AF0,MATCH,621,src/uicmnds.cpp,?FUN_00730AF0@@YIXXZ
 0x00730D60,FUN_00730D60,MATCH,309,src/uicmnds.cpp,?FUN_00730D60@@YIXXZ
 0x00730EA0,FUN_00730EA0,MATCH,129,src/uicmnds.cpp,?FUN_00730EA0@@YIXXZ
 0x00730F30,FUN_00730F30,MATCH,172,src/uicmnds.cpp,?FUN_00730F30@@YIXXZ
@@ -16038,6 +16072,7 @@ address,name,result,size,source,symbol
 0x00734640,StringTable::GetLanguage,MATCH,34,src/uicmnds2.cpp,?GetLanguage@StringTable@@SIPBUCSFLanguage@@W4CSFLanguages@@@Z
 0x00734670,StringTable::GetLanguageName,MATCH,44,src/uicmnds2.cpp,?GetLanguageName@StringTable@@SIPBDW4CSFLanguages@@@Z
 0x007346A0,StringTable::LoadFile,MATCH,752,src/uicmnds2.cpp,?LoadFile@StringTable@@SIHPBD@Z
+0x00734990,StringTable::ReadFile,MATCH,914,src/uicmnds2.cpp,?ReadFile@StringTable@@SIHPBD@Z
 0x00734D30,StringTable::Unload,MATCH,246,src/uicmnds2.cpp,?Unload@StringTable@@SIXXZ
 0x00734E30,FUN_00734E30,MATCH,34,src/uicmnds2.cpp,?FUN_00734E30@@YIHPBG@Z
 0x00734E60,StringTable::LoadString,MATCH,180,src/uicmnds2.cpp,?LoadString@StringTable@@SIPBGPBDPAPAD0H@Z
@@ -16214,6 +16249,7 @@ address,name,result,size,source,symbol
 0x00748360,Hicolor_Clear_Table,MATCH,29,src/unvqtblc.cpp,?Hicolor_Clear_Table@@YIXXZ
 0x00748380,Hicolor_Translate,MATCH,34,src/unvqtblc.cpp,?Hicolor_Translate@@YIXPAXH@Z
 0x007483B0,UnVQ2_4x4_Table,MATCH,916,src/unvqtblc.cpp,?UnVQ2_4x4_Table@@YAXPAE00KKK@Z
+0x00748AF0,UnVQ1_4x4_Table,MATCH,312,src/unvqtblc.cpp,?UnVQ1_4x4_Table@@YAXPAE00KKK@Z
 0x00748FD0,UnitTrackerClass::UnitTrackerClass,MATCH,49,src/utracker.cpp,??0UnitTrackerClass@@QAE@XZ
 0x00749010,UnitTrackerClass::~UnitTrackerClass,MATCH,1,src/utracker.cpp,??1UnitTrackerClass@@QAE@XZ
 0x00749020,UnitTrackerClass::Increment_Unit_Total,MATCH,20,src/utracker.cpp,?Increment_Unit_Total@UnitTrackerClass@@QAEXH@Z
@@ -17096,6 +17132,7 @@ address,name,result,size,source,symbol
 0x00767600,?Get_Display_Priority@NumberOfPlayersGameOption@WorldDominationTour@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z,MATCH,5,src/wdtgameoptions.cpp,?Get_Display_Priority@NumberOfPlayersGameOption@WorldDominationTour@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z
 0x00767610,?Get_String@NumberOfPlayersGameOption@WorldDominationTour@@UAE?AVWideWstring@@ABV?$rc_ptr@VWDTTerritory@@@@ABV3@@Z,MATCH,209,src/wdtgameoptions.cpp,?Get_String@NumberOfPlayersGameOption@WorldDominationTour@@UAE?AVWideWstring@@ABV?$rc_ptr@VWDTTerritory@@@@ABV3@@Z
 0x007676F0,FUN_007676F0,MATCH,68,src/wdtgameoptions.cpp,?FUN_007676F0@@YI?AV?$rc_ptr@VMapSizeGameOption@WorldDominationTour@@@@I@Z
+0x00767740,?Get_String@MapSizeGameOption@WorldDominationTour@@UAE?AVWideWstring@@ABV?$rc_ptr@VWDTTerritory@@@@ABV3@@Z,MATCH,179,src/wdtgameoptions.cpp,?Get_String@MapSizeGameOption@WorldDominationTour@@UAE?AVWideWstring@@ABV?$rc_ptr@VWDTTerritory@@@@ABV3@@Z
 0x00767800,?Get_Display_Priority@MapSizeGameOption@WorldDominationTour@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z,MATCH,30,src/wdtgameoptions.cpp,?Get_Display_Priority@MapSizeGameOption@WorldDominationTour@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z
 0x00767820,WorldDominationTour::FlagGameOption::FlagGameOption,MATCH,93,src/wdtgameoptions.cpp,??0FlagGameOption@WorldDominationTour@@QAE@IVWstring@@I0I@Z
 0x00767880,??_GFlagGameOption@WorldDominationTour@@UAEPAXI@Z,MATCH,54,src/wdtgameoptions.cpp,??_GFlagGameOption@WorldDominationTour@@UAEPAXI@Z
@@ -17745,7 +17782,7 @@ address,name,result,size,source,symbol
 0x0077CED0,_$E247,MATCH,62,src/wonline.cpp,_$E247
 0x0077CF10,_$E254,MATCH,22,src/wonline.cpp,_$E254
 0x0077CF30,_$E252,MATCH,10,src/wonline.cpp,_$E252
-0x0077CF40,FUN_0077CF40,MATCH,29,src/wonline.cpp,?FUN_0077CF40@@YIHXZ
+0x0077CF40,FUN_0077CF40,MATCH,29,src/wonline.cpp,?FUN_0077CF40@@YI_NXZ
 0x0077CF60,FUN_0077CF60,MATCH,15,src/wonline.cpp,?FUN_0077CF60@@YIHXZ
 0x0077CF70,_$E259,MATCH,22,src/wonline.cpp,_$E259
 0x0077CF90,_$E257,MATCH,10,src/wonline.cpp,_$E257
@@ -17866,7 +17903,7 @@ address,name,result,size,source,symbol
 0x00789500,FUN_00789500,MATCH,304,src/wonline.cpp,?FUN_00789500@@YIHPBD0HH@Z
 0x00789630,FUN_00789630,MATCH,103,src/wonline.cpp,?FUN_00789630@@YI?AVWstring@@PAUServer@@@Z
 0x007896A0,FUN_007896A0,MATCH,702,src/wonline.cpp,?FUN_007896A0@@YI_NPAUHWND__@@_N@Z
-0x00789960,FUN_00789960,MATCH,507,src/wonline.cpp,?FUN_00789960@@YI_NPAUWolChannel@@H@Z
+0x00789960,FUN_00789960,MATCH,507,src/wonline.cpp,?FUN_00789960@@YI_NPAUWolChannel@@_N@Z
 0x0078A470,FUN_0078A470,MATCH,562,src/wonline.cpp,?FUN_0078A470@@YIHPAG@Z
 0x0078A6B0,FUN_0078A6B0,MATCH,574,src/wonline.cpp,?FUN_0078A6B0@@YIHPAG@Z
 0x0078A8F0,FUN_0078A8F0,MATCH,764,src/wonline.cpp,?FUN_0078A8F0@@YIHPAG@Z
@@ -17934,6 +17971,7 @@ address,name,result,size,source,symbol
 0x00799D10,FUN_00799D10,MATCH,28,src/wonline.cpp,?FUN_00799D10@@YIXXZ
 0x00799D30,FUN_00799D30,MATCH,366,src/wonline.cpp,?FUN_00799D30@@YIHXZ
 0x0079AE00,FUN_0079AE00,MATCH,260,src/wonline.cpp,?FUN_0079AE00@@YGHPAUHWND__@@IIJ@Z
+0x0079BC80,FUN_0079BC80,MATCH,486,src/wonline.cpp,?FUN_0079BC80@@YI_NXZ
 0x0079BE70,FUN_0079BE70,MATCH,89,src/wonline.cpp,?FUN_0079BE70@@YIXXZ
 0x0079BED0,FUN_0079BED0,MATCH,122,src/wonline.cpp,?FUN_0079BED0@@YI_NXZ
 0x0079C040,FUN_0079C040,MATCH,853,src/wonline.cpp,?FUN_0079C040@@YIXPAUHWND__@@@Z
