@@ -34,3 +34,10 @@ effect, so it can be fixed in a separate build later.
   cookie base, although the byte-array allocations created no such cookie. This
   can read an invalid count and destroy or free unrelated memory; the recovered
   source preserves the original allocation/deallocation mismatch.
+
+- **Wonline user leave (0x00785740).** The ping refresh marks an empty player
+  slot with `-1` but still passes its null name through `FUN_007350C0` to
+  `FUN_007A0EA0` (0x00785DD6–0x00785DE9). The converter returns null, and the
+  ping updater's inlined `strcmp` reads that pointer at 0x007A0ECF when it reaches
+  a populated slot. A leave event with both empty and populated slots can
+  therefore access-violate; the matched source preserves this path.

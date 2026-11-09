@@ -3019,7 +3019,198 @@ bool FUN_0077CF40(void);
 void __fastcall FUN_007A0EA0(char const * name, int ping);
 #include "multiplayer.h"
 
-void __fastcall FUN_00785740(User * user);
+void __fastcall FUN_004E34A0(HWND dialog, int side, int flag);
+extern int DAT_00B76440[];
+void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
+void __fastcall FUN_005EDDE0(HWND dialog, bool enable);
+void FUN_005E9850(void);
+void FUN_0072CF90(void);
+static inline void Focus_Chat_Input_After(unsigned int event);
+void __fastcall FUN_005E9340(char const * name);
+
+// FUNCTION: GAMEMD 0x00785740
+void __fastcall FUN_00785740(User *user)
+{
+	stricmp(DAT_00B73E40.get(), user->Nick);
+	if (DAT_00B76B10.Type != 0) {
+		VocClass::PlayGlobal(Rule->PlayerLeft, 1.0f, 0x2000, 0);
+	}
+	if (user->Flags & 0x8000) {
+		FUN_004068E0("Local user leaving channel\n");
+		if (DAT_00B77E28 != 0) {
+			FUN_004068E0("Local user leaving channel after game start\n");
+		}
+		wchar_t name[64];
+		FUN_00735060(name, DAT_00B76B10.Name, -1);
+		if (strncmp(DAT_00B76B10.Name, "Lob_41_", 7) == 0) {
+			int number = atol(DAT_00B76B10.Name + strlen("Lob_41_"));
+			int page = number / 8;
+			int lobby = number % 8;
+			if (page == 0) {
+				swprintf(name, L"%s", DAT_00B73E1C[lobby]);
+			} else {
+				swprintf(name, L"%s %d", DAT_00B73E1C[lobby], page + 1);
+			}
+		}
+		if (!FUN_0077CF40()) {
+			FUN_005E2700(DAT_007EEF28,
+						 StringTable::LoadString("TXT_YOULEFT", 0, "D:\\ra2mdpost\\wonline.cpp", 0x244c),
+						 name);
+		}
+		DAT_00B77DD0 = 0;
+		FUN_004068E0("Channel Leave \n");
+		memset(&DAT_00B76B10, 0, sizeof(DAT_00B76B10));
+		memset(DAT_00B76E40, 0, sizeof(DAT_00B76E40));
+		DAT_00B77900.clear();
+		DAT_00B77E4C = 0;
+		Focus_Chat_Input_After(0x40);
+		Session.Options.ScenarioDescription[0] = 0;
+		++Session.Suspended;
+		Session.ScenarioFileLength = 0;
+		Session.ScenarioDigest[0] = 0;
+		HWND main = FUN_00775940(0x113);
+		if (main && DAT_00B77DC1) {
+			ShowWindow(main, SW_HIDE);
+			OwnerDraw::SetNeedsControlImage(main, 1);
+		}
+		HWND guest = FUN_00775940(0xc9);
+		if (guest) {
+			FUN_007757E0(guest, 2);
+			FUN_0072CF90();
+			ShowWindow(guest, SW_HIDE);
+			OwnerDraw::SetNeedsControlImage(guest, 1);
+			if (Session.unknown_0C == 4) {
+				if (DAT_00B77DC1) {
+					if (main) {
+						ShowWindow(main, SW_HIDE);
+						OwnerDraw::SetNeedsControlImage(main, 1);
+					}
+				} else {
+					FUN_00788A30(false);
+					if (main) {
+						PostMessageA(main, 0x593, 0, 0);
+					}
+				}
+			} else if (Session.unknown_0C == 5) {
+				FUN_004068E0("Setting g_JoinLobbyNow, Guest\n");
+				DAT_00B77DD8 = 1;
+			}
+		}
+		HWND game = FUN_00775940(0xc2);
+		if (game) {
+			FUN_007757E0(game, 2);
+			FUN_0072CF90();
+			ShowWindow(game, SW_HIDE);
+			OwnerDraw::SetNeedsControlImage(game, 1);
+			if (Session.unknown_0C == 4) {
+				if (DAT_00B77DC1) {
+					if (main) {
+						ShowWindow(main, SW_HIDE);
+						OwnerDraw::SetNeedsControlImage(main, 1);
+					}
+				} else {
+					FUN_00788A30(false);
+					if (main) {
+						PostMessageA(main, 0x593, 0, 0);
+					}
+				}
+			} else if (Session.unknown_0C == 5) {
+				FUN_004068E0("Setting g_JoinLobbyNow, Host\n");
+			}
+		}
+		if (main) {
+			if (!DAT_00B77DC1) {
+				ShowWindow(main, SW_SHOW);
+				OwnerDraw::SetNeedsControlImage(main, 0);
+			}
+			FUN_00781480();
+		}
+		--Session.Suspended;
+		return;
+	}
+	if (DAT_00B77E28 == 2) {
+		FUN_004068E0("other player leaving channel after Game Started\n");
+		return;
+	}
+	if (user) {
+		for (int slot = 0; slot < 8; ++slot) {
+			if (Session.Slots[slot] && !strcmp(FUN_007350C0(Session.Slots[slot]->Name), user->Nick)) {
+				HWND lobby = FUN_005E26C0();
+				if (lobby) {
+					FUN_004E34A0(lobby, slot, -1);
+				}
+				break;
+			}
+		}
+	}
+	User other;
+	for (int index = 0; index < DAT_00B77900.length(); ++index) {
+		DAT_00B77900.get(other, index);
+		if (!stricmp(other.Nick, user->Nick)) {
+			DAT_00B77900.remove(index);
+			if (DAT_00B76B10.Type != 0) {
+				memmove(DAT_00B76E40 + index * sizeof(ChannelUserInfo),
+						DAT_00B76E40 + (index + 1) * sizeof(ChannelUserInfo),
+						sizeof(ChannelUserInfo) * (15 - index));
+				if (DAT_00B77E28 != 2) {
+					for (unsigned j = 1; j < 16; ++j) {
+						DAT_00B76E58[j].Accepted = 0;
+						EnableWindow(GetDlgItem(FUN_005E26C0(), 0x59f), 1);
+					}
+					if (!DAT_00B77E4C) {
+						HWND dialog = FUN_00775940(0xc9);
+						FUN_005EDDE0(dialog, true);
+					}
+					FUN_005E9850();
+				}
+			}
+			if (index == 0 && DAT_00B76B10.Type != 0 && !DAT_00B77E4C) {
+				DAT_00AC116C->V09();
+			}
+			break;
+		}
+	}
+	if (DAT_00B76B10.Type != 0) {
+		FUN_005E9340(user->Nick);
+		for (int player = 0; player < Session.Players.Count(); ++player) {
+			if (!stricmp(FUN_007350C0(Session.Players[player]->Name), user->Nick)) {
+				NodeNameType *entry = Session.Players[player];
+				Session.Players.Delete_Index(player);
+				Session.FUN_0069BBF0(player);
+				delete entry;
+				break;
+			}
+		}
+		for (int slot = 0; slot < 8; ++slot) {
+			if (!Session.Slots[slot] || !FUN_005E93F0(Session.Slots[slot])) {
+				DAT_00B76440[slot] = -1;
+			}
+			char *name = FUN_007350C0(Session.Slots[slot]->Name);
+			FUN_007A0EA0(name, DAT_00B76440[slot]);
+		}
+		if (DAT_00B77E4C) {
+			FUN_005E9850();
+			FUN_0077DB90();
+			FUN_005E32D0(true, true);
+			if (FUN_00775B20() == 0x6b) {
+				HWND window = FUN_00775B10();
+				int index = SendDlgItemMessageA(window, 0x6eb, 0x188, 0, 0);
+				if (index != -1) {
+					MultiplayerGameMode *mode =
+						(MultiplayerGameMode *)SendDlgItemMessageA(window, 0x6eb, 0x199, index, 0);
+					if (mode) {
+						mode->vt_entry_90();
+						FUN_00783C80(0, false);
+						return;
+					}
+				}
+			} else if (Session.MPGameMode) {
+				Session.MPGameMode->vt_entry_90();
+			}
+		}
+	}
+	FUN_00783C80(0, false);
+}
 
 // FUNCTION: GAMEMD 0x00785EA0
 void FUN_00785EA0(void)
@@ -3589,11 +3780,8 @@ extern int DAT_00841F38;
 extern int DAT_00841F3C;
 
 extern long DAT_00B77EA8;
-void __fastcall FUN_004E34A0(HWND dialog, int side, int flag);
 void __fastcall FUN_005E3720(char const * text);
-extern int DAT_00B76440[];
 extern char DAT_00889F64[];
-void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
 int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void __fastcall FUN_00779C90(Wstring const & value);
@@ -3609,7 +3797,6 @@ extern int DAT_007EEF28;
 extern char DAT_00B77E30[];
 bool __fastcall FUN_0069BBE0(SessionClass * session);
 wchar_t * __fastcall FUN_00735120(char const * text);
-void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
 extern int DAT_007EEF2C;
 void __cdecl FUN_005E2790(int color, wchar_t const * text, ...);
 extern int DAT_00B76C20;
@@ -5169,7 +5356,6 @@ BOOL CALLBACK FUN_0078EBC0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 int __fastcall FUN_005E8D00(wchar_t const * name);
-extern int DAT_00B76440[];
 extern wchar_t DAT_00B75F6C[];
 
 int __fastcall FUN_005E64C0(int index);
@@ -10930,8 +11116,6 @@ static inline bool Is_Internal_Session(void)
 }
 
 extern int DAT_00AC1178;
-void __fastcall FUN_005EDDE0(HWND dialog, bool enable);
-void FUN_005E9850(void);
 
 // FUNCTION: GAMEMD 0x007A7110
 long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * users)
@@ -12499,7 +12683,6 @@ long __stdcall FUN_007AD610(void * sink)
 extern bool DAT_00AC11C2;
 extern int DAT_007EEF30, DAT_007EEF34, DAT_007EEF38, DAT_007EEF44;
 extern wchar_t DAT_0084B224[], DAT_0084B94C[], DAT_0084B9B0[];
-void FUN_0072CF90(void);
 void __fastcall FUN_005E74E0(HWND window);
 wchar_t *__fastcall FUN_0078F200(wchar_t const *name);
 #include "tiprequest.h"
