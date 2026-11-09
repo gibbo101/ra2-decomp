@@ -74,7 +74,6 @@ address,name,symbol,evidence
 0x00A802C8,OutList,,EventClass queue of 128 entries (YRpp EventClass::OutList)
 0x00B0CCB0,CommandBarStatics::ButtonA,,first initialiser $E96 0x006CFC00 constructs it; TabClass::Init_IO stores ID 0xF0 into it
 0x00B0CC40,CommandBarStatics::ButtonB,,constructed by initialiser 0x006CFC40
-0x0071BDF0,TerrainClass::TerrainClass,??0TerrainClass@@QAE@XZ,no-argument constructor (plain ret); called by TClassFactory<TerrainClass>::CreateInstance 0x006BF390
 0x0071BB90,TerrainClass::TerrainClass,??0TerrainClass@@QAE@PBVTerrainTypeClass@@ABVCell@@@Z,YRpp TerrainClass(TerrainTypeClass*; CellStruct*); the (type; cell) overload with ret 8
 0x0071BDF0,TerrainClass::TerrainClass,??0TerrainClass@@QAE@XZ,no-argument constructor (calls ObjectClass default 0x005F3900); called by TClassFactory<TerrainClass>::CreateInstance 0x006BF390
 0x0087E8B8,Search,,TS global (_astar.h); 0x00746000 and 0x005221D0 match calling Search.Test_Cell_Walk
@@ -261,7 +260,7 @@ address,name,symbol,evidence
 0x00AA0E24,IsometricTileTypeClass::ClearToSandLat,?ClearToSandLat@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/ClearToSandLat and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
 0x00AA0748,IsometricTileTypeClass::ClearToGreenLat,?ClearToGreenLat@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/ClearToGreenLat and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
 0x00AA10A8,IsometricTileTypeClass::ClearToPaveLat,?ClearToPaveLat@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/ClearToPaveLat and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
-0x00ABBEC8,IsometricTileTypeClass::PavedRoads,?PavedRoads@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/PavedRoads and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
+0x00ABBEC8,IsometricTileTypeClass::PavedRoads,?PavedRoads@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/PavedRoads and assigns the matching set's heap ID; Fixup_LAT reads that tile base; CellClass::Is_Tile_Paved_Road reads the base at 0x004866D0
 0x00AA0E20,IsometricTileTypeClass::Medians,?Medians@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/Medians and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
 0x00AA1058,IsometricTileTypeClass::RampSmooth,?RampSmooth@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/RampSmooth and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
 0x00ABC1D8,IsometricTileTypeClass::RampStart,?RampStart@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File (0x00545150) loads General/RampBase and assigns the matching set's heap ID; Fixup_LAT reads that tile base.
@@ -350,7 +349,7 @@ address,name,symbol,evidence
 0x008A0DE0,DSurface::GreenRight,,YRpp Drawing.h GreenShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x008A0DD4,DSurface::RedLeft,,YRpp Drawing.h RedShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x008A0DD0,DSurface::RedRight,,YRpp Drawing.h RedShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
-0x0087F770,Keyboard,,YRpp InputManagerClass.h Instance; Custom_Message_Box_Proc passes this pointer to matched WWKeyboardClass::Put at 0x0054F1C0
+0x0087F770,Keyboard,?Keyboard@@3PAUKeyboardClass@@A,"YRpp InputManagerClass::Instance; Custom_Message_Box_Proc passes it to matched WWKeyboardClass::Put (0x0054F1C0), Mouse_Left_Release queries its left Shift state, and the Wonline modal loop clears it (WWKeyboardClass::Clear, 0x0054F720) before and after"
 0x006D6070,Tactical::Set_Tactical_Position(Coord const &),?Set_Tactical_Position@Tactical@@QAEXABVCoord@@@Z,YRpp TacticalClass::SetTacticalPosition takes a CoordStruct reference; DisplayClass::Compute_Start_Pos at 0x004AC64D passes the coordinate to this overload
 0x0087E880,thread_access,,DirectSound audioLoad passes this critical section to InitializeCriticalSection at 0x0040947A and AUD_service_thread enters and leaves it at 0x004095F0 and 0x00409823
 0x00ABDC50,InvalidCell,,YRpp MapClass::InvalidCell; returned by 0x005657A0 for invalid cells
@@ -397,7 +396,6 @@ address,name,symbol,evidence
 0x00A8ED5C,ScenarioActive,?ScenarioActive@@3_NA,YRpp Unsorted::ScenarioStarted. Mouse_Left_Release checks this flag before querying an object's visual character.
 0x00817F98,TechnoTypeClass RTTI type descriptor,??_R0?AVTechnoTypeClass@@@8,The retail type descriptor contains .?AVTechnoTypeClass@@ at offset 8 and is the target type of the placement cast.
 0x00817F78,ObjectTypeClass RTTI type descriptor,??_R0?AVObjectTypeClass@@@8,The retail type descriptor contains .?AVObjectTypeClass@@ at offset 8 and is the source type of the placement cast.
-0x0087F770,Keyboard,?Keyboard@@3PAUKeyboardClass@@A,YRpp InputManagerClass::Instance. Mouse_Left_Release queries its left Shift key state during rubber-band selection.
 0x0089C3B0,BeaconManager,?BeaconManager@@3VBeaconManagerClass@@A,YRpp BeaconManagerClass::Instance. Mouse_Left_Release selects and places beacons on this singleton.
 0x00430F70,BeaconManagerClass::SelectBeacon,?SelectBeacon@BeaconManagerClass@@QAE_NVCoord@@@Z,Mouse_Left_Release passes the coordinate by value. SelectBeacon receives its three components in consecutive stack slots.
 0x00430BA0,BeaconManagerClass::PlaceBeacon,?PlaceBeacon@BeaconManagerClass@@QAEXHVCoord@@H@Z,YRpp BeaconManagerClass::PlaceBeacon. Mouse_Left_Release passes a house ID followed by the coordinate and beacon ID.
@@ -406,7 +404,6 @@ address,name,symbol,evidence
 0x0083921C,DiplomacyKillsIDs,_DiplomacyKillsIDs,0x00657DA0 indexes these eight diplomacy dialog control IDs by player slot
 0x0083923C,DiplomacyAllianceIDs,_DiplomacyAllianceIDs,0x00657DA0 indexes these eight diplomacy dialog control IDs by player slot
 0x0083925C,DiplomacyChatIDs,_DiplomacyChatIDs,0x00657DA0 indexes these eight diplomacy dialog control IDs by player slot
-0x00ABBEC8,IsometricTileTypeClass::PavedRoads,,CellClass::Is_Tile_Paved_Road reads the base at 0x004866D0 and theater initialization stores the PavedRoads set here
 0x00ABBEC4,IsometricTileTypeClass::PavedRoadEnds,,CellClass::Is_Tile_Paved_Road_End reads the base at 0x004866F0 and theater initialization stores the PavedRoadEnds set here
 0x00B73550,MainWindow,?MainWindow@@3PAUHWND__@@A,Matched ScrollClass::Message_Handler (0x006930A0) passes this HWND to SetCapture and YRpp identifies Game::hWnd at this address
 0x00B0C110,Swizzler,?Swizzler@@3VSwizzleManagerClass@@A,SwizzleManagerClass::Instance in YRpp; 340 references across 74 translation units agree on this base
@@ -435,7 +432,6 @@ address,name,symbol,evidence
 0x006FC0B0,TechnoClass::Can_Fire,?Can_Fire@TechnoClass@@UBE?AW4FireErrorType@@PAVAbstractClass@@H_N@Z,TechnoClass vtable slot 240; matched function
 0x007DC720,_com_issue_error,?_com_issue_error@@YGXJ@Z,COM error helper forwards HRESULT and null IErrorInfo; referenced by TechnoClass::Can_Fire
 0x00AC4F58,Progress,?Progress@@3VProgressScreenClass@@A,Matched static initializer at 0x00642980 passes 0x00AC4F58 to ProgressScreenClass::ProgressScreenClass; the destructor at 0x006429A0 uses the same object.
-0x0087F770,InputManagerInstance,?InputManagerInstance@@3PAXA,Matched Wonline dialog at 0x0077D840 passes the pointer stored at 0x0087F770 to the input flush routine at 0x0054F720 before and after the modal loop.
 0x0060A330,OwnerDraw::ClassifyLayoutBand,?ClassifyLayoutBand@OwnerDraw@@YGHPAUHWND__@@J@Z,EnumChildWindows callback at 0x0060A5A0 that assigns the control layout band
 0x0060AAB0,OwnerDraw::InitCompactDialogControlsProc,?InitCompactDialogControlsProc@OwnerDraw@@YGHPAUHWND__@@J@Z,EnumChildWindows callback at 0x0060AF40 that sets the sidebar margin and control alpha
 0x0060F9A0,OwnerDraw::RegisterChildControlProc,?RegisterChildControlProc@OwnerDraw@@YGHPAUHWND__@@J@Z,YRpp OwnerDraw.h identifies this callback; called by UI::RegisterWindow and OwnerDraw::PrepareDialogChildControls

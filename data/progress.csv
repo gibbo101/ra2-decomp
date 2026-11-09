@@ -18264,6 +18264,7 @@ address,name,result,size,source,symbol
 0x007B0350,FUN_007B0350,MATCH,29,src/worlddom.cpp,?FUN_007B0350@@YIXPAD@Z
 0x007B0370,FUN_007B0370,MATCH,6,src/worlddom.cpp,?FUN_007B0370@@YAPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@XZ
 0x007B0380,FUN_007B0380,MATCH,6,src/worlddom.cpp,?FUN_007B0380@@YAPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@XZ
+0x007B0390,FUN_007B0390,MATCH,150,src/worlddom.cpp,?FUN_007B0390@@YI?AV?$rc_ptr@VWDTTerritory@@@@H@Z
 0x007B0430,FUN_007B0430,MATCH,3,src/worlddom.cpp,?FUN_007B0430@@YA_NXZ
 0x007B0440,??_GFactionSelectDialogControl@WorldDominationTour@@UAEPAXI@Z,MATCH,77,src/worlddom.cpp,??_GFactionSelectDialogControl@WorldDominationTour@@UAEPAXI@Z
 0x007B0490,WorldDominationTour::FactionSelectDialogControl::FactionSelectDialogControl,MATCH,260,src/worlddom.cpp,??0FactionSelectDialogControl@WorldDominationTour@@QAE@XZ

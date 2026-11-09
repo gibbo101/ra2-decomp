@@ -531,6 +531,13 @@ rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0380(void)
 	return &DAT_00B77F78;
 }
 
+// FUNCTION: GAMEMD 0x007B0390
+rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id)
+{
+	WorldDominationTour::CONFLICT_ITER it = (*FUN_007B0370())->Get_Conflict_Iterator(id);
+	return(it ? (*it)->Territory : rc_ptr<WDTTerritory>());
+}
+
 // FUNCTION: GAMEMD 0x007B0430
 bool __cdecl FUN_007B0430(void)
 {

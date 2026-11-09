@@ -582,10 +582,11 @@ IPXAddressClass __fastcall FUN_0077D720(User * user)
 #include "theme.h"
 #include "scenario.h"
 #include "_map.h"
+#include "_keyboar.h"
+
+void __fastcall FUN_0054F720(void * input);
 
 extern bool UserInputLocked;
-extern void * InputManagerInstance;
-void __fastcall FUN_0054F720(void * input);
 HWND FUN_005E26C0(void);
 int __fastcall FUN_007759E0(HWND window, bool (*callback)(void), int a, int b, int c);
 BOOL CALLBACK FUN_0078D120(HWND win, UINT msg, WPARAM wparam, LPARAM lparam);
@@ -631,14 +632,14 @@ void FUN_0077D840(void)
 {
 	HWND dialog = UI::BeginDialog(0xCF, (DLGPROC)FUN_0078D120, 0);
 	UserInputLocked = true;
-	FUN_0054F720(InputManagerInstance);
+	Keyboard->Clear();
 	ShowWindow(dialog, SW_SHOWNORMAL);
 	if (FUN_005E26C0()) {
 		FUN_007759E0(dialog, FUN_0077D820, 0, 1, 1);
 	} else {
 		FUN_007759E0(dialog, UI::Updated, 0, 1, 1);
 	}
-	FUN_0054F720(InputManagerInstance);
+	Keyboard->Clear();
 	UserInputLocked = Scen->IsInputLocked;
 	Map.Flag_To_Redraw(GS_REDRAW_ALL);
 }

@@ -18511,6 +18511,7 @@ address,size,symbol,source,sha256
 0x007B0350,29,?FUN_007B0350@@YIXPAD@Z,src/worlddom.cpp,85523c1ebb730b1b5320c570d24c392c344b2bfd3c5f6a2ccb83cfb215f174df
 0x007B0370,6,?FUN_007B0370@@YAPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@XZ,src/worlddom.cpp,ba835c6b5698111c4041d2d46cde9b833c6e975c243a0ea6671b109ebfc273ed
 0x007B0380,6,?FUN_007B0380@@YAPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@XZ,src/worlddom.cpp,154ff88c4aeadaea061ec94b4c51768c71589836a037ae580ce272c911e9d751
+0x007B0390,150,?FUN_007B0390@@YI?AV?$rc_ptr@VWDTTerritory@@@@H@Z,src/worlddom.cpp,6ec287a28bc4b8fa6514ab994640368755e18537a7130583def3d09a366a835e
 0x007B0430,3,?FUN_007B0430@@YA_NXZ,src/worlddom.cpp,e18aacce29affcdddaa5f641ac1ec12552e0fe9d066e6408941b1792818b8619
 0x007B0440,77,??_GFactionSelectDialogControl@WorldDominationTour@@UAEPAXI@Z,src/worlddom.cpp,dd395f545955c69ecba9f82f773db4f746a0ab3721cd965c6feed236c4e1e829
 0x007B0490,260,??0FactionSelectDialogControl@WorldDominationTour@@QAE@XZ,src/worlddom.cpp,afa7b682a805f124e031bb6de44891a7b2fc7628e860858e3d6a0a872fd92f6d

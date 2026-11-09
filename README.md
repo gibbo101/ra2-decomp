@@ -12,7 +12,7 @@ over real objects or hard-coded addresses are rejected however well they score.
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
 **Status (9 November 2026):** 3.14 MB of the game's 3.81 MB of code matches byte for byte
-(82%), in 18,975 of its 19,362 functions (98%). Counting each unmatched function at its best
+(82%), in 18,976 of its 19,362 functions (98%). Counting each unmatched function at its best
 attempt so far, the fuzzy match is 94%. Each function is checked on its own; linking a whole
 executable that matches comes later. `docs/PLAN.md` has the method, and `docs/rounds/`
 records every batch.
@@ -86,7 +86,7 @@ out of history.
   assembly into the build with MASM; and added the checker's completion checks and
   function-map callbacks.
 - [meastes](https://github.com/meastes): matched functions in the map, VQA loading,
-  static-sound saving and Techno line drawing, ported from their matching decompilation
+  static-sound saving, Techno line drawing and the conflict-territory lookup, ported from their matching decompilation
   of Red Alert 2 ([meastes/redalert2-decomp](https://github.com/meastes/redalert2-decomp),
   GPL-3.0-or-later).
 - [mischa85](https://github.com/mischa85): named 102 functions and globals in audio, Bink,

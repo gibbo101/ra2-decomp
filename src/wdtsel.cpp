@@ -316,7 +316,7 @@ void Selection::Set_Text(WideWstring const & text, int start_delay)
 {
 	if (TextAnim != NULL) {
 		Remove_Anim(TextAnim);
-		HiddenSurface->Blit_From(WorldMap.Get()->TextRect, *AlternateSurface, WorldMap->TextRect);
+		HiddenSurface->Blit_From(WorldMap->TextRect, *AlternateSurface, WorldMap->TextRect);
 		Add_Update_Rect(WorldMap.Get()->TextRect);
 		TextAnim = NULL;
 	}

@@ -2,6 +2,10 @@
 // Copyright 2026 ra2-decomp contributors
 #pragma once
 
+#ifdef _DEBUG
+#include "assert.h"
+#endif
+
 class rc_object
 {
 	public:
@@ -37,7 +41,16 @@ class rc_ptr : public rc_ptr_base
 		rc_ptr & operator=(T * ptr) { FUN_0065D480(ptr); return(*this); }
 		T * Get(void) const { return((T *)Ptr); }
 		T & operator*(void) const { return(*Get()); }
-		T * operator->(void) const { return(Ptr ? (T *)Ptr : NULL); }
+		T * operator->(void) const
+		{
+			// Empty handles are valid; a pointee must have an owning reference.
+			if (Ptr != NULL) {
+#ifdef _DEBUG
+				assert(Ptr->RefCount > 0);
+#endif
+			}
+			return((T *)Ptr);
+		}
 };
 
 template<class T>

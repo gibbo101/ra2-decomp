@@ -2264,9 +2264,6 @@ void Version_Dialog(void)
 extern char DAT_00A8F7B8[32];
 void __fastcall FUN_004790B0(int disk);
 void __cdecl FUN_004A4AC0(const char * text);
-short __fastcall FUN_0054F000(void * input);
-short __fastcall FUN_0054F050(void * input);
-extern void * InputManagerInstance;
 void __fastcall FUN_0052B9B0(HWND dialog);
 
 static bool Cheat_Key_Process(char chr)
@@ -2323,8 +2320,8 @@ int Main_Menu(unsigned int timeout)
 			}
 			Title_Screen_Restore();
 
-			if (FUN_0054F000(InputManagerInstance)) {
-				int input = (unsigned short)FUN_0054F050(InputManagerInstance);
+			if (Keyboard->Check()) {
+				int input = Keyboard->Get();
 				if ((input & 0x800) == 0) {
 					if (Cheat_Key_Process((char)input) == true) {
 						VocClass::PlayGlobal(Rule->OptionsChanged, 1.0f, 0x2000);
