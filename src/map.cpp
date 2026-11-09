@@ -2226,6 +2226,115 @@ void MapClass::Internal_Destroy_Train_Bridge_NS_TopRight(Cell const & cell, Faci
 	}
 }
 
+static inline Cell Adjacent_Cell_L(Cell const &cell, FacingType facing)
+{
+	return (AdjacentCell[(int)facing & 7] + cell);
+}
+
+// FUNCTION: GAMEMD 0x00570AE0
+bool MapClass::Destroy_Train_Bridge_Span(Cell const &cell, FacingType dir, Rect *dirty)
+{
+	CellClass *cellptr = &Map[cell];
+	int count = 1;
+	CellClass *startptr;
+	bool was_owner;
+	Cell ownercell;
+	bool sprung;
+	int index;
+	Cell spanstart = Adjacent_Cell(cellptr->Fetch_CellID(), dir);
+	Cell lastcell = spanstart;
+	int ittype;
+
+	while (true) {
+		lastcell = Adjacent_Cell(cellptr->Fetch_CellID(), dir);
+		cellptr = &Map[lastcell];
+		ittype = int(cellptr->ITType - IsometricTileTypeClass::TrainBridgeSet + 1);
+
+		if (dir == FACING_E) {
+			if (ittype == IsometricTileTypeClass::BridgeBottomRight1 && cellptr->SubTile == 4 ||
+			    ittype == IsometricTileTypeClass::BridgeBottomRight2 && cellptr->SubTile == 4 ||
+			    (ittype == IsometricTileTypeClass::BridgeMiddle1 ||
+			     ittype == IsometricTileTypeClass::BridgeMiddle1 + 3 ||
+			     ittype == IsometricTileTypeClass::BridgeMiddle1 + 1 ||
+			     ittype == IsometricTileTypeClass::BridgeMiddle1 + 2) &&
+			        cellptr->SubTile == 4) {
+				break;
+			}
+		} else if (dir == FACING_S && (ittype == IsometricTileTypeClass::BridgeBottomLeft1 && cellptr->SubTile == 2 ||
+		                               ittype == IsometricTileTypeClass::BridgeBottomLeft2 && cellptr->SubTile == 2 ||
+		                               (ittype == IsometricTileTypeClass::BridgeMiddle2 ||
+		                                ittype == IsometricTileTypeClass::BridgeMiddle2 + 3 ||
+		                                ittype == IsometricTileTypeClass::BridgeMiddle2 + 1 ||
+		                                ittype == IsometricTileTypeClass::BridgeMiddle2 + 2) &&
+		                                   cellptr->SubTile == 2)) {
+			break;
+		}
+		if (++count >= 30)
+			break;
+	}
+
+	if (count != 30) {
+		startptr = &Map[cell];
+
+		if (dirty != 0) {
+			Point2D startpix;
+			Coord coord;
+			coord.X = cell.X * 256 + 128;
+			coord.Y = cell.Y * 256 + 128;
+			coord.Z = LEVEL_LEPTON_H * startptr->Height;
+			TacticalMap->Coord_To_Pixel(coord, startpix);
+
+			Point2D endpix;
+			coord.X = lastcell.X * 256 + 128;
+			coord.Y = lastcell.Y * 256 + 128;
+			coord.Z = LEVEL_LEPTON_H * startptr->Height;
+			TacticalMap->Coord_To_Pixel(coord, endpix);
+
+			Rect bounds;
+			bounds.X = min(startpix.X, endpix.X) - 64;
+			bounds.Y = min(startpix.Y, endpix.Y) - 64;
+			bounds.Width = abs(startpix.X - endpix.X) + 128;
+			bounds.Height = abs(startpix.Y - endpix.Y) + 128;
+			*dirty = Union(*dirty, bounds);
+		}
+
+		was_owner = false;
+		ownercell = Cell(-1, -1);
+		sprung = false;
+
+		for (index = 0; index < count; index++) {
+			if (startptr->IsBridgeDeck && was_owner) {
+				ownercell = startptr->CellID;
+			}
+			if (!startptr->IsBridgeDeck && !was_owner && ownercell != Cell(-1, -1)) {
+				Cell behind = Adjacent_Cell_L(startptr->Fetch_CellID(), Facing_Sub(dir, FACING_180));
+				CellClass *behindptr = &Map[behind];
+				if (dir == FACING_E) {
+					behindptr->Set_Under_Rail_Bridge(FACING_N, false);
+				} else {
+					behindptr->Set_Under_Rail_Bridge(FACING_W, false);
+				}
+				behindptr->OverlayData = 0;
+				behindptr->Overlay = OVERLAY_NONE;
+				Map.Radar_Background(behindptr->CellID);
+				Destroy_Train_Bridge_Span(cell, dir, dirty);
+				return (true);
+			}
+
+			was_owner = !startptr->IsBridgeDeck;
+			if (was_owner && !sprung) {
+				sprung = true;
+				Spring_Bridge_Destruction_Triggers(spanstart, lastcell);
+			}
+
+			TPoint2D<short> const &origin = startptr->Fetch_CellID();
+			Cell next = origin + AdjacentCell[dir & 7];
+			startptr = &Map[next];
+		}
+	}
+
+	return (false);
+}
 
 // FUNCTION: GAMEMD 0x00571050
 void MapClass::Destroy_Train_Bridge_Connections(Cell const & cell)
@@ -2617,6 +2726,125 @@ static inline bool Is_Concrete_Low_Bridge(Cell const & cell)
 	return(overlay >= 0xCD && overlay <= 0xE8);
 }
 
+// FUNCTION: GAMEMD 0x00574000
+void MapClass::DestroyConcreteBridgeAt(Cell const &cell)
+{
+	for (int x = -2; x < 3; ++x) {
+		for (int y = -2; y < 3; ++y) {
+			if (Is_Concrete_Low_Bridge(cell + Cell(x, y))) {
+				FUN_005749C0(cell + Cell(x, y));
+				return;
+			}
+		}
+	}
+	CellClass *cellptr = &Map[cell];
+	FacingType step;
+	FacingType facing = FACING_N;
+	if (!cellptr->IsUnderBridge && !cellptr->WasUnderBridge) {
+		for (int index = 0; index < 8; ++index) {
+			Cell adjacent = Adjacent_Cell(cell, facing);
+			cellptr = &Map[adjacent];
+			if (cellptr->IsUnderBridge || cellptr->WasUnderBridge)
+				break;
+			Cell adjacent2 = Adjacent_Cell(adjacent, facing);
+			cellptr = &Map[adjacent2];
+			if (cellptr->IsUnderBridge || cellptr->WasUnderBridge)
+				break;
+			adjacent = Adjacent_Cell(adjacent2, facing);
+			cellptr = &Map[adjacent];
+			if (cellptr->IsUnderBridge || cellptr->WasUnderBridge)
+				break;
+			facing = Facing_Add(facing, FACING_NE);
+		}
+	}
+	if (!cellptr->IsUnderBridge && !cellptr->WasUnderBridge)
+		return;
+	Cell origin;
+	if (cellptr->IsUnderBridge) {
+		if (cellptr->IsBridgeDeck)
+			origin = cellptr->CellID;
+		else
+			origin = cellptr->BridgeDeckCell->CellID;
+	} else {
+		Cell walk = cellptr->Fetch_CellID();
+		int count = 0;
+		if (cellptr->IsBridgeEastWest)
+			step = FACING_S;
+		else
+			step = FACING_E;
+		CellClass *walkptr;
+		while (true) {
+			Cell const &from = walk;
+			walk = Adjacent_Cell_L(from, step);
+			walkptr = &Map[walk];
+			if (walkptr->WasUnderBridge) {
+				if (++count >= 4)
+					return;
+			} else {
+				break;
+			}
+		}
+		FacingType back = Facing_Sub(step, FACING_180);
+		origin = (AdjacentCell[back & 7] + walk) + AdjacentCell[back & 7];
+	}
+	FacingType shared_direction = cellptr->IsBridgeEastWest ? FACING_W : FACING_N;
+	Cell spancell = origin;
+	DynamicVectorClass<Cell> cells;
+	int tile;
+	CellClass *spanptr;
+	if (spancell.X >= MapRect.X) {
+		while (spancell.X >= MapRect.X) {
+			if (spancell.X > MapRect.X + MapRect.Width)
+				break;
+			if (spancell.Y < MapRect.Y || spancell.Y > MapRect.Y + MapRect.Height)
+				break;
+			if (Array[spancell.X + spancell.Y * 512] != 0) {
+				spanptr = &Map[spancell];
+				tile = spanptr->ITType - IsometricTileTypeClass::BridgeSet + 1;
+				if (FUN_005746C0(tile, spanptr)) {
+					goto destroy_span;
+				}
+			}
+			spancell = Adjacent_Cell(spancell, shared_direction);
+		}
+	}
+	goto finished;
+
+destroy_span:
+	{
+		step = Facing_Sub(shared_direction, FACING_180);
+		Cell end = spancell;
+		int hits;
+		for (hits = 0; hits < 3; ++hits) {
+			if (Damage_Bridge(spancell))
+				break;
+		}
+		while (true) {
+			end = Adjacent_Cell(end, step);
+			spanptr = &Map[end];
+			if (end.X < MapRect.X || end.X > MapRect.X + MapRect.Width || end.Y < MapRect.Y ||
+			    end.Y > MapRect.Y + MapRect.Height)
+				goto destroy_connections;
+			tile = spanptr->ITType - IsometricTileTypeClass::BridgeSet + 1;
+			if (FUN_00574600(tile, step, spanptr))
+				break;
+		}
+		if (tile != -1) {
+			end = end + AdjacentCell[(step - 4) & 7];
+			for (hits = 0; hits < 3; ++hits) {
+				if (Damage_Bridge(end))
+					break;
+			}
+		}
+	destroy_connections:
+		Destroy_High_Bridge_Connections(spancell);
+		TacticalMap->IsFirstRender = true;
+	}
+
+finished:
+	Update_Pathfinding_1();
+}
+
 // FUNCTION: GAMEMD 0x00574600
 bool FUN_00574600(int tile, int dir, CellClass * cell)
 {
@@ -2712,6 +2940,125 @@ void MapClass::FUN_005749C0(Cell const & cell)
 			FUN_00575BA0(cell - Cell(1, 0));
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x00574C20
+void MapClass::DestroyWoodBridgeAt(Cell const &cell)
+{
+	for (int x = -2; x < 3; ++x) {
+		for (int y = -2; y < 3; ++y) {
+			if (Is_Low_Bridge(cell + Cell(x, y))) {
+				FUN_00574780(cell + Cell(x, y));
+				return;
+			}
+		}
+	}
+	CellClass *cellptr = &Map[cell];
+	FacingType step;
+	FacingType facing = FACING_N;
+	if (!cellptr->IsUnderBridge && !cellptr->WasUnderBridge) {
+		for (int index = 0; index < 8; ++index) {
+			Cell adjacent = Adjacent_Cell(cell, facing);
+			cellptr = &Map[adjacent];
+			if (cellptr->IsUnderBridge || cellptr->WasUnderBridge)
+				break;
+			Cell adjacent2 = Adjacent_Cell(adjacent, facing);
+			cellptr = &Map[adjacent2];
+			if (cellptr->IsUnderBridge || cellptr->WasUnderBridge)
+				break;
+			adjacent = Adjacent_Cell(adjacent2, facing);
+			cellptr = &Map[adjacent];
+			if (cellptr->IsUnderBridge || cellptr->WasUnderBridge)
+				break;
+			facing = Facing_Add(facing, FACING_NE);
+		}
+	}
+	if (!cellptr->IsUnderBridge && !cellptr->WasUnderBridge)
+		return;
+	Cell origin;
+	if (cellptr->IsUnderBridge) {
+		if (cellptr->IsBridgeDeck)
+			origin = cellptr->CellID;
+		else
+			origin = cellptr->BridgeDeckCell->CellID;
+	} else {
+		Cell walk = cellptr->Fetch_CellID();
+		int count = 0;
+		if (cellptr->IsBridgeEastWest)
+			step = FACING_S;
+		else
+			step = FACING_E;
+		CellClass *walkptr;
+		while (true) {
+			Cell const &from = walk;
+			walk = Adjacent_Cell_L(from, step);
+			walkptr = &Map[walk];
+			if (walkptr->WasUnderBridge) {
+				if (++count >= 4)
+					return;
+			} else {
+				break;
+			}
+		}
+		FacingType back = Facing_Sub(step, FACING_180);
+		origin = (AdjacentCell[back & 7] + walk) + AdjacentCell[back & 7];
+	}
+	FacingType shared_direction = cellptr->IsBridgeEastWest ? FACING_W : FACING_N;
+	Cell spancell = origin;
+	DynamicVectorClass<Cell> cells;
+	int tile;
+	CellClass *spanptr;
+	if (spancell.X >= MapRect.X) {
+		while (spancell.X >= MapRect.X) {
+			if (spancell.X > MapRect.X + MapRect.Width)
+				break;
+			if (spancell.Y < MapRect.Y || spancell.Y > MapRect.Y + MapRect.Height)
+				break;
+			if (Array[spancell.X + spancell.Y * 512] != 0) {
+				spanptr = &Map[spancell];
+				tile = spanptr->ITType - IsometricTileTypeClass::TrainBridgeSet + 1;
+				if (FUN_005746C0(tile, spanptr)) {
+					goto destroy_span;
+				}
+			}
+			spancell = Adjacent_Cell(spancell, shared_direction);
+		}
+	}
+	goto finished;
+
+destroy_span:
+	{
+		step = Facing_Sub(shared_direction, FACING_180);
+		Cell end = spancell;
+		int hits;
+		for (hits = 0; hits < 3; ++hits) {
+			if (Damage_Bridge(spancell))
+				break;
+		}
+		while (true) {
+			end = Adjacent_Cell(end, step);
+			spanptr = &Map[end];
+			if (end.X < MapRect.X || end.X > MapRect.X + MapRect.Width || end.Y < MapRect.Y ||
+			    end.Y > MapRect.Y + MapRect.Height)
+				goto destroy_connections;
+			tile = spanptr->ITType - IsometricTileTypeClass::TrainBridgeSet + 1;
+			if (FUN_00574600(tile, step, spanptr))
+				break;
+		}
+		if (tile != -1) {
+			end = end + AdjacentCell[(step - 4) & 7];
+			for (hits = 0; hits < 3; ++hits) {
+				if (Damage_Bridge(end))
+					break;
+			}
+		}
+	destroy_connections:
+		Destroy_High_Bridge_Connections(spancell);
+		TacticalMap->IsFirstRender = true;
+	}
+
+finished:
+	Update_Pathfinding_1();
 }
 
 // FUNCTION: GAMEMD 0x00575220
@@ -2988,6 +3335,115 @@ void MapClass::Spring_Bridge_Destruction_Triggers(Cell cell1, Cell cell2)
 			current.Y++;
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x00576200
+bool MapClass::Destroy_High_Bridge_Span(Cell const &cell, FacingType dir, Rect *dirty)
+{
+	CellClass *cellptr = &Map[cell];
+	int count = 1;
+	CellClass *startptr;
+	bool was_owner;
+	Cell ownercell;
+	bool sprung;
+	int index;
+	Cell spanstart = Adjacent_Cell(cellptr->Fetch_CellID(), dir);
+	Cell lastcell = spanstart;
+	int ittype;
+
+	while (true) {
+		lastcell = Adjacent_Cell(cellptr->Fetch_CellID(), dir);
+		cellptr = &Map[lastcell];
+		ittype = int(cellptr->ITType - IsometricTileTypeClass::BridgeSet + 1);
+
+		if (dir == FACING_E) {
+			if (ittype == IsometricTileTypeClass::BridgeBottomRight1 && cellptr->SubTile == 4 ||
+			    ittype == IsometricTileTypeClass::BridgeBottomRight2 && cellptr->SubTile == 4 ||
+			    (ittype == IsometricTileTypeClass::BridgeMiddle1 ||
+			     ittype == IsometricTileTypeClass::BridgeMiddle1 + 3 ||
+			     ittype == IsometricTileTypeClass::BridgeMiddle1 + 1 ||
+			     ittype == IsometricTileTypeClass::BridgeMiddle1 + 2) &&
+			        cellptr->SubTile == 4) {
+				break;
+			}
+		} else if (dir == FACING_S && (ittype == IsometricTileTypeClass::BridgeBottomLeft1 && cellptr->SubTile == 2 ||
+		                               ittype == IsometricTileTypeClass::BridgeBottomLeft2 && cellptr->SubTile == 2 ||
+		                               (ittype == IsometricTileTypeClass::BridgeMiddle2 ||
+		                                ittype == IsometricTileTypeClass::BridgeMiddle2 + 3 ||
+		                                ittype == IsometricTileTypeClass::BridgeMiddle2 + 1 ||
+		                                ittype == IsometricTileTypeClass::BridgeMiddle2 + 2) &&
+		                                   cellptr->SubTile == 2)) {
+			break;
+		}
+
+		if (++count >= 30) {
+			break;
+		}
+	}
+
+	if (count != 30) {
+		startptr = &Map[cell];
+
+		if (dirty != 0) {
+			Point2D startpix;
+			Coord coord;
+			coord.X = cell.X * 256 + 128;
+			coord.Y = cell.Y * 256 + 128;
+			coord.Z = LEVEL_LEPTON_H * startptr->Height;
+			TacticalMap->Coord_To_Pixel(coord, startpix);
+
+			Point2D endpix;
+			coord.X = lastcell.X * 256 + 128;
+			coord.Y = lastcell.Y * 256 + 128;
+			coord.Z = LEVEL_LEPTON_H * startptr->Height;
+			TacticalMap->Coord_To_Pixel(coord, endpix);
+
+			Rect bounds;
+			bounds.X = min(startpix.X, endpix.X) - 64;
+			bounds.Y = min(startpix.Y, endpix.Y) - 64;
+			bounds.Width = abs(startpix.X - endpix.X) + 128;
+			bounds.Height = abs(startpix.Y - endpix.Y) + 128;
+			*dirty = Union(*dirty, bounds);
+		}
+
+		was_owner = false;
+		ownercell = Cell(-1, -1);
+		sprung = false;
+
+		for (index = 0; index < count; index++) {
+			if (startptr->IsBridgeDeck && was_owner) {
+				ownercell = startptr->CellID;
+			}
+
+			if (!startptr->IsBridgeDeck && !was_owner && ownercell != Cell(-1, -1)) {
+				Cell behind = Adjacent_Cell_L(startptr->Fetch_CellID(), Facing_Sub(dir, FACING_180));
+				CellClass *behindptr = &Map[behind];
+
+				if (dir == FACING_E)
+					behindptr->Set_Under_Bridge(FACING_N, false);
+				else
+					behindptr->Set_Under_Bridge(FACING_W, false);
+
+				behindptr->OverlayData = 0;
+				behindptr->Overlay = OVERLAY_NONE;
+				Map.Radar_Background(behindptr->CellID);
+				Destroy_High_Bridge_Span(cell, dir, dirty);
+				return (true);
+			}
+
+			was_owner = !startptr->IsBridgeDeck;
+			if (was_owner && !sprung) {
+				sprung = true;
+				Spring_Bridge_Destruction_Triggers(spanstart, lastcell);
+			}
+
+			TPoint2D<short> const &origin = startptr->Fetch_CellID();
+			Cell next = origin + AdjacentCell[dir & 7];
+			startptr = &Map[next];
+		}
+	}
+
+	return (false);
 }
 
 // FUNCTION: GAMEMD 0x00576770
@@ -3762,7 +4218,7 @@ bool MapClass::Expand_High_Ground(CellClass * cellptr, int region_id)
 }
 
 // SYNTHETIC: GAMEMD 0x00579320 SYMBOL
-// _$E237
+// _$E239
 const Cell CliffVariantOffsets[] = {
 	Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0),
 	Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0), Cell(0, 0),
@@ -4147,7 +4603,7 @@ int MapClass::Straight_Shore_Length(CellClass * cellptr, FacingType direction)
 }
 
 // SYNTHETIC: GAMEMD 0x0057A9C0 SYMBOL
-// _$E241
+// _$E243
 Cell ShorePieceOffsets[] = {
 	Cell(0, -1),
 	Cell(0, -1),
@@ -6423,7 +6879,7 @@ bool MapClass::Rebuild_Cliffs_At(Cell const & cell)
 }
 
 // SYNTHETIC: GAMEMD 0x00585EE0 SYMBOL
-// _$E246
+// _$E248
 Cell RegionQuadrantOffsets[4] = {
 	Cell(0, 0), Cell(REGION_WIDTH, 0), Cell(0, REGION_HEIGHT), Cell(REGION_WIDTH, REGION_HEIGHT),
 };
