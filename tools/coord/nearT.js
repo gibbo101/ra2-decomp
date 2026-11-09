@@ -89,6 +89,8 @@ const sonnet = (await parallel(args.jobs.map(job => () =>
 
 const open = sonnet.flatMap(r => (r.sonnet ? r.sonnet.functions : [])
   .filter(f => f.result !== 'MATCH').map(f => ({ ...f, module: r.module })))
+const tier = sonnet.flatMap(r => (r.sonnet ? r.sonnet.functions : [])
+  .filter(f => f.result === 'MATCH').map(f => f.address.toUpperCase()))
 const requests = sonnet.filter(r => r.sonnet && r.sonnet.needs_other_headers && r.sonnet.needs_other_headers.trim())
   .map(r => `### ${r.module}\n${r.sonnet.needs_other_headers}`)
 log(`Sonnet matched ${sonnet.reduce((n, r) => n + (r.sonnet ? r.sonnet.functions.filter(f => f.result === 'MATCH').length : 0), 0)} of ${args.jobs.flatMap(j => Object.values(j.modules).flat()).length}; ${requests.length} modules asked for header changes`)
@@ -104,6 +106,7 @@ if (requests.length) {
     `This batch's first tier ran one Opus agent per module or group of modules on earlier near misses; each could edit only its own module's header. They asked ` +
     `for these changes to shared headers (their overlays are in build/batch/<job>/include/, their banked ` +
     `attempts in build/batch/<job>/<ADDR>.cpp, where a job is one module or a group of small ones):\n\n${requests.join('\n\n')}\n\n` +
+    `Already landed in src/ by that tier (keep them MATCH; do not list them as yours): ${tier.join(', ') || 'none'}.\n` +
     `Unmatched functions from that tier: ${open.map(f => `${f.address} (${f.module}, ${f.best_percent}%, ${f.blocker})`).join('; ')}.\n\n` +
     `Your job:\n` +
     `1. Land each requested header change in include/ properly: verify it against the exe (tools/headercheck.py ` +
@@ -127,6 +130,5 @@ if (requests.length) {
 }
 const landed = new Set(merged ? merged.landed.map(a => a.toUpperCase()) : [])
 
-const count = r => (r.sonnet ? r.sonnet.functions.filter(f => f.result === 'MATCH').length : 0)
-log(`Opus ${sonnet.reduce((n, r) => n + count(r), 0)}, merge ${landed.size}`)
-return { merged, modules: sonnet }
+log(`Opus ${tier.length}, merge ${landed.size}`)
+return { landed: { tier, merge: [...landed] }, merged, modules: sonnet }
