@@ -1924,27 +1924,6 @@ void __fastcall FUN_00638E60(void)
 bool __fastcall FUN_00639E30(PlanningTokenClass * a, PlanningTokenClass * b);
 void __fastcall FUN_00730A90(wchar_t const * text, int timeout);
 
-static inline Coord Node_Lead_7(PlanningNodeClass * n);
-static inline void Box_Into_7(Rect * r, int x, int y, int w, int h);
-static inline Rect Boxed(Rect r);
-
-// FUNCTION: GAMEMD 0x00638F90
-PlanningNodeClass * __stdcall FUN_00638F90(Point2D point)
-{
-	if (DAT_00AC4CCC != NULL) {
-		Point2D corner = Pixel_Of(Node_Lead_7(DAT_00AC4CCC));
-		corner.X -= 4;
-		corner.Y -= 4;
-		Rect rect;
-		Box_Into_7(&rect, corner.X, corner.Y, 8, 8);
-		Rect box = Boxed(rect);
-		if (box.Is_Point_Within(point)) {
-			return DAT_00AC4CCC;
-		}
-	}
-	return NULL;
-}
-
 // FUNCTION: GAMEMD 0x00639040
 bool __fastcall FUN_00639040(void)
 {
