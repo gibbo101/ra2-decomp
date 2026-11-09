@@ -589,7 +589,7 @@ int TechnoClass::Combat_Damage(int which) const
 }
 
 // FUNCTION: GAMEMD 0x006F3AD0
-Coord TechnoClass::Fire_Coord(int which, Coord base) const
+Coord TechnoClass::Fire_Coord(int which, Point3D base) const
 {
 	TechnoTypeClass const * tclass = TClass;
 	int flhx = 0;

@@ -3546,7 +3546,7 @@ bool InfantryClass::ChronoWarpTo(Coord dest)
 }
 
 // FUNCTION: GAMEMD 0x00523250
-Coord InfantryClass::Fire_Coord(int which, Coord base) const
+Coord InfantryClass::Fire_Coord(int which, Point3D base) const
 {
 	if (InOpenToppedTransport && Transporter != NULL) {
 		int index = Transporter->Cargo.IndexOf(this);

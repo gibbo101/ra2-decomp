@@ -130,7 +130,7 @@ class InfantryClass : public FootClass
 		virtual int Do_MISSION_HARVEST(void) override;
 		bool FUN_00522FC0(void);
 		virtual bool ChronoWarpTo(Coord dest) override;
-		virtual Coord Fire_Coord(int which, Coord base) const override;
+		virtual Coord Fire_Coord(int which, Point3D base) const override;
 		virtual void Berzerk(void) override;
 		virtual void Start_Fear(void) override;
 		virtual void Stop_Fear(void) override;
