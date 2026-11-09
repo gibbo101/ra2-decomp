@@ -28,8 +28,8 @@ namespace UI {
 namespace Game {
 	bool __fastcall OnWindowMoving(HWND window, WPARAM wparam, LPARAM lparam);
 }
-BOOL CALLBACK FUN_005D36A0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
-void __fastcall FUN_005D3760(HWND window, int id, int control, int notify_code);
+BOOL CALLBACK Message_Box_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+void __fastcall Message_Box_On_WM_COMMAND(HWND window, int id, int control, int notify_code);
 int FUN_00ABFC18;
 int FUN_00ABFC1C;
 int FUN_00ABFC20;
@@ -57,7 +57,7 @@ int WWMessageBox::Process(wchar_t const * msg, wchar_t const * b1txt, wchar_t co
 		id = 0x120;
 	}
 
-	HWND dialog = UI::BeginDialog(id, FUN_005D36A0, 0);
+	HWND dialog = UI::BeginDialog(id, Message_Box_Proc, 0);
 	if (dialog != NULL) {
 		SetWindowLong(dialog, DWL_USER, (LONG)&retval);
 
@@ -110,14 +110,14 @@ int WWMessageBox::Process(wchar_t const * msg, wchar_t const * b1txt, wchar_t co
 }
 
 // FUNCTION: GAMEMD 0x005D36A0
-BOOL CALLBACK FUN_005D36A0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK Message_Box_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	BOOL rc = UI::StandardWndProc(window, message, wparam, lparam);
 
 	if (rc == FALSE) {
 		switch (message) {
 			case WM_COMMAND:
-				FUN_005D3760(window, LOWORD(wparam), 0, HIWORD(wparam));
+				Message_Box_On_WM_COMMAND(window, LOWORD(wparam), 0, HIWORD(wparam));
 				rc = FALSE;
 				break;
 
@@ -135,7 +135,7 @@ BOOL CALLBACK FUN_005D36A0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 // FUNCTION: GAMEMD 0x005D3760
-void __fastcall FUN_005D3760(HWND window, int id, int control, int notify_code)
+void __fastcall Message_Box_On_WM_COMMAND(HWND window, int id, int control, int notify_code)
 {
 	int * retval = (int *)GetWindowLong(window, DWL_USER);
 

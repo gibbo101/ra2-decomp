@@ -3139,7 +3139,7 @@ BOOL CALLBACK InitCompactDialogControlsProc(HWND window, LPARAM lparam);
 }
 
 // FUNCTION: GAMEMD 0x00608070
-bool FUN_00608070(HWND dialog)
+bool WS_Save_Dialog_Values(HWND dialog)
 {
 	if (FUN_0069BBE0(&Session)) {
 		return false;
@@ -7874,7 +7874,7 @@ HWND __fastcall UI::BeginDialog(int resource, DLGPROC proc, int param)
 void __fastcall UI::EndDialog(HWND window)
 {
 	InputManagerClass::Instance->DoSomething();
-	FUN_00608070(window);
+	WS_Save_Dialog_Values(window);
 	DestroyWindow(window);
 
 	for (int index = 0; index < DAT_00B72F50; index++) {
