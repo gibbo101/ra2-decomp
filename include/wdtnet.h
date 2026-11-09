@@ -378,8 +378,7 @@ namespace WorldDominationTour
 			Wstring Name;
 			TERR_LIST Territories;
 			Point2D Origin;
-			int HelpBarX;
-			int HelpBarY;
+			Point2D HelpBarOrigin;
 			Rect CancelRect;
 			MSOverlayAnim * CancelAnim;
 			bool CancelActive;

@@ -3964,6 +3964,7 @@ address,name,result,size,source,symbol
 0x004BBCA0,DSurface::Draw_Depth_Glow_Line,MATCH,2735,src/dsurface.cpp,?Draw_Depth_Glow_Line@DSurface@@UAE_NABV?$TRect@H@@ABVPoint2D@@1HHH_N@Z
 0x004BDF00,DSurface::DrawRGBMultiplyingLine,MATCH,2754,src/dsurface.cpp,?DrawRGBMultiplyingLine@DSurface@@UAE_NABV?$TRect@H@@ABVPoint2D@@1ABVRGBClass@@MHH@Z
 0x004BE9D0,Brighten_Hicolor_Pixel,MATCH,226,src/dsurface.cpp,?Brighten_Hicolor_Pixel@@YIHPBVRGBClass@@HHH@Z
+0x004BEAC0,DSurface::FUN_004BEAC0,MATCH,2951,src/dsurface.cpp,?FUN_004BEAC0@DSurface@@QAE_NABV?$TRect@H@@AAVPoint2D@@1AAVRGBClass@@HHH@Z
 0x004BF650,DSurface::Blend_Pixel,MATCH,245,src/dsurface.cpp,?Blend_Pixel@DSurface@@SIGGGH@Z
 0x004BF750,DSurface::Draw_Ping_Pong_Gradient_Line,MATCH,1499,src/dsurface.cpp,?Draw_Ping_Pong_Gradient_Line@DSurface@@UBE_NABV?$TRect@H@@ABVPoint2D@@1ABVRGBClass@@2AAM3@Z
 0x004BFD30,DSurface::Draw_Depth_Shaded_Line,MATCH,2583,src/dsurface.cpp,?Draw_Depth_Shaded_Line@DSurface@@UAE_NABV?$TRect@H@@ABVPoint2D@@1IHH_N@Z
@@ -11458,6 +11459,7 @@ address,name,result,size,source,symbol
 0x0064AE50,Reconnect_Dialog_Proc,MATCH,1000,src/queue.cpp,?Reconnect_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x0064B240,Kick_Player_Now,MATCH,461,src/queue.cpp,?Kick_Player_Now@@YIXPAVConnManClass@@HPAUFrameSyncStruct@@_N@Z
 0x0064B410,Handle_Timeout,MATCH,187,src/queue.cpp,?Handle_Timeout@@YIHPAVConnManClass@@PAUFrameSyncStruct@@@Z
+0x0064B4D0,FUN_0064B4D0,MATCH,397,src/queue.cpp,?FUN_0064B4D0@@YI_NPAEPAHPAUMegaMissionData@EventData@EventClass@@PAVxTargetClass@@_N@Z
 0x0064CD30,FUN_0064CD30,MATCH,106,src/queue.cpp,?FUN_0064CD30@@YIXHHVxTargetClass@@PAV1@@Z
 0x0064D990,Clean_DoList,MATCH,73,src/queue.cpp,?Clean_DoList@@YIXPAVConnManClass@@@Z
 0x0064D9E0,Queue_Record,MATCH,205,src/queue.cpp,?Queue_Record@@YIXXZ
@@ -17882,6 +17884,7 @@ address,name,result,size,source,symbol
 0x00781CF0,FUN_00781CF0,MATCH,45,src/wonline.cpp,?FUN_00781CF0@@YAHPBUUserSort@@0@Z
 0x00781FB0,FUN_00781FB0,MATCH,877,src/wonline.cpp,?FUN_00781FB0@@YIXPAUUser@@_N@Z
 0x00781D20,FUN_00781D20,MATCH,655,src/wonline.cpp,?FUN_00781D20@@YIX_N@Z
+0x00782BB0,FUN_00782BB0,MATCH,1201,src/wonline.cpp,?FUN_00782BB0@@YIXPAUUser@@_N@Z
 0x00783070,FUN_00783070,MATCH,72,src/wonline.cpp,?FUN_00783070@@YIXPAUUser@@@Z
 0x007830C0,FUN_007830C0,MATCH,219,src/wonline.cpp,?FUN_007830C0@@YAHPBUUserRank@@0@Z
 0x007831A0,FUN_007831A0,MATCH,208,src/wonline.cpp,?FUN_007831A0@@YAHPBUUserRank@@0@Z
@@ -17950,6 +17953,7 @@ address,name,result,size,source,symbol
 0x00793A70,FUN_00793A70,MATCH,178,src/wonline.cpp,?FUN_00793A70@@YIXPBDG@Z
 0x00793B30,FUN_00793B30,MATCH,116,src/wonline.cpp,?FUN_00793B30@@YIXHPBD@Z
 0x00793CD0,FUN_00793CD0,MATCH,72,src/wonline.cpp,?FUN_00793CD0@@YIXH@Z
+0x007947B0,FUN_007947B0,MATCH,996,src/wonline.cpp,?FUN_007947B0@@YI_NXZ
 0x00794BA0,FUN_00794BA0,MATCH,2724,src/wonline.cpp,?FUN_00794BA0@@YIXXZ
 0x00795650,FUN_00795650,MATCH,1664,src/wonline.cpp,?FUN_00795650@@YI_NPAVIPXAddressClass@@@Z
 0x00795CD0,FUN_00795CD0,MATCH,2618,src/wonline.cpp,?FUN_00795CD0@@YIH_N@Z

@@ -95,7 +95,6 @@
 #include "warhead.h"
 #include "waypoint.h"
 #include "weapon.h"
-#include "windlg.h"
 #include "winstub.h"
 #include "wolapi/wolapi.h"
 #include "wonline.h"
@@ -1228,6 +1227,65 @@ int __fastcall Handle_Timeout(ConnManClass *net, FrameSyncStruct *their)
 	}
 
 	return(1);
+}
+
+extern int DAT_00AFA338[8];
+extern int DAT_00AFA42C[8];
+extern xTargetClass DAT_00AC5230[8][128];
+
+// FUNCTION: GAMEMD 0x0064B4D0
+bool __fastcall FUN_0064B4D0(unsigned char * type, int * size, EventClass::EventData::MegaMissionData * mission, xTargetClass * targets, bool store)
+{
+	int i;
+	bool found = false;
+
+	if (*type > 1) {
+		for (i = 0; i < 8; i++) {
+			if (*type == DAT_00AFA338[i]) {
+				if (memcmp(&DAT_00AC5230[i][0], &mission->Whom, sizeof(xTargetClass)) == 0 &&
+					memcmp(&DAT_00AC5230[i][1], targets, DAT_00AFA338[i] * sizeof(xTargetClass) - sizeof(xTargetClass)) == 0) {
+					if (store) {
+						*size += sizeof(xTargetClass) - *type * sizeof(xTargetClass);
+					}
+					found = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if (found) {
+		if (store) {
+			*type = 0;
+			mission->Slot = i;
+		}
+	}
+	else if (store && *type > 1) {
+		int slot = -1;
+		int oldest = -1;
+		for (i = 0; i < 8; i++) {
+			if (DAT_00AFA42C[i] == 0) {
+				slot = i;
+				break;
+			}
+			int age = Frame - DAT_00AFA42C[i];
+			if (age > oldest) {
+				oldest = age;
+				slot = i;
+			}
+		}
+		if (slot == -1) {
+			slot = 0;
+		}
+
+		DebugString("Compress: Saving new megamission list with %d units to slot %d\n", *type, slot);
+		DAT_00AFA42C[slot] = Frame;
+		DAT_00AC5230[slot][0] = mission->Whom;
+		memcpy(&DAT_00AC5230[slot][1], targets, *type * sizeof(xTargetClass) - sizeof(xTargetClass));
+		DAT_00AFA338[slot] = *type;
+		mission->Slot = slot;
+	}
+	return(found);
 }
 
 extern QueueClass<EventClass, 256> MegaMissionList;

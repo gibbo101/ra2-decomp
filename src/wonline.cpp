@@ -2201,7 +2201,93 @@ void __fastcall FUN_00781D20(bool ascending)
 	delete sorted;
 }
 
-void __fastcall FUN_00782BB0(User * user, bool ascending);
+int __cdecl FUN_00783520(const char * a, const char * b);
+int __cdecl FUN_00783570(const char * a, const char * b);
+
+// FUNCTION: GAMEMD 0x00782BB0
+void __fastcall FUN_00782BB0(User * user, bool ascending)
+{
+	int count = DAT_00B77900.length();
+	User temp;
+	memset(&temp, 0, sizeof(temp));
+	if (count == 0) {
+		DAT_00B77900.addTail(*user);
+		return;
+	}
+	int owners = 0;
+	DAT_00B77900.get(temp, 0);
+	while (temp.Flags & 1) {
+		if (owners >= count) {
+			break;
+		}
+		owners++;
+		DAT_00B77900.get(temp, owners);
+	}
+	int pos;
+	if (user->Flags & 1) {
+		pos = 0;
+		DAT_00B77900.get(temp, 0);
+		if (ascending) {
+			while (pos < owners) {
+				if (FUN_00783520(temp.Abbrev, user->Abbrev) >= 0) {
+					break;
+				}
+				pos++;
+				DAT_00B77900.get(temp, pos);
+			}
+		} else {
+			while (pos < owners) {
+				if (FUN_00783570(temp.Abbrev, user->Abbrev) >= 0) {
+					break;
+				}
+				pos++;
+				DAT_00B77900.get(temp, pos);
+			}
+		}
+		while (pos < owners) {
+			if (FUN_00783570(temp.Abbrev, user->Abbrev) != 0) {
+				break;
+			}
+			if (strcmpi(temp.Nick, user->Nick) >= 0) {
+				break;
+			}
+			pos++;
+			DAT_00B77900.get(temp, pos);
+		}
+	} else {
+		pos = owners;
+		DAT_00B77900.get(temp, owners);
+		if (ascending) {
+			while (pos < count) {
+				if (FUN_00783520(temp.Abbrev, user->Abbrev) >= 0) {
+					break;
+				}
+				pos++;
+				DAT_00B77900.get(temp, pos);
+			}
+		} else {
+			while (pos < count) {
+				if (FUN_00783570(temp.Abbrev, user->Abbrev) >= 0) {
+					break;
+				}
+				pos++;
+				DAT_00B77900.get(temp, pos);
+			}
+		}
+		while (pos < count) {
+			if (FUN_00783570(temp.Abbrev, user->Abbrev) != 0) {
+				break;
+			}
+			if (strcmpi(temp.Nick, user->Nick) >= 0) {
+				break;
+			}
+			pos++;
+			DAT_00B77900.get(temp, pos);
+		}
+	}
+	DAT_00B77900.add(*user, pos);
+}
+
 extern int DAT_00B77E48;
 void __fastcall FUN_00782320(User * user, bool ascending);
 
@@ -2323,7 +2409,10 @@ int __cdecl FUN_00783520(const char * a, const char * b)
 	if (la > 0) {
 		return -1;
 	}
-	return lb > 0;
+	if (lb > 0) {
+		return 1;
+	}
+	return 0;
 }
 
 // FUNCTION: GAMEMD 0x00783570
@@ -2337,7 +2426,10 @@ int __cdecl FUN_00783570(const char * a, const char * b)
 	if (la > 0) {
 		return -1;
 	}
-	return lb > 0;
+	if (lb > 0) {
+		return 1;
+	}
+	return 0;
 }
 
 static inline int Compare_User_Names(UserSort const * a, UserSort const * b)
@@ -5771,6 +5863,96 @@ extern bool DAT_00B77E27;
 extern int Frame;
 bool FUN_007947B0(void);
 int __fastcall FUN_00795CD0(bool go);
+void __fastcall FUN_0069BD60(SessionClass * session);
+unsigned char __fastcall FUN_00793D20(int partner, int tag, int retries);
+void FUN_00793BB0(void);
+
+// FUNCTION: GAMEMD 0x007947B0
+bool FUN_007947B0(void)
+{
+	CDTimerClass<SystemTimerClass> timer;
+	int tag = -1;
+	int partner;
+	Session.unknown_2FEC = 0;
+	memset(Session.unknown_2F4C, 0, sizeof(Session.unknown_2F4C));
+	DAT_00B77DCC = 0;
+	if (!Session.unknown_2E14) {
+		return false;
+	}
+	FUN_0069BD60(&Session);
+	FUN_007931F0(0);
+	FUN_004068E0("Session.NumConnectionPairs = %d\n", Session.unknown_2E14);
+	for (int i = 0; i < Session.unknown_2E14; i++) {
+		int first = Session.unknown_2A14[i][0];
+		int second = Session.unknown_2A14[i][1];
+		partner = -1;
+		NodeNameType * one = Session.Slots[first];
+		NodeNameType * two = Session.Slots[second];
+		char const * first_name = FUN_007350C0(one->Name);
+		FUN_004068E0("Connecting pair %d, %s and %s\n", i, first_name, FUN_007350C0(two->Name));
+		char const * name = FUN_007350C0(Session.Slots[first]->Name);
+		if (stricmp(name, DAT_00B73E40.get()) == 0) {
+			partner = second;
+			tag = i * 2 + 1;
+			Session.unknown_2C14[i][0] = 11;
+		}
+		name = FUN_007350C0(Session.Slots[second]->Name);
+		if (stricmp(name, DAT_00B73E40.get()) == 0) {
+			partner = first;
+			tag = i * 2;
+			Session.unknown_2C14[i][1] = 11;
+		}
+		if (partner != -1) {
+			int retries;
+			if (DAT_00ABFEC8.Rank_B(Session.unknown_29F4[first]) > DAT_00ABFEC8.Rank_B(Session.unknown_29F4[second])) {
+				retries = DAT_00ABFEC8.Rank_B(Session.unknown_29F4[first]);
+			} else {
+				retries = DAT_00ABFEC8.Rank_B(Session.unknown_29F4[second]);
+			}
+			FUN_004068E0("About to enter Start_Talking_To, retries = %d", retries);
+			if (!FUN_00793D20(partner, tag, retries)) {
+				FUN_004068E0("Something went horribly wrong\n");
+				return false;
+			}
+		} else {
+			FUN_004068E0("Waiting for other guys to connect\n");
+			timer = CDTimerClass<SystemTimerClass>(960);
+			int best = 0;
+			do {
+				Sleep(5);
+				FUN_0077F900();
+				FUN_00793BB0();
+				int res1 = Session.unknown_2C14[i][0];
+				int res2 = Session.unknown_2C14[i][1];
+				if ((res1 == 11 || res1 == 0) && (res2 == 11 || res2 == 0)) {
+					FUN_004068E0("Got both results - woohoo!\n");
+					break;
+				}
+				if (res1 >= 1 && res1 < 11 && res1 - 1 > best) {
+					FUN_004068E0("Connecting player 1 is trying again - try_now = %d\n", res1 - 1);
+					best = res1 - 1;
+					timer = CDTimerClass<SystemTimerClass>(840);
+				}
+				if (res2 >= 1 && res2 < 11 && res2 - 1 > best) {
+					FUN_004068E0("Connecting player 2 is trying again - try_now = %d\n", res2 - 1);
+					best = res2 - 1;
+					timer = CDTimerClass<SystemTimerClass>(840);
+				}
+			} while (timer.Value() != 0);
+		}
+		if (Session.unknown_2C14[i][0] != 11) {
+			FUN_004068E0("res1 != CONNRESULT_CONNECTED\n");
+			return false;
+		}
+		if (Session.unknown_2C14[i][1] != 11) {
+			FUN_004068E0("res2 != CONNRESULT_CONNECTED\n");
+			return false;
+		}
+		FUN_004068E0("Connection good, next pair\n");
+	}
+	FUN_004068E0("Everyones happy\n");
+	return true;
+}
 
 // FUNCTION: GAMEMD 0x00794BA0
 void FUN_00794BA0(void)

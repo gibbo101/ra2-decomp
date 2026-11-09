@@ -747,7 +747,7 @@ class SessionClass
 		unsigned short unknown_2E18[MAX_PLAYERS];
 		char unknown_2E28[MAX_PLAYERS][36];
 		bool unknown_2F48;
-		unsigned char unknown_2F49[0x23];
+		int unknown_2F4C[MAX_PLAYERS];
 		int unknown_2F6C[MAX_PLAYERS];
 		CDTimerClass<SystemTimerClass> unknown_2F8C[MAX_PLAYERS];
 		int unknown_2FEC;
