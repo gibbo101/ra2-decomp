@@ -64,6 +64,9 @@
 #include "fastmath.h"
 #include <wchar.h>
 
+// FUNCTION: GAMEMD 0x0043A0B0
+// ??0Vector3@@QAE@MMM@Z
+
 // SYNTHETIC: GAMEMD 0x006D1830 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x006D1860 SYMBOL
