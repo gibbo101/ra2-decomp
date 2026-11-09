@@ -2348,6 +2348,20 @@ extern char const * DAT_00844CB4;
 
 void __fastcall FUN_0072D830(int index);
 
+// FUNCTION: GAMEMD 0x0072D730
+void __fastcall FUN_0072D730(int index)
+{
+	if (!DAT_00B0FBB8) {
+		FUN_0072D830(index);
+		FUN_0072ADE0(
+			index == 0 ? DAT_00844BD4
+					   : index == 1 ? DAT_00844BD8 : DAT_00844BDC,
+			&DAT_00B0FBB0,
+			&DAT_00B0FBB4);
+		DAT_00B0FBB8 = true;
+	}
+}
+
 // FUNCTION: GAMEMD 0x0072D780
 void FUN_0072D780(void)
 {
@@ -2394,24 +2408,34 @@ void __fastcall FUN_0072D830(int index)
 {
 	if (index == 0) {
 		if (Drawing::RenderWidth == 0x280) {
-			DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CA0, DAT_00B0FC7D);
+			DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(
+				DAT_00844CA0, DAT_00B0FC7D);
+			return;
+		} else {
+			DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(
+				DAT_00844CA4, DAT_00B0FC7D);
 			return;
 		}
-		DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CA4, DAT_00B0FC7D);
-		return;
-	}
-	if (index == 1) {
+	} else if (index == 1) {
 		if (Drawing::RenderWidth == 0x280) {
-			DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CA8, DAT_00B0FC7D);
+			DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(
+				DAT_00844CA8, DAT_00B0FC7D);
+			return;
+		} else {
+			DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(
+				DAT_00844CAC, DAT_00B0FC7D);
 			return;
 		}
-		DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CAC, DAT_00B0FC7D);
-		return;
-	}
-	if (Drawing::RenderWidth == 0x280) {
-		DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CB0, DAT_00B0FC7D);
 	} else {
-		DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CB4, DAT_00B0FC7D);
+		if (Drawing::RenderWidth == 0x280) {
+			DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(
+				DAT_00844CB0, DAT_00B0FC7D);
+			return;
+		} else {
+			DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(
+				DAT_00844CB4, DAT_00B0FC7D);
+			return;
+		}
 	}
 }
 
