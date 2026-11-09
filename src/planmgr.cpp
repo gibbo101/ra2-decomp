@@ -877,7 +877,7 @@ void PlanningNodeClass::Unselect_All(void)
 // FUNCTION: GAMEMD 0x00635350
 void PlanningNodeClass::Draw_Lead_Box(int color)
 {
-	Rect clip = FUN_0072AD20();
+	Rect clip = Get_Title_Screen_Area();
 	Rect const & rect = FUN_00634510(Pixel_Of(Lead_Coord()), 8);
 	DSurface::Composite->Draw_Rect(clip, rect, color);
 	if (clip.Is_Overlapping(rect)) {
