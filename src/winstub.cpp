@@ -110,8 +110,8 @@ namespace Unsorted { extern bool ScenarioStarted; extern int CurrentFrame; exter
 
 void __cdecl FUN_004068E0(char const * format, ...);
 void __fastcall FUN_005BF500(bool state);
-void FUN_00407020(void);
-void FUN_00407040(void);
+void Audio_Focus_Lose(void);
+void Audio_Focus_Regain(void);
 
 class MouseSlots {
 	public:
@@ -144,7 +144,7 @@ void Focus_Loss(void)
 {
 	FUN_004068E0("Focus_Loss()\n");
 	FUN_005BF500(true);
-	FUN_00407020();
+	Audio_Focus_Lose();
 	if (DAT_00887640) {
 		DAT_00B73560 = DAT_00887640->Is_Captured();
 		FUN_004068E0("Focus_Loss(): _MouseCaptured = %s\n", DAT_00B73560 ? "true" : "false");
@@ -159,7 +159,7 @@ extern bool DAT_00884B8F;
 void Focus_Restore(void)
 {
 	FUN_004068E0("Focus_Restore()\n");
-	FUN_00407040();
+	Audio_Focus_Regain();
 	FUN_004068E0("Focus_Restore(): _MouseCaptured = %s\n", DAT_00B73560 ? "true" : "false");
 	if (DAT_00887640 && DAT_00B73560 == true && !Unsorted::ArmageddonMode) {
 		DAT_00887640->Capture_Mouse();

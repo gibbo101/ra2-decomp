@@ -66,9 +66,9 @@
 #include "movieunlock.h"
 
 extern CCINIClass DAT_008870C0;
-extern void * DAT_0087E740;
-extern void * DAT_0087E744;
-extern void * DAT_0087E748;
+extern void * AudioVoiceAttribs;
+extern void * AudioScoreAttribs;
+extern void * AudioSoundAttribs;
 void __fastcall FUN_00407150(void * p, int value);
 void __fastcall FUN_00752AB0(int volume);
 
@@ -179,7 +179,7 @@ void OptionsClass::Set_Repeat(bool on)
 void OptionsClass::Set_Score_Volume(float volume, bool feedback)
 {
 	ScoreVolume = MIN(volume, 1.0);
-	FUN_00407150(DAT_0087E744, ScoreVolume * 16384.0f);
+	FUN_00407150(AudioScoreAttribs, ScoreVolume * 16384.0f);
 	Theme.Set_Volume(ScoreVolume * 255.0);
 	DebugString("ScoreVolume = %f\n", ScoreVolume);
 }
@@ -188,7 +188,7 @@ void OptionsClass::Set_Score_Volume(float volume, bool feedback)
 void OptionsClass::Set_Sound_Volume(float volume, bool feedback)
 {
 	SoundVolume = MIN(volume, 1.0);
-	FUN_00407150(DAT_0087E748, SoundVolume * 16384.0f);
+	FUN_00407150(AudioSoundAttribs, SoundVolume * 16384.0f);
 	if (feedback) {
 		VocClass::PlayGlobal(Rule->GenericBeep, 1.0f, 0x2000, NULL);
 	}
@@ -200,7 +200,7 @@ void OptionsClass::Set_Voice_Volume(float volume, bool feedback)
 {
 	VoiceVolume = MIN(volume, 1.0);
 	FUN_00752AB0(VoiceVolume * 255.0);
-	FUN_00407150(DAT_0087E740, VoiceVolume * 16384.0f);
+	FUN_00407150(AudioVoiceAttribs, VoiceVolume * 16384.0f);
 	if (feedback) {
 		VocClass::PlayGlobal(Rule->GenericBeep, VoiceVolume, 0x2000, NULL);
 	}

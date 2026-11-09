@@ -870,7 +870,7 @@ void __fastcall FUN_007518C0(bool enabled);
 void __fastcall FUN_00753580(void);
 void __fastcall FUN_0053BBA0(bool forward);
 
-void FUN_00406E80(void);
+void Audio_Stop_Events(void);
 void __fastcall FUN_007529A0(bool);
 void FUN_00684240(void);
 void FUN_00753570(void);
@@ -890,7 +890,7 @@ void __fastcall FUN_0053B460(int duration)
 		DAT_00A9FA98 = duration;
 		DAT_00A9FAA8 = duration;
 		DAT_00A9FAB0 = 1;
-		FUN_00406E80();
+		Audio_Stop_Events();
 		FUN_007529A0(true);
 		DAT_00A9F9B8.FUN_00405BE0();
 		VocClass::PlayGlobal(Rule->LetsDoTheTimeWarpOutAgain, 1.0f, 0x2000, &DAT_00A9F9B8);

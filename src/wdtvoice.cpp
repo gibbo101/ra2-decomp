@@ -52,7 +52,7 @@ using namespace WorldDominationTour;
 
 Wstring operator+(Wstring const & a, Wstring const & b);
 extern void __fastcall FUN_007529A0(bool stop);
-extern void * FUN_00407010(void);
+extern void * AudioGetDevice(void);
 
 void __fastcall Parse_Index_List(Wstring const & text, VOICEINDEX_LIST & list);
 bool __fastcall WDT_Make_Sound_Filename(int side, int index, Wstring & out);
@@ -66,7 +66,7 @@ YRVoices::YRVoices(int side) :
 	QueuedSampleCount(0),
 	Stream(NULL)
 {
-	FUN_00407010();
+	AudioGetDevice();
 	{ Wstring name("OldCycle"); Categories[0].Set_Name(name); }
 	{ Wstring name("History"); Categories[1].Set_Name(name); }
 	{ Wstring name("Status"); Categories[2].Set_Name(name); }

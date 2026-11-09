@@ -93,9 +93,9 @@ struct AudioStream {
 struct AudioSource {
 	AudioStream * FUN_00407860(void);
 };
-extern AudioSource * __stdcall FUN_00407010(int a, int b);
+extern AudioSource * __stdcall AudioGetDevice(int a, int b);
 extern int __fastcall FUN_00407B60(AudioStream * stream, char const * name, int flag);
-extern void FUN_00406EE0(void);
+extern void Audio_Stop_All(void);
 extern AudioStream * DAT_00ABF114[5];
 
 // FUNCTION: GAMEMD 0x005BC140
@@ -353,7 +353,7 @@ BOOL CALLBACK FUN_005BC6E0(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			return FALSE;
 		case '[':
 			if (DAT_00ABF228 < 5) {
-				AudioStream * stream = FUN_00407010(5000, 0)->FUN_00407860();
+				AudioStream * stream = AudioGetDevice(5000, 0)->FUN_00407860();
 				DAT_00ABF114[DAT_00ABF228] = stream;
 				if (stream != NULL) {
 					if (FUN_00407B60(stream, "intro.wav", 1) != 0) {
@@ -378,7 +378,7 @@ BOOL CALLBACK FUN_005BC6E0(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			return FALSE;
 		case 'S':
 		case 's':
-			FUN_00406EE0();
+			Audio_Stop_All();
 			return FALSE;
 		case 'A':
 		case 'a':

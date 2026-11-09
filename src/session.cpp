@@ -48,12 +48,12 @@ void __fastcall FUN_00684240(void);
 void __fastcall FUN_00407150(void * p, int value);
 extern int DAT_00B73E44[0x800];
 extern int DAT_00B76338[0x40];
-extern void * DAT_0087E758;
+extern void * AudioGroupAttribs1;
 extern int DAT_0083ED20;
 extern CCToolTip * ToolTips;
 void FUN_00532130(void);
 void FUN_005BF450(void);
-void FUN_00406E80(void);
+void Audio_Stop_Events(void);
 void FUN_00750FA0(void);
 void FUN_007535D0(void);
 void FUN_00752CA0(void);
@@ -1597,7 +1597,7 @@ void SessionClass::Resume(void)
 		if (!MouseCursor->Is_Captured()) {
 			MouseCursor->Capture_Mouse();
 		}
-		FUN_00407150(DAT_0087E758, 0x4000);
+		FUN_00407150(AudioGroupAttribs1, 0x4000);
 	}
 }
 
@@ -1612,11 +1612,11 @@ void SessionClass::FUN_0069BB40(void)
 		}
 		FUN_00532130();
 		FUN_005BF450();
-		FUN_00406E80();
+		Audio_Stop_Events();
 		FUN_00750FA0();
 		FUN_007535D0();
 		FUN_00752CA0();
-		FUN_00407150(DAT_0087E758, 0x4000);
+		FUN_00407150(AudioGroupAttribs1, 0x4000);
 		if (ToolTips) {
 			ToolTips->Activate(false);
 		}
