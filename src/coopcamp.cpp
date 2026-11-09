@@ -651,6 +651,25 @@ bool CoopCampaignClass::FUN_0049CAF0(int index)
 	return true;
 }
 
+// FUNCTION: GAMEMD 0x0049CC50
+bool CoopCampaignClass::FUN_0049CC50(int index, int time, MPlayerScoreType first, MPlayerScoreType second)
+{
+	if (index >= 0 && index < ItemCount) {
+		Field48 += first.Kills[0];
+		Field4C += second.Kills[0];
+		Field50 += first.Built[0];
+		Field54 += second.Built[0];
+		Field58 += first.Lost[0];
+		Field5C += second.Lost[0];
+		Field60 += first.Score[0];
+		Field64 += second.Score[0];
+		Field68 = time;
+		Field38 = index;
+		return true;
+	}
+	return false;
+}
+
 // FUNCTION: GAMEMD 0x0049CCF0
 bool CoopCampaignClass::FUN_0049CCF0(int index, DynamicVectorClass<int> picks, char const * map, char const * name)
 {
