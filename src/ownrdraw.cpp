@@ -1535,14 +1535,14 @@ int FUN_00603AA0(HWND dialog, HWND control)
 }
 
 // FUNCTION: GAMEMD 0x00603D30
-void FUN_00603D30(HWND dialog, int value)
+void FUN_00603D30(HWND dialog, Surface *surface)
 {
 	OwnerDraw::WinData *data = NULL;
 	HWND key = dialog;
 
 	if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL) {
 		*(int *)((char *)data + 0x70) = 2;
-		*(int *)((char *)data + 0x14) = value;
+		data->image = surface;
 		InvalidateRect(dialog, NULL, TRUE);
 	}
 }

@@ -2249,7 +2249,7 @@ extern char DAT_00AC0A9C[];
 extern char DAT_00AC0B48[];
 extern char DAT_00AC0278[];
 int __fastcall FUN_004E3320(int index);
-int __fastcall FUN_004E3560(int index);
+Surface * __fastcall FUN_004E3560(int index);
 int __fastcall FUN_005EA920(int index);
 int __fastcall FUN_005EA9B0(int index);
 int __fastcall FUN_005EAA10(int index);
@@ -2382,14 +2382,10 @@ void __fastcall FUN_005EA180(HWND dialog, int arg)
 	FUN_005E9E70(dialog, arg, true);
 }
 
-struct PCX
-{
-	static PCX Instance;
-	int GetSurface(char const * name, void * palette);
-};
+#include "srfcache.h"
 extern char * DAT_008316CC;
 extern char * DAT_008316D0;
-void __fastcall FUN_00603D30(HWND item, int surface);
+void __fastcall FUN_00603D30(HWND item, Surface * surface);
 int __fastcall FUN_005EAAD0(int index);
 int __fastcall FUN_005EA8E0(int index);
 
@@ -2398,12 +2394,12 @@ void __fastcall FUN_005EA2A0(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
 		HWND item = GetDlgItem(dialog, FUN_005EAAD0(i));
-		int surface = 0;
+		Surface * surface = NULL;
 		NodeNameType * node = Session.Slots[i];
 		if (FUN_005E93F0(node) && wcscmp(node->Name, Session.GameName) == 0) {
-			surface = PCX::Instance.GetSurface(DAT_008316CC, NULL);
+			surface = SurfaceCache.GetSurface(DAT_008316CC, NULL);
 		} else if (FUN_005EA8E0(i) == 1) {
-			surface = PCX::Instance.GetSurface(DAT_008316D0, NULL);
+			surface = SurfaceCache.GetSurface(DAT_008316D0, NULL);
 		}
 		FUN_00603D30(item, surface);
 	}
@@ -3603,7 +3599,7 @@ void FUN_005EE1B0(void)
 	DAT_008870C0.Save(file, false);
 }
 
-void __fastcall FUN_00603D30(HWND item, int surface);
+void __fastcall FUN_00603D30(HWND item, Surface * surface);
 
 // FUNCTION: GAMEMD 0x005EE200
 void __fastcall FUN_005EE200(HWND dialog)
@@ -3613,11 +3609,11 @@ void __fastcall FUN_005EE200(HWND dialog)
 		if (item) {
 			SendMessage(item, 0xf1, Game::ObserverMode != 0, 0);
 		}
-		int surface;
+		Surface * surface;
 		if (Game::ObserverMode) {
-			surface = PCX::Instance.GetSurface("wolob.pcx", NULL);
+			surface = SurfaceCache.GetSurface("wolob.pcx", NULL);
 		} else {
-			surface = PCX::Instance.GetSurface("wolnob.pcx", NULL);
+			surface = SurfaceCache.GetSurface("wolnob.pcx", NULL);
 		}
 		item = GetDlgItem(dialog, 0x75f);
 		FUN_00603D30(item, surface);
