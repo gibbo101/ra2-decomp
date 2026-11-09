@@ -6621,6 +6621,196 @@ void MapClass::Shutdown(void)
 	TiberiumClass::Deinit_Tiberium_Growth_System();
 }
 
+static inline CellSubzoneStruct *Cliff_Subzone(MapClass *map, Cell const &cell)
+{
+	return &map->CellSubzones[map->Get_Cell_Zone_Index(cell)];
+}
+
+// FUNCTION: GAMEMD 0x00581140
+void MapClass::Collapse_Cliff(CellClass *cptr)
+{
+	if (cptr->ITType == IsometricTileTypeClass::DestroyableCliffs + DESTROYABLE_CLIFFS_COUNT - 2) {
+		Cell point = Cell(-(cptr->SubTile % 6), cptr->SubTile / -6) + cptr->CellID;
+		ObjectClass *tile = IsometricTileTypes[IsometricTileTypeClass::DestroyableCliffs]->Create_One_Of(NULL);
+		tile->Set_Coord(Coord(point));
+		tile->IsInLimbo = false;
+		tile->IsDown = true;
+		tile->Mark(MARK_UP);
+		delete tile;
+		ObjectClass *slope1 = IsometricTileTypes[IsometricTileTypeClass::SlopeSetPieces]->Create_One_Of(NULL);
+		slope1->Unlimbo(Coord(point), DIR_N);
+		ObjectClass *slope2 = IsometricTileTypes[IsometricTileTypeClass::SlopeSetPieces + 1]->Create_One_Of(NULL);
+		slope2->Unlimbo(Coord(point + Cell(3, 0)), DIR_N);
+		Update_Pathfinding_1();
+		IsometricTileTypeClass *ittype = IsometricTileTypes[IsometricTileTypeClass::DestroyableCliffs];
+		IsoTileSet const *image = (IsoTileSet const *)ittype->Get_Image_Data();
+		int x;
+		int y;
+		for (y = 0; y < ittype->Height; y++) {
+			for (x = 0; x < ittype->Width; x++) {
+				Cell cell = point + Cell(x, y);
+				if (image->Fetch_Record_Pointer_Unsafe(x + y * ittype->Width) != NULL) {
+					if (In_Local_Radar(cell, true)) {
+						Cliff_Subzone(this, cell)->SubzoneID[SUBZONE_FINE] = 0;
+						Map[cell].Recalc_Attributes();
+					}
+				}
+			}
+		}
+		for (y = 0; y < ittype->Height; y++) {
+			for (x = 0; x < ittype->Width; x++) {
+				Cell cell = point + Cell(x, y);
+				if (image->Fetch_Record_Pointer_Unsafe(x + y * ittype->Width) != NULL) {
+					if (In_Local_Radar(cell, true) && Cliff_Subzone(this, cell)->SubzoneID[SUBZONE_FINE] == 0) {
+						Update_Cell_Subzones(cell);
+					}
+				}
+			}
+		}
+		for (y = 0; y < ittype->Height; y++) {
+			for (x = 0; x < ittype->Width; x++) {
+				Cell cell = point + Cell(x, y);
+				if (image->Fetch_Record_Pointer_Unsafe(x + y * ittype->Width) != NULL) {
+					if (In_Local_Radar(cell, true)) {
+						Map[cell].BecomeUntargetable();
+						Map.Radar_Background(cell);
+					}
+				}
+			}
+		}
+		Point2D pixel1;
+		TacticalMap->Coord_To_Pixel(Coord(point, LEVEL_LEPTON_H * Map[point].Height), pixel1);
+		Point2D pixel2;
+		TacticalMap->Coord_To_Pixel(Coord(point + Cell(5, 3), LEVEL_LEPTON_H * Map[point + Cell(5, 3)].Height), pixel2);
+		Rect dirty;
+		dirty.X = pixel1.X - 2 * ISO_TILE_PIXEL_W;
+		dirty.Y = pixel1.Y - 2 * ISO_TILE_PIXEL_H;
+		dirty.Width = pixel2.X + 4 * ISO_TILE_PIXEL_W - pixel1.X;
+		dirty.Height = pixel2.Y + 4 * ISO_TILE_PIXEL_H - pixel1.Y;
+		TacticalMap->Register_Dirty_Area(dirty, false);
+		AnimTypeClass *med1 = AnimTypes[AnimTypeClass::From_Name("XGRYMED1")];
+		AnimTypeClass *med2 = AnimTypes[AnimTypeClass::From_Name("XGRYMED2")];
+		AnimTypeClass *sml1 = AnimTypes[AnimTypeClass::From_Name("XGRYSML1")];
+		for (y = point.Y; y < point.Y + 3; y++) {
+			for (x = point.X; x < point.X + 5; x++) {
+				Cell cell(x, y);
+				AnimTypeClass *type = NULL;
+				for (int i = 0; i < 2; i++) {
+					switch (Scen->RandomNumber(0, 2)) {
+					case 0:
+						type = med1;
+						break;
+					case 1:
+						type = med2;
+						break;
+					case 2:
+						type = sml1;
+						break;
+					}
+					AnimClass *anim =
+					    new AnimClass(type,
+						              Coord(cell, LEVEL_LEPTON_H * Map[cell].Height) +
+						                  Coord(Scen->RandomNumber(-12, 12), Scen->RandomNumber(-8, 8), 0),
+						              Random_Pick(0, 2), 1, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL), 0);
+				}
+			}
+		}
+	} else if (cptr->ITType == IsometricTileTypeClass::DestroyableCliffs + DESTROYABLE_CLIFFS_COUNT - 1) {
+		Cell point = cptr->CellID + Cell(-(cptr->SubTile % 4), -(cptr->SubTile >> 2));
+		ObjectClass *tile =
+		    IsometricTileTypes[IsometricTileTypeClass::DestroyableCliffs + DESTROYABLE_CLIFFS_COUNT - 1]->Create_One_Of(
+		        NULL);
+		tile->Set_Coord(Coord(point));
+		tile->IsInLimbo = false;
+		tile->IsDown = true;
+		tile->Mark(MARK_UP);
+		delete tile;
+		ObjectClass *slope1 = IsometricTileTypes[IsometricTileTypeClass::SlopeSetPieces + 3]->Create_One_Of(NULL);
+		slope1->Unlimbo(Coord(point), DIR_N);
+		ObjectClass *slope2 = IsometricTileTypes[IsometricTileTypeClass::SlopeSetPieces + 2]->Create_One_Of(NULL);
+		slope2->Unlimbo(Coord(point + Cell(0, 3)), DIR_N);
+		Update_Pathfinding_1();
+		IsometricTileTypeClass *ittype =
+		    IsometricTileTypes[IsometricTileTypeClass::DestroyableCliffs + DESTROYABLE_CLIFFS_COUNT - 1];
+		IsoTileSet const *image = (IsoTileSet const *)ittype->Get_Image_Data();
+		int x;
+		int y;
+		int row_width;
+		for (y = 0; y < ittype->Height; y++) {
+			row_width = ittype->Width;
+			for (x = 0; x < row_width; row_width = ittype->Width, x++) {
+				Cell cell = point + Cell(x, y);
+				if (image->Fetch_Record_Pointer_Unsafe(x + y * row_width) != NULL) {
+					if (In_Local_Radar(cell, true)) {
+						Cliff_Subzone(this, cell)->SubzoneID[SUBZONE_FINE] = 0;
+						Map[cell].Recalc_Attributes();
+					}
+				}
+			}
+		}
+		for (y = 0; y < ittype->Height; y++) {
+			row_width = ittype->Width;
+			for (x = 0; x < row_width; row_width = ittype->Width, x++) {
+				Cell cell = point + Cell(x, y);
+				if (image->Fetch_Record_Pointer_Unsafe(x + y * row_width) != NULL) {
+					if (In_Local_Radar(cell, true) && Cliff_Subzone(this, cell)->SubzoneID[SUBZONE_FINE] == 0) {
+						Update_Cell_Subzones(cell);
+					}
+				}
+			}
+		}
+		for (y = 0; y < ittype->Height; y++) {
+			row_width = ittype->Width;
+			for (x = 0; x < row_width; row_width = ittype->Width, x++) {
+				Cell cell = point + Cell(x, y);
+				if (image->Fetch_Record_Pointer_Unsafe(x + y * row_width) != NULL) {
+					if (In_Local_Radar(cell, true)) {
+						Map[cell].BecomeUntargetable();
+						Map.Radar_Background(cell);
+					}
+				}
+			}
+		}
+		Point2D pixel1;
+		TacticalMap->Coord_To_Pixel(Coord(point, LEVEL_LEPTON_H * Map[point].Height), pixel1);
+		Point2D pixel2;
+		TacticalMap->Coord_To_Pixel(Coord(point + Cell(3, 5), LEVEL_LEPTON_H * Map[point + Cell(3, 5)].Height), pixel2);
+		Rect dirty;
+		dirty.X = pixel2.X - 2 * ISO_TILE_PIXEL_W;
+		dirty.Y = pixel1.Y - 2 * ISO_TILE_PIXEL_H;
+		dirty.Width = pixel1.X + 4 * ISO_TILE_PIXEL_W - pixel2.X;
+		dirty.Height = pixel2.Y + 4 * ISO_TILE_PIXEL_H - pixel1.Y;
+		TacticalMap->Register_Dirty_Area(dirty, false);
+		AnimTypeClass *med1 = AnimTypes[AnimTypeClass::From_Name("XGRYMED1")];
+		AnimTypeClass *med2 = AnimTypes[AnimTypeClass::From_Name("XGRYMED2")];
+		AnimTypeClass *sml1 = AnimTypes[AnimTypeClass::From_Name("XGRYSML1")];
+		for (y = point.Y; y < point.Y + 5; y++) {
+			for (x = point.X; x < point.X + 3; x++) {
+				Cell cell(x, y);
+				AnimTypeClass *type = NULL;
+				for (int i = 0; i < 2; i++) {
+					switch (Scen->RandomNumber(0, 2)) {
+					case 0:
+						type = med1;
+						break;
+					case 1:
+						type = med2;
+						break;
+					case 2:
+						type = sml1;
+						break;
+					}
+					AnimClass *anim =
+					    new AnimClass(type,
+						              Coord(cell, LEVEL_LEPTON_H * Map[cell].Height) +
+						                  Coord(Scen->RandomNumber(-12, 12), Scen->RandomNumber(-8, 8), 0),
+						              Random_Pick(0, 2), 1, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL), 0);
+				}
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00581F50
 void MapClass::Reset_All_Subzones(void)
 {
