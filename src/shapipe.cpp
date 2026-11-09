@@ -15,9 +15,9 @@
 // _$E2
 
 SHPReference * SHPHead;
-SHPStruct * SHPCache;
-int SHPCacheSize;
-int SHPCacheIndex;
+static SHPStruct * SHPCache;
+static int SHPCacheSize;
+static int SHPCacheIndex;
 int SHPReferenceCount = 1;
 
 // FUNCTION: GAMEMD 0x0069E090
@@ -87,8 +87,8 @@ SHPReference::SHPReference(char const * filename)
 SHPStruct::~SHPStruct(void)
 {
 	if (Flags == -1) {
-		SHPReference * ref = (SHPReference *)this;
 		Unload();
+		SHPReference * ref = (SHPReference *)this;
 		if (ref->Next) ref->Next->Prev = ref->Prev;
 		if (ref->Prev) ref->Prev->Next = ref->Next;
 		else SHPHead = ref->Next;
@@ -97,6 +97,32 @@ SHPStruct::~SHPStruct(void)
 			ref->Filename = NULL;
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x0069E580
+SHPStruct * SHPStruct::GetData(void)
+{
+	if (Flags != -1) return this;
+	SHPReference * ref = (SHPReference *)this;
+	if (ref->Loaded) return ref->Data;
+	if (SHPCacheIndex == ref->Index) return SHPCache;
+	CCFileClass file(ref->Filename);
+	if (file.Is_Available(0)) {
+		int length = file.Size();
+		if (!SHPCache) {
+			SHPCacheSize = MAX(0x300000, length);
+			SHPCache = (SHPStruct *)operator new(SHPCacheSize);
+		} else if (SHPCacheSize < length) {
+			delete SHPCache;
+			SHPCache = (SHPStruct *)operator new(length);
+			SHPCacheSize = length;
+		}
+		if (SHPCache) file.Read(SHPCache, length);
+		SHPCacheIndex = ref->Index;
+		return SHPCache;
+	}
+	SHPCacheIndex = 0;
+	return NULL;
 }
 
 // FUNCTION: GAMEMD 0x0069E740
