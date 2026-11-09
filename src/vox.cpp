@@ -569,7 +569,7 @@ int __fastcall FUN_00753250(char const * name)
 }
 
 // FUNCTION: GAMEMD 0x007532A0
-bool __fastcall FUN_007532A0(int index)
+bool __fastcall Is_Speech_Finished(int index)
 {
 	if (index >= 0 && index < VoxArray.Count()) {
 		return VoxArray[index]->State == 2;
@@ -712,7 +712,7 @@ void FUN_00753540(void)
 }
 
 // FUNCTION: GAMEMD 0x00753570
-int FUN_00753570(void)
+int Add_Speech_Hold(void)
 {
 	return ++DAT_00B1D3D8;
 }

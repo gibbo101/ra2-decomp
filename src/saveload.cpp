@@ -233,7 +233,7 @@ CRCEngine Object_CRCs(void)
 #include "theme.h"
 
 extern bool UserInputLocked;
-extern int DAT_007F5BF8;
+extern int SidebarWidth;
 extern DynamicVectorClass<BuildingClass *> DAT_008B41E0;
 bool __fastcall FUN_00534FA0(int side);
 Rect __fastcall FUN_0072AD20(void);
@@ -672,7 +672,7 @@ bool Get_All(IStream * stream, bool save_net)
 
 	Rect temp = FUN_0072AD20();
 
-	Allocate_Surfaces(VisibleRect, Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, DAT_007F5BF8, VisibleRect.Height), false);
+	Allocate_Surfaces(VisibleRect, Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, SidebarWidth, VisibleRect.Height), false);
 
 	Map.Set_View_Dimensions(temp);
 

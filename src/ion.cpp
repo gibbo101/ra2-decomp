@@ -867,13 +867,13 @@ extern AudioController DAT_00A9F9B8;
 void __fastcall Hold_Scenario(int seconds);
 void Release_Scenario(void);
 void __fastcall FUN_007518C0(bool enabled);
-void __fastcall FUN_00753580(void);
+void __fastcall Remove_Speech_Hold(void);
 void __fastcall FUN_0053BBA0(bool forward);
 
 void FUN_00406E80(void);
 void __fastcall FUN_007529A0(bool);
 void FUN_00684240(void);
-void FUN_00753570(void);
+void Add_Speech_Hold(void);
 
 // FUNCTION: GAMEMD 0x0053B460
 void __fastcall FUN_0053B460(int duration)
@@ -897,7 +897,7 @@ void __fastcall FUN_0053B460(int duration)
 		FUN_007518C0(false);
 		DAT_00A9FAD1 = Scen->IsInputLocked;
 		FUN_00684240();
-		FUN_00753570();
+		Add_Speech_Hold();
 	}
 }
 
@@ -946,7 +946,7 @@ void FUN_0053B560(void)
 			DAT_00A9F9B8.SetEvent(NULL, NULL);
 			DAT_00A9F9B8.FUN_00405C00();
 			FUN_007518C0(true);
-			FUN_00753580();
+			Remove_Speech_Hold();
 			if (!DAT_00A9FAD1) {
 				Unlock_Scenario_Input();
 			}

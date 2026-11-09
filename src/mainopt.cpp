@@ -465,7 +465,7 @@ struct Drawing {
 	static int RenderHeight;
 };
 
-extern int DAT_007F5BF8;
+extern int SidebarWidth;
 Rect FUN_0072AD20(void);
 void FUN_0072E1B0(int width, int height);
 HWND FUN_00775B10(void);
@@ -584,7 +584,7 @@ bool Change_Display_Mode(int width, int height)
 
 	Rect temp = FUN_0072AD20();
 
-	Allocate_Surfaces(VisibleRect, Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, DAT_007F5BF8, VisibleRect.Height), false);
+	Allocate_Surfaces(VisibleRect, Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, SidebarWidth, VisibleRect.Height), false);
 	LogicalSurface = HiddenSurface;
 
 	DebugString("Recalc color remap tables\n");

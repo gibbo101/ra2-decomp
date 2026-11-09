@@ -79,7 +79,7 @@ namespace Detail { extern unsigned MinFrameRate; extern unsigned BufferZoneWidth
 namespace FPSCounter { extern unsigned CurrentFrameRate; extern bool ReducedEffects; }
 
 // FUNCTION: GAMEMD 0x0055AF40
-void __fastcall FUN_0055AF40(int value)
+void __fastcall Set_Frame_Rate_Limit(int value)
 {
 	Detail::MinFrameRate = value;
 }

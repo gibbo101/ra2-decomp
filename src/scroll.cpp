@@ -39,7 +39,7 @@
 
 
 extern FacingType Facing_Between_Points(Point2D const & pt1, Point2D const & pt2);
-extern ObjectClass * __fastcall FUN_005353D0(Cell const * cell, ObjectClass const * target);
+extern ObjectClass * __fastcall Best_Selected_Object(Cell const * cell, ObjectClass const * target);
 extern BeaconManagerClass BeaconManager;
 extern bool __stdcall FUN_0063A5A0(int x, int y);
 extern bool __stdcall FUN_0063A8E0(Point2D point);
@@ -156,9 +156,9 @@ ActionType ScrollClass::What_Action(Cell const & cell, ObjectClass * object, boo
 
 	if (CurrentObject.Count()) {
 		if (object != NULL) {
-			action = FUN_005353D0(NULL, object)->What_Action(object, false);
+			action = Best_Selected_Object(NULL, object)->What_Action(object, false);
 		} else {
-			action = FUN_005353D0(&cell, NULL)->What_Action(cell, check_fog, false);
+			action = Best_Selected_Object(&cell, NULL)->What_Action(cell, check_fog, false);
 		}
 
 	} else {

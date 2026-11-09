@@ -4148,7 +4148,7 @@ void __fastcall FUN_0060AF50(HWND window, RECT *rect)
 
 extern Rect *DAT_00B0FC28;
 extern Rect *DAT_00B0FC50;
-extern int DAT_007F5BF8;
+extern int SidebarWidth;
 
 #include "msanim.h"
 namespace OwnerDraw {
@@ -4219,7 +4219,7 @@ static inline int Sidebar_Margin(HWND window, int width)
 	if (data && data->Dialog.ExtraWidth) {
 		return data->Dialog.ExtraWidth;
 	}
-	return (DAT_007F5BF8 - width) / 2;
+	return (SidebarWidth - width) / 2;
 }
 
 // FUNCTION: GAMEMD 0x0060B1D0

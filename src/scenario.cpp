@@ -617,7 +617,7 @@ void __fastcall FUN_0074D450(TheaterType theater);
 void __fastcall FUN_006B5490(TheaterType theater);
 
 namespace Game { extern bool IsActive; extern HWND hWnd; bool __cdecl CallBack(void); }
-void __fastcall FUN_0055AF40(int value);
+void __fastcall Set_Frame_Rate_Limit(int value);
 void __fastcall FUN_0055AF50(int value);
 
 struct FileSystem { static char TEMPERAT_PAL[]; };
@@ -917,7 +917,7 @@ void Fill_In_Data(void)
 		}
 	}
 
-	FUN_0055AF40(Rule->DetailMinFrameRateNormal);
+	Set_Frame_Rate_Limit(Rule->DetailMinFrameRateNormal);
 	FUN_0055AF50(Rule->DetailBufferZoneWidth);
 }
 

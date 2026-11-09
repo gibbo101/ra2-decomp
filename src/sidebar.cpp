@@ -1930,7 +1930,7 @@ void SidebarClass::StripClass::FUN_006A8710(RTTIType type, int id)
 }
 
 extern Rect __fastcall FUN_0072AD90(void);
-extern int DAT_007F5BF8;
+extern int SidebarWidth;
 extern int DAT_007F5BFC;
 extern int DAT_00B0B508;
 extern int DAT_00B0B50C;
@@ -1944,14 +1944,14 @@ void SidebarClass::FUN_006A5130(bool full)
 		if (Options.IsSidebarOnRight) {
 			SidebarRect.X = TacticalRect.X + TacticalRect.Width;
 			SidebarRect.Y = 158;
-			SidebarRect.Width = DAT_007F5BF8;
+			SidebarRect.Width = SidebarWidth;
 			SidebarRect.Height = TacticalRect.Y + TacticalRect.Height + DAT_007F5BFC - 158;
 		}
 	} else {
 		Rect bounds = FUN_0072AD90();
 		SidebarRect.X = bounds.X + bounds.Width;
 		SidebarRect.Y = 158;
-		SidebarRect.Width = DAT_007F5BF8;
+		SidebarRect.Width = SidebarWidth;
 		SidebarRect.Height = bounds.Y + DAT_007F5BFC + bounds.Height - 158;
 	}
 

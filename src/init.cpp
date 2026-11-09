@@ -4444,7 +4444,7 @@ bool __fastcall FUN_00534FA0(int side)
 }
 
 // FUNCTION: GAMEMD 0x005353D0
-ObjectClass * __fastcall FUN_005353D0(Cell const * cell, ObjectClass const * target)
+ObjectClass * __fastcall Best_Selected_Object(Cell const * cell, ObjectClass const * target)
 {
 	ObjectClass * best_obj = NULL;
 	int best_value = -1;
