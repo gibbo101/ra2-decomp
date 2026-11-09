@@ -126,6 +126,12 @@ extern char DAT_00889F64[];
 extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 #define Technos DAT_00A8EC78
 
+// FUNCTION: GAMEMD 0x00413A30
+// ?As_Cell@Coord@@QBE?AVCell@@XZ
+
+// FUNCTION: GAMEMD 0x00642740
+// ??0Coord@@QAE@ABVCell@@H@Z
+
 // SYNTHETIC: GAMEMD 0x006DCD70 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x006DCDA0 SYMBOL
