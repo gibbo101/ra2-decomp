@@ -172,9 +172,9 @@ unsigned int VersionClass::Max_Version(void)
 }
 
 extern "C" {
-DWORD __stdcall FUN_007C89EC(LPSTR filename, LPDWORD handle);
-BOOL __stdcall FUN_007C89E6(LPSTR filename, DWORD handle, DWORD size, LPVOID block);
-BOOL __stdcall FUN_007C89E0(LPVOID block, LPSTR sub, LPVOID * buffer, UINT * len);
+DWORD __stdcall GetFileVersionInfoSizeA(LPSTR filename, LPDWORD handle);
+BOOL __stdcall GetFileVersionInfoA(LPSTR filename, DWORD handle, DWORD size, LPVOID block);
+BOOL __stdcall VerQueryValueA(LPVOID block, LPSTR sub, LPVOID * buffer, UINT * len);
 }
 
 // FUNCTION: GAMEMD 0x0074FDC0
@@ -202,14 +202,14 @@ char const * Version_Name(void)
 
 		if (GetModuleFileName(ProgramInstance, filename, sizeof(filename)) > 0) {
 			handle = 1;
-			size = FUN_007C89EC(filename, &handle);
+			size = GetFileVersionInfoSizeA(filename, &handle);
 			if (size > 0) {
 				block = new BYTE[size];
-				if (FUN_007C89E6(filename, handle, size, block)) {
-					FUN_007C89E0(block, "\\VarFileInfo\\Translation", (LPVOID *)&translate, &translate_len);
+				if (GetFileVersionInfoA(filename, handle, size, block)) {
+					VerQueryValueA(block, "\\VarFileInfo\\Translation", (LPVOID *)&translate, &translate_len);
 					if (translate_len > 0) {
 						sprintf(query, "\\StringFileInfo\\%04d%04d\\ProductVersion", translate->wLanguage, translate->wCodePage);
-						FUN_007C89E0(block, query, (LPVOID *)&translate, &translate_len);
+						VerQueryValueA(block, query, (LPVOID *)&translate, &translate_len);
 						if (translate_len > 0) {
 							strcpy(buffer, (const char *)translate);
 						}

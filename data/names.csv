@@ -443,3 +443,13 @@ address,name,symbol,evidence
 0x006BA580,SurfaceCacheClass::DrawTrans,?DrawTrans@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1F@Z,YRpp PCX.h BlitToSurface; TibSun srfcache.h DrawTrans signature; called on SurfaceCache by ProgressScreenClass::Draw_Flag 0x006435B0
 0x00584550,MapClass::Update_Cell_Subzones,?Update_Cell_Subzones@MapClass@@QAEXABVCell@@@Z,body matches TibSun MapClass::Update_Cell_Subzones (map.cpp); YRpp names it RecalculateSubZones
 0x007534E0,Set_EVA_Index,?Set_EVA_Index@@YIXH@Z,0x00534FA0 passes the side index and the setter writes VoxClass::EVAIndex
+0x005D36A0,Message_Box_Proc,,"same function as Red Alert 2 1.006 0x005B48C0 (compiled from src/msgbox.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x005D3760,Message_Box_On_WM_COMMAND,,"same function as Red Alert 2 1.006 0x005B4980 (compiled from src/msgbox.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x0065F710,Restate_Mission_Dialog_Proc,,"same function as Red Alert 2 1.006 0x0063B270 (compiled from src/restate.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x00B04CA0,RestateText,,"same global as Red Alert 2 1.006 0x00AB66E8 (inferred: referenced by matched src/restate.cpp (2 reference), which RedAlert2 rebuilds byte for byte"
+0x00839710,MissionININame,,"same global as Red Alert 2 1.006 0x007EE578 (inferred: referenced by matched src/restate.cpp (1 reference), which RedAlert2 rebuilds byte for byte"
+0x00839714,BriefingKey,,"same global as Red Alert 2 1.006 0x007EE57C (inferred: referenced by matched src/restate.cpp (2 reference), which RedAlert2 rebuilds byte for byte"
+0x007C89EC,GetFileVersionInfoSizeA,,"same function as Red Alert 2 1.006 0x00781BF0 (inferred: referenced by matched src/version.cpp (1 reference), which RedAlert2 rebuilds byte for byte"
+0x007C89E6,GetFileVersionInfoA,,"same function as Red Alert 2 1.006 0x00781BEA (inferred: referenced by matched src/version.cpp (1 reference), which RedAlert2 rebuilds byte for byte"
+0x007C89E0,VerQueryValueA,,"same function as Red Alert 2 1.006 0x00781BE4 (inferred: referenced by matched src/version.cpp (2 reference), which RedAlert2 rebuilds byte for byte"
+0x00608070,WS_Save_Dialog_Values,,"same function as Red Alert 2 1.006 0x005E5FC0 (inferred: referenced by matched src/windlg.cpp (1 reference)), which RedAlert2 rebuilds byte for byte"

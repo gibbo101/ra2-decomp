@@ -102,10 +102,10 @@ IntTriple2 DAT_00B04D08;
 
 namespace Unsorted { extern bool ScenarioStarted; }
 extern bool UserInputLocked;
-extern char * DAT_00839710;
-extern char * DAT_00839714;
+extern char * MissionININame;
+extern char * BriefingKey;
 extern char DAT_00889F64[];
-extern wchar_t const * DAT_00B04CA0;
+extern wchar_t const * RestateText;
 
 namespace UI {
 	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
@@ -123,7 +123,7 @@ struct GScreenClassStub {
 	void Flag_To_Redraw(int level);
 };
 extern GScreenClassStub Map;
-extern int CALLBACK FUN_0065F710(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+extern int CALLBACK Restate_Mission_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x0065F520
 void __fastcall FUN_0065F520(ScenarioClass * scen)
@@ -134,28 +134,28 @@ void __fastcall FUN_0065F520(ScenarioClass * scen)
 	CCFileClass file;
 	CCINIClass ini;
 	file.Close();
-	file.Set_Name(DAT_00839710);
+	file.Set_Name(MissionININame);
 	if (file.Is_Available(0)) {
 		ini.ReadCCFile(file, false, false);
 		char const * section = scen->ScenarioName;
 		bool found;
-		if (DAT_00839714 == NULL) {
+		if (BriefingKey == NULL) {
 			found = ini.Is_Present(section);
 		} else {
-			found = ini.Is_Present(section, DAT_00839714);
+			found = ini.Is_Present(section, BriefingKey);
 		}
 		wchar_t const * text;
 		if (found) {
 			char buffer[256];
-			ini.Get_String(section, DAT_00839714, DAT_00889F64, buffer, sizeof(buffer));
+			ini.Get_String(section, BriefingKey, DAT_00889F64, buffer, sizeof(buffer));
 			text = StringTable::LoadString(buffer, NULL, "D:\\ra2mdpost\\Restate.cpp", 0x87);
 		} else {
 			text = StringTable::LoadString("Brief:Error", NULL, "D:\\ra2mdpost\\Restate.cpp", 0x8a);
 		}
-		DAT_00B04CA0 = text;
+		RestateText = text;
 
 		int result;
-		HWND dialog = UI::BeginDialog(0x10c, FUN_0065F710, 0);
+		HWND dialog = UI::BeginDialog(0x10c, Restate_Mission_Dialog_Proc, 0);
 		UserInputLocked = true;
 		InputManagerClass::Instance->DoSomething();
 		if (dialog != NULL) {
@@ -181,7 +181,7 @@ void __fastcall FUN_0065F520(ScenarioClass * scen)
 }
 
 // FUNCTION: GAMEMD 0x0065F710
-int CALLBACK FUN_0065F710(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+int CALLBACK Restate_Mission_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
 	if (rc != 0) {
@@ -196,7 +196,7 @@ int CALLBACK FUN_0065F710(HWND window, UINT message, WPARAM wparam, LPARAM lpara
 		case 0x497:
 			{
 				HWND item = GetDlgItem(window, 0x6e7);
-				SendMessage(item, 0x4b2, 0, (LPARAM)DAT_00B04CA0);
+				SendMessage(item, 0x4b2, 0, (LPARAM)RestateText);
 			}
 			break;
 	}
