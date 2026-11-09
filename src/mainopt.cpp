@@ -466,7 +466,7 @@ struct Drawing {
 };
 
 extern int SidebarWidth;
-Rect FUN_0072AD20(void);
+Rect Get_Title_Screen_Area(void);
 void FUN_0072E1B0(int width, int height);
 HWND FUN_00775B10(void);
 HWND WS_Next_Lower_Dialog(HWND window);
@@ -582,7 +582,7 @@ bool Change_Display_Mode(int width, int height)
 		MoveWindow(MainWindow, 0, 0, windowrect.right - windowrect.left, windowrect.bottom - windowrect.top, TRUE);
 	}
 
-	Rect temp = FUN_0072AD20();
+	Rect temp = Get_Title_Screen_Area();
 
 	Allocate_Surfaces(VisibleRect, Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, SidebarWidth, VisibleRect.Height), false);
 	LogicalSurface = HiddenSurface;

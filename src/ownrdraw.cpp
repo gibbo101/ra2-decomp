@@ -3255,7 +3255,7 @@ void FUN_006084A0(HWND dialog)
 namespace Drawing { extern int RenderWidth; }
 extern int DAT_007F5BE0;
 extern int DAT_007F5BE4;
-extern int DAT_007F5BE8;
+extern int WideScreenThreshold;
 
 inline int Get_Layout_Dialog_Type(HWND dialog)
 {
@@ -3342,31 +3342,31 @@ bool __fastcall FUN_00608500(HWND parent, HWND child, Rect *out)
 		if (id == 0x72f) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x34, 0x4e, 0x18c, 0x8f);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0x3c, 0x62, 0x21c, 0x8f);
 			}
 		} else if (id == 0x732) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x6e, 0xd7, 0x10a, 0x15);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0xb4, 0xd7, 0x10a, 0x16);
 			}
 		} else if (id == 0x78e) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x50, 0xbe, 0x4b, 0x14);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0xaa, 0xbe, 0x4b, 0x14);
 			}
 		} else if (id == 0x78d) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0xe4, 0xbe, 0x4b, 0x14);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0x127, 0xbe, 0x4b, 0x14);
 			}
 		} else if (id == 0x78c) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x15a, 0xbe, 0x4b, 0x14);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0x1ae, 0xbe, 0x4b, 0x14);
 			}
 		}
@@ -3374,31 +3374,31 @@ bool __fastcall FUN_00608500(HWND parent, HWND child, Rect *out)
 		if (id == 0x72f) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x34, 0x4e, 0x18c, 0x8f);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0x3c, 0x62, 0x21c, 0x8f);
 			}
 		} else if (id == 0x732) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x6e, 0xd7, 0x10a, 0x15);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0xb4, 0xd7, 0x10a, 0x16);
 			}
 		} else if (id == 0x78e) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x50, 0xbe, 0x4b, 0x14);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0xaa, 0xbe, 0x4b, 0x14);
 			}
 		} else if (id == 0x78d) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0xe4, 0xbe, 0x4b, 0x14);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0x127, 0xbe, 0x4b, 0x14);
 			}
 		} else if (id == 0x78c) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x15a, 0xbe, 0x4b, 0x14);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0x1ae, 0xbe, 0x4b, 0x14);
 			}
 		}
@@ -3406,31 +3406,31 @@ bool __fastcall FUN_00608500(HWND parent, HWND child, Rect *out)
 		if (id == 0x72f) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x34, 0x4e, 0x18c, 0x8f);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0x3c, 0x62, 0x21c, 0x8f);
 			}
 		} else if (id == 0x732) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x6e, 0xd7, 0x10a, 0x16);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0xb4, 0xd7, 0x10a, 0x15);
 			}
 		} else if (id == 0x78e) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x50, 0xbe, 0x4b, 0x14);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0xaa, 0xbe, 0x4b, 0x14);
 			}
 		} else if (id == 0x78d) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0xe4, 0xbe, 0x4b, 0x14);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0x127, 0xbe, 0x4b, 0x14);
 			}
 		} else if (id == 0x78c) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x15a, 0xbe, 0x4b, 0x14);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0x1ae, 0xbe, 0x4b, 0x14);
 			}
 		}
@@ -3438,31 +3438,31 @@ bool __fastcall FUN_00608500(HWND parent, HWND child, Rect *out)
 		if (id == 0x72f) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x34, 0x4e, 0x18c, 0x8f);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0x3c, 0x62, 0x21c, 0x8f);
 			}
 		} else if (id == 0x732) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x6e, 0xd7, 0x10a, 0x15);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0xb4, 0xd7, 0x10a, 0x16);
 			}
 		} else if (id == 0x78e) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x50, 0xbe, 0x4b, 0x14);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0xaa, 0xbe, 0x4b, 0x14);
 			}
 		} else if (id == 0x78d) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0xe4, 0xbe, 0x4b, 0x14);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0x127, 0xbe, 0x4b, 0x14);
 			}
 		} else if (id == 0x78c) {
 			if (Drawing::RenderWidth == DAT_007F5BE0) {
 				rect = new Rect(0x15a, 0xbe, 0x4b, 0x14);
-			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == DAT_007F5BE8) {
+			} else if (Drawing::RenderWidth == DAT_007F5BE4 || Drawing::RenderWidth == WideScreenThreshold) {
 				rect = new Rect(0x1ae, 0xbe, 0x4b, 0x14);
 			}
 		}

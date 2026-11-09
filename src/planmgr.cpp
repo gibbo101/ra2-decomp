@@ -32,7 +32,7 @@
 #include "mission.h"
 
 extern double __cdecl FUN_004CAC40(double);
-extern Rect __fastcall FUN_0072AD20(void);
+extern Rect __fastcall Get_Title_Screen_Area(void);
 Coord __fastcall FUN_00633BC0(EventClass const & event);
 extern ConvertClass * FileSystem_MOUSE_PAL;
 extern ShapeSet * DAT_00ABF294;
@@ -201,7 +201,7 @@ void __fastcall FUN_0063D630(Point2D a, Point2D b, int outline, int fill, int fr
 	int cx = (b.X + a.X) / 2;
 	int cy = (a.Y + b.Y) / 2;
 	Point2D tl(cx - 10, cy - 10);
-	Rect clip = FUN_0072AD20();
+	Rect clip = Get_Title_Screen_Area();
 	Rect rect(tl.X + 1, tl.Y + 1, 19, 19);
 	DSurface::Composite->Draw_Rect(clip, rect, outline);
 	Shrink_Rect(rect);
@@ -889,7 +889,7 @@ void PlanningNodeClass::Draw_Lead_Box(int color)
 void PlanningNodeClass::Fill_Lead_Box(int color)
 {
 	Rect rect;
-	Rect clip = FUN_0072AD20();
+	Rect clip = Get_Title_Screen_Area();
 	rect = Lead_Rect();
 	rect.X += 1;
 	rect.Y += 1;
@@ -911,7 +911,7 @@ static inline Rect Inflated(Rect const & r, int n)
 // FUNCTION: GAMEMD 0x00635560
 void PlanningNodeClass::Frame_Lead_Box(int color)
 {
-	Rect clip = FUN_0072AD20();
+	Rect clip = Get_Title_Screen_Area();
 	Rect rect = Inflated(Around(8, Pixel_Of(Event_Coord(*PlanningMembers[0]->Packet))), 4);
 	for (int i = 0; i < 3; i++) {
 		DSurface::Composite->Draw_Rect(clip, rect, color);
@@ -922,7 +922,7 @@ void PlanningNodeClass::Frame_Lead_Box(int color)
 // FUNCTION: GAMEMD 0x00635680
 void PlanningNodeClass::FUN_00635680(int color)
 {
-	Rect clip = FUN_0072AD20();
+	Rect clip = Get_Title_Screen_Area();
 	Rect rect = Lead_Box_Rect2();
 	for (int i = 0; i < 3; i++) {
 		DSurface::Composite->Draw_Rect(clip, rect, color);
@@ -2809,7 +2809,7 @@ void __fastcall FUN_0063B150(void)
 		HouseClass * house = node->PlanningMembers[0]->Owner->House;
 		if (house->Is_Ally(PlayerPtr)) {
 			int color = node->Node_Color();
-			Rect clip = FUN_0072AD20();
+			Rect clip = Get_Title_Screen_Area();
 			Rect rect = Around(8, Pixel_Of(Node_Lead_7(node)));
 			Shrink_Rect(rect);
 			DSurface::Composite->Fill_Rect(clip, rect, color);
@@ -2863,7 +2863,7 @@ void __fastcall FUN_0063B2F0(void)
 	int color = Pixel_Color(DAT_00A80220);
 	PlanningNodeClass * hover = DAT_00AC4CCC;
 	if (hover) {
-		Rect clip = FUN_0072AD20();
+		Rect clip = Get_Title_Screen_Area();
 		Rect rect = Inflated(Around(8, Node_Pixel_7(hover)), 4);
 		for (int i = 0; i < 3; i++) {
 			DSurface::Composite->Draw_Rect(clip, rect, color);
@@ -2872,7 +2872,7 @@ void __fastcall FUN_0063B2F0(void)
 	}
 	PlanningNodeClass * sel = DAT_00AC4BF0;
 	if (sel) {
-		Rect clip = FUN_0072AD20();
+		Rect clip = Get_Title_Screen_Area();
 		Rect rect = Grown(Grown(Node_Rect_7(sel)));
 		for (int i = 0; i < 3; i++) {
 			DSurface::Composite->Draw_Rect(clip, rect, color);
@@ -3056,7 +3056,7 @@ Coord __fastcall FUN_0063CA80(EventClass const & event, TechnoClass * owner)
 void __fastcall FUN_0063CE40(PlanningNodeClass * node)
 {
 	int color = node->Node_Color();
-	Rect clip = FUN_0072AD20();
+	Rect clip = Get_Title_Screen_Area();
 	Rect rect = FUN_00634510(node->Lead_Pixel(), 8);
 	Shrink_Rect(rect);
 	DSurface::Composite->Fill_Rect(clip, rect, color);
@@ -3161,7 +3161,7 @@ int PlanningNodeClass::Lead_Color(void)
 // FUNCTION: GAMEMD 0x0063D400
 void __fastcall FUN_0063D400(Point2D p, int color)
 {
-	Rect clip = FUN_0072AD20();
+	Rect clip = Get_Title_Screen_Area();
 	Rect rect = FUN_00634510(p, 6);
 	DSurface::Composite->Draw_Rect(clip, rect, color);
 }
@@ -3169,7 +3169,7 @@ void __fastcall FUN_0063D400(Point2D p, int color)
 // FUNCTION: GAMEMD 0x0063D480
 void __fastcall FUN_0063D480(Point2D p, int color)
 {
-	Rect clip = FUN_0072AD20();
+	Rect clip = Get_Title_Screen_Area();
 	Rect rect = FUN_00634510(p, 6);
 	FUN_006357D0(&rect, -1);
 	DSurface::Composite->Fill_Rect(clip, rect, color);
@@ -3212,7 +3212,7 @@ void __fastcall FUN_0063D560(Point2D a, Point2D b, int color)
 	if (Distance(a, b) >= 0x25) {
 		int x = (a.X + b.X) / 2 - 10;
 		int y = (a.Y + b.Y) / 2 - 10;
-		Rect clip = FUN_0072AD20();
+		Rect clip = Get_Title_Screen_Area();
 		Rect rect(x, y, 0x15, 0x15);
 		DSurface::Composite->Draw_Rect(clip, rect, color);
 	}

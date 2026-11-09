@@ -2909,7 +2909,7 @@ void __fastcall FUN_0072E730(Surface * surface, Rect const * area, ConvertClass 
 void __fastcall FUN_0072E450(Surface * surface, Rect const * area, bool flag);
 
 // FUNCTION: GAMEMD 0x0072E820
-void __fastcall FUN_0072E820(Surface * surface, Rect const * area, bool flag)
+void __fastcall Fill_Surface_Rect(Surface * surface, Rect const * area, bool flag)
 {
 	FUN_0072E450(surface, area, flag);
 	FUN_0072E730(surface, area, DAT_00B0FBCC, DAT_00B0FB50, DAT_00B0FA04);
@@ -3391,7 +3391,7 @@ namespace OwnerDraw { extern SHPStruct * SideButtonShape; }
 void FUN_0072FBC0(void);
 
 extern Rect VisibleRect;
-Rect __fastcall FUN_0072AD20(void);
+Rect __fastcall Get_Title_Screen_Area(void);
 extern int DAT_00B0FADC;
 extern int DAT_00B0F9E4;
 
@@ -3445,7 +3445,7 @@ void __fastcall FUN_0072F540(Surface * surface, Rect const * area, bool flag)
 	pt.Y = DAT_00B0FC50->Y;
 	Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FA48, 0, pt, *area, SHAPE_WIN_REL);
 	Rect clip = *area;
-	Rect vis = FUN_0072AD20();
+	Rect vis = Get_Title_Screen_Area();
 	clip.Width = vis.Width;
 	pt.X = DAT_00B0FC5C->X;
 	pt.Y = DAT_00B0FC5C->Y;
@@ -3846,7 +3846,7 @@ int FUN_00730750(void)
 
 extern Rect VisibleRect;
 // FUNCTION: GAMEMD 0x0072AD20
-Rect __fastcall FUN_0072AD20(void)
+Rect __fastcall Get_Title_Screen_Area(void)
 {
 	Rect rect = VisibleRect;
 	rect.X = 0;
