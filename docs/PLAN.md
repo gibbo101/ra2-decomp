@@ -280,6 +280,9 @@ counted about 24,900 functions and 954 classes in `gamemd.exe`, including librar
   agent-driven, linking the whole exe with original bytes for what is still unmatched;
   GPL-3.0-or-later. Many YR functions are byte-identical to RA2's apart from addresses,
   so matched source carries over in both directions.
+- [mischa85/RedAlert2](https://github.com/mischa85/RedAlert2): a byte-for-byte rebuild of
+  base Red Alert 2 1.006; GPL-3.0. Its matches name YR functions that compile from the
+  same source, with the RA2 address and instruction similarity recorded in data/names.csv.
 - [redalert2-recomp](https://github.com/sp00nznet/redalert2-recomp): static
   recompilation of `gamemd.exe` to 5.8M lines of machine-lifted C. Playable (menus,
   skirmish, both campaigns), D3D11 presenter, 2× voxel units. Windows only. The lifted C

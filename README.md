@@ -89,6 +89,9 @@ out of history.
   static-sound saving and Techno line drawing, ported from their matching decompilation
   of Red Alert 2 ([meastes/redalert2-decomp](https://github.com/meastes/redalert2-decomp),
   GPL-3.0-or-later).
+- [mischa85](https://github.com/mischa85): named 102 functions and globals in audio, Bink,
+  the bit font, dialogs, the radar and the window stub from their byte-for-byte rebuild of
+  Red Alert 2 1.006 ([mischa85/RedAlert2](https://github.com/mischa85/RedAlert2), GPL-3.0).
 
 ## You need your own copy of the game
 
