@@ -57,6 +57,7 @@ class AbstractClass : public IPersistStream, public IRTTITypeInfo, public INotic
 
 		AbstractClass(void);
 		AbstractClass(NoInitClass const & x);
+		AbstractClass & operator=(AbstractClass const & that);
 		virtual ~AbstractClass(void);
 
 		virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, LPVOID * ppvObject) override;

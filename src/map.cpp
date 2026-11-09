@@ -8162,6 +8162,17 @@ void __fastcall FUN_00588AC0(MapClass * map)
 // SYNTHETIC: GAMEMD 0x00588BF0
 // ??_GMapClass@@UAEPAXI@Z
 
+// FUNCTION: GAMEMD 0x00588C10
+AbstractClass & AbstractClass::operator=(AbstractClass const & that)
+{
+	ID = that.ID;
+	AbstractFlags = that.AbstractFlags;
+	unknown_18 = that.unknown_18;
+	RefCount = that.RefCount;
+	Dirty = that.Dirty;
+	return *this;
+}
+
 // TEMPLATE: GAMEMD 0x00588C40
 // ??Y?$TPoint2D@F@@QAEABV0@ABV0@@Z
 template class TPoint2D<short>;
