@@ -66,6 +66,9 @@
 #include "color.hh"
 #include "tube.hh"
 
+// TEMPLATE: GAMEMD 0x0045AF20
+// ?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@@Z
+
 // SYNTHETIC: GAMEMD 0x004D2F50 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x004D2F80 SYMBOL
