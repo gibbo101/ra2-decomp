@@ -2433,6 +2433,59 @@ void TeamClass::TMission_TALK_BUBBLE(TeamMissionClass * mission, bool first_time
 	}
 }
 
+void __cdecl FUN_004068E0(char const * text, ...);
+
+static inline Coord Move_Coord_By_Cells(
+	Coord const & there, DirType dir, int distance_in_cells)
+{
+	return Move_Coord(there, dir, distance_in_cells * CELL_LEPTON_W);
+}
+
+// FUNCTION: GAMEMD 0x006EF700
+void TeamClass::TMission_MOVE_TO_ENEMY_APPROACH(
+	TeamMissionClass * mission, bool first_time)
+{
+	if (first_time) {
+		FootClass * leader = _Team_Leader(this);
+		if (leader == NULL) {
+			IsNextMission = true;
+			return;
+		}
+		HouseClass * enemy = NULL;
+		if (leader->House->Enemy != HOUSE_NONE) {
+			enemy = Houses[leader->House->Enemy];
+		}
+		if (enemy == NULL) {
+			IsNextMission = true;
+			return;
+		}
+		Coord there = enemy->FUN_0050DF30();
+		if (there == COORD_NONE) {
+			IsNextMission = true;
+			return;
+		}
+		Coord center = leader->House->FUN_0050DF30();
+		if (center == COORD_NONE) {
+			center = leader->Center_Coord();
+		}
+		Coord offset;
+		offset.X = center.X - there.X;
+		offset.Y = center.Y - there.Y;
+		offset.Z = center.Z - there.Z;
+		DirType dir(fastmath::atan2(-offset.Y, offset.X));
+		Cell cell = Move_Coord_By_Cells(
+			there, dir, Rule->AISafeDistance).As_Cell();
+		cell = Map.Nearby_Location(
+			cell, leader->Techno_Type_Class()->Speed,
+			-1, MZONE_NORMAL, false, Point2D(3, 3));
+		Assign_Mission_Target(&Map[cell]);
+		FUN_004068E0(
+			"A %s Team has chosen ( %d, %d) for its GatherAtEnemy cell.\n",
+			Class->Full_Name(), cell.X, cell.Y);
+	}
+	Coordinate_Move();
+}
+
 static inline FootClass * _Leader_Of(TeamClass const * team)
 {
 	return(_Team_Leader(team));
