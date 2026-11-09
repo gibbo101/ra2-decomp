@@ -125,7 +125,7 @@ class MapClass: public GScreenClass
 		Cell Get_Zone_Connection_Destination(Cell const & cell, Cell const & reference);
 		Cell Find_Bridge_Span_End_Cell(Cell const & cell, Cell const & reference);
 		Cell Find_Bridge_End_Cell_For_Subzone(Cell const & cell, int subzone_level, int subzone_id);
-		bool Build_Reachable_Subzones(CellClass * cptr, int subzone_level, DynamicVectorClass<unsigned short> const & connections, FootClass const * foot);
+		bool Build_Reachable_Subzones(CellClass * cptr, int subzone_level, DynamicVectorClass<unsigned short> & connections, FootClass const * foot);
 		void Update_Cell_Subzones(Cell const & cell);
 		void Register_Subzone_Connection(ZoneConnectionClass * connection);
 		void Unregister_Subzone_Connection(ZoneConnectionClass * connection);

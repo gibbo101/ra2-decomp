@@ -24,6 +24,9 @@ effect, so it can be fixed in a separate build later.
   allocate their temporary text buffers with array new and release them with scalar
   delete, preserving the original allocation/deallocation mismatch.
 
+- **MapClass::Build_Reachable_Subzones (0x005840C0).** The final grid scan tests each
+  visited flag against the subzone of the same cell. The cell offset comes from the
+  starting coordinates and never advances with the row or column.
 - **Dropship_Screen (0x004B6C30).** The dropship and four green-light shape files
   are loaded into raw unsigned-byte arrays, but cleanup deletes them through
   `SHPReference *` array pointers. The original reads an array cookie at pointer
