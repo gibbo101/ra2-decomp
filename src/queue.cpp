@@ -885,7 +885,6 @@ static int SyncBarControlIDs[MAX_PLAYERS] = {
 	0x648, 0x649, 0x64a, 0x64b, 0x64c, 0x64d, 0x64e, 0x64f
 };
 
-extern unsigned int DAT_00AFA418;
 extern RGBClass DAT_00A8EAE4;
 extern int DAT_00B04884;
 extern int DAT_00B04888;

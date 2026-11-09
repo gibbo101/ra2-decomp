@@ -1807,7 +1807,7 @@ void BuildingClass::AfterDestruction(void)
 			cellptr->Rubble = NULL;
 			cellptr->Recalc_Attributes(-1);
 			Map.ResetZones(cellptr->CellID);
-			Map.RecalculateSubZones(cellptr->CellID);
+			Map.Update_Cell_Subzones(cellptr->CellID);
 			cellptr->BecomeUntargetable();
 		}
 

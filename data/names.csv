@@ -440,3 +440,4 @@ address,name,symbol,evidence
 0x0060F9A0,OwnerDraw::RegisterChildControlProc,?RegisterChildControlProc@OwnerDraw@@YGHPAUHWND__@@J@Z,YRpp OwnerDraw.h identifies this callback; called by UI::RegisterWindow and OwnerDraw::PrepareDialogChildControls
 0x00AC4848,SurfaceCache,?SurfaceCache@@3VSurfaceCacheClass@@A,YRpp PCX.h Instance; the matched SurfaceCacheClass::GetSurface 0x006BA140 is called on it from wonline and the score and lobby dialogs
 0x006BA580,SurfaceCacheClass::DrawTrans,?DrawTrans@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1F@Z,YRpp PCX.h BlitToSurface; TibSun srfcache.h DrawTrans signature; called on SurfaceCache by ProgressScreenClass::Draw_Flag 0x006435B0
+0x00584550,MapClass::Update_Cell_Subzones,?Update_Cell_Subzones@MapClass@@QAEXABVCell@@@Z,body matches TibSun MapClass::Update_Cell_Subzones (map.cpp); YRpp names it RecalculateSubZones

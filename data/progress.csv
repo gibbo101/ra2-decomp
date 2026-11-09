@@ -14757,9 +14757,10 @@ address,name,result,size,source,symbol
 0x006F4AB0,TechnoClass::Receive_Message,MATCH,1013,src/techno.cpp,?Receive_Message@TechnoClass@@UAE?AW4RadioMessageType@@PAVRadioClass@@W42@AAH@Z
 0x006F4EB0,TechnoClass::Sensed,MATCH,475,src/techno.cpp,?Sensed@TechnoClass@@UAEXXZ
 0x006F5090,TechnoClass::Per_Cell_Process,MATCH,255,src/techno.cpp,?Per_Cell_Process@TechnoClass@@UAEXW4PCPType@@@Z
+0x006F5190,TechnoClass::Draw_Post_Render,MATCH,3423,src/techno.cpp,?Draw_Post_Render@TechnoClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x006F5EF0,TechnoClass::Draw_Double_Selection_Bracket,MATCH,306,src/techno.cpp,?Draw_Double_Selection_Bracket@TechnoClass@@SIXABVCoord@@0H@Z
 0x006F6030,TechnoClass::Draw_Single_Selection_Bracket,MATCH,144,src/techno.cpp,?Draw_Single_Selection_Bracket@TechnoClass@@SIXABVCoord@@0H@Z
-0x006F60C0,TechnoClass::vt_entry_448,MATCH,3,src/techno.cpp,?vt_entry_448@TechnoClass@@UAEXII@Z
+0x006F60C0,TechnoClass::Draw_Health_Bar_Old,MATCH,3,src/techno.cpp,?Draw_Health_Bar_Old@TechnoClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x006F6AC0,TechnoClass::Limbo,MATCH,480,src/techno.cpp,?Limbo@TechnoClass@@UAE_NXZ
 0x006F6CA0,TechnoClass::Unlimbo,MATCH,659,src/techno.cpp,?Unlimbo@TechnoClass@@UAE_NABVCoord@@W4Dir256@@@Z
 0x006F6F40,TechnoClass::Get_Sight_Bonus,MATCH,28,src/techno.cpp,?Get_Sight_Bonus@TechnoClass@@QAEHABVCoord@@@Z
@@ -14842,7 +14843,7 @@ address,name,result,size,source,symbol
 0x00705D50,TechnoClass::IsNotWarpingIn,MATCH,14,src/techno.cpp,?IsNotWarpingIn@TechnoClass@@UBE_NXZ
 0x00705D60,TechnoClass::FUN_00705D60,MATCH,5,src/techno.cpp,?FUN_00705D60@TechnoClass@@QAE_NXZ
 0x00705D70,TechnoClass::GetRemapColour,MATCH,138,src/techno.cpp,?GetRemapColour@TechnoClass@@UBEPAXXZ
-0x00706640,TechnoClass::Draw_Voxel,MATCH,1420,src/techno.cpp,?Draw_Voxel@TechnoClass@@UBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@HHW4ShapeFlags_Type@@@Z
+0x00706640,TechnoClass::Draw_Voxel,MATCH,1420,src/techno.cpp,?Draw_Voxel@TechnoClass@@UBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@HGW4ShapeFlags_Type@@@Z
 0x00706BD0,TechnoClass::Techno_Draw_Voxel_Shadow,MATCH,766,src/techno.cpp,?Techno_Draw_Voxel_Shadow@TechnoClass@@QBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@_NPAVSurface@@HH@Z
 0x00707280,TechnoClass::Techno_Render_Voxel_Shadow,MATCH,502,src/techno.cpp,?Techno_Render_Voxel_Shadow@TechnoClass@@QBE?AUSurfaceRegion@@ABUVoxelDataStruct@@ABVMatrix3D@@ABVPoint2D@@ABV?$TRect@H@@HW4ShapeFlags_Type@@_NPAVSurface@@HH@Z
 0x00707750,TechnoClass::Calculate_Sinking_Offset,MATCH,98,src/techno.cpp,?Calculate_Sinking_Offset@TechnoClass@@QAEXFH@Z

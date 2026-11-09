@@ -1643,11 +1643,10 @@ int MapClass::Get_Cell_Zone_ID(Cell const & cell)
 // FUNCTION: GAMEMD 0x0056D3F0
 int MapClass::Get_Cell_Zone_Index(Cell const & cell)
 {
-	int index = cell.X + cell.Y * (PlayRect.Height + PlayRect.Width + 1);
+	int index = Get_Cell_Subzone_Index(cell);
 	if (index < 0) {
-		return(0);
-	}
-	if (index >= CellZoneCount) {
+		index = 0;
+	} else if (index >= CellZoneCount) {
 		index = CellZoneCount - 1;
 	}
 	return(index);
@@ -2611,10 +2610,6 @@ void MapClass::Internal_Destroy_High_Bridge_NS_TopRight(Cell const & cell, Facin
 		Set_Bridge_End_State(adjacent, true, false);
 	}
 }
-
-
-bool FUN_00574600(int tile, int dir, CellClass * cell);
-bool FUN_005746C0(int tile, CellClass * cell);
 
 static inline bool Is_Concrete_Low_Bridge(Cell const & cell)
 {
@@ -5935,13 +5930,7 @@ Cell MapClass::Get_Zone_Connection_Destination(Cell const & cell, Cell const & r
 
 static inline CellSubzoneStruct * Subzone_Of(MapClass * map, Cell const & cell)
 {
-	int index = map->Get_Cell_Subzone_Index(cell);
-	if (index < 0) {
-		index = 0;
-	} else if (index >= map->CellZoneCount) {
-		index = map->CellZoneCount - 1;
-	}
-	return(&map->CellSubzones[index]);
+	return(&map->CellSubzones[map->Get_Cell_Zone_Index(cell)]);
 }
 
 // FUNCTION: GAMEMD 0x00583820
@@ -6094,23 +6083,6 @@ bool MapClass::Is_Area_Shore_Or_Water(Rect const & rect)
 
 extern FacingType DAT_0082A944[];
 
-static inline CellSubzoneStruct * Zone_Entry(MapClass * map, Cell const & cell)
-{
-	return(&map->CellSubzones[map->FUN_0056D3F0(cell)]);
-}
-
-static inline CellSubzoneStruct * Clamped_Subzone_Entry(MapClass * map, Cell const & cell)
-{
-	int index = map->FUN_0056D430(cell);
-	if (index < 0) {
-		index = 0;
-	} else if (index >= map->CellZoneCount) {
-		index = map->CellZoneCount - 1;
-	}
-	return(&map->CellSubzones[index]);
-}
-
-
 // FUNCTION: GAMEMD 0x00584E50
 void MapClass::Unregister_Subzone_Connection(ZoneConnectionClass * connection)
 {
@@ -6142,8 +6114,8 @@ void MapClass::Unregister_Subzone_Connection(ZoneConnectionClass * connection)
 	int sidx2;
 	for (int i = 0; i < ARRAY_SIZE(SubzoneTracking); i++) {
 		{
-			sidx1 = Zone_Entry(this, from)->SubzoneID[i];
-			sidx2 = Zone_Entry(this, to)->SubzoneID[i];
+			sidx1 = Subzone_Of(this, from)->SubzoneID[i];
+			sidx2 = Subzone_Of(this, to)->SubzoneID[i];
 
 			SubzoneTracking[i][sidx1].Connections.Delete(SubzoneConnectionStruct(sidx2));
 
@@ -6151,8 +6123,8 @@ void MapClass::Unregister_Subzone_Connection(ZoneConnectionClass * connection)
 		}
 
 		{
-			sidx1 = Zone_Entry(this, from_adj1)->SubzoneID[i];
-			sidx2 = Zone_Entry(this, to_adj1)->SubzoneID[i];
+			sidx1 = Subzone_Of(this, from_adj1)->SubzoneID[i];
+			sidx2 = Subzone_Of(this, to_adj1)->SubzoneID[i];
 
 			SubzoneTracking[i][sidx1].Connections.Delete(SubzoneConnectionStruct(sidx2));
 
@@ -6160,8 +6132,8 @@ void MapClass::Unregister_Subzone_Connection(ZoneConnectionClass * connection)
 		}
 
 		{
-			sidx1 = Clamped_Subzone_Entry(this, from_adj2)->SubzoneID[i];
-			sidx2 = Clamped_Subzone_Entry(this, to_adj2)->SubzoneID[i];
+			sidx1 = Subzone_Of(this, from_adj2)->SubzoneID[i];
+			sidx2 = Subzone_Of(this, to_adj2)->SubzoneID[i];
 
 			SubzoneTracking[i][sidx1].Connections.Delete(SubzoneConnectionStruct(sidx2));
 
@@ -6200,48 +6172,30 @@ void MapClass::Register_Subzone_Connection(ZoneConnectionClass * connection)
 	int sidx2;
 	for (int i = 0; i < ARRAY_SIZE(SubzoneTracking); i++) {
 		{
-			sidx1 = Zone_Entry(this, from)->SubzoneID[i];
-			sidx2 = Zone_Entry(this, to)->SubzoneID[i];
+			sidx1 = Subzone_Of(this, from)->SubzoneID[i];
+			sidx2 = Subzone_Of(this, to)->SubzoneID[i];
 
-			SubzoneConnectionStruct conn1;
-			conn1.SubzoneID = sidx2;
-			conn1.IsCrossBlock = false;
-			SubzoneTracking[i][sidx1].Connections.Add(conn1);
+			SubzoneTracking[i][sidx1].Connections.Add(SubzoneConnectionStruct(sidx2));
 
-			SubzoneConnectionStruct conn2;
-			conn2.SubzoneID = sidx1;
-			conn2.IsCrossBlock = false;
-			SubzoneTracking[i][sidx2].Connections.Add(conn2);
+			SubzoneTracking[i][sidx2].Connections.Add(SubzoneConnectionStruct(sidx1));
 		}
 
 		{
-			sidx1 = Zone_Entry(this, from_adj1)->SubzoneID[i];
-			sidx2 = Zone_Entry(this, to_adj1)->SubzoneID[i];
+			sidx1 = Subzone_Of(this, from_adj1)->SubzoneID[i];
+			sidx2 = Subzone_Of(this, to_adj1)->SubzoneID[i];
 
-			SubzoneConnectionStruct conn1;
-			conn1.SubzoneID = sidx2;
-			conn1.IsCrossBlock = false;
-			SubzoneTracking[i][sidx1].Connections.Add(conn1);
+			SubzoneTracking[i][sidx1].Connections.Add(SubzoneConnectionStruct(sidx2));
 
-			SubzoneConnectionStruct conn2;
-			conn2.SubzoneID = sidx1;
-			conn2.IsCrossBlock = false;
-			SubzoneTracking[i][sidx2].Connections.Add(conn2);
+			SubzoneTracking[i][sidx2].Connections.Add(SubzoneConnectionStruct(sidx1));
 		}
 
 		{
-			sidx1 = Zone_Entry(this, from_adj2)->SubzoneID[i];
-			sidx2 = Zone_Entry(this, to_adj2)->SubzoneID[i];
+			sidx1 = Subzone_Of(this, from_adj2)->SubzoneID[i];
+			sidx2 = Subzone_Of(this, to_adj2)->SubzoneID[i];
 
-			SubzoneConnectionStruct conn1;
-			conn1.SubzoneID = sidx2;
-			conn1.IsCrossBlock = false;
-			SubzoneTracking[i][sidx1].Connections.Add(conn1);
+			SubzoneTracking[i][sidx1].Connections.Add(SubzoneConnectionStruct(sidx2));
 
-			SubzoneConnectionStruct conn2;
-			conn2.SubzoneID = sidx1;
-			conn2.IsCrossBlock = false;
-			SubzoneTracking[i][sidx2].Connections.Add(conn2);
+			SubzoneTracking[i][sidx2].Connections.Add(SubzoneConnectionStruct(sidx1));
 		}
 	}
 }

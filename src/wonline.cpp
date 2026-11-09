@@ -5769,11 +5769,11 @@ void __fastcall FUN_00793930(char const * from, char const * to, int state)
 	}
 	for (int j = 0; j < Session.unknown_2E14; j++) {
 		if (Session.unknown_2A14[j][0] == from_slot && Session.unknown_2A14[j][1] == to_slot) {
-			Session.unknown_2C14[j][0] = state;
+			Session.ConnectionResults[j * 2] = state;
 			return;
 		}
 		if (Session.unknown_2A14[j][0] == to_slot && Session.unknown_2A14[j][1] == from_slot) {
-			Session.unknown_2C14[j][1] = state;
+			Session.ConnectionResults[j * 2 + 1] = state;
 			return;
 		}
 	}
@@ -5894,13 +5894,13 @@ bool FUN_007947B0(void)
 		if (stricmp(name, DAT_00B73E40.get()) == 0) {
 			partner = second;
 			tag = i * 2 + 1;
-			Session.unknown_2C14[i][0] = 11;
+			Session.ConnectionResults[i * 2] = 11;
 		}
 		name = FUN_007350C0(Session.Slots[second]->Name);
 		if (stricmp(name, DAT_00B73E40.get()) == 0) {
 			partner = first;
 			tag = i * 2;
-			Session.unknown_2C14[i][1] = 11;
+			Session.ConnectionResults[i * 2 + 1] = 11;
 		}
 		if (partner != -1) {
 			int retries;
@@ -5922,8 +5922,8 @@ bool FUN_007947B0(void)
 				Sleep(5);
 				FUN_0077F900();
 				FUN_00793BB0();
-				int res1 = Session.unknown_2C14[i][0];
-				int res2 = Session.unknown_2C14[i][1];
+				int res1 = Session.ConnectionResults[i * 2];
+				int res2 = Session.ConnectionResults[i * 2 + 1];
 				if ((res1 == 11 || res1 == 0) && (res2 == 11 || res2 == 0)) {
 					FUN_004068E0("Got both results - woohoo!\n");
 					break;
@@ -5940,11 +5940,11 @@ bool FUN_007947B0(void)
 				}
 			} while (timer.Value() != 0);
 		}
-		if (Session.unknown_2C14[i][0] != 11) {
+		if (Session.ConnectionResults[i * 2] != 11) {
 			FUN_004068E0("res1 != CONNRESULT_CONNECTED\n");
 			return false;
 		}
-		if (Session.unknown_2C14[i][1] != 11) {
+		if (Session.ConnectionResults[i * 2 + 1] != 11) {
 			FUN_004068E0("res2 != CONNRESULT_CONNECTED\n");
 			return false;
 		}

@@ -15102,9 +15102,10 @@ address,size,symbol,source,sha256
 0x006F4AB0,1013,?Receive_Message@TechnoClass@@UAE?AW4RadioMessageType@@PAVRadioClass@@W42@AAH@Z,src/techno.cpp,fdc70e4aed0e9f8b290de15aa79cc26791c68ae9bc6c48a1edf1903837b300a3
 0x006F4EB0,475,?Sensed@TechnoClass@@UAEXXZ,src/techno.cpp,bd523d2ece5ebf576a9183975ef9776fc1264947931cba17caa3f5d3cbf24a78
 0x006F5090,255,?Per_Cell_Process@TechnoClass@@UAEXW4PCPType@@@Z,src/techno.cpp,1a3e19541ce784e2c0288888d2179fac40ad86feab876fd762b89a9984aae94a
+0x006F5190,3423,?Draw_Post_Render@TechnoClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/techno.cpp,91565f1b180bb1b922dc6ca971c39993ecf9166c22e48aa1a503c9b48e2d8143
 0x006F5EF0,306,?Draw_Double_Selection_Bracket@TechnoClass@@SIXABVCoord@@0H@Z,src/techno.cpp,b7342c65ea37645568d3b8d556930d9b28d9477b047c5a8bb5c50e71e6ff642c
 0x006F6030,144,?Draw_Single_Selection_Bracket@TechnoClass@@SIXABVCoord@@0H@Z,src/techno.cpp,5a250c476d7ca06c1f55563a86eee0fe105c9a3fb7a2b039916b1bcf6747afde
-0x006F60C0,3,?vt_entry_448@TechnoClass@@UAEXII@Z,src/techno.cpp,1d10894625976bca9d8906f3ecf1e766b94e9219ec3bf1c30e02feea5e18e45a
+0x006F60C0,3,?Draw_Health_Bar_Old@TechnoClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/techno.cpp,1d10894625976bca9d8906f3ecf1e766b94e9219ec3bf1c30e02feea5e18e45a
 0x006F6AC0,480,?Limbo@TechnoClass@@UAE_NXZ,src/techno.cpp,ff66cab02493a713ad6c32d12b1d8e45145689476c222716ea02f15aeea774f0
 0x006F6CA0,659,?Unlimbo@TechnoClass@@UAE_NABVCoord@@W4Dir256@@@Z,src/techno.cpp,23375296f960ad0063a0ff3b316069d6de194effcb6a1581fb990a66e0171249
 0x006F6F40,28,?Get_Sight_Bonus@TechnoClass@@QAEHABVCoord@@@Z,src/techno.cpp,b1611e89c7b2f7448a2a8445e5ade9174c0666f2b91434c8498bd1e761bb40b1
@@ -15186,7 +15187,7 @@ address,size,symbol,source,sha256
 0x00705D50,14,?IsNotWarpingIn@TechnoClass@@UBE_NXZ,src/techno.cpp,cad2a84a279f9fa70375da12a56b6456b69f73dd80a7c888eb309e68faf316d5
 0x00705D60,5,?FUN_00705D60@TechnoClass@@QAE_NXZ,src/techno.cpp,2d2c154014206c5df3437d437797e694229862f8589c1d5d4ef67934e6828673
 0x00705D70,138,?GetRemapColour@TechnoClass@@UBEPAXXZ,src/techno.cpp,16be3474024d8ccf6f1897d6b26f0850b25366241e3ddd49d27605967de9dd0d
-0x00706640,1420,?Draw_Voxel@TechnoClass@@UBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@HHW4ShapeFlags_Type@@@Z,src/techno.cpp,902d4eb11e8f52e01b3ecc252b48143c612afc4f0d7f0f17cd81e0e839117ea7
+0x00706640,1420,?Draw_Voxel@TechnoClass@@UBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@HGW4ShapeFlags_Type@@@Z,src/techno.cpp,902d4eb11e8f52e01b3ecc252b48143c612afc4f0d7f0f17cd81e0e839117ea7
 0x00706BD0,766,?Techno_Draw_Voxel_Shadow@TechnoClass@@QBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@_NPAVSurface@@HH@Z,src/techno.cpp,20f960ab6ead903c6ee83d9c29936db85773480c76ed734dcec18ffa7573d92b
 0x00707280,502,?Techno_Render_Voxel_Shadow@TechnoClass@@QBE?AUSurfaceRegion@@ABUVoxelDataStruct@@ABVMatrix3D@@ABVPoint2D@@ABV?$TRect@H@@HW4ShapeFlags_Type@@_NPAVSurface@@HH@Z,src/techno.cpp,c76231cfa61d5c9af1c2855645ab254b01f3b4fd6d70016bb3c628d32d9defda
 0x00707750,98,?Calculate_Sinking_Offset@TechnoClass@@QAEXFH@Z,src/techno.cpp,b656fd67ec2a3b85d397923d970c849662fea7ffdb3e471c959057405f3b3d3f

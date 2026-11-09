@@ -742,7 +742,7 @@ class SessionClass
 		IPXAddressClass unknown_2994[MAX_PLAYERS];
 		int unknown_29F4[MAX_PLAYERS];
 		int unknown_2A14[64][2];
-		int unknown_2C14[64][2];
+		int ConnectionResults[128];
 		int unknown_2E14;
 		unsigned short unknown_2E18[MAX_PLAYERS];
 		char unknown_2E28[MAX_PLAYERS][36];

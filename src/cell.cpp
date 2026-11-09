@@ -1822,14 +1822,14 @@ void CellClass::Wall_Update(bool justneighbors)
 			if (newcell.Passability != old_passability) {
 				if (recalc_around) {
 					Map.ResetZones(newcell.CellID);
-					Map.RecalculateSubZones(newcell.CellID);
+					Map.Update_Cell_Subzones(newcell.CellID);
 					for (int dir = FACING_FIRST; (unsigned)dir < FACING_COUNT; dir++) {
 						CellClass & adjacent = Map[::Adjacent_Cell(newcell.CellID, (FacingType)dir)];
 						adjacent.AdjacentObjectCount--;
 					}
 				} else {
 					Map.Update_Cell_Zone_Constructively(newcell.CellID);
-					Map.RecalculateSubZones(newcell.CellID);
+					Map.Update_Cell_Subzones(newcell.CellID);
 				}
 			}
 		}
@@ -1882,7 +1882,7 @@ int CellClass::Reduce_Wall(int damage)
 					OverlayData = 0;
 					Recalc_Attributes();
 					Map.ResetZones(CellID);
-					Map.RecalculateSubZones(CellID);
+					Map.Update_Cell_Subzones(CellID);
 					Map.Flag_Background_Update(CellID);
 					Adjacent_Cell(FACING_N).Wall_Update();
 					Adjacent_Cell(FACING_W).Wall_Update();
