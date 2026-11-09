@@ -8587,6 +8587,7 @@ address,size,symbol,source,sha256
 0x0058C5A0,277,?Pick_Random_Clear_Cell_In_Zone@MapRegionClass@@SI?AVCell@@HH@Z,src/mapgen.cpp,701946af52a2b141d61748a720f8f31454b471040f9bad04fd9004f5e4289054
 0x0058C6C0,37,?Reset_Spreads@CellData@MapRegionClass@@SIX_N@Z,src/mapgen.cpp,17e02250aa687db57ff215c2020e7cf01b0a4cac71088aa3971bf3c57be93a13
 0x0058C6F0,271,?Get_Angle_Score@MapRegionClass@@QAENABVCell@@0N@Z,src/mapgen.cpp,2e0a21ca6d128e626afbc4b599e33189e1db09b75c7a1bc8bfd5e3850e4d903f
+0x0058C800,1678,?Create_Region_From_Cell@MapRegionClass@@SIPAV1@PAVCellClass@@@Z,src/mapgen.cpp,503f0494fc8bbe88b44c3e09bf3750a85c9ae71bf0340537cba4a2865ec606b6
 0x0058CE90,243,?Destroy_Cell_Regions@MapRegionClass@@SIXXZ,src/mapgen.cpp,ad185a902c9084e74a230678d4c777c1911980ac18b83622cf3c9f9f4fb386ed
 0x0058CF90,121,?Create_Water_Regions@MapRegionClass@@SIXXZ,src/mapgen.cpp,277981eddf3623af8502114279adc6260111c6b7a7f4566e90c9155305d2c565
 0x0058D010,82,?Create_Land_Regions@MapRegionClass@@SIX_N@Z,src/mapgen.cpp,df0e5cea705c0936f461a06d6a0e7067966d3c4171ef0dc6d8554d6c3e88dfbb
@@ -13070,6 +13071,7 @@ address,size,symbol,source,sha256
 0x0069E180,142,?SHPFreeAll@@YIXXZ,src/shapipe.cpp,f315042d4aa610e55d7f8eb11c6f54f58d02f89dec6b3ef98aea031e43752aed
 0x0069E430,200,??0SHPReference@@QAE@PBD@Z,src/shapipe.cpp,3bb2b5410047000569be9dd0d15990f4f83ba94c880c164e311578998b7b28bd
 0x0069E500,113,??1SHPStruct@@QAE@XZ,src/shapipe.cpp,2c74abeea22964508ec1e5a6866b3789265732ff61b6c1f80951b2dc4f44ff23
+0x0069E580,438,?GetData@SHPStruct@@QAEPAV1@XZ,src/shapipe.cpp,055351aade1e5a488a078e3674af0beadc70a6376ed20cad19599a1d2d738788
 0x0069E740,152,?GetPixels@SHPStruct@@QBEPAEH@Z,src/shapipe.cpp,cd37a81102d6736e176bda729efeee607d24910716e356070c1d745b748ca112
 0x0069E7E0,117,?GetFrameBounds@SHPStruct@@QBE?AV?$TRect@H@@H@Z,src/shapipe.cpp,cacc41140568134a2839150752f0a142361167e86543cbc114cac67ecd63b060
 0x0069E860,106,?GetColor@SHPStruct@@QBE?AVRGBClass@@H@Z,src/shapipe.cpp,ccdf076f3656eb13b68e73e8e00e6611b9512379f7b973e550ce357d1027e797
@@ -16909,6 +16911,7 @@ address,size,symbol,source,sha256
 0x007533A0,3,?FUN_007533A0@@YI_NXZ,src/vox.cpp,e18aacce29affcdddaa5f641ac1ec12552e0fe9d066e6408941b1792818b8619
 0x007533B0,57,?FUN_007533B0@@YIJPAUIStream@@@Z,src/vox.cpp,b4570a5e8f498d7d543e981d1187f1dbd4ae83970f84a8dad3672306ec72f511
 0x007533F0,229,?FUN_007533F0@@YIJPAUIStream@@@Z,src/vox.cpp,02d465012eb088f2a1b1bfcddb94bcfd0fc71920a8dac450aaa095cc7b67d61a
+0x007534E0,20,?Set_EVA_Index@@YIXH@Z,src/vox.cpp,2a5d3186006ceb06a1d1ba2166a09dc7bda35908bd3311d34f23b5eae65f1a67
 0x00753500,16,?FUN_00753500@@YIXXZ,src/vox.cpp,94836d3accf4a79c725cda9ec6b757be3b3cc568e4e4c3db4005a6080f1c77dd
 0x00753510,16,?FUN_00753510@@YIXXZ,src/vox.cpp,42c20b937d4222530254043d27cfaa14bddc96a92e14aafbb4811b98d9f93242
 0x00753520,21,?FUN_00753520@@YIHXZ,src/vox.cpp,099e8c1aee31809b7a408fadade5ea7ad8a3cb56b2458bc9e5527cb9282f5999

@@ -8218,6 +8218,7 @@ address,name,result,size,source,symbol
 0x0058C5A0,MapRegionClass::Pick_Random_Clear_Cell_In_Zone,MATCH,277,src/mapgen.cpp,?Pick_Random_Clear_Cell_In_Zone@MapRegionClass@@SI?AVCell@@HH@Z
 0x0058C6C0,MapRegionClass::CellData::Reset_Spreads,MATCH,37,src/mapgen.cpp,?Reset_Spreads@CellData@MapRegionClass@@SIX_N@Z
 0x0058C6F0,MapRegionClass::Get_Angle_Score,MATCH,271,src/mapgen.cpp,?Get_Angle_Score@MapRegionClass@@QAENABVCell@@0N@Z
+0x0058C800,MapRegionClass::Create_Region_From_Cell,MATCH,1678,src/mapgen.cpp,?Create_Region_From_Cell@MapRegionClass@@SIPAV1@PAVCellClass@@@Z
 0x0058CE90,MapRegionClass::Destroy_Cell_Regions,MATCH,243,src/mapgen.cpp,?Destroy_Cell_Regions@MapRegionClass@@SIXXZ
 0x0058CF90,MapRegionClass::Create_Water_Regions,MATCH,121,src/mapgen.cpp,?Create_Water_Regions@MapRegionClass@@SIXXZ
 0x0058D010,MapRegionClass::Create_Land_Regions,MATCH,82,src/mapgen.cpp,?Create_Land_Regions@MapRegionClass@@SIX_N@Z
@@ -12715,6 +12716,7 @@ address,name,result,size,source,symbol
 0x0069E180,SHPFreeAll,MATCH,142,src/shapipe.cpp,?SHPFreeAll@@YIXXZ
 0x0069E430,SHPReference::SHPReference,MATCH,200,src/shapipe.cpp,??0SHPReference@@QAE@PBD@Z
 0x0069E500,SHPStruct::~SHPStruct,MATCH,113,src/shapipe.cpp,??1SHPStruct@@QAE@XZ
+0x0069E580,SHPStruct::GetData,MATCH,438,src/shapipe.cpp,?GetData@SHPStruct@@QAEPAV1@XZ
 0x0069E740,SHPStruct::GetPixels,MATCH,152,src/shapipe.cpp,?GetPixels@SHPStruct@@QBEPAEH@Z
 0x0069E7E0,SHPStruct::GetFrameBounds,MATCH,117,src/shapipe.cpp,?GetFrameBounds@SHPStruct@@QBE?AV?$TRect@H@@H@Z
 0x0069E860,SHPStruct::GetColor,MATCH,106,src/shapipe.cpp,?GetColor@SHPStruct@@QBE?AVRGBClass@@H@Z
@@ -16571,6 +16573,7 @@ address,name,result,size,source,symbol
 0x007533A0,FUN_007533A0,MATCH,3,src/vox.cpp,?FUN_007533A0@@YI_NXZ
 0x007533B0,FUN_007533B0,MATCH,57,src/vox.cpp,?FUN_007533B0@@YIJPAUIStream@@@Z
 0x007533F0,FUN_007533F0,MATCH,229,src/vox.cpp,?FUN_007533F0@@YIJPAUIStream@@@Z
+0x007534E0,Set_EVA_Index,MATCH,20,src/vox.cpp,?Set_EVA_Index@@YIXH@Z
 0x00753500,FUN_00753500,MATCH,16,src/vox.cpp,?FUN_00753500@@YIXXZ
 0x00753510,FUN_00753510,MATCH,16,src/vox.cpp,?FUN_00753510@@YIXXZ
 0x00753520,FUN_00753520,MATCH,21,src/vox.cpp,?FUN_00753520@@YIHXZ
