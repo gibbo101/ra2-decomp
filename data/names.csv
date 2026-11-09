@@ -1,11 +1,17 @@
 address,name,symbol,evidence
 0x00A83D10,Theme,,0x006EDEF0 TeamClass::TMission_PLAY_MUSIC matched with TibSun source
+0x00886080,CCPalette,?CCPalette@@3VPaletteClass@@A,CCPalette static initializer 0x0040D8A0 in _palette.cpp constructs the PaletteClass at this address
+0x00B05584,StillUpdating,?StillUpdating@@3_NA,Animate_Score_Objs at 0x00690360 clears this byte and ScorePrintClass::Update at 0x00690D60 sets it
+0x007D5408,strdup,_strdup,YRpp CRT.h strdup and the name duplication in SfxEntry::SfxEntry at 0x00690EF0
+0x00691160,DynamicVectorClass<ScoreAnimClass *>::Add,?Add@?$DynamicVectorClass@PAVScoreAnimClass@@@@QAE_NABQAVScoreAnimClass@@@Z,All 80 bytes of this specialization are identical to the matched SfxEntry pointer specialization at this address and contain no relocations
 0x00720B20,ThemeClass::Queue_Song,,0x006EDEF0 TeamClass::TMission_PLAY_MUSIC matched with TibSun source
 0x00578460,MapClass::In_Local_Radar,?In_Local_Radar@MapClass@@QBE_NABVCell@@_N@Z,"called by 0x00578390 MapClass::In_Local_Radar(Rect const &, bool), matched with TibSun source"
 0x007C8E17,operator new,??2@YAPAXI@Z,YRpp CRT.h _new; the call target of operator new in matched 0x0043C0D0 and 0x00733E10
 0x007C8B3D,operator delete,??3@YAXPAX@Z,YRpp CRT.h _delete; the call target of operator delete in matched 0x0063EE30
 0x005F7090,ObjectTypeClass::ObjectTypeClass,??0ObjectTypeClass@@QAE@PBD@Z,YRpp ObjectTypeClass.h ObjectTypeClass(const char*); passes its argument to AbstractTypeClass(char const *) at matched 0x00410800
 0x005F7320,ObjectTypeClass::ObjectTypeClass,??0ObjectTypeClass@@QAE@ABVNoInitClass@@@Z,passes its argument to AbstractTypeClass(NoInitClass const &) at matched 0x00410960; the call target of new (this) VoxelAnimTypeClass(NoInitClass()) in matched 0x0074B810
+0x0060B000,FUN_0060B000,?FUN_0060B000@@YIXPAUHWND__@@ABVPoint2D@@@Z,Aligns a sidebar button with the button strip
+0x0060B1D0,FUN_0060B1D0,?FUN_0060B1D0@@YIXPAUHWND__@@ABVPoint2D@@@Z,Positions a sidebar control using its dialog margin
 0x0050B6F0,HouseClass::Is_Player_Control,,byte-identical to TibSun's body; called by 0x007404B0 UnitClass::What_Action
 0x00A83D4C,PlayerPtr,,YRpp HouseClass::CurrentPlayer; TibSun's PlayerPtr in 0x007404B0 and earlier matches
 0x008B4150,AnimTypes,,YRpp AnimTypeClass::Array; TibSun's AnimTypes in 0x00422B20 AnimTypeClass lookup
@@ -76,6 +82,9 @@ address,name,symbol,evidence
 0x00481A00,CellClass::Goodie_Check,,TS name (cell.h); returns bool in al with ret 4 as called by 0x0054C550
 0x00B0CEC8,Tactical::SelectableObjects,,TS name (tactical.h); the selectable-object array 0x006DC430 walks
 0x0057A0C0,MapClass::FUN_0057A0C0,,two-argument map function (ret 8) called by Seed_Land 0x0059A6C0; distinct from Build_All_Cliffs 0x00578E60
+0x0057BCF0,MapClass::Damage_Low_Bridge_EW,?Damage_Low_Bridge_EW@MapClass@@AAE_NABVCell@@@Z,East-west damage branch of MapClass::Damage_Low_Bridge
+0x0057C2B0,MapClass::Damage_Low_Bridge_NS,?Damage_Low_Bridge_NS@MapClass@@AAE_NABVCell@@@Z,North-south damage branch of MapClass::Damage_Low_Bridge
+0x0057CF60,MapClass::FUN_0057CF60,?FUN_0057CF60@MapClass@@QAE_NABVCell@@@Z,East-west damage branch of the second low-bridge overlay family
 0x0054F530,WWKeyboardClass::FUN_0054F530,,keyboard thiscall (ret 4) that ScoreClass::Input_Name 0x0068FBB0 calls on the key from Get; distinct from To_ASCII 0x0054F450
 0x0069DCF0,ShapeButtonClass::ShapeButtonClass,??0ShapeButtonClass@@QAE@XZ,no-argument constructor (plain ret); YRpp ShapeButtonClass.h JMP_THIS(0x69DCF0)
 0x0069DD30,ShapeButtonClass::ShapeButtonClass,??0ShapeButtonClass@@QAE@IPBVShapeSet@@HHHH_N@Z,seven-argument constructor (ret 0x1C); called by DropListClass::DropListClass 0x004B4E10
@@ -100,6 +109,7 @@ address,name,symbol,evidence
 0x0071CB90,TerrainClass::Write_INI,,0x00687CE0 Write_Scenario_INI matched with TibSun source
 0x006B4DD0,SmudgeClass::Write_INI,,0x00687CE0 Write_Scenario_INI matched with TibSun source
 0x00728280,TubeClass::Write_INI,,0x00687CE0 Write_Scenario_INI matched with TibSun source
+0x00730AF0,FUN_00730AF0,?FUN_00730AF0@@YIXXZ,Deploy command called by the keyboard and tab dispatchers
 0x004C9220,FacingClass::Set_Desired,,TS name (facing.h); compares the new direction with the desired one first as TS does; distinct from FacingClass::Set 0x004C9300, which walk Do_Turn calls
 0x0065D430,rc_ptr_base::rc_ptr_base,,stores vtable 0x007F094C whose RTTI (COL 0x008087C0) is .?AVrc_ptr_base@@; called by 0x007B0110 for rc_ptr<WDTState>
 0x0065D460,rc_ptr_base::~rc_ptr_base,,stores vtable 0x007F094C (RTTI rc_ptr_base) then releases Ptr; tail of 0x007B0130 for rc_ptr<WDTState>
@@ -153,6 +163,7 @@ address,name,symbol,evidence
 0x006292B0,ParasiteClass::ParasiteClass,??0ParasiteClass@@QAE@PAVFootClass@@@Z,constructor taking the owner FootClass * (ret 4); called by TechnoClass::Init 0x006F3F40
 0x0053EE70,IPXAddressClass::operator==,??8IPXAddressClass@@QAE_NAAV0@@Z,TibSun full address compare; called by IPXGlobalConnClass::Send_To 0x005403F0 at +0x107 and +0x174
 0x008872B0,Scripts,,DynamicVectorClass<ScriptClass *>: its initialiser stores vtable 0x007E1B24 (RTTI .?AV?$DynamicVectorClass@PAVScriptClass@@@@); TibSun _script.cpp
+0x00887310,AlternateSurface,,TibSun _surface.h AlternateSurface; YRpp DSurface::Alternate; GraphicMenu::Presentation clears this surface and takes its rectangle
 0x0088730C,HiddenSurface,,TibSun HiddenSurface (gscreen.h, _surface.h); YRpp DSurface::Hidden; read by 0x00642A60 and 0x00554400
 0x00643E90,ProgressScreenClass::Get_Current_Progress,,thiscall ret 4: PlayerProgress[i]/MainProgress, or MainProgress when index >= PlayerCount; called by SessionClass::Update_Progress 0x0069AE90
 0x00B077B0,SHPHead,,head of the SHPReference list: the constructor 0x0069E430 links each new reference here; 0x0069E500/0x0069E180/0x0069E930 read it
@@ -164,11 +175,22 @@ address,name,symbol,evidence
 0x00775700,WS_Create_Dialog,,"windlg WS_Create_Dialog (TibSun windlg.h), called by wonline"
 0x00887628,PacketTransport,,YRpp WinsockInterfaceClass::Instance (UDPInterfaceClass); wonline and ipxgconn Send_To use it
 0x0053F0E0,IPXAddressClass::As_String,,called by wonline; not yet defined in src/ipxaddr.cpp
+0x007E841C,Dropship_Screen::_loadout_slot_ys,_?_loadout_slot_ys@?1??Dropship_Screen@@YIXXZ@4QAY124$$CBHA,Complete 180-byte literal table equals original .rdata; SHA-256 ca19e5e09e594cc59c7be5fd0fd723dc630ac4f31c3b48968f11aa27b93974d7.
+0x007E84D0,Dropship_Screen::_green_light_ys,_?_green_light_ys@?1??Dropship_Screen@@YIXXZ@4QBHB,Complete 16-byte literal table equals original .rdata; SHA-256 c48fe75b2d30b0504b1711fd307431f1235d6c2bf6cde0baf9d825c33dd6e141.
+0x007E840C,Dropship_Screen::_pilot_chance,_?_pilot_chance@?1??Dropship_Screen@@YIXXZ@4MB,Complete 4-byte float equals original .rdata; SHA-256 8b35fe1a9b331dc0217e0419be35288af59676e9c57022a334110ab0e4799df4.
+0x00820328,Dropship_Screen::_drop_btn_names,_?_drop_btn_names@?1??Dropship_Screen@@YIXXZ@4PAPBDA,All three original pointer-table entries independently resolve to the corresponding compiled filename literals in order.
+0x00820334,Dropship_Screen::_green_btn_names,_?_green_btn_names@?1??Dropship_Screen@@YIXXZ@4PAPBDA,All four original pointer-table entries independently resolve to the corresponding compiled filename literals in order.
+0x0087E8A4,AlphaBuffer,?AlphaBuffer@@3PAVABuffer@@A,YRpp Drawing.h ABuffer::Instance at 0x87E8A4; data/symbols.csv agrees; existing real ABuffer type constructor and Fill contracts
+0x00887644,DepthBuffer,?DepthBuffer@@3PAVZBuffer@@A,YRpp Drawing.h ZBuffer::Instance at 0x887644; data/symbols.csv agrees; existing real ZBuffer type
+0x00887314,LogicalSurface,?LogicalSurface@@3PAVSurface@@A,YRpp Surface.h DSurface::Temp at 0x887314; independently matched GScreenClass::Input 0x004F4320 saves/restores LogicalSurface around Buttons->Input
+0x008A00A0,SurfacesRestored,?SurfacesRestored@@3_NA,Independent matched MSEngine::Restore_And_Advance 0x005D1E50 stores byte 1 at 0x008A00A0; matched Title_Screen_Restore 0x00532100 tests and clears same byte; same source global SurfacesRestored
+0x0069E740,SHPStruct::GetPixels,?GetPixels@SHPStruct@@QBEPAEH@Z,Independently matched complete 152-byte SHPStruct::GetPixels body and all 14 shapipe annotations with the YRpp unsigned-byte pointer return contract; existing layout and calling convention unchanged.
 0x00887300,SidebarSurface,,TibSun SidebarSurface (_surface.h); YRpp DSurface::Sidebar; read by 0x0069DEB0
 0x008469E0,VoxelNormalTables,,five table pointers {0, 0x846A08, 0x846AC8, 0x846C78, 0x846F78}: TibSun voxlib NULL plus VoxelNormals1..4
 0x008469F4,VoxelNormalTableEntryCount,,{0, 16, 36, 64, 245}: entries per normal table, matching the 12-byte table spacing
 0x00A8E9C0,Ipx,,TibSun globals.h IPXManagerClass Ipx; YRpp IPXManagerClass::Instance; beacon Send_Global_Message reads it
 0x0056D230,MapClass::Get_Cell_Zone,?Get_Cell_Zone@MapClass@@QAEHABVCell@@W4MZoneType@@_N@Z,"TibSun Get_Cell_Zone: bridge walk then zone array at +0x18 by mzone, -1 when none; ret 0xC; called by matched 0x0041FEE0"
+0x0056C510,MapClass::Zone_Reset,?Zone_Reset@MapClass@@QAEHXZ,The low-bridge damage routines call the pathfinding zone reset after a span collapses
 0x00887368,ToolTips,,TibSun _tooltip.cpp CCToolTip * ToolTips; YRpp CCToolTip::Instance; read by matched 0x005D4D50
 0x00ABFC90,_ModelessDialogs,,initialiser 0x005D4C50 stores vtable 0x007EEC8C (DynamicVectorClass<HWND__ *>); 4-byte dialog loop in 0x005D4D50
 0x00ABFCB8,_Accelerators,,initialiser 0x005D4CD0 stores vtable 0x007EECCC (DynamicVectorClass<AcceleratorTracker>); 8-byte loop in 0x005D4D50
@@ -317,6 +339,10 @@ address,name,symbol,evidence
 0x00886F90,SidebarRect,,YRpp Surface.h SidebarBounds; TibSun _rect.h SidebarRect; matched CCToolTip::Reset 0x00478DB0 uses the same X/Width fields
 0x0088731C,CompositeSurface,,YRpp Surface.h Composite; TibSun _surface.h CompositeSurface; CCToolTip::Draw 0x00478E30
 0x00B0B518,SidebarClass::IsToBlitSidebar,,"Matched Blit_Sidebar 0x006A70E0 reads at 0x006A7143, clears at 0x006A7166 and sets at 0x006A723A; TibSun sidebar.cpp static flag"
+0x00AC48B8,ODMasks,?ODMasks@@3UODComponentMasks@@A,YRpp OwnerDraw.h ColorShiftRed/Green at +0/+2; existing matched ODInitMasks 0x0061F190 independently confirms both component references
+0x00AC48BC,ODBComponentMask,?ODBComponentMask@@3GA,YRpp OwnerDraw.h ColorShiftBlue; existing matched ODInitMasks 0x0061F190 +0x4A/+0x62/+0x71
+0x00B78834,OD_Blend_Color::blend_color_alpha,?blend_color_alpha@?1??OD_Blend_Color@@YIGGGE@Z@4IA,Existing matched OwnerDraw::BlendGradientRect 0x006217E0 +0x11D/+0x13F/+0x158/+0x174 store and use alpha in the shared inline blender
+0x00B78838,OD_Blend_Color::blend_pixel_alpha,?blend_pixel_alpha@?1??OD_Blend_Color@@YIGGGE@Z@4IA,Existing matched OwnerDraw::BlendGradientRect 0x006217E0 +0x12A stores 255-alpha in the shared inline blender
 0x008A0DDC,DSurface::BlueLeft,,YRpp Drawing.h BlueShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x008A0DD8,DSurface::BlueRight,,YRpp Drawing.h BlueShiftLeft; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
 0x008A0DE4,DSurface::GreenLeft,,YRpp Drawing.h GreenShiftRight; TibSun and canonical Build_Hicolor_Pixel shift right by *Left and left by *Right; verified in 0x00478E30
@@ -409,3 +435,9 @@ address,name,symbol,evidence
 0x007DC720,_com_issue_error,?_com_issue_error@@YGXJ@Z,COM error helper forwards HRESULT and null IErrorInfo; referenced by TechnoClass::Can_Fire
 0x00AC4F58,Progress,?Progress@@3VProgressScreenClass@@A,Matched static initializer at 0x00642980 passes 0x00AC4F58 to ProgressScreenClass::ProgressScreenClass; the destructor at 0x006429A0 uses the same object.
 0x0087F770,InputManagerInstance,?InputManagerInstance@@3PAXA,Matched Wonline dialog at 0x0077D840 passes the pointer stored at 0x0087F770 to the input flush routine at 0x0054F720 before and after the modal loop.
+0x0060A330,OwnerDraw::ClassifyLayoutBand,?ClassifyLayoutBand@OwnerDraw@@YGHPAUHWND__@@J@Z,EnumChildWindows callback at 0x0060A5A0 that assigns the control layout band
+0x0060AAB0,OwnerDraw::InitCompactDialogControlsProc,?InitCompactDialogControlsProc@OwnerDraw@@YGHPAUHWND__@@J@Z,EnumChildWindows callback at 0x0060AF40 that sets the sidebar margin and control alpha
+0x0060F9A0,OwnerDraw::RegisterChildControlProc,?RegisterChildControlProc@OwnerDraw@@YGHPAUHWND__@@J@Z,YRpp OwnerDraw.h identifies this callback; called by UI::RegisterWindow and OwnerDraw::PrepareDialogChildControls
+0x00AC4848,SurfaceCache,?SurfaceCache@@3VSurfaceCacheClass@@A,YRpp PCX.h Instance; the matched SurfaceCacheClass::GetSurface 0x006BA140 is called on it from wonline and the score and lobby dialogs
+0x006BA580,SurfaceCacheClass::DrawTrans,?DrawTrans@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1F@Z,YRpp PCX.h BlitToSurface; TibSun srfcache.h DrawTrans signature; called on SurfaceCache by ProgressScreenClass::Draw_Flag 0x006435B0
+0x00584550,MapClass::Update_Cell_Subzones,?Update_Cell_Subzones@MapClass@@QAEXABVCell@@@Z,body matches TibSun MapClass::Update_Cell_Subzones (map.cpp); YRpp names it RecalculateSubZones

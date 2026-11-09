@@ -19,6 +19,7 @@
 #include "airctype.h"
 #include "app.h"
 #include "assert.h"
+#include "beacon.h"
 #include "building.h"
 #include "builtype.h"
 #include "capmgr.h"
@@ -45,6 +46,8 @@
 #include "logic.h"
 #include "mono.h"
 #include "mouse.h"
+#include "multiplayer.h"
+#undef LoadString
 #include "overtype.h"
 #include "quarry.h"
 #include "revent.h"
@@ -76,6 +79,7 @@
 #include "voc.h"
 #include "vox.h"
 #include "waypoint.h"
+#include "windlg.h"
 #include "color.hh"
 #include "strategy.hh"
 
@@ -2015,6 +2019,162 @@ bool HouseClass::Flag_Attach(UnitClass * object, bool set_home)
 	return(false);
 }
 
+extern BeaconManagerClass BeaconManager;
+extern bool DAT_00884D2C;
+extern bool DAT_00824410;
+void __fastcall FUN_00637A10(void);
+void __cdecl FUN_004068E0(char const * format, ...);
+namespace Game { extern int PlayerColor; extern bool ChatMask[8]; }
+
+// FUNCTION: GAMEMD 0x004FC0B0
+void HouseClass::MPlayer_Defeated(void)
+{
+	wchar_t txt[80];
+	int i,j;
+	HouseClass * hptr;
+	HouseClass * hptr2;
+	int num_alive;
+	int num_humans;
+	bool all_allies;
+
+	IsDefeated = true;
+
+	if (IQ == Rule->MaxIQ && !Is_Human_Player() && Rule->IsComputerParanoid && Session.Type != GAME_NORMAL) {
+		Computer_Paranoid();
+	}
+
+	if (Scen->Special.IsCaptureTheFlag) {
+		if (FlagLocation) {
+			Flag_Remove(FlagLocation, true);
+		} else if (FlagHome != CELL_NONE) {
+			Flag_Remove(&Map[FlagHome], true);
+		}
+	}
+
+	if (Session.Type != GAME_NORMAL && Scen->Special.IsHarvesterImmune) {
+		for (i = 0; i < Units.Count(); i++) {
+			UnitClass * unit = Units[i];
+			if (unit->House == this && unit->IsActive) {
+				unit->Delete_Me();
+			}
+		}
+	}
+
+	if (PlayerPtr == this) {
+		BeaconManager.DeleteAllBeacons(PlayerPtr->HeapID);
+		if (DAT_00884D2C) {
+			Map.FUN_006D1660();
+			DAT_00824410 = true;
+		} else {
+			DAT_00824410 = false;
+		}
+		FUN_00637A10();
+		Map.Place_Beacon_Mode_Control(0);
+		Unsorted::MuteSWLaunches = 1;
+		Map.Reveal_The_Map(this);
+		Map.Toggle_Radar(true);
+		HiddenSurface->Fill(0);
+		Map.Flag_To_Redraw(GS_REDRAW_ALL);
+		memset(Game::ChatMask, true, sizeof(Game::ChatMask));
+		if (WS_Top_Window_ID() == 0x73) {
+			Map.FUN_00658640(WS_Top_Window());
+		}
+		if (DAT_00AC1198 != PlayerPtr) {
+			swprintf(txt, StringTable::LoadString("TXT_PLAYER_DEFEATED", NULL, "D:\\ra2mdpost\\House.CPP", 4995), UIName);
+			Session.Messages.Add_Message(NULL, 0, txt, Session.Color_Index_To_Scheme(Game::PlayerColor), TextPrintType(0x4046), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+			VoxClass::Play("EVA_YouHaveLost", -1, -1);
+		}
+		Map.Flag_To_Redraw();
+		FUN_004068E0("MPlayer_Defeated() - Player %s has been defeated (OBIWAN MODE)\n", (char const *)IniName);
+	} else {
+		if (!Class->IsMultiplayPassive) {
+			Houses[HeapID]->MapIsClear = true;
+			FUN_004068E0("MPlayer_Defeated: frame %d, house id %d, MapIsClear set to true\n", Frame, HeapID);
+			if (this != DAT_00AC1198) {
+				swprintf(txt, StringTable::LoadString("TXT_PLAYER_DEFEATED", NULL, "D:\\ra2mdpost\\House.CPP", 5017), UIName);
+				Session.Messages.Add_Message(NULL, 0, txt, Scheme, TextPrintType(0x4046), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+				VoxClass::Play("EVA_PlayerDefeated", -1, -1);
+			}
+			Map.Flag_To_Redraw();
+		}
+		FUN_004068E0("MPlayer_Defeated() - Opponent %s has been defeated\n", (char const *)IniName);
+	}
+
+	num_alive = 0;
+	num_humans = 0;
+	for (i = 0; i < Houses.Count(); i++) {
+		hptr = Houses[i];
+		if (hptr && !hptr->IsDefeated && !hptr->Class->IsMultiplayPassive) {
+			if (hptr->Is_Human_Player()) {
+				num_humans++;
+			}
+			num_alive++;
+		}
+	}
+	FUN_004068E0("MPlayer_Defeated() - Alive = %d, Humans = %d\n", num_alive, num_humans);
+
+	all_allies = true;
+	for (i = 0; i < Houses.Count(); i++) {
+		hptr = Houses[i];
+		if (!hptr || hptr->IsDefeated || hptr->Class->IsMultiplayPassive) {
+			continue;
+		}
+		for (j = 0; j < Houses.Count(); j++) {
+			hptr2 = Houses[j];
+			if (!hptr2 || hptr2->IsDefeated || hptr2->Class->IsMultiplayPassive) {
+				continue;
+			}
+			if (!hptr->Is_Ally(hptr2) || !hptr2->Is_Ally(hptr)) {
+				all_allies = false;
+				break;
+			}
+		}
+		if (!all_allies) {
+			break;
+		}
+	}
+
+	if (all_allies) {
+		Session.SawGameCompletion = true;
+		FUN_004068E0("Saw game completion due to player defeat\n");
+		num_alive = 1;
+		FUN_004068E0("MPlayer_Defeated() - All remaining players are allied\n");
+	}
+
+	if (num_alive == 1 || num_humans == 0) {
+		if (DAT_00824410) {
+			Map.FUN_006D1610();
+		}
+		if (PlayerPtr->IsDefeated) {
+			MultiplayerGameMode * mode = Session.MPGameMode;
+			bool has_mode = mode != NULL;
+			bool net = (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && has_mode && mode->vt_entry_04() && mode->vt_entry_08();
+			if (num_alive == 1 && net) {
+				bool humans_left = false;
+				for (i = 0; i < Houses.Count(); i++) {
+					hptr = Houses[i];
+					if (hptr && !hptr->IsDefeated && hptr->Is_Human_Player()) {
+						humans_left = true;
+					}
+				}
+				if (humans_left) {
+					FUN_004068E0("MPlayer_Defeated() - Allies win, Flag_To_Win\n");
+					PlayerPtr->Flag_To_Win(false);
+					return;
+				}
+				FUN_004068E0("MPlayer_Defeated() - Allies lost, Flag_To_Lose\n");
+				PlayerPtr->Flag_To_Lose(false);
+			} else {
+				FUN_004068E0("MPlayer_Defeated() - Flag_To_Lose\n");
+				PlayerPtr->Flag_To_Lose(false);
+			}
+		} else {
+			FUN_004068E0("MPlayer_Defeated() - Flag_To_Win\n");
+			PlayerPtr->Flag_To_Win(false);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x004FC6D0
 void HouseClass::Destroy_All(void)
 {
@@ -3465,12 +3625,6 @@ void HouseClass::Write_All(CCINIClass & ini)
 
 SideType FUN_006A46D0(char const * name);
 
-class MultiplayerGameMode
-{
-	public:
-		virtual ~MultiplayerGameMode(void);
-		virtual bool vt_entry_04(void);
-};
 
 // FUNCTION: GAMEMD 0x00501210
 void HouseClass::Write_INI(CCINIClass & ini)

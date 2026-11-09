@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "_surface.h"
 #include "rect.h"
 #include "geometry.h"
 #include "tab.h"
@@ -225,6 +226,45 @@ void TabClass::DisposeOfArt(void)
 	for (int i = 0; i < 25; i++) {
 		FUN_006CFC80(i);
 	}
+}
+
+#include "scenario.h"
+extern Rect * DAT_00B0FC58;
+extern int DAT_00B0CD38;
+extern int DAT_00B0CB50;
+extern int DAT_00B0CD10;
+
+// FUNCTION: GAMEMD 0x006D02B0
+void TabClass::Init_For_House(void)
+{
+	BASECLASS::Init_For_House();
+
+	bool loaded = false;
+	for (int i = 0; i < 25; i++) {
+		char name[256];
+		sprintf(name, "Button%02d.SHP", i);
+		DAT_00B0C148[i] = FileSystem::LoadWholeFileEx(name, loaded);
+		DAT_00B0CBDC[i] = loaded;
+	}
+
+	DAT_00B0CD38 = ((ShapeSet const *)DAT_00B0C148[0])->Get_Width();
+	DAT_00B0CB50 = ((ShapeSet const *)DAT_00B0C148[0])->Get_Height();
+
+	Rect r = *DAT_00B0FC68;
+	DAT_00B0CC2C = DAT_00B0FC6C->X - DAT_00B0CB54 * r.Width;
+	int side = Scen->PlayerSideIndex;
+	int yoff;
+	if (side == 0) {
+		yoff = 0;
+	} else if (side == 1) {
+		yoff = 0;
+	} else {
+		yoff = 0;
+	}
+	DAT_00B0CC24 = DAT_00B0FC58->Y + yoff;
+	DAT_00B0CD10 = r.Width - DAT_00B0CD38;
+	DAT_00B0CC38 = DAT_00B0CD10 + DAT_00B0CD38;
+	Credits.Current = 0;
 }
 
 // FUNCTION: GAMEMD 0x006D03A0
@@ -464,6 +504,113 @@ void __fastcall FUN_006D09C0(ShapeButtonClass * button, char const * text)
 extern DSurface * DAT_00887300;
 extern ShapeSet const * DAT_00B0FB08;
 extern bool DAT_00B0B518;
+
+extern ShapeSet const *DAT_00B0FA3C;
+extern ShapeSet const *DAT_00B0FAA8;
+extern ShapeSet const *DAT_00B0FABC;
+extern int DAT_00B0F9E4;
+
+// FUNCTION: GAMEMD 0x006D0A20
+void TabClass::Draw_It(bool complete)
+{
+	static Point2D last_spot(0, 0);
+	static bool mouse_inside;
+	static Surface *drawn_on[4];
+	static int drawn_count;
+	bool redraw = complete || IsToRedraw;
+	if (!redraw) {
+		for (int slot = 0; slot < 25; slot++) {
+			ShapeButtonClass *button = FUN_006CFD40(slot);
+			if (button != 0 && button->IsDrawn) {
+				redraw = true;
+				break;
+			}
+		}
+	}
+	if (redraw) {
+		drawn_count = 0;
+	} else {
+		Point2D mouse = MouseCursor->Get_Mouse_Point();
+		if (DAT_00B0FC58->Is_Point_Within(mouse)) {
+			mouse_inside = true;
+			if (mouse.X != last_spot.X || mouse.Y != last_spot.Y)
+				redraw = true;
+		} else {
+			if (mouse_inside)
+				redraw = true;
+			mouse_inside = false;
+		}
+		last_spot.X = mouse.X;
+		last_spot.Y = mouse.Y;
+		if (redraw) {
+			drawn_count = 0;
+		} else {
+			int index;
+			for (index = 0; index < drawn_count; index++) {
+				if (drawn_on[index] == LogicalSurface)
+					goto drawn;
+			}
+			redraw = true;
+		}
+	}
+drawn:
+	if (!Unsorted::ArmageddonMode) {
+		Draw_Credits_Tab();
+		Credits.Graphic_Logic(true);
+		if (redraw) {
+			Rect view = LogicalSurface->Get_Rect();
+			Point2D where(0, 0);
+			where.X = DAT_00B0FC58->X;
+			where.Y = DAT_00B0FC58->Y;
+			Rect narrow = view;
+			narrow.Width = DAT_00B0FC58->Width;
+			Surface *surface = LogicalSurface;
+			Draw_Shape(*surface, *FileSystem::SIDEBAR_PAL, DAT_00B0FA3C, 0, where, narrow);
+			if (ThumbActive) {
+				where.X = DAT_00B0FC60->X;
+				where.Y = DAT_00B0FC60->Y;
+			} else {
+				where.X = DAT_00B0FC64->X;
+				where.Y = DAT_00B0FC64->Y;
+			}
+			Draw_Shape(*surface, *FileSystem::SIDEBAR_PAL, DAT_00B0FA90, 0, where, view);
+			if (ThumbActive) {
+				where.X = DAT_00B0FC68->X;
+				where.Y = DAT_00B0FC58->Y;
+				for (int tile = 0; tile < DAT_00B0F9E4; tile++) {
+					Draw_Shape(*surface, *FileSystem::SIDEBAR_PAL, DAT_00B0FAA8, 0, where, view);
+					where.X += DAT_00B0FC68->Width;
+				}
+				for (int slot = 0; slot < 25; slot++) {
+					ShapeButtonClass *button = FUN_006CFD40(slot);
+					if (button != 0 && button->Get_Shape_Data() != 0) {
+						button->Draw_Me(1);
+						button->IsDrawn = false;
+					}
+				}
+			}
+			where.X = DAT_00B0FC6C->X;
+			Draw_Shape(*surface, *FileSystem::SIDEBAR_PAL, DAT_00B0FABC, 0, where, view);
+			if (ThumbActive)
+				CommandBarStatics::ButtonA.Draw_Me(1);
+			else
+				CommandBarStatics::ButtonB.Draw_Me(1);
+			unknown_byte_5546 = true;
+			IsToRedraw = false;
+			if (drawn_count < sizeof(drawn_on) / sizeof(drawn_on[0]))
+				drawn_count++;
+			for (int index = drawn_count - 2; index >= 0; index--)
+				drawn_on[index + 1] = drawn_on[index];
+			drawn_on[0] = surface;
+		} else {
+			unknown_byte_5546 = false;
+		}
+	}
+	SidebarClass::Draw_It(complete);
+}
+
+// SYNTHETIC: GAMEMD 0x006D0E50 SYMBOL
+// _$E137
 
 // FUNCTION: GAMEMD 0x006D0E60
 void TabClass::Draw_Credits_Tab(void)

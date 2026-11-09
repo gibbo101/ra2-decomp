@@ -31,6 +31,8 @@ from pathlib import Path
 import capstone
 import pefile
 
+from exebuild import build_of, restore
+
 ROOT = Path(__file__).resolve().parent.parent
 NOP = 0x90
 PADDING = (NOP, 0xCC)
@@ -220,19 +222,16 @@ def main() -> None:
     exe, out = args.exe, args.out
     if args.no_asm and out.resolve() == (ROOT / "data/functions.csv").resolve():
         parser.error("--no-asm requires a separate output path")
-    pe = pefile.PE(str(exe))
+    data = exe.read_bytes()
+    build = build_of(data)
+    pe = pefile.PE(data=data)
     text = pe.sections[0]
     base = pe.OPTIONAL_HEADER.ImageBase + text.VirtualAddress
     code = bytearray(text.get_data()[: text.Misc_VirtualSize])
     end = base + len(code)
-    # EA's post-link patches leave stubs and nop runs that look like function boundaries;
-    # the map is of the compiler's code, so their original bytes are put back first.
-    with (ROOT / "data/exe_patches.csv").open() as f:
-        for r in csv.DictReader(f):
-            at = int(r["address"], 16)
-            if base <= at < end:
-                orig = bytes.fromhex(r["original"])
-                code[at - base:at - base + len(orig)] = orig
+    # Post-link patches leave stubs and nop runs that look like function boundaries;
+    # the map is of the compiler's code, so the retail bytes are put back first.
+    restore(code, base, build)
     code = bytes(code)
 
     starts, padded, calls, tables, after_end = set(), set(), set(), set(), set()

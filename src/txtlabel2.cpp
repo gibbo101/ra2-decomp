@@ -2972,6 +2972,70 @@ void FUN_0072EC30(void)
 	FUN_0072ADE0(DAT_00844BEC, &DAT_00B0FBD8, &DAT_00B0FBDC);
 }
 
+// FUNCTION: GAMEMD 0x0072EC70
+void __fastcall FUN_0072EC70(int width, int height)
+{
+	int left = 0;
+	int right = width;
+	if (width >= 1024) {
+		left = (width - 800) / 2;
+		right = width - left;
+	}
+	int top = 0;
+	int bottom = height;
+	int span = height;
+	if (height >= 768) {
+		top = (height - 600) / 2;
+		bottom = height - top;
+		span = height - top * 2;
+	}
+	bool small_width = width == 640;
+	bool small_height = height == 480;
+
+	int w = small_width
+		? DAT_00B0FB50->Get_Width() : DAT_00B0FA04->Get_Width();
+	int h = small_height
+		? DAT_00B0FB50->Get_Height() : DAT_00B0FA04->Get_Height();
+	DAT_00B0FC1C = new Rect(left, top, w, h);
+
+	int tw = DAT_00B0FAF8->Get_Width();
+	int th = DAT_00B0FAF8->Get_Height();
+	int x = right - tw;
+	DAT_00B0FC20 = new Rect(x, top, tw, th);
+
+	int wh = DAT_00B0FAC0->Get_Height();
+	DAT_00B0FC18 = new Rect(x, top, tw, wh);
+
+	int by = DAT_00B0FC20->Height + top;
+	int bh = DAT_00B0FA74->Get_Height();
+	DAT_00B0FC24 = new Rect(x, by, tw, bh);
+
+	int aw = DAT_00B0FAC4->Get_Width();
+	int ah = DAT_00B0FAC4->Get_Height();
+	int ax = DAT_00B0FC24->Width - aw + DAT_00B0FC24->X;
+	int ay = DAT_00B0FC24->Y;
+	DAT_00B0FC10 = new Rect(ax, ay, aw, ah);
+
+	int mw = DAT_00B0F9DC->Get_Width();
+	int mh = DAT_00B0F9DC->Get_Height();
+	int my = DAT_00B0FC24->Height + DAT_00B0FC24->Y - mh;
+	DAT_00B0FC14 = new Rect(right - mw, my, mw, mh);
+
+	DAT_00B0FA20 =
+		(span - DAT_00B0FC20->Height) / DAT_00B0FC24->Height;
+	int offset = DAT_00B0FC24->Height * DAT_00B0FA20;
+	int used = DAT_00B0FC20->Height + offset;
+	int ly = DAT_00B0FC24->Y + offset;
+	int lw = DAT_00B0FA38->Get_Width();
+	DAT_00B0FC28 = new Rect(right - lw, ly, lw, span - used);
+
+	int sw = small_width
+		? DAT_00B0FAE8->Get_Width() : DAT_00B0FA54->Get_Width();
+	int sh = small_height
+		? DAT_00B0FAE8->Get_Height() : DAT_00B0FA54->Get_Height();
+	DAT_00B0FC2C = new Rect(left, bottom - sh, sw, sh);
+}
+
 // FUNCTION: GAMEMD 0x0072EF60
 void FUN_0072EF60(void)
 {

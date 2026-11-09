@@ -1128,6 +1128,90 @@ void TechnoClass::Per_Cell_Process(PCPType why)
 	}
 }
 
+// FUNCTION: GAMEMD 0x006F5190
+void TechnoClass::Draw_Post_Render(Point2D const & point, Rect const & cliprect) const
+{
+	if (IsSinking) {
+		return;
+	}
+
+	if (BombVisible && AttachedBomb != NULL) {
+		if (!Map[Get_Cell()].Is_Shrouded()) {
+			Point2D pixel;
+			TacticalMap->Coord_To_Pixel(Render_Coord(), pixel);
+			Draw_Shape(*LogicalSurface, *MouseDrawer, Rule->BOMBCURS_SHP, AttachedBomb->Get_Current_Flicker_Frame(), pixel, TacticalRect, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ALPHA));
+		}
+	}
+
+	if (this != NULL && RTTI == RTTI_BUILDING && ((BuildingClass const *)((RTTI == RTTI_BUILDING) ? this : NULL))->IsRepairing) {
+		if (!Map[Get_Cell()].Is_Shrouded()) {
+			Point2D pixel;
+			TacticalMap->Coord_To_Pixel(Render_Coord(), pixel);
+			int frame = Options.Normalize_Delay(14) / 4;
+			if (frame < 2) frame = 2;
+			Draw_Shape(*LogicalSurface, *MouseDrawer, (ShapeSet const *)BuildingTypeClass::WrenchShapes, 6 * (Frame % frame) / (frame - 1), pixel, cliprect, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_ALPHA));
+		}
+	}
+
+	if (!IsDisguisedAs(PlayerPtr) && Visual_Character() != VISUAL_HIDDEN) {
+		DrawVeterancyPips(point, cliprect);
+	}
+
+	if (IsSelected) {
+		if (RTTI == RTTI_BUILDING) {
+
+			int color = WHITE;
+			if (HeightAGL < -4) {
+				color = BLACK;
+			}
+
+			Point3D dim = TClass->Lepton_Dimensions();
+			int x = dim.X / 2;
+			int y = dim.Y / 2;
+			color = NormalDrawer->Convert_Pixel(color);
+			Coord center = Center_Coord();
+
+			if (RTTI != RTTI_INFANTRY) {
+				Draw_Double_Selection_Bracket(center + Coord(x, y, 0), center + Coord(-x, y, 0), color);
+				Draw_Double_Selection_Bracket(center + Coord(x, y, 0), center + Coord(x, -y, 0), color);
+				Draw_Double_Selection_Bracket(center + Coord(-x, y, 0), center + Coord(-x, y, dim.Z), color);
+				Draw_Double_Selection_Bracket(center + Coord(x, -y, 0), center + Coord(x, -y, dim.Z), color);
+			}
+
+			if (Strength > 0 && (House->Is_Ally(PlayerPtr) || Rule->IsHealthBar)) {
+				Draw_Health_Bar_Old(point, cliprect);
+			}
+
+			if (RTTI != RTTI_INFANTRY) {
+				Draw_Single_Selection_Bracket(center + Coord(x, y, 0), center + Coord(x, y, dim.Z), color);
+				Draw_Single_Selection_Bracket(center + Coord(x, -y, dim.Z), center + Coord(x, y, dim.Z), color);
+				Draw_Single_Selection_Bracket(center + Coord(-x, y, dim.Z), center + Coord(x, y, dim.Z), color);
+			} else {
+				Draw_Single_Selection_Bracket(center + Coord(-x, y, 0), center + Coord(x, y, 0), color);
+				Draw_Single_Selection_Bracket(center + Coord(-x, y, 0), center + Coord(-x, y, dim.Z), color);
+				Draw_Single_Selection_Bracket(center + Coord(x, -y, dim.Z), center + Coord(x, -y, 0), color);
+				Draw_Single_Selection_Bracket(center + Coord(x, -y, dim.Z), center + Coord(-x, -y, dim.Z), color);
+			}
+		}
+
+		Draw_Health_Bar(point, cliprect, false);
+	}
+
+	if (IsMouseHovering && !IsSelected) {
+		if (IsDisguisedAs(PlayerPtr)) {
+			if (GetDisguiseHouse(true)) {
+				Draw_Health_Bar(point, cliprect, true);
+			}
+		} else {
+			Draw_Health_Bar(point, cliprect, true);
+		}
+	}
+
+	if (TalkBubbleOwner == this && TalkBubbleType > 0 && (int)TalkBubbleTimer > 0) {
+		Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)ObjectTypeClass::TalkBubbleShapes, TalkBubbleType - 1, point, cliprect, ShapeFlags_Type(SHAPE_CENTER|SHAPE_WIN_REL));
+	}
+}
+
 // FUNCTION: GAMEMD 0x006F5EF0
 void TechnoClass::Draw_Double_Selection_Bracket(Coord const & coord1, Coord const & coord2, int color)
 {
@@ -1160,7 +1244,7 @@ void TechnoClass::Draw_Single_Selection_Bracket(Coord const & coord1, Coord cons
 }
 
 // FUNCTION: GAMEMD 0x006F60C0
-void TechnoClass::vt_entry_448(unsigned, unsigned)
+void TechnoClass::Draw_Health_Bar_Old(Point2D const &, Rect const &) const
 {
 }
 
@@ -4698,6 +4782,98 @@ void * TechnoClass::GetRemapColour(void) const
 	return(ColorSchemes[index]->Converter);
 }
 
+// FUNCTION: GAMEMD 0x00706640
+void TechnoClass::Draw_Voxel(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & xcliprect, Point2D const & point, Matrix3D const & matrix, int brightness, unsigned short tint, ShapeFlags_Type negflags) const
+{
+	ShapeFlags_Type flags = SHAPE_ZGRAD;
+	if (negflags == SHAPE_NORMAL) {
+		switch (Visual_Character()) {
+			case VISUAL_RIPPLE:
+				{
+					int stage = CloakingDevice.Fetch_Stage();
+					if (stage == 0) {
+						flags = ShapeFlags_Type(SHAPE_TRANSLUCENT25|SHAPE_PREDATOR|SHAPE_ZGRAD);
+					} else if (stage == 1) {
+						flags = ShapeFlags_Type(SHAPE_TRANSLUCENT50|SHAPE_PREDATOR|SHAPE_ZGRAD);
+					} else {
+						flags = ShapeFlags_Type(SHAPE_TRANSLUCENT50|SHAPE_PREDATOR|SHAPE_ZGRAD);
+					}
+				}
+				break;
+
+			case VISUAL_INDISTINCT:
+				flags = ShapeFlags_Type(SHAPE_TRANSLUCENT25|SHAPE_ZGRAD);
+				break;
+
+			case VISUAL_DARKEN:
+			case VISUAL_SHADOWY:
+				flags = ShapeFlags_Type(SHAPE_TRANSLUCENT50|SHAPE_ZGRAD);
+				break;
+
+			case VISUAL_HIDDEN:
+				return;
+		}
+	}
+
+	if (IsBeingWarpedOut() || IsWarpingIn()) {
+		if (!(RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette)) {
+			if (this != NULL && RTTI == RTTI_BUILDING && Building_If_Building((TechnoClass *)this)->Class->DoubleThick) {
+				flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT75|SHAPE_ZGRAD);
+			} else {
+				flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT50|SHAPE_ZGRAD);
+			}
+		}
+	}
+
+	if (House->Is_Player_Control() && IsDisguised()) {
+		if (!(RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette)) {
+			flags = ShapeFlags_Type(GetDisguiseFlags(flags));
+		}
+	}
+
+	flags = ShapeFlags_Type(~negflags & (flags|SHAPE_ALPHA));
+
+	Rect cliprect = xcliprect;
+
+	brightness = Apparent_Brightness(brightness);
+
+	if (IsIronCurtained() || (this != NULL && RTTI == RTTI_BUILDING && Airstrike != NULL && Airstrike->Target == Building_If_Building((TechnoClass *)this))) {
+		brightness = GetAirstrikeTintIntensity(GetInvulnerabilityTintIntensity(brightness));
+	}
+
+	if (key != -1) {
+		if (cache != NULL && !Techno_Type_Class()->DisableVoxelCache) {
+			StaticBufferClass::Entry * entry = (*cache)[key];
+			if (entry != NULL) {
+				Techno_Blit_Voxel(*entry, point, cliprect, flags, brightness, tint);
+				return;
+			}
+		} else {
+			key = -1;
+		}
+	}
+
+	if (voxeldata.VoxLib != NULL && voxeldata.MotLib != NULL) {
+		SurfaceRegion region = Techno_Render_Voxel_Object(voxeldata, matrix, point, cliprect, frame, flags, brightness, tint);
+		int width = region.Bounds.Width;
+		int height = region.Bounds.Height;
+		if (RTTI == RTTI_UNIT) {
+			UnitCompositeDirtyRect = Union(UnitCompositeDirtyRect, Rect(region.Point + point, width, height));
+		}
+
+		if (key != -1) {
+			StaticBufferClass::Entry * data = VoxelStaticBuffer.Add(*VoxelDrawSystem::Get_Surface(), region);
+			if (data == NULL || !cache->Add_Index(key, data)) {
+				Class_Of()->Clear_Voxel_Indexes();
+				if (data == NULL) {
+					data = VoxelStaticBuffer.Add(*VoxelDrawSystem::Get_Surface(), region);
+				}
+				cache->Add_Index(key, data);
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00706BD0
 void TechnoClass::Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache, Surface * surface, int shadow_x, int shadow_y) const
 {
@@ -7454,8 +7630,6 @@ void TechnoClass::Set_Talker(TechnoClass * techno, TalkType bubble)
 	}
 }
 
-extern bool DAT_00A8EB7F;
-
 // FUNCTION: GAMEMD 0x0070F1D0
 void TechnoClass::FUN_0070F1D0(Point2D const &center, Rect const &rect)
 {
@@ -7464,7 +7638,7 @@ void TechnoClass::FUN_0070F1D0(Point2D const &center, Rect const &rect)
 			BehindAnim = new AnimClass(Rule->Behind, Center_Coord(), 0, 1, ShapeFlags_Type(0x600), 0);
 			if (BehindAnim) {
 				BehindAnim->SetOwnerObject(this);
-				if (!DAT_00A8EB7F)
+				if (!Options.ShowHidden)
 					BehindAnim->Invisible = true;
 			}
 		} else {
