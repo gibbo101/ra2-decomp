@@ -12,7 +12,7 @@ over real objects or hard-coded addresses are rejected however well they score.
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
 **Status (9 November 2026):** 3.14 MB of the game's 3.81 MB of code matches byte for byte
-(82%), in 18,971 of its 19,362 functions (98%). Counting each unmatched function at its best
+(82%), in 18,972 of its 19,362 functions (98%). Counting each unmatched function at its best
 attempt so far, the fuzzy match is 94%. Each function is checked on its own; linking a whole
 executable that matches comes later. `docs/PLAN.md` has the method, and `docs/rounds/`
 records every batch.

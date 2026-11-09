@@ -11050,6 +11050,7 @@ address,name,result,size,source,symbol
 0x00635210,PlanningNodeClass::Locate_Loop_Branch,MATCH,182,src/planmgr.cpp,?Locate_Loop_Branch@PlanningNodeClass@@QAEXXZ
 0x006352D0,PlanningNodeClass::Select_All,MATCH,49,src/planmgr.cpp,?Select_All@PlanningNodeClass@@QAEXXZ
 0x00635310,PlanningNodeClass::Unselect_All,MATCH,49,src/planmgr.cpp,?Unselect_All@PlanningNodeClass@@QAEXXZ
+0x00635350,PlanningNodeClass::Draw_Lead_Box,MATCH,309,src/planmgr.cpp,?Draw_Lead_Box@PlanningNodeClass@@QAEXH@Z
 0x00635490,PlanningNodeClass::Fill_Lead_Box,MATCH,202,src/planmgr.cpp,?Fill_Lead_Box@PlanningNodeClass@@QAEXH@Z
 0x00635560,PlanningNodeClass::Frame_Lead_Box,MATCH,281,src/planmgr.cpp,?Frame_Lead_Box@PlanningNodeClass@@QAEXH@Z
 0x00635680,PlanningNodeClass::FUN_00635680,MATCH,324,src/planmgr.cpp,?FUN_00635680@PlanningNodeClass@@QAEXH@Z

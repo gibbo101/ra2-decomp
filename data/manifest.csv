@@ -11383,6 +11383,7 @@ address,size,symbol,source,sha256
 0x00635210,182,?Locate_Loop_Branch@PlanningNodeClass@@QAEXXZ,src/planmgr.cpp,c0dd9255717d617e184a76faae7ff1f2280c4f324660516ef3c0ec4650d61a11
 0x006352D0,49,?Select_All@PlanningNodeClass@@QAEXXZ,src/planmgr.cpp,4d452665832b0efa01ec70ff995864096e67b725d4c4aa0113b5ec0c357074d8
 0x00635310,49,?Unselect_All@PlanningNodeClass@@QAEXXZ,src/planmgr.cpp,568076e3f184b779aebc155c80dededa128cb2ee7059df2fada4062fa7f9dd98
+0x00635350,309,?Draw_Lead_Box@PlanningNodeClass@@QAEXH@Z,src/planmgr.cpp,f84c4d254e73f7a18f4dadb4fed4e0122f410fc4e656f8d5038cc48f6a272c26
 0x00635490,202,?Fill_Lead_Box@PlanningNodeClass@@QAEXH@Z,src/planmgr.cpp,f7c9d7fca651380cd156b542feac09b461d6e72aed69ceb4a581671bc7957982
 0x00635560,281,?Frame_Lead_Box@PlanningNodeClass@@QAEXH@Z,src/planmgr.cpp,69f41a6c1f2f7dcbc049e505dc187fd010a372078c86bd34bfbc1b81ce2a4d7e
 0x00635680,324,?FUN_00635680@PlanningNodeClass@@QAEXH@Z,src/planmgr.cpp,d9d47cd86100d87619ddc543776c48c7a7c7756834d0e22071b0234b53c570ac
