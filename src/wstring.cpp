@@ -1399,7 +1399,7 @@ bool WideWstring::containsAny(wchar_t const* chars) const
 	return(wcscspn(str, chars) < len);
 }
 
-void __fastcall FUN_004335E0(wchar_t const * source, char * dest, int count);
+void __fastcall Bit_Stuff(wchar_t const * source, char * dest, int count);
 
 // FUNCTION: GAMEMD 0x007B8290
 bool WideWstring::containsAny(WideWstring const & chars) const
@@ -1413,13 +1413,13 @@ Wstring __fastcall FUN_007B82E0(WideWstring const & string)
 	int len = string.length();
 	int count = (len + 1) * 16;
 	char * narrow = new char[(count + 6) / 7];
-	FUN_004335E0(string.get(), narrow, count);
+	Bit_Stuff(string.get(), narrow, count);
 	Wstring tmp(narrow);
 	delete[](narrow);
 	return(tmp);
 }
 
-void __fastcall FUN_00433770(char const * source, wchar_t * dest, int count);
+void __fastcall Bit_Unstuff_String(char const * source, wchar_t * dest, int count);
 
 // FUNCTION: GAMEMD 0x007B83E0
 WideWstring __fastcall FUN_007B83E0(Wstring const & text)
@@ -1427,7 +1427,7 @@ WideWstring __fastcall FUN_007B83E0(Wstring const & text)
 	unsigned int len = text.length();
 	int count = (int)(((len + 1) * 7 >> 3) + 1) / 2;
 	wchar_t * wide = new wchar_t[count + 1];
-	FUN_00433770(text.get(), wide, count);
+	Bit_Unstuff_String(text.get(), wide, count);
 	WideWstring tmp(wide);
 	delete[](wide);
 	return(tmp);

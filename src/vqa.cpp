@@ -79,18 +79,18 @@ void FUN_00758F70(void)
 // _$E75
 DynamicVectorClass<MovieHandle *> IngameVQ;
 
-extern int DAT_00AA0430;
-int __fastcall FUN_0053E770(MSG *msg, HWND wnd, UINT min, UINT max, UINT flags);
-int __fastcall FUN_0053E730(MSG *msg, HWND wnd, UINT min, UINT max);
+extern int MessageLoopCount;
+int __fastcall Peek_Windows_Message(MSG *msg, HWND wnd, UINT min, UINT max, UINT flags);
+int __fastcall Get_Windows_Message(MSG *msg, HWND wnd, UINT min, UINT max);
 
 // FUNCTION: GAMEMD 0x00759200
 bool VQA_Message_Handler(void)
 {
 	MSG msg;
 
-	DAT_00AA0430++;
-	if (FUN_0053E770(&msg, NULL, 0, 0, 0)) {
-		if (FUN_0053E730(&msg, NULL, 0, 0)) {
+	MessageLoopCount++;
+	if (Peek_Windows_Message(&msg, NULL, 0, 0, 0)) {
+		if (Get_Windows_Message(&msg, NULL, 0, 0)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		} else {

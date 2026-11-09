@@ -38,9 +38,9 @@ bool (*Message_Intercept_Handler)(MSG &msg);
 
 namespace Game { extern HWND hWnd; }
 namespace CopyProtection { void __fastcall DispatchLauncherMessage(MSG *msg); }
-int __fastcall FUN_0053E770(MSG *msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
-int __fastcall FUN_0053E730(MSG *msg, HWND window, unsigned int filter_min, unsigned int filter_max);
-extern int DAT_00AA0430;
+int __fastcall Peek_Windows_Message(MSG *msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
+int __fastcall Get_Windows_Message(MSG *msg, HWND window, unsigned int filter_min, unsigned int filter_max);
+extern int MessageLoopCount;
 
 // FUNCTION: GAMEMD 0x005D4D50
 void Windows_Message_Handler(void)
@@ -49,9 +49,9 @@ void Windows_Message_Handler(void)
 
 	MSG msg;
 
-	DAT_00AA0430++;
-	while (FUN_0053E770(&msg, NULL, 0, 0, 0)) {
-		if (!FUN_0053E730(&msg, NULL, 0, 0)) {
+	MessageLoopCount++;
+	while (Peek_Windows_Message(&msg, NULL, 0, 0, 0)) {
+		if (!Get_Windows_Message(&msg, NULL, 0, 0)) {
 			return;
 		}
 		CopyProtection::DispatchLauncherMessage(&msg);

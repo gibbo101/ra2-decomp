@@ -441,3 +441,20 @@ address,name,symbol,evidence
 0x00AC4848,SurfaceCache,?SurfaceCache@@3VSurfaceCacheClass@@A,YRpp PCX.h Instance; the matched SurfaceCacheClass::GetSurface 0x006BA140 is called on it from wonline and the score and lobby dialogs
 0x006BA580,SurfaceCacheClass::DrawTrans,?DrawTrans@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1F@Z,YRpp PCX.h BlitToSurface; TibSun srfcache.h DrawTrans signature; called on SurfaceCache by ProgressScreenClass::Draw_Flag 0x006435B0
 0x00584550,MapClass::Update_Cell_Subzones,?Update_Cell_Subzones@MapClass@@QAEXABVCell@@@Z,body matches TibSun MapClass::Update_Cell_Subzones (map.cpp); YRpp names it RecalculateSubZones
+0x00432BF0,BinkHandle::Frame_Time,,"same function as Red Alert 2 1.006 0x004303C0 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x00432C10,BinkHandle::Set_Subtitle_Callback,,"same function as Red Alert 2 1.006 0x004303E0 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x00433020,BinkHandle::Check_Frame_Ready,,"same function as Red Alert 2 1.006 0x004307E0 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x00433040,BinkHandle::Render_Frame,,"same function as Red Alert 2 1.006 0x00430800 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x00433180,BinkHandle::Redraw_Frame,,"same function as Red Alert 2 1.006 0x00430940 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x004331F0,BinkHandle::Copy_Frame,,"same function as Red Alert 2 1.006 0x004309B0 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x00433270,BinkHandle::Draw_Subtitle,,"same function as Red Alert 2 1.006 0x00430A30 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x00433330,BinkHandle::Erase_Subtitle,,"same function as Red Alert 2 1.006 0x00430AF0 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x004333E0,BinkHandle::Current_Time,,"same function as Red Alert 2 1.006 0x00430BA0 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x004333F0,BinkHandle::Update_Focus,,"same function as Red Alert 2 1.006 0x00430BB0 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x004335E0,Bit_Stuff,,"same function as Red Alert 2 1.006 0x00430DA0 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x004336C0,Bit_Unstuff,,"same function as Red Alert 2 1.006 0x00430E80 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x00433770,Bit_Unstuff_String,,"same function as Red Alert 2 1.006 0x00430F30 (compiled from src/bfiofile2.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
+0x0089C490,BinkVolume,,"same global as Red Alert 2 1.006 0x0084E9A8 (inferred: referenced by matched src/bfiofile2.cpp (5 referen), which RedAlert2 rebuilds byte for byte"
+0x00AA0430,MessageLoopCount,,"same global as Red Alert 2 1.006 0x00A52298 (inferred: referenced by matched src/msgloop.cpp (10 referenc), which RedAlert2 rebuilds byte for byte"
+0x0053E770,Peek_Windows_Message,,"same function as Red Alert 2 1.006 0x00522ED0 (inferred: referenced by matched src/msgloop.cpp (7 reference), which RedAlert2 rebuilds byte for byte"
+0x0053E730,Get_Windows_Message,,"same function as Red Alert 2 1.006 0x00522E90 (inferred: referenced by matched src/msgloop.cpp (4 reference), which RedAlert2 rebuilds byte for byte"

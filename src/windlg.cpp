@@ -21,8 +21,8 @@
 BOOL CALLBACK Resize_Dialog(HWND window, LPARAM lParam);
 
 extern bool g_PlayingNetGame;
-extern int DAT_00AA0430;
-int __fastcall FUN_0053E770(MSG *msg, HWND wnd, UINT min, UINT max, UINT flags);
+extern int MessageLoopCount;
+int __fastcall Peek_Windows_Message(MSG *msg, HWND wnd, UINT min, UINT max, UINT flags);
 bool FUN_00608070(HWND dialog);
 
 BOOL CALLBACK Resize_Dialog_Proc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
@@ -227,8 +227,8 @@ int WS_Wait_Dialog(HWND window, bool (*callback)(void), bool, bool place_on_top,
 			Title_Screen_Restore(false);
 		}
 
-		DAT_00AA0430++;
-		while (FUN_0053E770(&msg, NULL, 0, 0, 1)) {
+		MessageLoopCount++;
+		while (Peek_Windows_Message(&msg, NULL, 0, 0, 1)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 			if (!WS_Has_Dialog(window)) {
