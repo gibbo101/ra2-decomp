@@ -3371,12 +3371,12 @@ extern bool DAT_00B0FCAB;
 extern bool DAT_00B0FCAC;
 extern bool DAT_00B0FCAD;
 extern bool DAT_00B0FCAE;
-extern SHPStruct * DAT_00B0F9E0;
+extern SHPStruct * RadarFrameShape;
 extern SHPStruct * DAT_00B0FA00;
 extern SHPStruct * DAT_00B0FA3C;
 extern SHPStruct * DAT_00B0FA48;
 extern SHPStruct * DAT_00B0FA50;
-extern SHPStruct * DAT_00B0FA68;
+extern SHPStruct * RadarAnimShape;
 extern SHPStruct * DAT_00B0FA70;
 extern SHPStruct * DAT_00B0FA8C;
 extern SHPStruct * DAT_00B0FA90;
@@ -3425,10 +3425,10 @@ void __fastcall FUN_0072F540(Surface * surface, Rect const * area, bool flag)
 	Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FB08, 0, pt, *area, SHAPE_WIN_REL);
 	pt.X = DAT_00B0FC38->X;
 	pt.Y = DAT_00B0FC38->Y;
-	Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0F9E0, 0, pt, *area, SHAPE_WIN_REL);
+	Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)RadarFrameShape, 0, pt, *area, SHAPE_WIN_REL);
 	pt.X = DAT_00B0FC3C->X;
 	pt.Y = DAT_00B0FC3C->Y;
-	Draw_Shape(*surface, *FUN_0072F510(), (ShapeSet const *)DAT_00B0FA68, 0, pt, *area, SHAPE_WIN_REL);
+	Draw_Shape(*surface, *FUN_0072F510(), (ShapeSet const *)RadarAnimShape, 0, pt, *area, SHAPE_WIN_REL);
 	pt.X = DAT_00B0FC44->X;
 	pt.Y = DAT_00B0FC44->Y;
 	Draw_Shape(*surface, *OwnerDraw::GetSideButtonConvert(), (ShapeSet const *)DAT_00B0FA70, 0, pt, *area, SHAPE_WIN_REL);
@@ -3474,19 +3474,19 @@ void __fastcall FUN_0072F540(Surface * surface, Rect const * area, bool flag)
 void FUN_0072FA10(void)
 {
 	if (Scen->PlayerSideIndex == 2) {
-		DAT_00B0FA68 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D48, DAT_00B0FCA5);
+		RadarAnimShape = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D48, DAT_00B0FCA5);
 		DAT_00B0FAC8 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D3C, DAT_00B0FCA1);
 		DAT_00B0FAD4 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D40, DAT_00B0FCA0);
 		DAT_00B0FA50 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D44, DAT_00B0FCA2);
 	} else {
-		DAT_00B0FA68 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D14, DAT_00B0FCA5);
+		RadarAnimShape = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D14, DAT_00B0FCA5);
 		DAT_00B0FAC8 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D04, DAT_00B0FCA1);
 		DAT_00B0FAD4 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D00, DAT_00B0FCA0);
 		DAT_00B0FA50 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D08, DAT_00B0FCA2);
 	}
 	OwnerDraw::SideButtonShape = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CFC, DAT_00B0FC9F);
 	DAT_00B0FB08 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D0C, DAT_00B0FCA3);
-	DAT_00B0F9E0 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D10, DAT_00B0FCA4);
+	RadarFrameShape = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D10, DAT_00B0FCA4);
 	DAT_00B0FA70 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D18, DAT_00B0FCA6);
 	DAT_00B0FAFC = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D1C, DAT_00B0FCA7);
 	DAT_00B0FA00 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D20, DAT_00B0FCA8);
@@ -3539,10 +3539,10 @@ void __fastcall FUN_0072FC60(int width, int height)
 	h = DAT_00B0FB08->Height;
 	x0 -= w;
 	DAT_00B0FC34 = new Rect(x0, 0, w, h);
-	int h2 = DAT_00B0F9E0->Height;
+	int h2 = RadarFrameShape->Height;
 	DAT_00B0FC38 = new Rect(x0, h, w, h2);
 	h += h2;
-	h2 = DAT_00B0FA68->Height;
+	h2 = RadarAnimShape->Height;
 	DAT_00B0FC3C = new Rect(x0, h, w, h2);
 	h += h2;
 	h2 = DAT_00B0FA70->Height;
@@ -3637,19 +3637,19 @@ void FUN_00730100(void)
 	}
 	DAT_00B0FB08 = NULL;
 	if (DAT_00B0FCA4) {
-		if (DAT_00B0F9E0) {
-			delete DAT_00B0F9E0;
+		if (RadarFrameShape) {
+			delete RadarFrameShape;
 		}
 		DAT_00B0FCA4 = false;
 	}
-	DAT_00B0F9E0 = NULL;
+	RadarFrameShape = NULL;
 	if (DAT_00B0FCA5) {
-		if (DAT_00B0FA68) {
-			delete DAT_00B0FA68;
+		if (RadarAnimShape) {
+			delete RadarAnimShape;
 		}
 		DAT_00B0FCA5 = false;
 	}
-	DAT_00B0FA68 = NULL;
+	RadarAnimShape = NULL;
 	if (DAT_00B0FCA6) {
 		if (DAT_00B0FA70) {
 			delete DAT_00B0FA70;

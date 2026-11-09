@@ -130,7 +130,7 @@ class RadarClass: public DisplayClass
 
 		void Render_Radar(void);
 		void Play_Movie(void);
-		void FUN_006578F0(void);
+		void Update_Transmission(void);
 		void Complete_Radar_Refresh(void);
 
 		void FUN_00658330(HWND dialog, int index, HouseClass * house);

@@ -49,7 +49,7 @@
 // SYNTHETIC: GAMEMD 0x00652660 SYMBOL
 // _$E2
 
-extern ObjectClass * __fastcall FUN_005353D0(Cell const * cell, ObjectClass const * target);
+extern ObjectClass * __fastcall Best_Selected_Object(Cell const * cell, ObjectClass const * target);
 extern bool __fastcall FUN_00637AA0();
 extern int __fastcall FUN_00639DA0();
 
@@ -72,7 +72,7 @@ extern HouseClass * PlayerPtr;
 namespace Unsorted { extern int MuteSWLaunches; }
 inline bool RadarTrackingStruct::Use_Head(void) const { return(Object->House == PlayerPtr); }
 int __fastcall FUN_00753250(char const * name);
-void __fastcall FUN_0055AF40(int value);
+void __fastcall Set_Frame_Rate_Limit(int value);
 
 // SYNTHETIC: GAMEMD 0x00652680 SYMBOL
 // _$E109
@@ -139,7 +139,7 @@ struct RadarStatics {
 
 // SYNTHETIC: GAMEMD 0x006528C0 SYMBOL
 // _$E156
-Rect DAT_00B04A00;
+Rect BriefingButtonRect;
 
 // SYNTHETIC: GAMEMD 0x006528D0 SYMBOL
 // _$E161
@@ -219,15 +219,15 @@ void RadarClass::Queue_Next_Movie(void)
 #undef LoadString
 #include "stringtable.h"
 
-extern int DAT_007F5BF8;
-extern int DAT_00B0FA68;
-extern char const * DAT_008391F4;
-extern char const * DAT_008391F8;
-extern void * DAT_00B048E0;
-extern void * DAT_00B048AC;
-extern bool DAT_00B048F9;
-extern bool DAT_00B048F8;
-extern Rect DAT_00B048C8;
+extern int SidebarWidth;
+extern int RadarAnimShape;
+extern char const * BriefingButtonShapeName;
+extern char const * OptionsButtonShapeName;
+extern void * BriefingButtonShape;
+extern void * OptionsButtonShape;
+extern bool IsBriefingButtonShapeLoaded;
+extern bool IsOptionsButtonShapeLoaded;
+extern Rect OptionsButtonRect;
 extern int DAT_00B04A1C;
 extern int DAT_00B04A38;
 
@@ -235,7 +235,7 @@ namespace Game { extern int SpecialDialog; }
 extern int DAT_00886FA8;
 extern int DAT_00B45B68;
 bool __fastcall FUN_0053BAE0(void);
-void __fastcall FUN_00753580(void);
+void __fastcall Remove_Speech_Hold(void);
 
 extern DSurface * DAT_00887300;
 ConvertClass * __fastcall FUN_0072F510(void);
@@ -298,16 +298,16 @@ void RadarClass::One_Time(void)
 // FUNCTION: GAMEMD 0x00652D90
 void RadarClass::DisposeOfArt(void)
 {
-	if (DAT_00B048F9) {
-		delete (char *)DAT_00B048E0;
-		DAT_00B048F9 = false;
+	if (IsBriefingButtonShapeLoaded) {
+		delete (char *)BriefingButtonShape;
+		IsBriefingButtonShapeLoaded = false;
 	}
-	DAT_00B048E0 = NULL;
-	if (DAT_00B048F8) {
-		delete (char *)DAT_00B048AC;
-		DAT_00B048F8 = false;
+	BriefingButtonShape = NULL;
+	if (IsOptionsButtonShapeLoaded) {
+		delete (char *)OptionsButtonShape;
+		IsOptionsButtonShapeLoaded = false;
 	}
-	DAT_00B048AC = NULL;
+	OptionsButtonShape = NULL;
 }
 
 // FUNCTION: GAMEMD 0x00652DE0
@@ -355,31 +355,31 @@ void RadarClass::Init_For_House(void)
 
 	int side = *(int *)((char *)Scen + 0x34b8);
 	if (side == 0) {
-		RadHeight = (DAT_007F5BF8 - 144) / 2 + 4;
-		DAT_00B04A00.X = RadX + 11;
-		DAT_00B04A00.Y = RadY + 4;
-		DAT_00B048C8.X = RadX + 83;
+		RadHeight = (SidebarWidth - 144) / 2 + 4;
+		BriefingButtonRect.X = RadX + 11;
+		BriefingButtonRect.Y = RadY + 4;
+		OptionsButtonRect.X = RadX + 83;
 	} else if (side == 1) {
-		RadHeight = (DAT_007F5BF8 - 145) / 2 + 5;
-		DAT_00B04A00.X = RadX + 14;
-		DAT_00B04A00.Y = RadY + 5;
-		DAT_00B048C8.X = RadX + 86;
+		RadHeight = (SidebarWidth - 145) / 2 + 5;
+		BriefingButtonRect.X = RadX + 14;
+		BriefingButtonRect.Y = RadY + 5;
+		OptionsButtonRect.X = RadX + 86;
 	} else {
-		RadHeight = (DAT_007F5BF8 - 145) / 2 + 5;
-		DAT_00B04A00.X = RadX + 14;
-		DAT_00B04A00.Y = RadY + 5;
-		DAT_00B048C8.X = RadX + 86;
+		RadHeight = (SidebarWidth - 145) / 2 + 5;
+		BriefingButtonRect.X = RadX + 14;
+		BriefingButtonRect.Y = RadY + 5;
+		OptionsButtonRect.X = RadX + 86;
 	}
-	DAT_00B048C8.Y = DAT_00B04A00.Y;
+	OptionsButtonRect.Y = BriefingButtonRect.Y;
 	DAT_00B04A1C = RadHeight;
 
-	DAT_00B048E0 = FileSystem::LoadWholeFileEx(DAT_008391F4, DAT_00B048F9);
-	DAT_00B048AC = FileSystem::LoadWholeFileEx(DAT_008391F8, DAT_00B048F8);
-	DAT_00B04A00.Width = ((ShpHeader *)DAT_00B048E0)->Width;
-	DAT_00B04A00.Height = ((ShpHeader *)DAT_00B048E0)->Height;
-	DAT_00B048C8.Width = ((ShpHeader *)DAT_00B048AC)->Width;
-	DAT_00B048C8.Height = ((ShpHeader *)DAT_00B048AC)->Height;
-	DAT_00B04A38 = DAT_00B0FA68;
+	BriefingButtonShape = FileSystem::LoadWholeFileEx(BriefingButtonShapeName, IsBriefingButtonShapeLoaded);
+	OptionsButtonShape = FileSystem::LoadWholeFileEx(OptionsButtonShapeName, IsOptionsButtonShapeLoaded);
+	BriefingButtonRect.Width = ((ShpHeader *)BriefingButtonShape)->Width;
+	BriefingButtonRect.Height = ((ShpHeader *)BriefingButtonShape)->Height;
+	OptionsButtonRect.Width = ((ShpHeader *)OptionsButtonShape)->Width;
+	OptionsButtonRect.Height = ((ShpHeader *)OptionsButtonShape)->Height;
+	DAT_00B04A38 = RadarAnimShape;
 
 	RadPHeight = Pack_Color(CCToolTip::ToolTipTextColor);
 }
@@ -396,8 +396,8 @@ void RadarClass::Init_IO(void)
 		RadarStatics::DAT_00B04978.IsOn = false;
 		RadarStatics::DAT_00B04978.IsToggleType = 0;
 		RadarStatics::DAT_00B04978.Set_Flags(5);
-		RadarStatics::DAT_00B04978.Set_Position(DAT_00B04A00.X, DAT_00B04A00.Y);
-		RadarStatics::DAT_00B04978.Set_Shape((ShapeSet const *)DAT_00B048E0, 0, 0);
+		RadarStatics::DAT_00B04978.Set_Position(BriefingButtonRect.X, BriefingButtonRect.Y);
+		RadarStatics::DAT_00B04978.Set_Shape((ShapeSet const *)BriefingButtonShape, 0, 0);
 		RadarStatics::DAT_00B04978.Flag_To_Redraw();
 
 		RadarStatics::DAT_00B04910.ShapeDrawer = FileSystem::SIDEBAR_PAL;
@@ -406,13 +406,13 @@ void RadarClass::Init_IO(void)
 		RadarStatics::DAT_00B04910.IsOn = false;
 		RadarStatics::DAT_00B04910.IsToggleType = 0;
 		RadarStatics::DAT_00B04910.Set_Flags(5);
-		RadarStatics::DAT_00B04910.Set_Position(DAT_00B048C8.X, DAT_00B048C8.Y);
-		RadarStatics::DAT_00B04910.Set_Shape((ShapeSet const *)DAT_00B048AC, 0, 0);
+		RadarStatics::DAT_00B04910.Set_Position(OptionsButtonRect.X, OptionsButtonRect.Y);
+		RadarStatics::DAT_00B04910.Set_Shape((ShapeSet const *)OptionsButtonShape, 0, 0);
 		RadarStatics::DAT_00B04910.Flag_To_Redraw();
 	}
 }
 
-extern void * DAT_00B0F9E0;
+extern void * RadarFrameShape;
 extern bool DAT_00B04964;
 extern bool DAT_00B049CC;
 extern bool DAT_00B0B518;
@@ -434,7 +434,7 @@ void RadarClass::Draw_It(bool forced)
 	IsToRedraw = IsToRedraw == true || FullRedraw == true;
 
 	if (IsToRedraw) {
-		ShapeSet const * frame_shape = (ShapeSet const *)DAT_00B0F9E0;
+		ShapeSet const * frame_shape = (ShapeSet const *)RadarFrameShape;
 		Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, frame_shape, 0, Point2D(RadX, RadY), DAT_00887300->Get_Rect());
 		RadarStatics::DAT_00B04978.Draw_Me(true);
 		RadarStatics::DAT_00B04910.Draw_Me(true);
@@ -468,7 +468,7 @@ void RadarClass::Draw_It(bool forced)
 				if (RadarAnimFrame >= 0 && RadarAnimFrame < ((ShpHeader *)DAT_00B04A38)->Count) {
 					ConvertClass * drawer = FUN_0072F510();
 					Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, RadarAnimFrame, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
-					LastDrawRect = Rect(RadX, RadWidth, DAT_007F5BF8, 110);
+					LastDrawRect = Rect(RadX, RadWidth, SidebarWidth, 110);
 				}
 			}
 		}
@@ -490,7 +490,7 @@ void RadarClass::Draw_It(bool forced)
 						ConvertClass * drawer = FUN_0072F510();
 						Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
 						Draw_Names();
-						LastDrawRect = Rect(RadX, RadWidth, DAT_007F5BF8, 110);
+						LastDrawRect = Rect(RadX, RadWidth, SidebarWidth, 110);
 					} else {
 						Draw_Names();
 						LastDrawRect = Rect(RadHeight, RadOffX, RadIHeight, RadPWidth);
@@ -510,7 +510,7 @@ void RadarClass::Draw_It(bool forced)
 					IsToRedraw = false;
 					ConvertClass * drawer = FUN_0072F510();
 					Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, 0, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
-					LastDrawRect = Rect(RadX, RadWidth, DAT_007F5BF8, 110);
+					LastDrawRect = Rect(RadX, RadWidth, SidebarWidth, 110);
 				}
 				break;
 		}
@@ -523,12 +523,12 @@ void RadarClass::Draw_It(bool forced)
 	}
 
 	if (DAT_00B049CC) {
-		LastDrawRect = Union(LastDrawRect, DAT_00B04A00);
+		LastDrawRect = Union(LastDrawRect, BriefingButtonRect);
 		DAT_00B0B518 = true;
 	}
 
 	if (DAT_00B04964) {
-		LastDrawRect = Union(LastDrawRect, DAT_00B048C8);
+		LastDrawRect = Union(LastDrawRect, OptionsButtonRect);
 		DAT_00B0B518 = true;
 	}
 }
@@ -580,13 +580,13 @@ void RadarClass::AI(KeyNumType & input, Point2D const & xy)
 
 	int offset = Options.IsSidebarOnRight ? DAT_00886FA8 : 0;
 
-	Rect r1 = DAT_00B04A00;
+	Rect r1 = BriefingButtonRect;
 	r1.X += offset;
 	if (r1.Is_Point_Within(xy)) {
 		Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
 	}
 
-	Rect r2 = DAT_00B048C8;
+	Rect r2 = OptionsButtonRect;
 	r2.X += offset;
 	if (r2.Is_Point_Within(xy)) {
 		Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
@@ -609,9 +609,9 @@ void RadarClass::AI(KeyNumType & input, Point2D const & xy)
 	}
 
 	if (RadarMode == 4) {
-		FUN_006578F0();
+		Update_Transmission();
 	} else if (!FUN_0053BAE0()) {
-		FUN_00753580();
+		Remove_Speech_Hold();
 	}
 }
 
@@ -686,9 +686,9 @@ int RadarClass::RTacticalClass::Action(unsigned flags, KeyNumType & key, int mod
 			} else if (amer_para_drop) {
 				action = ACTION_AMER_PARA_DROP;
 			} else if (object) {
-				action = FUN_005353D0(NULL, object)->What_Action(object);
+				action = Best_Selected_Object(NULL, object)->What_Action(object);
 			} else {
-				action = FUN_005353D0(&cell, NULL)->What_Action(cell);
+				action = Best_Selected_Object(&cell, NULL)->What_Action(cell);
 			}
 
 			switch (action) {
@@ -865,11 +865,11 @@ void RadarClass::Reposition_Sidebar(void)
 	int offset = Options.IsSidebarOnRight ? DAT_00886FA8 : 0;
 
 	RadarStatics::DAT_00B04978.DrawOffset.X = -offset;
-	RadarStatics::DAT_00B04978.Set_Position(DAT_00B04A00.X + offset, DAT_00B04A00.Y);
+	RadarStatics::DAT_00B04978.Set_Position(BriefingButtonRect.X + offset, BriefingButtonRect.Y);
 	RadarStatics::DAT_00B04978.Flag_To_Redraw();
 
 	RadarStatics::DAT_00B04910.DrawOffset.X = -offset;
-	RadarStatics::DAT_00B04910.Set_Position(DAT_00B048C8.X + offset, DAT_00B048C8.Y);
+	RadarStatics::DAT_00B04910.Set_Position(OptionsButtonRect.X + offset, OptionsButtonRect.Y);
 	RadarStatics::DAT_00B04910.Flag_To_Redraw();
 
 	RadarButton.Set_Position(RadHeight + offset, RadOffX);
@@ -1408,7 +1408,7 @@ void RadarClass::Post_Load_Radar_Fixup(void)
 	if (RadarMode == RMODE_MOVIE) {
 		RadarState = RSTATE_MOVIE_DONE;
 		Radar_Activate(SuspendedRadarMode, 0);
-		FUN_0055AF40(Rule->DetailMinFrameRateNormal);
+		Set_Frame_Rate_Limit(Rule->DetailMinFrameRateNormal);
 	}
 }
 
@@ -1884,24 +1884,24 @@ void RadarClass::Redraw_Radar(bool complete)
 
 void FUN_00752370(void);
 void FUN_00752480(int index, int position, int flags);
-void FUN_00753570(void);
-bool FUN_007532A0(int index);
+void Add_Speech_Hold(void);
+bool Is_Speech_Finished(int index);
 void FUN_00408390(void);
 int FUN_00408410(void);
 void FUN_005BF580(void);
 
 // FUNCTION: GAMEMD 0x006578F0
-void RadarClass::FUN_006578F0(void)
+void RadarClass::Update_Transmission(void)
 {
 	switch (unknown_14B8) {
 		case 0:
 			FUN_00752370();
 			FUN_00752480(unknown_int_14D4, 0, 3);
-			FUN_00753570();
+			Add_Speech_Hold();
 			unknown_14B8 = 1;
 			break;
 		case 1:
-			if (FUN_007532A0(unknown_int_14D4)) {
+			if (Is_Speech_Finished(unknown_int_14D4)) {
 				if (DAT_00B45B68) {
 					FUN_00408390();
 				}
@@ -1911,13 +1911,13 @@ void RadarClass::FUN_006578F0(void)
 		case 2:
 			if (DAT_00B45B68 == 0 || FUN_00408410()) {
 				if (DAT_00B45B68) {
-					FUN_00753580();
+					Remove_Speech_Hold();
 					FUN_005BF580();
 				}
 				Radar_Activate(3, false);
 				unknown_14C0.EndLooping();
 				unknown_14C0.SetEvent((AudioEvent *)VocClass::PlayGlobal(Rule->MovieOn, 1.0f, 0x2000), NULL);
-				FUN_0055AF40(Rule->DetailMinFrameRateMovie);
+				Set_Frame_Rate_Limit(Rule->DetailMinFrameRateMovie);
 			}
 			break;
 	}
@@ -1943,14 +1943,14 @@ void RadarClass::Play_Movie(void)
 	if (FullRedraw == true && !unknown_bool_14BD) {
 		ConvertClass * drawer = FUN_0072F510();
 		Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
-		LastDrawRect = Rect(RadX, RadWidth, DAT_007F5BF8, 110);
+		LastDrawRect = Rect(RadX, RadWidth, SidebarWidth, 110);
 		DebugString("Radar: Movie full redrawn\n");
 	}
 
 	if (has) {
 		if (IngameVQ.Count() > 0 && (movie = IngameVQ[0]) != NULL) {
 			if (movie->AdvanceFrame() == true) {
-				LastDrawRect = Rect(RadX, RadWidth, DAT_007F5BF8, 110);
+				LastDrawRect = Rect(RadX, RadWidth, SidebarWidth, 110);
 			}
 			finished = movie->FramesLeft();
 			hold = movie->State;
@@ -1986,7 +1986,7 @@ void RadarClass::Play_Movie(void)
 		hold = has;
 		unknown_14C0.EndLooping();
 		unknown_14C0.SetEvent((AudioEvent *)VocClass::PlayGlobal(Rule->MovieOff, 1.0f, 0x2000), NULL);
-		FUN_0055AF40(Rule->DetailMinFrameRateNormal);
+		Set_Frame_Rate_Limit(Rule->DetailMinFrameRateNormal);
 		IsToRedraw = true;
 	}
 
