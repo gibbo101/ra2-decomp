@@ -79,11 +79,7 @@ GDShortPair DAT_008B3FA0;
 // _$E103
 GDIntTriple DAT_008B4020;
 
-struct PCX
-{
-	static PCX Instance;
-	int GetSurface(char const *name, void *palette);
-};
+#include "srfcache.h"
 
 extern int DAT_008B40B0;
 extern int DAT_008B40A8;
@@ -104,7 +100,7 @@ extern char *DAT_00844B18;
 extern char *DAT_00844B1C;
 extern char *DAT_00844B20;
 
-void __fastcall FUN_00603D30(HWND dialog, int value);
+void __fastcall FUN_00603D30(HWND dialog, Surface * surface);
 int __fastcall FUN_004E37D0(int side);
 
 // FUNCTION: GAMEMD 0x004E3300
@@ -144,15 +140,15 @@ int __fastcall FUN_004E3380(int id)
 }
 
 // FUNCTION: GAMEMD 0x004E33F0
-int __fastcall FUN_004E33F0(int index)
+Surface * __fastcall FUN_004E33F0(int index)
 {
-	int result = 0;
+	Surface * result = NULL;
 	if (index == 0) {
-		result = PCX::Instance.GetSurface(DAT_00844B18, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844B18, NULL);
 	} else if (index == 1) {
-		result = PCX::Instance.GetSurface(DAT_00844B1C, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844B1C, NULL);
 	} else if (index == 2) {
-		result = PCX::Instance.GetSurface(DAT_00844B20, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844B20, NULL);
 	}
 	return result;
 }
@@ -175,40 +171,40 @@ int __fastcall FUN_004E3440(int side)
 void __fastcall FUN_004E34A0(HWND dialog, int side, int flag)
 {
 	HWND item = GetDlgItem(dialog, FUN_004E3440(side));
-	int surface = FUN_004E33F0(flag);
+	Surface * surface = FUN_004E33F0(flag);
 	if (item != (HWND)-1) {
 		FUN_00603D30(item, surface);
 	}
 }
 
 // FUNCTION: GAMEMD 0x004E3560
-int __fastcall FUN_004E3560(int index)
+Surface * __fastcall FUN_004E3560(int index)
 {
-	int result = 0;
+	Surface * result = NULL;
 	if (index == -2) {
-		result = PCX::Instance.GetSurface(DAT_00844AE8, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844AE8, NULL);
 	} else if (index == 0) {
-		result = PCX::Instance.GetSurface(DAT_00844AF0, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844AF0, NULL);
 	} else if (index == 1) {
-		result = PCX::Instance.GetSurface(DAT_00844AF4, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844AF4, NULL);
 	} else if (index == 2) {
-		result = PCX::Instance.GetSurface(DAT_00844AF8, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844AF8, NULL);
 	} else if (index == 3) {
-		result = PCX::Instance.GetSurface(DAT_00844AFC, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844AFC, NULL);
 	} else if (index == 4) {
-		result = PCX::Instance.GetSurface(DAT_00844B00, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844B00, NULL);
 	} else if (index == 5) {
-		result = PCX::Instance.GetSurface(DAT_00844B04, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844B04, NULL);
 	} else if (index == 6) {
-		result = PCX::Instance.GetSurface(DAT_00844B08, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844B08, NULL);
 	} else if (index == 7) {
-		result = PCX::Instance.GetSurface(DAT_00844B0C, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844B0C, NULL);
 	} else if (index == 8) {
-		result = PCX::Instance.GetSurface(DAT_00844B10, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844B10, NULL);
 	} else if (index == -3) {
-		result = PCX::Instance.GetSurface(DAT_00844AEC, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844AEC, NULL);
 	} else if (index == 9) {
-		result = PCX::Instance.GetSurface(DAT_00844B14, NULL);
+		result = SurfaceCache.GetSurface(DAT_00844B14, NULL);
 	}
 	return result;
 }

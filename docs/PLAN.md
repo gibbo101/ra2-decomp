@@ -1,7 +1,7 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 6 November 2026: 79% of game code by size matches (18,871 of 19,362 functions,
-97%; 92% fuzzy), landed in batches module by module. `docs/rounds/` records each round.
+Status, 9 November 2026: 81% of game code by size matches (18,923 of 19,362 functions,
+98%; 93% fuzzy), landed in batches module by module. `docs/rounds/` records each round.
 
 ## The goal
 
@@ -17,8 +17,8 @@ Decided 11 October 2026.
   original's, apart from bytes the linker fills in. The checker decides; nothing is called
   matched on judgement. This includes the 48 MASM objects (reassembled to match) and the
   third-party library code (linked as the original objects, not rewritten).
-- **Goal, not a gate: a matching MD5.** The rebuilt `gamemd.exe` hashes to
-  `2a1307f6f57c9c492f985b4e3afb88e6`. That also needs data sections, BSS order,
+- **Goal, not a gate: a matching MD5.** The rebuilt `gamemd.exe` hashes to retail 1.001's
+  `937b14db32f07ee47e92a8114ebdbdde`. That also needs data sections, BSS order,
   vtable/RTTI placement, link order, imports and resources to line up. Track it as a
   separate score next to the function count; the project ships without it if it proves
   out of reach.
@@ -222,7 +222,8 @@ exe's) needs EA's post-link patch reproduced. A pristine 1.001 would be the clea
 but Westwood's 1.001 patch (`YR1001EN.EXE`, 2.38 MB) is an RTPatch 5.20 binary diff that
 only updates an installed retail 1.000 `gamemd.exe`; it does not carry the exe.
 
-**Decided 11 October 2026: the target is the Steam exe.**
+**Decided 11 October 2026: the target is the Steam exe** (replaced on 8 November by
+retail 1.001, below).
 - The source is Westwood's 1.001, CD check included; the source is still the game as shipped.
 - Each EA patch site is recorded in the repo: address, the bytes Westwood's code would
   have, the bytes EA wrote, and the evidence. EA likely changed more than the CD check
@@ -248,6 +249,26 @@ patch at 0x4A81D7/0x4A820D, where Steam has the compiler's code; any edit TFD an
 share stays invisible to this comparison. TFD's TS and RA2 exes are kept too
 (`orig/ts-game-tfd.exe`, `orig/game-tfd.exe`); TFD's TS exe carries two extra
 `stxt` sections, a SafeDisc wrapper.
+
+**Retail 1.001 is the target (8 November 2026).** A retail Yuri's Revenge disc carries
+`gamemd.exe` 1.000 (4,808,976 bytes, CRC `0xB701D792`, linked 2001-08-23), loose in its
+`Install` folder. Westwood's official 1.001 patch (`YR1001EN.EXE`, RTPatch 5.20), applied
+under Wine to an install laid out from that disc, gives 4,813,072 bytes, CRC `0x098465B3`,
+MD5 `937b14db32f07ee47e92a8114ebdbdde`: Ares' pristine retail 1.001, with the same link
+timestamp as Steam's and TFD's. Compared with it outside `.rsrc`:
+- Steam's exe differs only at the sites already recorded, so EA made no edits that the
+  `nop` hunt missed.
+- TFD's differs at three: its no-CD patch in `GetCDNumber`, and a stub over
+  `CopyProtection::CheckProtectedData` at 0x0049F7A0, where the recorded original had been
+  TFD's stub rather than Westwood's code.
+
+So retail 1.001 replaces the Steam exe as the target, and any of the three builds serves
+as the player's copy. `data/exe_patches.csv` lists each build's sites (`build` column:
+`steam` or `tfd`) with the retail bytes, and `tools/exebuild.py` identifies the player's
+exe by SHA-256 and puts those bytes back before the map is built or a function is
+compared. The three give identical function maps and checker results. A Steam or TFD
+copy of the rebuilt exe follows from retail's by writing that build's bytes and
+resources back after linking.
 
 Scale against Byte Tactics: `.text` is about 4.8 times TA's whole exe. The recomp project
 counted about 24,900 functions and 954 classes in `gamemd.exe`, including library code.

@@ -71,7 +71,6 @@ extern bool Naval[19];
 void __fastcall FUN_006CFD20(int button, int slot);
 int __fastcall FUN_006CFCC0(char const * name);
 void __fastcall FUN_006CFDB0(int count);
-extern int DAT_008427CC;
 template<> void VectorClass<ColorScheme *>::Clear(void);
 void FUN_006269A0(void);
 void __fastcall FUN_00626AB0(char const * name, HSVClass & hsv);
@@ -2377,6 +2376,8 @@ bool RulesClass::Do_Movies(CCINIClass const & ini)
 	}
 	return(false);
 }
+
+extern int DAT_008427CC;
 
 // FUNCTION: GAMEMD 0x00674650
 bool RulesClass::Read_AdvancedCommandBar(CCINIClass const & ini, bool multiplayer)

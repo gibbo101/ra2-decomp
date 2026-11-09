@@ -11,6 +11,7 @@
 #include "stimer.h"
 #include "timer.h"
 #include "wolapi\wolapi.h"
+#include "arraylist.h"
 #include <string.h>
 #include <new.h>
 
@@ -52,22 +53,8 @@ struct PacketEntry {
 	char Data[0x8000];
 
 	PacketEntry(void) : Kind(0), Size(0) {}
-	PacketEntry(PacketEntry const * rhs);
-};
-
-struct PacketQueue {
-	int Count;
-	int Max;
-	PacketEntry *Data;
-
-	PacketQueue(void) : Count(0), Max(0), Data(0) {}
-	~PacketQueue(void)
-	{
-		Count = 0;
-		delete Data;
-	}
-	bool Shrink(void);
-	bool Grow(void);
+	~PacketEntry(void) {}
+	PacketEntry & operator=(PacketEntry const & rhs);
 };
 
 // FUNCTION: GAMEMD 0x006C6AD0
@@ -77,34 +64,65 @@ BasicTimerClass<SystemTimerClass> GameTimer;
 // _$E44
 
 // FUNCTION: GAMEMD 0x006C6B00
-PacketEntry::PacketEntry(PacketEntry const * rhs)
+PacketEntry & PacketEntry::operator=(PacketEntry const & rhs)
 {
-	Kind = rhs->Kind;
-	Size = rhs->Size;
+	Kind = rhs.Kind;
+	Size = rhs.Size;
 	if (Size > 0x8000) {
 		Size = 0;
-		return;
+		return(*this);
 	}
-	memcpy(Data, rhs->Data, Size);
+	memcpy(Data, rhs.Data, Size);
+	return(*this);
 }
 
 // FUNCTION: GAMEMD 0x006C6B40
 // FUNCTION: GAMEMD 0x006C6B60
-PacketQueue Queue;
+static ArrayList<PacketEntry> Queue;
+
+// FUNCTION: GAMEMD 0x006C6B80
+void __fastcall Queue_Packet(void *buf, int size)
+{
+	if (size > 0x8000 || buf == NULL || size < 1) {
+		return;
+	}
+	PacketEntry entry;
+	entry.Size = size;
+	memcpy(entry.Data, buf, size);
+	Queue.addTail(entry);
+}
 
 // FUNCTION: GAMEMD 0x006C6D00
 void Queue_Pop(void)
 {
-	int index = 0;
-	if (Queue.Count == 0) {
+	Queue.remove(0);
+}
+
+extern struct INetUtil * g_pNetUtil;
+extern char DAT_00B77930[];
+extern int DAT_00B76184;
+
+// FUNCTION: GAMEMD 0x006C6DE0
+void Queue_Send(void)
+{
+	PacketEntry entry;
+	if (Queue.length() == 0) {
 		return;
 	}
-	if (Queue.Count <= 0) {
-		index = Queue.Count - 1;
+	Queue.getHead(entry);
+	while (entry.Size < 1 || entry.Kind > 10) {
+		Queue.remove(0);
+		if (Queue.length() == 0) {
+			return;
+		}
+		Queue.getHead(entry);
 	}
-	memmove(&Queue.Data[index], &Queue.Data[index + 1], (Queue.Count - (index + 1)) * sizeof(PacketEntry));
-	Queue.Count--;
-	Queue.Shrink();
+	if (g_pNetUtil == NULL) {
+		return;
+	}
+	g_pNetUtil->RequestGameresSend(DAT_00B77930, DAT_00B76184, (unsigned char *)entry.Data, entry.Size);
+	entry.Kind++;
+	Queue.replace(entry, 0);
 }
 
 int Get_Unit_Count(int *buf, int count);
@@ -139,46 +157,7 @@ void Register_Game_End_Time(void)
 // ??_G?$rc_ptr@VPlayerProfile@@@@UAEPAXI@Z
 template class rc_ptr<PlayerProfile>;
 
-// FUNCTION: GAMEMD 0x006C8870
-bool PacketQueue::Shrink(void)
-{
-	if (Count * 3 > Max) {
-		return false;
-	}
-	int newmax = Max / 2;
-	if (newmax < 10) {
-		newmax = 10;
-	}
-	if (newmax >= Max) {
-		return false;
-	}
-	PacketEntry *p = (PacketEntry *)operator new(newmax * sizeof(PacketEntry));
-	if (Data) {
-		memcpy(p, Data, Count * sizeof(PacketEntry));
-	}
-	operator delete(Data);
-	Data = p;
-	Max = newmax;
-	return true;
-}
-
-// FUNCTION: GAMEMD 0x006C8900
-bool PacketQueue::Grow(void)
-{
-	if (Count < Max) {
-		return false;
-	}
-	int newmax = Count * 2;
-	if (newmax < 10) {
-		newmax = 10;
-	}
-	PacketEntry *p = (PacketEntry *)operator new(newmax * sizeof(PacketEntry));
-	memset(p, 0, newmax * sizeof(PacketEntry));
-	if (Data) {
-		memcpy(p, Data, Count * sizeof(PacketEntry));
-	}
-	operator delete(Data);
-	Max = newmax;
-	Data = p;
-	return true;
-}
+// TEMPLATE: GAMEMD 0x006C8870
+// ?shrinkVector@?$ArrayList@UPacketEntry@@@@AAEDXZ
+// TEMPLATE: GAMEMD 0x006C8900
+// ?growVector@?$ArrayList@UPacketEntry@@@@AAEDXZ

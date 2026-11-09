@@ -156,7 +156,8 @@ def load_patch_sites() -> list[tuple[int, str, str]]:
     if not path.exists():
         return []
     with path.open() as f:
-        return [(int(r["address"], 16), r["patched"], r["original"]) for r in csv.DictReader(f)]
+        return [(int(r["address"], 16), r["patched"], r["original"]) for r in csv.DictReader(f)
+                if r["build"] == "steam"]
 
 
 def main() -> None:

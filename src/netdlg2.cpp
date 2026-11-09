@@ -227,6 +227,143 @@ void Net2DisplayUsers(void)
 	FUN_005DAFE0(false);
 }
 
+void __fastcall FUN_005EA3E0(HWND dialog, bool flag);
+extern int DAT_00AC01A0;
+extern int DAT_00AC01D0;
+extern int DAT_00AC01E0;
+Surface * __fastcall FUN_004E3560(int index);
+bool __fastcall FUN_005E8740(int index);
+int __fastcall FUN_0060D320(HWND dialog);
+
+// FUNCTION: GAMEMD 0x005DAFE0
+void __fastcall FUN_005DAFE0(bool x)
+{
+	int i;
+	HWND win = WS_Top_Window();
+
+	HWND lower = win;
+	bool found = false;
+	int topid = WS_Top_Window_ID();
+	if (topid == 0xbc || topid == 0xbd) {
+		found = true;
+	} else {
+		lower = WS_Next_Lower_Dialog(lower);
+		while (lower) {
+			int id = FUN_0060D320(lower);
+			if (id == 0xbc || id == 0xbd) {
+				found = true;
+				break;
+			}
+			lower = WS_Next_Lower_Dialog(lower);
+		}
+	}
+	if (found) {
+		FUN_005EA3E0(lower, x);
+		return;
+	}
+
+	win = WS_Top_Window();
+	HWND userwin = GetDlgItem(win, 0x53e);
+	if (win == NULL || userwin == NULL) {
+		return;
+	}
+
+	HWND list = GetDlgItem(win, 0x53e);
+	OwnerDraw::CellData thecell;
+	int topindex = SendDlgItemMessage(win, 0x53e, LB_GETTOPINDEX, 0, 0);
+	SendDlgItemMessage(win, 0x53e, OD_DISABLEPAINT, 0, TRUE);
+
+	Dictionary<WideWstring,bool> lbdict(Wstring_Hash);
+	LBSaveSelections(userwin, lbdict);
+
+	SendDlgItemMessage(win, 0x53e, LB_RESETCONTENT, 0, 0);
+
+	if (CurGame == 0) {
+		SendMessage(list, 0x4cc, 0, (LPARAM)FUN_00735120(Session.Handle));
+		for (i = 1; i < Session.Chat.Count(); i++) {
+			SendMessage(list, 0x4cc, i, (LPARAM)Session.Chat[i]->Name);
+		}
+	} else {
+		for (i = 0; i < Session.Players.Count(); i++) {
+			int type = 0;
+			if (FUN_005E8740(i)) {
+				type = 2;
+				Session.Players[i]->Slot.Unknown77 = 1;
+			} else if (Session.Players[i]->Slot.Unknown77) {
+				type = 1;
+			}
+
+			wchar_t info[128];
+			wchar_t hname[128];
+			swprintf(info, L"%s", Session.Players[i]->Name);
+			int country = Session.Players[i]->Get_Country();
+			Surface * surf = FUN_004E3560(country);
+			switch (country) {
+			case 0:
+				swprintf(hname, L"%s", StringTable::LoadString("TXT_GDI", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 398));
+				break;
+			case 1:
+				swprintf(hname, L"%s", StringTable::LoadString("TXT_GDI", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 401));
+				break;
+			case 2:
+				swprintf(hname, L"%s", StringTable::LoadString("TXT_GDI", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 404));
+				break;
+			case 3:
+				swprintf(hname, L"%s", StringTable::LoadString("TXT_GDI", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 407));
+				break;
+			case 4:
+				swprintf(hname, L"%s", StringTable::LoadString("TXT_GDI", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 410));
+				break;
+			case 5:
+				swprintf(hname, L"%s", StringTable::LoadString("TXT_NOD", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 413));
+				break;
+			case 6:
+				swprintf(hname, L"%s", StringTable::LoadString("TXT_NOD", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 416));
+				break;
+			case 7:
+				swprintf(hname, L"%s", StringTable::LoadString("TXT_NOD", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 419));
+				break;
+			case 8:
+				swprintf(hname, L"%s", StringTable::LoadString("TXT_NOD", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 422));
+				break;
+			}
+
+			SendMessage(list, 0x4cc, -1, (LPARAM)info);
+
+			int color = PlayerColorTable[Session.Players[i]->Player.Color];
+			thecell.type = OwnerDraw::CellData::PRIMARY;
+			thecell.color = color;
+			thecell.hint.set(DAT_00887734);
+			SendDlgItemMessage(win, 0x53e, 0x4a8, MAKEWPARAM(DAT_00AC01A0, i), (LPARAM)&thecell);
+
+			thecell.type = OwnerDraw::CellData::SURFACE;
+			thecell.hint.set(hname);
+			thecell.surf = surf;
+			SendDlgItemMessage(win, 0x53e, 0x4a8, MAKEWPARAM(DAT_00AC01D0, i), (LPARAM)&thecell);
+
+			thecell.hint.set(DAT_00887734);
+			thecell.type = OwnerDraw::CellData::SURFACE;
+			if (type == 2) {
+				thecell.surf = SurfaceCache.GetSurface("wolhost.pcx", NULL);
+			} else if (type != 0) {
+				thecell.surf = SurfaceCache.GetSurface("wolacpt.pcx", NULL);
+			} else {
+				thecell.type = OwnerDraw::CellData::INVALID;
+			}
+			SendDlgItemMessage(win, 0x53e, 0x4a8, MAKEWPARAM(DAT_00AC01E0, i), (LPARAM)&thecell);
+		}
+		if (Session.MPGameMode) {
+			Session.MPGameMode->vt_entry_78(win);
+		}
+	}
+
+	LBRestoreSelections(userwin, lbdict);
+	SendDlgItemMessage(win, 0x53e, LB_SETTOPINDEX, topindex, 0);
+	SendDlgItemMessage(win, 0x53e, OD_DISABLEPAINT, 0, 0);
+	InvalidateRect(userwin, NULL, FALSE);
+	UpdateWindow(userwin);
+}
+
 // FUNCTION: GAMEMD 0x005DB600
 void __fastcall FUN_005DB600(NodeNameType * node)
 {
@@ -363,6 +500,46 @@ void Net2DisplayGameList(void)
 		InvalidateRect(handle, NULL, FALSE);
 		UpdateWindow(handle);
 	}
+}
+
+namespace Game
+{
+extern int Seed;
+}
+Wstring __fastcall FUN_007B82E0(WideWstring const &text);
+
+// FUNCTION: GAMEMD 0x005DBB60
+void __fastcall FUN_005DBB60(char *out)
+{
+	static char useroptions[512];
+	Wstring name = Session.Options.ScenarioDescription ? FUN_007B82E0(Session.Options.ScenarioDescription) : "";
+	int value = Session.unknown_8D4;
+	sprintf(out, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%d,%d,%d,%s,%s:", Game::Seed, Options.GameSpeed,
+	        Session.Options.GameSpeed, Session.Options.Credits, Session.Options.UnitCount, Session.Options.ShortGame,
+	        Session.Options.SWAllowed, Session.Options.BuildOffAlly, Session.Options.MCVRedeploy, Session.Options.Goodies,
+	        Session.Options.MPModeIndex, Options.CampDifficulty, name.get(), value, Session.ScenarioIsOfficial,
+	        Session.ScenarioFileLength, Session.ScenarioFileName, Session.ScenarioDigest);
+	memset(useroptions, 0, sizeof(useroptions));
+	for (int i = 0, count = Session.Players.Count(); i < count; i++) {
+		NodeNameType *entry = Session.Players[i];
+		int country = entry->Get_Country();
+		int color = entry->Get_Color();
+		int start = entry->Get_Start();
+		int team = entry->Get_Team();
+		wchar_t const *player_name = Session.Players[i]->Name;
+		sprintf(useroptions + strlen(useroptions), "%s,%d,%d,%d,%d,%x,%x,%x,", FUN_007350C0(player_name), country, color,
+		        start, team, 0, 0, 0);
+	}
+	useroptions[strlen(useroptions) - 1] = ':';
+	strcat(useroptions, "@:");
+	for (int k = 0; k < 8; k++) {
+		sprintf(useroptions + strlen(useroptions), "%d,%d,%d,%d,%d,", Session.Options.AISlots.Difficulties[k],
+		        Session.Options.AISlots.Countries[k] == -3 ? -1 : Session.Options.AISlots.Countries[k],
+		        Session.Options.AISlots.Colors[k], Session.Options.AISlots.Starts[k], Session.Options.AISlots.Allies[k]);
+	}
+	DebugString("Size of options string is %d bytes\n", strlen(useroptions));
+	DebugString("Options: %s\n", useroptions);
+	strcat(out, useroptions);
 }
 
 // FUNCTION: GAMEMD 0x005DBE20
