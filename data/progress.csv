@@ -13231,6 +13231,7 @@ address,name,result,size,source,symbol
 0x006B9450,SurfaceCacheClass::SurfaceCacheClass,MATCH,137,src/srfcache.cpp,??0SurfaceCacheClass@@QAE@XZ
 0x006B94E0,SurfaceCache_Wstring_Hash,MATCH,68,src/srfcache.cpp,?SurfaceCache_Wstring_Hash@@YIIAAVWstring@@@Z
 0x006B9530,SurfaceCacheClass::~SurfaceCacheClass,MATCH,526,src/srfcache.cpp,??1SurfaceCacheClass@@QAE@XZ
+0x006B9D00,SurfaceCacheClass::CachePCX,MATCH,1046,src/srfcache.cpp,?CachePCX@SurfaceCacheClass@@QAE_NPBDHH@Z
 0x006BA120,SurfaceCacheClass::CachePalettedPCX,MATCH,17,src/srfcache.cpp,?CachePalettedPCX@SurfaceCacheClass@@QAE_NPBD@Z
 0x006BA140,SurfaceCacheClass::GetSurface,MATCH,213,src/srfcache.cpp,?GetSurface@SurfaceCacheClass@@QAEPAVSurface@@PBDPAX@Z
 0x006BA220,_$E27,MATCH,1,src/srfcache.cpp,_$E27
