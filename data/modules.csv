@@ -1,6 +1,6 @@
 module,first,last,functions,certain
 seg_00401000,0x00401000,0x00403CDD,99,no
-wpaudio/audevent,0x00403CE0,0x00406919,89,no
+seg_00403CE0,0x00403CE0,0x00406919,89,no
 _alpha,0x00406920,0x0040AD89,175,no
 _astar,0x0040AD90,0x0040B348,26,yes
 _astar2,0x0040B350,0x0040BD49,40,no

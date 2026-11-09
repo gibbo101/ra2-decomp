@@ -343,7 +343,7 @@ class TechnoClass : public RadioClass
 		virtual bool IsWarpingIn(void) const override;
 		virtual bool IsWarpingSomethingOut(void) const override;
 		virtual bool IsNotWarping(void) const override;
-		virtual void * GetRemapColour(void) const override;
+		virtual LightConvertClass * GetRemapColour(void) const override;
 
 		virtual bool Is_Move_Override(void) const;
 		virtual bool Is_Allowed_To_Recloak(void) const;

@@ -1366,7 +1366,7 @@ bool ObjectClass::IsNotWarping(void) const
 }
 
 // FUNCTION: GAMEMD 0x00426520
-void * ObjectClass::GetRemapColour(void) const
+LightConvertClass * ObjectClass::GetRemapColour(void) const
 {
 	return(NULL);
 }

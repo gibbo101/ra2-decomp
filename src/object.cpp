@@ -1019,7 +1019,7 @@ bool ObjectClass::Paradrop(Coord const & coord)
 					if (anim != NULL) {
 						anim->SetOwnerObject(this);
 						if (Fetch_RTTI() != RTTI_BULLET) {
-							anim->LightConvert = (LightConvertClass *)GetRemapColour();
+							anim->LightConvert = GetRemapColour();
 							anim->TintColor = Get_Cell_Ptr()->Brightness;
 						}
 					}

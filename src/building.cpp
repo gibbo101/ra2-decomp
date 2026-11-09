@@ -1761,7 +1761,7 @@ void BuildingClass::Do_Destruction(TechnoClass * last_contact, TechnoClass * sou
 		if (type != NULL) {
 			AnimClass * anim = new AnimClass(type, Render_Coord(), 0, 1, (ShapeFlags_Type)0x600, 0, false);
 			if (Techno_Type_Class()->Palette != NULL) {
-				anim->LightConvert = (LightConvertClass *)GetRemapColour();
+				anim->LightConvert = GetRemapColour();
 				if (Class->PaletteFile[0]) {
 					strncpy(anim->PaletteName, Class->PaletteFile, 32);
 				}
@@ -4782,7 +4782,7 @@ void BuildingClass::PlayAnim(char const * name, BAnimType anim, bool damaged, bo
 		Power_Disable(this, animptr, anim);
 
 		if (animptr->Type->ShouldUseCellDrawer) {
-			animptr->LightConvert = (LightConvertClass *)GetRemapColour();
+			animptr->LightConvert = GetRemapColour();
 			int cellbrightness = Get_Cell_Ptr()->Brightness;
 			int brightness = Apparent_Brightness(cellbrightness);
 			if (IsIronCurtained() || (Airstrike != NULL && Airstrike->Target == Building_Of(this))) {
@@ -4911,7 +4911,7 @@ void BuildingClass::Set_Anim_Drawer(ConvertClass * drawer, int brightness)
 // FUNCTION: GAMEMD 0x00452000
 void BuildingClass::Update_Anim_Appearance(void)
 {
-	ConvertClass * drawer = (ConvertClass *)GetRemapColour();
+	ConvertClass * drawer = GetRemapColour();
 	Brightness = Tinted_Brightness(Get_Cell_Ptr()->Brightness);
 	Set_Anim_Drawer(drawer, Brightness);
 	Set_Anim_Translucency(TranslucencyLevel);

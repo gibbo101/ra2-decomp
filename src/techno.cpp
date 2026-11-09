@@ -4768,7 +4768,7 @@ bool TechnoClass::FUN_00705D60(void)
 }
 
 // FUNCTION: GAMEMD 0x00705D70
-void * TechnoClass::GetRemapColour(void) const
+LightConvertClass * TechnoClass::GetRemapColour(void) const
 {
 	TechnoTypeClass const * type = Techno_Type_Class();
 	int index = House->Scheme;
@@ -4942,6 +4942,35 @@ SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & vo
 	}
 
 	return(region);
+}
+
+// FUNCTION: GAMEMD 0x00707480
+void TechnoClass::Techno_Blit_Voxel(StaticBufferClass::Entry const & entry, Point2D const & point, Rect const & cliprect, ShapeFlags_Type flags, int brightness, unsigned short tint) const
+{
+	BSurface bsurface(entry.Width, entry.Height, 1, entry.Data);
+	flags = ShapeFlags_Type(flags & ~SHAPE_REMAP);
+
+	ConvertClass * converter = NULL;
+	if (RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette) {
+		converter = EightBitDrawer;
+	} else {
+		converter = GetRemapColour();
+	}
+
+	RLEBlitter const * blitter = converter->RLEBlitter_From_Flags(flags);
+
+	int predoffset = 0;
+	if (flags & SHAPE_PREDATOR) {
+		predoffset = Get_Predator_Offset();
+	}
+
+	if (RTTI == RTTI_UNIT) {
+		UnitCompositeDirtyRect = Union(UnitCompositeDirtyRect, Rect(entry.X + point.X, entry.Y + point.Y, entry.Width, entry.Height));
+	}
+
+	if (blitter != NULL) {
+		RLE_Blit(*LogicalSurface, cliprect, Rect(entry.X + point.X, entry.Y + point.Y, entry.Width, entry.Height), bsurface, bsurface.Get_Rect(), bsurface.Get_Rect(), *blitter, Get_Z_Adjust(), Get_Z_Gradient(), brightness, predoffset, NULL, Point2D(0, 0), tint);
+	}
 }
 
 // FUNCTION: GAMEMD 0x00707750
@@ -5708,6 +5737,40 @@ int TechnoClass::VoiceHarvest(void)
 	}
 }
 #pragma warning(pop)
+
+// FUNCTION: GAMEMD 0x007090A0
+void TechnoClass::Response_Attack(AbstractClass *target)
+{
+	int voice = What_Weapon_Should_I_Use(target);
+	WeaponTypeClass *weapon = Get_Class_Weapon_Data(voice)->Weapon;
+
+	if (weapon != NULL && weapon->Attack < 0 && Is_Type_Named("FV")) {
+		voice = Rule->VoiceIFVRepair;
+	} else if (Veterancy.Is_Elite()) {
+		if (voice == 0) {
+			voice = Techno_Type_Class()->VoicePrimaryEliteWeaponAttack;
+		} else {
+			voice = Techno_Type_Class()->VoiceSecondaryEliteWeaponAttack;
+		}
+	} else {
+		if (voice == 0) {
+			voice = Techno_Type_Class()->VoicePrimaryWeaponAttack;
+		} else {
+			voice = Techno_Type_Class()->VoiceSecondaryWeaponAttack;
+		}
+	}
+
+	if (Techno_Type_Class()->VoiceAttack.Count() == 0) {
+		if (voice != -1) {
+		queue:
+			QueueVoice(voice);
+		}
+	} else if (voice != -1) {
+		goto queue;
+	} else {
+		QueueVoice(Techno_Type_Class()->VoiceAttack.Pick(NonCriticalRandomNumber()));
+	}
+}
 
 // FUNCTION: GAMEMD 0x007091D0
 bool TechnoClass::CanPassiveAcquireTargets(void) const
@@ -7627,6 +7690,48 @@ void TechnoClass::Set_Talker(TechnoClass * techno, TalkType bubble)
 		TalkBubbleType = TALK_NONE;
 		TalkBubbleOwner = NULL;
 		TalkBubbleTimer = 0;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0070F1D0
+void TechnoClass::FUN_0070F1D0(Point2D const &center, Rect const &rect)
+{
+	if (Visual_Character(false, NULL) == VISUAL_NORMAL && !BehindAnim) {
+		if (Rule->Behind) {
+			BehindAnim = new AnimClass(Rule->Behind, Center_Coord(), 0, 1, ShapeFlags_Type(0x600), 0);
+			if (BehindAnim) {
+				BehindAnim->SetOwnerObject(this);
+				if (!Options.ShowHidden)
+					BehindAnim->Invisible = true;
+			}
+		} else {
+			int color = FileSystem::PALETTE_PAL->Convert_Pixel(12);
+			Point2D origin = center;
+			int outside, inside;
+			if (Frame & 8) {
+				outside = 12;
+				inside = 8;
+			} else {
+				outside = 10;
+				inside = 6;
+			}
+			for (int pass = 0; pass < 2; ++pass) {
+				LogicalSurface->Draw_Line(origin + Point2D(-outside, -outside), origin + Point2D(-inside, -outside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(inside, -outside), origin + Point2D(outside, -outside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(outside, -outside), origin + Point2D(outside, -inside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(outside, inside), origin + Point2D(outside, outside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(outside, outside), origin + Point2D(inside, outside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(-inside, outside), origin + Point2D(-outside, outside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(-outside, outside), origin + Point2D(-outside, inside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(-outside, -inside), origin + Point2D(-outside, -outside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(-4, 0), origin + Point2D(4, 0), color);
+				LogicalSurface->Draw_Line(origin + Point2D(0, -4), origin + Point2D(0, 4), color);
+				++origin.X;
+				++origin.Y;
+				RGBClass rgb = ColorSchemes[PlayerPtr->Scheme]->HSV;
+				color = DSurface::Build_Hicolor_Pixel(rgb.Get_Red(), rgb.Get_Green(), rgb.Get_Blue());
+			}
+		}
 	}
 }
 

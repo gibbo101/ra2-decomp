@@ -1486,7 +1486,7 @@ void UnitClass::Deploy(void)
 				if (DeployAnim == NULL) {
 					DeployAnim = new AnimClass(Class->DeployingAnim, PositionCoord, 0, 1, ShapeFlags_Type(0x600), 0, false);
 					DeployAnim->SetOwnerObject(this);
-					DeployAnim->LightConvert = (LightConvertClass *)GetRemapColour();
+					DeployAnim->LightConvert = GetRemapColour();
 				}
 				Animation.Set_Stage(DeployAnim->Type->Start);
 				Animation.Set_Rate(DeployAnim->Type->Rate);
@@ -1517,7 +1517,7 @@ void UnitClass::Undeploy(void)
 			if (DeployAnim == NULL) {
 				DeployAnim = new AnimClass(Class->DeployingAnim, PositionCoord, 0, 1, ShapeFlags_Type(0x600), 0, true);
 				DeployAnim->SetOwnerObject(this);
-				DeployAnim->LightConvert = (LightConvertClass *)GetRemapColour();
+				DeployAnim->LightConvert = GetRemapColour();
 			}
 			Animation.Set_Stage(DeployAnim->Type->Start);
 			Animation.Set_Rate(DeployAnim->Type->Rate);
@@ -2302,6 +2302,276 @@ int UnitClass::Do_MISSION_HUNT(void)
 		return(BASECLASS::Do_MISSION_HUNT());
 	}
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+// FUNCTION: GAMEMD 0x0073F0A0
+MoveType UnitClass::Can_Enter_Cell(CellClass const *cellptr, FacingType dir, int cell_height, CellClass const *cellptr2,
+                                   bool use_locomotor_enter_check) const
+{
+	bool bridge = cellptr->IsUnderBridge && (cell_height == -1 || abs(cell_height - cellptr->Height) > 1);
+	unsigned char flags = cellptr->Flag.Composite;
+	bool vehicle = cellptr->Flag.Occupy.Vehicle;
+	HousesType inftype = cellptr->InfType;
+	TubeClass *tunnel = cellptr->Get_Tunnel();
+
+	if (Class->MovementRestrictedTo != LAND_NONE) {
+		if (cellptr->Land_Type() == LAND_TUNNEL) {
+			IsometricTileTypeClass *itptr = IsometricTileTypes[cellptr->ITType];
+			if ((itptr->Width == 5 && itptr->Height == 3) || (itptr->Width == 4 && itptr->Height == 3)) {
+				if (cellptr->SubTile != 2)
+					return (MOVE_NO);
+			} else if (((itptr->Width == 3 && itptr->Height == 4) || (itptr->Width == 3 && itptr->Height == 5)) &&
+			           cellptr->SubTile != 6) {
+				return (MOVE_NO);
+			}
+		}
+		if (cellptr->Land_Type() != Class->MovementRestrictedTo && cellptr->Land_Type() != LAND_TUNNEL) {
+			if (cellptr->Overlay < OVERLAY_BRIDGEHEAD21 || cellptr->Overlay > OVERLAY_BRIDGEHEAD22 ||
+			    cell_height == cellptr->Height)
+				return (MOVE_NO);
+		}
+	}
+	if (dir == FACING_COUNT) {
+		if (tunnel != NULL) {
+			Cell exit = tunnel->Exit;
+			if (exit != Cell(0, 0))
+				return (MOVE_OK);
+		}
+		return (MOVE_NO);
+	}
+	if (tunnel != NULL) {
+		int dist = abs(dir - tunnel->EnterDir);
+		if (dist > 2 && dist < 6 && dir != FACING_NONE)
+			return (MOVE_NO);
+	}
+	FacingType opposite = Facing_Sub(dir, FACING_180);
+	TubeClass *backtunnel = cellptr->Adjacent_Cell(opposite).Get_Tunnel();
+	if (backtunnel != NULL) {
+		int dist = abs(opposite - backtunnel->EnterDir);
+		if (dist > FACING_90 && dist < FACING_270 && dir != FACING_NONE)
+			return (MOVE_NO);
+	}
+	MoveType retval = Can_Reach(cellptr, dir, cell_height, bridge, cellptr2);
+	if (retval == MOVE_NO)
+		return (MOVE_NO);
+	if (cell_height != -1 && cellptr->IsUnderBridge && cell_height == cellptr->Height + BRIDGE_CELL_HEIGHT) {
+		flags = cellptr->BridgeFlag.Composite;
+		vehicle = cellptr->BridgeFlag.Occupy.Vehicle;
+		inftype = cellptr->BridgeInfType;
+	}
+	if (!ScenarioInit && !Map.In_Local_Radar(cellptr) && !Is_Allowed_To_Leave_Map() && IsInPlayfield)
+		return (MOVE_NO);
+	retval = BASECLASS::Can_Enter_Cell(cellptr, dir, cell_height, cellptr2, use_locomotor_enter_check);
+	if (retval == MOVE_NO)
+		return (MOVE_NO);
+
+	if (cellptr->Overlay != OVERLAY_NONE) {
+		OverlayTypeClass const *optr = OverlayTypes[cellptr->Overlay];
+		if (optr->IsCrate && !House->FUN_0050B730() && Session.Type == GAME_NORMAL)
+			return (MOVE_NO);
+		if (optr->IsWall) {
+			if ((optr->IsCrushable && (Class->IsCrusher || Has_Ability(ABILITY_CRUSHER))) ||
+			    (optr->IsWall && Class->MZone == MZONE_CRUSHER_ALL)) {
+				if (House->Is_Ally(cellptr->Owner)) {
+					if (retval < MOVE_FRIENDLY_DESTROYABLE)
+						retval = MOVE_FRIENDLY_DESTROYABLE;
+				}
+			} else {
+				if (Is_Weapon_Equipped()) {
+					WarheadTypeClass const *warhead = Get_Class_Weapon_Data(0)->Weapon->WarheadPtr;
+					if (warhead->IsWallDestroyer || (warhead->IsWoodDestroyer && optr->Armor == ARMOR_WOOD)) {
+						if (House->Is_Ally(cellptr->Owner)) {
+							if (retval < MOVE_FRIENDLY_DESTROYABLE)
+								retval = MOVE_FRIENDLY_DESTROYABLE;
+						} else {
+							if (retval < MOVE_DESTROYABLE)
+								retval = MOVE_DESTROYABLE;
+						}
+					} else {
+						return (MOVE_NO);
+					}
+				} else {
+					return (MOVE_NO);
+				}
+			}
+		}
+	}
+
+	bool crushable = false;
+	ObjectClass *obj = cellptr->Cell_Occupier(bridge);
+	while (obj != NULL) {
+		if (static_cast<ObjectClass const *>(this) != obj) {
+			if (ParasiteImUsing != NULL && ParasiteImUsing->Victim != NULL) {
+				if (obj->Get_Cell() == ParasiteImUsing->Victim->Get_Cell())
+					return (MOVE_OK);
+			}
+			TechnoClass *contact = obj->Is_Techno() ? static_cast<TechnoClass *>(obj) : NULL;
+			if (ContainsLink(contact) && obj->RTTI == RTTI_BUILDING &&
+			    !static_cast<BuildingClass *>(obj)->FUN_00458A00(cellptr)) {
+				obj = obj->Next;
+				continue;
+			}
+			if (Class->SmallVisceroid && obj->RTTI == RTTI_UNIT && static_cast<UnitClass *>(obj)->Class->SmallVisceroid)
+				return (MOVE_OK);
+			if (obj->RTTI == RTTI_BUILDING) {
+				BuildingClass *building = static_cast<BuildingClass *>(obj);
+				if (Mission == MISSION_ENTER && obj == NavCom && building->Class->UnitAbsorb &&
+				    !building->IsBeingWarpedOut())
+					return (MOVE_OK);
+				if (Mission == MISSION_EATEN && obj == NavCom && building->Class->Grinding &&
+				    !building->IsBeingWarpedOut())
+					return (MOVE_OK);
+				if (building->Class->Grinding) {
+					ObjectClass *occupier = Map[Cell(Center_Coord())].Cell_Occupier();
+					while (occupier != NULL) {
+						if (occupier == building)
+							return (MOVE_OK);
+						occupier = occupier->Next;
+					}
+				}
+				if (building->Class->IsGate) {
+					if (!building->Is_Gate_Open()) {
+						if (building->House->Is_Ally(House)) {
+							if (retval < MOVE_CLOSED_GATE)
+								retval = MOVE_CLOSED_GATE;
+						} else {
+							if (!Is_Weapon_Equipped())
+								return (MOVE_NO);
+							if (retval < MOVE_DESTROYABLE)
+								retval = MOVE_DESTROYABLE;
+						}
+					}
+					obj = obj->Next;
+					continue;
+				}
+				if ((building->Class->IsCanUnitRepair || building->Class->Bunker) &&
+				    cellptr->Cell_Building() == building && !building->FUN_00458A00(cellptr)) {
+					obj = obj->Next;
+					continue;
+				}
+				if (building->Class->IsInvisibleInGame) {
+					obj = obj->Next;
+					continue;
+				}
+				if (building->Class->IsLaserFence &&
+				    (building->LaserFenceFrame == 12 || building->LaserFenceFrame == 8)) {
+					obj = obj->Next;
+					continue;
+				}
+				if (building->Class->IsFirestormWall) {
+					if (building->House->FirestormDefenseActivated)
+						return (MOVE_NO);
+					obj = obj->Next;
+					continue;
+				}
+				if (building->Class->IsBibbed) {
+					if (Map[Adjacent_Cell(cellptr->CellID, FACING_E)].Cell_Building() != building) {
+						obj = obj->Next;
+						continue;
+					}
+				}
+			}
+			if (Mission == MISSION_ENTER && obj == NavCom && obj->RTTI == RTTI_UNIT)
+				return (MOVE_OK);
+			if (Mission == MISSION_GUARD_AREA && ArchiveTarget == obj)
+				return (MOVE_NO);
+			FootClass *foot;
+			if (obj->AbstractFlags & 4) {
+				foot = static_cast<FootClass *>(obj);
+			} else {
+				foot = NULL;
+			}
+			bool is_moving =
+			    foot != NULL && (foot->NavCom || foot->PrimaryFacing.Is_Rotating() || foot->Locomotion->Is_Moving());
+			if (House->Is_Ally(obj)) {
+				if (is_moving) {
+					struct CollisionFacings {
+						int Self;
+						int Other;
+					} facings;
+					facings.Self = PrimaryFacing.Current().As_Dir8();
+					DirType reverse = static_cast<FootClass *>(obj)->PrimaryFacing.Current().Right_180();
+					facings.Other = reverse.As_Dir8();
+					DirType direction = ::Direction(PositionCoord, obj->PositionCoord);
+					if (facings.Self == facings.Other &&
+					    ::Distance(Center_Coord(), obj->Center_Coord()) <= 2 * CELL_LEPTON - 1 &&
+					    direction.As_Dir8() == facings.Self)
+						return (MOVE_NO);
+					if ((foot->IsOccupyingCell && foot->RTTI != RTTI_INFANTRY) ||
+					    foot->Locomotion->Will_Jump_Tracks()) {
+						if (retval < MOVE_MOVING_BLOCK)
+							retval = MOVE_MOVING_BLOCK;
+					}
+				} else {
+					if (obj->RTTI == RTTI_BUILDING)
+						return (MOVE_NO);
+					if (retval < MOVE_TEMP)
+						retval = MOVE_TEMP;
+				}
+			} else {
+				TechnoClass const *techno = Dynamic_Cast<TechnoClass const *>((AbstractClass const *)obj);
+				if (techno != NULL && techno->Cloak == CLOAKED) {
+					if (retval < MOVE_CLOAK)
+						retval = MOVE_CLOAK;
+				} else {
+					if ((Class->IsCrusher || Has_Ability(ABILITY_CRUSHER)) && obj->IsCrushable((TechnoClass *)this)) {
+						if (!House->Is_Ally(obj))
+							crushable = true;
+					} else {
+						if (Get_Class_Weapon_Data(0)->Weapon == NULL && !Class->IsTrain)
+							return (MOVE_NO);
+						switch (obj->Fetch_RTTI()) {
+						case RTTI_TERRAIN: {
+							int which = What_Weapon_Should_I_Use(obj);
+							WeaponTypeClass const *weapon = Get_Class_Weapon_Data(which)->Weapon;
+							if (weapon == NULL || weapon->WarheadPtr == NULL || !weapon->WarheadPtr->IsWoodDestroyer)
+								return (MOVE_NO);
+						}
+						default:
+							if (retval < MOVE_DESTROYABLE)
+								retval = MOVE_DESTROYABLE;
+							break;
+						case RTTI_BUILDING:
+							if (static_cast<BuildingClass *>(obj)->Class->IsBridgeRepairHut)
+								return (MOVE_NO);
+							if (retval < MOVE_DESTROYABLE)
+								retval = MOVE_DESTROYABLE;
+							break;
+						}
+					}
+				}
+			}
+		} else {
+			vehicle = false;
+			flags &= ~0x20;
+		}
+		obj = obj->Next;
+	}
+	if (!bridge && Ground[cellptr->Land_Type()].Cost[Class->Speed] == 0)
+		return (MOVE_NO);
+	if (retval == MOVE_OK && !crushable && (flags & 0x3F)) {
+		if (vehicle) {
+			retval = MOVE_MOVING_BLOCK;
+		} else {
+			if (inftype != HOUSE_NONE && House->Is_Ally(inftype)) {
+				retval = MOVE_MOVING_BLOCK;
+			} else {
+				if (!Class->IsCrusher && !Has_Ability(ABILITY_CRUSHER)) {
+					if (Class->IsTrain || (Get_Class_Weapon_Data(0)->Weapon != NULL &&
+					                       Get_Class_Weapon_Data(0)->Weapon->Bullet->IsAntiGround)) {
+						retval = MOVE_DESTROYABLE;
+					} else {
+						return (MOVE_NO);
+					}
+				}
+			}
+		}
+	}
+	if (retval == MOVE_OK && crushable && vehicle) {
+		if (cellptr->Cell_Unit() == NULL || !cellptr->Cell_Unit()->IsCrushable((TechnoClass *)this))
+			return (MOVE_MOVING_BLOCK);
+	}
+	return (retval);
 }
 
 // FUNCTION: GAMEMD 0x007404B0

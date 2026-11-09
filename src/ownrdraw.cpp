@@ -454,6 +454,77 @@ inline bool Is_Quick_Control_D(int id)
 		id == 0x711;
 }
 
+inline OwnerDraw::WinData *Get_Data(HWND window)
+{
+	OwnerDraw::WinData *data = NULL;
+	if (!OwnerDraw::Dialogs.getPointer(window, &data)) {
+		return NULL;
+	}
+	return data;
+}
+
+// FUNCTION: GAMEMD 0x00600CA0
+int FUN_00600CA0(HWND dialog, HWND control)
+{
+	OwnerDraw::WinData *record = Get_Data(dialog);
+	int kind = record != 0 ? record->Dialog.DialogID : 0;
+	int id = GetDlgCtrlID(control);
+	bool general =
+    (kind == 0x10c || kind == 0x94 || kind == 0xa3 || kind == 0x73 || kind == 0xd8 || kind == 0xbbb || kind == 0xf5 ||
+	 kind == 0x105 || kind == 0xe2 || kind == 0xd5 || kind == 0x2b5 || kind == 0xb7 || kind == 0x2b4 || kind == 0xbc7 ||
+	 kind == 0x101 || kind == 0x129 || kind == 0xbc6 || kind == 0xd7 || kind == 0x108 || kind == 0xbc || kind == 0xbd ||
+	 kind == 0xbb || kind == 0xb5 || kind == 0xbba || kind == 0xff || kind == 0x6b || kind == 0x100 || kind == 0x102 ||
+	 kind == 0xb8 || kind == 0xd6 || kind == 0x103 || kind == 0x125 || kind == 0xe7 || kind == 0x116 || kind == 0xc2 ||
+	 kind == 0xc9 || kind == 0x11d || kind == 0x11c || kind == 0x114 || kind == 700 || kind == 0x113 || kind == 0x109 ||
+	 kind == 0x10f || kind == 0x117 || kind == 0xe6 || kind == 0xf3 || kind == 0xf4 || kind == 0x10e ||
+	 kind == 0x112) &&
+    (id == 0x694);
+	if (general) {
+		return (0x1e);
+	}
+	bool dual_rail = (kind == 0xbc || kind == 0xbd || kind == 0x102 || kind == 0xc2 || kind == 0xc9 || kind == 0xbc6) &&
+                 (id == 0x6ec || id == 0x5a8);
+	if (dual_rail) {
+		return (0x1e);
+	}
+	if ((kind == 0x103) || (kind == 0xbc7)) {
+		if (id != 0x6f4) {
+			if (id == 0x6f3 || id == 0x69f || id == 0x6f6 || id == 0x6ef || id == 0x6f1 || id == 0x6f0 || id == 0x6f2 ||
+			    id == 0x73c || id == 0x73d || id == 0x73e || id == 0x73f || id == 0x740 || id == 0x735 || id == 0x732 ||
+			    id == 0x3ea || id == 0x733) {
+				return 0x1e;
+			}
+			bool tall = id == 0x411 || id == 0x412 || id == 0x419 || id == 0x41a || id == 0x6a3 || id == 0x6a4 || id == 0x6a5 ||
+            id == 0x6a7 || id == 0x6a6 || id == 0x6a8 || id == 0x73a || id == 0x739 || id == 0x73b || id == 0x738;
+			if (tall) {
+				return (0x3c);
+			}
+		} else {
+			return 0xf;
+		}
+	}
+	if ((kind == 0x108) || (kind == 0xbc6)) {
+		if (id == 0x6d2 || id == 0x3ea || id == 0x733 || id == 0x71b || id == 0x732 || id == 0x69d || id == 0x69f ||
+		    id == 0x69e || id == 0x6a0 || id == 0x78b || id == 0x5c8 || id == 0x411 || id == 0x412 || id == 0x413 ||
+		    id == 0x414 || id == 0x415 || id == 0x416 || id == 0x417 || id == 0x418) {
+			return 0x1e;
+		}
+		bool tall2 = id == 0x419 || id == 0x41a || id == 0x41b || id == 0x41c || id == 0x41d || id == 0x41e || id == 0x41f ||
+             id == 0x420 || id == 0x6a3 || id == 0x6a4 || id == 0x6a9 || id == 0x6ac || id == 0x6af || id == 0x6b2 ||
+             id == 0x6b5 || id == 0x6b8 || id == 0x6a5 || id == 0x6a7 || id == 0x6aa || id == 0x6ad || id == 0x6b0 ||
+             id == 0x6b3 || id == 0x6b6 || id == 0x6b9 || id == 0x6a6 || id == 0x6a8 || id == 0x6ab || id == 0x6ae ||
+             id == 0x6b1 || id == 0x6b4 || id == 0x6b7 || id == 0x6ba || id == 0x70a || id == 0x70b || id == 0x70c ||
+             id == 0x70d || id == 0x70e || id == 0x70f || id == 0x710 || id == 0x711;
+		if (tall2) {
+			return (0x3c);
+		}
+	}
+	if (Is_Owner_Draw_Message(kind) && id == 0x695) {
+		return 0xf;
+	}
+	return 0xf;
+}
+
 // FUNCTION: GAMEMD 0x00601360
 bool Is_Owner_Draw_Message(unsigned int msg)
 {
@@ -1630,14 +1701,7 @@ WideWstring FUN_00604060(HWND window, HWND control)
 	return WideWstring(DAT_00887734);
 }
 
-inline OwnerDraw::WinData *Get_Data(HWND window)
-{
-	OwnerDraw::WinData *data = NULL;
-	if (!OwnerDraw::Dialogs.getPointer(window, &data)) {
-		return NULL;
-	}
-	return data;
-}
+
 
 inline int Get_Dialog_Type(HWND dialog)
 {
@@ -6653,6 +6717,94 @@ inline int Draw_Hotkey_Text4(Surface *surface, wchar_t const *text, RECT *rect, 
 inline int Draw_Hotkey_Text5(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text4(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text6(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text5(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text7(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text6(surface, text, rect, font, color, flags); }
+
+// FUNCTION: GAMEMD 0x0061E700
+LRESULT CALLBACK OwnerDraw::GroupBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int i;
+
+	switch (message) {
+	case WM_PAINT: {
+		int spacing = 0;
+		WinData *data = Find_Data(window);
+
+		if (data != NULL) {
+			wchar_t const *text = data->Wide.text ? data->Wide.text : L"";
+
+			RECT area;
+			Get_Display_Rect(window, &area);
+
+			int width = area.right - area.left;
+			int middle_y = data->Wide.font->field_1C / 2 + area.top;
+			int text_width;
+			int text_height;
+
+			data->Wide.font->GetTextDimension(text, &text_width, &text_height, width);
+
+			Rect caption(area.left + 10, area.top, width, area.bottom - area.top);
+
+			PrintTextFixedLength(PrimaryTextColor, NULL, caption, text, wcslen(text), 0, 0, AlternateSurface, 0);
+
+			int shades[2] = {BevelLightColor, BevelShadowColor};
+			int colors[2];
+			colors[1] = ODColorToHiColor(shades[1]);
+			colors[0] = ODColorToHiColor(shades[0]);
+			i = 0;
+
+			int middle_color = ((((shades[0] & 0xFF) + (shades[1] & 0xFF)) / 2) & 0xFF) +
+			                   ((((shades[0] & 0xFF0000) + (shades[1] & 0xFF0000)) / 2) & 0xFF0000) +
+			                   ((((shades[0] & 0xFF00) + (shades[1] & 0xFF00)) / 2) & 0xFF00);
+
+			for (; i < 2; i++) {
+				int color = colors[i];
+
+				if (wcslen(text) == 0) {
+					AlternateSurface->Draw_Line(Point2D(area.left + i, middle_y + i),
+					                            Point2D(area.right - i - 1, middle_y + i), color);
+				} else {
+					AlternateSurface->Draw_Line(Point2D(area.left + i, middle_y + i),
+					                            Point2D(area.left + 8, middle_y + i), color);
+
+					if (text_width)
+						spacing = 12;
+
+					AlternateSurface->Draw_Line(Point2D(area.left + text_width + spacing, middle_y + i),
+					                            Point2D(area.right - i - 1, middle_y + i), color);
+				}
+
+				AlternateSurface->Draw_Line(Point2D(area.left + i, middle_y + i + 1),
+				                            Point2D(area.left + i, area.bottom - i - 1), color);
+
+				color = colors[1 - i];
+
+				AlternateSurface->Draw_Line(Point2D(area.left + i, area.bottom - i - 1),
+				                            Point2D(area.right - i - 1, area.bottom - i - 1), color);
+
+				AlternateSurface->Draw_Line(Point2D(area.right - i - 1, middle_y + i),
+				                            Point2D(area.right - i - 1, area.bottom - i - 2), color);
+
+				color = ODColorToHiColor(middle_color);
+
+				AlternateSurface->Put_Pixel(Point2D(area.right - i - 1, middle_y + i), color);
+
+				AlternateSurface->Put_Pixel(Point2D(area.left + i, area.bottom - i - 1), color);
+			}
+
+			ValidateRect(window, NULL);
+		}
+	}
+	case WM_NCPAINT:
+		return 0;
+
+	case WM_ERASEBKGND:
+		return 1;
+	}
+
+	WNDPROC proc = NULL;
+	DialogProcs.getValue(window, proc);
+	return CallWindowProc(proc, window, message, wparam, lparam);
+}
+
 // FUNCTION: GAMEMD 0x0061ECA0
 // OwnerDraw::HotkeyHandler
 LRESULT CALLBACK OwnerDraw::HotkeyHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -7457,6 +7609,47 @@ void __fastcall OwnerDraw::BlendGradientRect(Rect const & rect, Surface & surfac
 	}
 
 	surface.Unlock();
+}
+
+// FUNCTION: GAMEMD 0x006219D0
+void __fastcall FUN_006219D0(Rect const &rect, Surface &surface, int xpos, int ypos)
+{
+	unsigned short *surfptr = (unsigned short *)surface.Lock();
+
+	if (surfptr != NULL) {
+		int stride = surface.Stride() / 2;
+		int y;
+
+		for (y = rect.Y; y < rect.Y + rect.Height; ++y) {
+			int index = y * stride + rect.X;
+
+			for (int x = rect.X; x < rect.X + xpos; ++x) {
+				unsigned short px = surfptr[index];
+
+				surfptr[index] = ((px >> 1) & ((ODRComponentMask >> 1) & (unsigned int)ODRComponentMask)) |
+				                 ((px >> 1) & ((ODGComponentMask >> 1) & ODGComponentMask)) |
+				                 ((px >> 1) & (ODBComponentMask >> 1));
+
+				index++;
+			}
+		}
+
+		for (y = rect.Y; y < rect.Y + ypos; ++y) {
+			int index = y * stride + rect.X + xpos;
+
+			for (int x = rect.X + xpos; x < rect.Width + rect.X; ++x) {
+				unsigned short px = surfptr[index];
+
+				surfptr[index] = ((px >> 1) & ((ODRComponentMask >> 1) & (unsigned int)ODRComponentMask)) |
+				                 ((px >> 1) & ((ODGComponentMask >> 1) & ODGComponentMask)) |
+				                 ((px >> 1) & (ODBComponentMask >> 1));
+
+				index++;
+			}
+		}
+
+		surface.Unlock();
+	}
 }
 
 // FUNCTION: GAMEMD 0x00621B80
