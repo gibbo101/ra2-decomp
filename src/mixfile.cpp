@@ -33,7 +33,7 @@ struct CacheNode {
 	void * Value;
 };
 
-extern CacheNode * DAT_00ABF00C;
+static CacheNode * DAT_00ABF00C = NULL;
 void Exit_Process(int code);
 
 class SHPReference {
@@ -242,6 +242,13 @@ void Uncache_Shape(char const * name)
 	CRCEngine crc;
 	int id = crc(upper, strlen(upper));
 	CacheTree_Clear(id, DAT_00ABF00C);
+}
+
+// FUNCTION: GAMEMD 0x005B4310
+void MixFileClass::DestroyCache(void)
+{
+	CacheTree_Destroy(DAT_00ABF00C);
+	DAT_00ABF00C = NULL;
 }
 
 // FUNCTION: GAMEMD 0x005B4350
