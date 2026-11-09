@@ -17741,6 +17741,7 @@ address,name,result,size,source,symbol
 0x0077B260,_$E38,MATCH,26,src/wolpersonainformation2.cpp,_$E38
 0x0077B280,FUN_0077B280,MATCH,29,src/wolpersonainformation2.cpp,?FUN_0077B280@@YIHXZ
 0x0077B2A0,FUN_0077B2A0,MATCH,888,src/wolpersonainformation2.cpp,?FUN_0077B2A0@@YIH_N@Z
+0x0077B620,??_Estringdispid@CComTypeInfoHolder@ATL@@QAEPAXI@Z,MATCH,106,src/wolpersonainformation2.cpp,??_Estringdispid@CComTypeInfoHolder@ATL@@QAEPAXI@Z
 0x0077B690,_$E44,MATCH,40,src/wonline.cpp,_$E44
 0x0077B6C0,_$E47,MATCH,19,src/wonline.cpp,_$E47
 0x0077B6E0,_$E50,MATCH,19,src/wonline.cpp,_$E50
