@@ -8664,6 +8664,7 @@ address,name,result,size,source,symbol
 0x005B4080,CacheTree_Destroy,MATCH,41,src/mixfile.cpp,?CacheTree_Destroy@@YIXPAUCacheNode@@@Z
 0x005B40B0,FileSystem::LoadFile,MATCH,435,src/mixfile.cpp,?LoadFile@FileSystem@@SIPBXPBD_N@Z
 0x005B4270,Uncache_Shape,MATCH,157,src/mixfile.cpp,?Uncache_Shape@@YIXPBD@Z
+0x005B4310,MixFileClass::DestroyCache,MATCH,58,src/mixfile.cpp,?DestroyCache@MixFileClass@@SIXXZ
 0x005B4350,MixFileClass::Finder,MATCH,138,src/mixfile.cpp,?Finder@MixFileClass@@CIPAV1@PBD@Z
 0x005B43E0,MixFileClass::Cache,MATCH,3,src/mixfile.cpp,?Cache@MixFileClass@@SI_NPBDPBVBuffer@@@Z
 0x005B43F0,MixFileClass::Cache,MATCH,5,src/mixfile.cpp,?Cache@MixFileClass@@QAE_NPBVBuffer@@@Z
