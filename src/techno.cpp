@@ -7659,6 +7659,48 @@ void TechnoClass::Set_Talker(TechnoClass * techno, TalkType bubble)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0070F1D0
+void TechnoClass::FUN_0070F1D0(Point2D const &center, Rect const &rect)
+{
+	if (Visual_Character(false, NULL) == VISUAL_NORMAL && !BehindAnim) {
+		if (Rule->Behind) {
+			BehindAnim = new AnimClass(Rule->Behind, Center_Coord(), 0, 1, ShapeFlags_Type(0x600), 0);
+			if (BehindAnim) {
+				BehindAnim->SetOwnerObject(this);
+				if (!Options.ShowHidden)
+					BehindAnim->Invisible = true;
+			}
+		} else {
+			int color = FileSystem::PALETTE_PAL->Convert_Pixel(12);
+			Point2D origin = center;
+			int outside, inside;
+			if (Frame & 8) {
+				outside = 12;
+				inside = 8;
+			} else {
+				outside = 10;
+				inside = 6;
+			}
+			for (int pass = 0; pass < 2; ++pass) {
+				LogicalSurface->Draw_Line(origin + Point2D(-outside, -outside), origin + Point2D(-inside, -outside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(inside, -outside), origin + Point2D(outside, -outside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(outside, -outside), origin + Point2D(outside, -inside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(outside, inside), origin + Point2D(outside, outside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(outside, outside), origin + Point2D(inside, outside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(-inside, outside), origin + Point2D(-outside, outside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(-outside, outside), origin + Point2D(-outside, inside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(-outside, -inside), origin + Point2D(-outside, -outside), color);
+				LogicalSurface->Draw_Line(origin + Point2D(-4, 0), origin + Point2D(4, 0), color);
+				LogicalSurface->Draw_Line(origin + Point2D(0, -4), origin + Point2D(0, 4), color);
+				++origin.X;
+				++origin.Y;
+				RGBClass rgb = ColorSchemes[PlayerPtr->Scheme]->HSV;
+				color = DSurface::Build_Hicolor_Pixel(rgb.Get_Red(), rgb.Get_Green(), rgb.Get_Blue());
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0070F670
 void TechnoClass::FUN_0070F670(CellClass * cell)
 {
