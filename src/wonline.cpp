@@ -3019,7 +3019,198 @@ bool FUN_0077CF40(void);
 void __fastcall FUN_007A0EA0(char const * name, int ping);
 #include "multiplayer.h"
 
-void __fastcall FUN_00785740(User * user);
+void __fastcall FUN_004E34A0(HWND dialog, int side, int flag);
+extern int DAT_00B76440[];
+void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
+void __fastcall FUN_005EDDE0(HWND dialog, bool enable);
+void FUN_005E9850(void);
+void FUN_0072CF90(void);
+static inline void Focus_Chat_Input_After(unsigned int event);
+void __fastcall FUN_005E9340(char const * name);
+
+// FUNCTION: GAMEMD 0x00785740
+void __fastcall FUN_00785740(User *user)
+{
+	stricmp(DAT_00B73E40.get(), user->Nick);
+	if (DAT_00B76B10.Type != 0) {
+		VocClass::PlayGlobal(Rule->PlayerLeft, 1.0f, 0x2000, 0);
+	}
+	if (user->Flags & 0x8000) {
+		FUN_004068E0("Local user leaving channel\n");
+		if (DAT_00B77E28 != 0) {
+			FUN_004068E0("Local user leaving channel after game start\n");
+		}
+		wchar_t name[64];
+		FUN_00735060(name, DAT_00B76B10.Name, -1);
+		if (strncmp(DAT_00B76B10.Name, "Lob_41_", 7) == 0) {
+			int number = atol(DAT_00B76B10.Name + strlen("Lob_41_"));
+			int page = number / 8;
+			int lobby = number % 8;
+			if (page == 0) {
+				swprintf(name, L"%s", DAT_00B73E1C[lobby]);
+			} else {
+				swprintf(name, L"%s %d", DAT_00B73E1C[lobby], page + 1);
+			}
+		}
+		if (!FUN_0077CF40()) {
+			FUN_005E2700(DAT_007EEF28,
+						 StringTable::LoadString("TXT_YOULEFT", 0, "D:\\ra2mdpost\\wonline.cpp", 0x244c),
+						 name);
+		}
+		DAT_00B77DD0 = 0;
+		FUN_004068E0("Channel Leave \n");
+		memset(&DAT_00B76B10, 0, sizeof(DAT_00B76B10));
+		memset(DAT_00B76E40, 0, sizeof(DAT_00B76E40));
+		DAT_00B77900.clear();
+		DAT_00B77E4C = 0;
+		Focus_Chat_Input_After(0x40);
+		Session.Options.ScenarioDescription[0] = 0;
+		++Session.Suspended;
+		Session.ScenarioFileLength = 0;
+		Session.ScenarioDigest[0] = 0;
+		HWND main = FUN_00775940(0x113);
+		if (main && DAT_00B77DC1) {
+			ShowWindow(main, SW_HIDE);
+			OwnerDraw::SetNeedsControlImage(main, 1);
+		}
+		HWND guest = FUN_00775940(0xc9);
+		if (guest) {
+			FUN_007757E0(guest, 2);
+			FUN_0072CF90();
+			ShowWindow(guest, SW_HIDE);
+			OwnerDraw::SetNeedsControlImage(guest, 1);
+			if (Session.unknown_0C == 4) {
+				if (DAT_00B77DC1) {
+					if (main) {
+						ShowWindow(main, SW_HIDE);
+						OwnerDraw::SetNeedsControlImage(main, 1);
+					}
+				} else {
+					FUN_00788A30(false);
+					if (main) {
+						PostMessageA(main, 0x593, 0, 0);
+					}
+				}
+			} else if (Session.unknown_0C == 5) {
+				FUN_004068E0("Setting g_JoinLobbyNow, Guest\n");
+				DAT_00B77DD8 = 1;
+			}
+		}
+		HWND game = FUN_00775940(0xc2);
+		if (game) {
+			FUN_007757E0(game, 2);
+			FUN_0072CF90();
+			ShowWindow(game, SW_HIDE);
+			OwnerDraw::SetNeedsControlImage(game, 1);
+			if (Session.unknown_0C == 4) {
+				if (DAT_00B77DC1) {
+					if (main) {
+						ShowWindow(main, SW_HIDE);
+						OwnerDraw::SetNeedsControlImage(main, 1);
+					}
+				} else {
+					FUN_00788A30(false);
+					if (main) {
+						PostMessageA(main, 0x593, 0, 0);
+					}
+				}
+			} else if (Session.unknown_0C == 5) {
+				FUN_004068E0("Setting g_JoinLobbyNow, Host\n");
+			}
+		}
+		if (main) {
+			if (!DAT_00B77DC1) {
+				ShowWindow(main, SW_SHOW);
+				OwnerDraw::SetNeedsControlImage(main, 0);
+			}
+			FUN_00781480();
+		}
+		--Session.Suspended;
+		return;
+	}
+	if (DAT_00B77E28 == 2) {
+		FUN_004068E0("other player leaving channel after Game Started\n");
+		return;
+	}
+	if (user) {
+		for (int slot = 0; slot < 8; ++slot) {
+			if (Session.Slots[slot] && !strcmp(FUN_007350C0(Session.Slots[slot]->Name), user->Nick)) {
+				HWND lobby = FUN_005E26C0();
+				if (lobby) {
+					FUN_004E34A0(lobby, slot, -1);
+				}
+				break;
+			}
+		}
+	}
+	User other;
+	for (int index = 0; index < DAT_00B77900.length(); ++index) {
+		DAT_00B77900.get(other, index);
+		if (!stricmp(other.Nick, user->Nick)) {
+			DAT_00B77900.remove(index);
+			if (DAT_00B76B10.Type != 0) {
+				memmove(DAT_00B76E40 + index * sizeof(ChannelUserInfo),
+						DAT_00B76E40 + (index + 1) * sizeof(ChannelUserInfo),
+						sizeof(ChannelUserInfo) * (15 - index));
+				if (DAT_00B77E28 != 2) {
+					for (unsigned j = 1; j < 16; ++j) {
+						DAT_00B76E58[j].Accepted = 0;
+						EnableWindow(GetDlgItem(FUN_005E26C0(), 0x59f), 1);
+					}
+					if (!DAT_00B77E4C) {
+						HWND dialog = FUN_00775940(0xc9);
+						FUN_005EDDE0(dialog, true);
+					}
+					FUN_005E9850();
+				}
+			}
+			if (index == 0 && DAT_00B76B10.Type != 0 && !DAT_00B77E4C) {
+				DAT_00AC116C->V09();
+			}
+			break;
+		}
+	}
+	if (DAT_00B76B10.Type != 0) {
+		FUN_005E9340(user->Nick);
+		for (int player = 0; player < Session.Players.Count(); ++player) {
+			if (!stricmp(FUN_007350C0(Session.Players[player]->Name), user->Nick)) {
+				NodeNameType *entry = Session.Players[player];
+				Session.Players.Delete_Index(player);
+				Session.FUN_0069BBF0(player);
+				delete entry;
+				break;
+			}
+		}
+		for (int slot = 0; slot < 8; ++slot) {
+			if (!Session.Slots[slot] || !FUN_005E93F0(Session.Slots[slot])) {
+				DAT_00B76440[slot] = -1;
+			}
+			char *name = FUN_007350C0(Session.Slots[slot]->Name);
+			FUN_007A0EA0(name, DAT_00B76440[slot]);
+		}
+		if (DAT_00B77E4C) {
+			FUN_005E9850();
+			FUN_0077DB90();
+			FUN_005E32D0(true, true);
+			if (FUN_00775B20() == 0x6b) {
+				HWND window = FUN_00775B10();
+				int index = SendDlgItemMessageA(window, 0x6eb, 0x188, 0, 0);
+				if (index != -1) {
+					MultiplayerGameMode *mode =
+						(MultiplayerGameMode *)SendDlgItemMessageA(window, 0x6eb, 0x199, index, 0);
+					if (mode) {
+						mode->vt_entry_90();
+						FUN_00783C80(0, false);
+						return;
+					}
+				}
+			} else if (Session.MPGameMode) {
+				Session.MPGameMode->vt_entry_90();
+			}
+		}
+	}
+	FUN_00783C80(0, false);
+}
 
 // FUNCTION: GAMEMD 0x00785EA0
 void FUN_00785EA0(void)
@@ -3589,11 +3780,8 @@ extern int DAT_00841F38;
 extern int DAT_00841F3C;
 
 extern long DAT_00B77EA8;
-void __fastcall FUN_004E34A0(HWND dialog, int side, int flag);
 void __fastcall FUN_005E3720(char const * text);
-extern int DAT_00B76440[];
 extern char DAT_00889F64[];
-void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
 int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void __fastcall FUN_00779C90(Wstring const & value);
@@ -3609,7 +3797,6 @@ extern int DAT_007EEF28;
 extern char DAT_00B77E30[];
 bool __fastcall FUN_0069BBE0(SessionClass * session);
 wchar_t * __fastcall FUN_00735120(char const * text);
-void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
 extern int DAT_007EEF2C;
 void __cdecl FUN_005E2790(int color, wchar_t const * text, ...);
 extern int DAT_00B76C20;
@@ -5169,7 +5356,6 @@ BOOL CALLBACK FUN_0078EBC0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 int __fastcall FUN_005E8D00(wchar_t const * name);
-extern int DAT_00B76440[];
 extern wchar_t DAT_00B75F6C[];
 
 int __fastcall FUN_005E64C0(int index);
@@ -5822,6 +6008,23 @@ void __fastcall FUN_00793B30(int mode, char const * options)
 	}
 	FUN_004068E0("Sending public options string %s\n", text);
 	DAT_00AC116C->V15(text);
+}
+
+// FUNCTION: GAMEMD 0x00793BB0
+void FUN_00793BB0(void)
+{
+	for (int i = 0; i < Session.unknown_2FEC; ++i) {
+		if (Session.unknown_2F8C[i] == 0) {
+			GlobalPacketType packet;
+			memset(&packet, 0, sizeof(packet));
+			packet.Command = NET_PING;
+			strcpy(packet.Name, DAT_00B73E40.get());
+			char const *name = FUN_007350C0(Session.Slots[Session.unknown_2F6C[i]]->Name);
+			FUN_004068E0("Sending keepalive NET_PING packet to %s\n", name);
+			Ipx.Send_Global_Message_To_Name(&packet, 0x2F, 0, Session.Slots[Session.unknown_2F6C[i]]->Name);
+			Session.unknown_2F8C[i] = CDTimerClass<SystemTimerClass>(1200);
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x00793CD0
@@ -8219,6 +8422,219 @@ BOOL CALLBACK FUN_0079DB50(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 
 bool __fastcall FUN_0079F0A0(Wstring * name, ArrayList<WolChannel> * channels, WolChannel * result);
 
+void __fastcall FUN_0079BF50(HWND dialog);
+void __fastcall FUN_0079C040(HWND dialog);
+extern int DAT_0084A1CC;
+extern int DAT_0084A1D0;
+
+// FUNCTION: GAMEMD 0x0079AF10
+void __fastcall FUN_0079AF10(HWND dialog)
+{
+	HWND list = GetDlgItem(dialog, 0x689);
+	SendMessageA(list, 0x49d, 0, 1);
+
+	for (int i = 0; i < DAT_00B73AA8.length(); ++i) {
+		Wstring buddy;
+		DAT_00B73AA8.get(buddy, i);
+		WideWstring display = FUN_007B7ED0(buddy);
+		WolEntryState state = WOL_ENTRY_STATE_NONE;
+		DAT_00B76990.getValue(buddy, state);
+
+		int row = SendMessageA(list, 0x4c5, 0, (LPARAM)buddy.text());
+		if (row == -1) {
+			row = SendMessageA(list, 0x4c8, 0, (LPARAM)buddy.text());
+		}
+
+		OwnerDraw::CellData name;
+		name.type = OwnerDraw::CellData::TEXT;
+		name.string.set(display.get());
+		name.hint.set(DAT_00887734);
+
+		OwnerDraw::CellData status;
+		status.type = OwnerDraw::CellData::TEXT;
+		status.hint.set(DAT_00887734);
+
+		OwnerDraw::CellData mode;
+		mode.type = OwnerDraw::CellData::INVALID;
+		mode.string.set(DAT_00887734);
+		mode.hint.set(DAT_00887734);
+
+		OwnerDraw::CellData password;
+		password.type = OwnerDraw::CellData::INVALID;
+		password.string.set(DAT_00887734);
+		password.hint.set(DAT_00887734);
+
+		OwnerDraw::CellData gameType;
+		gameType.type = OwnerDraw::CellData::INVALID;
+		gameType.string.set(DAT_00887734);
+		gameType.hint.set(DAT_00887734);
+
+		OwnerDraw::CellData ping;
+		ping.type = OwnerDraw::CellData::INVALID;
+		ping.string.set(DAT_00887734);
+		ping.hint.set(DAT_00887734);
+
+		switch (state) {
+		case 1:
+			status.string.set(
+			    StringTable::LoadString("WOL:BuddyDisabledFind", 0, "D:\\ra2mdpost\\wonline.cpp", 0x67BD));
+			name.color = status.color = 0x808080;
+			break;
+
+		case 2:
+			status.string.set(StringTable::LoadString("WOL:BuddyOffline", 0, "D:\\ra2mdpost\\wonline.cpp", 0x67C3));
+			name.color = status.color = 0x808080;
+			break;
+
+		case 3:
+			status.string.set(StringTable::LoadString("WOL:BuddyOnline", 0, "D:\\ra2mdpost\\wonline.cpp", 0x67C9));
+			name.color = status.color = 0xf0f0;
+			break;
+
+		case 7:
+		case 8:
+			status.string.set(
+			    StringTable::LoadString("WOL:BuddyQuickMatching", 0, "D:\\ra2mdpost\\wonline.cpp", 0x67D0));
+			name.color = status.color = 0x80ff00;
+			break;
+
+		case 4: {
+			WolChannel channel;
+			memset(&channel, 0, sizeof(channel));
+
+			if (!DAT_00B76608.getValue(buddy, channel)) {
+				status.string.set(StringTable::LoadString("WOL:BuddyOnline", 0, "D:\\ra2mdpost\\wonline.cpp", 0x67E9));
+				name.color = status.color = 0xf0f0;
+			} else {
+				if (channel.Type == 0 && strncmp(channel.Name, "Lob_41_", strlen("Lob_41_")) == 0) {
+					int lobby = atol(channel.Name + strlen("Lob_41_"));
+					int page = lobby / 8;
+
+					WideWstring location(DAT_00B73E1C[lobby % 8]);
+
+					if (page) {
+						location += L" ";
+						location += FUN_007B7DD0(page + 1);
+					}
+					status.string.set(location.get());
+				} else {
+					status.string.set(FUN_00735120(channel.Name));
+				}
+				name.color = status.color = 0xff4000;
+			}
+			break;
+		}
+
+		case 5: {
+			WolChannel game;
+			memset(&game, 0, sizeof(game));
+			char found = DAT_00B76608.getValue(buddy, game);
+
+			if (found) {
+				Wstring game_name(game.Name);
+				found = FUN_0079F0A0(&game_name, &DAT_00B76AE0, &game);
+			}
+
+			if (found) {
+				char options[132];
+				strncpy(options, game.Info, 128);
+				int first = 0, second = 0, third = 0;
+				int fourth = 0, fifth = 0;
+				Wstring rest;
+
+				FUN_0077E820(options, &first, &second, &third, &fourth, &fifth, &rest);
+
+				unsigned int current = game.CurrentUsers - fourth + third;
+				int reserved = (fourth != 0 || fifth != 0);
+				unsigned int maximum = game.MaxUsers - reserved;
+
+				wchar_t details[80];
+				swprintf(details, L"%hs %d/%d", game.Name, current, maximum);
+				status.string.set(details);
+				name.color = status.color = 0xffff00;
+
+				mode.type = OwnerDraw::CellData::SURFACE;
+
+				if (game.Tournament != 0) {
+					mode.surf = SurfaceCache.GetSurface("woltrny.pcx", 0);
+					mode.hint.set(
+					    StringTable::LoadString("TXT_TOURNAMENT_GAME", 0, "D:\\ra2mdpost\\wonline.cpp", 0x680D));
+				} else if (game.Reserved & 0x100) {
+					mode.surf = SurfaceCache.GetSurface("wolclan.pcx", 0);
+					mode.hint.set(
+					    StringTable::LoadString("TXT_BATTLECLAN_GAME", 0, "D:\\ra2mdpost\\wonline.cpp", 0x6810));
+				} else {
+					mode.surf = SurfaceCache.GetSurface("gt18.bmp", 0);
+					mode.hint.set(DAT_00887734);
+				}
+
+				if (game.Reserved & 0x600) {
+					if (fourth == 0 && fifth != 0) {
+						gameType.type = OwnerDraw::CellData::SURFACE;
+						gameType.surf = SurfaceCache.GetSurface("wolrslkob.pcx", 0);
+					} else {
+						gameType.type = OwnerDraw::CellData::SURFACE;
+						gameType.surf = SurfaceCache.GetSurface("wolreslk.pcx", 0);
+					}
+				} else if (fourth == 0 && fifth != 0) {
+					gameType.type = OwnerDraw::CellData::SURFACE;
+					gameType.surf = SurfaceCache.GetSurface("wolob.pcx", 0);
+				}
+
+				if (game.Squad & 0x100) {
+					password.type = OwnerDraw::CellData::SURFACE;
+					password.surf = SurfaceCache.GetSurface("wolpriv.pcx", 0);
+					password.hint.set(
+					    StringTable::LoadString("TXT_GAME_PASSWORD", 0, "D:\\ra2mdpost\\wonline.cpp", 0x6830));
+				}
+
+				ping.type = OwnerDraw::CellData::PING;
+				ping.pingtime = game.Ping;
+				swprintf(details, StringTable::LoadString("WOL:GamePing", 0, "D:\\ra2mdpost\\wonline.cpp", 0x6835),
+				         game.Ping);
+				ping.hint.set(details);
+			} else {
+				status.string.set(StringTable::LoadString("WOL:BuddyOnline", 0, "D:\\ra2mdpost\\wonline.cpp", 0x6838));
+				name.color = status.color = 0xf0f0;
+			}
+			break;
+		}
+
+		case 6:
+			status.string.set(StringTable::LoadString("WOL:BuddyPlayingGame", 0, "D:\\ra2mdpost\\wonline.cpp", 0x683F));
+			name.color = status.color = 0x3050ff;
+			break;
+
+		default:
+			status.string.set(
+			    StringTable::LoadString("WOL:BuddyUnknownStatus", 0, "D:\\ra2mdpost\\wonline.cpp", 0x6845));
+			name.color = status.color = 0x808080;
+			break;
+		}
+
+		SendMessageA(list, 0x4a8, ((unsigned short)row << 16) | ((unsigned short)DAT_0084A1C4), (LPARAM)&name);
+		SendMessageA(list, 0x4a8, ((unsigned short)row << 16) | ((unsigned short)DAT_0084A1C8), (LPARAM)&mode);
+		SendMessageA(list, 0x4a8, ((unsigned short)row << 16) | ((unsigned short)DAT_0084A1CC), (LPARAM)&password);
+		SendMessageA(list, 0x4a8, ((unsigned short)row << 16) | ((unsigned short)DAT_0084A1D0), (LPARAM)&gameType);
+		SendMessageA(list, 0x4a8, ((unsigned short)row << 16) | ((unsigned short)DAT_0084A1D4), (LPARAM)&status);
+		SendMessageA(list, 0x4a8, ((unsigned short)row << 16) | ((unsigned short)DAT_0084A1D8), (LPARAM)&ping);
+	}
+
+	int wanted = -1;
+	if (DAT_00B76E24.length() > 0) {
+		wanted = SendMessageA(list, 0x4c5, 0, (LPARAM)DAT_00B76E24.text());
+	}
+
+	if (wanted != SendMessageA(list, 0x188, 0, 0)) {
+		SendMessageA(list, 0x186, wanted, 0);
+	}
+
+	SendMessageA(list, 0x49d, 0, 0);
+	InvalidateRect(list, 0, 0);
+	FUN_0079BF50(dialog);
+	FUN_0079C040(dialog);
+}
+
 // FUNCTION: GAMEMD 0x0079BC80
 bool FUN_0079BC80(void)
 {
@@ -8261,21 +8677,15 @@ bool FUN_0079BED0(void)
 	if (DAT_00B76E24.length() == 0) {
 		return false;
 	}
-	WolEntryState * state;
-	if (!DAT_00B76990.getPointer(DAT_00B76E24, &state)) {
+
+	WolEntryState state = WOL_ENTRY_STATE_NONE;
+	DAT_00B76990.getValue(DAT_00B76E24, state);
+
+	if ((int)state >= 0 && (int)state <= 2) {
 		return false;
 	}
-	if (state == NULL) {
-		goto done;
-	}
-	{
-		int value = *state;
-		if (value < 0 || value > 2) {
-			return true;
-		}
-	}
-done:
-	return false;
+
+	return true;
 }
 
 extern int DAT_00B779D0;
@@ -8283,6 +8693,16 @@ extern int DAT_00B779D0;
 static inline void Set_Text(HWND window, wchar_t const * text)
 {
 	SendMessage(window, 0x4B2, 0, (LPARAM)text);
+}
+
+// FUNCTION: GAMEMD 0x0079BF50
+void __fastcall FUN_0079BF50(HWND dialog)
+{
+	EnableWindow(GetDlgItem(dialog, 0x703), DAT_00B76E24.length() > 0);
+
+	EnableWindow(GetDlgItem(dialog, 0x62D), FUN_0079BC80());
+
+	EnableWindow(GetDlgItem(dialog, 0x5C2), FUN_0079BED0());
 }
 
 // FUNCTION: GAMEMD 0x0079C040
@@ -10696,8 +11116,6 @@ static inline bool Is_Internal_Session(void)
 }
 
 extern int DAT_00AC1178;
-void __fastcall FUN_005EDDE0(HWND dialog, bool enable);
-void FUN_005E9850(void);
 
 // FUNCTION: GAMEMD 0x007A7110
 long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * users)
@@ -10879,6 +11297,86 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 	}
 	FUN_00783C80(0, false);
 	return 0;
+}
+
+namespace Game
+{
+namespace Network
+{
+extern int GameStockKeepingUnit;
+extern long PlanetWestwoodStartTime;
+}
+}
+extern char DAT_00B779E0[];
+
+// FUNCTION: GAMEMD 0x007A7B60
+long __stdcall FUN_007A7B60(void *sink, long result, WolChannel *channel, User *users, int game_id)
+{
+	bool all_found = true;
+	int count = DAT_00B77900.length();
+	int listed = 0;
+	DAT_00B76478 = CDTimerClass<SystemTimerClass>(0);
+	if (DAT_00B77E27)
+		return S_OK;
+	DAT_00B77DCC = 1;
+	User *user = users;
+	while (user) {
+		++listed;
+		Wstring name(user->Nick);
+		name.toLower();
+		int i;
+		for (i = 0; i < count; ++i) {
+			User entry;
+			DAT_00B77900.get(entry, i);
+			Wstring other(entry.Nick);
+			other.toLower();
+			if (name == other)
+				break;
+		}
+		if (i >= count) {
+			all_found = false;
+			break;
+		}
+		user = user->Next;
+	}
+	bool ok = listed == count && all_found;
+	if (!ok) {
+		DAT_00B77DEC = false;
+		DAT_00B77E28 = 0;
+	} else {
+		if (FUN_0077CF40()) {
+			HWND dialog = FUN_00775940(0x117);
+			FUN_007757E0(dialog, 0);
+		}
+		HWND dialog = FUN_00775940(0xCF);
+		FUN_007757E0(dialog, 0);
+		Game::Network::WOLGameID = game_id;
+		DAT_00B77D6C = DAT_0084A234;
+		Game::Network::GameStockKeepingUnit = 0x2300;
+		Game::Network::Tournament = DAT_00B76B10.Tournament;
+		if (FUN_0077D970())
+			Game::Network::Tournament = 2;
+		strcpy(DAT_00B77830, DAT_00B73E40.get());
+		User *first = NULL;
+		DAT_00B77900.getPointer(&first, 0);
+		if (first)
+			strcpy(DAT_00B779E0, first->Nick);
+		Game::Network::PlanetWestwoodStartTime = time(0);
+		FUN_004068E0("OnGameStart\n");
+		if (channel)
+			DAT_00B77DD4 = channel->Reserved & 0xFF;
+		DAT_00B77E26 = false;
+		DAT_00B77E27 = true;
+		FUN_00792F10(users);
+		DAT_00B77E28 = 2;
+		FUN_004068E0("Starting a %d player game.\n", Session.NumPlayers);
+		User *host = FUN_007931A0();
+		if (host)
+			FUN_00735060(Session.MasterPlayerName, host->Nick, -1);
+		Session.MasterPlayerID = -1;
+		Session.unknown_2E14 = FUN_007937B0(Session.unknown_2A14);
+	}
+	return S_OK;
 }
 
 // FUNCTION: GAMEMD 0x007A8DA0
@@ -12185,7 +12683,6 @@ long __stdcall FUN_007AD610(void * sink)
 extern bool DAT_00AC11C2;
 extern int DAT_007EEF30, DAT_007EEF34, DAT_007EEF38, DAT_007EEF44;
 extern wchar_t DAT_0084B224[], DAT_0084B94C[], DAT_0084B9B0[];
-void FUN_0072CF90(void);
 void __fastcall FUN_005E74E0(HWND window);
 wchar_t *__fastcall FUN_0078F200(wchar_t const *name);
 #include "tiprequest.h"
