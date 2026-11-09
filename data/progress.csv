@@ -926,7 +926,7 @@ address,name,result,size,source,symbol
 0x004263A0,ObjectClass::Visual_Character,MATCH,5,src/anim.cpp,?Visual_Character@ObjectClass@@UBE?AW4VisualType@@_NPBVHouseClass@@@Z
 0x004263B0,ObjectClass::IsStrange,MATCH,3,src/anim.cpp,?IsStrange@ObjectClass@@UBE_NXZ
 0x004263C0,ObjectClass::Full_Name,MATCH,6,src/anim.cpp,?Full_Name@ObjectClass@@UBEPBGXZ
-0x004263D0,ObjectClass::Fire_Coord,MATCH,50,src/anim.cpp,?Fire_Coord@ObjectClass@@UBE?AVCoord@@HV2@@Z
+0x004263D0,ObjectClass::Fire_Coord,MATCH,50,src/anim.cpp,?Fire_Coord@ObjectClass@@UBE?AVCoord@@HV?$TPoint3D@H@@@Z
 0x00426410,ObjectClass::Occupies_Cells,MATCH,3,src/anim.cpp,?Occupies_Cells@ObjectClass@@UBE_NXZ
 0x00426420,ObjectClass::IsDisguised,MATCH,3,src/anim.cpp,?IsDisguised@ObjectClass@@UBE_NXZ
 0x00426430,ObjectClass::IsDisguisedAs,MATCH,5,src/anim.cpp,?IsDisguisedAs@ObjectClass@@UBE_NPAVHouseClass@@@Z
@@ -1630,7 +1630,7 @@ address,name,result,size,source,symbol
 0x00453240,BuildingClass::Unlimbo_Laser_Fence_Helper,MATCH,296,src/building.cpp,?Unlimbo_Laser_Fence_Helper@BuildingClass@@SIXABVCell@@@Z
 0x00453370,BuildingClass::Init_Laser_Fence_Frame,MATCH,36,src/building.cpp,?Init_Laser_Fence_Frame@BuildingClass@@QAEXXZ
 0x004533A0,BuildingClass::Toggle_Laser_Fence_Post,MATCH,1180,src/building.cpp,?Toggle_Laser_Fence_Post@BuildingClass@@QAEX_N@Z
-0x00453840,BuildingClass::Fire_Coord,MATCH,550,src/building.cpp,?Fire_Coord@BuildingClass@@UBE?AVCoord@@HV2@@Z
+0x00453840,BuildingClass::Fire_Coord,MATCH,550,src/building.cpp,?Fire_Coord@BuildingClass@@UBE?AVCoord@@HV?$TPoint3D@H@@@Z
 0x00453A70,BuildingClass::Turret_Coord,MATCH,374,src/building.cpp,?Turret_Coord@BuildingClass@@UBE?AVCoord@@H@Z
 0x00453BF0,BuildingClass::Voxel_Fire_Coord,MATCH,362,src/building.cpp,?Voxel_Fire_Coord@BuildingClass@@QBE?AVCoord@@H_N@Z
 0x00453D60,BuildingClass::Set_Occupy_Bit,MATCH,85,src/building.cpp,?Set_Occupy_Bit@BuildingClass@@UAEXABVCoord@@@Z
@@ -6275,7 +6275,7 @@ address,name,result,size,source,symbol
 0x00522E70,InfantryClass::Do_MISSION_HARVEST,MATCH,325,src/infantry.cpp,?Do_MISSION_HARVEST@InfantryClass@@UAEHXZ
 0x00522FC0,InfantryClass::FUN_00522FC0,MATCH,19,src/infantry.cpp,?FUN_00522FC0@InfantryClass@@QAE_NXZ
 0x00522FE0,InfantryClass::ChronoWarpTo,MATCH,610,src/infantry.cpp,?ChronoWarpTo@InfantryClass@@UAE_NVCoord@@@Z
-0x00523250,InfantryClass::Fire_Coord,MATCH,159,src/infantry.cpp,?Fire_Coord@InfantryClass@@UBE?AVCoord@@HV2@@Z
+0x00523250,InfantryClass::Fire_Coord,MATCH,159,src/infantry.cpp,?Fire_Coord@InfantryClass@@UBE?AVCoord@@HV?$TPoint3D@H@@@Z
 0x005232F0,InfantryClass::Fetch_Object_Size,MATCH,6,src/infantry.cpp,?Fetch_Object_Size@InfantryClass@@UBEHXZ
 0x00523300,InfantryClass::GetClassID,MATCH,56,src/infantry.cpp,?GetClassID@InfantryClass@@UAGJPAU_GUID@@@Z
 0x00523340,InfantryClass::Fetch_RTTI,MATCH,6,src/infantry.cpp,?Fetch_RTTI@InfantryClass@@UBE?AW4RTTIType@@XZ
@@ -13155,14 +13155,15 @@ address,name,result,size,source,symbol
 0x006B6BA0,_$E32,MATCH,15,src/spawnmanager.cpp,_$E32
 0x006B6BB0,_$E35,MATCH,18,src/spawnmanager.cpp,_$E35
 0x006B6BD0,_$E38,MATCH,26,src/spawnmanager.cpp,_$E38
-0x006B6BF0,_$E47,MATCH,23,src/spawnmanager.cpp,_$E47
-0x006B6C10,_$E80,MATCH,61,src/spawnmanager.cpp,_$E80
-0x006B6C50,_$E78,MATCH,59,src/spawnmanager.cpp,_$E78
+0x006B6BF0,_$E49,MATCH,23,src/spawnmanager.cpp,_$E49
+0x006B6C10,_$E120,MATCH,61,src/spawnmanager.cpp,_$E120
+0x006B6C50,_$E118,MATCH,59,src/spawnmanager.cpp,_$E118
 0x006B6C90,SpawnManagerClass::SpawnManagerClass,MATCH,516,src/spawnmanager.cpp,??0SpawnManagerClass@@QAE@PAVTechnoClass@@PAVAircraftTypeClass@@HHH@Z
 0x006B6EA0,SpawnManagerClass::SpawnManagerClass,MATCH,241,src/spawnmanager.cpp,??0SpawnManagerClass@@QAE@XZ
 0x006B6FA0,SpawnManagerClass::SpawnManagerClass,MATCH,102,src/spawnmanager.cpp,??0SpawnManagerClass@@QAE@ABVNoInitClass@@@Z
 0x006B7010,SpawnManagerClass::~SpawnManagerClass,MATCH,231,src/spawnmanager.cpp,??1SpawnManagerClass@@UAE@XZ
 0x006B7100,SpawnManagerClass::KillNodes,MATCH,294,src/spawnmanager.cpp,?KillNodes@SpawnManagerClass@@QAEXXZ
+0x006B7230,SpawnManagerClass::AI,MATCH,2396,src/spawnmanager.cpp,?AI@SpawnManagerClass@@UAEXXZ
 0x006B7B90,SpawnManagerClass::SetTarget,MATCH,17,src/spawnmanager.cpp,?SetTarget@SpawnManagerClass@@QAEXPAVAbstractClass@@@Z
 0x006B7BB0,SpawnManagerClass::ResetTarget,MATCH,133,src/spawnmanager.cpp,?ResetTarget@SpawnManagerClass@@QAEXXZ
 0x006B7C40,SpawnManagerClass::UpdateTarget,MATCH,23,src/spawnmanager.cpp,?UpdateTarget@SpawnManagerClass@@QAE_NXZ
@@ -14763,7 +14764,7 @@ address,name,result,size,source,symbol
 0x006F3820,TechnoClass::SelectNavalTargeting,MATCH,292,src/techno.cpp,?SelectNavalTargeting@TechnoClass@@UBEHPAVAbstractClass@@@Z
 0x006F3950,TechnoClass::How_Many_Survivors,MATCH,24,src/techno.cpp,?How_Many_Survivors@TechnoClass@@UBEHXZ
 0x006F3970,TechnoClass::Combat_Damage,MATCH,337,src/techno.cpp,?Combat_Damage@TechnoClass@@QBEHH@Z
-0x006F3AD0,TechnoClass::Fire_Coord,MATCH,653,src/techno.cpp,?Fire_Coord@TechnoClass@@UBE?AVCoord@@HV2@@Z
+0x006F3AD0,TechnoClass::Fire_Coord,MATCH,653,src/techno.cpp,?Fire_Coord@TechnoClass@@UBE?AVCoord@@HV?$TPoint3D@H@@@Z
 0x006F3D60,TechnoClass::Turret_Coord,MATCH,468,src/techno.cpp,?Turret_Coord@TechnoClass@@UBE?AVCoord@@H@Z
 0x006F3F40,TechnoClass::Init,MATCH,953,src/techno.cpp,?Init@TechnoClass@@UAEXXZ
 0x006F4300,TechnoClass::TechnoClass,MATCH,498,src/techno.cpp,??0TechnoClass@@QAE@ABVNoInitClass@@@Z

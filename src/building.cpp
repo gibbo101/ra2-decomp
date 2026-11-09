@@ -5538,7 +5538,7 @@ static inline Coord Ground_Fire_Offset(Point2D const & point)
 }
 
 // FUNCTION: GAMEMD 0x00453840
-Coord BuildingClass::Fire_Coord(int which, Coord base) const
+Coord BuildingClass::Fire_Coord(int which, Point3D base) const
 {
 	if (Class->CanBeOccupied && GetOccupantCount() > 0) {
 		Coord pt = Ground_Fire_Offset(TacticalMap->Pixel_To_Lepton(Class->MuzzleFlash[FiringOccupantIndex]));
@@ -5547,7 +5547,7 @@ Coord BuildingClass::Fire_Coord(int which, Coord base) const
 	if (Class->PrimaryFirePixelOffset != Point2D(0xFFFF, 0xFFFF)) {
 		if (Class->PrimaryFireDualOffset) {
 			Coord pt = Ground_Fire_Offset(TacticalMap->Pixel_To_Lepton(Class->PrimaryFirePixelOffset));
-			return(BASECLASS::Fire_Coord(which, Coord(0, 0, 0)) + pt);
+			return(BASECLASS::Fire_Coord(which, Point3D(0, 0, 0)) + pt);
 		}
 		Coord pt = Ground_Fire_Offset(TacticalMap->Pixel_To_Lepton(Class->PrimaryFirePixelOffset));
 		return(pt + Render_Coord());
@@ -5556,7 +5556,7 @@ Coord BuildingClass::Fire_Coord(int which, Coord base) const
 		return(Voxel_Fire_Coord(which, true));
 	}
 
-	Coord coord = BASECLASS::Fire_Coord(which, Coord(0, 0, 0));
+	Coord coord = BASECLASS::Fire_Coord(which, Point3D(0, 0, 0));
 	if (Class->IsTurretAnimAVoxel) {
 		Point2D pt(Class->AnimData[BANIM_TURRET].Location.X, Class->AnimData[BANIM_TURRET].Location.Y);
 		coord += TacticalMap->Pixel_To_Lepton(pt);

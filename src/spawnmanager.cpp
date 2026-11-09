@@ -5,6 +5,11 @@
 #include "always.h"
 #include "geometry.h"
 #include "spawnmgr.h"
+#include "weapon.h"
+#include "animtype.h"
+#include "anim.h"
+#include "cell.h"
+#include "map.h"
 #include "aircraft.h"
 #include "airctype.h"
 #include "globals.h"
@@ -43,16 +48,16 @@
 // SYNTHETIC: GAMEMD 0x006B6BD0 SYMBOL
 // _$E38
 // SYNTHETIC: GAMEMD 0x006B6BF0 SYMBOL
-// _$E47
+// _$E49
 
 extern "C" const CLSID CLSID_SpawnManagerClass;
 namespace Game { extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; }
 
 // SYNTHETIC: GAMEMD 0x006B6C10 SYMBOL
-// _$E80
+// _$E120
 // SYNTHETIC: GAMEMD 0x006B6C50 SYMBOL
-// _$E78
+// _$E118
 DynamicVectorClass<SpawnManagerClass *> SpawnManagers;
 
 // FUNCTION: GAMEMD 0x006B6C90
@@ -157,6 +162,275 @@ void SpawnManagerClass::KillNodes(void)
 			SpawnedNodes[index]->Unit = 0;
 			SpawnedNodes[index]->SpawnTimer = delay;
 		}
+	}
+}
+
+extern char const * DAT_00840098;
+extern int DAT_0084009C, DAT_008400A0;
+
+static inline bool Spawn_Is_Foot(AbstractClass const * object)
+{
+	return object != NULL && (object->AbstractFlags & 4) != 0;
+}
+
+static inline FootClass * Spawn_Foot_View(AbstractClass * object)
+{
+	if (object == NULL) return NULL;
+	return (object->AbstractFlags & 4)
+		? static_cast<FootClass *>(object) : NULL;
+}
+// FUNCTION: GAMEMD 0x006B7230
+void SpawnManagerClass::AI()
+{
+	if (UpdateTimer.Value()) {
+		return;
+	}
+	UpdateTimer = 10;
+
+	for (int i = 0; i < SpawnedNodes.Count(); i++) {
+		bool burst = false;
+		AircraftClass *unit = SpawnedNodes[i]->Unit;
+		switch (SpawnedNodes[i]->Status) {
+		case 0:
+			if (Target == 0 || SpawnTimer.Value() || Status == 2 ||
+				Owner->House->IonSensitivesShouldBeOffline()) {
+				break;
+			}
+			if (SpawnedNodes[i]->IsSpawnMissile == 1) {
+				if (((FootClass *)Owner)->Locomotion.operator->()->Is_Moving()) {
+					break;
+				}
+				if (((FootClass *)Owner)->Locomotion.operator->()->Is_Moving_Now()) {
+					break;
+				}
+			}
+			if (Spawn_Is_Foot(Owner) &&
+				Spawn_Foot_View(Owner)->IsAttackedByLocomotor) {
+				break;
+			}
+			if (Owner->Techno_Type_Class()->MissileSpawn) {
+				SpawnTimer = 9;
+			} else {
+				SpawnTimer = 20;
+			}
+			if (SpawnedNodes[i]->IsSpawnMissile == 1) {
+				WeaponTypeClass *weapon =
+					Owner->Get_Class_Weapon_Data(0)->Weapon;
+				if (weapon != 0 && weapon->Burst > 1) {
+					burst = true;
+					Owner->BurstIndex = i & 1;
+				}
+			}
+			SpawnedNodes[i]->Status = 2;
+			{
+				WeaponDataStruct const *data =
+					Owner->Get_Class_Weapon_Data(0);
+				int which = 0;
+				Coord coord = Point3D(0, 0, 0);
+				if (!data->Weapon->Spawner) which = 1;
+				if (Owner->BurstIndex) {
+					coord = Owner->Fire_Coord(
+						which, Owner->Techno_Type_Class()->SecondSpawnOffset);
+				} else {
+					coord = Owner->Fire_Coord(which, Coord(0, 0, 0));
+				}
+				coord.Z += 10;
+				if (SpawnType == Rule->CMisl.Type) {
+					coord.X -= DAT_0084009C;
+					coord.Y -= DAT_008400A0;
+				}
+				unit->Unlimbo(
+					coord, Owner->PrimaryFacing.Current().As_Dir256());
+				if (SpawnType == Rule->CMisl.Type) {
+					new AnimClass(
+						AnimTypes[AnimTypeClass::From_Name(DAT_00840098)],
+						unit->PositionCoord, 2, 1,
+						ShapeFlags_Type(0x600), -10, false);
+				}
+			}
+			if (burst) {
+				Owner->BurstIndex = 0;
+			}
+			if (SpawnedNodes[i]->IsSpawnMissile == 1) {
+				if (NewTarget != 0) {
+					Target = NewTarget;
+					NewTarget = 0;
+				}
+				unit->Assign_Destination(Target, 1);
+			} else {
+				CellClass &cell = Map[Owner->Get_Cell()];
+				unit->Assign_Destination(&cell.Adjacent_Cell(FACING_N), 1);
+			}
+			unit->QueueMission(MISSION_MOVE, false);
+			break;
+
+		case 1:
+			if (!SpawnedNodes[i]->SpawnTimer.Value()) {
+				UnlinkPointer(unit);
+			}
+			break;
+
+		case 2:
+			if (SpawnedNodes[i]->IsSpawnMissile == 1) {
+				break;
+			}
+			if (NewTarget != 0) {
+				Target = NewTarget;
+				NewTarget = 0;
+			}
+			if (Target == 0) {
+				unit->Assign_Destination(Owner, 1);
+				unit->Assign_Target(0);
+				unit->QueueMission(MISSION_MOVE, false);
+				SpawnedNodes[i]->Status = 4;
+			} else {
+				CellClass &cell = Map[Owner->Get_Cell()];
+				unit->Assign_Destination(&cell.Adjacent_Cell(FACING_S), 1);
+				unit->QueueMission(MISSION_MOVE, false);
+			}
+			break;
+
+		case 3:
+			if (NewTarget != 0) {
+				Target = NewTarget;
+				NewTarget = 0;
+			}
+			if (unit->Ammo == 0 || Target == 0) {
+				unit->Assign_Destination(Owner, 1);
+				unit->Assign_Target(0);
+				unit->QueueMission(MISSION_MOVE, false);
+				SpawnedNodes[i]->Status = 4;
+			} else {
+				SpawnedNodes[i]->Unit->Assign_Target(Target);
+				SpawnedNodes[i]->Unit->QueueMission(MISSION_ATTACK, false);
+			}
+			break;
+
+		case 4:
+			if (NewTarget != 0) {
+				Target = NewTarget;
+				NewTarget = 0;
+			}
+			if (unit->Ammo > 0 && Target != 0) {
+				SpawnedNodes[i]->Status = 3;
+				SpawnedNodes[i]->Unit->Assign_Target(Target);
+				SpawnedNodes[i]->Unit->QueueMission(MISSION_ATTACK, false);
+			} else if (unit->Get_Cell() == Owner->Get_Cell() &&
+					   unit->PositionCoord.Z - Owner->PositionCoord.Z < 20) {
+				unit->Limbo();
+				SpawnedNodes[i]->Status = 6;
+				SpawnedNodes[i]->SpawnTimer = ReloadRate;
+			} else {
+				unit->Assign_Destination(Owner, 1);
+				unit->Assign_Target(0);
+				unit->QueueMission(MISSION_MOVE, false);
+			}
+			break;
+
+		case 6:
+			if (!SpawnedNodes[i]->SpawnTimer.Value()) {
+				SpawnedNodes[i]->Status = 0;
+				unit->Ammo = unit->Class->MaxAmmo;
+				unit->EstimatedHealth = unit->Strength =
+					unit->Class->MaxStrength;
+			}
+			break;
+
+		case 7:
+			if (!SpawnedNodes[i]->SpawnTimer.Value()) {
+				SpawnedNodes[i]->Unit = (AircraftClass *)
+					SpawnType->Create_One_Of(Owner->Owner_HouseClass());
+				if (SpawnType == Rule->V3Rocket.Type ||
+					SpawnType == Rule->DMisl.Type ||
+					SpawnType == Rule->CMisl.Type) {
+					SpawnedNodes[i]->IsSpawnMissile = 1;
+				} else {
+					SpawnedNodes[i]->IsSpawnMissile = 0;
+				}
+				SpawnedNodes[i]->Unit->Limbo();
+				SpawnedNodes[i]->Unit->SpawnOwner = Owner;
+				SpawnedNodes[i]->Status = 0;
+			}
+			break;
+		}
+	}
+
+	bool flag = false;
+	switch (Status) {
+	case 0:
+		if (NewTarget != 0) {
+			Target = NewTarget;
+			NewTarget = 0;
+		}
+		if (Target != 0) {
+			if (!Owner->IsCloseEnoughToAttack(Target)) {
+				ResetTarget();
+				return;
+			}
+			Status = 1;
+		}
+		break;
+
+	case 1: {
+		if (Target == 0) {
+			ResetTarget();
+			return;
+		}
+		int index;
+		for (index = 0; index < SpawnedNodes.Count(); index++) {
+			int status = SpawnedNodes[index]->Status;
+			if (status != 2 && status != 7) {
+				return;
+			}
+		}
+		for (index = 0; index < SpawnedNodes.Count(); index++) {
+			if (SpawnedNodes[index]->Status == 2) {
+				if (SpawnedNodes[index]->Unit->Class->MissileSpawn) {
+					flag = true;
+					KamikazeInstance.Add(SpawnedNodes[index]->Unit, Target);
+					KamikazeInstance.UpdateTimer = 2;
+					if (SpawnedNodes[index]->IsSpawnMissile == 1) {
+						SpawnedNodes[index]->Status = 1;
+						if (SpawnType == Rule->V3Rocket.Type) {
+							SpawnedNodes[index]->SpawnTimer =
+								Rule->V3Rocket.PauseFrames +
+								Rule->V3Rocket.TiltFrames;
+						} else {
+							SpawnedNodes[index]->SpawnTimer =
+								Rule->DMisl.PauseFrames +
+								Rule->DMisl.TiltFrames;
+						}
+					} else {
+						UnlinkPointer(SpawnedNodes[index]->Unit);
+					}
+				} else {
+					SpawnedNodes[index]->Status = 3;
+					SpawnedNodes[index]->Unit->Assign_Target(Target);
+					SpawnedNodes[index]->Unit->QueueMission(
+						MISSION_ATTACK, false);
+				}
+			}
+		}
+		if (flag) {
+			ResetTarget();
+		}
+		Status = 2;
+		break;
+	}
+
+	case 2: {
+		flag = true;
+		for (int index = 0; index < SpawnedNodes.Count(); index++) {
+			int status = SpawnedNodes[index]->Status;
+			if (status == 3 || status == 4) {
+				flag = false;
+			}
+		}
+		if (flag) {
+			Status = 0;
+		}
+		break;
+	}
 	}
 }
 

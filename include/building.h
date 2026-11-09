@@ -209,7 +209,7 @@ class BuildingClass : public TechnoClass
 		virtual Coord Target_Coord(void) const override;
 		virtual Coord Docking_Coord(TechnoClass * docker) const override;
 		virtual Coord Render_Coord(void) const override;
-		virtual Coord Fire_Coord(int which, Coord base) const override;
+		virtual Coord Fire_Coord(int which, Point3D base) const override;
 		virtual Coord Center_Coord(void) const override;
 		virtual Coord Destination_Coord(TechnoClass * docker = NULL) const override;
 		virtual int Sort_Y(void) const override;

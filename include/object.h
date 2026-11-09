@@ -155,7 +155,7 @@ class ObjectClass : public AbstractClass
 		virtual Coord Docking_Coord(TechnoClass * docker) const;
 		virtual Coord Center_Coord(void) const override;
 		virtual Coord Render_Coord(void) const {return(Center_Coord());}
-		virtual Coord Fire_Coord(int which, Coord base) const {return(Center_Coord() + Coord(0, 0, 50));}
+		virtual Coord Fire_Coord(int which, Point3D base) const {return(Center_Coord() + Coord(0, 0, 50));}
 		virtual Coord Exit_Coord(int index) const {return(Center_Coord());}
 		virtual int Sort_Y(void) const;
 		virtual bool On_Ground(void) const override;
