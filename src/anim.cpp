@@ -820,7 +820,7 @@ void AnimClass::Start(void)
 
 			cptr->Recalc_Attributes();
 			Map.ResetZones(cptr->CellID);
-			Map.RecalculateSubZones(cptr->CellID);
+			Map.Update_Cell_Subzones(cptr->CellID);
 		}
 	}
 }

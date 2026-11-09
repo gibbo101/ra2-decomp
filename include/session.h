@@ -446,7 +446,7 @@ class MultiMission
 		wchar_t const * Description(void) const {return(ScenarioDescription);}
 		char const * Get_Filename(void) const {return(Filename);}
 		char const * Get_Digest(void) const {return(Digest);}
-		bool Get_Official(void) { return(IsOfficial); }
+		bool Get_Official(void) const { return(IsOfficial); }
 
 		bool Is_Random_Map(void) const;
 		bool Supports_Game_Mode(Wstring & mode) const;
@@ -742,12 +742,12 @@ class SessionClass
 		IPXAddressClass unknown_2994[MAX_PLAYERS];
 		int unknown_29F4[MAX_PLAYERS];
 		int unknown_2A14[64][2];
-		int unknown_2C14[64][2];
+		int ConnectionResults[128];
 		int unknown_2E14;
 		unsigned short unknown_2E18[MAX_PLAYERS];
 		char unknown_2E28[MAX_PLAYERS][36];
 		bool unknown_2F48;
-		unsigned char unknown_2F49[0x23];
+		int unknown_2F4C[MAX_PLAYERS];
 		int unknown_2F6C[MAX_PLAYERS];
 		CDTimerClass<SystemTimerClass> unknown_2F8C[MAX_PLAYERS];
 		int unknown_2FEC;

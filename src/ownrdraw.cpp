@@ -133,12 +133,15 @@ namespace OwnerDraw {
 			} ProgressBar;
 
 			struct {
-				unsigned char reserved28[0x44];
+				unsigned char reserved28[0x40];
+				int ControlType;
 				int DialogID;
 				unsigned char reserved70[0x40];
 				int LayoutBand;
 				unsigned char reservedB4[9];
 				bool HasOpenAnimation;
+				unsigned char reservedBE[0x1E];
+				int ExtraWidth;
 			} Dialog;
 
 			unsigned char _size[0x100];
@@ -306,15 +309,15 @@ namespace OwnerDraw {
 void OwnerDraw::Initialize(void)
 {
 	ControlInsetPx = 1;
-	ListSelectionFillColor = 0xff;
-	DefaultBorderColor = 0xff;
 	ScrollButtonBevelAlpha = 0x7f;
 	PrimaryTextColor = 0xffff;
 	AltComboTextColor = 0xeeeeee;
 	ImeCompositionTextColor = 0x9f9f;
 	CaretColor = 0xffffff;
 	UnusedMidGrayColor = 0x808080;
+	ListSelectionFillColor = 0xff;
 	AltSelectionFillColor = 0x626262;
+	DefaultBorderColor = 0xff;
 	AltBorderColor = 0x929292;
 	BevelLightColor = 0xc5bea7;
 	BevelShadowColor = 0x807a68;
@@ -1120,20 +1123,9 @@ bool Is_Unused_Control(HWND dialog, HWND control)
 	return false;
 }
 
-// FUNCTION: GAMEMD 0x00602DD0
-bool Is_Typed_Control(HWND dialog, HWND control)
+inline bool Is_Sidebar_Button(int type, int id)
 {
-	OwnerDraw::WinData *data = NULL;
-	int type;
-
-	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
-	} else {
-		type = 0;
-	}
-	int id = GetDlgCtrlID(control);
-
-	if (type == 0x94 ||
+	return (type == 0x94 ||
 		type == 0xd8 ||
 		type == 0xf5 ||
 		type == 0xe2 ||
@@ -1162,10 +1154,24 @@ bool Is_Typed_Control(HWND dialog, HWND control)
 		type == 0x10e ||
 		type == 0x108 ||
 		type == 0xbc6 ||
-		type == 0xbc7) {
-		if (id == 0x71c) {
-			return true;
-		}
+		type == 0xbc7) && id == 0x71c;
+}
+
+// FUNCTION: GAMEMD 0x00602DD0
+bool Is_Typed_Control(HWND dialog, HWND control)
+{
+	OwnerDraw::WinData *data = NULL;
+	int type;
+
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
+		type = *(int *)((char *)data + 0x6c);
+	} else {
+		type = 0;
+	}
+	int id = GetDlgCtrlID(control);
+
+	if (Is_Sidebar_Button(type, id)) {
+		return true;
 	}
 	if (type == 0x94) {
 		if (id == 0x6ea || id == 0x6ec || id == 0x6eb) {
@@ -1197,52 +1203,23 @@ int Control_Slot_Count(HWND dialog, HWND control)
 	return 12;
 }
 
+inline OwnerDraw::WinData *Find_Data(HWND window)
+{
+	OwnerDraw::WinData *data = NULL;
+	OwnerDraw::Dialogs.getPointer(window, &data);
+	return data;
+}
+
+
 // FUNCTION: GAMEMD 0x00603040
 int Control_Sound_Slot(HWND dialog, HWND control)
 {
-	OwnerDraw::WinData *data = NULL;
-	int type;
-
-	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
-	} else {
-		type = 0;
-	}
+	OwnerDraw::WinData *data = Find_Data(dialog);
+	int type = data ? data->Dialog.DialogID : 0;
 	int id = GetDlgCtrlID(control);
 
-	if (type == 0x94 ||
-		type == 0xd8 ||
-		type == 0xf5 ||
-		type == 0xe2 ||
-		type == 0xd5 ||
-		type == 0x101 ||
-		type == 0x129 ||
-		type == 0xd7 ||
-		type == 0xbb ||
-		type == 0x100 ||
-		type == 0xd6 ||
-		type == 0x125 ||
-		type == 0x122 ||
-		type == 0x112 ||
-		type == 0xe7 ||
-		type == 0x116 ||
-		type == 0x11d ||
-		type == 0x11c ||
-		type == 0xfe ||
-		type == 0x10f ||
-		type == 0x117 ||
-		type == 0x114 ||
-		type == 0xe6 ||
-		type == 0xf3 ||
-		type == 0xf4 ||
-		type == 0x2bc ||
-		type == 0x10e ||
-		type == 0x108 ||
-		type == 0xbc6 ||
-		type == 0xbc7) {
-		if (id == 0x71c) {
-			return 0x25;
-		}
+	if (Is_Sidebar_Button(type, id)) {
+		return 0x25;
 	}
 	if (type == 0xbc || type == 0xbd || type == 0xc2 || type == 0xc9 || type == 0x102 || type == 0xbc6) {
 		if (id == 0x6ec || id == 0x5a8) {
@@ -1545,73 +1522,27 @@ done:
 	return 0;
 }
 
+namespace OwnerDraw {
+bool __fastcall TrySetDialogLayoutBand2(HWND dialog);
+}
+
+bool __fastcall FUN_006242B0(HWND control);
+
 // FUNCTION: GAMEMD 0x00603AA0
 int FUN_00603AA0(HWND dialog, HWND control)
 {
-	OwnerDraw::WinData *data = NULL;
-	HWND key = dialog;
-	int type;
-
-	if (!OwnerDraw::Dialogs.getPointer(key, &data) || data == NULL) {
-		return 0;
-	}
-	type = *(int *)((char *)data + 0x6c);
-	if (!(type == 0x10d ||
-		type == 0xd9 ||
-		type == 0xf0 ||
-		type == 0xce ||
-		type == 0x120 ||
-		type == 0x121 ||
-		type == 0x115 ||
-		type == 0xd3 ||
-		type == 0xcf ||
-		type == 0x11f ||
-		type == 0xc3 ||
-		type == 0x11b ||
-		type == 0xe1 ||
-		type == 0x11e ||
-		type == 0xc4 ||
-		type == 0x130 ||
-		type == 0xd0 ||
-		type == 0xfc ||
-		type == 0x126)) {
-		return 0;
-	}
-	*(int *)((char *)data + 0xb0) = 2;
-
-	key = control;
-	char name[128];
-	GetClassName(control, name, 128);
-	if (strcmp(name, "Edit") != 0 && strcmp(name, "NewEdit") != 0) {
-		bool owner_drawn;
-		if (strcmp(name, "ListBox") == 0) {
-			OwnerDraw::WinData *list_data = NULL;
-			if (OwnerDraw::Dialogs.getPointer(key, &list_data)) {
-				owner_drawn = *(int *)((char *)list_data + 0x68) == 1;
-				goto decided;
-			}
-		}
-		if (strcmp(name, "ComboBox") != 0) {
-			return 0;
-		}
-		owner_drawn = (GetWindowLong(key, GWL_STYLE) & 3) != 3;
-decided:
-		if (!owner_drawn) {
-			return 0;
-		}
-	}
-	return 0xc0;
+	return OwnerDraw::TrySetDialogLayoutBand2(dialog) && FUN_006242B0(control) ? 0xc0 : 0;
 }
 
 // FUNCTION: GAMEMD 0x00603D30
-void FUN_00603D30(HWND dialog, int value)
+void FUN_00603D30(HWND dialog, Surface *surface)
 {
 	OwnerDraw::WinData *data = NULL;
 	HWND key = dialog;
 
 	if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL) {
 		*(int *)((char *)data + 0x70) = 2;
-		*(int *)((char *)data + 0x14) = value;
+		data->image = surface;
 		InvalidateRect(dialog, NULL, TRUE);
 	}
 }
@@ -1717,7 +1648,7 @@ inline int Get_Dialog_Type(HWND dialog)
 	return 0;
 }
 
-struct Game { static HINSTANCE hInstance; static bool __cdecl CallBack(void); static bool __fastcall MainLoop(void); static int ObserverMode; };
+struct Game { static HINSTANCE hInstance; static bool __cdecl CallBack(void); static bool __fastcall MainLoop(void); static int ObserverMode; static int PCXInitialized; };
 
 // FUNCTION: GAMEMD 0x006040B0
 char const * __fastcall OwnerDraw::GetTooltipStringLabel(HWND window, HWND control)
@@ -3068,11 +2999,11 @@ bool FUN_00609730(HWND dialog, HWND control);
 
 inline bool Is_Plain_Control(HWND window)
 {
-	OwnerDraw::WinData *data = NULL;
-
-	if ((GetWindowLong(window, GWL_STYLE) & 0xb) == 0xb) {
+	if ((GetWindowLong(window, GWL_STYLE) & BS_OWNERDRAW) == BS_OWNERDRAW) {
 		HWND key = window;
-		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
+		OwnerDraw::WinData *data = NULL;
+		OwnerDraw::Dialogs.getPointer(key, &data);
+		if (data != NULL && data->Dialog.ControlType == 0) {
 			return true;
 		}
 	}
@@ -3765,11 +3696,11 @@ bool __fastcall FUN_00608CD0(HWND parent, HWND child)
 // FUNCTION: GAMEMD 0x006096A0
 bool FUN_006096A0(HWND parent, HWND child)
 {
-	OwnerDraw::WinData *data = NULL;
-
-	if ((GetWindowLong(child, GWL_STYLE) & 0xb) == 0xb) {
+	if ((GetWindowLong(child, GWL_STYLE) & BS_OWNERDRAW) == BS_OWNERDRAW) {
 		HWND key = child;
-		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
+		OwnerDraw::WinData *data = NULL;
+		OwnerDraw::Dialogs.getPointer(key, &data);
+		if (data != NULL && data->Dialog.ControlType == 0) {
 			return FUN_00608CD0(parent, child);
 		}
 	}
@@ -3860,10 +3791,10 @@ bool FUN_00609B30(HWND dialog, HWND control)
 // FUNCTION: GAMEMD 0x00609BC0
 bool FUN_00609BC0(HWND parent, HWND child)
 {
-	if (FUN_0069BBE0(&Session)) {
+	if (Session.FUN_0069BBE0()) {
 		return false;
 	}
-	if (Is_Plain_Control(child) && FUN_00608CD0(parent, child)) {
+	if (FUN_006096A0(parent, child)) {
 		return true;
 	}
 	if (Is_Plain_Control(child) && FUN_00609730(parent, child)) {
@@ -3875,10 +3806,10 @@ bool FUN_00609BC0(HWND parent, HWND child)
 // FUNCTION: GAMEMD 0x00609CF0
 bool FUN_00609CF0(HWND parent, HWND child)
 {
-	if (!FUN_0069BBE0(&Session)) {
+	if (!Session.FUN_0069BBE0()) {
 		return false;
 	}
-	if (Is_Plain_Control(child) && FUN_00608CD0(parent, child)) {
+	if (FUN_006096A0(parent, child)) {
 		return true;
 	}
 	if (Is_Plain_Control(child) && FUN_00609730(parent, child)) {
@@ -4039,6 +3970,30 @@ int __fastcall FUN_0060A300(HWND dialog)
 	return DAT_00AC4894 >= 1;
 }
 
+namespace OwnerDraw {
+// FUNCTION: GAMEMD 0x0060A330
+// OwnerDraw::ClassifyLayoutBand
+BOOL CALLBACK ClassifyLayoutBand(HWND window, LPARAM lparam)
+{
+	WinData *data = Find_Data(window);
+	if (data != NULL) {
+		HWND parent = GetParent(window);
+		if (FUN_00609BC0(parent, window)) {
+			data->Dialog.LayoutBand = 1;
+			return TRUE;
+		}
+		if (FUN_00609CF0(parent, window)) {
+			data->Dialog.LayoutBand = 2;
+			return TRUE;
+		}
+		if (FUN_00609E20(parent, window)) {
+			data->Dialog.LayoutBand = 3;
+		}
+	}
+	return TRUE;
+}
+}
+
 // FUNCTION: GAMEMD 0x0060A5A0
 void __fastcall FUN_0060A5A0(HWND dialog)
 {
@@ -4068,6 +4023,21 @@ BOOL CALLBACK SendTransitionCompleteToCustomTextChildProc(HWND window, LPARAM lp
 void __fastcall FUN_0060AAA0(HWND dialog)
 {
 	EnumChildWindows(dialog, OwnerDraw::SendTransitionCompleteToCustomTextChildProc, 0);
+}
+
+namespace OwnerDraw {
+// FUNCTION: GAMEMD 0x0060AAB0
+// OwnerDraw::InitCompactDialogControlsProc
+BOOL CALLBACK InitCompactDialogControlsProc(HWND window, LPARAM lparam)
+{
+	HWND parent = GetParent(window);
+	WinData *data = Find_Data(window);
+	if (data != NULL) {
+		data->Dialog.ExtraWidth = Control_Sound_Slot(parent, window);
+		data->Edit.alpha = FUN_00603AA0(parent, window);
+	}
+	return TRUE;
+}
 }
 
 // FUNCTION: GAMEMD 0x0060AF40
@@ -4123,6 +4093,96 @@ extern SHPStruct *SideButtonShape;
 }
 extern Rect *DAT_00B0FC24;
 extern Rect *DAT_00B0FC4C;
+
+extern Rect *DAT_00B0FC48;
+
+// FUNCTION: GAMEMD 0x0060B000
+void __fastcall FUN_0060B000(HWND window, Point2D const &size)
+{
+	HWND parent = GetParent(window);
+	bool compact = Session.FUN_0069BBE0();
+	RECT parent_rect;
+	RECT rect;
+	GetWindowRect(parent, &parent_rect);
+	GetWindowRect(window, &rect);
+	Rect area(parent_rect.left, parent_rect.top, parent_rect.right - parent_rect.left, parent_rect.bottom - parent_rect.top);
+	int offset = 0;
+	if (!compact) {
+		offset = (area.Width - DAT_007F5BE4) / 2;
+		offset = offset < 0 ? 0 : offset;
+	}
+	int frameHeight = parent_rect.bottom - parent_rect.top;
+	int shift = 0;
+	if (!compact) {
+		shift = Centre_Y(frameHeight, compact);
+		shift -= Centre_Y(size.Y, compact);
+	}
+	int x;
+	int y;
+	int width;
+	int height;
+	if (compact) {
+		width = OwnerDraw::SideButtonShape->Get_Width();
+		height = OwnerDraw::SideButtonShape->Get_Height();
+		Rect *strip = DAT_00B0FC48;
+		x = parent_rect.right - offset - parent_rect.left - 147;
+		HWND dialog = GetParent(window);
+		RECT parent2;
+		RECT rect2;
+		GetWindowRect(dialog, &parent2);
+		GetWindowRect(window, &rect2);
+		int top = rect2.top - parent2.top;
+		y = ((rect2.bottom - parent2.top - top) / 2 - 198 + top) / 44 * height + strip->Y;
+	} else {
+		width = OwnerDraw::SmallButtonAnimShape->Get_Width();
+		height = OwnerDraw::SmallButtonAnimShape->Get_Height();
+		Rect *strip = DAT_00B0FC24;
+		x = parent_rect.right - offset - parent_rect.left - 156;
+		int top = strip->Y;
+		int pos = rect.top - top - parent_rect.top + shift;
+		int row = pos / strip->Height;
+		int prod = strip->Height * row;
+		int up = abs(strip->Height - pos + prod);
+		int down = abs(pos - prod);
+		y = (down < up ? row : row + 1) * strip->Height + top;
+	}
+	MoveWindow(window, x, y, width, height, FALSE);
+}
+
+static inline int Sidebar_Margin(HWND window, int width)
+{
+	OwnerDraw::WinData *data = Get_Data(window);
+	if (data && data->Dialog.ExtraWidth) {
+		return data->Dialog.ExtraWidth;
+	}
+	return (DAT_007F5BF8 - width) / 2;
+}
+
+// FUNCTION: GAMEMD 0x0060B1D0
+void __fastcall FUN_0060B1D0(HWND window, Point2D const &size)
+{
+	HWND parent = GetParent(window);
+	bool compact = Session.FUN_0069BBE0();
+	RECT parent_rect;
+	RECT rect;
+	GetWindowRect(parent, &parent_rect);
+	GetWindowRect(window, &rect);
+	Rect area(parent_rect.left, parent_rect.top, parent_rect.right - parent_rect.left, parent_rect.bottom - parent_rect.top);
+	int offset = 0;
+	if (!compact) {
+		int excess = (area.Width - DAT_007F5BE4) / 2;
+		offset = excess < 0 ? 0 : excess;
+	}
+	int frameHeight = parent_rect.bottom - parent_rect.top;
+	int shift = 0;
+	if (!compact) {
+		shift = MAX(0, (frameHeight - DAT_007F5BF0) / 2);
+		shift -= MAX(0, (size.Y - DAT_007F5BF0) / 2);
+	}
+	int width = rect.right - rect.left;
+	int height = rect.bottom - rect.top;
+	MoveWindow(window, parent_rect.right - Sidebar_Margin(window, width) - width - offset - parent_rect.left, rect.top - parent_rect.top + shift, width, height, FALSE);
+}
 
 // FUNCTION: GAMEMD 0x0060B350
 void __fastcall FUN_0060B350(HWND window)
@@ -4182,13 +4242,7 @@ void __fastcall FUN_0060B420(HWND window)
 	}
 	int w = own.right - own.left;
 	int h = own.bottom - own.top;
-	OwnerDraw::WinData *data = Get_Data(window);
-	int half;
-	if (data != NULL && *(int *)((char *)data + 0xdc) != 0) {
-		half = *(int *)((char *)data + 0xdc);
-	} else {
-		half = (DAT_007F5BF8 - w) / 2;
-	}
+	int half = Sidebar_Margin(window, w);
 	int x = client.right - half - w - dx - client.left;
 	MoveWindow(window, x, compact ? DAT_00B0FC50->Y - h : DAT_00B0FC28->Y - h, w, h, FALSE);
 }
@@ -4236,13 +4290,7 @@ void __fastcall FUN_0060B610(HWND window)
 	}
 	int w = own.right - own.left;
 	int h = own.bottom - own.top;
-	OwnerDraw::WinData *data = Get_Data(window);
-	int half;
-	if (data != NULL && *(int *)((char *)data + 0xdc) != 0) {
-		half = *(int *)((char *)data + 0xdc);
-	} else {
-		half = (DAT_007F5BF8 - w) / 2;
-	}
+	int half = Sidebar_Margin(window, w);
 	int x = client.right - half - w - dx - client.left;
 	MoveWindow(window, x, compact ? DAT_00B0FC50->Height + DAT_00B0FC50->Y - h : DAT_00B0FC28->Height + DAT_00B0FC28->Y - h, w, h, FALSE);
 }
@@ -4383,17 +4431,17 @@ namespace OwnerDraw {
 // OwnerDraw::TrySetDialogLayoutBand2
 bool __fastcall TrySetDialogLayoutBand2(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
-	int type = *(int *)((char *)data + 0x6c);
+	int type = data->Dialog.DialogID;
 	bool match = type == 0x10d || type == 0xd9 || type == 0xf0 || type == 0xce || type == 0x120 || type == 0x121 ||
 		type == 0x115 || type == 0xd3 || type == 0xcf || type == 0x11f || type == 0xc3 || type == 0x11b ||
 		type == 0xe1 || type == 0x11e || type == 0xc4 || type == 0x130 || type == 0xd0 || type == 0xfc ||
 		type == 0x126;
 	if (match) {
-		*(int *)((char *)data + 0xb0) = 2;
+		data->Dialog.LayoutBand = 2;
 	}
 	return match;
 }
@@ -4844,6 +4892,131 @@ BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam)
 	return TRUE;
 }
 
+void __fastcall FUN_0053E3C0(HWND window);
+void ODCacheImages(void);
+namespace OwnerDraw {
+LRESULT CALLBACK ScrollBarHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+LRESULT CALLBACK ListBoxHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+LRESULT CALLBACK ComboBoxHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+LRESULT CALLBACK TrackBarHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+LRESULT CALLBACK StaticHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+LRESULT CALLBACK SysTabHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+LRESULT CALLBACK OwnerDrawButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+LRESULT CALLBACK AutoRadioButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+LRESULT CALLBACK DefaultHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+// FUNCTION: GAMEMD 0x0060F9A0
+// OwnerDraw::RegisterChildControlProc
+BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam)
+{
+	char class_name[128];
+	GetClassName(window, class_name, sizeof(class_name));
+	LONG style = GetWindowLong(window, GWL_STYLE);
+	RECT rect1;
+	Get_Display_Rect(window, &rect1);
+	RECT rect2;
+	GetClientRect(window, &rect2);
+	FUN_0053E3C0(window);
+	Initialize();
+	if (!Game::PCXInitialized) {
+		ODInitMasks();
+		ODCacheImages();
+		Game::PCXInitialized = 1;
+	}
+	WNDPROC customProc = NULL;
+	int controlType = 11;
+	NewEditLink *link = (NewEditLink *)GetWindowLong(window, GWL_USERDATA);
+	if (link) {
+		strcpy(class_name, link->className);
+	}
+	if (strcmp(class_name, "ScrollBar") == 0) {
+		customProc = ScrollBarHandler;
+		controlType = 8;
+	} else if (strcmp(class_name, "ListBox") == 0) {
+		customProc = ListBoxHandler;
+		controlType = 4;
+	} else if (strcmp(class_name, "ComboBox") == 0) {
+		customProc = ComboBoxHandler;
+		controlType = 3;
+	} else if (strcmp(class_name, TRACKBAR_CLASS) == 0) {
+		customProc = TrackBarHandler;
+		controlType = 7;
+	} else if (strcmp(class_name, PROGRESS_CLASS) == 0) {
+		customProc = ProgressHandler;
+		controlType = 6;
+	} else if (strcmp(class_name, "NewEdit") == 0) {
+		customProc = NewEditHandler;
+		controlType = 1;
+	} else if (strcmp(class_name, "Edit") == 0) {
+		customProc = EditHandler;
+		controlType = 1;
+	} else if (strcmp(class_name, "Static") == 0) {
+		customProc = StaticHandler;
+		controlType = 2;
+	} else if (strcmp(class_name, "SysTabControl32") == 0) {
+		customProc = SysTabHandler;
+		controlType = 10;
+	} else if (strcmp(class_name, "Button") == 0) {
+		if ((style & BS_GROUPBOX) == BS_GROUPBOX) {
+			customProc = GroupBoxButtonHandler;
+			controlType = 0;
+		} else if ((style & BS_OWNERDRAW) == BS_OWNERDRAW) {
+			customProc = OwnerDrawButtonHandler;
+			controlType = 0;
+		} else if ((style & BS_AUTOCHECKBOX) == BS_AUTOCHECKBOX) {
+			customProc = CheckBoxButtonHandler;
+			controlType = 0;
+		} else {
+			if ((style & BS_AUTORADIOBUTTON) == BS_AUTORADIOBUTTON) {
+				customProc = AutoRadioButtonHandler;
+			}
+			controlType = 0;
+		}
+	} else if (strcmp(class_name, HOTKEY_CLASS) == 0) {
+		customProc = HotkeyHandler;
+		controlType = 9;
+	} else {
+		customProc = SysListViewHandler;
+	}
+	WNDPROC originalProc = (WNDPROC)SetWindowLong(window, GWL_WNDPROC, (LONG)DefaultHandler);
+	if (!SubclassProcs.contains(window)) {
+		SubclassProcs.add(window, customProc);
+	}
+	if (!DialogProcs.contains(window)) {
+		DialogProcs.add(window, originalProc);
+	}
+	WinData *data = NULL;
+	if (!Dialogs.getPointer(window, &data)) {
+		WinData temp;
+		Dialogs.add(window, temp);
+		Dialogs.getPointer(window, &data);
+	}
+	data->userData = lparam;
+	data->Dialog.ControlType = controlType;
+	if (link) {
+		data->Wide.styleFlags = link->style;
+	}
+	WNDPROC proc = NULL;
+	{
+		WNDPROC *entry = NULL;
+		if (DialogProcs.getPointer(window, &entry) && entry != NULL) {
+			proc = *entry;
+		}
+	}
+	char text[2048];
+	text[0] = 0;
+	CallWindowProc(proc, window, WM_GETTEXT, sizeof(text), (LPARAM)text);
+	if (text[0]) {
+		data->Set_Text(StringTable::LoadString(text, NULL, "D:\\ra2mdpost\\ownrdraw.cpp", 0x1ce0));
+	} else {
+		data->Set_Text((wchar_t const *)NULL);
+	}
+	data->Wide.hasText = 0;
+	SendMessage(window, OD_SUBCLASSED, 0, 0);
+	return TRUE;
+}
+}
+
 extern DSurface * DAT_00887308;
 extern int DAT_00AC48D8;
 void __fastcall FUN_006219D0(Rect const & rect, Surface & surface, int xpos, int ypos);
@@ -4902,7 +5075,7 @@ union ODColorBits {
 };
 
 // SYNTHETIC: GAMEMD 0x006107A0 SYMBOL
-// _$E119
+// _$E120
 OwnerDraw::Tooltip ODTooltip;
 
 // FUNCTION: GAMEMD 0x006107E0
@@ -5028,11 +5201,11 @@ bool OwnerDraw::End_Tooltip(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00612910 SYMBOL
-// _$E122
+// _$E123
 static ArrayList<HWND> ActiveWindows;
 
 // SYNTHETIC: GAMEMD 0x00612930 SYMBOL
-// _$E127
+// _$E128
 static Dictionary<OwnerDraw::CtrlMsgData, bool> ProcessedMessages(Hash_CtrlMsg);
 
 // FUNCTION: GAMEMD 0x00612A60
@@ -5058,13 +5231,6 @@ LRESULT CALLBACK OwnerDraw::SysListViewHandler(HWND window, UINT message, WPARAM
 		return (LRESULT)GetStockObject(NULL_BRUSH);
 	}
 	return CallWindowProc(original, window, message, wparam, lparam);
-}
-
-inline OwnerDraw::WinData *Find_Data(HWND window)
-{
-	OwnerDraw::WinData *data = NULL;
-	OwnerDraw::Dialogs.getPointer(window, &data);
-	return data;
 }
 
 extern DSurface * DAT_00887310;
@@ -7293,6 +7459,23 @@ void __fastcall OwnerDraw::BlendGradientRect(Rect const & rect, Surface & surfac
 	surface.Unlock();
 }
 
+// FUNCTION: GAMEMD 0x00621B80
+void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha)
+{
+	unsigned short * pixels = (unsigned short *)surface->Lock();
+	if (pixels) {
+		int stride = surface->Stride() / 2;
+		for (int y = rect->Y; y < rect->Y + rect->Height; ++y) {
+			int index = y * stride + rect->X;
+			for (int x = rect->X; x < rect->X + rect->Width; ++x) {
+				pixels[index] = OD_Blend_Color(pixels[index], color, alpha);
+				++index;
+			}
+		}
+		surface->Unlock();
+	}
+}
+
 // FUNCTION: GAMEMD 0x00621D30
 void ODDrawBitsStrand(Rect const & rect, Surface & surface)
 {
@@ -7717,6 +7900,168 @@ int __fastcall FUN_00623840(HWND list)
 int CALLBACK FUN_00623DA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 namespace UI { int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
 
+namespace OwnerDraw {
+extern wchar_t IMECompositionString[];
+extern int IMECompositionStringLength;
+extern int IMECompositionCursorPos;
+extern int IMEComposing;
+void UpdateIMECompositionString(void);
+}
+extern int DAT_00AC48C8;
+
+template<class T>
+inline T Edit_Text_Maximum(T a, T b)
+{
+	return a < b ? b : a;
+}
+
+// FUNCTION: GAMEMD 0x00623880
+void __fastcall FUN_00623880(
+	Surface *surface, Rect *rect, wchar_t *text, int caret,
+	BitFont *font, unsigned int color, int *scroll, int ime,
+	int password, int frame, int unknown9)
+{
+	wchar_t buffer[0x800];
+	int caret_x = -1;
+	int composition_length = 0;
+	int composing = 0;
+	if (text == 0) {
+		text = L"";
+	}
+	int text_length = wcslen(text);
+	if (caret < 0 || caret > text_length) {
+		caret = 0;
+	}
+	if (ime) {
+		OwnerDraw::UpdateIMECompositionString();
+		composition_length = OwnerDraw::IMECompositionStringLength;
+		composing = OwnerDraw::IMEComposing;
+	}
+	buffer[0] = 0;
+	wcsncpy(buffer, text, 0x800);
+	if (composition_length) {
+		wcsncpy(&buffer[caret], OwnerDraw::IMECompositionString,
+				0x800 - caret);
+		wcsncpy(&buffer[composition_length + caret], &text[caret],
+				0x800 - composition_length - caret);
+	}
+	buffer[0x7FF] = 0;
+	int length = wcslen(buffer);
+	if (password && length > 0) {
+		wchar_t *p = buffer;
+		for (int i = length; i != 0; i--) {
+			*p++ = '*';
+		}
+	}
+	int cursor;
+	if (composing || composition_length) {
+		cursor = OwnerDraw::IMECompositionCursorPos + caret;
+	} else {
+		cursor = caret;
+	}
+	if (cursor < *scroll + 5) {
+		if (cursor >= 5) {
+			*scroll = cursor - 5;
+		} else {
+			*scroll = 0;
+		}
+	}
+	while (*scroll < length) {
+		if (font->FUN_00433F50(&buffer[*scroll],
+							  rect->Width - 5, 0, 0) >= cursor - *scroll) {
+			break;
+		}
+		(*scroll)++;
+	}
+	int before = caret - *scroll;
+	int lead = Edit_Text_Maximum(before, 0);
+	int composed = composition_length;
+	if (before < 0) {
+		before += composition_length;
+		composed = Edit_Text_Maximum(before, 0);
+	}
+	int after = length - composition_length - caret;
+	if (before < 0) {
+		after += before;
+	}
+	if (after < 0) {
+		after = 0;
+	}
+	text = &buffer[*scroll];
+	if (frame) {
+		Rect area(rect->X - 1, rect->Y - 1,
+				  font->FUN_00433ED0(text, 0) + 5, rect->Height + 2);
+		surface->Fill_Rect(area, 0);
+	}
+	if (lead) {
+		int width = OwnerDraw::PrintTextFixedLength(
+			color, font, *rect, text, lead, 0, 0, surface, unknown9);
+		rect->X += width;
+		rect->Width -= width;
+		if (rect->Width < 0) {
+			rect->Width = 0;
+		}
+		text += lead;
+	}
+	if (composed) {
+		cursor -= *scroll + lead;
+		int rest;
+		if (cursor < 0 || cursor > composed) {
+			rest = -1;
+		} else {
+			rest = composed - cursor;
+			composed -= rest;
+		}
+		if (composed > 0) {
+			int width = OwnerDraw::PrintTextFixedLength(
+				OwnerDraw::ImeCompositionTextColor, font, *rect,
+				text, composed, 0, 0, surface, unknown9);
+			rect->X += width;
+			rect->Width -= width;
+			if (rect->Width < 0) {
+				rect->Width = 0;
+			}
+			text += composed;
+		}
+		if (rest >= 0) {
+			caret_x = rect->X;
+			if (rest) {
+				int width = OwnerDraw::PrintTextFixedLength(
+					OwnerDraw::ImeCompositionTextColor, font, *rect,
+					text, rest, 0, 0, surface, unknown9);
+				rect->X += width;
+				rect->Width -= width;
+				if (rect->Width < 0) {
+					rect->Width = 0;
+				}
+				text += rest;
+			}
+		}
+	} else {
+		caret_x = rect->X;
+	}
+	if (after) {
+		int width = OwnerDraw::PrintTextFixedLength(
+			color, font, *rect, text, after, 0, 0, surface, unknown9);
+		rect->X += width;
+		rect->Width -= width;
+		if (rect->Width < 0) {
+			rect->Width = 0;
+		}
+	}
+	if (ime && caret_x > 0 && !DAT_00AC48C8) {
+		ODDrawEdgeGlow(
+			*surface, Point2D(caret_x, rect->Y),
+			Point2D(caret_x, rect->Y + rect->Height - 2),
+			OwnerDraw::CaretColor, 0xFF);
+		ODDrawEdgeGlow(
+			*surface, Point2D(caret_x + 1, rect->Y),
+			Point2D(caret_x + 1, rect->Y + rect->Height - 2),
+			OwnerDraw::CaretColor, 0xFF);
+	}
+	DAT_00AC48C8 = 0;
+}
+
 // FUNCTION: GAMEMD 0x00623CD0
 int __fastcall FUN_00623CD0(wchar_t const * text)
 {
@@ -7955,7 +8300,7 @@ bool __fastcall FUN_006242B0(HWND control)
 	if (strcmp(name, "ListBox") == 0) {
 		OwnerDraw::WinData *data = NULL;
 		if (OwnerDraw::Dialogs.getPointer(key, &data)) {
-			return *(int *)((char *)data + 0x68) == 1;
+			return data->Dialog.ControlType == 1;
 		}
 	}
 	if (strcmp(name, "ComboBox") == 0) {

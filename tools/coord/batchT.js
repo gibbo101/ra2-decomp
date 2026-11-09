@@ -147,4 +147,6 @@ const opus = (await parallel(sonnet.map(prev => () => {
 
 const count = (r, key) => (r[key] ? r[key].functions.filter(f => f.result === 'MATCH').length : 0)
 log(`Sonnet ${opus.reduce((n, r) => n + count(r, 'sonnet'), 0)}, merge ${landed.size}, Opus ${opus.reduce((n, r) => n + count(r, 'opus'), 0)}`)
-return { merged, modules: opus }
+const matched = key => opus.flatMap(r => (r[key] ? r[key].functions : [])
+  .filter(f => f.result === 'MATCH').map(f => f.address.toUpperCase()))
+return { landed: { sonnet: matched('sonnet'), merge: [...landed], opus: matched('opus') }, merged, modules: opus }

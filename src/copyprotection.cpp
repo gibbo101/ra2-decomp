@@ -17,6 +17,8 @@ namespace CopyProtection {
 static char *LauncherMessage;
 static const UINT LauncherMessageID = 0xBEEF;
 
+bool __fastcall CheckVersion(void);
+
 // FUNCTION: GAMEMD 0x0049F5C0
 // CopyProtection::IsLauncherRunning
 bool IsLauncherRunning(void)
@@ -81,6 +83,18 @@ void __fastcall DispatchLauncherMessage(MSG *msg)
 			FUN_004068E0("The message says: %s\n", LauncherMessage);
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x0049F7A0
+// CopyProtection::CheckProtectedData
+bool CheckProtectedData(void)
+{
+	FUN_004068E0("COPYPROTECTION - Validating\n");
+	FUN_004068E0("_mProtectedData = %d (%s)\n", LauncherMessage, LauncherMessage ? LauncherMessage : "EEK!");
+	if (LauncherMessage) {
+		return strcmp(LauncherMessage, "UIDATA,3DDATA,MAPS") == 0;
+	}
+	return CheckVersion();
 }
 
 // FUNCTION: GAMEMD 0x0049F8B0

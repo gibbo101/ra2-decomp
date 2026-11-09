@@ -693,16 +693,12 @@ int __fastcall FUN_0046F880(int index)
 	return player->Get_Start();
 }
 
-struct PCX
-{
-	static PCX Instance;
-	int GetSurface(char const * name, void * palette);
-};
+#include "srfcache.h"
 extern char * DAT_0081B1E0;
 extern char * DAT_0081B1E4;
 void __fastcall FUN_004E49A0(HWND dialog, int combo, int value);
 void __fastcall FUN_004E5480(HWND dialog, int combo, int value);
-void __fastcall FUN_00603D30(HWND item, int surface);
+void __fastcall FUN_00603D30(HWND item, Surface * surface);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus);
 struct Game
@@ -756,7 +752,7 @@ void __fastcall FUN_0046F8F0(HWND dialog)
 	}
 }
 
-inline void _Set_Image(HWND item, int i, int first, int second)
+inline void _Set_Image(HWND item, int i, Surface * first, Surface * second)
 {
 	if (item != NULL) {
 		if (DAT_0089E000[i]) {
@@ -766,7 +762,7 @@ inline void _Set_Image(HWND item, int i, int first, int second)
 				FUN_00603D30(item, second);
 			}
 		} else {
-			FUN_00603D30(item, 0);
+			FUN_00603D30(item, NULL);
 		}
 	}
 }
@@ -774,8 +770,8 @@ inline void _Set_Image(HWND item, int i, int first, int second)
 // FUNCTION: GAMEMD 0x0046FA20
 void __fastcall FUN_0046FA20(HWND dialog)
 {
-	int first = PCX::Instance.GetSurface(DAT_0081B1E0, NULL);
-	int second = PCX::Instance.GetSurface(DAT_0081B1E4, NULL);
+	Surface * first = SurfaceCache.GetSurface(DAT_0081B1E0, NULL);
+	Surface * second = SurfaceCache.GetSurface(DAT_0081B1E4, NULL);
 	for (int i = 0; i < 8; i++) {
 		if (Session.Slots[i] != NULL && FUN_005E93F0(Session.Slots[i])) {
 			int id;

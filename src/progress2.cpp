@@ -41,11 +41,7 @@ struct Drawing {
 	static int BlueShiftRight;
 };
 
-class PCX {
-	public:
-		bool BlitToSurface(Rect * rect, Surface * dest, Surface * source, int color);
-		static PCX Instance;
-};
+#include "srfcache.h"
 
 // FUNCTION: GAMEMD 0x006433D0
 // ProgressScreenClass::Get_Current_Progress
@@ -107,7 +103,7 @@ void ProgressScreenClass::Draw_Flag(int x, int y, Surface * flag)
 		| ((0 >> Drawing::GreenShiftRight) << Drawing::GreenShiftLeft)
 		| ((255 >> Drawing::BlueShiftRight) << Drawing::BlueShiftLeft);
 	if (HiddenSurface != 0 && !((DSurface *)HiddenSurface)->Is_Lost()) {
-		PCX::Instance.BlitToSurface(&rect, HiddenSurface, flag, color);
+		SurfaceCache.DrawTrans(rect, *HiddenSurface, *flag, color);
 	}
 }
 
