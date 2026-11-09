@@ -548,13 +548,13 @@ bool BinkMovieHandle::FramesLeft(void)
 // FUNCTION: GAMEMD 0x005C0580
 bool BinkMovieHandle::AdvanceFrame(void)
 {
-	return(((BinkHandle *)Player)->FUN_00433040());
+	return(((BinkHandle *)Player)->Render_Frame());
 }
 
 // FUNCTION: GAMEMD 0x005C0590
 void BinkMovieHandle::Waiting(void)
 {
-	((BinkHandle *)Player)->FUN_00433020();
+	((BinkHandle *)Player)->Check_Frame_Ready();
 }
 
 // FUNCTION: GAMEMD 0x005C05A0
@@ -566,7 +566,7 @@ void BinkMovieHandle::SetPosition(int x, int y)
 // FUNCTION: GAMEMD 0x005C05C0
 void BinkMovieHandle::InitSubtitles(void (__fastcall * callback)(void *))
 {
-	((BinkHandle *)Player)->FUN_00432C10(callback);
+	((BinkHandle *)Player)->Set_Subtitle_Callback(callback);
 }
 
 // FUNCTION: GAMEMD 0x005C05D0
@@ -578,7 +578,7 @@ void BinkMovieHandle::SeekToFrame(int frame)
 // FUNCTION: GAMEMD 0x005C05E0
 int BinkMovieHandle::Timing(void)
 {
-	return(((BinkHandle *)Player)->FUN_00432BF0());
+	return(((BinkHandle *)Player)->Frame_Time());
 }
 
 // FUNCTION: GAMEMD 0x005C05F0

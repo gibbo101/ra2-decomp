@@ -50,7 +50,7 @@ extern int DAT_00AA0434;
 extern int DAT_00AA0438;
 extern short DAT_00AA0168[256];
 extern int DAT_00828140;
-extern int DAT_00AA0430;
+extern int MessageLoopCount;
 extern int DAT_00AA043C;
 extern int DAT_00AA0440;
 extern int DAT_00AA0478;
@@ -339,21 +339,21 @@ int __fastcall FUN_0053E720(void)
 	return DAT_00AA0444;
 }
 
-int __fastcall FUN_0053E770(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
+int __fastcall Peek_Windows_Message(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
 
 // FUNCTION: GAMEMD 0x0053E730
-int __fastcall FUN_0053E730(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max)
+int __fastcall Get_Windows_Message(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max)
 {
 	int result;
 	do {
-		result = FUN_0053E770(msg, window, filter_min, filter_max, 1);
+		result = Peek_Windows_Message(msg, window, filter_min, filter_max, 1);
 	} while (!result);
 	if (msg->message == WM_QUIT) result = 0;
 	return result;
 }
 
 // FUNCTION: GAMEMD 0x0053E770
-int __fastcall FUN_0053E770(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove)
+int __fastcall Peek_Windows_Message(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove)
 {
 	int result = 0;
 	union {
@@ -369,7 +369,7 @@ int __fastcall FUN_0053E770(MSG * msg, HWND window, unsigned int filter_min, uns
 		MouseCursor->Convert_Coordinate(DAT_00AA0434, DAT_00AA0438);
 		if (DAT_00AA0434 != DAT_00AA043C || DAT_00AA0438 != DAT_00AA0440) {
 			rec.mouse.Type = 1;
-			rec.mouse.Counter = DAT_00AA0430;
+			rec.mouse.Counter = MessageLoopCount;
 			rec.mouse.Frame = Unsorted::CurrentFrame;
 			EnterCriticalSection(&DAT_00AA0400);
 			MouseCursor->Set_Mouse_Point(DAT_00AA0434, DAT_00AA0438);
@@ -423,7 +423,7 @@ top:
 				STM_AccessTransfer(DAT_00AA0464, &DAT_00AA0368, 0xc);
 				DAT_00AA0478 = 1;
 			}
-			if (DAT_00AA036C > (unsigned int)DAT_00AA0430) return 0;
+			if (DAT_00AA036C > (unsigned int)MessageLoopCount) return 0;
 			DAT_00AA0478 = 0;
 			if (DAT_00AA0370 == 1) {
 				STM_AccessTransfer(DAT_00AA0464, &pt, 8);
@@ -452,7 +452,7 @@ top:
 			goto top;
 		}
 		rec.message.Type = 0;
-		rec.message.Counter = DAT_00AA0430;
+		rec.message.Counter = MessageLoopCount;
 		rec.message.Frame = Unsorted::CurrentFrame;
 		rec.message.Message = *msg;
 		rec.message.Message.hwnd = (HWND)index;

@@ -741,8 +741,8 @@ BOOL CALLBACK MPlayer_Game_List_Dialog_Proc(HWND window, UINT message, WPARAM wp
 bool __fastcall FUN_005E7BF0(int slot);
 extern int DAT_008316A4;
 extern bool DAT_00AC0269;
-extern int DAT_00AA0430;
-int __fastcall FUN_0053E770(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
+extern int MessageLoopCount;
+int __fastcall Peek_Windows_Message(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
 void __cdecl FUN_004068E0(char const * format, ...);
 int __fastcall FUN_005DF410(int index, char flag);
 void __fastcall Unjoin_Game(int game_index);
@@ -819,9 +819,9 @@ bool Net2Remote_Connect(void)
 			Ipx.Service();
 			Title_Screen_Restore(false);
 
-			DAT_00AA0430++;
+			MessageLoopCount++;
 			MSG msg;
-			while (FUN_0053E770(&msg, NULL, 0, 0, PM_REMOVE)) {
+			while (Peek_Windows_Message(&msg, NULL, 0, 0, PM_REMOVE)) {
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
