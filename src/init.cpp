@@ -4355,7 +4355,7 @@ extern MFCD * DAT_00884E74;
 extern MFCD * DAT_00884E78;
 extern int DAT_0089E414;
 extern CCINIClass DAT_00887208;
-void FUN_007534E0(void);
+void Set_EVA_Index(int index);
 void FUN_0072F350(void);
 void __fastcall FUN_0072F440(int side);
 void __fastcall FUN_006D02B0(void * map);
@@ -4366,7 +4366,7 @@ bool __fastcall FUN_00534FA0(int side)
 {
 	char name[64];
 
-	FUN_007534E0();
+	Set_EVA_Index(side);
 	if (side == 2) {
 		side = 1;
 	}
