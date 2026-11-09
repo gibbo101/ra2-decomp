@@ -74,8 +74,8 @@ void FUN_00752290(void);
 void FUN_00752340(void);
 void FUN_00752760(void);
 void FUN_00752AD0(void);
-void FUN_00752B40(void);
-void FUN_00753500(void);
+void Theme_Suspend(void);
+void Theme_Resume(void);
 void FUN_00753510(void);
 void FUN_007535B0(void);
 void FUN_00753620(void);
@@ -83,51 +83,51 @@ void FUN_007B84D0(void);
 void FUN_0040A940(void);
 void FUN_0040A950(void);
 
-AudioIDXData * DAT_0087E724;
-AudioDevice * DAT_0087E728;
-int DAT_0087E72C;
-int DAT_0087E730;
-MixFileClass * DAT_0087E734;
-MixFileClass * DAT_0087E738;
-AudioAttribs DAT_0087E2C0;
-AudioAttribs DAT_0087E4E0;
-AudioAttribs DAT_0087E578;
-AudioAttribs DAT_0087E450;
-AudioAttribs DAT_0087E340;
-AudioAttribs DAT_0087E6A0;
-AudioAttribs DAT_0087E5F8;
-AudioAttribs DAT_0087E3C0;
+AudioIDXData * AudioIDX;
+AudioDevice * AudioMainDevice;
+int AudioEnabled;
+int AudioFocusLocks;
+MixFileClass * AudioMix;
+MixFileClass * ScoresMix;
+AudioAttribs AudioMasterData;
+AudioAttribs AudioScoreData;
+AudioAttribs AudioVoiceData;
+AudioAttribs AudioSoundData;
+AudioAttribs AudioCompData;
+AudioAttribs AudioFadeData;
+AudioAttribs AudioGroupData2;
+AudioAttribs AudioGroupData1;
 AudioAttribs * DAT_0087E73C;
-AudioAttribs * DAT_0087E740;
-AudioAttribs * DAT_0087E744;
-AudioAttribs * DAT_0087E748;
+AudioAttribs * AudioVoiceAttribs;
+AudioAttribs * AudioScoreAttribs;
+AudioAttribs * AudioSoundAttribs;
 AudioAttribs * DAT_0087E74C;
-AudioAttribs * DAT_0087E750;
-AudioAttribs * DAT_0087E754;
-AudioAttribs * DAT_0087E758;
-int DAT_0087E75C;
-TimeStamp DAT_0087E760;
+AudioAttribs * AudioGroupAttribs2;
+AudioAttribs * AudioFadeAttribs;
+AudioAttribs * AudioGroupAttribs1;
+int AudioServiceBusy;
+TimeStamp AudioServiceLast;
 
 // FUNCTION: GAMEMD 0x00406B10
 int __fastcall FUN_00406B10(int enable)
 {
 	InitAudioTimer();
-	AudioAttribsInit(&DAT_0087E2C0);
-	DAT_0087E73C = &DAT_0087E2C0;
-	AudioAttribsInit(&DAT_0087E4E0);
-	DAT_0087E744 = &DAT_0087E4E0;
-	AudioAttribsInit(&DAT_0087E578);
-	DAT_0087E740 = &DAT_0087E578;
-	AudioAttribsInit(&DAT_0087E450);
-	DAT_0087E748 = &DAT_0087E450;
-	AudioAttribsInit(&DAT_0087E340);
-	DAT_0087E74C = &DAT_0087E340;
-	AudioAttribsInit(&DAT_0087E6A0);
-	DAT_0087E754 = &DAT_0087E6A0;
-	AudioAttribsInit(&DAT_0087E5F8);
-	DAT_0087E750 = &DAT_0087E5F8;
-	AudioAttribsInit(&DAT_0087E3C0);
-	DAT_0087E758 = &DAT_0087E3C0;
+	AudioAttribsInit(&AudioMasterData);
+	DAT_0087E73C = &AudioMasterData;
+	AudioAttribsInit(&AudioScoreData);
+	AudioScoreAttribs = &AudioScoreData;
+	AudioAttribsInit(&AudioVoiceData);
+	AudioVoiceAttribs = &AudioVoiceData;
+	AudioAttribsInit(&AudioSoundData);
+	AudioSoundAttribs = &AudioSoundData;
+	AudioAttribsInit(&AudioCompData);
+	DAT_0087E74C = &AudioCompData;
+	AudioAttribsInit(&AudioFadeData);
+	AudioFadeAttribs = &AudioFadeData;
+	AudioAttribsInit(&AudioGroupData2);
+	AudioGroupAttribs2 = &AudioGroupData2;
+	AudioAttribsInit(&AudioGroupData1);
+	AudioGroupAttribs1 = &AudioGroupData1;
 
 	if (enable) {
 		FUN_00402940();
@@ -142,66 +142,66 @@ int __fastcall FUN_00406B10(int enable)
 		format.Flags = mAUDIO_FORMAT_PCM;
 		AudioFormatUpdate(&format);
 
-		DAT_0087E728 = FUN_00402C70(-1, &format);
-		if (!DAT_0087E728 || FUN_00403530(DAT_0087E728, 0x10) != 0x10) {
+		AudioMainDevice = FUN_00402C70(-1, &format);
+		if (!AudioMainDevice || FUN_00403530(AudioMainDevice, 0x10) != 0x10) {
 			enable = 0;
 		} else {
-			DAT_0087E73C = &DAT_0087E728->Attribs;
+			DAT_0087E73C = &AudioMainDevice->Attribs;
 			if (CCFileClass("AUDIOMD.MIX").Is_Available(0)) {
-				DAT_0087E734 = new MixFileClass("AUDIOMD.MIX", &DAT_00886980);
+				AudioMix = new MixFileClass("AUDIOMD.MIX", &DAT_00886980);
 			} else {
-				DAT_0087E734 = new MixFileClass("AUDIO.MIX", &DAT_00886980);
+				AudioMix = new MixFileClass("AUDIO.MIX", &DAT_00886980);
 			}
-			DAT_0087E724 = FUN_004011C0("audio", 0);
-			if (!DAT_0087E724) {
+			AudioIDX = FUN_004011C0("audio", 0);
+			if (!AudioIDX) {
 				enable = 0;
 			}
 		}
 	}
 
 	FUN_00407550();
-	if (!FUN_00403ED0(DAT_0087E728, DAT_0087E724)) {
+	if (!FUN_00403ED0(AudioMainDevice, AudioIDX)) {
 		enable = 0;
 	}
 	FUN_00752290();
 	FUN_00752AD0();
-	DAT_0087E72C = enable;
+	AudioEnabled = enable;
 	return 1;
 }
 
 // FUNCTION: GAMEMD 0x00406D40
-void FUN_00406D40(void)
+void Audio_Shutdown(void)
 {
-	if (DAT_0087E728) {
-		FUN_00403730(DAT_0087E728, 1);
+	if (AudioMainDevice) {
+		FUN_00403730(AudioMainDevice, 1);
 	}
 	FUN_00404E70();
 	FUN_004081A0();
 	FUN_00752340();
-	FUN_00752B40();
+	Theme_Suspend();
 	AudioEventCloseDown();
 	FUN_00407780();
-	if (DAT_0087E724) {
-		FUN_00401580(DAT_0087E724);
-		DAT_0087E724 = NULL;
+	if (AudioIDX) {
+		FUN_00401580(AudioIDX);
+		AudioIDX = NULL;
 	}
-	if (DAT_0087E734) {
-		delete DAT_0087E734;
-		DAT_0087E734 = NULL;
+	if (AudioMix) {
+		delete AudioMix;
+		AudioMix = NULL;
 	}
-	if (DAT_0087E738) {
-		delete DAT_0087E738;
-		DAT_0087E738 = NULL;
+	if (ScoresMix) {
+		delete ScoresMix;
+		ScoresMix = NULL;
 	}
-	if (DAT_0087E728) {
-		FUN_004033C0(DAT_0087E728);
-		DAT_0087E728 = NULL;
+	if (AudioMainDevice) {
+		FUN_004033C0(AudioMainDevice);
+		AudioMainDevice = NULL;
 	}
 	AudioCloseDown();
 }
 
 // FUNCTION: GAMEMD 0x00406DE0
-int FUN_00406DE0(void)
+int Audio_Open_Device(void)
 {
 	AudioFormat format;
 
@@ -214,56 +214,56 @@ int FUN_00406DE0(void)
 	format.Flags = mAUDIO_FORMAT_PCM;
 	AudioFormatUpdate(&format);
 
-	DAT_0087E728 = FUN_00402C70(-1, &format);
-	if (DAT_0087E728 && FUN_00403530(DAT_0087E728, 0x10) == 0x10) {
+	AudioMainDevice = FUN_00402C70(-1, &format);
+	if (AudioMainDevice && FUN_00403530(AudioMainDevice, 0x10) == 0x10) {
 		return 1;
 	}
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x00406E60
-void FUN_00406E60(void)
+void Audio_Close_Device(void)
 {
-	if (DAT_0087E728) {
-		FUN_004033C0(DAT_0087E728);
-		DAT_0087E728 = NULL;
+	if (AudioMainDevice) {
+		FUN_004033C0(AudioMainDevice);
+		AudioMainDevice = NULL;
 	}
 }
 
 // FUNCTION: GAMEMD 0x00406E80
-void FUN_00406E80(void)
+void Audio_Stop_Events(void)
 {
-	if (DAT_0087E728) {
-		FUN_00403730(DAT_0087E728, 1);
+	if (AudioMainDevice) {
+		FUN_00403730(AudioMainDevice, 1);
 	}
 	FUN_00404E70();
 }
 
 // FUNCTION: GAMEMD 0x00406EA0
-void FUN_00406EA0(void)
+void Audio_Pause_Channels(void)
 {
-	if (DAT_0087E728) {
-		FUN_00403770(DAT_0087E728, 1);
+	if (AudioMainDevice) {
+		FUN_00403770(AudioMainDevice, 1);
 	}
 	FUN_00404FD0();
 	FUN_00751040();
 }
 
 // FUNCTION: GAMEMD 0x00406EC0
-void FUN_00406EC0(void)
+void Audio_Resume_Channels(void)
 {
 	FUN_00751080();
 	FUN_00405040();
-	if (DAT_0087E728) {
-		FUN_004037C0(DAT_0087E728, 1);
+	if (AudioMainDevice) {
+		FUN_004037C0(AudioMainDevice, 1);
 	}
 }
 
 // FUNCTION: GAMEMD 0x00406EE0
-void FUN_00406EE0(void)
+void Audio_Stop_All(void)
 {
-	if (DAT_0087E728) {
-		FUN_00403730(DAT_0087E728, 1);
+	if (AudioMainDevice) {
+		FUN_00403730(AudioMainDevice, 1);
 	}
 	FUN_00404E70();
 	FUN_004081A0();
@@ -273,14 +273,14 @@ void FUN_00406EE0(void)
 void FUN_00406F00(void)
 {
 	if (!ChronoScreenEffect::Active()) {
-		if (DAT_0087E728) {
-			FUN_00403770(DAT_0087E728, 1);
+		if (AudioMainDevice) {
+			FUN_00403770(AudioMainDevice, 1);
 		}
 		FUN_00404FD0();
 		FUN_00751040();
 	}
 	FUN_007535B0();
-	FUN_00753500();
+	Theme_Resume();
 }
 
 // FUNCTION: GAMEMD 0x00406F40
@@ -290,56 +290,56 @@ void FUN_00406F40(void)
 	FUN_00753620();
 	FUN_00751080();
 	FUN_00405040();
-	if (DAT_0087E728) {
-		FUN_004037C0(DAT_0087E728, 1);
+	if (AudioMainDevice) {
+		FUN_004037C0(AudioMainDevice, 1);
 	}
 }
 
 // FUNCTION: GAMEMD 0x00406F70
 void FUN_00406F70(void)
 {
-	if (!DAT_0087E75C && DAT_0087E728) {
-		DAT_0087E75C = 1;
+	if (!AudioServiceBusy && AudioMainDevice) {
+		AudioServiceBusy = 1;
 		TimeStamp now = AudioGetTime();
-		if (now - DAT_0087E760 > 33) {
+		if (now - AudioServiceLast > 33) {
 			AudioServiceAllEvents();
 			FUN_00750EC0();
 			FUN_00752760();
 			Theme.AI();
 			FUN_007B84D0();
-			DAT_0087E760 = now;
+			AudioServiceLast = now;
 		}
-		DAT_0087E75C = 0;
+		AudioServiceBusy = 0;
 	}
 }
 
 // FUNCTION: GAMEMD 0x00407000
 int FUN_00407000(void)
 {
-	return DAT_0087E728 != NULL;
+	return AudioMainDevice != NULL;
 }
 
 // FUNCTION: GAMEMD 0x00407010
-AudioDevice * FUN_00407010(void)
+AudioDevice * AudioGetDevice(void)
 {
-	return DAT_0087E728;
+	return AudioMainDevice;
 }
 
 // FUNCTION: GAMEMD 0x00407020
-void FUN_00407020(void)
+void Audio_Focus_Lose(void)
 {
-	if (!DAT_0087E730) {
+	if (!AudioFocusLocks) {
 		FUN_0040A940();
 	}
-	DAT_0087E730++;
+	AudioFocusLocks++;
 }
 
 // FUNCTION: GAMEMD 0x00407040
-void FUN_00407040(void)
+void Audio_Focus_Regain(void)
 {
-	if (DAT_0087E730) {
-		DAT_0087E730--;
-		if (!DAT_0087E730) {
+	if (AudioFocusLocks) {
+		AudioFocusLocks--;
+		if (!AudioFocusLocks) {
 			FUN_0040A950();
 		}
 	}
@@ -364,13 +364,13 @@ void FUN_00407080(AudioLevel * level, int newLevel)
 }
 
 // FUNCTION: GAMEMD 0x00407090
-int __fastcall FUN_00407090(AudioLevel * level)
+int __fastcall AudioLevelIsFading(AudioLevel * level)
 {
 	return level->level != level->newLevel;
 }
 
 // FUNCTION: GAMEMD 0x004070B0
-void __fastcall FUN_004070B0(AudioLevel * level)
+void __fastcall AudioLevelWaitFade(AudioLevel * level)
 {
 	TimeStamp end = AudioGetTime() + level->duration;
 

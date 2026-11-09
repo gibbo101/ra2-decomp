@@ -29,7 +29,7 @@ bool __fastcall FUN_00623CD0(wchar_t const * text);
 void __cdecl FUN_004068E0(char const * format, ...);
 
 extern MixFileClass * DAT_00884E2C;
-extern MixFileClass * DAT_0087E738;
+extern MixFileClass * ScoresMix;
 extern MixFileClass * DAT_00884DDC;
 extern MixFileClass * DAT_00884DD8;
 extern MixFileClass * DAT_00884E64;
@@ -129,10 +129,10 @@ bool CD::Swap(DiskID disk)
 		DAT_00884E2C = NULL;
 	}
 
-	if (DAT_0087E738) {
-		FUN_004068E0("     Releasing %s\n", DAT_0087E738->Filename);
-		delete DAT_0087E738;
-		DAT_0087E738 = NULL;
+	if (ScoresMix) {
+		FUN_004068E0("     Releasing %s\n", ScoresMix->Filename);
+		delete ScoresMix;
+		ScoresMix = NULL;
 	}
 
 	if (DAT_00884DDC) {
@@ -199,10 +199,10 @@ bool CD::Swap(DiskID disk)
 	bool newthemes = CCFileClass("THEMEMD.MIX").Is_Available(0);
 	if (newthemes) {
 		FUN_004068E0("     Initializing Themes.MIX\n");
-		DAT_0087E738 = new MixFileClass("THEMEMD.MIX", &FastKey);
+		ScoresMix = new MixFileClass("THEMEMD.MIX", &FastKey);
 	} else {
 		FUN_004068E0("     Initializing Themes.MIX\n");
-		DAT_0087E738 = new MixFileClass("THEME.MIX", &FastKey);
+		ScoresMix = new MixFileClass("THEME.MIX", &FastKey);
 	}
 
 	Theme.Scan();

@@ -105,18 +105,18 @@ extern int DAT_00ABF348;
 extern bool DAT_00ABF35C;
 extern int DAT_008809D8;
 extern int DAT_008809DC;
-extern void * DAT_0087E758;
-extern void * DAT_0087E750;
+extern void * AudioGroupAttribs1;
+extern void * AudioGroupAttribs2;
 
 void __cdecl FUN_004068E0(char const *, ...);
 void FUN_007535B0(void);
 void FUN_00408200(void);
 void FUN_00408270(void);
 void __fastcall FUN_00407170(void *, int);
-void FUN_00406EA0(void);
+void Audio_Pause_Channels(void);
 void __fastcall FUN_0040A7C0(int, int, int);
 void FUN_0040A850(void);
-void FUN_00406EC0(void);
+void Audio_Resume_Channels(void);
 void FUN_00408230(void);
 void FUN_004082F0(void);
 void FUN_004083D0(void);
@@ -178,11 +178,11 @@ void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool str
 			bink.Flag = true;
 		}
 		Movie_Audio_Suspend();
-		FUN_00406EA0();
+		Audio_Pause_Channels();
 		FUN_0040A7C0(0xAC44, 0x10, 2);
 		bink.FUN_00432C70();
 		FUN_0040A850();
-		FUN_00406EC0();
+		Audio_Resume_Channels();
 		Movie_Audio_Resume();
 		if (clrscrn_after == true) {
 			HiddenSurface->Fill(0);
@@ -219,11 +219,11 @@ void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool str
 			Update_Visible_Surface(true, HiddenSurface);
 		}
 		Movie_Audio_Suspend();
-		FUN_00406EA0();
+		Audio_Pause_Channels();
 		FUN_0040A7C0(0xAC44, 0x10, 2);
 		Movie_Play(vqa, true, theme, false);
 		FUN_0040A850();
-		FUN_00406EC0();
+		Audio_Resume_Channels();
 		Movie_Audio_Resume();
 		Movie_Destroy(vqa);
 		delete vqa;
@@ -336,8 +336,8 @@ void Movie_Audio_Resume(void)
 		FUN_00408230();
 		FUN_004082F0();
 		FUN_004083D0();
-		FUN_00407170(DAT_0087E758, 0x4000);
-		FUN_00407170(DAT_0087E750, 0x4000);
+		FUN_00407170(AudioGroupAttribs1, 0x4000);
+		FUN_00407170(AudioGroupAttribs2, 0x4000);
 		FUN_00753620();
 		DAT_00ABF35C = false;
 	}
@@ -350,8 +350,8 @@ void Movie_Audio_Suspend(void)
 		FUN_007535B0();
 		FUN_00408200();
 		FUN_00408270();
-		FUN_00407170(DAT_0087E758, 0x2000);
-		FUN_00407170(DAT_0087E750, 0x2000);
+		FUN_00407170(AudioGroupAttribs1, 0x2000);
+		FUN_00407170(AudioGroupAttribs2, 0x2000);
 		DAT_00ABF35C = true;
 	}
 }

@@ -146,16 +146,16 @@ AudioChannel * __fastcall AudioDeviceFirstChannel(AudioDevice * dev, AudioSearch
 AudioChannel * __fastcall AudioDeviceNextChannel(AudioSearch * sh);
 int __fastcall AudioDeviceService(AudioDevice * dev);
 void __fastcall AudioChannelSetFormat(AudioChannel * chan, AudioFormat * format);
-AudioDevice * __fastcall FUN_00407010(void);
+AudioDevice * __fastcall AudioGetDevice(void);
 
 extern AudioAttribs * DAT_0087E73C;
-extern AudioAttribs * DAT_0087E740;
-extern AudioAttribs * DAT_0087E744;
-extern AudioAttribs * DAT_0087E748;
+extern AudioAttribs * AudioVoiceAttribs;
+extern AudioAttribs * AudioScoreAttribs;
+extern AudioAttribs * AudioSoundAttribs;
 extern AudioAttribs * DAT_0087E74C;
-extern AudioAttribs * DAT_0087E750;
-extern AudioAttribs * DAT_0087E754;
-extern AudioAttribs * DAT_0087E758;
+extern AudioAttribs * AudioGroupAttribs2;
+extern AudioAttribs * AudioFadeAttribs;
+extern AudioAttribs * AudioGroupAttribs1;
 
 extern AudioSystemMaster * AudioSystemDSD;
 extern LPDIRECTSOUND AUD_sound_object;

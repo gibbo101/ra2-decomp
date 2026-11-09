@@ -65,7 +65,7 @@ struct AudioSource {
 	AudioStream * FUN_00407860(int a, int b);
 };
 extern int FUN_00407000(void);
-extern AudioSource * FUN_00407010(void);
+extern AudioSource * AudioGetDevice(void);
 extern void __fastcall FUN_00408080(AudioStream * stream, char const * name);
 extern void __fastcall FUN_00407B40(AudioStream * stream, int value);
 extern void __fastcall FUN_00407B50(AudioStream * stream, int value);
@@ -76,8 +76,8 @@ extern char DAT_00889F64[];
 extern char DAT_00B0F1F8[];
 extern bool DAT_00A8ED64;
 extern bool DAT_0089E3A0;
-extern int DAT_0087E744;
-extern int DAT_0087E754;
+extern int AudioScoreAttribs;
+extern int AudioFadeAttribs;
 
 // FUNCTION: GAMEMD 0x00720440
 ThemeControl::ThemeControl(void) :
@@ -138,12 +138,12 @@ void ThemeClass::Init_Themes(CCINIClass & ini)
 		}
 	}
 
-	if (FUN_00407010()) {
-		Stream = FUN_00407010()->FUN_00407860(20000, 0);
+	if (AudioGetDevice()) {
+		Stream = AudioGetDevice()->FUN_00407860(20000, 0);
 		if (Stream) {
 			FUN_00408080(Stream, "Music Stream");
-			FUN_00407B40(Stream, DAT_0087E744);
-			FUN_00407B50(Stream, DAT_0087E754);
+			FUN_00407B40(Stream, AudioScoreAttribs);
+			FUN_00407B50(Stream, AudioFadeAttribs);
 		}
 	}
 }

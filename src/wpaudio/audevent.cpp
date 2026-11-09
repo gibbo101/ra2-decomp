@@ -17,8 +17,8 @@
 
 namespace Randomizer { extern Random2Class Global; }
 
-extern AudioAttribs * DAT_0087E748;
-extern AudioAttribs * DAT_0087E758;
+extern AudioAttribs * AudioSoundAttribs;
+extern AudioAttribs * AudioGroupAttribs1;
 extern int DAT_00B1D3A8;
 extern int DAT_00B1D3AC;
 AudioSample * __fastcall eventNextSample(AudioEvent * event);
@@ -933,7 +933,7 @@ static int audioEventPrep(AudioEvent * event)
 	event->state = AUDIO_EVENT_START_PLAYING;
 	event->channel->SfxAttribs = &event->attribs;
 	event->channel->CompAttribs = &audioCompressionAttribs;
-	event->channel->FadeAttribs = DAT_0087E758;
+	event->channel->FadeAttribs = AudioGroupAttribs1;
 	if (eclass->Control & (AUDIO_EVENT_CTRL_PREDELAY | AUDIO_EVENT_CTRL_AMBIENT)) {
 		delay = AudioRandomPick((eclass->Control & AUDIO_EVENT_CTRL_AMBIENT) ? EVENT_MIN_DELAY : eclass->MinDelay, eclass->MaxDelay);
 		if (delay >= EVENT_MIN_DELAY) {
@@ -1090,8 +1090,8 @@ AudioChannel * __fastcall audioPrepareChannel(int pri, int flags)
 	if (audioDevice && (chan = AudioDeviceGetChannel(audioDevice, AUDIO_CHANNEL_TYPE_STD))) {
 		if (!(chan->Control.Status & (mAUDIO_CTRL_PLAYING | mAUDIO_CTRL_PAUSED | mAUDIO_CTRL_INUSE)) || chan->Control.Priority <= pri) {
 			AudioChannelStop(chan);
-			chan->GroupAttribs = DAT_0087E748;
-			chan->FadeAttribs = DAT_0087E758;
+			chan->GroupAttribs = AudioSoundAttribs;
+			chan->FadeAttribs = AudioGroupAttribs1;
 			chan->Control.Priority = pri;
 			if (flags & 1) {
 				chan->Control.LoopCount = AUDIO_CTRL_LOOP_FOREVER;

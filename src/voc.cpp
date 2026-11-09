@@ -52,7 +52,7 @@ SoundPool * __fastcall FUN_004074D0(int a, int b);
 int __fastcall FUN_004067D0(char const * name, int * priority);
 int __fastcall FUN_00406820(int * control, char const * name);
 int __fastcall FUN_00406870(int * type, char const * name);
-void FUN_00406E80(void);
+void Audio_Stop_Events(void);
 
 bool DAT_008464AC = true;
 int DAT_008464B0 = 2;

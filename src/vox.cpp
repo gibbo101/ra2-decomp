@@ -70,7 +70,7 @@ struct AudioSource
 	AudioStream * FUN_00407860(int a, int b);
 };
 extern int FUN_00407000(void);
-extern AudioSource * FUN_00407010(void);
+extern AudioSource * AudioGetDevice(void);
 extern void __fastcall FUN_00408080(AudioStream * stream, char const * name);
 extern void __fastcall FUN_00407B40(AudioStream * stream, int value);
 extern void __fastcall FUN_00407B50(AudioStream * stream, int value);
@@ -101,8 +101,8 @@ extern unsigned __int64 DAT_00B1D4D0;
 extern int DAT_00B1D3B8;
 extern int DAT_00B1D3E0;
 extern char DAT_00A8ED64;
-extern int DAT_0087E740;
-extern int DAT_0087E750;
+extern int AudioVoiceAttribs;
+extern int AudioGroupAttribs2;
 void FUN_00752370(void);
 VoxNode * __fastcall FUN_00752680(VoxClass * vox);
 void __fastcall FUN_00752590(VoxClass * vox, int type, int priority);
@@ -121,14 +121,14 @@ int FUN_00752290(void)
 	DAT_00B1D4B8 = NULL;
 	DAT_00B1D4BC = 1;
 	if (!DAT_00B1D4CC) {
-		DAT_00B1D4CC = FUN_00407010()->FUN_00407860(3000, 0);
+		DAT_00B1D4CC = AudioGetDevice()->FUN_00407860(3000, 0);
 		if (!DAT_00B1D4CC) {
 			return 0;
 		}
 	}
 	FUN_00408080(DAT_00B1D4CC, "EVA Stream");
-	FUN_00407B40(DAT_00B1D4CC, DAT_0087E740);
-	FUN_00407B50(DAT_00B1D4CC, DAT_0087E750);
+	FUN_00407B40(DAT_00B1D4CC, AudioVoiceAttribs);
+	FUN_00407B50(DAT_00B1D4CC, AudioGroupAttribs2);
 	return 1;
 }
 
@@ -372,20 +372,20 @@ void __fastcall FUN_00752AB0(int volume)
 int FUN_00752AD0(void)
 {
 	if (!DAT_00B1D4D8) {
-		DAT_00B1D4D8 = FUN_00407010()->FUN_00407860(3000, 0);
+		DAT_00B1D4D8 = AudioGetDevice()->FUN_00407860(3000, 0);
 		if (!DAT_00B1D4D8) {
 			return 0;
 		}
 	}
 	FUN_00408080(DAT_00B1D4D8, "Taunt Stream");
-	FUN_00407B40(DAT_00B1D4CC, DAT_0087E740);
-	FUN_00407B50(DAT_00B1D4CC, DAT_0087E750);
+	FUN_00407B40(DAT_00B1D4CC, AudioVoiceAttribs);
+	FUN_00407B50(DAT_00B1D4CC, AudioGroupAttribs2);
 	DAT_00B1D480 = 0;
 	return 1;
 }
 
 // FUNCTION: GAMEMD 0x00752B40
-void FUN_00752B40(void)
+void Theme_Suspend(void)
 {
 	if (DAT_00B1D4D8) {
 		DAT_00B1D4D8->FUN_00407F40();
@@ -687,7 +687,7 @@ void Set_EVA_Index(int index = 0)
 }
 
 // FUNCTION: GAMEMD 0x00753500
-void FUN_00753500(void)
+void Theme_Resume(void)
 {
 	if (DAT_00B1D4D8) {
 		DAT_00B1D4D8->FUN_00407FB0();

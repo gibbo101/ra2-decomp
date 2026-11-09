@@ -447,7 +447,7 @@ void FUN_007513F0(void);
 void FUN_0047ADC0(void);
 void FUN_005DA720(void);
 void FUN_0053E1D0(void);
-void FUN_00406D40(void);
+void Audio_Shutdown(void);
 void FUN_007B86B0(void);
 
 // FUNCTION: GAMEMD 0x006BE1C0
@@ -819,7 +819,7 @@ void __cdecl Prog_End(void)
 
 	FUN_0053E1D0();
 	Theme.Free_Themes();
-	FUN_00406D40();
+	Audio_Shutdown();
 	StringTable::Unload();
 	CopyProtection::ShutDown();
 	FUN_007B86B0();

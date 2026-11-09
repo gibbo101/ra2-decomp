@@ -149,7 +149,7 @@ void __fastcall FUN_0072DEF0(void);
 void __fastcall FUN_007781A0(void);
 void __fastcall FUN_0078ABF0(bool a, wchar_t const * text);
 extern bool ScenarioStarted;
-extern void * DAT_0087E758;
+extern void * AudioGroupAttribs1;
 extern int DAT_0083D834;
 extern bool DAT_00B054CC;
 extern int DAT_00B07784;
@@ -462,8 +462,8 @@ bool Start_Scenario(char const * name, bool briefing, CampaignType campaign)
 void Pause_Scenario(void)
 {
 	FUN_00406F00();
-	DAT_0083D834 = FUN_004072B0(DAT_0087E758);
-	FUN_00407150(DAT_0087E758, 0x4000);
+	DAT_0083D834 = FUN_004072B0(AudioGroupAttribs1);
+	FUN_00407150(AudioGroupAttribs1, 0x4000);
 
 	if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) {
 		DebugString("Paused ElapsedTimer = %ld\n", Scen->ElapsedTimer.Value());
@@ -496,7 +496,7 @@ void Resume_Scenario(void)
 		ToolTips->Activate(Options.ToolTips);
 	}
 
-	FUN_00407150(DAT_0087E758, DAT_0083D834);
+	FUN_00407150(AudioGroupAttribs1, DAT_0083D834);
 	DAT_0083D834 = 0x4000;
 	FUN_005BF500(false);
 	FUN_00406F40();
@@ -959,7 +959,7 @@ void Clear_Scenario(void)
 	Scen->UniqueID = 1000 * 1000;
 	Scen->RandomNumber.unknown_00 = true;
 	DAT_0083D834 = 0x4000;
-	FUN_00407150(DAT_0087E758, 0x4000);
+	FUN_00407150(AudioGroupAttribs1, 0x4000);
 	FUN_00750FA0();
 
 	PlayerPtr = NULL;
@@ -1060,11 +1060,11 @@ void Clear_Scenario(void)
 
 void __fastcall FUN_0072DDB0(void);
 void __fastcall FUN_005BF450(void);
-void __fastcall FUN_00406E80(void);
+void __fastcall Audio_Stop_Events(void);
 void __fastcall FUN_007529A0(bool a);
 void __fastcall FUN_00752CA0(void);
 void __fastcall FUN_00407070(void * p);
-void __fastcall FUN_004070B0(void * p);
+void __fastcall AudioLevelWaitFade(void * p);
 bool __fastcall FUN_007529E0(void);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 bool Net2Init_Network(void);
@@ -1095,8 +1095,8 @@ void Do_Win(void)
 	Map.Set_Default_Mouse(MOUSE_NORMAL, false);
 	MouseCursor->Hide_Mouse();
 
-	FUN_00407070(DAT_0087E758);
-	FUN_004070B0(DAT_0087E758);
+	FUN_00407070(AudioGroupAttribs1);
+	AudioLevelWaitFade(AudioGroupAttribs1);
 
 	int timeout = TickCount + 300;
 
@@ -1106,9 +1106,9 @@ void Do_Win(void)
 
 	FUN_007529A0(true);
 	FUN_00752CA0();
-	FUN_00406E80();
+	Audio_Stop_Events();
 	FUN_00750FA0();
-	FUN_00407150(DAT_0087E758, 0x4000);
+	FUN_00407150(AudioGroupAttribs1, 0x4000);
 	Toggle_Display_Mode(false);
 
 	if (Session.Type != GAME_NORMAL) {
@@ -1314,8 +1314,8 @@ void Do_Lose(void)
 	MouseCursor->Hide_Mouse();
 	Toggle_Display_Mode(false);
 
-	FUN_00407070(DAT_0087E758);
-	FUN_004070B0(DAT_0087E758);
+	FUN_00407070(AudioGroupAttribs1);
+	AudioLevelWaitFade(AudioGroupAttribs1);
 
 	int timeout = TickCount + 300;
 
@@ -1325,9 +1325,9 @@ void Do_Lose(void)
 
 	FUN_007529A0(true);
 	FUN_00752CA0();
-	FUN_00406E80();
+	Audio_Stop_Events();
 	FUN_00750FA0();
-	FUN_00407150(DAT_0087E758, 0x4000);
+	FUN_00407150(AudioGroupAttribs1, 0x4000);
 
 	bool finished = false;
 
@@ -1477,7 +1477,7 @@ void Do_Restart(void)
 	timer = 60;
 	Theme.Stop(true);
 
-	FUN_00406E80();
+	Audio_Stop_Events();
 	FUN_00750FA0();
 	FUN_007529A0(true);
 	FUN_00752CA0();
@@ -1515,9 +1515,9 @@ void Do_Abort(void)
 	Map.Set_Default_Mouse(MOUSE_NORMAL, false);
 	Theme.Stop(true);
 
-	FUN_00407070(DAT_0087E758);
+	FUN_00407070(AudioGroupAttribs1);
 	VoxClass::Play("EVA_BattleControlTerminated", 2, -1);
-	FUN_004070B0(DAT_0087E758);
+	AudioLevelWaitFade(AudioGroupAttribs1);
 
 	int timeout = TickCount + 300;
 
@@ -1527,9 +1527,9 @@ void Do_Abort(void)
 
 	FUN_007529A0(true);
 	FUN_00752CA0();
-	FUN_00406E80();
+	Audio_Stop_Events();
 	FUN_00750FA0();
-	FUN_00407150(DAT_0087E758, 0x4000);
+	FUN_00407150(AudioGroupAttribs1, 0x4000);
 	Toggle_Display_Mode(false);
 	Game::IsActive = false;
 }

@@ -977,7 +977,7 @@ void __fastcall AudioSetPrimaryFormat(int rate, int bits, int channels)
 // FUNCTION: GAMEMD 0x0040A850
 void AudioSetDeviceFormat(void)
 {
-	AudioDevice * dev = FUN_00407010();
+	AudioDevice * dev = AudioGetDevice();
 
 	if (AUD_primary_buffer && dev) {
 		WAVEFORMATEX wf;
@@ -1038,22 +1038,22 @@ void AudioRegainFocus(void)
 void __fastcall AUD_service_attribs(AudioDevice * dev)
 {
 	if (dev) {
-		AudioAttribsUpdate(DAT_0087E744);
-		AudioAttribsUpdate(DAT_0087E748);
-		AudioAttribsUpdate(DAT_0087E740);
+		AudioAttribsUpdate(AudioScoreAttribs);
+		AudioAttribsUpdate(AudioSoundAttribs);
+		AudioAttribsUpdate(AudioVoiceAttribs);
 		AudioAttribsUpdate(DAT_0087E73C);
-		AudioAttribsUpdate(DAT_0087E754);
-		AudioAttribsUpdate(DAT_0087E758);
-		AudioAttribsUpdate(DAT_0087E750);
+		AudioAttribsUpdate(AudioFadeAttribs);
+		AudioAttribsUpdate(AudioGroupAttribs1);
+		AudioAttribsUpdate(AudioGroupAttribs2);
 		AudioAttribsUpdate(DAT_0087E74C);
 		AudioDeviceService(dev);
-		AudioAttribsUsed(DAT_0087E748);
-		AudioAttribsUsed(DAT_0087E744);
-		AudioAttribsUsed(DAT_0087E740);
+		AudioAttribsUsed(AudioSoundAttribs);
+		AudioAttribsUsed(AudioScoreAttribs);
+		AudioAttribsUsed(AudioVoiceAttribs);
 		AudioAttribsUsed(DAT_0087E73C);
-		AudioAttribsUsed(DAT_0087E754);
-		AudioAttribsUsed(DAT_0087E758);
-		AudioAttribsUsed(DAT_0087E750);
+		AudioAttribsUsed(AudioFadeAttribs);
+		AudioAttribsUsed(AudioGroupAttribs1);
+		AudioAttribsUsed(AudioGroupAttribs2);
 		AudioAttribsUsed(DAT_0087E74C);
 	}
 }
