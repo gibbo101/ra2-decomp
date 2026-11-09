@@ -10552,6 +10552,7 @@ address,name,result,size,source,symbol
 0x00620720,ODDrawArrowBitmap,MATCH,235,src/ownrdraw.cpp,?ODDrawArrowBitmap@@YIXPAVSurface@@ABV?$TRect@H@@HH_N@Z
 0x00620870,ODPixelToPaletteColor,MATCH,121,src/ownrdraw.cpp,?ODPixelToPaletteColor@@YIKG@Z
 0x00620810,ODColorToHiColor,MATCH,87,src/ownrdraw.cpp,?ODColorToHiColor@@YIHK@Z
+0x006208F0,OwnerDraw::DrawBeveledBorder,MATCH,984,src/ownrdraw.cpp,?DrawBeveledBorder@OwnerDraw@@YIXAAVSurface@@ABV?$TRect@H@@HH@Z
 0x00620CD0,ODDrawButtonRect,MATCH,646,src/ownrdraw.cpp,?ODDrawButtonRect@@YIXAAVSurface@@ABV?$TRect@H@@H@Z
 0x00620F60,FUN_00620F60,MATCH,223,src/ownrdraw.cpp,?FUN_00620F60@@YIHPAVSurface@@PBGPAUtagRECT@@PAVBitFont@@IH@Z
 0x00621040,OwnerDraw::DrawWideText,MATCH,272,src/ownrdraw.cpp,?DrawWideText@OwnerDraw@@YIHPAVSurface@@PBGPAULTRBStruct@@PAVBitFont@@IHHHHH@Z

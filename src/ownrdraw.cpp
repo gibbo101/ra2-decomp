@@ -7304,6 +7304,72 @@ int ODColorToHiColor(COLORREF color)
 	return(DSurface::Build_Hicolor_Pixel(((ColorBytes *)&color)->red, ((ColorBytes *)&color)->green, ((ColorBytes *)&color)->blue));
 }
 
+namespace OwnerDraw
+{
+// FUNCTION: GAMEMD 0x006208F0
+// OwnerDraw::DrawBeveledBorder
+void DrawBeveledBorder(Surface & surf, Rect const & rect, int offset, int color)
+{
+	if (color == -1) {
+		color = ODColorToHiColor(DefaultBorderColor);
+	}
+	int shades[2] = { BevelLightColor, BevelShadowColor };
+	int pixels[2] = { ODColorToHiColor(shades[0]), ODColorToHiColor(shades[1]) };
+	Rect work = rect;
+	work.X -= offset;
+	work.Y -= offset;
+	work.Width += 2 * offset;
+	work.Height += 2 * offset;
+
+	for (int i = 0; i < offset; i++) {
+		Point2D end1;
+		Point2D start1;
+		Point2D end2;
+		Point2D start2;
+		Point2D end3;
+		Point2D start3;
+		Point2D end4;
+
+		if (offset == 2) color = pixels[i];
+
+		end1.X = work.Width - i + work.X - 2;
+		end1.Y = i + work.Y;
+		start1.X = i + work.X;
+		start1.Y = i + work.Y;
+		surf.Draw_Line(start1, end1, color);
+
+		end3.X = work.X + i;
+		end3.Y = work.Y - i + work.Height - 1;
+		start3.X = end3.X;
+		start3.Y = work.Y + i + 1;
+		surf.Draw_Line(start3, end3, color);
+
+		if (offset == 2) color = pixels[offset - 1 - i];
+
+		end2.X = work.Width - i + work.X - 1;
+		start2.X = i + work.X;
+		end2.Y = work.Y - i + work.Height - 1;
+		start2.Y = end2.Y;
+		surf.Draw_Line(start2, end2, color);
+
+		end4.X = work.X - i + work.Width - 1;
+		end4.Y = work.Y - i + work.Height - 2;
+		surf.Draw_Line(Point2D(end4.X, i + work.Y), end4, color);
+
+		if (offset == 2) {
+			int middle =
+				((((shades[0] & 0xFF00) + (shades[1] & 0xFF00)) / 2) & 0xFF00)
+				+ ((((shades[0] & 0xFF0000) + (shades[1] & 0xFF0000)) / 2) & 0xFF0000)
+				+ ((((shades[0] & 0xFF) + (shades[1] & 0xFF)) / 2) & 0xFF);
+
+			color = ODColorToHiColor(middle);
+			surf.Put_Pixel(Point2D(work.Width - i + work.X - 1, work.Y + i), color);
+			surf.Put_Pixel(Point2D(work.X + i, work.Y - i + work.Height - 1), color);
+		}
+	}
+}
+}
+
 // FUNCTION: GAMEMD 0x00620CD0
 void ODDrawButtonRect(Surface & surf, Rect const & rect, int offset)
 {
