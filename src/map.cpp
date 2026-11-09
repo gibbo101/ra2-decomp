@@ -1834,6 +1834,207 @@ bool MapClass::Register_Subzone_Connections(Cell const & cell)
 	return(result);
 }
 
+// FUNCTION: GAMEMD 0x0056DC20
+Cell MapClass::Nearby_Location(Cell const &cell, SpeedType speed, int zone, MZoneType check, bool checkbridge,
+                               Point2D dimensions, bool checkoverlay, bool checkheight, bool checkburrow,
+                               bool allowunderbridge, Cell const &nearto, bool flag, bool buildable) const
+{
+	Cell candidates[24];
+	int count = 0;
+	int xx = cell.X;
+	int yy = cell.Y;
+	bool found = false;
+
+	if (zone == 0xffff)
+		zone = -1;
+
+	int height = Map[cell].Height;
+	if (checkbridge) {
+		if (Map[cell].IsUnderBridge)
+			height += 4;
+	}
+
+	int const maxradius = PlayRect.Height + PlayRect.Width > 32 ? 32 : PlayRect.Height + PlayRect.Width;
+
+	for (int radius = 0; radius < maxradius; ++radius) {
+		for (int x = -radius; x <= radius; ++x) {
+			Cell newcell;
+			CellClass *cellptr;
+
+			if (flag == 0) {
+				newcell = Cell(xx + x, yy - radius);
+				cellptr = &Map[newcell];
+
+				Rect area(newcell.X, newcell.Y, dimensions.X, dimensions.Y);
+
+				if (In_Local_Radar(cellptr, true) &&
+				    ((MapClass *)this)
+				        ->Is_Clear_To_Move(newcell, dimensions.X, dimensions.Y, speed, zone, check, -1, checkbridge,
+				                           checkoverlay)) {
+					if (!checkheight || abs(height - 4 * cellptr->IsUnderBridge - cellptr->Height) < 2) {
+						if ((!checkburrow || cellptr->Can_Burrow_Here()) &&
+						    (allowunderbridge || !cellptr->IsUnderBridge)) {
+							if (!buildable || ((MapClass *)this)->IsAreaFree(area, -1)) {
+								candidates[count++] = newcell;
+
+								if (checkbridge || newcell == TacticalMap->Coord_To_Cell(Coord(newcell, 0))) {
+									found = true;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (count == 24)
+				break;
+
+			if (flag == 0 || x > -radius) {
+				int bottom_y = yy + radius;
+				newcell = Cell(xx + x, bottom_y);
+				cellptr = &Map[newcell];
+
+				Rect area(newcell.X, newcell.Y, dimensions.X, dimensions.Y);
+
+				if (In_Local_Radar(cellptr, true) &&
+				    ((MapClass *)this)
+				        ->Is_Clear_To_Move(newcell, dimensions.X, dimensions.Y, speed, zone, check, -1, checkbridge,
+				                           checkoverlay)) {
+					if (!checkheight || abs(height - 4 * cellptr->IsUnderBridge - cellptr->Height) < 2) {
+						if ((!checkburrow || cellptr->Can_Burrow_Here()) &&
+						    (allowunderbridge || !cellptr->IsUnderBridge)) {
+							if (!buildable || ((MapClass *)this)->IsAreaFree(area, -1)) {
+								candidates[count++] = newcell;
+
+								if (checkbridge || newcell == TacticalMap->Coord_To_Cell(Coord(newcell, 0))) {
+									found = true;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (count == 24)
+				break;
+		}
+
+		if (count == 24)
+			break;
+
+		for (int y = -radius + 1; y <= radius - 1; ++y) {
+			Cell newcell;
+			CellClass *cellptr;
+
+			if (flag == 0) {
+				newcell = Cell(xx - radius, yy + y);
+				cellptr = &Map[newcell];
+
+				Rect area(newcell.X, newcell.Y, dimensions.X, dimensions.Y);
+
+				if (In_Local_Radar(cellptr, true) &&
+				    ((MapClass *)this)
+				        ->Is_Clear_To_Move(newcell, dimensions.X, dimensions.Y, speed, zone, check, -1, checkbridge,
+				                           checkoverlay)) {
+					if (!checkheight || abs(height - 4 * cellptr->IsUnderBridge - cellptr->Height) < 2) {
+						if ((!checkburrow || cellptr->Can_Burrow_Here()) &&
+						    (allowunderbridge || !cellptr->IsUnderBridge)) {
+							if (!buildable || ((MapClass *)this)->IsAreaFree(area, -1)) {
+								candidates[count++] = newcell;
+
+								if (checkbridge || newcell == TacticalMap->Coord_To_Cell(Coord(newcell, 0))) {
+									found = true;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (count == 24)
+				break;
+
+			newcell = Cell(xx + radius, yy + y);
+			cellptr = &Map[newcell];
+
+			Rect area(newcell.X, newcell.Y, dimensions.X, dimensions.Y);
+
+			if (In_Local_Radar(cellptr, true) && ((MapClass *)this)
+			                                         ->Is_Clear_To_Move(newcell, dimensions.X, dimensions.Y, speed,
+			                                                            zone, check, -1, checkbridge, checkoverlay)) {
+				if (!checkheight || abs(height - 4 * cellptr->IsUnderBridge - cellptr->Height) < 2) {
+					if ((!checkburrow || cellptr->Can_Burrow_Here()) && (allowunderbridge || !cellptr->IsUnderBridge)) {
+						if (!buildable || ((MapClass *)this)->IsAreaFree(area, -1)) {
+							candidates[count++] = newcell;
+
+							if (checkbridge || newcell == TacticalMap->Coord_To_Cell(Coord(newcell, 0))) {
+								found = true;
+							}
+						}
+					}
+				}
+			}
+
+			if (count == 24)
+				break;
+		}
+
+		if (count == 24)
+			break;
+		if (found)
+			break;
+	}
+
+	if (count > 0) {
+		Cell visible[24];
+		Cell hidden[24];
+		int visible_count = 0;
+		int hidden_count = 0;
+		int index;
+
+		for (index = 0; index < count; ++index) {
+			Cell projected = TacticalMap->Coord_To_Cell(Coord(candidates[index], 0));
+
+			if (projected == candidates[index]) {
+				visible[visible_count++] = candidates[index];
+			} else {
+				hidden[hidden_count++] = candidates[index];
+			}
+		}
+
+		if (nearto == CELL_NONE) {
+			if (visible_count != 0) {
+				return visible[Frame % visible_count];
+			}
+			return hidden[Frame % hidden_count];
+		}
+
+		int total = visible_count;
+		if (visible_count == 0)
+			total = hidden_count;
+
+		double best_distance = 100000.0;
+		Cell best = CELL_NONE;
+
+		for (index = 0; index < total; ++index) {
+			Cell candidate = visible_count != 0 ? visible[index] : hidden[index];
+
+			int dx = candidate.X - nearto.X;
+			int dy = candidate.Y - nearto.Y;
+			double distance = fastmath::sqrt((double)(dy * dy + dx * dx));
+
+			if (distance < best_distance) {
+				best_distance = distance;
+				best = candidate;
+			}
+		}
+
+		return best;
+	}
+
+	return CELL_NONE;
+}
+
 // FUNCTION: GAMEMD 0x0056E7C0
 bool MapClass::Is_Clear_To_Move(Cell const & cell, int width, int height, SpeedType speed, int zone, MZoneType check, int cell_height, bool checkbridge, bool block_overlays)
 {
