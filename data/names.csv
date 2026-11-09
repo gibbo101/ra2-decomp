@@ -447,7 +447,6 @@ address,name,symbol,evidence
 0x00778150,IME_Close_Alt,,"same function as Red Alert 2 1.006 0x007380E0 (compiled from src/winstub.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
 0x00B73570,IMEResult,,"same global as Red Alert 2 1.006 0x00B263F8 (inferred: referenced by matched src/winstub.cpp (3 reference), which RedAlert2 rebuilds byte for byte"
 0x00B73561,_MouseWheel,,"same global as Red Alert 2 1.006 0x00B263E9 (inferred: referenced by matched src/winstub.cpp (3 reference), which RedAlert2 rebuilds byte for byte"
-0x00B730EC,IMEResultString,,"same global as Red Alert 2 1.006 0x00B25F7C (inferred: referenced by matched src/winstub.cpp (5 reference), which RedAlert2 rebuilds byte for byte"
 0x00B7354C,ProgramIcon,,"same global as Red Alert 2 1.006 0x00B263D4 (inferred: referenced by matched src/winstub.cpp (2 reference), which RedAlert2 rebuilds byte for byte"
 0x00B73548,ProgramCursor,,"same global as Red Alert 2 1.006 0x00B263D0 (inferred: referenced by matched src/winstub.cpp (1 reference), which RedAlert2 rebuilds byte for byte"
 0x00B73544,ShowCommand,,"same global as Red Alert 2 1.006 0x00B263CC (inferred: referenced by matched src/winstub.cpp (1 reference), which RedAlert2 rebuilds byte for byte"

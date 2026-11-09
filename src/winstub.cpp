@@ -217,7 +217,7 @@ extern bool DAT_008A00A0;
 extern bool DAT_00A8ED81;
 extern int DAT_00A8EDD8;
 extern int IMEResult;
-extern wchar_t IMEResultString[];
+extern wchar_t DAT_00B730EC[];
 extern MouseSlots * DAT_00887640;
 
 namespace OwnerDraw { int __fastcall ServiceIMEMessage(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
@@ -359,7 +359,7 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 	}
 
 	if (message == WM_IME_CHAR) {
-		int length = wcslen(IMEResultString);
+		int length = wcslen(DAT_00B730EC);
 		char mb[4];
 		int wc;
 		if (wParam & 0xFF00) {
@@ -371,8 +371,8 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 			mb[1] = 0;
 		}
 		int converted = MultiByteToWideChar(0, 0, mb, strlen(mb), (LPWSTR)&wc, 1);
-		IMEResultString[length] = (converted == 1) ? wc : 0;
-		IMEResultString[length + 1] = 0;
+		DAT_00B730EC[length] = (converted == 1) ? wc : 0;
+		DAT_00B730EC[length + 1] = 0;
 		return(0);
 	}
 
@@ -511,7 +511,7 @@ void OwnerDraw::CancelIMEComposition(void)
 	IMECompositionStringLength = 0;
 	IMECompositionCursorPos = 0;
 	IMEComposing = 0;
-	IMEResultString[0] = 0;
+	DAT_00B730EC[0] = 0;
 	if (Game::hIMC) {
 		FUN_007C8A28(Game::hIMC, 0x15, 4, 0);
 	}
@@ -616,7 +616,7 @@ int __fastcall OwnerDraw::ServiceIMEMessage(HWND hwnd, UINT message, WPARAM wPar
 
 		case 0x10D:
 			UpdateIMECompositionString();
-			IMEResultString[0] = 0;
+			DAT_00B730EC[0] = 0;
 			IMEComposing = 1;
 			IMEResult = DefWindowProc(hwnd, 0x10D, wParam, lParam);
 			return(1);
