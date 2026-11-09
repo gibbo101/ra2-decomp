@@ -7891,6 +7891,219 @@ BOOL CALLBACK FUN_0079DB50(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 
 bool __fastcall FUN_0079F0A0(Wstring * name, ArrayList<WolChannel> * channels, WolChannel * result);
 
+void __fastcall FUN_0079BF50(HWND dialog);
+void __fastcall FUN_0079C040(HWND dialog);
+extern int DAT_0084A1CC;
+extern int DAT_0084A1D0;
+
+// FUNCTION: GAMEMD 0x0079AF10
+void __fastcall FUN_0079AF10(HWND dialog)
+{
+	HWND list = GetDlgItem(dialog, 0x689);
+	SendMessageA(list, 0x49d, 0, 1);
+
+	for (int i = 0; i < DAT_00B73AA8.length(); ++i) {
+		Wstring buddy;
+		DAT_00B73AA8.get(buddy, i);
+		WideWstring display = FUN_007B7ED0(buddy);
+		WolEntryState state = WOL_ENTRY_STATE_NONE;
+		DAT_00B76990.getValue(buddy, state);
+
+		int row = SendMessageA(list, 0x4c5, 0, (LPARAM)buddy.text());
+		if (row == -1) {
+			row = SendMessageA(list, 0x4c8, 0, (LPARAM)buddy.text());
+		}
+
+		OwnerDraw::CellData name;
+		name.type = OwnerDraw::CellData::TEXT;
+		name.string.set(display.get());
+		name.hint.set(DAT_00887734);
+
+		OwnerDraw::CellData status;
+		status.type = OwnerDraw::CellData::TEXT;
+		status.hint.set(DAT_00887734);
+
+		OwnerDraw::CellData mode;
+		mode.type = OwnerDraw::CellData::INVALID;
+		mode.string.set(DAT_00887734);
+		mode.hint.set(DAT_00887734);
+
+		OwnerDraw::CellData password;
+		password.type = OwnerDraw::CellData::INVALID;
+		password.string.set(DAT_00887734);
+		password.hint.set(DAT_00887734);
+
+		OwnerDraw::CellData gameType;
+		gameType.type = OwnerDraw::CellData::INVALID;
+		gameType.string.set(DAT_00887734);
+		gameType.hint.set(DAT_00887734);
+
+		OwnerDraw::CellData ping;
+		ping.type = OwnerDraw::CellData::INVALID;
+		ping.string.set(DAT_00887734);
+		ping.hint.set(DAT_00887734);
+
+		switch (state) {
+		case 1:
+			status.string.set(
+			    StringTable::LoadString("WOL:BuddyDisabledFind", 0, "D:\\ra2mdpost\\wonline.cpp", 0x67BD));
+			name.color = status.color = 0x808080;
+			break;
+
+		case 2:
+			status.string.set(StringTable::LoadString("WOL:BuddyOffline", 0, "D:\\ra2mdpost\\wonline.cpp", 0x67C3));
+			name.color = status.color = 0x808080;
+			break;
+
+		case 3:
+			status.string.set(StringTable::LoadString("WOL:BuddyOnline", 0, "D:\\ra2mdpost\\wonline.cpp", 0x67C9));
+			name.color = status.color = 0xf0f0;
+			break;
+
+		case 7:
+		case 8:
+			status.string.set(
+			    StringTable::LoadString("WOL:BuddyQuickMatching", 0, "D:\\ra2mdpost\\wonline.cpp", 0x67D0));
+			name.color = status.color = 0x80ff00;
+			break;
+
+		case 4: {
+			WolChannel channel;
+			memset(&channel, 0, sizeof(channel));
+
+			if (!DAT_00B76608.getValue(buddy, channel)) {
+				status.string.set(StringTable::LoadString("WOL:BuddyOnline", 0, "D:\\ra2mdpost\\wonline.cpp", 0x67E9));
+				name.color = status.color = 0xf0f0;
+			} else {
+				if (channel.Type == 0 && strncmp(channel.Name, "Lob_41_", strlen("Lob_41_")) == 0) {
+					int lobby = atol(channel.Name + strlen("Lob_41_"));
+					int page = lobby / 8;
+
+					WideWstring location((wchar_t const *)DAT_00B73E1C[lobby % 8]);
+
+					if (page) {
+						location += L" ";
+						location += FUN_007B7DD0(page + 1);
+					}
+					status.string.set(location.get());
+				} else {
+					status.string.set(FUN_00735120(channel.Name));
+				}
+				name.color = status.color = 0xff4000;
+			}
+			break;
+		}
+
+		case 5: {
+			WolChannel game;
+			memset(&game, 0, sizeof(game));
+			char found = DAT_00B76608.getValue(buddy, game);
+
+			if (found) {
+				Wstring game_name(game.Name);
+				found = FUN_0079F0A0(&game_name, &DAT_00B76AE0, &game);
+			}
+
+			if (found) {
+				char options[132];
+				strncpy(options, game.Info, 128);
+				int first = 0, second = 0, third = 0;
+				int fourth = 0, fifth = 0;
+				Wstring rest;
+
+				FUN_0077E820(options, &first, &second, &third, &fourth, &fifth, &rest);
+
+				unsigned int current = game.CurrentUsers - fourth + third;
+				int reserved = (fourth != 0 || fifth != 0);
+				unsigned int maximum = game.MaxUsers - reserved;
+
+				wchar_t details[80];
+				swprintf(details, L"%hs %d/%d", game.Name, current, maximum);
+				status.string.set(details);
+				name.color = status.color = 0xffff00;
+
+				mode.type = OwnerDraw::CellData::SURFACE;
+
+				if (game.Tournament != 0) {
+					mode.surf = SurfaceCache.GetSurface("woltrny.pcx", 0);
+					mode.hint.set(
+					    StringTable::LoadString("TXT_TOURNAMENT_GAME", 0, "D:\\ra2mdpost\\wonline.cpp", 0x680D));
+				} else if (game.Reserved & 0x100) {
+					mode.surf = SurfaceCache.GetSurface("wolclan.pcx", 0);
+					mode.hint.set(
+					    StringTable::LoadString("TXT_BATTLECLAN_GAME", 0, "D:\\ra2mdpost\\wonline.cpp", 0x6810));
+				} else {
+					mode.surf = SurfaceCache.GetSurface("gt18.bmp", 0);
+					mode.hint.set(DAT_00887734);
+				}
+
+				if (game.Reserved & 0x600) {
+					if (fourth == 0 && fifth != 0) {
+						gameType.type = OwnerDraw::CellData::SURFACE;
+						gameType.surf = SurfaceCache.GetSurface("wolrslkob.pcx", 0);
+					} else {
+						gameType.type = OwnerDraw::CellData::SURFACE;
+						gameType.surf = SurfaceCache.GetSurface("wolreslk.pcx", 0);
+					}
+				} else if (fourth == 0 && fifth != 0) {
+					gameType.type = OwnerDraw::CellData::SURFACE;
+					gameType.surf = SurfaceCache.GetSurface("wolob.pcx", 0);
+				}
+
+				if (game.Squad & 0x100) {
+					password.type = OwnerDraw::CellData::SURFACE;
+					password.surf = SurfaceCache.GetSurface("wolpriv.pcx", 0);
+					password.hint.set(
+					    StringTable::LoadString("TXT_GAME_PASSWORD", 0, "D:\\ra2mdpost\\wonline.cpp", 0x6830));
+				}
+
+				ping.type = OwnerDraw::CellData::PING;
+				ping.pingtime = game.Ping;
+				swprintf(details, StringTable::LoadString("WOL:GamePing", 0, "D:\\ra2mdpost\\wonline.cpp", 0x6835),
+				         game.Ping);
+				ping.hint.set(details);
+			} else {
+				status.string.set(StringTable::LoadString("WOL:BuddyOnline", 0, "D:\\ra2mdpost\\wonline.cpp", 0x6838));
+				name.color = status.color = 0xf0f0;
+			}
+			break;
+		}
+
+		case 6:
+			status.string.set(StringTable::LoadString("WOL:BuddyPlayingGame", 0, "D:\\ra2mdpost\\wonline.cpp", 0x683F));
+			name.color = status.color = 0x3050ff;
+			break;
+
+		default:
+			status.string.set(
+			    StringTable::LoadString("WOL:BuddyUnknownStatus", 0, "D:\\ra2mdpost\\wonline.cpp", 0x6845));
+			name.color = status.color = 0x808080;
+			break;
+		}
+
+		SendMessageA(list, 0x4a8, ((unsigned short)row << 16) | ((unsigned short)DAT_0084A1C4), (LPARAM)&name);
+		SendMessageA(list, 0x4a8, ((unsigned short)row << 16) | ((unsigned short)DAT_0084A1C8), (LPARAM)&mode);
+		SendMessageA(list, 0x4a8, ((unsigned short)row << 16) | ((unsigned short)DAT_0084A1CC), (LPARAM)&password);
+		SendMessageA(list, 0x4a8, ((unsigned short)row << 16) | ((unsigned short)DAT_0084A1D0), (LPARAM)&gameType);
+		SendMessageA(list, 0x4a8, ((unsigned short)row << 16) | ((unsigned short)DAT_0084A1D4), (LPARAM)&status);
+		SendMessageA(list, 0x4a8, ((unsigned short)row << 16) | ((unsigned short)DAT_0084A1D8), (LPARAM)&ping);
+	}
+
+	int wanted = -1;
+	if (DAT_00B76E24.length() > 0) {
+		wanted = SendMessageA(list, 0x4c5, 0, (LPARAM)DAT_00B76E24.text());
+	}
+
+	if (wanted != SendMessageA(list, 0x188, 0, 0)) {
+		SendMessageA(list, 0x186, wanted, 0);
+	}
+
+	SendMessageA(list, 0x49d, 0, 0);
+	InvalidateRect(list, 0, 0);
+	FUN_0079BF50(dialog);
+	FUN_0079C040(dialog);
+}
+
 // FUNCTION: GAMEMD 0x0079BC80
 bool FUN_0079BC80(void)
 {
@@ -7933,21 +8146,15 @@ bool FUN_0079BED0(void)
 	if (DAT_00B76E24.length() == 0) {
 		return false;
 	}
-	WolEntryState * state;
-	if (!DAT_00B76990.getPointer(DAT_00B76E24, &state)) {
+
+	WolEntryState state = WOL_ENTRY_STATE_NONE;
+	DAT_00B76990.getValue(DAT_00B76E24, state);
+
+	if ((int)state >= 0 && (int)state <= 2) {
 		return false;
 	}
-	if (state == NULL) {
-		goto done;
-	}
-	{
-		int value = *state;
-		if (value < 0 || value > 2) {
-			return true;
-		}
-	}
-done:
-	return false;
+
+	return true;
 }
 
 extern int DAT_00B779D0;
@@ -7955,6 +8162,16 @@ extern int DAT_00B779D0;
 static inline void Set_Text(HWND window, wchar_t const * text)
 {
 	SendMessage(window, 0x4B2, 0, (LPARAM)text);
+}
+
+// FUNCTION: GAMEMD 0x0079BF50
+void __fastcall FUN_0079BF50(HWND dialog)
+{
+	EnableWindow(GetDlgItem(dialog, 0x703), DAT_00B76E24.length() > 0);
+
+	EnableWindow(GetDlgItem(dialog, 0x62D), (unsigned char)FUN_0079BC80());
+
+	EnableWindow(GetDlgItem(dialog, 0x5C2), (unsigned char)FUN_0079BED0());
 }
 
 // FUNCTION: GAMEMD 0x0079C040
