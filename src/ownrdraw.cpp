@@ -6717,6 +6717,94 @@ inline int Draw_Hotkey_Text4(Surface *surface, wchar_t const *text, RECT *rect, 
 inline int Draw_Hotkey_Text5(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text4(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text6(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text5(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text7(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text6(surface, text, rect, font, color, flags); }
+
+// FUNCTION: GAMEMD 0x0061E700
+LRESULT CALLBACK OwnerDraw::GroupBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int i;
+
+	switch (message) {
+	case WM_PAINT: {
+		int spacing = 0;
+		WinData *data = Find_Data(window);
+
+		if (data != NULL) {
+			wchar_t const *text = data->Wide.text ? data->Wide.text : L"";
+
+			RECT area;
+			Get_Display_Rect(window, &area);
+
+			int width = area.right - area.left;
+			int middle_y = data->Wide.font->field_1C / 2 + area.top;
+			int text_width;
+			int text_height;
+
+			data->Wide.font->GetTextDimension(text, &text_width, &text_height, width);
+
+			Rect caption(area.left + 10, area.top, width, area.bottom - area.top);
+
+			PrintTextFixedLength(PrimaryTextColor, NULL, caption, text, wcslen(text), 0, 0, AlternateSurface, 0);
+
+			int shades[2] = {BevelLightColor, BevelShadowColor};
+			int colors[2];
+			colors[1] = ODColorToHiColor(shades[1]);
+			colors[0] = ODColorToHiColor(shades[0]);
+			i = 0;
+
+			int middle_color = ((((shades[0] & 0xFF) + (shades[1] & 0xFF)) / 2) & 0xFF) +
+			                   ((((shades[0] & 0xFF0000) + (shades[1] & 0xFF0000)) / 2) & 0xFF0000) +
+			                   ((((shades[0] & 0xFF00) + (shades[1] & 0xFF00)) / 2) & 0xFF00);
+
+			for (; i < 2; i++) {
+				int color = colors[i];
+
+				if (wcslen(text) == 0) {
+					AlternateSurface->Draw_Line(Point2D(area.left + i, middle_y + i),
+					                            Point2D(area.right - i - 1, middle_y + i), color);
+				} else {
+					AlternateSurface->Draw_Line(Point2D(area.left + i, middle_y + i),
+					                            Point2D(area.left + 8, middle_y + i), color);
+
+					if (text_width)
+						spacing = 12;
+
+					AlternateSurface->Draw_Line(Point2D(area.left + text_width + spacing, middle_y + i),
+					                            Point2D(area.right - i - 1, middle_y + i), color);
+				}
+
+				AlternateSurface->Draw_Line(Point2D(area.left + i, middle_y + i + 1),
+				                            Point2D(area.left + i, area.bottom - i - 1), color);
+
+				color = colors[1 - i];
+
+				AlternateSurface->Draw_Line(Point2D(area.left + i, area.bottom - i - 1),
+				                            Point2D(area.right - i - 1, area.bottom - i - 1), color);
+
+				AlternateSurface->Draw_Line(Point2D(area.right - i - 1, middle_y + i),
+				                            Point2D(area.right - i - 1, area.bottom - i - 2), color);
+
+				color = ODColorToHiColor(middle_color);
+
+				AlternateSurface->Put_Pixel(Point2D(area.right - i - 1, middle_y + i), color);
+
+				AlternateSurface->Put_Pixel(Point2D(area.left + i, area.bottom - i - 1), color);
+			}
+
+			ValidateRect(window, NULL);
+		}
+	}
+	case WM_NCPAINT:
+		return 0;
+
+	case WM_ERASEBKGND:
+		return 1;
+	}
+
+	WNDPROC proc = NULL;
+	DialogProcs.getValue(window, proc);
+	return CallWindowProc(proc, window, message, wparam, lparam);
+}
+
 // FUNCTION: GAMEMD 0x0061ECA0
 // OwnerDraw::HotkeyHandler
 LRESULT CALLBACK OwnerDraw::HotkeyHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
