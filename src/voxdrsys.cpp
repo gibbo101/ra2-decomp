@@ -11,6 +11,9 @@
 #include "voxlib.h"
 #include "wwfile.h"
 
+// SYNTHETIC: GAMEMD 0x004068F0 SYMBOL
+// ??_H@YGXPAXIHP6EX0@Z@Z
+
 // SYNTHETIC: GAMEMD 0x007539B0 SYMBOL
 // _$E2
 
