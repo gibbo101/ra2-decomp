@@ -12,7 +12,6 @@
 #include "_rtti.h"
 #include "_rules.h"
 #include "_script.h"
-#include "_surface.h"
 #include "_tactica.h"
 #include "_vanim.h"
 #include "_warhead.h"
@@ -31,7 +30,6 @@
 #include "connmgr.h"
 #include "conquer.h"
 #include "crc.h"
-#include "data.h"
 #include "dbgprint.h"
 #include "dsurface.h"
 #include "empulse.h"
@@ -885,7 +883,6 @@ static int SyncBarControlIDs[MAX_PLAYERS] = {
 	0x648, 0x649, 0x64a, 0x64b, 0x64c, 0x64d, 0x64e, 0x64f
 };
 
-extern RGBClass DAT_00A8EAE4;
 extern int DAT_00B04884;
 extern int DAT_00B04888;
 extern unsigned char DAT_00B0488C;
@@ -1000,7 +997,6 @@ extern bool ConnectionLost;
 void __fastcall Send_Statistics_Packet(bool arg);
 void __fastcall FUN_005DA750(int id, int error);
 
-extern INetUtil * DAT_00AC1170;
 extern int DAT_00B77780;
 extern int DAT_00B77CE0;
 extern int DAT_00B04890;
@@ -1070,10 +1066,10 @@ BOOL CALLBACK Reconnect_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 			break;
 
 		case WM_TIMER:
-			if (Session.Type == GAME_INTERNET && wparam == 1 && DAT_00AC1170 != NULL) {
+			if (Session.Type == GAME_INTERNET && wparam == 1 && g_pNetUtil != NULL) {
 				int handle;
 				if (DAT_00B77780 < 5) {
-					DAT_00AC1170->RequestPing(DAT_00B77930, 1000, &handle);
+					g_pNetUtil->RequestPing(DAT_00B77930, 1000, &handle);
 					DAT_00B77780++;
 				}
 				DAT_00B04890++;

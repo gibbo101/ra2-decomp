@@ -3052,7 +3052,6 @@ void __fastcall FUN_005EC030(HWND dialog)
 }
 
 void FUN_00785360(void);
-extern int DAT_00AC116C;
 
 // FUNCTION: GAMEMD 0x005EC290
 void __fastcall FUN_005EC290(HWND dialog, int start)
@@ -3069,7 +3068,7 @@ void __fastcall FUN_005EC290(HWND dialog, int start)
 		}
 	}
 	FUN_005EBC00(dialog, start);
-	if (DAT_00AC116C) {
+	if (g_pChat) {
 		FUN_00785360();
 	} else {
 		FUN_005DAFD0();

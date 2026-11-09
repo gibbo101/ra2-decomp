@@ -541,3 +541,6 @@ address,name,symbol,evidence
 0x0087E5F8,AudioGroupData2,,"same global as Red Alert 2 1.006 0x00831310 (inferred: referenced by matched src/audio.cpp (2 references)), which RedAlert2 rebuilds byte for byte"
 0x0087E3C0,AudioGroupData1,,"same global as Red Alert 2 1.006 0x008310D8 (inferred: referenced by matched src/audio.cpp (2 references)), which RedAlert2 rebuilds byte for byte"
 0x0087E738,ScoresMix,,"same global as Red Alert 2 1.006 0x00831448 (inferred: referenced by matched src/cd.cpp (7 references); a), which RedAlert2 rebuilds byte for byte"
+0x00AC116C,g_pChat,?g_pChat@@3PAUIChat@@A,"WOLAPI IChat interface pointer (TibSun netshare.h name); every IChat method call in wonline, netshare and conquer goes through it"
+0x00AC1170,g_pNetUtil,?g_pNetUtil@@3PAUINetUtil@@A,"WOLAPI INetUtil interface pointer (TibSun netshare.h name); ladder, ping and gameres requests in wonline, queue and stats go through it"
+0x00AC1174,g_pDownload,?g_pDownload@@3PAUIDownload@@A,"WOLAPI IDownload interface pointer (TibSun netshare.h name), next to g_pChat and g_pNetUtil; the patch download code calls through it"
