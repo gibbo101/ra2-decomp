@@ -874,6 +874,264 @@ FactoryClass * HouseClass::Factory_Producing_This(ObjectTypeClass const * object
 	return(fptr);
 }
 
+extern bool FUN_007529E0(void);
+extern int DAT_00A8F040;
+
+static inline FootClass *House_Foot_View(AbstractClass *object)
+{
+	if (object && (object->AbstractFlags & 4))
+		return static_cast<FootClass *>(object);
+	return NULL;
+}
+
+// FUNCTION: GAMEMD 0x004F8440
+void HouseClass::AI()
+{
+	if (PowerBlackoutTimer.Value() == 1) {
+		PowerBlackoutTimer = CDTimerClass<FrameTimerClass>(0);
+		RecalcPower = true;
+	}
+	if (RadarBlackoutTimer.Value() == 1) {
+		RadarBlackoutTimer = CDTimerClass<FrameTimerClass>(0);
+		RecalcRadar = true;
+	}
+	if (RecalcPower) {
+		Recalc_Power_Drain();
+		RecalcRadar = true;
+	}
+	if (RecalcRadar) {
+		if (Unsorted::MuteSWLaunches == 0)
+			Recalc_Radar_Availability();
+		Recalc_Spy_Satellite();
+	}
+	if (Frame % 100 == 0) {
+		for (int index = 0; index < AngerNodes.Count(); ++index) {
+			if (AngerNodes[index].Level > 1)
+				--AngerNodes[index].Level;
+		}
+	}
+	if (AIGeneral) {
+		long frame_delay = 0;
+		static_cast<IAIHouse *>(AIGeneral)->AI(&frame_delay);
+	}
+	if (!Is_Human_Player() && (IsBaseBuilding || IQ >= Rule->IQProduction)) {
+		IsBaseBuilding = true;
+		IsStarted = true;
+		IsAlerted = true;
+	}
+	if (IsToWin && BorrowedTime.Value() == 0 && (Session.Type != 0 || Blockage <= 0)) {
+		CDTimerClass<SystemTimerClass> speech_wait(120);
+		while (FUN_007529E0() && speech_wait.Value() != 0)
+			Call_Back();
+		IsToWin = false;
+		if (Is_Player_Control())
+			PlayerWins = true;
+		else if ((Session.Type == 3 || Session.Type == 4) && Session.MPGameMode && Session.MPGameMode->vt_entry_04() &&
+		         Session.MPGameMode->vt_entry_08()) {
+			if (Is_Human_Player())
+				PlayerWins = true;
+			else
+				PlayerLoses = true;
+		} else
+			PlayerLoses = true;
+	}
+	if (IsToLose && BorrowedTime.Value() == 0) {
+		CDTimerClass<SystemTimerClass> speech_wait(120);
+		while (FUN_007529E0() && speech_wait.Value() != 0)
+			Call_Back();
+		if (Session.Type == 0) {
+			if (Is_Player_Control())
+				PlayerLoses = true;
+			else
+				PlayerWins = true;
+		} else if (Is_Player_Control())
+			PlayerLoses = true;
+		else
+			PlayerWins = true;
+	}
+	if (IsToDie && BorrowedTime.Value() == 0) {
+		IsToDie = false;
+		Destroy_All();
+	}
+	Power = MAX(Power, 0);
+	Drain = MAX(Drain, 0);
+	if (PlayerPtr->HeapID == HeapID && (Session.Type == 3 || Session.Type == 4) && Session.MPGameMode &&
+	    !Session.MPGameMode->vt_entry_04()) {
+		static int random_side = NonCriticalRandomNumber(0, 1);
+		if (NonCriticalRandomNumber(0, 2) == 0) {
+			CellClass *const &cell =
+			    random_side ? Map.Array[(Map.PlayRect.Width + 11) * 512 + 13]
+				            : Map.Array[(Map.PlayRect.Width + Map.PlayRect.Height - 15) * 512 + Map.PlayRect.Height + 13];
+			if (cell && (cell->ShroudCounter != 1 || cell->IsMapped || cell->IsVisible))
+				Scen->RandomNumber(0, 2);
+		}
+	}
+	if (FlagHome != CELL_NONE && Frame % 15 == 0) {
+		FootClass *foot = 0;
+		TechnoClass *occupant = Map[FlagHome].Cell_Techno(Point2D(0, 0), false, 0);
+		if (occupant) {
+			bool moving = false;
+			foot = House_Foot_View(occupant);
+			if (foot && foot->NavCom)
+				moving = true;
+			if (!moving)
+				occupant->Scatter(COORD_NONE, true, true);
+			if (foot && foot->NavCom)
+				moving = true;
+			if (!moving) {
+				int count = 0;
+				while (!occupant->IsInLimbo && count++ < 5) {
+					int damage = occupant->Strength;
+					occupant->Take_Damage(damage, 0, Rule->C4Warhead, 0, true, false, 0);
+				}
+			}
+		}
+	}
+	if (TeamTime.Value() == 0 && !Is_Human_Player() && !Class->IsMultiplayPassive) {
+		TypeList<TeamTypeClass const *> teams = Suggested_New_Team(false);
+		if (teams.Count() > 0) {
+			for (int index = 0; index < teams.Count(); ++index) {
+				teams[index]->Create_One_Of(this);
+			}
+		}
+		TeamTime = CDTimerClass<FrameTimerClass>(Rule->TeamDelays[Difficulty]);
+	}
+	if (PlayerPtr == this) {
+		if (!CurBuildings && Map.IsSellMode)
+			Map.Sell_Mode_Control(0);
+		if (PlayerPtr == this) {
+			if (SpeakMaxedDelay.Value() == 0 && Available_Money() < 100 &&
+			    NumShipyards + BuildingFactories + UnitFactories + InfantryFactories > 0) {
+				VoxClass::Play("EVA_InsufficientFunds", -1, -1);
+				Map.Flash_Money();
+				SpeakMaxedDelay = CDTimerClass<FrameTimerClass>(Options.Normalize_Delay((int)(Rule->SpeakDelay * 900.0)));
+			}
+			if (SpeakMaxedDelay.Value() == 0) {
+				int capacity = Capacity;
+				if (capacity - (int)Tiberium.Get_Total_Amount() < 30 && capacity > 50) {
+					SpeakMaxedDelay =
+					    CDTimerClass<FrameTimerClass>(Options.Normalize_Delay((int)(Rule->SpeakDelay * 900.0)));
+				}
+			}
+			if (Power_Fraction() < 1.0) {
+				if (ABQuantity.Value(Rule->BuildConst[0]->HeapID) > 0 || ABQuantity.Value(Rule->BuildConst[1]->HeapID) > 0 ||
+				    ABQuantity.Value(Rule->BuildConst[2]->HeapID) > 0) {
+					if (!DAT_00A8F040) {
+						VoxClass::Play("EVA_LowPower", -1, -1);
+						Session.Messages.Add_Message(
+						    0, 0, StringTable::LoadString("TXT_LOW_POWER", 0, "D:\\ra2mdpost\\House.CPP", 0x949), Scheme,
+						    TextPrintType(0x4046), (int)(Rule->MessageDelay * 900.0), false);
+						DAT_00A8F040 = 1;
+					}
+					SpeakPowerDelay =
+					    CDTimerClass<FrameTimerClass>(Options.Normalize_Delay((int)(Rule->SpeakDelay * 900.0)));
+				}
+			} else
+				DAT_00A8F040 = 0;
+		}
+	}
+	ObjectClass *flag = static_cast<ObjectClass *>(FlagLocation);
+	if (flag && flag->Fetch_RTTI() == 1)
+		flag->Mark(MARK_CHANGE);
+	if (TriggerTime.Value() == 0 || IsBuiltSomething) {
+		TriggerTime = CDTimerClass<FrameTimerClass>(90);
+		IsBuiltSomething = false;
+	}
+	for (int super_index = 0; super_index < SuperWeapon.Count(); ++super_index) {
+		SuperClass *super = SuperWeapon[super_index];
+		if (super->AI(this == PlayerPtr) && this == PlayerPtr) {
+			int type_index = super->Class->Fetch_Heap_ID();
+			Map.RepaintSidebar(SidebarClass::GetObjectTabIdx(RTTI_SUPERWEAPON, type_index, false));
+		}
+	}
+	if (Session.Type != 0 && !IsDefeated && Frame > 0 && !Class->IsMultiplayPassive) {
+		bool defeated = false;
+		if (Session.Options.ShortGame) {
+			int units = UQuantity.Value(Rule->BaseUnit[1]->HeapID) + UQuantity.Value(Rule->BaseUnit[0]->HeapID) +
+			            UQuantity.Value(Rule->BaseUnit[2]->HeapID);
+			if (CurBuildings <= 0 && units <= 0)
+				defeated = true;
+		} else {
+			int units = CurBuildings;
+			units += AUQuantity.Total();
+			units += AIQuantity.Total();
+			units += AAQuantity.Total();
+			if (Rule->BuildRefinery[2])
+				units += ABQuantity.Value(Rule->BuildRefinery[2]->HeapID);
+			if (units == 0)
+				defeated = true;
+		}
+		if (defeated) {
+			Destroy_All();
+			MPlayer_Defeated();
+		}
+	}
+	if (Frame % 8 == 0) {
+		for (int tag_index = HouseTags.Count() - 1; tag_index >= 0; --tag_index) {
+			HouseTags[tag_index]->Spring(TEVENT_ANY, 0, CELL_NONE, false, 0);
+		}
+	}
+	if (AITimer.Value() == 0 && !Is_Human_Player() && !Class->IsMultiplayPassive) {
+		AITimer = CDTimerClass<FrameTimerClass>(Expert_AI());
+	}
+	if (!Is_Human_Player() && !Class->IsMultiplayPassive && Frame % 8 == 0) {
+		int mode = ProductionMode;
+		if (mode == 0 || Session.Type == 0) {
+			AI_Building();
+			AI_Unit();
+			AI_Infantry();
+			AI_Aircraft();
+		} else if (mode == 1) {
+			AI_Building();
+			if (BuildStructure == -1 || !BuildingTypes[BuildStructure]->Who_Can_Build_Me(true, true, true, this)) {
+				AI_Unit();
+				AI_Infantry();
+				AI_Aircraft();
+			}
+		} else if (mode == 2) {
+			AI_Unit();
+			if (!First_Ownable(this, Rule->HarvesterUnit) || BuildUnit != First_Ownable(this, Rule->HarvesterUnit)->HeapID) {
+				AI_Infantry();
+				AI_Aircraft();
+			}
+			bool none = BuildUnit == -1 && BuildInfantry == -1 && BuildAircraft == -1;
+			if (BuildUnit != -1 && !UnitTypes[BuildUnit]->Who_Can_Build_Me(true, true, true, this))
+				none = true;
+			if (BuildInfantry != -1 && !InfantryTypes[BuildInfantry]->Who_Can_Build_Me(true, true, true, this))
+				none = true;
+			if ((BuildAircraft != -1 && !AircraftTypes[BuildAircraft]->Who_Can_Build_Me(true, true, true, this)) || none)
+				AI_Building();
+		}
+	}
+	if (PlayerPtr == this) {
+		if (IsRecalcNeeded) {
+			IsRecalcNeeded = false;
+			int building_count = Buildings.Count();
+			for (int index = 0; index < building_count; ++index) {
+				BuildingClass *building = Buildings[index];
+				if (building && building->IsActive && building->Strength > 0 &&
+				    building->Get_Mission() != MISSION_DECONSTRUCTION && building->MissionQueue != MISSION_DECONSTRUCTION &&
+				    PlayerPtr == building->House)
+					building->Update_Buildables();
+			}
+			Map.Recalc();
+
+			Update_Present_Super_Weapons();
+			AISupers();
+		}
+	} else if (IsRecalcNeeded) {
+		IsRecalcNeeded = false;
+		Update_Present_Super_Weapons();
+		AISupers();
+	}
+	if (DidRepair && RepairTimer.Value() == 0)
+		DidRepair = false;
+	if (this == PlayerPtr && IsToLook) {
+		IsToLook = false;
+		Map.FUN_004ADCD0(false, false);
+	}
+}
+
 // FUNCTION: GAMEMD 0x004F9370
 void HouseClass::Super_Weapon_Handler(void)
 {
@@ -969,6 +1227,55 @@ double HouseClass::Weed_Fraction(void) const
 		return(0.f);
 	}
 	return((double)Weed.Get_Total_Amount() / Rule->WeedCapacity);
+}
+
+// FUNCTION: GAMEMD 0x004F9790
+void HouseClass::Spend_Money(int money)
+{
+	float old_amount = Tiberium.Get_Total_Amount();
+	int old_capacity = Capacity;
+	int spent;
+	int remaining = money;
+	if (money > Credits) {
+		remaining -= Credits;
+		spent = Credits;
+		Credits = 0;
+	} else {
+		Credits -= money;
+		spent = money;
+		remaining = 0;
+	}
+	if (remaining > 0 && Tiberium.Get_Total_Amount() > 0.0f) {
+		int count = Buildings.Count();
+		for (int index = 0; index < count; ++index) {
+			BuildingClass *building = Buildings[index];
+			if (building) {
+				StorageClass &storage = building->Storage;
+				while (storage.Get_Total_Amount() > 0.0f && remaining > 0) {
+					int type = storage.First_Used_Slot();
+					while (remaining > 0 && storage.Get_Amount(type) > 0.0f) {
+						float removed = storage.Decrease_Amount(1.0f, type);
+						Tiberium.Decrease_Amount(removed, type);
+						int value = (int)(Tiberiums[type]->CreditValue * Class->IncomeMult * removed);
+						remaining -= value;
+						spent += value;
+						if (remaining < 0) {
+							Credits -= remaining;
+							spent += remaining;
+							remaining = 0;
+							break;
+						}
+						if (remaining <= 0)
+							break;
+					}
+				}
+			}
+			if (!remaining)
+				break;
+		}
+	}
+	Silo_Redraw_Check((int)old_amount, old_capacity);
+	CreditsSpent += spent;
 }
 
 // FUNCTION: GAMEMD 0x004F9950
