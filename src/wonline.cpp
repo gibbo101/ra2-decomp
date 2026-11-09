@@ -7979,7 +7979,7 @@ void __fastcall FUN_0079AF10(HWND dialog)
 					int lobby = atol(channel.Name + strlen("Lob_41_"));
 					int page = lobby / 8;
 
-					WideWstring location((wchar_t const *)DAT_00B73E1C[lobby % 8]);
+					WideWstring location(DAT_00B73E1C[lobby % 8]);
 
 					if (page) {
 						location += L" ";
@@ -8169,9 +8169,9 @@ void __fastcall FUN_0079BF50(HWND dialog)
 {
 	EnableWindow(GetDlgItem(dialog, 0x703), DAT_00B76E24.length() > 0);
 
-	EnableWindow(GetDlgItem(dialog, 0x62D), (unsigned char)FUN_0079BC80());
+	EnableWindow(GetDlgItem(dialog, 0x62D), FUN_0079BC80());
 
-	EnableWindow(GetDlgItem(dialog, 0x5C2), (unsigned char)FUN_0079BED0());
+	EnableWindow(GetDlgItem(dialog, 0x5C2), FUN_0079BED0());
 }
 
 // FUNCTION: GAMEMD 0x0079C040
