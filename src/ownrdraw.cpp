@@ -7459,6 +7459,47 @@ void __fastcall OwnerDraw::BlendGradientRect(Rect const & rect, Surface & surfac
 	surface.Unlock();
 }
 
+// FUNCTION: GAMEMD 0x006219D0
+void __fastcall FUN_006219D0(Rect const &rect, Surface &surface, int xpos, int ypos)
+{
+	unsigned short *surfptr = (unsigned short *)surface.Lock();
+
+	if (surfptr != NULL) {
+		int stride = surface.Stride() / 2;
+		int y;
+
+		for (y = rect.Y; y < rect.Y + rect.Height; ++y) {
+			int index = y * stride + rect.X;
+
+			for (int x = rect.X; x < rect.X + xpos; ++x) {
+				unsigned short px = surfptr[index];
+
+				surfptr[index] = ((px >> 1) & ((ODRComponentMask >> 1) & (unsigned int)ODRComponentMask)) |
+				                 ((px >> 1) & ((ODGComponentMask >> 1) & ODGComponentMask)) |
+				                 ((px >> 1) & (ODBComponentMask >> 1));
+
+				index++;
+			}
+		}
+
+		for (y = rect.Y; y < rect.Y + ypos; ++y) {
+			int index = y * stride + rect.X + xpos;
+
+			for (int x = rect.X + xpos; x < rect.Width + rect.X; ++x) {
+				unsigned short px = surfptr[index];
+
+				surfptr[index] = ((px >> 1) & ((ODRComponentMask >> 1) & (unsigned int)ODRComponentMask)) |
+				                 ((px >> 1) & ((ODGComponentMask >> 1) & ODGComponentMask)) |
+				                 ((px >> 1) & (ODBComponentMask >> 1));
+
+				index++;
+			}
+		}
+
+		surface.Unlock();
+	}
+}
+
 // FUNCTION: GAMEMD 0x00621B80
 void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha)
 {
