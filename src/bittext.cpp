@@ -124,7 +124,7 @@ int BitText::PrintChar(BitFont * font, Surface * surface, unsigned short ch, int
 	int result = x;
 	if (font) {
 		font->Lock(surface);
-		font->FUN_00434110(x);
+		font->Set_Tab_Origin(x);
 		result = font->Blit(ch, x, y, -1);
 		font->UnLock(surface);
 	}
@@ -137,7 +137,7 @@ int BitText::Print(BitFont * font, Surface * surface, wchar_t const * text, int 
 	int result = x;
 	if (font) {
 		font->Lock(surface);
-		font->FUN_00434110(x);
+		font->Set_Tab_Origin(x);
 		result = font->FUN_00434500(text, x, y, w, h);
 		font->UnLock(surface);
 	}
@@ -152,18 +152,18 @@ int BitText::PrintBold(BitFont * font, Surface * surface, wchar_t const * text, 
 		if (font->Bool_40) {
 			font->State_2C = 2;
 			font->Lock(surface);
-			font->FUN_00434110(x);
+			font->Set_Tab_Origin(x);
 			font->FUN_00434500(text, x, y, w, 0);
 			font->UnLock(surface);
 			int x1 = x + 1;
 			font->Lock(surface);
-			font->FUN_00434110(x1);
+			font->Set_Tab_Origin(x1);
 			result = font->FUN_00434500(text, x1, y, w, 0);
 			font->UnLock(surface);
 			font->State_2C = 1;
 		} else {
 			font->Lock(surface);
-			font->FUN_00434110(x);
+			font->Set_Tab_Origin(x);
 			result = font->FUN_00434500(text, x, y, w, 0);
 			font->UnLock(surface);
 		}
@@ -180,7 +180,7 @@ bool BitText::DrawText(BitFont * font, Surface * surface, wchar_t const * text, 
 	}
 
 	font->Lock(surface);
-	font->FUN_00434110(x);
+	font->Set_Tab_Origin(x);
 
 	wchar_t const * start = text;
 	int height = 0;
@@ -317,7 +317,7 @@ bool BitText::DrawShadow(BitFont * font, Surface * surface, wchar_t const * text
 	if (!font) {
 		return false;
 	}
-	font->FUN_00434110(x);
+	font->Set_Tab_Origin(x);
 	unsigned short c = font->DefaultColor2;
 	unsigned short old = font->SetColor(c);
 	DrawText(font, surface, text, x + 1, y + 1, w, h, a8, a9, a10);
@@ -331,7 +331,7 @@ bool BitText::DrawBold(BitFont * font, Surface * surface, wchar_t const * text, 
 	if (!font) {
 		return false;
 	}
-	font->FUN_00434110(x);
+	font->Set_Tab_Origin(x);
 	bool result;
 	if (font->Bool_40) {
 		font->State_2C = 2;
