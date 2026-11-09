@@ -6930,6 +6930,7 @@ address,name,result,size,source,symbol
 0x0053CAB0,_$E140,MATCH,88,src/ionblast.cpp,_$E140
 0x0053CB10,IonBlastClass::IonBlastClass,MATCH,120,src/ionblast.cpp,??0IonBlastClass@@QAE@VCoord@@@Z
 0x0053CB90,IonBlastClass::~IonBlastClass,MATCH,76,src/ionblast.cpp,??1IonBlastClass@@QAE@XZ
+0x0053CBE0,IonBlastClass::AI,MATCH,1837,src/ionblast.cpp,?AI@IonBlastClass@@QAEXXZ
 0x0053D310,IonBlastClass::Update_All,MATCH,32,src/ionblast.cpp,?Update_All@IonBlastClass@@SIXXZ
 0x0053D550,IonBlastClass::Clear_All,MATCH,37,src/ionblast.cpp,?Clear_All@IonBlastClass@@SIXXZ
 0x0053D850,IonBlastClass::Draw_All,MATCH,136,src/ionblast.cpp,?Draw_All@IonBlastClass@@SIXXZ
