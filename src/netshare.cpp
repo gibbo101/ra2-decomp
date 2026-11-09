@@ -848,25 +848,6 @@ void FUN_005E3AB0(void)
 
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
 
-template<>
-inline char Dictionary<WideWstring,bool>::add(
-	WideWstring &key, bool &value)
-{
-	DNode<WideWstring,bool> *item = new DNode<WideWstring,bool>;
-	item->key = key;
-	item->value = value;
-	item->hashNext = NULL;
-	unsigned int offset = keyHash(key);
-	DNode<WideWstring,bool> *head = table[offset];
-	table[offset] = item;
-	if (head) item->hashNext = head;
-	++entries;
-	float percent = (float)entries;
-	percent /= (float)getSize();
-	if (percent >= EXPAND_THRESHOLD) expand();
-	return(TRUE);
-}
-
 static inline void LBGetText(HWND win, int index, wchar_t * wide, char * narrow)
 {
 	if (SendMessage(win, 0x4cf, index, 0) != 0) {
@@ -884,6 +865,13 @@ static inline void LBSelectText(HWND win, WideWstring & key, wchar_t * wide)
 	if (index != LB_ERR) {
 		ListBox_SetCurSel(win, index);
 	}
+}
+
+static inline void Save_Selected_Text(Dictionary<WideWstring,bool> &selections, WideWstring &key, wchar_t const *text)
+{
+	key = text;
+	bool selected = true;
+	selections.add(key, selected);
 }
 
 // FUNCTION: GAMEMD 0x005E5F10
@@ -907,16 +895,19 @@ void LBSaveSelections(HWND win, Dictionary<WideWstring,bool> &lbdict)
 					SendMessage(win, 0x4b7, i, (LPARAM)narrow);
 					FUN_00735060(wide, narrow, -1);
 				}
-				key = wide;
-				bool selected = true;
-				lbdict.add(key, selected);
+				Save_Selected_Text(lbdict, key, wide);
 			}
 		}
 	} else if (!(style & LBS_NOSEL)) {
 		int i = ListBox_GetCurSel(win);
 		if (i >= 0) {
 			wide[0] = 0;
-			LBGetText(win, i, wide, narrow);
+			if (SendMessage(win, 0x4cf, i, 0)) {
+				SendMessage(win, 0x4b6, i, (LPARAM)wide);
+			} else {
+				SendMessage(win, 0x4b7, i, (LPARAM)narrow);
+				FUN_00735060(wide, narrow, -1);
+			}
 			key = wide;
 			bool selected = true;
 			lbdict.add(key, selected);
@@ -1469,7 +1460,7 @@ int __fastcall FUN_005E8720(wchar_t const * name)
 }
 
 // FUNCTION: GAMEMD 0x005E8740
-int __fastcall FUN_005E8740(int index)
+bool __fastcall FUN_005E8740(int index)
 {
 	return(wcscmp(Session.Players[index]->Name, Session.GameName) == 0);
 }
@@ -1937,12 +1928,9 @@ void __fastcall FUN_005E9340(char const * name)
 }
 
 // FUNCTION: GAMEMD 0x005E93F0
-int __fastcall FUN_005E93F0(NodeNameType * slot)
+bool __fastcall FUN_005E93F0(NodeNameType * slot)
 {
-	if (slot == NULL || slot == DAT_00AC119C || slot == DAT_00AC11A0 || slot == DAT_00AC11B0 || slot == DAT_00AC11B4 || slot == DAT_00AC11A4 || slot == DAT_00AC11A8 || slot == DAT_00AC11AC) {
-		return(0);
-	}
-	return(1);
+	return(slot != NULL && slot != DAT_00AC119C && slot != DAT_00AC11A0 && slot != DAT_00AC11B0 && slot != DAT_00AC11B4 && slot != DAT_00AC11A4 && slot != DAT_00AC11A8 && slot != DAT_00AC11AC);
 }
 
 // FUNCTION: GAMEMD 0x005E9440
@@ -2306,7 +2294,7 @@ extern char DAT_00AC0A9C[];
 extern char DAT_00AC0B48[];
 extern char DAT_00AC0278[];
 int __fastcall FUN_004E3320(int index);
-int __fastcall FUN_004E3560(int index);
+Surface * __fastcall FUN_004E3560(int index);
 int __fastcall FUN_005EA920(int index);
 int __fastcall FUN_005EA9B0(int index);
 int __fastcall FUN_005EAA10(int index);
@@ -2439,14 +2427,10 @@ void __fastcall FUN_005EA180(HWND dialog, int arg)
 	FUN_005E9E70(dialog, arg, true);
 }
 
-struct PCX
-{
-	static PCX Instance;
-	int GetSurface(char const * name, void * palette);
-};
+#include "srfcache.h"
 extern char * DAT_008316CC;
 extern char * DAT_008316D0;
-void __fastcall FUN_00603D30(HWND item, int surface);
+void __fastcall FUN_00603D30(HWND item, Surface * surface);
 int __fastcall FUN_005EAAD0(int index);
 int __fastcall FUN_005EA8E0(int index);
 
@@ -2455,12 +2439,12 @@ void __fastcall FUN_005EA2A0(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
 		HWND item = GetDlgItem(dialog, FUN_005EAAD0(i));
-		int surface = 0;
+		Surface * surface = NULL;
 		NodeNameType * node = Session.Slots[i];
 		if (FUN_005E93F0(node) && wcscmp(node->Name, Session.GameName) == 0) {
-			surface = PCX::Instance.GetSurface(DAT_008316CC, NULL);
+			surface = SurfaceCache.GetSurface(DAT_008316CC, NULL);
 		} else if (FUN_005EA8E0(i) == 1) {
-			surface = PCX::Instance.GetSurface(DAT_008316D0, NULL);
+			surface = SurfaceCache.GetSurface(DAT_008316D0, NULL);
 		}
 		FUN_00603D30(item, surface);
 	}
@@ -2504,7 +2488,16 @@ int __fastcall FUN_005EA9B0(int index)
 	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
 		return(Session.Options.AISlots.Colors[index]);
 	}
-	if (node == DAT_00AC119C || node == DAT_00AC11A0 || node == DAT_00AC11B0 || node == DAT_00AC11B4) {
+	if (node == DAT_00AC119C) {
+		return(-2);
+	}
+	if (node == DAT_00AC11A0) {
+		return(-2);
+	}
+	if (node == DAT_00AC11B0) {
+		return(-2);
+	}
+	if (node == DAT_00AC11B4) {
 		return(-2);
 	}
 	return(node->Get_Color());
@@ -2517,7 +2510,16 @@ int __fastcall FUN_005EAA10(int index)
 	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
 		return(Session.Options.AISlots.Starts[index]);
 	}
-	if (node == DAT_00AC119C || node == DAT_00AC11A0 || node == DAT_00AC11B0 || node == DAT_00AC11B4) {
+	if (node == DAT_00AC119C) {
+		return(-2);
+	}
+	if (node == DAT_00AC11A0) {
+		return(-2);
+	}
+	if (node == DAT_00AC11B0) {
+		return(-2);
+	}
+	if (node == DAT_00AC11B4) {
 		return(-2);
 	}
 	return(node->Get_Start());
@@ -2530,7 +2532,16 @@ int __fastcall FUN_005EAA70(int index)
 	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
 		return(Session.Options.AISlots.Allies[index]);
 	}
-	if (node == DAT_00AC119C || node == DAT_00AC11A0 || node == DAT_00AC11B0 || node == DAT_00AC11B4) {
+	if (node == DAT_00AC119C) {
+		return(-2);
+	}
+	if (node == DAT_00AC11A0) {
+		return(-2);
+	}
+	if (node == DAT_00AC11B0) {
+		return(-2);
+	}
+	if (node == DAT_00AC11B4) {
 		return(-2);
 	}
 	return(node->Get_Team());
@@ -2552,76 +2563,13 @@ int __fastcall FUN_005EAAD0(int index)
 	return(-1);
 }
 
-static inline int SlotA(int i)
-{
-	NodeNameType * node = Session.Slots[i];
-	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
-		return(Session.Options.AISlots.Colors[i]);
-	}
-	if (node == DAT_00AC119C) {
-		return(-2);
-	}
-	if (node == DAT_00AC11A0) {
-		return(-2);
-	}
-	if (node == DAT_00AC11B0) {
-		return(-2);
-	}
-	if (node == DAT_00AC11B4) {
-		return(-2);
-	}
-	return(node->Get_Color());
-}
-
-static inline int SlotB(int i)
-{
-	NodeNameType * node = Session.Slots[i];
-	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
-		return(Session.Options.AISlots.Starts[i]);
-	}
-	if (node == DAT_00AC119C) {
-		return(-2);
-	}
-	if (node == DAT_00AC11A0) {
-		return(-2);
-	}
-	if (node == DAT_00AC11B0) {
-		return(-2);
-	}
-	if (node == DAT_00AC11B4) {
-		return(-2);
-	}
-	return(node->Get_Start());
-}
-
-static inline int SlotC(int i)
-{
-	NodeNameType * node = Session.Slots[i];
-	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
-		return(Session.Options.AISlots.Allies[i]);
-	}
-	if (node == DAT_00AC119C) {
-		return(-2);
-	}
-	if (node == DAT_00AC11A0) {
-		return(-2);
-	}
-	if (node == DAT_00AC11B0) {
-		return(-2);
-	}
-	if (node == DAT_00AC11B4) {
-		return(-2);
-	}
-	return(node->Get_Team());
-}
-
 // FUNCTION: GAMEMD 0x005EAB30
 void __fastcall FUN_005EAB30(char * buffer)
 {
 	buffer[0] = '\0';
 	for (int i = 0; i < 8; i++) {
 		char text[4];
-		sprintf(text, "%d,", SlotA(i));
+		sprintf(text, "%d,", FUN_005EA9B0(i));
 		strcat(buffer, text);
 	}
 }
@@ -2632,7 +2580,7 @@ void __fastcall FUN_005EAC00(char * buffer)
 	buffer[0] = '\0';
 	for (int i = 0; i < 8; i++) {
 		char text[4];
-		sprintf(text, "%d,", SlotB(i));
+		sprintf(text, "%d,", FUN_005EAA10(i));
 		strcat(buffer, text);
 	}
 }
@@ -2643,7 +2591,7 @@ void __fastcall FUN_005EACD0(char * buffer)
 	buffer[0] = '\0';
 	for (int i = 0; i < 8; i++) {
 		char text[4];
-		sprintf(text, "%d,", SlotC(i));
+		sprintf(text, "%d,", FUN_005EAA70(i));
 		strcat(buffer, text);
 	}
 }
@@ -2653,7 +2601,7 @@ void __fastcall FUN_005EADA0(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
 		int id = FUN_004E4E60(i);
-		FUN_004E5480(dialog, id, SlotB(i));
+		FUN_004E5480(dialog, id, FUN_005EAA10(i));
 	}
 }
 
@@ -2662,7 +2610,7 @@ void __fastcall FUN_005EAE40(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
 		int id = FUN_004E5940(i);
-		FUN_004E5ED0(dialog, id, SlotC(i));
+		FUN_004E5ED0(dialog, id, FUN_005EAA70(i));
 	}
 }
 
@@ -2672,12 +2620,12 @@ void __fastcall FUN_005EAEE0(HWND dialog)
 	int self = FUN_005E8D40();
 	if (self != -1) {
 		int id = FUN_004E41D0(self);
-		FUN_004E49A0(dialog, id, SlotA(self));
+		FUN_004E49A0(dialog, id, FUN_005EA9B0(self));
 	}
 	for (int i = 0; i < 8; i++) {
 		if (i != self) {
 			int id = FUN_004E41D0(i);
-			FUN_004E49A0(dialog, id, SlotA(i));
+			FUN_004E49A0(dialog, id, FUN_005EA9B0(i));
 		}
 	}
 }
@@ -3660,7 +3608,7 @@ void FUN_005EE1B0(void)
 	DAT_008870C0.Save(file, false);
 }
 
-void __fastcall FUN_00603D30(HWND item, int surface);
+void __fastcall FUN_00603D30(HWND item, Surface * surface);
 
 // FUNCTION: GAMEMD 0x005EE200
 void __fastcall FUN_005EE200(HWND dialog)
@@ -3670,11 +3618,11 @@ void __fastcall FUN_005EE200(HWND dialog)
 		if (item) {
 			SendMessage(item, 0xf1, Game::ObserverMode != 0, 0);
 		}
-		int surface;
+		Surface * surface;
 		if (Game::ObserverMode) {
-			surface = PCX::Instance.GetSurface("wolob.pcx", NULL);
+			surface = SurfaceCache.GetSurface("wolob.pcx", NULL);
 		} else {
-			surface = PCX::Instance.GetSurface("wolnob.pcx", NULL);
+			surface = SurfaceCache.GetSurface("wolnob.pcx", NULL);
 		}
 		item = GetDlgItem(dialog, 0x75f);
 		FUN_00603D30(item, surface);

@@ -71,3 +71,39 @@ PathStruct * FootClass::Find_Path(Cell const & dest, FacingType * final_moves, i
 
 	return(path);
 }
+
+// FUNCTION: GAMEMD 0x004CBC40
+Cell FootClass::Safety_Point(Cell const &src, Cell const &dst, int start, int max)
+{
+	FacingType dir = Facing_Sub(DirType().Direction(src, dst).As_Dir8() ^ 4, 1);
+	Cell next;
+	int lp;
+	for (int dist = start; dist < max; dist++) {
+		next = dst;
+		for (lp = 0; lp < dist; lp++) {
+			next = Adjacent_Cell(next, dir);
+		}
+		if (dir & 1) {
+			for (lp = 0; lp < dist << 1; lp++) {
+				next = Adjacent_Cell(next, Facing_Add(dir, FACING_135));
+				if (Can_Enter_Cell(&Map[next], Facing_Add(dir, FACING_135)) == MOVE_OK) {
+					return next;
+				}
+			}
+		} else {
+			for (lp = 0; lp < dist; lp++) {
+				next = Adjacent_Cell(next, Facing_Add(dir, FACING_90));
+				if (Can_Enter_Cell(&Map[next], Facing_Add(dir, FACING_90)) == MOVE_OK) {
+					return next;
+				}
+			}
+			for (lp = 0; lp < dist; lp++) {
+				next = Adjacent_Cell(next, Facing_Add(dir, FACING_180));
+				if (Can_Enter_Cell(&Map[next], Facing_Add(dir, FACING_180)) == MOVE_OK) {
+					return next;
+				}
+			}
+		}
+	}
+	return CELL_NONE;
+}

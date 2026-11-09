@@ -131,6 +131,66 @@ void GraphicMenu::Set_Item_Enabled(int id, bool enabled)
 	}
 }
 
+// FUNCTION: GAMEMD 0x004F2300
+int GraphicMenu::Presentation(void)
+{
+	::Theme.Play_Song(::Theme.From_Name(ThemeName.get()));
+	AlternateSurface->Fill(0);
+	HiddenSurface->Fill(0);
+	VisibleSurface->Blit_From(*HiddenSurface, false, true);
+	bool done = false;
+	GraphicMenuItem *selected = 0;
+	Keyboard->Clear();
+	if (CurrentAnim) {
+		Engine.Wait_For_Anim(CurrentAnim, 300000);
+	}
+	Engine.Restore_Anims(AlternateSurface->Get_Rect());
+	Engine.Restore_And_Advance();
+	do {
+		Hide_Mouse();
+		Engine.Wait_For_Focus();
+		Show_Mouse();
+		Point2D point(Get_Mouse_X(), Get_Mouse_Y());
+		if (Keyboard->Check()) {
+			KeyNumType key = Keyboard->Get();
+			GraphicMenuItem *item;
+			if (key == KN_LMOUSE || key == KN_RETURN) {
+				item = Get_Item_Under_Mouse(point);
+			} else {
+				item = Get_Item_For_Key(key);
+			}
+			if (item) {
+				if (selected != item) {
+					if (selected) {
+						selected->Set_Selected(false);
+					}
+					selected = item;
+					item->Set_Selected(true);
+				}
+				done = true;
+			}
+		} else {
+			GraphicMenuItem *item = Get_Item_Under_Mouse(point);
+			if (item != selected) {
+				if (selected) {
+					selected->Set_Selected(false);
+				}
+				selected = item;
+				if (item) {
+					item->Set_Selected(true);
+				}
+			}
+		}
+		Engine.Wait_Delay(1);
+	} while (!done);
+	if (selected) {
+		selected->Action(&Engine);
+	}
+	OwnerDraw::Release_Mouse();
+	::Theme.Fade_Out();
+	return selected ? selected->Get_ID() : -1;
+}
+
 // FUNCTION: GAMEMD 0x004F2640
 void GraphicMenu::Set_Animation(MSAnim *anim)
 {
@@ -157,33 +217,23 @@ void GraphicMenu::Add_Item(GraphicMenuItem * item)
 }
 
 // FUNCTION: GAMEMD 0x004F26E0
-GraphicMenuItem * GraphicMenu::Get_Item_Under_Mouse(Point2D const & mouse)
+GraphicMenuItem *GraphicMenu::Get_Item_Under_Mouse(Point2D const &point)
 {
-	ITEM_ITER it = Items;
-	for (; it; it++) {
-		if (it->Is_Mouse_Over(mouse)) {
-			break;
-		}
+	ITEM_ITER cursor(Items);
+	while (cursor && !(*cursor)->Is_Mouse_Over(point)) {
+		cursor++;
 	}
-	if (it) {
-		return(*it);
-	}
-	return(NULL);
+	return cursor ? *cursor : NULL;
 }
 
 // FUNCTION: GAMEMD 0x004F2770
-GraphicMenuItem * GraphicMenu::Get_Item_For_Key(KeyNumType key)
+GraphicMenuItem *GraphicMenu::Get_Item_For_Key(KeyNumType key)
 {
-	ITEM_ITER it = Items;
-	for (; it; it++) {
-		if (it->Is_Input_Key(key)) {
-			break;
-		}
+	ITEM_ITER cursor(Items);
+	while (cursor && !(*cursor)->Is_Input_Key(key)) {
+		cursor++;
 	}
-	if (it) {
-		return(*it);
-	}
-	return(NULL);
+	return cursor ? *cursor : NULL;
 }
 
 // FUNCTION: GAMEMD 0x004F2800

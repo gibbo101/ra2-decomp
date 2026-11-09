@@ -509,7 +509,7 @@ def main():
 
     # EA's post-link patches
     patches = [(int(r["address"], 16), r["original"], r["patched"])
-               for r in csv.DictReader(open(ROOT / "data/exe_patches.csv"))]
+               for r in csv.DictReader(open(ROOT / "data/exe_patches.csv")) if r["build"] == "steam"]
     hit = sorted({a for a, e in gm.items() for p, _, _ in patches
                   if a <= p < a + max(int(e["len"], 16), orig.sizes.get(a, 0))})
     P("## Rows that match EA's post-link patches")

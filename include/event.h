@@ -90,7 +90,7 @@ class EventClass
 
 		int Frame;
 
-		union {
+		union EventData {
 			char DataBuffer[104];
 
 			struct {
@@ -110,10 +110,10 @@ class EventClass
 			struct {
 				int 			Value;
 			} General;
-			struct {
+			struct MegaMissionData {
 				xTargetClass	Whom;
 				char			Mission;
-				unsigned char	: 8;
+				char			Slot;
 				xTargetClass	Target;
 				xTargetClass	Destination;
 				xTargetClass	Follow;

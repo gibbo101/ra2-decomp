@@ -205,6 +205,25 @@ static inline bool Key_Down(int key)
 	return InputManagerClass::Instance->IsKeyPressed(key);
 }
 
+// FUNCTION: GAMEMD 0x004E15A0
+GadgetClass *GadgetClass::Extract_Gadget_At(int x, int y)
+{
+	GadgetClass *gadget = this;
+	Rect best(0, 0, DAT_007F5BE8, DAT_007F5BF4);
+	GadgetClass *result = NULL;
+	while (gadget) {
+		if (!gadget->IsDisabled) {
+			Rect current(gadget->X, gadget->Y, gadget->Width, gadget->Height);
+			if (current.Is_Point_Within(Point2D(x, y)) && current.Width * current.Height <= best.Width * best.Height) {
+				best = current;
+				result = gadget;
+			}
+		}
+		gadget = (GadgetClass *)gadget->Get_Next();
+	}
+	return (result);
+}
+
 // FUNCTION: GAMEMD 0x004E1640
 KeyNumType GadgetClass::Input(void)
 {

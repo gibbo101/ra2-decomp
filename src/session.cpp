@@ -729,6 +729,97 @@ static inline bool Next_File(HANDLE handle, WIN32_FIND_DATA & block)
 	return(FindNextFile(handle, &block) != 0);
 }
 
+// FUNCTION: GAMEMD 0x006994F0
+void __fastcall FUN_006994F0(char const *filename, wchar_t *description, char *digest, char *modes, bool *official,
+                             int *min_players, int *max_players)
+{
+	CCFileClass file(filename);
+	if (!file.Is_Available() || !file.Open(1)) {
+		return;
+	}
+
+	int percent = 0;
+	int size;
+	char *head = 0;
+	char *end;
+	do {
+		percent += 5;
+		size = file.Size() * percent / 100;
+		if (head) {
+			delete[] head;
+		}
+		head = new char[size + 1];
+		if (!head) {
+			return;
+		}
+		file.Seek(0, 0);
+		file.Read(head, size);
+		head[size] = '\0';
+		char *start = strstr(head, "[Basic]");
+		if (start) {
+			end = strstr(start + 5, "\n[");
+			if (end > start) {
+				break;
+			}
+		}
+		if (percent >= 100) {
+			delete[] head;
+			return;
+		}
+	} while (true);
+	end[1] = '\0';
+	FUN_004068E0("Read first %d%% of file looking for [Basic] section\n", percent);
+
+	percent = 0;
+	char *tail = 0;
+	int length;
+	do {
+		percent++;
+		length = file.Size() * percent / 100;
+		if (tail) {
+			delete[] tail;
+		}
+		tail = new char[length + 1];
+		if (!tail) {
+			return;
+		}
+		file.Seek(-length, 2);
+		file.Read(tail, length);
+		tail[length] = '\0';
+		if (strstr(tail, "[Digest]")) {
+			break;
+		}
+		if (percent >= 100) {
+			delete[] head;
+			delete[] tail;
+			return;
+		}
+	} while (true);
+	FUN_004068E0("Read last  %d%% of file looking for [Digest] section\n", percent);
+
+	CCINIClass ini;
+	BufferStraw straw(head, end - head);
+	ini.Load(straw, false, false);
+	CCINIClass digest_ini;
+	BufferStraw digest_straw(tail, strlen(tail) + 1);
+	digest_ini.Load(digest_straw, false, false);
+
+	int min = ini.Get_Int("Basic", "MinPlayers", *min_players);
+	*min_players = min;
+	int max = ini.Get_Int("Basic", "MaxPlayers", *max_players);
+	*max_players = max;
+	ini.Get_String("Basic", "GameMode", "", modes, 0x100);
+	char name[0x40];
+	ini.Get_String("Basic", "Name", "No Name", name, 0x40);
+	FUN_00735060(description, name, -1);
+	digest_ini.Get_String("Digest", "1", "No Digest", digest, 0x20);
+	*official = ini.Get_Bool("Basic", "Official", false);
+	FUN_004068E0("MPR %s (%d/%d): official: %d, desc: %s\n", filename, *min_players, *max_players, *official, name);
+	FUN_004068E0("\t\tGameModes: %s\n", modes);
+	delete[] head;
+	delete[] tail;
+}
+
 // FUNCTION: GAMEMD 0x00699980
 void SessionClass::Read_Scenario_Descriptions(void)
 {
@@ -1441,6 +1532,51 @@ void SessionClass::FUN_0069B7E0(int color, bool random)
 // FUNCTION: GAMEMD 0x0069B8B0
 void __stdcall FUN_0069B8B0(int, int)
 {
+}
+
+// FUNCTION: GAMEMD 0x0069B8C0
+void SessionClass::FUN_0069B8C0(void)
+{
+	FUN_004068E0("Processing Random Assignments...\n");
+	int count = Session.Players.Count();
+	for (int i = 0; i < count; i++) {
+		NodeNameType * player = Session.Players[i];
+		if (player->Slot.InitialCountry != -3 && player->Slot.Country != -3) {
+			if (player->Slot.InitialCountry == -2) {
+				player->Slot.InitialCountry = -1;
+				if (MPGameMode != NULL) {
+					player->Slot.Country = MPGameMode->RandomHumanCountryIndex();
+				} else {
+					player->Slot.Country = Scen->RandomNumber(0, 9);
+				}
+			}
+			if (player->Slot.InitialColor == -2) {
+				player->Slot.InitialColor = -1;
+				player->Slot.ColorIdx = -1;
+				player->Slot.ColorIdx = Session.FUN_0069B690();
+			}
+		} else {
+			player->Set_Country(-3);
+			player->Set_Color(8);
+		}
+		if (i == 0) {
+			Game::PlayerColor = player->Slot.ColorIdx;
+		}
+		FUN_004068E0("Player %i, %s: Side = %i, Color = %i\n", i, FUN_007350C0(player->Name), player->Get_Country(), player->Get_Color());
+	}
+	for (int k = 0; k < 8; k++) {
+		if (Session.Options.AISlots.Countries[k] == -2) {
+			if (MPGameMode != NULL) {
+				Session.Options.AISlots.Countries[k] = MPGameMode->RandomAICountryIndex();
+			} else {
+				Session.Options.AISlots.Countries[k] = Session.FUN_0069B670();
+			}
+		}
+		if (Session.Options.AISlots.Colors[k] == -2) {
+			Session.Options.AISlots.Colors[k] = Session.FUN_0069B690();
+		}
+		FUN_004068E0("AI %i: Side = %i, Color = %i\n", k, Session.Options.AISlots.Countries[k], Session.Options.AISlots.Colors[k]);
+	}
 }
 
 // FUNCTION: GAMEMD 0x0069BAB0

@@ -11,9 +11,9 @@ over real objects or hard-coded addresses are rejected however well they score.
 `docs/AGENTS.md` holds the rules the agents follow and every lesson learned. Pull requests
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
-**Status (6 November 2026):** 3.01 MB of the game's 3.81 MB of code matches byte for byte
-(79%), in 18,871 of its 19,362 functions (97%). Counting each unmatched function at its best
-attempt so far, the fuzzy match is 92%. Each function is checked on its own; linking a whole
+**Status (9 November 2026):** 3.08 MB of the game's 3.81 MB of code matches byte for byte
+(81%), in 18,923 of its 19,362 functions (98%). Counting each unmatched function at its best
+attempt so far, the fuzzy match is 93%. Each function is checked on its own; linking a whole
 executable that matches comes later. `docs/PLAN.md` has the method, and `docs/rounds/`
 records every batch.
 
@@ -25,8 +25,14 @@ records every batch.
    and builds two local tables from it (`data/symbols.csv`, `data/layouts.csv`, needs
    `clang`). YRpp serves only as a guide to names and layouts; nothing derived from it is
    shipped here.
-2. Copy your Yuri's Revenge 1.001 `gamemd.exe` (the Steam copy, MD5
-   `2a1307f6f57c9c492f985b4e3afb88e6`) to `orig/gamemd.exe`.
+2. Copy your Yuri's Revenge 1.001 `gamemd.exe` to `orig/gamemd.exe`. Any of these builds
+   will do; the checker puts back the few bytes the later ones changed after linking:
+
+   | build | size | MD5 |
+   |---|---:|---|
+   | retail CD, updated with the official 1.001 patch | 4,813,072 | `937b14db32f07ee47e92a8114ebdbdde` |
+   | The First Decade | 4,813,072 | `6604fd6f4ab71a11c708ea423dc0a29e` |
+   | Steam | 5,286,208 | `2a1307f6f57c9c492f985b4e3afb88e6` |
 3. Check one file, or everything:
 
    ```sh
@@ -74,9 +80,10 @@ out of history.
 - [dk8827](https://github.com/dk8827): matched functions in jumpjet, the capture manager,
   house, team, foot, planning, tactical, isotype, techno, the random map generator,
   netshare, the co-op campaign, text and subtitles, the sidebar and radar, custom dialogs
-  and load progress, cells, the display, pathfinding, the INI readers, UI commands and
-  the World Domination Tour; brought Westwood's archived assembly into the build with
-  MASM; and added the checker's completion checks and function-map callbacks.
+  and load progress, cells, the display, pathfinding, the INI readers, UI commands, the
+  World Domination Tour and the dropship and score screens; brought Westwood's archived
+  assembly into the build with MASM; and added the checker's completion checks and
+  function-map callbacks.
 - [meastes](https://github.com/meastes): matched functions in the map, VQA loading,
   static-sound saving and Techno line drawing, ported from their matching decompilation
   of Red Alert 2 ([meastes/redalert2-decomp](https://github.com/meastes/redalert2-decomp),

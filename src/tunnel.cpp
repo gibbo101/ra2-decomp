@@ -305,6 +305,55 @@ void TunnelLocomotionClass::ProcessDugIn(void)
 	}
 }
 
+static inline DirType Tunnel_Direction_To(Coord const &from, Coord const &to)
+{
+	Point2D delta(to.X - from.X, to.Y - from.Y);
+	return DirType(fastmath::atan2((double)-delta.Y, (double)delta.X));
+}
+
+static inline Coord Tunnel_Move_Coord(Coord const &start, DirType const &dir, int distance)
+{
+	Point2D point(start.X, start.Y);
+	double radians = dir.As_Radian();
+	return Coord((int)(point.X + fastmath::cos(radians) * distance), (int)(point.Y - fastmath::sin(radians) * distance),
+	             start.Z);
+}
+
+// FUNCTION: GAMEMD 0x00729580
+void TunnelLocomotionClass::ProcessDigging(void)
+{
+	Coord coord = LinkedTo->PositionCoord;
+	if (Point2D(DestinationCoord.X, DestinationCoord.Y).Distance_To(Point2D(coord.X, coord.Y)) < 20) {
+		coord = DestinationCoord;
+		coord.Z = -CELL_LEPTON;
+		if (LinkedTo->Can_Enter_Cell(&Map[Coord(LinkedTo->PositionCoord)]) &&
+		    Map.In_Local_Radar(Coord(LinkedTo->PositionCoord))) {
+			Cell cell = LinkedTo->PositionCell;
+			cell = Map.Nearby_Location(cell, SPEED_TRACK, Map.Get_Cell_Zone(cell), MZONE_NORMAL, false, Point2D(1, 1), false,
+			                           false, true);
+			if (cell == CELL_NONE) {
+				cell = Map.Nearby_Location(LinkedTo->PositionCell, SPEED_TRACK, -1, MZONE_SUBTERANNEAN, false, Point2D(1, 1),
+				                           false, false, true);
+			}
+			if (cell == CELL_NONE) {
+				LinkedTo->Take_Damage(LinkedTo->Strength, 0, Rule->C4Warhead, NULL, true, true, NULL);
+				return;
+			}
+			Move_To(Coord(cell, 0));
+		} else {
+			if (LinkedTo->HeightAGL > -50) {
+				VocClass::PlayAt(Rule->DigSound, LinkedTo->PositionCoord, NULL);
+			}
+			State = STATE_PRE_DIG_OUT;
+			LinkedTo->Mark(MARK_DOWN);
+			IsUnderground = false;
+		}
+	} else {
+		coord = Tunnel_Move_Coord(coord, Tunnel_Direction_To(coord, DestinationCoord), 19);
+	}
+	LinkedTo->PositionCoord = coord;
+}
+
 // FUNCTION: GAMEMD 0x007298F0
 void TunnelLocomotionClass::ProcessPreDigOut(void)
 {

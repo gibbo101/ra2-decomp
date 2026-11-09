@@ -106,12 +106,9 @@ class MapClass: public GScreenClass
 		int Get_Cell_Zone_ID(Cell const & cell);
 		int Get_Cell_Zone_Index(Cell const & cell);
 		int Get_Cell_Subzone_Index(Cell const & cell);
-		int FUN_0056D430(Cell const & cell);
-		int FUN_0056D3F0(Cell const & cell);
 		void Update_Cell_Zone(Cell const & cell);
 		void Update_Cell_Zone_Constructively(Cell const & cell);
 		void ResetZones(Cell const & cell);
-		void RecalculateSubZones(Cell const & cell);
 		int Zone_Reset(void);
 		int Zone_Span(CellZoneStruct * data, int zone, int & skip);
 		void Compute_Zone_Connections(void);
@@ -379,3 +376,5 @@ extern CellClass InvalidCell;
 
 int SubzoneHash(unsigned int const & key);
 extern int MZonePassability[MZONE_COUNT][PASSABLE_COUNT];
+bool FUN_00574600(int tile, int dir, CellClass * cell);
+bool FUN_005746C0(int tile, CellClass * cell);

@@ -119,16 +119,81 @@ Quaternion Conjugate(const Quaternion & q)
 	return(Quaternion(-q.X,-q.Y,-q.Z,q.W));
 }
 
+inline float Trackball_Length(Vector3 const &vector)
+{
+	double y = vector.Y;
+	double z = vector.Z;
+	double x = vector.X;
+	return fastmath::sqrt(x * x + z * z + y * y);
+}
+
+static float project_to_sphere(float radius, float x, float y)
+{
+	const float sqrt_two = 1.41421356f;
+	float distance = fastmath::sqrt(x * x + y * y);
+	float z;
+	if (distance < radius * (sqrt_two / 2.0f)) {
+		z = fastmath::sqrt(radius * radius - distance * distance);
+	} else {
+		float tangent = radius / sqrt_two;
+		z = tangent * tangent / distance;
+	}
+	return z;
+}
+
+// FUNCTION: GAMEMD 0x00646160
+Quaternion Trackball(float x0, float y0, float x1, float y1, float radius)
+{
+	Vector3 axis;
+	float angle;
+	Vector3 first;
+	Vector3 second;
+	Vector3 delta;
+	float distance;
+	if (x0 == x1 && y0 == y1) {
+		return Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+	first.X = x0;
+	first.Y = y0;
+	first.Z = project_to_sphere(radius, x0, y0);
+	second.X = x1;
+	second.Y = y1;
+	second.Z = project_to_sphere(radius, x1, y1);
+	axis = Vector3::Cross_Product(second, first);
+	delta = first - second;
+	distance = Trackball_Length(delta) / (2.0 * radius);
+	if (distance > 1.0f) {
+		distance = 1.0f;
+	} else if (distance < -1.0f) {
+		distance = -1.0f;
+	}
+	angle = 2.0 * fastmath::asin(distance);
+	return Axis_To_Quat(axis, angle);
+}
+
+inline Vector3 Quat_Normalize(Vector3 const &vector)
+{
+	float length = fastmath::sqrt(vector.X * vector.X + vector.Y * vector.Y + vector.Z * vector.Z);
+	if (length != 0.0) {
+		double divisor = length;
+		return Vector3(
+			(float)(vector.X / divisor),
+			(float)(vector.Y / divisor),
+			(float)(vector.Z / divisor));
+	}
+	return vector;
+}
+
 // FUNCTION: GAMEMD 0x00646480
 Quaternion Axis_To_Quat(const Vector3 &a, float phi)
 {
 	Quaternion q;
 	Vector3 tmp = a;
 
-	tmp = Normalize(tmp);
-	q.X = tmp[0];
-	q.Y = tmp[1];
-	q.Z = tmp[2];
+	tmp = Quat_Normalize(tmp);
+	q.X = tmp.X;
+	q.Y = tmp.Y;
+	q.Z = tmp.Z;
 
 	q.Scale(fastmath::sin(phi / 2.0f));
 	q.W = fastmath::cos(phi / 2.0f);

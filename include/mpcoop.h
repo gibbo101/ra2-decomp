@@ -52,7 +52,7 @@ class MPCooperative : public MultiplayerGameMode
 		virtual bool vt_entry_60(void) override;
 		virtual bool vt_entry_64(void) override;
 		virtual void vt_entry_74(unsigned a, unsigned b) override;
-		virtual void vt_entry_78(unsigned a) override;
+		virtual void vt_entry_78(HWND dialog) override;
 		virtual bool UnfixAlliances(void) override;
 		virtual bool IsAIAllowed(void) override;
 		virtual bool vt_entry_68(void) override;

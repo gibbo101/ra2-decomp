@@ -169,15 +169,7 @@ SchemeNode::~SchemeNode(void)
 	}
 }
 
-// FUNCTION: GAMEMD 0x00626660
-int SchemeHash(char const * str)
-{
-	int hash = 0;
-	while (*str) {
-		hash = (*str++ + hash * 26) % 31;
-	}
-	return(hash);
-}
+int SchemeHash(char const * str);
 
 class SchemeLibrary
 {
@@ -247,6 +239,29 @@ inline SchemeNode ** Find_Node(SchemeTable * table, HashString const & key)
 		}
 	}
 	return(0);
+}
+
+// FUNCTION: GAMEMD 0x006263D0
+DynamicVectorClass<ColorScheme *> * __fastcall
+ColorScheme::GeneratePalette(char const *name)
+{
+	SchemeLibrary *library = Library();
+	DynamicVectorClass<ColorScheme *> *schemes = library->Lookup(name);
+	if (schemes != NULL) {
+		return schemes;
+	}
+	DAT_00AC48F0->Add(name);
+	return DAT_00AC48F0->Lookup(name);
+}
+
+// FUNCTION: GAMEMD 0x00626660
+int SchemeHash(char const * str)
+{
+	int hash = 0;
+	while (*str) {
+		hash = (*str++ + hash * 26) % 31;
+	}
+	return(hash);
 }
 
 // FUNCTION: GAMEMD 0x00626690
@@ -386,20 +401,30 @@ DynamicVectorClass<ColorScheme *> * SchemeLibrary::Generate(char const * name)
 	return(schemes);
 }
 
-// FUNCTION: GAMEMD 0x006278C0
-void SchemeLibrary::Add(char const * name)
+static inline bool Add_Node(
+	SchemeTable *table, HashString const &key, SchemeNode * const &node)
 {
-	DynamicVectorClass<ColorScheme *> * schemes = Generate(name);
-	SchemeNode * node = new SchemeNode(name, schemes);
-	HashString key(name);
-	SchemeTable * table = Table;
-	DynamicVectorClass<SchemeEntry> & bucket = table->Buckets[table->HashFunction(key) % table->NumBuckets];
+	DynamicVectorClass<SchemeEntry> &bucket =
+		table->Buckets[table->HashFunction(key) % table->NumBuckets];
+	bool found = false;
 	for (int index = bucket.Count() - 1; index >= 0; index--) {
 		if (bucket[index].Key == key) {
-			return;
+			found = true;
+			break;
 		}
 	}
-	bucket.Add(SchemeEntry(key, node));
+	if (found) {
+		return false;
+	}
+	return bucket.Add(SchemeEntry(key, node));
+}
+
+// FUNCTION: GAMEMD 0x006278C0
+void SchemeLibrary::Add(char const *name)
+{
+	DynamicVectorClass<ColorScheme *> *schemes = Generate(name);
+	SchemeNode *node = new SchemeNode(name, schemes);
+	Add_Node(Table, name, node);
 }
 
 // FUNCTION: GAMEMD 0x00627A10

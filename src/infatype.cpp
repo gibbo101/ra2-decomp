@@ -6,6 +6,7 @@
 #define NDEBUG
 #define INCLUDE_COM
 #include "always.h"
+#include "swizzle.h"
 #include "geometry.h"
 #include "infatype.h"
 #include "_map.h"
@@ -383,6 +384,48 @@ void InfantryTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(IsAgent);
 	crc(IsThief);
 	crc(IsVehicleThief);
+}
+
+template <class T> static inline void Load_List(IStream *stream, TypeList<T> &list)
+{
+	new (&list) TypeList<T>;
+	int count;
+	stream->Read(&count, sizeof(count), 0);
+	for (int index = 0; index < count; index++) {
+		T value;
+		stream->Read(&value, sizeof(value), 0);
+		list.Add(value);
+	}
+}
+
+// FUNCTION: GAMEMD 0x00524960
+HRESULT __stdcall InfantryTypeClass::Load(IStream *stream)
+{
+	if (DoControls != 0) {
+		operator delete((void *)DoControls);
+		DoControls = 0;
+	}
+	HRESULT result = TechnoTypeClass::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) InfantryTypeClass(NoInitClass());
+		Fetch_Voxel_Image();
+		Fetch_Normal_Image();
+		Load_List(stream, VoiceComment);
+		Load_List(stream, DeadBodies);
+		int index;
+		for (index = 0; index < DeadBodies.Count(); index++) {
+			Swizzle_Pointer(&DeadBodies[index]);
+		}
+		Load_List(stream, DeathAnims);
+		for (index = 0; index < DeathAnims.Count(); index++) {
+			Swizzle_Pointer(&DeathAnims[index]);
+		}
+		DoControls = (DoInfoStruct *)operator new(DOINFO_COUNT * sizeof(DoInfoStruct));
+		stream->Read((void *)DoControls, DOINFO_COUNT * sizeof(DoInfoStruct), 0);
+		Swizzle_Pointer(&OccupyWeapon.Weapon);
+		Swizzle_Pointer(&EliteOccupyWeapon.Weapon);
+	}
+	return result;
 }
 
 // FUNCTION: GAMEMD 0x00524B60
