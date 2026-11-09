@@ -2327,7 +2327,7 @@ bool MapClass::Destroy_Train_Bridge_Span(Cell const &cell, FacingType dir, Rect 
 				Spring_Bridge_Destruction_Triggers(spanstart, lastcell);
 			}
 
-			TPoint2D<short> const &origin = startptr->Fetch_CellID();
+			Cell const &origin = startptr->Fetch_CellID();
 			Cell next = origin + AdjacentCell[dir & 7];
 			startptr = &Map[next];
 		}
@@ -3437,7 +3437,7 @@ bool MapClass::Destroy_High_Bridge_Span(Cell const &cell, FacingType dir, Rect *
 				Spring_Bridge_Destruction_Triggers(spanstart, lastcell);
 			}
 
-			TPoint2D<short> const &origin = startptr->Fetch_CellID();
+			Cell const &origin = startptr->Fetch_CellID();
 			Cell next = origin + AdjacentCell[dir & 7];
 			startptr = &Map[next];
 		}
