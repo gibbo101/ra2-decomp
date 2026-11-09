@@ -11,8 +11,8 @@ over real objects or hard-coded addresses are rejected however well they score.
 `docs/AGENTS.md` holds the rules the agents follow and every lesson learned. Pull requests
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
-**Status (9 November 2026):** 3.12 MB of the game's 3.81 MB of code matches byte for byte
-(82%), in 18,951 of its 19,362 functions (98%). Counting each unmatched function at its best
+**Status (9 November 2026):** 3.14 MB of the game's 3.81 MB of code matches byte for byte
+(82%), in 18,971 of its 19,362 functions (98%). Counting each unmatched function at its best
 attempt so far, the fuzzy match is 94%. Each function is checked on its own; linking a whole
 executable that matches comes later. `docs/PLAN.md` has the method, and `docs/rounds/`
 records every batch.
@@ -81,8 +81,8 @@ out of history.
   house, team, foot, planning, tactical, isotype, techno, the random map generator,
   netshare, the co-op campaign, text and subtitles, the sidebar and radar, custom dialogs
   and load progress, cells, the display, pathfinding, the INI readers, UI commands, the
-  World Domination Tour, the dropship and score screens, bridge destruction and
-  reinforcements; brought Westwood's archived
+  World Domination Tour, the dropship and score screens, bridge destruction,
+  reinforcements, spawn managers and ion blasts; brought Westwood's archived
   assembly into the build with MASM; and added the checker's completion checks and
   function-map callbacks.
 - [meastes](https://github.com/meastes): matched functions in the map, VQA loading,
