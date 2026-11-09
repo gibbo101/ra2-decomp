@@ -65,10 +65,10 @@ BSurface * BlastSurfaces[80];
 const double WaveStartDistance = 0.0;
 const double WaveBandWidth = 57.0;
 const double WaveFrequency = 0.11;
-const double WaveAmplitudeFalloff = 25.0;
+const double WaveAmplitudeFalloff = 51.0;
 const double WaveRockScale = DEG_TO_RAD(360);
 const double WaveSpeedScale = 0.0125;
-const double WaveRange = 256.0;
+const double WaveRange = 512.0;
 
 // SYNTHETIC: GAMEMD 0x0053CA30 SYMBOL
 // _$E134
@@ -103,6 +103,180 @@ IonBlastClass::IonBlastClass(Coord coord) :
 IonBlastClass::~IonBlastClass(void)
 {
 	IonBlasts.Delete(this);
+}
+
+static inline float Ion_Vector_Length(Vector3 const &v)
+{
+	return (float)fastmath::sqrt(
+		(double)v.X * v.X +
+		(double)v.Y * v.Y +
+		(double)v.Z * v.Z);
+}
+// FUNCTION: GAMEMD 0x0053CBE0
+void IonBlastClass::AI()
+{
+	if (Lifetime >= 79) {
+		delete this;
+		return;
+	}
+
+	if (DisableIonBeam != 1) {
+		Point2D point;
+		TacticalMap->Coord_To_Pixel(Position, point);
+
+		if (Lifetime == 0) {
+			if (Map[Position].Land_Type() == 2) {
+				new AnimClass(
+					Rule->SplashList[Rule->SplashList.Count() - 1],
+					Position + Coord(0, 0, 5), 0, 1,
+					ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL), 0);
+			} else {
+				new AnimClass(
+					Rule->IonBlast, Position + Coord(0, 0, 5), 0, 1,
+					ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL), 0);
+			}
+
+			new AnimClass(
+				Rule->IonBeam, Position + Coord(0, 0, 5), 0, 1,
+				ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL), 0);
+
+			if (Map[Position].IsUnderBridge) {
+				Coord coord = Coord(
+					Position.X, Position.Y,
+					BRIDGE_LEPTON_HEIGHT + Position.Z);
+				Explosion_Damage(
+					coord, Rule->IonCannonDamage, 0,
+					Rule->IonCannonWarhead, 1);
+			}
+
+			Explosion_Damage(
+				Position, Rule->IonCannonDamage, 0,
+				Rule->IonCannonWarhead, 1);
+			Combat_Lighting(
+				Position, Rule->IonCannonDamage,
+				Rule->IonCannonWarhead, 0, 0);
+		}
+
+		Cell const &center = Position.As_Cell();
+
+		for (int x_offset = -3; x_offset < 4; x_offset++) {
+			for (int y_offset = -3; y_offset < 4; y_offset++) {
+				CellClass &cell = Map[center + Cell(x_offset, y_offset)];
+				ObjectClass *occupier = cell.Cell_Occupier();
+
+				while (occupier != 0) {
+					if (occupier->Fetch_RTTI() == RTTI_INFANTRY ||
+						occupier->Fetch_RTTI() == RTTI_UNIT) {
+						FootClass *foot = (FootClass *)occupier;
+						Point2D occupier_point;
+						TacticalMap->Coord_To_Pixel(
+							occupier->Get_Coord(), occupier_point);
+
+						Point2D diff = occupier_point - point;
+						int screen_dist = (int)fastmath::sqrt(
+							(double)diff.Y * diff.Y +
+							(double)diff.X * diff.X) + 8;
+
+						if (screen_dist < 256) {
+							char *displacement =
+								(char *)BlastSurfaces[Lifetime]->Lock(
+									Point2D(screen_dist + 256, 128));
+
+							if (*displacement > 0) {
+								foot->Set_Speed(0.0);
+								int draw_offset =
+									Spiral_Index_To_Point(*displacement).Y;
+								foot->IonBlastYDrawOffset = 2 * draw_offset;
+							}
+
+							VoxelLibrary *voxel;
+							if (foot->Techno_Type_Class()->Voxel.VoxLib != NULL &&
+								(voxel = foot->Techno_Type_Class()->Voxel.VoxLib,
+								 !voxel->Load_Failed()) &&
+								*displacement >= 0) {
+								Coord blast_coord = Position;
+								Coord occupier_coord = occupier->Get_Coord();
+
+								Vector3 to_blast;
+								to_blast.X =
+									(float)(blast_coord.X - occupier_coord.X);
+								to_blast.Y =
+									(float)(occupier_coord.Y - blast_coord.Y);
+								to_blast.Z =
+									(float)(blast_coord.Z - occupier_coord.Z);
+								Vector3 flat = to_blast;
+
+								double facing_rad =
+									foot->PrimaryFacing.Current().As_Radian();
+								float facing_sin =
+									(float)fastmath::sin(facing_rad);
+								Vector3 facing(
+									(float)fastmath::cos(facing_rad),
+									facing_sin, 0.0f);
+
+								float blast_dist = Ion_Vector_Length(to_blast);
+
+								if (fabs(blast_dist) > 0.00002) {
+									flat.Z = 0.0;
+									double flat_len = fastmath::sqrt(
+										flat.X * flat.X + flat.Y * flat.Y);
+
+									Vector3 normal;
+									if (flat_len != 0.0) {
+										normal = flat / flat_len;
+									} else {
+										normal = flat;
+									}
+
+									float forwards = normal * facing;
+									float sideways = Ion_Vector_Length(
+										Vector3::Cross_Product(normal, facing));
+
+									float c2 = facing.X;
+									float s2 = facing_sin;
+									float c3 = facing.X;
+									float s3 = facing_sin;
+									if (fabs(c2 * forwards - s2 * sideways -
+											 normal.X) > 0.0002 ||
+										fabs(c3 * sideways + s3 * forwards -
+											 normal.Y) > 0.0002) {
+										sideways = -sideways;
+									}
+
+									double decay =
+										blast_dist + WaveAmplitudeFalloff;
+									double height =
+										(fastmath::sin(
+											(blast_dist -
+											 (double)Lifetime * WavePhaseSpeed +
+											 38.0) * WaveFrequency) * 3.5 + 3.0) *
+										WaveAmplitudeFalloff;
+									double slope =
+										((fastmath::cos(
+											(blast_dist -
+											 (double)Lifetime * WavePhaseSpeed +
+											 38.0) * WaveFrequency) *
+										  WaveFrequency *
+										  WaveAmplitudeFalloff * 3.5) *
+										 decay - height) /
+										(decay * decay);
+
+									foot->AngleRotatedSideways =
+										(float)(sideways * slope * WaveRockScale);
+									foot->AngleRotatedForwards =
+										(float)(-(forwards * slope *
+												  WaveRockScale));
+								}
+							}
+						}
+					}
+					occupier = occupier->Next;
+				}
+			}
+		}
+	}
+
+	Lifetime++;
 }
 
 // FUNCTION: GAMEMD 0x0053D310
