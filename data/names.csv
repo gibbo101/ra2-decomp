@@ -324,6 +324,7 @@ address,name,symbol,evidence
 0x00421350,AlphaShapeClass::Draw_All,,TibSun AlphaShapeClass::Draw_All; the callee iterates the AlphaShapes vector at 0x0088A0F0 and clips each DrawRect at +0x28 to the rectangle passed by Draw_Shroud.
 0x00ABE890,RMGRandom,,0x005A78D0 Generate_Urban_Pavement passes this Random2Class to both Random calls; TibSun mapgen.cpp Pick_Random_UInt names this generator
 0x00AA10A4,IsometricTileTypeClass::MiscPaveTile,,0x005A78D0 adds this tile base plus 8 to its random pavement choice; TibSun Generate_Urban_Pavement and the MiscPaveTile theater INI binding
+0x00ABED14,MapRegionClass::TotalCount,,MapRegionClass constructor assigns the current count to ID and increments it; Delete_All_Regions resets it
 0x0089C2DC,MapCellStride,,0x0058C2A0 MapRegionClass::Get_Cell_Data(Cell) and 0x0058C270 MapRegionClass::CellData::Clear_Inviolates use this global as the grid stride
 0x00ABED10,RMGCellData,,0x0058C2A0 and 0x0058C2C0 MapRegionClass::Get_Cell_Data overloads index the CellData array pointer at this address with sizeof(CellData)=80
 0x007E3890,DynamicVectorClass<Cell>::vftable,??_7?$DynamicVectorClass@VCell@@@@6B@,Raw original COL at 0x7fbe60 -> type descriptor 0x818960 names .?AV?$DynamicVectorClass@VCell@@@@; target 0x00594F40+0xA5 relocation stores this table into actual 24-byte DynamicVectorClass<Cell> after VectorClass<Cell> ctor 0x0042FCB0
