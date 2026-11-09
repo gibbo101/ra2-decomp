@@ -631,6 +631,131 @@ static inline bool Edge_Of_World(InfantryClass * infantry)
 	return(false);
 }
 
+static inline BuildingClass *Destination_Building(AbstractClass *object)
+{
+	if (object == NULL)
+		return NULL;
+	return object->Fetch_RTTI() == RTTI_BUILDING ? static_cast<BuildingClass *>(object) : NULL;
+}
+
+static inline void Assign_Foot_Destination(InfantryClass *infantry, AbstractClass *target, bool immediate)
+{
+	infantry->FootClass::Assign_Destination(target, immediate);
+}
+
+// FUNCTION: GAMEMD 0x0051AA40
+void InfantryClass::Assign_Destination(AbstractClass *target, bool immediate)
+{
+	if (Owner_HouseClass()->FUN_0050B730()) {
+		if (Doing == (DoType)27 || Doing == (DoType)28 || Doing == (DoType)29 || Doing == (DoType)30) {
+			return;
+		}
+	}
+
+	if (Class->JumpJet && target != NULL) {
+		if (Cell(target->Center_Coord()) == Cell(Center_Coord()))
+			return;
+	}
+
+	if (DirectRockerLinkedUnit != NULL) {
+		DirectRockerLinkedUnit->DirectRockerLinkedUnit = NULL;
+		DirectRockerLinkedUnit = NULL;
+	}
+
+	if (Locomotion->Is_Moving() && target != NULL && Map[Center_Coord()].Is_Clear_To_Move(Class->Speed, true, false)) {
+		if (Class->JumpJet || CurrentMission != MISSION_ATTACK || NavCom != target) {
+			Stop_Driver();
+		}
+	}
+
+	if (House->FUN_0050B730() && target != NULL && NavCom == target && IsProne && !Class->IsFraidyCat &&
+	    !Class->IsCyborg) {
+		Do_Action(DO_GET_UP);
+	}
+
+	if (Get_Mission() == MISSION_ENTER || MissionQueue == MISSION_ENTER) {
+		if (!HasAnyLink()) {
+			TechnoClass *transport = Dynamic_Cast<TechnoClass *>(target);
+			if (transport != NULL) {
+				if (transport->HasAnyLink()) {
+					if (transport->Fetch_RTTI() == RTTI_UNIT) {
+						QueueUpToEnter = Cast_Unit(target);
+						ArchiveTarget = NULL;
+						target = NULL;
+					} else if (transport->Fetch_RTTI() == RTTI_BUILDING) {
+						QueueUpToEnter = Destination_Building(target);
+						ArchiveTarget = NULL;
+						target = NULL;
+					} else {
+						ArchiveTarget = target;
+					}
+				} else {
+					if (Transmit_Message(RADIO_HELLO, transport) == RADIO_ROGER) {
+						RadioMessageType reply = Transmit_Message(RADIO_DOCKING);
+						if (reply == RADIO_DOCKING)
+							return;
+						if (reply != RADIO_ROGER) {
+							Transmit_Message(RADIO_OVER_OUT);
+						}
+					}
+				}
+			}
+		} else {
+			Path[0] = FACING_NONE;
+		}
+	} else {
+		Path[0] = FACING_NONE;
+	}
+
+	if (target != NULL && Class->JumpJet && Locomotion->Is_Moving()) {
+		IPersistPtr persist(Locomotion);
+		CLSID clsid;
+		persist->GetClassID(&clsid);
+		if (clsid == CLSID_WalkLocomotion) {
+			NavQueue.Add_Head(target);
+			target = Get_Target_Cell_Ptr();
+			if (target != NULL && static_cast<CellClass *>(target)->IsUnderBridge) {
+				target = NULL;
+			}
+		}
+	}
+
+	if (Class->JumpJet && target != NULL && !Locomotion->Is_Moving()) {
+		bool should_fly = Should_JumpJet_Fly(Destination_Coord().As_Cell(), target->Center_Coord().As_Cell());
+		bool is_jumpjet = Is_JumpJet();
+		if (Class->HoverAttack)
+			should_fly = true;
+
+		if (is_jumpjet) {
+			if (!should_fly) {
+				IPiggybackPtr piggy(Locomotion);
+				if (piggy != NULL) {
+					if (piggy->Is_Piggybacking() && piggy->Is_Ok_To_End()) {
+						piggy->End_Piggyback(&Locomotion);
+					}
+				}
+
+				ILocomotionPtr walk(CLSID_WalkLocomotion);
+				walk->Link_To_Object(this);
+				piggy = IPiggybackPtr(walk);
+				if (piggy != NULL) {
+					piggy->Begin_Piggyback(Locomotion);
+					Locomotion = walk;
+				}
+			}
+		} else if (should_fly) {
+			IPiggybackPtr piggy(Locomotion);
+			if (piggy != NULL) {
+				if (piggy->Is_Piggybacking() && piggy->Is_Ok_To_End()) {
+					piggy->End_Piggyback(&Locomotion);
+				}
+			}
+		}
+	}
+
+	Assign_Foot_Destination(this, target, immediate);
+}
+
 // FUNCTION: GAMEMD 0x0051B1F0
 void InfantryClass::Assign_Target(AbstractClass * target)
 {
