@@ -339,7 +339,7 @@ int MultiplayerGameMode::FirstValidMapIndex(void)
 }
 
 // FUNCTION: GAMEMD 0x005D63E0
-bool MultiplayerGameMode::FUN_005D63E0(MultiMission * map)
+bool MultiplayerGameMode::FUN_005D63E0(MultiMission const * map)
 {
 	if (map->Is_Random_Map()) {
 		return(IsAIAllowed());

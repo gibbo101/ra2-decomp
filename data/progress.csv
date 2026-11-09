@@ -9623,7 +9623,7 @@ address,name,result,size,source,symbol
 0x005D6350,MultiplayerGameMode::IsAIAllowed,MATCH,4,src/multiplayer.cpp,?IsAIAllowed@MultiplayerGameMode@@UAE_NXZ
 0x005D6360,MultiplayerGameMode::vt_entry_40,MATCH,3,src/multiplayer.cpp,?vt_entry_40@MultiplayerGameMode@@UAE_NXZ
 0x005D6370,MultiplayerGameMode::FirstValidMapIndex,MATCH,100,src/multiplayer.cpp,?FirstValidMapIndex@MultiplayerGameMode@@UAEHXZ
-0x005D63E0,MultiplayerGameMode::FUN_005D63E0,MATCH,73,src/multiplayer.cpp,?FUN_005D63E0@MultiplayerGameMode@@QAE_NPAVMultiMission@@@Z
+0x005D63E0,MultiplayerGameMode::FUN_005D63E0,MATCH,73,src/multiplayer.cpp,?FUN_005D63E0@MultiplayerGameMode@@QAE_NPBVMultiMission@@@Z
 0x005D6430,MultiplayerGameMode::RandomHumanCountryIndex,MATCH,10,src/multiplayer.cpp,?RandomHumanCountryIndex@MultiplayerGameMode@@UAEHXZ
 0x005D6440,MultiplayerGameMode::RandomAICountryIndex,MATCH,5,src/multiplayer.cpp,?RandomAICountryIndex@MultiplayerGameMode@@UAEHXZ
 0x005D6450,MultiplayerGameMode::PopulateTeamDropdown,MATCH,109,src/multiplayer.cpp,?PopulateTeamDropdown@MultiplayerGameMode@@UAEXPAUHWND__@@PAV?$DynamicVectorClass@PAVMultiplayerTeam@@@@PAVMultiplayerTeam@@@Z
@@ -9882,7 +9882,7 @@ address,name,result,size,source,symbol
 0x005E9240,FUN_005E9240,MATCH,77,src/netshare.cpp,?FUN_005E9240@@YIHPAUNodeNameType@@@Z
 0x005E9290,FUN_005E9290,MATCH,164,src/netshare.cpp,?FUN_005E9290@@YIXPAVIPXAddressClass@@@Z
 0x005E9340,FUN_005E9340,MATCH,174,src/netshare.cpp,?FUN_005E9340@@YIXPBD@Z
-0x005E93F0,FUN_005E93F0,MATCH,69,src/netshare.cpp,?FUN_005E93F0@@YIHPAUNodeNameType@@@Z
+0x005E93F0,FUN_005E93F0,MATCH,69,src/netshare.cpp,?FUN_005E93F0@@YI_NPAUNodeNameType@@@Z
 0x005E9440,FUN_005E9440,MATCH,37,src/netshare.cpp,?FUN_005E9440@@YIHPAUNodeNameType@@@Z
 0x005E9470,FUN_005E9470,MATCH,45,src/netshare.cpp,?FUN_005E9470@@YIHPAUNodeNameType@@@Z
 0x005E94A0,FUN_005E94A0,MATCH,44,src/netshare.cpp,?FUN_005E94A0@@YIHPAUNodeNameType@@@Z
@@ -12593,6 +12593,7 @@ address,name,result,size,source,symbol
 0x0069B760,SessionClass::FUN_0069B760,MATCH,124,src/session.cpp,?FUN_0069B760@SessionClass@@QAEXH_N@Z
 0x0069B7E0,SessionClass::FUN_0069B7E0,MATCH,205,src/session.cpp,?FUN_0069B7E0@SessionClass@@QAEXH_N@Z
 0x0069B8B0,FUN_0069B8B0,MATCH,3,src/session.cpp,?FUN_0069B8B0@@YGXHH@Z
+0x0069B8C0,SessionClass::FUN_0069B8C0,MATCH,494,src/session.cpp,?FUN_0069B8C0@SessionClass@@QAEXXZ
 0x0069BAB0,SessionClass::Resume,MATCH,144,src/session.cpp,?Resume@SessionClass@@QAEXXZ
 0x0069BB40,SessionClass::FUN_0069BB40,MATCH,157,src/session.cpp,?FUN_0069BB40@SessionClass@@QAEXXZ
 0x0069BBE0,SessionClass::FUN_0069BBE0,MATCH,7,src/session.cpp,?FUN_0069BBE0@SessionClass@@QBE_NXZ
@@ -13744,16 +13745,18 @@ address,name,result,size,source,symbol
 0x006C6AB0,_$E41,MATCH,23,src/stats.cpp,_$E41
 0x006C6AD0,_$E46,MATCH,27,src/stats.cpp,_$E46
 0x006C6AF0,_$E44,MATCH,1,src/stats.cpp,_$E44
-0x006C6B00,PacketEntry::PacketEntry,MATCH,61,src/stats.cpp,??0PacketEntry@@QAE@PBU0@@Z
+0x006C6B00,PacketEntry::operator=,MATCH,61,src/stats.cpp,??4PacketEntry@@QAEAAU0@ABU0@@Z
 0x006C6B40,_$E51,MATCH,29,src/stats.cpp,_$E51
 0x006C6B60,_$E49,MATCH,23,src/stats.cpp,_$E49
+0x006C6B80,Queue_Packet,MATCH,374,src/stats.cpp,?Queue_Packet@@YIXPAXH@Z
 0x006C6D00,Queue_Pop,MATCH,220,src/stats.cpp,?Queue_Pop@@YIXXZ
+0x006C6DE0,Queue_Send,MATCH,367,src/stats.cpp,?Queue_Send@@YIXXZ
 0x006C87D0,Get_Unit_Count,MATCH,27,src/stats.cpp,?Get_Unit_Count@@YIHPAHH@Z
 0x006C87F0,Register_Game_Start_Time,MATCH,37,src/stats.cpp,?Register_Game_Start_Time@@YIXXZ
 0x006C8820,Register_Game_End_Time,MATCH,31,src/stats.cpp,?Register_Game_End_Time@@YIXXZ
 0x006C8840,??_G?$rc_ptr@VPlayerProfile@@@@UAEPAXI@Z,MATCH,36,src/stats.cpp,??_G?$rc_ptr@VPlayerProfile@@@@UAEPAXI@Z
-0x006C8870,PacketQueue::Shrink,MATCH,144,src/stats.cpp,?Shrink@PacketQueue@@QAE_NXZ
-0x006C8900,PacketQueue::Grow,MATCH,142,src/stats.cpp,?Grow@PacketQueue@@QAE_NXZ
+0x006C8870,?shrinkVector@?$ArrayList@UPacketEntry@@@@AAEDXZ,MATCH,144,src/stats.cpp,?shrinkVector@?$ArrayList@UPacketEntry@@@@AAEDXZ
+0x006C8900,?growVector@?$ArrayList@UPacketEntry@@@@AAEDXZ,MATCH,142,src/stats.cpp,?growVector@?$ArrayList@UPacketEntry@@@@AAEDXZ
 0x006C8990,_$E2,MATCH,23,src/stbuffer.cpp,_$E2
 0x006C89B0,StaticBufferClass::StaticBufferClass,MATCH,30,src/stbuffer.cpp,??0StaticBufferClass@@QAE@H@Z
 0x006C89D0,StaticBufferClass::~StaticBufferClass,MATCH,15,src/stbuffer.cpp,??1StaticBufferClass@@QAE@XZ
@@ -14837,6 +14840,7 @@ address,name,result,size,source,symbol
 0x00705D50,TechnoClass::IsNotWarpingIn,MATCH,14,src/techno.cpp,?IsNotWarpingIn@TechnoClass@@UBE_NXZ
 0x00705D60,TechnoClass::FUN_00705D60,MATCH,5,src/techno.cpp,?FUN_00705D60@TechnoClass@@QAE_NXZ
 0x00705D70,TechnoClass::GetRemapColour,MATCH,138,src/techno.cpp,?GetRemapColour@TechnoClass@@UBEPAXXZ
+0x00706640,TechnoClass::Draw_Voxel,MATCH,1420,src/techno.cpp,?Draw_Voxel@TechnoClass@@UBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@HHW4ShapeFlags_Type@@@Z
 0x00706BD0,TechnoClass::Techno_Draw_Voxel_Shadow,MATCH,766,src/techno.cpp,?Techno_Draw_Voxel_Shadow@TechnoClass@@QBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@_NPAVSurface@@HH@Z
 0x00707280,TechnoClass::Techno_Render_Voxel_Shadow,MATCH,502,src/techno.cpp,?Techno_Render_Voxel_Shadow@TechnoClass@@QBE?AUSurfaceRegion@@ABUVoxelDataStruct@@ABVMatrix3D@@ABVPoint2D@@ABV?$TRect@H@@HW4ShapeFlags_Type@@_NPAVSurface@@HH@Z
 0x00707750,TechnoClass::Calculate_Sinking_Offset,MATCH,98,src/techno.cpp,?Calculate_Sinking_Offset@TechnoClass@@QAEXFH@Z

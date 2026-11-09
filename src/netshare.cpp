@@ -1880,12 +1880,9 @@ void __fastcall FUN_005E9340(char const * name)
 }
 
 // FUNCTION: GAMEMD 0x005E93F0
-int __fastcall FUN_005E93F0(NodeNameType * slot)
+bool __fastcall FUN_005E93F0(NodeNameType * slot)
 {
-	if (slot == NULL || slot == DAT_00AC119C || slot == DAT_00AC11A0 || slot == DAT_00AC11B0 || slot == DAT_00AC11B4 || slot == DAT_00AC11A4 || slot == DAT_00AC11A8 || slot == DAT_00AC11AC) {
-		return(0);
-	}
-	return(1);
+	return(slot != NULL && slot != DAT_00AC119C && slot != DAT_00AC11A0 && slot != DAT_00AC11B0 && slot != DAT_00AC11B4 && slot != DAT_00AC11A4 && slot != DAT_00AC11A8 && slot != DAT_00AC11AC);
 }
 
 // FUNCTION: GAMEMD 0x005E9440
@@ -2443,7 +2440,16 @@ int __fastcall FUN_005EA9B0(int index)
 	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
 		return(Session.Options.AISlots.Colors[index]);
 	}
-	if (node == DAT_00AC119C || node == DAT_00AC11A0 || node == DAT_00AC11B0 || node == DAT_00AC11B4) {
+	if (node == DAT_00AC119C) {
+		return(-2);
+	}
+	if (node == DAT_00AC11A0) {
+		return(-2);
+	}
+	if (node == DAT_00AC11B0) {
+		return(-2);
+	}
+	if (node == DAT_00AC11B4) {
 		return(-2);
 	}
 	return(node->Get_Color());
@@ -2456,7 +2462,16 @@ int __fastcall FUN_005EAA10(int index)
 	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
 		return(Session.Options.AISlots.Starts[index]);
 	}
-	if (node == DAT_00AC119C || node == DAT_00AC11A0 || node == DAT_00AC11B0 || node == DAT_00AC11B4) {
+	if (node == DAT_00AC119C) {
+		return(-2);
+	}
+	if (node == DAT_00AC11A0) {
+		return(-2);
+	}
+	if (node == DAT_00AC11B0) {
+		return(-2);
+	}
+	if (node == DAT_00AC11B4) {
 		return(-2);
 	}
 	return(node->Get_Start());
@@ -2469,7 +2484,16 @@ int __fastcall FUN_005EAA70(int index)
 	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
 		return(Session.Options.AISlots.Allies[index]);
 	}
-	if (node == DAT_00AC119C || node == DAT_00AC11A0 || node == DAT_00AC11B0 || node == DAT_00AC11B4) {
+	if (node == DAT_00AC119C) {
+		return(-2);
+	}
+	if (node == DAT_00AC11A0) {
+		return(-2);
+	}
+	if (node == DAT_00AC11B0) {
+		return(-2);
+	}
+	if (node == DAT_00AC11B4) {
 		return(-2);
 	}
 	return(node->Get_Team());
@@ -2491,76 +2515,13 @@ int __fastcall FUN_005EAAD0(int index)
 	return(-1);
 }
 
-static inline int SlotA(int i)
-{
-	NodeNameType * node = Session.Slots[i];
-	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
-		return(Session.Options.AISlots.Colors[i]);
-	}
-	if (node == DAT_00AC119C) {
-		return(-2);
-	}
-	if (node == DAT_00AC11A0) {
-		return(-2);
-	}
-	if (node == DAT_00AC11B0) {
-		return(-2);
-	}
-	if (node == DAT_00AC11B4) {
-		return(-2);
-	}
-	return(node->Get_Color());
-}
-
-static inline int SlotB(int i)
-{
-	NodeNameType * node = Session.Slots[i];
-	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
-		return(Session.Options.AISlots.Starts[i]);
-	}
-	if (node == DAT_00AC119C) {
-		return(-2);
-	}
-	if (node == DAT_00AC11A0) {
-		return(-2);
-	}
-	if (node == DAT_00AC11B0) {
-		return(-2);
-	}
-	if (node == DAT_00AC11B4) {
-		return(-2);
-	}
-	return(node->Get_Start());
-}
-
-static inline int SlotC(int i)
-{
-	NodeNameType * node = Session.Slots[i];
-	if (node && (node == DAT_00AC11A4 || node == DAT_00AC11A8 || node == DAT_00AC11AC)) {
-		return(Session.Options.AISlots.Allies[i]);
-	}
-	if (node == DAT_00AC119C) {
-		return(-2);
-	}
-	if (node == DAT_00AC11A0) {
-		return(-2);
-	}
-	if (node == DAT_00AC11B0) {
-		return(-2);
-	}
-	if (node == DAT_00AC11B4) {
-		return(-2);
-	}
-	return(node->Get_Team());
-}
-
 // FUNCTION: GAMEMD 0x005EAB30
 void __fastcall FUN_005EAB30(char * buffer)
 {
 	buffer[0] = '\0';
 	for (int i = 0; i < 8; i++) {
 		char text[4];
-		sprintf(text, "%d,", SlotA(i));
+		sprintf(text, "%d,", FUN_005EA9B0(i));
 		strcat(buffer, text);
 	}
 }
@@ -2571,7 +2532,7 @@ void __fastcall FUN_005EAC00(char * buffer)
 	buffer[0] = '\0';
 	for (int i = 0; i < 8; i++) {
 		char text[4];
-		sprintf(text, "%d,", SlotB(i));
+		sprintf(text, "%d,", FUN_005EAA10(i));
 		strcat(buffer, text);
 	}
 }
@@ -2582,7 +2543,7 @@ void __fastcall FUN_005EACD0(char * buffer)
 	buffer[0] = '\0';
 	for (int i = 0; i < 8; i++) {
 		char text[4];
-		sprintf(text, "%d,", SlotC(i));
+		sprintf(text, "%d,", FUN_005EAA70(i));
 		strcat(buffer, text);
 	}
 }
@@ -2592,7 +2553,7 @@ void __fastcall FUN_005EADA0(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
 		int id = FUN_004E4E60(i);
-		FUN_004E5480(dialog, id, SlotB(i));
+		FUN_004E5480(dialog, id, FUN_005EAA10(i));
 	}
 }
 
@@ -2601,7 +2562,7 @@ void __fastcall FUN_005EAE40(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
 		int id = FUN_004E5940(i);
-		FUN_004E5ED0(dialog, id, SlotC(i));
+		FUN_004E5ED0(dialog, id, FUN_005EAA70(i));
 	}
 }
 
@@ -2611,12 +2572,12 @@ void __fastcall FUN_005EAEE0(HWND dialog)
 	int self = FUN_005E8D40();
 	if (self != -1) {
 		int id = FUN_004E41D0(self);
-		FUN_004E49A0(dialog, id, SlotA(self));
+		FUN_004E49A0(dialog, id, FUN_005EA9B0(self));
 	}
 	for (int i = 0; i < 8; i++) {
 		if (i != self) {
 			int id = FUN_004E41D0(i);
-			FUN_004E49A0(dialog, id, SlotA(i));
+			FUN_004E49A0(dialog, id, FUN_005EA9B0(i));
 		}
 	}
 }

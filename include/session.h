@@ -446,7 +446,7 @@ class MultiMission
 		wchar_t const * Description(void) const {return(ScenarioDescription);}
 		char const * Get_Filename(void) const {return(Filename);}
 		char const * Get_Digest(void) const {return(Digest);}
-		bool Get_Official(void) { return(IsOfficial); }
+		bool Get_Official(void) const { return(IsOfficial); }
 
 		bool Is_Random_Map(void) const;
 		bool Supports_Game_Mode(Wstring & mode) const;

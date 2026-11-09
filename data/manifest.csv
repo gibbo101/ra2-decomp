@@ -9973,7 +9973,7 @@ address,size,symbol,source,sha256
 0x005D6350,4,?IsAIAllowed@MultiplayerGameMode@@UAE_NXZ,src/multiplayer.cpp,0c34a72b93ec080179bccd1c1ee4ee2ab0a241bf951f0d934487c76f6818b8de
 0x005D6360,3,?vt_entry_40@MultiplayerGameMode@@UAE_NXZ,src/multiplayer.cpp,01cb47d078b4841b8408ec4fe278efa83115c6f6e101972987507d2b2b57dcf0
 0x005D6370,100,?FirstValidMapIndex@MultiplayerGameMode@@UAEHXZ,src/multiplayer.cpp,3986a0a124cad3d907133dbfa011c85a91b4789a4a663b77560d90aadc44bcda
-0x005D63E0,73,?FUN_005D63E0@MultiplayerGameMode@@QAE_NPAVMultiMission@@@Z,src/multiplayer.cpp,e5f4d9b1d0d4c381f2d0676b88b89336739a964acbd6cd4168c5457b10199a29
+0x005D63E0,73,?FUN_005D63E0@MultiplayerGameMode@@QAE_NPBVMultiMission@@@Z,src/multiplayer.cpp,e5f4d9b1d0d4c381f2d0676b88b89336739a964acbd6cd4168c5457b10199a29
 0x005D6430,10,?RandomHumanCountryIndex@MultiplayerGameMode@@UAEHXZ,src/multiplayer.cpp,05269d524b21b2cb6864bb45bd63f63c80a030ff8d7f2a4058a7cc4c5694fbb9
 0x005D6440,5,?RandomAICountryIndex@MultiplayerGameMode@@UAEHXZ,src/multiplayer.cpp,4b7e9ccc7704ce4c783dc1869f85dace2fea47144d31c7e87f3f5fd5d07f9033
 0x005D6450,109,?PopulateTeamDropdown@MultiplayerGameMode@@UAEXPAUHWND__@@PAV?$DynamicVectorClass@PAVMultiplayerTeam@@@@PAVMultiplayerTeam@@@Z,src/multiplayer.cpp,6ccfa49d86e0f481fb47331e4ea3cdc33f54ac61c7869502b13a45db1c60d6f2
@@ -10233,7 +10233,7 @@ address,size,symbol,source,sha256
 0x005E9240,77,?FUN_005E9240@@YIHPAUNodeNameType@@@Z,src/netshare.cpp,3dd2ad185acc974e70272bba5b17ae958c1f1cf19cc9ccf44e23cf12339533f8
 0x005E9290,164,?FUN_005E9290@@YIXPAVIPXAddressClass@@@Z,src/netshare.cpp,08a09a874f9d3c6d2cf319e85e1e11ee709c757202a210a214a354bae47797f0
 0x005E9340,174,?FUN_005E9340@@YIXPBD@Z,src/netshare.cpp,7714eb0ad5ac656aa394613d760c26fa12ff7f1971a6b0f2be5c84cc9e7da3d2
-0x005E93F0,69,?FUN_005E93F0@@YIHPAUNodeNameType@@@Z,src/netshare.cpp,80cce0fcf0d4355e6df83eaeaca0e6aed176724f586b54be3463516c05b2e41b
+0x005E93F0,69,?FUN_005E93F0@@YI_NPAUNodeNameType@@@Z,src/netshare.cpp,80cce0fcf0d4355e6df83eaeaca0e6aed176724f586b54be3463516c05b2e41b
 0x005E9440,37,?FUN_005E9440@@YIHPAUNodeNameType@@@Z,src/netshare.cpp,092586718a2cd51a13a92cb5943ca9d64c7b63f234e77ca60def28404aa3a19a
 0x005E9470,45,?FUN_005E9470@@YIHPAUNodeNameType@@@Z,src/netshare.cpp,14f643feabc5f791519515ad544d19177fedd1c5faaf63cf3c575b6221ed6c9f
 0x005E94A0,44,?FUN_005E94A0@@YIHPAUNodeNameType@@@Z,src/netshare.cpp,3173a4bfc49cbe3e336830e696e84cf8d8dd992fae25067b3c5e91ccd54c4201
@@ -12941,6 +12941,7 @@ address,size,symbol,source,sha256
 0x0069B760,124,?FUN_0069B760@SessionClass@@QAEXH_N@Z,src/session.cpp,42bedb984f19ebb66544b6be22e69ff8f22c712d256437ebfcdbeee6a9eadc52
 0x0069B7E0,205,?FUN_0069B7E0@SessionClass@@QAEXH_N@Z,src/session.cpp,e3b84f9f772711e5a9a5e73eb6b8279d3e2142b5ce3f4d796c5ac48a5ac661eb
 0x0069B8B0,3,?FUN_0069B8B0@@YGXHH@Z,src/session.cpp,1d10894625976bca9d8906f3ecf1e766b94e9219ec3bf1c30e02feea5e18e45a
+0x0069B8C0,494,?FUN_0069B8C0@SessionClass@@QAEXXZ,src/session.cpp,b1af08283cfa34abd73ae2de1b521d06db0829176f2bc53f090ddedfdfbec0ac
 0x0069BAB0,144,?Resume@SessionClass@@QAEXXZ,src/session.cpp,98c2f0e3ff528054c0b5afe24fe6cdd9fe430966524c2668e28ca4ac614df9c6
 0x0069BB40,157,?FUN_0069BB40@SessionClass@@QAEXXZ,src/session.cpp,ad251717cd155e4413b34ca7a6c097c4d340f6669d3f20c39476f72f6a67e6c6
 0x0069BBE0,7,?FUN_0069BBE0@SessionClass@@QBE_NXZ,src/session.cpp,1ce737e02c662fd2ba77d7697124c8196428708871a91905220c98244c81b1be
@@ -14089,16 +14090,18 @@ address,size,symbol,source,sha256
 0x006C6AB0,23,_$E41,src/stats.cpp,687b4b28298bad1c062899df06de7ab49029e97c54f8190db2ae13a1a815cca7
 0x006C6AD0,27,_$E46,src/stats.cpp,49abe188f3a5ac44fa22919c415ec6eaf223f78e04f7a5af4df9617e85a0a375
 0x006C6AF0,1,_$E44,src/stats.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
-0x006C6B00,61,??0PacketEntry@@QAE@PBU0@@Z,src/stats.cpp,d9b6a42c820f75b17471ec0d6347fdc397f94b58bd83781dd4879af06a1cecf0
+0x006C6B00,61,??4PacketEntry@@QAEAAU0@ABU0@@Z,src/stats.cpp,d9b6a42c820f75b17471ec0d6347fdc397f94b58bd83781dd4879af06a1cecf0
 0x006C6B40,29,_$E51,src/stats.cpp,204d15ec33560b2e9395d4c77ae9da1e2f7f897bdf258f1a15f68da5988c597e
 0x006C6B60,23,_$E49,src/stats.cpp,b495039679004bd839685c9b263f4e56294af9539768fdcbd14ef6a74dae7cd8
+0x006C6B80,374,?Queue_Packet@@YIXPAXH@Z,src/stats.cpp,7be511cc8e00f09bf2c7a8551b5d359e8ae0f4d89c5581ddccd4ae735649484c
 0x006C6D00,220,?Queue_Pop@@YIXXZ,src/stats.cpp,c0deb546d9c3674d241dca5e6c59fe661ffeb3044f3555a934937395d3f96ced
+0x006C6DE0,367,?Queue_Send@@YIXXZ,src/stats.cpp,291361d7e5b6d890262328ff4211945ee94cc78e5e1e4e62afa1e6ddb5b4527a
 0x006C87D0,27,?Get_Unit_Count@@YIHPAHH@Z,src/stats.cpp,81a6b7ed09b7e0c5bde85e05c5e424f7caa846fa518c769fa3119f606783cd2f
 0x006C87F0,37,?Register_Game_Start_Time@@YIXXZ,src/stats.cpp,df2fb4bf76954cd89ffaeb4c82ca34842cf90ee8a2d2ec6e16943053a37c31e8
 0x006C8820,31,?Register_Game_End_Time@@YIXXZ,src/stats.cpp,4e7da0c1b1f1de8ee44f5f45adf0a846c3dd7fd3acc9e8d69351dae5e599011f
 0x006C8840,36,??_G?$rc_ptr@VPlayerProfile@@@@UAEPAXI@Z,src/stats.cpp,302222125c407bbc2f3637abdfaa8513838d00b37f0d5c1d698347f4efc7f78f
-0x006C8870,144,?Shrink@PacketQueue@@QAE_NXZ,src/stats.cpp,a3c29cf11e4551cac46142125ca4d07e9694c80b1674065f12f5517f8b115362
-0x006C8900,142,?Grow@PacketQueue@@QAE_NXZ,src/stats.cpp,a9b48386c11526a6f7620ea3e6cc85e433e2fe67ca0a2af951d07b3924818d37
+0x006C8870,144,?shrinkVector@?$ArrayList@UPacketEntry@@@@AAEDXZ,src/stats.cpp,a3c29cf11e4551cac46142125ca4d07e9694c80b1674065f12f5517f8b115362
+0x006C8900,142,?growVector@?$ArrayList@UPacketEntry@@@@AAEDXZ,src/stats.cpp,a9b48386c11526a6f7620ea3e6cc85e433e2fe67ca0a2af951d07b3924818d37
 0x006C8990,23,_$E2,src/stbuffer.cpp,2ea2ee5903d0276993e6a6af8adf2052f1636d245cd6036cb247788c50a6d67d
 0x006C89B0,30,??0StaticBufferClass@@QAE@H@Z,src/stbuffer.cpp,5d1eba684edb0452aa71369f6cd2792c754be3431a71f0546f32f8c63d38e475
 0x006C89D0,15,??1StaticBufferClass@@QAE@XZ,src/stbuffer.cpp,d2b7eb45c6037c4e63f643a83f54d9c5bac91557126aa91bc48687be3f74e4d9
@@ -15181,6 +15184,7 @@ address,size,symbol,source,sha256
 0x00705D50,14,?IsNotWarpingIn@TechnoClass@@UBE_NXZ,src/techno.cpp,cad2a84a279f9fa70375da12a56b6456b69f73dd80a7c888eb309e68faf316d5
 0x00705D60,5,?FUN_00705D60@TechnoClass@@QAE_NXZ,src/techno.cpp,2d2c154014206c5df3437d437797e694229862f8589c1d5d4ef67934e6828673
 0x00705D70,138,?GetRemapColour@TechnoClass@@UBEPAXXZ,src/techno.cpp,16be3474024d8ccf6f1897d6b26f0850b25366241e3ddd49d27605967de9dd0d
+0x00706640,1420,?Draw_Voxel@TechnoClass@@UBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@HHW4ShapeFlags_Type@@@Z,src/techno.cpp,902d4eb11e8f52e01b3ecc252b48143c612afc4f0d7f0f17cd81e0e839117ea7
 0x00706BD0,766,?Techno_Draw_Voxel_Shadow@TechnoClass@@QBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@_NPAVSurface@@HH@Z,src/techno.cpp,20f960ab6ead903c6ee83d9c29936db85773480c76ed734dcec18ffa7573d92b
 0x00707280,502,?Techno_Render_Voxel_Shadow@TechnoClass@@QBE?AUSurfaceRegion@@ABUVoxelDataStruct@@ABVMatrix3D@@ABVPoint2D@@ABV?$TRect@H@@HW4ShapeFlags_Type@@_NPAVSurface@@HH@Z,src/techno.cpp,c76231cfa61d5c9af1c2855645ab254b01f3b4fd6d70016bb3c628d32d9defda
 0x00707750,98,?Calculate_Sinking_Offset@TechnoClass@@QAEXFH@Z,src/techno.cpp,b656fd67ec2a3b85d397923d970c849662fea7ffdb3e471c959057405f3b3d3f

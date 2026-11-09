@@ -1534,6 +1534,51 @@ void __stdcall FUN_0069B8B0(int, int)
 {
 }
 
+// FUNCTION: GAMEMD 0x0069B8C0
+void SessionClass::FUN_0069B8C0(void)
+{
+	FUN_004068E0("Processing Random Assignments...\n");
+	int count = Session.Players.Count();
+	for (int i = 0; i < count; i++) {
+		NodeNameType * player = Session.Players[i];
+		if (player->Slot.InitialCountry != -3 && player->Slot.Country != -3) {
+			if (player->Slot.InitialCountry == -2) {
+				player->Slot.InitialCountry = -1;
+				if (MPGameMode != NULL) {
+					player->Slot.Country = MPGameMode->RandomHumanCountryIndex();
+				} else {
+					player->Slot.Country = Scen->RandomNumber(0, 9);
+				}
+			}
+			if (player->Slot.InitialColor == -2) {
+				player->Slot.InitialColor = -1;
+				player->Slot.ColorIdx = -1;
+				player->Slot.ColorIdx = Session.FUN_0069B690();
+			}
+		} else {
+			player->Set_Country(-3);
+			player->Set_Color(8);
+		}
+		if (i == 0) {
+			Game::PlayerColor = player->Slot.ColorIdx;
+		}
+		FUN_004068E0("Player %i, %s: Side = %i, Color = %i\n", i, FUN_007350C0(player->Name), player->Get_Country(), player->Get_Color());
+	}
+	for (int k = 0; k < 8; k++) {
+		if (Session.Options.AISlots.Countries[k] == -2) {
+			if (MPGameMode != NULL) {
+				Session.Options.AISlots.Countries[k] = MPGameMode->RandomAICountryIndex();
+			} else {
+				Session.Options.AISlots.Countries[k] = Session.FUN_0069B670();
+			}
+		}
+		if (Session.Options.AISlots.Colors[k] == -2) {
+			Session.Options.AISlots.Colors[k] = Session.FUN_0069B690();
+		}
+		FUN_004068E0("AI %i: Side = %i, Color = %i\n", k, Session.Options.AISlots.Countries[k], Session.Options.AISlots.Colors[k]);
+	}
+}
+
 // FUNCTION: GAMEMD 0x0069BAB0
 void SessionClass::Resume(void)
 {

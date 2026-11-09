@@ -4698,6 +4698,98 @@ void * TechnoClass::GetRemapColour(void) const
 	return(ColorSchemes[index]->Converter);
 }
 
+// FUNCTION: GAMEMD 0x00706640
+void TechnoClass::Draw_Voxel(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & xcliprect, Point2D const & point, Matrix3D const & matrix, int brightness, int unknown, ShapeFlags_Type negflags) const
+{
+	ShapeFlags_Type flags = SHAPE_ZGRAD;
+	if (negflags == SHAPE_NORMAL) {
+		switch (Visual_Character()) {
+			case VISUAL_RIPPLE:
+				{
+					int stage = CloakingDevice.Fetch_Stage();
+					if (stage == 0) {
+						flags = ShapeFlags_Type(SHAPE_TRANSLUCENT25|SHAPE_PREDATOR|SHAPE_ZGRAD);
+					} else if (stage == 1) {
+						flags = ShapeFlags_Type(SHAPE_TRANSLUCENT50|SHAPE_PREDATOR|SHAPE_ZGRAD);
+					} else {
+						flags = ShapeFlags_Type(SHAPE_TRANSLUCENT50|SHAPE_PREDATOR|SHAPE_ZGRAD);
+					}
+				}
+				break;
+
+			case VISUAL_INDISTINCT:
+				flags = ShapeFlags_Type(SHAPE_TRANSLUCENT25|SHAPE_ZGRAD);
+				break;
+
+			case VISUAL_DARKEN:
+			case VISUAL_SHADOWY:
+				flags = ShapeFlags_Type(SHAPE_TRANSLUCENT50|SHAPE_ZGRAD);
+				break;
+
+			case VISUAL_HIDDEN:
+				return;
+		}
+	}
+
+	if (IsBeingWarpedOut() || IsWarpingIn()) {
+		if (!(RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette)) {
+			if (this != NULL && RTTI == RTTI_BUILDING && Building_If_Building((TechnoClass *)this)->Class->DoubleThick) {
+				flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT75|SHAPE_ZGRAD);
+			} else {
+				flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT50|SHAPE_ZGRAD);
+			}
+		}
+	}
+
+	if (House->Is_Player_Control() && IsDisguised()) {
+		if (!(RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette)) {
+			flags = ShapeFlags_Type(GetDisguiseFlags(flags));
+		}
+	}
+
+	flags = ShapeFlags_Type(~negflags & (flags|SHAPE_ALPHA));
+
+	Rect cliprect = xcliprect;
+
+	brightness = Apparent_Brightness(brightness);
+
+	if (IsIronCurtained() || (this != NULL && RTTI == RTTI_BUILDING && Airstrike != NULL && Airstrike->Target == Building_If_Building((TechnoClass *)this))) {
+		brightness = GetAirstrikeTintIntensity(GetInvulnerabilityTintIntensity(brightness));
+	}
+
+	if (key != -1) {
+		if (cache != NULL && !Techno_Type_Class()->DisableVoxelCache) {
+			StaticBufferClass::Entry * entry = (*cache)[key];
+			if (entry != NULL) {
+				Techno_Blit_Voxel(*entry, point, cliprect, flags, brightness, unknown);
+				return;
+			}
+		} else {
+			key = -1;
+		}
+	}
+
+	if (voxeldata.VoxLib != NULL && voxeldata.MotLib != NULL) {
+		SurfaceRegion region = Techno_Render_Voxel_Object(voxeldata, matrix, point, cliprect, frame, flags, brightness, unknown);
+		int width = region.Bounds.Width;
+		int height = region.Bounds.Height;
+		if (RTTI == RTTI_UNIT) {
+			UnitCompositeDirtyRect = Union(UnitCompositeDirtyRect, Rect(region.Point + point, width, height));
+		}
+
+		if (key != -1) {
+			StaticBufferClass::Entry * data = VoxelStaticBuffer.Add(*VoxelDrawSystem::Get_Surface(), region);
+			if (data == NULL || !cache->Add_Index(key, data)) {
+				Class_Of()->Clear_Voxel_Indexes();
+				if (data == NULL) {
+					data = VoxelStaticBuffer.Add(*VoxelDrawSystem::Get_Surface(), region);
+				}
+				cache->Add_Index(key, data);
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00706BD0
 void TechnoClass::Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache, Surface * surface, int shadow_x, int shadow_y) const
 {
