@@ -494,10 +494,8 @@ int FUN_00600CA0(HWND dialog, HWND control)
 			    id == 0x3ea || id == 0x733) {
 				return 0x1e;
 			}
-			bool tall = ((((((id == 0x411) || (id == 0x412)) || (id == 0x419)) || ((id == 0x41a || (id == 0x6a3)))) ||
-			              ((id == 0x6a4 || ((id == 0x6a5 || (id == 0x6a7)))))) ||
-			             (id == 0x6a6)) ||
-			            ((((id == 0x6a8 || (id == 0x73a)) || (id == 0x739)) || ((id == 0x73b || (id == 0x738)))));
+			bool tall = id == 0x411 || id == 0x412 || id == 0x419 || id == 0x41a || id == 0x6a3 || id == 0x6a4 || id == 0x6a5 ||
+            id == 0x6a7 || id == 0x6a6 || id == 0x6a8 || id == 0x73a || id == 0x739 || id == 0x73b || id == 0x738;
 			if (tall) {
 				return (0x3c);
 			}
@@ -511,21 +509,12 @@ int FUN_00600CA0(HWND dialog, HWND control)
 		    id == 0x414 || id == 0x415 || id == 0x416 || id == 0x417 || id == 0x418) {
 			return 0x1e;
 		}
-		bool tall2 =
-		    ((((id == 0x419) || (id == 0x41a)) || (id == 0x41b)) ||
-			 (((((((id == 0x41c || (id == 0x41d)) || ((id == 0x41e || ((id == 0x41f || (id == 0x420)))))) ||
-			      (id == 0x6a3)) ||
-			     (((((id == 0x6a4 || (id == 0x6a9)) || (id == 0x6ac)) || ((id == 0x6af || (id == 0x6b2)))) ||
-			       (id == 0x6b5)))) ||
-			    (((id == 0x6b8 || (id == 0x6a5)) ||
-			      (((id == 0x6a7 || (((id == 0x6aa || (id == 0x6ad)) || (id == 0x6b0)))) ||
-			        (((id == 0x6b3 || (id == 0x6b6)) || (id == 0x6b9)))))))) ||
-			   ((id == 0x6a6 || (id == 0x6a8)))))) ||
-		    (((id == 0x6ab || (((id == 0x6ae || (id == 0x6b1)) || (id == 0x6b4)))) ||
-			  (((id == 0x6b7 || (id == 0x6ba)) ||
-			    ((id == 0x70a ||
-			      (((id == 0x70b || (id == 0x70c)) ||
-			        ((id == 0x70d || ((((id == 0x70e || (id == 0x70f)) || (id == 0x710)) || (id == 0x711)))))))))))));
+		bool tall2 = id == 0x419 || id == 0x41a || id == 0x41b || id == 0x41c || id == 0x41d || id == 0x41e || id == 0x41f ||
+             id == 0x420 || id == 0x6a3 || id == 0x6a4 || id == 0x6a9 || id == 0x6ac || id == 0x6af || id == 0x6b2 ||
+             id == 0x6b5 || id == 0x6b8 || id == 0x6a5 || id == 0x6a7 || id == 0x6aa || id == 0x6ad || id == 0x6b0 ||
+             id == 0x6b3 || id == 0x6b6 || id == 0x6b9 || id == 0x6a6 || id == 0x6a8 || id == 0x6ab || id == 0x6ae ||
+             id == 0x6b1 || id == 0x6b4 || id == 0x6b7 || id == 0x6ba || id == 0x70a || id == 0x70b || id == 0x70c ||
+             id == 0x70d || id == 0x70e || id == 0x70f || id == 0x710 || id == 0x711;
 		if (tall2) {
 			return (0x3c);
 		}
