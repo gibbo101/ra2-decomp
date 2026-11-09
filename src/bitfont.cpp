@@ -51,7 +51,7 @@ BitFont::BitFont(char const * filename)
 	if (InternalPTR) {
 		field_18 = InternalPTR->Stride;
 		field_1C = InternalPTR->Lines;
-		FUN_00434700();
+		Make_Missing_Char();
 	} else {
 		Reset_Defaults(this);
 	}
@@ -79,7 +79,7 @@ bool BitFont::Load(char const * filename)
 	if (InternalPTR) {
 		field_18 = InternalPTR->Stride;
 		field_1C = InternalPTR->Lines;
-		FUN_00434700();
+		Make_Missing_Char();
 		return true;
 	}
 	return false;
@@ -140,7 +140,7 @@ int BitFont::FUN_00433ED0(wchar_t const * text, int maxwidth)
 }
 
 // FUNCTION: GAMEMD 0x00433EF0
-int BitFont::FUN_00433EF0(wchar_t const * text, int maxwidth)
+int BitFont::Bold_String_Pixel_Width(wchar_t const * text, int maxwidth)
 {
 	if (Bool_40) {
 		State_2C = 2;
@@ -153,7 +153,7 @@ int BitFont::FUN_00433EF0(wchar_t const * text, int maxwidth)
 }
 
 // FUNCTION: GAMEMD 0x004340A0
-bool BitFont::FUN_004340A0(wchar_t const * text, int * width, int * height, int maxwidth)
+bool BitFont::Bold_Text_Dimensions(wchar_t const * text, int * width, int * height, int maxwidth)
 {
 	if (Bool_40) {
 		State_2C = 2;
@@ -165,7 +165,7 @@ bool BitFont::FUN_004340A0(wchar_t const * text, int * width, int * height, int 
 }
 
 // FUNCTION: GAMEMD 0x00434100
-int BitFont::FUN_00434100(int x)
+int BitFont::Set_Tab_Width(int x)
 {
 	int old = Unknown_28;
 	Unknown_28 = x;
@@ -173,7 +173,7 @@ int BitFont::FUN_00434100(int x)
 }
 
 // FUNCTION: GAMEMD 0x00434110
-void BitFont::FUN_00434110(int x)
+void BitFont::Set_Tab_Origin(int x)
 {
 	field_20 = x;
 }
@@ -197,7 +197,7 @@ int BitFont::Blit(unsigned short ch, int x, int y, int unknown)
 	if (unknown != -1) color = unknown;
 	unsigned char * glyph = GetCharacterBitmap(ch);
 	if (!glyph) {
-		glyph = (unsigned char *)FUN_00434790(&color);
+		glyph = (unsigned char *)Missing_Char(&color);
 		if (!glyph) return x;
 	}
 	if (!pGraphBuffer) return x;
@@ -208,7 +208,7 @@ int BitFont::Blit(unsigned short ch, int x, int y, int unknown)
 		LTRBStruct rect;
 		LTRBStruct clipped;
 		SetRect((RECT *)&rect, x, y, x + width - 1, y + height - 1);
-		if (!FUN_00434840(&clipped, &rect, &Bounds)) return State_2C + width + x;
+		if (!Clip_Rect(&clipped, &rect, &Bounds)) return State_2C + width + x;
 		if (rect.Left < clipped.Left || rect.Right > clipped.Right || rect.Top < clipped.Top || rect.Bottom > clipped.Bottom) {
 			int skip = clipped.Top - rect.Top;
 			int rows = clipped.Bottom - clipped.Top + 1;
@@ -282,7 +282,7 @@ struct Drawing {
 	static int GreenShiftRight;
 };
 
-extern RGBClass const DAT_00A80220;
+extern RGBClass const WhiteColor;
 
 // FUNCTION: GAMEMD 0x00434500
 int BitFont::FUN_00434500(wchar_t const * text, int x, int y, int w, int h)
@@ -306,7 +306,7 @@ int BitFont::FUN_00434500(wchar_t const * text, int x, int y, int w, int h)
 					unsigned char b = (saved >> Drawing::BlueShiftLeft) << Drawing::BlueShiftRight;
 					unsigned char g = (saved >> Drawing::GreenShiftLeft) << Drawing::GreenShiftRight;
 					RGBClass c = RGBClass(r, g, b);
-					c.Adjust(ratio, DAT_00A80220);
+					c.Adjust(ratio, WhiteColor);
 					Color = (unsigned short)(((c.Get_Green() >> Drawing::GreenShiftRight) << Drawing::GreenShiftLeft)
 						| ((c.Get_Blue() >> Drawing::BlueShiftRight) << Drawing::BlueShiftLeft)
 						| ((c.Get_Red() >> Drawing::RedShiftRight) << Drawing::RedShiftLeft));
@@ -387,7 +387,7 @@ int BitFont::FUN_00433F50(wchar_t const * text, int maxwidth, int maxchars, int 
 }
 
 // FUNCTION: GAMEMD 0x00434700
-void BitFont::FUN_00434700(void)
+void BitFont::Make_Missing_Char(void)
 {
 	Pointer_8 = malloc(InternalPTR->FontHeight * InternalPTR->Stride + 2);
 	if (InternalPTR) {
@@ -405,14 +405,14 @@ void BitFont::FUN_00434700(void)
 }
 
 // FUNCTION: GAMEMD 0x00434790
-void * BitFont::FUN_00434790(unsigned short * color)
+void * BitFont::Missing_Char(unsigned short * color)
 {
 	if (color) *color ^= 0x5555;
 	return Pointer_8;
 }
 
 // FUNCTION: GAMEMD 0x004347B0
-void BitFont::FUN_004347B0(void)
+void BitFont::Widen_Space(void)
 {
 	if (InternalPTR) {
 		field_1C++;
@@ -424,7 +424,7 @@ void BitFont::FUN_004347B0(void)
 }
 
 // FUNCTION: GAMEMD 0x004347E0
-void BitFont::FUN_004347E0(void)
+void BitFont::Set_Wide_Space(void)
 {
 	if (InternalPTR) {
 		field_1C++;
@@ -442,7 +442,7 @@ void BitFont::FUN_004347E0(void)
 }
 
 // FUNCTION: GAMEMD 0x00434840
-bool BitFont::FUN_00434840(LTRBStruct * out, LTRBStruct * rect, LTRBStruct * bounds)
+bool BitFont::Clip_Rect(LTRBStruct * out, LTRBStruct * rect, LTRBStruct * bounds)
 {
 	if (rect->Top > bounds->Bottom || bounds->Top > rect->Bottom || rect->Left > bounds->Right || bounds->Left > rect->Right) {
 		out->Left = 0;
@@ -475,7 +475,7 @@ void BitFont::Lock(Surface * surface)
 		Bounds.Right = area.Right;
 		Bounds.Bottom = area.Bottom;
 	} else {
-		FUN_00434840(&Bounds, &Bounds, &area);
+		Clip_Rect(&Bounds, &Bounds, &area);
 	}
 }
 

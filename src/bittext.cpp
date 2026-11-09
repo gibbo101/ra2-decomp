@@ -19,7 +19,7 @@ struct Drawing {
 	static int RGB_To_Int(int red, int green, int blue);
 };
 
-extern RGBClass DAT_00A80220;
+extern RGBClass WhiteColor;
 
 inline RGBClass Int_To_RGB(int color)
 {
@@ -69,7 +69,7 @@ inline bool Draw_Line(BitFont * font, wchar_t const * & start, wchar_t const * e
 				int remain = count - index - 1;
 				if (remain < fade) {
 					RGBClass rgb = Int_To_RGB(color);
-					rgb.Adjust((255 / fade) * (fade - remain), DAT_00A80220);
+					rgb.Adjust((255 / fade) * (fade - remain), WhiteColor);
 					c = RGB_To_Int(rgb);
 				}
 			}
@@ -124,7 +124,7 @@ int BitText::PrintChar(BitFont * font, Surface * surface, unsigned short ch, int
 	int result = x;
 	if (font) {
 		font->Lock(surface);
-		font->FUN_00434110(x);
+		font->Set_Tab_Origin(x);
 		result = font->Blit(ch, x, y, -1);
 		font->UnLock(surface);
 	}
@@ -137,7 +137,7 @@ int BitText::Print(BitFont * font, Surface * surface, wchar_t const * text, int 
 	int result = x;
 	if (font) {
 		font->Lock(surface);
-		font->FUN_00434110(x);
+		font->Set_Tab_Origin(x);
 		result = font->FUN_00434500(text, x, y, w, h);
 		font->UnLock(surface);
 	}
@@ -152,18 +152,18 @@ int BitText::PrintBold(BitFont * font, Surface * surface, wchar_t const * text, 
 		if (font->Bool_40) {
 			font->State_2C = 2;
 			font->Lock(surface);
-			font->FUN_00434110(x);
+			font->Set_Tab_Origin(x);
 			font->FUN_00434500(text, x, y, w, 0);
 			font->UnLock(surface);
 			int x1 = x + 1;
 			font->Lock(surface);
-			font->FUN_00434110(x1);
+			font->Set_Tab_Origin(x1);
 			result = font->FUN_00434500(text, x1, y, w, 0);
 			font->UnLock(surface);
 			font->State_2C = 1;
 		} else {
 			font->Lock(surface);
-			font->FUN_00434110(x);
+			font->Set_Tab_Origin(x);
 			result = font->FUN_00434500(text, x, y, w, 0);
 			font->UnLock(surface);
 		}
@@ -180,7 +180,7 @@ bool BitText::DrawText(BitFont * font, Surface * surface, wchar_t const * text, 
 	}
 
 	font->Lock(surface);
-	font->FUN_00434110(x);
+	font->Set_Tab_Origin(x);
 
 	wchar_t const * start = text;
 	int height = 0;
@@ -253,7 +253,7 @@ bool BitText::DrawText(BitFont * font, Surface * surface, wchar_t const * text, 
 									int remain = a9 - index - 1;
 									if (remain < a10) {
 										RGBClass rgb = Int_To_RGB(color);
-										rgb.Adjust((255 / a10) * (a10 - remain), DAT_00A80220);
+										rgb.Adjust((255 / a10) * (a10 - remain), WhiteColor);
 										c = RGB_To_Int(rgb);
 									}
 								}
@@ -296,7 +296,7 @@ bool BitText::DrawText(BitFont * font, Surface * surface, wchar_t const * text, 
 				int remain = a9 - index - 1;
 				if (remain < a10) {
 					RGBClass rgb = Int_To_RGB(color);
-					rgb.Adjust((255 / a10) * (a10 - remain), DAT_00A80220);
+					rgb.Adjust((255 / a10) * (a10 - remain), WhiteColor);
 					c = RGB_To_Int(rgb);
 				}
 			}
@@ -317,7 +317,7 @@ bool BitText::DrawShadow(BitFont * font, Surface * surface, wchar_t const * text
 	if (!font) {
 		return false;
 	}
-	font->FUN_00434110(x);
+	font->Set_Tab_Origin(x);
 	unsigned short c = font->DefaultColor2;
 	unsigned short old = font->SetColor(c);
 	DrawText(font, surface, text, x + 1, y + 1, w, h, a8, a9, a10);
@@ -331,7 +331,7 @@ bool BitText::DrawBold(BitFont * font, Surface * surface, wchar_t const * text, 
 	if (!font) {
 		return false;
 	}
-	font->FUN_00434110(x);
+	font->Set_Tab_Origin(x);
 	bool result;
 	if (font->Bool_40) {
 		font->State_2C = 2;

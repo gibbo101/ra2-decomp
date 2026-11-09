@@ -937,7 +937,7 @@ void __fastcall FUN_006357D0(Rect * rect, int amount)
 }
 
 extern RGBClass DAT_00A83CD9;
-extern RGBClass DAT_00A80220;
+extern RGBClass WhiteColor;
 struct Drawing {
 	static int RGB_To_Int(int red, int green, int blue);
 	static unsigned char RedShiftRight;
@@ -985,11 +985,11 @@ int PlanningNodeClass::Node_Color(void)
 			bool past = token->Reached(token->Node_Index(this));
 			if (past) {
 				slot = FUN_006339B0(owner);
-				Color = FUN_0063D070(RGBClass(Houses[slot]->RemapColorRGB), DAT_00A80220, 0x64);
+				Color = FUN_0063D070(RGBClass(Houses[slot]->RemapColorRGB), WhiteColor, 0x64);
 			}
 		} else {
 			slot = FUN_006339B0(owner);
-			Color = FUN_0063D070(RGBClass(Houses[slot]->RemapColorRGB), DAT_00A80220, 0x64);
+			Color = FUN_0063D070(RGBClass(Houses[slot]->RemapColorRGB), WhiteColor, 0x64);
 		}
 		result = Color;
 	}
@@ -1018,7 +1018,7 @@ int PlanningNodeClass::Branch_Color(int index)
 	}
 	if (last_owner == NULL) return -1;
 	int slot = FUN_006339B0(last_owner);
-	return branch->Color = FUN_0063D070(Houses[slot]->RemapColorRGB, DAT_00A80220, 0x64);
+	return branch->Color = FUN_0063D070(Houses[slot]->RemapColorRGB, WhiteColor, 0x64);
 }
 
 // FUNCTION: GAMEMD 0x00635C10
@@ -1041,7 +1041,7 @@ int PlanningNodeClass::Loop_Color(void)
 	}
 	if (last_owner == NULL) return -1;
 	int slot = FUN_006339B0(last_owner);
-	return LoopBranch.Color = FUN_0063D070(Houses[slot]->RemapColorRGB, DAT_00A80220, 0x64);
+	return LoopBranch.Color = FUN_0063D070(Houses[slot]->RemapColorRGB, WhiteColor, 0x64);
 }
 
 // FUNCTION: GAMEMD 0x00635DB0
@@ -2849,7 +2849,7 @@ static inline Rect Grown(Rect r) { Widen_6(&r); return r; }
 // FUNCTION: GAMEMD 0x0063B2F0
 void __fastcall FUN_0063B2F0(void)
 {
-	int color = Pixel_Color(DAT_00A80220);
+	int color = Pixel_Color(WhiteColor);
 	PlanningNodeClass * hover = DAT_00AC4CCC;
 	if (hover) {
 		Rect clip = FUN_0072AD20();
@@ -2921,7 +2921,7 @@ static inline int Unit_Path_Tint(TechnoClass * techno, WaypointTint tint)
 	if (tint == WAYPOINT_NORMAL) {
 		return FUN_0063D070(color, DAT_00A83CD9, 80);
 	}
-	return FUN_0063D070(color, DAT_00A80220, 100);
+	return FUN_0063D070(color, WhiteColor, 100);
 }
 
 static inline int RGB_Pixel(RGBClass const & color)
@@ -2934,7 +2934,7 @@ static inline int Waypoint_Fill_Color(TechnoClass * techno)
 	int normal = RGB_Pixel(DAT_00A83CD9);
 	int result;
 	if (techno) {
-		int highlight = FUN_0063DAD0(DAT_00A80220);
+		int highlight = FUN_0063DAD0(WhiteColor);
 		if (DAT_00AC4BF0) {
 			if (DAT_00AC4BF0->Find_Member(techno) != -1) result = highlight;
 			else result = normal;
@@ -3088,7 +3088,7 @@ int __fastcall FUN_0063CFC0(TechnoClass * techno)
 {
 	int slot = FUN_006339B0(techno);
 	RGBClass mixed = Houses[slot]->RemapColorRGB;
-	mixed.Adjust(0x64, DAT_00A80220);
+	mixed.Adjust(0x64, WhiteColor);
 	return (mixed.Get_Green() >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
 		| (mixed.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
 		| (mixed.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
@@ -3102,7 +3102,7 @@ int __fastcall FUN_0063D0F0(TechnoClass * techno)
 	int normal = FUN_0063DAD0(DAT_00A83CD9);
 	int result;
 	if (techno) {
-		int highlight = FUN_0063DAD0(DAT_00A80220);
+		int highlight = FUN_0063DAD0(WhiteColor);
 		if (DAT_00AC4BF0) {
 			if (DAT_00AC4BF0->Has_Member(techno)) result = highlight;
 			else result = normal;
@@ -3135,7 +3135,7 @@ int PlanningNodeClass::Lead_Color(void)
 	TechnoClass * techno = PlanningMembers[0]->Owner;
 	int result = Pack_Wide(DAT_00A83CD9);
 	if (techno) {
-		int highlight = Pack_Wide(DAT_00A80220);
+		int highlight = Pack_Wide(WhiteColor);
 		if (DAT_00AC4BF0) {
 			if (DAT_00AC4BF0->Has_Member(techno)) {
 				result = highlight;

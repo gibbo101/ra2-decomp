@@ -38,10 +38,10 @@ class BitFont
 		virtual ~BitFont(void);
 
 		bool Load(char const * filename);
-		void FUN_00434700(void);
+		void Make_Missing_Char(void);
 		bool GetTextDimension(wchar_t const * text, int * width, int * height, int maxwidth);
 		int FUN_00433ED0(wchar_t const * text, int maxwidth);
-		int FUN_00433EF0(wchar_t const * text, int maxwidth);
+		int Bold_String_Pixel_Width(wchar_t const * text, int maxwidth);
 		int FUN_00433F50(wchar_t const * text, int maxwidth, int unknown1, int unknown2);
 		int FUN_004349B0(wchar_t ch);
 		unsigned short SetColor(unsigned short color);
@@ -50,16 +50,16 @@ class BitFont
 		bool SetFlag40(bool flag);
 		void Lock(Surface * surface);
 		void UnLock(Surface * surface);
-		bool FUN_004340A0(wchar_t const * text, int * width, int * height, int maxwidth);
-		int FUN_00434100(int x);
-		void FUN_00434110(int x);
+		bool Bold_Text_Dimensions(wchar_t const * text, int * width, int * height, int maxwidth);
+		int Set_Tab_Width(int x);
+		void Set_Tab_Origin(int x);
 		unsigned char * GetCharacterBitmap(wchar_t ch);
-		void * FUN_00434790(unsigned short * color);
-		void FUN_004347B0(void);
-		void FUN_004347E0(void);
+		void * Missing_Char(unsigned short * color);
+		void Widen_Space(void);
+		void Set_Wide_Space(void);
 		void FUN_004349F0(void);
 		int FUN_00434500(wchar_t const * text, int x, int y, int w, int h);
-		bool FUN_00434840(LTRBStruct * out, LTRBStruct * rect, LTRBStruct * bounds);
+		bool Clip_Rect(LTRBStruct * out, LTRBStruct * rect, LTRBStruct * bounds);
 		int Blit(unsigned short ch, int x, int y, int unknown);
 		void SetBounds(LTRBStruct * bounds);
 
