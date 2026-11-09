@@ -5738,6 +5738,40 @@ int TechnoClass::VoiceHarvest(void)
 }
 #pragma warning(pop)
 
+// FUNCTION: GAMEMD 0x007090A0
+void TechnoClass::Response_Attack(AbstractClass *target)
+{
+	int voice = What_Weapon_Should_I_Use(target);
+	WeaponTypeClass *weapon = Get_Class_Weapon_Data(voice)->Weapon;
+
+	if (weapon != NULL && weapon->Attack < 0 && Is_Type_Named("FV")) {
+		voice = Rule->VoiceIFVRepair;
+	} else if (Veterancy.Is_Elite()) {
+		if (voice == 0) {
+			voice = Techno_Type_Class()->VoicePrimaryEliteWeaponAttack;
+		} else {
+			voice = Techno_Type_Class()->VoiceSecondaryEliteWeaponAttack;
+		}
+	} else {
+		if (voice == 0) {
+			voice = Techno_Type_Class()->VoicePrimaryWeaponAttack;
+		} else {
+			voice = Techno_Type_Class()->VoiceSecondaryWeaponAttack;
+		}
+	}
+
+	if (Techno_Type_Class()->VoiceAttack.Count() == 0) {
+		if (voice != -1) {
+		queue:
+			QueueVoice(voice);
+		}
+	} else if (voice != -1) {
+		goto queue;
+	} else {
+		QueueVoice(Techno_Type_Class()->VoiceAttack.Pick(NonCriticalRandomNumber()));
+	}
+}
+
 // FUNCTION: GAMEMD 0x007091D0
 bool TechnoClass::CanPassiveAcquireTargets(void) const
 {
