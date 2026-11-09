@@ -109,6 +109,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - `FUN_`/`DAT_` names are not checked against their address, so a MATCH can still have
   two globals swapped. Read the reference lines (`+0x.. NAME: original 0x..`).
 - Inlined code often has an out-of-line copy or a twin elsewhere; match that first.
+- check.py prints at most 400 diff lines: a variant whose later hunks vanish may only have
+  hit the cap. Confirm a gain with the score, not the shorter diff.
   VoxelAnimClass::VoxelAnimClass (0x007493B0) has AnimClass's bounce code.
 
 ### Declarations
@@ -134,6 +136,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   INI read), put its result in a temporary.
 - For `a * b` on doubles the right operand loads first: write the operands in the
   reverse of the disassembly's load order.
+- The `sub esp,8` for a double argument is emitted before the argument's expression, then
+  moved to the first stall; it never crosses a preceding spill store (0x0070C690).
+- A compare of two spilled locals reloads the right operand first, except for address-taken
+  locals or when the left register is reused next (0x0060B950 is one exception, unsolved).
 - Within one expression VC6 makes a call before plain loads. If the original loads values
   into callee-saved registers before a call, load them in earlier statements:
   `int key = p->Key; int old = t[i]; t[i] = old + p->F(key);`. One such statement can
@@ -212,6 +218,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 ### Stack frame
 - Locals are laid out by size, not declaration order. To fix two objects' order, make
   them members of one local struct.
+- In a frame over 128 bytes, VC6 orders tied slots by an interleave of the whole set of
+  frame symbols: adding or removing any one reshuffles the rest (0x0077E900, 0x00780E30).
 - A buffer declared inside the loop body gives `push ecx`; one at function level does not.
 - An inline helper's x87 shape can follow how its arguments are evaluated: naming the
   bounds as locals, upper first, gave Seed_River's `fst; fadd` (0x0059D510).
@@ -238,12 +246,11 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A TibSun out-of-line function may be inline in YR, or the reverse (a function placed
   after its neighbours). If ours calls what the original inlines, define it `inline` first.
 - What the original calls (constructors, `Add`) stays a call when declared without a body.
-- The original mixes call and inline forms of one function: wrap one use in a one-line
-  inline helper. Helpers nested too deep stop inlining and become real calls.
+- A file-local helper is source only when it is genuine factoring (used wherever that code
+  appears) or mirrors a TibSun or YRpp helper. A single-use wrapper that exists to shift
+  inlining is forcing, and its match is banked, not landed.
 - A nested call left out of line under an inlined wrapper (`Cell_Terrain()` around
-  `Cell_Find_Object`) is the inline budget: call the wrapper, as TibSun does. If both
-  levels still inline, wrap other calls in the function in file-local inline helpers
-  until it stays; each helper must contain a call (Preview_Cell_Color needed three).
+  `Cell_Find_Object`) is the inline budget: call the wrapper, as TibSun does.
 - A callee the original inlines that lives in the same module is defined in that file
   (`Do_AnimTypes`, `Read_X`); define it there and VC6 inlines it.
 - Each function has an inline budget, spent from the end of the function backwards:
@@ -355,8 +362,6 @@ Each entry: what the diff showed, then the source change that fixed it.
   own `return;`, which moves the shared copy to the last arm (ZBuffer::Pan).
 - VC6 spends the inline budget from the end of a function backwards, and every inlined call
   costs the same: write the accessor calls the original made (planmgr's Get_Count, Set_Event).
-- An inline call the original leaves out of line goes out of line when wrapped in a file-local
-  inline helper one level deeper (bullet's Coord_Dist, building's _Usable).
 - An unnamed `seg_` range that opens with a header run is a module of its own: it lands in
   `src/<previous module>2.cpp` (3 for a second such range), a provisional name that keeps the
   linker's alphabetical order. One with no header run is the end of the module before it and
