@@ -6,9 +6,9 @@
 #define NDEBUG
 #include "always.h"
 #include "rect.h"
+#include "dsurface.h"
 #include "srfcache.h"
 #include "ccfile.h"
-#include "dsurface.h"
 #include "ownrdraw.h"
 #include "pcx.h"
 #include <new>
@@ -74,6 +74,70 @@ SurfaceCacheClass::~SurfaceCacheClass(void)
 	}
 }
 
+template<> char Dictionary<Wstring, SurfaceCacheEntry>::remove(Wstring &key)
+{
+	SurfaceCacheEntry value;
+	return(remove(key, value));
+}
+
+// FUNCTION: GAMEMD 0x006B9D00
+bool SurfaceCacheClass::CachePCX(char const *name, int bpp, int red_channel)
+{
+	int i;
+	RGBClass pal[256];
+	SurfaceCacheEntry new_entry;
+	CCFileClass file(name);
+	Surface *pcx = Read_PCX_File(file, (PaletteClass *)&pal);
+	Surface *surf = pcx;
+	if (pcx == NULL) {
+		return(false);
+	}
+	if (bpp == 2) {
+		unsigned short pal16[256];
+		for (i = 0; i < 256; i++) {
+			RGBClass &rgb = pal[i];
+			pal16[i] = ((rgb.Get_Red() >> DSurface::RedLeft) << DSurface::RedRight)
+				| ((rgb.Get_Green() >> DSurface::GreenLeft) << DSurface::GreenRight)
+				| ((rgb.Get_Blue() >> DSurface::BlueLeft) << DSurface::BlueRight);
+		}
+		Rect rect = pcx->Get_Rect();
+		surf = new BSurface(rect.Width, rect.Height, 2);
+		unsigned short *s = (unsigned short *)surf->Lock();
+		unsigned char *p = (unsigned char *)pcx->Lock();
+		for (i = 0; i < rect.Width * rect.Height; i++) {
+			s[i] = pal16[p[i]];
+		}
+		pcx->Unlock();
+		surf->Unlock();
+		delete pcx;
+	} else if (bpp == 1) {
+		memcpy(new_entry.palette, pal, sizeof(pal));
+	}
+	if (red_channel && bpp == 1) {
+		Rect rect = surf->Get_Rect();
+		unsigned char *s = (unsigned char *)surf->Lock();
+		for (i = 0; i < rect.Width * rect.Height; i++) {
+			s[i] = pal[s[i]].Get_Red();
+		}
+		surf->Unlock();
+	}
+	new_entry.surf = surf;
+	Wstring key(name);
+	key.toLower();
+	SurfaceCacheEntry old_entry;
+	SurfaceCacheEntry *old_pointer = NULL;
+	char found = getPointer(key, &old_pointer);
+	if (found && old_pointer) {
+		old_entry = *old_pointer;
+	}
+	if (found) {
+		remove(key);
+		delete old_entry.surf;
+	}
+	add(key, new_entry);
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x006BA120
 bool SurfaceCacheClass::CachePalettedPCX(char const *name)
 {
@@ -110,8 +174,9 @@ void SurfaceCacheClass::Remove(char const *name)
 	Wstring key(name);
 	SurfaceCacheEntry entry;
 	if (getValue(key, entry)) {
-		remove(key);
-		delete entry.surf;
+		Surface * surf = entry.surf;
+		remove(key, entry);
+		delete surf;
 	}
 	getEntries();
 }
