@@ -189,7 +189,7 @@ DisplayClass::DisplayClass(void) :
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 };
-extern Rect __fastcall FUN_0072AD20(void);
+extern Rect __fastcall Get_Title_Screen_Area(void);
 
 // FUNCTION: GAMEMD 0x004A8850
 void DisplayClass::One_Time(void)
@@ -199,7 +199,7 @@ void DisplayClass::One_Time(void)
 	PlacementShapes = FileSystem::LoadFile("PLACE.SHP", false);
 	ShadowShapes = FileSystem::LoadFile("SHADOW.SHP", false);
 
-	Rect rect = FUN_0072AD20();
+	Rect rect = Get_Title_Screen_Area();
 	Set_View_Dimensions(rect);
 }
 

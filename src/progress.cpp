@@ -22,7 +22,7 @@ struct FileSystem {
 };
 void __fastcall Load_Title_Page(char const * name, bool visible);
 Surface * __fastcall FUN_004E3560(int index);
-Rect __fastcall FUN_0072AD20(void);
+Rect __fastcall Get_Title_Screen_Area(void);
 BitFont * __fastcall FUN_004A60D0(int flags);
 wchar_t * __fastcall FUN_00735120(char const * text);
 
@@ -350,7 +350,7 @@ void ProgressScreenClass::Set_Layout(Point2D pt, wchar_t const * title, bool use
 	if (pt.X == -1 && pt.Y == -1) {
 		int width, height;
 		Fit_Size(&width, &height, PlayerCount, usedialog);
-		Rect rect = FUN_0072AD20();
+		Rect rect = Get_Title_Screen_Area();
 		Pos = Point2D((rect.Width - width) / 2, (rect.Height - height) / 2);
 	} else {
 		Pos.X = pt.X;

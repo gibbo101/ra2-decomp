@@ -1769,7 +1769,7 @@ bool Parse_Command_Line(int argc, char * argv[])
 	return(true);
 }
 
-void __fastcall FUN_0072E820(BSurface * image, Rect * rect, int flag);
+void __fastcall Fill_Surface_Rect(BSurface * image, Rect * rect, int flag);
 
 extern int DAT_00A8ED98;
 extern RandomStraw CryptRandom;
@@ -1830,7 +1830,7 @@ void __fastcall FUN_0052FEC0(Surface * surface, bool flag)
 	int height = surface->Get_Height();
 	Rect rect(0, 0, width, height);
 	BSurface * image = new BSurface(width, height, 2);
-	FUN_0072E820(image, &rect, 0);
+	Fill_Surface_Rect(image, &rect, 0);
 	surface->Blit_From(*image, false, true);
 	delete image;
 	if (flag) {

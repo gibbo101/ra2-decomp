@@ -94,7 +94,7 @@ struct Drawing {
 };
 
 extern int DAT_007F5BE4;
-extern int DAT_007F5BE8;
+extern int WideScreenThreshold;
 
 // FUNCTION: GAMEMD 0x00640710
 void MapPreviewClass::DrawStartPoints(HWND window)
@@ -191,7 +191,7 @@ void MapPreviewClass::DrawMap(XSurface & surface)
 		Rect framerect;
 		if (Drawing::RenderWidth == DAT_007F5BE4) {
 			framerect = Rect(499, 379, 216, 166);
-		} else if (Drawing::RenderWidth == DAT_007F5BE8) {
+		} else if (Drawing::RenderWidth == WideScreenThreshold) {
 			framerect = Rect(570, 424, 300, 260);
 		} else {
 			framerect = Rect(385, 270, 200, 200);

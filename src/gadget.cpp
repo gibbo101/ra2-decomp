@@ -27,7 +27,7 @@ class InputManagerClass
 		bool IsKeyPressed(int key);
 };
 
-extern int DAT_007F5BE8;
+extern int WideScreenThreshold;
 extern int DAT_007F5BF4;
 extern GadgetClass * DAT_008B3E94;
 
@@ -209,7 +209,7 @@ static inline bool Key_Down(int key)
 GadgetClass *GadgetClass::Extract_Gadget_At(int x, int y)
 {
 	GadgetClass *gadget = this;
-	Rect best(0, 0, DAT_007F5BE8, DAT_007F5BF4);
+	Rect best(0, 0, WideScreenThreshold, DAT_007F5BF4);
 	GadgetClass *result = NULL;
 	while (gadget) {
 		if (!gadget->IsDisabled) {

@@ -211,13 +211,13 @@ bool FUN_00774070(void);
 #define GET_WHEEL_DELTA_WPARAM(wParam) ((short)HIWORD(wParam))
 #endif
 extern int DAT_00822D1C;
-extern bool DAT_00B73561;
+extern bool _MouseWheel;
 extern bool DAT_00884D34;
 extern bool DAT_008A00A0;
 extern bool DAT_00A8ED81;
 extern int DAT_00A8EDD8;
-extern int DAT_00B73570;
-extern wchar_t DAT_00B730EC[];
+extern int IMEResult;
+extern wchar_t IMEResultString[];
 extern MouseSlots * DAT_00887640;
 
 namespace OwnerDraw { int __fastcall ServiceIMEMessage(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
@@ -243,7 +243,7 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 
 	if (OwnerDraw::ServiceIMEMessage(hwnd, message, wParam, lParam)) {
 		FUN_004068E0("Default\n");
-		return(DAT_00B73570);
+		return(IMEResult);
 	}
 
 	switch (message) {
@@ -342,14 +342,14 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 			return(On_WM_MOVING(hwnd, wParam, lParam));
 
 		case WM_MOUSEWHEEL:
-			if (!DAT_00B73561) {
-				DAT_00B73561 = true;
+			if (!_MouseWheel) {
+				_MouseWheel = true;
 				if (GET_WHEEL_DELTA_WPARAM(wParam) < 0) {
 					Execute_Command("SidebarDown");
 				} else {
 					Execute_Command("SidebarUp");
 				}
-				DAT_00B73561 = false;
+				_MouseWheel = false;
 			}
 			break;
 	}
@@ -359,7 +359,7 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 	}
 
 	if (message == WM_IME_CHAR) {
-		int length = wcslen(DAT_00B730EC);
+		int length = wcslen(IMEResultString);
 		char mb[4];
 		int wc;
 		if (wParam & 0xFF00) {
@@ -371,8 +371,8 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 			mb[1] = 0;
 		}
 		int converted = MultiByteToWideChar(0, 0, mb, strlen(mb), (LPWSTR)&wc, 1);
-		DAT_00B730EC[length] = (converted == 1) ? wc : 0;
-		DAT_00B730EC[length + 1] = 0;
+		IMEResultString[length] = (converted == 1) ? wc : 0;
+		IMEResultString[length + 1] = 0;
 		return(0);
 	}
 
@@ -438,10 +438,10 @@ char *Build_Version_String(char * buffer, int buflen)
 	return(buffer);
 }
 
-extern HICON DAT_00B7354C;
-extern HCURSOR DAT_00B73548;
-extern int DAT_00B73544;
-extern wchar_t DAT_00B73518;
+extern HICON ProgramIcon;
+extern HCURSOR ProgramCursor;
+extern int ShowCommand;
+extern wchar_t IMECompositionTerminator;
 void * __stdcall FUN_007C8A22(HWND window);
 void * __stdcall FUN_007C8A1C(HWND window, void * context);
 int __stdcall FUN_007C8A28(void * context, int action, int index, int value);
@@ -463,8 +463,8 @@ void Create_Main_Window(HINSTANCE instance, int command_show, int width, int hei
 {
 	InitCommonControls();
 
-	DAT_00B7354C = LoadIcon(instance, MAKEINTRESOURCE(93));
-	DAT_00B73548 = LoadCursor(Game::hInstance, MAKEINTRESOURCE(104));
+	ProgramIcon = LoadIcon(instance, MAKEINTRESOURCE(93));
+	ProgramCursor = LoadCursor(Game::hInstance, MAKEINTRESOURCE(104));
 
 	WNDCLASS wndclass;
 	wndclass.style = CS_HREDRAW | CS_VREDRAW;
@@ -472,8 +472,8 @@ void Create_Main_Window(HINSTANCE instance, int command_show, int width, int hei
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
 	wndclass.hInstance = instance;
-	wndclass.hIcon = DAT_00B7354C;
-	wndclass.hCursor = DAT_00B73548;
+	wndclass.hIcon = ProgramIcon;
+	wndclass.hCursor = ProgramCursor;
 	wndclass.hbrBackground = NULL;
 	wndclass.lpszMenuName = NULL;
 	wndclass.lpszClassName = "Yuri's Revenge";
@@ -495,7 +495,7 @@ void Create_Main_Window(HINSTANCE instance, int command_show, int width, int hei
 	FUN_007C8A1C(Game::hWnd, NULL);
 
 	ShowWindow(Game::hWnd, SW_NORMAL);
-	DAT_00B73544 = command_show;
+	ShowCommand = command_show;
 	UpdateWindow(Game::hWnd);
 	SetFocus(Game::hWnd);
 
@@ -511,7 +511,7 @@ void OwnerDraw::CancelIMEComposition(void)
 	IMECompositionStringLength = 0;
 	IMECompositionCursorPos = 0;
 	IMEComposing = 0;
-	DAT_00B730EC[0] = 0;
+	IMEResultString[0] = 0;
 	if (Game::hIMC) {
 		FUN_007C8A28(Game::hIMC, 0x15, 4, 0);
 	}
@@ -528,7 +528,7 @@ struct IMECandidateList {
 };
 
 // FUNCTION: GAMEMD 0x00777E40
-void __fastcall FUN_00777E40(void * context, unsigned int index, char * buffer, int length)
+void __fastcall IME_Get_Candidate_Text(void * context, unsigned int index, char * buffer, int length)
 {
 	if (context) {
 		unsigned int size = FUN_007C8A2E(context, index, NULL, 0);
@@ -557,7 +557,7 @@ void OwnerDraw::UpdateIMECompositionString(void)
 		if (size > 0) {
 			buffer[size] = 0;
 			int wide = MultiByteToWideChar(0, 0, buffer, -1, IMECompositionString, 256);
-			DAT_00B73518 = 0;
+			IMECompositionTerminator = 0;
 			int length;
 			if (wide < 0) {
 				length = 0;
@@ -579,7 +579,7 @@ void OwnerDraw::UpdateIMECompositionString(void)
 }
 
 // FUNCTION: GAMEMD 0x00777F90
-void __fastcall FUN_00777F90(HWND window)
+void __fastcall IME_Send_Result(HWND window)
 {
 	if (Game::hIMC) {
 		char buffer[513];
@@ -605,39 +605,39 @@ int __fastcall OwnerDraw::ServiceIMEMessage(HWND hwnd, UINT message, WPARAM wPar
 	switch (message) {
 		case 0x10F:
 			UpdateIMECompositionString();
-			DAT_00B73570 = DefWindowProc(hwnd, 0x10F, wParam, lParam);
+			IMEResult = DefWindowProc(hwnd, 0x10F, wParam, lParam);
 			return(1);
 
 		case 0x10E:
 			UpdateIMECompositionString();
 			IMEComposing = 0;
-			DAT_00B73570 = DefWindowProc(hwnd, 0x10E, wParam, lParam);
+			IMEResult = DefWindowProc(hwnd, 0x10E, wParam, lParam);
 			return(1);
 
 		case 0x10D:
 			UpdateIMECompositionString();
-			DAT_00B730EC[0] = 0;
+			IMEResultString[0] = 0;
 			IMEComposing = 1;
-			DAT_00B73570 = DefWindowProc(hwnd, 0x10D, wParam, lParam);
+			IMEResult = DefWindowProc(hwnd, 0x10D, wParam, lParam);
 			return(1);
 
 		case 0x281:
-			DAT_00B73570 = DefWindowProc(hwnd, 0x281, wParam, lParam);
+			IMEResult = DefWindowProc(hwnd, 0x281, wParam, lParam);
 			return(1);
 
 		case 0x282:
 		case 0x285:
 		case 0x290:
 		case 0x291:
-			DAT_00B73570 = DefWindowProc(hwnd, message, wParam, lParam);
+			IMEResult = DefWindowProc(hwnd, message, wParam, lParam);
 			return(1);
 	}
 	return(0);
 }
 
-extern int DAT_007F5BE8;
-extern bool __fastcall FUN_0072E820(Surface * surface, Rect const & rect, int color);
-extern Rect __fastcall FUN_0072AD20(void);
+extern int WideScreenThreshold;
+extern bool __fastcall Fill_Surface_Rect(Surface * surface, Rect const & rect, int color);
+extern Rect __fastcall Get_Title_Screen_Area(void);
 int __stdcall FUN_007C8A3A(void * context, int enable);
 
 namespace OwnerDraw {
@@ -648,11 +648,11 @@ namespace OwnerDraw {
 // FUNCTION: GAMEMD 0x00778120
 int OwnerDraw::GetIMEResult(void)
 {
-	return(DAT_00B73570);
+	return(IMEResult);
 }
 
 // FUNCTION: GAMEMD 0x00778130
-void FUN_00778130(void)
+void IME_Close(void)
 {
 	if (Game::hIMC) {
 		FUN_007C8A3A(Game::hIMC, 0);
@@ -660,7 +660,7 @@ void FUN_00778130(void)
 }
 
 // FUNCTION: GAMEMD 0x00778150
-void FUN_00778150(void)
+void IME_Close_Alt(void)
 {
 	if (Game::hIMC) {
 		FUN_007C8A3A(Game::hIMC, 1);
@@ -714,7 +714,7 @@ void __fastcall Load_Title_Screen(char const * name, Surface * surface, PaletteC
 		int surface_height = surface->Get_Height();
 		Rect screen(0, 0, surface_width, surface_height);
 		BSurface * black = new BSurface(surface_width, surface_height, 2);
-		FUN_0072E820(black, screen, 0);
+		Fill_Surface_Rect(black, screen, 0);
 		surface->Blit_From(*black, false, true);
 		delete black;
 
@@ -723,8 +723,8 @@ void __fastcall Load_Title_Screen(char const * name, Surface * surface, PaletteC
 		int width = load_buffer->Get_Width();
 		int height = load_buffer->Get_Height();
 		Point2D origin;
-		if (surface->Get_Width() > DAT_007F5BE8) {
-			Rect area = FUN_0072AD20();
+		if (surface->Get_Width() > WideScreenThreshold) {
+			Rect area = Get_Title_Screen_Area();
 			origin = Point2D(area.X, area.Y);
 			x = (area.Width - width) / 2;
 			y = (area.Height - height) / 2;

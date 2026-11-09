@@ -236,7 +236,7 @@ extern bool UserInputLocked;
 extern int DAT_007F5BF8;
 extern DynamicVectorClass<BuildingClass *> DAT_008B41E0;
 bool __fastcall FUN_00534FA0(int side);
-Rect __fastcall FUN_0072AD20(void);
+Rect __fastcall Get_Title_Screen_Area(void);
 void __cdecl FUN_004068E0(char const * format, ...);
 HRESULT __fastcall FUN_00751710(IStream * stream);
 HRESULT __fastcall FUN_007533F0(IStream * stream);
@@ -670,7 +670,7 @@ bool Get_All(IStream * stream, bool save_net)
 		return(false);
 	}
 
-	Rect temp = FUN_0072AD20();
+	Rect temp = Get_Title_Screen_Area();
 
 	Allocate_Surfaces(VisibleRect, Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, temp.Width, VisibleRect.Height), Rect(0, 0, DAT_007F5BF8, VisibleRect.Height), false);
 
