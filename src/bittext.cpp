@@ -19,7 +19,7 @@ struct Drawing {
 	static int RGB_To_Int(int red, int green, int blue);
 };
 
-extern RGBClass WhiteColor;
+extern RGBClass DAT_00A80220;
 
 inline RGBClass Int_To_RGB(int color)
 {
@@ -69,7 +69,7 @@ inline bool Draw_Line(BitFont * font, wchar_t const * & start, wchar_t const * e
 				int remain = count - index - 1;
 				if (remain < fade) {
 					RGBClass rgb = Int_To_RGB(color);
-					rgb.Adjust((255 / fade) * (fade - remain), WhiteColor);
+					rgb.Adjust((255 / fade) * (fade - remain), DAT_00A80220);
 					c = RGB_To_Int(rgb);
 				}
 			}
@@ -253,7 +253,7 @@ bool BitText::DrawText(BitFont * font, Surface * surface, wchar_t const * text, 
 									int remain = a9 - index - 1;
 									if (remain < a10) {
 										RGBClass rgb = Int_To_RGB(color);
-										rgb.Adjust((255 / a10) * (a10 - remain), WhiteColor);
+										rgb.Adjust((255 / a10) * (a10 - remain), DAT_00A80220);
 										c = RGB_To_Int(rgb);
 									}
 								}
@@ -296,7 +296,7 @@ bool BitText::DrawText(BitFont * font, Surface * surface, wchar_t const * text, 
 				int remain = a9 - index - 1;
 				if (remain < a10) {
 					RGBClass rgb = Int_To_RGB(color);
-					rgb.Adjust((255 / a10) * (a10 - remain), WhiteColor);
+					rgb.Adjust((255 / a10) * (a10 - remain), DAT_00A80220);
 					c = RGB_To_Int(rgb);
 				}
 			}

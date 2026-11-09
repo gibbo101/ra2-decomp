@@ -282,7 +282,7 @@ struct Drawing {
 	static int GreenShiftRight;
 };
 
-extern RGBClass const WhiteColor;
+extern RGBClass const DAT_00A80220;
 
 // FUNCTION: GAMEMD 0x00434500
 int BitFont::FUN_00434500(wchar_t const * text, int x, int y, int w, int h)
@@ -306,7 +306,7 @@ int BitFont::FUN_00434500(wchar_t const * text, int x, int y, int w, int h)
 					unsigned char b = (saved >> Drawing::BlueShiftLeft) << Drawing::BlueShiftRight;
 					unsigned char g = (saved >> Drawing::GreenShiftLeft) << Drawing::GreenShiftRight;
 					RGBClass c = RGBClass(r, g, b);
-					c.Adjust(ratio, WhiteColor);
+					c.Adjust(ratio, DAT_00A80220);
 					Color = (unsigned short)(((c.Get_Green() >> Drawing::GreenShiftRight) << Drawing::GreenShiftLeft)
 						| ((c.Get_Blue() >> Drawing::BlueShiftRight) << Drawing::BlueShiftLeft)
 						| ((c.Get_Red() >> Drawing::RedShiftRight) << Drawing::RedShiftLeft));

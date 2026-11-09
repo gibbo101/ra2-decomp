@@ -450,4 +450,3 @@ address,name,symbol,evidence
 0x004347B0,BitFont::Widen_Space,,"same function as Red Alert 2 1.006 0x00431F70 (compiled from src/bitfont.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
 0x004347E0,BitFont::Set_Wide_Space,,"same function as Red Alert 2 1.006 0x00431FA0 (compiled from src/bitfont.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
 0x00434840,BitFont::Clip_Rect,,"same function as Red Alert 2 1.006 0x00432000 (compiled from src/bitfont.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
-0x00A80220,WhiteColor,,"same global as Red Alert 2 1.006 0x00AB6849 (inferred: referenced by matched src/bitfont.cpp (4 reference), which RedAlert2 rebuilds byte for byte"
