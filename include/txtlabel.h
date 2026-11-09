@@ -26,7 +26,7 @@ class TextLabelClass : public GadgetClass
 		wchar_t *Text;
 		int Color;
 		int PixWidth;
-		unsigned int AnimDword3C;
+		int ScrollPosition;
 		bool SkipDraw;
 		bool Animate;
 		int AnimPos;

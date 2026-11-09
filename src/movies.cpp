@@ -729,7 +729,7 @@ class MPBattleClass : public MultiplayerGameMode
 		virtual bool vt_entry_5C(unsigned a, unsigned b, unsigned c) override;
 		virtual bool vt_entry_68(void) override;
 		virtual void vt_entry_74(unsigned a, unsigned b) override;
-		virtual void vt_entry_78(unsigned a) override;
+		virtual void vt_entry_78(HWND dialog) override;
 		virtual void vt_entry_90(void) override;
 		virtual void vt_entry_94(void) override;
 		virtual int vt_entry_98(void) override;
@@ -824,7 +824,7 @@ void MPBattleClass::vt_entry_74(unsigned a, unsigned b)
 }
 
 // FUNCTION: GAMEMD 0x005C0F00
-void MPBattleClass::vt_entry_78(unsigned a)
+void MPBattleClass::vt_entry_78(HWND dialog)
 {
 }
 

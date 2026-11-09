@@ -215,10 +215,10 @@ struct OwnerDraw {
 };
 extern int DAT_00B779D4;
 extern Surface * DAT_00887310;
-void __fastcall FUN_00603D30(HWND item, int surface);
+void __fastcall FUN_00603D30(HWND item, Surface * surface);
 void __fastcall FUN_0072AA10(Rect * rect, int dx, int dy);
 void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha);
-int __fastcall FUN_005CA110(int index);
+Surface * __fastcall FUN_005CA110(int index);
 
 static const int DAT_0082FD5C[8][5] = {
 	{ 0x411, 0x419, 0x6a3, 0x6a5, 0x6a6 },
@@ -279,7 +279,7 @@ int CALLBACK FUN_005C9B10(HWND window, UINT message, WPARAM wparam, LPARAM lpara
 			for (i = 0; i < 2; i++) {
 				int header = DAT_0082FDFC[i];
 				item = GetDlgItem(window, header);
-				int surface = FUN_005CA110(i);
+				Surface * surface = FUN_005CA110(i);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
@@ -290,7 +290,7 @@ int CALLBACK FUN_005C9B10(HWND window, UINT message, WPARAM wparam, LPARAM lpara
 				COLORREF color = RGB(rgb.Get_Red(), rgb.Get_Green(), rgb.Get_Blue());
 				int flag = DAT_0082FE04[i];
 				item = GetDlgItem(window, flag);
-				int surface = FUN_005CA110(i + 2);
+				Surface * surface = FUN_005CA110(i + 2);
 				if (item && surface) {
 					FUN_00603D30(item, surface);
 				}
@@ -339,11 +339,7 @@ int CALLBACK FUN_005C9B10(HWND window, UINT message, WPARAM wparam, LPARAM lpara
 	return 0;
 }
 
-struct PCX
-{
-	static PCX Instance;
-	int GetSurface(char const * name, void * palette);
-};
+#include "srfcache.h"
 extern char * DAT_00844B24;
 extern char * DAT_00844B28;
 extern char * DAT_00844B2C;
@@ -376,101 +372,101 @@ extern char * DAT_00844B94;
 extern char * DAT_00844B98;
 
 // FUNCTION: GAMEMD 0x005CA110
-int __fastcall FUN_005CA110(int index)
+Surface * __fastcall FUN_005CA110(int index)
 {
 	if (Scen->PlayerSideIndex == 0) {
 		if (index == 0) {
-			return PCX::Instance.GetSurface(DAT_00844B24, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B24, NULL);
 		}
 		if (index == 1) {
-			return PCX::Instance.GetSurface(DAT_00844B28, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B28, NULL);
 		}
 		if (index == 2) {
-			return PCX::Instance.GetSurface(DAT_00844B2C, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B2C, NULL);
 		}
 		if (index == 3) {
-			return PCX::Instance.GetSurface(DAT_00844B30, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B30, NULL);
 		}
 		if (index == 4) {
-			return PCX::Instance.GetSurface(DAT_00844B34, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B34, NULL);
 		}
 		if (index == 5) {
-			return PCX::Instance.GetSurface(DAT_00844B38, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B38, NULL);
 		}
 		if (index == 6) {
-			return PCX::Instance.GetSurface(DAT_00844B3C, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B3C, NULL);
 		}
 		if (index == 7) {
-			return PCX::Instance.GetSurface(DAT_00844B40, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B40, NULL);
 		}
 		if (index == 8) {
-			return PCX::Instance.GetSurface(DAT_00844B44, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B44, NULL);
 		}
 		if (index == 9) {
-			return PCX::Instance.GetSurface(DAT_00844B48, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B48, NULL);
 		}
 	} else if (Scen->PlayerSideIndex == 1) {
 		if (index == 0) {
-			return PCX::Instance.GetSurface(DAT_00844B4C, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B4C, NULL);
 		}
 		if (index == 1) {
-			return PCX::Instance.GetSurface(DAT_00844B50, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B50, NULL);
 		}
 		if (index == 2) {
-			return PCX::Instance.GetSurface(DAT_00844B54, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B54, NULL);
 		}
 		if (index == 3) {
-			return PCX::Instance.GetSurface(DAT_00844B58, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B58, NULL);
 		}
 		if (index == 4) {
-			return PCX::Instance.GetSurface(DAT_00844B5C, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B5C, NULL);
 		}
 		if (index == 5) {
-			return PCX::Instance.GetSurface(DAT_00844B60, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B60, NULL);
 		}
 		if (index == 6) {
-			return PCX::Instance.GetSurface(DAT_00844B64, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B64, NULL);
 		}
 		if (index == 7) {
-			return PCX::Instance.GetSurface(DAT_00844B68, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B68, NULL);
 		}
 		if (index == 8) {
-			return PCX::Instance.GetSurface(DAT_00844B6C, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B6C, NULL);
 		}
 		if (index == 9) {
-			return PCX::Instance.GetSurface(DAT_00844B70, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B70, NULL);
 		}
 	} else if (Scen->PlayerSideIndex == 2) {
 		if (index == 0) {
-			return PCX::Instance.GetSurface(DAT_00844B74, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B74, NULL);
 		}
 		if (index == 1) {
-			return PCX::Instance.GetSurface(DAT_00844B78, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B78, NULL);
 		}
 		if (index == 2) {
-			return PCX::Instance.GetSurface(DAT_00844B7C, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B7C, NULL);
 		}
 		if (index == 3) {
-			return PCX::Instance.GetSurface(DAT_00844B80, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B80, NULL);
 		}
 		if (index == 4) {
-			return PCX::Instance.GetSurface(DAT_00844B84, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B84, NULL);
 		}
 		if (index == 5) {
-			return PCX::Instance.GetSurface(DAT_00844B88, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B88, NULL);
 		}
 		if (index == 6) {
-			return PCX::Instance.GetSurface(DAT_00844B8C, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B8C, NULL);
 		}
 		if (index == 7) {
-			return PCX::Instance.GetSurface(DAT_00844B90, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B90, NULL);
 		}
 		if (index == 8) {
-			return PCX::Instance.GetSurface(DAT_00844B94, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B94, NULL);
 		}
 		if (index == 9) {
-			return PCX::Instance.GetSurface(DAT_00844B98, NULL);
+			return SurfaceCache.GetSurface(DAT_00844B98, NULL);
 		}
 	}
-	return 0;
+	return NULL;
 }

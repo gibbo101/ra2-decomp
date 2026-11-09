@@ -168,6 +168,111 @@ int __fastcall StringTable::LoadFile(char const * filename)
 
 extern void * DAT_00B1CF8C;
 
+extern char DAT_00B1BF38[0x1000];
+extern wchar_t DAT_00B17F24[0x1000];
+
+static inline void Collapse_White_Space(wchar_t *string)
+{
+	wchar_t *in = string;
+	wchar_t previous = 0;
+	int line_start = 1;
+	wchar_t *out = string;
+	for (wchar_t c = *in++; c != 0; c = *in++) {
+		if (c == ' ') {
+			if (previous == c || line_start) {
+				continue;
+			}
+		} else if (c == '\n' || c == '\t') {
+			if (previous == ' ') {
+				out--;
+			}
+			*out = c;
+			line_start = 1;
+			previous = c;
+			out++;
+			continue;
+		}
+		*out++ = c;
+		previous = c;
+		line_start = 0;
+	}
+	if (previous == ' ') {
+		out--;
+	}
+	*out = 0;
+}
+
+static void Decode_String(wchar_t *string)
+{
+	for (; *string != 0; string++) {
+		*string = ~*string;
+	}
+}
+
+// FUNCTION: GAMEMD 0x00734990
+int __fastcall StringTable::ReadFile(char const *name)
+{
+	CCFileClass file(name);
+	int string_index = 0;
+	if (!file.Is_Available() || !file.Open()) {
+		return 0;
+	}
+	CSFHeader header;
+	if (file.Read(&header, sizeof(header)) != sizeof(header)) {
+		return 0;
+	}
+	int id;
+	int count;
+	int length;
+	int label = 0;
+	while (file.Read(&id, 4) == 4) {
+		if (id != CSF_LABEL_SIGNATURE) {
+			return 0;
+		}
+		file.Read(&count, 4);
+		file.Read(&length, 4);
+		if (length != 0) {
+			file.Read(DAT_00B1BF38, length);
+		}
+		DAT_00B1BF38[length] = 0;
+		strcpy(Labels[label].Name, DAT_00B1BF38);
+		if (length > MaxLabelLen) {
+			MaxLabelLen = length;
+		}
+		Labels[label].FirstValueIndex = string_index;
+		Labels[label].NumValues = count;
+		for (int index = 0; index < count; index++) {
+			file.Read(&id, 4);
+			if (id != CSF_VALUE_SIGNATURE && id != CSF_EXVALUE_SIGNATURE) {
+				return 0;
+			}
+			file.Read(&length, 4);
+			if (length != 0) {
+				file.Read(DAT_00B17F24, length * 2);
+			}
+			DAT_00B17F24[length] = 0;
+			Decode_String(DAT_00B17F24);
+			Collapse_White_Space(DAT_00B17F24);
+			Values[string_index + index] = (wchar_t *)::operator new((wcslen(DAT_00B17F24) + 1) * sizeof(wchar_t));
+			wcscpy(Values[string_index + index], DAT_00B17F24);
+			if (id == CSF_EXVALUE_SIGNATURE) {
+				file.Read(&length, 4);
+				if (length != 0) {
+					file.Read(DAT_00B1BF38, length);
+				}
+				DAT_00B1BF38[length] = 0;
+				if (length != 0) {
+					ExtraValues[string_index + index] = (char *)::operator new(length + 1);
+					strcpy(ExtraValues[string_index + index], DAT_00B1BF38);
+				}
+			}
+		}
+		label++;
+		string_index += count;
+	}
+	return 1;
+}
+
 // FUNCTION: GAMEMD 0x00734D30
 void StringTable::Unload(void)
 {

@@ -504,8 +504,8 @@ class TechnoClass : public RadioClass
 		virtual void Draw_Action_Line(bool force, int unknown) const;
 		virtual unsigned GetDisguiseFlags(unsigned flags) const;
 		virtual bool IsClearlyVisibleTo(HouseClass * house) const;
-		virtual void Draw_Voxel(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, int brightness, int unknown, ShapeFlags_Type negflags) const;
-		virtual void vt_entry_448(unsigned, unsigned);
+		virtual void Draw_Voxel(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, int brightness, unsigned short tint, ShapeFlags_Type negflags) const;
+		virtual void Draw_Health_Bar_Old(Point2D const & point, Rect const & cliprect) const;
 		virtual void Draw_Health_Bar(Point2D const & point, Rect const & rect, bool sensed_underground) const;
 		virtual void Draw_Pips(Point2D const & bottomleft, Point2D const & bottomright, Rect const & rect) const;
 		virtual void DrawVeterancyPips(Point2D const & point, Rect const & rect) const;
@@ -670,9 +670,9 @@ class TechnoClass : public RadioClass
 		virtual void Draw_Post_Render(Point2D const & point, Rect const & cliprect) const override;
 
 
-		void Techno_Blit_Voxel(StaticBufferClass::Entry const & cache, Point2D const & point, Rect const & cliprect, ShapeFlags_Type flags, int brightness, int unknown) const;
+		void Techno_Blit_Voxel(StaticBufferClass::Entry const & cache, Point2D const & point, Rect const & cliprect, ShapeFlags_Type flags, int brightness, unsigned short tint) const;
 		void Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, int layer_index, int key, VoxelIndexClass * cache, Rect const & cliprect, Point2D const & point, Matrix3D const & matrix, bool force_cache, Surface * surface, int shadow_x, int shadow_y) const;
-		SurfaceRegion Techno_Render_Voxel_Object(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int frame, ShapeFlags_Type flags, int brightness, int unknown) const;
+		SurfaceRegion Techno_Render_Voxel_Object(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int frame, ShapeFlags_Type flags, int brightness, unsigned short tint) const;
 		SurfaceRegion Techno_Render_Voxel_Shadow(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int layer_index, ShapeFlags_Type flags, bool cached, Surface * surface, int shadow_x, int shadow_y) const;
 
 		virtual void Hidden(void) override;

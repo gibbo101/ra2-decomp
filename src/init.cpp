@@ -1559,7 +1559,7 @@ bool FUN_0052F3F0(void)
 	Session.unknown_30A4 = 0;
 	Session.unknown_30A8 = -1;
 	memset(Session.unknown_2A14, 0, sizeof(Session.unknown_2A14));
-	memset(Session.unknown_2C14, -1, sizeof(Session.unknown_2C14));
+	memset(Session.ConnectionResults, -1, sizeof(Session.ConnectionResults));
 	memset(Session.unknown_2E18, 0, sizeof(Session.unknown_2E18));
 	memset(Session.unknown_2FF8, 0, sizeof(Session.unknown_2FF8));
 	Session.unknown_2E14 = 0;

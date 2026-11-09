@@ -1219,7 +1219,7 @@ class SHPStruct
 		short Count;
 		void Load(void);
 		Rect GetFrameBounds(int frame) const;
-		void * GetPixels(int frame) const;
+		unsigned char * GetPixels(int frame) const;
 };
 
 // FUNCTION: GAMEMD 0x0047EC90
@@ -1318,7 +1318,7 @@ void CellClass::Draw_Fog_Shape(Point2D const & drawpoint, Rect const & cliprect,
 	int shape_skip = drawpoint.X - inter_right + shaperect.X + shaperect.Width + src_x;
 	int alpha_skip = inter_left - inter_right + AlphaBuffer->Get_Buffer_Width();
 
-	unsigned char * shapeptr = (unsigned char *)shapes->GetPixels(shapenum);
+	unsigned char * shapeptr = shapes->GetPixels(shapenum);
 	unsigned short * alphaptr = (unsigned short *)AlphaBuffer->Get_Buffer_Offset(Point2D(inter_left, inter_top - TacticalRect.Y));
 
 	shapeptr += src_x + src_y * shaperect.Width;
@@ -1822,14 +1822,14 @@ void CellClass::Wall_Update(bool justneighbors)
 			if (newcell.Passability != old_passability) {
 				if (recalc_around) {
 					Map.ResetZones(newcell.CellID);
-					Map.RecalculateSubZones(newcell.CellID);
+					Map.Update_Cell_Subzones(newcell.CellID);
 					for (int dir = FACING_FIRST; (unsigned)dir < FACING_COUNT; dir++) {
 						CellClass & adjacent = Map[::Adjacent_Cell(newcell.CellID, (FacingType)dir)];
 						adjacent.AdjacentObjectCount--;
 					}
 				} else {
 					Map.Update_Cell_Zone_Constructively(newcell.CellID);
-					Map.RecalculateSubZones(newcell.CellID);
+					Map.Update_Cell_Subzones(newcell.CellID);
 				}
 			}
 		}
@@ -1882,7 +1882,7 @@ int CellClass::Reduce_Wall(int damage)
 					OverlayData = 0;
 					Recalc_Attributes();
 					Map.ResetZones(CellID);
-					Map.RecalculateSubZones(CellID);
+					Map.Update_Cell_Subzones(CellID);
 					Map.Flag_Background_Update(CellID);
 					Adjacent_Cell(FACING_N).Wall_Update();
 					Adjacent_Cell(FACING_W).Wall_Update();

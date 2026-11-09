@@ -44,7 +44,7 @@ class MultiplayerGameMode
 
 		static MultiplayerGameMode * __fastcall Get(int index);
 		CCINIClass * FUN_005D67B0(void);
-		bool FUN_005D63E0(MultiMission * map);
+		bool FUN_005D63E0(MultiMission const * map);
 		MultiplayerTeam * FUN_005D6620(int index);
 		void FUN_005D6750(void);
 		bool FUN_005D6D80(void);
@@ -81,7 +81,7 @@ class MultiplayerGameMode
 		virtual int RandomHumanCountryIndex(void);
 		virtual int RandomAICountryIndex(void);
 		virtual void vt_entry_74(unsigned a, unsigned b);
-		virtual void vt_entry_78(unsigned a);
+		virtual void vt_entry_78(HWND dialog);
 		virtual bool UnfixAlliances(void);
 		virtual bool StartingPositionsToHouseBaseCells(char unused);
 		virtual bool StartingPositionsToHouseBaseCells2(bool arg);
