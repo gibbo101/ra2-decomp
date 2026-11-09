@@ -10776,8 +10776,8 @@ namespace Network
 {
 extern int GameStockKeepingUnit;
 extern long PlanetWestwoodStartTime;
-} // namespace Network
-} // namespace Game
+}
+}
 extern char DAT_00B779E0[];
 
 // FUNCTION: GAMEMD 0x007A7B60
