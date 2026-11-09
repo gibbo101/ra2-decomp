@@ -944,7 +944,7 @@ address,name,result,size,source,symbol
 0x004264F0,ObjectClass::IsWarpingIn,MATCH,3,src/anim.cpp,?IsWarpingIn@ObjectClass@@UBE_NXZ
 0x00426500,ObjectClass::IsWarpingSomethingOut,MATCH,3,src/anim.cpp,?IsWarpingSomethingOut@ObjectClass@@UBE_NXZ
 0x00426510,ObjectClass::IsNotWarping,MATCH,3,src/anim.cpp,?IsNotWarping@ObjectClass@@UBE_NXZ
-0x00426520,ObjectClass::GetRemapColour,MATCH,3,src/anim.cpp,?GetRemapColour@ObjectClass@@UBEPAXXZ
+0x00426520,ObjectClass::GetRemapColour,MATCH,3,src/anim.cpp,?GetRemapColour@ObjectClass@@UBEPAVLightConvertClass@@XZ
 0x00426530,AnimClass::Fetch_Object_Size,MATCH,6,src/anim.cpp,?Fetch_Object_Size@AnimClass@@UBEHXZ
 0x00426540,AnimClass::GetClassID,MATCH,56,src/anim.cpp,?GetClassID@AnimClass@@UAGJPAU_GUID@@@Z
 0x00426580,AnimClass::Fetch_RTTI,MATCH,6,src/anim.cpp,?Fetch_RTTI@AnimClass@@UBE?AW4RTTIType@@XZ
@@ -14842,10 +14842,11 @@ address,name,result,size,source,symbol
 0x00705D30,TechnoClass::FUN_00705D30,MATCH,24,src/techno.cpp,?FUN_00705D30@TechnoClass@@QAE_NXZ
 0x00705D50,TechnoClass::IsNotWarpingIn,MATCH,14,src/techno.cpp,?IsNotWarpingIn@TechnoClass@@UBE_NXZ
 0x00705D60,TechnoClass::FUN_00705D60,MATCH,5,src/techno.cpp,?FUN_00705D60@TechnoClass@@QAE_NXZ
-0x00705D70,TechnoClass::GetRemapColour,MATCH,138,src/techno.cpp,?GetRemapColour@TechnoClass@@UBEPAXXZ
+0x00705D70,TechnoClass::GetRemapColour,MATCH,138,src/techno.cpp,?GetRemapColour@TechnoClass@@UBEPAVLightConvertClass@@XZ
 0x00706640,TechnoClass::Draw_Voxel,MATCH,1420,src/techno.cpp,?Draw_Voxel@TechnoClass@@UBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@HGW4ShapeFlags_Type@@@Z
 0x00706BD0,TechnoClass::Techno_Draw_Voxel_Shadow,MATCH,766,src/techno.cpp,?Techno_Draw_Voxel_Shadow@TechnoClass@@QBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@_NPAVSurface@@HH@Z
 0x00707280,TechnoClass::Techno_Render_Voxel_Shadow,MATCH,502,src/techno.cpp,?Techno_Render_Voxel_Shadow@TechnoClass@@QBE?AUSurfaceRegion@@ABUVoxelDataStruct@@ABVMatrix3D@@ABVPoint2D@@ABV?$TRect@H@@HW4ShapeFlags_Type@@_NPAVSurface@@HH@Z
+0x00707480,TechnoClass::Techno_Blit_Voxel,MATCH,718,src/techno.cpp,?Techno_Blit_Voxel@TechnoClass@@QBEXABUEntry@StaticBufferClass@@ABVPoint2D@@ABV?$TRect@H@@W4ShapeFlags_Type@@HG@Z
 0x00707750,TechnoClass::Calculate_Sinking_Offset,MATCH,98,src/techno.cpp,?Calculate_Sinking_Offset@TechnoClass@@QAEXFH@Z
 0x007077C0,TechnoClass::Detach,MATCH,1262,src/techno.cpp,?Detach@TechnoClass@@UAEXPBVAbstractClass@@_N@Z
 0x00707CB0,TechnoClass::Kill_Cargo,MATCH,112,src/techno.cpp,?Kill_Cargo@TechnoClass@@QAEXPAV1@@Z

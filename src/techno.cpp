@@ -4768,7 +4768,7 @@ bool TechnoClass::FUN_00705D60(void)
 }
 
 // FUNCTION: GAMEMD 0x00705D70
-void * TechnoClass::GetRemapColour(void) const
+LightConvertClass * TechnoClass::GetRemapColour(void) const
 {
 	TechnoTypeClass const * type = Techno_Type_Class();
 	int index = House->Scheme;
@@ -4942,6 +4942,35 @@ SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & vo
 	}
 
 	return(region);
+}
+
+// FUNCTION: GAMEMD 0x00707480
+void TechnoClass::Techno_Blit_Voxel(StaticBufferClass::Entry const & entry, Point2D const & point, Rect const & cliprect, ShapeFlags_Type flags, int brightness, unsigned short tint) const
+{
+	BSurface bsurface(entry.Width, entry.Height, 1, entry.Data);
+	flags = ShapeFlags_Type(flags & ~SHAPE_REMAP);
+
+	ConvertClass * converter = NULL;
+	if (RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette) {
+		converter = EightBitDrawer;
+	} else {
+		converter = GetRemapColour();
+	}
+
+	RLEBlitter const * blitter = converter->RLEBlitter_From_Flags(flags);
+
+	int predoffset = 0;
+	if (flags & SHAPE_PREDATOR) {
+		predoffset = Get_Predator_Offset();
+	}
+
+	if (RTTI == RTTI_UNIT) {
+		UnitCompositeDirtyRect = Union(UnitCompositeDirtyRect, Rect(entry.X + point.X, entry.Y + point.Y, entry.Width, entry.Height));
+	}
+
+	if (blitter != NULL) {
+		RLE_Blit(*LogicalSurface, cliprect, Rect(entry.X + point.X, entry.Y + point.Y, entry.Width, entry.Height), bsurface, bsurface.Get_Rect(), bsurface.Get_Rect(), *blitter, Get_Z_Adjust(), Get_Z_Gradient(), brightness, predoffset, NULL, Point2D(0, 0), tint);
+	}
 }
 
 // FUNCTION: GAMEMD 0x00707750

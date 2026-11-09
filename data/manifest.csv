@@ -1304,7 +1304,7 @@ address,size,symbol,source,sha256
 0x004264F0,3,?IsWarpingIn@ObjectClass@@UBE_NXZ,src/anim.cpp,01cb47d078b4841b8408ec4fe278efa83115c6f6e101972987507d2b2b57dcf0
 0x00426500,3,?IsWarpingSomethingOut@ObjectClass@@UBE_NXZ,src/anim.cpp,01cb47d078b4841b8408ec4fe278efa83115c6f6e101972987507d2b2b57dcf0
 0x00426510,3,?IsNotWarping@ObjectClass@@UBE_NXZ,src/anim.cpp,e18aacce29affcdddaa5f641ac1ec12552e0fe9d066e6408941b1792818b8619
-0x00426520,3,?GetRemapColour@ObjectClass@@UBEPAXXZ,src/anim.cpp,4bc724f3b1d0caf4fe369c18cba3102e6c4ea057f63fe1587e3973134a7f755e
+0x00426520,3,?GetRemapColour@ObjectClass@@UBEPAVLightConvertClass@@XZ,src/anim.cpp,4bc724f3b1d0caf4fe369c18cba3102e6c4ea057f63fe1587e3973134a7f755e
 0x00426530,6,?Fetch_Object_Size@AnimClass@@UBEHXZ,src/anim.cpp,989adfae4630d2fa26263a7f8fca48602f1ce5ebfddd063adfb2106a4513f4eb
 0x00426540,56,?GetClassID@AnimClass@@UAGJPAU_GUID@@@Z,src/anim.cpp,e8b8fe44992c39bccc9603c69af6cb8437617fbe789f4da80bc93e20f118df48
 0x00426580,6,?Fetch_RTTI@AnimClass@@UBE?AW4RTTIType@@XZ,src/anim.cpp,e36623525b7c35b277173e56616b2d865cf6515aa2be1d12d6814ef725cecffb
@@ -15186,10 +15186,11 @@ address,size,symbol,source,sha256
 0x00705D30,24,?FUN_00705D30@TechnoClass@@QAE_NXZ,src/techno.cpp,7884772ce95d58fc82085bb09e028f42f6418f349246b7fec79e4c75be4a8f85
 0x00705D50,14,?IsNotWarpingIn@TechnoClass@@UBE_NXZ,src/techno.cpp,cad2a84a279f9fa70375da12a56b6456b69f73dd80a7c888eb309e68faf316d5
 0x00705D60,5,?FUN_00705D60@TechnoClass@@QAE_NXZ,src/techno.cpp,2d2c154014206c5df3437d437797e694229862f8589c1d5d4ef67934e6828673
-0x00705D70,138,?GetRemapColour@TechnoClass@@UBEPAXXZ,src/techno.cpp,16be3474024d8ccf6f1897d6b26f0850b25366241e3ddd49d27605967de9dd0d
+0x00705D70,138,?GetRemapColour@TechnoClass@@UBEPAVLightConvertClass@@XZ,src/techno.cpp,16be3474024d8ccf6f1897d6b26f0850b25366241e3ddd49d27605967de9dd0d
 0x00706640,1420,?Draw_Voxel@TechnoClass@@UBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@HGW4ShapeFlags_Type@@@Z,src/techno.cpp,902d4eb11e8f52e01b3ecc252b48143c612afc4f0d7f0f17cd81e0e839117ea7
 0x00706BD0,766,?Techno_Draw_Voxel_Shadow@TechnoClass@@QBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@_NPAVSurface@@HH@Z,src/techno.cpp,20f960ab6ead903c6ee83d9c29936db85773480c76ed734dcec18ffa7573d92b
 0x00707280,502,?Techno_Render_Voxel_Shadow@TechnoClass@@QBE?AUSurfaceRegion@@ABUVoxelDataStruct@@ABVMatrix3D@@ABVPoint2D@@ABV?$TRect@H@@HW4ShapeFlags_Type@@_NPAVSurface@@HH@Z,src/techno.cpp,c76231cfa61d5c9af1c2855645ab254b01f3b4fd6d70016bb3c628d32d9defda
+0x00707480,718,?Techno_Blit_Voxel@TechnoClass@@QBEXABUEntry@StaticBufferClass@@ABVPoint2D@@ABV?$TRect@H@@W4ShapeFlags_Type@@HG@Z,src/techno.cpp,244116b6119fb2fafdad804b4e05747bf491d32a1acc79bb8577d66cc159fa8a
 0x00707750,98,?Calculate_Sinking_Offset@TechnoClass@@QAEXFH@Z,src/techno.cpp,b656fd67ec2a3b85d397923d970c849662fea7ffdb3e471c959057405f3b3d3f
 0x007077C0,1262,?Detach@TechnoClass@@UAEXPBVAbstractClass@@_N@Z,src/techno.cpp,3d3232cbe8199ad769cbcbebd4892dd09c0ef7e87f0e7abfd6710020e540ad8d
 0x00707CB0,112,?Kill_Cargo@TechnoClass@@QAEXPAV1@@Z,src/techno.cpp,6aa36c9fff3f0c044bca8b1fbd784809b7506c5d1fea795d67fbe292d998ae8a

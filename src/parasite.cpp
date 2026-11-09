@@ -314,7 +314,7 @@ void ParasiteClass::UpdateSquid(void)
 		CellClass * vcell = Victim->Get_Cell_Ptr();
 		if (Victim != grapple->OwnerObject) {
 			grapple->SetOwnerObject(Victim);
-			grapple->LightConvert = (LightConvertClass *)Owner->GetRemapColour();
+			grapple->LightConvert = Owner->GetRemapColour();
 			if (vcell != NULL) {
 				grapple->TintColor = vcell->Brightness;
 			}

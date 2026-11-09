@@ -35,9 +35,9 @@ class BuildingClass;
 class RadioClass;
 class TagClass;
 class WarheadTypeClass;
-class ShapeSet;
 class MonoClass;
 class AnimClass;
+class LightConvertClass;
 class BombClass;
 class LineTrail;
 
@@ -286,7 +286,7 @@ class ObjectClass : public AbstractClass
 		virtual bool IsWarpingIn(void) const;
 		virtual bool IsWarpingSomethingOut(void) const;
 		virtual bool IsNotWarping(void) const;
-		virtual void * GetRemapColour(void) const;
+		virtual LightConvertClass * GetRemapColour(void) const;
 		void Set_Height(int height);
 		void FUN_005F6CB0(int sound);
 
