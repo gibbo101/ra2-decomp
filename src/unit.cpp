@@ -2574,6 +2574,201 @@ MoveType UnitClass::Can_Enter_Cell(CellClass const *cellptr, FacingType dir, int
 	return (retval);
 }
 
+static inline TechnoClass * Techno_Of(AbstractClass * a)
+{
+	if (a == NULL) return(NULL);
+	return((a->AbstractFlags & 1) ? (TechnoClass *)a : NULL);
+}
+
+bool __fastcall FUN_00637DB0(int action);
+
+// FUNCTION: GAMEMD 0x0073FD50
+ActionType UnitClass::What_Action(ObjectClass const * object, bool disallow_force) const
+{
+	ActionType action = BASECLASS::What_Action(object, disallow_force);
+	if (action == ACTION_TOGGLE_SELECT) {
+		return(ACTION_TOGGLE_SELECT);
+	}
+
+	if (Combat_Damage(-1) < 0 && House->Is_Player_Control() && action != ACTION_SELF) {
+		if (House->Is_Ally(object)) {
+			if (object->IsStrange() && object != this && object->Considered_Vehicle()) {
+				if (object->Fetch_RTTI() != RTTI_AIRCRAFT ||
+					Map[object->Center_Coord()].Cell_Building() == NULL) {
+					if (object->HealthRatio < Rule->ConditionGreen) {
+						action = ACTION_GREPAIR;
+					}
+				}
+			} else if (object->Fetch_RTTI() != RTTI_BUILDING) {
+				action = ACTION_SELECT;
+			}
+		} else {
+			action = ACTION_NONE;
+		}
+	}
+
+	if (action == ACTION_ATTACK && !Can_Player_Fire()) {
+		if ((Class->IsCrusher || Has_Ability(ABILITY_CRUSHER)) &&
+			object->IsCrushable((UnitClass *)this)) {
+			action = ACTION_MOVE;
+		} else {
+			action = ACTION_SELECT;
+		}
+	}
+
+	if (action == ACTION_SELF) {
+		if (FUN_00637DB0(action)) {
+			if (Class->DeploysInto != NULL) {
+				Cell cell = Center_Coord().As_Cell();
+				if (Class->DeploysInto->Width() > 2 ||
+					Class->DeploysInto->Height(false) > 2) {
+					cell = Adjacent_Cell(cell, FACING_NW);
+				}
+
+				((UnitClass *)this)->Mark(MARK_UP);
+				Locomotion->Mark_All_Occupation_Bits(MARK_UP);
+				if (!Class->DeploysInto->Legal_Placement(cell)) {
+					action = ACTION_NO_DEPLOY;
+				}
+				Locomotion->Mark_All_Occupation_Bits(MARK_DOWN);
+				((UnitClass *)this)->Mark(MARK_DOWN);
+			} else if (!Class->IsSimpleDeployer) {
+				if (Class->MaxPassengers > 0 && BunkerLinkedItem == NULL) {
+					if (Cargo.How_Many() == 0) {
+						action = ACTION_NO_DEPLOY;
+					} else if (!IsOnBridge) {
+						CellClass * cell = &Map[(Coord const &)PositionCoord];
+						ObjectClass * passenger = Cargo.Attached_Object();
+						if (passenger != NULL &&
+							Ground[cell->Land_Type()].Cost[
+								passenger->Techno_Type_Class()->Speed] < 0.01 &&
+							cell->Land_Type() != LAND_WATER) {
+							action = ACTION_NO_DEPLOY;
+						}
+						if (Class->Speed != SPEED_HOVER && Get_Height_AGL() != 0) {
+							action = ACTION_NO_DEPLOY;
+						}
+					}
+				} else if (Class->DeployFire) {
+					action = ACTION_SELF;
+				} else if (BunkerLinkedItem == NULL) {
+					action = ACTION_NONE;
+				}
+			}
+		} else {
+			action = ACTION_NO_DEPLOY;
+		}
+	}
+
+	if (action == ACTION_SELF && !Can_Deploy_Now()) {
+		action = ACTION_NO_DEPLOY;
+	}
+
+	TechnoClass const * techno = Techno_Of(const_cast<ObjectClass *>(object));
+	if (action == ACTION_SELECT && House->Is_Player_Control() &&
+		techno != NULL && techno->House->Is_Ally(this) &&
+		!techno->IsBeingWarpedOut()) {
+		if (object->Fetch_RTTI() == RTTI_BUILDING &&
+			((UnitClass *)this)->Transmit_Message(
+				RADIO_CAN_LOAD, (RadioClass *)object) == RADIO_ROGER) {
+			if (Class->MZone == MZONE_FLYER) {
+				action = ACTION_NO_ENTER;
+			} else if (object != NULL &&
+					   ((BuildingClass const *)object)->Class->Grinding) {
+				action = ACTION_EATEN;
+			} else {
+				action = ACTION_ENTER;
+			}
+		}
+	}
+
+	if (House->Is_Player_Control() && action == ACTION_SELECT &&
+		object->Fetch_RTTI() == RTTI_BUILDING) {
+		BuildingClass * building = (BuildingClass *)object;
+		if (building->Class->IsCanUnitRepair &&
+			((UnitClass *)this)->Transmit_Message(
+				RADIO_CAN_LOAD, building) == RADIO_ROGER &&
+			!building->HasAnyLink() &&
+			!building->Cargo.Is_Something_Attached()) {
+			action = ACTION_MOVE;
+		}
+	}
+
+	if (House->Is_Player_Control() && action == ACTION_SELECT) {
+		if (object->Fetch_RTTI() == RTTI_BUILDING) {
+			BuildingClass * building = (BuildingClass *)object;
+			if (building->Class->Bunker &&
+				((UnitClass *)this)->Transmit_Message(
+					RADIO_CAN_LOAD, building) == RADIO_ROGER &&
+				!building->HasAnyLink() &&
+				!building->Cargo.Is_Something_Attached()) {
+				action = ACTION_MOVE;
+			}
+		}
+	} else if (action == ACTION_ATTACK) {
+		if (!Is_Weapon_Equipped()) {
+			action = ACTION_ATTACK_SUPPORT;
+		}
+	}
+
+	if (action != ACTION_NO_ENTER) {
+		if (House->Is_Ally(object) && House->Is_Player_Control() &&
+			!object->IsBeingWarpedOut() && !object->IsWarpingIn() &&
+			Dynamic_Cast<TechnoClass const *>(object) != NULL &&
+			action != ACTION_ATTACK && action != ACTION_GREPAIR &&
+			action != ACTION_GUARD_AREA) {
+			TechnoTypeClass const * type = object->Techno_Type_Class();
+			if (object != this && type != NULL && type->MaxPassengers > 0) {
+				if (object != NULL && (object->AbstractFlags & 4) &&
+					((FootClass const *)object)->Locomotion->Is_Moving()) {
+					action = ACTION_NO_ENTER;
+				} else {
+					switch (((UnitClass *)this)->Transmit_Message(
+						RADIO_CAN_LOAD, (RadioClass *)object)) {
+						case RADIO_ROGER:
+							action = ACTION_ENTER;
+							break;
+						case RADIO_NEGATIVE:
+							action = ACTION_NO_ENTER;
+							break;
+					}
+				}
+			}
+		}
+	}
+
+	if (House->Is_Player_Control() && Class->IsSimpleDeployer && Deployed) {
+		if (action == ACTION_MOVE) {
+			action = ACTION_NOMOVE;
+		} else if (action == ACTION_ATTACK) {
+			bool inrange = false;
+			if (Class->DeployFire) {
+				int weapon = What_Weapon_Should_I_Use(NULL);
+				inrange = In_Range((AbstractClass *)object, weapon);
+			}
+			if (!inrange) {
+				return(ACTION_NOMOVE);
+			}
+		}
+	}
+
+	if (action == ACTION_NONE && House->Is_Player_Control() && Can_Player_Move()) {
+		action = ACTION_NOMOVE;
+	}
+	if (action == ACTION_ATTACK && !Can_Attack_Now()) {
+		action = ACTION_NONE;
+	}
+	if (action == ACTION_NOMOVE) {
+		if (object->IsDisguised() && object->GetDisguiseHouse(true) == NULL &&
+			object->GetDisguise(true)->Fetch_RTTI() == RTTI_OVERLAYTYPE) {
+			action = ACTION_MOVE;
+		}
+	} else if (action == ACTION_ATTACK && object->Class_Of()->IsImmune) {
+		action = ACTION_NOMOVE;
+	}
+	return(action);
+}
+
 // FUNCTION: GAMEMD 0x007404B0
 ActionType UnitClass::What_Action(Cell const & cell, bool check_fog, bool disallow_force) const
 {
@@ -3012,11 +3207,7 @@ double UnitClass::Tiberium_Load(void) const
 	return(0.0);
 }
 
-static inline TechnoClass * Techno_Of(AbstractClass * a)
-{
-	if (a == NULL) return(NULL);
-	return((a->AbstractFlags & 1) ? (TechnoClass *)a : NULL);
-}
+
 
 static inline bool Is_Object(AbstractClass * a)
 {
