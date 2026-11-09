@@ -676,6 +676,16 @@ HRESULT __fastcall FUN_007533F0(IStream * stream)
 	return hr;
 }
 
+// FUNCTION: GAMEMD 0x007534E0
+void Set_EVA_Index(int index = 0)
+{
+	if (index == -1) {
+		Set_EVA_Index();
+		return;
+	}
+	DAT_00B1D4C8 = index;
+}
+
 // FUNCTION: GAMEMD 0x00753500
 void FUN_00753500(void)
 {
