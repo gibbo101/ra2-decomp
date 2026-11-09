@@ -410,7 +410,7 @@ AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * cont
 }
 
 // FUNCTION: GAMEMD 0x00750EC0
-void Speech_Init(void)
+void FUN_00750EC0(void)
 {
 	SoundNode * node = (SoundNode *)DAT_00B1D320.FUN_004073C0();
 	while (node != NULL) {

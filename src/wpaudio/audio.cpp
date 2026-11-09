@@ -67,12 +67,12 @@ void FUN_00405040(void);
 void FUN_004081A0(void);
 void FUN_00407550(void);
 void FUN_00407780(void);
-void Speech_Init(void);
-void Speech_Shutdown(void);
-void Speech_Service(void);
-void Speech_Init(void);
-void Speech_Shutdown(void);
-void Speech_Service(void);
+void FUN_00750EC0(void);
+void FUN_00751040(void);
+void FUN_00751080(void);
+void FUN_00752290(void);
+void FUN_00752340(void);
+void FUN_00752760(void);
 void FUN_00752AD0(void);
 void Theme_Suspend(void);
 void Theme_Resume(void);
@@ -163,7 +163,7 @@ int __fastcall FUN_00406B10(int enable)
 	if (!FUN_00403ED0(AudioMainDevice, AudioIDX)) {
 		enable = 0;
 	}
-	Speech_Init();
+	FUN_00752290();
 	FUN_00752AD0();
 	AudioEnabled = enable;
 	return 1;
@@ -177,7 +177,7 @@ void Audio_Shutdown(void)
 	}
 	FUN_00404E70();
 	FUN_004081A0();
-	Speech_Shutdown();
+	FUN_00752340();
 	Theme_Suspend();
 	AudioEventCloseDown();
 	FUN_00407780();
@@ -246,13 +246,13 @@ void Audio_Pause_Channels(void)
 		FUN_00403770(AudioMainDevice, 1);
 	}
 	FUN_00404FD0();
-	Speech_Shutdown();
+	FUN_00751040();
 }
 
 // FUNCTION: GAMEMD 0x00406EC0
 void Audio_Resume_Channels(void)
 {
-	Speech_Service();
+	FUN_00751080();
 	FUN_00405040();
 	if (AudioMainDevice) {
 		FUN_004037C0(AudioMainDevice, 1);
@@ -277,7 +277,7 @@ void FUN_00406F00(void)
 			FUN_00403770(AudioMainDevice, 1);
 		}
 		FUN_00404FD0();
-		Speech_Shutdown();
+		FUN_00751040();
 	}
 	FUN_007535B0();
 	Theme_Resume();
@@ -288,7 +288,7 @@ void FUN_00406F40(void)
 {
 	FUN_00753510();
 	FUN_00753620();
-	Speech_Service();
+	FUN_00751080();
 	FUN_00405040();
 	if (AudioMainDevice) {
 		FUN_004037C0(AudioMainDevice, 1);
@@ -303,8 +303,8 @@ void FUN_00406F70(void)
 		TimeStamp now = AudioGetTime();
 		if (now - AudioServiceLast > 33) {
 			AudioServiceAllEvents();
-			Speech_Init();
-			Speech_Service();
+			FUN_00750EC0();
+			FUN_00752760();
 			Theme.AI();
 			FUN_007B84D0();
 			AudioServiceLast = now;

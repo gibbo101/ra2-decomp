@@ -106,10 +106,10 @@ extern int AudioGroupAttribs2;
 void FUN_00752370(void);
 VoxNode * __fastcall FUN_00752680(VoxClass * vox);
 void __fastcall FUN_00752590(VoxClass * vox, int type, int priority);
-void Speech_Service(void);
+void FUN_00752760(void);
 
 // FUNCTION: GAMEMD 0x00752290
-int Speech_Init(void)
+int FUN_00752290(void)
 {
 	DAT_00B1D3D8 = 0;
 	DAT_00B1D428 = 0;
@@ -133,7 +133,7 @@ int Speech_Init(void)
 }
 
 // FUNCTION: GAMEMD 0x00752340
-void Speech_Shutdown(void)
+void FUN_00752340(void)
 {
 	FUN_00752370();
 	if (DAT_00B1D4CC) {
@@ -216,7 +216,7 @@ void VoxClass::PlayIndex(int index, int a, int b)
 			if (!found || found->Type != a) {
 				FUN_00752590(vox, a, b);
 			}
-			Speech_Service();
+			FUN_00752760();
 		}
 	}
 }
@@ -317,7 +317,7 @@ void __fastcall FUN_007529A0(bool clear)
 // FUNCTION: GAMEMD 0x007529E0
 int FUN_007529E0(void)
 {
-	Speech_Service();
+	FUN_00752760();
 	if (DAT_00B1D4CC) {
 		if (DAT_00B1D4CC->FUN_00408070()) {
 			goto busy;
