@@ -17701,9 +17701,9 @@ address,name,result,size,source,symbol
 0x00779940,FUN_00779940,MATCH,246,src/wolpersonainformation.cpp,?FUN_00779940@@YI_NXZ
 0x00779A40,FUN_00779A40,MATCH,271,src/wolpersonainformation.cpp,?FUN_00779A40@@YIX_N@Z
 0x00779B50,FUN_00779B50,MATCH,318,src/wolpersonainformation.cpp,?FUN_00779B50@@YI?AVWstring@@XZ
-0x00779C90,FUN_00779C90,MATCH,317,src/wolpersonainformation.cpp,?FUN_00779C90@@YIXPBVWstring@@@Z
+0x00779C90,FUN_00779C90,MATCH,317,src/wolpersonainformation.cpp,?FUN_00779C90@@YIXABVWstring@@@Z
 0x00779DD0,FUN_00779DD0,MATCH,318,src/wolpersonainformation.cpp,?FUN_00779DD0@@YI?AVWstring@@XZ
-0x00779F10,FUN_00779F10,MATCH,317,src/wolpersonainformation.cpp,?FUN_00779F10@@YIXPBVWstring@@@Z
+0x00779F10,FUN_00779F10,MATCH,317,src/wolpersonainformation.cpp,?FUN_00779F10@@YIXABVWstring@@@Z
 0x0077A050,PlayerProfile::~PlayerProfile,MATCH,42,src/wolpersonainformation.cpp,??1PlayerProfile@@UAE@XZ
 0x0077A080,PlayerProfile::Save,MATCH,1048,src/wolpersonainformation.cpp,?Save@PlayerProfile@@QAEXPBVWstring@@@Z
 0x0077A4A0,PlayerProfile::SetName,MATCH,42,src/wolpersonainformation.cpp,?SetName@PlayerProfile@@QAEXPBVWstring@@@Z
@@ -18008,6 +18008,7 @@ address,name,result,size,source,symbol
 0x00799CD0,FUN_00799CD0,MATCH,62,src/wonline.cpp,?FUN_00799CD0@@YIXXZ
 0x00799D10,FUN_00799D10,MATCH,28,src/wonline.cpp,?FUN_00799D10@@YIXXZ
 0x00799D30,FUN_00799D30,MATCH,366,src/wonline.cpp,?FUN_00799D30@@YIHXZ
+0x00799EA0,FUN_00799EA0,MATCH,3932,src/wonline.cpp,?FUN_00799EA0@@YGHPAUHWND__@@IIJ@Z
 0x0079AE00,FUN_0079AE00,MATCH,260,src/wonline.cpp,?FUN_0079AE00@@YGHPAUHWND__@@IIJ@Z
 0x0079BC80,FUN_0079BC80,MATCH,486,src/wonline.cpp,?FUN_0079BC80@@YI_NXZ
 0x0079BE70,FUN_0079BE70,MATCH,89,src/wonline.cpp,?FUN_0079BE70@@YIXXZ
@@ -18080,6 +18081,7 @@ address,name,result,size,source,symbol
 0x007A9200,FUN_007A9200,MATCH,842,src/wonline.cpp,?FUN_007A9200@@YGJPAXJPAUUser@@PBD@Z
 0x007A9550,FUN_007A9550,MATCH,673,src/wonline.cpp,?FUN_007A9550@@YGJPAXJPAUUser@@PBG@Z
 0x007A9800,FUN_007A9800,MATCH,365,src/wonline.cpp,?FUN_007A9800@@YGJPAXJ@Z
+0x007A9970,FUN_007A9970,MATCH,3371,src/wonline.cpp,?FUN_007A9970@@YGJPAXJPAUWolChannel@@@Z
 0x007AA6A0,FUN_007AA6A0,MATCH,47,src/wonline.cpp,?FUN_007AA6A0@@YGJPAXJH@Z
 0x007AA6D0,FUN_007AA6D0,MATCH,413,src/wonline.cpp,?FUN_007AA6D0@@YGJPAXJ@Z
 0x007AA870,FUN_007AA870,MATCH,1849,src/wonline.cpp,?FUN_007AA870@@YGJPAXJPAUWolChannel@@@Z

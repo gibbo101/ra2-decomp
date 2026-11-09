@@ -3188,7 +3188,7 @@ rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name);
 extern int DAT_00B77A90;
 extern char DAT_00B761A8[];
 #include "wolopt.h"
-void __fastcall FUN_00779F10(Wstring const * value);
+void __fastcall FUN_00779F10(Wstring const & value);
 bool DAT_0084A238 = true;
 
 static inline Wstring Strip_Server_Prefix(Server * server)
@@ -3324,7 +3324,7 @@ bool __fastcall FUN_007864C0(Server * server)
 	Session.FUN_0069B760(profile.Get()->Field1C, false);
 	Session.FUN_0069B7E0(profile.Get()->Field20, false);
 	Session.Write_MultiPlayer_Settings();
-	FUN_00779F10(&DAT_00B73E40);
+	FUN_00779F10(DAT_00B73E40);
 	if (DAT_00AC1170 != NULL && strlen(DAT_00B761A8) != 0) {
 		DAT_00AC1170->V05(DAT_00B761A8, DAT_00B77A90, DAT_00B73E40.get(), DAT_0084A234 & 0xFFFF00, -1, 0, 0);
 		DAT_00AC1170->V14(DAT_00B761A8, DAT_00B77A90, DAT_00B73E40.get(), DAT_0084A234 & 0xFFFF00);
@@ -3596,7 +3596,7 @@ extern char DAT_00889F64[];
 void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
 int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
-void __fastcall FUN_00779C90(Wstring const * value);
+void __fastcall FUN_00779C90(Wstring const & value);
 extern char DAT_00889F64[];
 int __fastcall FUN_00797640(int sku);
 BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
@@ -7823,8 +7823,353 @@ int FUN_00799D30(void)
 	return result;
 }
 
+Wstring __fastcall FUN_00779B50(void);
+Wstring __fastcall FUN_00779DD0(void);
+void FUN_004E43C0(void);
+extern bool DAT_00B77EA0;
+extern bool DAT_00B77E68;
+int __fastcall FUN_00623FC0(HWND combo, int index, Wstring * out);
+
+// FUNCTION: GAMEMD 0x00799EA0
+BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message == WM_INITDIALOG && lparam) {
+		SetWindowLong(window, 8, ((int *)lparam)[1]);
+	}
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	SimpleWonlineDialogControl * control = (SimpleWonlineDialogControl *)GetWindowLong(window, 8);
+	switch (message) {
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return TRUE;
+
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x629:
+					if (FUN_00775940(0x11D) && DAT_00B75E48.Get()) {
+						Wstring text;
+						FUN_00623E40(GetDlgItem(window, 0x629), text);
+						DAT_00B75E48.Get()->SetName(&text);
+						return FALSE;
+					}
+					break;
+
+				case 0x628:
+					{
+						bool open = FUN_00775940(0x11D) != NULL;
+						switch (HIWORD(wparam)) {
+							case CBN_EDITCHANGE:
+							case EN_CHANGE:
+								if (HIWORD(wparam) == EN_CHANGE && !open) {
+									break;
+								}
+								if (HIWORD(wparam) == CBN_EDITCHANGE && open) {
+									break;
+								}
+								if (DAT_00B77EA0) {
+									break;
+								}
+								{
+									Wstring text;
+									FUN_00623E40((HWND)lparam, text);
+									bool found = FUN_00786DC0(text);
+									bool enable = found || DAT_00B77E68;
+									if (!found) {
+										DAT_00B73E40 = text;
+									}
+									DAT_00B77EA0 = true;
+									HWND edit = GetDlgItem(window, 0x72C);
+									SendMessage(edit, 0x4B4, 0, (LPARAM)DAT_00B7778C.text());
+									InvalidateRect(edit, NULL, FALSE);
+									DAT_00B77EA0 = false;
+									bool ready = DAT_00B73E40.length() > 0 && DAT_00B7778C.length() == 8;
+									HWND check = GetDlgItem(window, 0x72D);
+									ShowWindow(check, SW_HIDE);
+									SendMessage(check, 0x49D, 0, 1);
+									SendMessage(check, BM_SETCHECK, enable, 0);
+									EnableWindow(check, FALSE);
+									SendMessage(check, 0x49D, 0, 0);
+									ShowWindow(check, SW_SHOW);
+									InvalidateRect(check, NULL, FALSE);
+									EnableWindow(GetDlgItem(window, 0x6EB), DAT_00B73E40.length() > 0);
+									EnableWindow(GetDlgItem(window, 0x539), ready);
+								}
+								return FALSE;
+
+							case CBN_SELCHANGE:
+								if (open) {
+									break;
+								}
+								{
+									DAT_00B77EA0 = true;
+									DAT_00B73E40.clear();
+									DAT_00B7778C.clear();
+									DAT_0084A238 = true;
+									HWND edit = GetDlgItem(window, 0x72C);
+									SendMessage(edit, 0x4B4, 0, (LPARAM)DAT_00B7778C.text());
+									bool enable = DAT_00B77E68;
+									int item = SendMessage((HWND)lparam, CB_GETCURSEL, 0, 0);
+									if (item != -1) {
+										int slot = SendMessage((HWND)lparam, CB_GETITEMDATA, item, 0);
+										if (slot > 0 && slot <= 0x20) {
+											FUN_00623FC0((HWND)lparam, item, &DAT_00B73E40);
+											char const * nick;
+											char const * pass;
+											DAT_00AC116C->V36(slot, &nick, &pass);
+											DAT_00B7778C = pass;
+											edit = GetDlgItem(window, 0x72C);
+											SendMessage(edit, 0x4B4, 0, (LPARAM)DAT_00B7778C.text());
+											DAT_0084A238 = false;
+											enable = true;
+										}
+									}
+									bool ready = DAT_00B73E40.length() > 0 && DAT_00B7778C.length() == 8;
+									HWND check = GetDlgItem(window, 0x72D);
+									SendMessage(check, BM_SETCHECK, enable, 0);
+									EnableWindow(check, FALSE);
+									InvalidateRect(check, NULL, FALSE);
+									EnableWindow(GetDlgItem(window, 0x6EB), DAT_00B73E40.length() > 0);
+									EnableWindow(GetDlgItem(window, 0x539), ready);
+									DAT_00B77EA0 = false;
+								}
+								return FALSE;
+						}
+					}
+					break;
+
+				case 0x539:
+					control->F1(window, 0x539);
+					return FALSE;
+
+				case 0x62A:
+					if (FUN_00775940(0x11D) && DAT_00B75E48.Get()) {
+						HWND combo = GetDlgItem(window, 0x62A);
+						int item = SendMessage(combo, CB_GETCURSEL, 0, 0);
+						int locale = 0;
+						if (item != -1) {
+							locale = SendMessage(combo, CB_GETITEMDATA, item, 0);
+						}
+						DAT_00B75E48.Get()->SetLocale(locale, 3);
+						return FALSE;
+					}
+					break;
+
+				case 0x6A1:
+					if (FUN_00775940(0x11D) && DAT_00B75E48.Get()) {
+						int country = -2;
+						HWND combo = GetDlgItem(window, 0x6A1);
+						int item = SendMessage(combo, CB_GETCURSEL, 0, 0);
+						if (item != -1) {
+							country = SendMessage(combo, CB_GETITEMDATA, item, 0);
+						}
+						DAT_00B75E48->SetCountry(country);
+						return FALSE;
+					}
+					break;
+
+				case 0x686:
+					control->F1(window, 2);
+					return FALSE;
+
+				case 0x6A2:
+					if (FUN_00775940(0x11D) && DAT_00B75E48.Get()) {
+						int value = -2;
+						HWND combo = GetDlgItem(window, 0x6A2);
+						int item = SendMessage(combo, CB_GETCURSEL, 0, 0);
+						if (item != -1) {
+							value = SendMessage(combo, CB_GETITEMDATA, item, 0);
+						}
+						DAT_00B75E48->SetField20(value);
+						return FALSE;
+					}
+					break;
+
+				case 0x72C:
+					if (HIWORD(wparam) == EN_CHANGE && !DAT_00B77EA0) {
+						DAT_0084A238 = true;
+						FUN_00623E40((HWND)lparam, DAT_00B7778C);
+						Wstring text;
+						FUN_00623E40(GetDlgItem(window, 0x628), text);
+						bool ready = text.length() > 0 && DAT_00B7778C.length() == 8;
+						HWND check = GetDlgItem(window, 0x72D);
+						SendMessage(check, 0x49D, 0, 1);
+						EnableWindow(check, ready);
+						InvalidateRect(check, NULL, FALSE);
+						SendMessage(check, 0x49D, 0, 0);
+						EnableWindow(GetDlgItem(window, 0x6EB), FALSE);
+						EnableWindow(GetDlgItem(window, 0x539), ready);
+						return FALSE;
+					}
+					break;
+
+				case 0x72D:
+					DAT_00B77E68 = SendMessage((HWND)lparam, BM_GETCHECK, 0, 0) == BST_CHECKED;
+					return FALSE;
+
+				case 0x6EB:
+					{
+						DAT_00B77EA0 = true;
+						HWND combo = GetDlgItem(window, 0x628);
+						int item = SendMessage(combo, 0x4B9, -1, (LPARAM)DAT_00B73E40.text());
+						if (item != -1) {
+							Wstring name;
+							FUN_00623FC0(combo, item, &name);
+							name.toLower();
+							Wstring const autologin = FUN_00779B50();
+							if (name == autologin.toLower()) {
+								FUN_00779C90(DAT_00889F64);
+							}
+							Wstring const lastvalid = FUN_00779DD0();
+							if (name == lastvalid.toLower()) {
+								FUN_00779F10(DAT_00889F64);
+							}
+							int slot = SendMessage(combo, CB_GETITEMDATA, item, 0);
+							SendMessage(combo, CB_DELETESTRING, item, 0);
+							DAT_00AC116C->V37(slot, DAT_00889F64, DAT_00889F64, 1);
+						}
+						SendMessage(combo, 0x4B4, 0, (LPARAM)DAT_00889F64);
+						InvalidateRect(combo, NULL, FALSE);
+						HWND edit = GetDlgItem(window, 0x72C);
+						SendMessage(edit, 0x4B4, 0, (LPARAM)DAT_00889F64);
+						DAT_00B73E40.clear();
+						DAT_00B7778C.clear();
+						DAT_0084A238 = true;
+						HWND check = GetDlgItem(window, 0x72D);
+						EnableWindow(check, FALSE);
+						InvalidateRect(check, NULL, FALSE);
+						EnableWindow(GetDlgItem(window, 0x6EB), FALSE);
+						EnableWindow(GetDlgItem(window, 0x539), FALSE);
+						DAT_00B77EA0 = false;
+					}
+					return FALSE;
+
+				case 0x6EA:
+					FUN_00788B00(window);
+					return FALSE;
+
+				case 0x6EC:
+					FUN_00773E90("Manage");
+					return FALSE;
+			}
+			break;
+
+		case 0x497:
+			{
+				DAT_00B77EA0 = true;
+				HWND combo = GetDlgItem(window, 0x628);
+				HWND edit = GetDlgItem(window, 0x72C);
+				SendMessage(combo, 0x4D1, 1, 0);
+				SendMessage(edit, 0x4D1, 1, 0);
+				SendMessage(combo, EM_LIMITTEXT, 9, 0);
+				SendMessage(edit, EM_LIMITTEXT, 8, 0);
+				FUN_00623840(combo);
+				SendMessage(combo, CB_LIMITTEXT, 9, 0);
+				for (int i = 1; i < 0x20; i++) {
+					char const * nick;
+					char const * pass;
+					if (DAT_00AC116C->V36(i, &nick, &pass) == 0 && nick != NULL && strlen(nick) != 0) {
+						int added = SendMessage(combo, 0x4BC, 0, (LPARAM)nick);
+						SendMessage(combo, CB_SETITEMDATA, added, i);
+					}
+				}
+				Wstring saved(DAT_00B73E40);
+				bool found = FUN_00786DC0(DAT_00B73E40);
+				if (!found) {
+					DAT_00B73E40 = saved;
+				}
+				SendMessage(combo, 0x4B4, 0, (LPARAM)DAT_00B73E40.text());
+				if (DAT_00B73E40.length() > 0) {
+					SendMessage(edit, 0x4B4, 0, (LPARAM)DAT_00B7778C.text());
+					DAT_0084A238 = false;
+				}
+				bool ready = DAT_00B73E40.length() > 0 && DAT_00B7778C.length() == 8;
+				HWND check = GetDlgItem(window, 0x72D);
+				SendMessage(check, 0x49D, 0, 1);
+				SendMessage(check, BM_SETCHECK, found, 0);
+				EnableWindow(check, FALSE);
+				InvalidateRect(check, NULL, FALSE);
+				SendMessage(check, 0x49D, 0, 0);
+				EnableWindow(GetDlgItem(window, 0x6EB), DAT_00B73E40.length() > 0);
+				EnableWindow(GetDlgItem(window, 0x539), ready);
+				WOLOptionsClass options;
+				if (!options.Is_Bit1_Clear()) {
+					FUN_00798F50(GetDlgItem(window, 0x62A));
+					FUN_004E3A00(window, 0x6A1);
+					HWND country = GetDlgItem(window, 0x6A1);
+					int count = SendMessage(country, CB_GETCOUNT, 0, 0);
+					for (int j = 0; j < count; j++) {
+						int data = SendMessage(country, CB_GETITEMDATA, j, 0);
+						if (data == DAT_00B75E48.Get()->Field1C) {
+							SendMessage(country, CB_SETCURSEL, j, 0);
+							break;
+						}
+					}
+					FUN_004E43C0();
+					FUN_004E45A0(window, 0x6A2);
+					HWND side = GetDlgItem(window, 0x6A2);
+					count = SendMessage(side, CB_GETCOUNT, 0, 0);
+					for (int k = 0; k < count; k++) {
+						int data = SendMessage(side, CB_GETITEMDATA, k, 0);
+						if (data == DAT_00B75E48.Get()->Field20) {
+							SendMessage(side, CB_SETCURSEL, k, 0);
+							break;
+						}
+					}
+					FUN_007896A0(GetDlgItem(window, 0x629), true);
+				}
+				DAT_00B77EA0 = false;
+			}
+			return FALSE;
+
+		case 0x4ED:
+			ShowWindow(window, SW_HIDE);
+			OwnerDraw::SetNeedsControlImage(window, 1);
+			return FALSE;
+
+		case 0x4DB:
+			{
+				bool previous = wparam != 0;
+				HWND child = (HWND)lparam;
+				HWND parent = GetParent(child);
+				while (parent && child && parent != window) {
+					child = parent;
+					parent = GetParent(child);
+				}
+				if (child) {
+					Focus_Next_Tab_Item(child, previous);
+					return FALSE;
+				}
+			}
+			break;
+
+		case 0x4DA:
+			{
+				FUN_00623E40(GetDlgItem(window, 0x72C), DAT_00B7778C);
+				Wstring text;
+				FUN_00623E40(GetDlgItem(window, 0x628), text);
+				if (text.length() > 0 && DAT_00B7778C.length() == 8) {
+					PostMessage(GetDlgItem(window, 0x539), BM_CLICK, 0, 0);
+				}
+			}
+			break;
+	}
+	return FALSE;
+}
+
 void __fastcall FUN_00779830(bool value);
-void __fastcall FUN_00779C90(Wstring const * value);
+void __fastcall FUN_00779C90(Wstring const & value);
 
 // FUNCTION: GAMEMD 0x0079AE00
 BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -7855,7 +8200,7 @@ BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 		case WM_COMMAND:
 			switch (LOWORD(wparam)) {
 				case IDOK:
-					FUN_00779C90(&DAT_00B73E40);
+					FUN_00779C90(DAT_00B73E40);
 					control->F1(window, 1);
 					break;
 
@@ -10795,6 +11140,154 @@ long __stdcall FUN_007A9800(void * sink, long result)
 		int scheme = GadgetClass::Get_Color_Scheme();
 		Session.Messages.Add_Message(NULL, 0, message, scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
 	}
+	return 0;
+}
+
+static inline char Remove_Channel(Wstring & key)
+{
+	return DAT_00B76608.remove(key);
+}
+
+// FUNCTION: GAMEMD 0x007A9970
+long __stdcall FUN_007A9970(void * sink, long result, WolChannel * channel)
+{
+	HWND dialog = FUN_00775940(0xCF);
+	WolEntryState state = WOL_ENTRY_STATE_NONE;
+	if (DAT_00B73ACC.length() != 0) {
+		DAT_00B76990.getValue(DAT_00B73ACC, state);
+		char name[64];
+		name[0] = 0;
+		if (channel) {
+			if (channel->Type == 0) {
+				if (strnicmp(channel->Name, "Lob_40_", strlen("Lob_40_")) == 0) {
+					state = (WolEntryState)7;
+				} else {
+					state = (WolEntryState)(strnicmp(channel->Name, "Lob_35_", strlen("Lob_35_")) ? 4 : 8);
+				}
+			} else {
+				state = (WolEntryState)5;
+				Wstring game_name(channel->Name);
+				WolChannel game;
+				if (FUN_0079F0A0(&game_name, &DAT_00B76AE0, &game)) {
+					if (FUN_0077D9D0(&game)) {
+						state = (WolEntryState)8;
+					} else if (FUN_0077D9B0(&game)) {
+						state = (WolEntryState)7;
+					}
+				}
+			}
+			if (DAT_00B73ACC.length() > 0) {
+				DAT_00B76608.add(DAT_00B73ACC, *channel);
+			}
+			strcpy(name, channel->Name);
+			if (strncmp(name, "Lob_41_", 7) == 0) {
+				int number = atol(name + strlen("Lob_41_"));
+				int copy = number / 8;
+				int slot = number % 8;
+				if (copy == 0) {
+					sprintf(name, "%s", DAT_00B73E1C[slot]);
+				} else {
+					sprintf(name, "%s %d", DAT_00B73E1C[slot], copy + 1);
+				}
+			}
+		} else {
+			if (DAT_00B73ACC.length() > 0) {
+				Remove_Channel(DAT_00B73ACC);
+			}
+			if (result == 0x40131) {
+				state = (WolEntryState)3;
+			} else if (result == 0x40130) {
+				state = (WolEntryState)2;
+			} else if (result == 0x40132) {
+				state = (WolEntryState)1;
+			}
+		}
+		if (DAT_00B73ACC.length() > 0) {
+			DAT_00B76990.add(DAT_00B73ACC, state);
+			DAT_00B73ACC.clear();
+			HWND list = FUN_00775940(0x116);
+			if (list) {
+				FUN_0079AF10(list);
+			}
+		}
+		FUN_0079C3A0();
+		return 0;
+	}
+	if (dialog) {
+		if (FUN_00775B10() != dialog) {
+			return 0;
+		}
+		WideWstring text;
+		HWND item = GetDlgItem(dialog, 0x5C8);
+		if (channel && item) {
+			if (channel->Type == 0 && strncmp(channel->Name, "Lob_41_", strlen("Lob_41_")) == 0) {
+				int number = atol(channel->Name + strlen("Lob_41_"));
+				int copy = number / 8;
+				int slot = number % 8;
+				text.set(DAT_00B73E1C[slot]);
+				if (copy) {
+					text += L" ";
+					text += FUN_007B7DD0(copy + 1);
+				}
+			} else {
+				text.set(FUN_00735120(channel->Name));
+			}
+		} else if (result == 0x40130) {
+			text.set(StringTable::LoadString("TXT_FINDPAGE_NOT_ONLINE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2045));
+		} else if (result == 0x40131) {
+			text.set(StringTable::LoadString("TXT_FINDPAGE_NOT_IN_CHANNEL", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2047));
+		} else if (result == 0x40132) {
+			text.set(StringTable::LoadString("TXT_FINDPAGE_FIND_DISABLED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2049));
+		} else {
+			text.set(StringTable::LoadString("TXT_FINDPAGE_NOT_ONLINE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x204B));
+		}
+		SendMessage(item, 0x4B2, 0, (LPARAM)text.text());
+		return 0;
+	}
+	{
+	wchar_t message[128];
+	if (channel) {
+		if (channel->Type == 0 && strncmp(channel->Name, "Lob_41_", strlen("Lob_41_")) == 0) {
+			int number = atol(channel->Name + strlen("Lob_41_"));
+			int copy = number / 8;
+			int slot = number % 8;
+			WideWstring lobby(DAT_00B73E1C[slot]);
+			if (copy) {
+				lobby += L" ";
+				lobby += FUN_007B7DD0(copy + 1);
+			}
+			wchar_t * who = FUN_00735120(DAT_00B76E28);
+			swprintf(message, StringTable::LoadString("TXT_USER_FOUND", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x205E), who, lobby.get());
+		} else {
+			wchar_t * who = FUN_00735120(DAT_00B76E28);
+			swprintf(message, StringTable::LoadString("TXT_USER_FOUND", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2060), who, FUN_00735120(channel->Name));
+		}
+	} else if (result == 0x40130) {
+		swprintf(message, StringTable::LoadString("TXT_USER_NOT_ONLINE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2067), FUN_00735120(DAT_00B76E28));
+	} else if (result == 0x40131) {
+		swprintf(message, StringTable::LoadString("TXT_USER_NOT_IN_CHANNEL", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2069), FUN_00735120(DAT_00B76E28));
+	} else if (result == 0x40132) {
+		swprintf(message, StringTable::LoadString("TXT_USER_FIND_DISABLED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x206B), FUN_00735120(DAT_00B76E28));
+	} else {
+		swprintf(message, StringTable::LoadString("TXT_USER_NOT_ONLINE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x206D), FUN_00735120(DAT_00B76E28));
+	}
+	HWND top = FUN_00775B10();
+	if (top) {
+		if (GetDlgItem(top, 0x53F)) {
+			FUN_005E2700(DAT_007EEF28, message);
+			return 0;
+		}
+		if (GetDlgItem(top, 0x5B5)) {
+			FUN_005E2790(DAT_007EEF28, message);
+			return 0;
+		}
+	}
+	if (FUN_0069BBE0(&Session)) {
+		int scheme = GadgetClass::Get_Color_Scheme();
+		Session.Messages.Add_Message(NULL, 0, message, scheme, TextPrintType(0x16), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+	}
+	}
+	DAT_00B76E28[0] = 0;
 	return 0;
 }
 

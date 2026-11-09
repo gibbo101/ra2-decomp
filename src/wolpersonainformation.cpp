@@ -354,7 +354,7 @@ Wstring __fastcall FUN_00779B50(void)
 }
 
 // FUNCTION: GAMEMD 0x00779C90
-void __fastcall FUN_00779C90(Wstring const * value)
+void __fastcall FUN_00779C90(Wstring const & value)
 {
 	CDFileClass file("wolinfoMD.ini");
 	if (!file.Is_Available()) {
@@ -368,7 +368,7 @@ void __fastcall FUN_00779C90(Wstring const * value)
 		{
 			Wstring key("AutoLogin");
 			Wstring section("DefaultPersona");
-			ini.Put_String(section, key, *value);
+			ini.Put_String(section, key, value);
 		}
 		ini.Save(file);
 	}
@@ -394,7 +394,7 @@ Wstring __fastcall FUN_00779DD0(void)
 }
 
 // FUNCTION: GAMEMD 0x00779F10
-void __fastcall FUN_00779F10(Wstring const * value)
+void __fastcall FUN_00779F10(Wstring const & value)
 {
 	CDFileClass file("wolinfoMD.ini");
 	if (!file.Is_Available()) {
@@ -408,7 +408,7 @@ void __fastcall FUN_00779F10(Wstring const * value)
 		{
 			Wstring key("LastValid");
 			Wstring section("DefaultPersona");
-			ini.Put_String(section, key, *value);
+			ini.Put_String(section, key, value);
 		}
 		ini.Save(file);
 	}
