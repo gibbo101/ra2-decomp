@@ -221,6 +221,27 @@ void Selection::On_Map_Leave(void)
 #include "stringtable.h"
 WideWstring __fastcall FUN_007B7E40(int value, int digits);
 
+// FUNCTION: GAMEMD 0x0076E180
+// WorldDominationTour::Selection::On_Cancel_Enter
+void Selection::On_Cancel_Enter(void)
+{
+	if (!WorldMap->CancelActive) {
+		WorldMap->FUN_007693F0(this, true);
+		Play_SFX("MouseCancel");
+		Set_Tooltip(StringTable::LoadString("WOL:WDTTerritoryBack", NULL, "D:\\ra2mdpost\\WDTSel.cpp", 0x37e));
+	}
+}
+
+// FUNCTION: GAMEMD 0x0076E290
+// WorldDominationTour::Selection::On_Cancel_Leave
+void Selection::On_Cancel_Leave(void)
+{
+	if (WorldMap->CancelActive) {
+		WorldMap->FUN_007693F0(this, false);
+		Set_Tooltip(StringTable::LoadString("WDT:TerritorySelectToolTip", NULL, "D:\\ra2mdpost\\WDTSel.cpp", 0x394));
+	}
+}
+
 // FUNCTION: GAMEMD 0x0076E2F0
 // WorldDominationTour::Selection::Do_Target_Selection
 void Selection::Do_Target_Selection(int index)
@@ -254,6 +275,27 @@ void Selection::Do_Target_Selection(int index)
 
 	Do_Target_Anim(TourCampaign.Get()->CycleHistory->FUN_00767BB0(current_tick), true, silent);
 	TourCampaign.Get()->Write_INI(index);
+}
+
+// FUNCTION: GAMEMD 0x0076E430
+// WorldDominationTour::Selection::Get_Outcome
+int Selection::Get_Outcome(int tick, bool & mega)
+{
+	rc_ptr<State> state = TourCampaign->CycleHistory->FUN_00767BB0(tick);
+	if (state.Get() != NULL) {
+		int owned = state->FUN_0076F670(TourCampaign->PlayerFaction);
+		if (owned <= LosingThreshold) {
+			mega = owned <= MegaLosingThreshold;
+			return(OUTCOME_LOSE);
+		}
+		if (owned >= WinningThreshold) {
+			mega = owned >= MegaWinningThreshold;
+			return(OUTCOME_WIN);
+		}
+	}
+
+	mega = false;
+	return(OUTCOME_DRAW);
 }
 
 // FUNCTION: GAMEMD 0x0076E4F0
@@ -296,6 +338,67 @@ bool Selection::Present_Ticks(int tick_from, int tick_to)
 	}
 
 	return(first);
+}
+
+// FUNCTION: GAMEMD 0x0076E750
+// WorldDominationTour::Selection::Presentation
+void Selection::Presentation(int index)
+{
+	Set_Text(L"", 0);
+	int current_tick = TourCampaign->Properties->FUN_0076BFE0();
+	int previous_tick = TourCampaign->Get_Previous_Tick(index);
+	if (current_tick - previous_tick > 8) {
+		previous_tick = current_tick - 8;
+	}
+
+	rc_ptr<State> previous_state = TourCampaign->CycleHistory->FUN_00767BB0(previous_tick);
+	if (previous_state.Get() != NULL) {
+		int faction = TourCampaign->PlayerFaction;
+		int owned = previous_state->FUN_0076F670(faction);
+		if (owned >= MegaWinningThreshold) {
+			VoicePlayer.FUN_007712C0(0, OUTCOME_WIN, owned >= 30, true, 0);
+		} else if (owned <= MegaLosingThreshold) {
+			VoicePlayer.FUN_007712C0(0, OUTCOME_LOSE, owned <= 0, true, 0);
+		} else {
+			VoicePlayer.FUN_007712C0(0, OUTCOME_DRAW, true, true, 0);
+		}
+
+		Present_Ticks(previous_tick, current_tick);
+		while (VoicePlayer.FUN_007717F0() && !Brokeout) {
+			Wait_Delay(5);
+			Check_For_Breakout();
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0076E8B0
+// WorldDominationTour::Selection::Present_History
+bool Selection::Present_History(int tick_from, int tick_to)
+{
+	rc_ptr<State> before = TourCampaign->CycleHistory->FUN_00767BB0(tick_from);
+	int faction = TourCampaign->PlayerFaction;
+	int old_count = before->FUN_0076F670(faction);
+	rc_ptr<State> after = TourCampaign->CycleHistory->FUN_00767BB0(tick_to);
+	faction = TourCampaign->PlayerFaction;
+	int new_count = after->FUN_0076F670(faction);
+	int change = new_count - old_count;
+
+	int outcome;
+	bool emphasis;
+	if (change < -1) {
+		outcome = OUTCOME_LOSE;
+		emphasis = change < -3 || new_count <= MegaLosingThreshold;
+	} else if (change > 1) {
+		outcome = OUTCOME_WIN;
+		emphasis = change > 3 || new_count >= MegaWinningThreshold;
+	} else {
+		outcome = OUTCOME_DRAW;
+		bool mega = false;
+		emphasis = Get_Outcome(tick_to, mega) == OUTCOME_LOSE && mega;
+	}
+
+	VoicePlayer.FUN_007712C0(1, outcome, emphasis, true, 0);
+	return(!Present_Ticks(tick_from, tick_to));
 }
 
 // FUNCTION: GAMEMD 0x0076E9D0
@@ -364,6 +467,14 @@ void Selection::Play_SFX(Wstring const & name)
 			it->Play();
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x0076EC80
+// WorldDominationTour::Selection::Set_Long_Description
+void Selection::Set_Long_Description(void)
+{
+	Set_Text(TourCampaign->Properties->LongDesc, 0);
+	Set_Tooltip(StringTable::LoadString("WDT:TerritorySelectToolTip", NULL, "D:\\ra2mdpost\\WDTSel.cpp", 0x4ce));
 }
 
 // FUNCTION: GAMEMD 0x0076ECD0
