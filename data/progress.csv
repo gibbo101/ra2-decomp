@@ -1440,6 +1440,7 @@ address,name,result,size,source,symbol
 0x00439640,_$E35,MATCH,15,src/bounce.cpp,_$E35
 0x00439650,_$E38,MATCH,18,src/bounce.cpp,_$E38
 0x00439670,_$E41,MATCH,26,src/bounce.cpp,_$E41
+0x00439690,BounceClass::Init,MATCH,324,src/bounce.cpp,?Init@BounceClass@@QAEXABVCoord@@NNNN@Z
 0x004397E0,BounceClass::Init,MATCH,441,src/bounce.cpp,?Init@BounceClass@@QAEXABVCoord@@NNNABVVector3@@N@Z
 0x004399A0,BounceClass::Get_Bounce_Coord,MATCH,55,src/bounce.cpp,?Get_Bounce_Coord@BounceClass@@QBE?AVCoord@@XZ
 0x004399E0,BounceClass::Get_Matrix,MATCH,40,src/bounce.cpp,?Get_Matrix@BounceClass@@QBE?AVMatrix3D@@XZ
@@ -4286,6 +4287,7 @@ address,name,result,size,source,symbol
 0x004CAEF0,FUN_004CAEF0,MATCH,1,src/fastmath.cpp,?FUN_004CAEF0@@YIXXZ
 0x004CAF00,FUN_004CAF00,MATCH,1,src/fastmath.cpp,?FUN_004CAF00@@YIXXZ
 0x004CAF10,FUN_004CAF10,MATCH,1,src/fastmath.cpp,?FUN_004CAF10@@YIXXZ
+0x004CAF20,init_sqrt_tab,MATCH,314,src/fastmath.cpp,?init_sqrt_tab@@YIXXZ
 0x004CB060,fastmath::sqrtf,MATCH,120,src/fastmath.cpp,?sqrtf@fastmath@@YIMM@Z
 0x004CB0E0,init_sin_tab,MATCH,112,src/fastmath.cpp,?init_sin_tab@@YIXXZ
 0x004CB150,fastmath::sinf,MATCH,77,src/fastmath.cpp,?sinf@fastmath@@YIMM@Z

@@ -69,6 +69,25 @@ static inline Vector3 Normalize_Axis(const Vector3 & vec)
 	return(vec);
 }
 
+inline double Bounce_Random(double minimum, double maximum)
+{
+	return minimum + (maximum - minimum) * ((double)Random_Pick(0, INT_MAX - 1) * (1.0 / double(INT_MAX - 1)));
+}
+
+// FUNCTION: GAMEMD 0x00439690
+void BounceClass::Init(Coord const & coord, double elasticity, double unused, double min_speed, double max_speed)
+{
+	Vector3 velocity;
+	double speed = Bounce_Random(min_speed, max_speed) * 3.0;
+	double yaw = Bounce_Random(0.0, 1.0) * DEG_TO_RAD(360);
+	double pitch = Bounce_Random(1.0, 2.0) * DEG_TO_RAD(45);
+	double cosine = fastmath::cos(pitch);
+	velocity.X = cosine * fastmath::cos(yaw) * speed;
+	velocity.Y = (fastmath::cos(pitch) * fastmath::sin(yaw) * speed);
+	velocity.Z = fastmath::sin(pitch) * speed;
+	Init(coord, elasticity, 3.0, 0.0, velocity, 0.0);
+}
+
 // FUNCTION: GAMEMD 0x004397E0
 void BounceClass::Init(Coord const & coord, double elasticity, double gravity, double max_velocity, Vector3 const & velocity, double rotation)
 {

@@ -15,6 +15,7 @@
 #define EXP_LSB	(1<<EXP_SHIFTS)
 #define MANT_MASK  (EXP_LSB-1)
 #define MANT_SHIFTS (23-SQRT_BITS)
+#define SQRT_TAB_SIZE (1<<(SQRT_BITS+1))
 #define SIN_TABLE_SIZE   8192
 #define SIN_TABLE_EXTENT (SIN_TABLE_SIZE + SIN_TABLE_SIZE / 4)
 #define TAN_TABLE_SIZE   4096
@@ -54,9 +55,9 @@ static void Sabotage_Routine(LPVOID funcptr)
 }
 
 // FUNCTION: GAMEMD 0x004CAC40
-double __cdecl fastmath::sqrt(double f)
+double __cdecl fastmath::sqrt(double value)
 {
-	return((float)(fastmath::sqrtf(f)));
+	return (float)fastmath::sqrtf(value);
 }
 
 // FUNCTION: GAMEMD 0x004CACB0
@@ -114,6 +115,27 @@ void FUN_004CAF00(void)
 // FUNCTION: GAMEMD 0x004CAF10
 void FUN_004CAF10(void)
 {
+}
+
+// FUNCTION: GAMEMD 0x004CAF20
+void init_sqrt_tab(void)
+{
+	short		 i;
+	float		 value;
+	unsigned int  *fi = (unsigned int *) &value + MOST_SIG_OFFSET;
+
+	for (i = 0; i != SQRT_TAB_SIZE/2; i++) {
+
+		value = 0;
+		*fi = (i << MANT_SHIFTS) | (EXP_BIAS << EXP_SHIFTS);
+		value = fastmath::sqrt(value);
+		sqrt_tab[i] = *fi & MANT_MASK;
+
+		value = 0;
+		*fi = (i << MANT_SHIFTS) | ((EXP_BIAS + 1) << EXP_SHIFTS);
+		value = fastmath::sqrt(value);
+		sqrt_tab[i + SQRT_TAB_SIZE/2] = *fi & MANT_MASK;
+	}
 }
 
 // FUNCTION: GAMEMD 0x004CB060
