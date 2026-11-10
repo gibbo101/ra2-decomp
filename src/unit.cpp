@@ -77,6 +77,7 @@
 #include "parasite.h"
 #include "capmgr.h"
 #include "loco.h"
+#include "cast.h"
 namespace Unsorted { extern int CurrentFrame; extern bool MoveFeedback; }
 #include "bench.hh"
 #include "color.hh"
@@ -859,12 +860,6 @@ bool UnitClass::Unlimbo(Coord const & coord, Dir256 dir)
 		return(true);
 	}
 	return(false);
-}
-
-static inline BuildingClass * As_Building(TechnoClass * p)
-{
-	if (p == NULL) return(NULL);
-	return(p->Fetch_RTTI() == RTTI_BUILDING ? (BuildingClass *)p : NULL);
 }
 
 // FUNCTION: GAMEMD 0x00737C90
@@ -2574,12 +2569,6 @@ MoveType UnitClass::Can_Enter_Cell(CellClass const *cellptr, FacingType dir, int
 	return (retval);
 }
 
-static inline TechnoClass * Techno_Of(AbstractClass * a)
-{
-	if (a == NULL) return(NULL);
-	return((a->AbstractFlags & 1) ? (TechnoClass *)a : NULL);
-}
-
 bool __fastcall FUN_00637DB0(int action);
 
 // FUNCTION: GAMEMD 0x0073FD50
@@ -2664,7 +2653,7 @@ ActionType UnitClass::What_Action(ObjectClass const * object, bool disallow_forc
 		action = ACTION_NO_DEPLOY;
 	}
 
-	TechnoClass const * techno = Techno_Of(const_cast<ObjectClass *>(object));
+	TechnoClass const * techno = As_Techno(const_cast<ObjectClass *>(object));
 	if (action == ACTION_SELECT && House->Is_Player_Control() &&
 		techno != NULL && techno->House->Is_Ally(this) &&
 		!techno->IsBeingWarpedOut()) {
@@ -3224,7 +3213,7 @@ static inline ObjectClass * Object_Of(AbstractClass * a)
 AbstractClass * UnitClass::Approach_Target(bool force)
 {
 	if (!House->FUN_0050B730() && TarCom != NULL && NavCom == NULL) {
-		TechnoClass * target = Techno_Of(TarCom);
+		TechnoClass * target = As_Techno(TarCom);
 		if ((Class->IsCrusher || Has_Ability(ABILITY_CRUSHER)) && Distance(TarCom) < Rule->CrushDistance && target != NULL && ((ObjectClass *)target)->IsCrushable(this) && (Class->IsAutoCrush || !House->FUN_0050B730())) {
 			if (!force) {
 				Assign_Destination(TarCom, true);

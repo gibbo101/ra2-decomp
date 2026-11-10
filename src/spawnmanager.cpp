@@ -20,6 +20,7 @@
 #include "swizzle.h"
 #include "techno.h"
 #include "techtype.h"
+#include "cast.h"
 
 // SYNTHETIC: GAMEMD 0x006B6A00 SYMBOL
 // _$E2
@@ -168,12 +169,6 @@ void SpawnManagerClass::KillNodes(void)
 extern char const * DAT_00840098;
 extern int DAT_0084009C, DAT_008400A0;
 
-static inline FootClass * Spawn_Foot_View(AbstractClass * object)
-{
-	if (object == NULL) return NULL;
-	return (object->AbstractFlags & 4)
-		? static_cast<FootClass *>(object) : NULL;
-}
 // FUNCTION: GAMEMD 0x006B7230
 void SpawnManagerClass::AI()
 {
@@ -200,7 +195,7 @@ void SpawnManagerClass::AI()
 				}
 			}
 			if (Owner != NULL && (Owner->AbstractFlags & 4) &&
-				Spawn_Foot_View(Owner)->IsAttackedByLocomotor) {
+				As_Foot(Owner)->IsAttackedByLocomotor) {
 				break;
 			}
 			if (Owner->Techno_Type_Class()->MissileSpawn) {

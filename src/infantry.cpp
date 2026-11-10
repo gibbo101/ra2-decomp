@@ -68,6 +68,7 @@
 #include "warhead.h"
 #include "weapon.h"
 #include "bench.hh"
+#include "cast.h"
 
 // SYNTHETIC: GAMEMD 0x00517840 SYMBOL
 // _$E2
@@ -196,12 +197,6 @@ InfantryClass::~InfantryClass(void)
 	IsActive = false;
 }
 
-static inline UnitClass * Cast_Unit(AbstractClass * object)
-{
-	if (object == NULL) return(NULL);
-	return((object->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass *)object : NULL);
-}
-
 extern ParticleSystemClass * DAT_00A8ED78;
 
 // FUNCTION: GAMEMD 0x00517FA0
@@ -231,7 +226,7 @@ ResultType InfantryClass::Take_Damage(int & damage, int distance, WarheadTypeCla
 		}
 
 		if (Transporter != NULL && Transporter->Fetch_RTTI() == RTTI_UNIT && Transporter->Techno_Type_Class()->Gunner) {
-			Cast_Unit(Transporter)->RemoveGunner(this);
+			As_Unit(Transporter)->RemoveGunner(this);
 		}
 
 		Death_Announcement(source);
@@ -1579,12 +1574,6 @@ AbstractClass * InfantryClass::Greatest_Threat(ThreatType threat, Coord const & 
 
 extern bool __fastcall FUN_00637DB0(int action);
 
-static inline UnitClass const * Cast_Object_Unit(ObjectClass const * object)
-{
-	if (object == NULL) return(NULL);
-	return((object->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass const *)object : NULL);
-}
-
 // FUNCTION: GAMEMD 0x0051E3B0
 ActionType InfantryClass::What_Action(ObjectClass const * object, bool disallow_force) const
 {
@@ -1721,7 +1710,7 @@ not_engineer_building:
 	WeaponTypeClass const * weapon = Get_Class_Weapon_Data(What_Weapon_Should_I_Use((AbstractClass *)object))->Weapon;
 	if (action == ACTION_ATTACK && weapon != NULL) {
 		if (weapon->SabotageCursor) {
-			if (object != NULL && object->Fetch_RTTI() == RTTI_UNIT && Cast_Object_Unit(object)->BunkerLinkedItem != NULL) {
+			if (object != NULL && object->Fetch_RTTI() == RTTI_UNIT && As_Unit(object)->BunkerLinkedItem != NULL) {
 				return(ACTION_SELECT);
 			}
 			return((ActionType)0x40);

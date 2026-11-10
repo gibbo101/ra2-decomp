@@ -6,6 +6,7 @@
 #define INCLUDE_COM
 #include "always.h"
 #include "geometry.h"
+#include "cast.h"
 
 #include "team.h"
 
@@ -97,11 +98,6 @@ void __fastcall FUN_0070F120(FootClass * unit, TalkType bubble);
 
 BuildingClass * __fastcall Pick_Building_With_Property(BuildingTypeClass * type, HouseClass * house, FootClass * unit, TargetPropertyType prop, bool only_enemy);
 BuildingClass * __fastcall Pick_Own_Building_With_Property(BuildingTypeClass * type, HouseClass * house, FootClass * unit, TargetPropertyType prop, bool only_enemy);
-
-static inline CellClass * _As_Cell(AbstractClass * target)
-{
-	return((target == NULL) ? NULL : ((target->RTTI == RTTI_CELL) ? (CellClass *)target : NULL));
-}
 
 static inline int _Coord_Distance(Coord const & a, Coord const & b)
 {
@@ -855,7 +851,7 @@ void TeamClass::Coordinate_Attack(void)
 
 	FootClass * leader = Fetch_A_Leader();
 	if (Is_Target_Cell(Target) && Member != NULL && leader->RTTI != RTTI_AIRCRAFT) {
-		CellClass * cellptr = _As_Cell(Target);
+		CellClass * cellptr = As_Cell(Target);
 		if (cellptr->Cell_Object()) {
 			Target = cellptr->Cell_Object();
 		}
@@ -1464,7 +1460,7 @@ void TeamClass::TMission_SPY(TeamMissionClass * mission, bool first_time)
 	}
 
 	if (Is_Target_Cell(MissionTarget)) {
-		CellClass * cellptr = _As_Cell(MissionTarget);
+		CellClass * cellptr = As_Cell(MissionTarget);
 
 		ObjectClass * bldg = cellptr->Cell_Object();
 		if (bldg != NULL) {

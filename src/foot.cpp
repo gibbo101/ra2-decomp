@@ -65,6 +65,7 @@
 #include "bench.hh"
 #include "color.hh"
 #include "tube.hh"
+#include "cast.h"
 
 // TEMPLATE: GAMEMD 0x0045AF20
 // ?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@@Z
@@ -852,12 +853,6 @@ bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
 	return(X==rvalue.X && Y==rvalue.Y);
 }
 
-static inline TechnoClass * Techno_Of(AbstractClass * a)
-{
-	if (a == NULL) return(NULL);
-	return((a->AbstractFlags & 1) ? (TechnoClass *)a : NULL);
-}
-
 static inline int Flat_Distance(Point2D const & a, Point2D const & b)
 {
 	Point2D diff = a - b;
@@ -1018,7 +1013,7 @@ AbstractClass * FootClass::Approach_Target(bool force)
 				Coord mycoord = Get_Cell_Ptr()->Center_Coord();
 				Coord tarcoord;
 				if (TarCom != NULL && (TarCom->AbstractFlags & 1)) {
-					tarcoord = Techno_Of(TarCom)->Get_Cell_Ptr()->Center_Coord();
+					tarcoord = As_Techno(TarCom)->Get_Cell_Ptr()->Center_Coord();
 				} else {
 					tarcoord = TarCom->Center_Coord();
 				}

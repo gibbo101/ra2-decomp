@@ -28,6 +28,8 @@
 #include "coord.h"
 #include "slavemgr.h"
 #include <new.h>
+#include "cast.h"
+#include "infantry.h"
 
 // SYNTHETIC: GAMEMD 0x0075A880 SYMBOL
 // _$E13
@@ -169,11 +171,6 @@ void STDMETHODCALLTYPE WalkLocomotionClass::Force_Immediate_Destination(CoordStr
 	}
 }
 
-static inline FootClass * Cast_Infantry(FootClass * foot)
-{
-	return (!foot) ? NULL : ((foot->Fetch_RTTI() == RTTI_INFANTRY) ? foot : NULL);
-}
-
 // FUNCTION: GAMEMD 0x0075C240
 bool WalkLocomotionClass::Mark_Head_To(Coord const & coord)
 {
@@ -207,7 +204,7 @@ bool WalkLocomotionClass::Mark_Head_To(Coord const & coord)
 
 		if (LinkedTo->SlaveOwner != NULL && LinkedTo->SlaveOwner->SlaveManager != NULL) {
 			if (Map[coord].Cell_Techno() == LinkedTo->SlaveOwner) {
-				FootClass * infantry = Cast_Infantry(LinkedTo);
+				InfantryClass * infantry = As_Infantry(LinkedTo);
 				if (LinkedTo->SlaveOwner->SlaveManager->FUN_006B0880(infantry, &Map[coord])) {
 					any_spot = true;
 				}

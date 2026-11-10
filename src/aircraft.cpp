@@ -50,6 +50,7 @@
 #include "geometry.h"
 #include "waypoint.h"
 #include "weapon.h"
+#include "cast.h"
 
 #include "velocity.h"
 
@@ -2089,12 +2090,6 @@ FacingType AircraftClass::Desired_Load_Dir(ObjectClass * object, Cell & moveto) 
 }
 
 // The object as a building, or NULL when it is not one.
-static inline BuildingClass * Cast_Building(AbstractClass * object)
-{
-	if (object == NULL) return(NULL);
-	return((object->Fetch_RTTI() == RTTI_BUILDING) ? (BuildingClass *)object : NULL);
-}
-
 // FUNCTION: GAMEMD 0x00419C80
 int AircraftClass::Do_MISSION_ENTER(void)
 {
@@ -2110,14 +2105,14 @@ int AircraftClass::Do_MISSION_ENTER(void)
 	};
 
 	if (Get_Height_AGL() == 0 && Class->IsAirportBound && NavCom != NULL && NavCom != Get_Cell_Ptr()->Cell_Building()) {
-		DockNowHeadingTo = Cast_Building(NavCom);
+		DockNowHeadingTo = As_Building(NavCom);
 		Transmit_Message(RADIO_OVER_OUT);
 		QueueMission(MISSION_MOVE, true);
 		return(1);
 	}
 
 	if (Get_Height_AGL() > 0 && DockNowHeadingTo != NavCom && NavCom != NULL && NavCom->Fetch_RTTI() == RTTI_BUILDING) {
-		DockNowHeadingTo = Cast_Building(NavCom);
+		DockNowHeadingTo = As_Building(NavCom);
 	}
 
 	if (NavCom == NULL && In_Which_Layer() != LAYER_GROUND) {

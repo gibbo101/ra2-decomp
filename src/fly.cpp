@@ -39,6 +39,7 @@
 #include "weapon.h"
 #include "layer.hh"
 #include <new.h>
+#include "cast.h"
 
 // SYNTHETIC: GAMEMD 0x004CC790 SYMBOL
 // _$E2
@@ -357,14 +358,6 @@ bool FlyLocomotionClass::Edge_Of_World_AI(void)
 	return(false);
 }
 
-static inline AircraftClass * Aircraft_Of(FootClass * foot)
-{
-	if (foot == NULL) {
-		return(NULL);
-	}
-	return((foot->Fetch_RTTI() == RTTI_AIRCRAFT) ? (AircraftClass *)foot : NULL);
-}
-
 // FUNCTION: GAMEMD 0x004CD600
 void FlyLocomotionClass::Movement_AI(void)
 {
@@ -451,7 +444,7 @@ void FlyLocomotionClass::Movement_AI(void)
 		Physics(coord, LinkedTo->PrimaryFacing.Current());
 
 		if (!Map.In_Radar(coord.As_Cell())) {
-			if (LinkedTo->Should_Delete_Off_Map() && !(LinkedTo != NULL && LinkedTo->Fetch_RTTI() == RTTI_AIRCRAFT && Aircraft_Of(LinkedTo)->Class->IsFlyBy)) {
+			if (LinkedTo->Should_Delete_Off_Map() && !(LinkedTo != NULL && LinkedTo->Fetch_RTTI() == RTTI_AIRCRAFT && As_Aircraft(LinkedTo)->Class->IsFlyBy)) {
 				Cell here = coord.As_Cell();
 				Cell edge = Map.Cell_To_LocalRect(here);
 				if (edge.X < Map.MapRect.Width / 2) {

@@ -11,6 +11,7 @@
 #include "ftimer.h"
 #include "globals.h"
 #include "noinit.h"
+#include "cast.h"
 #define INCLUDE_COM
 #include "always.h"
 #include "temporal.h"
@@ -140,14 +141,6 @@ HRESULT STDMETHODCALLTYPE TemporalClass::GetClassID(CLSID * retval)
 	return(S_OK);
 }
 
-static inline BuildingClass * Building_Cast(TechnoClass * techno)
-{
-	if (techno == NULL) {
-		return(NULL);
-	}
-	return((techno->RTTI == RTTI_BUILDING) ? (BuildingClass *)techno : NULL);
-}
-
 // FUNCTION: GAMEMD 0x0071A760
 void TemporalClass::AI(void)
 {
@@ -207,7 +200,7 @@ void TemporalClass::AI(void)
 				SourceSW = NULL;
 			}
 			if (Target->BunkerLinkedItem != NULL) {
-				Building_Cast(Target)->UnloadBunker();
+				As_Building(Target)->UnloadBunker();
 			}
 			if (Target->SlaveManager != NULL) {
 				Target->SlaveManager->Killed(Owner, NULL);
@@ -218,7 +211,7 @@ void TemporalClass::AI(void)
 			building->House->Production_Status_Changed();
 		} else {
 			if (Target->BunkerLinkedItem != NULL) {
-				Building_Cast(Target->BunkerLinkedItem)->ClearBunker();
+				As_Building(Target->BunkerLinkedItem)->ClearBunker();
 			}
 			if (Target->SlaveManager != NULL) {
 				Target->SlaveManager->Killed(Owner, NULL);
@@ -441,14 +434,6 @@ bool TemporalClass::CanWarpTarget(TechnoClass * target)
 	return(true);
 }
 
-static inline UnitClass * Unit_Cast(TechnoClass * techno)
-{
-	if (techno == NULL) {
-		return(NULL);
-	}
-	return((techno->RTTI == RTTI_UNIT) ? (UnitClass *)techno : NULL);
-}
-
 // FUNCTION: GAMEMD 0x0071AF20
 void TemporalClass::Fire(TechnoClass * target)
 {
@@ -471,14 +456,14 @@ void TemporalClass::Fire(TechnoClass * target)
 			Target->TemporalTargetingMe = this;
 			WarpRemaining = Target->Techno_Type_Class()->MaxStrength * 10;
 			if (Target != NULL && Target->Fetch_RTTI() == RTTI_UNIT) {
-				if (Unit_Cast(Target)->Class->Harvester && Target->House == PlayerPtr) {
+				if (As_Unit(Target)->Class->Harvester && Target->House == PlayerPtr) {
 					if (RadarEventClass::Create(RADAREVENT_HARVESTER_ATTACKED, Target->Destination_Coord().As_Cell())) {
 						VoxClass::Play("EVA_OreMinerUnderAttack", -1, -1);
 					}
 				}
 			}
 			if (Target->Fetch_RTTI() == RTTI_BUILDING && !Target->Techno_Type_Class()->IsInsignificant && !Target->IsStrange()) {
-				Target->House->Attacked(Building_Cast(Target));
+				Target->House->Attacked(As_Building(Target));
 			}
 		} else {
 			NextTemporal = Target->TemporalTargetingMe;

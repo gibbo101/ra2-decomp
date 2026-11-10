@@ -55,6 +55,7 @@
 #include <new>
 #include <cmath>
 #include <stdio.h>
+#include "cast.h"
 
 int SubzoneHash(unsigned int const & key);
 extern int DAT_00ABDE88;
@@ -681,11 +682,6 @@ bool MapClass::In_Radar(Coord const & coord) const
 	return(In_Radar(coord.As_Cell()));
 }
 
-static inline BuildingClass * Building_If_Building(AbstractClass * t)
-{
-	return(t->RTTI == RTTI_BUILDING ? (BuildingClass *)t : (BuildingClass *)0);
-}
-
 #define Cell_In_Range(c, len) ((c).X + (c).Y * 512 >= 0 && (c).X + (c).Y * 512 < (len) && Array[(c).X + (c).Y * 512] != NULL)
 
 // FUNCTION: GAMEMD 0x005687F0
@@ -708,7 +704,7 @@ void MapClass::RemoveContentAt(Cell const * coords, TechnoClass * content)
 		}
 
 		if (content->RTTI == RTTI_BUILDING) {
-			BuildingClass * building = Building_If_Building(content);
+			BuildingClass * building = As_Building(content);
 			if (building->Class->CanHideThings) {
 				height = building->Class->OccupyHeight - 1;
 				if (height <= 0) height = 1;

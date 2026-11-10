@@ -46,6 +46,7 @@
 #include "session.h"
 #include "scheme.h"
 #include "shapeset.h"
+#include "cast.h"
 #undef LoadString
 #include "stringtable.h"
 #include "super.h"
@@ -1608,11 +1609,6 @@ bool SidebarClass::Abandon_Production(RTTIType type, int id, FactoryClass * fact
 	return Column[GetObjectTabIdx(type, id, false)].Abandon_Production(factory);
 }
 
-static inline TechnoClass * Building_Cast(TechnoClass * object)
-{
-	if (object == NULL) return NULL;
-	return object->Fetch_RTTI() == RTTI_BUILDING ? object : (TechnoClass *)NULL;
-}
 static inline bool Is_Building(TechnoClass * object)
 {
 	return object && object->Fetch_RTTI() == RTTI_BUILDING;
@@ -1622,7 +1618,7 @@ static inline bool Is_Building(TechnoClass * object)
 bool SidebarClass::StripClass::Abandon_Production(FactoryClass const * factory)
 {
 	if (factory && factory->Get_Object() && Is_Building(factory->Get_Object())) {
-		Building_Cast(factory->Get_Object())->ClearSidebarTabObject();
+		As_Building(factory->Get_Object())->ClearSidebarTabObject();
 	}
 	bool abandoned = false;
 	bool idle = true;

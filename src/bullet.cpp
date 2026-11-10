@@ -47,6 +47,7 @@
 #include "voxdrsys.h"
 #include "warhead.h"
 #include "weapon.h"
+#include "cast.h"
 
 // SYNTHETIC: GAMEMD 0x004660D0 SYMBOL
 // _$E2
@@ -416,29 +417,14 @@ void BulletClass::Bullet_Explodes(bool forced)
 	}
 }
 
-static inline TechnoClass * Techno_Of(AbstractClass * target)
-{
-	return(target == NULL ? NULL : ((target->AbstractFlags & 1) ? (TechnoClass *)target : NULL));
-}
-
 static inline ObjectClass * Object_Of(AbstractClass * target)
 {
 	return(target == NULL ? NULL : ((target->AbstractFlags & 2) ? (ObjectClass *)target : NULL));
 }
 
-static inline FootClass * Foot_Of(AbstractClass * target)
-{
-	return(target == NULL ? NULL : ((target->AbstractFlags & 4) ? (FootClass *)target : NULL));
-}
-
 static inline bool Is_Foot_Object(AbstractClass const * target)
 {
 	return(target != NULL && (target->AbstractFlags & 4));
-}
-
-static inline UnitClass * Unit_Of(AbstractClass * target)
-{
-	return(target == NULL ? NULL : ((target->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass *)target : NULL));
 }
 
 static inline Vector3 Normalize_Dir(const Vector3 & vec)
@@ -482,18 +468,18 @@ void BulletClass::Detonate(Coord const & coord)
 			}
 		}
 	} else if (Warhead->IvanBomb) {
-		BombListInstance.Plant(Payback, Techno_Of(TarCom));
+		BombListInstance.Plant(Payback, As_Techno(TarCom));
 	} else if (Warhead->ElectricAssault) {
 		if (TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_BUILDING && Payback != NULL && Payback->Fetch_RTTI() == RTTI_INFANTRY) {
 			((BuildingClass *)TarCom)->FUN_00452820((InfantryClass *)Payback);
 		}
 	} else if (Warhead->Parasite) {
 		if (Payback != NULL) {
-			((FootClass *)Payback)->ParasiteImUsing->TryInfect(Foot_Of(TarCom));
+			((FootClass *)Payback)->ParasiteImUsing->TryInfect(As_Foot(TarCom));
 		}
 	} else if (Warhead->Temporal) {
 		if (Payback != NULL && TarCom != NULL) {
-			if (!(TarCom->AbstractFlags & 4) || Foot_Of(TarCom)->In_Which_Layer() == LAYER_GROUND) {
+			if (!(TarCom->AbstractFlags & 4) || As_Foot(TarCom)->In_Which_Layer() == LAYER_GROUND) {
 				TechnoClass * techno = (TechnoClass *)TarCom;
 				if (techno != NULL) {
 					if (!(techno->AbstractFlags & 1)) {
@@ -508,12 +494,12 @@ void BulletClass::Detonate(Coord const & coord)
 		}
 	} else if (Warhead->IsLocomotor) {
 		if (Payback != NULL && Payback->LocomotorTarget != TarCom && Payback->LocomotorSource == NULL) {
-			if (!Is_Foot_Object(Payback) || !Foot_Of(Payback)->IsAttackedByLocomotor) {
+			if (!Is_Foot_Object(Payback) || !As_Foot(Payback)->IsAttackedByLocomotor) {
 				bool infactory = false;
 				if (TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_UNIT) {
-					TechnoClass * contact = Unit_Of(TarCom)->FUN_0065AD30(0);
+					TechnoClass * contact = As_Unit(TarCom)->FUN_0065AD30(0);
 					if (contact != NULL && contact->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass *)contact)->Class->IsWeaponsFactory) {
-						if (Map[Unit_Of(TarCom)->Get_Coord()].Cell_Building() == contact) {
+						if (Map[As_Unit(TarCom)->Get_Coord()].Cell_Building() == contact) {
 							infactory = true;
 						}
 					}
@@ -524,7 +510,7 @@ void BulletClass::Detonate(Coord const & coord)
 				}
 
 				if (TarCom != NULL && !infactory) {
-					if (!Is_Foot_Object(TarCom) || Foot_Of(TarCom)->In_Which_Layer() == LAYER_GROUND) {
+					if (!Is_Foot_Object(TarCom) || As_Foot(TarCom)->In_Which_Layer() == LAYER_GROUND) {
 						FootClass * foot = (FootClass *)TarCom;
 						if (Is_Foot_Object(foot) && !foot->IsIronCurtained()) {
 							if ((TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_UNIT) || (TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_AIRCRAFT)) {
@@ -539,12 +525,12 @@ void BulletClass::Detonate(Coord const & coord)
 		}
 	} else if (Warhead->Airstrike) {
 		if (Payback != NULL && TarCom != NULL && (TarCom->AbstractFlags & 1) && Payback->Airstrike != NULL) {
-			if (Payback->Airstrike->FUN_0041D7E0(Techno_Of(TarCom))) {
-				Payback->Airstrike->StartMission(Techno_Of(TarCom));
+			if (Payback->Airstrike->FUN_0041D7E0(As_Techno(TarCom))) {
+				Payback->Airstrike->StartMission(As_Techno(TarCom));
 			}
 		}
 	} else if (Warhead->DirectRocker && TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_UNIT) {
-		TechnoClass * techno = Techno_Of(TarCom);
+		TechnoClass * techno = As_Techno(TarCom);
 		if (Payback != NULL && techno != NULL && !techno->IsIronCurtained()) {
 			double force = MIN(((DamageMultiplier * Strength) >> 8) * Rule->DirectRockingCoefficient / DAT_0081AEF8, 4.0);
 			Coord tcoord = techno->PositionCoord;

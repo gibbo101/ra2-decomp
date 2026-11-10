@@ -67,6 +67,7 @@
 #include "bench.hh"
 #include "ramp.hh"
 #include "tube.hh"
+#include "cast.h"
 
 // SYNTHETIC: GAMEMD 0x0047B150 SYMBOL
 // _$E2
@@ -4218,17 +4219,12 @@ inline bool Is_Foot_Object(AbstractClass * const & p)
 	return(p != NULL && (p->AbstractFlags & 4) != 0);
 }
 
-inline FootClass * As_Foot_Object(AbstractClass * const & p)
-{
-	return(!p ? NULL : ((p->AbstractFlags & 4) ? (FootClass *)p : NULL));
-}
-
 // FUNCTION: GAMEMD 0x00487D70
 bool CellClass::TryAssignJumpjet(FootClass * foot)
 {
 	if (foot == NULL) {
 		if (Is_Foot_Object(Jumpjet)) {
-			As_Foot_Object(Jumpjet)->Jumpjet_OccupyCell(CELL_NONE);
+			As_Foot(Jumpjet)->Jumpjet_OccupyCell(CELL_NONE);
 		}
 		Jumpjet = NULL;
 		return(true);
@@ -4237,7 +4233,7 @@ bool CellClass::TryAssignJumpjet(FootClass * foot)
 		return(false);
 	}
 	Jumpjet = foot;
-	if (FootClass * f = As_Foot_Object(foot)) {
+	if (FootClass * f = As_Foot(foot)) {
 		f->Jumpjet_OccupyCell(CellID);
 	}
 	return(true);

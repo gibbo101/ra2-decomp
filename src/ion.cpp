@@ -41,6 +41,7 @@
 #include "lightcon.h"
 #include <objidl.h>
 #include "msanim.h"
+#include "cast.h"
 
 // SYNTHETIC: GAMEMD 0x00539350 SYMBOL
 // _$E2
@@ -798,12 +799,6 @@ done:;
 }
 
 
-static inline TechnoClass * Cast_Techno(ObjectClass * object)
-{
-	if (object == NULL) return NULL;
-	return (object->AbstractFlags & 1) ? (TechnoClass *)object : NULL;
-}
-
 // FUNCTION: GAMEMD 0x0053B080
 void FUN_0053B080(void)
 {
@@ -838,7 +833,7 @@ void FUN_0053B080(void)
 			if (techno->Next == NULL) {
 				break;
 			}
-			techno = Cast_Techno(techno->Next);
+			techno = As_Techno(techno->Next);
 		}
 	}
 	if (!PsyDom::Owner->FUN_0050B730()) {

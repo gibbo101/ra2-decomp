@@ -84,6 +84,7 @@
 #include "warhead.h"
 #include "weapon.h"
 #include "color.hh"
+#include "cast.h"
 
 // SYNTHETIC: GAMEMD 0x0043AF40 SYMBOL
 // _$E2
@@ -686,14 +687,6 @@ struct FileSystem {
 	static ConvertClass * PALETTE_PAL;
 };
 
-static inline bool Is_Deconstructing(TechnoClass const *object)
-{
-	if (!object || object->Fetch_RTTI() != RTTI_BUILDING)
-		return false;
-	BuildingClass const *building = static_cast<BuildingClass const *>(object);
-	return building->BState == BSTATE_CONSTRUCTION && building->Mission == MISSION_DECONSTRUCTION;
-}
-
 // FUNCTION: GAMEMD 0x0043D290
 void BuildingClass::Draw_It(Point2D const &drawpoint, Rect const &cliprect) const
 {
@@ -702,7 +695,8 @@ void BuildingClass::Draw_It(Point2D const &drawpoint, Rect const &cliprect) cons
 	if (shapefile == NULL)
 		return;
 
-	if (Is_Deconstructing(this)) {
+	BuildingClass const *building = As_Building(this);
+	if (building != NULL && building->BState == BSTATE_CONSTRUCTION && building->Mission == MISSION_DECONSTRUCTION) {
 		for (int i = 0; i < BANIM_COUNT; i++) {
 			if (Anims[i] != NULL) {
 				Anims[i]->Invisible = true;
@@ -3221,11 +3215,6 @@ static inline Cell Target_Cell(AbstractClass * target)
 	return(target->Center_Coord().As_Cell());
 }
 
-static inline FootClass * Foot_Of(AbstractClass * target)
-{
-	return(target == NULL ? NULL : ((target->AbstractFlags & 4) ? (FootClass *)target : NULL));
-}
-
 // FUNCTION: GAMEMD 0x0044B780
 int BuildingClass::Do_MISSION_REPAIR(void)
 {
@@ -3411,7 +3400,7 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 						if (!damaged && !manual_reload || !roger && !all_done) {
 							if (client->HealthRatio == Rule->ConditionGreen) {
 								if (!((FootClass *)client)->Locomotion->Is_Powered()) {
-									FootClass * mover = Foot_Of(FUN_0065AD30(0));
+									FootClass * mover = As_Foot(FUN_0065AD30(0));
 									mover->Locomotion->Power_On();
 									if (mover->ArchiveTarget != NULL && !mover->House->FUN_0050B730()) {
 										mover->QueueMission(MISSION_MOVE, false);
@@ -3504,7 +3493,7 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 								PlayNthAnim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow, false);
 								Status = 1;
 
-								FootClass * foot = Foot_Of(Contact_With_Whom());
+								FootClass * foot = As_Foot(Contact_With_Whom());
 								if (foot->ArchiveTarget != NULL && !foot->House->FUN_0050B730()) {
 									foot->QueueMission(MISSION_MOVE, false);
 									foot->Assign_Destination(foot->ArchiveTarget, true);
@@ -4730,12 +4719,6 @@ void BuildingClass::Set_Anim_Coords(void)
 	}
 }
 
-static inline BuildingClass * Building_Of(AbstractClass * object)
-{
-	if (object == NULL) return(NULL);
-	return((object->Fetch_RTTI() == RTTI_BUILDING) ? (BuildingClass *)object : NULL);
-}
-
 static inline void Warp_Pause(BuildingClass * building, AnimClass * anim)
 {
 	if (building->IsBeingWarpedOut()) {
@@ -4785,7 +4768,7 @@ void BuildingClass::PlayAnim(char const * name, BAnimType anim, bool damaged, bo
 			animptr->LightConvert = GetRemapColour();
 			int cellbrightness = Get_Cell_Ptr()->Brightness;
 			int brightness = Apparent_Brightness(cellbrightness);
-			if (IsIronCurtained() || (Airstrike != NULL && Airstrike->Target == Building_Of(this))) {
+			if (IsIronCurtained() || (Airstrike != NULL && Airstrike->Target == As_Building(this))) {
 				brightness = GetEffectTintIntensity(brightness);
 			}
 			animptr->TintColor = brightness;
@@ -6634,7 +6617,7 @@ int BuildingClass::Apparent_Brightness(int brightness) const
 int BuildingClass::Tinted_Brightness(int cellbrightness)
 {
 	int brightness = Apparent_Brightness(cellbrightness);
-	if (IsIronCurtained() || (Airstrike != NULL && Airstrike->Target == Building_Of(this))) {
+	if (IsIronCurtained() || (Airstrike != NULL && Airstrike->Target == As_Building(this))) {
 		brightness = GetEffectTintIntensity(brightness);
 	}
 	return(brightness);
@@ -7492,18 +7475,13 @@ bool BuildingClass::CanBeSelectedNow(void) const
 	return(TechnoClass::CanBeSelectedNow());
 }
 
-static inline CellClass * _As_Cell(AbstractClass * target)
-{
-	return((target == NULL) ? NULL : ((target->RTTI == RTTI_CELL) ? (CellClass *)target : NULL));
-}
-
 #pragma warning(push)
 #pragma warning(disable : 4716)
 // FUNCTION: GAMEMD 0x00459C20
 int BuildingClass::VoiceDeploy(void)
 {
 	if (Is_Target_Cell(ArchiveTarget)) {
-		if (_As_Cell(ArchiveTarget)->Land_Type() == LAND_TIBERIUM && Class->ResourceDestination && Class->ResourceGatherer && Class->VoiceHarvest != -1) {
+		if (As_Cell(ArchiveTarget)->Land_Type() == LAND_TIBERIUM && Class->ResourceDestination && Class->ResourceGatherer && Class->VoiceHarvest != -1) {
 			QueueVoice(Class->VoiceHarvest);
 		} else {
 			return(TechnoClass::VoiceDeploy());

@@ -47,6 +47,7 @@
 #include "mono.h"
 #include "mouse.h"
 #include "multiplayer.h"
+#include "cast.h"
 #undef LoadString
 #include "overtype.h"
 #include "quarry.h"
@@ -877,13 +878,6 @@ FactoryClass * HouseClass::Factory_Producing_This(ObjectTypeClass const * object
 extern bool FUN_007529E0(void);
 extern int DAT_00A8F040;
 
-static inline FootClass *House_Foot_View(AbstractClass *object)
-{
-	if (object && (object->AbstractFlags & 4))
-		return static_cast<FootClass *>(object);
-	return NULL;
-}
-
 // FUNCTION: GAMEMD 0x004F8440
 void HouseClass::AI()
 {
@@ -971,7 +965,7 @@ void HouseClass::AI()
 		TechnoClass *occupant = Map[FlagHome].Cell_Techno(Point2D(0, 0), false, 0);
 		if (occupant) {
 			bool moving = false;
-			foot = House_Foot_View(occupant);
+			foot = As_Foot(occupant);
 			if (foot && foot->NavCom)
 				moving = true;
 			if (!moving)
@@ -4328,11 +4322,6 @@ HRESULT STDMETHODCALLTYPE HouseClass::FindConnectionPoint(REFIID riid, IConnecti
 	return(CONNECT_E_CANNOTCONNECT);
 }
 
-inline BuildingClass * Building_Cast(TechnoClass * techno)
-{
-	return((techno->Fetch_RTTI() == RTTI_BUILDING) ? (BuildingClass *)techno : NULL);
-}
-
 // FUNCTION: GAMEMD 0x005025F0
 void HouseClass::RegisterLoss(TechnoClass * techno, bool keeptiberium)
 {
@@ -4346,9 +4335,9 @@ void HouseClass::RegisterLoss(TechnoClass * techno, bool keeptiberium)
 	Map.OnTechnoDestroyed(techno);
 
 	if (techno->Techno_Type_Class()->PowersUnit && techno != NULL && techno->Fetch_RTTI() == RTTI_BUILDING) {
-		BuildingClass * bptr = Building_Cast(techno);
+		BuildingClass * bptr = As_Building(techno);
 		if (bptr->RegisteredAsPoweredUnitSource) {
-			Building_Cast(techno)->RegisteredAsPoweredUnitSource = false;
+			As_Building(techno)->RegisteredAsPoweredUnitSource = false;
 			UnitTypeClass const * powered = techno->Techno_Type_Class()->PowersUnit;
 			if (--PoweredUnitCenters == 0 && powered != NULL) {
 				bool found = false;
@@ -7233,12 +7222,6 @@ void HouseClass::FUN_0050D2D0(HouseClass * other)
 	}
 }
 
-static inline BuildingClass * Cast_Building(ObjectClass * object)
-{
-	if (object == NULL) return NULL;
-	return (object->Fetch_RTTI() == RTTI_BUILDING) ? (BuildingClass *)object : NULL;
-}
-
 // FUNCTION: GAMEMD 0x0050D320
 void HouseClass::RespawnStartingBuildings(void)
 {
@@ -7253,18 +7236,13 @@ void HouseClass::RespawnStartingBuildings(void)
 			int damage = -existing->Class->MaxStrength;
 			existing->Take_Damage(damage, 0, Rule->C4Warhead, NULL, false, false, NULL);
 		} else {
-			BuildingClass * building = Cast_Building(type->Create_One_Of(this));
+			BuildingClass * building = As_Building(type->Create_One_Of(this));
 			Coord coord = Map[entry->CellID].Center_Coord();
 			if (!building->ForceCreate(coord, 0)) {
 				building->Delete_Me();
 			}
 		}
 	}
-}
-
-static inline TechnoClass * Cast_Respawn_Techno(ObjectClass * object)
-{
-	return object == NULL ? NULL : (object->AbstractFlags & 1) ? (TechnoClass *)object : NULL;
 }
 
 // FUNCTION: GAMEMD 0x0050D440
@@ -7276,16 +7254,16 @@ void HouseClass::RespawnStartingForces(void)
 		TechnoClass * object = NULL;
 		switch (type->Fetch_RTTI()) {
 		case RTTI_AIRCRAFTTYPE:
-			object = Cast_Respawn_Techno(type->Create_One_Of(this));
+			object = As_Techno(type->Create_One_Of(this));
 			break;
 		case RTTI_BUILDINGTYPE:
-			object = Cast_Respawn_Techno(type->Create_One_Of(this));
+			object = As_Techno(type->Create_One_Of(this));
 			break;
 		case RTTI_UNITTYPE:
-			object = Cast_Respawn_Techno(type->Create_One_Of(this));
+			object = As_Techno(type->Create_One_Of(this));
 			break;
 		case RTTI_INFANTRYTYPE:
-			object = Cast_Respawn_Techno(((InfantryTypeClass const *)type)->Create_One_Of(this));
+			object = As_Techno(((InfantryTypeClass const *)type)->Create_One_Of(this));
 			break;
 		}
 		Coord coord = Map[entry->CellID].Center_Coord();

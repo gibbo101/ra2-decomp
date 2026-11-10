@@ -72,6 +72,7 @@
 #include "zbuffer.h"
 #include "color.hh"
 #include "super.hh"
+#include "cast.h"
 #undef LoadString
 #include "stringtable.h"
 
@@ -2329,12 +2330,6 @@ void DisplayClass::Update_Cell_Colors(void)
 extern bool DAT_00A8F7D8;
 extern wchar_t DAT_008A0630[];
 
-static inline TechnoClass * Help_Cast(ObjectClass * object)
-{
-	if (object->AbstractFlags & 1) return((TechnoClass *)object);
-	return(NULL);
-}
-
 // FUNCTION: GAMEMD 0x004AE4F0
 char const * DisplayClass::Help_Text(int id)
 {
@@ -2365,7 +2360,7 @@ char const * DisplayClass::Help_Text(int id)
 	if (object == NULL) {
 		return(NULL);
 	}
-	TechnoClass * techno = Help_Cast(object);
+	TechnoClass * techno = As_Techno(object);
 	if (techno != NULL && !techno->IsOwnedByPlayer) {
 		if (techno->Cloak == CLOAKED && !Map[techno->Center_Coord()].Is_Sensed(PlayerPtr->HeapID)) {
 			return(NULL);

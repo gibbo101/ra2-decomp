@@ -17,6 +17,7 @@
 #include "techno.h"
 #include "techtype.h"
 #include "voc.h"
+#include "cast.h"
 
 // SYNTHETIC: GAMEMD 0x0041D070 SYMBOL
 // _$E2
@@ -56,12 +57,6 @@ namespace Unsorted { extern int CurrentFrame; }
 // SYNTHETIC: GAMEMD 0x0041D2C0 SYMBOL
 // _$E76
 DynamicVectorClass<AirstrikeClass *> Airstrikes;
-
-static inline TechnoClass * Cast_Techno(ObjectClass * object)
-{
-	if (object == NULL) return NULL;
-	return (object->AbstractFlags & 1) ? (TechnoClass *)object : NULL;
-}
 
 // FUNCTION: GAMEMD 0x0041D300
 AirstrikeClass::AirstrikeClass(void)
@@ -120,7 +115,7 @@ void AirstrikeClass::InvalidatePointer(AbstractClass * ptr)
 				FUN_0041DC80(FirstObject);
 			}
 			if (Target != NULL && (Target->AbstractFlags & 1)) {
-				Cast_Techno(Target)->Airstrike = NULL;
+				As_Techno(Target)->Airstrike = NULL;
 			}
 			Target = NULL;
 			return;

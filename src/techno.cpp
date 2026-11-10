@@ -89,6 +89,7 @@
 #include "vox.h"
 #include "voxdrsys.h"
 #include "stbuffer.h"
+#include "cast.h"
 #undef LoadString
 #include "stringtable.h"
 #include "_voxel.h"
@@ -362,11 +363,6 @@ bool TechnoClass::Is_Players_Army(void) const
 	return(true);
 }
 
-static inline BuildingClass * Building_If_Building(AbstractClass * t)
-{
-	return(t->RTTI == RTTI_BUILDING ? (BuildingClass *)t : (BuildingClass *)0);
-}
-
 // FUNCTION: GAMEMD 0x006F3330
 int TechnoClass::What_Weapon_Should_I_Use(AbstractClass * target) const
 {
@@ -409,11 +405,11 @@ int TechnoClass::What_Weapon_Should_I_Use(AbstractClass * target) const
 
 	if (secondary->WarheadPtr->Airstrike) {
 		if (target->RTTI == RTTI_BUILDING) {
-			if (Building_If_Building(target)->Class->CanC4) {
-				if (!Building_If_Building(target)->TClass->ResourceDestination) {
+			if (As_Building(target)->Class->CanC4) {
+				if (!As_Building(target)->TClass->ResourceDestination) {
 					goto success;
 				}
-				if (!Building_If_Building(target)->TClass->ResourceGatherer) {
+				if (!As_Building(target)->TClass->ResourceGatherer) {
 					return(1);
 				}
 			}
@@ -937,14 +933,6 @@ bool TechnoClass::Mark(MarkType mark)
 	return(false);
 }
 
-static inline AircraftClass * Aircraft_Of(AbstractClass * object)
-{
-	if (object == NULL) {
-		return(NULL);
-	}
-	return((object->Fetch_RTTI() == RTTI_AIRCRAFT) ? (AircraftClass *)object : NULL);
-}
-
 static inline bool Is_Foot_Object(AbstractClass const * object)
 {
 	if (object == NULL) {
@@ -971,7 +959,7 @@ RadioMessageType TechnoClass::Receive_Message(RadioClass * from, RadioMessageTyp
 			break;
 
 		case RADIO_TETHER:
-			if (RTTI == RTTI_AIRCRAFT && Aircraft_Of(this)->Class->IsAirportBound) {
+			if (RTTI == RTTI_AIRCRAFT && As_Aircraft(this)->Class->IsAirportBound) {
 				break;
 			}
 			if (!IsTethered) {
@@ -2826,14 +2814,6 @@ EBolt * TechnoClass::FireEBolt(ObjectClass * target)
 	return(ebolt);
 }
 
-static inline TechnoClass * As_Techno(AbstractClass * object)
-{
-	if (object != NULL && (object->AbstractFlags & 1)) {
-		return((TechnoClass *)object);
-	}
-	return(NULL);
-}
-
 // FUNCTION: GAMEMD 0x006FD620
 RadBeam * TechnoClass::CreateRadBeam(ObjectClass * target, int type)
 {
@@ -3242,11 +3222,6 @@ void TechnoClass::Renovate(void)
 extern bool __fastcall FUN_00746DB0(UnitClass * unit);
 extern void __fastcall FUN_00638840(TechnoClass * techno);
 
-static inline UnitClass * Cast_To_Unit(TechnoClass * techno)
-{
-	return((techno->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass *)techno : NULL);
-}
-
 // FUNCTION: GAMEMD 0x007014A0
 bool TechnoClass::Captured(HouseClass * newowner, bool announce)
 {
@@ -3256,11 +3231,11 @@ bool TechnoClass::Captured(HouseClass * newowner, bool announce)
 		}
 		Assign_Target(NULL);
 		Assign_Destination(NULL, true);
-		if (!(this != NULL && Fetch_RTTI() == RTTI_UNIT && FUN_00746DB0(Cast_To_Unit(this)))) {
+		if (!(this != NULL && Fetch_RTTI() == RTTI_UNIT && FUN_00746DB0(As_Unit(this)))) {
 			ArchivedTarget = NULL;
 		}
 		if (CurrentMission != MISSION_DECONSTRUCTION) {
-			if (!(this != NULL && Fetch_RTTI() == RTTI_UNIT && Cast_To_Unit(this)->Class->IsSimpleDeployer) || CurrentMission != MISSION_UNLOAD) {
+			if (!(this != NULL && Fetch_RTTI() == RTTI_UNIT && As_Unit(this)->Class->IsSimpleDeployer) || CurrentMission != MISSION_UNLOAD) {
 				QueueMission(MISSION_GUARD, true);
 			}
 		}
@@ -3458,7 +3433,7 @@ ResultType TechnoClass::Take_Damage(int & damage, int distance, WarheadTypeClass
 	}
 
 	if (result == RESULT_DESTROYED && Fetch_RTTI() == RTTI_BUILDING && warhead != NULL && warhead->CausesDelayKill) {
-		BuildingClass * building = (this == NULL) ? NULL : Building_If_Building(this);
+		BuildingClass * building = (this == NULL) ? NULL : As_Building(this);
 		if (building->Class->EligibleForDelayKill) {
 			int frames = warhead->DelayKillFrames;
 			int delay = (int)(frames + (warhead->DelayKillAtMax * (double)frames - frames) / (double)((int)warhead->SpreadFactor * CELL_LEPTON) * distance);
@@ -3734,17 +3709,6 @@ void TechnoClass::RegisterDestruction(TechnoClass * destroyer)
 	}
 }
 
-static inline TechnoClass * Cast_To_Techno(ObjectClass const * object)
-{
-	if (object == NULL) {
-		return(NULL);
-	}
-	if (object->AbstractFlags & 1) {
-		return((TechnoClass *)object);
-	}
-	return(NULL);
-}
-
 // FUNCTION: GAMEMD 0x006F8960
 bool TechnoClass::TryAutoTargetObject(ThreatType method, int mask, Cell const & cell, int range, TechnoClass const ** object, int & value, int zone) const
 {
@@ -3774,7 +3738,7 @@ bool TechnoClass::TryAutoTargetObject(ThreatType method, int mask, Cell const & 
 
 	while (tentative != NULL) {
 		if (tentative != this) {
-			tech = Cast_To_Techno(tentative);
+			tech = (TechnoClass *)As_Techno(tentative);
 			if (tech) {
 				if (Combat_Damage() < 0) {
 					if (tech->HealthRatio < Rule->ConditionGreen && House->Is_Ally(tech)) break;
@@ -4817,7 +4781,7 @@ void TechnoClass::Draw_Voxel(VoxelDataStruct const & voxeldata, int frame, int k
 
 	if (IsBeingWarpedOut() || IsWarpingIn()) {
 		if (!(RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette)) {
-			if (this != NULL && RTTI == RTTI_BUILDING && Building_If_Building((TechnoClass *)this)->Class->DoubleThick) {
+			if (this != NULL && RTTI == RTTI_BUILDING && As_Building((TechnoClass *)this)->Class->DoubleThick) {
 				flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT75|SHAPE_ZGRAD);
 			} else {
 				flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT50|SHAPE_ZGRAD);
@@ -4837,7 +4801,7 @@ void TechnoClass::Draw_Voxel(VoxelDataStruct const & voxeldata, int frame, int k
 
 	brightness = Apparent_Brightness(brightness);
 
-	if (IsIronCurtained() || (this != NULL && RTTI == RTTI_BUILDING && Airstrike != NULL && Airstrike->Target == Building_If_Building((TechnoClass *)this))) {
+	if (IsIronCurtained() || (this != NULL && RTTI == RTTI_BUILDING && Airstrike != NULL && Airstrike->Target == As_Building((TechnoClass *)this))) {
 		brightness = GetAirstrikeTintIntensity(GetInvulnerabilityTintIntensity(brightness));
 	}
 
@@ -5665,18 +5629,13 @@ int TechnoClass::VoiceCapture(void)
 }
 #pragma warning(pop)
 
-static inline InfantryClass * As_Infantry_Techno(TechnoClass * techno)
-{
-	return(techno->Fetch_RTTI() == RTTI_INFANTRY ? (InfantryClass *)techno : NULL);
-}
-
 #pragma warning(push)
 #pragma warning(disable : 4716)
 // FUNCTION: GAMEMD 0x00708E00
 int TechnoClass::VoiceDeploy(void)
 {
 	if (!unknown_bool_4F8) {
-		if (this != NULL && Is_Infantry() && As_Infantry_Techno(this)->FUN_00522510()) {
+		if (this != NULL && Is_Infantry() && As_Infantry(this)->FUN_00522510()) {
 			if (Techno_Type_Class()->VoiceUndeploy != -1) {
 				QueueVoice(Techno_Type_Class()->VoiceUndeploy);
 			}
@@ -6789,24 +6748,13 @@ void TechnoClass::Remove_Damage_Particle(void)
 	}
 }
 
-static inline TechnoClass * AsTechno(AbstractClass * object)
-{
-	if (object == NULL) {
-		return(NULL);
-	}
-	if (object->AbstractFlags & 1) {
-		return((TechnoClass *)object);
-	}
-	return(NULL);
-}
-
 // FUNCTION: GAMEMD 0x0070D7E0
 bool TechnoClass::Enter_Object_Nearby(void)
 {
 	TechnoClass * techno = QueueUpToEnter;
 	if (techno != NULL) {
 		if (techno->IsActive) {
-			if (AsTechno(QueueUpToEnter) != NULL) {
+			if (As_Techno(QueueUpToEnter) != NULL) {
 				if (Transmit_Message(RADIO_HELLO, techno) == RADIO_ROGER) {
 					if (Transmit_Message(RADIO_CAN_LOAD, techno) == RADIO_ROGER) {
 						QueueMission(MISSION_ENTER, true);
@@ -8021,14 +7969,6 @@ void TechnoClass::ReleaseLocomotor(bool set_target)
 	}
 }
 
-static inline FootClass * Cast_Techno(FootClass * object)
-{
-	if (object != NULL && (object->AbstractFlags & 1)) {
-		return(object);
-	}
-	return(NULL);
-}
-
 // FUNCTION: GAMEMD 0x00710000
 void TechnoClass::ImbueLocomotor(FootClass * target, CLSID clsid)
 {
@@ -8069,8 +8009,8 @@ void TechnoClass::ImbueLocomotor(FootClass * target, CLSID clsid)
 				}
 				other->Begin_Piggyback(target->Locomotion);
 				target->Locomotion = locomotion;
-				LocomotorTarget = Cast_Techno(target);
-				Cast_Techno(target)->LocomotorSource = (FootClass *)this;
+				LocomotorTarget = (FootClass *)As_Techno(target);
+				As_Techno(target)->LocomotorSource = (FootClass *)this;
 				LocomotorTarget->Assign_Destination(this, true);
 				LocomotorTarget->Unselect();
 				if (target->Team != NULL) {

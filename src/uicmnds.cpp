@@ -6,6 +6,7 @@
 #include "always.h"
 #include "rect.h"
 #include "geometry.h"
+#include "cast.h"
 
 // SYNTHETIC: GAMEMD 0x00730760 SYMBOL
 // _$E2
@@ -236,11 +237,6 @@ void FUN_00730AF0(void)
 	}
 }
 
-static inline UnitClass * Unit_Of(ObjectClass * object)
-{
-	return (object->RTTI == RTTI_UNIT) ? (UnitClass *)object : NULL;
-}
-
 // FUNCTION: GAMEMD 0x00730D60
 void FUN_00730D60(void)
 {
@@ -260,7 +256,7 @@ void FUN_00730D60(void)
 						return;
 					}
 				} else if (object->RTTI == RTTI_UNIT) {
-					if (Unit_Of(object)->SlaveManager || Unit_Of(object)->Class->Harvester) {
+					if (As_Unit(object)->SlaveManager || As_Unit(object)->Class->Harvester) {
 						ok = ((TechnoClass *)object)->Player_Assign_Mission(MISSION_GUARD_AREA, (AbstractClass *)object->Get_Target_Cell_Ptr(), NULL, NULL);
 						if (!ok) {
 							return;

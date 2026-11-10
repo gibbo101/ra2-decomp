@@ -14,6 +14,7 @@
 #include "infantry.h"
 #include "infatype.h"
 #include "techno.h"
+#include "cast.h"
 
 // SYNTHETIC: GAMEMD 0x006AEF10 SYMBOL
 // _$E2
@@ -65,18 +66,6 @@ DynamicVectorClass<SlaveManagerClass *> SlaveManagers;
 #include "_map.h"
 #include "map.h"
 #include "unit.h"
-
-static inline BuildingClass * Cast_Building(AbstractClass * object)
-{
-	if (object == NULL) return(NULL);
-	return((object->Fetch_RTTI() == RTTI_BUILDING) ? (BuildingClass *)object : NULL);
-}
-
-static inline UnitClass * Cast_Unit(AbstractClass * object)
-{
-	if (object == NULL) return(NULL);
-	return((object->Fetch_RTTI() == RTTI_UNIT) ? (UnitClass *)object : NULL);
-}
 
 // FUNCTION: GAMEMD 0x006AF1A0
 SlaveManagerClass::SlaveManagerClass(TechnoClass * owner, InfantryTypeClass * type, int number, int regen, int reload) :
@@ -195,8 +184,8 @@ Cell SlaveManagerClass::FUN_006B0300(Cell cell)
 	int height;
 	int width;
 	if (Owner != NULL && Owner->Fetch_RTTI() == RTTI_BUILDING) {
-		width = Cast_Building(Owner)->Class->Width();
-		height = Cast_Building(Owner)->Class->Height(false);
+		width = As_Building(Owner)->Class->Width();
+		height = As_Building(Owner)->Class->Height(false);
 	} else if (Owner->Techno_Type_Class()->DeploysInto != NULL) {
 		width = Owner->Techno_Type_Class()->DeploysInto->Width();
 		height = Owner->Techno_Type_Class()->DeploysInto->Height(false);
@@ -239,7 +228,7 @@ void SlaveManagerClass::FUN_006B04C0(void)
 		if (node->State == 0) {
 			Cell cell;
 			if (Owner != NULL && Owner->Fetch_RTTI() == RTTI_BUILDING) {
-				BuildingClass * building = Cast_Building(Owner);
+				BuildingClass * building = As_Building(Owner);
 				int width = building->Class->Width();
 				int height = building->Class->Height(false);
 				cell = Owner->Get_Cell() + Cell(width - 1, height / 2);
@@ -264,7 +253,7 @@ Cell SlaveManagerClass::FUN_006B0690(void)
 {
 	Cell cell;
 	if (Owner != NULL && Owner->Fetch_RTTI() == RTTI_BUILDING) {
-		BuildingClass * building = Cast_Building(Owner);
+		BuildingClass * building = As_Building(Owner);
 		int width = building->Class->Width();
 		int height = building->Class->Height(false);
 		cell = Owner->Get_Cell() + Cell(width - 1, height / 2);
@@ -423,8 +412,8 @@ void SlaveManagerClass::Deploy2(void)
 // FUNCTION: GAMEMD 0x006B0DB0
 void SlaveManagerClass::FUN_006B0DB0(void)
 {
-	if (Owner != NULL && Owner->Fetch_RTTI() == RTTI_UNIT && Cast_Unit(Owner)->NavCom != NULL) {
-		Cell target = Cast_Unit(Owner)->NavCom->Center_Coord();
+	if (Owner != NULL && Owner->Fetch_RTTI() == RTTI_UNIT && As_Unit(Owner)->NavCom != NULL) {
+		Cell target = As_Unit(Owner)->NavCom->Center_Coord();
 		Cell cell;
 		cell = FUN_006B0300(target);
 		if (cell == CELL_NONE) {

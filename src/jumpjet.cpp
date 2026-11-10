@@ -25,6 +25,7 @@
 #include "ccrand.h"
 #include <math.h>
 #include "slavemgr.h"
+#include "cast.h"
 
 // SYNTHETIC: GAMEMD 0x0054AA30 SYMBOL
 // _$E103
@@ -822,11 +823,6 @@ boolean STDMETHODCALLTYPE JumpjetLocomotionClass::Is_Moving_Now(void)
 
 #include "infatype.h"
 
-static inline InfantryClass * Jumpjet_Infantry(FootClass * foot)
-{
-	return foot == NULL ? NULL : foot->Fetch_RTTI() == RTTI_INFANTRY ? (InfantryClass *)foot : NULL;
-}
-
 // FUNCTION: GAMEMD 0x0054D0F0
 void JumpjetLocomotionClass::Movement_AI(void)
 {
@@ -892,7 +888,7 @@ void JumpjetLocomotionClass::Movement_AI(void)
 	LinkedTo->Set_Coord(new_coord);
 	if (!LinkedTo->IsAttackedByLocomotor) {
 		if (LinkedTo != NULL && LinkedTo->Fetch_RTTI() == RTTI_INFANTRY
-			&& Jumpjet_Infantry(LinkedTo)->Class->JumpJetTurn
+			&& As_Infantry(LinkedTo)->Class->JumpJetTurn
 			&& CurrentState == HOVERING && LinkedTo->TarCom != NULL) {
 			Facing.Set(LinkedTo->GetTargetDirection(LinkedTo->TarCom));
 		} else LinkedTo->PrimaryFacing.Set(Facing.Current());
