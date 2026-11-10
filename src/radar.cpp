@@ -43,6 +43,7 @@
 #include "vox.h"
 #include "zbuffer.h"
 #include "vqa.h"
+#include "beacon.h"
 #include "fastmath.h"
 #include "coord.h"
 
@@ -55,6 +56,7 @@ extern int __fastcall FUN_00639DA0();
 
 extern const double ONE_RAD;
 extern const double DAT_007F02A8;
+extern BeaconManagerClass BeaconManager;
 extern const double DAT_00B048D8;
 extern const double DAT_00B049F8;
 extern const double DAT_00B049E0;
@@ -1889,6 +1891,121 @@ bool Is_Speech_Finished(int index);
 void FUN_00408390(void);
 int FUN_00408410(void);
 void FUN_005BF580(void);
+
+// FUNCTION: GAMEMD 0x00656EC0
+void RadarClass::Render_Radar(void)
+{
+	int i;
+	Rect prev_rect = LastDrawRect;
+	bool is_tactical = Is_Radar_Tactical();
+
+	Cell center = Map[TacticalMap->Pixel_To_Cell(Point2D(TacticalRect.X + TacticalRect.Width / 2, TacticalRect.Y + TacticalRect.Height / 2))].Fetch_CellID();
+
+	RadarViewRect = Cell_To_Radar_Pixel(center);
+	RadarViewRect.Width = ((2 * TacticalRect.Width) / (60 / ZoomFactor) + 1.0f);
+	RadarViewRect.Height = ((2 * TacticalRect.Height) / (30 / ZoomFactor));
+	RadarViewRect -= Point2D(TacticalRect.Width / (60 / ZoomFactor), (2 * TacticalRect.Height) / (30 / ZoomFactor) * 0.5f);
+
+	if (RadarViewRect.X < RadarRect.X) {
+		RadarViewRect.X = RadarRect.X;
+	} else {
+		if (RadarViewRect.X + RadarViewRect.Width >= RadarRect.X + RadarRect.Width) {
+			RadarViewRect.X = RadarRect.X - (RadarViewRect.Width - RadarRect.Width) - 1;
+		}
+	}
+
+	if (RadarViewRect.Y < RadarRect.Y) {
+		RadarViewRect.Y = RadarRect.Y;
+	} else {
+		if (RadarViewRect.Y + RadarViewRect.Height >= RadarRect.Y + RadarRect.Height) {
+			RadarViewRect.Y = RadarRect.Y - (RadarViewRect.Height - RadarRect.Height) - 1;
+		}
+	}
+
+	if (FullRedraw) {
+		OldRadarViewRect = RadarViewRect;
+	}
+
+	if (IsToRedraw || OldRadarViewRect != RadarViewRect || !No_Radar_Events_Submitted() || PixelStack.Count() > 0 || BackgroundStack.Count() > 0 || BeaconManager.RadarBeaconPulsing()) {
+		if (is_tactical) {
+			IsToRedraw = false;
+		}
+
+		Plot_Radar_Background();
+
+		bool moved = false;
+		if (OldRadarViewRect != RadarViewRect) {
+			Point2D pt;
+			for (i = 0; i < OldRadarViewRect.Height; i++) {
+				pt = Point2D(OldRadarViewRect.X, i + OldRadarViewRect.Y) - Point2D(RadarRect.X, RadarRect.Y);
+				Radar_Pixel(pt);
+				pt = Point2D(OldRadarViewRect.X + OldRadarViewRect.Width - 1, i + OldRadarViewRect.Y) - Point2D(RadarRect.X, RadarRect.Y);
+				Radar_Pixel(pt);
+			}
+			for (i = 0; i < OldRadarViewRect.Width; i++) {
+				pt = Point2D(i + OldRadarViewRect.X, OldRadarViewRect.Y) - Point2D(RadarRect.X, RadarRect.Y);
+				Radar_Pixel(pt);
+				pt = Point2D(i + OldRadarViewRect.X, OldRadarViewRect.Height + OldRadarViewRect.Y - 1) - Point2D(RadarRect.X, RadarRect.Y);
+				Radar_Pixel(pt);
+			}
+			moved = true;
+		}
+
+		if (CellRedrawRect.Is_Valid()) {
+			RadarSurface->Blit_From(CellRedrawRect, *BackgroundSurface, CellRedrawRect);
+			LastDrawRect = Union(LastDrawRect, CellRedrawRect + RadarRect.TopLeft);
+
+			for (int x = CellRedrawRect.X; x < CellRedrawRect.X + CellRedrawRect.Width; x++) {
+				for (int y = CellRedrawRect.Y; y < CellRedrawRect.Y + CellRedrawRect.Height; y++) {
+					Plot_Radar_Pixel(Point2D(x, y));
+				}
+			}
+			CellRedrawRect = Rect(0, 0, 0, 0);
+		}
+
+		// Render all pixels in the "to redraw" stack.
+		for (i = PixelStack.Count() - 1; i >= 0; i--) {
+			Plot_Radar_Pixel(PixelStack[i]);
+		}
+		PixelStack.Clear();
+
+		RadarEventClass::Draw_Events();
+		BeaconManager.DrawRadar(RadarSurface, RadarSurface->Get_Rect());
+
+		if (is_tactical) {
+			if (FullRedraw) {
+				ConvertClass * drawer = FUN_0072F510();
+				LastDrawRect = RadarRect;
+				Draw_Shape(*SidebarSurface, *drawer, (ShapeSet const *)RadarAnim, 32, Point2D(RadX, RadWidth), SidebarSurface->Get_Rect());
+			}
+
+			if (LastDrawRect.Is_Valid()) {
+				SidebarSurface->Blit_From(LastDrawRect, *RadarSurface, LastDrawRect - Point2D(RadarRect.X, RadarRect.Y));
+			}
+
+			SidebarSurface->Draw_Rect(RadarViewRect, RadPHeight);
+			Rect area = RadarRect;
+			Rect rr(area.X - 1, area.Y - 1, area.Width + 2, area.Height + 2);
+			SidebarSurface->Draw_Rect(rr, RadPHeight);
+		}
+
+		if (moved) {
+			Rect const & inner = Union(OldRadarViewRect, LastDrawRect);
+			LastDrawRect = Union(RadarViewRect, inner);
+		}
+
+		OldRadarViewRect = RadarViewRect;
+		RadarEventClass::Remove_Finished();
+	}
+
+	if (PixelFlags != NULL) {
+		memset(PixelFlags, 0, RadarSurface->Get_Height() * RadarSurface->Get_Width() / 8 + 1);
+	}
+
+	if (!is_tactical) {
+		LastDrawRect = prev_rect;
+	}
+}
 
 // FUNCTION: GAMEMD 0x006578F0
 void RadarClass::Update_Transmission(void)
