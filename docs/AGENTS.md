@@ -501,6 +501,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   the include block its headers' static members renumber every `$E` marker after it.
 - A class only one module uses (MSFrameAnim in wdtmap) is declared in that .cpp, which
   keeps it out of shared headers whose changes flip heap-sensitive matches.
+- A helper many files share goes in its own header that includes only what its bodies
+  need (`cast.h` includes only `abstract.h`, with forward declarations), and only its
+  users include it. As new inlines in the class headers, the same casts flipped nine
+  heap-sensitive functions in files that never call them.
 - Read a matched caller's reference lines before declaring a destructor: wdtmap's
   0x0040D300 is BasicTimerClass<FrameTimerClass>'s, not StageClass's.
 
