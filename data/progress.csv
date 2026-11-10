@@ -9654,6 +9654,7 @@ address,name,result,size,source,symbol
 0x005D6790,MultiplayerGameMode::UnfixAlliances,MATCH,15,src/multiplayer.cpp,?UnfixAlliances@MultiplayerGameMode@@UAE_NXZ
 0x005D67A0,MultiplayerGameMode::vt_entry_1C,MATCH,5,src/multiplayer.cpp,?vt_entry_1C@MultiplayerGameMode@@UAE_NI@Z
 0x005D67B0,MultiplayerGameMode::FUN_005D67B0,MATCH,222,src/multiplayer.cpp,?FUN_005D67B0@MultiplayerGameMode@@QAEPAVCCINIClass@@XZ
+0x005D6890,MultiplayerGameMode::AssignStartingPositionsToHouse,MATCH,844,src/multiplayer.cpp,?AssignStartingPositionsToHouse@MultiplayerGameMode@@UAEPAVCell@@PAV2@HPAV?$DynamicVectorClass@VCell@@@@PAE@Z
 0x005D6BE0,MultiplayerGameMode::StartingPositionsToHouseBaseCells,MATCH,139,src/multiplayer.cpp,?StartingPositionsToHouseBaseCells@MultiplayerGameMode@@UAE_ND@Z
 0x005D6C70,MultiplayerGameMode::StartingPositionsToHouseBaseCells2,MATCH,266,src/multiplayer.cpp,?StartingPositionsToHouseBaseCells2@MultiplayerGameMode@@UAE_N_N@Z
 0x005D6D80,MultiplayerGameMode::FUN_005D6D80,MATCH,677,src/multiplayer.cpp,?FUN_005D6D80@MultiplayerGameMode@@QAE_NXZ

@@ -475,6 +475,81 @@ CCINIClass * MultiplayerGameMode::FUN_005D67B0(void)
 	return(INI);
 }
 
+// best 90.8% against include/, no overlay; scan index takes EBX (exe ESI) and best/pick stack slots are swapped
+static inline bool Is_Observer(HouseClass * house)
+{
+	if (house != NULL) {
+		for (int k = 0; k < Session.Players.Count(); k++) {
+			if (house->FUN_0050B730() && wcscmp(house->UIName, Session.Players[k]->Name) == 0) {
+				return(Session.Players[k]->Slot.SpectatorFlag == -1);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: GAMEMD 0x005D6890
+Cell * MultiplayerGameMode::AssignStartingPositionsToHouse(Cell * result, int house, DynamicVectorClass<Cell> * coords, unsigned char * satisfied)
+{
+	int i = 0;
+	while (i < coords->Count() && Scen->HouseIndices[i] == -1) {
+		i++;
+	}
+	if (i == coords->Count()) {
+		DAT_00ABFDD4 = false;
+		DAT_00ABFDD5 = false;
+		if (Is_Observer(Houses[house])) {
+			i = Scen->RandomNumber(0, coords->Count() - 1);
+			satisfied[i] = 1;
+			Scen->HouseIndices[i] = house;
+			DAT_00ABFDD4 = true;
+			FUN_004068E0("Observer observing random cell: %d (%d,%d)\n", i, (*coords)[i].X, (*coords)[i].Y);
+			*result = (*coords)[i];
+			return(result);
+		}
+		i = Scen->RandomNumber(0, coords->Count() - 1);
+		FUN_004068E0("First cell taken: %d (%d,%d)\n", i, (*coords)[i].X, (*coords)[i].Y);
+		satisfied[i] = 1;
+		Scen->HouseIndices[i] = house;
+		*result = (*coords)[i];
+		return(result);
+	}
+	if (DAT_00ABFDD4 && !DAT_00ABFDD5) {
+		DAT_00ABFDD5 = true;
+		Scen->HouseIndices[i] = house;
+		*result = (*coords)[i];
+		return(result);
+	}
+	if (Is_Observer(Houses[house])) {
+		DAT_00ABFDD5 = true;
+		DAT_00ABFDD4 = true;
+		FUN_004068E0("Observer Observing cell: %d (%d,%d)\n", i, (*coords)[i].X, (*coords)[i].Y);
+		*result = (*coords)[i];
+		return(result);
+	}
+	int best_sum = -1;
+	int best = -1;
+	for (int b = 0; b < coords->Count(); b++) {
+		if (!satisfied[b]) {
+			int sum = 0;
+			for (int c = 0; c < coords->Count(); c++) {
+				if (satisfied[c]) {
+					sum += (*coords)[b].Distance_To((*coords)[c]);
+				}
+			}
+			if (sum > best_sum) {
+				best_sum = sum;
+				best = b;
+			}
+		}
+	}
+	satisfied[best] = 1;
+	Scen->HouseIndices[best] = house;
+	FUN_004068E0("Starting cell taken: %d (%d,%d)\n", best, (*coords)[best].X, (*coords)[best].Y);
+	*result = (*coords)[best];
+	return(result);
+}
+
 // FUNCTION: GAMEMD 0x005D6BE0
 bool MultiplayerGameMode::StartingPositionsToHouseBaseCells(char unused)
 {
@@ -580,16 +655,7 @@ bool MultiplayerGameMode::FUN_005D6D80(void)
 	for (int i = 0; i < Houses.Count(); i++) {
 		HouseClass * house = Houses[i];
 		if (!house->Class->IsMultiplayPassive) {
-			bool skip = false;
-			if (house) {
-				for (int k = 0; k < Session.Players.Count(); k++) {
-					if (((MPHouse *)house)->FUN_0050B730() && wcscmp(house->UIName, Session.Players[k]->Name) == 0) {
-						skip = Session.Players[k]->Slot.SpectatorFlag == -1;
-						break;
-					}
-				}
-			}
-			if (!skip) {
+			if (!Is_Observer(house)) {
 				amount = credits;
 				if (!SpawnBaseUnits(house, (unsigned)&amount)) {
 					return(false);
