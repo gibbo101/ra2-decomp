@@ -11572,6 +11572,7 @@ address,name,result,size,source,symbol
 0x00656E50,RadarClass::Is_Player_Names,MATCH,27,src/radar.cpp,?Is_Player_Names@RadarClass@@QAE_NXZ
 0x00656E70,RadarClass::Is_Playing_Movie,MATCH,27,src/radar.cpp,?Is_Playing_Movie@RadarClass@@QAE_NXZ
 0x00656E90,RadarClass::Redraw_Radar,MATCH,40,src/radar.cpp,?Redraw_Radar@RadarClass@@QAEX_N@Z
+0x00656EC0,RadarClass::Render_Radar,MATCH,2603,src/radar.cpp,?Render_Radar@RadarClass@@QAEXXZ
 0x006578F0,RadarClass::Update_Transmission,MATCH,225,src/radar.cpp,?Update_Transmission@RadarClass@@QAEXXZ
 0x006579E0,RadarClass::Play_Movie,MATCH,764,src/radar.cpp,?Play_Movie@RadarClass@@QAEXXZ
 0x00657CE0,RadarClass::Complete_Radar_Refresh,MATCH,178,src/radar.cpp,?Complete_Radar_Refresh@RadarClass@@QAEXXZ
@@ -16834,10 +16835,11 @@ address,name,result,size,source,symbol
 0x007C3EB0,UnVQ2_C4_4x4,MATCH,929,src/vqalib/unvq.cpp,?UnVQ2_C4_4x4@@YAXPAE00KKK@Z
 0x007C4260,UnVQ1_C4_4x2,MATCH,317,src/vqalib/unvq.cpp,?UnVQ1_C4_4x2@@YAXPAE00KKK@Z
 0x007C43A0,UnVQ2_C4_4x2,MATCH,901,src/vqalib/unvq.cpp,?UnVQ2_C4_4x2@@YAXPAE00KKK@Z
-0x007C4B80,UnVQ2_C0_4x4_KEY,MATCH,1034,src/vqalib/unvq.cpp,?UnVQ2_C0_4x4_KEY@@YAXPAE00KKK@Z
-0x007C4F90,UnVQ2_C0_4x4_TRANS_HALF,MATCH,1026,src/vqalib/unvq.cpp,?UnVQ2_C0_4x4_TRANS_HALF@@YAXPAE00KKK@Z
-0x007C53A0,UnVQ2_C0_4x2_TRANS,MATCH,1057,src/vqalib/unvq.cpp,?UnVQ2_C0_4x2_TRANS@@YAXPAE00KKK@Z
-0x007C57D0,UnVQ2_C0_4x2_KEY,MATCH,1003,src/vqalib/unvq.cpp,?UnVQ2_C0_4x2_KEY@@YAXPAE00KKK@Z
+0x007C4730,UnVQ2_C0_4x4_TRANS,MATCH,1101,src/vqalib/unvqtran.cpp,?UnVQ2_C0_4x4_TRANS@@YAXPAE00KKK@Z
+0x007C4B80,UnVQ2_C0_4x4_KEY,MATCH,1034,src/vqalib/unvqtran.cpp,?UnVQ2_C0_4x4_KEY@@YAXPAE00KKK@Z
+0x007C4F90,UnVQ2_C0_4x4_TRANS_HALF,MATCH,1026,src/vqalib/unvqtran.cpp,?UnVQ2_C0_4x4_TRANS_HALF@@YAXPAE00KKK@Z
+0x007C53A0,UnVQ2_C0_4x2_TRANS,MATCH,1057,src/vqalib/unvqtran.cpp,?UnVQ2_C0_4x2_TRANS@@YAXPAE00KKK@Z
+0x007C57D0,UnVQ2_C0_4x2_KEY,MATCH,1003,src/vqalib/unvqtran.cpp,?UnVQ2_C0_4x2_KEY@@YAXPAE00KKK@Z
 0x0075A790,Initialize_Options,MATCH,53,src/vqoption.cpp,?Initialize_Options@@YIXXZ
 0x0075A7D0,Set_Option,MATCH,19,src/vqoption.cpp,?Set_Option@@YIXH@Z
 0x0075A7F0,Clear_Option,MATCH,29,src/vqoption.cpp,?Clear_Option@@YIXH@Z
