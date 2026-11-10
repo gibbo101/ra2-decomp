@@ -2435,10 +2435,13 @@ void TeamClass::TMission_TALK_BUBBLE(TeamMissionClass * mission, bool first_time
 
 void __cdecl FUN_004068E0(char const * text, ...);
 
-static inline Coord Move_Coord_By_Cells(
-	Coord const & there, DirType dir, int distance_in_cells)
+static inline void Find_Gathering_Cell(
+	Coord const & base, DirType dir, FootClass const * leader, Cell & cell)
 {
-	return Move_Coord(there, dir, distance_in_cells * CELL_LEPTON_W);
+	Coord gather = Move_Coord(base, dir, Cell_To_Lepton(Rule->AISafeDistance));
+	cell = Cell(gather.X / CELL_LEPTON_W, gather.Y / CELL_LEPTON_H);
+	cell = Map.Nearby_Location(
+		cell, leader->TClass->Speed, -1, MZONE_NORMAL, false, Point2D(3, 3));
 }
 
 // FUNCTION: GAMEMD 0x006EF700
@@ -2473,11 +2476,8 @@ void TeamClass::TMission_MOVE_TO_ENEMY_APPROACH(
 		offset.Y = center.Y - there.Y;
 		offset.Z = center.Z - there.Z;
 		DirType dir(fastmath::atan2(-offset.Y, offset.X));
-		Cell cell = Move_Coord_By_Cells(
-			there, dir, Rule->AISafeDistance).As_Cell();
-		cell = Map.Nearby_Location(
-			cell, leader->Techno_Type_Class()->Speed,
-			-1, MZONE_NORMAL, false, Point2D(3, 3));
+		Cell cell;
+		Find_Gathering_Cell(there, dir, leader, cell);
 		Assign_Mission_Target(&Map[cell]);
 		FUN_004068E0(
 			"A %s Team has chosen ( %d, %d) for its GatherAtEnemy cell.\n",
@@ -2676,8 +2676,8 @@ void TeamClass::TMission_MOVE_TO_BASE_FRONT(TeamMissionClass * mission, bool fir
 			target = target - base;
 			dir = DirType(fastmath::atan2((double)-target.Y, (double)target.X));
 		}
-		Cell cell = Move_Coord(base, dir, Rule->AISafeDistance * CELL_LEPTON_W).As_Cell();
-		cell = Map.Nearby_Location(cell, leader->TClass->Speed, -1, MZONE_NORMAL, false, Point2D(3, 3));
+		Cell cell;
+		Find_Gathering_Cell(base, dir, leader, cell);
 		Assign_Mission_Target(&Map[cell]);
 	}
 	Coordinate_Move();
