@@ -2650,10 +2650,17 @@ struct AtlSinkRoot : AtlRootBase {
 	AtlCriticalSection Lock;
 };
 
-class CNetUtilEventSink : public AtlSinkRoot, public IUnknown
+class CNetUtilEventSink : public AtlSinkRoot, public INetUtilEvent
 {
 	public:
 		CNetUtilEventSink(void);
+		HRESULT __stdcall OnPing(HRESULT res, int time, unsigned long ip, int handle);
+		HRESULT __stdcall OnLadderList(HRESULT res, Ladder * list, int totalCount, long timeStamp, int keyRung);
+		HRESULT __stdcall OnGameresSent(HRESULT res);
+		HRESULT __stdcall OnNewNick(HRESULT res, LPCSTR message, LPCSTR nick, LPCSTR pass);
+		HRESULT __stdcall OnAgeCheck(HRESULT res, int years, int consent);
+		HRESULT __stdcall OnWDTState(HRESULT res, unsigned char * state, int length);
+		HRESULT __stdcall OnHighscore(HRESULT res, Highscore * list, int totalCount, long timeStamp, int keyRung);
 		static AtlIntMapEntry * __stdcall _GetEntries(void) { return DAT_007F7650; }
 		IUnknown * _GetRawUnknown(void) { return (IUnknown *)((int)this + _GetEntries()->dw); }
 		IUnknown * GetUnknown(void) { return _GetRawUnknown(); }
@@ -2670,10 +2677,15 @@ class CChatEventSink : public AtlSinkRoot, public IUnknown
 		long _InternalQueryInterface(IID const & iid, void ** object) { return InternalQueryInterface(this, _GetEntries(), iid, object); }
 };
 
-class CDownloadEventSink : public AtlSinkRoot, public IUnknown
+class CDownloadEventSink : public AtlSinkRoot, public IDownloadEvent
 {
 	public:
 		CDownloadEventSink(void) {}
+		HRESULT __stdcall OnEnd(void);
+		HRESULT __stdcall OnError(int error);
+		HRESULT __stdcall OnProgressUpdate(int bytesread, int totalsize, int timetaken, int timeleft);
+		HRESULT __stdcall OnQueryResume(void);
+		HRESULT __stdcall OnStatusUpdate(int status);
 		static AtlIntMapEntry * __stdcall _GetEntries(void) { return DAT_007F7638; }
 		IUnknown * _GetRawUnknown(void) { return (IUnknown *)((int)this + _GetEntries()->dw); }
 		IUnknown * GetUnknown(void) { return _GetRawUnknown(); }
@@ -10056,7 +10068,7 @@ CNetUtilEventSink::CNetUtilEventSink(void)
 }
 
 // FUNCTION: GAMEMD 0x007A2FE0
-long __stdcall FUN_007A2FE0(void * sink, long result, unsigned char * data, int length)
+HRESULT CNetUtilEventSink::OnWDTState(HRESULT result, unsigned char * data, int length)
 {
 	if (result < 0 || length <= 0) {
 		SetEvent(DAT_00B73684[5]);
@@ -10082,7 +10094,7 @@ long __stdcall FUN_007A2FE0(void * sink, long result, unsigned char * data, int 
 }
 
 // FUNCTION: GAMEMD 0x007A30D0
-long __stdcall FUN_007A30D0(void * sink, long result)
+HRESULT CNetUtilEventSink::OnGameresSent(HRESULT result)
 {
 	FUN_004068E0("OnGameresSent  %d\n", result);
 	if (result == 0) {
@@ -10106,7 +10118,7 @@ static inline char Remove_Ladder(Dictionary<Wstring, Ladder> & dict, Wstring & k
 }
 
 // FUNCTION: GAMEMD 0x007A3100
-long __stdcall FUN_007A3100(void * sink, long result, Ladder * list, int, long, int key_rung)
+HRESULT CNetUtilEventSink::OnLadderList(HRESULT result, Ladder * list, int, long, int key_rung)
 {
 	Ladder * temp = NULL;
 	if (result != 0) {
@@ -10263,7 +10275,7 @@ static inline void Remove_Highscore(Wstring & name)
 }
 
 // FUNCTION: GAMEMD 0x007A3B30
-long __stdcall FUN_007A3B30(void * sink, long result, Highscore * list, int, long, int)
+HRESULT CNetUtilEventSink::OnHighscore(HRESULT result, Highscore * list, int, long, int)
 {
 	if (result == 0) {
 		Highscore * temp = list;
@@ -10289,7 +10301,7 @@ static inline rc_ptr<PlayerProfile> Profile_For_Nick(char const * nick)
 }
 
 // FUNCTION: GAMEMD 0x007A3D90
-long __stdcall FUN_007A3D90(void * sink, long result, char const * message, char const * nick, char const * pass)
+HRESULT CNetUtilEventSink::OnNewNick(HRESULT result, LPCSTR message, LPCSTR nick, LPCSTR pass)
 {
 	FUN_004068E0("OnNewNick\n");
 	DAT_00B77DF0 = result;
@@ -10367,7 +10379,7 @@ long __stdcall FUN_007A3D90(void * sink, long result, char const * message, char
 }
 
 // FUNCTION: GAMEMD 0x007A4070
-long __stdcall FUN_007A4070(void * sink, long result, int age, int consent)
+HRESULT CNetUtilEventSink::OnAgeCheck(HRESULT result, int age, int consent)
 {
 	FUN_004068E0("OnAgeCheck\n");
 	DAT_00B77DF4 = result;
@@ -10391,7 +10403,7 @@ long __stdcall FUN_007A4070(void * sink, long result, int age, int consent)
 }
 
 // FUNCTION: GAMEMD 0x007A40F0
-long __stdcall FUN_007A40F0(void * sink, long result, int time, unsigned long address, int extra)
+HRESULT CNetUtilEventSink::OnPing(HRESULT result, int time, unsigned long address, int extra)
 {
 	if (DAT_00B77DC1 && DAT_00B77780) {
 		if (result == 0 && time >= 0 && time < 1000) {
@@ -12277,30 +12289,30 @@ template class Dictionary<Wstring, Channel>;
 // ?growVector@?$ArrayList@VWstring@@@@AAEDXZ
 
 // FUNCTION: GAMEMD 0x007AD440
-long __stdcall FUN_007AD440(void * sink)
+HRESULT CDownloadEventSink::OnEnd(void)
 {
 	SendMessage(FUN_00775B10(), 0x5F4, 0, 0);
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x007AD460
-long __stdcall FUN_007AD460(void * sink, LPARAM param)
+HRESULT CDownloadEventSink::OnError(int error)
 {
-	SendMessage(FUN_00775B10(), 0x5F5, 0, param);
+	SendMessage(FUN_00775B10(), 0x5F5, 0, error);
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x007AD480
-long __stdcall FUN_007AD480(void * sink, unsigned int done, unsigned int total, long unused, long seconds)
+HRESULT CDownloadEventSink::OnProgressUpdate(int bytesread, int totalsize, int timetaken, int timeleft)
 {
 	wchar_t buffer[200];
 
 	buffer[0] = 0;
-	SendDlgItemMessage(FUN_00775B10(), 0x5C6, 0x402, done * 100 / total, 0);
-	if (seconds > 0) {
-		swprintf(buffer, StringTable::LoadString("TXT_BYTES_W_TIME", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x142F), done, total, seconds);
+	SendDlgItemMessage(FUN_00775B10(), 0x5C6, 0x402, bytesread * 100 / (unsigned)totalsize, 0);
+	if (timeleft > 0) {
+		swprintf(buffer, StringTable::LoadString("TXT_BYTES_W_TIME", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x142F), bytesread, totalsize, timeleft);
 	} else {
-		swprintf(buffer, StringTable::LoadString("TXT_BYTES_WO_TIME", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1434), done, total);
+		swprintf(buffer, StringTable::LoadString("TXT_BYTES_WO_TIME", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1434), bytesread, totalsize);
 	}
 	if (time(NULL) - DAT_00B77EA8 != 0) {
 		HWND item = GetDlgItem(FUN_00775B10(), 0x5C8);
@@ -12311,7 +12323,7 @@ long __stdcall FUN_007AD480(void * sink, unsigned int done, unsigned int total, 
 }
 
 // FUNCTION: GAMEMD 0x007AD580
-long __stdcall FUN_007AD580(void * sink, int state)
+HRESULT CDownloadEventSink::OnStatusUpdate(int state)
 {
 	wchar_t buffer[200];
 
@@ -12331,7 +12343,7 @@ long __stdcall FUN_007AD580(void * sink, int state)
 }
 
 // FUNCTION: GAMEMD 0x007AD610
-long __stdcall FUN_007AD610(void * sink)
+HRESULT CDownloadEventSink::OnQueryResume(void)
 {
 	return 0;
 }
