@@ -305,20 +305,6 @@ void TunnelLocomotionClass::ProcessDugIn(void)
 	}
 }
 
-static inline DirType Tunnel_Direction_To(Coord const &from, Coord const &to)
-{
-	Point2D delta(to.X - from.X, to.Y - from.Y);
-	return DirType(fastmath::atan2((double)-delta.Y, (double)delta.X));
-}
-
-static inline Coord Tunnel_Move_Coord(Coord const &start, DirType const &dir, int distance)
-{
-	Point2D point(start.X, start.Y);
-	double radians = dir.As_Radian();
-	return Coord((int)(point.X + fastmath::cos(radians) * distance), (int)(point.Y - fastmath::sin(radians) * distance),
-	             start.Z);
-}
-
 // FUNCTION: GAMEMD 0x00729580
 void TunnelLocomotionClass::ProcessDigging(void)
 {
@@ -349,7 +335,11 @@ void TunnelLocomotionClass::ProcessDigging(void)
 			IsUnderground = false;
 		}
 	} else {
-		coord = Tunnel_Move_Coord(coord, Tunnel_Direction_To(coord, DestinationCoord), 19);
+		Point2D delta(DestinationCoord.X - coord.X, DestinationCoord.Y - coord.Y);
+		DirType dir = DirType(fastmath::atan2((double)-delta.Y, (double)delta.X));
+		Point2D point(coord.X, coord.Y);
+		double radians = dir.As_Radian();
+		coord = Coord((int)(point.X + fastmath::cos(radians) * 19), (int)(point.Y - fastmath::sin(radians) * 19), coord.Z);
 	}
 	LinkedTo->PositionCoord = coord;
 }

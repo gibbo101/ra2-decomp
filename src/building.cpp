@@ -7012,15 +7012,6 @@ void BuildingClass::FUN_00458330(void)
 	}
 }
 
-static inline void Occupant_Offset_To_Coord(Coord &coord, Point2D const &point)
-{
-	int y = point.Y;
-	int x = point.X;
-	coord.X = x;
-	coord.Y = y;
-	coord.Z = 0;
-}
-
 // FUNCTION: GAMEMD 0x004585C0
 void BuildingClass::KillOccupants(TechnoClass *killer)
 {
@@ -7031,8 +7022,7 @@ void BuildingClass::KillOccupants(TechnoClass *killer)
 		}
 	} else {
 		for (int index = Occupants.Count() - 1; index >= 0; --index) {
-			Coord coord;
-			Occupant_Offset_To_Coord(coord, TacticalMap->Pixel_To_Lepton(Class->MuzzleFlash[index]));
+			Coord coord(TacticalMap->Pixel_To_Lepton(Class->MuzzleFlash[index]), 0);
 			coord = coord + Render_Coord();
 			AnimClass *anim = new AnimClass(killer->Get_Class_Weapon_Data(0)->Weapon->AssaultAnim, coord, 0, 1,
 			                                ShapeFlags_Type(0x600), 0, false);

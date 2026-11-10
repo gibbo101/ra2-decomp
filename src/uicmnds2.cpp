@@ -171,37 +171,6 @@ extern void * DAT_00B1CF8C;
 extern char DAT_00B1BF38[0x1000];
 extern wchar_t DAT_00B17F24[0x1000];
 
-static inline void Collapse_White_Space(wchar_t *string)
-{
-	wchar_t *in = string;
-	wchar_t previous = 0;
-	int line_start = 1;
-	wchar_t *out = string;
-	for (wchar_t c = *in++; c != 0; c = *in++) {
-		if (c == ' ') {
-			if (previous == c || line_start) {
-				continue;
-			}
-		} else if (c == '\n' || c == '\t') {
-			if (previous == ' ') {
-				out--;
-			}
-			*out = c;
-			line_start = 1;
-			previous = c;
-			out++;
-			continue;
-		}
-		*out++ = c;
-		previous = c;
-		line_start = 0;
-	}
-	if (previous == ' ') {
-		out--;
-	}
-	*out = 0;
-}
-
 static void Decode_String(wchar_t *string)
 {
 	for (; *string != 0; string++) {
@@ -252,7 +221,35 @@ int __fastcall StringTable::ReadFile(char const *name)
 			}
 			DAT_00B17F24[length] = 0;
 			Decode_String(DAT_00B17F24);
-			Collapse_White_Space(DAT_00B17F24);
+			{
+				wchar_t *in = DAT_00B17F24;
+				wchar_t previous = 0;
+				int line_start = 1;
+				wchar_t *out = DAT_00B17F24;
+				for (wchar_t c = *in++; c != 0; c = *in++) {
+					if (c == ' ') {
+						if (previous == c || line_start) {
+							continue;
+						}
+					} else if (c == '\n' || c == '\t') {
+						if (previous == ' ') {
+							out--;
+						}
+						*out = c;
+						line_start = 1;
+						previous = c;
+						out++;
+						continue;
+					}
+					*out++ = c;
+					previous = c;
+					line_start = 0;
+				}
+				if (previous == ' ') {
+					out--;
+				}
+				*out = 0;
+			}
 			Values[string_index + index] = (wchar_t *)::operator new((wcslen(DAT_00B17F24) + 1) * sizeof(wchar_t));
 			wcscpy(Values[string_index + index], DAT_00B17F24);
 			if (id == CSF_EXVALUE_SIGNATURE) {

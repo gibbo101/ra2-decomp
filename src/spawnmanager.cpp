@@ -168,11 +168,6 @@ void SpawnManagerClass::KillNodes(void)
 extern char const * DAT_00840098;
 extern int DAT_0084009C, DAT_008400A0;
 
-static inline bool Spawn_Is_Foot(AbstractClass const * object)
-{
-	return object != NULL && (object->AbstractFlags & 4) != 0;
-}
-
 static inline FootClass * Spawn_Foot_View(AbstractClass * object)
 {
 	if (object == NULL) return NULL;
@@ -204,7 +199,7 @@ void SpawnManagerClass::AI()
 					break;
 				}
 			}
-			if (Spawn_Is_Foot(Owner) &&
+			if (Owner != NULL && (Owner->AbstractFlags & 4) &&
 				Spawn_Foot_View(Owner)->IsAttackedByLocomotor) {
 				break;
 			}

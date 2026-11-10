@@ -6192,7 +6192,6 @@ address,name,result,size,source,symbol
 0x00518D80,InfantryClass::Shape_Number,MATCH,521,src/infantry.cpp,?Shape_Number@InfantryClass@@QBEHXZ
 0x00518F90,InfantryClass::Draw_It,MATCH,1689,src/infantry.cpp,?Draw_It@InfantryClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x0051AA10,InfantryClass::Detach,MATCH,42,src/infantry.cpp,?Detach@InfantryClass@@UAEXPBVAbstractClass@@_N@Z
-0x0051AA40,InfantryClass::Assign_Destination,MATCH,1953,src/infantry.cpp,?Assign_Destination@InfantryClass@@UAEXPAVAbstractClass@@_N@Z
 0x0051B1F0,InfantryClass::Assign_Target,MATCH,347,src/infantry.cpp,?Assign_Target@InfantryClass@@UAEXPAVAbstractClass@@@Z
 0x0051BAB0,InfantryClass::AI,MATCH,1239,src/infantry.cpp,?AI@InfantryClass@@UAEXXZ
 0x0051BF90,InfantryClass::Can_Enter_Cell,MATCH,2323,src/infantry.cpp,?Can_Enter_Cell@InfantryClass@@UBE?AW4MoveType@@PBVCellClass@@W4FacingType@@H0_N@Z
@@ -8220,7 +8219,6 @@ address,name,result,size,source,symbol
 0x0058C5A0,MapRegionClass::Pick_Random_Clear_Cell_In_Zone,MATCH,277,src/mapgen.cpp,?Pick_Random_Clear_Cell_In_Zone@MapRegionClass@@SI?AVCell@@HH@Z
 0x0058C6C0,MapRegionClass::CellData::Reset_Spreads,MATCH,37,src/mapgen.cpp,?Reset_Spreads@CellData@MapRegionClass@@SIX_N@Z
 0x0058C6F0,MapRegionClass::Get_Angle_Score,MATCH,271,src/mapgen.cpp,?Get_Angle_Score@MapRegionClass@@QAENABVCell@@0N@Z
-0x0058C800,MapRegionClass::Create_Region_From_Cell,MATCH,1678,src/mapgen.cpp,?Create_Region_From_Cell@MapRegionClass@@SIPAV1@PAVCellClass@@@Z
 0x0058CE90,MapRegionClass::Destroy_Cell_Regions,MATCH,243,src/mapgen.cpp,?Destroy_Cell_Regions@MapRegionClass@@SIXXZ
 0x0058CF90,MapRegionClass::Create_Water_Regions,MATCH,121,src/mapgen.cpp,?Create_Water_Regions@MapRegionClass@@SIXXZ
 0x0058D010,MapRegionClass::Create_Land_Regions,MATCH,82,src/mapgen.cpp,?Create_Land_Regions@MapRegionClass@@SIX_N@Z
@@ -9870,7 +9868,6 @@ address,name,result,size,source,symbol
 0x005E3850,SendPrivateGameopts,MATCH,367,src/netshare.cpp,?SendPrivateGameopts@@YIXPBD0@Z
 0x005E39C0,FUN_005E39C0,MATCH,231,src/netshare.cpp,?FUN_005E39C0@@YIXPADH@Z
 0x005E3AB0,FUN_005E3AB0,MATCH,603,src/netshare.cpp,?FUN_005E3AB0@@YIXXZ
-0x005E5F10,LBSaveSelections,MATCH,793,src/netshare.cpp,?LBSaveSelections@@YIXPAUHWND__@@AAV?$Dictionary@VWideWstring@@_N@@@Z
 0x005E6230,LBRestoreSelections,MATCH,516,src/netshare.cpp,?LBRestoreSelections@@YIXPAUHWND__@@AAV?$Dictionary@VWideWstring@@_N@@@Z
 0x005E6440,FUN_005E6440,MATCH,45,src/netshare.cpp,?FUN_005E6440@@YIHXZ
 0x005E6470,FUN_005E6470,MATCH,68,src/netshare.cpp,?FUN_005E6470@@YIHXZ
@@ -11820,7 +11817,6 @@ address,name,result,size,source,symbol
 0x0065D890,_$E38,MATCH,26,src/reinf.cpp,_$E38
 0x0065D8B0,_$E41,MATCH,23,src/reinf.cpp,_$E41
 0x0065D8D0,FUN_0065D8D0,MATCH,3,src/reinf.cpp,?FUN_0065D8D0@@YI_NXZ
-0x0065D8E0,Do_Reinforcements,MATCH,1093,src/reinf.cpp,?Do_Reinforcements@@YI_NPBVTeamTypeClass@@H@Z
 0x0065DD30,_Create_Group,MATCH,734,src/reinf.cpp,?_Create_Group@@YIPAVFootClass@@PBVTeamTypeClass@@@Z
 0x0065E010,Create_Reinforcement,MATCH,1599,src/reinf.cpp,?Create_Reinforcement@@YI_NPBVTeamTypeClass@@PAVFootClass@@ABVCell@@_N@Z
 0x0065E650,Create_Special_Reinforcement,MATCH,5,src/reinf.cpp,?Create_Special_Reinforcement@@YI_NPAVHouseClass@@PBVTechnoTypeClass@@1W4TeamMissionType@@H@Z
@@ -18107,7 +18103,6 @@ address,name,result,size,source,symbol
 0x007A9200,FUN_007A9200,MATCH,842,src/wonline.cpp,?FUN_007A9200@@YGJPAXJPAUUser@@PBD@Z
 0x007A9550,FUN_007A9550,MATCH,673,src/wonline.cpp,?FUN_007A9550@@YGJPAXJPAUUser@@PBG@Z
 0x007A9800,FUN_007A9800,MATCH,365,src/wonline.cpp,?FUN_007A9800@@YGJPAXJ@Z
-0x007A9970,FUN_007A9970,MATCH,3371,src/wonline.cpp,?FUN_007A9970@@YGJPAXJPAUChannel@@@Z
 0x007AA6A0,FUN_007AA6A0,MATCH,47,src/wonline.cpp,?FUN_007AA6A0@@YGJPAXJH@Z
 0x007AA6D0,FUN_007AA6D0,MATCH,413,src/wonline.cpp,?FUN_007AA6D0@@YGJPAXJ@Z
 0x007AA870,FUN_007AA870,MATCH,1849,src/wonline.cpp,?FUN_007AA870@@YGJPAXJPAUChannel@@@Z

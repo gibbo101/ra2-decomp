@@ -867,53 +867,7 @@ static inline void LBSelectText(HWND win, WideWstring & key, wchar_t * wide)
 	}
 }
 
-static inline void Save_Selected_Text(Dictionary<WideWstring,bool> &selections, WideWstring &key, wchar_t const *text)
-{
-	key = text;
-	bool selected = true;
-	selections.add(key, selected);
-}
 
-// FUNCTION: GAMEMD 0x005E5F10
-void LBSaveSelections(HWND win, Dictionary<WideWstring,bool> &lbdict)
-{
-	int count = ListBox_GetCount(win);
-	WideWstring key;
-	wchar_t wide[0x400];
-	char narrow[0x400];
-	if (count == 0) {
-		return;
-	}
-
-	LONG style = GetWindowLong(win, GWL_STYLE);
-	if (style & LBS_MULTIPLESEL) {
-		for (int i = 0; i < count; i++) {
-			if (ListBox_GetSel(win, i)) {
-				if (SendMessage(win, 0x4cf, i, 0)) {
-					SendMessage(win, 0x4b6, i, (LPARAM)wide);
-				} else {
-					SendMessage(win, 0x4b7, i, (LPARAM)narrow);
-					FUN_00735060(wide, narrow, -1);
-				}
-				Save_Selected_Text(lbdict, key, wide);
-			}
-		}
-	} else if (!(style & LBS_NOSEL)) {
-		int i = ListBox_GetCurSel(win);
-		if (i >= 0) {
-			wide[0] = 0;
-			if (SendMessage(win, 0x4cf, i, 0)) {
-				SendMessage(win, 0x4b6, i, (LPARAM)wide);
-			} else {
-				SendMessage(win, 0x4b7, i, (LPARAM)narrow);
-				FUN_00735060(wide, narrow, -1);
-			}
-			key = wide;
-			bool selected = true;
-			lbdict.add(key, selected);
-		}
-	}
-}
 
 // FUNCTION: GAMEMD 0x005E6230
 void LBRestoreSelections(HWND win, Dictionary<WideWstring,bool> & lbdict)
