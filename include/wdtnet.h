@@ -787,13 +787,13 @@ namespace WorldDominationTour
 			void Remove_Target_Anims2(void);
 			void On_Map_Enter(void);
 			void On_Map_Leave(void);
+			void On_Cancel_Enter(void);
 			void On_Cancel_Leave(void);
 			void Do_Target_Selection(int index);
 			int Get_Outcome(int tick, bool & mega);
 			bool Present_Ticks(int tick_from, int tick_to);
 			void Presentation(int index);
 			bool Present_History(int tick_from, int tick_to);
-			void FUN_0076E180(void);
 			void FUN_0076EBE0(Wstring const & name);
 			void FUN_0076EEB0(void);
 
