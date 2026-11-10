@@ -14678,6 +14678,7 @@ address,name,result,size,source,symbol
 0x006EF5F0,TeamClass::Flash,MATCH,30,src/team.cpp,?Flash@TeamClass@@QAEXH@Z
 0x006EF610,TeamClass::TMission_PLAY_ANIM,MATCH,192,src/team.cpp,?TMission_PLAY_ANIM@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z
 0x006EF6D0,TeamClass::TMission_TALK_BUBBLE,MATCH,37,src/team.cpp,?TMission_TALK_BUBBLE@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z
+0x006EF700,TeamClass::TMission_MOVE_TO_ENEMY_APPROACH,MATCH,736,src/team.cpp,?TMission_MOVE_TO_ENEMY_APPROACH@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z
 0x006EFC70,TeamClass::TMission_IRON_CURTAIN,MATCH,482,src/team.cpp,?TMission_IRON_CURTAIN@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z
 0x006F0130,TeamClass::TMission_CHRONO_ATTACK,MATCH,626,src/team.cpp,?TMission_CHRONO_ATTACK@TeamClass@@AAEXPAVTeamMissionClass@@_N@Z
 0x006F03B0,TeamClass::Stray_Distance,MATCH,60,src/team.cpp,?Stray_Distance@TeamClass@@QAEHXZ
@@ -17376,12 +17377,18 @@ address,name,result,size,source,symbol
 0x0076DF50,WorldDominationTour::Selection::Remove_Target_Anims2,MATCH,115,src/wdtsel.cpp,?Remove_Target_Anims2@Selection@WorldDominationTour@@QAEXXZ
 0x0076DFD0,WorldDominationTour::Selection::On_Map_Enter,MATCH,181,src/wdtsel.cpp,?On_Map_Enter@Selection@WorldDominationTour@@QAEXXZ
 0x0076E090,WorldDominationTour::Selection::On_Map_Leave,MATCH,237,src/wdtsel.cpp,?On_Map_Leave@Selection@WorldDominationTour@@QAEXXZ
+0x0076E180,WorldDominationTour::Selection::On_Cancel_Enter,MATCH,261,src/wdtsel.cpp,?On_Cancel_Enter@Selection@WorldDominationTour@@QAEXXZ
+0x0076E290,WorldDominationTour::Selection::On_Cancel_Leave,MATCH,83,src/wdtsel.cpp,?On_Cancel_Leave@Selection@WorldDominationTour@@QAEXXZ
 0x0076E2F0,WorldDominationTour::Selection::Do_Target_Selection,MATCH,319,src/wdtsel.cpp,?Do_Target_Selection@Selection@WorldDominationTour@@QAEXH@Z
+0x0076E430,WorldDominationTour::Selection::Get_Outcome,MATCH,191,src/wdtsel.cpp,?Get_Outcome@Selection@WorldDominationTour@@QAEHHAA_N@Z
 0x0076E4F0,WorldDominationTour::Selection::Present_Ticks,MATCH,600,src/wdtsel.cpp,?Present_Ticks@Selection@WorldDominationTour@@QAE_NHH@Z
+0x0076E750,WorldDominationTour::Selection::Presentation,MATCH,339,src/wdtsel.cpp,?Presentation@Selection@WorldDominationTour@@QAEXH@Z
+0x0076E8B0,WorldDominationTour::Selection::Present_History,MATCH,275,src/wdtsel.cpp,?Present_History@Selection@WorldDominationTour@@QAE_NHH@Z
 0x0076E9D0,WorldDominationTour::Selection::Check_For_Breakout,MATCH,66,src/wdtsel.cpp,?Check_For_Breakout@Selection@WorldDominationTour@@QAEXXZ
 0x0076EA20,WorldDominationTour::Selection::Set_Text,MATCH,198,src/wdtsel.cpp,?Set_Text@Selection@WorldDominationTour@@QAEXABVWideWstring@@H@Z
 0x0076EAF0,WorldDominationTour::Selection::Set_Tooltip,MATCH,225,src/wdtsel.cpp,?Set_Tooltip@Selection@WorldDominationTour@@QAEXABVWideWstring@@@Z
 0x0076EBE0,WorldDominationTour::Selection::Play_SFX,MATCH,158,src/wdtsel.cpp,?Play_SFX@Selection@WorldDominationTour@@QAEXABVWstring@@@Z
+0x0076EC80,WorldDominationTour::Selection::Set_Long_Description,MATCH,80,src/wdtsel.cpp,?Set_Long_Description@Selection@WorldDominationTour@@QAEXXZ
 0x0076ECD0,FUN_0076ECD0,MATCH,62,src/wdtsel.cpp,?FUN_0076ECD0@@YIXPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z
 0x0076EEB0,WorldDominationTour::Selection::FUN_0076EEB0,MATCH,195,src/wdtsel.cpp,?FUN_0076EEB0@Selection@WorldDominationTour@@QAEXXZ
 0x0076EF80,WorldDominationTour::Selection::End,MATCH,91,src/wdtsel.cpp,?End@Selection@WorldDominationTour@@QAEXXZ
