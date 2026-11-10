@@ -11050,13 +11050,10 @@ address,name,result,size,source,symbol
 0x00635210,PlanningNodeClass::Locate_Loop_Branch,MATCH,182,src/planmgr.cpp,?Locate_Loop_Branch@PlanningNodeClass@@QAEXXZ
 0x006352D0,PlanningNodeClass::Select_All,MATCH,49,src/planmgr.cpp,?Select_All@PlanningNodeClass@@QAEXXZ
 0x00635310,PlanningNodeClass::Unselect_All,MATCH,49,src/planmgr.cpp,?Unselect_All@PlanningNodeClass@@QAEXXZ
-0x00635350,PlanningNodeClass::Draw_Lead_Box,MATCH,309,src/planmgr.cpp,?Draw_Lead_Box@PlanningNodeClass@@QAEXH@Z
 0x00635490,PlanningNodeClass::Fill_Lead_Box,MATCH,202,src/planmgr.cpp,?Fill_Lead_Box@PlanningNodeClass@@QAEXH@Z
-0x00635560,PlanningNodeClass::Frame_Lead_Box,MATCH,281,src/planmgr.cpp,?Frame_Lead_Box@PlanningNodeClass@@QAEXH@Z
 0x00635680,PlanningNodeClass::FUN_00635680,MATCH,324,src/planmgr.cpp,?FUN_00635680@PlanningNodeClass@@QAEXH@Z
 0x006357D0,FUN_006357D0,MATCH,81,src/planmgr.cpp,?FUN_006357D0@@YIXPAV?$TRect@H@@H@Z
 0x0063D070,FUN_0063D070,MATCH,120,src/planmgr.cpp,?FUN_0063D070@@YIHABVRGBClass@@0H@Z
-0x00635830,PlanningNodeClass::Node_Color,MATCH,519,src/planmgr.cpp,?Node_Color@PlanningNodeClass@@QAEHXZ
 0x00635A40,PlanningNodeClass::Branch_Color,MATCH,462,src/planmgr.cpp,?Branch_Color@PlanningNodeClass@@QAEHH@Z
 0x00635C10,PlanningNodeClass::Loop_Color,MATCH,401,src/planmgr.cpp,?Loop_Color@PlanningNodeClass@@QAEHXZ
 0x00635DB0,PlanningNodeClass::Reset_Colors,MATCH,54,src/planmgr.cpp,?Reset_Colors@PlanningNodeClass@@QAEX_N@Z
@@ -11135,11 +11132,8 @@ address,name,result,size,source,symbol
 0x00639040,FUN_00639040,MATCH,229,src/planmgr.cpp,?FUN_00639040@@YI_NXZ
 0x00639130,FUN_00639130,MATCH,215,src/planmgr.cpp,?FUN_00639130@@YI_NXZ
 0x00639210,FUN_00639210,MATCH,187,src/planmgr.cpp,?FUN_00639210@@YIPAVPlanningNodeClass@@HHVCoord@@@Z
-0x006392D0,FUN_006392D0,MATCH,207,src/planmgr.cpp,?FUN_006392D0@@YIPAVPlanningNodeClass@@VPoint2D@@@Z
-0x006393A0,FUN_006393A0,MATCH,207,src/planmgr.cpp,?FUN_006393A0@@YIPAVPlanningNodeClass@@VPoint2D@@@Z
 0x00639470,FUN_00639470,MATCH,105,src/planmgr.cpp,?FUN_00639470@@YIPAVPlanningNodeClass@@VCoord@@@Z
 0x006394E0,FUN_006394E0,MATCH,193,src/planmgr.cpp,?FUN_006394E0@@YIXPAVAbstractClass@@PAVPlanningNodeClass@@@Z
-0x006395B0,FUN_006395B0,MATCH,388,src/planmgr.cpp,?FUN_006395B0@@YIXPAVTechnoClass@@PAVPlanningNodeClass@@@Z
 0x00639740,FUN_00639740,MATCH,185,src/planmgr.cpp,?FUN_00639740@@YIXPAVTechnoClass@@PAVPlanningNodeClass@@@Z
 0x00639800,FUN_00639800,MATCH,587,src/planmgr.cpp,?FUN_00639800@@YIXPAVTechnoClass@@PAVPlanningNodeClass@@@Z
 0x00639A50,FUN_00639A50,MATCH,354,src/planmgr.cpp,?FUN_00639A50@@YIXPAVPlanningNodeClass@@0VEventClass@@@Z
@@ -11162,7 +11156,6 @@ address,name,result,size,source,symbol
 0x0063A4B0,FUN_0063A4B0,MATCH,237,src/planmgr.cpp,?FUN_0063A4B0@@YIXH@Z
 0x0063AAC0,FUN_0063AAC0,MATCH,64,src/planmgr.cpp,?FUN_0063AAC0@@YGXVPoint2D@@@Z
 0x0063AB00,FUN_0063AB00,MATCH,86,src/planmgr.cpp,?FUN_0063AB00@@YGXVPoint2D@@@Z
-0x0063AB60,FUN_0063AB60,MATCH,252,src/planmgr.cpp,?FUN_0063AB60@@YG_NVPoint2D@@@Z
 0x0063AC60,FUN_0063AC60,MATCH,6,src/planmgr.cpp,?FUN_0063AC60@@YIPAVPlanningNodeClass@@XZ
 0x0063AC70,FUN_0063AC70,MATCH,182,src/planmgr.cpp,?FUN_0063AC70@@YIHPAVPlanningNodeClass@@@Z
 0x0063AD30,FUN_0063AD30,MATCH,7,src/planmgr.cpp,?FUN_0063AD30@@YIXPAVPlanningNodeClass@@@Z
@@ -11173,8 +11166,6 @@ address,name,result,size,source,symbol
 0x0063B080,FUN_0063B080,MATCH,7,src/planmgr.cpp,?FUN_0063B080@@YIXPAVPlanningNodeClass@@@Z
 0x0063B090,FUN_0063B090,MATCH,11,src/planmgr.cpp,?FUN_0063B090@@YIXXZ
 0x0063B0A0,FUN_0063B0A0,MATCH,176,src/planmgr.cpp,?FUN_0063B0A0@@YIXXZ
-0x0063B150,FUN_0063B150,MATCH,411,src/planmgr.cpp,?FUN_0063B150@@YIXXZ
-0x0063B2F0,FUN_0063B2F0,MATCH,608,src/planmgr.cpp,?FUN_0063B2F0@@YIXXZ
 0x0063BE10,FUN_0063BE10,MATCH,66,src/planmgr.cpp,?FUN_0063BE10@@YI_NPAVTechnoClass@@@Z
 0x0063BE60,Draw_Filled_Unit_Waypoints,MATCH,2085,src/planmgr.cpp,?Draw_Filled_Unit_Waypoints@@YIXPAVTechnoClass@@@Z
 0x0063CA80,FUN_0063CA80,MATCH,87,src/planmgr.cpp,?FUN_0063CA80@@YI?AVCoord@@ABVEventClass@@PAVTechnoClass@@@Z

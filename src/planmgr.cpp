@@ -526,26 +526,6 @@ Point2D PlanningNodeClass::Lead_Pixel(void)
 	return pixel;
 }
 
-static inline Coord Event_Coord(EventClass const & e) { return FUN_00633BC0(e); }
-static inline Point2D Pixel_0(Coord const & c) { return FUN_006339E0(c); }
-static inline Point2D Pixel_1(Coord const & c) { return Pixel_0(c); }
-static inline Point2D Pixel_2(Coord const & c) { return Pixel_1(c); }
-static inline Point2D Pixel_3(Coord const & c) { return Pixel_2(c); }
-static inline Point2D Pixel_4(Coord const & c) { return Pixel_3(c); }
-static inline Point2D Pixel_5(Coord const & c) { return Pixel_4(c); }
-static inline Point2D Pixel_6(Coord const & c) { return Pixel_5(c); }
-static inline Point2D Pixel_7(Coord const & c) { return Pixel_6(c); }
-static inline Point2D Pixel_Of(Coord c) { Point2D p = Pixel_7(c); return p; }
-static inline Rect Around_0(int size, Point2D p) { return FUN_00634510(p, size); }
-static inline Rect Around_1(int size, Point2D p) { return Around_0(size, p); }
-static inline Rect Around_2(int size, Point2D p) { return Around_1(size, p); }
-static inline Rect Around_3(int size, Point2D p) { return Around_2(size, p); }
-static inline Rect Around_4(int size, Point2D p) { return Around_3(size, p); }
-static inline Rect Around_5(int size, Point2D p) { return Around_4(size, p); }
-static inline Rect Around_6(int size, Point2D p) { return Around_5(size, p); }
-static inline Rect Around_7(int size, Point2D p) { return Around_6(size, p); }
-static inline Rect Around(int size, Point2D p) { return Around_7(size, p); }
-
 // FUNCTION: GAMEMD 0x00634470
 bool PlanningNodeClass::Hit_Test(int x, int y)
 {
@@ -874,17 +854,6 @@ void PlanningNodeClass::Unselect_All(void)
 	}
 }
 
-// FUNCTION: GAMEMD 0x00635350
-void PlanningNodeClass::Draw_Lead_Box(int color)
-{
-	Rect clip = Get_Title_Screen_Area();
-	Rect const & rect = FUN_00634510(Pixel_Of(Lead_Coord()), 8);
-	DSurface::Composite->Draw_Rect(clip, rect, color);
-	if (clip.Is_Overlapping(rect)) {
-		Unknown2.Add(this);
-	}
-}
-
 // FUNCTION: GAMEMD 0x00635490
 void PlanningNodeClass::Fill_Lead_Box(int color)
 {
@@ -906,17 +875,6 @@ static inline Rect Inflated(Rect const & r, int n)
 	o.Width += 2 * n;
 	o.Height += 2 * n;
 	return o;
-}
-
-// FUNCTION: GAMEMD 0x00635560
-void PlanningNodeClass::Frame_Lead_Box(int color)
-{
-	Rect clip = Get_Title_Screen_Area();
-	Rect rect = Inflated(Around(8, Pixel_Of(Event_Coord(*PlanningMembers[0]->Packet))), 4);
-	for (int i = 0; i < 3; i++) {
-		DSurface::Composite->Draw_Rect(clip, rect, color);
-		Shrink_Rect(rect);
-	}
 }
 
 // FUNCTION: GAMEMD 0x00635680
@@ -967,45 +925,6 @@ int __fastcall FUN_0063D070(RGBClass const & color, RGBClass const & other, int 
 	return (mixed.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
 		| (mixed.Get_Green() >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
 		| (mixed.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
-}
-
-static inline int Mix_0(RGBClass const & c, RGBClass const & o, int r) { return FUN_0063D070(c, o, r); }
-static inline int Mix_1(RGBClass const & c, RGBClass const & o, int r) { return Mix_0(c, o, r); }
-static inline int Mix_2(RGBClass const & c, RGBClass const & o, int r) { return Mix_1(c, o, r); }
-static inline int Mix_3(RGBClass const & c, RGBClass const & o, int r) { return Mix_2(c, o, r); }
-static inline int Mix_4(RGBClass const & c, RGBClass const & o, int r) { return Mix_3(c, o, r); }
-static inline int Mix_5(RGBClass const & c, RGBClass const & o, int r) { return Mix_4(c, o, r); }
-static inline int Mix_6(RGBClass const & c, RGBClass const & o, int r) { return Mix_5(c, o, r); }
-static inline int Mix_7(RGBClass const & c, RGBClass const & o, int r) { return Mix_6(c, o, r); }
-
-// FUNCTION: GAMEMD 0x00635830
-int PlanningNodeClass::Node_Color(void)
-{
-	int result = Color;
-	if (result == -1) {
-		TechnoClass * owner = PlanningMembers[0]->Owner;
-		int slot = FUN_006339B0(owner);
-		result = Mix_7(RGBClass(Houses[slot]->RemapColorRGB), DAT_00A83CD9, 0x50);
-		Color = result;
-		int count = PlanningBranches.Count();
-		for (int i = 0; i < count; i++) {
-			if (PlanningBranches[i]->Get_Color() == result) goto done;
-		}
-		if (count == 0) {
-			PlanningTokenClass * token = owner->FUN_00705D20();
-			bool past = token->Reached(token->Node_Index(this));
-			if (past) {
-				slot = FUN_006339B0(owner);
-				Color = FUN_0063D070(RGBClass(Houses[slot]->RemapColorRGB), DAT_00A80220, 0x64);
-			}
-		} else {
-			slot = FUN_006339B0(owner);
-			Color = FUN_0063D070(RGBClass(Houses[slot]->RemapColorRGB), DAT_00A80220, 0x64);
-		}
-		result = Color;
-	}
-done:
-	return result;
 }
 
 // FUNCTION: GAMEMD 0x00635A40
@@ -2025,89 +1944,6 @@ PlanningNodeClass * __fastcall FUN_00639210(int house, int id, Coord coord)
 	return 0;
 }
 
-static inline Coord Node_Lead_0(PlanningNodeClass * n) { return n->Lead_Coord(); }
-static inline Coord Node_Lead_1(PlanningNodeClass * n) { return Node_Lead_0(n); }
-static inline Coord Node_Lead_2(PlanningNodeClass * n) { return Node_Lead_1(n); }
-static inline Coord Node_Lead_3(PlanningNodeClass * n) { return Node_Lead_2(n); }
-static inline Coord Node_Lead_4(PlanningNodeClass * n) { return Node_Lead_3(n); }
-static inline Coord Node_Lead_5(PlanningNodeClass * n) { return Node_Lead_4(n); }
-static inline Coord Node_Lead_6(PlanningNodeClass * n) { return Node_Lead_5(n); }
-static inline Coord Node_Lead_7(PlanningNodeClass * n) { return Node_Lead_6(n); }
-static inline void Box_Into_0(Rect * r, int x, int y, int w, int h) { r->TRect<int>::TRect(x, y, w, h); }
-static inline void Box_Into_1(Rect * r, int x, int y, int w, int h) { Box_Into_0(r, x, y, w, h); }
-static inline void Box_Into_2(Rect * r, int x, int y, int w, int h) { Box_Into_1(r, x, y, w, h); }
-static inline void Box_Into_3(Rect * r, int x, int y, int w, int h) { Box_Into_2(r, x, y, w, h); }
-static inline void Box_Into_4(Rect * r, int x, int y, int w, int h) { Box_Into_3(r, x, y, w, h); }
-static inline void Box_Into_5(Rect * r, int x, int y, int w, int h) { Box_Into_4(r, x, y, w, h); }
-static inline void Box_Into_6(Rect * r, int x, int y, int w, int h) { Box_Into_5(r, x, y, w, h); }
-static inline void Box_Into_7(Rect * r, int x, int y, int w, int h) { Box_Into_6(r, x, y, w, h); }
-
-static inline void Grow(Rect * rect, int amount)
-{
-	int twice = amount * 2;
-	if (twice < 0 && (twice >= rect->Width || twice >= rect->Height)) {
-		rect->X = 0;
-		rect->Y = 0;
-		rect->Width = 0;
-		rect->Height = 0;
-		return;
-	}
-	rect->X -= amount;
-	rect->Y -= amount;
-	rect->Width += twice;
-	rect->Height += twice;
-}
-
-static inline Rect Boxed(Rect r) { Rect b = r; Grow(&b, 4); return b; }
-
-// FUNCTION: GAMEMD 0x006392D0
-PlanningNodeClass * __fastcall FUN_006392D0(Point2D point)
-{
-	int count = PlanningNodeClass::Unknown1.Count();
-	int i = 0;
-	if (count > 0) {
-		do {
-			PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
-			Coord coord = Node_Lead_7(node);
-			Point2D corner = Pixel_Of(coord);
-			corner.X -= 4;
-			corner.Y -= 4;
-			Rect rect;
-			Box_Into_7(&rect, corner.X, corner.Y, 8, 8);
-			Rect box = Boxed(rect);
-			if (box.Is_Point_Within(point)) {
-				return node;
-			}
-			i++;
-		} while (i < count);
-	}
-	return 0;
-}
-
-// FUNCTION: GAMEMD 0x006393A0
-PlanningNodeClass * __fastcall FUN_006393A0(Point2D point)
-{
-	int count = PlanningNodeClass::Unknown2.Count();
-	int i = 0;
-	if (count > 0) {
-		do {
-			PlanningNodeClass * node = PlanningNodeClass::Unknown2[i];
-			Coord coord = Node_Lead_7(node);
-			Point2D corner = Pixel_Of(coord);
-			corner.X -= 4;
-			corner.Y -= 4;
-			Rect rect;
-			Box_Into_7(&rect, corner.X, corner.Y, 8, 8);
-			Rect box = Boxed(rect);
-			if (box.Is_Point_Within(point)) {
-				return node;
-			}
-			i++;
-		} while (i < count);
-	}
-	return 0;
-}
-
 // FUNCTION: GAMEMD 0x00639470
 PlanningNodeClass * __fastcall FUN_00639470(Coord coord)
 {
@@ -2151,15 +1987,6 @@ void __fastcall FUN_00639800(TechnoClass * techno, PlanningNodeClass * node);
 extern bool DAT_00AC4CD0;
 void __fastcall FUN_00639CB0(TechnoClass * techno);
 
-static inline void Token_Add_0(PlanningTokenClass * const & token) { PlanningTokenClass::Array.Add(token); }
-static inline void Token_Add_1(PlanningTokenClass * const & token) { Token_Add_0(token); }
-static inline void Token_Add_2(PlanningTokenClass * const & token) { Token_Add_1(token); }
-static inline void Token_Add_3(PlanningTokenClass * const & token) { Token_Add_2(token); }
-static inline void Token_Add_4(PlanningTokenClass * const & token) { Token_Add_3(token); }
-static inline void Token_Add_5(PlanningTokenClass * const & token) { Token_Add_4(token); }
-static inline void Token_Add_6(PlanningTokenClass * const & token) { Token_Add_5(token); }
-static inline void Token_Add_7(PlanningTokenClass * const & token) { Token_Add_6(token); }
-
 static inline void Close_Loop(TechnoClass * techno, PlanningNodeClass * node)
 {
 	PlanningTokenClass * token = techno->FUN_00705D20();
@@ -2181,23 +2008,6 @@ static inline void Close_Loop(TechnoClass * techno, PlanningNodeClass * node)
 		FUN_00639CB0(techno);
 	}
 	node->Update_Active();
-}
-
-// FUNCTION: GAMEMD 0x006395B0
-void __fastcall FUN_006395B0(TechnoClass * techno, PlanningNodeClass * node)
-{
-	PlanningTokenClass * token = techno->FUN_00705D20();
-	if (!token) {
-		PlanningTokenClass * created = new PlanningTokenClass(techno);
-		Token_Add_7(created);
-		techno->FUN_00705D10(created);
-		token = created;
-	}
-	if (token->Has_Node(node)) {
-		Close_Loop(techno, node);
-	} else {
-		FUN_00639800(techno, node);
-	}
 }
 
 // FUNCTION: GAMEMD 0x00639740
@@ -2541,46 +2351,6 @@ void __stdcall FUN_0063AB00(Point2D xy)
 	}
 }
 
-// FUNCTION: GAMEMD 0x0063AB60
-bool __stdcall FUN_0063AB60(Point2D xy)
-{
-	if (!PlanningNodeClass::PlanningModeActive) {
-		return false;
-	}
-	if (DAT_00AC4CB0) {
-		return false;
-	}
-	PlanningNodeClass * hover = DAT_00AC4CCC;
-	PlanningNodeClass * sel = DAT_00AC4C38;
-	PlanningNodeClass * hit;
-	if (hover != 0) {
-		Point2D corner = Pixel_Of(Node_Lead_7(hover));
-		corner.X -= 4;
-		corner.Y -= 4;
-		Rect rect;
-		Box_Into_7(&rect, corner.X, corner.Y, 8, 8);
-		Rect box = Boxed(rect);
-		if (box.Is_Point_Within(xy)) {
-			hit = DAT_00AC4CCC;
-		} else {
-			hit = 0;
-		}
-	} else {
-		hit = 0;
-	}
-	if (sel == 0) {
-		if (hit == 0) {
-			return false;
-		}
-		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
-	} else if (hit != sel) {
-		Map.Set_Default_Mouse(MOUSE_NORMAL, false);
-	} else {
-		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
-	}
-	return true;
-}
-
 // FUNCTION: GAMEMD 0x0063AC60
 PlanningNodeClass * __fastcall FUN_0063AC60(void)
 {
@@ -2792,94 +2562,6 @@ void __fastcall FUN_0063B0A0(void)
 }
 
 void __fastcall Draw_Filled_Unit_Waypoints(TechnoClass * techno);
-
-// FUNCTION: GAMEMD 0x0063B150
-void __fastcall FUN_0063B150(void)
-{
-	int nodes = PlanningNodeClass::Unknown1.Count();
-	for (int i = 0; i < nodes; i++) {
-		PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
-		HouseClass * house = node->PlanningMembers[0]->Owner->House;
-		if (house->Is_Ally(PlayerPtr)) {
-			node->FUN_0063CAE0();
-		}
-	}
-	for (int j = 0; j < nodes; j++) {
-		PlanningNodeClass * node = PlanningNodeClass::Unknown1[j];
-		HouseClass * house = node->PlanningMembers[0]->Owner->House;
-		if (house->Is_Ally(PlayerPtr)) {
-			int color = node->Node_Color();
-			Rect clip = Get_Title_Screen_Area();
-			Rect rect = Around(8, Pixel_Of(Node_Lead_7(node)));
-			Shrink_Rect(rect);
-			DSurface::Composite->Fill_Rect(clip, rect, color);
-		}
-	}
-	int count = Technos.Count();
-	for (int k = 0; k < count; k++) {
-		TechnoClass * techno = Technos[k];
-		HouseClass * house = techno->House;
-		if (house->Is_Ally(PlayerPtr)) {
-			Draw_Filled_Unit_Waypoints(techno);
-		}
-	}
-}
-
-static inline int Pixel_Color(RGBClass const & c)
-{
-	return (c.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
-		| (c.Get_Green() >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
-		| (c.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
-}
-
-static inline Point2D Node_Pixel_0(PlanningNodeClass * n) { return n->Lead_Pixel(); }
-static inline Point2D Node_Pixel_1(PlanningNodeClass * n) { return Node_Pixel_0(n); }
-static inline Point2D Node_Pixel_2(PlanningNodeClass * n) { return Node_Pixel_1(n); }
-static inline Point2D Node_Pixel_3(PlanningNodeClass * n) { return Node_Pixel_2(n); }
-static inline Point2D Node_Pixel_4(PlanningNodeClass * n) { return Node_Pixel_3(n); }
-static inline Point2D Node_Pixel_5(PlanningNodeClass * n) { return Node_Pixel_4(n); }
-static inline Point2D Node_Pixel_6(PlanningNodeClass * n) { return Node_Pixel_5(n); }
-static inline Point2D Node_Pixel_7(PlanningNodeClass * n) { return Node_Pixel_6(n); }
-static inline Rect Node_Rect_0(PlanningNodeClass * n) { return n->Lead_Rect(); }
-static inline Rect Node_Rect_1(PlanningNodeClass * n) { return Node_Rect_0(n); }
-static inline Rect Node_Rect_2(PlanningNodeClass * n) { return Node_Rect_1(n); }
-static inline Rect Node_Rect_3(PlanningNodeClass * n) { return Node_Rect_2(n); }
-static inline Rect Node_Rect_4(PlanningNodeClass * n) { return Node_Rect_3(n); }
-static inline Rect Node_Rect_5(PlanningNodeClass * n) { return Node_Rect_4(n); }
-static inline Rect Node_Rect_6(PlanningNodeClass * n) { return Node_Rect_5(n); }
-static inline Rect Node_Rect_7(PlanningNodeClass * n) { return Node_Rect_6(n); }
-static inline void Widen_0(Rect * r) { FUN_006357D0(r, 4); }
-static inline void Widen_1(Rect * r) { Widen_0(r); }
-static inline void Widen_2(Rect * r) { Widen_1(r); }
-static inline void Widen_3(Rect * r) { Widen_2(r); }
-static inline void Widen_4(Rect * r) { Widen_3(r); }
-static inline void Widen_5(Rect * r) { Widen_4(r); }
-static inline void Widen_6(Rect * r) { Widen_5(r); }
-static inline Rect Grown(Rect r) { Widen_6(&r); return r; }
-
-// FUNCTION: GAMEMD 0x0063B2F0
-void __fastcall FUN_0063B2F0(void)
-{
-	int color = Pixel_Color(DAT_00A80220);
-	PlanningNodeClass * hover = DAT_00AC4CCC;
-	if (hover) {
-		Rect clip = Get_Title_Screen_Area();
-		Rect rect = Inflated(Around(8, Node_Pixel_7(hover)), 4);
-		for (int i = 0; i < 3; i++) {
-			DSurface::Composite->Draw_Rect(clip, rect, color);
-			Shrink_Rect(rect);
-		}
-	}
-	PlanningNodeClass * sel = DAT_00AC4BF0;
-	if (sel) {
-		Rect clip = Get_Title_Screen_Area();
-		Rect rect = Grown(Grown(Node_Rect_7(sel)));
-		for (int i = 0; i < 3; i++) {
-			DSurface::Composite->Draw_Rect(clip, rect, color);
-			Shrink_Rect(rect);
-		}
-	}
-}
 
 // FUNCTION: GAMEMD 0x0063BE10
 bool __fastcall FUN_0063BE10(TechnoClass * techno)
