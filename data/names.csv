@@ -549,3 +549,11 @@ address,name,symbol,evidence
 0x00B782C8,_pnhHeap,?_pnhHeap@@3P6AHI@ZA,Pinned LIBCMT handler.obj references in _set_new_handler and _callnewh independently resolve the allocation failure handler
 0x00B7856C,pOldExceptFilter,_pOldExceptFilter,Pinned LIBCMT unhandld.obj unique handler and restore routines independently resolve the previous exception filter
 0x0087CB14,_tmpoff,__tmpoff,Named reference in the complete independently located tmpfile.obj block; initialized data corroborated by the rmtmp.obj definition
+0x00A8F91C,PaletteInterpolationTable,_PaletteInterpolationTable,Unchanged archived winasm.asm independently unique interpolation procedures agree on this relocation target; already-matched src/interpal.cpp corroborates the global
+0x00879124,LineBuffer,LineBuffer,Unchanged archived winasm.asm independently unique interpolation procedures agree on this relocation target
+0x00877D20,TopLine,TopLine,Unchanged archived winasm.asm independently unique interpolation procedures agree on this relocation target
+0x00878720,BottomLine,BottomLine,Unchanged archived winasm.asm independently unique interpolation procedures agree on this relocation target
+0x00A8F918,InterpolationPalette,_InterpolationPalette,Unchanged archived winasm.asm independently unique interpolation procedures agree on this relocation target; already-matched src/interpal.cpp corroborates the global
+0x00B45590,VoxelPixelDeltaTable,_VoxelPixelDeltaTable,Independently matched Draw_Voxel_Regular_Normals and Draw_Voxel_Reverse_Normals agree on this external data reference
+0x00B2FF78,VoxelDrawBuffer,_VoxelDrawBuffer,Independently matched Draw_Voxel_Regular_Normals and Draw_Voxel_Reverse_Normals agree on this external data reference
+0x0084E862,UseMMX,_UseMMX,Archived processor detector sets the MMX flag; all four uniquely placed Adjust_Color procedures test the same byte
