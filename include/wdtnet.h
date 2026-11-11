@@ -360,7 +360,7 @@ namespace WorldDominationTour
 			bool FUN_00769440(Point2D const & point);
 			void FUN_007693A0(Selection * selection, bool hovered);
 			void FUN_007693F0(Selection * selection, bool hovered);
-			void FUN_007681E0(INIClass const & ini, Selection * selection, int value);
+			void FUN_007681E0(INIClass const & ini, Selection * selection, bool value);
 			void FUN_007692F0(Selection * selection, YRVoices * voices);
 			rc_ptr<Territory> FUN_0076F000(int id);
 			ConvertClass * FUN_007691E0(Wstring const & name);

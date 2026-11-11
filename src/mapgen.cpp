@@ -1682,6 +1682,115 @@ unsigned MapRegionClass::Build_Neighbor_Region_Mask(Cell const & cell, bool & va
 	return(mask);
 }
 
+// FUNCTION: GAMEMD 0x00593550
+bool MapRegionClass::Build_Corner_Ramp_NW(Cell const & cell2, Cell const & cell1, int region_id)
+{
+	int dx = cell2.X - cell1.X;
+	if (dx >= 3) {
+		int dy = cell1.Y - cell2.Y;
+		if (dy >= 3) {
+			Rect rect(cell1.X - 7, cell2.Y - 7, dx + 10, dy + 10);
+			if (Is_Ramp_Area_Clear(rect, region_id)) {
+
+				Flatten_Area(Rect(rect.X, rect.Y, rect.Width, 7), region_id);
+				Flatten_Area(Rect(rect.X, rect.Y, 7, rect.Height), region_id);
+				Flatten_Area(Rect(cell2.X, cell2.Y, 1, 2));
+				Flatten_Area(Rect(cell1.X, cell1.Y, 2, 1));
+				Flatten_Area(Rect(cell1.X + 1, cell2.Y + 1, cell2.X - cell1.X - 1, cell1.Y - cell2.Y - 1));
+
+				MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 5), cell2 - Cell(2, 3), region_id, CellHeight);
+				MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 6), cell2 - Cell(1, 1), region_id, CellHeight);
+				MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 8), cell1 - Cell(3, 2), region_id, CellHeight);
+				MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 9), cell1 - Cell(1, 1), region_id, CellHeight);
+
+				for (int i = 0; i < 4; ++i) {
+					CellClass * cptr = &Map[Cell(cell1.X - i, cell2.Y - i)];
+					cptr->Height = CellHeight - (char)i - 1;
+					cptr->Ramp = 5;
+					cptr->ITType = (IsometricTileType)(IsometricTileTypeClass::RampStart + 4);
+					cptr->SubTile = 0;
+				}
+
+				for (int j = 0; j < 4; ++j) {
+					for (int k = 0; k < cell2.X - cell1.X + j - 3; ++k) {
+						CellClass * cptr = &Map[Cell(cell2.X - k - 3, cell2.Y - j)];
+						cptr->Height = CellHeight - (char)j - 1;
+						cptr->Ramp = 2;
+						cptr->ITType = (IsometricTileType)(IsometricTileTypeClass::RampStart + 1);
+						cptr->SubTile = 0;
+					}
+				}
+
+				for (int m = 0; m < 4; ++m) {
+					for (int n = 0; n < cell1.Y - cell2.Y + m - 3; ++n) {
+						CellClass * cptr = &Map[Cell(cell1.X - m, cell1.Y - n - 3)];
+						cptr->Height = CellHeight - (char)m - 1;
+						cptr->Ramp = 1;
+						cptr->ITType = IsometricTileTypeClass::RampStart;
+						cptr->SubTile = 0;
+					}
+				}
+
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: GAMEMD 0x00593AF0
+bool MapRegionClass::Build_Corner_Ramp_SW(Cell const & cell1, Cell const & cell2, int region_id)
+{
+	int dx = cell2.X - cell1.X;
+	if (dx >= 3) {
+		int dy = cell2.Y - cell1.Y;
+		if (dy >= 3) {
+			Rect rect(cell1.X - 7, cell1.Y - 4, dx + 10, dy + 10);
+			if (Is_Ramp_Area_Clear(rect, region_id)) {
+				Flatten_Area(Rect(rect.X, rect.Y, 7, rect.Height), region_id);
+				Flatten_Area(Rect(rect.X, cell2.Y + 1, rect.Width, 7), region_id);
+				Flatten_Area(Rect(cell1.X, cell1.Y, 2, 1));
+				Flatten_Area(Rect(cell2.X, cell2.Y - 1, 1, 2));
+				Flatten_Area(Rect(cell1.X + 1, cell1.Y + 1, cell2.X - cell1.X - 1, cell2.Y - cell1.Y - 1));
+
+				MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 7), cell1 - Cell(3, 0), region_id, CellHeight);
+				MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 1), cell2 - Cell(2, 0), region_id, CellHeight);
+
+				for (int i = 0; i < 4; ++i) {
+					CellClass * cptr = &Map[Cell(cell1.X - i, cell2.Y + i)];
+					cptr->Height = CellHeight - (char)i - 1;
+					cptr->Ramp = 8;
+					cptr->ITType = (IsometricTileType)(IsometricTileTypeClass::RampStart + 7);
+					cptr->SubTile = 0;
+				}
+
+				for (int j = 0; j < 4; ++j) {
+					for (int k = 0; k < cell2.Y - cell1.Y + j - 3; ++k) {
+						CellClass * cptr = &Map[Cell(cell1.X - j, cell1.Y + k + 3)];
+						cptr->Height = CellHeight - (char)j - 1;
+						cptr->Ramp = 1;
+						cptr->ITType = IsometricTileTypeClass::RampStart;
+						cptr->SubTile = 0;
+					}
+				}
+
+				for (int m = 0; m < 4; ++m) {
+					for (int n = 0; n < cell2.X - cell1.X + m - 3; ++n) {
+						CellClass * cptr = &Map[Cell(cell2.X - n - 3, cell2.Y + m)];
+						cptr->Height = CellHeight - (char)m - 1;
+						cptr->Ramp = 4;
+						cptr->ITType = (IsometricTileType)(IsometricTileTypeClass::RampStart + 3);
+						cptr->SubTile = 0;
+					}
+				}
+
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x00594010
 bool MapRegionClass::Is_Ramp_Area_Clear(Rect & rect, int id)
 {
@@ -1731,7 +1840,8 @@ void MapRegionClass::Flatten_Area(Rect const & rect)
 			Cell cell(x, y);
 			if (My_In_Radar(cell)) {
 				CellData::Set_Region(cell, ID);
-				Map[cell].Height = CellHeight;
+				CellClass * cellptr = &Map[cell];
+				cellptr->Height = CellHeight;
 			}
 		}
 	}
@@ -2867,6 +2977,39 @@ bool MapSeedClass::Load(const char * name)
 
 	if (BASECLASS::Load()) {
 		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: GAMEMD 0x00597A30
+bool MapSeedClass::Load_File(const char * file_name)
+{
+	if (file_name != NULL) {
+		DebugString("Loading random map: %s\n", file_name);
+		CCFileClass file(file_name);
+		INIClass ini;
+
+		if (ini.Load(file, false)) {
+			ini.Get_UnicodeString("RandomMap", "Description", StringTable::LoadString("TXT_RANDOM_MAP_DESCRIPTION", NULL, "D:\\ra2mdpost\\MapGen.cpp", 5433), MapDescription, 128);
+			Width = ini.Get_Int("RandomMap", "Width", Width);
+			Height = ini.Get_Int("RandomMap", "Height", Height);
+			NumPlayers = ini.Get_Int("RandomMap", "NumPlayers", NumPlayers);
+			Seed = ini.Get_Int("RandomMap", "Seed", Seed);
+			MapType = ini.Get_Int("RandomMap", "MapType", MapType);
+			Biome = ini.Get_Int("RandomMap", "Theater", Biome);
+			Time = ini.Get_Int("RandomMap", "Time", Time);
+			Cliffs = ini.Get_Int("RandomMap", "RegionSize", Cliffs);
+			Hills = ini.Get_Int("RandomMap", "Ruggedness", Hills);
+			Accessibility = ini.Get_Int("RandomMap", "Accessibility", Accessibility);
+			WaterAmount = ini.Get_Int("RandomMap", "WaterAmount", WaterAmount);
+			Tiberium = ini.Get_Int("RandomMap", "Tiberium", Tiberium);
+			TiberiumLayout = ini.Get_Int("RandomMap", "TiberiumLayout", TiberiumLayout);
+			Vegetation = ini.Get_Int("RandomMap", "Vegetation", Vegetation);
+			Cities = ini.Get_Int("RandomMap", "UrbanPresence", Cities);
+			Resources = ini.Get_Int("RandomMap", "Resources", Resources);
+			return(true);
+		}
+		return(false);
 	}
 	return(false);
 }
@@ -6245,6 +6388,9 @@ void Init_Dirt_Roads(void)
 		DirtRoadTiles[i + 101].ITType = IsometricTileType(IsometricTileTypeClass::DirtRoadSlopes + i);
 	}
 }
+
+// FUNCTION: GAMEMD 0x005AC230
+// My_In_Radar
 
 // SYNTHETIC: GAMEMD 0x005AC270
 // ??_GMapSeedClass@@UAEPAXI@Z

@@ -2810,6 +2810,7 @@ address,size,symbol,source,sha256
 0x00480180,102,?Wipe_Depth@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z,src/cell.cpp,85f155d0d22c14aa3a398ca398b43498b5b55b145fe56bdbba6a198da5e99bf9
 0x004801F0,172,?Draw_Shroud_And_Fog@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z,src/cell.cpp,9ade6d197f0d3ae17d75ceb3ddbd0d45d073595d4686da895dc82c2ae0f412e7
 0x004802A0,165,?Draw_Shadow_Cast@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z,src/cell.cpp,9932101e26e41719529f4fcd062a2b0e3729187ec2892c2e8e967c88751f914b
+0x00480350,437,?Draw_It@CellClass@@QBEXABVPoint2D@@ABV?$TRect@H@@_N@Z,src/cell.cpp,5e5a6b708cd5db57149ae1e92c46f52097885f1cfcc135af8d021134ae5a10c1
 0x00480510,283,?Has_Wall_Or_Gate@CellClass@@QBE_NW4OverlayType@@W4FacingType@@@Z,src/cell.cpp,db862a7fe7551e0f56eaca485442946f13fc06e7e4ed91eea5dd1309226a478a
 0x00480630,1015,?Wall_Update@CellClass@@QAEX_N@Z,src/cell.cpp,5fa2c44e1e0ab219447fc718db9dca09cc89774c2745db7f0d4b3dce5188cc22
 0x00480A30,77,?Cell_Coord@CellClass@@QBE?AVCoord@@XZ,src/cell.cpp,fbaa65897ccc70fe7a2f5f30af1784bdada355aced79b71dc070bfa79365a388
@@ -8614,6 +8615,8 @@ address,size,symbol,source,sha256
 0x005905D0,920,?Make_Region_Connections@MapRegionClass@@QAEXXZ,src/mapgen.cpp,79db8a4ed9a1b50d53e3918cfdb09143f90fec4a9893955745c7530ad82daeb5
 0x00590970,1625,?Connect_Regions_With_Ramp@MapRegionClass@@QAE_NABVCell@@HM@Z,src/mapgen.cpp,460c6d6af707c092490d30ea5b1ffd5c05aed70be03c1900a36fddf30b9474c8
 0x00590FD0,279,?Build_Neighbor_Region_Mask@MapRegionClass@@QAEIABVCell@@AA_NHM@Z,src/mapgen.cpp,f35820076dea52336e939f41744b88dc47260df87cf83a5965382f041f31b8c3
+0x00593550,1426,?Build_Corner_Ramp_NW@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,45f18e9447b391ff000276e305d8625a3f914688adf546d78d6a13c046dcab4c
+0x00593AF0,1299,?Build_Corner_Ramp_SW@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,5b3e5dc8c52f24f62eee1f7d21f7e55f13eabf3d8fdc37c426f000644546cd77
 0x00594010,372,?Is_Ramp_Area_Clear@MapRegionClass@@QAE_NAAV?$TRect@H@@H@Z,src/mapgen.cpp,34e2976d7e6aa7e8a0df858125d40f074c8f1395117d8755f20f43409c249102
 0x00594190,343,?Flatten_Area@MapRegionClass@@QAEXABV?$TRect@H@@H@Z,src/mapgen.cpp,31ce54b9fbb2cb9198a3eaab0ba170e1555ef0bebf517e1b4c2a72c8e7772e8c
 0x005942F0,232,?Flatten_Area@MapRegionClass@@QAEXABV?$TRect@H@@@Z,src/mapgen.cpp,77c472b3bd6c220fc3c26328ae090b3867c92bd982b6ca1d7ae36fbdf4f1f726
@@ -8640,6 +8643,7 @@ address,size,symbol,source,sha256
 0x00597730,40,?Save@MapSeedClass@@QAE_NPBD@Z,src/mapgen.cpp,c33bd6393700be5eb7f726df6c4722d309f6c00791d59172f8637c2896984d45
 0x00597760,677,?Save_File@MapSeedClass@@UAE_NPBDPBG@Z,src/mapgen.cpp,9bb7acb7dace1483de308fa072991fe79e21645b82997ce0d0c0d29291b482d7
 0x00597A10,30,?Load@MapSeedClass@@QAE_NPBD@Z,src/mapgen.cpp,9470fac454d1b7e28e1757389a3baaeabb19b139e87616121c96bfc7a2f1cd7e
+0x00597A30,775,?Load_File@MapSeedClass@@UAE_NPBD@Z,src/mapgen.cpp,f60f6f53e6a39347013410a99fa97c3bd7af41d72b94e36e0cc3df8af00167b3
 0x00597D40,5,?Delete@MapSeedClass@@QAE_NXZ,src/mapgen.cpp,4c477697e150c53ee51d5fe1fa322ef10b9515a6229279e596b5c90186bb9fa2
 0x00597D50,13,?Delete_File@MapSeedClass@@UAE_NPBD@Z,src/mapgen.cpp,ba950cc49f6b90b108f3b9f36166c61b011b89242a25242061ed653db0e550d8
 0x00597D60,535,?Read_File@MapSeedClass@@UAE_NPAVFileEntryClass@@PAU_WIN32_FIND_DATAA@@@Z,src/mapgen.cpp,0c5e54b3e2610d4fb6fcde36c90355548ea4059294d521c44fa4c3cb925ff47a
@@ -8744,7 +8748,7 @@ address,size,symbol,source,sha256
 0x005AC190,39,_$E206,src/mapgen.cpp,14c9910388e5bda70a30fed94d0fa394c214f8e9aa5d205892d335f4eebaa928
 0x005AC1C0,48,?Dirt_Road_Tile_Index@@YIHW4IsometricTileType@@@Z,src/mapgen.cpp,fb22b1f2ccee4e85ac32623118d0dffd7ee5121966e0965cc693f19e49926c2c
 0x005AC1F0,61,?Init_Dirt_Roads@@YIXXZ,src/mapgen.cpp,4fe916f4e36662f9e72e78fcb2546669479af04c73436cb8facbbaac648190f7
-0x005AC230,53,?My_In_Radar@@YI_NABVCell@@@Z,src/smartdeform.cpp,ecd9ad50a9b339886e2473c980e07679670114f8992d443bc074e4ae45185a61
+0x005AC230,53,?My_In_Radar@@YI_NABVCell@@@Z,src/mapgen.cpp,ecd9ad50a9b339886e2473c980e07679670114f8992d443bc074e4ae45185a61
 0x005AC270,30,??_GMapSeedClass@@UAEPAXI@Z,src/mapgen.cpp,f867c6daa1c4667d32015013f9c7bebd856e7819b5b2403df606fc378b696e39
 0x005AC340,38,??_G?$PriorityQueueClass@UCellNode@@@@QAEPAXI@Z,src/mapgen.cpp,61df6f737c171f988c74e250749be78fac9f58ae834d597cdc7459ab79ad6d6c
 0x005AC370,35,??9?$TPoint2D@F@@QBE_NABV0@@Z,src/mapgen.cpp,a29f5866e09a114abcb9106082eb956e99fb7570ff83d25b0178fe925cfa22bc

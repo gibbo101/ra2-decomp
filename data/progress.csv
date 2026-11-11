@@ -2447,6 +2447,7 @@ address,name,result,size,source,symbol
 0x00480180,CellClass::Wipe_Depth,MATCH,102,src/cell.cpp,?Wipe_Depth@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x004801F0,CellClass::Draw_Shroud_And_Fog,MATCH,172,src/cell.cpp,?Draw_Shroud_And_Fog@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x004802A0,CellClass::Draw_Shadow_Cast,MATCH,165,src/cell.cpp,?Draw_Shadow_Cast@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z
+0x00480350,CellClass::Draw_It,MATCH,437,src/cell.cpp,?Draw_It@CellClass@@QBEXABVPoint2D@@ABV?$TRect@H@@_N@Z
 0x00480510,CellClass::Has_Wall_Or_Gate,MATCH,283,src/cell.cpp,?Has_Wall_Or_Gate@CellClass@@QBE_NW4OverlayType@@W4FacingType@@@Z
 0x00480630,CellClass::Wall_Update,MATCH,1015,src/cell.cpp,?Wall_Update@CellClass@@QAEX_N@Z
 0x00480A30,CellClass::Cell_Coord,MATCH,77,src/cell.cpp,?Cell_Coord@CellClass@@QBE?AVCoord@@XZ
@@ -8245,6 +8246,8 @@ address,name,result,size,source,symbol
 0x005905D0,MapRegionClass::Make_Region_Connections,MATCH,920,src/mapgen.cpp,?Make_Region_Connections@MapRegionClass@@QAEXXZ
 0x00590970,MapRegionClass::Connect_Regions_With_Ramp,MATCH,1625,src/mapgen.cpp,?Connect_Regions_With_Ramp@MapRegionClass@@QAE_NABVCell@@HM@Z
 0x00590FD0,MapRegionClass::Build_Neighbor_Region_Mask,MATCH,279,src/mapgen.cpp,?Build_Neighbor_Region_Mask@MapRegionClass@@QAEIABVCell@@AA_NHM@Z
+0x00593550,MapRegionClass::Build_Corner_Ramp_NW,MATCH,1426,src/mapgen.cpp,?Build_Corner_Ramp_NW@MapRegionClass@@QAE_NABVCell@@0H@Z
+0x00593AF0,MapRegionClass::Build_Corner_Ramp_SW,MATCH,1299,src/mapgen.cpp,?Build_Corner_Ramp_SW@MapRegionClass@@QAE_NABVCell@@0H@Z
 0x00594010,MapRegionClass::Is_Ramp_Area_Clear,MATCH,372,src/mapgen.cpp,?Is_Ramp_Area_Clear@MapRegionClass@@QAE_NAAV?$TRect@H@@H@Z
 0x00594190,MapRegionClass::Flatten_Area,MATCH,343,src/mapgen.cpp,?Flatten_Area@MapRegionClass@@QAEXABV?$TRect@H@@H@Z
 0x005942F0,MapRegionClass::Flatten_Area,MATCH,232,src/mapgen.cpp,?Flatten_Area@MapRegionClass@@QAEXABV?$TRect@H@@@Z
@@ -8270,6 +8273,7 @@ address,name,result,size,source,symbol
 0x00597730,MapSeedClass::Save,MATCH,40,src/mapgen.cpp,?Save@MapSeedClass@@QAE_NPBD@Z
 0x00597760,MapSeedClass::Save_File,MATCH,677,src/mapgen.cpp,?Save_File@MapSeedClass@@UAE_NPBDPBG@Z
 0x00597A10,MapSeedClass::Load,MATCH,30,src/mapgen.cpp,?Load@MapSeedClass@@QAE_NPBD@Z
+0x00597A30,MapSeedClass::Load_File,MATCH,775,src/mapgen.cpp,?Load_File@MapSeedClass@@UAE_NPBD@Z
 0x00597D40,MapSeedClass::Delete,MATCH,5,src/mapgen.cpp,?Delete@MapSeedClass@@QAE_NXZ
 0x00597D50,MapSeedClass::Delete_File,MATCH,13,src/mapgen.cpp,?Delete_File@MapSeedClass@@UAE_NPBD@Z
 0x00597D60,MapSeedClass::Read_File,MATCH,535,src/mapgen.cpp,?Read_File@MapSeedClass@@UAE_NPAVFileEntryClass@@PAU_WIN32_FIND_DATAA@@@Z
@@ -8371,6 +8375,7 @@ address,name,result,size,source,symbol
 0x005AC190,_$E206,MATCH,39,src/mapgen.cpp,_$E206
 0x005AC1C0,Dirt_Road_Tile_Index,MATCH,48,src/mapgen.cpp,?Dirt_Road_Tile_Index@@YIHW4IsometricTileType@@@Z
 0x005AC1F0,Init_Dirt_Roads,MATCH,61,src/mapgen.cpp,?Init_Dirt_Roads@@YIXXZ
+0x005AC230,My_In_Radar,MATCH,53,src/mapgen.cpp,?My_In_Radar@@YI_NABVCell@@@Z
 0x005AC270,??_GMapSeedClass@@UAEPAXI@Z,MATCH,30,src/mapgen.cpp,??_GMapSeedClass@@UAEPAXI@Z
 0x005AC340,??_G?$PriorityQueueClass@UCellNode@@@@QAEPAXI@Z,MATCH,38,src/mapgen.cpp,??_G?$PriorityQueueClass@UCellNode@@@@QAEPAXI@Z
 0x005AC370,??9?$TPoint2D@F@@QBE_NABV0@@Z,MATCH,35,src/mapgen.cpp,??9?$TPoint2D@F@@QBE_NABV0@@Z
@@ -13033,7 +13038,6 @@ address,name,result,size,source,symbol
 0x006B2070,SliderClass::Draw_Thumb,MATCH,116,src/slider.cpp,?Draw_Thumb@SliderClass@@MAEXXZ
 0x006B20F0,SliderClass::Draw_Me,MATCH,108,src/slider.cpp,?Draw_Me@SliderClass@@UAEHH@Z
 0x006B2160,SliderClass::Peer_To_Peer,MATCH,57,src/slider.cpp,?Peer_To_Peer@SliderClass@@UAEXIAAW4KeyNumType@@AAVControlClass@@@Z
-0x005AC230,?My_In_Radar@@YI_NABVCell@@@Z,MATCH,53,src/smartdeform.cpp,?My_In_Radar@@YI_NABVCell@@@Z
 0x006B21A0,_$E2,MATCH,40,src/smartdeform.cpp,_$E2
 0x006B21D0,_$E5,MATCH,19,src/smartdeform.cpp,_$E5
 0x006B21F0,_$E8,MATCH,19,src/smartdeform.cpp,_$E8

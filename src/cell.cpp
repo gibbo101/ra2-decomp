@@ -1699,6 +1699,50 @@ void CellClass::Draw_Shadow_Cast(Point2D const & point, Rect const & cliprect)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00480350
+void CellClass::Draw_It(Point2D const & xdrawpoint, Rect const & cliprect, bool objects) const
+{
+	if (!objects) {
+		if (Drawer == NULL) {
+			((CellClass *)this)->Init_Drawer(NULL);
+		}
+
+		IsometricTileTypeClass * ittype;
+		int icon = 0;
+		int subtile;
+
+		if (ITType != ISOTILE_NONE) {
+			ittype = IsometricTileTypes[ITType];
+			subtile = SubTile;
+			if (ittype->NumTileTypesInSet > 1) {
+				if (ittype->Is_Randomized(SubTile)) {
+					icon = IsBridgeDamaged;
+				} else {
+					int numtiles = ittype->NumTileTypesInSet;
+					icon = Clear_Icon(ITType, numtiles);
+				}
+			}
+		} else {
+			ittype = IsometricTileTypes[TILE_CLEAR];
+			subtile = 0;
+			int numtiles = ittype->NumTileTypesInSet;
+			icon = Clear_Icon(TILE_CLEAR, numtiles);
+		}
+
+		CellCount++;
+
+		Point2D drawpoint(xdrawpoint.X, xdrawpoint.Y - 15 * Height);
+
+		if (ittype->Get_Image_Data()) {
+			ittype->Draw_Tile(Drawer, subtile, *DSurface::Temp, drawpoint.X, drawpoint.Y + DSurface::ViewBounds.Y, cliprect, Height, TileBrightness, true, icon, false, false, false, 0);
+		}
+
+		if (Smudge != SMUDGE_NONE) {
+			SmudgeTypes[Smudge]->Draw_It(drawpoint + Point2D(30, DSurface::ViewBounds.Y) - cliprect.TopLeft, cliprect, SmudgeData, LEVEL_LEPTON_H * Height, CellID);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00480510
 bool CellClass::Has_Wall_Or_Gate(OverlayType type, FacingType facing) const
 {

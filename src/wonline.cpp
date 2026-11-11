@@ -804,7 +804,7 @@ extern int DAT_00B7690C;
 extern int DAT_00B77784;
 void FUN_005EE190(void);
 void FUN_005EE1B0(void);
-void __fastcall FUN_005EE350(int arg);
+void __fastcall FUN_005EE350(HWND dialog);
 
 // FUNCTION: GAMEMD 0x0077DED0
 void FUN_0077DED0(void)
