@@ -9682,7 +9682,7 @@ address,name,result,size,source,symbol
 0x005D8110,?Clear@?$DynamicVectorClass@PAVMultiplayerGameMode@@@@UAEXXZ,MATCH,42,src/multiplayer.cpp,?Clear@?$DynamicVectorClass@PAVMultiplayerGameMode@@@@UAEXXZ
 0x005D8140,?ID@?$DynamicVectorClass@PAVMultiplayerGameMode@@@@UAEHPBQAVMultiplayerGameMode@@@Z,MATCH,27,src/multiplayer.cpp,?ID@?$DynamicVectorClass@PAVMultiplayerGameMode@@@@UAEHPBQAVMultiplayerGameMode@@@Z
 0x005D8160,?GetItem@?$VectorClass@PAVMultiplayerGameMode@@@@UBEPAVMultiplayerGameMode@@H@Z,MATCH,13,src/multiplayer.cpp,?GetItem@?$VectorClass@PAVMultiplayerGameMode@@@@UBEPAVMultiplayerGameMode@@H@Z
-0x005D8170,Allocate_MPBattle,MATCH,59,src/multiplayer.cpp,?Allocate_MPBattle@@YGPAVMPBattleClass@@PAPAG0PAPAD1_NH@Z
+0x005D8170,Allocate_MPBattle,MATCH,59,src/multiplayer.cpp,?Allocate_MPBattle@@YGPAVMPBattleClass@@ABVWideWstring@@0ABVWstring@@1_NH@Z
 0x005D81B0,Allocate_MPManBattle,MATCH,59,src/multiplayer.cpp,?Allocate_MPManBattle@@YGPAVMPManBattleClass@@ABVWideWstring@@0ABVWstring@@1_NH@Z
 0x005D81F0,Allocate_MPSiege,MATCH,59,src/multiplayer.cpp,?Allocate_MPSiege@@YGPAVMPSiegeClass@@ABVWideWstring@@0ABVWstring@@1_NH@Z
 0x005D8230,Allocate_MPUnholyAlliance,MATCH,59,src/multiplayer.cpp,?Allocate_MPUnholyAlliance@@YGPAVMPUnholyAllianceClass@@ABVWideWstring@@0ABVWstring@@1_NH@Z

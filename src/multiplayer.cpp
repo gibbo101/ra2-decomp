@@ -978,17 +978,12 @@ template class DynamicVectorClass<MultiplayerGameMode *>;
 #include "mpfreeforall.h"
 #include "mpcoop.h"
 
-class MPBattleClass : public MultiplayerGameMode
-{
-	public:
-		MPBattleClass * FUN_005C0DD0(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
-};
+#include "mpbattle.h"
 
 // FUNCTION: GAMEMD 0x005D8170
-MPBattleClass * __stdcall Allocate_MPBattle(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
+MPBattleClass * __stdcall Allocate_MPBattle(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
 {
-	MPBattleClass * mode = (MPBattleClass *)operator new(0x40);
-	return(mode ? mode->FUN_005C0DD0(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
+	return(new MPBattleClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
 }
 
 // FUNCTION: GAMEMD 0x005D81B0
