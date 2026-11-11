@@ -6,12 +6,12 @@
 
 #include "multiplayer.h"
 
-class MPFreeForAllClass : public MultiplayerGameMode
+class FreeForAll : public MultiplayerGameMode
 {
 	public:
-		MPFreeForAllClass(NoInitClass const & x) : MultiplayerGameMode(x) {}
-		MPFreeForAllClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
-		virtual ~MPFreeForAllClass(void);
+		FreeForAll(NoInitClass const & x) : MultiplayerGameMode(x) {}
+		FreeForAll(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
+		virtual ~FreeForAll(void);
 		virtual bool vt_entry_10(void) override;
 		virtual bool vt_entry_14(WideWstring * message) override;
 		virtual bool vt_entry_18(void) override;

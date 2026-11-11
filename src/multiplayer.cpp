@@ -23,6 +23,7 @@
 #include <windows.h>
 #undef LoadString
 #include "stringtable.h"
+#include "mpsiege.h"
 
 // SYNTHETIC: GAMEMD 0x005D58B0 SYMBOL
 // _$E2
@@ -66,12 +67,6 @@ extern bool DAT_00ABFDD5;
 void __cdecl FUN_004068E0(char const * format, ...);
 double __cdecl FUN_004CAC40(double);
 DynamicVectorClass<Cell> __fastcall FUN_00688380(char arg);
-
-class MultiplayerObserverTeam : public MultiplayerTeam
-{
-	public:
-		MultiplayerObserverTeam(void);
-};
 
 
 // FUNCTION: GAMEMD 0x005D5AC0
@@ -967,7 +962,6 @@ void Free_Game_Modes(void)
 template class DynamicVectorClass<MultiplayerGameMode *>;
 
 #include "mpmanbattle.h"
-#include "mpsiege.h"
 #include "mpunholyalliance.h"
 #include "mpfreeforall.h"
 #include "mpcoop.h"
@@ -975,33 +969,33 @@ template class DynamicVectorClass<MultiplayerGameMode *>;
 #include "mpbattle.h"
 
 // FUNCTION: GAMEMD 0x005D8170
-MPBattleClass * __stdcall Allocate_MPBattle(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
+MultiplayerBattle * __stdcall Allocate_MPBattle(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
 {
-	return(new MPBattleClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
+	return(new MultiplayerBattle(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
 }
 
 // FUNCTION: GAMEMD 0x005D81B0
-MPManBattleClass * __stdcall Allocate_MPManBattle(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
+MultiplayerManBattle * __stdcall Allocate_MPManBattle(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
 {
-	return(new MPManBattleClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
+	return(new MultiplayerManBattle(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
 }
 
 // FUNCTION: GAMEMD 0x005D81F0
-MPSiegeClass * __stdcall Allocate_MPSiege(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
+MultiplayerSiege * __stdcall Allocate_MPSiege(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
 {
-	return(new MPSiegeClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
+	return(new MultiplayerSiege(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
 }
 
 // FUNCTION: GAMEMD 0x005D8230
-MPUnholyAllianceClass * __stdcall Allocate_MPUnholyAlliance(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
+UnholyAlliance * __stdcall Allocate_MPUnholyAlliance(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
 {
-	return(new MPUnholyAllianceClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
+	return(new UnholyAlliance(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
 }
 
 // FUNCTION: GAMEMD 0x005D8270
-MPFreeForAllClass * __stdcall Allocate_MPFreeForAll(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
+FreeForAll * __stdcall Allocate_MPFreeForAll(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
 {
-	return(new MPFreeForAllClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
+	return(new FreeForAll(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
 }
 
 // FUNCTION: GAMEMD 0x005D82B0

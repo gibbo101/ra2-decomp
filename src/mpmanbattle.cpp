@@ -8,15 +8,15 @@
 #include "mpmanbattle.h"
 
 // FUNCTION: GAMEMD 0x005C6150
-MPManBattleClass::MPManBattleClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
+MultiplayerManBattle::MultiplayerManBattle(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
 	MultiplayerGameMode(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C6190
-MPManBattleClass::~MPManBattleClass(void)
+MultiplayerManBattle::~MultiplayerManBattle(void)
 {
 }
 
 // SYNTHETIC: GAMEMD 0x005C61A0
-// ??_GMPManBattleClass@@UAEPAXI@Z
+// ??_GMultiplayerManBattle@@UAEPAXI@Z

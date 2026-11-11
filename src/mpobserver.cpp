@@ -111,37 +111,37 @@ void Reset_Observer_View(void)
 }
 
 // FUNCTION: GAMEMD 0x005C93E0
-MPMegawealthClass::MPMegawealthClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
+Megawealth::Megawealth(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
 	MultiplayerGameMode(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C9420
-MPMegawealthClass::~MPMegawealthClass(void)
+Megawealth::~Megawealth(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C9430
-bool MPMegawealthClass::vt_entry_8C(void)
+bool Megawealth::vt_entry_8C(void)
 {
 	DAT_0087F7E8.FUN_00577F30(NULL);
 	return(true);
 }
 
 // SYNTHETIC: GAMEMD 0x005C9440
-// ??_GMPMegawealthClass@@UAEPAXI@Z
+// ??_GMegawealth@@UAEPAXI@Z
 
 // FUNCTION: GAMEMD 0x005C9470
-MPObserverTeam::MPObserverTeam(void) :
+MultiplayerObserverTeam::MultiplayerObserverTeam(void) :
 	MultiplayerTeam(StringTable::LoadString("MP:ObserverTeam", NULL, "D:\\ra2mdpost\\MPObserver.cpp", 5), -1)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C94C0
-bool MPObserverTeam::IsTeamIncluded(int index)
+bool MultiplayerObserverTeam::IsTeamIncluded(int index)
 {
 	return(FUN_005D8C90(index));
 }
 
 // SYNTHETIC: GAMEMD 0x005C94D0
-// ??_GMPObserverTeam@@UAEPAXI@Z
+// ??_GMultiplayerObserverTeam@@UAEPAXI@Z

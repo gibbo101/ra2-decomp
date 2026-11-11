@@ -45,24 +45,24 @@ int __fastcall FUN_00623840(HWND list);
 // _$E38
 
 // FUNCTION: GAMEMD 0x005C5CE0
-MPFreeForAllClass::MPFreeForAllClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
+FreeForAll::FreeForAll(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
 	MultiplayerGameMode(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C5D20
-MPFreeForAllClass::~MPFreeForAllClass(void)
+FreeForAll::~FreeForAll(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C5D30
-bool MPFreeForAllClass::vt_entry_10(void)
+bool FreeForAll::vt_entry_10(void)
 {
 	return(MultiplayerGameMode::vt_entry_10());
 }
 
 // FUNCTION: GAMEMD 0x005C5D40
-bool MPFreeForAllClass::vt_entry_14(WideWstring * message)
+bool FreeForAll::vt_entry_14(WideWstring * message)
 {
 	if (!MultiplayerGameMode::vt_entry_14(message)) {
 		return(false);
@@ -78,7 +78,7 @@ bool MPFreeForAllClass::vt_entry_14(WideWstring * message)
 }
 
 // FUNCTION: GAMEMD 0x005C5D90
-bool MPFreeForAllClass::vt_entry_18(void)
+bool FreeForAll::vt_entry_18(void)
 {
 	if (!MultiplayerGameMode::vt_entry_18()) {
 		return(false);
@@ -92,7 +92,7 @@ bool MPFreeForAllClass::vt_entry_18(void)
 }
 
 // FUNCTION: GAMEMD 0x005C5DD0
-void MPFreeForAllClass::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
+void FreeForAll::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
 {
 	FUN_00623840(hwnd);
 	MultiplayerTeam * team = FUN_005D6620(index);
@@ -107,10 +107,10 @@ void MPFreeForAllClass::PopulateTeamDropdownForPlayer(HWND hwnd, int index)
 }
 
 // FUNCTION: GAMEMD 0x005C5E30
-bool MPFreeForAllClass::vt_entry_40(void)
+bool FreeForAll::vt_entry_40(void)
 {
 	return(true);
 }
 
 // SYNTHETIC: GAMEMD 0x005C5E40
-// ??_GMPFreeForAllClass@@UAEPAXI@Z
+// ??_GFreeForAll@@UAEPAXI@Z

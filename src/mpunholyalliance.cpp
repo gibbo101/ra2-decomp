@@ -53,38 +53,38 @@ static inline Cell Base_Spot(Cell const & base)
 }
 
 // FUNCTION: GAMEMD 0x005CB3A0
-MPUnholyAllianceClass::MPUnholyAllianceClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
+UnholyAlliance::UnholyAlliance(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
 	MultiplayerGameMode(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
 {
 }
 
 // FUNCTION: GAMEMD 0x005CB3E0
-MPUnholyAllianceClass::~MPUnholyAllianceClass(void)
+UnholyAlliance::~UnholyAlliance(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005CB3F0
-bool MPUnholyAllianceClass::vt_entry_10(void)
+bool UnholyAlliance::vt_entry_10(void)
 {
 	Session.Options.Bases = true;
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005CB400
-bool MPUnholyAllianceClass::vt_entry_14(WideWstring * message)
+bool UnholyAlliance::vt_entry_14(WideWstring * message)
 {
 	return(Session.Options.Bases && MultiplayerGameMode::vt_entry_14(message));
 }
 
 // FUNCTION: GAMEMD 0x005CB430
-bool MPUnholyAllianceClass::vt_entry_18(void)
+bool UnholyAlliance::vt_entry_18(void)
 {
 	Session.Options.Bases = true;
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005CB440
-bool MPUnholyAllianceClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
+bool UnholyAlliance::SpawnBaseUnits(HouseClass * house, unsigned unused)
 {
 	bool failed = false;
 	for (int i = Rule->BaseUnit.Count() - 1; i >= 0; i--) {
@@ -113,4 +113,4 @@ bool MPUnholyAllianceClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
 }
 
 // SYNTHETIC: GAMEMD 0x005CB540
-// ??_GMPUnholyAllianceClass@@UAEPAXI@Z
+// ??_GUnholyAlliance@@UAEPAXI@Z

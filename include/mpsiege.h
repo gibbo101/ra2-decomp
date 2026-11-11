@@ -6,33 +6,33 @@
 
 #include "multiplayer.h"
 
-class MPObserverTeam : public MultiplayerTeam
+class MultiplayerObserverTeam : public MultiplayerTeam
 {
 	public:
-		MPObserverTeam(void);
+		MultiplayerObserverTeam(void);
 		virtual bool IsTeamIncluded(int index) override;
 };
 
-class MPSiegeDefenderTeam : public MultiplayerTeam
+class MultiplayerSiegeDefenderTeam : public MultiplayerTeam
 {
 	public:
-		MPSiegeDefenderTeam(void);
-		virtual ~MPSiegeDefenderTeam(void);
+		MultiplayerSiegeDefenderTeam(void);
+		virtual ~MultiplayerSiegeDefenderTeam(void);
 };
 
-class MPSiegeAttackerTeam : public MultiplayerTeam
+class MultiplayerSiegeAttackerTeam : public MultiplayerTeam
 {
 	public:
-		MPSiegeAttackerTeam(void);
-		virtual ~MPSiegeAttackerTeam(void);
+		MultiplayerSiegeAttackerTeam(void);
+		virtual ~MultiplayerSiegeAttackerTeam(void);
 };
 
-class MPSiegeClass : public MultiplayerGameMode
+class MultiplayerSiege : public MultiplayerGameMode
 {
 	public:
-		MPSiegeClass(NoInitClass const & x) : MultiplayerGameMode(x) {}
-		MPSiegeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
-		virtual ~MPSiegeClass(void);
+		MultiplayerSiege(NoInitClass const & x) : MultiplayerGameMode(x) {}
+		MultiplayerSiege(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
+		virtual ~MultiplayerSiege(void);
 		virtual bool vt_entry_10(void) override;
 		virtual bool vt_entry_14(WideWstring * message) override;
 		virtual bool vt_entry_18(void) override;

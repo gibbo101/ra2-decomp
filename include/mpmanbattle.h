@@ -6,10 +6,10 @@
 
 #include "multiplayer.h"
 
-class MPManBattleClass : public MultiplayerGameMode
+class MultiplayerManBattle : public MultiplayerGameMode
 {
 	public:
-		MPManBattleClass(NoInitClass const & x) : MultiplayerGameMode(x) {}
-		MPManBattleClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
-		virtual ~MPManBattleClass(void);
+		MultiplayerManBattle(NoInitClass const & x) : MultiplayerGameMode(x) {}
+		MultiplayerManBattle(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
+		virtual ~MultiplayerManBattle(void);
 };

@@ -53,18 +53,18 @@ DynamicVectorClass<Cell> __fastcall FUN_00688380(char arg);
 int __fastcall FUN_00688ED0(ObjectClass * object, Cell const & cell, int flag);
 
 // FUNCTION: GAMEMD 0x005CA630
-MPSiegeClass::MPSiegeClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
+MultiplayerSiege::MultiplayerSiege(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
 	MultiplayerGameMode(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
 {
 }
 
 // FUNCTION: GAMEMD 0x005CA670
-MPSiegeClass::~MPSiegeClass(void)
+MultiplayerSiege::~MultiplayerSiege(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005CA680
-bool MPSiegeClass::vt_entry_10(void)
+bool MultiplayerSiege::vt_entry_10(void)
 {
 	if (!MultiplayerGameMode::vt_entry_10()) {
 		return(false);
@@ -79,7 +79,7 @@ bool MPSiegeClass::vt_entry_10(void)
 }
 
 // FUNCTION: GAMEMD 0x005CA6D0
-bool MPSiegeClass::vt_entry_14(WideWstring * message)
+bool MultiplayerSiege::vt_entry_14(WideWstring * message)
 {
 	if (!MultiplayerGameMode::vt_entry_14(message)) {
 		return(false);
@@ -117,25 +117,25 @@ bool MPSiegeClass::vt_entry_14(WideWstring * message)
 }
 
 // FUNCTION: GAMEMD 0x005CA7D0
-bool MPSiegeClass::vt_entry_18(void)
+bool MultiplayerSiege::vt_entry_18(void)
 {
 	return(MultiplayerGameMode::vt_entry_18());
 }
 
 // FUNCTION: GAMEMD 0x005CA7E0
-bool MPSiegeClass::IsAIAllowed(void)
+bool MultiplayerSiege::IsAIAllowed(void)
 {
 	return(false);
 }
 
 // FUNCTION: GAMEMD 0x005CA7F0
-bool MPSiegeClass::UnfixAlliances(void)
+bool MultiplayerSiege::UnfixAlliances(void)
 {
 	return(MultiplayerGameMode::UnfixAlliances());
 }
 
 // FUNCTION: GAMEMD 0x005CA800
-bool MPSiegeClass::StartingPositionsToHouseBaseCells2(bool arg)
+bool MultiplayerSiege::StartingPositionsToHouseBaseCells2(bool arg)
 {
 	DynamicVectorClass<Cell> cells = FUN_00688380(arg);
 	unsigned char used[16];
@@ -175,15 +175,15 @@ bool MPSiegeClass::StartingPositionsToHouseBaseCells2(bool arg)
 }
 
 // FUNCTION: GAMEMD 0x005CA9B0
-void MPSiegeClass::CreateMPTeams(DynamicVectorClass<MultiplayerTeam *> * teams)
+void MultiplayerSiege::CreateMPTeams(DynamicVectorClass<MultiplayerTeam *> * teams)
 {
-	teams->Add(new MPObserverTeam);
-	teams->Add(new MPSiegeDefenderTeam);
-	teams->Add(new MPSiegeAttackerTeam);
+	teams->Add(new MultiplayerObserverTeam);
+	teams->Add(new MultiplayerSiegeDefenderTeam);
+	teams->Add(new MultiplayerSiegeAttackerTeam);
 }
 
 // FUNCTION: GAMEMD 0x005CAAC0
-bool MPSiegeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
+bool MultiplayerSiege::SpawnBaseUnits(HouseClass * house, unsigned unused)
 {
 	int i = 0;
 	while (i < Session.Players.Count()) {
@@ -213,4 +213,4 @@ bool MPSiegeClass::SpawnBaseUnits(HouseClass * house, unsigned unused)
 }
 
 // SYNTHETIC: GAMEMD 0x005CABD0
-// ??_GMPSiegeClass@@UAEPAXI@Z
+// ??_GMultiplayerSiege@@UAEPAXI@Z

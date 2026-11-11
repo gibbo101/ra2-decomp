@@ -6,11 +6,11 @@
 
 #include "multiplayer.h"
 
-class MPMegawealthClass : public MultiplayerGameMode
+class Megawealth : public MultiplayerGameMode
 {
 	public:
-		MPMegawealthClass(NoInitClass const & x) : MultiplayerGameMode(x) {}
-		MPMegawealthClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
-		virtual ~MPMegawealthClass(void);
+		Megawealth(NoInitClass const & x) : MultiplayerGameMode(x) {}
+		Megawealth(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
+		virtual ~Megawealth(void);
 		virtual bool vt_entry_8C(void) override;
 };

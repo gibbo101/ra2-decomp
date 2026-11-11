@@ -715,156 +715,156 @@ template class DynamicVectorClass<char const *>;
 #include "mpbattle.h"
 
 // FUNCTION: GAMEMD 0x005C0DD0
-MPBattleClass::MPBattleClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
+MultiplayerBattle::MultiplayerBattle(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex) :
 	MultiplayerGameMode(title, tooltip, inifile, mapfilter, aiallowed, modeindex)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0E10
-MPBattleClass::~MPBattleClass(void)
+MultiplayerBattle::~MultiplayerBattle(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0E20
-bool MPBattleClass::vt_entry_40(void)
+bool MultiplayerBattle::vt_entry_40(void)
 {
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005C0E30
-bool MPBattleClass::vt_entry_04(void)
+bool MultiplayerBattle::vt_entry_04(void)
 {
 	return(false);
 }
 
 // FUNCTION: GAMEMD 0x005C0E40
-bool MPBattleClass::vt_entry_08(void)
+bool MultiplayerBattle::vt_entry_08(void)
 {
 	return(false);
 }
 
 // FUNCTION: GAMEMD 0x005C0E50
-bool MPBattleClass::vt_entry_0C(unsigned a)
+bool MultiplayerBattle::vt_entry_0C(unsigned a)
 {
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005C0E60
-void MPBattleClass::vt_entry_20(void)
+void MultiplayerBattle::vt_entry_20(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0E70
-void MPBattleClass::vt_entry_24(void)
+void MultiplayerBattle::vt_entry_24(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0E80
-void MPBattleClass::vt_entry_38(unsigned a)
+void MultiplayerBattle::vt_entry_38(unsigned a)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0E90
-bool MPBattleClass::vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name)
+bool MultiplayerBattle::vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name)
 {
 	return(false);
 }
 
 // FUNCTION: GAMEMD 0x005C0EB0
-bool MPBattleClass::vt_entry_54(int index, DynamicVectorClass<int> picks)
+bool MultiplayerBattle::vt_entry_54(int index, DynamicVectorClass<int> picks)
 {
 	return(false);
 }
 
 // FUNCTION: GAMEMD 0x005C0ED0
-bool MPBattleClass::vt_entry_5C(unsigned a, unsigned b, unsigned c)
+bool MultiplayerBattle::vt_entry_5C(unsigned a, unsigned b, unsigned c)
 {
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005C0EE0
-bool MPBattleClass::vt_entry_68(void)
+bool MultiplayerBattle::vt_entry_68(void)
 {
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x005C0EF0
-void MPBattleClass::vt_entry_74(unsigned a, unsigned b)
+void MultiplayerBattle::vt_entry_74(unsigned a, unsigned b)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0F00
-void MPBattleClass::vt_entry_78(HWND dialog)
+void MultiplayerBattle::vt_entry_78(HWND dialog)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0F10
-void MPBattleClass::vt_entry_90(void)
+void MultiplayerBattle::vt_entry_90(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0F20
-void MPBattleClass::vt_entry_94(void)
+void MultiplayerBattle::vt_entry_94(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0F30
-int MPBattleClass::vt_entry_98(void)
+int MultiplayerBattle::vt_entry_98(void)
 {
 	return(-1);
 }
 
 // FUNCTION: GAMEMD 0x005C0F40
-void MPBattleClass::vt_entry_9C(void)
+void MultiplayerBattle::vt_entry_9C(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0F50
-void MPBattleClass::vt_entry_A0(bool playerWon)
+void MultiplayerBattle::vt_entry_A0(bool playerWon)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0F60
-void MPBattleClass::vt_entry_A4(unsigned a)
+void MultiplayerBattle::vt_entry_A4(unsigned a)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0F70
-bool MPBattleClass::vt_entry_A8(void)
+bool MultiplayerBattle::vt_entry_A8(void)
 {
 	return(false);
 }
 
 // FUNCTION: GAMEMD 0x005C0F80
-void MPBattleClass::vt_entry_AC(void)
+void MultiplayerBattle::vt_entry_AC(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0F90
-void MPBattleClass::vt_entry_B0(void)
+void MultiplayerBattle::vt_entry_B0(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x005C0FA0
-bool MPBattleClass::vt_entry_B4(DynamicVectorClass<int> list, int * out)
+bool MultiplayerBattle::vt_entry_B4(DynamicVectorClass<int> list, int * out)
 {
 	return(false);
 }
 
 // FUNCTION: GAMEMD 0x005C0FC0
-int MPBattleClass::vt_entry_B8(void)
+int MultiplayerBattle::vt_entry_B8(void)
 {
 	return(0);
 }
 
 // FUNCTION: GAMEMD 0x005C0FD0
-bool MPBattleClass::vt_entry_BC(void)
+bool MultiplayerBattle::vt_entry_BC(void)
 {
 	return(true);
 }
 
 // SYNTHETIC: GAMEMD 0x005C0FE0
-// ??_GMPBattleClass@@UAEPAXI@Z
+// ??_GMultiplayerBattle@@UAEPAXI@Z
 
 unsigned char __stdcall FUN_005D8C90(int index);
 unsigned char __stdcall FUN_005D8CB0(int index);

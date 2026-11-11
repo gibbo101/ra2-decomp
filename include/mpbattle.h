@@ -6,11 +6,11 @@
 
 #include "multiplayer.h"
 
-class MPBattleClass : public MultiplayerGameMode
+class MultiplayerBattle : public MultiplayerGameMode
 {
 	public:
-		MPBattleClass(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
-		virtual ~MPBattleClass(void);
+		MultiplayerBattle(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex);
+		virtual ~MultiplayerBattle(void);
 		virtual bool vt_entry_04(void) override;
 		virtual bool vt_entry_40(void) override;
 		virtual bool vt_entry_08(void) override;

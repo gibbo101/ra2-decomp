@@ -101,13 +101,13 @@ void Reset_Siege_Team_Stats(void)
 }
 
 // FUNCTION: GAMEMD 0x005CAE10
-MPSiegeDefenderTeam::MPSiegeDefenderTeam(void) :
+MultiplayerSiegeDefenderTeam::MultiplayerSiegeDefenderTeam(void) :
 	MultiplayerTeam(StringTable::LoadString("MP:DefenderTeam", NULL, "D:\\ra2mdpost\\MPSiegeTeam.cpp", 6), 1)
 {
 }
 
 // FUNCTION: GAMEMD 0x005CAE60
-MPSiegeDefenderTeam::~MPSiegeDefenderTeam(void)
+MultiplayerSiegeDefenderTeam::~MultiplayerSiegeDefenderTeam(void)
 {
 }
 
@@ -123,18 +123,18 @@ bool __stdcall Siege_Only_Spectators_Remain(int self)
 }
 
 // FUNCTION: GAMEMD 0x005CAEB0
-MPSiegeAttackerTeam::MPSiegeAttackerTeam(void) :
+MultiplayerSiegeAttackerTeam::MultiplayerSiegeAttackerTeam(void) :
 	MultiplayerTeam(StringTable::LoadString("MP:AttackerTeam", NULL, "D:\\ra2mdpost\\MPSiegeTeam.cpp", 22), 1)
 {
 }
 
 // FUNCTION: GAMEMD 0x005CAF00
-MPSiegeAttackerTeam::~MPSiegeAttackerTeam(void)
+MultiplayerSiegeAttackerTeam::~MultiplayerSiegeAttackerTeam(void)
 {
 }
 
 // SYNTHETIC: GAMEMD 0x005CAF10
-// ??_GMPSiegeDefenderTeam@@UAEPAXI@Z
+// ??_GMultiplayerSiegeDefenderTeam@@UAEPAXI@Z
 
 // SYNTHETIC: GAMEMD 0x005CAF40
-// ??_GMPSiegeAttackerTeam@@UAEPAXI@Z
+// ??_GMultiplayerSiegeAttackerTeam@@UAEPAXI@Z
