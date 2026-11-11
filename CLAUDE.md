@@ -23,8 +23,8 @@ setup and the checker.
   constructs:
   - inline asm, `#pragma optimize` and whole `.asm` files that Westwood's own source had,
     copied unchanged from the TibSun archive (`reference/tibsun/code`);
-  - `volatile` on data another thread writes (a field or global, never a local), where
-    the exe re-reads it in the way only `volatile` makes VC6 do;
+  - `volatile` on a field or global (never a local) that the exe re-reads or stores in the
+    way only `volatile` makes VC6 do, with every function touching it still matching;
   - Westwood's `div_zero` crash idiom as a local (`volatile int div_zero = 0;
     div_zero = 1 / div_zero;`), where the exe has that exact sequence.
 - Running agents in parallel (a workflow) needs the maintainer's explicit opt-in each time.

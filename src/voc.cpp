@@ -30,8 +30,10 @@ struct SoundNode : SoundLink
 	AudioController Controller;
 	Coord Position;
 	int Flag;
-	int Retired;
+	volatile int Retired;
 
+	void FUN_00750FF0(void);
+	void FUN_00751010(void);
 };
 
 struct SoundPool
@@ -53,6 +55,7 @@ int __fastcall FUN_004067D0(char const * name, int * priority);
 int __fastcall FUN_00406820(int * control, char const * name);
 int __fastcall FUN_00406870(int * type, char const * name);
 void Audio_Stop_Events(void);
+void __fastcall FUN_00406E80(void);
 
 bool DAT_008464AC = true;
 int DAT_008464B0 = 2;
@@ -409,6 +412,32 @@ AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * cont
 	return event;
 }
 
+// FUNCTION: GAMEMD 0x00750E20
+void * VocClass::PlayIndexAtPos(int voc, Coord const & coord, int flag)
+{
+	if (voc < 0) {
+		return NULL;
+	}
+
+	SoundNode * node = DAT_00B1D3A4->FUN_00407520();
+	if (node == NULL) {
+		return NULL;
+	}
+
+	node->Controller.FUN_00405BE0();
+	node->FUN_004072D0();
+	node->Retired = 0;
+	node->Position = coord;
+	node->Flag = flag;
+	void * event = PlayAt(voc, node->Position, &node->Controller);
+	DAT_00B1D320.FUN_00407420(node);
+	DAT_00B1D3A8++;
+	if (DAT_00B1D3A8 > DAT_00B1D3AC) {
+		DAT_00B1D3AC = DAT_00B1D3A8;
+	}
+	return event;
+}
+
 // FUNCTION: GAMEMD 0x00750EC0
 void FUN_00750EC0(void)
 {
@@ -453,6 +482,55 @@ void FUN_00750FA0(void)
 		DAT_00B1D3A4->FUN_00407530(node);
 		DAT_00B1D3A8--;
 		node = next;
+	}
+}
+
+// FUNCTION: GAMEMD 0x00750FF0
+void SoundNode::FUN_00750FF0(void)
+{
+	Retired++;
+	AudioEvent * event = Controller.GetEvent();
+	if (event == NULL) {
+		return;
+	}
+	event->FUN_004053E0();
+}
+
+// FUNCTION: GAMEMD 0x00751010
+void SoundNode::FUN_00751010(void)
+{
+	if (Retired != 0) {
+		if (--Retired < 0) {
+			Retired = 0;
+		}
+		AudioEvent * event = Controller.GetEvent();
+		if (event != NULL) {
+			event->FUN_00405430();
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00751040
+void FUN_00751040(void)
+{
+	SoundNode * node = (SoundNode *)DAT_00B1D320.FUN_004073C0();
+	while (node != NULL) {
+		node->Retired++;
+		AudioEvent * event = node->Controller.GetEvent();
+		if (event != NULL) {
+			event->FUN_004053E0();
+		}
+		node = (SoundNode *)node->FUN_004073E0();
+	}
+}
+
+// FUNCTION: GAMEMD 0x00751080
+void FUN_00751080(void)
+{
+	SoundNode * node = (SoundNode *)DAT_00B1D320.FUN_004073C0();
+	while (node != NULL) {
+		node->FUN_00751010();
+		node = (SoundNode *)node->FUN_004073E0();
 	}
 }
 
@@ -620,6 +698,32 @@ HRESULT __fastcall FUN_00751620(IStream * stream)
 			result = stream->Write(&entry, sizeof(entry), NULL);
 			if (FAILED(result)) return result;
 			node = (SoundNode *)node->FUN_004073E0();
+		}
+	}
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x00751710
+HRESULT __fastcall FUN_00751710(IStream * stream)
+{
+	FUN_00750FA0();
+	FUN_00406E80();
+	int count;
+	HRESULT result = stream->Read(&count, sizeof(count), NULL);
+	if (SUCCEEDED(result)) {
+		for (int i = 0; i < count; i++) {
+			struct VocStaticRecord {
+				int Index;
+				CoordStruct Position;
+			} entry;
+			result = stream->Read(&entry, sizeof(entry), NULL);
+			if (FAILED(result)) break;
+			if (entry.Index != -1 && entry.Index < VocArray.Count() && entry.Index >= 0) {
+				VocEntry * restored = VocArray[entry.Index];
+				if (restored->Voc != NULL && restored->Voc->FUN_00406650()) {
+					VocClass::PlayIndexAtPos(entry.Index, Coord(entry.Position), 0);
+				}
+			}
 		}
 	}
 	return result;

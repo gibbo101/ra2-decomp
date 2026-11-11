@@ -474,8 +474,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   moved startup.cpp's by one): renumber the markers rather than undo the header.
 - Wide string literals are pooled across files (0x0082083C is `L" "`): a constant
   stored into a temporary is not necessarily a vtable.
-- `volatile` is allowed only on data another thread writes (the mouse thread's flags), where
-  the exe re-reads it; never on a local or to force a match (CLAUDE.md lists the exceptions).
+- `volatile` is allowed on a field or global the exe re-reads or stores the way only `volatile`
+  makes VC6 do (the mouse thread's flags, `SoundNode::Retired`), when every function that
+  touches it still matches; never on a local (CLAUDE.md lists the exceptions).
 - Westwood's inline asm from the archive stays where Westwood put it, unchanged (blitblit.h,
   xsurface.cpp's surface_quick_fill); check.py refuses any asm block not found verbatim there.
 - The message list is `Session.Messages`, not a global; Add_Message takes YR's 7 arguments.
@@ -529,8 +530,6 @@ Each entry: what the diff showed, then the source change that fixed it.
   0x0072D730, 0x0072E450, 0x0072F540): helpers, budget fillers and call forms all failed.
 - `DynamicVectorClass<T>`'s constructor and Add are called for some T and inlined for
   others in the original; no instantiation order tried reproduces it.
-- voc 0x00751710, 0x00750E20 and 0x00751040 match only with `SoundNode::Retired` volatile;
-  no other thread is known to write it, so the rules bar it until one is found.
 
 ## Report
 

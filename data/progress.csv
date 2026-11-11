@@ -16495,9 +16495,14 @@ address,name,result,size,source,symbol
 0x007509E0,VocClass::PlayAt,MATCH,220,src/voc.cpp,?PlayAt@VocClass@@SIPAXHABVCoord@@PAUAudioController@@@Z
 0x00750AC0,FUN_00750AC0,MATCH,634,src/voc.cpp,?FUN_00750AC0@@YIMABVCoord@@PAHPAVVocClass@@@Z
 0x00750D40,FUN_00750D40,MATCH,224,src/voc.cpp,?FUN_00750D40@@YIPAVAudioEvent@@ABVCoord@@PAUAudioController@@@Z
+0x00750E20,VocClass::PlayIndexAtPos,MATCH,152,src/voc.cpp,?PlayIndexAtPos@VocClass@@SIPAXHABVCoord@@H@Z
 0x00750EC0,FUN_00750EC0,MATCH,118,src/voc.cpp,?FUN_00750EC0@@YIXXZ
 0x00750F40,FUN_00750F40,MATCH,82,src/voc.cpp,?FUN_00750F40@@YIXPBVCoord@@H@Z
 0x00750FA0,FUN_00750FA0,MATCH,77,src/voc.cpp,?FUN_00750FA0@@YIXXZ
+0x00750FF0,SoundNode::FUN_00750FF0,MATCH,27,src/voc.cpp,?FUN_00750FF0@SoundNode@@QAEXXZ
+0x00751010,SoundNode::FUN_00751010,MATCH,45,src/voc.cpp,?FUN_00751010@SoundNode@@QAEXXZ
+0x00751040,FUN_00751040,MATCH,58,src/voc.cpp,?FUN_00751040@@YIXXZ
+0x00751080,FUN_00751080,MATCH,76,src/voc.cpp,?FUN_00751080@@YIXXZ
 0x007510D0,FUN_007510D0,MATCH,791,src/voc.cpp,?FUN_007510D0@@YIXAAVINIClass@@@Z
 0x007513F0,Free_Vocs,MATCH,220,src/voc.cpp,?Free_Vocs@@YIXXZ
 0x007514D0,VocClass::FindIndex,MATCH,80,src/voc.cpp,?FindIndex@VocClass@@SIHPBD@Z
@@ -16507,6 +16512,7 @@ address,name,result,size,source,symbol
 0x007515F0,FUN_007515F0,MATCH,10,src/voc.cpp,?FUN_007515F0@@YI_NPAVVocEntry@@@Z
 0x00751600,VocEntry::Name,MATCH,17,src/voc.cpp,?Name@VocEntry@@QAEPBDXZ
 0x00751620,FUN_00751620,MATCH,233,src/voc.cpp,?FUN_00751620@@YIJPAUIStream@@@Z
+0x00751710,FUN_00751710,MATCH,397,src/voc.cpp,?FUN_00751710@@YIJPAUIStream@@@Z
 0x007518A0,FUN_007518A0,MATCH,31,src/voc.cpp,?FUN_007518A0@@YIXPAUAudioController@@H@Z
 0x007518C0,FUN_007518C0,MATCH,7,src/voc.cpp,?FUN_007518C0@@YIX_N@Z
 0x007518D0,?Clear@?$DynamicVectorClass@PAVVocClass@@@@UAEXXZ,MATCH,42,src/voc.cpp,?Clear@?$DynamicVectorClass@PAVVocClass@@@@UAEXXZ
