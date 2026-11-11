@@ -45,7 +45,7 @@ extern HANDLE DAT_00B78168;
 extern int DAT_00B7816C;
 extern HANDLE DAT_00B78154;
 extern DWORD DAT_00B78158;
-extern DSurface * DAT_00887300;
+#include "_surface.h"
 extern int DAT_00886FB8;
 extern ConvertClass * FileSystem_MOUSE_PAL;
 
@@ -344,8 +344,8 @@ void WWMouseClass::Draw_Mouse(::Surface * surface, bool issidebarsurface)
 			savedregion = &Rect3;
 		} else {
 			if (!Options.IsSidebarOnRight) {
-				if (-DAT_00887300->Get_Width() > surface->Get_Width() - DAT_00886FB8) {
-					xoffset = -DAT_00887300->Get_Width();
+				if (-SidebarSurface->Get_Width() > surface->Get_Width() - DAT_00886FB8) {
+					xoffset = -SidebarSurface->Get_Width();
 				} else {
 					xoffset = surface->Get_Width() - DAT_00886FB8;
 				}

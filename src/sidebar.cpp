@@ -549,7 +549,6 @@ void SidebarClass::Init_For_House(void)
 }
 
 extern void * DAT_00B0B478;
-extern bool DAT_00884B8F;
 extern bool DAT_00B0B518;
 bool __fastcall FUN_004E1470(GadgetClass * gadget);
 
@@ -1017,7 +1016,7 @@ void SidebarClass::FUN_006A74A0(int tab)
 		StripClass::SelectButton[current.ID * 60 + added].Zap();
 		Map.Add_A_Button(StripClass::SelectButton[current.ID * 60 + added]);
 	}
-	DAT_00884B8F = true;
+	Map.IsForceCompleteRedraw = true;
 	UpdateScrollButtons();
 }
 
@@ -1040,7 +1039,7 @@ void SidebarClass::FUN_006A76F0(int tab)
 {
 	int delay = 10 - Unsorted::CurrentFrame % 10;
 	TabButtons[tab].StartFlashing(10, delay, (Unsorted::CurrentFrame + delay) / 10 % 2 == 0);
-	DAT_00884B8F = true;
+	Map.IsForceCompleteRedraw = true;
 	Map.Flag_To_Redraw();
 }
 
@@ -1130,7 +1129,7 @@ bool SidebarClass::Activate(int control)
 				StripClass::SelectButton[current.ID * 60 + added].Zap();
 				Map.Add_A_Button(StripClass::SelectButton[current.ID * 60 + added]);
 			}
-			DAT_00884B8F = true;
+			Map.IsForceCompleteRedraw = true;
 			UpdateScrollButtons();
 		} else {
 			FUN_005BF450();
@@ -1270,7 +1269,7 @@ void SidebarClass::StripClass::Activate(void)
 		SelectButton[ID * 60 + index].Zap();
 		Map.Add_A_Button(SelectButton[ID * 60 + index]);
 	}
-	DAT_00884B8F = true;
+	Map.IsForceCompleteRedraw = true;
 }
 
 // FUNCTION: GAMEMD 0x006A83E0
@@ -1403,7 +1402,7 @@ bool SidebarClass::StripClass::Add(RTTIType type, int id)
 		}
 		FUN_006A8710(type, id);
 		IsToRedraw = true;
-		DAT_00884B8F = true;
+		Map.IsForceCompleteRedraw = true;
 		return true;
 	}
 	return false;
@@ -1537,7 +1536,7 @@ void SidebarClass::StripClass::SelectClass::OnMouseEnter(void)
 	unknown_34 = true;
 	Strip->IsToRedraw = true;
 	Map.Flag_To_Redraw();
-	DAT_00884B8F = true;
+	Map.IsForceCompleteRedraw = true;
 	DAT_00B0B518 = true;
 }
 
@@ -1548,7 +1547,7 @@ void SidebarClass::StripClass::SelectClass::OnMouseLeave(void)
 	unknown_34 = false;
 	Strip->IsToRedraw = true;
 	Map.Flag_To_Redraw();
-	DAT_00884B8F = true;
+	Map.IsForceCompleteRedraw = true;
 	DAT_00B0B518 = true;
 }
 
@@ -1618,7 +1617,7 @@ bool SidebarClass::StripClass::Abandon_Production(FactoryClass const * factory)
 	if (abandoned) {
 		IsToRedraw = true;
 		Map.Flag_To_Redraw();
-		DAT_00884B8F = true;
+		Map.IsForceCompleteRedraw = true;
 	}
 	if (idle) {
 		IsBuilding = false;

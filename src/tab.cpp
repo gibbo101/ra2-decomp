@@ -501,7 +501,6 @@ void __fastcall FUN_006D09C0(ShapeButtonClass * button, char const * text)
 	}
 }
 
-extern DSurface * DAT_00887300;
 extern ShapeSet const * DAT_00B0FB08;
 extern bool DAT_00B0B518;
 
@@ -616,7 +615,7 @@ drawn:
 void TabClass::Draw_Credits_Tab(void)
 {
 	ShapeSet const * shape = DAT_00B0FB08;
-	Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, shape, 0, Point2D(0, 0), DAT_00887300->Get_Rect());
+	Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, shape, 0, Point2D(0, 0), SidebarSurface->Get_Rect());
 	DAT_00B0B518 = true;
 }
 

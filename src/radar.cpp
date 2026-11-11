@@ -239,7 +239,6 @@ extern int DAT_00B45B68;
 bool __fastcall FUN_0053BAE0(void);
 void __fastcall Remove_Speech_Hold(void);
 
-extern DSurface * DAT_00887300;
 ConvertClass * __fastcall FUN_0072F510(void);
 
 struct ShpHeader {
@@ -437,7 +436,7 @@ void RadarClass::Draw_It(bool forced)
 
 	if (IsToRedraw) {
 		ShapeSet const * frame_shape = (ShapeSet const *)RadarFrameShape;
-		Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, frame_shape, 0, Point2D(RadX, RadY), DAT_00887300->Get_Rect());
+		Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, frame_shape, 0, Point2D(RadX, RadY), SidebarSurface->Get_Rect());
 		RadarStatics::DAT_00B04978.Draw_Me(true);
 		RadarStatics::DAT_00B04910.Draw_Me(true);
 	}
@@ -469,7 +468,7 @@ void RadarClass::Draw_It(bool forced)
 			if (IsToRedraw == true || timer_fired) {
 				if (RadarAnimFrame >= 0 && RadarAnimFrame < ((ShpHeader *)DAT_00B04A38)->Count) {
 					ConvertClass * drawer = FUN_0072F510();
-					Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, RadarAnimFrame, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
+					Draw_Shape(*SidebarSurface, *drawer, (ShapeSet const *)DAT_00B04A38, RadarAnimFrame, Point2D(RadX, RadWidth), SidebarSurface->Get_Rect());
 					LastDrawRect = Rect(RadX, RadWidth, SidebarWidth, 110);
 				}
 			}
@@ -490,7 +489,7 @@ void RadarClass::Draw_It(bool forced)
 					IsToRedraw = false;
 					if (full) {
 						ConvertClass * drawer = FUN_0072F510();
-						Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
+						Draw_Shape(*SidebarSurface, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), SidebarSurface->Get_Rect());
 						Draw_Names();
 						LastDrawRect = Rect(RadX, RadWidth, SidebarWidth, 110);
 					} else {
@@ -511,7 +510,7 @@ void RadarClass::Draw_It(bool forced)
 				if (IsToRedraw) {
 					IsToRedraw = false;
 					ConvertClass * drawer = FUN_0072F510();
-					Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, 0, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
+					Draw_Shape(*SidebarSurface, *drawer, (ShapeSet const *)DAT_00B04A38, 0, Point2D(RadX, RadWidth), SidebarSurface->Get_Rect());
 					LastDrawRect = Rect(RadX, RadWidth, SidebarWidth, 110);
 				}
 				break;
@@ -809,14 +808,14 @@ void RadarClass::Draw_Names(void)
 	}
 
 	ConvertClass * drawer = FUN_0072F510();
-	Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
+	Draw_Shape(*SidebarSurface, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), SidebarSurface->Get_Rect());
 
 	y = RadOffX + 2;
-	Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), StringTable::LoadString("TXT_NAME_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1268), DAT_00887300, &DAT_00887300->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x19));
-	Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), StringTable::LoadString("TXT_KILLS_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1270), DAT_00887300, &DAT_00887300->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x219));
+	Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), StringTable::LoadString("TXT_NAME_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1268), SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x19));
+	Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), StringTable::LoadString("TXT_KILLS_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1270), SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x219));
 
 	y += 7;
-	DAT_00887300->Draw_Line(Point2D(RadHeight, y), Point2D(RadOffY + RadHeight - 1, y), FileSystem::SIDEBAR_PAL->Convert_Pixel(14));
+	SidebarSurface->Draw_Line(Point2D(RadHeight, y), Point2D(RadOffY + RadHeight - 1, y), FileSystem::SIDEBAR_PAL->Convert_Pixel(14));
 	y += 4;
 
 	for (house = 0; house < Houses.Count(); house++) {
@@ -845,7 +844,7 @@ void RadarClass::Draw_Names(void)
 			txt[18] = '.';
 			txt[19] = 0;
 		}
-		Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), txt, DAT_00887300, &DAT_00887300->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), color, 0, TextPrintType(style));
+		Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), txt, SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), color, 0, TextPrintType(style));
 
 		kills = 0;
 		for (h = 0; h < 20; h++) {
@@ -853,7 +852,7 @@ void RadarClass::Draw_Names(void)
 			kills += ptr->BuildingsKilled[h];
 		}
 		swprintf(txt, L"%2d", kills);
-		Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), txt, DAT_00887300, &DAT_00887300->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), color, 0, TextPrintType(style | 0x200));
+		Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), txt, SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), color, 0, TextPrintType(style | 0x200));
 
 		y += 9;
 	}
@@ -2059,7 +2058,7 @@ void RadarClass::Play_Movie(void)
 
 	if (FullRedraw == true && !unknown_bool_14BD) {
 		ConvertClass * drawer = FUN_0072F510();
-		Draw_Shape(*DAT_00887300, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), DAT_00887300->Get_Rect());
+		Draw_Shape(*SidebarSurface, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), SidebarSurface->Get_Rect());
 		LastDrawRect = Rect(RadX, RadWidth, SidebarWidth, 110);
 		DebugString("Radar: Movie full redrawn\n");
 	}

@@ -153,7 +153,6 @@ void Focus_Loss(void)
 }
 
 HWND FUN_00775B10(void);
-extern bool DAT_00884B8F;
 
 // FUNCTION: GAMEMD 0x00777420
 void Focus_Restore(void)
@@ -182,7 +181,7 @@ void Focus_Restore(void)
 			}
 		}
 		if (SidebarSurface != NULL && ((DSurface *)SidebarSurface)->Restore_Check()) {
-			DAT_00884B8F = true;
+			Map.IsForceCompleteRedraw = true;
 			if (!Unsorted::ScenarioStarted || Unsorted::CurrentFrame > 16) {
 				SidebarSurface->Fill(0);
 			}
