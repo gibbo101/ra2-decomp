@@ -41,6 +41,25 @@ def archive_shaped_object():
     return head + sect + code + reloc + sym_text + aux + helper + public + struct.pack("<I", 4)
 
 
+def grouped_object(code=b"\x90\xc3"):
+    """An empty .text, then the code in .text$mmx (a long name, in the string table): ml's
+    output for a file that only uses named code segments."""
+    text_flags = coffgen.SCN_CNT_CODE | coffgen.SCN_MEM_EXECUTE | coffgen.SCN_MEM_READ | coffgen.ALIGN[16]
+    raw = 20 + 2 * 40
+    symptr = raw + len(code)
+    head = struct.pack("<HHIIIHH", coffgen.I386, 2, 0, symptr, 5, 0, 0)
+    empty = struct.pack("<8sIIIIIIHHI", b".text", 0, 0, 0, 0, 0, 0, 0, 0, text_flags)
+    mmx = struct.pack("<8sIIIIIIHHI", b"/4", 0, 0, len(code), raw, 0, 0, 0, 0, text_flags)
+    sym_text = struct.pack("<8sIhHBB", b".text", 0, 1, 0, coffgen.CLASS_STATIC, 1)
+    aux_text = bytes(18)
+    sym_mmx = struct.pack("<4sIIhHBB", b"\0\0\0\0", 4, 0, 2, 0, coffgen.CLASS_STATIC, 1)
+    aux_mmx = struct.pack("<IHHIHBBBB", len(code), 0, 0, 0, 0, 0, 0, 0, 0)
+    routine = struct.pack("<8sIhHBB", b"_routine", 0, 2, 0x20, coffgen.CLASS_EXTERNAL, 0)
+    strings = b".text$mmx\0"
+    return (head + empty + mmx + code + sym_text + aux_text + sym_mmx + aux_mmx + routine
+            + struct.pack("<I", 4 + len(strings)) + strings)
+
+
 class ComdatizeTests(unittest.TestCase):
     def test_public_routine_becomes_the_comdat_key(self):
         out, _ = comdatize.comdatize(archive_shaped_object())
@@ -62,6 +81,14 @@ class ComdatizeTests(unittest.TestCase):
         self.assertEqual(len(out), len(src))
         diff = [i for i in range(len(src)) if src[i] != out[i]]
         self.assertEqual(set(diff), {20 + 36 + 1, symptr + 18 + 14})
+
+    def test_grouped_code_section_converts_and_empty_text_stays(self):
+        out, count = comdatize.comdatize(grouped_object())
+        self.assertEqual(count, 1)
+        self.assertFalse(struct.unpack_from("<I", out, 20 + 36)[0] & coffgen.SCN_LNK_COMDAT)
+        self.assertTrue(struct.unpack_from("<I", out, 20 + 40 + 36)[0] & coffgen.SCN_LNK_COMDAT)
+        symptr = struct.unpack_from("<I", out, 8)[0]
+        self.assertEqual(out[symptr + 18 * 3 + 14], coffgen.COMDAT_ANY)
 
     def test_idempotent(self):
         once, _ = comdatize.comdatize(ml_shaped_object())

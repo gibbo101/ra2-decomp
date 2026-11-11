@@ -4,8 +4,8 @@
 
 ml emits one non-COMDAT .text section per object, and LINK cannot place such a section through
 /ORDER (warning LNK4065). The original hand-written assembly objects are one COMDAT-like unit
-each, so this pass marks every executable .text section IMAGE_SCN_LNK_COMDAT and sets the
-selection byte of its section-symbol aux record to ANY. LINK keys a COMDAT on the first symbol
+each, so this pass marks every non-empty executable .text or .text$ section
+IMAGE_SCN_LNK_COMDAT and sets the selection byte of its section-symbol aux record to ANY. LINK keys a COMDAT on the first symbol
 the symbol table defines in it; where that is a file-local label (the archived objects
 define helpers before the public routine at offset 0), the public routine's entry is swapped
 ahead of it and every relocation's symbol index follows. The bytes are left alone.
@@ -28,24 +28,36 @@ def comdatize(data):
     nsec = struct.unpack_from("<H", data, 2)[0]
     symptr = struct.unpack_from("<I", data, 8)[0]
     converted = 0
+    strtab = symptr + 18 * struct.unpack_from("<I", data, 12)[0]
     for idx in range(1, nsec + 1):
         off = 20 + 40 * (idx - 1)
-        name = bytes(data[off:off + 8]).rstrip(b"\0")
+        name = section_name(data, off, strtab)
         flags = struct.unpack_from("<I", data, off + 36)[0]
-        if name != b".text" or not flags & CNT_CODE or flags & coffgen.SCN_LNK_COMDAT:
+        size = struct.unpack_from("<I", data, off + 16)[0]
+        if (name != ".text" and not name.startswith(".text$")) or not size \
+                or not flags & CNT_CODE or flags & coffgen.SCN_LNK_COMDAT:
             continue
         aux = None
         for sidx, sname, value, sec, scl, naux in coffgen.read_symbols(bytes(data)):
-            if sec == idx and scl == coffgen.CLASS_STATIC and value == 0 and naux and sname == ".text":
+            if sec == idx and scl == coffgen.CLASS_STATIC and value == 0 and naux and sname == name:
                 aux = symptr + 18 * (sidx + 1)
                 break
         if aux is None:
-            raise ValueError("section symbol for .text not found")
+            raise ValueError(f"section symbol for {name} not found")
         struct.pack_into("<I", data, off + 36, flags | coffgen.SCN_LNK_COMDAT)
         data[aux + 14] = coffgen.COMDAT_ANY
         key_first(data, idx)
         converted += 1
     return bytes(data), converted
+
+
+def section_name(data, off, strtab):
+    """A section header's name, following a /offset into the string table for long names."""
+    raw = bytes(data[off:off + 8]).rstrip(b"\0")
+    if raw.startswith(b"/") and raw[1:].isdigit():
+        at = strtab + int(raw[1:])
+        return bytes(data[at:data.index(b"\0", at)]).decode("latin-1")
+    return raw.decode("latin-1")
 
 
 def key_first(data, section):

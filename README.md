@@ -13,9 +13,11 @@ from people are just as welcome and go through the same checker and rules (`CONT
 
 **Status (11 November 2026):** 3.16 MB of the game's 3.82 MB of code matches byte for byte
 (83%), in 18,997 of its 19,353 functions (98%). Counting each unmatched function at its best
-attempt so far, the fuzzy match is 94%. Each function is checked on its own; linking a whole
-executable that matches comes later. `docs/PLAN.md` has the method, and `docs/rounds/`
-records every batch.
+attempt so far, the fuzzy match is 94%. Each function is checked on its own, and
+`tools/exelink/` links the whole executable with every matched function at its original
+address: with the original's bytes for what isn't matched yet, the image is identical to
+retail 1.001 in every section, and 81% of its code comes from source. `docs/PLAN.md` has
+the method, and `docs/rounds/` records every batch.
 
 ## Getting started
 
@@ -89,6 +91,10 @@ out of history.
   static-sound saving, Techno line drawing and the conflict-territory lookup, ported from their matching decompilation
   of Red Alert 2 ([meastes/redalert2-decomp](https://github.com/meastes/redalert2-decomp),
   GPL-3.0-or-later).
+- [r-melvin](https://github.com/r-melvin): wrote `tools/exelink/`, the whole-executable
+  link, ported from their matching decompilation of Yuri's Revenge
+  ([r-melvin/gagarin](https://github.com/r-melvin/gagarin)), and found the duplicate
+  definitions and the padding row it exposed.
 - [mischa85](https://github.com/mischa85): named 102 functions and globals in audio, Bink,
   the bit font, dialogs, the radar and the window stub from their byte-for-byte rebuild of
   Red Alert 2 1.006 ([mischa85/RedAlert2](https://github.com/mischa85/RedAlert2), GPL-3.0).
