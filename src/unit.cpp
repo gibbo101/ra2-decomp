@@ -1867,10 +1867,7 @@ static inline bool Is_Cached(VoxelIndexClass * cache, int key)
 	return(false);
 }
 
-static inline bool Is_Barrel_Ahead(FacingClass const & facing)
-{
-	return(facing.Current().As_Dir4() > 0 && facing.Current().As_Dir4() < 3);
-}
+#include "voxfacing.h"
 
 // FUNCTION: GAMEMD 0x0073B470
 void UnitClass::Unit_Draw_Voxel(Point2D xdrawpoint, Rect xcliprect, int brightness, WORD tint)

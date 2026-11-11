@@ -1880,6 +1880,7 @@ address,size,symbol,source,sha256
 0x0043CEA0,387,?Render@BuildingClass@@UBE_NAAV?$TRect@H@@_N1@Z,src/building.cpp,fdbe38a2eea911c73503a338f617fc33fb593470febf23c171982c14aceb3e8c
 0x0043D030,599,?Editor_Draw_It@BuildingClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/building.cpp,5c627d9d9cf87cba9fdbb90564b6b7ce03c6e4bdefc3ed5f1a5928cef0482387
 0x0043D290,2022,?Draw_It@BuildingClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/building.cpp,660e60e11ce405d5d5059a07aa54042b65e7e81f6b1f964009bef6f9370fa8db
+0x0043DA80,3362,?Draw_Extras@BuildingClass@@UAEXAAVPoint2D@@AAV?$TRect@H@@@Z,src/building.cpp,0951c9dadfb4f15a87e4c6857f30d689d365db051c022ddad9b81e17b1a7d6a4
 0x0043E7B0,325,?DrawInfoTipAndSpiedSelection@BuildingClass@@QBEXPAVPoint2D@@PAV?$TRect@H@@@Z,src/building.cpp,36d2a2061d9fd951c5b454a99b4a8f62f3616164b875afac2b490dce63049fa5
 0x0043E900,52,?Get_Z_Adjust@BuildingClass@@UBEHXZ,src/building.cpp,8cb0b7e935f3703b816053ef455d1684959197def64d890677bb9ea453722873
 0x0043E940,1012,?Barrel_Pitch@BuildingClass@@UBE?AVDirType@@PAVAbstractClass@@@Z,src/building.cpp,bb660760524ab118ca301e1b56ab924eb2174e97b15e20717f26c1d6f3116941

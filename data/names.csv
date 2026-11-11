@@ -557,3 +557,8 @@ address,name,symbol,evidence
 0x00B45590,VoxelPixelDeltaTable,_VoxelPixelDeltaTable,Independently matched Draw_Voxel_Regular_Normals and Draw_Voxel_Reverse_Normals agree on this external data reference
 0x00B2FF78,VoxelDrawBuffer,_VoxelDrawBuffer,Independently matched Draw_Voxel_Regular_Normals and Draw_Voxel_Reverse_Normals agree on this external data reference
 0x0084E862,UseMMX,_UseMMX,Archived processor detector sets the MMX flag; all four uniquely placed Adjust_Color procedures test the same byte
+0x00A8ED6B,Debug_Map,?Debug_Map@@3_NA,TibSun declaration and consistent relocations in existing matched src/building.cpp functions
+0x00887418,UseVoxelCache,?UseVoxelCache@@3_NA,TibSun declaration and consistent relocations in existing matched src/unit.cpp functions
+0x00705E00,TechnoClass::Techno_Draw_Object,?Techno_Draw_Object@TechnoClass@@QBEXPBVShapeSet@@HABVPoint2D@@ABV?$TRect@H@@W4Dir256@@HHW4ZGradientType@@_NHG0HV3@W4ShapeFlags_Type@@@Z,TibSun declaration and consistent relocations in existing matched src/building.cpp functions
+0x00818CB4,BuildingClass::Draw_Extras::_make_visible,_?_make_visible@?GI@??Draw_Extras@BuildingClass@@UAEXAAVPoint2D@@AAV?$TRect@H@@@Z@4_NA,Function-local static in matched Draw_Extras; original initialized value agrees with the archived declaration
+0x00818CB0,BuildingClass::Draw_Extras::_dir_adjust,_?_dir_adjust@?GI@??Draw_Extras@BuildingClass@@UAEXAAVPoint2D@@AAV?$TRect@H@@@Z@4HA,Function-local static in matched Draw_Extras; original initialized value agrees with the archived declaration

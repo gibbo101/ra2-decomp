@@ -1518,6 +1518,7 @@ address,name,result,size,source,symbol
 0x0043CEA0,BuildingClass::Render,MATCH,387,src/building.cpp,?Render@BuildingClass@@UBE_NAAV?$TRect@H@@_N1@Z
 0x0043D030,BuildingClass::Editor_Draw_It,MATCH,599,src/building.cpp,?Editor_Draw_It@BuildingClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x0043D290,BuildingClass::Draw_It,MATCH,2022,src/building.cpp,?Draw_It@BuildingClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
+0x0043DA80,BuildingClass::Draw_Extras,MATCH,3362,src/building.cpp,?Draw_Extras@BuildingClass@@UAEXAAVPoint2D@@AAV?$TRect@H@@@Z
 0x0043E7B0,BuildingClass::DrawInfoTipAndSpiedSelection,MATCH,325,src/building.cpp,?DrawInfoTipAndSpiedSelection@BuildingClass@@QBEXPAVPoint2D@@PAV?$TRect@H@@@Z
 0x0043E900,BuildingClass::Get_Z_Adjust,MATCH,52,src/building.cpp,?Get_Z_Adjust@BuildingClass@@UBEHXZ
 0x0043E940,BuildingClass::Barrel_Pitch,MATCH,1012,src/building.cpp,?Barrel_Pitch@BuildingClass@@UBE?AVDirType@@PAVAbstractClass@@@Z
