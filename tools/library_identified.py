@@ -112,9 +112,20 @@ class Audit:
         require(len(references) == len(relocations), f"Unchecked relocation: {entry}")
         linked = bytearray(code)
         for reference in references:
-            require(reference.status == "ok" and reference.want is not None,
+            require(reference.status == "ok",
                     f"Unproved reference: {entry}: {reference}")
-            value = reference.want + reference.addend
+            want = reference.want
+            if want is None:
+                target = reference.target
+                require(target.name.startswith("??_C@") and target.section > 0,
+                        "Only verified literal strings may lack a named address")
+                literal_section = obj.sections[target.section - 1]
+                literal = literal_section.data[target.value:]
+                require(not literal_section.relocs and literal and literal[-1] == 0 and
+                        self.original.read(reference.got, len(literal)) == literal,
+                        "Complete literal string differs")
+                want = reference.got
+            value = want + reference.addend
             if reference.type == coff.REL_REL32:
                 value -= address + reference.offset + 4
             struct.pack_into("<I", linked, reference.offset, value & 0xFFFFFFFF)
@@ -124,6 +135,43 @@ class Audit:
                 re.finditer(b"(?=" + re.escape(bytes(linked)) + b")", self.text)]
         return {"size": len(code),
                 "fully_linked_locations": [f"0x{hit:08X}" for hit in hits]}
+
+    def block_data(self, obj, addresses, item):
+        """Corroborate a block's named data reference with its archive definition."""
+        picks = [p for p in obj.functions() if p[0].name == item["function"]]
+        require(len(picks) == 1, "Ambiguous data-reference function")
+        _, section, lo, hi = picks[0]
+        references = [r for r in section.relocs if lo <= r.offset < hi and
+                      obj.by_index[r.symbol].name == item["symbol"]]
+        require(references, "Object block does not reference the named data")
+        targets = set()
+        for ref in references:
+            symbol = obj.by_index[ref.symbol]
+            require(ref.type == coff.REL_DIR32 and ref.offset + 4 <= hi and
+                    symbol.section == 0 and symbol.type != 0x20 and
+                    symbol.storage == coff.STORAGE_EXTERNAL,
+                    "Object-block reference must name external data")
+            addend = struct.unpack_from("<i", section.data, ref.offset)[0]
+            at = addresses[item["function"]] + ref.offset - lo
+            targets.add((self.original.u32(at) - addend) & 0xFFFFFFFF)
+        require(len(targets) == 1, "Object-block data references disagree")
+        target = next(iter(targets))
+        _, _, definition, _ = self.object(item["definition"])
+        symbols = [s for s in definition.symbols if s.name == item["symbol"] and s.section > 0]
+        require(len(symbols) == 1, "Ambiguous archive data definition")
+        symbol = symbols[0]
+        data = definition.sections[symbol.section - 1]
+        require(symbol.storage == coff.STORAGE_EXTERNAL and symbol.type != 0x20 and
+                data.name == ".data" and not data.is_code and not data.relocs and
+                0 <= symbol.value < len(data.data), "Invalid initialized data definition")
+        base = target - symbol.value
+        require(any(not s.Characteristics & 0x20000020 and
+                    self.original.base + s.VirtualAddress <= base and
+                    base + len(data.data) <= self.original.base + s.VirtualAddress + s.Misc_VirtualSize
+                    for s in self.original.pe.sections), "Data definition falls outside non-code data")
+        require(self.original.read(base, len(data.data)) == data.data,
+                "Initialized data definition differs")
+        return target
 
     def object_block(self, entry):
         """Locate every code section of a library member, in its original order."""
@@ -142,7 +190,7 @@ class Audit:
             symbol, section, start, end = pick
             code, mask = check.function_bytes(pick)
             require(start == 0 and end == len(section.data) == len(code) and code and
-                    symbol.storage == coff.STORAGE_EXTERNAL and symbol.type == 0x20,
+                    symbol.storage in (coff.STORAGE_EXTERNAL, 3) and symbol.type == 0x20,
                     "Object-block function must occupy its entire code section")
             addresses[symbol.name] = address + len(combined)
             masked.update(len(combined) + offset for offset in mask)
@@ -164,6 +212,11 @@ class Audit:
             anchors[anchor["symbol"]] = result
         require(len(anchors) >= 4, "Object block requires four independent unique anchors")
         bindings = dict(addresses)
+        for anchor in block.get("external_anchors", []):
+            require(anchor["symbol"] not in anchors and anchor["symbol"] not in addresses,
+                    "Duplicate external anchor")
+            anchors[anchor["symbol"]] = self.unique_anchor(anchor)
+            bindings[anchor["symbol"]] = int(anchor["address"], 16)
         for item in block.get("globals", []):
             require(len(set(item["anchor_symbols"])) >= 2,
                     "Object-block global requires two distinct anchors")
@@ -185,6 +238,19 @@ class Audit:
             require(refs and {r["target"] for r in refs} == {item["address"]},
                     "Unique destructor does not corroborate the RTTI vtable")
             bindings[item["symbol"]] = vtable
+        for item in block.get("data_definitions", []):
+            target = self.block_data(obj, addresses, item)
+            require(item["symbol"] not in bindings or bindings[item["symbol"]] == target,
+                    "Conflicting object-block data definition")
+            bindings[item["symbol"]] = target
+        for anchor in block.get("linked_anchors", []):
+            result = self.linked_body(anchor, bindings)
+            require(result["fully_linked_locations"] == [anchor["address"]],
+                    "Linked auxiliary body is not unique")
+            require(anchor["symbol"] not in bindings or
+                    bindings[anchor["symbol"]] == int(anchor["address"], 16),
+                    "Conflicting linked auxiliary identity")
+            bindings[anchor["symbol"]] = int(anchor["address"], 16)
         for symbol in symbols:
             self.linked_body({**entry, "symbol": symbol,
                               "address": f"0x{addresses[symbol]:08X}"}, bindings)
@@ -295,10 +361,26 @@ def verify(path=ROOT / "data/library_identified.json"):
     document = json.loads(Path(path).read_text())
     entries = identity_records(document["targets"])
     audit = Audit()
-    for entry in entries.values():
+    verified, visiting = set(), set()
+
+    def verify_entry(address):
+        require(address in entries, "Unknown library identity prerequisite")
+        require(address not in visiting, "Cyclic library identity prerequisite")
+        if address in verified:
+            return
+        visiting.add(address)
+        entry = entries[address]
+        for dependency in entry.get("requires", []):
+            verify_entry(int(dependency, 16))
         if entry["kind"] == "object_block":
             entry = {**entry, "block": document["blocks"][entry["block"]]}
         audit.target(entry)
+        audit.local[entry["symbol"]] = address
+        visiting.remove(address)
+        verified.add(address)
+
+    for address in entries:
+        verify_entry(address)
     return {address: (row["size"], row["symbol"], row["library"], row["object"])
             for address, row in entries.items()}
 

@@ -471,6 +471,7 @@ address,size,symbol,library,object
 0x007CD4DE,214,_tmpfile,LIBCMT.LIB,tmpfile.obj
 0x007CD5B4,97,_init_namebuf,LIBCMT.LIB,tmpfile.obj
 0x007CD615,70,_genfname,LIBCMT.LIB,tmpfile.obj
+0x007CD65B,7,___inc_tmpoff,LIBCMT.LIB,tmpfile.obj
 0x007CD662,25,_ctime,LIBCMT.LIB,ctime.obj
 0x007CD680,257,__strnicmp,LIBCMT.LIB,strnicmp.obj
 0x007CD790,62,_strcspn,LIBCMT.LIB,strcspn.obj

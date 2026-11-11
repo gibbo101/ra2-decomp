@@ -1,11 +1,14 @@
 import copy
+import json
+from pathlib import Path
 import struct
+import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from coff import CODE, REL_DIR32, REL_REL32, STORAGE_EXTERNAL, CoffObject, Reloc, Section, Symbol
-from library_identified import Audit, identity_records, merge
+from library_identified import Audit, identity_records, merge, verify
 from rtti import Rtti
 
 
@@ -85,6 +88,82 @@ def table_fixture():
 
 
 class LibraryIdentityTests(unittest.TestCase):
+    def test_prerequisites_are_verified_first_and_cycles_are_rejected(self):
+        rows = [{**ENTRY, 'symbol': '_first', 'kind': 'incoming',
+                 'requires': ['0x00002000']},
+                {**ENTRY, 'symbol': '_second', 'kind': 'incoming', 'address': '0x00002000'}]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'identities.json'
+            path.write_text(json.dumps({'targets': rows}))
+            audit = Mock(local={})
+            with patch('library_identified.Audit', return_value=audit):
+                verify(path)
+                self.assertEqual([c.args[0]['symbol'] for c in audit.target.call_args_list],
+                                 ['_second', '_first'])
+                self.assertEqual(audit.local, {'_second': 0x2000, '_first': 0x1000})
+                rows[1]['requires'] = ['0x00001000']
+                path.write_text(json.dumps({'targets': rows}))
+                with self.assertRaisesRegex(ValueError, 'Cyclic'):
+                    verify(path)
+                rows[1]['requires'] = ['0x00003000']
+                path.write_text(json.dumps({'targets': rows}))
+                with self.assertRaisesRegex(ValueError, 'Unknown'):
+                    verify(path)
+
+    def test_block_accepts_static_functions_but_rejects_rebinding_members(self):
+        audit, entry = block_fixture()
+        obj = audit.object(entry)[2]
+        obj.symbols[0].storage = 3
+        audit.target(entry)
+        entry['block']['external_anchors'] = [{**ENTRY, 'symbol': '_f4'}]
+        with self.assertRaisesRegex(ValueError, 'Duplicate external anchor'):
+            audit.target(entry)
+        entry['block']['external_anchors'] = []
+        obj.symbols[0].storage = 1
+        with self.assertRaisesRegex(ValueError, 'entire code section'):
+            audit.target(entry)
+
+    def test_literal_relocations_require_the_complete_original_string(self):
+        code = b'\x68' + bytes(4) + b'\xc3'
+        image = b'\x68' + struct.pack('<I', 0x2000) + b'\xc3'
+        audit = audit_fixture(code, image, [Reloc(1, 1, REL_DIR32)])
+        obj = audit.object(ENTRY)[2]
+        obj.symbols[1].name = '??_C@fixture'
+        obj.symbols[1].section = 2
+        obj.symbols[1].type = 0
+        obj.sections.append(Section(2, '.rdata', b'hello\0', 0))
+        read = audit.original.read
+        audit.original.read = lambda at, size: b'hello\0'[:size] if at == 0x2000 else read(at, size)
+        audit.linked_body(ENTRY, {})
+        audit.original.read = lambda at, size: b'other\0'[:size] if at == 0x2000 else read(at, size)
+        with self.assertRaisesRegex(ValueError, 'Unproved reference'):
+            audit.linked_body(ENTRY, {})
+
+    def test_block_data_requires_a_consistent_reference_and_full_definition(self):
+        code = b'\xff\x05' + struct.pack('<i', 4) + b'\xc3'
+        image = b'\xff\x05' + struct.pack('<I', 0x2004) + b'\xc3'
+        audit = audit_fixture(code, image, [Reloc(2, 1, REL_DIR32)])
+        obj = audit.object(ENTRY)[2]
+        obj.symbols[1].type = 0
+        definition = CoffObject.__new__(CoffObject)
+        definition.sections = [Section(1, '.data', bytes(range(12)), 0)]
+        definition.symbols = [Symbol(0, '_target', 4, 1, 0, STORAGE_EXTERNAL)]
+        audit.object = lambda entry: ('definition.obj', b'', definition, None)
+        read = audit.original.read
+        audit.original.read = lambda at, size: bytes(range(12))[:size] if at == 0x1FFC else read(at, size)
+        audit.original.base = 0
+        audit.original.pe = SimpleNamespace(sections=[SimpleNamespace(
+            VirtualAddress=0x1FFC, Misc_VirtualSize=12, Characteristics=0x40)])
+        item = {'symbol': '_target', 'function': '_caller', 'definition': {}}
+        self.assertEqual(audit.block_data(obj, {'_caller': 0x1000}, item), 0x2000)
+        definition.sections[0].data = b'wrong data!!'
+        with self.assertRaisesRegex(ValueError, 'definition differs'):
+            audit.block_data(obj, {'_caller': 0x1000}, item)
+        definition.sections[0].data = bytes(range(12))
+        obj.sections[0].relocs[0].type = REL_REL32
+        with self.assertRaisesRegex(ValueError, 'external data'):
+            audit.block_data(obj, {'_caller': 0x1000}, item)
+
     def test_object_block_requires_complete_ordered_member_and_target_position(self):
         audit, entry = block_fixture()
         audit.target(entry)

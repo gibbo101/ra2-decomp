@@ -139,6 +139,18 @@
       ]
     },
     {
+      "address": "0x007CD65B",
+      "symbol": "___inc_tmpoff",
+      "library": "LIBCMT.LIB",
+      "object": "tmpfile.obj",
+      "size": 7,
+      "kind": "object_block",
+      "block": "temporary_files",
+      "requires": [
+        "0x007D5719"
+      ]
+    },
+    {
       "address": "0x007CF762",
       "size": 6,
       "symbol": "__get_sbh_threshold",
@@ -420,6 +432,152 @@
             "__initptd",
             "__freeptd"
           ]
+        }
+      ]
+    },
+    "temporary_files": {
+      "address": "0x007CD460",
+      "size": 514,
+      "symbols": [
+        "_tmpnam",
+        "_tmpfile",
+        "_init_namebuf",
+        "_genfname",
+        "___inc_tmpoff"
+      ],
+      "anchors": [
+        {
+          "address": "0x007CD460",
+          "symbol": "_tmpnam",
+          "library": "LIBCMT.LIB",
+          "object": "tmpfile.obj"
+        },
+        {
+          "address": "0x007CD4DE",
+          "symbol": "_tmpfile",
+          "library": "LIBCMT.LIB",
+          "object": "tmpfile.obj"
+        },
+        {
+          "address": "0x007CD5B4",
+          "symbol": "_init_namebuf",
+          "library": "LIBCMT.LIB",
+          "object": "tmpfile.obj"
+        },
+        {
+          "address": "0x007CD615",
+          "symbol": "_genfname",
+          "library": "LIBCMT.LIB",
+          "object": "tmpfile.obj"
+        }
+      ],
+      "external_anchors": [
+        {
+          "address": "0x007D2C36",
+          "symbol": "__openfile",
+          "library": "LIBCMT.LIB",
+          "object": "_open.obj"
+        },
+        {
+          "address": "0x007CB33D",
+          "symbol": "___initstdio",
+          "library": "LIBCMT.LIB",
+          "object": "_file.obj"
+        },
+        {
+          "address": "0x007CE18D",
+          "symbol": "__flsbuf",
+          "library": "LIBCMT.LIB",
+          "object": "_flsbuf.obj"
+        },
+        {
+          "address": "0x007D4BF0",
+          "symbol": "_strcpy",
+          "library": "LIBCMT.LIB",
+          "object": "strcat.obj"
+        },
+        {
+          "address": "0x007D4C00",
+          "symbol": "_strcat",
+          "library": "LIBCMT.LIB",
+          "object": "strcat.obj"
+        },
+        {
+          "address": "0x007D5408",
+          "symbol": "__strdup",
+          "library": "LIBCMT.LIB",
+          "object": "strdup.obj"
+        },
+        {
+          "address": "0x007C9DD4",
+          "symbol": "_strtoxl",
+          "library": "LIBCMT.LIB",
+          "object": "strtol.obj"
+        }
+      ],
+      "globals": [
+        {
+          "symbol": "_namebuf0",
+          "address": "0x00B78208",
+          "anchor_symbols": [
+            "_tmpnam",
+            "_init_namebuf"
+          ]
+        },
+        {
+          "symbol": "_namebuf1",
+          "address": "0x00B78218",
+          "anchor_symbols": [
+            "_tmpfile",
+            "_init_namebuf"
+          ]
+        },
+        {
+          "symbol": "__commode",
+          "address": "0x00B783D4",
+          "anchor_symbols": [
+            "_tmpfile",
+            "__openfile"
+          ]
+        },
+        {
+          "symbol": "__iob",
+          "address": "0x0087BF50",
+          "anchor_symbols": [
+            "___initstdio",
+            "__flsbuf"
+          ]
+        }
+      ],
+      "data_definitions": [
+        {
+          "symbol": "__tmpoff",
+          "function": "___inc_tmpoff",
+          "definition": {
+            "library": "LIBCMT.LIB",
+            "object": "rmtmp.obj",
+            "symbol": "__rmtmp"
+          }
+        }
+      ],
+      "linked_anchors": [
+        {
+          "address": "0x007C9FD9",
+          "symbol": "_strtoul",
+          "library": "LIBCMT.LIB",
+          "object": "strtol.obj"
+        },
+        {
+          "address": "0x007CB44B",
+          "symbol": "__unlock_file",
+          "library": "LIBCMT.LIB",
+          "object": "_file.obj"
+        },
+        {
+          "address": "0x007D5408",
+          "symbol": "__strdup",
+          "library": "LIBCMT.LIB",
+          "object": "strdup.obj"
         }
       ]
     }

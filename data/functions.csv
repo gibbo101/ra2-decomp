@@ -19838,7 +19838,8 @@ address,size,evidence,name
 0x007CD460,126,CGL,_tmpnam
 0x007CD4DE,214,GL,_tmpfile
 0x007CD5B4,97,CGL,_init_namebuf
-0x007CD615,77,CGL,_genfname
+0x007CD615,70,CGL,_genfname
+0x007CD65B,7,L,___inc_tmpoff
 0x007CD662,25,CGL,_ctime
 0x007CD680,257,CYGL,CRT::_strnicmp
 0x007CD790,62,CYGL,CRT::strcspn

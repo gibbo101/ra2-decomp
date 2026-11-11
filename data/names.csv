@@ -548,3 +548,4 @@ address,name,symbol,evidence
 0x0087C584,__sbh_threshold,___sbh_threshold,Pinned LIBCMT calloc.obj malloc.obj realloc.obj and sbheap.obj independently resolve this small-block-heap threshold
 0x00B782C8,_pnhHeap,?_pnhHeap@@3P6AHI@ZA,Pinned LIBCMT handler.obj references in _set_new_handler and _callnewh independently resolve the allocation failure handler
 0x00B7856C,pOldExceptFilter,_pOldExceptFilter,Pinned LIBCMT unhandld.obj unique handler and restore routines independently resolve the previous exception filter
+0x0087CB14,_tmpoff,__tmpoff,Named reference in the complete independently located tmpfile.obj block; initialized data corroborated by the rmtmp.obj definition
