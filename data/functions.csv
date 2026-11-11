@@ -10655,7 +10655,6 @@ address,size,evidence,name
 0x005F5850,212,PCVG,
 0x005F5930,14,PCVG,
 0x005F5940,524,PCVYG,ObjectClass::SpawnParachuted
-0x005F5B4C,1,Y,ObjectClass::ReplaceTag
 0x005F5B50,49,PCYG,ObjectClass::AttachTrigger
 0x005F5B90,117,PV,
 0x005F5C10,1,P,

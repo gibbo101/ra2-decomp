@@ -11909,8 +11909,8 @@ address,name,result,size,source,symbol
 0x00661590,RLEEngine::Line_Compress,MATCH,62,src/rle.cpp,?Line_Compress@RLEEngine@@QBEHPBXPAXH@Z
 0x006615D0,RLEEngine::Decompress,MATCH,98,src/rle.cpp,?Decompress@RLEEngine@@QBEHPBXPAXH@Z
 0x00661640,RLEEngine::Line_Decompress,MATCH,101,src/rle.cpp,?Line_Decompress@RLEEngine@@QBEHPBXPAX@Z
-0x006616B0,RandomStraw::RandomStraw,MATCH,80,src/rle.cpp,??0RandomStraw@@QAE@XZ
-0x00661700,RandomStraw::~RandomStraw,MATCH,36,src/rle.cpp,??1RandomStraw@@UAE@XZ
+0x006616B0,RandomStraw::RandomStraw,MATCH,80,src/rndstraw.cpp,??0RandomStraw@@QAE@XZ
+0x00661700,RandomStraw::~RandomStraw,MATCH,36,src/rndstraw.cpp,??1RandomStraw@@UAE@XZ
 0x00661730,RandomStraw::Reset,MATCH,23,src/rndstraw.cpp,?Reset@RandomStraw@@QAEXXZ
 0x00661750,RandomStraw::Seed_Bits_Needed,MATCH,22,src/rndstraw.cpp,?Seed_Bits_Needed@RandomStraw@@QBEHXZ
 0x00661770,RandomStraw::Seed_Bit,MATCH,219,src/rndstraw.cpp,?Seed_Bit@RandomStraw@@QAEXH@Z
@@ -18922,13 +18922,13 @@ address,name,result,size,source,symbol
 0x007BA2C0,FUN_007BA2C0,MATCH,48,src/wwmous.cpp,?FUN_007BA2C0@@YAXXZ
 0x007BA2F0,FUN_007BA2F0,MATCH,13,src/wwmous.cpp,?FUN_007BA2F0@@YAXXZ
 0x007BA300,??_GMouse@@UAEPAXI@Z,MATCH,32,src/wwmous.cpp,??_GMouse@@UAEPAXI@Z
+0x007BA3A0,??_GWWMouseClass@@UAEPAXI@Z,MATCH,30,src/wwmous.cpp,??_GWWMouseClass@@UAEPAXI@Z
 0x007BA320,WWMouseClass::Is_Hidden,MATCH,11,src/wwmouse.cpp,?Is_Hidden@WWMouseClass@@UBE_NXZ
 0x007BA330,WWMouseClass::Is_Captured,MATCH,4,src/wwmouse.cpp,?Is_Captured@WWMouseClass@@UBE_NXZ
 0x007BA340,WWMouseClass::Get_Mouse_X,MATCH,4,src/wwmouse.cpp,?Get_Mouse_X@WWMouseClass@@UBEHXZ
 0x007BA350,WWMouseClass::Get_Mouse_Y,MATCH,4,src/wwmouse.cpp,?Get_Mouse_Y@WWMouseClass@@UBEHXZ
 0x007BA360,WWMouseClass::Get_Mouse_Point,MATCH,18,src/wwmouse.cpp,?Get_Mouse_Point@WWMouseClass@@UBE?AVPoint2D@@XZ
 0x007BA380,WWMouseClass::Set_Mouse_Point,MATCH,17,src/wwmouse.cpp,?Set_Mouse_Point@WWMouseClass@@UAEXHH@Z
-0x007BA3A0,??_GWWMouseClass@@UAEPAXI@Z,MATCH,30,src/wwmouse.cpp,??_GWWMouseClass@@UAEPAXI@Z
 0x007BA3C0,BufferPipe::Put,MATCH,88,src/xpipe.cpp,?Put@BufferPipe@@UAEHPBXH@Z
 0x007BA420,FilePipe::~FilePipe,MATCH,48,src/xpipe.cpp,??1FilePipe@@UAE@XZ
 0x007BA450,FilePipe::End,MATCH,39,src/xpipe.cpp,?End@FilePipe@@UAEHXZ

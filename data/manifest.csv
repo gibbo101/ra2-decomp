@@ -12263,8 +12263,8 @@ address,size,symbol,source,sha256
 0x00661590,62,?Line_Compress@RLEEngine@@QBEHPBXPAXH@Z,src/rle.cpp,781072ea883756f6ed768c0070317563820ea33df0a7b40650cea9949f9c6f4c
 0x006615D0,98,?Decompress@RLEEngine@@QBEHPBXPAXH@Z,src/rle.cpp,baa66a0650919cfec2b6324ebf69168b8cdb3efe7caaa6c4c6f7d9465dc90496
 0x00661640,101,?Line_Decompress@RLEEngine@@QBEHPBXPAX@Z,src/rle.cpp,f306c5c15bbbc895bb459f3dd03a2f39b3ba8e5eaca8a09460cf1d154e88b554
-0x006616B0,80,??0RandomStraw@@QAE@XZ,src/rle.cpp,ba22cefafbd2b91a06561ae751ce94a679f3665dcf5f442001d92570ac330dd4
-0x00661700,36,??1RandomStraw@@UAE@XZ,src/rle.cpp,e480cc282a5c2826de31c6ba6e635edc6f3e816a56fab348a7496f86a0b3c9e6
+0x006616B0,80,??0RandomStraw@@QAE@XZ,src/rndstraw.cpp,ba22cefafbd2b91a06561ae751ce94a679f3665dcf5f442001d92570ac330dd4
+0x00661700,36,??1RandomStraw@@UAE@XZ,src/rndstraw.cpp,e480cc282a5c2826de31c6ba6e635edc6f3e816a56fab348a7496f86a0b3c9e6
 0x00661730,23,?Reset@RandomStraw@@QAEXXZ,src/rndstraw.cpp,3ff5fafbdc2dc80503ddda8d40b9f79e23077a6f0babad3aeec5433bc3aee822
 0x00661750,22,?Seed_Bits_Needed@RandomStraw@@QBEHXZ,src/rndstraw.cpp,ac2565537bbcbf25fd52cdcf2608ea14cb2cd61c0aae7c911b1cff39cacc0031
 0x00661770,219,?Seed_Bit@RandomStraw@@QAEXH@Z,src/rndstraw.cpp,cc5240f4b7136c2f59b326c08ecf22ba707e91c4900345f8bdd15a83718b59f7
@@ -18796,7 +18796,7 @@ address,size,symbol,source,sha256
 0x007BA350,4,?Get_Mouse_Y@WWMouseClass@@UBEHXZ,src/wwmouse.cpp,07ad3a50b1c271e07fb57fb47d2f0e77f3342d41bfa410990cb1320a45035fb2
 0x007BA360,18,?Get_Mouse_Point@WWMouseClass@@UBE?AVPoint2D@@XZ,src/wwmouse.cpp,7de5ea5027793dfcd7438ca19e70dacef733067e7e46452296a53f5710746c63
 0x007BA380,17,?Set_Mouse_Point@WWMouseClass@@UAEXHH@Z,src/wwmouse.cpp,24cdced0d504c1b7a782a15da8b3af5f9b2131ee7393cb2661768a5a7628e278
-0x007BA3A0,30,??_GWWMouseClass@@UAEPAXI@Z,src/wwmouse.cpp,e19aaeade611fa4c6bff3213d01ebe05d4bc5bb99c4bf9c4d94239b46726be13
+0x007BA3A0,30,??_GWWMouseClass@@UAEPAXI@Z,src/wwmous.cpp,e19aaeade611fa4c6bff3213d01ebe05d4bc5bb99c4bf9c4d94239b46726be13
 0x007BA3C0,88,?Put@BufferPipe@@UAEHPBXH@Z,src/xpipe.cpp,c534d984d6de888e4b02a4f50163d9edba7f9f6bcfdc14478835018ac767fa27
 0x007BA420,48,??1FilePipe@@UAE@XZ,src/xpipe.cpp,3dd25034736eb6e5f0e6c7386947346676e6e4b5a54677f8b31fed9b6277a6d4
 0x007BA450,39,?End@FilePipe@@UAEHXZ,src/xpipe.cpp,5e8ba5e439cc65c824ebe59091cc35a59dcd9ebad73d2ac538b68fa1bf1d81a0

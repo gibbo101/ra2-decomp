@@ -9,6 +9,20 @@
 #include <climits>
 #include <cstring>
 
+// FUNCTION: GAMEMD 0x006616B0
+RandomStraw::RandomStraw(void) :
+	SeedBits(0),
+	Current(0)
+{
+	Reset();
+}
+
+// FUNCTION: GAMEMD 0x00661700
+RandomStraw::~RandomStraw(void)
+{
+	Reset();
+}
+
 // FUNCTION: GAMEMD 0x00661730
 void RandomStraw::Reset(void)
 {
@@ -106,7 +120,3 @@ int RandomStraw::Get(void * source, int slen)
 
 // SYNTHETIC: GAMEMD 0x00661C70
 // ??_GRandomStraw@@UAEPAXI@Z
-RandomStraw::~RandomStraw(void)
-{
-	Reset();
-}

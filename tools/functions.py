@@ -366,6 +366,13 @@ def main() -> None:
     case_labels = labels(None)
     for a in case_labels:
         del evidence[a]
+    # A start only data, YRpp or Ghidra names whose bytes are all padding is no function.
+    ordered = sorted(evidence)
+    padding_only = [a for i, a in enumerate(ordered[:-1])
+                    if set(evidence[a]) <= {"V", "Y", "G"}
+                    and all(b in PADDING for b in code[a - base:ordered[i + 1] - base])]
+    for a in padding_only:
+        del evidence[a]
     first = base
     if first not in evidence:
         evidence[first] = "P"

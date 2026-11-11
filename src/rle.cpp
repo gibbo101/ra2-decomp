@@ -5,7 +5,6 @@
 
 #include "always.h"
 #include "rle.h"
-#include "rndstraw.h"
 #include <string.h>
 
 // FUNCTION: GAMEMD 0x00661530
@@ -86,22 +85,4 @@ int RLEEngine::Line_Decompress(void const * source, void * dest) const
 	unsigned short const * sptr = (unsigned short const *)source;
 	int datalen = *sptr++;
 	return(Decompress(sptr, dest, datalen - sizeof(short)));
-}
-
-// FUNCTION: GAMEMD 0x006616B0
-RandomStraw::RandomStraw(void) :
-	SeedBits(0),
-	Current(0)
-{
-	SeedBits = 0;
-	Current = 0;
-	memset(Random, '\0', sizeof(Random));
-}
-
-// FUNCTION: GAMEMD 0x00661700
-RandomStraw::~RandomStraw(void)
-{
-	SeedBits = 0;
-	Current = 0;
-	memset(Random, '\0', sizeof(Random));
 }

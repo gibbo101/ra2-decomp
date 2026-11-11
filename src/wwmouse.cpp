@@ -9,46 +9,6 @@
 #include "globals.h"
 #include "bsurface.h"
 
-void __cdecl FUN_004068E0(char const * format, ...);
-
-extern WWMouseClass * DAT_00B78164;
-extern HANDLE DAT_00B78168;
-
-#line 1274 "D:\\ra2mdpost\\wwmous.cpp"
-static inline void Block_Mouse(void)
-{
-	if (WaitForSingleObject(DAT_00B78168, 10000) == WAIT_TIMEOUT) {
-		FUN_004068E0("Warning: Probable deadlock occurred on MouseMutex. %s, line %d\n", __FILE__, __LINE__);
-	}
-}
-
-
-static inline void Unblock_Mouse(void)
-{
-	ReleaseMutex(DAT_00B78168);
-}
-
-WWMouseClass::~WWMouseClass(void)
-{
-	Block_Mouse();
-	if (DAT_00B78164 == this) {
-		DAT_00B78164 = 0;
-	}
-	Unblock_Mouse();
-	if (field_44 != 0) {
-		delete field_44;
-		field_44 = 0;
-	}
-	if (field_58 != 0) {
-		delete field_58;
-		field_58 = 0;
-	}
-	if (field_6C != 0) {
-		delete field_6C;
-		field_6C = 0;
-	}
-}
-
 // FUNCTION: GAMEMD 0x007BA320
 bool WWMouseClass::Is_Hidden(void) const
 {
@@ -85,6 +45,3 @@ void WWMouseClass::Set_Mouse_Point(int x, int y)
 	field_1C = x;
 	field_20 = y;
 }
-
-// SYNTHETIC: GAMEMD 0x007BA3A0
-// ??_GWWMouseClass@@UAEPAXI@Z
