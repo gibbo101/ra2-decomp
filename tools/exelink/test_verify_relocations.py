@@ -405,6 +405,8 @@ class VerifyRelocationsTests(unittest.TestCase):
         self.assertEqual(_literal_size("__real@8@3fff8000000000000000"), 8)
         self.assertIsNone(_literal_size("?global@@3HA"))
 
+    @unittest.skipUnless(DEFAULT_BINDINGS.is_file() and DEFAULT_MANIFEST.is_file(),
+                         "needs build/exelink/inputs from prepare.py")
     def test_tracked_bindings_file_agrees_with_manifest(self):
         central = json.loads(DEFAULT_BINDINGS.read_text())
         manifest = json.loads(DEFAULT_MANIFEST.read_text())
