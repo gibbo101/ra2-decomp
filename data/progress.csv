@@ -16196,6 +16196,7 @@ address,name,result,size,source,symbol
 0x007436E0,UnitClass::Write_INI,MATCH,459,src/unit.cpp,?Write_INI@UnitClass@@SIXAAVCCINIClass@@@Z
 0x007438B0,UnitClass::Credit_Load,MATCH,50,src/unit.cpp,?Credit_Load@UnitClass@@QBEHXZ
 0x007438F0,UnitClass::Should_Crush_It,MATCH,339,src/unit.cpp,?Should_Crush_It@UnitClass@@QBE_NPBVTechnoClass@@@Z
+0x00743A50,UnitClass::Scatter,MATCH,1622,src/unit.cpp,?Scatter@UnitClass@@UAEXABVCoord@@_N1@Z
 0x007440B0,UnitClass::Limbo,MATCH,80,src/unit.cpp,?Limbo@UnitClass@@UAE_NXZ
 0x00744100,UnitClass::Do_MISSION_GUARD_AREA,MATCH,117,src/unit.cpp,?Do_MISSION_GUARD_AREA@UnitClass@@UAEHXZ
 0x00744180,UnitClass::Is_Ready_To_Move,MATCH,48,src/unit.cpp,?Is_Ready_To_Move@UnitClass@@UBE_NXZ

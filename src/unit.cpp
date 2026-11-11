@@ -3497,6 +3497,109 @@ bool UnitClass::Should_Crush_It(TechnoClass const * it) const
 	return(true);
 }
 
+template<class T>
+bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
+{
+	return(X==rvalue.X && Y==rvalue.Y);
+}
+
+// FUNCTION: GAMEMD 0x00743A50
+void UnitClass::Scatter(Coord const & threat, bool forced, bool nokidding)
+{
+	if (!Can_Scatter()) return;
+
+	IPersistPtr persist(Locomotion);
+	CLSID locoid;
+	persist->GetClassID(&locoid);
+	if (locoid == LocomotionClass::CLSIDs::Teleport) return;
+
+	if (!Current_Mission_Control().IsScatter && !forced) return;
+
+	if (PrimaryFacing.Is_Rotating()) return;
+
+	if (NavCom != NULL && !nokidding) return;
+
+	if (Deployed || Deploying || Undeploying) return;
+	if (!Locomotion->Is_Powered()) return;
+
+	if (threat == COORD_NONE) {
+		Cell nearby = Map.Nearby_Location(
+			Destination_Coord().As_Cell(), Class->Speed, -1,
+			MZONE_NORMAL, IsOnBridge, Point2D(1,1), false, true);
+		if (nearby != CELL_NONE) {
+			Assign_Destination(&Map[nearby]);
+		}
+	} else {
+		if (Current_Mission_Control().IsParalyzed) return;
+
+		if ((Fetch_RTTI() != RTTI_UNIT || !IsDumping)
+			&& (NavCom == NULL || (nokidding && !IsRotating))) {
+			if (TarCom == NULL || forced || Random_Pick(1, 4) == 1) {
+				FacingType toface;
+
+				if (threat != COORD_NONE) {
+					Coord here = PositionCoord;
+					DirType direction;
+					direction.Direction(threat, here);
+					toface = Dir_Facing(direction);
+					toface = Facing_Add(
+						toface,
+						Random_Pick(FACING_0, FACING_90)-FACING_45);
+				} else {
+					toface = (PrimaryFacing.Current().As_Dir8());
+					toface = Facing_Add(
+						toface,
+						Random_Pick(FACING_0, FACING_90)-FACING_45);
+				}
+
+				Cell altcell(0, 0);
+				Cell newcell(0, 0);
+				Cell destcell;
+				destcell = Destination_Coord();
+
+				CellClass *cellptr = &Map[destcell];
+
+				int z = cellptr->Height + Is_Moving_Onto_Bridge()
+					? BRIDGE_CELL_HEIGHT : 0;
+				Coord destcoord = Destination_Coord();
+				destcoord.Z = z * LEVEL_LEPTON_H;
+
+				FacingType face;
+				for (face = FACING_N; face < FACING_COUNT; face++) {
+					FacingType newface = Facing_Add(toface, face);
+					Cell checkcell = destcell + AdjacentCell[newface & 7];
+					CellClass *cptr = &Map[checkcell];
+
+					if (Map.In_Local_Radar(checkcell)
+						&& Can_Enter_Cell(
+							cptr, newface, Get_Cell_Height()) == MOVE_OK) {
+						if (altcell == CELL_NONE) altcell = checkcell;
+						if (CELL_NONE == Cell(0,0)) {
+							Coord checkcoord = checkcell.As_Coord();
+							checkcoord.Z = destcoord.Z;
+							if (checkcell == TacticalMap->Coord_To_Cell(checkcoord)
+								&& !Map[checkcell].IsUnderBridge) {
+								newcell = checkcell;
+								break;
+							}
+						}
+					}
+				}
+
+				Cell destination = newcell;
+				if (destination == CELL_NONE) {
+					destination = altcell;
+				}
+
+				if (destination != CELL_NONE) {
+					QueueMission(MISSION_MOVE, false);
+					Assign_Destination(&Map[destination]);
+				}
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x007440B0
 bool UnitClass::Limbo(void)
 {

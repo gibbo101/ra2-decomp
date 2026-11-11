@@ -16544,6 +16544,7 @@ address,size,symbol,source,sha256
 0x007436E0,459,?Write_INI@UnitClass@@SIXAAVCCINIClass@@@Z,src/unit.cpp,f52f3800500dce56d05f3d6e3ceb63eb65dabe1a7778161cff3c4d2543f08ae0
 0x007438B0,50,?Credit_Load@UnitClass@@QBEHXZ,src/unit.cpp,b2fd7971d3281335dbb5376a80794f2eb72e42c4461302530e2ad1f434e1e66c
 0x007438F0,339,?Should_Crush_It@UnitClass@@QBE_NPBVTechnoClass@@@Z,src/unit.cpp,a8881f571e4497883da3d6dd68a3a738e977ecd63456f5f7ca516175eaeabaf6
+0x00743A50,1622,?Scatter@UnitClass@@UAEXABVCoord@@_N1@Z,src/unit.cpp,5b368b88dd0b81134a9502a85201ce4efe63bf71296ab4794f8c19deb7b0ec2d
 0x007440B0,80,?Limbo@UnitClass@@UAE_NXZ,src/unit.cpp,3d393cee0b07c4dfcd80c1961121536695ad50242a8f8d351b30b2f114f74e6e
 0x00744100,117,?Do_MISSION_GUARD_AREA@UnitClass@@UAEHXZ,src/unit.cpp,8ccc437f64638a41bf787ebc08c3bc07844e5a71200d54f9f6f0d050c13649c4
 0x00744180,48,?Is_Ready_To_Move@UnitClass@@UBE_NXZ,src/unit.cpp,e7884967859b222e622048fd14db503e9c71121cb8dbe2aabdf1dee59b1732d6
