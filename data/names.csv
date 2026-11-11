@@ -544,3 +544,8 @@ address,name,symbol,evidence
 0x00AC116C,g_pChat,?g_pChat@@3PAUIChat@@A,"WOLAPI IChat interface pointer (TibSun netshare.h name); every IChat method call in wonline, netshare and conquer goes through it"
 0x00AC1170,g_pNetUtil,?g_pNetUtil@@3PAUINetUtil@@A,"WOLAPI INetUtil interface pointer (TibSun netshare.h name); ladder, ping and gameres requests in wonline, queue and stats go through it"
 0x00AC1174,g_pDownload,?g_pDownload@@3PAUIDownload@@A,"WOLAPI IDownload interface pointer (TibSun netshare.h name), next to g_pChat and g_pNetUtil; the patch download code calls through it"
+0x00A8ED6B,Debug_Map,?Debug_Map@@3_NA,TibSun declaration and consistent relocations in existing matched src/building.cpp functions
+0x00887418,UseVoxelCache,?UseVoxelCache@@3_NA,TibSun declaration and consistent relocations in existing matched src/unit.cpp functions
+0x00705E00,TechnoClass::Techno_Draw_Object,?Techno_Draw_Object@TechnoClass@@QBEXPBVShapeSet@@HABVPoint2D@@ABV?$TRect@H@@W4Dir256@@HHW4ZGradientType@@_NHG0HV3@W4ShapeFlags_Type@@@Z,TibSun declaration and consistent relocations in existing matched src/building.cpp functions
+0x00818CB4,BuildingClass::Draw_Extras::_make_visible,_?_make_visible@?GI@??Draw_Extras@BuildingClass@@UAEXAAVPoint2D@@AAV?$TRect@H@@@Z@4_NA,Function-local static in matched Draw_Extras; original initialized value agrees with the archived declaration
+0x00818CB0,BuildingClass::Draw_Extras::_dir_adjust,_?_dir_adjust@?GI@??Draw_Extras@BuildingClass@@UAEXAAVPoint2D@@AAV?$TRect@H@@@Z@4HA,Function-local static in matched Draw_Extras; original initialized value agrees with the archived declaration
