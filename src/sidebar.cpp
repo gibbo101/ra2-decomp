@@ -822,25 +822,8 @@ void SidebarClass::FUN_006A6820(int tab)
 			unknown_5398 = -1;
 			unknown_5394 = ((short *)DAT_00B0B478)[3];
 		}
-	} else if (first != ActiveTabIndex) {
-		TabButtons[ActiveTabIndex].Turn_Off();
-		StripClass & old = Column[ActiveTabIndex];
-		old.AllowedToDraw = false;
-		for (int slot = 0; slot < 60; slot++) {
-			Map.Remove_A_Button(StripClass::SelectButton[old.ID * 60 + slot]);
-		}
-		ActiveTabIndex = first;
-		TabButtons[first].Turn_On();
-		StripClass & current = Column[ActiveTabIndex];
-		current.AllowedToDraw = true;
-		int count = Visible_Cameos();
-		for (int added = 0; added < count; added++) {
-			StripClass::SelectButton[current.ID * 60 + added].Zap();
-			Map.Add_A_Button(StripClass::SelectButton[current.ID * 60 + added]);
-		}
-		DAT_00884B8F = true;
-		UpdateScrollButtons();
-		IsForceCompleteRedraw = true;
+	} else {
+		SetTab(first);
 	}
 }
 
