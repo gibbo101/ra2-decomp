@@ -14799,6 +14799,7 @@ address,name,result,size,source,symbol
 0x006F78D0,TechnoClass::InAuxiliarySearchRange,MATCH,86,src/techno.cpp,?InAuxiliarySearchRange@TechnoClass@@UBE_NPAVAbstractClass@@@Z
 0x006F7930,TechnoClass::IsCloseEnoughToAttackCoords,MATCH,49,src/techno.cpp,?IsCloseEnoughToAttackCoords@TechnoClass@@UBE_NABVCoord@@@Z
 0x006F7970,TechnoClass::In_Range,MATCH,40,src/techno.cpp,?In_Range@TechnoClass@@UBE_NABVCoord@@H@Z
+0x006F7CA0,TechnoClass::CanAutoTargetObject,MATCH,3259,src/techno.cpp,?CanAutoTargetObject@TechnoClass@@QBE_NW4ThreatType@@HHPBV1@AAHHABVCoord@@@Z
 0x006F9DB0,TechnoClass::Owner,MATCH,10,src/techno.cpp,?Owner@TechnoClass@@UBE?AW4HousesType@@XZ
 0x006F9DC0,TechnoClass::Owner_HouseClass,MATCH,7,src/techno.cpp,?Owner_HouseClass@TechnoClass@@UBEPAVHouseClass@@XZ
 0x006F9DD0,TechnoClass::Clicked_As_Target,MATCH,54,src/techno.cpp,?Clicked_As_Target@TechnoClass@@UAEXH@Z

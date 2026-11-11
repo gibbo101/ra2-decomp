@@ -15147,6 +15147,7 @@ address,size,symbol,source,sha256
 0x006F78D0,86,?InAuxiliarySearchRange@TechnoClass@@UBE_NPAVAbstractClass@@@Z,src/techno.cpp,2d95a5439a0443c1fde8e30dc04881ba7ad7f1158511e531cb8dfb791e7b9c05
 0x006F7930,49,?IsCloseEnoughToAttackCoords@TechnoClass@@UBE_NABVCoord@@@Z,src/techno.cpp,b351f6718cd2e01bd0237302c63b49860c1aab6a005cbd70705740f4801ff7cc
 0x006F7970,40,?In_Range@TechnoClass@@UBE_NABVCoord@@H@Z,src/techno.cpp,ab90ea8ebe17dfce4bdec1ea5491483128cd065c62c0631ae97cf717fbc06f9b
+0x006F7CA0,3259,?CanAutoTargetObject@TechnoClass@@QBE_NW4ThreatType@@HHPBV1@AAHHABVCoord@@@Z,src/techno.cpp,dbf2666b376ef1f6958c267b1428ca7ba64587175864e52c14980e568453b2d1
 0x006F8960,688,?TryAutoTargetObject@TechnoClass@@QBE_NW4ThreatType@@HABVCell@@HPAPBV1@AAHH@Z,src/techno.cpp,33d489945d514154cd90070f08f4dbb8d68356ee33d2ac9207ddac14cfa28689
 0x006F8C10,478,?Evaluate_Just_Cell@TechnoClass@@QBEHABVCell@@@Z,src/techno.cpp,bca449a2501fced8be3790e550c6667737123b0b620c7459b623b6269eef54ab
 0x006F8DF0,4031,?Greatest_Threat@TechnoClass@@UBEPAVAbstractClass@@W4ThreatType@@ABVCoord@@_N@Z,src/techno.cpp,daa87351730ce6443a19b6f6a798eb8777dc65fc43dfff287329dc3e6b46ffa2

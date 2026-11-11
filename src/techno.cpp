@@ -1530,6 +1530,256 @@ bool TechnoClass::In_Range(Coord const & coord, int which) const
 	return(In_Range(&Map[coord], which));
 }
 
+static inline bool Can_Capture_Passive_Target(
+	TechnoClass const * attacker,
+	TechnoClass const * object)
+{
+	if (attacker->House->FUN_0050B730()
+		|| object->RTTI != RTTI_BUILDING
+		|| attacker->RTTI != RTTI_INFANTRY) return(false);
+
+	bool defending_base = false;
+	if (((FootClass *)attacker)->Team != NULL
+		&& ((FootClass *)attacker)->Team->Class->IsBaseDefense) {
+		defending_base = true;
+	}
+
+	bool needs_engineer =
+		((BuildingClass *)object)->Class->NeedsEngineer
+		&& ((InfantryClass *)attacker)->Class->IsEngineer
+		&& object->House != attacker->House;
+	bool can_occupy =
+		((InfantryClass *)attacker)->Class->Occupier
+		&& ((BuildingClass *)object)->CanBeOccupiedBy(
+			(InfantryClass *)attacker);
+
+	if (Session.Type == GAME_NORMAL || defending_base
+		|| (!needs_engineer && !can_occupy)) return(false);
+	return(true);
+}
+
+// FUNCTION: GAMEMD 0x006F7CA0
+bool TechnoClass::CanAutoTargetObject(
+	ThreatType method, int mask, int range,
+	TechnoClass const * object, int & value,
+	int zone, Coord const & coord) const
+{
+	bool engineer = Is_Renovator();
+	int which = What_Weapon_Should_I_Use((TechnoClass *)object);
+	WeaponTypeClass const * weapon = Get_Class_Weapon_Data(which)->Weapon;
+
+	if (!(method & 0x18200)
+		&& GetFireErrorWithoutRange((TechnoClass *)object, which) == 5) {
+		return(false);
+	}
+	if (object->EstimatedHealth <= 0 && TClass->VHPScan == 2) return(false);
+	if (weapon != NULL && weapon->WarheadPtr != NULL
+		&& (float)weapon->WarheadPtr->Modifier[object->TClass->Armor]
+			<= 0.02f) return(false);
+	if (TClass->LandTargeting == 2 && object->On_Ground()
+		&& object->Get_Cell_Ptr()->Land_Type() != LAND_WATER) return(false);
+
+	if (object == NULL || object->IsInLimbo || object->Strength == 0) {
+		return(false);
+	}
+	if (object->Cloak == CLOAKED) {
+		if (!Map[object->Center_Coord()].Is_Sensed(House->HeapID)
+			&& House != object->House) return(false);
+	}
+	if (!object->IsInPlayfield) return(false);
+	if (object->Current_Mission_Control().IsNoThreat) return(false);
+	if (object->HeightAGL < -20) return(false);
+
+	Coord objectcoord = object->Center_Coord();
+	if (zone != -1
+		&& Map.Get_Cell_Zone(
+			objectcoord.As_Cell(), TClass->MZone, object->IsOnBridge)
+			!= zone) return(false);
+
+	bool controlled_transport = false;
+	HouseClass * controlling_house = NULL;
+	if (Transporter != NULL && Transporter->TClass->OpenTopped
+		&& Transporter->MindControlledBy != NULL) {
+		controlling_house = Transporter->MindControlledBy->House;
+		controlled_transport = true;
+	}
+
+	if ((RTTI != RTTI_INFANTRY || !((InfantryClass *)this)->IsBerzerk)
+		&& !TClass->AttackFriendlies && !Berzerk
+		&& !controlled_transport) {
+		if (House->Is_Ally(object)) {
+			if (Combat_Damage() < 0 || engineer) {
+				if (object->HealthRatio == Rule->ConditionGreen) return(false);
+				if (object->RTTI == RTTI_AIRCRAFT && RTTI == RTTI_UNIT) {
+					if (object->HeightAGL > 0) return(false);
+					if (Map[object->Center_Coord()].Cell_Building()) {
+						return(false);
+					}
+				} else if (RTTI == RTTI_UNIT && !object->IsStrange()) {
+					return(false);
+				}
+			} else {
+				return(false);
+			}
+		}
+	} else if (controlled_transport && controlling_house != NULL
+		&& controlling_house->Is_Ally(object)) {
+		return(false);
+	}
+
+	if (this == object) return(false);
+	if (Scen->Special.IsHarvesterImmune
+		&& Rule->HarvesterUnit.Is_In_List(
+			(UnitTypeClass const *)object->Class_Of())) return(false);
+
+	int dist;
+	if (object->In_Air()) {
+		double x = object->Center_Coord().X - Center_Coord().X;
+		double y = object->Center_Coord().Y - Center_Coord().Y;
+		dist = (int)fastmath::sqrt(x * x + y * y);
+		if (range > 0 && dist > range) return(false);
+	} else {
+		Coord separation = Center_Coord() - object->Center_Coord();
+		double y = separation.Y;
+		double z = separation.Z;
+		double x = separation.X;
+		dist = (int)fastmath::sqrt(x * x + z * z + y * y);
+		if (range > 0 && dist > range) return(false);
+	}
+
+	if (range == 0) {
+		if (!Is_Weapon_Equipped()) {
+			if (dist > TClass->ThreatRange) return(false);
+		} else {
+			if (!In_Range((TechnoClass *)object, which)) return(false);
+		}
+	}
+
+	if (House->Is_Player_Control() && !object->IsOwnedByPlayer
+		&& !object->IsDiscoveredByPlayer && Session.Type == GAME_NORMAL
+		&& object->RTTI != RTTI_AIRCRAFT) return(false);
+	if (object->RTTI == RTTI_BUILDING
+		&& ((BuildingClass *)object)->Class->IsInvisibleInGame) return(false);
+
+	RTTIType otype = object->RTTI;
+	if (!((1 << otype) & mask)
+		&& (!(mask & 2) || !object->IsStrange())) return(false);
+
+	TechnoTypeClass const * tclass = object->TClass;
+	if (!tclass->IsLegalTarget) return(false);
+
+	if (Session.Type != GAME_NORMAL
+		&& object->House->Class->IsMultiplayPassive) {
+		if (!Can_Capture_Passive_Target(this, object)) return(false);
+	}
+	if (tclass->IsInsignificant && object->MindControlledBy == NULL
+		&& !object->MindControlledByAUnit
+		&& (object->RTTI != RTTI_BUILDING
+			|| object->House->Class->IsMultiplayPassive)) {
+		if (!Can_Capture_Passive_Target(this, object)) return(false);
+	}
+
+	if (tclass->IsTrain && RTTI == RTTI_INFANTRY
+		&& ((InfantryClass *)this)->Class->IsVehicleThief) return(false);
+
+	if (object->IsDisguisedAs(House) && !TClass->DetectDisguise) {
+		if (object->DisguiseBlinkTimer == 0
+			|| House->FUN_0050B730()
+			|| Random_Pick(0, 99)
+				> Rule->DisabledDisguiseDetectionPercent[House->Difficulty]) {
+			return(false);
+		}
+	}
+
+	if (method & THREAT_CIVILIANS) {
+		object->Owner_HouseClass();
+		return(false);
+	}
+	if ((method & THREAT_CAPTURE)
+		&& (otype != RTTI_BUILDING
+			|| !((BuildingTypeClass const *)tclass)->IsCaptureable)) {
+		return(false);
+	}
+
+	if ((!Is_Foot() || ((FootClass *)this)->Team == NULL)
+		&& House->FUN_0050B730() && !object->IsStrange()
+		&& otype == RTTI_BUILDING) {
+		WeaponDataStruct const * turret = object->GetTurretWeapon();
+		if (turret == NULL || turret->Weapon == NULL || object->Risk() == 0) {
+			if (!engineer) return(false);
+		}
+	}
+
+	if (engineer) {
+		if (object->RTTI != RTTI_BUILDING
+			|| (House->Is_Ally(object->House)
+				&& (object->HealthRatio > Rule->ConditionRed
+					|| !((BuildingClass *)object)->Class->Cost_Of(House)))) {
+			return(false);
+		}
+	}
+
+	if ((method & THREAT_TIBERIUM) && tclass->Capacity == 0) return(false);
+
+	CellClass * cell_this = &Map[Get_Coord()];
+	CellClass * cell_that = &Map[object->Get_Coord()];
+	if (cell_this->IsUnderBridge && cell_that->IsUnderBridge
+		&& IsOnBridge != object->IsOnBridge) return(false);
+
+	value = (int)Target_Threat((TechnoClass *)object, coord);
+	if (TClass->VHPScan == 1) {
+		if (object->EstimatedHealth <= 0) value /= 2;
+		else if (object->EstimatedHealth <= object->TClass->MaxStrength / 2) {
+			value *= 2;
+		}
+	}
+
+	if (House->IsAllToHunt && House->Enemy != HOUSE_NONE
+		&& object->House != Houses[House->Enemy]) value = 1;
+
+	if ((method & THREAT_POWER) && otype == RTTI_BUILDING) {
+		if (((BuildingTypeClass const *)tclass)->Power > 0) {
+			value += ((BuildingTypeClass const *)tclass)->Power * 1000;
+		} else {
+			value = 0;
+		}
+	}
+	if (method & 0x8000) {
+		if (otype != RTTI_BUILDING
+			|| ((BuildingTypeClass const *)tclass)->MaxNumberOccupants <= 0) {
+			return(false);
+		}
+		value += ((BuildingTypeClass const *)tclass)->MaxNumberOccupants * 1000;
+	}
+	if (method & 0x10000) {
+		if (otype != RTTI_BUILDING
+			|| !((BuildingTypeClass const *)tclass)->NeedsEngineer) return(false);
+		value += 1000;
+	}
+	if ((method & THREAT_FACTORIES) && otype == RTTI_BUILDING
+		&& ((BuildingTypeClass const *)tclass)->ToBuild == RTTI_NONE) value = 0;
+
+	if (method & THREAT_BASE_DEFENSE) {
+		if (object->RTTI == RTTI_BUILDING
+			&& As_Building(object)->Class->CanBeOccupied) {
+			if (As_Building(object)->GetOccupantCount() == 0) return(false);
+		} else {
+			WeaponDataStruct const * turret = object->GetTurretWeapon();
+			if (turret == NULL || turret->Weapon == NULL
+				|| otype != RTTI_BUILDING) return(false);
+		}
+	}
+
+	double areamod = Area_Modify(object->Center_Coord().As_Cell());
+	if (areamod != 1) value = (int)(areamod * value);
+	if (value) {
+		value = MAX(1, value);
+		return(true);
+	}
+	value = 0;
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x006F9DB0
 HousesType TechnoClass::Owner(void) const
 {

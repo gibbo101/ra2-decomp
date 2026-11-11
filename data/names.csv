@@ -562,3 +562,4 @@ address,name,symbol,evidence
 0x00705E00,TechnoClass::Techno_Draw_Object,?Techno_Draw_Object@TechnoClass@@QBEXPBVShapeSet@@HABVPoint2D@@ABV?$TRect@H@@W4Dir256@@HHW4ZGradientType@@_NHG0HV3@W4ShapeFlags_Type@@@Z,TibSun declaration and consistent relocations in existing matched src/building.cpp functions
 0x00818CB4,BuildingClass::Draw_Extras::_make_visible,_?_make_visible@?GI@??Draw_Extras@BuildingClass@@UAEXAAVPoint2D@@AAV?$TRect@H@@@Z@4_NA,Function-local static in matched Draw_Extras; original initialized value agrees with the archived declaration
 0x00818CB0,BuildingClass::Draw_Extras::_dir_adjust,_?_dir_adjust@?GI@??Draw_Extras@BuildingClass@@UAEXAAVPoint2D@@AAV?$TRect@H@@@Z@4HA,Function-local static in matched Draw_Extras; original initialized value agrees with the archived declaration
+0x006F79A0,TechnoClass::Area_Modify,?Area_Modify@TechnoClass@@QBENABVCell@@@Z,TibSun area-scan multiplier; YR caller consumes an x87 double after the four-edge area scan
