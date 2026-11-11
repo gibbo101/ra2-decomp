@@ -9,6 +9,8 @@ to place on their own.
 
 data/library_identified.json supplements those matches with explicit identities
 corroborated by incoming relocations, referenced globals, or named RTTI vtables.
+Complete object blocks and initialized pointer tables can identify smaller bodies
+whose positions and named incoming references are otherwise ambiguous.
 library_identified.py verifies the linked archive bodies before the map is written.
 Run python tools/library_identified.py to check just these entries.
 

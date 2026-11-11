@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock
 
-from coff import CODE, REL_REL32, STORAGE_EXTERNAL, CoffObject, Reloc, Section, Symbol
+from coff import CODE, REL_DIR32, REL_REL32, STORAGE_EXTERNAL, CoffObject, Reloc, Section, Symbol
 from library_identified import Audit, identity_records, merge
 from rtti import Rtti
 
@@ -32,7 +32,90 @@ ENTRY = {"address": "0x00001000", "size": 6, "symbol": "_caller",
          "library": "FIXTURE.LIB", "object": "fixture.obj"}
 
 
+def block_fixture():
+    codes = [bytes([65 + i]) * 19 for i in range(4)] + [b"\xc3"]
+    audit = audit_fixture(b"", b"".join(codes))
+    obj = CoffObject.__new__(CoffObject)
+    obj.sections = [Section(i + 1, ".text", code, CODE) for i, code in enumerate(codes)]
+    obj.symbols = [Symbol(i, f"_f{i}", 0, i + 1, 0x20, STORAGE_EXTERNAL) for i in range(5)]
+    obj.by_index = {s.index: s for s in obj.symbols}
+    picks = {p[0].name: p for p in obj.functions()}
+    audit.object = lambda entry: ("fixture.obj", b"", obj, picks[entry["symbol"]])
+    entry = {**ENTRY, "symbol": "_f4", "size": 1, "address": "0x0000104C",
+             "kind": "object_block", "block": {
+                 "address": "0x00001000", "size": 77, "symbols": list(picks),
+                 "anchors": [{**ENTRY, "symbol": f"_f{i}",
+                              "address": f"0x{0x1000 + i * 19:08X}"} for i in range(4)]}}
+    return audit, entry
+
+
+def table_fixture():
+    audit = audit_fixture(b"\xc3", b"\xc3")
+    table = b"DATA" + bytes(12) + b"END!"
+    linked = b"DATA" + struct.pack("<III", 0x1000, 0x1000, 0x3000) + b"END!"
+    section = Section(1, ".data", table, 0, [Reloc(4, 0, REL_DIR32),
+                      Reloc(8, 0, REL_DIR32), Reloc(12, 1, REL_DIR32)])
+    code = Section(2, ".text", b"\xc3", CODE)
+    obj = CoffObject.__new__(CoffObject)
+    obj.sections = [section, code]
+    obj.symbols = [Symbol(0, "_tiny", 0, 2, 0x20, STORAGE_EXTERNAL),
+                   Symbol(1, "_init", 0, 0, 0x20, STORAGE_EXTERNAL),
+                   Symbol(2, "_pointer1", 4, 1, 0, STORAGE_EXTERNAL),
+                   Symbol(3, "_pointer2", 8, 1, 0, STORAGE_EXTERNAL),
+                   Symbol(4, "_table_anchor", 16, 1, 0, STORAGE_EXTERNAL)]
+    obj.by_index = {s.index: s for s in obj.symbols}
+    audit.object = lambda entry: ("fixture.obj", b"", obj, (obj.symbols[0], code, 0, 1))
+    def read(address, size):
+        base, data = (0x1000, b"\xc3") if address < 0x2000 else (0x2000, linked)
+        return data[address - base:address - base + size]
+    audit.original.read = read
+    audit.original.base = 0
+    audit.original.pe = SimpleNamespace(sections=[
+        SimpleNamespace(VirtualAddress=0x1000, SizeOfRawData=1),
+        SimpleNamespace(VirtualAddress=0x2000, SizeOfRawData=20)])
+    audit.unique_anchor = lambda entry: {
+        "address": entry["address"],
+        "references": [{"symbol": "_table_anchor", "target": "0x00002010"}]}
+    entry = {**ENTRY, "symbol": "_tiny", "size": 1, "kind": "data_table", "table": {
+        "address": "0x00002000", "section": 1, "anchor_symbol": "_table_anchor",
+        "anchor_address": "0x00002010", "anchors": [{**ENTRY, "symbol": "_caller"}],
+        "target_pointers": ["_pointer1", "_pointer2"],
+        "function_anchors": [{**ENTRY, "symbol": "_init", "address": "0x00003000"}]}}
+    return audit, entry, obj
+
+
 class LibraryIdentityTests(unittest.TestCase):
+    def test_object_block_requires_complete_ordered_member_and_target_position(self):
+        audit, entry = block_fixture()
+        audit.target(entry)
+        mutations = [lambda e: e.update(address="0x0000104B"),
+                     lambda e: e["block"]["symbols"].pop(),
+                     lambda e: e["block"]["symbols"].reverse(),
+                     lambda e: e["block"]["anchors"].pop(),
+                     lambda e: e["block"]["anchors"][0].update(object="wrong.obj")]
+        for change in mutations:
+            bad = copy.deepcopy(entry)
+            change(bad)
+            with self.subTest(entry=bad), self.assertRaises(ValueError):
+                audit.target(bad)
+
+    def test_data_table_requires_distinct_pointers_and_complete_relocations(self):
+        audit, entry, obj = table_fixture()
+        audit.target(entry)
+        mutations = [lambda e: e.update(address="0x00001001"),
+                     lambda e: e["table"].update(target_pointers=["_pointer1", "_pointer1"]),
+                     lambda e: e["table"].update(target_pointers=["_pointer1"]),
+                     lambda e: e["table"].update(function_anchors=[]),
+                     lambda e: e["table"].update(anchor_address="0x00002011")]
+        for change in mutations:
+            bad = copy.deepcopy(entry)
+            change(bad)
+            with self.subTest(entry=bad), self.assertRaises(ValueError):
+                audit.target(bad)
+        obj.sections[0].relocs.append(Reloc(18, 0, REL_DIR32))
+        with self.assertRaisesRegex(ValueError, "truncated"):
+            audit.target(entry)
+
     def test_overlapping_anchor_matches_are_ambiguous(self):
         audit = audit_fixture(b"AA", b"AAA")
         with self.assertRaisesRegex(ValueError, "one independent location"):

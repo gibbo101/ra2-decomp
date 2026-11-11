@@ -19640,7 +19640,10 @@ address,size,evidence,name
 0x007C8AB7,28,G,
 0x007C8AD3,27,CGL,??8type_info@@QBEHABV0@@Z
 0x007C8AEE,28,L,??9type_info@@QBEHABV0@@Z
-0x007C8B0A,51,L,?before@type_info@@QBEHABV1@@Z
+0x007C8B0A,31,L,?before@type_info@@QBEHABV1@@Z
+0x007C8B29,4,L,?raw_name@type_info@@QBEPBDXZ
+0x007C8B2D,11,L,??0type_info@@AAE@ABV0@@Z
+0x007C8B38,5,L,??4type_info@@AAEAAV0@ABV0@@Z
 0x007C8B3D,11,CYG,CRT::_delete
 0x007C8B48,340,CYGL,CRT::qsort
 0x007C8C9C,78,CGL,_shortsort
@@ -19651,7 +19654,8 @@ address,size,evidence,name
 0x007C8E25,140,CYGL,CRT::bsearch
 0x007C8EC0,52,CGL,__allmul
 0x007C8EF4,82,CYGL,CRT::sprintf
-0x007C8F46,24,GL,__fpmath
+0x007C8F46,23,GL,__fpmath
+0x007C8F5D,1,L,__fpclear
 0x007C8F5E,56,CGL,__cfltcvt_init
 0x007C8F96,16,L,?__set_inconsistency@@YAP6AXXZP6AXXZ@Z
 0x007C8FB0,25,CGL,__CIpow
@@ -19915,7 +19919,8 @@ address,size,evidence,name
 0x007CFFC8,758,CGL,___sbh_resize_block
 0x007D02BE,209,L,___sbh_heapmin
 0x007D038F,815,GL,___sbh_heap_check
-0x007D06BE,42,L,?_set_new_handler@@YAP6AHI@ZP6AHI@Z@Z
+0x007D06BE,36,L,?_set_new_handler@@YAP6AHI@ZP6AHI@Z@Z
+0x007D06E2,6,L,?_query_new_handler@@YAP6AHI@ZXZ
 0x007D06E8,27,CGL,__callnewh
 0x007D0703,220,CGL,__filbuf
 0x007D07DF,101,CG,
@@ -19935,7 +19940,9 @@ address,size,evidence,name
 0x007D13DA,30,L,__mtterm
 0x007D13F8,19,CGL,__initptd
 0x007D140B,103,CGL,__getptd
-0x007D1472,172,L,__freeptd
+0x007D1472,160,L,__freeptd
+0x007D1512,6,L,___threadid
+0x007D1518,6,L,___threadhandle
 0x007D151E,127,CGL,__fltin2
 0x007D15A0,123,CYGL,CRT::strlen
 0x007D161B,115,CGL,__dosmaperr
@@ -20178,7 +20185,8 @@ address,size,evidence,name
 0x007D9EB0,31,CGL,__allshl
 0x007D9ECF,41,CGL,_ungetc
 0x007D9EF8,110,CGL,__ungetc_lk
-0x007D9F66,87,GL,?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z
+0x007D9F66,70,GL,?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z
+0x007D9FAC,17,L,?__CxxSetUnhandledExceptionFilter@@YAXXZ
 0x007D9FBD,13,L,?__CxxRestoreUnhandledExceptionFilter@@YAXXZ
 0x007D9FCA,295,CGL,__flswbuf
 0x007DA0F1,453,CGL,___crtGetStringTypeW

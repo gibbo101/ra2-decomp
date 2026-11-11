@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # Copyright 2026 ra2-decomp contributors
-"""Verify small library identities using incoming relocations, globals and RTTI.
+"""Verify small library identities using relocations, RTTI and complete object blocks.
 
 Usage: python tools/library_identified.py [IDENTITIES_JSON]
 The linked archive bodies must agree at every byte, including relocations.
 This audit also runs before libmatch.py writes the library map.
+Named blocks in the manifest share evidence for functions from one archive member;
+data-table evidence requires distinct named pointers and all table relocations.
 """
 
 import json
@@ -91,7 +93,7 @@ class Audit:
             references.append({"offset": offset,
                                "symbol": obj.by_index[relocation.symbol].name,
                                "target": f"0x{(target - addend) & 0xFFFFFFFF:08X}"})
-        result = {"references": references}
+        result = {"address": entry["address"], "size": len(code), "references": references}
         self.anchors[key] = result
         return result
 
@@ -123,10 +125,137 @@ class Audit:
         return {"size": len(code),
                 "fully_linked_locations": [f"0x{hit:08X}" for hit in hits]}
 
+    def object_block(self, entry):
+        """Locate every code section of a library member, in its original order."""
+        block = entry["block"]
+        _, _, obj, _ = self.object(entry)
+        picks = list(obj.functions())
+        symbols = [pick[0].name for pick in picks]
+        require(symbols == block["symbols"] and len(set(symbols)) == len(symbols),
+                "Object block must cover every function, without aliases, in section order")
+        require({p[1].number for p in picks} ==
+                {s.number for s in obj.sections if s.is_code and s.data},
+                "Object block omits a code section")
+        address = int(block["address"], 16)
+        combined, masked, addresses = bytearray(), set(), {}
+        for pick in picks:
+            symbol, section, start, end = pick
+            code, mask = check.function_bytes(pick)
+            require(start == 0 and end == len(section.data) == len(code) and code and
+                    symbol.storage == coff.STORAGE_EXTERNAL and symbol.type == 0x20,
+                    "Object-block function must occupy its entire code section")
+            addresses[symbol.name] = address + len(combined)
+            masked.update(len(combined) + offset for offset in mask)
+            combined.extend(code)
+        require(len(combined) == block["size"] and
+                addresses[entry["symbol"]] == int(entry["address"], 16),
+                "Object-block size or target position differs")
+        hits = [self.base + m.start() for m in re.finditer(
+            b"(?=" + libmatch.pattern(bytes(combined), masked) + b")", self.text, re.S)]
+        require(hits == [address], "Complete object block is not independently unique")
+        anchors = {}
+        for anchor in block["anchors"]:
+            require((anchor["library"], anchor["object"]) ==
+                    (entry["library"], entry["object"]) and
+                    addresses[anchor["symbol"]] == int(anchor["address"], 16),
+                    "Wrong object-block anchor member or position")
+            result = self.unique_anchor(anchor)
+            require(result["size"] >= 19, "Object-block anchor is too small")
+            anchors[anchor["symbol"]] = result
+        require(len(anchors) >= 4, "Object block requires four independent unique anchors")
+        bindings = dict(addresses)
+        for item in block.get("globals", []):
+            require(len(set(item["anchor_symbols"])) >= 2,
+                    "Object-block global requires two distinct anchors")
+            for symbol in item["anchor_symbols"]:
+                refs = [r for r in anchors[symbol]["references"] if r["symbol"] == item["symbol"]]
+                require(refs and {r["target"] for r in refs} == {item["address"]},
+                        "Object-block anchors disagree on a global")
+            bindings[item["symbol"]] = int(item["address"], 16)
+        for item in block.get("rtti", []):
+            rtti, vtable = self.original.rtti(), int(item["address"], 16)
+            deleting, destructor = addresses[item["deleting_destructor"]], addresses[item["destructor"]]
+            require(rtti.class_of(item["destructor"])[0] == item["type"] and
+                    rtti.type_of_vtable(vtable) == item["type"] and
+                    self.original.u32(vtable) == deleting and
+                    rtti.owner(deleting) == item["type"] and rtti.calls(deleting, destructor),
+                    "Object-block RTTI destructor chain differs")
+            refs = [r for r in anchors[item["destructor"]]["references"]
+                    if r["symbol"] == item["symbol"]]
+            require(refs and {r["target"] for r in refs} == {item["address"]},
+                    "Unique destructor does not corroborate the RTTI vtable")
+            bindings[item["symbol"]] = vtable
+        for symbol in symbols:
+            self.linked_body({**entry, "symbol": symbol,
+                              "address": f"0x{addresses[symbol]:08X}"}, bindings)
+        return bindings
+
+    def data_table(self, entry):
+        """Identify a tiny body through named pointers in a uniquely located table."""
+        table = entry["table"]
+        _, _, obj, _ = self.object(entry)
+        symbols = {s.name: s for s in obj.symbols}
+        anchor = symbols[table["anchor_symbol"]]
+        require(anchor.section == table["section"] > 0, "Wrong anchored data section")
+        section = obj.sections[anchor.section - 1]
+        address = int(table["address"], 16)
+        require(not section.is_code and section.name == ".data" and
+                address + anchor.value == int(table["anchor_address"], 16),
+                "Wrong data table or anchor offset")
+        require(table["anchors"], "No incoming reference to the data table")
+        for caller in table["anchors"]:
+            refs = [r for r in self.unique_anchor(caller)["references"] if r["symbol"] == anchor.name]
+            require(refs and {r["target"] for r in refs} == {table["anchor_address"]},
+                    "Independent caller does not locate the data table")
+        for relocation in section.relocs:
+            require(relocation.type == coff.REL_DIR32 and
+                    0 <= relocation.offset <= len(section.data) - 4,
+                    "Unsupported or truncated data table relocation")
+        mask = {r.offset + k for r in section.relocs for k in range(4)}
+        pattern = b"(?=" + libmatch.pattern(section.data, mask) + b")"
+        hits = []
+        for pe_section in self.original.pe.sections:
+            base = self.original.base + pe_section.VirtualAddress
+            data = self.original.read(base, pe_section.SizeOfRawData)
+            hits.extend(base + m.start() for m in re.finditer(pattern, data, re.S))
+        require(hits == [address], "Complete data table is not independently unique")
+        functions = {a["symbol"]: self.unique_anchor(a) for a in table["function_anchors"]}
+        pointers = table["target_pointers"]
+        require(len(set(pointers)) == len(pointers) >= 2,
+                "Require two distinct named incoming pointers")
+        offsets = set()
+        for name in pointers:
+            symbol = symbols[name]
+            require(symbol.section == section.number and symbol.storage == coff.STORAGE_EXTERNAL,
+                    "Target pointer is not defined in this data section")
+            offsets.add(symbol.value)
+        require(len(offsets) == len(pointers), "Named pointers must occupy distinct slots")
+        linked, seen = bytearray(section.data), set()
+        for relocation in section.relocs:
+            symbol = obj.by_index[relocation.symbol].name
+            addend = struct.unpack_from("<i", section.data, relocation.offset)[0]
+            if symbol == entry["symbol"]:
+                require(relocation.offset in offsets and addend == 0,
+                        "Target relocation lacks a distinct named pointer")
+                target = int(entry["address"], 16)
+                seen.add(relocation.offset)
+            else:
+                require(symbol in functions, "Unproved auxiliary data table reference")
+                target = int(functions[symbol]["address"], 16)
+            struct.pack_into("<I", linked, relocation.offset, (target + addend) & 0xFFFFFFFF)
+        require(seen == offsets, "Missing target data pointer")
+        require(bytes(linked) == self.original.read(address, len(linked)),
+                "Fully relocated data table differs")
+        return {}
+
     def target(self, entry):
         address = int(entry["address"], 16)
         bindings = {}
-        if entry["kind"] in ("incoming", "global"):
+        if entry["kind"] == "object_block":
+            bindings = self.object_block(entry)
+        elif entry["kind"] == "data_table":
+            bindings = self.data_table(entry)
+        elif entry["kind"] in ("incoming", "global"):
             symbol = entry["symbol"] if entry["kind"] == "incoming" else entry["global_symbol"]
             target = entry["address"] if entry["kind"] == "incoming" else entry["global_address"]
             require(entry["anchors"], f"No independent anchors: {entry}")
@@ -163,9 +292,12 @@ class Audit:
 
 
 def verify(path=ROOT / "data/library_identified.json"):
-    entries = identity_records(json.loads(Path(path).read_text())["targets"])
+    document = json.loads(Path(path).read_text())
+    entries = identity_records(document["targets"])
     audit = Audit()
     for entry in entries.values():
+        if entry["kind"] == "object_block":
+            entry = {**entry, "block": document["blocks"][entry["block"]]}
         audit.target(entry)
     return {address: (row["size"], row["symbol"], row["library"], row["object"])
             for address, row in entries.items()}

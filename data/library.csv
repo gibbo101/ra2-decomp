@@ -309,6 +309,9 @@ address,size,symbol,library,object
 0x007C8AD3,27,??8type_info@@QBEHABV0@@Z,LIBCMT.LIB,typinfo.obj
 0x007C8AEE,28,??9type_info@@QBEHABV0@@Z,LIBCMT.LIB,typinfo.obj
 0x007C8B0A,31,?before@type_info@@QBEHABV1@@Z,LIBCMT.LIB,typinfo.obj
+0x007C8B29,4,?raw_name@type_info@@QBEPBDXZ,LIBCMT.LIB,typinfo.obj
+0x007C8B2D,11,??0type_info@@AAE@ABV0@@Z,LIBCMT.LIB,typinfo.obj
+0x007C8B38,5,??4type_info@@AAEAAV0@ABV0@@Z,LIBCMT.LIB,typinfo.obj
 0x007C8B48,340,_qsort,LIBCMT.LIB,qsort.obj
 0x007C8C9C,78,_shortsort,LIBCMT.LIB,qsort.obj
 0x007C8CEA,44,_swap,LIBCMT.LIB,qsort.obj
@@ -318,6 +321,7 @@ address,size,symbol,library,object
 0x007C8EC0,52,__allmul,LIBCMT.LIB,llmul.obj
 0x007C8EF4,82,_sprintf,LIBCMT.LIB,sprintf.obj
 0x007C8F46,23,__fpmath,LIBCMT.LIB,fpinit.obj
+0x007C8F5D,1,__fpclear,LIBCMT.LIB,fpinit.obj
 0x007C8F5E,56,__cfltcvt_init,LIBCMT.LIB,fpinit.obj
 0x007C8F96,16,?__set_inconsistency@@YAP6AXXZP6AXXZ@Z,LIBCMT.LIB,user.obj
 0x007C8FB0,25,__CIpow,LIBCMT.LIB,pow.obj
@@ -544,6 +548,7 @@ address,size,symbol,library,object
 0x007D02BE,209,___sbh_heapmin,LIBCMT.LIB,sbheap.obj
 0x007D038F,815,___sbh_heap_check,LIBCMT.LIB,sbheap.obj
 0x007D06BE,36,?_set_new_handler@@YAP6AHI@ZP6AHI@Z@Z,LIBCMT.LIB,handler.obj
+0x007D06E2,6,?_query_new_handler@@YAP6AHI@ZXZ,LIBCMT.LIB,handler.obj
 0x007D06E8,27,__callnewh,LIBCMT.LIB,handler.obj
 0x007D0703,220,__filbuf,LIBCMT.LIB,_filbuf.obj
 0x007D0844,473,__read_lk,LIBCMT.LIB,read.obj
@@ -557,6 +562,8 @@ address,size,symbol,library,object
 0x007D13F8,19,__initptd,LIBCMT.LIB,tidtable.obj
 0x007D140B,103,__getptd,LIBCMT.LIB,tidtable.obj
 0x007D1472,160,__freeptd,LIBCMT.LIB,tidtable.obj
+0x007D1512,6,___threadid,LIBCMT.LIB,tidtable.obj
+0x007D1518,6,___threadhandle,LIBCMT.LIB,tidtable.obj
 0x007D151E,127,__fltin2,LIBCMT.LIB,cfin.obj
 0x007D15A0,123,_strlen,LIBCMT.LIB,strlen.obj
 0x007D161B,115,__dosmaperr,LIBCMT.LIB,dosmap.obj
@@ -787,6 +794,7 @@ address,size,symbol,library,object
 0x007D9ECF,41,_ungetc,LIBCMT.LIB,ungetc.obj
 0x007D9EF8,110,__ungetc_lk,LIBCMT.LIB,ungetc.obj
 0x007D9F66,70,?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z,LIBCMT.LIB,unhandld.obj
+0x007D9FAC,17,?__CxxSetUnhandledExceptionFilter@@YAXXZ,LIBCMT.LIB,unhandld.obj
 0x007D9FBD,13,?__CxxRestoreUnhandledExceptionFilter@@YAXXZ,LIBCMT.LIB,unhandld.obj
 0x007D9FCA,295,__flswbuf,LIBCMT.LIB,_flswbuf.obj
 0x007DA0F1,453,___crtGetStringTypeW,LIBCMT.LIB,w_str.obj

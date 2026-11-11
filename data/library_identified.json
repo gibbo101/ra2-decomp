@@ -1,6 +1,67 @@
 {
   "targets": [
     {
+      "address": "0x007C8B29",
+      "symbol": "?raw_name@type_info@@QBEPBDXZ",
+      "library": "LIBCMT.LIB",
+      "object": "typinfo.obj",
+      "size": 4,
+      "kind": "object_block",
+      "block": "type_info"
+    },
+    {
+      "address": "0x007C8B2D",
+      "symbol": "??0type_info@@AAE@ABV0@@Z",
+      "library": "LIBCMT.LIB",
+      "object": "typinfo.obj",
+      "size": 11,
+      "kind": "object_block",
+      "block": "type_info"
+    },
+    {
+      "address": "0x007C8B38",
+      "symbol": "??4type_info@@AAEAAV0@ABV0@@Z",
+      "library": "LIBCMT.LIB",
+      "object": "typinfo.obj",
+      "size": 5,
+      "kind": "object_block",
+      "block": "type_info"
+    },
+    {
+      "address": "0x007C8F5D",
+      "symbol": "__fpclear",
+      "library": "LIBCMT.LIB",
+      "object": "fpinit.obj",
+      "size": 1,
+      "kind": "data_table",
+      "table": {
+        "address": "0x0087BEB0",
+        "section": 1,
+        "anchor_symbol": "__FPinit",
+        "anchor_address": "0x0087BEB8",
+        "anchors": [
+          {
+            "address": "0x007CBDAF",
+            "symbol": "__cinit",
+            "library": "LIBCMT.LIB",
+            "object": "crt0dat.obj"
+          }
+        ],
+        "target_pointers": [
+          "__FPmtinit",
+          "__FPmtterm"
+        ],
+        "function_anchors": [
+          {
+            "address": "0x007C8F46",
+            "symbol": "__fpmath",
+            "library": "LIBCMT.LIB",
+            "object": "fpinit.obj"
+          }
+        ]
+      }
+    },
+    {
       "address": "0x007CA9AF",
       "size": 5,
       "symbol": "??1__non_rtti_object@@UAE@XZ",
@@ -114,6 +175,48 @@
       ]
     },
     {
+      "address": "0x007D06E2",
+      "size": 6,
+      "symbol": "?_query_new_handler@@YAP6AHI@ZXZ",
+      "library": "LIBCMT.LIB",
+      "object": "handler.obj",
+      "kind": "global",
+      "global_symbol": "?_pnhHeap@@3P6AHI@ZA",
+      "global_address": "0x00B782C8",
+      "anchors": [
+        {
+          "address": "0x007D06BE",
+          "symbol": "?_set_new_handler@@YAP6AHI@ZP6AHI@Z@Z",
+          "library": "LIBCMT.LIB",
+          "object": "handler.obj"
+        },
+        {
+          "address": "0x007D06E8",
+          "symbol": "__callnewh",
+          "library": "LIBCMT.LIB",
+          "object": "handler.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007D1512",
+      "symbol": "___threadid",
+      "library": "LIBCMT.LIB",
+      "object": "tidtable.obj",
+      "size": 6,
+      "kind": "object_block",
+      "block": "thread_data"
+    },
+    {
+      "address": "0x007D1518",
+      "symbol": "___threadhandle",
+      "library": "LIBCMT.LIB",
+      "object": "tidtable.obj",
+      "size": 6,
+      "kind": "object_block",
+      "block": "thread_data"
+    },
+    {
       "address": "0x007D5719",
       "size": 6,
       "symbol": "__getpid",
@@ -126,6 +229,30 @@
           "symbol": "_init_namebuf",
           "library": "LIBCMT.LIB",
           "object": "tmpfile.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007D9FAC",
+      "size": 17,
+      "symbol": "?__CxxSetUnhandledExceptionFilter@@YAXXZ",
+      "library": "LIBCMT.LIB",
+      "object": "unhandld.obj",
+      "kind": "global",
+      "global_symbol": "_pOldExceptFilter",
+      "global_address": "0x00B7856C",
+      "anchors": [
+        {
+          "address": "0x007D9F66",
+          "symbol": "?__CxxUnhandledExceptionFilter@@YGJPAU_EXCEPTION_POINTERS@@@Z",
+          "library": "LIBCMT.LIB",
+          "object": "unhandld.obj"
+        },
+        {
+          "address": "0x007D9FBD",
+          "symbol": "?__CxxRestoreUnhandledExceptionFilter@@YAXXZ",
+          "library": "LIBCMT.LIB",
+          "object": "unhandld.obj"
         }
       ]
     },
@@ -180,5 +307,121 @@
       "vtable": "0x007FA498",
       "deleting_destructor": "0x007DCDF2"
     }
-  ]
+  ],
+  "blocks": {
+    "type_info": {
+      "address": "0x007C8A8E",
+      "size": 175,
+      "symbols": [
+        "??1type_info@@UAE@XZ",
+        "??_Gtype_info@@UAEPAXI@Z",
+        "??8type_info@@QBEHABV0@@Z",
+        "??9type_info@@QBEHABV0@@Z",
+        "?before@type_info@@QBEHABV1@@Z",
+        "?raw_name@type_info@@QBEPBDXZ",
+        "??0type_info@@AAE@ABV0@@Z",
+        "??4type_info@@AAEAAV0@ABV0@@Z"
+      ],
+      "anchors": [
+        {
+          "address": "0x007C8A8E",
+          "symbol": "??1type_info@@UAE@XZ",
+          "library": "LIBCMT.LIB",
+          "object": "typinfo.obj"
+        },
+        {
+          "address": "0x007C8AD3",
+          "symbol": "??8type_info@@QBEHABV0@@Z",
+          "library": "LIBCMT.LIB",
+          "object": "typinfo.obj"
+        },
+        {
+          "address": "0x007C8AEE",
+          "symbol": "??9type_info@@QBEHABV0@@Z",
+          "library": "LIBCMT.LIB",
+          "object": "typinfo.obj"
+        },
+        {
+          "address": "0x007C8B0A",
+          "symbol": "?before@type_info@@QBEHABV1@@Z",
+          "library": "LIBCMT.LIB",
+          "object": "typinfo.obj"
+        }
+      ],
+      "rtti": [
+        {
+          "symbol": "??_7type_info@@6B@",
+          "address": "0x007F9594",
+          "type": ".?AVtype_info@@",
+          "destructor": "??1type_info@@UAE@XZ",
+          "deleting_destructor": "??_Gtype_info@@UAEPAXI@Z"
+        }
+      ]
+    },
+    "thread_data": {
+      "address": "0x007D1386",
+      "size": 408,
+      "symbols": [
+        "__mtinit",
+        "__mtterm",
+        "__initptd",
+        "__getptd",
+        "__freeptd",
+        "___threadid",
+        "___threadhandle"
+      ],
+      "anchors": [
+        {
+          "address": "0x007D1386",
+          "symbol": "__mtinit",
+          "library": "LIBCMT.LIB",
+          "object": "tidtable.obj"
+        },
+        {
+          "address": "0x007D13DA",
+          "symbol": "__mtterm",
+          "library": "LIBCMT.LIB",
+          "object": "tidtable.obj"
+        },
+        {
+          "address": "0x007D13F8",
+          "symbol": "__initptd",
+          "library": "LIBCMT.LIB",
+          "object": "tidtable.obj"
+        },
+        {
+          "address": "0x007D140B",
+          "symbol": "__getptd",
+          "library": "LIBCMT.LIB",
+          "object": "tidtable.obj"
+        },
+        {
+          "address": "0x007D1472",
+          "symbol": "__freeptd",
+          "library": "LIBCMT.LIB",
+          "object": "tidtable.obj"
+        }
+      ],
+      "globals": [
+        {
+          "symbol": "___tlsindex",
+          "address": "0x0087C7A8",
+          "anchor_symbols": [
+            "__mtinit",
+            "__mtterm",
+            "__getptd",
+            "__freeptd"
+          ]
+        },
+        {
+          "symbol": "__XcptActTab",
+          "address": "0x0087CB20",
+          "anchor_symbols": [
+            "__initptd",
+            "__freeptd"
+          ]
+        }
+      ]
+    }
+  }
 }
