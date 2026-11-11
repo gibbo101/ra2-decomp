@@ -280,6 +280,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   after the statements before it; placement new adds the test.
 - A file-local helper whose body is a real function in the exe (a callback): define that
   function under its own marker and call it; VC6 inlines it where the original does (0x00610570).
+- A function matched with a callee's body written out cannot be inlined into its own
+  callers: call the callee (FUN_006A6820 calls SetTab, which StripClass::Recalc inlines).
 
 ### Constructs
 - `(x & 2) >> 1` that the exe computes as `and eax,2; shr eax,1`: write
@@ -507,6 +509,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   heap-sensitive functions in files that never call them.
 - Read a matched caller's reference lines before declaring a destructor: wdtmap's
   0x0040D300 is BasicTimerClass<FrameTimerClass>'s, not StageClass's.
+- One new constructor in velocity.h (`TVelocity3D(Coord const &)`) flips Print_CRCs
+  (0x0064DEA0) in queue.cpp through bullet.h: run a full checkall after any velocity.h change.
 
 ## Known dead ends
 
