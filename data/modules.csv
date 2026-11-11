@@ -421,4 +421,4 @@ vqalib/dstream,0x007BF240,0x007BF46F,2,yes
 vqalib/loader,0x007BF470,0x007C2584,23,yes
 vqalib/task,0x007C2590,0x007C3908,20,yes
 vqalib/timer,0x007C3910,0x007C39B7,4,yes
-vqalib/unvq,0x007C39C0,0x007C8A8D,73,yes
+vqalib/unvq,0x007C39C0,0x007C8361,42,yes

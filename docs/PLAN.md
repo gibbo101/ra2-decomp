@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 10 November 2026: 82% of game code by size matches (18,974 of 19,362 functions,
+Status, 11 November 2026: 82% of game code by size matches (18,974 of 19,331 functions,
 98%; 94% fuzzy), landed in batches module by module. `docs/rounds/` records each round.
 
 ## The goal
@@ -427,9 +427,10 @@ never paste their headers verbatim.
    step 5 better. Verified on the step-2 functions: the four `RawFileClass` ones and
    0x5F5CD0 MATCH, `CampaignClass::FindIndex` shows its one register difference, and
    swapping `GetLastError` for `GetTickCount` (identical bytes) reports WRONG TARGETS.
-   `tools/libmatch.py` places 558 LIBCMT functions from 216 objects
-   (`data/library.csv`), so CRT calls are verified by name and the queue can skip
-   prebuilt code; the CRT block starts at 0x7C8A8E.
+   `tools/libmatch.py` places 558 LIBCMT functions from 216 objects and the 365 import
+   thunks the linker takes from the import libraries (`data/library.csv`), so CRT and
+   DLL calls are verified by name and the queue can skip prebuilt code; the thunk table
+   starts at 0x7C8362 and the CRT block at 0x7C8A8E.
    - Linker-filled bytes are not compared, but what they point at is: a jump or table
      must land at the same place in the function, a string literal or constant must equal
      the original's target bytes, a call or global must reach its known address. A name
