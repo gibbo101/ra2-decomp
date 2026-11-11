@@ -544,3 +544,5 @@ address,name,symbol,evidence
 0x00AC116C,g_pChat,?g_pChat@@3PAUIChat@@A,"WOLAPI IChat interface pointer (TibSun netshare.h name); every IChat method call in wonline, netshare and conquer goes through it"
 0x00AC1170,g_pNetUtil,?g_pNetUtil@@3PAUINetUtil@@A,"WOLAPI INetUtil interface pointer (TibSun netshare.h name); ladder, ping and gameres requests in wonline, queue and stats go through it"
 0x00AC1174,g_pDownload,?g_pDownload@@3PAUIDownload@@A,"WOLAPI IDownload interface pointer (TibSun netshare.h name), next to g_pChat and g_pNetUtil; the patch download code calls through it"
+0x0087D620,__lconv,___lconv,Pinned LIBCMT initmon.obj and initnum.obj references in __init_monetary and __init_numeric independently resolve this locale-convention pointer
+0x0087C584,__sbh_threshold,___sbh_threshold,Pinned LIBCMT calloc.obj malloc.obj realloc.obj and sbheap.obj independently resolve this small-block-heap threshold

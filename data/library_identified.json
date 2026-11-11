@@ -1,0 +1,184 @@
+{
+  "targets": [
+    {
+      "address": "0x007CA9AF",
+      "size": 5,
+      "symbol": "??1__non_rtti_object@@UAE@XZ",
+      "library": "LIBCMT.LIB",
+      "object": "rtti.obj",
+      "rtti_type": ".?AV__non_rtti_object@@",
+      "vtable": "0x007F95D0",
+      "deleting_destructor": "0x007CA993",
+      "kind": "rtti"
+    },
+    {
+      "address": "0x007CAA00",
+      "size": 5,
+      "symbol": "??1bad_typeid@@UAE@XZ",
+      "library": "LIBCMT.LIB",
+      "object": "rtti.obj",
+      "rtti_type": ".?AVbad_typeid@@",
+      "vtable": "0x007F95DC",
+      "deleting_destructor": "0x007CA9E4",
+      "kind": "rtti"
+    },
+    {
+      "address": "0x007CAC2F",
+      "size": 5,
+      "symbol": "??1bad_cast@@UAE@XZ",
+      "library": "LIBCMT.LIB",
+      "object": "rtti.obj",
+      "rtti_type": ".?AVbad_cast@@",
+      "vtable": "0x007F9660",
+      "deleting_destructor": "0x007CAC13",
+      "kind": "rtti"
+    },
+    {
+      "address": "0x007CBEC1",
+      "size": 9,
+      "symbol": "__lockexit",
+      "library": "LIBCMT.LIB",
+      "object": "crt0dat.obj",
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007C970C",
+          "symbol": "__onexit",
+          "library": "LIBCMT.LIB",
+          "object": "onexit.obj"
+        },
+        {
+          "address": "0x007CBE1C",
+          "symbol": "_doexit",
+          "library": "LIBCMT.LIB",
+          "object": "crt0dat.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CBECA",
+      "size": 9,
+      "symbol": "__unlockexit",
+      "library": "LIBCMT.LIB",
+      "object": "crt0dat.obj",
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007C970C",
+          "symbol": "__onexit",
+          "library": "LIBCMT.LIB",
+          "object": "onexit.obj"
+        },
+        {
+          "address": "0x007CBE1C",
+          "symbol": "_doexit",
+          "library": "LIBCMT.LIB",
+          "object": "crt0dat.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CF762",
+      "size": 6,
+      "symbol": "__get_sbh_threshold",
+      "library": "LIBCMT.LIB",
+      "object": "sbheap.obj",
+      "kind": "global",
+      "global_symbol": "___sbh_threshold",
+      "global_address": "0x0087C584",
+      "anchors": [
+        {
+          "address": "0x007D3374",
+          "symbol": "_calloc",
+          "library": "LIBCMT.LIB",
+          "object": "calloc.obj"
+        },
+        {
+          "address": "0x007C946E",
+          "symbol": "__heap_alloc",
+          "library": "LIBCMT.LIB",
+          "object": "malloc.obj"
+        },
+        {
+          "address": "0x007D0F45",
+          "symbol": "_realloc",
+          "library": "LIBCMT.LIB",
+          "object": "realloc.obj"
+        },
+        {
+          "address": "0x007CF768",
+          "symbol": "__set_sbh_threshold",
+          "library": "LIBCMT.LIB",
+          "object": "sbheap.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007D5719",
+      "size": 6,
+      "symbol": "__getpid",
+      "library": "LIBCMT.LIB",
+      "object": "getpid.obj",
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007CD5B4",
+          "symbol": "_init_namebuf",
+          "library": "LIBCMT.LIB",
+          "object": "tmpfile.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007DB060",
+      "size": 6,
+      "symbol": "_localeconv",
+      "library": "LIBCMT.LIB",
+      "object": "lconv.obj",
+      "kind": "global",
+      "global_symbol": "___lconv",
+      "global_address": "0x0087D620",
+      "anchors": [
+        {
+          "address": "0x007D6830",
+          "symbol": "___init_monetary",
+          "library": "LIBCMT.LIB",
+          "object": "initmon.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007DBC57",
+      "size": 3,
+      "symbol": "__matherr",
+      "library": "LIBCMT.LIB",
+      "object": "matherr.obj",
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007D8C6B",
+          "symbol": "__87except",
+          "library": "LIBCMT.LIB",
+          "object": "87except.obj"
+        },
+        {
+          "address": "0x007DBB55",
+          "symbol": "__umatherr",
+          "library": "LIBCMT.LIB",
+          "object": "fpexcept.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007DCE3B",
+      "size": 38,
+      "symbol": "??1_com_error@@UAE@XZ",
+      "library": "COMSUPP.LIB",
+      "object": "comraise.obj",
+      "kind": "rtti",
+      "rtti_type": ".?AV_com_error@@",
+      "vtable": "0x007FA498",
+      "deleting_destructor": "0x007DCDF2"
+    }
+  ]
+}

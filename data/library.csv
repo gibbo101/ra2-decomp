@@ -379,9 +379,12 @@ address,size,symbol,library,object
 0x007CA8C6,41,_wcschr,LIBCMT.LIB,wcschr.obj
 0x007CA8EF,130,___RTCastToVoid,LIBCMT.LIB,rtti.obj
 0x007CA971,34,??0__non_rtti_object@@QAE@PBD@Z,LIBCMT.LIB,rtti.obj
+0x007CA9AF,5,??1__non_rtti_object@@UAE@XZ,LIBCMT.LIB,rtti.obj
+0x007CAA00,5,??1bad_typeid@@UAE@XZ,LIBCMT.LIB,rtti.obj
 0x007CAA05,198,___RTtypeid,LIBCMT.LIB,rtti.obj
 0x007CAACB,25,??0bad_typeid@@QAE@PBD@Z,LIBCMT.LIB,rtti.obj
 0x007CAAE4,279,___RTDynamicCast,LIBCMT.LIB,rtti.obj
+0x007CAC2F,5,??1bad_cast@@UAE@XZ,LIBCMT.LIB,rtti.obj
 0x007CAC4C,26,?FindCompleteObject@@YAPAXPAPAX@Z,LIBCMT.LIB,rtti.obj
 0x007CAC66,90,?FindSITargetTypeInstance@@YAPBU_s_RTTIBaseClassDescriptor@@PAXPBU_s_RTTICompleteObjectLocator@@PAUTypeDescriptor@@H2@Z,LIBCMT.LIB,rtti.obj
 0x007CACC0,249,?FindMITargetTypeInstance@@YAPBU_s_RTTIBaseClassDescriptor@@PAXPBU_s_RTTICompleteObjectLocator@@PAUTypeDescriptor@@H2@Z,LIBCMT.LIB,rtti.obj
@@ -423,6 +426,8 @@ address,size,symbol,library,object
 0x007CBDFE,15,__cexit,LIBCMT.LIB,crt0dat.obj
 0x007CBE0D,15,__c_exit,LIBCMT.LIB,crt0dat.obj
 0x007CBE1C,165,_doexit,LIBCMT.LIB,crt0dat.obj
+0x007CBEC1,9,__lockexit,LIBCMT.LIB,crt0dat.obj
+0x007CBECA,9,__unlockexit,LIBCMT.LIB,crt0dat.obj
 0x007CBED3,26,__initterm,LIBCMT.LIB,crt0dat.obj
 0x007CBEED,19,__statusfp,LIBCMT.LIB,ieee87.obj
 0x007CBF00,20,__clearfp,LIBCMT.LIB,ieee87.obj
@@ -527,6 +532,7 @@ address,size,symbol,library,object
 0x007CF64C,101,__d_inttype,LIBCMT.LIB,powhlp.obj
 0x007CF6B1,60,__heap_init,LIBCMT.LIB,heapinit.obj
 0x007CF6ED,117,__heap_term,LIBCMT.LIB,heapinit.obj
+0x007CF762,6,__get_sbh_threshold,LIBCMT.LIB,sbheap.obj
 0x007CF768,23,__set_sbh_threshold,LIBCMT.LIB,sbheap.obj
 0x007CF77F,62,___sbh_heap_init,LIBCMT.LIB,sbheap.obj
 0x007CF7BD,43,___sbh_find_block,LIBCMT.LIB,sbheap.obj
@@ -629,6 +635,7 @@ address,size,symbol,library,object
 0x007D5408,43,__mbsdup,LIBCMT.LIB,mbsdup.obj
 0x007D5433,23,__open,LIBCMT.LIB,open.obj
 0x007D544A,719,__sopen,LIBCMT.LIB,open.obj
+0x007D5719,6,__getpid,LIBCMT.LIB,getpid.obj
 0x007D571F,114,__mbsrchr,LIBCMT.LIB,mbsrchr.obj
 0x007D5791,109,__rmtmp,LIBCMT.LIB,rmtmp.obj
 0x007D57FE,202,_asctime,LIBCMT.LIB,asctime.obj
@@ -807,6 +814,7 @@ address,size,symbol,library,object
 0x007DAE6E,49,_x_ismbbtype,LIBCMT.LIB,ismbbyte.obj
 0x007DAE9F,137,___crtMessageBoxA,LIBCMT.LIB,crtmbox.obj
 0x007DAF28,312,___getlocaleinfo,LIBCMT.LIB,inithelp.obj
+0x007DB060,6,_localeconv,LIBCMT.LIB,lconv.obj
 0x007DB066,33,___addl,LIBCMT.LIB,mantold.obj
 0x007DB087,94,___add_12,LIBCMT.LIB,mantold.obj
 0x007DB0E5,46,___shl_12,LIBCMT.LIB,mantold.obj
@@ -823,6 +831,7 @@ address,size,symbol,library,object
 0x007DBBDD,40,__set_errno,LIBCMT.LIB,fpexcept.obj
 0x007DBC05,37,__get_fname,LIBCMT.LIB,fpexcept.obj
 0x007DBC2A,45,__errcode,LIBCMT.LIB,fpexcept.obj
+0x007DBC57,3,__matherr,LIBCMT.LIB,matherr.obj
 0x007DBC5A,14,__statfp,LIBCMT.LIB,fpctrl.obj
 0x007DBC68,15,__clrfp,LIBCMT.LIB,fpctrl.obj
 0x007DBC77,35,__ctrlfp,LIBCMT.LIB,fpctrl.obj
@@ -840,6 +849,7 @@ address,size,symbol,library,object
 0x007DC4C9,275,___crtGetLocaleInfoW,LIBCMT.LIB,w_loc.obj
 0x007DC5DC,286,___crtGetLocaleInfoA,LIBCMT.LIB,a_loc.obj
 0x007DC6FA,23,_abort,LIBCMT.LIB,abort.obj
+0x007DCE3B,38,??1_com_error@@UAE@XZ,COMSUPP.LIB,comraise.obj
 0x007DCE62,6,_HeapFree@12,KERNEL32.LIB,KERNEL32.dll
 0x007DCE68,6,_HeapAlloc@12,KERNEL32.LIB,KERNEL32.dll
 0x007DCE6E,6,_GetTimeZoneInformation@4,KERNEL32.LIB,KERNEL32.dll
