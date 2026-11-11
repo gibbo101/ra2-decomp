@@ -36,11 +36,7 @@ struct CacheNode {
 static CacheNode * DAT_00ABF00C = NULL;
 void Exit_Process(int code);
 
-class SHPReference {
-	public:
-		SHPReference(char const * name);
-		char Data[0x24];
-};
+#include "msanim.h"
 
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool as_shape);

@@ -56,12 +56,6 @@
 extern char const * DAT_007EED18;
 extern char DAT_00889F64[];
 
-class MPHouse
-{
-	public:
-		bool FUN_0050B730(void);
-};
-
 bool __cdecl FUN_0077D940(void);
 int __fastcall FUN_00623840(HWND hwnd);
 int __fastcall FUN_0069B670(SessionClass * session);
