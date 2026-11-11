@@ -60,7 +60,42 @@ def grouped_object(code=b"\x90\xc3"):
             + struct.pack("<I", 4 + len(strings)) + strings)
 
 
+def two_routine_object():
+    """_first at 0 and _second at 0x10 in one .text, with a DIR32 at 0x14 against _first."""
+    code = bytes(range(0x20))
+    text_flags = coffgen.SCN_CNT_CODE | coffgen.SCN_MEM_EXECUTE | coffgen.SCN_MEM_READ | coffgen.ALIGN[4]
+    raw = 20 + 40
+    relptr = raw + len(code)
+    symptr = relptr + 10
+    head = struct.pack("<HHIIIHH", coffgen.I386, 1, 0, symptr, 4, 0, 0)
+    sect = struct.pack("<8sIIIIIIHHI", b".text", 0, 0, len(code), raw, relptr, 0, 1, 0, text_flags)
+    reloc = struct.pack("<IIH", 0x14, 2, coffgen.REL_DIR32)
+    sym_text = struct.pack("<8sIhHBB", b".text", 0, 1, 0, coffgen.CLASS_STATIC, 1)
+    aux = struct.pack("<IHHIHBBBB", len(code), 1, 0, 0, 0, 0, 0, 0, 0)
+    first = struct.pack("<8sIhHBB", b"_first", 0, 1, 0x20, coffgen.CLASS_EXTERNAL, 0)
+    second = struct.pack("<8sIhHBB", b"_second", 0x10, 1, 0x20, coffgen.CLASS_EXTERNAL, 0)
+    return head + sect + code + reloc + sym_text + aux + first + second + struct.pack("<I", 4)
+
+
 class ComdatizeTests(unittest.TestCase):
+    def test_split_moves_the_routine_and_what_follows_to_a_keyed_section(self):
+        out, count = comdatize.comdatize(comdatize.split(two_routine_object(), "_second"))
+        self.assertEqual(count, 2)
+        sections = [struct.unpack_from("<IIIIH", out, 20 + 40 * i + 16) for i in range(2)]
+        self.assertEqual([(size, nrel) for size, _, _, _, nrel in sections], [(0x10, 0), (0x10, 1)])
+        self.assertEqual(out[sections[0][1]:sections[0][1] + 0x10] + out[sections[1][1]:sections[1][1] + 0x10],
+                         bytes(range(0x20)))
+        symbols = list(coffgen.read_symbols(out))
+        in_second = [s for s in symbols if s[3] == 2]
+        self.assertEqual([(s[1], s[2]) for s in in_second], [(".text", 0), ("_second", 0)])
+        self.assertEqual(out[struct.unpack_from("<I", out, 8)[0] + 18 * (in_second[0][0] + 1) + 14], coffgen.COMDAT_ANY)
+        va, idx, _ = struct.unpack_from("<IIH", out, sections[1][2])
+        self.assertEqual((va, next(s[1] for s in symbols if s[0] == idx)), (4, "_first"))
+
+    def test_split_refuses_a_routine_at_the_section_start(self):
+        with self.assertRaises(ValueError):
+            comdatize.split(two_routine_object(), "_first")
+
     def test_public_routine_becomes_the_comdat_key(self):
         out, _ = comdatize.comdatize(archive_shaped_object())
         symbols = list(coffgen.read_symbols(out))

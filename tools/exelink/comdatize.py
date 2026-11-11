@@ -9,6 +9,8 @@ IMAGE_SCN_LNK_COMDAT and sets the selection byte of its section-symbol aux recor
 the symbol table defines in it; where that is a file-local label (the archived objects
 define helpers before the public routine at offset 0), the public routine's entry is swapped
 ahead of it and every relocation's symbol index follows. The bytes are left alone.
+split() first cuts a code section where the original began a new object at one of its
+routines (build.py reads those from data/asm_objects.csv), so each part is placed on its own.
 
 Usage: comdatize.py IN.obj [OUT.obj]    (in place when OUT is omitted)
 """
@@ -49,6 +51,79 @@ def comdatize(data):
         key_first(data, idx)
         converted += 1
     return bytes(data), converted
+
+
+def split(data, symbol):
+    """Copy of the object whose code section holding `symbol` ends where `symbol` starts; `symbol`
+    and everything after it move to a new last section with the same header."""
+    data = bytes(data)
+    nsec, symptr, nsyms = struct.unpack_from("<H", data, 2)[0], *struct.unpack_from("<II", data, 8)
+    if struct.unpack_from("<H", data, 16)[0]:
+        raise ValueError("objects with an optional header are not split")
+    strtab = data[symptr + 18 * nsyms:]
+    symbols = list(coffgen.read_symbols(data))
+    at = next((s for s in symbols if s[1] == symbol and s[3] > 0), None)
+    if at is None:
+        raise ValueError(f"{symbol} is not defined")
+    section, cut = at[3], at[2]
+    heads = [bytearray(data[20 + 40 * i:20 + 40 * i + 40]) for i in range(nsec)]
+    flags = struct.unpack_from("<I", heads[section - 1], 36)[0]
+    if not cut or struct.unpack_from("<H", heads[section - 1], 34)[0] or flags & coffgen.SCN_LNK_NRELOC_OVFL:
+        raise ValueError(f"{symbol} cannot start a section")
+    sec_sym = next(s for s in symbols if s[3] == section and s[4] == coffgen.CLASS_STATIC
+                   and s[2] == 0 and s[5] and s[1].startswith("."))
+    moved = {s[0] for s in symbols if s[3] == section and s[2] >= cut and s[0] != sec_sym[0]}
+    newsec = nsec + 1
+    record = lambda i: bytearray(data[symptr + 18 * i:symptr + 18 * i + 18])  # noqa: E731
+
+    # The new section symbol and its aux go just before the first moved symbol, so the new
+    # section's first symbol is its section symbol and its COMDAT key can follow.
+    table, remap, new_sym = [], {}, None
+    for s in symbols:
+        if s[0] == min(moved):
+            new_sym = len(table)
+            sym = record(sec_sym[0])
+            struct.pack_into("<h", sym, 12, newsec)
+            table += [sym, record(sec_sym[0] + 1)]
+        remap[s[0]] = len(table)
+        recs = [record(i) for i in range(s[0], s[0] + 1 + s[5])]
+        if s[0] in moved:
+            struct.pack_into("<Ih", recs[0], 8, s[2] - cut, newsec)
+        table += recs
+
+    def relocations(h):
+        ptr, n = struct.unpack_from("<I", h, 24)[0], struct.unpack_from("<H", h, 32)[0]
+        return [struct.unpack_from("<IIH", data, ptr + 10 * r) for r in range(n)]
+
+    def contents(h):
+        size, ptr = struct.unpack_from("<II", h, 16)
+        return data[ptr:ptr + size] if ptr else None
+
+    relocs = {i: relocations(h) for i, h in enumerate(heads, 1)}
+    bodies = {i: contents(h) for i, h in enumerate(heads, 1)}
+    relocs[newsec] = [(va - cut, idx, kind) for va, idx, kind in relocs[section] if va >= cut]
+    if any(va < cut < va + 4 for va, _, _ in relocs[section]):
+        raise ValueError(f"a relocation straddles {symbol}")
+    relocs[section] = [r for r in relocs[section] if r[0] < cut]
+    bodies[newsec], bodies[section] = bodies[section][cut:], bodies[section][:cut]
+    heads.append(bytearray(heads[section - 1]))
+    for sec, idx in ((section, remap[sec_sym[0]]), (newsec, new_sym)):
+        struct.pack_into("<IH", table[idx + 1], 0, len(bodies[sec]), len(relocs[sec]))
+
+    pos, blob = 20 + 40 * len(heads), bytearray()
+    for i, h in enumerate(heads, 1):
+        body = bodies[i]
+        if body is not None:
+            struct.pack_into("<II", h, 16, len(body), pos + len(blob) if body else 0)
+            blob += body
+        rel = b"".join(struct.pack("<IIH", va, remap[idx], kind) for va, idx, kind in relocs[i])
+        struct.pack_into("<I", h, 24, pos + len(blob) if rel else 0)
+        struct.pack_into("<H", h, 32, len(relocs[i]))
+        blob += rel
+    header = bytearray(data[:20])
+    struct.pack_into("<H", header, 2, len(heads))
+    struct.pack_into("<II", header, 8, pos + len(blob), len(table))
+    return bytes(header) + b"".join(heads) + bytes(blob) + b"".join(bytes(r) for r in table) + strtab
 
 
 def section_name(data, off, strtab):

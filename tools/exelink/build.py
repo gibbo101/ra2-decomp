@@ -5,13 +5,15 @@
 Each .cpp is compiled as tools/check.py compiles it (the fixed flags, the header
 directory it prepares) plus /Gy, which puts every function in its own COMDAT so /ORDER can place it at its
 address; it changes how the code is packaged, not the code. Each archived .asm is assembled the
-same way as the checker does, then comdatize.py marks its .text a COMDAT for the same reason. Writes
+same way as the checker does, split where data/asm_objects.csv says the original began a new object
+at one of its routines, and then comdatize.py marks its .text a COMDAT for the same reason. Writes
 build/exelink/obj/objects.json, the object index the link reads:
 {"objects": [{"source": "src/x.cpp", "object": "src/x.obj"}, ...]}.
 
 Usage: uv run tools/exelink/build.py [--jobs N] [--only src/a.cpp ...]
 """
 import argparse
+import csv
 import json
 import shutil
 import sys
@@ -24,6 +26,15 @@ sys.path.insert(0, str(HERE.parent))
 import paths  # noqa: E402
 import check  # noqa: E402
 import comdatize  # noqa: E402
+
+
+def object_starts():
+    """{source: [routines the original assembled as the first of a new object]} from data/asm_objects.csv."""
+    with open(paths.ROOT / "data/asm_objects.csv", newline="") as f:
+        starts = {}
+        for row in csv.DictReader(f):
+            starts.setdefault(row["source"], []).append(row["symbol"])
+        return starts
 
 
 def sources():
@@ -39,6 +50,7 @@ def main(argv=None):
     objdir.mkdir(parents=True, exist_ok=True)
     todo = [p.resolve() for p in args.only] if args.only else sources()
     headers = check.prepare_headers(None)
+    starts = object_starts()
     failed = []
 
     def one(src):
@@ -48,7 +60,10 @@ def main(argv=None):
         if obj is None:
             failed.append((rel.as_posix(), log.strip().splitlines()[-3:]))
         elif src.suffix == ".asm":   # MASM writes one plain .text; make it a COMDAT /ORDER can place
-            obj.write_bytes(comdatize.comdatize(obj.read_bytes())[0])
+            data = obj.read_bytes()
+            for symbol in starts.get(rel.as_posix(), ()):
+                data = comdatize.split(data, symbol)
+            obj.write_bytes(comdatize.comdatize(data)[0])
         return rel
 
     try:
