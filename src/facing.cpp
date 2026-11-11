@@ -88,6 +88,7 @@ FacingBias DAT_008B3A60;
 #include "language\language.h"
 #include "ownrdraw.h"
 #include "surface.h"
+#include "dsurface.h"
 #include "version.h"
 #include "win.h"
 #include "windlg.h"

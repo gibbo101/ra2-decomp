@@ -842,7 +842,6 @@ static inline int Max_Visible_Cameos(void)
 
 extern Rect DAT_008809F4;
 extern Rect DAT_00B07DC8;
-extern DSurface * DAT_00887300;
 extern CCToolTip * ToolTips;
 
 // FUNCTION: GAMEMD 0x006A6C30
@@ -851,10 +850,10 @@ void SidebarClass::Draw_It(bool complete)
 	DAT_008809F4 = DAT_00B07DC8;
 
 	Surface * old = DSurface::Temp;
-	DSurface::Temp = DAT_00887300;
+	DSurface::Temp = SidebarSurface;
 	bool redrawn = false;
 
-	Rect window(0, 0, DAT_00887300->Get_Width(), DAT_00887300->Get_Height());
+	Rect window(0, 0, SidebarSurface->Get_Width(), SidebarSurface->Get_Height());
 
 	complete = complete || IsToRedraw || IsForceCompleteRedraw;
 
@@ -862,16 +861,16 @@ void SidebarClass::Draw_It(bool complete)
 		if (IsForceCompleteRedraw) {
 			redrawn = true;
 
-			Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B468, 0, Point2D(0, DAT_00886F94), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B468, 0, Point2D(0, DAT_00886F94), window, SHAPE_WIN_REL);
 
 			int y = DAT_00B0B4F8;
 			for (int i = 0; i < Max_Visible_Cameos(); i++) {
-				Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B46C, 0, Point2D(0, y), window, SHAPE_WIN_REL);
+				Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B46C, 0, Point2D(0, y), window, SHAPE_WIN_REL);
 				y += ((ShapeSet const *)DAT_00B0B46C)->Get_Height();
 			}
 
-			Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B470, 0, Point2D(0, y), window, SHAPE_WIN_REL);
-			Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B474, 0, Point2D(0, y + ((ShapeSet const *)DAT_00B0B470)->Get_Height()), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B470, 0, Point2D(0, y), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B474, 0, Point2D(0, y + ((ShapeSet const *)DAT_00B0B470)->Get_Height()), window, SHAPE_WIN_REL);
 		}
 
 		Power.Draw_Me(redrawn);
@@ -883,9 +882,9 @@ void SidebarClass::Draw_It(bool complete)
 		Waypoint.Draw_Me(redrawn);
 
 		if (unknown_5398 != 0) {
-			Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B478, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
-			Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B47C, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
-			Draw_Shape(*DAT_00887300, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B480, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B478, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B47C, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B480, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
 		}
 		DAT_00B0B518 = true;
 	}
@@ -968,10 +967,10 @@ void SidebarClass::Blit_Sidebar(bool complete)
 			DAT_00B0B518 = false;
 			if (DAT_008809F4 == DAT_00B07DC8) {
 				if (IsToRedrawCredits) {
-					DAT_00887640->Draw_Mouse(DAT_00887300, true);
+					DAT_00887640->Draw_Mouse(SidebarSurface, true);
 					DAT_00887308->Blit_From(
 						Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, DAT_00886F98, 16),
-						*DAT_00887300,
+						*SidebarSurface,
 						Rect(0, 0, DAT_00886F98, 16),
 						false,
 						true
@@ -986,18 +985,18 @@ void SidebarClass::Blit_Sidebar(bool complete)
 			DAT_00B0B518 = true;
 		}
 
-		DAT_00887640->Draw_Mouse(DAT_00887300, true);
+		DAT_00887640->Draw_Mouse(SidebarSurface, true);
 		if (DAT_008809F4 == DAT_00B07DC8 && !complete) {
 			if (IsToRedrawCredits) {
-				DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, DAT_00886F98, 16), *DAT_00887300, Rect(0, 0, DAT_00886F98, 16), false, true);
+				DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, DAT_00886F98, 16), *SidebarSurface, Rect(0, 0, DAT_00886F98, 16), false, true);
 				IsToRedrawCredits = false;
 			}
-			DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_00886F94, DAT_00886F98, DAT_00887300->Get_Height() - DAT_00886F94), *DAT_00887300, Rect(0, DAT_00886F94, DAT_00886F98, DAT_00886F9C), false, true);
+			DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_00886F94, DAT_00886F98, SidebarSurface->Get_Height() - DAT_00886F94), *SidebarSurface, Rect(0, DAT_00886F94, DAT_00886F98, DAT_00886F9C), false, true);
 		} else if (DAT_00B0B518) {
-			Rect sb_rect = DAT_00887300->Get_Rect();
-			DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, sb_rect.Width, sb_rect.Height), *DAT_00887300, Rect(0, 0, sb_rect.Width, sb_rect.Height), false, true);
+			Rect sb_rect = SidebarSurface->Get_Rect();
+			DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, sb_rect.Width, sb_rect.Height), *SidebarSurface, Rect(0, 0, sb_rect.Width, sb_rect.Height), false, true);
 		} else {
-			DAT_00887308->Blit_From(Rect(scrnpt.x + DAT_008809F4.X + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_008809F4.Y, DAT_008809F4.Width, DAT_008809F4.Height), *DAT_00887300, DAT_008809F4, false, true);
+			DAT_00887308->Blit_From(Rect(scrnpt.x + DAT_008809F4.X + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_008809F4.Y, DAT_008809F4.Width, DAT_008809F4.Height), *SidebarSurface, DAT_008809F4, false, true);
 		}
 		DAT_00B0B519 = true;
 	}
