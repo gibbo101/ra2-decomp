@@ -23,10 +23,7 @@
 void __cdecl FUN_004068E0(char const * format, ...);
 extern int DAT_00841F3C;
 extern WinsockInterfaceClass * DAT_00887628;
-struct Unknown_00B052D0 {
-	unsigned char FUN_00663D60(int);
-};
-extern Unknown_00B052D0 DAT_00B052D0;
+#include "ownertalk.h"
 // SYNTHETIC: GAMEMD 0x0053F8A0 SYMBOL
 // _$E40
 // SYNTHETIC: GAMEMD 0x0053F8D0 SYMBOL
@@ -345,7 +342,7 @@ int IPXGlobalConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 					break;
 				}
 			}
-			unsigned char result = DAT_00B052D0.FUN_00663D60(id);
+			unsigned char result = OwnerTalk.Mask_From_ID(id);
 			if (!result) {
 				result = 1;
 			}

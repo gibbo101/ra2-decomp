@@ -377,12 +377,7 @@ void SessionClass::Init(void)
 {
 }
 
-struct Unknown_00B052D0 {
-	void FUN_00663B40(void);
-	bool FUN_00663DB0(int);
-	bool FUN_006639D0(void);
-};
-extern Unknown_00B052D0 DAT_00B052D0;
+#include "ownertalk.h"
 
 // FUNCTION: GAMEMD 0x00697B70
 int SessionClass::Create_Connections(void)
@@ -455,10 +450,10 @@ int SessionClass::Create_Connections(void)
 		unknown_309C = 20;
 		unknown_3094 = -1;
 		Ipx.Create_Multicast_Connection();
-		DAT_00B052D0.FUN_00663B40();
+		OwnerTalk.Build_Connection_List();
 		if (Session.Am_I_Master(NULL)) {
-			bool r = DAT_00B052D0.FUN_00663DB0(0);
-			if (r) r = DAT_00B052D0.FUN_006639D0();
+			bool r = OwnerTalk.Start_Router(NULL);
+			if (r) r = OwnerTalk.Send_Player_List();
 			if (!r) {
 				Session.ViaPacketRouter = false;
 			}

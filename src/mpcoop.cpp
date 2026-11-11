@@ -1535,8 +1535,7 @@ extern int DAT_00B7790C[];
 extern unsigned char DAT_00B77A04;
 extern unsigned char DAT_00B76568;
 extern int DAT_00A8EA0C;
-extern int DAT_00B052D0;
-void __fastcall FUN_00664530(int * object);
+#include "ownertalk.h"
 void __fastcall FUN_005E7460(void);
 struct CCToolTip {
 	static ToolTipManager * Instance;
@@ -1687,7 +1686,7 @@ void MPCooperative::vt_entry_AC(void)
 	}
 	if (Session.ViaPacketRouter) {
 		if (DAT_00A8EA0C) {
-			FUN_00664530(&DAT_00B052D0);
+			OwnerTalk.Send_Shutdown();
 		}
 		Session.ViaPacketRouter = 0;
 	}

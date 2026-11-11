@@ -244,11 +244,7 @@ void Motion_Capture(void)
 	}
 }
 
-struct Unknown_00B052D0 {
-	void FUN_00664530(void);
-	bool FUN_00664610(int, int);
-};
-extern Unknown_00B052D0 DAT_00B052D0;
+#include "ownertalk.h"
 extern int DAT_00A8EA0C;
 extern WinsockInterfaceClass * DAT_00887628;
 extern void __cdecl FUN_004068E0(char const * format, ...);
@@ -260,11 +256,11 @@ void FUN_0055CF10(void)
 	FUN_004068E0("Disconnect_Gracefully\n");
 	if (Session.Type == GAME_INTERNET && DAT_00887628 && Session.ViaPacketRouter) {
 		if (DAT_00A8EA0C) {
-			DAT_00B052D0.FUN_00664530();
+			OwnerTalk.Send_Shutdown();
 			CDTimerClass<SystemTimerClass> timer(480);
 			while (timer()) {
 				Call_Back();
-				if (DAT_00B052D0.FUN_00664610(10, 0)) {
+				if (OwnerTalk.Wait_For_Router_Shutdown(10, false)) {
 					break;
 				}
 			}

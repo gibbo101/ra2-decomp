@@ -145,12 +145,7 @@ namespace Game { extern int PlayerCount; namespace Network { extern int Tourname
 extern void __cdecl FUN_004068E0(char const *, ...);
 extern NodeNameType * DAT_00AC119C;
 
-struct Unknown_00B052D0 {
-	void FUN_006646C0(int);
-	int FUN_00664440(void);
-	bool FUN_006639D0(void);
-};
-extern Unknown_00B052D0 DAT_00B052D0;
+#include "ownertalk.h"
 
 // FUNCTION: GAMEMD 0x005DA750
 void __fastcall Destroy_Connection(int id, int error)
@@ -194,13 +189,13 @@ void __fastcall Destroy_Connection(int id, int error)
 			housep->Flag_To_Die();
 		}
 		if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
-			DAT_00B052D0.FUN_006646C0(id);
+			OwnerTalk.Send_Remove_Player(id);
 		}
 	}
 
 	if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter && Session.Am_I_Master(housep)) {
 		*(bool *)&Session.unknown_3098 = true;
-		int newid = DAT_00B052D0.FUN_00664440();
+		int newid = OwnerTalk.Update_Master();
 		if (newid != -1) {
 			HouseClass *newmaster = Houses[newid];
 			if (newmaster) {
@@ -226,7 +221,7 @@ void __fastcall Destroy_Connection(int id, int error)
 				FUN_004068E0("New game host is %ls\n", Session.MasterPlayerName);
 				Session.MasterPlayerID = newid;
 				if (Session.Am_I_Master(NULL)) {
-					DAT_00B052D0.FUN_006639D0();
+					OwnerTalk.Send_Player_List();
 				}
 			}
 		}
@@ -244,7 +239,7 @@ void __fastcall Destroy_Connection(int id, int error)
 			Session.Players.Delete(Session.Players[i]);
 			Session.FUN_0069BBF0(i);
 			if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
-				DAT_00B052D0.FUN_006646C0(id);
+				OwnerTalk.Send_Remove_Player(id);
 			}
 			break;
 		}

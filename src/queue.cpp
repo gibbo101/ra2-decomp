@@ -2426,15 +2426,7 @@ void __fastcall FUN_00652230(EventClass *event)
 	}
 }
 
-struct Unknown_00B052D0 {
-	char Gap[0x10];
-	int Count;
-
-	char * FUN_006643E0(int index);
-	IPXAddressClass * FUN_006642A0(char const * name);
-	unsigned short FUN_00664390(char const * name);
-};
-extern Unknown_00B052D0 DAT_00B052D0;
+#include "ownertalk.h"
 int __fastcall FUN_005422D0(IPXManagerClass *ipx);
 
 // FUNCTION: GAMEMD 0x006523A0
@@ -2444,16 +2436,16 @@ void FUN_006523A0(void)
 	if (Session.Type == GAME_INTERNET) {
 		FUN_00543080(&Ipx);
 		int pending = FUN_005422D0(&Ipx);
-		for (int i = 0; i < DAT_00B052D0.Count; i++) {
+		for (int i = 0; i < OwnerTalk.ConnectionList.Count(); i++) {
 			GlobalPacketType packet;
 			memset(&packet, 0, 0x2f);
 			packet.Command = (NetCommandType)0x2f;
 			strcpy(packet.Name, FUN_007350C0(Session.Players[0]->Name));
-			char * name = DAT_00B052D0.FUN_006643E0(i);
+			char * name = OwnerTalk.Name_From_Index(i);
 			if (name && stricmp(name, FUN_007350C0(Session.Players[0]->Name)) != 0) {
 				DebugString("Sending NET_PORT_UNREACHABLE to %s\n", name);
-				IPXAddressClass address = *DAT_00B052D0.FUN_006642A0(name);
-				Ipx.Send_Global_Message(&packet, 0x2f, 1, &address, DAT_00B052D0.FUN_00664390(name));
+				IPXAddressClass address = *OwnerTalk.Address_From_Name(name);
+				Ipx.Send_Global_Message(&packet, 0x2f, 1, &address, OwnerTalk.Port_From_Name(name));
 			}
 		}
 		CDTimerClass<SystemTimerClass> timer(300);

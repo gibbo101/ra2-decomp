@@ -624,8 +624,7 @@ struct FileSystem { static char TEMPERAT_PAL[]; };
 void __fastcall FUN_004A3C30(void * palette, int rate, bool (__cdecl * callback)(void));
 bool Wait_For_Players_To_Load(void);
 namespace Game { namespace Network { extern int Tournament; extern int WOLGameID; } }
-struct Unknown_00B052D0 { bool FUN_00664610(int, int); };
-extern Unknown_00B052D0 DAT_00B052D0;
+#include "ownertalk.h"
 int __fastcall FUN_0072B380(void);
 void __fastcall Multiplayer_Last_Minute_Fixups(bool official);
 
@@ -765,7 +764,7 @@ bool Read_Scenario(char const * fname)
 	if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
 		Session.Update_Progress(99);
 		if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
-			DAT_00B052D0.FUN_00664610(15000, true);
+			OwnerTalk.Wait_For_Router_Shutdown(15000, true);
 		}
 	}
 
