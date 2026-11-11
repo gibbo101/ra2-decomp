@@ -134,24 +134,7 @@ namespace UI {
 }
 extern bool (*RMGCallback)();
 BOOL CALLBACK Map_Seed_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
-class RefPtrBase
-{
-	public:
-		RefPtrBase(void);
-		virtual ~RefPtrBase(void);
-		void Set(void * ptr);
-
-		void * Ptr;
-};
-
-class TerritoryRef : public RefPtrBase
-{
-	public:
-		TerritoryRef(void) {}
-		~TerritoryRef(void) {}
-};
-
-TerritoryRef __fastcall WDT_Get_Territory_Ref(int index);
+rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id);
 char * CalcRandomMapDigest(void);
 void __fastcall FUN_005E7EB0(MapPreviewClass * preview);
 extern int FUN_00734FD0(void);
@@ -183,45 +166,6 @@ extern int DAT_0082B080[];
 extern int DAT_0082B094[];
 extern int * DAT_00ABE260;
 extern int * DAT_00ABE27C;
-
-struct TerritoryData {
-	void * VTable;
-	int RefCount;
-	int Index;
-	unsigned short Seed;
-	unsigned char Pad0[0x12 - 0x0E];
-	unsigned char Width;
-	unsigned char Height;
-	unsigned char Pad1[0x18 - 0x14];
-	int Resources;
-	unsigned char MapType;
-	unsigned char Biome;
-	unsigned char Time;
-	unsigned char CliffsMin;
-	unsigned char CliffsMax;
-	unsigned char Cliffs;
-	unsigned char AccessibilityMin;
-	unsigned char AccessibilityMax;
-	unsigned char Accessibility;
-	unsigned char HillsMin;
-	unsigned char HillsMax;
-	unsigned char Hills;
-	unsigned char WaterMin;
-	unsigned char WaterMax;
-	unsigned char Water;
-	unsigned char TiberiumMin;
-	unsigned char TiberiumMax;
-	unsigned char Tiberium;
-	unsigned char LayoutMin;
-	unsigned char LayoutMax;
-	unsigned char Layout;
-	unsigned char VegetationMin;
-	unsigned char VegetationMax;
-	unsigned char Vegetation;
-	unsigned char CitiesMin;
-	unsigned char CitiesMax;
-	unsigned char Cities;
-};
 
 // SYNTHETIC: GAMEMD 0x0058B740 SYMBOL
 // _$E186
@@ -2217,11 +2161,11 @@ void Clean_Up_RMCache(void)
 // FUNCTION: GAMEMD 0x00595FB0
 void Do_Random_Map(HWND dialog, bool (*callback)())
 {
-	TerritoryRef territory;
+	rc_ptr<WDTTerritory> territory;
 	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
-		territory.Set(WDT_Get_Territory_Ref(Session.unknown_08).Ptr);
+		territory = FUN_007B0390(Session.unknown_08);
 	}
-	if (territory.Ptr != NULL) {
+	if (territory.Get() != NULL) {
 		RandomMapGen.SeedData.NumPlayers = 4;
 	}
 	char *digest = CalcRandomMapDigest();
@@ -2757,20 +2701,18 @@ void MapSeedClass::Randomize(void)
 	Fixup_Settings();
 }
 
-#define WDT ((TerritoryData *)territory.Ptr)
-
 // FUNCTION: GAMEMD 0x00597430
 void MapSeedClass::Fixup_WDT_Settings(void)
 {
-	TerritoryRef territory;
+	rc_ptr<WDTTerritory> territory;
 	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
-		territory.Set(WDT_Get_Territory_Ref(Session.unknown_08).Ptr);
+		territory = FUN_007B0390(Session.unknown_08);
 	}
 
-	if (territory.Ptr != NULL) {
-		Seed = WDT->Seed == 0 ? Sim_Random_Pick(0U, 65535U) : WDT->Seed;
+	if (territory.Get() != NULL) {
+		Seed = territory->Seed == 0 ? Sim_Random_Pick(0U, 65535U) : territory->Seed;
 
-		switch (WDT->Width) {
+		switch (territory->Width) {
 			case 0:
 				Width = 0;
 				break;
@@ -2788,7 +2730,7 @@ void MapSeedClass::Fixup_WDT_Settings(void)
 				break;
 		}
 
-		switch (WDT->Height) {
+		switch (territory->Height) {
 			case 0:
 				Height = 0;
 				break;
@@ -2808,7 +2750,7 @@ void MapSeedClass::Fixup_WDT_Settings(void)
 
 		NumPlayers = 4;
 
-		switch (WDT->Time) {
+		switch (territory->Time) {
 			case 2:
 				Time = 0;
 				break;
@@ -2826,21 +2768,19 @@ void MapSeedClass::Fixup_WDT_Settings(void)
 				break;
 		}
 
-		MapType = WDT->MapType;
-		Biome = WDT->Biome;
-		Cliffs = WDT->Cliffs;
-		Accessibility = WDT->Accessibility;
-		Hills = WDT->Hills;
-		WaterAmount = WDT->Water;
-		Tiberium = WDT->Tiberium;
-		TiberiumLayout = WDT->Layout;
-		Vegetation = WDT->Vegetation;
-		Cities = WDT->Cities;
-		Resources = WDT->Resources;
+		MapType = territory->MapType;
+		Biome = territory->Biome;
+		Cliffs = territory->CliffsDefault;
+		Accessibility = territory->AccessibilityDefault;
+		Hills = territory->HillsDefault;
+		WaterAmount = territory->WaterDefault;
+		Tiberium = territory->TiberiumAmountDefault;
+		TiberiumLayout = territory->TiberiumFieldsDefault;
+		Vegetation = territory->VegetationDefault;
+		Cities = territory->CitiesDefault;
+		Resources = territory->Resources;
 	}
 }
-
-#undef WDT
 
 // FUNCTION: GAMEMD 0x005975E0
 void MapSeedClass::Fixup_Settings(void)

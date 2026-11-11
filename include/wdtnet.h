@@ -50,10 +50,10 @@ class WDTTerritory : public ReferenceCounted {
 		unsigned char Width;
 		unsigned char Height;
 		unsigned char NumPlayers;
-		int Veinholes;
+		int Resources;
+		unsigned char MapType;
 		unsigned char Biome;
 		unsigned char Time;
-		unsigned char Field1E;
 
 		unsigned char CliffsMin;
 		unsigned char CliffsMax;
@@ -161,8 +161,8 @@ enum {
 							+ size_of(WDTTerritory, UnitCount)
 							+ size_of(WDTTerritory, TechLevel)
 							+ size_of(WDTTerritory, StartingCredits)
-							+ size_of(WDTTerritory, Biome)
-							+ size_of(WDTTerritory, Field1E)
+							+ size_of(WDTTerritory, MapType)
+							+ size_of(WDTTerritory, Time)
 							+ size_of(WDTTerritory, Width)
 							+ size_of(WDTTerritory, Height)
 							+ size_of(WDTTerritory, NumPlayers)

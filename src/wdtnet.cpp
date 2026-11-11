@@ -80,9 +80,9 @@ WDTTerritory::WDTTerritory(void)
 	Width = 1;
 	Height = 1;
 	NumPlayers = 2;
-	Biome = 1;
+	MapType = 1;
+	Biome = 0;
 	Time = 0;
-	Field1E = 0;
 	CliffsMin = 0;
 	CliffsMax = 100;
 	CliffsDefault = 50;
@@ -355,13 +355,13 @@ bool WDTState::Create_Territories(void *data, int size)
 		(*h).StartingCredits = PEEK_AT(data, pos++) << 8;
 		(*h).StartingCredits += PEEK_AT(data, pos++);
 		unsigned int packed = PEEK_AT(data, pos++) - 0x80;
-		(*h).Biome = packed & 0xF;
-		(*h).Time = (packed >> 4) & 0xF;
-		(*h).Field1E = PEEK_AT(data, pos++) - 0x80;
+		(*h).MapType = packed & 0xF;
+		(*h).Biome = (packed >> 4) & 0xF;
+		(*h).Time = PEEK_AT(data, pos++) - 0x80;
 		(*h).Width = PEEK_AT(data, pos++) - 0x80;
 		(*h).Height = PEEK_AT(data, pos++) - 0x80;
 		(*h).NumPlayers = PEEK_AT(data, pos++) - 0x80;
-		(*h).Veinholes = PEEK_AT(data, pos++) - 0x80;
+		(*h).Resources = PEEK_AT(data, pos++) - 0x80;
 
 		(*h).CliffsMin = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
 		(*h).CliffsMax = PEEK_AT(data, pos) > 0x7F ? PEEK_AT(data, pos++) - 0x80 : PEEK_AT(data, pos++);
