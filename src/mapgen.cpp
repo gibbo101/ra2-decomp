@@ -20,7 +20,6 @@
 #include "cell.h"
 #include "conquer.h"
 #include "coord.h"
-#include "data.h"
 #include "dbgprint.h"
 #include "fastmath.h"
 #include "house.h"

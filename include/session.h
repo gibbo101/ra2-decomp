@@ -417,6 +417,24 @@ struct GlobalPacketType {
 			unsigned short OriginalPortNumber;
 			unsigned char BlitzMe;
 		} ManglerData;
+
+		struct {
+			char Difficulty;
+			int Start[8];
+			int Country[8];
+			int Color[8];
+			int AICountry[8];
+			int AIColor[8];
+			int AIDifficulty[8];
+			int AIStart[8];
+			int AIAlly[8];
+		} CampaignOptions;
+
+		struct {
+			int Start;
+			int Country;
+			int Color;
+		} CampaignSlot;
 	};
 };
 #pragma pack()

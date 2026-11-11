@@ -95,7 +95,6 @@
 #include "weapon.h"
 #include "winstub.h"
 #include "wolapi/wolapi.h"
-#include "wonline.h"
 #include "wsproto.h"
 #include "special.hh"
 #include <ctime>

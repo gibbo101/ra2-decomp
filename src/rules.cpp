@@ -5,12 +5,10 @@
 
 #include "always.h"
 #include "rules.h"
-#include "_bench.h"
 #include "_palette.h"
 #include "_rules.h"
 #include "_warhead.h"
 #include "_weapon.h"
-#include "addon.h"
 #include "airctype.h"
 #include "anim.h"
 #include "animtype.h"
@@ -75,6 +73,9 @@ template<> void VectorClass<ColorScheme *>::Clear(void);
 void FUN_006269A0(void);
 void __fastcall FUN_00626AB0(char const * name, HSVClass & hsv);
 void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const * section);
+extern unsigned int DAT_00B053B4;
+extern bool DAT_00B053B8;
+int FUN_005D5ED0(void);
 
 // SYNTHETIC: GAMEMD 0x00664B10 SYMBOL
 // _$E35
@@ -3100,10 +3101,6 @@ void RulesClass::Detach(AbstractClass const * target, bool all)
 	AnimToInfantry.Delete((InfantryTypeClass const *)target);
 	DamageFireTypes.Delete((AnimTypeClass const *)target);
 }
-
-extern unsigned int DAT_00B053B4;
-extern bool DAT_00B053B8;
-int FUN_005D5ED0(void);
 
 // FUNCTION: GAMEMD 0x00679A10
 bool RulesClass::Objects(CCINIClass & ini)

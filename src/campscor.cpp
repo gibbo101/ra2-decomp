@@ -139,34 +139,6 @@ bool __fastcall FUN_0046D490(int index)
 	return DAT_0089E000[index];
 }
 
-#pragma pack(push, 1)
-struct CampScoreOptions
-{
-	int Type;
-	char Name[0x2b];
-	char Difficulty;
-	int Start[8];
-	int Country[8];
-	int Color[8];
-	int AICountry[8];
-	int AIColor[8];
-	int AIDifficulty[8];
-	int AIStart[8];
-	int AIAlly[8];
-	char Rest[0x1c7 - 0x130];
-};
-
-struct CampScoreSlot
-{
-	int Type;
-	char Name[0x2b];
-	int Start;
-	int Country;
-	int Color;
-	char Rest[0x1c7 - 0x3b];
-};
-#pragma pack(pop)
-
 extern NodeNameType * DAT_00AC119C;
 extern NodeNameType * DAT_00AC11A0;
 extern NodeNameType * DAT_00AC11B0;
@@ -180,28 +152,28 @@ HWND WS_Find_Dialog(int id);
 // FUNCTION: GAMEMD 0x0046D4A0
 void FUN_0046D4A0(void)
 {
-	CampScoreOptions packet;
-	packet.Type = 0x32;
+	GlobalPacketType packet;
+	packet.Command = (NetCommandType)0x32;
 	strcpy(packet.Name, Session.Handle);
 	if (FUN_005E8760()) {
 		FUN_004068E0("Sending Campaign Options...\n");
-		packet.Difficulty = (char)Options.CampDifficulty;
+		packet.CampaignOptions.Difficulty = (char)Options.CampDifficulty;
 		for (int i = 0; i < 8; i++) {
 			if (Session.Slots[i] != NULL && Session.Slots[i] != DAT_00AC119C && Session.Slots[i] != DAT_00AC11A0) {
-				packet.Start[i] = Session.Slots[i]->Get_Start();
-				packet.Country[i] = Session.Slots[i]->Get_Country();
-				packet.Color[i] = Session.Slots[i]->Get_Color();
+				packet.CampaignOptions.Start[i] = Session.Slots[i]->Get_Start();
+				packet.CampaignOptions.Country[i] = Session.Slots[i]->Get_Country();
+				packet.CampaignOptions.Color[i] = Session.Slots[i]->Get_Color();
 			} else {
-				packet.Color[i] = packet.Country[i] = packet.Start[i] = -1;
+				packet.CampaignOptions.Color[i] = packet.CampaignOptions.Country[i] = packet.CampaignOptions.Start[i] = -1;
 			}
 			char * name = FUN_007350C0(Session.Slots[i]->Name);
-			FUN_004068E0("Player %i %s: Start %i, Country %i, Color %i\n", i, name, packet.Start[i], packet.Country[i], packet.Color[i]);
-			packet.AICountry[i] = Session.Options.AISlots.Countries[i];
-			packet.AIColor[i] = Session.Options.AISlots.Colors[i];
-			packet.AIDifficulty[i] = Session.Options.AISlots.Difficulties[i];
-			packet.AIStart[i] = Session.Options.AISlots.Starts[i];
-			packet.AIAlly[i] = Session.Options.AISlots.Allies[i];
-			FUN_004068E0("AI %i: Difficulty %i, Country %i, Color %i, Start %i, Ally %i\n", i, packet.AIDifficulty[i], packet.AICountry[i], packet.AIColor[i], packet.AIStart[i], packet.AIAlly[i]);
+			FUN_004068E0("Player %i %s: Start %i, Country %i, Color %i\n", i, name, packet.CampaignOptions.Start[i], packet.CampaignOptions.Country[i], packet.CampaignOptions.Color[i]);
+			packet.CampaignOptions.AICountry[i] = Session.Options.AISlots.Countries[i];
+			packet.CampaignOptions.AIColor[i] = Session.Options.AISlots.Colors[i];
+			packet.CampaignOptions.AIDifficulty[i] = Session.Options.AISlots.Difficulties[i];
+			packet.CampaignOptions.AIStart[i] = Session.Options.AISlots.Starts[i];
+			packet.CampaignOptions.AIAlly[i] = Session.Options.AISlots.Allies[i];
+			FUN_004068E0("AI %i: Difficulty %i, Country %i, Color %i, Start %i, Ally %i\n", i, packet.CampaignOptions.AIDifficulty[i], packet.CampaignOptions.AICountry[i], packet.CampaignOptions.AIColor[i], packet.CampaignOptions.AIStart[i], packet.CampaignOptions.AIAlly[i]);
 		}
 		for (int j = 1; j < 8; j++) {
 			if (Session.Slots[j] != NULL && FUN_005E93F0(Session.Slots[j])) {
@@ -215,11 +187,10 @@ void FUN_0046D4A0(void)
 // FUNCTION: GAMEMD 0x0046D650
 bool FUN_0046D650(void)
 {
-	CampScoreOptions & received = *(CampScoreOptions *)&Session.GPacket;
 	bool changed = false;
-	if (received.Type == 0x32) {
+	if (Session.GPacket.Command == 0x32) {
 		FUN_004068E0("Decoding Campaign Options...\n");
-		int difficulty = received.Difficulty;
+		int difficulty = Session.GPacket.CampaignOptions.Difficulty;
 		if (Options.CampDifficulty != difficulty) {
 			changed = true;
 		}
@@ -233,17 +204,17 @@ bool FUN_0046D650(void)
 		}
 		for (int i = 0; i < 8; i++) {
 			if (Session.Slots[i] != NULL && Session.Slots[i] != DAT_00AC119C && Session.Slots[i] != DAT_00AC11A0) {
-				int start = received.Start[i];
+				int start = Session.GPacket.CampaignOptions.Start[i];
 				if (Session.Slots[i]->Get_Start() != start) {
 					changed = true;
 				}
 				Session.Slots[i]->Set_Start(start);
-				int country = received.Country[i];
+				int country = Session.GPacket.CampaignOptions.Country[i];
 				if (Session.Slots[i]->Get_Country() != country) {
 					changed = true;
 				}
 				Session.Slots[i]->Set_Country(country);
-				int color = received.Color[i];
+				int color = Session.GPacket.CampaignOptions.Color[i];
 				if (Session.Slots[i]->Get_Color() != color) {
 					changed = true;
 				}
@@ -251,26 +222,26 @@ bool FUN_0046D650(void)
 			}
 			char * name = FUN_007350C0(Session.Slots[i]->Name);
 			FUN_004068E0("Player %i %s: Start %i, Country %i, Color %i\n", i, name, Session.Slots[i]->Get_Start(), Session.Slots[i]->Get_Country(), Session.Slots[i]->Get_Color());
-			if (Session.Options.AISlots.Countries[i] != received.AICountry[i]) {
+			if (Session.Options.AISlots.Countries[i] != Session.GPacket.CampaignOptions.AICountry[i]) {
 				changed = true;
 			}
-			Session.Options.AISlots.Countries[i] = received.AICountry[i];
-			if (Session.Options.AISlots.Colors[i] != received.AIColor[i]) {
+			Session.Options.AISlots.Countries[i] = Session.GPacket.CampaignOptions.AICountry[i];
+			if (Session.Options.AISlots.Colors[i] != Session.GPacket.CampaignOptions.AIColor[i]) {
 				changed = true;
 			}
-			Session.Options.AISlots.Colors[i] = received.AIColor[i];
-			if (Session.Options.AISlots.Difficulties[i] != received.AIDifficulty[i]) {
+			Session.Options.AISlots.Colors[i] = Session.GPacket.CampaignOptions.AIColor[i];
+			if (Session.Options.AISlots.Difficulties[i] != Session.GPacket.CampaignOptions.AIDifficulty[i]) {
 				changed = true;
 			}
-			Session.Options.AISlots.Difficulties[i] = received.AIDifficulty[i];
-			if (Session.Options.AISlots.Starts[i] != received.AIStart[i]) {
+			Session.Options.AISlots.Difficulties[i] = Session.GPacket.CampaignOptions.AIDifficulty[i];
+			if (Session.Options.AISlots.Starts[i] != Session.GPacket.CampaignOptions.AIStart[i]) {
 				changed = true;
 			}
-			Session.Options.AISlots.Starts[i] = received.AIStart[i];
-			if (Session.Options.AISlots.Allies[i] != received.AIAlly[i]) {
+			Session.Options.AISlots.Starts[i] = Session.GPacket.CampaignOptions.AIStart[i];
+			if (Session.Options.AISlots.Allies[i] != Session.GPacket.CampaignOptions.AIAlly[i]) {
 				changed = true;
 			}
-			Session.Options.AISlots.Allies[i] = received.AIAlly[i];
+			Session.Options.AISlots.Allies[i] = Session.GPacket.CampaignOptions.AIAlly[i];
 			FUN_004068E0("AI %i: Difficulty %i, Country %i, Color %i, Start %i, Ally %i\n", i, Session.Options.AISlots.Difficulties[i], Session.Options.AISlots.Countries[i], Session.Options.AISlots.Colors[i], Session.Options.AISlots.Starts[i], Session.Options.AISlots.Allies[i]);
 		}
 	}
@@ -280,12 +251,12 @@ bool FUN_0046D650(void)
 // FUNCTION: GAMEMD 0x0046D810
 void FUN_0046D810(void)
 {
-	CampScoreSlot packet;
-	packet.Type = 0x33;
+	GlobalPacketType packet;
+	packet.Command = (NetCommandType)0x33;
 	strcpy(packet.Name, Session.Handle);
-	packet.Start = Session.Players[0]->Get_Start();
-	packet.Country = Session.Players[0]->Get_Country();
-	packet.Color = Session.Players[0]->Get_Color();
+	packet.CampaignSlot.Start = Session.Players[0]->Get_Start();
+	packet.CampaignSlot.Country = Session.Players[0]->Get_Country();
+	packet.CampaignSlot.Color = Session.Players[0]->Get_Color();
 	if (Session.Slots[0] != NULL) {
 		Ipx.Send_Global_Message_To_Name(&packet, 0x1c7, 1, Session.Slots[0]->Name);
 		Ipx.Service();
@@ -309,31 +280,30 @@ bool FUN_0046D8B0(void)
 		}
 	}
 	if (index == -1) return false;
-	CampScoreSlot & received = *(CampScoreSlot *)&Session.GPacket;
-	if (Session.Slots[index]->Get_Country() != received.Country) changed = true;
+	if (Session.Slots[index]->Get_Country() != Session.GPacket.CampaignSlot.Country) changed = true;
 	if (Session.MPGameMode != NULL) {
-		if (Session.MPGameMode->vt_entry_1C(received.Country)) {
-			Session.Slots[index]->Set_Country(received.Country);
+		if (Session.MPGameMode->vt_entry_1C(Session.GPacket.CampaignSlot.Country)) {
+			Session.Slots[index]->Set_Country(Session.GPacket.CampaignSlot.Country);
 		} else if (Session.MPGameMode != NULL && !Session.MPGameMode->vt_entry_1C(Session.Slots[index]->Get_Country())) {
 			Session.Slots[index]->Set_Country(Session.MPGameMode->vt_entry_28());
 		}
 	}
-	if (Session.Slots[index]->Get_Color() != received.Color) changed = true;
-	if (FUN_004E4580(received.Color)) {
-		if (Session.Slots[index]->Get_Color() != received.Color) {
+	if (Session.Slots[index]->Get_Color() != Session.GPacket.CampaignSlot.Color) changed = true;
+	if (FUN_004E4580(Session.GPacket.CampaignSlot.Color)) {
+		if (Session.Slots[index]->Get_Color() != Session.GPacket.CampaignSlot.Color) {
 			Session.Slots[index]->Set_Color(-2);
 			changed = true;
 		}
 	} else {
-		Session.Slots[index]->Set_Color(received.Color);
+		Session.Slots[index]->Set_Color(Session.GPacket.CampaignSlot.Color);
 	}
-	if (Session.Slots[index]->Get_Color() != received.Start) changed = true;
-	if (FUN_004E50A0(received.Start)) {
-		if (Session.Slots[index]->Get_Start() != received.Start) {
+	if (Session.Slots[index]->Get_Color() != Session.GPacket.CampaignSlot.Start) changed = true;
+	if (FUN_004E50A0(Session.GPacket.CampaignSlot.Start)) {
+		if (Session.Slots[index]->Get_Start() != Session.GPacket.CampaignSlot.Start) {
 			Session.Slots[index]->Set_Start(-2);
 		}
 	} else {
-		Session.Slots[index]->Set_Start(received.Start);
+		Session.Slots[index]->Set_Start(Session.GPacket.CampaignSlot.Start);
 	}
 	return changed;
 }

@@ -35,7 +35,6 @@
 #include <stddef.h>
 #include <string.h>
 #include <time.h>
-#include <wchar.h>
 #include "stringtable.h"
 
 HWND WS_Find_Dialog(int id);
