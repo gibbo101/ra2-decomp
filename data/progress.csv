@@ -17596,6 +17596,7 @@ address,name,result,size,source,symbol
 0x007DF280,_MMX_Brighten_Color_565,MATCH,322,src/winasm.asm,_MMX_Brighten_Color_565
 0x007DF3C2,_MMX_Brighten_Color_555,MATCH,318,src/winasm.asm,_MMX_Brighten_Color_555
 0x007DF500,_MMX_Brighten_Color_556,MATCH,320,src/winasm.asm,_MMX_Brighten_Color_556
+0x007DF640,_MMX_Brighten_Color_655,MATCH,321,src/winasm.asm,_MMX_Brighten_Color_655
 0x007DFE00,Draw_Voxel_Regular_UNUSED_ASM,MATCH,256,src/winasm.asm,_Draw_Voxel_Regular_UNUSED_ASM
 0x007DFF00,Draw_Voxel_Reverse_UNUSED_ASM,MATCH,252,src/winasm.asm,_Draw_Voxel_Reverse_UNUSED_ASM
 0x007E0001,Asm_Interpolate,MATCH,165,src/winasm.asm,_Asm_Interpolate

@@ -13,7 +13,6 @@ build/exelink/obj/objects.json, the object index the link reads:
 Usage: uv run tools/exelink/build.py [--jobs N] [--only src/a.cpp ...]
 """
 import argparse
-import csv
 import json
 import shutil
 import sys
@@ -26,15 +25,6 @@ sys.path.insert(0, str(HERE.parent))
 import paths  # noqa: E402
 import check  # noqa: E402
 import comdatize  # noqa: E402
-
-
-def object_starts():
-    """{source: [routines the original assembled as the first of a new object]} from data/asm_objects.csv."""
-    with open(paths.ROOT / "data/asm_objects.csv", newline="") as f:
-        starts = {}
-        for row in csv.DictReader(f):
-            starts.setdefault(row["source"], []).append(row["symbol"])
-        return starts
 
 
 def sources():
@@ -50,7 +40,7 @@ def main(argv=None):
     objdir.mkdir(parents=True, exist_ok=True)
     todo = [p.resolve() for p in args.only] if args.only else sources()
     headers = check.prepare_headers(None)
-    starts = object_starts()
+    starts = check.asm_object_starts()
     failed = []
 
     def one(src):

@@ -1,3 +1,4 @@
 source,symbol,evidence
 src/unvq_asm.asm,_ASM_UnVQ_4x2,"0x007C6D40 follows int3 fill to a 16-byte boundary, as in TS 2.03; RA's UNVQBUFF.ASM holds UnVQ_4x2"
 src/vqa_uncomp.asm,_OLD_VQA_LCW_Uncompress,"0x007C8110 follows int3 fill to a 16-byte boundary, as in TS 2.03; RA's AUDUNZAP.ASM and LCWUNCMP.ASM are separate"
+src/winasm.asm,_Draw_Voxel_Regular_Normals_ASM,"0x007DF7C0 follows int3 fill to a 64-byte boundary after MMX_Brighten_Color_655, so the voxel routines are another object"

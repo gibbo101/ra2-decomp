@@ -24,6 +24,8 @@ class Section:
     data: bytes
     flags: int
     relocs: list[Reloc] = field(default_factory=list)
+    # Offsets where the original began a new object: alignment filler before one is not code.
+    object_starts: set[int] = field(default_factory=set)
 
     @property
     def is_code(self) -> bool:

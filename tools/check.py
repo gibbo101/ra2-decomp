@@ -84,6 +84,9 @@ PROC = re.compile(r"^\s*([\w?$@]+)\s+PROC\b", re.I | re.M)
 ASM_FLAGS = ["/c", "/coff", "/Cx"]
 FORBIDDEN = re.compile(r"\b(__asm|_asm|__emit|_emit)\b|#\s*pragma\s+(optimize|code_seg)")
 PADDING = (0x90, 0xCC)
+# MASM's ALIGN filler in code: 7-byte lea esp,[esp+0] while they fit, then one of these.
+MASM_FILL = (b"", b"\x90", b"\x8b\xff", b"\x8d\x49\x00", b"\x8d\x64\x24\x00",
+             b"\x05\x00\x00\x00\x00", b"\x8d\x9b\x00\x00\x00\x00")
 TIBSUN = ROOT / "reference/tibsun/code"
 
 
@@ -558,11 +561,29 @@ def compare(orig: Original, obj: CoffObject, raw: bytes, address: int, name: str
                                        prefer.get(r.symbol) == address, r.symbol not in taken))
 
 
+def masm_fill(n: int) -> bytes:
+    return b"\x8d\xa4\x24\x00\x00\x00\x00" * (n // 7) + MASM_FILL[n % 7]
+
+
+def asm_object_starts() -> dict[str, list[str]]:
+    """{source: routines the original assembled as the first of a new object}, from
+    data/asm_objects.csv: the archive keeps them in one file with the routines before."""
+    with open(ROOT / "data/asm_objects.csv", newline="") as f:
+        starts = {}
+        for row in csv.DictReader(f):
+            starts.setdefault(row["source"], []).append(row["symbol"])
+        return starts
+
+
 def function_bytes(pick):
     _, sec, start, end = pick
     relocs = [r for r in sec.relocs if start <= r.offset < end]
     masked = {r.offset - start + k for r in relocs for k in range(4)}
     ours = sec.data[start:end]
+    if end in sec.object_starts:
+        fill = max((n for n in range(1, 64) if ours.endswith(masm_fill(n))), default=0)
+        if not masked & set(range(len(ours) - fill, len(ours))):
+            ours = ours[:len(ours) - fill]
     while ours and ours[-1] in PADDING and len(ours) - 1 not in masked:
         ours = ours[:-1]
     return ours, masked
@@ -860,6 +881,10 @@ def main() -> None:
 def report(src, raw, orig, names, targets, score=False, summary=False):
     """Verify one compiled source object and print the normal checker result."""
     obj = CoffObject(raw)
+    if is_asm(src):
+        for symbol in asm_object_starts().get(src.resolve().relative_to(ROOT).as_posix(), ()):
+            at = next(s for s in obj.symbols if s.name == symbol and s.section > 0)
+            obj.sections[at.section - 1].object_starts.add(at.value)
     # Which compiled function each annotation is decides what its own symbol resolves to,
     # so pick them first, by bytes alone.
     local, duplicates = bind_annotations(orig, obj, raw, src)
