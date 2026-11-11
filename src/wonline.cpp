@@ -2671,6 +2671,7 @@ class CChatEventSink : public AtlSinkRoot, public IUnknown
 {
 	public:
 		CChatEventSink(void);
+		HRESULT __stdcall OnFind(HRESULT result, Channel *channel);
 		static AtlIntMapEntry * __stdcall _GetEntries(void) { return DAT_007F7698; }
 		IUnknown * _GetRawUnknown(void) { return (IUnknown *)((int)this + _GetEntries()->dw); }
 		IUnknown * GetUnknown(void) { return _GetRawUnknown(); }
@@ -11464,6 +11465,188 @@ long __stdcall FUN_007A9800(void * sink, long result)
 extern wchar_t DAT_0084B128[];
 extern char DAT_0084B170[];
 extern char DAT_0084B138[];
+
+// FUNCTION: GAMEMD 0x007A9970
+HRESULT __stdcall CChatEventSink::OnFind(HRESULT result, Channel *channel)
+{
+	HWND find_dialog = WS_Find_Dialog(0xCF);
+	WolEntryState status = WOL_ENTRY_STATE_NONE;
+
+	if (DAT_00B73ACC.length() != 0) {
+		WolEntryState *previous = 0;
+		DAT_00B76990.getPointer(DAT_00B73ACC, &previous);
+		if (previous) status = *previous;
+
+		char name[64];
+		name[0] = 0;
+		User user;
+
+		if (channel) {
+			if (channel->type == 0) {
+				if (!_strnicmp((char *)channel->name, "Lob_40_", strlen("Lob_40_")))
+					status = (WolEntryState)7;
+				else if (!_strnicmp((char *)channel->name, "Lob_35_", strlen("Lob_35_")))
+					status = (WolEntryState)8;
+				else
+					status = (WolEntryState)4;
+			} else {
+				status = (WolEntryState)5;
+				Wstring lookup_name((char *)channel->name);
+				Channel game;
+				if (FUN_0079F0A0(&lookup_name, &DAT_00B76AE0, &game)) {
+					if (FUN_0077D9D0(&game)) status = (WolEntryState)8;
+					else if (FUN_0077D9B0(&game)) status = (WolEntryState)7;
+				}
+			}
+
+			if (DAT_00B73ACC.length() > 0)
+				DAT_00B76608.add(DAT_00B73ACC, *channel);
+
+			strcpy(name, (char *)channel->name);
+			if (!strncmp(name, "Lob_41_", 7)) {
+				int value = atol(name + strlen("Lob_41_"));
+				int division = value / 8;
+				int remainder = value % 8;
+				if (division == 0)
+					sprintf(name, "%s", DAT_00B73E1C[remainder]);
+				else
+					sprintf(name, "%s %d", DAT_00B73E1C[remainder], division + 1);
+			}
+		} else {
+			if (DAT_00B73ACC.length() > 0)
+				DAT_00B76608.remove(DAT_00B73ACC);
+
+			if (result == 0x40131) {
+				status = (WolEntryState)3;
+			} else if (result == 0x40130) {
+				status = (WolEntryState)2;
+			} else if (result == 0x40132) {
+				status = (WolEntryState)1;
+			}
+		}
+
+		if (DAT_00B73ACC.length() > 0) {
+			DAT_00B76990.add(DAT_00B73ACC, status);
+			DAT_00B73ACC.clear();
+			HWND dialog = WS_Find_Dialog(0x116);
+			if (dialog) FUN_0079AF10(dialog);
+		}
+		if (DAT_00B73ACC.length() > 0) {
+			if ((unsigned long)(time(0) - DAT_00B779D0) < 5) return 0;
+			DAT_00B73ACC.clear();
+		}
+		if (DAT_00B76980.length() != 0) {
+			if (DAT_00B76980.length() > 0) {
+				DAT_00B76980.get(DAT_00B73ACC, 0);
+				DAT_00B76980.remove(0);
+			}
+			DAT_00B779D0 = time(0);
+			memset(&user, 0, sizeof(user));
+			strcpy((char *)user.name, DAT_00B73ACC.get());
+			g_pChat->RequestFind(&user);
+		}
+		return 0;
+	} else {
+		if (find_dialog) {
+			if (FUN_00775B10() != find_dialog) return 0;
+
+			WideWstring location;
+			HWND label = GetDlgItem(find_dialog, 0x5C8);
+
+			if (channel && label) {
+				if (channel->type == 0 &&
+					!strncmp((char *)channel->name, "Lob_41_", strlen("Lob_41_"))) {
+					int value = atol((char *)channel->name + strlen("Lob_41_"));
+					int division = value / 8;
+					location.set(DAT_00B73E1C[value % 8]);
+					if (division != 0) {
+						location += L" ";
+						location += FUN_007B7DD0(division + 1);
+					}
+				} else {
+					location.set(FUN_00735120((char *)channel->name));
+				}
+			} else if (result == 0x40130) {
+				location.set(StringTable::LoadString(
+					"TXT_FINDPAGE_NOT_ONLINE", 0, "D:\\ra2mdpost\\wonline.cpp", 0x2045));
+			} else if (result == 0x40131) {
+				location.set(StringTable::LoadString(
+					"TXT_FINDPAGE_NOT_IN_CHANNEL", 0, "D:\\ra2mdpost\\wonline.cpp", 0x2047));
+			} else if (result == 0x40132) {
+				location.set(StringTable::LoadString(
+					"TXT_FINDPAGE_FIND_DISABLED", 0, "D:\\ra2mdpost\\wonline.cpp", 0x2049));
+			} else {
+				location.set(StringTable::LoadString(
+					"TXT_FINDPAGE_NOT_ONLINE", 0, "D:\\ra2mdpost\\wonline.cpp", 0x204B));
+			}
+			SendMessageA(label, 0x4B2, 0, (LPARAM)location.text());
+			return 0;
+		}
+
+		wchar_t text[128];
+
+		if (channel) {
+			if (channel->type == 0 &&
+				!strncmp((char *)channel->name, "Lob_41_", strlen("Lob_41_"))) {
+				int value = atol((char *)channel->name + strlen("Lob_41_"));
+				int division = value / 8;
+				int remainder = value % 8;
+				WideWstring lobby(DAT_00B73E1C[remainder]);
+				if (division != 0) {
+					lobby += L" ";
+					lobby += FUN_007B7DD0(division + 1);
+				}
+				wchar_t const *user_name = FUN_00735120(DAT_00B76E28);
+				wchar_t const *lobby_name = lobby.get();
+				swprintf(text, StringTable::LoadString(
+					"TXT_USER_FOUND", 0, "D:\\ra2mdpost\\wonline.cpp", 0x205E),
+					user_name, lobby_name);
+			} else {
+				wchar_t const *user_name = FUN_00735120(DAT_00B76E28);
+				wchar_t const *channel_name = FUN_00735120((char *)channel->name);
+				swprintf(text, StringTable::LoadString(
+					"TXT_USER_FOUND", 0, "D:\\ra2mdpost\\wonline.cpp", 0x2060),
+					user_name, channel_name);
+			}
+		} else if (result == 0x40130) {
+			swprintf(text, StringTable::LoadString(
+				"TXT_USER_NOT_ONLINE", 0, "D:\\ra2mdpost\\wonline.cpp", 0x2067),
+				FUN_00735120(DAT_00B76E28));
+		} else if (result == 0x40131) {
+			swprintf(text, StringTable::LoadString(
+				"TXT_USER_NOT_IN_CHANNEL", 0, "D:\\ra2mdpost\\wonline.cpp", 0x2069),
+				FUN_00735120(DAT_00B76E28));
+		} else if (result == 0x40132) {
+			swprintf(text, StringTable::LoadString(
+				"TXT_USER_FIND_DISABLED", 0, "D:\\ra2mdpost\\wonline.cpp", 0x206B),
+				FUN_00735120(DAT_00B76E28));
+		} else {
+			swprintf(text, StringTable::LoadString(
+				"TXT_USER_NOT_ONLINE", 0, "D:\\ra2mdpost\\wonline.cpp", 0x206D),
+				FUN_00735120(DAT_00B76E28));
+		}
+
+		HWND dialog = FUN_00775B10();
+		if (dialog) {
+			if (GetDlgItem(dialog, 0x53F)) {
+				PMessagePrintf(DAT_007EEF28, text);
+				return 0;
+			}
+			if (GetDlgItem(dialog, 0x5B5)) {
+				FUN_005E2790(DAT_007EEF28, text);
+				return 0;
+			}
+		}
+		if (FUN_0069BBE0(&Session)) {
+			int color = GadgetClass::Get_Color_Scheme();
+			Session.Messages.Add_Message(
+				0, 0, text, color, TextPrintType(0x16),
+				(int)(Rule->MessageDelay * 900.0), false);
+		}
+		DAT_00B76E28[0] = 0;
+		return 0;
+	}
+}
 
 // FUNCTION: GAMEMD 0x007AA6A0
 long __stdcall FUN_007AA6A0(void * sink, long result, int value)

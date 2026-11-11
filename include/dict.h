@@ -517,31 +517,31 @@ void Dictionary<K,V>::expand(void)
 	int i;
 	int oldsize;
 	unsigned int offset;
-	DNode<K,V> **oldtable,*temp,*first,*next;
+	DNode<K,V> **oldtable, *temp, *first, *next;
 
-	if (keepSize==TRUE)
+	if (keepSize == TRUE)
 		return;
 
-	oldtable=table;
-	oldsize=size;
-	size*=2;
+	oldtable = table;
+	oldsize = size;
+	size *= 2;
 	tableBits++;
 
-	table=(DNode<K,V> **)new DNode<K,V>* [size];
-	assert(table!=NULL);
-	memset((void *)table,0,size*sizeof(void *));
+	table = (DNode<K,V> **)new DNode<K,V>*[size];
+	assert(table != NULL);
+	memset((void *)table, 0, size * sizeof(void *));
 
-	for (i=0; i<oldsize; i++)
-	{
-		temp=oldtable[i];
-		while (temp!=NULL)
-		{
-			offset=keyHash(temp->key);
-			first=table[offset];
-			table[offset]=temp;
-			next=temp->hashNext;
-			temp->hashNext=first;
-			temp=next;
+	for (i = 0; i < oldsize; i++) {
+		temp = oldtable[i];
+		while (temp != NULL) {
+			unsigned int hash = hashFunc(temp->key);
+			offset = ((1u << tableBits) - 1) & hash;
+			assert(offset < getSize());
+			first = table[offset];
+			table[offset] = temp;
+			next = temp->hashNext;
+			temp->hashNext = first;
+			temp = next;
 		}
 	}
 	delete[](oldtable);
