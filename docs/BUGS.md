@@ -41,3 +41,9 @@ effect, so it can be fixed in a separate build later.
   ping updater's inlined `strcmp` reads that pointer at 0x007A0ECF when it reaches
   a populated slot. A leave event with both empty and populated slots can
   therefore access-violate; the matched source preserves this path.
+
+- **UnitClass::Scatter (0x00743A50).** The height expression evaluates
+  `(cell height + moving onto a bridge) ? bridge height : 0`, so a nonzero
+  ground height selects the bridge height instead of adding it conditionally.
+  This affects the coordinate used to choose a scatter destination and is also
+  present in the archived TibSun implementation.
