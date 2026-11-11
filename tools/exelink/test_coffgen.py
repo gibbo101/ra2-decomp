@@ -67,6 +67,14 @@ class WriterTests(unittest.TestCase):
         self.assertEqual(sections[3]["raw_size"], 4)
         self.assertEqual([symbols[idx]["name"] for _, idx, _ in sections[3]["relocs"]], ["?stub_00401000@@YAXXZ"])
 
+    def test_alignment_is_read_and_lowered_without_touching_other_flags(self):
+        data = self.build()
+        self.assertEqual(coffgen.section_alignment(data, 1), 16)
+        for align in (1, 512, 8192):
+            out = coffgen.set_alignment(data, 1, align)
+            self.assertEqual(coffgen.section_alignment(out, 1), align)
+            self.assertEqual(section_flags(out, 1) & ~0x00F00000, section_flags(data, 1) & ~0x00F00000)
+
     def test_rejects_empty_stub(self):
         with self.assertRaises(ValueError):
             coffgen.ObjectWriter().add_code_comdat(["?x@@YAXXZ"], 0)

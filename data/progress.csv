@@ -17593,6 +17593,7 @@ address,name,result,size,source,symbol
 0x007DEEFA,_Brighten_Color_565,MATCH,221,src/winasm.asm,_Brighten_Color_565
 0x007DEFD7,_Brighten_Color_655,MATCH,221,src/winasm.asm,_Brighten_Color_655
 0x007DF0B4,_Brighten_Color_556,MATCH,221,src/winasm.asm,_Brighten_Color_556
+0x007DF191,_Brighten_Color_555,MATCH,221,src/winasm.asm,_Brighten_Color_555
 0x007DF280,_MMX_Brighten_Color_565,MATCH,322,src/winasm.asm,_MMX_Brighten_Color_565
 0x007DF3C2,_MMX_Brighten_Color_555,MATCH,318,src/winasm.asm,_MMX_Brighten_Color_555
 0x007DF500,_MMX_Brighten_Color_556,MATCH,320,src/winasm.asm,_MMX_Brighten_Color_556

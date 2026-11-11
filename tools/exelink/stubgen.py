@@ -556,14 +556,24 @@ def plan(objdir, library_names, out, extra_unresolved=(), manifest=None, extents
         placed.append({"addr": f"0x{va:X}", "symbol": key, "kind": "stub", "len": f"0x{slot:X}",
                        "names": len(names) - 1})
 
+    realign = {}
     if order_tail:
+        # Westwood's assembly after the library keeps its retail address among the library's
+        # sections: plain .text, with the alignment that address has where its own is stricter.
+        tail_project = []
+        for va in sorted(v for v in asm_heads if v in provider and v >= first):
+            obj, sym = tu_object[provider_rows[va]["tu"]], provider[va]
+            section = next(x for x in parsed_of(obj)[2].values() if x["name"] == sym)["section"]
+            tail_project.append((va, trimmed.get(va, comdat_size.get(sym, 0)), sym))
+            realign.setdefault(obj, []).append((section, va & -va))
         engine_end = max(va + slot for va, slot, _ in layout)
         tail_plan = taillink.plan_tail(tail_layout, libdir or paths.LIBDIR,
-                                  engine_end, out / "tail")
+                                  engine_end, out / "tail", tail_project)
         for name, size in tail_plan["fillers"]:
             writer.add_code_comdat([name], size, 1, fill=code_fill(int(name[9:17], 16), size) if hybrid else 0xCC)
         order.extend(tail_plan["order"])
         text_pieces.extend([va, size, "library", name] for va, size, name in tail_plan["library_sections"])
+        text_pieces.extend([va, size, "project", name] for va, size, name in tail_plan["project_sections"])
         stub_names.update(n for n, _ in tail_plan["fillers"])
         if hybrid and retail.text_end() > tail_plan["end"]:
             # Retail's .text continues past the last identified library section (code the toolchain
@@ -746,6 +756,12 @@ def plan(objdir, library_names, out, extra_unresolved=(), manifest=None, extents
                 tail[idx] = TAIL
         for secidx, size in trims.get(path, ()):
             data = coffgen.truncate_section(data, secidx, size)
+            changed = True
+        for secidx, align in realign.get(path, ()):
+            if coffgen.section_alignment(data, secidx) > align:
+                data = coffgen.set_alignment(data, secidx, align)
+            # LINK sorts a grouped .text$x after every plain .text; /ORDER places it once it is plain.
+            data = coffgen.set_section_names(data, {secidx: ".text"})
             changed = True
         if hybrid:
             data, gone = hybrid_module.harden(data, order_set, re.sub(r'\W', '_', path.stem))

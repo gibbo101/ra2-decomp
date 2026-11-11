@@ -244,6 +244,21 @@ def section_symbols(data):
     return out
 
 
+def section_alignment(data, section):
+    """The 1-based `section`'s alignment in bytes (1 when the header gives none)."""
+    code = (struct.unpack_from("<I", data, 20 + 40 * (section - 1) + 36)[0] >> 20) & 0xF
+    return 1 << (code - 1) if code else 1
+
+
+def set_alignment(data, section, align):
+    """Copy of the object whose 1-based `section` has alignment `align` (a power of two, at most 8192)."""
+    data = bytearray(data)
+    off = 20 + 40 * (section - 1) + 36
+    flags = struct.unpack_from("<I", data, off)[0] & ~0x00F00000
+    struct.pack_into("<I", data, off, flags | (align.bit_length() << 20))
+    return bytes(data)
+
+
 def truncate_section(data, section, size):
     """Copy of the object whose 1-based `section` keeps only its first `size` bytes (the section
     header and the section symbol's aux record both say so)."""

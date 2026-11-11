@@ -129,10 +129,11 @@ def order_entries(entries, start):
     return order, fillers, names_at, skipped, cursor
 
 
-def plan_tail(layout, libdir, start, out):
+def plan_tail(layout, libdir, start, out, project=()):
     """Write the library member copies to `out` and return the ordering plan.
 
-    start: first address after the ordered engine block."""
+    start: first address after the ordered engine block. project: [(addr, len, key)] of matched
+    project sections that retail keeps among the library's, ordered with them."""
     out.mkdir(parents=True, exist_ok=True)
     members = {}
     for sec in layout["sections"]:
@@ -162,12 +163,17 @@ def plan_tail(layout, libdir, start, out):
         if key:
             entries.append({"addr": hx(s["addr"]), "len": s["len"], "align": s["align"], "name": key,
                             "kind": "section", "names": [(n, o) for n, o in s["symbols"]] or [(key, 0)]})
+    entries += [{"addr": va, "len": size, "align": 1, "name": key, "kind": "project", "names": [(key, 0)]}
+                for va, size, key in project]
     order, fillers, names_at, skipped, end = order_entries(entries, start)
     thunks = [(e["name"], e["addr"]) for e in entries if e["kind"] == "thunk"]
     skipped_at = {x["addr"] for x in skipped}
     library_sections = [(e["addr"], e["len"], e["names"][0][0]) for e in entries
                         if e["kind"] == "section" and f"0x{e['addr']:X}" not in skipped_at]
-    return {"objects": objects, "library_sections": library_sections, "order": order, "thunks": thunks, "fillers": fillers, "names_at": names_at, "end": end,
+    project_sections = [(e["addr"], e["len"], e["name"]) for e in entries
+                        if e["kind"] == "project" and f"0x{e['addr']:X}" not in skipped_at]
+    return {"objects": objects, "library_sections": library_sections, "project_sections": project_sections,
+            "order": order, "thunks": thunks, "fillers": fillers, "names_at": names_at, "end": end,
             "report": {"members_copied": len(objects), "ordered": len(order) - len(fillers), "fillers": len(fillers),
                        "filler_bytes": sum(n for _, n in fillers), "skipped": skipped, "problems": problems}}
 
