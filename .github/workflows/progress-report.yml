@@ -1,0 +1,20 @@
+name: Progress report
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/bytematch_report.py build/GAMEMD_1.001/report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GAMEMD_1.001_report
+          path: build/GAMEMD_1.001/report.json
