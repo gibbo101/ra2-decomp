@@ -544,3 +544,4 @@ address,name,symbol,evidence
 0x00AC116C,g_pChat,?g_pChat@@3PAUIChat@@A,"WOLAPI IChat interface pointer (TibSun netshare.h name); every IChat method call in wonline, netshare and conquer goes through it"
 0x00AC1170,g_pNetUtil,?g_pNetUtil@@3PAUINetUtil@@A,"WOLAPI INetUtil interface pointer (TibSun netshare.h name); ladder, ping and gameres requests in wonline, queue and stats go through it"
 0x00AC1174,g_pDownload,?g_pDownload@@3PAUIDownload@@A,"WOLAPI IDownload interface pointer (TibSun netshare.h name), next to g_pChat and g_pNetUtil; the patch download code calls through it"
+0x006F79A0,TechnoClass::Area_Modify,?Area_Modify@TechnoClass@@QBENABVCell@@@Z,TibSun area-scan multiplier; YR caller consumes an x87 double after the four-edge area scan
