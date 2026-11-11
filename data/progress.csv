@@ -3581,6 +3581,7 @@ address,name,result,size,source,symbol
 0x004A6CB0,_$E76,MATCH,59,src/disklaser.cpp,_$E76
 0x004A6CF0,_$E81,MATCH,1190,src/disklaser.cpp,_$E81
 0x004A71A0,DiskLaserClass::Fire,MATCH,416,src/disklaser.cpp,?Fire@DiskLaserClass@@QAEXPAVTechnoClass@@0PAVWeaponTypeClass@@H@Z
+0x004A7340,DiskLaserClass::AI,MATCH,1466,src/disklaser.cpp,?AI@DiskLaserClass@@UAEXXZ
 0x004A7900,DiskLaserClass::PointerGotInvalid,MATCH,204,src/disklaser.cpp,?PointerGotInvalid@DiskLaserClass@@QAEXPAVAbstractClass@@@Z
 0x004A79D0,DiskLaserClass::Mark_For_Removal,MATCH,95,src/disklaser.cpp,?Mark_For_Removal@DiskLaserClass@@QAEXXZ
 0x004A7A30,DiskLaserClass::DiskLaserClass,MATCH,145,src/disklaser.cpp,??0DiskLaserClass@@QAE@XZ

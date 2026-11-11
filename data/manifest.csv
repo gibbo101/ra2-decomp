@@ -3936,6 +3936,7 @@ address,size,symbol,source,sha256
 0x004A6CB0,59,_$E76,src/disklaser.cpp,f61363094bf49762a0ba08cc03a483cf37d09cd38e2556d637a34adae1a6308f
 0x004A6CF0,1190,_$E81,src/disklaser.cpp,504298491ee42b5a176a5f139b1456a707eb97e73fc32d7072d359ab8d1a3091
 0x004A71A0,416,?Fire@DiskLaserClass@@QAEXPAVTechnoClass@@0PAVWeaponTypeClass@@H@Z,src/disklaser.cpp,08cc1326e46558100d2d55772e9a593faf324164a2bee62cb4a19914a2605b8a
+0x004A7340,1466,?AI@DiskLaserClass@@UAEXXZ,src/disklaser.cpp,ce2766d4f6ae7cfa78181ef950d403cdac2a77b7ffd654df1ea53a1498644295
 0x004A7900,204,?PointerGotInvalid@DiskLaserClass@@QAEXPAVAbstractClass@@@Z,src/disklaser.cpp,8cc23ef4a04eae0e18e6b2c170000c9568b76332b77fde78a18198be25dad056
 0x004A79D0,95,?Mark_For_Removal@DiskLaserClass@@QAEXXZ,src/disklaser.cpp,e4d6b5525951065387a612d386aae33963208091702a73c033a58ff7f6f996f7
 0x004A7A30,145,??0DiskLaserClass@@QAE@XZ,src/disklaser.cpp,76d8e8272138276594dd0efd922b7cf6ff297ad6ae6c93845e1bb5e9e4bf412b

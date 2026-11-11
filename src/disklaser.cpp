@@ -106,11 +106,124 @@ void DiskLaserClass::Fire(TechnoClass * owner, TechnoClass * target, WeaponTypeC
 	unknown_38 = 0;
 }
 
+#include "_map.h"
+#include "_rules.h"
+#include "builtype.h"
+#include "building.h"
+#include "house.h"
+#include "laser.h"
+#include "map.h"
+#include "rules.h"
+#include "voc.h"
+
 static inline int Coord_Dist2(int x, int y, int z, Coord const & b)
 {
 	Coord c = Coord(x, y, z) - b;
 	return c.Length();
 }
+
+static inline int Coord_Dist(Coord const & a, Coord const & b)
+{
+	Coord c = a - b;
+	return c.Length();
+}
+
+// FUNCTION: GAMEMD 0x004A7340
+void DiskLaserClass::AI(void)
+{
+	if (unknown_30 < 0) {
+		Mark_For_Removal();
+		return;
+	}
+	if (unknown_30 > 0) {
+		unknown_30--;
+		return;
+	}
+
+	int distance;
+	{
+		Coord oc = Owner->Center_Coord();
+		if (Owner->In_Air()) {
+			oc.Z = Target->Center_Coord().Z;
+		}
+		distance = Coord_Dist(oc, Target->Center_Coord());
+	}
+	if (Target->Fetch_RTTI() == RTTI_BUILDING) {
+		BuildingClass * building = (BuildingClass *)Target;
+		if (building != NULL) {
+			distance += -(building->Class->Height(false) + building->Class->Width()) * 64;
+			if (distance < 0) {
+				distance = 0;
+			}
+		}
+	}
+	if (distance > Weapon->Range) {
+		Mark_For_Removal();
+		return;
+	}
+	if (Owner->IsCrashing) {
+		Mark_For_Removal();
+		return;
+	}
+
+	Coord fire = Owner->Fire_Coord(0, Coord(0, 0, 0));
+	int ia = (unknown_34 + unknown_38) % 16;
+	int ib = (unknown_34 - unknown_38 + 16) % 16;
+	int ic = (unknown_34 + unknown_38 + 1) % 16;
+	int id = (unknown_34 - unknown_38 + 15) % 16;
+
+	RGBClass color;
+	RGBClass const * inner;
+	RGBClass const * outer;
+	if (Weapon->IsHouseColor) {
+		inner = &Owner->House->LaserColor;
+		color.Set_Red(inner->Get_Red() >> 1);
+		color.Set_Green(inner->Get_Green() >> 1);
+		color.Set_Blue(inner->Get_Blue() >> 1);
+		outer = &color;
+	} else {
+		inner = &Weapon->LaserInnerColor;
+		outer = &Weapon->LaserOuterColor;
+	}
+	RGBClass const * spread = &Weapon->LaserOuterSpread;
+
+	if (ia == ib && unknown_38 != 0) {
+		Coord start = fire + DrawCoords[ia];
+		Coord end;
+		if (Target != NULL && (Target->AbstractFlags & 2)) {
+			end = Target->Target_Coord();
+		} else {
+			end = Target->As_Coord();
+		}
+		new LaserDrawClass(start, end, 0, true, *inner, *outer, *spread, Weapon->LaserDuration, false, true, 1.0f, 0.0f);
+		MapClass::DamageArea(end, Damage, Owner, Weapon->WarheadPtr, true, NULL);
+		if (Weapon->Sound.Count() > 0) {
+			VocClass::PlayAt(Weapon->Sound.Pick(Owner->SoundRandomSeed), start);
+		}
+		unknown_30 = -1;
+		return;
+	}
+
+	{
+		int duration = 8 - unknown_38;
+		Point2D const & pa = DrawCoords[ia];
+		Point2D const & pb = DrawCoords[ib];
+		Point2D const & pc = DrawCoords[ic];
+		Point2D const & pd = DrawCoords[id];
+		Coord a = fire + pa;
+		Coord c = fire + pc;
+		if (unknown_38 == 0 && Rule->DiskLaserChargeUp != -1) {
+			VocClass::PlayAt(Rule->DiskLaserChargeUp, a);
+		}
+		new LaserDrawClass(a, c, 0, true, *inner, *outer, *spread, duration, false, true, 1.0f, 0.5f);
+		a = fire + pb;
+		c = fire + pd;
+		new LaserDrawClass(a, c, 0, true, *inner, *outer, *spread, duration, false, true, 1.0f, 0.5f);
+	}
+	unknown_30 = 1;
+	unknown_38++;
+}
+
 
 // FUNCTION: GAMEMD 0x004A7900
 void DiskLaserClass::PointerGotInvalid(AbstractClass * invalid)
