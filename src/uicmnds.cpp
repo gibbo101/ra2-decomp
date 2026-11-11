@@ -688,7 +688,6 @@ wchar_t * __fastcall FUN_00731D10(wchar_t * buffer)
 	return wcscpy(buffer, StringTable::LoadString("MSG:SelAcrossScreen", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x3f5));
 }
 
-typedef DynamicVectorClass<ObjectClass *> ObjectList;
 
 extern bool DAT_00B0FE64;
 extern int DAT_00A8ECC8;
@@ -739,13 +738,13 @@ TechnoList * __fastcall FUN_00731EB0(bool (__fastcall * test)(TechnoClass *, int
 }
 
 // FUNCTION: GAMEMD 0x00731F70
-TechnoList * __fastcall FUN_00731F70(bool (__fastcall * test)(ObjectClass *, int), int arg)
+TechnoList * __fastcall FUN_00731F70(bool (__fastcall * test)(TechnoClass *, int), int arg)
 {
 	TechnoList * result = new TechnoList;
 	int count = TacticalMap->Selectable_Count();
 	for (int i = 0; i < count; i++) {
 		ObjectClass * object = TacticalMap->Selectable_Object(i);
-		if (object && object->Is_Techno() && test(object, arg)) {
+		if (object && object->Is_Techno() && test((TechnoClass *)object, arg)) {
 			result->Add((TechnoClass *)object);
 		}
 	}
@@ -767,7 +766,7 @@ TechnoList * FUN_00732050(void)
 }
 
 // FUNCTION: GAMEMD 0x00732110
-void __fastcall FUN_00732110(ObjectList * list, void (__fastcall * fn)(ObjectClass *, int), int arg)
+void __fastcall FUN_00732110(TechnoList * list, void (__fastcall * fn)(TechnoClass *, int), int arg)
 {
 	int count = list->Count();
 	for (int i = 0; i < count; i++) {
@@ -776,19 +775,19 @@ void __fastcall FUN_00732110(ObjectList * list, void (__fastcall * fn)(ObjectCla
 }
 
 // FUNCTION: GAMEMD 0x00732140
-void __fastcall FUN_00732140(ObjectList * list, bool (__fastcall * test)(ObjectClass *, int), void (__fastcall * fn)(ObjectClass *, int), int test_arg, int fn_arg)
+void __fastcall FUN_00732140(TechnoList * list, bool (__fastcall * test)(TechnoClass *, int), void (__fastcall * fn)(TechnoClass *, int), int test_arg, int fn_arg)
 {
 	int count = list->Count();
 	for (int i = 0; i < count; i++) {
-		ObjectClass * object = (*list)[i];
-		if (test(object, test_arg)) {
-			fn(object, fn_arg);
+		TechnoClass * techno = (*list)[i];
+		if (test(techno, test_arg)) {
+			fn(techno, fn_arg);
 		}
 	}
 }
 
 // FUNCTION: GAMEMD 0x00732190
-bool __fastcall FUN_00732190(ObjectList * list, bool (__fastcall * test)(ObjectClass *, int), int arg)
+bool __fastcall FUN_00732190(TechnoList * list, bool (__fastcall * test)(TechnoClass *, int), int arg)
 {
 	int count = list->Count();
 	for (int i = 0; i < count; i++) {
@@ -800,7 +799,7 @@ bool __fastcall FUN_00732190(ObjectList * list, bool (__fastcall * test)(ObjectC
 }
 
 // FUNCTION: GAMEMD 0x007321D0
-bool __fastcall FUN_007321D0(ObjectList * list, bool (__fastcall * test)(ObjectClass *, int), int arg)
+bool __fastcall FUN_007321D0(TechnoList * list, bool (__fastcall * test)(TechnoClass *, int), int arg)
 {
 	int count = list->Count();
 	for (int i = 0; i < count; i++) {
@@ -1177,7 +1176,7 @@ extern int DAT_00845560;
 extern int DAT_00845564;
 extern int DAT_00B0FE70;
 extern char DAT_00B0FD70[];
-int __fastcall FUN_007335F0(TechnoClass * techno, int unused);
+bool __fastcall FUN_007335F0(TechnoClass * techno, int unused);
 
 static inline wchar_t const * Health_Text(int status)
 {
@@ -1209,7 +1208,7 @@ static inline TechnoList * Wrap_All(void)
 	return FUN_00732050();
 }
 
-static inline TechnoList * Wrap_Filter(bool (__fastcall * test)(ObjectClass *, int), int arg)
+static inline TechnoList * Wrap_Filter(bool (__fastcall * test)(TechnoClass *, int), int arg)
 {
 	return FUN_00731F70(test, arg);
 }
@@ -1264,7 +1263,7 @@ void __fastcall FUN_00733380(bool redraw)
 				delete list;
 			}
 			DAT_00B0FE6C = NULL;
-			DAT_00B0FE6C = Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
+			DAT_00B0FE6C = Wrap_Filter(FUN_007335F0, 0);
 		}
 		FUN_006DA740(TacticalMap);
 		next = 0;
@@ -1305,12 +1304,9 @@ void __fastcall FUN_00733380(bool redraw)
 }
 
 // FUNCTION: GAMEMD 0x007335F0
-int __fastcall FUN_007335F0(TechnoClass * techno, int unused)
+bool __fastcall FUN_007335F0(TechnoClass * techno, int unused)
 {
-	if (techno && techno->IsActive && Player_Owned(techno) && techno->Fetch_RTTI() != RTTI_BUILDING) {
-		return true;
-	}
-	return false;
+	return(techno && techno->IsActive && Player_Owned(techno) && techno->Fetch_RTTI() != RTTI_BUILDING);
 }
 
 // FUNCTION: GAMEMD 0x00733640
@@ -1330,12 +1326,6 @@ int __fastcall FUN_007336A0(int value)
 	}
 	return value == 1 ? 2 : 0;
 }
-
-class VeterancyReader
-{
-	public:
-		int FUN_00750030(void);
-};
 
 static inline int Cycle_Rank(int value)
 {
@@ -1361,7 +1351,7 @@ static inline void Mixed_Rank(wchar_t const *& name, int next)
 	int shown = all->Count();
 	for (int k = 0; k < shown; k++) {
 		TechnoClass * techno = (*all)[k];
-		if (((VeterancyReader *)&techno->Veterancy)->FUN_00750030() != next) {
+		if (techno->Veterancy.Remaining_Levels() != next) {
 			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x67a);
 			break;
 		}
@@ -1388,7 +1378,7 @@ void __fastcall FUN_007336C0(bool redraw)
 				delete list;
 			}
 			DAT_00B0FE6C = NULL;
-			DAT_00B0FE6C = Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
+			DAT_00B0FE6C = Wrap_Filter(FUN_007335F0, 0);
 		}
 		FUN_006DA740(TacticalMap);
 		next = 0;
@@ -1402,7 +1392,7 @@ void __fastcall FUN_007336C0(bool redraw)
 	int count = selection->Count();
 	for (int i = 0; i < count; i++) {
 		ObjectClass * object = (*selection)[i];
-		if (((VeterancyReader *)&((TechnoClass *)object)->Veterancy)->FUN_00750030() == next) {
+		if (((TechnoClass *)object)->Veterancy.Remaining_Levels() == next) {
 			object->Select();
 		}
 	}
@@ -1524,7 +1514,7 @@ void __fastcall FUN_007339B0(bool redraw)
 				delete list;
 			}
 			DAT_00B0FE6C = NULL;
-			DAT_00B0FE6C = Wrap_Filter((bool (__fastcall *)(ObjectClass *, int))FUN_007335F0, 0);
+			DAT_00B0FE6C = Wrap_Filter(FUN_007335F0, 0);
 		}
 		FUN_006DA740(TacticalMap);
 		chosen = FUN_00733E10(DAT_00B0FE6C, NULL, 0x7fffffff, &best);
@@ -1573,7 +1563,7 @@ int __fastcall FUN_00733C60(TechnoClass * techno, char const * name)
 }
 
 // FUNCTION: GAMEMD 0x00733CD0
-NameList * __fastcall FUN_00733CD0(ObjectList * objects)
+NameList * __fastcall FUN_00733CD0(TechnoList * objects)
 {
 	NameList * list = new NameList(0, NULL);
 	int count = objects->Count();
