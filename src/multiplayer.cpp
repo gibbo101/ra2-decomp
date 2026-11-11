@@ -972,6 +972,12 @@ void Free_Game_Modes(void)
 // ?GetItem@?$VectorClass@PAVMultiplayerGameMode@@@@UBEPAVMultiplayerGameMode@@H@Z
 template class DynamicVectorClass<MultiplayerGameMode *>;
 
+#include "mpmanbattle.h"
+#include "mpsiege.h"
+#include "mpunholyalliance.h"
+#include "mpfreeforall.h"
+#include "mpcoop.h"
+
 class MPBattleClass : public MultiplayerGameMode
 {
 	public:
@@ -985,69 +991,34 @@ MPBattleClass * __stdcall Allocate_MPBattle(wchar_t ** title, wchar_t ** tooltip
 	return(mode ? mode->FUN_005C0DD0(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
 }
 
-class MPManBattleClass : public MultiplayerGameMode
-{
-	public:
-		MPManBattleClass * FUN_005C6150(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
-};
-
 // FUNCTION: GAMEMD 0x005D81B0
-MPManBattleClass * __stdcall Allocate_MPManBattle(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
+MPManBattleClass * __stdcall Allocate_MPManBattle(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
 {
-	MPManBattleClass * mode = (MPManBattleClass *)operator new(0x40);
-	return(mode ? mode->FUN_005C6150(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
+	return(new MPManBattleClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
 }
-
-class MPSiegeClass : public MultiplayerGameMode
-{
-	public:
-		MPSiegeClass * FUN_005CA630(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
-};
 
 // FUNCTION: GAMEMD 0x005D81F0
-MPSiegeClass * __stdcall Allocate_MPSiege(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
+MPSiegeClass * __stdcall Allocate_MPSiege(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
 {
-	MPSiegeClass * mode = (MPSiegeClass *)operator new(0x40);
-	return(mode ? mode->FUN_005CA630(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
+	return(new MPSiegeClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
 }
-
-class MPUnholyAllianceClass : public MultiplayerGameMode
-{
-	public:
-		MPUnholyAllianceClass * FUN_005CB3A0(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
-};
 
 // FUNCTION: GAMEMD 0x005D8230
-MPUnholyAllianceClass * __stdcall Allocate_MPUnholyAlliance(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
+MPUnholyAllianceClass * __stdcall Allocate_MPUnholyAlliance(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
 {
-	MPUnholyAllianceClass * mode = (MPUnholyAllianceClass *)operator new(0x40);
-	return(mode ? mode->FUN_005CB3A0(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
+	return(new MPUnholyAllianceClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
 }
-
-class MPFreeForAllClass : public MultiplayerGameMode
-{
-	public:
-		MPFreeForAllClass * FUN_005C5CE0(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
-};
 
 // FUNCTION: GAMEMD 0x005D8270
-MPFreeForAllClass * __stdcall Allocate_MPFreeForAll(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
+MPFreeForAllClass * __stdcall Allocate_MPFreeForAll(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
 {
-	MPFreeForAllClass * mode = (MPFreeForAllClass *)operator new(0x40);
-	return(mode ? mode->FUN_005C5CE0(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
+	return(new MPFreeForAllClass(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
 }
 
-class MPCoopMode : public MultiplayerGameMode
-{
-	public:
-		MPCoopMode * FUN_005C1470(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex);
-};
-
 // FUNCTION: GAMEMD 0x005D82B0
-MPCoopMode * __stdcall Allocate_MPCoop(wchar_t ** title, wchar_t ** tooltip, char ** inifile, char ** mapfilter, bool aiallowed, int modeindex)
+MPCooperative * __stdcall Allocate_MPCoop(WideWstring const & title, WideWstring const & tooltip, Wstring const & inifile, Wstring const & mapfilter, bool aiallowed, int modeindex)
 {
-	MPCoopMode * mode = (MPCoopMode *)operator new(0x344);
-	return(mode ? mode->FUN_005C1470(title, tooltip, inifile, mapfilter, aiallowed, modeindex) : NULL);
+	return(new MPCooperative(title, tooltip, inifile, mapfilter, aiallowed, modeindex));
 }
 
 // TEMPLATE: GAMEMD 0x005D82F0

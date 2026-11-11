@@ -10039,11 +10039,11 @@ address,size,symbol,source,sha256
 0x005D8140,27,?ID@?$DynamicVectorClass@PAVMultiplayerGameMode@@@@UAEHPBQAVMultiplayerGameMode@@@Z,src/multiplayer.cpp,eeb29d112613b0653ee85b4ff58bddb59157c8b4fc65a386db3052b948d71bbb
 0x005D8160,13,?GetItem@?$VectorClass@PAVMultiplayerGameMode@@@@UBEPAVMultiplayerGameMode@@H@Z,src/multiplayer.cpp,da1c0b5074b32d4e80b5f5f042a075a73f60de8e9432201ad45100959599be93
 0x005D8170,59,?Allocate_MPBattle@@YGPAVMPBattleClass@@PAPAG0PAPAD1_NH@Z,src/multiplayer.cpp,ff0e5b06dbf679595ea81444272ee71ecd0d95db761c16e9f297d361e377791a
-0x005D81B0,59,?Allocate_MPManBattle@@YGPAVMPManBattleClass@@PAPAG0PAPAD1_NH@Z,src/multiplayer.cpp,0460e77b66c989c9bf50225955fd55d19eecb7246530df01920925aa486528e6
-0x005D81F0,59,?Allocate_MPSiege@@YGPAVMPSiegeClass@@PAPAG0PAPAD1_NH@Z,src/multiplayer.cpp,a2fe469c3e098d52bd305dc7ce291e9b3cc6e729d82daaee505e6a8dca4a6663
-0x005D8230,59,?Allocate_MPUnholyAlliance@@YGPAVMPUnholyAllianceClass@@PAPAG0PAPAD1_NH@Z,src/multiplayer.cpp,3be8c273b6eab1335e397fcff74d6b47e95b8b90fa919a64c1fb8181399cb299
-0x005D8270,59,?Allocate_MPFreeForAll@@YGPAVMPFreeForAllClass@@PAPAG0PAPAD1_NH@Z,src/multiplayer.cpp,baa693262172d7473069b1ad6b39c718f92a83adde671247466fa45c63044b49
-0x005D82B0,62,?Allocate_MPCoop@@YGPAVMPCoopMode@@PAPAG0PAPAD1_NH@Z,src/multiplayer.cpp,3b46c6d64ccc3f6a931878870a821ba0eca63b1e386e63517ec80148448ad562
+0x005D81B0,59,?Allocate_MPManBattle@@YGPAVMPManBattleClass@@ABVWideWstring@@0ABVWstring@@1_NH@Z,src/multiplayer.cpp,0460e77b66c989c9bf50225955fd55d19eecb7246530df01920925aa486528e6
+0x005D81F0,59,?Allocate_MPSiege@@YGPAVMPSiegeClass@@ABVWideWstring@@0ABVWstring@@1_NH@Z,src/multiplayer.cpp,a2fe469c3e098d52bd305dc7ce291e9b3cc6e729d82daaee505e6a8dca4a6663
+0x005D8230,59,?Allocate_MPUnholyAlliance@@YGPAVMPUnholyAllianceClass@@ABVWideWstring@@0ABVWstring@@1_NH@Z,src/multiplayer.cpp,3be8c273b6eab1335e397fcff74d6b47e95b8b90fa919a64c1fb8181399cb299
+0x005D8270,59,?Allocate_MPFreeForAll@@YGPAVMPFreeForAllClass@@ABVWideWstring@@0ABVWstring@@1_NH@Z,src/multiplayer.cpp,baa693262172d7473069b1ad6b39c718f92a83adde671247466fa45c63044b49
+0x005D82B0,62,?Allocate_MPCoop@@YGPAVMPCooperative@@ABVWideWstring@@0ABVWstring@@1_NH@Z,src/multiplayer.cpp,3b46c6d64ccc3f6a931878870a821ba0eca63b1e386e63517ec80148448ad562
 0x005D82F0,62,??8?$VectorClass@PAVMultiplayerTeam@@@@UBE_NABV0@@Z,src/multiplayer.cpp,99fe6bd84f8a1f0d9572ae92ea81f06a015346609cbad0891ad8ecc2749ac66d
 0x005D8330,174,?Resize@?$VectorClass@PAVMultiplayerTeam@@@@UAE_NHPBQAVMultiplayerTeam@@@Z,src/multiplayer.cpp,5327c1b45362ad0d9e958ea5f72879ea753fd3f2421c8201f8b9363d2fde6bc7
 0x005D83E0,39,?Clear@?$VectorClass@PAVMultiplayerTeam@@@@UAEXXZ,src/multiplayer.cpp,2d503a478d265a9f39ffd16a5ec9df7498320072255d35e2e3d31ca64175814e

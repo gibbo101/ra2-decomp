@@ -9683,11 +9683,11 @@ address,name,result,size,source,symbol
 0x005D8140,?ID@?$DynamicVectorClass@PAVMultiplayerGameMode@@@@UAEHPBQAVMultiplayerGameMode@@@Z,MATCH,27,src/multiplayer.cpp,?ID@?$DynamicVectorClass@PAVMultiplayerGameMode@@@@UAEHPBQAVMultiplayerGameMode@@@Z
 0x005D8160,?GetItem@?$VectorClass@PAVMultiplayerGameMode@@@@UBEPAVMultiplayerGameMode@@H@Z,MATCH,13,src/multiplayer.cpp,?GetItem@?$VectorClass@PAVMultiplayerGameMode@@@@UBEPAVMultiplayerGameMode@@H@Z
 0x005D8170,Allocate_MPBattle,MATCH,59,src/multiplayer.cpp,?Allocate_MPBattle@@YGPAVMPBattleClass@@PAPAG0PAPAD1_NH@Z
-0x005D81B0,Allocate_MPManBattle,MATCH,59,src/multiplayer.cpp,?Allocate_MPManBattle@@YGPAVMPManBattleClass@@PAPAG0PAPAD1_NH@Z
-0x005D81F0,Allocate_MPSiege,MATCH,59,src/multiplayer.cpp,?Allocate_MPSiege@@YGPAVMPSiegeClass@@PAPAG0PAPAD1_NH@Z
-0x005D8230,Allocate_MPUnholyAlliance,MATCH,59,src/multiplayer.cpp,?Allocate_MPUnholyAlliance@@YGPAVMPUnholyAllianceClass@@PAPAG0PAPAD1_NH@Z
-0x005D8270,Allocate_MPFreeForAll,MATCH,59,src/multiplayer.cpp,?Allocate_MPFreeForAll@@YGPAVMPFreeForAllClass@@PAPAG0PAPAD1_NH@Z
-0x005D82B0,Allocate_MPCoop,MATCH,62,src/multiplayer.cpp,?Allocate_MPCoop@@YGPAVMPCoopMode@@PAPAG0PAPAD1_NH@Z
+0x005D81B0,Allocate_MPManBattle,MATCH,59,src/multiplayer.cpp,?Allocate_MPManBattle@@YGPAVMPManBattleClass@@ABVWideWstring@@0ABVWstring@@1_NH@Z
+0x005D81F0,Allocate_MPSiege,MATCH,59,src/multiplayer.cpp,?Allocate_MPSiege@@YGPAVMPSiegeClass@@ABVWideWstring@@0ABVWstring@@1_NH@Z
+0x005D8230,Allocate_MPUnholyAlliance,MATCH,59,src/multiplayer.cpp,?Allocate_MPUnholyAlliance@@YGPAVMPUnholyAllianceClass@@ABVWideWstring@@0ABVWstring@@1_NH@Z
+0x005D8270,Allocate_MPFreeForAll,MATCH,59,src/multiplayer.cpp,?Allocate_MPFreeForAll@@YGPAVMPFreeForAllClass@@ABVWideWstring@@0ABVWstring@@1_NH@Z
+0x005D82B0,Allocate_MPCoop,MATCH,62,src/multiplayer.cpp,?Allocate_MPCoop@@YGPAVMPCooperative@@ABVWideWstring@@0ABVWstring@@1_NH@Z
 0x005D82F0,??8?$VectorClass@PAVMultiplayerTeam@@@@UBE_NABV0@@Z,MATCH,62,src/multiplayer.cpp,??8?$VectorClass@PAVMultiplayerTeam@@@@UBE_NABV0@@Z
 0x005D8330,?Resize@?$VectorClass@PAVMultiplayerTeam@@@@UAE_NHPBQAVMultiplayerTeam@@@Z,MATCH,174,src/multiplayer.cpp,?Resize@?$VectorClass@PAVMultiplayerTeam@@@@UAE_NHPBQAVMultiplayerTeam@@@Z
 0x005D83E0,?Clear@?$VectorClass@PAVMultiplayerTeam@@@@UAEXXZ,MATCH,39,src/multiplayer.cpp,?Clear@?$VectorClass@PAVMultiplayerTeam@@@@UAEXXZ

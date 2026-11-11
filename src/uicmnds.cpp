@@ -1115,9 +1115,9 @@ void __fastcall FUN_00732FF0(char const * name, void (__fastcall * fn)(ObjectCla
 	}
 }
 
-static inline ObjectList * New_Object_List(void)
+static inline TechnoList * New_Object_List(void)
 {
-	return new ObjectList(0, NULL);
+	return new TechnoList(0, NULL);
 }
 
 static inline TechnoList * New_Techno_List(void)
@@ -1214,14 +1214,14 @@ static inline TechnoList * Wrap_Filter(bool (__fastcall * test)(ObjectClass *, i
 	return FUN_00731F70(test, arg);
 }
 
-static inline void Append_Object(ObjectList * list, ObjectClass * object)
+static inline void Append_Object(TechnoList * list, ObjectClass * object)
 {
-	list->Add(object);
+	list->Add((TechnoClass *)object);
 }
 
 static inline void Mixed_Check(wchar_t const *& name, int next)
 {
-	ObjectList * all = New_Object_List();
+	TechnoList * all = New_Object_List();
 	int total = DAT_00A8ECC8;
 	for (int j = 0; j < total; j++) {
 		ObjectClass * object = DAT_00A8ECB8[j];
@@ -1274,7 +1274,7 @@ void __fastcall FUN_00733380(bool redraw)
 			FUN_006DA740(TacticalMap);
 		}
 	}
-	ObjectList * selection = (ObjectList *)DAT_00B0FE6C;
+	TechnoList * selection = DAT_00B0FE6C;
 	int count = selection->Count();
 	for (int i = 0; i < count; i++) {
 		ObjectClass * object = (*selection)[i];
@@ -1294,7 +1294,7 @@ void __fastcall FUN_00733380(bool redraw)
 	}
 	Mixed_Check(name, next);
 	Show_Message(text, name);
-	ObjectList * current = (ObjectList *)DAT_00B0FE6C;
+	TechnoList * current = DAT_00B0FE6C;
 	DAT_00845560 = next;
 	int remaining = current->Count();
 	Unsorted::NavCycleMode = 0;
@@ -1350,7 +1350,7 @@ static inline int Cycle_Rank(int value)
 
 static inline void Mixed_Rank(wchar_t const *& name, int next)
 {
-	ObjectList * all = New_Object_List();
+	TechnoList * all = New_Object_List();
 	int total = DAT_00A8ECC8;
 	for (int j = 0; j < total; j++) {
 		ObjectClass * object = DAT_00A8ECB8[j];
@@ -1360,7 +1360,7 @@ static inline void Mixed_Rank(wchar_t const *& name, int next)
 	}
 	int shown = all->Count();
 	for (int k = 0; k < shown; k++) {
-		TechnoClass * techno = (TechnoClass *)(*all)[k];
+		TechnoClass * techno = (*all)[k];
 		if (((VeterancyReader *)&techno->Veterancy)->FUN_00750030() != next) {
 			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x67a);
 			break;
@@ -1398,7 +1398,7 @@ void __fastcall FUN_007336C0(bool redraw)
 			FUN_006DA740(TacticalMap);
 		}
 	}
-	ObjectList * selection = (ObjectList *)DAT_00B0FE6C;
+	TechnoList * selection = DAT_00B0FE6C;
 	int count = selection->Count();
 	for (int i = 0; i < count; i++) {
 		ObjectClass * object = (*selection)[i];
@@ -1418,7 +1418,7 @@ void __fastcall FUN_007336C0(bool redraw)
 	}
 	Mixed_Rank(name, next);
 	Show_Message(text, name);
-	ObjectList * current = (ObjectList *)DAT_00B0FE6C;
+	TechnoList * current = DAT_00B0FE6C;
 	DAT_00845564 = next;
 	int remaining = current->Count();
 	Unsorted::NavCycleMode = 0;
@@ -1468,9 +1468,9 @@ static inline int Named_Selectable(TechnoClass * techno, char const * name)
 	return false;
 }
 
-static inline ObjectList * Collect_Selected(void)
+static inline TechnoList * Collect_Selected(void)
 {
-	ObjectList * all = New_Object_List();
+	TechnoList * all = New_Object_List();
 	int total = DAT_00A8ECC8;
 	for (int j = 0; j < total; j++) {
 		ObjectClass * object = DAT_00A8ECB8[j];
@@ -1481,11 +1481,11 @@ static inline ObjectList * Collect_Selected(void)
 	return all;
 }
 
-static inline void Find_Mixed(ObjectList * all, char const * chosen, wchar_t const *& name)
+static inline void Find_Mixed(TechnoList * all, char const * chosen, wchar_t const *& name)
 {
 	int shown = all->Count();
 	for (int k = 0; k < shown; k++) {
-		if (!(unsigned char)FUN_00733C60((TechnoClass *)(*all)[k], chosen)) {
+		if (!(unsigned char)FUN_00733C60((*all)[k], chosen)) {
 			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x6c3);
 			break;
 		}
@@ -1501,7 +1501,7 @@ static inline void Remember_Name(char * chosen, int best)
 	}
 }
 
-static inline void Find_Mixed_Outer(ObjectList * all, char const * chosen, wchar_t const *& name)
+static inline void Find_Mixed_Outer(TechnoList * all, char const * chosen, wchar_t const *& name)
 {
 	Find_Mixed(all, chosen, name);
 }
@@ -1534,17 +1534,17 @@ void __fastcall FUN_007339B0(bool redraw)
 			FUN_006DA740(TacticalMap);
 		}
 	}
-	ObjectList * selection = (ObjectList *)DAT_00B0FE6C;
+	TechnoList * selection = DAT_00B0FE6C;
 	int count = selection->Count();
 	for (int i = 0; i < count; i++) {
-		TechnoClass * techno = (TechnoClass *)(*selection)[i];
+		TechnoClass * techno = (*selection)[i];
 		char const * id = techno->Class_Of()->IniName;
 		if (chosen && strcmp(id, chosen) == 0 && techno->CanBeSelectedNow()) {
 			techno->Select();
 		}
 	}
 	wchar_t const * name = NULL;
-	ObjectList * all = Collect_Selected();
+	TechnoList * all = Collect_Selected();
 	Find_Mixed_Outer(all, chosen, name);
 	if (!name && DAT_00A8ECC8 > 0) {
 		name = DAT_00A8ECB8[0]->Class_Of()->UIName;
