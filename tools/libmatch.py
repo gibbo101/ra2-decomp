@@ -7,6 +7,13 @@ fields its relocations fill in left as wildcards. A function found exactly once 
 recorded with its library and member. Functions under 8 bytes are skipped: too short
 to place on their own.
 
+data/library_identified.json supplements those matches with explicit identities
+corroborated by incoming relocations, referenced globals, or named RTTI vtables.
+Complete object blocks and initialized pointer tables can identify smaller bodies
+whose positions and named incoming references are otherwise ambiguous.
+library_identified.py verifies the linked archive bodies before the map is written.
+Run python tools/library_identified.py to check just these entries.
+
 The linker's import thunks (`jmp dword ptr [IAT]`) come from the import libraries too: each
 run of at least THUNK_RUN of them outside a located function is recorded, named from the
 short import record of the DLL's import library under toolchain/vc6sp3/LIB, or from the
@@ -128,6 +135,10 @@ def main() -> None:
                     ambiguous += 1
     thunks = import_thunks(pe, code, base, found)
     found.update(thunks)
+    identified = ROOT / "data/library_identified.json"
+    if identified.exists():
+        from library_identified import merge, verify
+        found = merge(found, verify(identified))
     out = ROOT / "data/library.csv"
     with out.open("w", newline="") as f:
         w = csv.writer(f, lineterminator="\n")
