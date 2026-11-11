@@ -1,0 +1,22 @@
+; SPDX-License-Identifier: MIT
+; Import names and __stdcall argument sizes of the 13 binkw32.dll imports. This
+; is an interface description only; no Bink SDK material. Each name is both the
+; linker symbol (the __stdcall decoration of BinkOpen etc.) and the exact import
+; name retail uses; tools/exelink/implib.py builds binkw32.lib from this file with
+; the plain NAME import type. (Do not feed it to LIB /DEF: LIB records the
+; "no prefix" type and would import "BinkOpen@8".)
+LIBRARY binkw32
+EXPORTS
+  _BinkClose@4
+  _BinkCopyToBuffer@28
+  _BinkDDSurfaceType@4
+  _BinkDoFrame@4
+  _BinkGetError@0
+  _BinkGoto@12
+  _BinkNextFrame@4
+  _BinkOpen@8
+  _BinkOpenDirectSound@4
+  _BinkPause@8
+  _BinkSetSoundSystem@8
+  _BinkSetVolume@8
+  _BinkWait@4

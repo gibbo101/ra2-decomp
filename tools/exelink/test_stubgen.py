@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+"""stubgen: layout arithmetic, /ORDER spelling and a full plan over a synthetic object set."""
+
+import json
+from pathlib import Path
+import tempfile
+import unittest
+
+import coffgen
+import stubgen
+
+
+class HelperTests(unittest.TestCase):
+    def test_name_address(self):
+        self.assertEqual(stubgen.name_address("?FUN_0041EC90@AITriggerTypeClass@@QAE_NXZ"), 0x41EC90)
+        self.assertEqual(stubgen.name_address("_FUN_00729E50@4"), 0x729E50)
+        self.assertEqual(stubgen.name_address("?VT_007E16B0@@3PADA"), 0x7E16B0)
+        self.assertEqual(stubgen.name_address("?DAT_00B1CF70@@3HA"), 0xB1CF70)
+        self.assertIsNone(stubgen.name_address("?Reset@Obj_007B4620@@QAEXXZ"))   # receiver, not method
+        self.assertIsNone(stubgen.name_address("??0?$HashTable_006249A0@H@@QAE@XZ"))
+        self.assertIsNone(stubgen.name_address("_FUN_00000010"))                # outside the image
+
+    def test_order_name(self):
+        self.assertEqual(stubgen.order_name("_FUN_00729E50@4"), "FUN_00729E50@4")
+        self.assertEqual(stubgen.order_name("?stub_00401000@@YAXXZ"), "?stub_00401000@@YAXXZ")
+        self.assertEqual(stubgen.order_name("@lzo1x_1_compress@20"), "@lzo1x_1_compress@20")
+
+    def test_stub_layout_uses_the_whole_slot(self):
+        entries = [["0x401000", "0xD", "0x3", "nop", "engine", []],
+                   ["0x401010", "0x5", "0x1", "mixed", "engine", []],
+                   ["0x401016", "0x4", "0x0", "none", "engine", []]]
+        self.assertEqual(stubgen.stub_layout(entries), [(0x401000, 0x10, 16), (0x401010, 0x6, 16),
+                                                       (0x401016, 0x4, 2)])
+
+    def test_looks_like_function(self):
+        self.assertTrue(stubgen.looks_like_function("?F@@YAXXZ", set()))
+        self.assertFalse(stubgen.looks_like_function("?g@@3HA", set()))
+        self.assertFalse(stubgen.looks_like_function("??_7X@@6B@", set()))
+        self.assertTrue(stubgen.looks_like_function("_f", {"_f"}))
+        self.assertTrue(stubgen.looks_like_function("_api@8", set()))
+
+
+class PlanTests(unittest.TestCase):
+    EXTENTS = [["0x401000", "0xD", "0x3", "nop", "engine", []],
+               ["0x401010", "0x20", "0x0", "none", "engine", []],
+               ["0x401030", "0x5", "0xB", "mixed", "engine", []],
+               ["0x401040", "0x3", "0xD", "nop", "engine", []],
+               ["0x7C8A8E", "0x10", "0x0", "none", "crt", []]]
+    MANIFEST = [{"tu": "match/a.cpp", "addr": "0x401000", "sym": "?M@@YAXXZ", "len": "0x10", "status": "matched"},
+                {"tu": "match/a.cpp", "addr": "0x401030", "sym": "?P@@YAXXZ", "len": "0x5", "status": "partial"},
+                {"tu": "match/a.cpp", "addr": "0x401040", "sym": "?S@@YAXXZ", "len": "0x3", "status": "matched"}]
+    BINDINGS = {"?Callee@@YAXXZ": "0x00401010", "match/a.cpp::?Alias@@YAXXZ": "0x00401000"}
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        root = Path(self.tmp.name)
+        objdir = root / "obj"
+        (objdir / "match").mkdir(parents=True)
+        w = coffgen.ObjectWriter()
+        w.add_code_comdat(["?M@@YAXXZ"], 0x10)
+        w.add_code_comdat(["?P@@YAXXZ"], 0x10)
+        w.add_code_comdat(["?S@@YAXXZ"], 0x10)
+        w.set_anchor(["?Callee@@YAXXZ", "_FUN_007C8A8E", "?DAT_00812000@@3HA", "?Unknown@@YAXXZ",
+                      "?Alias@@YAXXZ", "?P@@YAXXZ", "_lib_func"])
+        data = bytearray(w.build())
+        # make ?S static, as VC6 emits file-local functions
+        idx = next(i for i, name, *_ in coffgen.read_symbols(bytes(data)) if name == "?S@@YAXXZ")
+        symptr = int.from_bytes(data[8:12], "little")
+        data[symptr + 18 * idx + 16] = coffgen.CLASS_STATIC
+        (objdir / "match/a.obj").write_bytes(bytes(data))
+        (objdir / "objects.json").write_text(json.dumps(
+            {"success": True, "objects": [{"object": "match/a.obj", "source": "match/a.cpp"}]}))
+        self.out = root / "out"
+        self.result = stubgen.plan(objdir, {"_lib_func"}, self.out, manifest=self.MANIFEST,
+                                   extents=self.EXTENTS, symbol_bindings=self.BINDINGS)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def stub_symbols(self):
+        return {name: (section, value, scl) for _, name, value, section, scl, _ in
+                coffgen.read_symbols((self.out / "stubs.obj").read_bytes())}
+
+    def test_order_and_placement(self):
+        order = (self.out / "order.txt").read_text().split()
+        self.assertEqual(order, ["?M@@YAXXZ", "?stub_00401010@@YAXXZ", "?stub_00401030@@YAXXZ",
+                                 "?static_00401040@@YAXXZ"])
+        kinds = [(p["addr"], p["kind"]) for p in self.result["placed"]]
+        self.assertEqual(kinds, [("0x401000", "matched"), ("0x401010", "stub"), ("0x401030", "stub"),
+                                 ("0x401040", "matched")])
+        self.assertEqual(self.result["static_functions_promoted"], 1)
+
+    def test_stub_names_and_partial_displacement(self):
+        syms = self.stub_symbols()
+        self.assertGreater(syms["?Callee@@YAXXZ"][0], 0)          # defined by the 0x401010 stub
+        self.assertGreater(syms["?P@@YAXXZ"][0], 0)               # partial row: the stub owns its name
+        self.assertEqual(syms["?Alias@@YAXXZ"][2], 105)           # second name of a matched function
+        # COMMON sized to the next known data address (here: the end of .data)
+        self.assertEqual(syms["?DAT_00812000@@3HA"], (0, 0x367BE4, 2))
+        self.assertGreater(syms["?Unknown@@YAXXZ"][0], 0)        # unbound function: tail stub
+        copy = self.out / "objects/match/a.obj"
+        names = {name: section for _, name, _, section, scl, _ in coffgen.read_symbols(copy.read_bytes())
+                 if scl == 2}
+        self.assertEqual(names["?P@@YAXXZ"], 0)                   # reference kept, definition renamed
+        self.assertTrue(any(n.startswith("__displaced_00401030") for n in names))
+        self.assertIn("?static_00401040@@YAXXZ", names)
+        self.assertEqual(self.result["extra_stubs"]["code_unbound"], 1)
+        self.assertNotIn("_lib_func", syms)                       # a library provides it
+
+    def test_stub_sizes_cover_the_retail_slot(self):
+        data = (self.out / "stubs.obj").read_bytes()
+        sizes = {}
+        for _, name, value, section, scl, _ in coffgen.read_symbols(data):
+            if name.startswith("?stub_") and scl == 2:
+                sizes[name] = int.from_bytes(data[20 + 40 * (section - 1) + 16:20 + 40 * (section - 1) + 20],
+                                             "little")
+        self.assertEqual(sizes, {"?stub_00401010@@YAXXZ": 0x20, "?stub_00401030@@YAXXZ": 0x10})
+
+
+class DuplicateDefinerTests(unittest.TestCase):
+    """A name two TUs define (a scalar deleting destructor, COMDAT ANY): M1 sizes the slot from the matched
+    row's own body, not from whichever definer the link order puts first."""
+    EXTENTS = [["0x401000", "0x10", "0x0", "none", "engine", []],
+               ["0x401010", "0x30", "0x0", "none", "engine", []]]
+    MANIFEST = [{"tu": "match/x.cpp", "addr": "0x401000", "sym": "?X@@YAXXZ", "len": "0x10", "status": "matched"},
+                {"tu": "match/y.cpp", "addr": "0x401010", "sym": "?G@@YAXXZ", "len": "0x30", "status": "matched"}]
+
+    def plan(self, x_size, y_size):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            objdir = root / "obj"
+            (objdir / "match").mkdir(parents=True)
+            for name, syms in (("x", [(["?X@@YAXXZ"], 0x10), (["?G@@YAXXZ"], x_size)]),
+                               ("y", [(["?G@@YAXXZ"], y_size)])):
+                w = coffgen.ObjectWriter()
+                for names, size in syms:
+                    w.add_code_comdat(names, size)
+                w.set_anchor([])
+                (objdir / f"match/{name}.obj").write_bytes(w.build())
+            (objdir / "objects.json").write_text(json.dumps({"success": True, "objects": [
+                {"object": "match/x.obj", "source": "match/x.cpp"},
+                {"object": "match/y.obj", "source": "match/y.cpp"}]}))
+            result = stubgen.plan(objdir, set(), root / "out", manifest=self.MANIFEST, extents=self.EXTENTS,
+                                  symbol_bindings={})
+            return result, (root / "out/order.txt").read_text().split()
+
+    def test_differing_earlier_definer_does_not_win_the_slot(self):
+        result, order = self.plan(0x10, 0x30)
+        self.assertEqual(order, ["?X@@YAXXZ", "?dup_00401010@@YAXXZ"])
+        row = next(p for p in result["placed"] if p["addr"] == "0x401010")
+        self.assertEqual(row["object_size"], "0x30")
+        self.assertEqual(result["matched_symbol_at_several_addresses"], [{"addr": "0x401010", "symbol": "?G@@YAXXZ"}])
+
+    def test_identical_definers_keep_the_real_name(self):
+        result, order = self.plan(0x30, 0x30)
+        self.assertEqual(order, ["?X@@YAXXZ", "?G@@YAXXZ"])
+
+
+class AsmObjectPlanTests(unittest.TestCase):
+    """A hand-written assembly object is one COMDAT holding two byte-packed routines."""
+    EXTENTS = [["0x401000", "0x10", "0x0", "none", "engine", []],
+               ["0x401010", "0x10", "0x0", "none", "engine", []],
+               ["0x401020", "0x10", "0x0", "none", "engine", []],
+               ["0x7C8A8E", "0x10", "0x0", "none", "crt", []]]
+    MANIFEST = [{"tu": "match/asm/o.asm", "addr": "0x401000", "sym": "_Head", "len": "0x10", "status": "matched"},
+                {"tu": "match/asm/o.asm", "addr": "0x401010", "sym": "_Tail", "len": "0x10", "status": "matched"}]
+
+    def test_interior_routine_shares_the_head_placement(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "obj/match/asm").mkdir(parents=True)
+            w = coffgen.ObjectWriter()
+            w.add_code_comdat(["_Head", "_Tail"], 0x20, 1)
+            data = bytearray(w.build())
+            symptr = int.from_bytes(data[8:12], "little")
+            idx = next(i for i, name, *_ in coffgen.read_symbols(bytes(data)) if name == "_Tail")
+            data[symptr + 18 * idx + 8:symptr + 18 * idx + 12] = (0x10).to_bytes(4, "little")   # interior label
+            (root / "obj/match/asm/o.obj").write_bytes(bytes(data))
+            (root / "obj/objects.json").write_text(json.dumps(
+                {"success": True, "objects": [{"object": "match/asm/o.obj", "source": "match/asm/o.asm"}]}))
+            result = stubgen.plan(root / "obj", set(), root / "out", manifest=self.MANIFEST,
+                                  extents=self.EXTENTS, symbol_bindings={})
+            order = (root / "out/order.txt").read_text().split()
+            self.assertEqual(order[:2], ["Head", "?stub_00401020@@YAXXZ"])
+            kinds = [(p["addr"], p["kind"]) for p in result["placed"]][:2]
+            self.assertEqual(kinds, [("0x401000", "matched"), ("0x401020", "stub")])
+
+
+
+if __name__ == "__main__":
+    unittest.main()
