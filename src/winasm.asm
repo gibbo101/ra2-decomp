@@ -620,9 +620,13 @@ PUBLIC	C &procname
 &procname	ENDP
 ENDM
 
+; FUNCTION: GAMEMD 0x007DE200
 ADJUST_COLOR Adjust_Color_565, rgb565
+; FUNCTION: GAMEMD 0x007DE53A
 ADJUST_COLOR Adjust_Color_555, rgb555
+; FUNCTION: GAMEMD 0x007DE87A
 ADJUST_COLOR Adjust_Color_556, rgb556
+; FUNCTION: GAMEMD 0x007DEBBA
 ADJUST_COLOR Adjust_Color_655, rgb655
 
 
@@ -1759,6 +1763,7 @@ Draw_Voxel_Reverse_ASM endp
 align 8
 
 ; VOID cdecl Func(VoxelFuncArgumentStruct * arg1);
+; FUNCTION: GAMEMD 0x007DFE00
 Draw_Voxel_Regular_UNUSED_ASM proc C uses esi edi ebx ecx edx \
 		arg1:DWORD
 
@@ -1888,6 +1893,7 @@ Draw_Voxel_Regular_UNUSED_ASM endp
 align 8
 
 ; VOID cdecl Func(VoxelFuncArgumentStruct * arg1);
+; FUNCTION: GAMEMD 0x007DFF00
 Draw_Voxel_Reverse_UNUSED_ASM proc C uses esi edi ebx ecx edx \
 		arg1:DWORD
 

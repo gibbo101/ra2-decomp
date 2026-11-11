@@ -12,7 +12,7 @@ A function start needs at least one piece of evidence, recorded as letters:
   Y  YRpp names it (data/symbols.csv)
   G  Ghidra's analysis found it (build/ghidra/functions.csv, when present)
   L  a prebuilt library function was found here (data/library.csv)
-  A  a public entry in a uniquely located archived assembly code section
+  A  a public entry in a uniquely located archived assembly section or procedure run
   F  code after a function's return or switch tables that no path through that function
      reaches, at an aligned address: a function nothing calls directly, placed with no
      padding before it
@@ -159,7 +159,7 @@ def read_starts(path: Path, kind: str | None = None) -> dict[int, str]:
 
 
 def assembly_bounds(obj, code: bytes, base: int, evidence: dict[int, str],
-                    iat: set[int]) -> dict[int, int]:
+                    iat: set[int], data_symbols: dict[str, int] | None = None) -> dict[int, int]:
     """Locate archived MASM procedures independently of the addresses in source annotations."""
     from coff import REL_DIR32, REL_REL32, STORAGE_EXTERNAL
     from libmatch import MIN_SIZE, pattern
@@ -177,6 +177,25 @@ def assembly_bounds(obj, code: bytes, base: int, evidence: dict[int, str],
         offset = addr - base
         return (0 <= offset <= len(code) - 6 and code[offset:offset + 2] == b"\xff\x25"
                 and struct.unpack_from("<I", code, offset + 2)[0] in iat)
+
+    def bound_data(sec, lo: int, hi: int, at: int) -> bool:
+        """Every relocation binds independently named external data, at two locations."""
+        targets = {}
+        for rel in sec.relocs:
+            if not lo <= rel.offset < hi:
+                continue
+            sym = obj.by_index[rel.symbol]
+            if (rel.type != REL_DIR32 or rel.offset + 4 > hi or sym.section != 0
+                    or sym.storage != STORAGE_EXTERNAL
+                    or sym.type == 0x20 or not data_symbols or sym.name not in data_symbols):
+                return False
+            target = data_symbols[sym.name]
+            addend = struct.unpack_from("<i", sec.data, rel.offset)[0]
+            linked = struct.unpack_from("<I", code, at - base + rel.offset - lo)[0]
+            if linked != (target + addend) & 0xFFFFFFFF:
+                return False
+            targets[sym.name] = target
+        return len(targets) >= 2 and len(set(targets.values())) >= 2
 
     anchors = {a for a, flags in evidence.items() if set(flags) - {"P", "F", "A"}}
     stops = {}
@@ -201,6 +220,35 @@ def assembly_bounds(obj, code: bytes, base: int, evidence: dict[int, str],
                 evidence.setdefault(start, "A")
                 stops[start] = stop
         else:
+            # A changed procedure can divide an otherwise unchanged archive section.
+            # Preserve COFF order and spacing across at least two complete public
+            # procedures. Either an existing entry anchors the run, or every body
+            # binds all references to independently named non-code data locations.
+            runs, run = [], []
+            for lo, hi in procs:
+                at = unique(sec.data[lo:hi], {k - lo for k in masked if lo <= k < hi})
+                if (at is None or (run and
+                        (run[-1][1] != lo or run[-1][2] + run[-1][1] - run[-1][0] != at))):
+                    runs.append(run)
+                    run = []
+                if at is not None:
+                    run.append((lo, hi, at))
+            runs.append(run)
+            for run in runs:
+                if len(run) < 2:
+                    continue
+                if not (any(at in anchors for _, _, at in run)
+                        or all(bound_data(sec, lo, hi, at) for lo, hi, at in run)):
+                    continue
+                for lo, hi, at in run:
+                    stop = at + hi - lo
+                    interior = [a for a in evidence if at < a < stop]
+                    if any(set(evidence[a]) - {"P", "F"} for a in interior):
+                        continue
+                    for a in interior:
+                        del evidence[a]
+                    evidence.setdefault(at, "A")
+                    stops[at] = stop
             # A split section can still end at a run of linker import thunks.
             lo, hi = procs[-1]
             if hi != len(sec.data):
@@ -386,15 +434,18 @@ def main() -> None:
     stops = {}
     if sources and not args.no_asm:
         from check import assemble_source
+        from assembly_anchors import verified_data_symbols
         from coff import CoffObject
         iat = {imp.address for dll in getattr(pe, "DIRECTORY_ENTRY_IMPORT", []) for imp in dll.imports}
         (ROOT / "build").mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(dir=ROOT / "build") as tmp:
+            data_symbols = verified_data_symbols(exe, Path(tmp))
             for src in sources:
                 obj, log = assemble_source(src, Path(tmp) / "archive.obj")
                 if obj is None:
                     raise SystemExit(f"Cannot assemble {src.name} for function discovery: {log}")
-                stops.update(assembly_bounds(CoffObject(obj.read_bytes()), code, base, evidence, iat))
+                stops.update(assembly_bounds(CoffObject(obj.read_bytes()), code, base, evidence,
+                                             iat, data_symbols))
         ordered = sorted(evidence)
 
     with out.open("w", newline="") as f:

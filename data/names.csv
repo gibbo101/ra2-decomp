@@ -549,3 +549,6 @@ address,name,symbol,evidence
 0x00877D20,TopLine,TopLine,Unchanged archived winasm.asm independently unique interpolation procedures agree on this relocation target
 0x00878720,BottomLine,BottomLine,Unchanged archived winasm.asm independently unique interpolation procedures agree on this relocation target
 0x00A8F918,InterpolationPalette,_InterpolationPalette,Unchanged archived winasm.asm independently unique interpolation procedures agree on this relocation target; already-matched src/interpal.cpp corroborates the global
+0x00B45590,VoxelPixelDeltaTable,_VoxelPixelDeltaTable,Independently matched Draw_Voxel_Regular_Normals and Draw_Voxel_Reverse_Normals agree on this external data reference
+0x00B2FF78,VoxelDrawBuffer,_VoxelDrawBuffer,Independently matched Draw_Voxel_Regular_Normals and Draw_Voxel_Reverse_Normals agree on this external data reference
+0x0084E862,UseMMX,_UseMMX,Archived processor detector sets the MMX flag; all four uniquely placed Adjust_Color procedures test the same byte
