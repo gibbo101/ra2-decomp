@@ -8311,6 +8311,7 @@ address,size,symbol,source,sha256
 0x00575EE0,793,?Spring_Bridge_Destruction_Triggers@MapClass@@AAEXVCell@@0@Z,src/map.cpp,307b83969dbb95b30efe4ff050ac6e45817f5a0b09f0500224e8cb616b09a866
 0x00576200,1381,?Destroy_High_Bridge_Span@MapClass@@AAE_NABVCell@@W4FacingType@@PAV?$TRect@H@@@Z,src/map.cpp,f1d069928d83b9ffcbaac6790aa3b41259fcc05cd8248136ab32b1f5f1659690
 0x00576770,1066,?Destroy_High_Bridge_Connections@MapClass@@AAEXABVCell@@@Z,src/map.cpp,864b26ca6916a6cfd79e8f8cc81989413cffb515e78c4445dd1a3020b62017a3
+0x00576BA0,3454,?Damage_High_Bridge@MapClass@@AAE_NABVCell@@@Z,src/map.cpp,92b8dd10890a23e8fa47ffa40e85a25d461cb1057873c404708fc0ee7dd2179f
 0x00577920,303,?Detach@MapClass@@UAEXPBVAbstractClass@@_N@Z,src/map.cpp,a07cbae31d47d7cea39a3db89b3a5401f9433227ed67facce52686cab10eb1b6
 0x00577A50,96,?Pick_Random_Location@MapClass@@QBE?AVCell@@XZ,src/map.cpp,400fd100d81af84fd6639d0745e25db931400fb4a724c74db5e5b5a95dc3ff27
 0x00577AB0,244,?Reshroud@MapClass@@QAEXPAVHouseClass@@@Z,src/map.cpp,87922dfaefefc658137a15dd4c0ae28f55e4f7de39ed27380f8758b46c9bd0bb

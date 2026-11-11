@@ -7956,6 +7956,7 @@ address,name,result,size,source,symbol
 0x00575EE0,MapClass::Spring_Bridge_Destruction_Triggers,MATCH,793,src/map.cpp,?Spring_Bridge_Destruction_Triggers@MapClass@@AAEXVCell@@0@Z
 0x00576200,MapClass::Destroy_High_Bridge_Span,MATCH,1381,src/map.cpp,?Destroy_High_Bridge_Span@MapClass@@AAE_NABVCell@@W4FacingType@@PAV?$TRect@H@@@Z
 0x00576770,MapClass::Destroy_High_Bridge_Connections,MATCH,1066,src/map.cpp,?Destroy_High_Bridge_Connections@MapClass@@AAEXABVCell@@@Z
+0x00576BA0,MapClass::Damage_High_Bridge,MATCH,3454,src/map.cpp,?Damage_High_Bridge@MapClass@@AAE_NABVCell@@@Z
 0x00577920,MapClass::Detach,MATCH,303,src/map.cpp,?Detach@MapClass@@UAEXPBVAbstractClass@@_N@Z
 0x00577A50,MapClass::Pick_Random_Location,MATCH,96,src/map.cpp,?Pick_Random_Location@MapClass@@QBE?AVCell@@XZ
 0x00577AB0,MapClass::Reshroud,MATCH,244,src/map.cpp,?Reshroud@MapClass@@QAEXPAVHouseClass@@@Z
