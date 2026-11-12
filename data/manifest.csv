@@ -1928,6 +1928,7 @@ address,size,symbol,source,sha256
 0x0044B760,5,?Do_MISSION_CAPTURE@BuildingClass@@UAEHXZ,src/building.cpp,8528a994e8c824ab8a467ae750364558845f76c31447c7b1a1ae47481efc0c9e
 0x0044B770,5,?Do_MISSION_HARVEST@BuildingClass@@UAEHXZ,src/building.cpp,7b71e25d369acf9526e097282f486ad4b76540d248c393526f48fcc0044e099a
 0x0044B780,4605,?Do_MISSION_REPAIR@BuildingClass@@UAEHXZ,src/building.cpp,9da68706c094a0fe84d5e148f6510903b92fb8a150fa4c188bddfff70cfb0989
+0x0044C980,3144,?Do_MISSION_MISSILE@BuildingClass@@UAEHXZ,src/building.cpp,a1fdeac2d903b5907bc0f081563556f46b0f2661a03dd2172eaccdebfb2fd1ed
 0x0044D5D0,206,?Revealed@BuildingClass@@UAE_NPAVHouseClass@@@Z,src/building.cpp,f1e5c7a1dad4f676029b05a900c64e5512f7e2672b2d3243da4fa9b19be530ce
 0x0044D6A0,93,?Enter_Idle_Mode@BuildingClass@@UAE_N_N0@Z,src/building.cpp,65f2aa08a3b083dab6f3ccf5c9ac3676cce962af5d64940b72a992695f7269a4
 0x0044D700,92,?Pip_Count@BuildingClass@@UBEHXZ,src/building.cpp,21799d344afdac0f9da0a0256be4811611230439ee5ee14123c8a8fb3c3c2822
@@ -6839,6 +6840,7 @@ address,size,symbol,source,sha256
 0x0052FFD0,37,?Blank_Hidden_Surface@@YIX_N@Z,src/init.cpp,2aa058e2f3d65da7fb95d1ba6fa90ac4a0dbc9f6f9b99ee6bd9c44fc5c696e4e
 0x00530000,406,?Init_Expansion_Files@@YI_NXZ,src/init.cpp,5601645fea70f94d543c6b05fcb2b821f74819865769fa4bed13385764e6662d
 0x005301A0,692,?Init_Bootstrap_Mixfiles@@YI_NXZ,src/init.cpp,ff6c35e311e71c069ef3e757e24c90be4e465c3c8a47cc18127fade196621947
+0x00530460,3635,?Init_Secondary_Mixfiles@@YI_NXZ,src/init.cpp,1c92a38955f5f94998b53a380c88e912a7f7b02a22e80a60cdeaa9f080f192a9
 0x005312A0,984,?FUN_005312A0@@YIXXZ,src/init.cpp,0d05111a4f7e69d22c92c7386b2481d0038ccc2ae82a763edc1ecc2adfac6ada
 0x00531680,561,?Init_Bulk_Data@@YI_NXZ,src/init.cpp,4f9477239191714d26e8e1aeb5cea9ad98f861a530bfbfced2912d126e27c468
 0x005318C0,147,?Save_Recording_Values@@YI_NAAVCCFileClass@@@Z,src/init.cpp,517f1abe6812abb76b44c8ec576aee5033cbb164fb1a3885df47dc2db7164e5b
@@ -15265,6 +15267,7 @@ address,size,symbol,source,sha256
 0x00709A20,3,?vt_entry_47C@TechnoClass@@UAEXPAVAbstractClass@@@Z,src/techno.cpp,e598d0c3ba86d917b177d7adde0556aa99bc355543c57aee0a3e50b684dd7e99
 0x00709A30,3,?Assign_Destination@TechnoClass@@UAEXPAVAbstractClass@@_N@Z,src/techno.cpp,1d10894625976bca9d8906f3ecf1e766b94e9219ec3bf1c30e02feea5e18e45a
 0x00709A40,66,?Enter_Idle_Mode@TechnoClass@@UAE_N_N0@Z,src/techno.cpp,2754d0d80d9dc96876602ee6763c7bb665a2e72e718044e35b9a0a0e6fac7d75
+0x00709A90,3834,?Draw_Pips@TechnoClass@@UBEXABVPoint2D@@0ABV?$TRect@H@@@Z,src/techno.cpp,052715a6a9c1e04bf69b668f56008d70af5f40f69f4457d0f91167951aab8b21
 0x0070A990,206,?DrawVeterancyPips@TechnoClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/techno.cpp,cd2c169462ba8c25e02a75a2d4d5a4c3b548d48bcc52228c83feefd9323e7f87
 0x0070AA60,751,?Draw_Text_Overlay@TechnoClass@@UBEXABVPoint2D@@0ABV?$TRect@H@@@Z,src/techno.cpp,9b1c9955ce3d0b2bb57f67d9b242ae9ee4375602d5b4f5e0e76ef8823032b277
 0x0070AD50,78,?Find_Exit_Cell@TechnoClass@@UBE?AVCell@@PBV1@I@Z,src/techno.cpp,545bf0de3bf84ec77d3012f35a027a7aec5e3c99dee70397cdea71550b671c3e
@@ -18125,7 +18128,7 @@ address,size,symbol,source,sha256
 0x0077D1C0,10,_$E312,src/wonline.cpp,47b6440632316d22a28a861a5f7ed8b72c3ec6e1d4e23fb075f92ef430b8b4b2
 0x0077D1D0,18,??0FUN_007F7624_Class@@QAE@XZ,src/wonline.cpp,6e3c453beaa85d1d1f1569d72c241609497ce3f589de6c98d28cff81801607b0
 0x0077D1F0,11,??1FUN_007F7624_Class@@UAE@XZ,src/wonline.cpp,e84ee455d6a8ec21c2d9cdf8af73ad454ec0fa64363bc5ab9f59d65e08835e75
-0x0077D200,5,?FUN_0077D200@@YIXXZ,src/wonline.cpp,8d8da9f78f6ebb44f98cc14f5267c5ed4de5de2338941ee900a46efcec2c4597
+0x0077D200,5,?F4@SimpleWonlineDialogControl@@UAE_NXZ,src/wonline.cpp,8d8da9f78f6ebb44f98cc14f5267c5ed4de5de2338941ee900a46efcec2c4597
 0x0077D210,34,?FUN_0077D210@@YIXPAD@Z,src/wonline.cpp,19961f679490d6b1ddc2dd37632316773de2bf4c28bf22196b9985cc49af877d
 0x0077D240,89,?FUN_0077D240@@YIHPAVWstring@@@Z,src/wonline.cpp,09b437cd0b2c10dc54cbc5ee2dff1cb18c940926a183e3551840ef0ed39fee65
 0x0077D2A0,63,?FUN_0077D2A0@@YI_NPAUUser@@@Z,src/wonline.cpp,9e66f579975f13c6afca21be675e958ca5e917e1e1e117fd17451393061b3d9a
