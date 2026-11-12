@@ -256,9 +256,7 @@ bool RadBeam::FUN_00659CA0(void)
 		if (unknown_8C > 0) {
 			do {
 				FUN_00659FF0();
-				short color = (Tint.Get_Blue() >> (unsigned char)DSurface::BlueLeft << DSurface::BlueRight)
-					| (Tint.Get_Red() >> (unsigned char)DSurface::RedLeft << DSurface::RedRight)
-					| (Tint.Get_Green() >> (unsigned char)DSurface::GreenLeft << DSurface::GreenRight);
+				short color = DSurface::Build_Hicolor_Pixel(Tint);
 				Coord * b = &PointB;
 				Coord * a = &PointA;
 				Point2D p1;
