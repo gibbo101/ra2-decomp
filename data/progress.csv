@@ -7917,6 +7917,7 @@ address,name,result,size,source,symbol
 0x0056C210,MapClass::Close_Object,MATCH,744,src/map.cpp,?Close_Object@MapClass@@QBEPAVObjectClass@@ABVCoord@@@Z
 0x0056C500,_$E238,MATCH,1,src/map.cpp,_$E238
 0x0056CB80,SubzoneHash,MATCH,16,src/map.cpp,?SubzoneHash@@YIHABI@Z
+0x0056D230,MapClass::Get_Cell_Zone,MATCH,362,src/map.cpp,?Get_Cell_Zone@MapClass@@QAEHPBVCell@@W4MZoneType@@_N@Z
 0x0056D3A0,MapClass::Get_Cell_Zone_ID,MATCH,78,src/map.cpp,?Get_Cell_Zone_ID@MapClass@@QAEHABVCell@@@Z
 0x0056D3F0,MapClass::Get_Cell_Zone_Index,MATCH,54,src/map.cpp,?Get_Cell_Zone_Index@MapClass@@QAEHABVCell@@@Z
 0x0056D430,MapClass::Get_Cell_Subzone_Index,MATCH,35,src/map.cpp,?Get_Cell_Subzone_Index@MapClass@@QAEHABVCell@@@Z
@@ -8053,6 +8054,7 @@ address,name,result,size,source,symbol
 0x00586780,MapClass::IsAreaFree,MATCH,278,src/map.cpp,?IsAreaFree@MapClass@@QAE_NABV?$TRect@H@@H@Z
 0x005868A0,MapClass::Recalc_Cells_In_Rect,MATCH,240,src/map.cpp,?Recalc_Cells_In_Rect@MapClass@@QAEXABV?$TRect@H@@@Z
 0x00586990,MapClass::Recalc_Cells_In_List,MATCH,289,src/map.cpp,?Recalc_Cells_In_List@MapClass@@QAEXABV?$DynamicVectorClass@VCell@@@@@Z
+0x00586AC0,MapClass::Closest_Edge_Cell,MATCH,292,src/map.cpp,?Closest_Edge_Cell@MapClass@@QAE?AVCell@@ABV2@_N@Z
 0x00586BF0,MapClass::Set_WasUnderBridge_Flags,MATCH,604,src/map.cpp,?Set_WasUnderBridge_Flags@MapClass@@QAEXXZ
 0x00586E50,MapClass::Clip_To_Map,MATCH,361,src/map.cpp,?Clip_To_Map@MapClass@@QAE?AVCell@@ABV2@@Z
 0x00586FC0,MapClass::Closest_Passable_Cell,MATCH,438,src/map.cpp,?Closest_Passable_Cell@MapClass@@QAE?AVCell@@ABV2@0@Z
@@ -11640,6 +11642,7 @@ address,name,result,size,source,symbol
 0x00659570,RadBeam::FUN_00659570,MATCH,4,src/radbeam.cpp,?FUN_00659570@RadBeam@@QAEEXZ
 0x00659580,RadBeam::FUN_00659580,MATCH,10,src/radbeam.cpp,?FUN_00659580@RadBeam@@QAEXH@Z
 0x00659590,RadBeam::FUN_00659590,MATCH,187,src/radbeam.cpp,?FUN_00659590@RadBeam@@QAEXABVCoord@@0F@Z
+0x00659650,RadBeam::FUN_00659650,MATCH,879,src/radbeam.cpp,?FUN_00659650@RadBeam@@QAE_NXZ
 0x006599C0,RadBeam::FUN_006599C0,MATCH,100,src/radbeam.cpp,?FUN_006599C0@RadBeam@@QAEXXZ
 0x00659A30,RadBeam::FUN_00659A30,MATCH,136,src/radbeam.cpp,?FUN_00659A30@RadBeam@@QAEXXZ
 0x00659CA0,RadBeam::FUN_00659CA0,MATCH,388,src/radbeam.cpp,?FUN_00659CA0@RadBeam@@QAE_NXZ
@@ -16590,8 +16593,10 @@ address,name,result,size,source,symbol
 0x00753520,FUN_00753520,MATCH,21,src/vox.cpp,?FUN_00753520@@YIHXZ
 0x00753540,FUN_00753540,MATCH,33,src/vox.cpp,?FUN_00753540@@YIXXZ
 0x00753570,Add_Speech_Hold,MATCH,12,src/vox.cpp,?Add_Speech_Hold@@YIHXZ
+0x00753580,Remove_Speech_Hold,MATCH,33,src/vox.cpp,?Remove_Speech_Hold@@YIXXZ
 0x007535B0,FUN_007535B0,MATCH,27,src/vox.cpp,?FUN_007535B0@@YIHXZ
 0x007535D0,FUN_007535D0,MATCH,67,src/vox.cpp,?FUN_007535D0@@YIXXZ
+0x00753620,FUN_00753620,MATCH,48,src/vox.cpp,?FUN_00753620@@YIXXZ
 0x00753650,?Clear@?$DynamicVectorClass@PAVVoxClass@@@@UAEXXZ,MATCH,42,src/vox.cpp,?Clear@?$DynamicVectorClass@PAVVoxClass@@@@UAEXXZ
 0x00753680,?ID@?$DynamicVectorClass@PAVVoxClass@@@@UAEHPBQAVVoxClass@@@Z,MATCH,27,src/vox.cpp,?ID@?$DynamicVectorClass@PAVVoxClass@@@@UAEHPBQAVVoxClass@@@Z
 0x007536A0,?GetItem@?$VectorClass@PAVVoxClass@@@@UBEPAVVoxClass@@H@Z,MATCH,13,src/vox.cpp,?GetItem@?$VectorClass@PAVVoxClass@@@@UBEPAVVoxClass@@H@Z
