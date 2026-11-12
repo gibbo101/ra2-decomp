@@ -1566,6 +1566,7 @@ address,name,result,size,source,symbol
 0x0044B760,BuildingClass::Do_MISSION_CAPTURE,MATCH,5,src/building.cpp,?Do_MISSION_CAPTURE@BuildingClass@@UAEHXZ
 0x0044B770,BuildingClass::Do_MISSION_HARVEST,MATCH,5,src/building.cpp,?Do_MISSION_HARVEST@BuildingClass@@UAEHXZ
 0x0044B780,BuildingClass::Do_MISSION_REPAIR,MATCH,4605,src/building.cpp,?Do_MISSION_REPAIR@BuildingClass@@UAEHXZ
+0x0044C980,BuildingClass::Do_MISSION_MISSILE,MATCH,3144,src/building.cpp,?Do_MISSION_MISSILE@BuildingClass@@UAEHXZ
 0x0044D5D0,BuildingClass::Revealed,MATCH,206,src/building.cpp,?Revealed@BuildingClass@@UAE_NPAVHouseClass@@@Z
 0x0044D6A0,BuildingClass::Enter_Idle_Mode,MATCH,93,src/building.cpp,?Enter_Idle_Mode@BuildingClass@@UAE_N_N0@Z
 0x0044D700,BuildingClass::Pip_Count,MATCH,92,src/building.cpp,?Pip_Count@BuildingClass@@UBEHXZ
@@ -6485,6 +6486,7 @@ address,name,result,size,source,symbol
 0x0052FFD0,Blank_Hidden_Surface,MATCH,37,src/init.cpp,?Blank_Hidden_Surface@@YIX_N@Z
 0x00530000,Init_Expansion_Files,MATCH,406,src/init.cpp,?Init_Expansion_Files@@YI_NXZ
 0x005301A0,Init_Bootstrap_Mixfiles,MATCH,692,src/init.cpp,?Init_Bootstrap_Mixfiles@@YI_NXZ
+0x00530460,Init_Secondary_Mixfiles,MATCH,3635,src/init.cpp,?Init_Secondary_Mixfiles@@YI_NXZ
 0x005312A0,FUN_005312A0,MATCH,984,src/init.cpp,?FUN_005312A0@@YIXXZ
 0x00531680,Init_Bulk_Data,MATCH,561,src/init.cpp,?Init_Bulk_Data@@YI_NXZ
 0x005318C0,Save_Recording_Values,MATCH,147,src/init.cpp,?Save_Recording_Values@@YI_NAAVCCFileClass@@@Z
@@ -14918,6 +14920,7 @@ address,name,result,size,source,symbol
 0x00709A20,TechnoClass::vt_entry_47C,MATCH,3,src/techno.cpp,?vt_entry_47C@TechnoClass@@UAEXPAVAbstractClass@@@Z
 0x00709A30,TechnoClass::Assign_Destination,MATCH,3,src/techno.cpp,?Assign_Destination@TechnoClass@@UAEXPAVAbstractClass@@_N@Z
 0x00709A40,TechnoClass::Enter_Idle_Mode,MATCH,66,src/techno.cpp,?Enter_Idle_Mode@TechnoClass@@UAE_N_N0@Z
+0x00709A90,TechnoClass::Draw_Pips,MATCH,3834,src/techno.cpp,?Draw_Pips@TechnoClass@@UBEXABVPoint2D@@0ABV?$TRect@H@@@Z
 0x0070A990,TechnoClass::DrawVeterancyPips,MATCH,206,src/techno.cpp,?DrawVeterancyPips@TechnoClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x0070AA60,TechnoClass::Draw_Text_Overlay,MATCH,751,src/techno.cpp,?Draw_Text_Overlay@TechnoClass@@UBEXABVPoint2D@@0ABV?$TRect@H@@@Z
 0x0070AD50,TechnoClass::Find_Exit_Cell,MATCH,78,src/techno.cpp,?Find_Exit_Cell@TechnoClass@@UBE?AVCell@@PBV1@I@Z
@@ -17897,7 +17900,6 @@ address,name,result,size,source,symbol
 0x0077D1C0,_$E312,MATCH,10,src/wonline.cpp,_$E312
 0x0077D1D0,FUN_007F7624_Class::FUN_007F7624_Class,MATCH,18,src/wonline.cpp,??0FUN_007F7624_Class@@QAE@XZ
 0x0077D1F0,FUN_007F7624_Class::~FUN_007F7624_Class,MATCH,11,src/wonline.cpp,??1FUN_007F7624_Class@@UAE@XZ
-0x0077D200,FUN_0077D200,MATCH,5,src/wonline.cpp,?FUN_0077D200@@YIXXZ
 0x0077D210,FUN_0077D210,MATCH,34,src/wonline.cpp,?FUN_0077D210@@YIXPAD@Z
 0x0077D240,FUN_0077D240,MATCH,89,src/wonline.cpp,?FUN_0077D240@@YIHPAVWstring@@@Z
 0x0077D2A0,FUN_0077D2A0,MATCH,63,src/wonline.cpp,?FUN_0077D2A0@@YI_NPAUUser@@@Z
@@ -17980,6 +17982,7 @@ address,name,result,size,source,symbol
 0x00786080,FUN_00786080,MATCH,496,src/wonline.cpp,?FUN_00786080@@YIXXZ
 0x00786270,FUN_00786270,MATCH,278,src/wonline.cpp,?FUN_00786270@@YI_NXZ
 0x00786390,FUN_00786390,MATCH,300,src/wonline.cpp,?FUN_00786390@@YIHXZ
+0x0077D200,SimpleWonlineDialogControl::F4,MATCH,5,src/wonline.cpp,?F4@SimpleWonlineDialogControl@@UAE_NXZ
 0x007864C0,FUN_007864C0,MATCH,2250,src/wonline.cpp,?FUN_007864C0@@YI_NPAUServer@@@Z
 0x00786D90,FUN_00786D90,MATCH,48,src/wonline.cpp,?FUN_00786D90@@YI_NXZ
 0x00786DC0,FUN_00786DC0,MATCH,164,src/wonline.cpp,?FUN_00786DC0@@YI_NAAVWstring@@@Z
