@@ -236,8 +236,7 @@ Point2D MapClass::Cell_To_PlayRect_Point(Point2D const & point) const
 	}
 	int x = w / 2 + (d >> 1);
 	int y = px + py - w;
-	Point2D result(x, y);
-	return(result);
+	return(Point2D(x, y));
 }
 
 // FUNCTION: GAMEMD 0x00565520
