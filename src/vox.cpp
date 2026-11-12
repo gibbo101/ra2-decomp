@@ -86,8 +86,8 @@ struct VoxNode : SoundLink
 	int Id;
 };
 
-extern int DAT_00B1D3D8;
-extern int DAT_00B1D428;
+extern volatile int DAT_00B1D3D8;
+extern volatile int DAT_00B1D428;
 extern SoundLink DAT_00B1D3C8;
 extern SoundLink DAT_00B1D3F0;
 extern SoundLink DAT_00B1D450[4];
@@ -296,6 +296,83 @@ void VoxClass::Play(char const * name, int a, int b)
 {
 	if (name) {
 		PlayIndex(FindVox(name), a, b);
+	}
+}
+
+static inline VoxNode * Pop_Queue(void)
+{
+	for (int i = 3; i >= 0; i--) {
+		VoxNode * node = (VoxNode *)DAT_00B1D450[i].FUN_004073C0();
+		if (node) {
+			node->FUN_00407450();
+			return node;
+		}
+	}
+	return NULL;
+}
+
+static inline VoxClass * Take_Node(VoxNode * node, int * type, int * priority)
+{
+	if (node) {
+		VoxClass * vox = node->Vox;
+		if (type) *type = node->Type;
+		if (priority) *priority = node->Priority;
+		delete node;
+		return vox;
+	}
+	return NULL;
+}
+
+// FUNCTION: GAMEMD 0x00752760
+void FUN_00752760(void)
+{
+	if (DAT_00A8ED64 || !FUN_00407000() || !DAT_00B1D4CC || DAT_00B1D4CC->FUN_00408070()) {
+		return;
+	}
+	if (FUN_004093B0() <= DAT_00B1D4D0 + DAT_00B1D4CC->FUN_00408140() || DAT_00B1D428) {
+		return;
+	}
+	if (DAT_00B1D4C4) {
+		DAT_00B1D4C4->State = 2;
+		DAT_00B1D4C4 = NULL;
+	}
+	int type = 0;
+	int priority = 0;
+	VoxNode * node = (VoxNode *)DAT_00B1D3C8.FUN_004073C0();
+	if (node) {
+		node->FUN_00407450();
+		if (DAT_00B1D4B8) {
+			delete DAT_00B1D4B8;
+			DAT_00B1D4B8 = NULL;
+		}
+	} else {
+		node = (VoxNode *)DAT_00B1D3F0.FUN_004073C0();
+		if (node) {
+			node->FUN_00407450();
+			if (DAT_00B1D4B8) {
+				delete DAT_00B1D4B8;
+				DAT_00B1D4B8 = NULL;
+			}
+		} else if (DAT_00B1D4B8) {
+			node = DAT_00B1D4B8;
+			DAT_00B1D4B8 = NULL;
+		} else {
+			node = Pop_Queue();
+		}
+	}
+	VoxClass * vox = Take_Node(node, &type, &priority);
+	if (vox) {
+		vox->State = 2;
+		char name[256];
+		strcpy(name, vox->GetFilename());
+		strcat(name, ".WAV");
+		if (FUN_00407B60(DAT_00B1D4CC, name, 1)) {
+			DAT_00B1D4D0 = 500;
+			DAT_00B1D4C4 = vox;
+			DAT_00B1D3B8 = type;
+			DAT_00B1D3E0 = priority;
+			vox->State = 0;
+		}
 	}
 }
 
@@ -724,7 +801,19 @@ void FUN_00753540(void)
 // FUNCTION: GAMEMD 0x00753570
 int Add_Speech_Hold(void)
 {
-	return ++DAT_00B1D3D8;
+	int count = DAT_00B1D3D8 + 1;
+	DAT_00B1D3D8 = count;
+	return count;
+}
+
+// FUNCTION: GAMEMD 0x00753580
+void Remove_Speech_Hold(void)
+{
+	if (DAT_00B1D3D8 != 0) {
+		if (--DAT_00B1D3D8 < 0) {
+			DAT_00B1D3D8 = 0;
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x007535B0
@@ -733,7 +822,9 @@ int FUN_007535B0(void)
 	if (DAT_00B1D4CC) {
 		DAT_00B1D4CC->FUN_00407FB0();
 	}
-	return ++DAT_00B1D428;
+	int count = DAT_00B1D428 + 1;
+	DAT_00B1D428 = count;
+	return count;
 }
 
 // FUNCTION: GAMEMD 0x007535D0
@@ -749,6 +840,19 @@ void FUN_007535D0(void)
 	FUN_00752370();
 	DAT_00B1D428 = 0;
 	DAT_00B1D3D8 = 0;
+}
+
+// FUNCTION: GAMEMD 0x00753620
+void FUN_00753620(void)
+{
+	if (DAT_00B1D4CC) {
+		DAT_00B1D4CC->FUN_00408000();
+	}
+	if (DAT_00B1D428 != 0) {
+		if (--DAT_00B1D428 < 0) {
+			DAT_00B1D428 = 0;
+		}
+	}
 }
 
 // TEMPLATE: GAMEMD 0x00753650
