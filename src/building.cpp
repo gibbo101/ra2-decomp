@@ -3107,14 +3107,12 @@ Coord BuildingClass::Docking_Coord(TechnoClass * docker) const
 				return(Center_Coord());
 
 			case 1:
-				coord = Center_Coord() + Class->DockingOffsets[0];
-				return(coord);
+				return(Center_Coord() + Class->DockingOffsets[0]);
 
 			default:
 				int index = FindLinkIndex(docker);
 				if (index >= 0 && index < Class->NumberOfDocks) {
-					coord = Center_Coord() + Class->DockingOffsets[index];
-					return(coord);
+					return(Center_Coord() + Class->DockingOffsets[index]);
 				}
 				return(Center_Coord());
 		}
@@ -3803,6 +3801,145 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 	}
 
 	return(TICKS_PER_SECOND);
+}
+
+// FUNCTION: GAMEMD 0x0044C980
+int BuildingClass::Do_MISSION_MISSILE(void)
+{
+	if (Class->IsNukeSilo) {
+		enum { INITIAL, DOOR_OPENING, LAUNCH_UP, LAUNCH_DOWN, DONE_LAUNCH };
+		switch (Status) {
+		case INITIAL: {
+			IsReadyToCommence = false;
+			Begin_Mode(BSTATE_ACTIVE);
+			Status = DOOR_OPENING;
+			PsiWarnAnim = HouseClass::PsiWarn(House, &Map[House->NukeDest], NULL, "PSIWARN");
+		}
+		case DOOR_OPENING:
+			if (IsReadyToCommence) {
+				Begin_Mode(BSTATE_AUX1);
+				Status = LAUNCH_UP;
+			}
+		case LAUNCH_UP: {
+			Cell center = Center_Coord();
+			AbstractClass * target = &Map[House->NukeDest];
+			WeaponTypeClass const * weapon = SuperWeaponTypes[LastSuperWeaponIndex]->Weapon;
+			BulletTypeClass const * bullet_type = weapon->Bullet;
+			WarheadTypeClass const * warhead = weapon->WarheadPtr;
+			int strength = weapon->Attack;
+			BulletClass * bullet = Create_Bullet(bullet_type, target, this, strength, warhead, 255, true);
+			if (bullet != NULL) {
+				bullet->Set_Weapon_Type((WeaponTypeClass *)weapon);
+				if (PsiWarnAnim != NULL) {
+					PsiWarnAnim->FUN_00424C90(bullet);
+					PsiWarnAnim = NULL;
+				}
+				bullet->Limbo();
+				Coord launch = Fire_Coord(0, Coord(0, 0, 0));
+				if (!bullet->Unlimbo(launch, TVelocity3D<double>(DirType(DIR_N), DirType(DIR_N), 10))) {
+					delete bullet;
+					bullet = NULL;
+				} else {
+					AnimClass * anim = new AnimClass(Rule->NukeTakeOff, launch);
+					anim->ZAdjust = -100;
+				}
+				Status = LAUNCH_DOWN;
+			}
+			return 1;
+		}
+		case LAUNCH_DOWN:
+			Begin_Mode(BSTATE_AUX2);
+			Status = DONE_LAUNCH;
+			return 6;
+		case DONE_LAUNCH:
+			Begin_Mode(BSTATE_IDLE);
+			QueueMission(MISSION_GUARD, false);
+			return 4 * TICKS_PER_SECOND;
+		}
+	}
+	if (LastSuperWeaponIndex != -1) {
+		Fire_At(&Map[House->NukeDest], 0);
+		QueueMission(MISSION_GUARD, false);
+	}
+	if (Class->IsEMPulseCannon) {
+		enum { INITIAL, EM_PULSE, FIRE, DONE };
+		switch (Status) {
+		case INITIAL: {
+			DirType aim_direction = Aim_Direction(&Map[House->EMPDest]);
+			DirType barrel_pitch = Barrel_Pitch(&Map[House->EMPDest]);
+			if (DIR_MIN < (PrimaryFacing.Current() - aim_direction)) {
+				PrimaryFacing.Set_Desired(aim_direction);
+			} else {
+				if (DIR_MIN < (BarrelPitch.Current() - barrel_pitch)) {
+					BarrelPitch.Set_Desired(barrel_pitch);
+				} else {
+					Status = EM_PULSE;
+				}
+			}
+			return 1;
+		}
+		case EM_PULSE:
+			new AnimClass(AnimTypes[Anim_From_Name("PULSBALL")], Fire_Coord(0, Coord(0, 0, 0)));
+			Status = FIRE;
+			return 32;
+		case DONE:
+			BarrelPitch.Set_Desired(DIR_E);
+			Begin_Mode(BSTATE_IDLE);
+			QueueMission(MISSION_GUARD, false);
+			return 4 * TICKS_PER_SECOND;
+		case FIRE: {
+			Coord ucoord;
+			WeaponTypeClass const * weapon = PrimaryWeapon;
+			CellClass * target = &Map[House->EMPDest];
+			CellClass * target2 = &Map[House->EMPDest];
+			if (!Debug_Map && House->EMPDest != CELL_NONE) {
+				BarrelPitch.Set_Desired(Barrel_Pitch(target));
+				Coord fire = Fire_Coord(0, Coord(0, 0, 0));
+				Map.Get_Height_GL(House->EMPDest);
+				DirType yaw = ::Direction(fire, House->EMPDest.As_Coord());
+				MPHType speed = Calculate_Projectile_Speed(Distance(target), Rule->Gravity);
+				BulletClass * bullet = Create_Bullet(weapon->Bullet, target, this, weapon->Attack, weapon->WarheadPtr, 3 * speed / 4, weapon->IsBright);
+				TVelocity3D<double> velocity;
+				velocity.Set(0, 0, 0);
+				velocity.Set_Yaw(yaw);
+				velocity.Set_Speed(speed);
+				ucoord = Turret_Coord();
+				Coord disp = target2->Center_Coord() - ucoord;
+				int distance2 = disp.X * disp.X + disp.Y * disp.Y;
+				DirType pitch;
+				bool valid = Calculate_Projectile_Pitch(Should_Use_High_Arc(0), speed, fastmath::sqrt(distance2), disp.Z, Rule->Gravity, pitch);
+				if (!valid) {
+					valid = Calculate_Projectile_Pitch(Should_Use_High_Arc(0), speed * 10 / 8, fastmath::sqrt(distance2), disp.Z, Rule->Gravity, pitch);
+					if (!valid) {
+						pitch = DirType(Dir256(DIR_NW + 26));
+						valid = true;
+					}
+				}
+				velocity.Set_Pitch(pitch);
+				if (valid && bullet->Unlimbo(ucoord, velocity)) {
+					if (Is_Turret_Equipped() && Techno_Type_Class()->TurretRecoil) {
+						TurretRecoil.Fire();
+						BarrelRecoil.Fire();
+					}
+					if (!Techno_Type_Class()->IsGattling) {
+						VocClass::PlayAt(weapon->Sound.Pick(NonCriticalRandomNumber), Fire_Coord(0, Coord(0, 0, 0)));
+					}
+					Status = DONE;
+					return 1;
+				} else {
+					bullet->Release();
+					Begin_Mode(BSTATE_IDLE);
+					QueueMission(MISSION_GUARD, false);
+					return 4 * TICKS_PER_SECOND;
+				}
+			}
+			Begin_Mode(BSTATE_IDLE);
+			QueueMission(MISSION_GUARD, false);
+			return 4 * TICKS_PER_SECOND;
+		}
+		}
+	}
+	return Current_Mission_Control().Normal_Delay();
 }
 
 // FUNCTION: GAMEMD 0x0044D5D0
