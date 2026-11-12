@@ -3404,3 +3404,4 @@ date,address,function,model,result,best,checks,minutes,blocker,notes,attempt_ids
 2026-11-11,0x00506EF0,HouseClass::AI_Build_Defense,coordinator,partial,99.8,0,,register allocation (one add destination),"Not retried: the bank needs 0x005060B0 present in src/house.cpp (still 99.9%) plus #define NDEBUG and velocity.h, as recorded for 0x005060B0.",,
 2026-11-12,0x0069E320,SHPUnloadFrom,coordinator,MATCH,100,1,,,The near_unit bank as written now matches against today's headers (was 95.3%).,,
 2026-11-12,0x0069E210,SHPUnloadAll,coordinator,MATCH,100,1,,,The near_unit bank as written matches alongside 0x0069E320 (was 94.1%).,,
+2026-11-12,0x0076FF40,WorldDominationTour::FUN_0076FF40,coordinator,MATCH,100,1,,,TibSun's form from the near_wdtterr bank matches as written against today's headers (was 81.0%).,,

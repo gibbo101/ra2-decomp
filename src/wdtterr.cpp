@@ -186,3 +186,16 @@ MSShapeAnim * Territory::FUN_0076FF30(void)
 
 // SYNTHETIC: GAMEMD 0x00770020
 // ??_GTerritory@WorldDominationTour@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x0076FF40
+rc_ptr<Territory> __fastcall WorldDominationTour::FUN_0076FF40(TERR_LIST * list, int id)
+{
+	TERR_ITER it(*list);
+	for (; it; it++) {
+		if (it->ID == id) {
+			break;
+		}
+	}
+
+	return(it ? *it : rc_ptr<Territory>());
+}

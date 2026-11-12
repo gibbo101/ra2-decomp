@@ -17467,6 +17467,7 @@ address,name,result,size,source,symbol
 0x0076FF20,WorldDominationTour::Territory::FUN_0076FF20,MATCH,10,src/wdtterr.cpp,?FUN_0076FF20@Territory@WorldDominationTour@@QAEXPAVMSShapeAnim@@@Z
 0x0076FF30,WorldDominationTour::Territory::FUN_0076FF30,MATCH,11,src/wdtterr.cpp,?FUN_0076FF30@Territory@WorldDominationTour@@QAEPAVMSShapeAnim@@XZ
 0x00770020,??_GTerritory@WorldDominationTour@@UAEPAXI@Z,MATCH,54,src/wdtterr.cpp,??_GTerritory@WorldDominationTour@@UAEPAXI@Z
+0x0076FF40,WorldDominationTour::FUN_0076FF40,MATCH,211,src/wdtterr.cpp,?FUN_0076FF40@WorldDominationTour@@YI?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@PAV?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@H@Z
 0x00770060,_$E9,MATCH,23,src/wdtvoice.cpp,_$E9
 0x00770080,_$E19,MATCH,40,src/wdtvoice.cpp,_$E19
 0x007700B0,_$E22,MATCH,19,src/wdtvoice.cpp,_$E22

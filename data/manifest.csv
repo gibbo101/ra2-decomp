@@ -17714,6 +17714,7 @@ address,size,symbol,source,sha256
 0x0076FEB0,111,?FUN_0076FEB0@Territory@WorldDominationTour@@QAEX_NPAVSelection@2@@Z,src/wdtterr.cpp,08c7b42e0ba48583bc6432afec8089cb1cf80771f8280ebc450ea4467caf7c06
 0x0076FF20,10,?FUN_0076FF20@Territory@WorldDominationTour@@QAEXPAVMSShapeAnim@@@Z,src/wdtterr.cpp,a639a128feb1ae38b52f55276d7ca51324ce2668e53e1d2073c4282c568521e1
 0x0076FF30,11,?FUN_0076FF30@Territory@WorldDominationTour@@QAEPAVMSShapeAnim@@XZ,src/wdtterr.cpp,984a3f76830213afd520793f893be7708b095bc7b41ad44ccbc8b1f3d5f543ec
+0x0076FF40,211,?FUN_0076FF40@WorldDominationTour@@YI?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@PAV?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@H@Z,src/wdtterr.cpp,fad26fd9283bec479333e99adc7af41285b69044d108323bfd1e83bb8892dbe1
 0x00770020,54,??_GTerritory@WorldDominationTour@@UAEPAXI@Z,src/wdtterr.cpp,fd29f2147ed1a2d87d4aca615c301f161585498e3ae35b9a8f8b49f94cd24360
 0x00770060,23,_$E9,src/wdtvoice.cpp,98b4b2c6a04c0e49a52a0311469808cb4ec38cb661f4849293b1cea51e4a0e3f
 0x00770080,40,_$E19,src/wdtvoice.cpp,08cf18e73178e308e0f3ab7a2c43e280b69d2f909a7ad7e6778130faea71f2d5
