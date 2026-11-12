@@ -64,6 +64,134 @@ BitFont::~BitFont(void)
 	if (InternalPTR) InternalPTR->Destroy();
 }
 
+struct FontShortHeaderType {
+    int Magic;
+    int FontWidth;
+    int Stride;
+    int FontHeight;
+    int Lines;
+    int Count;
+    int SymbolDataSize;
+};
+
+struct FontRangeType {
+    unsigned short Symbol;
+    unsigned short Reserved;
+    int First;
+    int Last;
+};
+
+struct FontFileHeaderType {
+    int Magic;
+    int FontWidth;
+    int Stride;
+    int FontHeight;
+    int Lines;
+    int RangeCount;
+    int SymbolDataSize;
+    int RangeOffset;
+    int BitmapOffset;
+};
+
+// FUNCTION: GAMEMD 0x00433990
+BitFont::InternalData * BitFont::LoadInternalData(char const * filename)
+{
+    InternalData * data = 0;
+    FontShortHeaderType header;
+    CCFileClass * file = new CCFileClass(filename);
+    if (file != 0) {
+        if (file->Is_Available() && file->Open(FileClass::READ)) {
+            data = new InternalData;
+            if (data != 0) {
+                memset(data, 0, sizeof(InternalData));
+                data->SymbolTable =
+                    (unsigned short *)operator new(0x10000 * sizeof(unsigned short));
+                if (data->SymbolTable != 0) {
+                    memset(data->SymbolTable, 0, 0x10000 * sizeof(unsigned short));
+                    if (file->Read(&header, sizeof(header)) == sizeof(header)) {
+                        if (header.Magic == 0x546E6F66) {
+                            data->FontHeight = header.FontHeight;
+                            data->Lines = header.Lines;
+                            data->Stride = header.Stride;
+                            data->FontWidth = header.FontWidth;
+                            data->SymbolDataSize = header.SymbolDataSize;
+                            data->Count = header.Count;
+                            if (file->Read(data->SymbolTable,
+                                           0x10000 * sizeof(unsigned short))
+                                != 0x10000 * sizeof(unsigned short)) {
+                                goto failed;
+                            }
+                        } else if (header.Magic == 0x744E6F46) {
+                            file->Seek(0, SEEK_SET);
+                            FontFileHeaderType fileheader;
+                            if (file->Read(&fileheader, sizeof(fileheader))
+                                != sizeof(fileheader)) {
+                                goto failed;
+                            }
+                            data->FontHeight = fileheader.FontHeight;
+                            data->Lines = fileheader.Lines;
+                            data->Stride = fileheader.Stride;
+                            data->FontWidth = fileheader.FontWidth;
+                            data->SymbolDataSize = fileheader.SymbolDataSize;
+                            FontRangeType * ranges = (FontRangeType *)malloc(
+                                fileheader.RangeCount * sizeof(FontRangeType));
+                            if (ranges == 0) {
+                                goto failed;
+                            }
+                            file->Seek(fileheader.RangeOffset, SEEK_SET);
+                            if (file->Read(ranges,
+                                           fileheader.RangeCount * sizeof(FontRangeType))
+                                != fileheader.RangeCount * sizeof(FontRangeType)) {
+                                goto failed;
+                            }
+                            data->Count = 0;
+                            for (unsigned index = 0;
+                                 index < (unsigned)fileheader.RangeCount;
+                                 index++) {
+                                unsigned short symbol = ranges[index].Symbol;
+                                for (int character = ranges[index].First;
+                                     character <= ranges[index].Last;
+                                     character++, symbol++) {
+                                    data->SymbolTable[character] = symbol + 1;
+                                    data->Count++;
+                                }
+                            }
+                            free(ranges);
+                            file->Seek(fileheader.BitmapOffset, SEEK_SET);
+                        } else {
+                            goto failed;
+                        }
+                        int size = data->Count * data->SymbolDataSize;
+                        data->ValidSymbolCount = 0;
+                        for (int character = 0; character < 0x10000; character++) {
+                            if (data->SymbolTable[character]) {
+                                data->ValidSymbolCount++;
+                            }
+                        }
+                        data->Bitmaps = (char *)operator new(size);
+                        if (data->Bitmaps != 0
+                            && file->Read(data->Bitmaps, size) == size) {
+                            goto loaded;
+                        }
+                    }
+                }
+failed:
+                if (data->SymbolTable) {
+                    delete data->SymbolTable;
+                }
+                if (data->Bitmaps) {
+                    delete data->Bitmaps;
+                }
+                delete data;
+                data = 0;
+            }
+        }
+loaded:
+        delete file;
+    }
+    return data;
+}
+
 // FUNCTION: GAMEMD 0x00433C00
 void BitFont::InternalData::Destroy(void)
 {
