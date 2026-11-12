@@ -2351,7 +2351,7 @@ void BuildingClass::Assign_Rally_Point(Cell const & cell, bool play_eva)
 	}
 
 	Coord here = Position;
-	int zone = Map.Get_Cell_Zone(here.As_Cell(), mzone, underbridge);
+	int zone = Map.Get_Cell_Zone(&here.As_Cell(), mzone, underbridge);
 
 	nearbyloc = Map.Nearby_Location(cell, speed, zone, mzone, underbridge, Point2D(1, 1), false, false, false, true, Cell(0, 0), false, false);
 
@@ -2771,10 +2771,10 @@ void BuildingClass::Grand_Opening(bool captured)
 			UnitClass * unit = new UnitClass(Class->FreeUnit, House);
 			if (unit != NULL) {
 				if (!unit->Unlimbo(Coord(cell), DIR_W)) {
-					cell = Map.Nearby_Location(PositionCoord.As_Cell(), SPEED_WHEEL, Map.Get_Cell_Zone(PositionCoord.As_Cell(), unit->Class->MZone), unit->Class->MZone, false, Point2D(1,1), true, true, false, false);
+					cell = Map.Nearby_Location(PositionCoord.As_Cell(), SPEED_WHEEL, Map.Get_Cell_Zone(&PositionCoord.As_Cell(), unit->Class->MZone), unit->Class->MZone, false, Point2D(1,1), true, true, false, false);
 
 					if (cell == DAT_0089C818 || !unit->Unlimbo(Coord(cell), DIR_SW)) {
-						Cell newcell = Map.Nearby_Location(PositionCoord.As_Cell(), SPEED_WHEEL, Map.Get_Cell_Zone(PositionCoord.As_Cell(), unit->Class->MZone), unit->Class->MZone, false, Point2D(1,1), false, true, false, false);
+						Cell newcell = Map.Nearby_Location(PositionCoord.As_Cell(), SPEED_WHEEL, Map.Get_Cell_Zone(&PositionCoord.As_Cell(), unit->Class->MZone), unit->Class->MZone, false, Point2D(1,1), false, true, false, false);
 
 						if (newcell == DAT_0089C818 || !unit->Unlimbo(Coord(newcell), DIR_SW)) {
 							House->Refund_Money(unit->Class->GetRefund(House, true));

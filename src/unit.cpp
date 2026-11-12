@@ -785,10 +785,10 @@ RadioMessageType UnitClass::Receive_Message(RadioClass * from, RadioMessageType 
 			if (NavCom == NULL) {
 				Cell cell = Get_Cell();
 				CellClass * cellptr = &Map[cell];
-				int zone1 = Map.Get_Cell_Zone(LastAdjacencyCell, from->Techno_Type_Class()->MZone);
+				int zone1 = Map.Get_Cell_Zone(&LastAdjacencyCell, from->Techno_Type_Class()->MZone);
 				int zone2 = -1;
 				if (from != NULL && (from->AbstractFlags & 4)) {
-					zone2 = Map.Get_Cell_Zone(((FootClass *)from)->LastAdjacencyCell, from->Techno_Type_Class()->MZone);
+					zone2 = Map.Get_Cell_Zone(&((FootClass *)from)->LastAdjacencyCell, from->Techno_Type_Class()->MZone);
 				}
 				if (zone1 != zone2) {
 					Assign_Destination(from, true);
@@ -3810,8 +3810,8 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 			Cell tobridge = Map.Get_Zone_Connection_Destination(to, to);
 
 			if (AStarAttempt(&frombridge, &tobridge)) {
-				Cell fromspot = Map.Nearby_Location(frombridge, SPEED_TRACK, Map.Get_Cell_Zone(frombridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
-				Cell tospot = Map.Nearby_Location(tobridge, SPEED_TRACK, Map.Get_Cell_Zone(frombridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+				Cell fromspot = Map.Nearby_Location(frombridge, SPEED_TRACK, Map.Get_Cell_Zone(&frombridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+				Cell tospot = Map.Nearby_Location(tobridge, SPEED_TRACK, Map.Get_Cell_Zone(&frombridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
 
 				if (fromspot != CELL_NONE && tospot != CELL_NONE) {
 					RouteQueue.Add(&Map[fromspot]);
@@ -3829,7 +3829,7 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 						RouteQueue.Add(&Map[fromspot]);
 						dest = &Map[tospot];
 					} else {
-						Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
+						Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
 						if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
 							return(NULL);
 						}
@@ -3837,7 +3837,7 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 					}
 
 				} else {
-					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
+					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
 					if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
 						return(NULL);
 					}
@@ -3855,7 +3855,7 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 			Cell frombridge = Map.Get_Zone_Connection_Destination(from, to);
 
 			if (AStarAttempt(&frombridge, &to)) {
-				Cell fromspot = Map.Nearby_Location(frombridge, SPEED_TRACK, Map.Get_Cell_Zone(frombridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+				Cell fromspot = Map.Nearby_Location(frombridge, SPEED_TRACK, Map.Get_Cell_Zone(&frombridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
 
 				if (fromspot != CELL_NONE) {
 					RouteQueue.Add(&Map[fromspot]);
@@ -3866,7 +3866,7 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 					}
 
 				} else {
-					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
+					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
 					if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
 						return(NULL);
 					}
@@ -3881,8 +3881,8 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 			Cell frombridge = Map.Get_Zone_Connection_Destination(from, to);
 
 			if (AStarAttempt(&frombridge, &to)) {
-				Cell fromspot = Map.Nearby_Location(frombridge, SPEED_TRACK, Map.Get_Cell_Zone(frombridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
-				Cell tospot = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(to), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+				Cell fromspot = Map.Nearby_Location(frombridge, SPEED_TRACK, Map.Get_Cell_Zone(&frombridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+				Cell tospot = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&to), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
 
 				if (fromspot != CELL_NONE && tospot != CELL_NONE) {
 					RouteQueue.Add(&Map[fromspot]);
@@ -3899,7 +3899,7 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 						RouteQueue.Add(&Map[fromspot]);
 						dest = &Map[tospot];
 					} else {
-						Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
+						Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
 						if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
 							return(NULL);
 						}
@@ -3907,7 +3907,7 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 					}
 
 				} else {
-					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
+					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&from, MZONE_NORMAL, true), MZONE_NORMAL, true, Point2D(1, 1), false, true, false);
 					if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
 						return(NULL);
 					}
@@ -3924,7 +3924,7 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 			Cell tobridge = Map.Get_Zone_Connection_Destination(to, to);
 
 			if (AStarAttempt(&from, &tobridge)) {
-				Cell tospot = Map.Nearby_Location(tobridge, SPEED_TRACK, Map.Get_Cell_Zone(tobridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+				Cell tospot = Map.Nearby_Location(tobridge, SPEED_TRACK, Map.Get_Cell_Zone(&tobridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
 
 				if (tospot != CELL_NONE) {
 					RouteQueue.Add(&Map[tospot]);
@@ -3939,7 +3939,7 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 					if (tospot != CELL_NONE) {
 						dest = &Map[tospot];
 					} else {
-						Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, true, false);
+						Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&from), MZONE_NORMAL, false, Point2D(1, 1), false, true, false);
 						if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
 							return(NULL);
 						}
@@ -3952,7 +3952,7 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 			}
 
 		} else if (!canburrowto && AStarAttempt(&from, &to)) {
-			Cell tospot = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(to), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+			Cell tospot = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&to), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
 
 			if (tospot != CELL_NONE) {
 				RouteQueue.Add(&Map[tospot]);
@@ -3962,7 +3962,7 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 				if (tospot != CELL_NONE) {
 					dest = &Map[tospot];
 				} else {
-					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
+					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
 					if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
 						return(NULL);
 					}
@@ -3975,8 +3975,8 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 		Cell tobridge = Map.Get_Zone_Connection_Destination(to, to);
 
 		if (AStarAttempt(&from, &tobridge)) {
-			Cell fromspot = Map.Nearby_Location(from, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
-			Cell tospot = Map.Nearby_Location(tobridge, SPEED_TRACK, Map.Get_Cell_Zone(tobridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+			Cell fromspot = Map.Nearby_Location(from, SPEED_TRACK, Map.Get_Cell_Zone(&from), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+			Cell tospot = Map.Nearby_Location(tobridge, SPEED_TRACK, Map.Get_Cell_Zone(&tobridge), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
 
 			if (fromspot != CELL_NONE && tospot != CELL_NONE) {
 				RouteQueue.Add(&Map[fromspot]);
@@ -3993,7 +3993,7 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 					RouteQueue.Add(&Map[fromspot]);
 					dest = &Map[tospot];
 				} else {
-					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
+					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
 					if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
 						return(NULL);
 					}
@@ -4001,7 +4001,7 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 				}
 
 			} else {
-				Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
+				Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
 				if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
 					return(NULL);
 				}
@@ -4014,13 +4014,13 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 
 	} else if (canburrowto) {
 		if (AStarAttempt(&from, &to)) {
-			Cell fromspot = Map.Nearby_Location(from, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+			Cell fromspot = Map.Nearby_Location(from, SPEED_TRACK, Map.Get_Cell_Zone(&from), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
 
 			if (fromspot != CELL_NONE) {
 				RouteQueue.Add(&Map[fromspot]);
 
 			} else if (!Map.Is_Same_Cell_Zone(from, to, MZONE_NORMAL, false, false, false)) {
-				Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
+				Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
 				if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
 					return(NULL);
 				}
@@ -4030,8 +4030,8 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 
 	} else {
 		if (AStarAttempt(&from, &to)) {
-			Cell fromspot = Map.Nearby_Location(from, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
-			Cell tospot = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(to), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+			Cell fromspot = Map.Nearby_Location(from, SPEED_TRACK, Map.Get_Cell_Zone(&from), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
+			Cell tospot = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&to), MZONE_NORMAL, false, Point2D(1, 1), false, true, true);
 
 			if (fromspot != CELL_NONE && tospot != CELL_NONE) {
 				RouteQueue.Add(&Map[fromspot]);
@@ -4044,14 +4044,14 @@ AbstractClass * UnitClass::Plan_Route(AbstractClass * dest)
 						RouteQueue.Add(&Map[fromspot]);
 						dest = &Map[tospot];
 					} else {
-						Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
+						Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
 						if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
 							return(NULL);
 						}
 						dest = &Map[fallback];
 					}
 				} else {
-					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
+					Cell fallback = Map.Nearby_Location(to, SPEED_TRACK, Map.Get_Cell_Zone(&from), MZONE_NORMAL, false, Point2D(1, 1), false, false, false);
 					if (fallback == CELL_NONE || Get_Height_AGL() < 0) {
 						return(NULL);
 					}

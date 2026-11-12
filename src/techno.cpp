@@ -1594,7 +1594,7 @@ bool TechnoClass::CanAutoTargetObject(
 	Coord objectcoord = object->Center_Coord();
 	if (zone != -1
 		&& Map.Get_Cell_Zone(
-			objectcoord.As_Cell(), TClass->MZone, object->IsOnBridge)
+			&objectcoord.As_Cell(), TClass->MZone, object->IsOnBridge)
 			!= zone) return(false);
 
 	bool controlled_transport = false;
@@ -3968,7 +3968,7 @@ bool TechnoClass::TryAutoTargetObject(ThreatType method, int mask, Cell const & 
 
 	CellClass * cellptr = &Map[cell];
 
-	if (zone != -1 && Map.Get_Cell_Zone(cell, TClass->MZone, true) != zone) {
+	if (zone != -1 && Map.Get_Cell_Zone(&cell, TClass->MZone, true) != zone) {
 		return(false);
 	}
 
@@ -4083,7 +4083,7 @@ AbstractClass * TechnoClass::Greatest_Threat(ThreatType method, Coord const & co
 	}
 
 	if (!(method & THREAT_RANGE) && RTTI != RTTI_BUILDING && RTTI != RTTI_AIRCRAFT) {
-		zone = Map.Get_Cell_Zone(Center_Coord().As_Cell(), Techno_Type_Class()->MZone, true);
+		zone = Map.Get_Cell_Zone(&Center_Coord().As_Cell(), Techno_Type_Class()->MZone, true);
 	}
 
 	if (RTTI == RTTI_INFANTRY) {
@@ -4724,7 +4724,7 @@ Cell TechnoClass::Nearby_Location(TechnoClass const * techno) const
 		cell = Center_Coord().As_Cell();
 	}
 	MZoneType mzone = Techno_Type_Class()->MZone;
-	int zone = mzone != MZONE_NONE ? Map.Get_Cell_Zone(cell, mzone, IsOnBridge) : -1;
+	int zone = mzone != MZONE_NONE ? Map.Get_Cell_Zone(&cell, mzone, IsOnBridge) : -1;
 	return(Map.Nearby_Location(cell, speed, zone, mzone, IsOnBridge));
 }
 

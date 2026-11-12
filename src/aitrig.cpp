@@ -1074,19 +1074,19 @@ bool AITriggerTypeClass::FUN_0041FEE0(TeamTypeClass *team, HouseClass *house, Ho
 	Cell b = enemy->Get_Base_Center();
 	MZoneType mz = (MZoneType)team->field_EC;
 	if (team->field_F1) {
-		int zb = Map.Get_Cell_Zone(b, mz, false);
-		int za = Map.Get_Cell_Zone(a, mz, false);
+		int zb = Map.Get_Cell_Zone(&b, mz, false);
+		int za = Map.Get_Cell_Zone(&a, mz, false);
 		if (za != zb) {
-			zb = Map.Get_Cell_Zone(b, MZONE_AMPHIBIOUS, false);
-			za = Map.Get_Cell_Zone(a, MZONE_AMPHIBIOUS, false);
+			zb = Map.Get_Cell_Zone(&b, MZONE_AMPHIBIOUS, false);
+			za = Map.Get_Cell_Zone(&a, MZONE_AMPHIBIOUS, false);
 			if (za == zb) {
 				return(true);
 			}
 		}
 		return(false);
 	}
-	int zb = Map.Get_Cell_Zone(b, mz, false);
-	int za = Map.Get_Cell_Zone(a, mz, false);
+	int zb = Map.Get_Cell_Zone(&b, mz, false);
+	int za = Map.Get_Cell_Zone(&a, mz, false);
 	return((za == zb) ? true : false);
 }
 

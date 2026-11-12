@@ -135,7 +135,7 @@ void STDMETHODCALLTYPE TunnelLocomotionClass::Stop_Moving(void)
 			if ((Point2D(pos) - Point2D(DestinationCoord)).Length() > CELL_LEPTON_DIAG) {
 
 				Cell cell = LinkedTo->PositionCell;
-				Cell nearby = Map.Nearby_Location(cell, SPEED_TRACK, Map.Get_Cell_Zone(cell), MZONE_NORMAL, false, Point2D(1, 1), false, false, true);
+				Cell nearby = Map.Nearby_Location(cell, SPEED_TRACK, Map.Get_Cell_Zone(&cell), MZONE_NORMAL, false, Point2D(1, 1), false, false, true);
 
 				if (nearby == CELL_NONE) {
 					nearby = Map.Nearby_Location(cell, SPEED_TRACK, -1, MZONE_NORMAL, false, Point2D(1, 1), false, false, true);
@@ -315,7 +315,7 @@ void TunnelLocomotionClass::ProcessDigging(void)
 		if (LinkedTo->Can_Enter_Cell(&Map[Coord(LinkedTo->PositionCoord)]) &&
 		    Map.In_Local_Radar(Coord(LinkedTo->PositionCoord))) {
 			Cell cell = LinkedTo->PositionCell;
-			cell = Map.Nearby_Location(cell, SPEED_TRACK, Map.Get_Cell_Zone(cell), MZONE_NORMAL, false, Point2D(1, 1), false,
+			cell = Map.Nearby_Location(cell, SPEED_TRACK, Map.Get_Cell_Zone(&cell), MZONE_NORMAL, false, Point2D(1, 1), false,
 			                           false, true);
 			if (cell == CELL_NONE) {
 				cell = Map.Nearby_Location(LinkedTo->PositionCell, SPEED_TRACK, -1, MZONE_SUBTERANNEAN, false, Point2D(1, 1),

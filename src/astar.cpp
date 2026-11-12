@@ -1221,8 +1221,8 @@ PathStruct * AStarClass::Find_Path(Cell const & from, Cell const & to, FootClass
 	CellClass * from_ptr = &Map[from];
 	CellClass * to_ptr = &Map[to];
 
-	int from_zone = Map.Get_Cell_Zone(from, mzone != MZONE_NONE ? mzone : foot->TClass->MZone, foot->IsOnBridge);
-	int to_zone = Map.Get_Cell_Zone(to,  mzone != MZONE_NONE ? mzone : foot->TClass->MZone, Map[to].IsUnderBridge);
+	int from_zone = Map.Get_Cell_Zone(&from, mzone != MZONE_NONE ? mzone : foot->TClass->MZone, foot->IsOnBridge);
+	int to_zone = Map.Get_Cell_Zone(&to,  mzone != MZONE_NONE ? mzone : foot->TClass->MZone, Map[to].IsUnderBridge);
 
 	Cell hs_from = Map.Get_Bridge_Zone_Connection_Cell(from_ptr, foot->IsOnBridge);
 	Cell hs_to = Map.Get_Bridge_Zone_Connection_Cell(to_ptr, to_ptr->IsUnderBridge);

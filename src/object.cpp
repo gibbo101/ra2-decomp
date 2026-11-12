@@ -1003,7 +1003,7 @@ bool ObjectClass::Paradrop(Coord const & coord)
 				if (Is_Techno()) {
 					MZoneType mz = Techno_Type_Class()->MZone;
 					Cell cell = coord.As_Cell();
-					ok = cellptr->Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(cell, mz, IsOnBridge), mz, -1, true);
+					ok = cellptr->Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(&cell, mz, IsOnBridge), mz, -1, true);
 				}
 				if (ok && Unlimbo(coord, (Dir256)0x80)) {
 					Set_Coord(coord);

@@ -169,7 +169,7 @@ bool TeleportLocomotionClass::FUN_00718260(Coord to, bool flag)
 			} else if (mzone == MZONE_AMPHIBIOUS_DESTROYER) {
 				mzone = MZONE_AMPHIBIOUS;
 			}
-			Cell nearby = Map.Nearby_Location(Cell(to), SPEED_TRACK, Map.Get_Cell_Zone(cptr->CellID, mzone, bridge), mzone, Map[Cell(to)].IsUnderBridge, Point2D(1, 1), false, false, false, true, Cell(0, 0));
+			Cell nearby = Map.Nearby_Location(Cell(to), SPEED_TRACK, Map.Get_Cell_Zone(&cptr->CellID, mzone, bridge), mzone, Map[Cell(to)].IsUnderBridge, Point2D(1, 1), false, false, false, true, Cell(0, 0));
 			Coord offset = to - Map[to].Center_Coord();
 			LinkedTo->ChronoDestCoords = offset + Map[nearby].Center_Coord();
 			return(false);
@@ -310,7 +310,7 @@ bool TeleportLocomotionClass::FUN_00718B70(Coord const & coord)
 					Cell navcell = obj->Destination_Coord().As_Cell();
 					CellClass * cellptr = &Map[LinkedTo->Destination_Coord()];
 					bool onbridge = LinkedTo->Is_Moving_Onto_Bridge();
-					Cell nearcell = Map.Nearby_Location(navcell, LinkedTo->Techno_Type_Class()->Speed, Map.Get_Cell_Zone(cellptr->CellID, mzone, onbridge), mzone, Map[navcell].IsUnderBridge, Point2D(1, 1), false, true);
+					Cell nearcell = Map.Nearby_Location(navcell, LinkedTo->Techno_Type_Class()->Speed, Map.Get_Cell_Zone(&cellptr->CellID, mzone, onbridge), mzone, Map[navcell].IsUnderBridge, Point2D(1, 1), false, true);
 					if (nearcell != CELL_NONE) {
 						LastCoords = Map[nearcell].Closest_Free_Spot(Map[nearcell].Center_Coord(), any_spot, isbridge);
 					}
@@ -323,7 +323,7 @@ bool TeleportLocomotionClass::FUN_00718B70(Coord const & coord)
 			Cell cell = coord.As_Cell();
 			if (cell != CELL_NONE) {
 				if (LinkedTo->Can_Enter_Cell(&Map[cell])) {
-					int zone = Map.Get_Cell_Zone(cell, mzone, isbridge);
+					int zone = Map.Get_Cell_Zone(&cell, mzone, isbridge);
 					cell = Map.Nearby_Location(cell, LinkedTo->Techno_Type_Class()->Speed, zone, mzone, isbridge);
 				}
 			}

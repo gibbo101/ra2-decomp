@@ -454,7 +454,7 @@ void ParasiteClass::ExitUnit(void)
 		cell = Victim->Get_Cell();
 placed:
 		cellptr = &Map[cell];
-		if (!cellptr->Is_Clear_To_Move(Owner->Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(cell, Owner->Techno_Type_Class()->MZone, false), Owner->Techno_Type_Class()->MZone, -1, true)) {
+		if (!cellptr->Is_Clear_To_Move(Owner->Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(&cell, Owner->Techno_Type_Class()->MZone, false), Owner->Techno_Type_Class()->MZone, -1, true)) {
 			cell = Victim->Nearby_Location(NULL);
 		}
 		coord = COORD_NONE;

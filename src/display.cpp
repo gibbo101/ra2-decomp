@@ -970,7 +970,7 @@ Cell DisplayClass::Calculated_Cell(SourceType dir, Cell const & waypoint, Cell c
 		dir = SOURCE_NORTH;
 	}
 	if (zonecheck && trycell != CELL_NONE) {
-		zone = Map.Get_Cell_Zone(trycell, mzone, true);
+		zone = Map.Get_Cell_Zone(&trycell, mzone, true);
 	}
 
 	Point2D trypoint = Cell_To_LocalRect_Point(Point2D(trycell.X, trycell.Y));

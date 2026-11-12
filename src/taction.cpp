@@ -1024,13 +1024,13 @@ bool TActionClass::TAction_REDUCE_TIBERIUM(HouseClass * , ObjectClass * , Trigge
 bool TActionClass::TAction_REVEAL_ZONE(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	if (!PlayerPtr->IsVisionary) {
-		int zone = Map.Get_Cell_Zone(Scen->Get_Waypoint_Cell(Data.Value), MZONE_CRUSHER);
+		int zone = Map.Get_Cell_Zone(&Scen->Get_Waypoint_Cell(Data.Value), MZONE_CRUSHER);
 
 		Map.Reset_Local_Iterator();
 		CellClass *cellptr = Map.Local_Iterate();
 
 		while (cellptr) {
-			if (Map.Get_Cell_Zone(cellptr->CellID, MZONE_CRUSHER) == zone) {
+			if (Map.Get_Cell_Zone(&cellptr->CellID, MZONE_CRUSHER) == zone) {
 				int height = cellptr->Height/2;
 				Coord c1 = Coord(cellptr->CellID - Cell(height/2, height/2)) + Coord(0, 0, height * LEVEL_LEPTON_H);
 				Map.RevealArea2(&c1, 2, PlayerPtr, false, false, false, true, false);
