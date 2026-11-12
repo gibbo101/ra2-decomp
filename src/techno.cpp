@@ -4974,16 +4974,14 @@ void TechnoClass::FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned ch
 	}
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Target_Laser_Rect(start_point)), black);
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Target_Laser_Rect(end_point)), pixel);
-	Coord const & from = src;
-	Coord const & to = dst;
 	Coord current = src;
 	Coord next;
 	int step = 1;
 	int inverse = 63;
 	while (step <= 64) {
-		next.X = (from.X * inverse + to.X * step) / 64;
-		next.Y = (from.Y * inverse + to.Y * step) / 64;
-		next.Z = (from.Z * inverse + to.Z * step) / 64;
+		next.X = (src.X * inverse + dst.X * step) / 64;
+		next.Y = (src.Y * inverse + dst.Y * step) / 64;
+		next.Z = (src.Z * inverse + dst.Z * step) / 64;
 		TacticalMap->Coord_To_Pixel(current, start_point);
 		TacticalMap->Coord_To_Pixel(next, end_point);
 		start_point.Y += DSurface::ViewBounds.Y;
