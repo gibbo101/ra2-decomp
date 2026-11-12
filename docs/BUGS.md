@@ -48,6 +48,10 @@ effect, so it can be fixed in a separate build later.
   This affects the coordinate used to choose a scatter destination and is also
   present in the archived TibSun implementation.
 
+- **TechnoClass::Draw_Pips (0x00709A90).** The passenger-pip color buffer is
+  allocated with array new and released with scalar delete on both cleanup
+  paths. The recovered source preserves this allocation/deallocation mismatch.
+
 - **AnimClass::Draw_It (0x00422CA0).** The airstrike/laser-target and force-shield
   tint switches fall through from color mode 2 into mode 1 and then the default
   encoding. Mode 1 also falls through into the default. The resulting tint ORs
