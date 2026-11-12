@@ -13,6 +13,15 @@
 #include "surface.h"
 #include "_tactica.h"
 
+template<> TPoint3D<int> const & TPoint3D<int>::operator /= (int divisor)
+{
+	if (divisor != 0) {
+		TPoint2D<int>::operator /= (divisor);
+		Z /= divisor;
+	}
+	return(*this);
+}
+
 // SYNTHETIC: GAMEMD 0x00658E80 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x00658EB0 SYMBOL
@@ -159,34 +168,14 @@ void RadBeam::FUN_00659580(int value)
 	unknown_18 = value;
 }
 
-class Tactical
-{
-	public:
-		static int Z_Lepton_To_Pixel(int lepton);
-		bool Coord_To_Pixel(Coord const & coord, Point2D & pixel);
-};
-
-class DSurface : public Surface
-{
-	public:
-		static DSurface * Temp;
-		static Rect ViewBounds;
-};
+#include "tactical.h"
+#include "dsurface.h"
 
 extern bool __fastcall Line_In_Bounds(Point2D & start, Point2D & end, Rect const & bounds);
 extern const double DAT_007F04C0;
 extern const double DAT_007E2800;
 extern const double DAT_00839530;
 extern const double DAT_007E1738;
-
-struct Drawing {
-	static unsigned char RedShiftRight;
-	static unsigned char GreenShiftRight;
-	static unsigned char BlueShiftRight;
-	static int RedShiftLeft;
-	static int GreenShiftLeft;
-	static int BlueShiftLeft;
-};
 
 // FUNCTION: GAMEMD 0x00659590
 void RadBeam::FUN_00659590(Coord const & from, Coord const & to, short color)
@@ -203,18 +192,58 @@ void RadBeam::FUN_00659590(Coord const & from, Coord const & to, short color)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00659650
+bool RadBeam::FUN_00659650(void)
+{
+	if (!unknown_8) {
+		unknown_8 = 1;
+		FUN_006599C0();
+	}
+	if (unknown_58 && Owner != NULL) {
+		Coord target;
+		if (!(Owner->AbstractFlags & 2)) {
+			target = Owner->As_Coord();
+		} else {
+			target = ((ObjectClass *)Owner)->Target_Coord();
+		}
+		TargetLocation = target;
+		FUN_006599C0();
+	}
+	if (unknown_9) {
+		FUN_00659A30();
+		for (unknown_88 = 0; double(unknown_88) * unknown_18 < Length; unknown_88++) {
+			FUN_00659AC0();
+			unsigned short green = Tint.Get_Green();
+			short color = DSurface::Build_Hicolor_Pixel(Tint.Get_Red(), green, Tint.Get_Blue());
+			FUN_00659590(PointA, PointB, color);
+		}
+	}
+	if (unknown_58) {
+		unknown_7C += unknown_54;
+		if (unknown_7C <= 0 || unknown_7C >= Period) {
+			unknown_54 = -unknown_54;
+			if (unknown_7C < 0) {
+				unknown_7C = 0;
+			}
+		}
+		return(false);
+	}
+	return(++unknown_7C >= Period);
+}
+
 // FUNCTION: GAMEMD 0x006599C0
 void RadBeam::FUN_006599C0(void)
 {
 	Delta = TargetLocation - SourceLocation;
-	Length = fastmath::sqrt(Delta.X * Delta.X + Delta.Y * Delta.Y + Delta.Z * Delta.Z);
+	int squared_length = Delta.X * Delta.X + Delta.Y * Delta.Y + Delta.Z * Delta.Z;
+	Length = fastmath::sqrt(squared_length);
 }
 
 // FUNCTION: GAMEMD 0x00659A30
 void RadBeam::FUN_00659A30(void)
 {
 	unknown_8C = (int)(Length / unknown_18);
-	Coord step(Delta.X, Delta.Y, Delta.Z);
+	Point3D step(Delta.X, Delta.Y, Delta.Z);
 	step /= unknown_8C;
 	double phase = unknown_7C;
 	unknown_80 = phase / Period * Amplitude;
@@ -236,9 +265,9 @@ bool RadBeam::FUN_00659CA0(void)
 		if (unknown_8C > 0) {
 			do {
 				FUN_00659FF0();
-				short color = (Tint.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft)
-					| (Tint.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
-					| (Tint.Get_Green() >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft);
+				short color = (Tint.Get_Blue() >> (unsigned char)DSurface::BlueLeft << DSurface::BlueRight)
+					| (Tint.Get_Red() >> (unsigned char)DSurface::RedLeft << DSurface::RedRight)
+					| (Tint.Get_Green() >> (unsigned char)DSurface::GreenLeft << DSurface::GreenRight);
 				Coord * b = &PointB;
 				Coord * a = &PointA;
 				Point2D p1;
@@ -262,9 +291,10 @@ bool RadBeam::FUN_00659CA0(void)
 void RadBeam::FUN_00659E30(void)
 {
 	Delta = TargetLocation - SourceLocation;
-	Length = fastmath::sqrt(Delta.X * Delta.X + Delta.Y * Delta.Y + Delta.Z * Delta.Z);
+	int squared_length = Delta.X * Delta.X + Delta.Y * Delta.Y + Delta.Z * Delta.Z;
+	Length = fastmath::sqrt(squared_length);
 	unknown_8C = (int)(Length / unknown_18);
-	Coord step(Delta.X, Delta.Y, Delta.Z);
+	Point3D step(Delta.X, Delta.Y, Delta.Z);
 	step /= unknown_8C;
 	AnotherLocation = step;
 }
@@ -281,9 +311,10 @@ void RadBeam::FUN_00659EE0(void)
 	}
 	unknown_80 = phase / (double)period * Amplitude;
 	Delta = Delta + AnotherLocation * (int)(unknown_50 * unknown_7C * unknown_48);
-	Length = fastmath::sqrt(Delta.X * Delta.X + Delta.Y * Delta.Y + Delta.Z * Delta.Z);
+	int squared_length = Delta.X * Delta.X + Delta.Y * Delta.Y + Delta.Z * Delta.Z;
+	Length = fastmath::sqrt(squared_length);
 	unknown_8C = (int)(Length / unknown_18);
-	Coord step(Delta.X, Delta.Y, Delta.Z);
+	Point3D step(Delta.X, Delta.Y, Delta.Z);
 	step /= unknown_8C;
 	AndAnotherLocation = step;
 }

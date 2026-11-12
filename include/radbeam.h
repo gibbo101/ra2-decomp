@@ -57,7 +57,7 @@ class RadBeam
 		int unknown_50;
 		int unknown_54;
 		bool unknown_58;
-		Coord Delta;
+		Point3D Delta;
 		double Length;
 		Coord AnotherLocation;
 		int unknown_7C;
