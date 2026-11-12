@@ -379,7 +379,7 @@ class TechnoClass : public RadioClass
 		virtual Coord Turret_Coord(int which=0) const;
 		void Create_Planning_Token(void);
 		static void __stdcall FUN_00705860(Coord start, Coord end);
-		static void __stdcall FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned char shadow);
+		void FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned char shadow);
 		void Draw_A_Link_To(Coord src, Coord dst, RGBClass color);
 		void FUN_00705D10(PlanningTokenClass * token);
 		PlanningTokenClass * FUN_00705D20(void);
