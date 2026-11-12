@@ -47,3 +47,7 @@ effect, so it can be fixed in a separate build later.
   ground height selects the bridge height instead of adding it conditionally.
   This affects the coordinate used to choose a scatter destination and is also
   present in the archived TibSun implementation.
+
+- **TechnoClass::Draw_Pips (0x00709A90).** The passenger-pip color buffer is
+  allocated with array new and released with scalar delete on both cleanup
+  paths. The recovered source preserves this allocation/deallocation mismatch.
