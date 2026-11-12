@@ -163,8 +163,7 @@ void LaserDrawClass::Draw_It(void)
 		};
 
 		if (!BlinkState) {
-			DirType dir = Direction(Start, End);
-			FacingType facing = dir.As_Facing();
+			FacingType facing = Direction(Start, End).As_Facing();
 
 			Point2D start_pixel;
 			TacticalMap->Coord_To_Pixel(Start, start_pixel);
