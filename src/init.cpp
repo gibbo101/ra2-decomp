@@ -1966,6 +1966,182 @@ extern MFCD * DAT_00884E38;
 extern MFCD * DAT_00884E3C;
 extern MFCD * DAT_00884E40;
 extern MFCD * DAT_00884E44;
+extern MFCD * DAT_00884E18;
+extern MFCD * DAT_00884E14;
+extern MFCD * DAT_00884E28;
+extern MFCD * DAT_00884E24;
+extern MFCD * DAT_00884E60;
+extern MFCD * DAT_00884E64;
+extern MFCD * DAT_00884DD8;
+extern MFCD * DAT_0087E738;
+extern MFCD * DAT_00884E2C;
+extern DynamicVectorClass<MFCD *> DAT_00884DA8;
+extern DynamicVectorClass<MFCD *> DAT_00884DE0;
+
+// FUNCTION: GAMEMD 0x00530460
+bool Init_Secondary_Mixfiles(void)
+{
+	if (CCFileClass("CONQMD.MIX").Is_Available()) {
+		DAT_00884E38 = new MFCD("CONQMD.MIX", &FastKey);
+	}
+	DebugStringNoPrefix(" CONQMD.MIX");
+	if (DAT_00884E38 == NULL) return false;
+
+	if (DAT_00884E18 != NULL) {
+		delete DAT_00884E18;
+	}
+	DAT_00884E18 = new MFCD("GENERMD.MIX", &FastKey);
+	DAT_00884E18->Cache();
+	if (DAT_00884E14 != NULL) {
+		delete DAT_00884E14;
+	}
+	DAT_00884E14 = new MFCD("GENERIC.MIX", &FastKey);
+	DAT_00884E14->Cache();
+	if (DAT_00884E28 != NULL) {
+		delete DAT_00884E28;
+	}
+	DAT_00884E28 = new MFCD("ISOGENMD.MIX", &FastKey);
+	if (DAT_00884E24 != NULL) {
+		delete DAT_00884E24;
+	}
+	DAT_00884E24 = new MFCD("ISOGEN.MIX", &FastKey);
+
+	if (CCFileClass("CONQUER.MIX").Is_Available()) {
+		DAT_00884E3C = new MFCD("CONQUER.MIX", &FastKey);
+	}
+	DebugStringNoPrefix(" CONQUER.MIX");
+	if (DAT_00884E3C == NULL) return false;
+	if (CCFileClass("CAMEOMD.MIX").Is_Available()) {
+		DAT_00884E40 = new MFCD("CAMEOMD.MIX", &FastKey);
+	}
+	DebugStringNoPrefix(" CAMEOMD.MIX");
+	if (DAT_00884E40 == NULL) return false;
+	if (CCFileClass("CAMEO.MIX").Is_Available()) {
+		DAT_00884E44 = new MFCD("CAMEO.MIX", &FastKey);
+	}
+	DebugStringNoPrefix(" CAMEO.MIX");
+	if (DAT_00884E44 == NULL) return false;
+
+	int cd = CD::Get_Current_Disk(60) + 1;
+	char name[260];
+	if (DAT_0089E3A0 == true) {
+		strcpy(name, "MAPSMD*.MIX");
+		if (CDFileClass::Find_First_File(name) == true) {
+			DebugStringNoPrefix(" %s", name);
+			DAT_00884E60 = new MFCD(name, &FastKey);
+			while (CDFileClass::Find_Next_File(name) == true) {
+				DebugStringNoPrefix(" %s", name);
+				MFCD * mix = new MFCD(name, &FastKey);
+				if (mix != NULL) {
+					DAT_00884DA8.Add(mix);
+				}
+			}
+			CDFileClass::Find_Close();
+		} else {
+			strcpy(name, "MAPS*.MIX");
+			if (CDFileClass::Find_First_File(name) == true) {
+				DebugStringNoPrefix(" %s", name);
+				DAT_00884E64 = new MFCD(name, &FastKey);
+				while (CDFileClass::Find_Next_File(name) == true) {
+					DebugStringNoPrefix(" %s", name);
+					MFCD * mix = new MFCD(name, &FastKey);
+					if (mix != NULL) {
+						DAT_00884DA8.Add(mix);
+					}
+				}
+				CDFileClass::Find_Close();
+			}
+		}
+	} else {
+		sprintf(name, "MAPSMD%02d.MIX", cd);
+		if (CCFileClass(name).Is_Available()) {
+			DAT_00884E60 = new MFCD(name, &FastKey);
+		}
+		DebugStringNoPrefix(" %s", name);
+		sprintf(name, "MAPS%02d.MIX", cd);
+		if (CCFileClass(name).Is_Available()) {
+			DAT_00884E64 = new MFCD(name, &FastKey);
+		}
+		DebugStringNoPrefix(" %s", name);
+	}
+	if (DAT_00884E60 == NULL) return false;
+
+	if (CCFileClass("MULTIMD.MIX").Is_Available()) {
+		DAT_00884DD8 = new MFCD("MULTIMD.MIX", &FastKey);
+	}
+	DebugStringNoPrefix(" MULTIMD.MIX");
+	if (DAT_00884DD8 == NULL) return false;
+
+	if (CCFileClass("THEMEMD.MIX").Is_Available()) {
+		FUN_004068E0("     Initializing ThemesMD.MIX\n");
+		DAT_0087E738 = new MFCD("THEMEMD.MIX", &FastKey);
+	} else if (CCFileClass("THEME.MIX").Is_Available()) {
+		FUN_004068E0("     Initializing Themes.MIX\n");
+		DAT_0087E738 = new MFCD("THEME.MIX", &FastKey);
+	}
+	DebugStringNoPrefix(" THEME.MIX");
+	ScoresPresent = true;
+	Theme.Scan();
+
+	if (DAT_0089E3A0 == true) {
+		strcpy(name, "MOVMD*.MIX");
+		if (RawFileClass("MOVIES01.MIX").Is_Available()) {
+			strcpy(name, "MOVIES*.MIX");
+		}
+		if (RawFileClass("MIXFILES\\MOVIES01.MIX").Is_Available()) {
+			strcpy(name, "MIXFILES\\MOVIES*.MIX");
+		}
+		if (RawFileClass("MOVMD01.MIX").Is_Available()) {
+			strcpy(name, "MOVMD*.MIX");
+		}
+		if (RawFileClass("MIXFILES\\MOVMD01.MIX").Is_Available()) {
+			strcpy(name, "MIXFILES\\MOVMD*.MIX");
+		}
+		if (RawFileClass("MOVMD03.MIX").Is_Available()) {
+			strcpy(name, "MOVMD*.MIX");
+		}
+		if (RawFileClass("MIXFILES\\MOVMD03.MIX").Is_Available()) {
+			strcpy(name, "MIXFILES\\MOVMD*.MIX");
+		}
+		if (CDFileClass::Find_First_File(name) == true) {
+			DebugStringNoPrefix(" %s", name);
+			DAT_00884E2C = new MFCD(name, &FastKey);
+			while (CDFileClass::Find_Next_File(name) == true) {
+				DebugStringNoPrefix(" %s", name);
+				MFCD * mix = new MFCD(name, &FastKey);
+				if (mix != NULL) {
+					DAT_00884DE0.Add(mix);
+				}
+			}
+			CDFileClass::Find_Close();
+		} else {
+			strcpy(name, "MOVIES*.MIX");
+			DebugStringNoPrefix(" %s", name);
+			DAT_00884E2C = new MFCD(name, &FastKey);
+			while (CDFileClass::Find_Next_File(name) == true) {
+				DebugStringNoPrefix(" %s", name);
+				MFCD * mix = new MFCD(name, &FastKey);
+				if (mix != NULL) {
+					DAT_00884DE0.Add(mix);
+				}
+			}
+			CDFileClass::Find_Close();
+		}
+	} else {
+		sprintf(name, "MOVMD%02d.MIX", cd);
+		if (CCFileClass(name).Is_Available()) {
+			DAT_00884E2C = new MFCD(name, &FastKey);
+		} else {
+			sprintf(name, "MOVIES%02d.MIX", cd);
+			if (CCFileClass(name).Is_Available()) {
+				DAT_00884E2C = new MFCD(name, &FastKey);
+			}
+		}
+		DebugStringNoPrefix(" %s", name);
+	}
+	return DAT_00884E2C ? true : false;
+}
+
 void FUN_005FF420(void);
 void FUN_0053D330(void);
 
