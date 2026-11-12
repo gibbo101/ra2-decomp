@@ -47,3 +47,9 @@ effect, so it can be fixed in a separate build later.
   ground height selects the bridge height instead of adding it conditionally.
   This affects the coordinate used to choose a scatter destination and is also
   present in the archived TibSun implementation.
+
+- **AnimClass::Draw_It (0x00422CA0).** The airstrike/laser-target and force-shield
+  tint switches fall through from color mode 2 into mode 1 and then the default
+  encoding. Mode 1 also falls through into the default. The resulting tint ORs
+  multiple packed-color encodings together; the recovered source preserves this
+  cumulative packing.
