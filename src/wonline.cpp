@@ -333,12 +333,6 @@ FUN_007F7624_Class::~FUN_007F7624_Class(void)
 
 bool FUN_0077F900(void);
 
-// FUNCTION: GAMEMD 0x0077D200
-void FUN_0077D200(void)
-{
-	FUN_0077F900();
-}
-
 // FUNCTION: GAMEMD 0x0077D210
 void __fastcall FUN_0077D210(char * text)
 {
@@ -1224,22 +1218,7 @@ bool __fastcall FUN_0077F520(bool wait)
 // FUNCTION: GAMEMD 0x0077F710
 bool __fastcall FUN_0077F710(unsigned char ping, bool wait)
 {
-	if (DAT_00B76520.length() != 0) {
-		if (!FUN_0077F120()) {
-			return false;
-		}
-	}
-	for (int i = 0; i < 18; i++) {
-		ResetEvent(DAT_00B73684[i]);
-	}
-	if (!FUN_0077EF90(0x29, ping)) {
-		SetEvent(DAT_00B73684[0]);
-		return false;
-	}
-	if (wait) {
-		return FUN_0077F120();
-	}
-	return true;
+	return FUN_0077F320(0x29, ping, wait);
 }
 
 extern int DAT_00B7646C;
@@ -3197,7 +3176,14 @@ class SimpleWonlineDialogControl : public OwnerDraw::SimpleDialogControl
 {
 	public:
 		virtual ~SimpleWonlineDialogControl(void) {}
+		virtual bool F4(void);
 };
+
+// FUNCTION: GAMEMD 0x0077D200
+bool SimpleWonlineDialogControl::F4(void)
+{
+	return FUN_0077F900();
+}
 
 static inline void Focus_Chat_Input_After(unsigned int event)
 {
@@ -8685,16 +8671,11 @@ void __fastcall FUN_0079CBA0(Wstring * name)
 
 extern int DAT_00B778C8;
 
-static inline bool Request_Buddy_Pages(void)
-{
-	return FUN_0077F320(0x29, 1, false);
-}
-
 // FUNCTION: GAMEMD 0x0079CE70
 void FUN_0079CE70(void)
 {
 	DAT_00B778C8 = time(NULL);
-	if (!Request_Buddy_Pages()) {
+	if (!FUN_0077F710(1, false)) {
 		SetEvent(DAT_00B73684[5]);
 		return;
 	}
