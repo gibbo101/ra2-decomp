@@ -52,6 +52,11 @@
 #include "coord.h"
 #include <math.h>
 #include "geometry.h"
+#include <d3d.h>
+#include "bound.h"
+#include "zbuffer.h"
+#include "dsurface.h"
+#include "building.h"
 
 // SYNTHETIC: GAMEMD 0x00421C90 SYMBOL
 // _$E2
@@ -72,6 +77,25 @@ class AudioEvent;
 AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 bool __fastcall FUN_0043B4C0(HouseClass * house, CellClass * cell);
 SideType FUN_006A46D0(char const * name);
+
+namespace FPSCounter { extern unsigned CurrentFrameRate; }
+namespace Detail { unsigned GetMinFrameRate(void); }
+struct Triangle3D {
+	void Set_Color(int a, int b, int c);
+	void Set_Vertex(int index, float x, float y, float z, float u, float v);
+	D3DTLVERTEX Vertex[3];
+};
+class Texture3DCache {
+public:
+	Texture3DCache(void);
+	void FUN_004A3640(void);
+	void FUN_004A3650(void);
+	HRESULT Flush(LPDIRECTDRAWSURFACE target);
+	int Add(Triangle3D const & triangle);
+	Triangle3D List[1024];
+	int Count;
+};
+extern Texture3DCache * DAT_008A0E10;
 
 // SYNTHETIC: GAMEMD 0x00421CB0 SYMBOL
 // _$E106
@@ -413,7 +437,7 @@ Cell const * AnimClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x00423920 SYMBOL
-// _$E147
+// _$E173
 
 // FUNCTION: GAMEMD 0x00423930
 BounceResultType AnimClass::Bounce_AI(void)
@@ -1404,30 +1428,6 @@ bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
 // ?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
 template class CDTimerClass<FrameTimerClass>;
 
-#include <d3d.h>
-#include "bound.h"
-#include "zbuffer.h"
-#include "dsurface.h"
-#include "building.h"
-namespace FPSCounter { extern unsigned CurrentFrameRate; }
-namespace Detail { unsigned GetMinFrameRate(void); }
-struct Triangle3D {
-	void Set_Color(int a, int b, int c);
-	void Set_Vertex(int index, float x, float y, float z, float u, float v);
-	D3DTLVERTEX Vertex[3];
-};
-class Texture3DCache {
-public:
-	Texture3DCache(void);
-	void FUN_004A3640(void);
-	void FUN_004A3650(void);
-	HRESULT Flush(LPDIRECTDRAWSURFACE target);
-	int Add(Triangle3D const & triangle);
-	Triangle3D List[1024];
-	int Count;
-};
-extern Texture3DCache * DAT_008A0E10;
-
 // FUNCTION: GAMEMD 0x00422CA0
 void AnimClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 {
@@ -1529,7 +1529,7 @@ void AnimClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 			ConvertClass * convert;
 
 			if (Type->IsVeins) {
-				convert = (ConvertClass *)ColorSchemes[PlayerPtr->Scheme]->Converter;
+				convert = ColorSchemes[PlayerPtr->Scheme]->Converter;
 				if (!Type->UseNormalLight) {
 					brightness = Map[Render_Coord()].TileBrightness;
 				}
@@ -1538,19 +1538,19 @@ void AnimClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 				if (cellptr->Drawer == NULL) {
 					cellptr->Init_Drawer(0, 0x10000, 0, 1000, 1000, 1000);
 				}
-				convert = (ConvertClass *)cellptr->Drawer;
+				convert = cellptr->Drawer;
 				if (!Type->UseNormalLight) {
 					brightness = cellptr->TileBrightness;
 				}
 			} else if (LightConvert != NULL) {
-				convert = (ConvertClass *)LightConvert;
+				convert = LightConvert;
 				if (!Type->UseNormalLight) {
 					brightness = TintColor;
 				}
 			} else {
 				convert = FileSystem::ANIM_PAL;
 				if (Type->AltPalette) {
-					convert = (ConvertClass *)ColorSchemes[0]->Converter;
+					convert = ColorSchemes[0]->Converter;
 				}
 				if (!Type->UseNormalLight) {
 					brightness = Map[Cell(Render_Coord())].Brightness;
