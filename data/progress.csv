@@ -896,7 +896,7 @@ address,name,result,size,source,symbol
 0x00422C70,AnimClass::Render,MATCH,38,src/anim.cpp,?Render@AnimClass@@UBE_NAAV?$TRect@H@@_N1@Z
 0x004238B0,AnimClass::Mark,MATCH,18,src/anim.cpp,?Mark@AnimClass@@UAE_NW4MarkType@@@Z
 0x004238D0,AnimClass::Occupy_List,MATCH,69,src/anim.cpp,?Occupy_List@AnimClass@@UBEPBVCell@@_N@Z
-0x00423920,_$E146,MATCH,1,src/anim.cpp,_$E146
+0x00423920,_$E173,MATCH,1,src/anim.cpp,_$E173
 0x00423930,AnimClass::Bounce_AI,MATCH,392,src/anim.cpp,?Bounce_AI@AnimClass@@UAE?AW4BounceResultType@@XZ
 0x00423AC0,AnimClass::AI,MATCH,4234,src/anim.cpp,?AI@AnimClass@@UAEXXZ
 0x00424B50,AnimClass::SetOwnerObject,MATCH,315,src/anim.cpp,?SetOwnerObject@AnimClass@@QAEXPAVObjectClass@@@Z
@@ -952,6 +952,7 @@ address,name,result,size,source,symbol
 0x004265B0,DirType::Direction,MATCH,99,src/anim.cpp,?Direction@DirType@@QAEAAV1@ABVCoord@@0@Z
 0x00426620,??0?$CDTimerClass@VFrameTimerClass@@@@QAE@ABVNoInitClass@@@Z,MATCH,5,src/anim.cpp,??0?$CDTimerClass@VFrameTimerClass@@@@QAE@ABVNoInitClass@@@Z
 0x00426630,?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ,MATCH,28,src/anim.cpp,?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
+0x00422CA0,AnimClass::Draw_It,MATCH,3088,src/anim.cpp,?Draw_It@AnimClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x00426650,_$E2,MATCH,23,src/animfile.cpp,_$E2
 0x00426670,AnimFile::AnimFile,MATCH,89,src/animfile.cpp,??0AnimFile@@QAE@XZ
 0x004266D0,AnimFile::~AnimFile,MATCH,107,src/animfile.cpp,??1AnimFile@@UAE@XZ
@@ -10647,6 +10648,7 @@ address,name,result,size,source,symbol
 0x00625830,?shrink@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEXXZ,MATCH,174,src/ownrdraw.cpp,?shrink@?$Dictionary@PAUHWND__@@UWinData@OwnerDraw@@@@AAEXXZ
 0x006258E0,?shrink@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEXXZ,MATCH,168,src/ownrdraw.cpp,?shrink@?$Dictionary@UCtrlMsgData@OwnerDraw@@_N@@AAEXXZ
 0x00625990,?growVector@?$ArrayList@PAUHWND__@@@@AAEDXZ,MATCH,143,src/ownrdraw.cpp,?growVector@?$ArrayList@PAUHWND__@@@@AAEDXZ
+0x00625560,??_G?$DNode@PAUHWND__@@UWinData@OwnerDraw@@@@QAEPAXI@Z,MATCH,138,src/ownrdraw.cpp,??_G?$DNode@PAUHWND__@@UWinData@OwnerDraw@@@@QAEPAXI@Z
 0x00625AB0,PacketClass::~PacketClass,MATCH,41,src/packet.cpp,??1PacketClass@@QAE@XZ
 0x00625AE0,PacketClass::Add_Field,MATCH,16,src/packet.cpp,?Add_Field@PacketClass@@QAEXPAVFieldClass@@@Z
 0x00625AF0,PacketClass::PacketClass,MATCH,270,src/packet.cpp,??0PacketClass@@QAE@PAD@Z
@@ -14874,6 +14876,7 @@ address,name,result,size,source,symbol
 0x00704000,TechnoClass::Get_Z_Fudge_Tunnel,MATCH,575,src/techno.cpp,?Get_Z_Fudge_Tunnel@TechnoClass@@QBEHXZ
 0x00704240,TechnoClass::Get_Z_Fudge_Cliff,MATCH,259,src/techno.cpp,?Get_Z_Fudge_Cliff@TechnoClass@@QBEHXZ
 0x00705CA0,TechnoClass::GetAttackCoordinates,MATCH,105,src/techno.cpp,?GetAttackCoordinates@TechnoClass@@UBE?AVCoord@@XZ
+0x00705270,TechnoClass::FUN_00705270,MATCH,1508,src/techno.cpp,?FUN_00705270@TechnoClass@@QAEXVCoord@@0VRGBClass@@E@Z
 0x00705D10,TechnoClass::FUN_00705D10,MATCH,13,src/techno.cpp,?FUN_00705D10@TechnoClass@@QAEXPAVPlanningTokenClass@@@Z
 0x00705D20,TechnoClass::FUN_00705D20,MATCH,7,src/techno.cpp,?FUN_00705D20@TechnoClass@@QAEPAVPlanningTokenClass@@XZ
 0x00705D30,TechnoClass::FUN_00705D30,MATCH,24,src/techno.cpp,?FUN_00705D30@TechnoClass@@QAE_NXZ
