@@ -8647,3 +8647,7 @@ OwnerDraw::ColumnData::ColumnData(ColumnData & that)
 // TEMPLATE: GAMEMD 0x00625990
 // ?growVector@?$ArrayList@PAUHWND__@@@@AAEDXZ
 template class ArrayList<HWND>;
+
+// SYNTHETIC: GAMEMD 0x00625560
+// ??_G?$DNode@PAUHWND__@@UWinData@OwnerDraw@@@@QAEPAXI@Z
+template class DNode<HWND, OwnerDraw::WinData>;

@@ -568,3 +568,4 @@ address,name,symbol,evidence
 0x00886B88,NonCriticalRandomNumber,?NonCriticalRandomNumber@@3VRandom2Class@@A,YRpp Randomizer::Global; independently matched Game::InitRandom 0x0052FC20 seeds this global and CellClass::Clear_Icon 0x004814F0 draws from it.
 0x00886980,FastKey,?FastKey@@3VPKey@@A,Independent matched _palette.cpp PKey initializer _$E35 at 0x0040D9C0 constructs Modulus at 0x00886980 and Exponent at +0x100 and initializes BitPrecision at +0x200
 0x00A8EC74,ScoresPresent,?ScoresPresent@@3_NA,Independent matched ThemeClass::Scan at 0x007207F0 begins by reading this bool; native source uses ScoresPresent
+0x00625560,"DNode<HWND, OwnerDraw::WinData>::scalar deleting destructor",??_G?$DNode@PAUHWND__@@UWinData@OwnerDraw@@@@QAEPAXI@Z,Matched 138-byte compiler-generated deleting destructor from explicit DNode instantiation.
