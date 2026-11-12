@@ -220,6 +220,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   them members of one local struct.
 - In a frame over 128 bytes, VC6 orders tied slots by an interleave of the whole set of
   frame symbols: adding or removing any one reshuffles the rest (0x0077E900, 0x00780E30).
+- A permuter match through a no-op round-trip (`int same0 = x; x = same0;`) can work only
+  by adding a local that changes the large-frame interleave (Init_Game). Look for the real
+  local the original had before reworking the loop or expression it sits on.
 - A buffer declared inside the loop body gives `push ecx`; one at function level does not.
 - An inline helper's x87 shape can follow how its arguments are evaluated: naming the
   bounds as locals, upper first, gave Seed_River's `fst; fadd` (0x0059D510).
@@ -246,9 +249,12 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A TibSun out-of-line function may be inline in YR, or the reverse (a function placed
   after its neighbours). If ours calls what the original inlines, define it `inline` first.
 - What the original calls (constructors, `Add`) stays a call when declared without a body.
-- A file-local helper is source only when it is genuine factoring (used wherever that code
-  appears) or mirrors a TibSun or YRpp helper. A single-use wrapper that exists to shift
-  inlining is forcing, and its match is banked, not landed.
+- A file-local helper is source only when it is genuine factoring, shared by more than one
+  function, or mirrors a TibSun or YRpp helper. Single-use helpers, forwarders and dummy
+  locals that exist to shift inlining or allocation are forcing: their match is banked, not
+  landed.
+- Before casting operands to steer a hand-written expression, try the header's own inline
+  for it: RadBeam's tint matched as `DSurface::Build_Hicolor_Pixel(Tint)` with no casts.
 - A nested call left out of line under an inlined wrapper (`Cell_Terrain()` around
   `Cell_Find_Object`) is the inline budget: call the wrapper, as TibSun does.
 - A callee the original inlines that lives in the same module is defined in that file
@@ -477,6 +483,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - `volatile` is allowed on a field or global the exe re-reads or stores the way only `volatile`
   makes VC6 do (the mouse thread's flags, `SoundNode::Retired`), when every function that
   touches it still matches; never on a local (CLAUDE.md lists the exceptions).
+- With a `volatile` counter, `return ++X;` re-reads X. Where the exe doesn't, write
+  `int count = X + 1; X = count; return count;` (the speech-hold counters).
 - Westwood's inline asm from the archive stays where Westwood put it, unchanged (blitblit.h,
   xsurface.cpp's surface_quick_fill); check.py refuses any asm block not found verbatim there.
 - The message list is `Session.Messages`, not a global; Add_Message takes YR's 7 arguments.
