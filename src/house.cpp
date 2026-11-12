@@ -3615,7 +3615,7 @@ Cell HouseClass::Where_To_Go(FootClass const * object) const
 
 	Cell cell = Random_Cell_In_Zone(zone);
 
-	return(Map.Nearby_Location(cell, SPEED_TRACK, Map.Get_Cell_Zone(object->PositionCoord.As_Cell())));
+	return(Map.Nearby_Location(cell, SPEED_TRACK, Map.Get_Cell_Zone(&object->PositionCoord.As_Cell())));
 }
 
 // FUNCTION: GAMEMD 0x00500300

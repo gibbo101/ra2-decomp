@@ -1770,6 +1770,34 @@ int SubzoneHash(unsigned int const & key)
 	return(key & 0xF | ((key >> 12) & 0xF));
 }
 
+// FUNCTION: GAMEMD 0x0056D230
+int MapClass::Get_Cell_Zone(Cell const * cell, MZoneType mzone, bool bridge)
+{
+	if (bridge && Map[*cell].IsUnderBridge) {
+		int index = Zone_Connection_Index(*cell, 1, 0);
+		if (index != -1) {
+			ZoneConnectionClass & connection = ZoneConnections[index];
+			if (connection.IsPassable) {
+				cell = &connection.From;
+			} else {
+				CellClass * cptr = &Map[*cell];
+				FacingType facing = connection.From.X == connection.To.X ? FACING_S : FACING_E;
+				while (cptr->IsUnderBridge) {
+					cptr = &cptr->Adjacent_Cell(facing);
+				}
+				if ((cptr->Is_Tile_Bridge() || cptr->Is_Tile_Train_Bridge()) && cptr->Land_Type() != LAND_ROCK) {
+					cell = &connection.To;
+				} else {
+					cell = &connection.From;
+				}
+			}
+		} else {
+			return(-1);
+		}
+	}
+	return(Zones[mzone][Get_Cell_Zone_ID(*cell)]);
+}
+
 // FUNCTION: GAMEMD 0x0056D3A0
 int MapClass::Get_Cell_Zone_ID(Cell const & cell)
 {
@@ -7303,7 +7331,7 @@ int MapClass::Find_Largest_Water_Zone(int * zone)
 	CellClass * cptr = Map.Local_Iterate();
 	while (cptr != NULL) {
 		if (cptr->Passability == PASSABLE_WATER) {
-			int id = Get_Cell_Zone(cptr->CellID, MZONE_WATER, false);
+			int id = Get_Cell_Zone(&cptr->CellID, MZONE_WATER, false);
 			if (id >= 0) {
 				if (id >= counts.Count()) {
 					for (int n = id - counts.Count() + 1; n > 0; n--) {
@@ -7339,23 +7367,23 @@ void MapClass::Find_Water_Cells_Around(Cell const * center, int max_radius, int 
 		int negative_radius = -radius;
 		for (int offset = negative_radius; offset <= radius; ++offset) {
 			Cell candidate = Cell(*center + Cell(radius, offset));
-			if (Get_Cell_Zone(candidate, mzone, false) == zone) {
+			if (Get_Cell_Zone(&candidate, mzone, false) == zone) {
 				if (Is_Area_Shore_Or_Water(Rect(candidate.X, candidate.Y, width, height)))
 					found->Add(candidate);
 			}
 			candidate = Cell(*center + Cell(-radius, offset));
-			if (Get_Cell_Zone(candidate, mzone, false) == zone) {
+			if (Get_Cell_Zone(&candidate, mzone, false) == zone) {
 				if (Is_Area_Shore_Or_Water(Rect(candidate.X, candidate.Y, width, height)))
 					found->Add(candidate);
 			}
 			if (offset != radius && offset != negative_radius) {
 				candidate = Cell(*center + Cell(offset, radius));
-				if (Get_Cell_Zone(candidate, mzone, false) == zone) {
+				if (Get_Cell_Zone(&candidate, mzone, false) == zone) {
 					if (Is_Area_Shore_Or_Water(Rect(candidate.X, candidate.Y, width, height)))
 						found->Add(candidate);
 				}
 				candidate = Cell(*center + Cell(offset, negative_radius));
-				if (Get_Cell_Zone(candidate, mzone, false) == zone) {
+				if (Get_Cell_Zone(&candidate, mzone, false) == zone) {
 					if (Is_Area_Shore_Or_Water(Rect(candidate.X, candidate.Y, width, height)))
 						found->Add(candidate);
 				}
@@ -8001,6 +8029,37 @@ static inline Cell Bridge_Start_Cell(Cell const & cell, FacingType facing)
 {
 	return(Adjacent_Cell(cell, facing));
 }
+
+// FUNCTION: GAMEMD 0x00586AC0
+Cell MapClass::Closest_Edge_Cell(Cell const & cell, bool inset)
+{
+	Point2D coord(cell.X, cell.Y);
+	Point2D point = Cell_To_PlayRect_Point(coord);
+	int local_x = point.X - LocalRect.X;
+	int local_y = point.Y - LocalRect.Y;
+	point = Point2D(local_x, local_y);
+
+	int y = point.Y - LocalRect.Height / 2;
+	int x = point.X - LocalRect.Width / 2;
+
+	if (abs(x) < abs(y)) {
+		if (point.X < LocalRect.Width / 2) {
+			point.X = inset ? 1 : 0;
+		} else {
+			point.X = inset ? LocalRect.Width - 1 : LocalRect.Width;
+		}
+	} else {
+		if (point.Y < LocalRect.Height / 2) {
+			point.Y = inset ? 1 : 0;
+		} else {
+			point.Y = inset ? LocalRect.Height - 1 : LocalRect.Height;
+		}
+	}
+
+	point = LocalRect_To_Cell_Point(point);
+	return(Cell(point.X, point.Y));
+}
+
 
 // FUNCTION: GAMEMD 0x00586BF0
 void MapClass::Set_WasUnderBridge_Flags(void)

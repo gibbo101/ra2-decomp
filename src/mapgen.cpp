@@ -583,7 +583,7 @@ Cell MapRegionClass::Pick_Random_Clear_Cell_In_Zone(int zone, int region_id)
 		}
 		cellptr = &Map[data.CellID];
 	} while (data.CellID == Cell(0,0)
-			|| Map.Get_Cell_Zone(cellptr->CellID, MZONE_NORMAL, false) != zone
+			|| Map.Get_Cell_Zone(&cellptr->CellID, MZONE_NORMAL, false) != zone
 			|| !cellptr->Is_Tile_Clear()
 			|| (region_id != -1 && data.RegionID != region_id));
 	return(data.CellID);
@@ -1832,7 +1832,7 @@ void Create_Zone_Region(CellClass * cptr, MZoneType mzone, int zone)
 			Cell const & next = other.CellID;
 			if (In_Zone_Map_Bounds(other.CellID)) {
 				MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(next);
-				if (other.Passability == PASSABLE_LAND && Map.Get_Cell_Zone(next, mzone, false) == zone && data.SpreadID == -1) {
+				if (other.Passability == PASSABLE_LAND && Map.Get_Cell_Zone(&next, mzone, false) == zone && data.SpreadID == -1) {
 					data.SpreadID = id;
 					pending.Add(next);
 				}
@@ -1852,7 +1852,7 @@ void Create_Zone_Regions(MZoneType mzone, int zone)
 		if (My_In_Radar(cptr->CellID) &&
 			MapRegionClass::Get_Cell_Data(cptr->CellID).RegionID == -1 &&
 			cptr->Passability == PASSABLE_LAND &&
-			Map.Get_Cell_Zone(cptr->CellID, mzone, false) == zone) {
+			Map.Get_Cell_Zone(&cptr->CellID, mzone, false) == zone) {
 			Create_Zone_Region(cptr, mzone, zone);
 		}
 	}

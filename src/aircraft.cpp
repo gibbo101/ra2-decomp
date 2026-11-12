@@ -3011,7 +3011,7 @@ AbstractClass * AircraftClass::Good_LZ(void) const
 				}
 				if (bestdist == -1 || dist < bestdist) {
 					Cell cell = building->Get_Cell();
-					cell = Map.Nearby_Location(cell, SPEED_FOOT, Map.Get_Cell_Zone(cell), MZONE_NORMAL, false, Point2D(3, 3));
+					cell = Map.Nearby_Location(cell, SPEED_FOOT, Map.Get_Cell_Zone(&cell), MZONE_NORMAL, false, Point2D(3, 3));
 					if (cell != CELL_NONE) {
 						bestdist = dist;
 						bestcell = cell;
@@ -3023,7 +3023,7 @@ AbstractClass * AircraftClass::Good_LZ(void) const
 
 	if (bestdist != -1) {
 		if (bestdist < CELL_LEPTON) {
-			Cell cell = Map.Nearby_Location(Get_Cell(), SPEED_FOOT, Map.Get_Cell_Zone(Get_Cell()));
+			Cell cell = Map.Nearby_Location(Get_Cell(), SPEED_FOOT, Map.Get_Cell_Zone(&Get_Cell()));
 			return(&Map[cell]);
 		}
 		return(&Map[bestcell]);
@@ -3036,7 +3036,7 @@ AbstractClass * AircraftClass::Good_LZ(void) const
 				int dist = Distance_To(techno);
 				if (bestdist == -1 || dist < bestdist) {
 					Cell cell = techno->Get_Cell();
-					cell = Map.Nearby_Location(cell, SPEED_FOOT, Map.Get_Cell_Zone(cell));
+					cell = Map.Nearby_Location(cell, SPEED_FOOT, Map.Get_Cell_Zone(&cell));
 					if (cell != CELL_NONE) {
 						bestdist = dist;
 						bestcell = cell;

@@ -102,7 +102,7 @@ class MapClass: public GScreenClass
 		virtual void Detach(AbstractClass const * , bool all = true);
 
 		bool Is_Same_Cell_Zone(Cell const & from, Cell const & to, MZoneType mzone=MZONE_NORMAL, bool isbridge1=false, bool isbridge2=false, bool leavemap=false);
-		int Get_Cell_Zone(Cell const & cell, MZoneType mzone=MZONE_NORMAL, bool bridge=false);
+		int Get_Cell_Zone(Cell const * cell, MZoneType mzone=MZONE_NORMAL, bool bridge=false);
 		int Get_Cell_Zone_ID(Cell const & cell);
 		int Get_Cell_Zone_Index(Cell const & cell);
 		int Get_Cell_Subzone_Index(Cell const & cell);

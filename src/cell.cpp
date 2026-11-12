@@ -2585,7 +2585,7 @@ bool CellClass::Is_Clear_To_Move(SpeedType loco, bool ignoreinfantry, bool ignor
 	}
 
 	if (zone != -1) {
-		if (zone != Map.Get_Cell_Zone(CellID, check, checkbridge)) {
+		if (zone != Map.Get_Cell_Zone(&CellID, check, checkbridge)) {
 			return(false);
 		}
 	}

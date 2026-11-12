@@ -313,7 +313,7 @@ bool FootClass::Basic_Path(Cell cell, int path_offset, int avoidance)
 		MZoneType mzone = _simple_mzone[Techno_Type_Class()->MZone];
 		bool check = Techno_Type_Class()->IsSubterranean && Map[cell].Can_Burrow_Here() ? true : false;
 
-		Cell nearby = Map.Nearby_Location(cell, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(Get_Cell(), mzone, IsOnBridge), mzone, IsOnBridge, Point2D(1, 1), false, true, check, true, Get_Cell());
+		Cell nearby = Map.Nearby_Location(cell, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(&Get_Cell(), mzone, IsOnBridge), mzone, IsOnBridge, Point2D(1, 1), false, true, check, true, Get_Cell());
 		maxdist = MAX(abs(nearby.X - cell.X), abs(nearby.Y - cell.Y));
 
 		if (nearby != CELL_NONE && ::Distance(Coord(cell), Coord(nearby)) < dist) {
@@ -330,7 +330,7 @@ bool FootClass::Basic_Path(Cell cell, int path_offset, int avoidance)
 			MZoneType mzone = _simple_mzone[Techno_Type_Class()->MZone];
 			bool check = Techno_Type_Class()->IsSubterranean && Map[cell].Can_Burrow_Here() ? true : false;
 
-			Cell nearby = Map.Nearby_Location(cell, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(Get_Cell(), mzone, IsOnBridge), mzone, IsOnBridge, Point2D(1, 1), false, true, check, true, Get_Cell());
+			Cell nearby = Map.Nearby_Location(cell, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(&Get_Cell(), mzone, IsOnBridge), mzone, IsOnBridge, Point2D(1, 1), false, true, check, true, Get_Cell());
 
 			Assign_Destination(&Map[nearby]);
 			cell = nearby;
@@ -468,7 +468,7 @@ int FootClass::Do_MISSION_PATROL(void)
 			if (optr != NULL && (In_Range(optr, primary) || Search.Test_Cell_Walk(Cell(Destination_Coord()), Cell(optr->Destination_Coord()), this, Is_Moving_Onto_Bridge(), optr->Is_Moving_Onto_Bridge(), MZONE_NONE) < dist)) {
 				PatrolCell = Get_Target_Cell_Ptr();
 				if (PatrolCell->IsUnderBridge && !Is_Moving_Onto_Bridge()) {
-					Cell cell = Map.Nearby_Location(PatrolCell->CellID, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(PatrolCell->CellID, Techno_Type_Class()->MZone, false), Techno_Type_Class()->MZone, false, Point2D(1,1), false, true, false, false);
+					Cell cell = Map.Nearby_Location(PatrolCell->CellID, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(&PatrolCell->CellID, Techno_Type_Class()->MZone, false), Techno_Type_Class()->MZone, false, Point2D(1,1), false, true, false, false);
 					if (cell != CELL_NONE) {
 						PatrolCell = &Map[cell];
 					} else {
@@ -1082,10 +1082,10 @@ AbstractClass * FootClass::Approach_Target(bool force)
 							bool clear;
 							if (Techno_Type_Class()->CloseRange) {
 								Mark(MARK_UP);
-								clear = Map[trycell].Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(Destination_Coord().As_Cell(), mzone, IsOnBridge), mzone);
+								clear = Map[trycell].Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(&Destination_Coord().As_Cell(), mzone, IsOnBridge), mzone);
 								Mark(MARK_DOWN);
 							} else {
-								clear = Map[trycell].Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(Destination_Coord().As_Cell(), mzone, IsOnBridge), mzone);
+								clear = Map[trycell].Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(&Destination_Coord().As_Cell(), mzone, IsOnBridge), mzone);
 							}
 
 							if (!clear) {
@@ -1101,10 +1101,10 @@ AbstractClass * FootClass::Approach_Target(bool force)
 									if (In_Weapon_Range(trycoord, TarCom, Get_Class_Weapon_Data(primary)->Weapon) || (Techno_Type_Class()->CloseRange && (double)maxrange < 307.2)) {
 										if (Techno_Type_Class()->CloseRange) {
 											Mark(MARK_UP);
-											clear = Map[trycell].Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(Destination_Coord().As_Cell(), mzone, IsOnBridge), mzone);
+											clear = Map[trycell].Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(&Destination_Coord().As_Cell(), mzone, IsOnBridge), mzone);
 											Mark(MARK_DOWN);
 										} else {
-											clear = Map[trycell].Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(Destination_Coord().As_Cell(), mzone, IsOnBridge), mzone);
+											clear = Map[trycell].Is_Clear_To_Move(Techno_Type_Class()->Speed, false, false, Map.Get_Cell_Zone(&Destination_Coord().As_Cell(), mzone, IsOnBridge), mzone);
 										}
 										if (clear) goto passable;
 									}
@@ -1154,7 +1154,7 @@ passable:
 			} else {
 				trycell = Map.Nearby_Location(trycell,
 					Techno_Type_Class()->Speed,
-					Map.Get_Cell_Zone(Destination_Coord().As_Cell(), mzone, Is_Moving_Onto_Bridge()),
+					Map.Get_Cell_Zone(&Destination_Coord().As_Cell(), mzone, Is_Moving_Onto_Bridge()),
 					mzone,
 					Map[trycell].IsUnderBridge,
 					Point2D(1, 1),
@@ -1200,7 +1200,7 @@ int FootClass::Do_MISSION_GUARD_AREA(void)
 		if (Is_Target_Cell(ArchiveTarget)) {
 			BuildingClass * building = Map[ArchiveTarget->Center_Coord()].Cell_Building();
 			if (building != NULL && House->Is_Ally(building->House) && !House->Is_Human_Player() && (RTTI != RTTI_UNIT || !static_cast<UnitClass *>(this)->Class->Harvester)) {
-				Cell nearby = Map.Nearby_Location((Cell)ArchiveTarget->Center_Coord(), SPEED_TRACK, Map.Get_Cell_Zone((Cell)PositionCoord));
+				Cell nearby = Map.Nearby_Location((Cell)ArchiveTarget->Center_Coord(), SPEED_TRACK, Map.Get_Cell_Zone(&(Cell)PositionCoord));
 				if (nearby != CELL_NONE) {
 					ArchiveTarget = &Map[nearby];
 				}
@@ -3134,7 +3134,7 @@ bool FootClass::Execute_Waypoint_Path(WaypointClass * waypoint)
 				Cell nearby_cell = Map.Nearby_Location(
 					waypoint_cell,
 					TClass->Speed,
-					Map.Get_Cell_Zone(waypoint_cell, TClass->MZone, Map[waypoint_cell].IsUnderBridge),
+					Map.Get_Cell_Zone(&waypoint_cell, TClass->MZone, Map[waypoint_cell].IsUnderBridge),
 					TClass->MZone,
 					false,
 					Point2D(1, 1),
@@ -3164,9 +3164,9 @@ bool FootClass::Execute_Waypoint_Path(WaypointClass * waypoint)
 			CellClass * waypoint_map_cell = &Map[waypoint_cell];
 			ActionType adjusted_action = What_Action(adjusted_waypoint, false, true);
 
-			waypoint_zone = Map.Get_Cell_Zone(waypoint_cell, TClass->MZone, waypoint_map_cell->IsUnderBridge);
-			adjusted_zone = Map.Get_Cell_Zone(adjusted_waypoint, TClass->MZone, adjusted_cell->IsUnderBridge);
-			int destination_zone = Map.Get_Cell_Zone(Destination_Coord().As_Cell(), TClass->MZone, Is_Moving_Onto_Bridge());
+			waypoint_zone = Map.Get_Cell_Zone(&waypoint_cell, TClass->MZone, waypoint_map_cell->IsUnderBridge);
+			adjusted_zone = Map.Get_Cell_Zone(&adjusted_waypoint, TClass->MZone, adjusted_cell->IsUnderBridge);
+			int destination_zone = Map.Get_Cell_Zone(&Destination_Coord().As_Cell(), TClass->MZone, Is_Moving_Onto_Bridge());
 			MoveType entry_result = Can_Enter_Cell(adjusted_cell, FACING_NONE,
 				adjusted_cell->Height + (BRIDGE_CELL_HEIGHT * adjusted_cell->IsUnderBridge), 0, true);
 
@@ -3539,7 +3539,7 @@ Cell FootClass::Move_Order(Cell const & where, bool consider_fog)
 		if (moveanywhere && action == ACTION_NOMOVE) {
 			cell = Map.Nearby_Location(where, Techno_Type_Class()->Speed, -1, mzone, Map[where].IsUnderBridge, Point2D(1, 1), false, true, Techno_Type_Class()->IsSubterranean && HeightAGL < 0);
 		} else if (!inradar || shroud || (!moveanywhere && (!Techno_Type_Class()->Teleporter || action == ACTION_NOMOVE) && !Map.Is_Same_Cell_Zone(cptr->CellID, cell, mzone, ontobridge, Map[where].IsUnderBridge, false))) {
-			cell = Map.Nearby_Location(where, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(cptr->CellID, mzone, ontobridge), mzone, Map[where].IsUnderBridge, Point2D(1, 1), false, true, false, true);
+			cell = Map.Nearby_Location(where, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(&cptr->CellID, mzone, ontobridge), mzone, Map[where].IsUnderBridge, Point2D(1, 1), false, true, false, true);
 		}
 
 		if (cell != CELL_NONE) {

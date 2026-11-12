@@ -1807,7 +1807,7 @@ not_engineer_building:
 				action = ACTION_CAPTURE;
 				if (object->Fetch_RTTI() == RTTI_BUILDING) {
 					Cell cell = object->Center_Coord().As_Cell();
-					int targzone = Map.Get_Cell_Zone(Get_Target_Cell(), Class->MZone, IsOnBridge);
+					int targzone = Map.Get_Cell_Zone(&Get_Target_Cell(), Class->MZone, IsOnBridge);
 					Cell const * list = ((BuildingClass const *)object)->Class->Occupy_List(false);
 					bool found = false;
 					while (*list != REFRESH_EOL && !found) {
@@ -1815,7 +1815,7 @@ not_engineer_building:
 						for (FacingType i = FACING_N; i < FACING_COUNT; i++) {
 							Cell const & adj = AdjacentCell[(int)i & 7];
 							Cell adjcell = adj + newcell;
-							if (Map.Get_Cell_Zone(adjcell, Class->MZone, false) == targzone) {
+							if (Map.Get_Cell_Zone(&adjcell, Class->MZone, false) == targzone) {
 								found = true;
 								break;
 							}

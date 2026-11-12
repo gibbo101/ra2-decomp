@@ -193,7 +193,7 @@ Cell SlaveManagerClass::FUN_006B0300(Cell cell)
 		width = 1;
 		height = width;
 	}
-	Cell found = Map.Nearby_Location(cell, SPEED_TRACK, Map.Get_Cell_Zone(Owner->Get_Cell(), MZONE_NORMAL, false), MZONE_NORMAL, false, Point2D(width, height), true, false, false, false, cell, false, true);
+	Cell found = Map.Nearby_Location(cell, SPEED_TRACK, Map.Get_Cell_Zone(&Owner->Get_Cell(), MZONE_NORMAL, false), MZONE_NORMAL, false, Point2D(width, height), true, false, false, false, cell, false, true);
 	if (found == CELL_NONE) {
 		return CELL_NONE;
 	}
