@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "dialog.h"
 #include "geometry.h"
 #include "techno.h"
 #include "_bench.h"
@@ -6231,6 +6232,206 @@ bool TechnoClass::Enter_Idle_Mode(bool, bool)
 
 namespace FileSystem { extern ShapeSet * PIPS_SHP; extern ConvertClass * PALETTE_PAL; }
 
+inline Rect Drawing_GetTextDimensions(wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY)
+{
+	Rect result;
+	return *Drawing_GetTextDimensions(&result, text, loc, flags, marginX, marginY);
+}
+
+namespace FileSystem { extern ShapeSet * PIPS2_SHP; }
+Point2D Plain_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flag, int scheme, int unused);
+
+// FUNCTION: GAMEMD 0x00709A90
+void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect const &window) const
+{
+	int i;
+	Point2D offset(4, 2);
+	Point2D xy = point + Point2D(6, -1);
+	Class_Of();
+	ShapeSet const *pip_shapes = FileSystem::PIPS_SHP;
+	Class_Of();
+	ShapeSet const *pips1 = FileSystem::PIPS_SHP;
+	Class_Of();
+	ShapeSet const *pips2 = FileSystem::PIPS2_SHP;
+	bool building = Fetch_RTTI() == RTTI_BUILDING;
+	if (!building) {
+		xy = point + Point2D(-5, 0);
+		offset = Point2D(4, 0);
+		pip_shapes = pips2;
+	}
+	if (Fetch_RTTI() == RTTI_INFANTRY) xy = xy + Point2D(11, 0);
+	if (building && Techno_Type_Class()->PipScale == PIPSCALE_TIBERIUM) return;
+	int spawns = Techno_Type_Class()->SpawnsNumber;
+	if (spawns > 0) {
+		int docked = SpawnManager->CountDockedSpawns();
+		for (i = 0; i < spawns; i++) {
+			int full = 1;
+			int empty = 0;
+			Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, i < docked ? full : empty, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+		}
+	}
+	if (building) {
+		BuildingClass const *self = static_cast<BuildingClass const *>(this);
+		int occupants = self->Class->MaxNumberOccupants;
+		int count = self->GetOccupantCount();
+		if (self->Class->ShowOccupantPips && occupants > 0) {
+			for (i = 0; i < occupants; i++) {
+				int frame;
+				if (i < count && self->Occupants[i] != NULL) frame = self->Occupants[i]->Class->OccupyPip;
+				else frame = 6;
+				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			}
+		}
+	}
+	if (Techno_Type_Class()->Max_Passengers() > 0) {
+		Point2D shift(0, 0);
+		int pips = Class_Of()->Max_Pips();
+		Techno_Type_Class();
+		int *colors = new int[pips];
+		for (int c = 0; c < pips; c++) colors[c] = 0;
+		int passengers = Cargo.How_Many();
+		int index = Cargo.GetTotalSize() - 1;
+		if (this && Fetch_RTTI() == RTTI_BUILDING && As_Building(this)->IsAbsorbAllowed()) {
+			ObjectClass const *object = Cargo.Attached_Object();
+			for (i = 0; i < passengers && object; i++) {
+				if (object->Fetch_RTTI() == RTTI_INFANTRY) colors[i] = static_cast<InfantryClass const *>(object)->Class->Pip;
+				else colors[i] = object->Fetch_RTTI() == RTTI_UNIT ? 4 : 1;
+				object = object->Next;
+			}
+		} else {
+			if (index >= pips) {
+				delete colors;
+				return;
+			}
+			ObjectClass const *object = Cargo.Attached_Object();
+			for (i = 0; i < passengers && object; i++) {
+				if (object->Fetch_RTTI() == RTTI_INFANTRY) {
+					int size = (int)(static_cast<TechnoClass const *>(object)->Techno_Type_Class()->Size - 1.0);
+					for (int k = size; k > 0; k--) colors[index--] = 3;
+					colors[index] = static_cast<InfantryClass const *>(object)->Class->Pip;
+				} else if (object->Fetch_RTTI() == RTTI_UNIT) {
+					int size = (int)(static_cast<TechnoClass const *>(object)->Techno_Type_Class()->Size - 1.0);
+					for (int k = size; k > 0; k--) colors[index--] = 3;
+					colors[index] = 5;
+				} else colors[index] = 1;
+				object = object->Next;
+				index--;
+			}
+		}
+		int start = 0;
+		if (Techno_Type_Class()->Gunner) {
+			Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, colors[0], xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			start = 1;
+			shift = offset * 2;
+		}
+		for (int j = start; j < pips; j++) {
+			Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, colors[j], xy + shift + offset * j, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+		}
+		delete colors;
+	} else {
+		int pips = Pip_Count();
+		int maximum = Techno_Type_Class()->Max_Pips();
+		if (Techno_Type_Class()->PipScale == PIPSCALE_CHARGE) {
+			for (i = 0; i < maximum; i++) {
+				int frame = 0;
+				if (i < pips) frame = 1;
+				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			}
+			bool flag = false;
+			if (CaptureManager && CaptureManager->IsOverloading(&flag)) {
+				int overload_frame = 3;
+				int ordinary_frame = 4;
+				int frame = flag ? overload_frame : ordinary_frame;
+				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			}
+		}
+		if (Techno_Type_Class()->PipScale == PIPSCALE_TIBERIUM) {
+			float gold = Storage.Get_Amount(0);
+			float gems = Storage.Get_Amount(2);
+			float ore = Storage.Get_Amount(3);
+			float other = Storage.Get_Amount(1);
+			int greenpips = (int)(maximum * ((double)(ore + gems + gold) / Techno_Type_Class()->Capacity) + 0.5);
+			int bluepips = (int)(maximum * ((double)other / Techno_Type_Class()->Capacity) + 0.5);
+			for (i = 0; i < maximum; i++) {
+				int shape = 0;
+				if (bluepips > 0) {
+					shape = 5;
+					bluepips--;
+				} else if (greenpips > 0) {
+					shape = 2;
+					greenpips--;
+				}
+				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, shape, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			}
+		} else if (Techno_Type_Class()->PipScale == PIPSCALE_AMMO) {
+			int wrap = Techno_Type_Class()->PipWrap;
+			if (wrap == 0) {
+				int left = pips;
+				for (int i = 0; i < maximum; i++) {
+					if (left > 0) {
+						left--;
+						Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips2, 13, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+					}
+				}
+			} else {
+				int rows = maximum / wrap;
+				for (i = 0; i < wrap; i++) {
+					int frame = 14;
+					for (int j = rows - 1; j >= 0; j--) {
+						if (i + j * wrap < Ammo) {
+							frame = j + 15;
+							break;
+						}
+					}
+					Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips2, frame, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				}
+			}
+		}
+	}
+	bool selfheal = false;
+	bool flash = false;
+	int healframe = 13;
+	Point2D heal_offset(0, 0);
+	if (Fetch_RTTI() == RTTI_INFANTRY || (Fetch_RTTI() == RTTI_UNIT && Techno_Type_Class()->Organic)) {
+		if (House->FUN_0050D9C0()) {
+			selfheal = true;
+			if (Frame % Rule->SelfHealInfantryFrames <= 5 && Strength < Techno_Type_Class()->MaxStrength) flash = true;
+			healframe = 13;
+		}
+	}
+	if (Fetch_RTTI() == RTTI_UNIT && !Techno_Type_Class()->Organic) {
+		if (House->FUN_0050D9D0()) {
+			selfheal = true;
+			if (Frame % Rule->SelfHealUnitFrames <= 5 && Strength < Techno_Type_Class()->MaxStrength) flash = true;
+			healframe = 20;
+		}
+	}
+	if (Fetch_RTTI() == RTTI_UNIT) { heal_offset = Point2D(38, -32); }
+	else if (Fetch_RTTI() == RTTI_INFANTRY) { heal_offset = Point2D(19, -35); }
+	if (selfheal) {
+		if (flash) Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_DARKEN));
+		else Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+	}
+	if (Fetch_RTTI() != RTTI_BUILDING) Draw_Text_Overlay(point + Point2D(-10, 10), point, window);
+	if (Group >= 0 && Group < 10) {
+		int group = Group + 1;
+		if (group == 10) group = 0;
+		int yval = Fetch_RTTI() == RTTI_INFANTRY ? -36 : -33;
+		wchar_t text[10];
+		swprintf(text, L"%d", group < 10 ? group : 0);
+		Point2D where = point + Point2D(-4, yval - 3);
+		Rect box = Drawing_GetTextDimensions(text, where, 0x49, 2, -2);
+		box = Intersect(box, window);
+		box.X--;
+		box.Width++;
+		RGBClass color = House->RemapColorRGB;
+		int pixel = DSurface::Build_Hicolor_Pixel(color);
+		LogicalSurface->Fill_Rect(box, 0);
+		LogicalSurface->Draw_Rect(box, pixel);
+		Plain_Text_Print_Wide(text, LogicalSurface, &window, &where, pixel, 0, (TextPrintType)0x49, -1, 1);
+	}
+}
+
 // FUNCTION: GAMEMD 0x0070A990
 void TechnoClass::DrawVeterancyPips(Point2D const & point, Rect const & rect) const
 {
@@ -6258,7 +6459,7 @@ void TechnoClass::DrawVeterancyPips(Point2D const & point, Rect const & rect) co
 }
 
 Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, int unused);
-Rect Drawing_GetTextDimensions(wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY);
+
 
 // FUNCTION: GAMEMD 0x0070AA60
 void TechnoClass::Draw_Text_Overlay(Point2D const & point1, Point2D const & point2, Rect const & cliprect) const
