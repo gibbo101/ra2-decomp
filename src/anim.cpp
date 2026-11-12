@@ -39,6 +39,7 @@
 #include "session.h"
 #include "setpal.h"
 #include "shapeset.h"
+#include "msanim.h"
 #include "smudtype.h"
 #include "sun.h"
 #include "swizzle.h"
@@ -51,6 +52,11 @@
 #include "coord.h"
 #include <math.h>
 #include "geometry.h"
+#include <d3d.h>
+#include "bound.h"
+#include "zbuffer.h"
+#include "dsurface.h"
+#include "building.h"
 
 // SYNTHETIC: GAMEMD 0x00421C90 SYMBOL
 // _$E2
@@ -59,24 +65,37 @@ extern DynamicVectorClass<AnimClass *> DAT_00A83E00;
 struct FileSystem
 {
 	static char TEMPERAT_PAL[];
+	static ConvertClass * ANIM_PAL;
 };
-struct Game
-{
-	static bool __cdecl CallBack(void);
-};
+namespace Game { bool __cdecl CallBack(void); extern bool bDirect3DIsUseable; }
 void __fastcall FUN_00489280(Coord const & coord, int damage, TechnoClass * source, WarheadTypeClass const * warhead, bool affect_tiberium, HouseClass * house);
 void __fastcall FUN_004A3C30(void * palette, int rate, bool (__cdecl * callback)(void));
 extern const double DAT_007E3570;
-class SHPStruct
-{
-	public:
-		Rect GetFrameBounds(int frame) const;
-};
+
 extern ParticleSystemClass * DAT_00A8ED78;
 class AudioEvent;
 AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 bool __fastcall FUN_0043B4C0(HouseClass * house, CellClass * cell);
 SideType FUN_006A46D0(char const * name);
+
+namespace FPSCounter { extern unsigned CurrentFrameRate; }
+namespace Detail { unsigned GetMinFrameRate(void); }
+struct Triangle3D {
+	void Set_Color(int a, int b, int c);
+	void Set_Vertex(int index, float x, float y, float z, float u, float v);
+	D3DTLVERTEX Vertex[3];
+};
+class Texture3DCache {
+public:
+	Texture3DCache(void);
+	void FUN_004A3640(void);
+	void FUN_004A3650(void);
+	HRESULT Flush(LPDIRECTDRAWSURFACE target);
+	int Add(Triangle3D const & triangle);
+	Triangle3D List[1024];
+	int Count;
+};
+extern Texture3DCache * DAT_008A0E10;
 
 // SYNTHETIC: GAMEMD 0x00421CB0 SYMBOL
 // _$E106
@@ -418,7 +437,7 @@ Cell const * AnimClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x00423920 SYMBOL
-// _$E146
+// _$E173
 
 // FUNCTION: GAMEMD 0x00423930
 BounceResultType AnimClass::Bounce_AI(void)
@@ -1408,3 +1427,196 @@ bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
 // TEMPLATE: GAMEMD 0x00426630
 // ?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
 template class CDTimerClass<FrameTimerClass>;
+
+// FUNCTION: GAMEMD 0x00422CA0
+void AnimClass::Draw_It(Point2D const & point, Rect const & cliprect) const
+{
+	if (Game::bDirect3DIsUseable && DepthBuffer != NULL && Is_Type_Named("RING1")) {
+		int elapsed = Animation.Fetch_Stage() * Animation.Fetch_Rate() - Animation.Timer.Value();
+		int rate = Animation.Fetch_Rate();
+		elapsed += rate;
+		int duration = Stage_Count() * rate;
+		int radius = elapsed + 8;
+		Point2D top_left(point.X - (radius << 1), point.Y - radius);
+		Point2D bottom_right(point.X + (radius << 1), point.Y + radius);
+		int remaining = (duration - elapsed) << 8;
+		int red = remaining / duration;
+		red = Bound(red, 0, 255);
+		int first_third = duration / 3;
+		int green = elapsed < first_third ? (elapsed << 8) / first_third : remaining / (duration - first_third);
+		green = Bound(green, 0, 255) * 2 / 3;
+		int last_third = duration * 2 / 3;
+		int blue = elapsed < last_third ? (elapsed << 8) / last_third : remaining / (duration - last_third);
+		blue = Bound(blue, 0, 255);
+		int zadjust = ZAdjust + Type->YDrawOffset - TacticalMap->Z_Lepton_To_Pixel(Height) - 2;
+		unsigned depth = (unsigned short)(DepthBuffer->Get_Scroll() + DepthBuffer->Bounds.Y - point.Y - TacticalRect.Y);
+		zadjust += depth;
+		float upper_z = (float)((zadjust + radius) & 0xFFFF) / 65535.0f;
+		float lower_z = (float)((zadjust - radius) & 0xFFFF) / 65535.0f;
+		Triangle3D tri[2];
+		tri[0].Set_Color(red, green, blue);
+		tri[1].Set_Color(red, green, blue);
+		tri[0].Set_Vertex(0, top_left.X, top_left.Y, upper_z, 0.0f, 0.0f);
+		tri[0].Set_Vertex(1, top_left.X, bottom_right.Y, lower_z, 0.0f, 1.0f);
+		tri[0].Set_Vertex(2, bottom_right.X, bottom_right.Y, lower_z, 1.0f, 1.0f);
+		tri[1].Set_Vertex(0, top_left.X, top_left.Y, upper_z, 0.0f, 0.0f);
+		tri[1].Set_Vertex(1, bottom_right.X, bottom_right.Y, lower_z, 1.0f, 1.0f);
+		tri[1].Set_Vertex(2, bottom_right.X, top_left.Y, upper_z, 1.0f, 0.0f);
+		DAT_008A0E10->Add(tri[0]);
+		DAT_008A0E10->Add(tri[1]);
+		return;
+	}
+	if (FPSCounter::CurrentFrameRate < Detail::GetMinFrameRate() && Type->DetailLevel > 1) {
+		return;
+	}
+	if (!Invisible && Type->DetailLevel <= Options.DetailLevel && (!IsFogged || !Type->ShouldFogRemove)) {
+		ShapeSet const * shapefile = (ShapeSet const *)Get_Image_Data();
+		if (shapefile != NULL) {
+			int flags = AnimFlags;
+			int shapenum = Type->Start + Animation.Fetch_Stage();
+			if (UnderTemporal) {
+				if (Type->DoubleThick) {
+					flags |= SHAPE_TRANSLUCENT75;
+				}
+				else {
+					flags |= SHAPE_TRANSLUCENT50;
+				}
+			}
+
+			if (Type->TranslucencyDetailLevel <= Options.DetailLevel) {
+				if (Type->Translucent) {
+					if (TranslucencyLevel >= 15) {
+						return;
+					}
+					if (Animation.Fetch_Stage() > Type->End * 0.6) {
+						flags |= SHAPE_TRANSLUCENT75;
+					} else if (Animation.Fetch_Stage() > Type->End * 0.4) {
+						flags |= SHAPE_TRANSLUCENT50;
+					} else if (Animation.Fetch_Stage() > Type->End * 0.2) {
+						flags |= SHAPE_TRANSLUCENT25;
+					}
+				} else if (Type->Translucency > 0) {
+					if (TranslucencyLevel >= 15) {
+						return;
+					}
+					if (Type->Translucency == 25) {
+						flags |= SHAPE_TRANSLUCENT25;
+					} else if (Type->Translucency == 50) {
+						flags |= SHAPE_TRANSLUCENT50;
+					} else if (Type->Translucency == 75) {
+						flags |= SHAPE_TRANSLUCENT75;
+					}
+				} else if (TranslucencyLevel != 0) {
+					if (TranslucencyLevel > 15) {
+						return;
+					}
+					if (TranslucencyLevel > 10) {
+						flags |= SHAPE_TRANSLUCENT50;
+					} else if (TranslucencyLevel > 5) {
+						flags |= SHAPE_TRANSLUCENT50;
+					} else {
+						flags |= SHAPE_TRANSLUCENT25;
+					}
+				}
+			}
+
+			if ((flags & SHAPE_DARKEN) == 0) {
+				flags |= SHAPE_ALPHA;
+			}
+
+			int height = HeightAGL;
+			int brightness = 1000;
+			ConvertClass * convert;
+
+			if (Type->IsVeins) {
+				convert = ColorSchemes[PlayerPtr->Scheme]->Converter;
+				if (!Type->UseNormalLight) {
+					brightness = Map[Render_Coord()].TileBrightness;
+				}
+			} else if (UseCellLightConvert) {
+				CellClass * cellptr = &Map[Cell(Render_Coord())];
+				if (cellptr->Drawer == NULL) {
+					cellptr->Init_Drawer(0, 0x10000, 0, 1000, 1000, 1000);
+				}
+				convert = cellptr->Drawer;
+				if (!Type->UseNormalLight) {
+					brightness = cellptr->TileBrightness;
+				}
+			} else if (LightConvert != NULL) {
+				convert = LightConvert;
+				if (!Type->UseNormalLight) {
+					brightness = TintColor;
+				}
+			} else {
+				convert = FileSystem::ANIM_PAL;
+				if (Type->AltPalette) {
+					convert = ColorSchemes[0]->Converter;
+				}
+				if (!Type->UseNormalLight) {
+					brightness = Map[Cell(Render_Coord())].Brightness;
+				}
+			}
+
+			if (HasExtras) {
+				Draw_Shape(*LogicalSurface, *convert, shapefile, shapenum, point + Point2D(0, Type->YDrawOffset + TacticalMap->Z_Lepton_To_Pixel(height)), cliprect, ShapeFlags_Type(SHAPE_ZGRAD | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_DARKEN), 0, Type->YDrawOffset - TacticalMap->Z_Lepton_To_Pixel(Height), ZGRAD_GROUND, 1000, 0, 0, 0, Point2D(0, 0));
+			}
+
+			WORD tint = 0;
+			if (IsBuildingAnim) {
+				BuildingClass * building = Map[Center_Coord()].Cell_Building();
+				if (building != NULL) {
+					if (building->Airstrike != NULL) {
+						BYTE red = Rule->ColorAdd[Rule->LaserTargetColor].Get_Red();
+						BYTE green = Rule->ColorAdd[Rule->LaserTargetColor].Get_Green();
+						BYTE blue = Rule->ColorAdd[Rule->LaserTargetColor].Get_Blue();
+						switch (DSurface::Get_Primary_Color_Mode()) {
+						case 2: tint = (((red << 6) | green) << 5) | blue;
+							// Fall through to accumulate the packed colors.
+						case 1: tint |= (((green >> 1) | (red << 5)) << 6) | blue;
+							// Fall through.
+						default: tint |= (((green >> 1) | (red << 5)) << 5) | blue;
+						}
+					}
+					if (building->IsIronCurtained() && building->ForceShielded == 1) {
+						BYTE red = Rule->ColorAdd[Rule->ForceShieldColor].Get_Red();
+						BYTE green = Rule->ColorAdd[Rule->ForceShieldColor].Get_Green();
+						BYTE blue = Rule->ColorAdd[Rule->ForceShieldColor].Get_Blue();
+						switch (DSurface::Get_Primary_Color_Mode()) {
+						case 2: tint |= (((red << 6) | green) << 5) | blue;
+							// Fall through to accumulate the packed colors.
+						case 1: tint |= (((green >> 1) | (red << 5)) << 6) | blue;
+							// Fall through.
+						default: tint |= (((green >> 1) | (red << 5)) << 5) | blue;
+						}
+					}
+				}
+			}
+			if (Map[Cell(Center_Coord())].Is_Shrouded()) {
+				tint = 0;
+			}
+
+			if (Type->Tiled) {
+				int frameheight = ((SHPStruct const *)shapefile)->GetFrameBounds(0).Height;
+				Point2D origin = point;
+				Point2D drawpoint = origin - Point2D(0, frameheight / 2);
+				bool done = false;
+				int height_offset = ZAdjust + Type->YDrawOffset - TacticalMap->Z_Lepton_To_Pixel(Height) - 50;
+				while (!done) {
+					Draw_Shape(*LogicalSurface, *FileSystem::ANIM_PAL, shapefile, shapenum, Point2D(origin.X, drawpoint.Y + Type->YDrawOffset), TacticalRect, ShapeFlags_Type(flags | SHAPE_ZGRAD), 0, height_offset, ZGRAD_90DEG, brightness, tint, 0, 0, Point2D(0, 0));
+					if (drawpoint.Y < 0) {
+						done = true;
+					}
+					drawpoint.Y -= frameheight;
+					height_offset -= frameheight + frameheight / 2;
+				}
+			} else if (Type->Flat) {
+				Draw_Shape(*LogicalSurface, *convert, shapefile, shapenum, point + Point2D(0, Type->YDrawOffset), cliprect, ShapeFlags_Type(flags | SHAPE_ZGRAD), 0, ZAdjust + Type->YDrawOffset - TacticalMap->Z_Lepton_To_Pixel(Height) - 3, ZGRAD_GROUND, brightness, tint, 0, 0, Point2D(0, 0));
+			} else {
+				Draw_Shape(*LogicalSurface, *convert, shapefile, shapenum, point + Point2D(0, Type->YDrawOffset), cliprect, ShapeFlags_Type(flags | SHAPE_ZGRAD), 0, ZAdjust + Type->YDrawOffset - TacticalMap->Z_Lepton_To_Pixel(Height) - 2, ZGRAD_90DEG, brightness, tint, 0, 0, Point2D(0, 0));
+				if (Type->Shadow) {
+					Draw_Shape(*LogicalSurface, *convert, shapefile, shapenum + shapefile->Get_Count() / 2, point, cliprect, ShapeFlags_Type((flags & ~SHAPE_TRANSLUCENT75) | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_DARKEN), 0, -2 - TacticalMap->Z_Lepton_To_Pixel(Height), ZGRAD_GROUND, 1000, 0, 0, 0, Point2D(0, 0));
+				}
+			}
+		}
+	}
+}

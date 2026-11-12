@@ -13,7 +13,9 @@ class StageClass {
 
 		bool HasChanged;
 
+	public:
 		CDTimerClass<FrameTimerClass> Timer;
+	private:
 
 		int Rate;
 
