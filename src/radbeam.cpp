@@ -13,15 +13,6 @@
 #include "surface.h"
 #include "_tactica.h"
 
-template<> TPoint3D<int> const & TPoint3D<int>::operator /= (int divisor)
-{
-	if (divisor != 0) {
-		TPoint2D<int>::operator /= (divisor);
-		Z /= divisor;
-	}
-	return(*this);
-}
-
 // SYNTHETIC: GAMEMD 0x00658E80 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x00658EB0 SYMBOL
