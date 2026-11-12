@@ -488,7 +488,6 @@ address,name,symbol,evidence
 0x00B0FA68,RadarAnimShape,,"same global as Red Alert 2 1.006 0x00AC1070 (inferred: referenced by matched src/radar.cpp (1 reference);), which RedAlert2 rebuilds byte for byte"
 0x00B0F9E0,RadarFrameShape,,"same global as Red Alert 2 1.006 0x00AC0FF0 (inferred: referenced by matched src/radar.cpp (1 reference);), which RedAlert2 rebuilds byte for byte"
 0x00753580,Remove_Speech_Hold,?Remove_Speech_Hold@@YIXXZ,Matched 33-byte speech hold decrement; volatile counter accesses verified across vox.
-0x00752760,FUN_00752760,?FUN_00752760@@YIXXZ,Matched 572-byte queued speech update.
 0x00753620,FUN_00753620,?FUN_00753620@@YIXXZ,Matched 48-byte speech resume and counter decrement.
 0x005353D0,Best_Selected_Object,,"same function as Red Alert 2 1.006 0x0051A690 (inferred: referenced by matched src/scroll.cpp (2 references), which RedAlert2 rebuilds byte for byte"
 0x0055AF40,Set_Frame_Rate_Limit,,"same function as Red Alert 2 1.006 0x0053D820 (inferred: referenced by matched src/radar.cpp (3 references)), which RedAlert2 rebuilds byte for byte"
