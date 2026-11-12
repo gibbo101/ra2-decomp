@@ -61,6 +61,34 @@ void __fastcall SHPFreeAll(void)
 	SHPHead = NULL;
 }
 
+// FUNCTION: GAMEMD 0x0069E210
+void __fastcall SHPUnloadAll(void)
+{
+	for (SHPReference * cur = SHPHead; cur; cur = cur->Next) {
+		cur->Unload();
+	}
+	if (SHPCache) {
+		delete SHPCache;
+		SHPCache = NULL;
+		SHPCacheSize = 0;
+		SHPCacheIndex = 0;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0069E320
+void __fastcall SHPUnloadFrom(unsigned int level)
+{
+	for (SHPReference * cur = SHPHead; cur; cur = cur->Next) {
+		if (cur->Reserved <= level) cur->Unload();
+	}
+	if (SHPCache) {
+		delete SHPCache;
+		SHPCache = NULL;
+		SHPCacheSize = 0;
+		SHPCacheIndex = 0;
+	}
+}
+
 // FUNCTION: GAMEMD 0x0069E430
 SHPReference::SHPReference(char const * filename)
 {

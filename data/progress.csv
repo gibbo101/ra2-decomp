@@ -12713,6 +12713,8 @@ address,name,result,size,source,symbol
 0x0069E090,SHPStruct::Load,MATCH,99,src/shapipe.cpp,?Load@SHPStruct@@QAEXXZ
 0x0069E100,SHPStruct::Unload,MATCH,119,src/shapipe.cpp,?Unload@SHPStruct@@QAEXXZ
 0x0069E180,SHPFreeAll,MATCH,142,src/shapipe.cpp,?SHPFreeAll@@YIXXZ
+0x0069E210,SHPUnloadAll,MATCH,259,src/shapipe.cpp,?SHPUnloadAll@@YIXXZ
+0x0069E320,SHPUnloadFrom,MATCH,266,src/shapipe.cpp,?SHPUnloadFrom@@YIXI@Z
 0x0069E430,SHPReference::SHPReference,MATCH,200,src/shapipe.cpp,??0SHPReference@@QAE@PBD@Z
 0x0069E500,SHPStruct::~SHPStruct,MATCH,113,src/shapipe.cpp,??1SHPStruct@@QAE@XZ
 0x0069E580,SHPStruct::GetData,MATCH,438,src/shapipe.cpp,?GetData@SHPStruct@@QAEPAV1@XZ
