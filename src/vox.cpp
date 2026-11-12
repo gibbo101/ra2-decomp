@@ -86,8 +86,8 @@ struct VoxNode : SoundLink
 	int Id;
 };
 
-extern int DAT_00B1D3D8;
-extern int DAT_00B1D428;
+extern volatile int DAT_00B1D3D8;
+extern volatile int DAT_00B1D428;
 extern SoundLink DAT_00B1D3C8;
 extern SoundLink DAT_00B1D3F0;
 extern SoundLink DAT_00B1D450[4];
@@ -724,7 +724,19 @@ void FUN_00753540(void)
 // FUNCTION: GAMEMD 0x00753570
 int Add_Speech_Hold(void)
 {
-	return ++DAT_00B1D3D8;
+	int count = DAT_00B1D3D8 + 1;
+	DAT_00B1D3D8 = count;
+	return count;
+}
+
+// FUNCTION: GAMEMD 0x00753580
+void Remove_Speech_Hold(void)
+{
+	if (DAT_00B1D3D8 != 0) {
+		if (--DAT_00B1D3D8 < 0) {
+			DAT_00B1D3D8 = 0;
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x007535B0
@@ -733,7 +745,9 @@ int FUN_007535B0(void)
 	if (DAT_00B1D4CC) {
 		DAT_00B1D4CC->FUN_00407FB0();
 	}
-	return ++DAT_00B1D428;
+	int count = DAT_00B1D428 + 1;
+	DAT_00B1D428 = count;
+	return count;
 }
 
 // FUNCTION: GAMEMD 0x007535D0
@@ -749,6 +763,19 @@ void FUN_007535D0(void)
 	FUN_00752370();
 	DAT_00B1D428 = 0;
 	DAT_00B1D3D8 = 0;
+}
+
+// FUNCTION: GAMEMD 0x00753620
+void FUN_00753620(void)
+{
+	if (DAT_00B1D4CC) {
+		DAT_00B1D4CC->FUN_00408000();
+	}
+	if (DAT_00B1D428 != 0) {
+		if (--DAT_00B1D428 < 0) {
+			DAT_00B1D428 = 0;
+		}
+	}
 }
 
 // TEMPLATE: GAMEMD 0x00753650
