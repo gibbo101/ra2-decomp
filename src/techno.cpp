@@ -4948,6 +4948,57 @@ Coord TechnoClass::GetAttackCoordinates(void) const
 	return(Position);
 }
 
+// FUNCTION: GAMEMD 0x00705270
+void TechnoClass::FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned char shadow)
+{
+	RGBClass mixed;
+	Point2D start_point;
+	Point2D end_point;
+	TacticalMap->Coord_To_Pixel(src, start_point);
+	TacticalMap->Coord_To_Pixel(dst, end_point);
+	start_point.Y += DSurface::ViewBounds.Y;
+	end_point.Y += DSurface::ViewBounds.Y;
+	int pixel = DSurface::Build_Hicolor_Pixel(color);
+	int black = DSurface::Build_Hicolor_Pixel(BlackColor);
+	Point2D shadow_start = start_point;
+	shadow_start.Y += 1;
+	Point2D shadow_end = end_point;
+	shadow_end.Y += 1;
+	if (shadow) {
+		DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Rect(-2, -2, 3, 3) + shadow_start), pixel);
+		DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Rect(-2, -2, 3, 3) + shadow_end), black);
+	}
+	Rect clip = DSurface::ViewBounds;
+	if (shadow && Clip_Line_To_Rect(shadow_start, shadow_end, clip)) {
+		DSurface::Composite->Draw_Line(shadow_start, shadow_end, FileSystem::PALETTE_PAL->Convert_Pixel(0));
+	}
+	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Target_Laser_Rect(start_point)), black);
+	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Target_Laser_Rect(end_point)), pixel);
+	Coord const & from = src;
+	Coord const & to = dst;
+	Coord current = src;
+	Coord next;
+	int step = 1;
+	int inverse = 63;
+	while (step <= 64) {
+		next.X = (from.X * inverse + to.X * step) / 64;
+		next.Y = (from.Y * inverse + to.Y * step) / 64;
+		next.Z = (from.Z * inverse + to.Z * step) / 64;
+		TacticalMap->Coord_To_Pixel(current, start_point);
+		TacticalMap->Coord_To_Pixel(next, end_point);
+		start_point.Y += DSurface::ViewBounds.Y;
+		end_point.Y += DSurface::ViewBounds.Y;
+		if (Clip_Line_To_Rect(start_point, end_point, clip)) {
+			mixed = color;
+			mixed.Adjust(MIN(inverse * 4, 254), BlackColor);
+			DSurface::Composite->Draw_Line(start_point, end_point, DSurface::Build_Hicolor_Pixel(mixed));
+		}
+		current = next;
+		step++;
+		inverse--;
+	}
+}
+
 // FUNCTION: GAMEMD 0x00705D10
 void TechnoClass::FUN_00705D10(PlanningTokenClass * token)
 {
