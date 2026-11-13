@@ -296,6 +296,117 @@ extern short SineTable[];
 static int _FireStepX[FACING_COUNT] = { 1,  1,  0, -1, -1, -1,  0,  1 };
 static int _FireStepY[FACING_COUNT] = { 0,  1,  1,  1,  0, -1, -1, -1 };
 
+// FUNCTION: GAMEMD 0x0062F230
+void ParticleSystemClass::Railgun_AI(void)
+{
+	int i;
+	if (!IsMarkedForDeletion && SystemParticles.Count() == 0) {
+		Point3D delta = SpawnCoord - Get_Coord();
+		int dx = delta.X;
+		int dy = delta.Y;
+		int dz = delta.Z;
+		int total_dist = (int)fastmath::sqrt(
+			(double)dx * (double)dx +
+			(double)dy * (double)dy +
+			(double)dz * (double)dz);
+
+		double dy_double = dy;
+		double dx_double = dx;
+		double horiz = dy_double * dy_double;
+		int horiz_dist = (int)fastmath::sqrt(horiz + dx_double * dx_double);
+
+		int clamped_z = dz;
+		int clamped_x = dx;
+		if (clamped_z >= total_dist) clamped_z = total_dist;
+		if (clamped_z <= -total_dist) clamped_z = -total_dist;
+		if (clamped_x >= horiz_dist) clamped_x = horiz_dist;
+		if (clamped_x <= -horiz_dist) clamped_x = -horiz_dist;
+
+		int num_particles = (int)((double)total_dist * Class->ParticlesPerCoord);
+		float dist_f = (float)total_dist;
+		float elevation = fastmath::asin((double)clamped_z / dist_f);
+		float azimuth = fastmath::acos((double)clamped_x / horiz_dist);
+		if (dy < 0) azimuth = -azimuth;
+
+		Matrix3D mat;
+		mat.Make_Identity();
+		mat.Rotate_Z(azimuth);
+		mat.Rotate_X(elevation);
+
+		float velocity_accum = 0.0f;
+		i = 0;
+		if (num_particles > 0) {
+			float num_particles_f = (float)num_particles;
+			do {
+				float frac = (float)i / num_particles_f;
+				double angle = dist_f;
+				angle *= frac;
+				angle *= Class->SpiralDeltaPerCoord;
+				double sine = fastmath::sin(angle);
+				double cosine = fastmath::cos(angle);
+
+				Vector3 spiral(0.0f, cosine, sine);
+				spiral = mat * spiral;
+				Vector3 scaled = (float)Class->SpiralRadius * spiral;
+
+				Vector3 tmp(
+					((Random_Pick(0, 0x7ffffffe) * 4.656612877414201e-10) - 0.5)
+						* Class->PositionPerturbationCoefficient,
+					((Random_Pick(0, 0x7ffffffe) * 4.656612877414201e-10) - 0.5)
+						* Class->PositionPerturbationCoefficient,
+					((Random_Pick(0, 0x7ffffffe) * 4.656612877414201e-10) - 0.5)
+						* Class->PositionPerturbationCoefficient);
+				scaled += tmp;
+
+				Coord particle_pos;
+				particle_pos = Point3D((int)scaled.X, (int)scaled.Y, (int)scaled.Z)
+					+ Lerp(Get_Coord(), SpawnCoord, frac);
+				ParticleClass *particle =
+					Spawn_Held_Particle(particle_pos, particle_pos);
+
+				particle->MovementDirection = spiral;
+				Vector3 move(
+					((Random_Pick(0, 0x7ffffffe) * 4.656612877414201e-10) - 0.5)
+						* Class->MovementPerturbationCoefficient,
+					((Random_Pick(0, 0x7ffffffe) * 4.656612877414201e-10) - 0.5)
+						* Class->MovementPerturbationCoefficient,
+					((Random_Pick(0, 0x7ffffffe) * 4.656612877414201e-10) - 0.5)
+						* Class->MovementPerturbationCoefficient);
+				particle->MovementDirection += move;
+				particle->MovementDirection =
+					Normalize(particle->MovementDirection);
+
+				float vp =
+					((Random_Pick(0, 0x7ffffffe) * 4.656612877414201e-10)
+						+ velocity_accum - 0.5)
+					* (Class->VelocityPerturbationCoefficient * 0.5);
+
+				velocity_accum = (float)MAX(MIN(vp, Class->VelocityPerturbationCoefficient),
+					-Class->MovementPerturbationCoefficient);
+
+				particle->Speed = velocity_accum + particle->Class->Velocity;
+				i++;
+			} while (i < num_particles);
+		}
+
+		if (Class->IsLaser) {
+			new LaserDrawClass(
+				Get_Coord(), SpawnCoord, 0, true, Class->LaserColor,
+				RGBClass(0, 0, 0), RGBClass(0, 0, 0),
+				10, false, true, 0.5f, 0.0f);
+		}
+		IsMarkedForDeletion = true;
+	}
+
+	for (i = 0; i < SystemParticles.Count(); i++) {
+		SystemParticles[i]->Behavior_AI();
+	}
+	for (int j = SystemParticles.Count() - 1; j >= 0; j--) {
+		ParticleClass *particle = SystemParticles[j];
+		if (particle->IsToDie) particle->Delete_Me();
+	}
+}
+
 // FUNCTION: GAMEMD 0x0062F9A0
 void ParticleSystemClass::Fire_AI(void)
 {
