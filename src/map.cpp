@@ -7265,6 +7265,55 @@ static inline CellSubzoneStruct * Subzone_Of(MapClass * map, Cell const & cell)
 	return(&map->CellSubzones[map->Get_Cell_Zone_Index(cell)]);
 }
 
+// FUNCTION: GAMEMD 0x005835D0
+Cell MapClass::Find_Bridge_Span_End_Cell(Cell const &cell, Cell const &reference)
+{
+	CellClass *cptr = &Map[cell];
+
+	if (!cptr->IsUnderBridge) {
+		return cptr->CellID;
+	}
+
+	FacingType fwd = cptr->IsBridgeEastWest ? FACING_E : FACING_S;
+	FacingType bwd = Facing_Sub(fwd, FACING_180);
+
+	CellClass *fcell = cptr;
+	CellClass *bcell = cptr;
+
+	Cell fresult = CELL_NONE;
+	Cell bresult = CELL_NONE;
+
+	while (true) {
+		if (fcell->IsUnderBridge) {
+			fcell = &fcell->Adjacent_Cell(fwd);
+			if (!fcell->IsUnderBridge &&
+				(fcell->Is_Tile_Bridge() || fcell->Is_Tile_Train_Bridge()) && fcell->Land_Type() != LAND_ROCK)
+				fresult = fcell->CellID;
+		}
+		if (bcell->IsUnderBridge) {
+			bcell = &bcell->Adjacent_Cell(bwd);
+			if (!bcell->IsUnderBridge &&
+				(bcell->Is_Tile_Bridge() || bcell->Is_Tile_Train_Bridge()) && bcell->Land_Type() != LAND_ROCK)
+				bresult = bcell->CellID;
+		}
+		if (!bcell->IsUnderBridge && !fcell->IsUnderBridge) break;
+	}
+
+	Cell result = CELL_NONE;
+
+	if (Map.In_Local_Radar(fresult, true)) {
+		result = fresult;
+	}
+
+	if (Map.In_Local_Radar(bresult, true)) {
+		if (result == CELL_NONE || bresult.Distance_To(reference) < fresult.Distance_To(reference)) {
+			result = bresult;
+		}
+	}
+
+	return result;
+}
+
 // FUNCTION: GAMEMD 0x00583820
 Cell MapClass::Find_Bridge_End_Cell_For_Subzone(Cell const & cell, int subzone_level, int subzone_id)
 {
