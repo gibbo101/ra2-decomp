@@ -12190,7 +12190,7 @@ address,name,result,size,source,symbol
 0x0067C640,_$E185,MATCH,15,src/saveload.cpp,_$E185
 0x0067C650,_$E188,MATCH,18,src/saveload.cpp,_$E188
 0x0067C670,FUN_0067C670,MATCH,26,src/saveload.cpp,?FUN_0067C670@@YIXXZ
-0x0067C690,FUN_0067C690,MATCH,78,src/saveload.cpp,?FUN_0067C690@@YIJPAUIStream@@@Z
+0x0067C690,Load_Vector,MATCH,78,src/saveload.cpp,?Load_Vector@@YIJPAUIStream@@@Z
 0x0067C6E0,Object_CRCs,MATCH,2050,src/saveload.cpp,?Object_CRCs@@YI?AVCRCEngine@@XZ
 0x0067D300,Put_All,MATCH,4411,src/saveload.cpp,?Put_All@@YI_NPAUIStream@@H@Z
 0x0067E440,Load_Game,MATCH,749,src/saveload.cpp,?Load_Game@@YI_NPBD@Z
