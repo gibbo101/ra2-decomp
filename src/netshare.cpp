@@ -1420,7 +1420,7 @@ bool __fastcall FUN_005E8740(int index)
 }
 
 // FUNCTION: GAMEMD 0x005E8760
-int FUN_005E8760(void)
+bool FUN_005E8760(void)
 {
 	wchar_t * name = FUN_00735120(Session.Handle);
 	return(wcscmp(name, Session.GameName) == 0);
@@ -1888,21 +1888,15 @@ bool __fastcall FUN_005E93F0(NodeNameType * slot)
 }
 
 // FUNCTION: GAMEMD 0x005E9440
-int __fastcall FUN_005E9440(NodeNameType * slot)
+bool __fastcall FUN_005E9440(NodeNameType * slot)
 {
-	if (slot != NULL && (slot == DAT_00AC11A4 || slot == DAT_00AC11A8 || slot == DAT_00AC11AC)) {
-		return(1);
-	}
-	return(0);
+	return(slot != NULL && (slot == DAT_00AC11A4 || slot == DAT_00AC11A8 || slot == DAT_00AC11AC));
 }
 
 // FUNCTION: GAMEMD 0x005E9470
-int __fastcall FUN_005E9470(NodeNameType * slot)
+bool __fastcall FUN_005E9470(NodeNameType * slot)
 {
-	if (slot == NULL || slot == DAT_00AC119C || slot == DAT_00AC11A0 || slot == DAT_00AC11B4 || slot == DAT_00AC11B0) {
-		return(0);
-	}
-	return(1);
+	return(slot != NULL && slot != DAT_00AC119C && slot != DAT_00AC11A0 && slot != DAT_00AC11B4 && slot != DAT_00AC11B0);
 }
 
 // FUNCTION: GAMEMD 0x005E94A0
