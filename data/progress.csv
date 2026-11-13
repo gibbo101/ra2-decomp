@@ -10585,6 +10585,7 @@ address,name,result,size,source,symbol
 0x006219D0,FUN_006219D0,MATCH,420,src/ownrdraw.cpp,?FUN_006219D0@@YIXABV?$TRect@H@@AAVSurface@@HH@Z
 0x00621B80,FUN_00621B80,MATCH,425,src/ownrdraw.cpp,?FUN_00621B80@@YIXPAV?$TRect@H@@PAVSurface@@GH@Z
 0x00621D30,ODDrawBitsStrand,MATCH,341,src/ownrdraw.cpp,?ODDrawBitsStrand@@YIXABV?$TRect@H@@AAVSurface@@@Z
+0x00621E90,OwnerDraw::Paint,MATCH,1326,src/ownrdraw.cpp,?Paint@OwnerDraw@@YIXPAUHWND__@@@Z
 0x006223C0,On_WM_NCDESTROY,MATCH,119,src/ownrdraw.cpp,?On_WM_NCDESTROY@@YIXPAUHWND__@@@Z
 0x00622440,ODUpdateWindowRect,MATCH,35,src/ownrdraw.cpp,?ODUpdateWindowRect@@YGHPAUHWND__@@PAUtagRECT@@@Z
 0x00622470,ODAddWindowToList,MATCH,365,src/ownrdraw.cpp,?ODAddWindowToList@@YGHPAUHWND__@@PAV?$ArrayList@PAUHWND__@@@@@Z
@@ -17952,6 +17953,7 @@ address,name,result,size,source,symbol
 0x0077E780,FUN_0077E780,MATCH,22,src/wonline.cpp,?FUN_0077E780@@YIHXZ
 0x0077E7A0,FUN_0077E7A0,MATCH,114,src/wonline.cpp,?FUN_0077E7A0@@YIXPAD@Z
 0x0077E820,FUN_0077E820,MATCH,217,src/wonline.cpp,?FUN_0077E820@@YIXPADPAH1111PAVWstring@@@Z
+0x0077E900,FUN_0077E900,MATCH,666,src/wonline.cpp,?FUN_0077E900@@YIXABVWstring@@H@Z
 0x0077EBA0,FUN_0077EBA0,MATCH,350,src/wonline.cpp,?FUN_0077EBA0@@YIHABVWstring@@@Z
 0x0077ED00,FUN_0077ED00,MATCH,645,src/wonline.cpp,?FUN_0077ED00@@YIHABVWstring@@HHHH@Z
 0x0077EF90,FUN_0077EF90,MATCH,399,src/wonline.cpp,?FUN_0077EF90@@YI_NHE@Z

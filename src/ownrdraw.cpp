@@ -140,7 +140,13 @@ namespace OwnerDraw {
 				int LayoutBand;
 				unsigned char reservedB4[9];
 				bool HasOpenAnimation;
-				unsigned char reservedBE[0x1E];
+				unsigned char reservedBE[0x16];
+				bool Unknown_0D4;
+				bool HasTopPanelAnimation;
+				bool HasButtonAnimation;
+				bool HasMainScreenAnimation;
+				bool FlagD8;
+				unsigned char reservedD9[3];
 				int ExtraWidth;
 			} Dialog;
 
@@ -4606,8 +4612,8 @@ void __fastcall FUN_0060CC00(HWND dialog)
 // FUNCTION: GAMEMD 0x0060CC60
 unsigned char __fastcall FUN_0060CC60(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
-	if (data != NULL) {
+	OwnerDraw::WinData *data = NULL;
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
 		return *((unsigned char *)data + 0xd7);
 	}
 	return 0;
@@ -4662,8 +4668,8 @@ unsigned char __fastcall FUN_0060CDB0(HWND dialog)
 // FUNCTION: GAMEMD 0x0060CE40
 int __fastcall FUN_0060CE40(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
-	if (data != NULL) {
+	OwnerDraw::WinData *data = NULL;
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
 		return *(int *)((char *)data + 0xe0);
 	}
 	return 0;
@@ -4672,8 +4678,8 @@ int __fastcall FUN_0060CE40(HWND dialog)
 // FUNCTION: GAMEMD 0x0060CEA0
 int __fastcall FUN_0060CEA0(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
-	if (data != NULL) {
+	OwnerDraw::WinData *data = NULL;
+	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
 		return *(int *)((char *)data + 0xe4);
 	}
 	return 0;
@@ -7759,6 +7765,132 @@ void ODDrawBitsStrand(Rect const & rect, Surface & surface)
 
 		if ((index % 6) == 0) {
 			x += 10;
+		}
+	}
+}
+
+class ConvertClass;
+namespace OwnerDraw { void Paint(HWND window); }
+#include "draw.h"
+extern ShapeSet const * DAT_00B0FC80;
+extern ShapeSet const * DAT_00B0FC84;
+extern ShapeSet const * DAT_00B0FC88;
+extern ShapeSet const * DAT_00B0FC8C;
+void __fastcall FUN_0072F540(Surface * surface, Rect * rect, int flag);
+bool FUN_0072E260(void);
+void __fastcall FUN_0072E450(Surface * surface, Rect * rect, bool flag);
+void __fastcall FUN_0072E730(Surface * surface, Rect * rect, int a, int b, int c);
+void __fastcall FUN_0072E8C0(Surface * surface, Rect * rect);
+void __fastcall FUN_0072E860(Surface * surface, Rect * rect);
+void __fastcall FUN_0072E920(Surface * surface, Rect * rect);
+ConvertClass * FUN_0072AFF0(void);
+ConvertClass * FUN_0072B010(void);
+ConvertClass * FUN_0072B030(void);
+
+// FUNCTION: GAMEMD 0x00621E90
+void __fastcall OwnerDraw::Paint(HWND window)
+{
+	WinData * entry = Find_Data(window);
+	if (entry == NULL) {
+		return;
+	}
+	RECT rcClient;
+	GetClientRect(window, &rcClient);
+
+	RECT rcDisp;
+	Get_Display_Rect(window, &rcDisp);
+
+	Rect rFull;
+	rFull.Set(rcDisp.left, rcDisp.top, rcDisp.right - rcDisp.left, rcDisp.bottom - rcDisp.top);
+	if (rFull.Width <= rcClient.right) {
+		rFull.Width = rcClient.right;
+	}
+	if (rFull.Height <= rcClient.bottom) {
+		rFull.Height = rcClient.bottom;
+	}
+
+	if (entry->paintDisabled == 0) {
+		Surface * surf = entry->cachedSurface;
+		if (!surf) {
+			surf = new BSurface(rcClient.right, rcClient.bottom, 2);
+			entry->cachedSurface = surf;
+			OwnerDraw::CachedSurfaceCount++;
+		}
+
+		int mode = entry->Dialog.LayoutBand;
+		if (mode == 1) {
+			if (FUN_0069BBE0(&Session)) {
+				FUN_0072F540(surf, &rFull, 0);
+			} else if (FUN_0072E260()) {
+				FUN_0072E450(surf, &rFull, !entry->Dialog.Unknown_0D4);
+
+				int a = FUN_0060C4E0(window);
+				int b = FUN_0060CE40(window);
+				int c = FUN_0060CEA0(window);
+				FUN_0072E730(surf, &rFull, a, b, c);
+
+				if (entry->Dialog.HasTopPanelAnimation) {
+					FUN_0072E8C0(surf, &rFull);
+				}
+				if (entry->Dialog.HasButtonAnimation) {
+					FUN_0072E860(surf, &rFull);
+				}
+				if (FUN_0060CC60(window)) {
+					FUN_0072E920(surf, &rFull);
+				}
+			}
+		} else if (mode == 2) {
+			Rect dst = rFull;
+			dst.X = 0;
+			dst.Y = 0;
+			surf->Blit_From(dst, *DAT_00887310, rFull, false, true);
+
+			ShapeSet const * shape;
+			ConvertClass * palette;
+			if (FUN_0069BBE0(&Session)) {
+				int theme = Scen->PlayerSideIndex;
+				if (theme == 0) {
+					shape = DAT_00B0FC84;
+					palette = FUN_0072AFF0();
+				} else if (theme == 1) {
+					shape = DAT_00B0FC88;
+					palette = FUN_0072AFF0();
+				} else {
+					shape = DAT_00B0FC8C;
+					palette = FUN_0072B010();
+				}
+			} else {
+				shape = DAT_00B0FC80;
+				palette = FUN_0072B030();
+			}
+			Point2D position(0, 0);
+			if (palette && shape) {
+				Draw_Shape(*surf, *palette, shape, 0, position, dst, SHAPE_WIN_REL);
+			}
+		} else {
+			Surface * back = SurfaceCache.GetSurface(DAT_00833654, NULL);
+
+			Rect dst = rFull;
+			Rect src = rFull;
+			dst.X -= rcDisp.left;
+			dst.Y -= rcDisp.top;
+
+			int width = back->Get_Width();
+			int height = back->Get_Height();
+			if (Drawing::RenderWidth > width) {
+				src.X += (Drawing::RenderWidth - width) / -2;
+			}
+			if (Drawing::RenderHeight > height) {
+				src.Y += (Drawing::RenderHeight - height) / -2;
+			}
+			surf->Blit_From(dst, *back, src, false, true);
+		}
+
+		if (surf) {
+			Rect srcOnXs = rFull;
+			srcOnXs.X -= rcDisp.left;
+			srcOnXs.Y -= rcDisp.top;
+			DAT_00887310->Blit_From(rFull, *surf, srcOnXs, false, true);
 		}
 	}
 }

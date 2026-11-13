@@ -998,6 +998,67 @@ void __fastcall FUN_00783C80(int arg, bool flag);
 
 WideWstring __fastcall FUN_007B7ED0(Wstring const & text);
 
+void __fastcall FUN_004E34A0(HWND dialog, int side, int flag);
+extern int DAT_00B76440[];
+void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
+void __fastcall FUN_005EDDE0(HWND dialog, bool enable);
+void FUN_005E9850(void);
+void FUN_0072CF90(void);
+void __fastcall FUN_005E9340(char const * name);
+
+// FUNCTION: GAMEMD 0x0077E900
+void __fastcall FUN_0077E900(Wstring const & who, int status)
+{
+	Wstring name(who.length() > 0 ? who : DAT_00B73E40);
+	if (name == DAT_00B73E40 && status == 0) {
+		HWND w = FUN_00775940(0xC9);
+		FUN_005EDDE0(w, true);
+	}
+	int index = FUN_0077D240(&name);
+	if (index != -1) {
+		DAT_00B76E58[index].Accepted = status;
+		FUN_00783C80(0, false);
+	}
+	bool pair = DAT_00B77E4C == 1;
+	Wstring lower = ((Wstring const &)name).toLower();
+	int i;
+	for (i = 0; i < Session.Players.Count(); i++) {
+		Wstring slot_name = FUN_007B7F90(Session.Players[i]->Name);
+		if (((Wstring const &)slot_name).toLower() == lower) {
+			break;
+		}
+	}
+	if (i >= Session.Players.Count()) {
+		return;
+	}
+	Session.Players[i]->Slot.Unknown77 = status;
+	if (pair && (Session.unknown_0C == 3 || Session.unknown_0C == 1 || Session.unknown_0C == 2) && !DAT_00B77DEC && i == 1 && DAT_00B77900.length() == 2) {
+		User *temp, *head = NULL;
+		User source;
+		memset(&source, 0, sizeof(source));
+		for (int k = 0; k < DAT_00B77900.length(); k++) {
+			DAT_00B77900.get(source, k);
+			temp = new User;
+			*temp = source;
+			temp->next = head;
+			head = temp;
+		}
+		DAT_00B77E14 = 0;
+		DAT_00B73A20 = 9;
+		DAT_00B77D70 = 90;
+		DAT_00B77A88 = time(0);
+		g_pChat->RequestGameStart(head);
+		DAT_00B77DEC = true;
+		temp = head;
+		while (temp) {
+			head = temp->next;
+			delete temp;
+			temp = head;
+		}
+	}
+	FUN_00783C80(0, false);
+}
+
 // FUNCTION: GAMEMD 0x0077EBA0
 int __fastcall FUN_0077EBA0(Wstring const & who)
 {
@@ -2840,14 +2901,7 @@ bool FUN_0077CF40(void);
 void __fastcall FUN_007A0EA0(char const * name, int ping);
 #include "multiplayer.h"
 
-void __fastcall FUN_004E34A0(HWND dialog, int side, int flag);
-extern int DAT_00B76440[];
-void __cdecl FUN_005E2700(int color, wchar_t const * text, ...);
-void __fastcall FUN_005EDDE0(HWND dialog, bool enable);
-void FUN_005E9850(void);
-void FUN_0072CF90(void);
 static inline void Focus_Chat_Input_After(unsigned int event);
-void __fastcall FUN_005E9340(char const * name);
 
 // FUNCTION: GAMEMD 0x00785740
 void __fastcall FUN_00785740(User *user)
