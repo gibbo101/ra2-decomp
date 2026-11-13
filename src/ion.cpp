@@ -5,6 +5,8 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "fastmath.h"
+#include "wwmath.h"
 #include "geometry.h"
 #include "ion.h"
 #include "_convert.h"
@@ -1086,6 +1088,181 @@ void FUN_0053BB80(void)
 		delete DAT_00A9FA9C_Surface;
 	}
 	DAT_00A9FA9C_Surface = NULL;
+}
+
+void __fastcall FUN_0053C0A0(unsigned short * dest, unsigned short const * source,
+	unsigned short alpha, int width, int height, int dest_pad, int source_stride);
+
+// FUNCTION: GAMEMD 0x0053BBA0
+void __fastcall FUN_0053BBA0(bool forward)
+{
+	int width = DAT_00A9FA9C_Surface->Get_Width();
+	int height = DAT_00A9FA9C_Surface->Get_Height() - DAT_007F5BFC;
+	int bytes_per_pixel = DAT_00A9FA9C_Surface->Bytes_Per_Pixel();
+	int source_stride = DAT_00A9FA9C_Surface->Stride() / bytes_per_pixel;
+	int dest_pad = (DSurface::Composite->Stride() - width * bytes_per_pixel) / bytes_per_pixel;
+	unsigned short * dest = (unsigned short *)DSurface::Composite->Lock(Point2D(0, 0));
+	unsigned short const * source = (unsigned short const *)DAT_00A9FA9C_Surface->Lock(Point2D(0, 0));
+
+	if (dest != NULL && source != NULL) {
+		DAT_00A9FAA4 = 0.0f;
+		DAT_00A9FAA0 = 0.0f;
+		int step;
+		if (!forward) {
+			step = DAT_00A9FAA8 - DAT_00A9FA98;
+		} else {
+			step = DAT_00A9FA98;
+		}
+		for (int i = 0; i < step; i++) {
+			DAT_00A9FAA4 += 0.002;
+			DAT_00A9FAA0 += DAT_00A9FAA4;
+		}
+		unsigned short alpha = step * 255 / DAT_00A9FAA8;
+
+		switch (DSurface::Get_Primary_Color_Mode()) {
+		case COLORMODE_565:
+			FUN_0053C0A0(dest, source, alpha, width, height, dest_pad, source_stride);
+			break;
+
+		case COLORMODE_556:
+		{
+			unsigned short * output = dest;
+			float center_x = float(width / 2);
+			float center_y = float(height / 2);
+			float radius_squared = center_x * center_x + center_y * center_y;
+			float y = -center_y;
+			for (int row = height; row > 0; row--) {
+				float x = -center_x;
+				for (int col = width; col > 0; col--) {
+					float falloff = (1.0f - (x * x + y * y) / radius_squared) * 5.0f;
+					float angle = falloff * falloff;
+					angle *= DAT_00A9FAA0;
+					float cosine = fastmath::cosf(angle);
+					float sine = fastmath::sinf(angle);
+					int source_x = WWMath::Float_To_Long(cosine * x + sine * y + center_x);
+					int source_y = WWMath::Float_To_Long(cosine * y - sine * x + center_y);
+
+					if (source_x < 0) {
+						source_x = 0;
+					} else if (source_x >= width) {
+						source_x = width - 1;
+					}
+					if (source_y < 0) {
+						source_y = 0;
+					} else if (source_y >= height) {
+						source_y = height - 1;
+					}
+
+					unsigned short const * pixel_source = source + source_y * source_stride + source_x;
+					unsigned short red = *pixel_source >> 11;
+					unsigned short green = (*pixel_source >> 6) & 0x1F;
+					unsigned short blue = *pixel_source & 0x3F;
+					red += ((0x1F - red) * alpha) >> 8;
+					green += ((0x1F - green) * alpha) >> 8;
+					blue += ((0x3F - blue) * alpha) >> 8;
+					*output++ = (red << 11) | (green << 6) | blue;
+					x += 1.0f;
+				}
+				y += 1.0f;
+				output += dest_pad;
+			}
+			break;
+		}
+
+		default:
+		{
+			unsigned short * output = dest;
+			float center_x = float(width / 2);
+			float center_y = float(height / 2);
+			float radius_squared = center_x * center_x + center_y * center_y;
+			float y = -center_y;
+			for (int row = height; row > 0; row--) {
+				float x = -center_x;
+				for (int col = width; col > 0; col--) {
+					float falloff = (1.0f - (x * x + y * y) / radius_squared) * 5.0f;
+					float angle = falloff * falloff;
+					angle *= DAT_00A9FAA0;
+					float cosine = fastmath::cosf(angle);
+					float sine = fastmath::sinf(angle);
+					int source_x = WWMath::Float_To_Long(cosine * x + sine * y + center_x);
+					int source_y = WWMath::Float_To_Long(cosine * y - sine * x + center_y);
+
+					if (source_x < 0) {
+						source_x = 0;
+					} else if (source_x >= width) {
+						source_x = width - 1;
+					}
+					if (source_y < 0) {
+						source_y = 0;
+					} else if (source_y >= height) {
+						source_y = height - 1;
+					}
+
+					unsigned short const * pixel_source = source + source_y * source_stride + source_x;
+					unsigned short red = (*pixel_source >> 10) & 0x1F;
+					unsigned short green = (*pixel_source >> 5) & 0x1F;
+					unsigned short blue = *pixel_source & 0x1F;
+					red += ((0x1F - red) * alpha) >> 8;
+					green += ((0x1F - green) * alpha) >> 8;
+					blue += ((0x1F - blue) * alpha) >> 8;
+					*output++ = (red << 10) | (green << 5) | blue;
+					x += 1.0f;
+				}
+				y += 1.0f;
+				output += dest_pad;
+			}
+			break;
+		}
+		}
+	}
+
+	DAT_00A9FA9C_Surface->Unlock();
+	DSurface::Composite->Unlock();
+}
+
+// FUNCTION: GAMEMD 0x0053C0A0
+void __fastcall FUN_0053C0A0(unsigned short * dest, unsigned short const * source,
+	unsigned short alpha, int width, int height, int dest_pad, int source_stride)
+{
+	float center_x = float(width / 2);
+	float center_y = float(height / 2);
+	float radius_squared = center_x * center_x + center_y * center_y;
+	float y = -center_y;
+
+	for (int row = height; row > 0; row--) {
+		float x = -center_x;
+		for (int col = width; col > 0; col--) {
+			float falloff = (1.0f - (x * x + y * y) / radius_squared) * 5.0f;
+			float angle = DAT_00A9FAA0 * falloff * falloff;
+			float cosine = fastmath::cosf(angle);
+			float sine = fastmath::sinf(angle);
+			int source_x = WWMath::Float_To_Long(cosine * x + sine * y + center_x);
+			int source_y = WWMath::Float_To_Long(cosine * y - sine * x + center_y);
+
+			if (source_x < 0) {
+				source_x = 0;
+			} else if (source_x >= width) {
+				source_x = width - 1;
+			}
+			if (source_y < 0) {
+				source_y = 0;
+			} else if (source_y >= height) {
+				source_y = height - 1;
+			}
+
+			unsigned short const * pixel = source + source_y * source_stride + source_x;
+			unsigned short red = *pixel >> 11;
+			unsigned short green = (*pixel >> 5) & 0x3F;
+			unsigned short blue = *pixel & 0x1F;
+			red += ((0x1F - red) * alpha) >> 8;
+			green += ((0x3F - green) * alpha) >> 8;
+			blue += ((0x1F - blue) * alpha) >> 8;
+			*dest++ = (red << 11) | (green << 5) | blue;
+			x += 1.0f;
+		}
+		dest += dest_pad;
+		y += 1.0f;
+	}
 }
 
 // FUNCTION: GAMEMD 0x0053C280
