@@ -1869,6 +1869,74 @@ static inline bool Is_Cached(VoxelIndexClass * cache, int key)
 
 #include "voxfacing.h"
 
+// FUNCTION: GAMEMD 0x0073B140
+void UnitClass::Unit_Blit_Voxel(Surface * surface, Point2D drawpoint, Rect cliprect, int brightness, WORD tint)
+{
+	if (Map[Center_Coord().As_Cell()].Is_Shrouded()) {
+		tint = 0;
+	}
+	bool fudge = false;
+	if (Class->TooBigToFitUnderBridge) {
+		if (Is_Z_Fudge_Bridge() && Get_Z_Fudge_Column() == 0) {
+			fudge = true;
+		} else {
+			TechnoClass * radio = FUN_0065AD40(0);
+			if (NavCom != NULL) {
+				if (radio != NULL && radio->Fetch_RTTI() == RTTI_BUILDING && ((BuildingClass *)radio)->Class->IsWeaponsFactory) {
+					fudge = true;
+				}
+			}
+		}
+	}
+	int predoffset = 0;
+	unsigned flags = SHAPE_ALPHA | SHAPE_ZGRAD;
+	switch (Visual_Character()) {
+	case VISUAL_INDISTINCT:
+		flags = SHAPE_ALPHA | SHAPE_TRANSLUCENT25 | SHAPE_ZGRAD;
+		break;
+	case VISUAL_DARKEN:
+	case VISUAL_SHADOWY:
+		flags = SHAPE_ALPHA | SHAPE_TRANSLUCENT50 | SHAPE_ZGRAD;
+		break;
+	case VISUAL_RIPPLE: {
+		int stage = CloakingDevice.Fetch_Stage();
+		if (stage == 0) {
+			flags = SHAPE_ALPHA | SHAPE_TRANSLUCENT25 | SHAPE_PREDATOR | SHAPE_ZGRAD;
+		} else if (stage == 1) {
+			flags = SHAPE_ALPHA | SHAPE_TRANSLUCENT50 | SHAPE_PREDATOR | SHAPE_ZGRAD;
+		} else {
+			flags = SHAPE_ALPHA | SHAPE_TRANSLUCENT50 | SHAPE_PREDATOR | SHAPE_ZGRAD;
+		}
+		predoffset = Get_Predator_Offset();
+		break;
+	}
+	}
+	if (IsBeingWarpedOut() || IsWarpingIn()) {
+		flags |= SHAPE_TRANSLUCENT50;
+	}
+	if (House->Is_Player_Control() && IsDisguised()) {
+		flags = GetDisguiseFlags(flags);
+	}
+	ConvertClass * converter = ColorSchemes[House->Scheme]->Converter;
+	Blitter const * blitter = converter->Blitter_From_Flags(ShapeFlags_Type(flags));
+	Rect rect(UnitCompositeDirtyRect.X + drawpoint.X - 128,
+		UnitCompositeDirtyRect.Y + drawpoint.Y - 128,
+		UnitCompositeDirtyRect.Width, UnitCompositeDirtyRect.Height);
+	if (fudge && UnitCompositeDirtyRect.Height > 16) {
+		Rect source_rect = UnitCompositeDirtyRect;
+		rect.Height = UnitCompositeDirtyRect.Height - 16;
+		source_rect.Height = rect.Height;
+		Bit_Blit(*surface, cliprect, rect, *LogicalSurface, LogicalSurface->Get_Rect(), source_rect, *blitter, Get_Z_Adjust() - 5, ZGRAD_GROUND, brightness, tint, predoffset);
+		rect.Y += rect.Height;
+		source_rect.Y += rect.Height;
+		rect.Height = 16;
+		source_rect.Height = 16;
+		Bit_Blit(*surface, cliprect, rect, *LogicalSurface, LogicalSurface->Get_Rect(), source_rect, *blitter, Get_Z_Adjust(), ZGRAD_90DEG, brightness, tint, predoffset);
+	} else {
+		Bit_Blit(*surface, cliprect, rect, *LogicalSurface, LogicalSurface->Get_Rect(), UnitCompositeDirtyRect, *blitter, Get_Z_Adjust(), Get_Z_Gradient(), brightness, tint, predoffset);
+	}
+}
+
 // FUNCTION: GAMEMD 0x0073B470
 void UnitClass::Unit_Draw_Voxel(Point2D xdrawpoint, Rect xcliprect, int brightness, WORD tint)
 {
@@ -2269,6 +2337,444 @@ bool UnitClass::Harvesting(void)
 	Animation.Set_Stage(0);
 	Animation.Set_Rate(0);
 	return(false);
+}
+
+// FUNCTION: GAMEMD 0x0073D630
+int UnitClass::Do_MISSION_UNLOAD(void)
+{
+	Cell cell;
+	if (BunkerLinkedItem != NULL) {
+		if (Get_Cell_Ptr()->Cell_Building() != NULL) Get_Cell_Ptr()->Cell_Building()->EmptyBunker();
+	} else if (Class->Max_Passengers() > 0) {
+		enum { INITIAL, MANEUVERING, OPENING_DOOR, UNLOADING, CLOSING_DOOR };
+		switch (Status) {
+		case INITIAL: {
+			if (Locomotion->Is_Moving()) return(10);
+			Cell current = PositionCell;
+			CellClass & current_cell = Map[current];
+			if (NavCom == NULL && current_cell.Land_Type() == LAND_WATER) {
+				Cell destination = Map.Nearby_Location(PositionCell, SPEED_WHEEL, -1, MZONE_NORMAL, false, Point2D(1, 1), false, false, false, true, Cell(0, 0), false, false);
+				Assign_Destination(&Map[destination], true);
+				return(10);
+			}
+			int passengers = Cargo.How_Many();
+			FacingType facing = Desired_Load_Dir(NULL, cell);
+			if (passengers && cell != CELL_NONE) {
+				if (FUN_0070DC60()) {
+					if (passengers == 1) NonPassengerCount = 0;
+					else NonPassengerCount = 1;
+				}
+				Locomotion->Do_Turn((DirStruct &)DirType(facing));
+				Status = MANEUVERING;
+				return(1);
+			}
+			QueueMission(MISSION_GUARD, false);
+			break;
+		}
+		case MANEUVERING:
+			if (!IsRotating) {
+				Status = UNLOADING;
+				return(1);
+			}
+			break;
+		case UNLOADING:
+			if (Cargo.How_Many() > NonPassengerCount) {
+				FootClass * passenger = RemoveFirstPassenger();
+				if (passenger != NULL) {
+					DirType opposite = PrimaryFacing.Current().Right_180();
+					int attempt = 0;
+					int toface = opposite.Round_To_8();
+					bool prefer_far = true;
+					bool placed = false;
+					for (; attempt < FACING_COUNT; ++attempt) {
+						FacingType facing = (FacingType)((toface + attempt) & 7);
+						Cell near_cell = Adjacent_Cell(PositionCell, facing);
+						Cell far_cell = Adjacent_Cell(near_cell, facing);
+						bool far_allowed = passenger->Can_Enter_Cell(&Map[far_cell], facing, Get_Cell_Height(), NULL, true) == MOVE_OK;
+						bool near_allowed = passenger->Can_Enter_Cell(&Map[near_cell], facing, Get_Cell_Height(), NULL, true) == MOVE_OK;
+						if (!near_allowed || (!far_allowed && prefer_far)) {
+							if (prefer_far && attempt + 1 == FACING_COUNT) {
+								attempt = 0;
+								prefer_far = false;
+							}
+							continue;
+						}
+						if (Map[near_cell].IsUnderBridge) continue;
+						++ScenarioInit;
+						Coord position = Coord(near_cell);
+						if (passenger->Fetch_RTTI() == RTTI_INFANTRY) {
+							position = Map.Closest_Free_Spot(position, false);
+						} else {
+							near_cell = Map.Nearby_Location(near_cell, passenger->Techno_Type_Class()->Speed, -1, MZONE_NORMAL, false, Point2D(1, 1), false, false, false, true, Cell(0, 0), false, false);
+							position = Coord(Map[near_cell].Center_Coord().As_Cell());
+						}
+						placed = passenger->Unlimbo(position, DirType(facing).As_Dir256());
+						--ScenarioInit;
+						if (placed) {
+							if (Class->OpenTopped) ExitedOpenTopped(passenger);
+							if (Class->OpenTopped && House != passenger->House) passenger->Assign_Target(NULL);
+							passenger->Transporter = NULL;
+							passenger->QueueMission(MISSION_MOVE, false);
+							if (prefer_far) passenger->Assign_Destination(&Map[far_cell], true);
+							else passenger->Assign_Destination(&Map[near_cell], true);
+							if (Team != NULL) Team->AddMember(passenger, false);
+						}
+						break;
+					}
+					if (!placed) {
+						Cargo.Attach(passenger);
+						if (Techno_Type_Class()->Gunner) ReceiveGunner(passenger);
+						passenger->Hidden();
+					} else if (Techno_Type_Class()->LeaveTransportSound != -1) {
+						VocClass::PlayIndexAtPos(Techno_Type_Class()->LeaveTransportSound, PositionCoord, 0);
+					}
+				}
+			} else {
+				Status = CLOSING_DOOR;
+			}
+			break;
+		case CLOSING_DOOR:
+			QueueMission(MISSION_GUARD, false);
+			IsMissionUnloadStandby = true;
+			break;
+		}
+		return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+	} else if (Class->DeployFire && !Class->IsSimpleDeployer) {
+		Assign_Target(&Map[Get_Cell()]);
+		if (Can_Fire(TarCom, 0, true) == FIRE_OK) Fire_At(TarCom, 0);
+		return(Random_Pick(0, 2) + 14);
+	}
+	if (!Class->Harvester && !Class->Weeder) {
+		if (Class->DeploysInto != NULL) {
+			switch (Status) {
+			case 2:
+				if (!IsDeploying) {
+					Enter_Idle_Mode(false, true);
+					Commence();
+				} else if (!Try_To_Deploy() && NavCom != NULL) {
+					IsDeploying = false;
+				}
+				break;
+			case 0:
+				Transmit_Message(RADIO_OVER_OUT);
+				Path[0] = FACING_NONE;
+				Status = 1;
+				// Initial setup falls through into the movement check.
+			case 1:
+				if (!Locomotion->Is_Moving()) {
+					Try_To_Deploy();
+					if (IsActive) {
+						if (IsDeploying) Status = 2;
+						else if (!House->FUN_0050B730() && Session.Type != GAME_NORMAL) QueueMission(MISSION_HUNT, false);
+						else QueueMission(MISSION_GUARD, false);
+					}
+				} else if (MissionQueue != MISSION_NONE && MissionQueue != MISSION_UNLOAD) {
+					Commence();
+				}
+				break;
+			}
+		} else {
+			if (Class->IsSimpleDeployer) {
+				if (Deployed) Undeploy();
+				else Deploy();
+				if (Deploying || Undeploying || InAir) return(1);
+				QueueMission(MISSION_GUARD, false);
+				Commence();
+			}
+			return(BASECLASS::Do_MISSION_UNLOAD());
+		}
+		return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+	}
+	if (!HasAnyLink()) {
+		Enter_Idle_Mode(false, true);
+		IsDumping = false;
+		if (Locomotion->Is_Moving()) Stop_Driver();
+		if (Ready_To_Next_Mission()) Commence();
+		return(1);
+	}
+	if (PrimaryFacing.Current().As_Dir256() != DIR_E) {
+		if (!IsRotating) Locomotion->Do_Turn((DirStruct &)DirType(DIR_E));
+		return(5);
+	}
+	if (!IsDumping) {
+		IsDumping = true;
+		Animation.Set_Stage(0);
+		Animation.Set_Rate(1);
+		if (Class->Harvester) {
+			BuildingClass * building = Map[AdjacentCell[FACING_W] + PositionCell].Cell_Building();
+			if (building != NULL) building->PlayNthAnim(BANIM_PRE_PRODUCTION, building->HealthRatio <= Rule->ConditionYellow, false, 0);
+		}
+		Status = 3;
+	} else {
+		switch (Status) {
+		case 4:
+			if (Class->Weeder) {
+				IsDumping = false;
+				if (NavCom != NULL && MissionQueue != MISSION_NONE && MissionQueue != MISSION_HARVEST) {
+					if (Locomotion->Is_Moving()) Stop_Driver();
+					if (Ready_To_Next_Mission()) Commence();
+				} else {
+					QueueMission(MISSION_HARVEST, false);
+					if (Ready_To_Next_Mission()) {
+						if (HasAnyLink()) Transmit_Message(RADIO_OVER_OUT);
+						Commence();
+					}
+				}
+			} else {
+				BuildingClass * building = Map[PositionCell + AdjacentCell[FACING_W]].Cell_Building();
+				bool active = false;
+				if (building != NULL && building->Class->IsRefinery) active = building->Anim_Active(BANIM_PRODUCTION);
+				if (active) return(1);
+				IsDumping = false;
+				if (NavCom != NULL && MissionQueue != MISSION_NONE && MissionQueue != MISSION_HARVEST) {
+					if (Locomotion->Is_Moving()) Stop_Driver();
+					if (Ready_To_Next_Mission()) Commence();
+				} else {
+					QueueMission(MISSION_HARVEST, false);
+					if (Ready_To_Next_Mission()) {
+						if (HasAnyLink()) Transmit_Message(RADIO_OVER_OUT);
+						Commence();
+					}
+				}
+			}
+			break;
+		case 3: {
+			BuildingClass * building = Map[PositionCell + AdjacentCell[FACING_W]].Cell_Building();
+			if (building == NULL) {
+				if (HasAnyLink()) Transmit_Message(RADIO_OVER_OUT);
+				QueueMission(MISSION_HARVEST, true);
+				return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+			} else {
+				if (Animation.Fetch_Stage() >= Rule->HarvesterDumpRate * TICKS_PER_MINUTE) {
+					building->UpdateRefinerySmokeSystems();
+					if (!building->Anim_Active(BANIM_SPECIAL_ONE)) building->PlayNthAnim(BANIM_SPECIAL_ONE, building->HealthRatio <= Rule->ConditionYellow, false, 0);
+					int slot = Storage.First_Used_Slot();
+					HouseClass * owner = building->Owner_HouseClass();
+					int purifiers = owner->NumOrePurifiers;
+					if (!owner->IsHuman && Session.Type != GAME_NORMAL) purifiers += Rule->AIVirtualPurifiers[owner->Difficulty];
+					float amount = slot != -1 ? Storage.Get_Amount(slot) : 0.0f;
+					float bonus = (float)purifiers * Rule->PurifierBonus * amount;
+					float removed;
+					if (slot != -1 && (removed = Storage.Decrease_Amount(amount, slot)) > 0.0f) {
+						if (Class->Weeder) {
+							House->Harvested_Weed((int)removed, slot);
+							Animation.Set_Stage(0);
+						} else {
+							owner->Give_Tiberium(removed, slot);
+							if (bonus > 0.0f) owner->Give_Tiberium(bonus, slot);
+							Animation.Set_Stage(0);
+						}
+					} else {
+						if (building->Class->IsRefinery) building->PlayNthAnim(BANIM_PRODUCTION, building->HealthRatio <= Rule->ConditionYellow, false, 0);
+						Status = 4;
+						if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->DestroyNthAnim(BANIM_SPECIAL_ONE);
+					}
+				}
+				if (NavCom != NULL && MissionQueue != MISSION_NONE && MissionQueue != MISSION_HARVEST) {
+					if (building->Class->IsRefinery) building->PlayNthAnim(BANIM_PRODUCTION, building->HealthRatio <= Rule->ConditionYellow, false, 0);
+					Status = 4;
+					if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->DestroyNthAnim(BANIM_SPECIAL_ONE);
+				}
+				return(1);
+			}
+			break;
+		}
+		}
+	}
+	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+static inline int Unit_Dock_Distance(ObjectClass const & unit, AbstractClass const & dock)
+{
+	Point3D delta = unit.Center_Coord() - dock.Center_Coord();
+	double x = delta.X;
+	double y = delta.Y;
+	double z = delta.Z;
+	return int(fastmath::sqrt(x * x + (y * y + z * z)));
+}
+
+// FUNCTION: GAMEMD 0x0073E5E0
+int UnitClass::Do_MISSION_HARVEST(void)
+{
+	enum { LOOKING, HARVESTING, FINDHOME, HEADINGHOME, GOINGTOIDLE };
+	int index;
+
+	if (Class->ResourceDestination && Class->ResourceGatherer && SlaveManager != NULL) {
+		SlaveManager->FUN_006B0DB0();
+		return Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2);
+	}
+	if (!Class->Harvester && !Class->Weeder) {
+		return 450;
+	}
+	if (Class->Dock.Count() == 0 && !House->FUN_0050B730()) {
+		QueueMission(MISSION_GUARD, false);
+		return 1;
+	}
+	bool found = false;
+	for (index = 0; index < Class->Dock.Count(); index++) {
+		if (House->BQuantity.Value(Class->Dock[index]->HeapID) > 0) {
+			found = true;
+			break;
+		}
+	}
+	if (!found) {
+		QueueMission(MISSION_GUARD, false);
+		return 1;
+	}
+	{
+		bool teleporter = Class->Teleporter;
+		switch (Status) {
+		case LOOKING:
+			if (!Class->Weeder && Tiberium_Load() >= 1.0) {
+				Status = FINDHOME;
+				return 1;
+			}
+			{
+				bool hastarget = true;
+				if (ArchiveTarget != 0) {
+					Assign_Destination(ArchiveTarget, 1);
+					Assign_Archive_Target(0);
+					hastarget = false;
+				}
+				IsHarvesting = false;
+				bool ok;
+				if (Class->Weeder) {
+					ok = Goto_Weed(Rule->TiberiumLongScan / 256);
+				} else {
+					IPersistPtr persist(Locomotion);
+					CLSID clsid;
+					persist->GetClassID(&clsid);
+					if (clsid == LocomotionClass::CLSIDs::Teleport && NavCom != 0) {
+						Assign_Destination(0, 1);
+					}
+					ok = Goto_Tiberium(Rule->TiberiumLongScan / 256, hastarget);
+				}
+				if (ok) {
+					IsHarvesting = true;
+					Animation.Set_Rate(2);
+					Animation.Set_Stage(0);
+					Status = HARVESTING;
+					return 1;
+				}
+				if (NavCom == 0) {
+					if (ArchiveTarget != 0) {
+						Assign_Destination(ArchiveTarget, 1);
+					} else {
+						Status = GOINGTOIDLE;
+						IsUseless = true;
+						if (Class->Harvester) {
+							House->IsTiberiumShort = true;
+						}
+						return 105;
+					}
+				} else {
+					IsUseless = false;
+				}
+			}
+			break;
+		case HARVESTING:
+			if (Animation.Fetch_Rate() == 0) {
+				Animation.Set_Stage(0);
+				Animation.Set_Rate(Rule->HarvesterLoadRate);
+			}
+			if (Animation.Fetch_Stage() < 9) {
+				return 1;
+			}
+			if (!Harvesting()) {
+				IsHarvesting = false;
+				if (Class->Harvester && Tiberium_Load() == 1.0) {
+					Status = FINDHOME;
+					Cell cell;
+					if (Class->Harvester) {
+						cell = ScanForTiberium(Rule->TiberiumShortScan / 256, false);
+					} else {
+						cell = Search_For_Weed(Rule->TiberiumShortScan / 256);
+					}
+					if (cell != CELL_NONE) {
+						Assign_Archive_Target(&Map[cell]);
+					} else {
+						Assign_Archive_Target(0);
+					}
+					return 1;
+				}
+				bool ok;
+				if (Class->Harvester) {
+					ok = Goto_Tiberium(Rule->TiberiumShortScan / 256, false);
+				} else {
+					ok = Goto_Weed(Rule->TiberiumShortScan / 256);
+				}
+				if (!ok && NavCom == 0) {
+					Assign_Archive_Target(0);
+					Status = FINDHOME;
+				} else {
+					Status = HARVESTING;
+					IsHarvesting = true;
+				}
+				return 1;
+			}
+			return 1;
+		case FINDHOME:
+			if (NavCom != 0 && teleporter && TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0)) {
+				AbortMotion();
+			}
+			if (NavCom == 0) {
+				BuildingClass *nearest = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0);
+				bool close;
+				if (!teleporter) {
+					close = nearest != 0 && Unit_Dock_Distance(*this, *nearest) <= Rule->HarvesterTooFarDistance * 256;
+				} else {
+					close = nearest != 0 && Unit_Dock_Distance(*this, *nearest) <= Rule->ChronoHarvTooFarDistance * 256;
+				}
+				if (close && Transmit_Message(RADIO_HELLO, nearest) == 1) {
+					Status = HEADINGHOME;
+					break;
+				}
+				ScenarioInit++;
+				nearest = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 1);
+				ScenarioInit--;
+				if (nearest != 0) {
+					if (Distance_To(nearest) > 0x300 || teleporter) {
+						Cell cell = Cell(nearest->Get_Coord());
+						BuildingTypeClass *dock = nearest->Class;
+						Cell here = cell;
+						here.X = dock->QueueingCell.X + cell.X;
+						here.Y += dock->QueueingCell.Y;
+						here = Map.Nearby_Location(here, SPEED_WHEEL, -1, MZONE_NORMAL, false, Point2D(1, 1), 0, 0, 0, 1, Cell(0, 0), 0);
+						if (!(here == CELL_NONE)) {
+							Assign_Destination(&Map[here], 1);
+						} else {
+							Assign_Destination(0, 1);
+						}
+					}
+				}
+			}
+			break;
+		case HEADINGHOME:
+			QueueMission(MISSION_ENTER, false);
+			return 1;
+		case GOINGTOIDLE:
+			if (IsUseless) {
+				if (TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Rule->RepairBay, 0, 1)) {
+					QueueMission(MISSION_REPAIR, false);
+				} else {
+					QueueMission(MISSION_HUNT, false);
+				}
+			}
+			{
+				BuildingClass *object = Map[Get_Coord()].Cell_Building();
+				if (object != 0) {
+					BuildingTypeClass *type = object->Class;
+					if (type->IsRefinery || type->IsWeeder) {
+						Assign_Destination(&Map[Nearby_Location(object)], 1);
+					}
+				}
+			}
+			QueueMission(MISSION_GUARD, false);
+			break;
+		}
+		int delay = Current_Mission_Control().Normal_Delay();
+		return delay + Random_Pick(0, 2);
+	}
 }
 
 // FUNCTION: GAMEMD 0x0073EFC0
