@@ -1255,6 +1255,97 @@ static inline int Send_To_Host(void * packet, int size, int sent)
 	return(sent);
 }
 
+// FUNCTION: GAMEMD 0x005E74E0
+void Update_Network_Dialog_Preview(HWND win)
+{
+	delete MultiplayerMapPreview;
+	MultiplayerMapPreview = NULL;
+	switch (Session.Type) {
+	case GAME_IPX:
+		if (WS_Top_Window_ID() == IDD_MPLAYER_GUEST &&
+			!FUN_006951F0(Session.ScenarioFileName, Session.ScenarioFileLength, Session.ScenarioDigest,
+						  Session.ScenarioIsOfficial, false)) {
+			InvalidateRect(win, NULL, FALSE);
+			GlobalPacketType packet;
+			memset(&packet, 0, sizeof(packet));
+			packet.Command = NET_REQ_PREVIEW;
+			while (true) {
+				if (Send_To_Host(&packet, 0x2f, 0))
+					break;
+				Call_Back();
+			}
+			while (Ipx.Global_Num_Send() != 0)
+				Call_Back();
+			return;
+		}
+		break;
+	case GAME_INTERNET:
+		if (WS_Find_Dialog(IDD_WOL_GUEST) != NULL) {
+			bool present = false;
+			if (FUN_006951F0(Session.ScenarioFileName, Session.ScenarioFileLength, Session.ScenarioDigest,
+							 Session.ScenarioIsOfficial, false)) {
+				char name[128];
+				strcpy(name, Session.ScenarioFileName);
+				strupr(name);
+				FUN_004068E0("Checking for file %s in local directory\n", name);
+				if (!Session.ScenarioIsOfficial && strstr(name, ".MPR") != NULL &&
+					strstr(name, ".YRM") != NULL) {
+					break;
+				}
+				{
+					RawFileClass file(Session.ScenarioFileName);
+					if (file.Is_Available())
+						present = true;
+				}
+				if (!present)
+					break;
+			}
+			if (!Session.Is_Random_Map() && MultiplayerMapPreview != NULL) {
+				delete MultiplayerMapPreview;
+				MultiplayerMapPreview = NULL;
+				InvalidateRect(win, NULL, FALSE);
+				return;
+			}
+			InvalidateRect(win, NULL, FALSE);
+			return;
+		}
+		break;
+	case GAME_MODEM:
+	case GAME_NULL_MODEM:
+		if (!FUN_006951F0(Session.ScenarioFileName, Session.ScenarioFileLength, Session.ScenarioDigest,
+						  Session.ScenarioIsOfficial, false)) {
+			SerialPacketType packet;
+			memset(&packet, 0, sizeof(packet));
+			packet.Command = SERIAL_REQ_PREVIEW;
+			CDTimerClass<SystemTimerClass> response_timer = PACKET_SENDING_TIMEOUT;
+			while (response_timer) {
+				int sent = NullModem.Send_Message(&packet, sizeof(packet), 1);
+				while (NullModem.Num_Send() > 0 && response_timer)
+					Call_Back();
+				if (sent)
+					break;
+			}
+			return;
+		}
+		break;
+	}
+	if (MultiplayerMapPreview != NULL) {
+		delete MultiplayerMapPreview;
+		MultiplayerMapPreview = NULL;
+	}
+	bool unavailable = !CCFileClass(Session.ScenarioFileName).Is_Available();
+	if (!unavailable)
+		MultiplayerMapPreview = new MapPreviewClass;
+	if (MultiplayerMapPreview != NULL) {
+		if (!Session.Is_Random_Map()) {
+			MultiplayerMapPreview->Read_INI_Preview(Session.ScenarioFileName);
+		} else {
+			FUN_0058BB30();
+		}
+		InvalidateRect(win, NULL, FALSE);
+	}
+}
+
 bool __fastcall FUN_00693B70(char * name, int type, bool flag);
 
 // FUNCTION: GAMEMD 0x005E7920
