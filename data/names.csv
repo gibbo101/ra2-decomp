@@ -13,6 +13,7 @@ address,name,symbol,evidence
 0x0060B000,FUN_0060B000,?FUN_0060B000@@YIXPAUHWND__@@ABVPoint2D@@@Z,Aligns a sidebar button with the button strip
 0x0060B1D0,FUN_0060B1D0,?FUN_0060B1D0@@YIXPAUHWND__@@ABVPoint2D@@@Z,Positions a sidebar control using its dialog margin
 0x0050B6F0,HouseClass::Is_Player_Control,,byte-identical to TibSun's body; called by 0x007404B0 UnitClass::What_Action
+0x004ADFF0,DisplayClass::All_To_Look,?All_To_Look@DisplayClass@@QAEX_N0@Z,TibSun All_To_Look body; Encroach_Shadow at 0x004ACAC0+0xDC and Encroach_Fog at 0x004ACBC0+0x3E call the matched FUN_004ADFF0 implementation
 0x00A83D4C,PlayerPtr,,YRpp HouseClass::CurrentPlayer; TibSun's PlayerPtr in 0x007404B0 and earlier matches
 0x008B4150,AnimTypes,,YRpp AnimTypeClass::Array; TibSun's AnimTypes in 0x00422B20 AnimTypeClass lookup
 0x00481180,CellClass::Closest_Free_Spot,,YRpp FindInfantrySubposition; TibSun's argument use, ret 0x14
@@ -80,7 +81,7 @@ address,name,symbol,evidence
 0x0042D170,AStarClass::Test_Cell_Walk,,TS name (astar.h); six arguments and ret 0x18 as called by 0x00746000 and 0x005221D0
 0x00481A00,CellClass::Goodie_Check,,TS name (cell.h); returns bool in al with ret 4 as called by 0x0054C550
 0x00B0CEC8,Tactical::SelectableObjects,,TS name (tactical.h); the selectable-object array 0x006DC430 walks
-0x0057A0C0,MapClass::FUN_0057A0C0,,two-argument map function (ret 8) called by Seed_Land 0x0059A6C0; distinct from Build_All_Cliffs 0x00578E60
+0x0057A0C0,MapClass::Build_All_Shores,?Build_All_Shores@MapClass@@QAE_NH_N@Z,TibSun Build_All_Shores water-mask and two-pass shoreline generation; YR adds flat_height as a second argument (ret 8); Seed_Land at 0x0059A6C0 calls this target
 0x0057BCF0,MapClass::Damage_Low_Bridge_EW,?Damage_Low_Bridge_EW@MapClass@@AAE_NABVCell@@@Z,East-west damage branch of MapClass::Damage_Low_Bridge
 0x0057C2B0,MapClass::Damage_Low_Bridge_NS,?Damage_Low_Bridge_NS@MapClass@@AAE_NABVCell@@@Z,North-south damage branch of MapClass::Damage_Low_Bridge
 0x0057CF60,MapClass::FUN_0057CF60,?FUN_0057CF60@MapClass@@QAE_NABVCell@@@Z,East-west damage branch of the second low-bridge overlay family
