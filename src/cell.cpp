@@ -521,6 +521,117 @@ static inline CellClass const & LAT_Neighbor(CellClass const & cell, FacingType 
 	return Map[adjacent];
 }
 
+// FUNCTION: GAMEMD 0x0047C620
+bool CellClass::Is_Clear_To_Build(SpeedType speed, BuildingTypeClass *what, HouseClass *who) const
+{
+	if (ScenarioInit) {
+		return true;
+	}
+
+	if (what != 0) {
+		if (what->IsLaserFence) {
+			if (Cell_Building() != 0 || Cell_Terrain() != 0) {
+				return false;
+			}
+		} else if (what->IsLaserFencePost || what->IsGate) {
+			ObjectClass *obj = Cell_Object(Point2D(0, 0), false);
+			if (obj != 0) {
+				if (obj->RTTI != 6) {
+					return false;
+				}
+				if (!((BuildingClass *)obj)->Class->IsLaserFence || obj->Owner_HouseClass() != who) {
+					return false;
+				}
+			}
+			if ((Flag.Composite & 0x3F) != 0) {
+				return false;
+			}
+		} else {
+			if (what->ToTile == 0) {
+				if (Cell_Object(Point2D(0, 0), false) != 0) {
+					return false;
+				}
+				if ((Flag.Composite & 0x3F) != 0) {
+					return false;
+				}
+			} else {
+				if (ITType >= 0 && ITType < IsometricTileTypes.Count() && !IsometricTileTypes[ITType]->IsMorphable) {
+					return false;
+				}
+				if (Cell_Building() != 0) {
+					return false;
+				}
+			}
+		}
+	}
+
+	if (Debug_Map) {
+		if (!Map.In_Radar(CellID)) {
+			return false;
+		}
+	} else {
+		if (!Map.In_Local_Radar(this, true)) {
+			return false;
+		}
+	}
+
+	if (Overlay != -1) {
+		HouseClass *owner = 0;
+		if (Owner >= 0) {
+			owner = Houses[Owner];
+		}
+
+		if (Overlay == 2 || Overlay == 0) {
+			if (what != 0) {
+				if (what->ToOverlay != 0 && what->ToOverlay->HeapID == Overlay && OverlayData >= 0x10 || what == Rule->WallTower || what == Rule->GDIGateOne || what == Rule->GDIGateTwo) {
+					if (owner == who) {
+						return true;
+					}
+				}
+			}
+		}
+
+		if (Overlay == 0x1A) {
+			if (what != 0) {
+				if ((what->ToOverlay != 0 && what->ToOverlay->HeapID == 0x1A && OverlayData >= 0x10) || what == Rule->NodGateOne || what == Rule->NodGateTwo) {
+					if (owner == who) {
+						return true;
+					}
+				}
+			}
+		}
+
+		if (what != 0 && what->IsLaserFence && (Overlay == 0x7E || Which_Tiberium_Type(Overlay) != -1)) {
+			if (Is_Bridge_Here() || WasUnderBridge || Ramp != 0) {
+				return false;
+			}
+			return true;
+		}
+
+		if (!Debug_Map || OverlayTypes[Overlay]->IsWall) {
+			return false;
+		}
+	}
+
+	if (speed == -1) {
+		if (Is_Bridge_Here() || WasUnderBridge || Ramp != 0) {
+			return false;
+		}
+		if (what->Naval) {
+			if (!Is_Tile_Water()) {
+				return false;
+			}
+			return true;
+		}
+		return ::Ground[Land_Type()].Build;
+	} else {
+		if (::Ground[Land_Type()].Cost[speed] == 0) {
+			return false;
+		}
+		return true;
+	}
+}
+
 // FUNCTION: GAMEMD 0x0047CA80
 bool CellClass::Fixup_LAT(void)
 {
