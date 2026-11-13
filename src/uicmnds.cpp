@@ -758,7 +758,11 @@ TechnoList * FUN_00732050(void)
 	int count = DAT_00A8ECC8;
 	for (int i = 0; i < count; i++) {
 		ObjectClass * object = DAT_00A8ECB8[i];
-		if (object && object->Is_Techno()) {
+		bool flag;
+		if (object != NULL) {
+			flag = (object->AbstractFlags & 1) != 0;
+		}
+		if (object != NULL && flag) {
 			result->Add((TechnoClass *)object);
 		}
 	}
@@ -1127,7 +1131,160 @@ void __fastcall FUN_00733160(AbstractClass * object)
 	}
 }
 
+bool __fastcall FUN_007335F0(TechnoClass * techno, int unused);
+
+// FUNCTION: GAMEMD 0x007331B0
+void FUN_007331B0(void)
+{
+	if (DAT_00B0FE6C) {
+		delete DAT_00B0FE6C;
+		DAT_00B0FE6C = NULL;
+	}
+	TechnoList * list = FUN_00732050();
+	DAT_00B0FE6C = list;
+	if (list->Count() == 0) {
+		if (list) {
+			delete list;
+		}
+		DAT_00B0FE6C = NULL;
+		list = FUN_00731F70(FUN_007335F0, 0);
+		DAT_00B0FE6C = list;
+	}
+}
+
 extern wchar_t const DAT_00887734[];
+
+int __fastcall FUN_007336A0(int value);
+int __fastcall FUN_00733990(int value);
+
+extern int DAT_00845560;
+extern int DAT_00845564;
+extern int DAT_00B0FE70;
+extern char DAT_00B0FD70[];
+
+static inline void Check_Mixed_Selection(wchar_t const *& name, int next, bool rank)
+{
+	TechnoList * all = FUN_00732050();
+	int shown = all->Count();
+	for (int k = 0; k < shown; k++) {
+		ObjectClass * object = (*all)[k];
+		int value;
+		if (rank) {
+			value = static_cast<TechnoClass *>(object)->Veterancy.Remaining_Levels();
+		} else {
+			value = object->GetHealthStatus();
+		}
+		if (value != next) {
+			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp",
+										   rank ? 0x67a : 0x62f);
+			break;
+		}
+	}
+	if (all)
+		delete all;
+}
+
+static inline void Show_Navigation_Message(wchar_t * text, wchar_t const * name)
+{
+	FUN_00731D90(text, name);
+	FUN_00730A90(text, 240);
+}
+
+// FUNCTION: GAMEMD 0x00733380
+void __fastcall FUN_00733380(bool redraw)
+{
+	wchar_t text[256];
+	int next;
+	if (Unsorted::MuteSWLaunches) {
+		return;
+	}
+	if (Unsorted::NavCycleMode != 3) {
+		FUN_007331B0();
+		FUN_006DA740(TacticalMap);
+		next = 0;
+	} else {
+		next = FUN_007336A0(DAT_00845560);
+		if (redraw) {
+			FUN_006DA740(TacticalMap);
+		}
+	}
+	TechnoList * selection = DAT_00B0FE6C;
+	int count = selection->Count();
+	for (int i = 0; i < count; i++) {
+		ObjectClass * object = (*selection)[i];
+		if (object->GetHealthStatus() == next) {
+			object->Select();
+		}
+	}
+	wchar_t const * name;
+	if (next == 0) {
+		name = StringTable::LoadString("MSG:Critical", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x644);
+	} else if (next == 1) {
+		name = StringTable::LoadString("MSG:HeavilyDamaged", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x646);
+	} else if (next == 2) {
+		name = StringTable::LoadString("MSG:Healthy", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x648);
+	} else {
+		name = DAT_00887734;
+	}
+	Check_Mixed_Selection(name, next, false);
+	Show_Navigation_Message(text, name);
+	TechnoList * current = DAT_00B0FE6C;
+	DAT_00845560 = next;
+	int remaining = current->Count();
+	Unsorted::NavCycleMode = 0;
+	if (remaining) {
+		Unsorted::NavCycleMode = 3;
+	}
+	DAT_00B0FE58 = false;
+}
+
+// FUNCTION: GAMEMD 0x007336C0
+void __fastcall FUN_007336C0(bool redraw)
+{
+	wchar_t text[256];
+	int next;
+	if (Unsorted::MuteSWLaunches) {
+		return;
+	}
+	if (Unsorted::NavCycleMode != 4) {
+		FUN_007331B0();
+		FUN_006DA740(TacticalMap);
+		next = 0;
+	} else {
+		next = FUN_00733990(DAT_00845564);
+		if (redraw) {
+			FUN_006DA740(TacticalMap);
+		}
+	}
+	TechnoList * selection = DAT_00B0FE6C;
+	int count = selection->Count();
+	for (int i = 0; i < count; i++) {
+		ObjectClass * object = (*selection)[i];
+		if (static_cast<TechnoClass *>(object)->Veterancy.Remaining_Levels() == next) {
+			object->Select();
+		}
+	}
+	wchar_t const * name;
+	if (next == 0) {
+		name = StringTable::LoadString("MSG:Elite", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x68e);
+	} else if (next == 1) {
+		name = StringTable::LoadString("MSG:Veteran", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x690);
+	} else if (next == 2) {
+		name = StringTable::LoadString("MSG:LittleExperience", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x692);
+	} else {
+		name = DAT_00887734;
+	}
+	Check_Mixed_Selection(name, next, true);
+	Show_Navigation_Message(text, name);
+	TechnoList * current = DAT_00B0FE6C;
+	DAT_00845564 = next;
+	int remaining = current->Count();
+	Unsorted::NavCycleMode = 0;
+	if (remaining) {
+		Unsorted::NavCycleMode = 4;
+	}
+	DAT_00B0FE58 = false;
+}
 
 // FUNCTION: GAMEMD 0x007335F0
 bool __fastcall FUN_007335F0(TechnoClass * techno, int unused)
