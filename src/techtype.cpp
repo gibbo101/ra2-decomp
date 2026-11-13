@@ -1245,3 +1245,24 @@ template class DynamicVectorClass<ParticleSystemTypeClass const *>;
 // TEMPLATE: GAMEMD 0x00717DB0
 // ?Delete_Index@?$DynamicVectorClass@PAVTechnoTypeClass@@@@QAE_NH@Z
 template class DynamicVectorClass<TechnoTypeClass *>;
+
+// FUNCTION: GAMEMD 0x007178C0
+Coord TechnoTypeClass::GetParticleSysOffset(void) const
+{
+	if (DamSmkOffScrnRel) {
+		Point2D pixel = Point2D(DamageSmokeOffset.X, DamageSmokeOffset.Y);
+		Coord coord;
+		coord = Coord(TacticalMap->Pixel_To_Lepton(pixel), 0);
+		int h = DamageSmokeOffset.Z * 10;
+		coord.X -= h;
+		coord.Y -= h;
+		int height = (int)(fastmath::sqrt((double)h * (double)h * 2) * 0.58);
+		if (DamageSmokeOffset.Z < 0) {
+			coord.Z += height;
+		} else {
+			coord.Z -= height;
+		}
+		return (coord);
+	}
+	return (DamageSmokeOffset);
+}
