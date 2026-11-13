@@ -251,7 +251,7 @@ extern void __cdecl FUN_004068E0(char const * format, ...);
 void FUN_006523A0(void);
 
 // FUNCTION: GAMEMD 0x0055CF10
-void FUN_0055CF10(void)
+void Disconnect_Gracefully(void)
 {
 	FUN_004068E0("Disconnect_Gracefully\n");
 	if (Session.Type == GAME_INTERNET && DAT_00887628 && Session.ViaPacketRouter) {
@@ -314,7 +314,7 @@ bool __fastcall FUN_0055CFD0(void)
 					PlayerRestarts = false;
 					PlayerAborts = false;
 					FUN_0072DFB0();
-					Session.FUN_0069BB40();
+					Session.Pause();
 					Do_Win();
 					Session.Resume();
 					DAT_00ABCD58 = false;
@@ -329,7 +329,7 @@ bool __fastcall FUN_0055CFD0(void)
 					PlayerRestarts = false;
 					PlayerAborts = false;
 					FUN_0072DFB0();
-					Session.FUN_0069BB40();
+					Session.Pause();
 					Do_Lose();
 					Session.Resume();
 					DAT_00ABCD58 = false;
@@ -346,7 +346,7 @@ bool __fastcall FUN_0055CFD0(void)
 			PlayerLoses = false;
 			PlayerRestarts = false;
 			PlayerAborts = false;
-			Session.FUN_0069BB40();
+			Session.Pause();
 			Do_Restart();
 			Session.Resume();
 			DAT_00ABCD58 = false;
@@ -356,11 +356,11 @@ bool __fastcall FUN_0055CFD0(void)
 			PlayerRestarts = false;
 			PlayerAborts = false;
 			FUN_0072DFB0();
-			Session.FUN_0069BB40();
+			Session.Pause();
 			Do_Abort();
 			Session.Resume();
 			DAT_00ABCD58 = false;
-			FUN_0055CF10();
+			Disconnect_Gracefully();
 		}
 	done:
 		--Session.Suspended;
