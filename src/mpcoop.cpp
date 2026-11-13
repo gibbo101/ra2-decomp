@@ -1265,6 +1265,89 @@ void MPCooperative::vt_entry_A0(bool playerWon)
 	}
 }
 
+// FUNCTION: GAMEMD 0x005C3B10
+void MPCooperative::DrawTeamDropdown(HWND list, DynamicVectorClass<MultiMission const *> *maps, MultiMission const *selected)
+{
+	unknown_4 = true;
+	if (Field50 == 0) {
+		Field50 = new CampaignScoreClass();
+	}
+	SendMessageA(list, 0x184, 0, 0);
+	Field49 = false;
+	if (Current == 0) {
+		if (Session.Players.Count() == 2) {
+			CoopCampaignClass *raw = (CoopCampaignClass *)operator new(sizeof(CoopCampaignClass));
+			Current = raw ? raw->FUN_0049B660(Session.Players[0]->Name, Session.Players[1]->Name) : 0;
+		}
+	} else if (Session.Players.Count() != 2) {
+		Current->FUN_0049B760(DAT_00887734, DAT_00887734);
+	}
+	if (Campaigns.Count() == 0) {
+		int records;
+		DAT_0089F518.FUN_0049E4F0(&records);
+		for (int r = 0; r < records; r++) {
+			CoopCampaignClass *raw = (CoopCampaignClass *)operator new(sizeof(CoopCampaignClass));
+			CoopCampaignClass *campaign = raw ? raw->FUN_0049B610() : 0;
+			campaign->FUN_0049CAF0(r);
+			Campaigns.Add(campaign);
+		}
+	}
+	DynamicVectorClass<wchar_t *> names;
+	DAT_0089F518.FUN_0049E740(&names);
+	int count = names.Length();
+	int i;
+	for (i = 0; i < count; i++) {
+		if (names[i] != 0) {
+			void *map;
+			Campaigns[i]->FUN_0049D070(&map, -1);
+			int map_count = maps->Count();
+			char name[260];
+			MultiMission const *found = 0;
+			sprintf(name, "%s.MAP", map);
+			for (int k = 0; k < map_count; k++) {
+				if (found != 0) {
+					break;
+				}
+				char const *scenario = Scenario_Filename((*maps)[k]);
+				if (_stricmp(scenario, name) == 0) {
+					found = (*maps)[k];
+				}
+			}
+			if (found != 0) {
+				wchar_t text[260];
+				swprintf(text, L"%d. %s", i + 1, names[i]);
+				SendMessageA(list, 0x4CD, 0, (LPARAM)text);
+				SendMessageA(list, 0x19A, i, (LPARAM)found);
+			} else {
+				FUN_004068E0("@@@@ Could not find %s for %s\n", name, names[i]);
+			}
+			delete names[i];
+		}
+	}
+	if (Current != 0 && Current->FUN_0049D120() && !Field49) {
+		char name[260];
+		Current->FUN_0049D390(name);
+		strcat(name, ".MAP");
+		int map_count = maps->Count();
+		MultiMission const *found = 0;
+		for (int k = 0; k < map_count; k++) {
+			if (found != 0) {
+				break;
+			}
+			char const *scenario = Scenario_Filename((*maps)[k]);
+			if (_stricmp(scenario, name) == 0) {
+				found = (*maps)[k];
+			}
+		}
+		if (found != 0) {
+			SendMessageA(list, 0x4CD, 0, (LPARAM)StringTable::LoadString("TXT_COOP_USE_SAVE", 0, "D:\\ra2mdpost\\MPCoop.cpp", 0x6be));
+			SendMessageA(list, 0x19A, i, (LPARAM)found);
+			Field49 = true;
+		}
+	}
+	SendMessageA(list, 0x186, 0, 0);
+}
+
 // FUNCTION: GAMEMD 0x005C3EC0
 bool MPCooperative::FUN_005C3EC0(void)
 {
@@ -1418,7 +1501,7 @@ int MPCooperative::vt_entry_98(void)
 bool MPCooperative::vt_entry_A8(void)
 {
 	if (Field50 == NULL) {
-		Field50 = new MPCoopObject;
+		Field50 = new CampaignScoreClass;
 	}
 	if (Current == NULL) {
 		return(false);
@@ -1446,9 +1529,9 @@ bool MPCooperative::vt_entry_A8(void)
 	Current->FUN_0049BCA0(&total);
 	Current->FUN_0049BCC0(&index);
 	if (entry) {
-		Field50->Send(stats, Scen->ElapsedTimer.Value(), index < total, side, entry->Title);
+		Field50->Show(stats, Scen->ElapsedTimer.Value(), index < total, side, entry->Title);
 	} else {
-		Field50->Send(stats, Scen->ElapsedTimer.Value(), index < total, side, DAT_00887734);
+		Field50->Show(stats, Scen->ElapsedTimer.Value(), index < total, side, DAT_00887734);
 	}
 	while (stats.Count()) {
 		if (stats[0]) {
