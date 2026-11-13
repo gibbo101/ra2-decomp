@@ -8678,3 +8678,123 @@ void TechnoClass::AddPassenger(FootClass * passenger)
 
 // TEMPLATE: GAMEMD 0x00710890
 // ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAUEntry@StaticBufferClass@@@@PAU12@HABU12@@Z
+
+// FUNCTION: GAMEMD 0x00709550
+void TechnoClass::FUN_00709550(void)
+{
+	if (CurrentTargets.Count() == 0) {
+		AttackedTargets.Clear();
+		return;
+	}
+
+	for (int index = AttackedTargets.Count() - 1; index >= 0; --index) {
+		AbstractClass * target = AttackedTargets[index];
+		bool found = false;
+
+		for (int current = 0; current < CurrentTargets.Count(); current++) {
+			if (target == CurrentTargets[current]) {
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			AttackedTargets.Delete_Index(index);
+		}
+	}
+
+	DynamicVectorClass<AbstractClass *> targets;
+	DynamicVectorClass<int> values;
+
+	int attacked = AttackedTargets.Count();
+	if (attacked > 0) {
+		int count = CurrentTargets.Count();
+
+		for (int index = 0; index < count; index++) {
+			AbstractClass * target = CurrentTargets[index];
+			bool found = false;
+
+			for (int past = 0; past < attacked; past++) {
+				if (target == AttackedTargets[past]) {
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				targets.Add(target);
+				values.Add(CurrentTargetThreatValues[index]);
+			}
+		}
+	}
+
+	if (targets.Count() == 0) {
+		AttackedTargets.Clear();
+
+		int count = CurrentTargets.Count();
+		int best = 0;
+		AbstractClass * pick = NULL;
+
+		for (int index = 0; index < count; index++) {
+			int value = CurrentTargetThreatValues[index];
+			if (value > best) {
+				best = value;
+				pick = CurrentTargets[index];
+			}
+		}
+
+		Assign_Target(pick);
+	} else {
+		int best = 0;
+		AbstractClass * pick = NULL;
+		int index = 0;
+
+		if (index < targets.Count()) {
+			do {
+				AbstractClass * target = targets[index];
+
+				if (values[index] > best) {
+					pick = target;
+					best = values[index];
+				}
+
+				index++;
+			} while (index < targets.Count());
+		}
+
+		Assign_Target(pick);
+	}
+}
+
+// FUNCTION: GAMEMD 0x0070BCB0
+Coord TechnoClass::Predict_Target_Coord(void) const
+{
+	Coord coord = COORD_NONE;
+
+	if (TarCom != NULL) {
+		coord = TarCom->As_Coord();
+
+		if (TarCom != NULL && TarCom->RTTI == RTTI_UNIT) {
+			UnitClass * unit = (UnitClass *)TarCom;
+
+			if (unit != NULL && unit->Locomotion->Is_Moving()) {
+				int speed = unit->Current_Speed();
+				int distance = Distance(TarCom);
+				WeaponDataStruct const * wdata = GetTurretWeapon();
+
+				if (wdata != NULL) {
+					WeaponTypeClass const * weapon = wdata->Weapon;
+
+					if (weapon != NULL) {
+						double range = distance;
+						int travel = range / (weapon->Get_Speed(distance) * 0.9) * speed;
+
+						coord = Move_Coord(coord, unit->PrimaryFacing.Current(), travel);
+					}
+				}
+			}
+		}
+	}
+
+	return coord;
+}
