@@ -341,8 +341,7 @@ void BuildingLightClass::Set_Behavior_Type(LightBehaviorType type)
 int BuildingLightClass::Detection_Radius(void) const
 {
 	static const double _scale = 5.973333333333333;
-	int radius = Sweep_Stage() * _scale;
-	radius += Rule->SpotlightRadius;
+	int radius = int(Sweep_Stage() * _scale) + Rule->SpotlightRadius;
 	return(radius);
 }
 
@@ -417,3 +416,86 @@ BuildingLightClass::~BuildingLightClass(void)
 // TEMPLATE: GAMEMD 0x00437160
 // ??G?$TPoint3D@H@@QBE?BV0@ABV0@@Z
 template class TPoint3D<int>;
+
+#include "dsurface.h"
+#include "fastmath.h"
+#include "matrix3d.h"
+
+// FUNCTION: GAMEMD 0x00435BE0
+void BuildingLightClass::Draw_It(Point2D const & point, Rect const & cliprect) const
+{
+	if (Behavior == 0 || Owner == 0 || Owner->Fetch_RTTI() != RTTI_BUILDING) {
+		return;
+	}
+	BuildingClass * building = (BuildingClass *)Owner;
+	if (building == 0 || !building->IsActive || !building->IsPowerOnline() || building->IsFogged) {
+		return;
+	}
+	if (Scen->Special.IsFogOfWar && Map.IsLocationFogged(Get_Coord())) {
+		return;
+	}
+
+	SpotLightClass * spotlight = new SpotLightClass(Get_Coord(), 0x10);
+
+	int planar_dist = Distance(Owner->Center_Coord());
+	int stage = Sweep_Stage();
+
+	if (planar_dist > Rule->SpotlightLocationRadius && Behavior == LIGHT_BEHAVIOR_FOLLOW) {
+		int radius = stage + 80;
+		radius = (radius > 0) ? radius : 0;
+		spotlight->Set_Radius(min(radius, 89));
+	} else {
+		spotlight->Set_Radius(0x50);
+	}
+
+	spotlight->Draw_It();
+	delete spotlight;
+
+	Coord here = Get_Coord();
+	Coord there = Owner->Center_Coord();
+
+	int distance = Distance(there);
+	int detection = Detection_Radius();
+
+	if (distance < detection) {
+		return;
+	}
+
+	double angle = fastmath::asin((double)detection / (double)distance);
+
+	Matrix3D mat;
+	mat.Make_Identity();
+	mat.Rotate_Z(angle);
+	Vector3 v(here.X - there.X, here.Y - there.Y, here.Z - there.Z);
+	Vector3 vec = mat * v;
+	Coord arc1 = Coord(there.X + vec.X, there.Y + vec.Y, there.Z + vec.Z);
+
+	mat.Make_Identity();
+	mat.Rotate_Z(-angle);
+	Vector3 vec2 = mat * v;
+	Coord arc2 = Coord(there.X + vec2.X, there.Y + vec2.Y, there.Z + vec2.Z);
+
+	Point2D arc1_px;
+	Point2D arc2_px;
+	Point2D caster_px;
+	TacticalMap->Coord_To_Pixel(arc1, arc1_px);
+	TacticalMap->Coord_To_Pixel(arc2, arc2_px);
+	TacticalMap->Coord_To_Pixel(there + Coord(0, 0, 430), caster_px);
+
+	arc1_px += TacticalRect.Top_Left();
+	arc2_px += TacticalRect.Top_Left();
+	caster_px += TacticalRect.Top_Left();
+	Point2D caster_px2 = caster_px;
+
+	int zstart = -Tactical::Z_Lepton_To_Pixel(there.Z + 400);
+	int zend = -Tactical::Z_Lepton_To_Pixel((Get_Coord() + Coord(0, 0, 250)).Z);
+
+	if (Clip_Line_To_Rect(caster_px, arc1_px, TacticalRect)) {
+		LogicalSurface->Draw_Depth_Glow_Line(LogicalSurface->Get_Rect(), caster_px, arc1_px, 75 - 6 * stage,
+											 zstart, zend);
+	}
+	if (Clip_Line_To_Rect(caster_px2, arc2_px, TacticalRect)) {
+		LogicalSurface->Draw_Depth_Glow_Line(LogicalSurface->Get_Rect(), caster_px2, arc2_px, 75 - 6 * stage,
+											 zstart, zend);
+	}
+}
