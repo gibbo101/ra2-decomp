@@ -167,17 +167,16 @@ namespace OwnerDraw {
 		{
 			Set_Text((wchar_t const *)0);
 			while (Wide.nodes) {
-				Remove_Node(Wide.nodes);
+				WinNode *node = Wide.nodes;
+				Remove_Node(node);
 			}
-			if (Wide.editText) {
-				delete Wide.editText;
-			}
+			delete Wide.editText;
 		}
 		WinData & operator=(WinData const & that);
 
 		WinNode *Add_Node(int length);
 		void Copy_Nodes(WinNode const *source);
-		void Set_Text(wchar_t const *text);
+		void Set_Text(wchar_t const * str);
 		void Set_Text(char const *text);
 		void Remove_Node(WinNode *node);
 		void Remove_All_Nodes(void)
@@ -4975,6 +4974,21 @@ LRESULT CALLBACK OwnerDrawButtonHandler(HWND window, UINT message, WPARAM wparam
 LRESULT CALLBACK AutoRadioButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 LRESULT CALLBACK DefaultHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
+// FUNCTION: GAMEMD 0x0060F760
+// OwnerDraw::SetNeedsControlImage
+BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam)
+{
+	WinData *data = NULL;
+	if (!Dialogs.getPointer(window, &data)) {
+		WinData temp;
+		Dialogs.add(window, temp);
+		Dialogs.getPointer(window, &data);
+	}
+	data->paintDisabled = lparam;
+	return TRUE;
+}
+
+
 // FUNCTION: GAMEMD 0x0060F9A0
 // OwnerDraw::RegisterChildControlProc
 BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam)
@@ -5067,12 +5081,7 @@ BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam)
 		data->Wide.styleFlags = link->style;
 	}
 	WNDPROC proc = NULL;
-	{
-		WNDPROC *entry = NULL;
-		if (DialogProcs.getPointer(window, &entry) && entry != NULL) {
-			proc = *entry;
-		}
-	}
+	DialogProcs.getValue(window, proc);
 	char text[2048];
 	text[0] = 0;
 	CallWindowProc(proc, window, WM_GETTEXT, sizeof(text), (LPARAM)text);
@@ -8224,11 +8233,11 @@ void OwnerDraw::WinData::Copy_Nodes(WinNode const * source)
 void OwnerDraw::WinData::Set_Text(wchar_t const * str)
 {
 	if (Wide.text) {
-		delete Wide.text;
+		operator delete(Wide.text);
 		Wide.text = NULL;
 	}
 	if (str && *str) {
-		Wide.text = new wchar_t[wcslen(str) + 1];
+		Wide.text = (wchar_t *)operator new(wcslen(str) * 2 + 2);
 		wcscpy(Wide.text, str);
 	}
 }
@@ -8237,7 +8246,7 @@ void OwnerDraw::WinData::Set_Text(wchar_t const * str)
 void OwnerDraw::WinData::Set_Text(char const * str)
 {
 	if (Wide.text) {
-		delete Wide.text;
+		operator delete(Wide.text);
 		Wide.text = NULL;
 	}
 	if (str && *str) {
