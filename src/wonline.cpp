@@ -1321,11 +1321,162 @@ extern int DAT_00B77E64;
 extern int DAT_00B77E20;
 
 
-void __fastcall FUN_005E32D0(bool force, bool now);
+void __fastcall PumpGameopts(bool force, bool now);
 int FUN_00775B20(void);
 void Call_Back(void);
 bool FUN_00796710(void);
 bool FUN_00786270(void);
+
+int WS_Top_Window_ID(void);
+void Title_Screen_Restore(bool force);
+BOOL __fastcall Peek_Windows_Message(MSG * message, HWND window, UINT first, UINT last, UINT flags);
+extern int DAT_00AA0430;
+extern int DAT_00B77E6C;
+extern int DAT_00B77E70;
+extern bool DAT_00B77E26;
+extern bool DAT_00B77E27;
+void __fastcall FUN_0079FC10(int state, int timeout, int result);
+void FUN_00794BA0(void);
+
+// FUNCTION: GAMEMD 0x0077F900
+bool FUN_0077F900(void)
+{
+	Title_Screen_Restore(false);
+	MSG msg;
+	int counter = 0;
+	DAT_00AA0430++;
+	while (Peek_Windows_Message(&msg, NULL, 0, 0, PM_REMOVE)) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+		counter++;
+		if (counter == 100) break;
+	}
+	if (FUN_0077CF40() && DAT_00B77D70 != -1 && DAT_00B73A20 != 1 && DAT_00B73A20 != 0 && DAT_00B73A20 != 11) {
+		if ((unsigned)(time(NULL) - DAT_00B77A88) > (unsigned)DAT_00B77D70) {
+			if (DAT_00B73A20 != 5) {
+				if (DAT_00B73A20 >= 2 && DAT_00B73A20 <= 4) {
+					FUN_0079FC10(0, -1, 2);
+				} else {
+					PMessagePrintf(0x20C0FF, StringTable::LoadString("WOL:MatchTimeout", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x97A));
+					FUN_0079FC10(2, 30, 0);
+				}
+				SetEvent(DAT_00B73684[5]);
+			} else {
+				FUN_0079FC10(5, 180, 0);
+			}
+		}
+	}
+	WS_Top_Window_ID();
+	if (DAT_00B777A0.length() > 200) {
+		DAT_00B777A0.clear();
+	}
+	if (DAT_00B76180 < (unsigned)time(0) - 2 && DAT_00B777A0.length() > 65 ||
+		DAT_00B76180 < (unsigned)time(0) - 3 && DAT_00B777A0.length() > 10 ||
+		DAT_00B76180 < (unsigned)time(0) - 15 && DAT_00B777A0.length() > 0) {
+		User * list = NULL;
+		User * last_user = NULL;
+		for (int i = 0; i < 10; i++) {
+			if (DAT_00B777A0.length() > 0) {
+				User * new_user = new User;
+				memset(new_user, 0, sizeof(User));
+				Wstring name;
+				DAT_00B777A0.removeTail(name);
+				char * rawName = name.get();
+				if (strlen(rawName) > 9) rawName[9] = '\0';
+				strcpy((char *)new_user->name, rawName);
+				if (last_user == NULL) list = new_user;
+				else last_user->next = new_user;
+				last_user = new_user;
+			} else break;
+		}
+		if (g_pChat != NULL) g_pChat->RequestUserTeam(list);
+		User * d = list;
+		while (d != NULL) {
+			User * next = d->next;
+			delete d;
+			d = next;
+		}
+		DAT_00B76180 = time(0);
+	}
+	if (DAT_00B765F8.length() > 200) {
+		DAT_00B765F8.clear();
+	}
+	if (DAT_00B7617C < (unsigned)time(0) - 2 && DAT_00B765F8.length() > 65 ||
+		DAT_00B7617C < (unsigned)time(0) - 3 && DAT_00B765F8.length() > 10 ||
+		DAT_00B7617C < (unsigned)time(0) - 15 && DAT_00B765F8.length() > 0) {
+		User * list = NULL;
+		User * last_user = NULL;
+		for (int i = 0; i < 10; i++) {
+			if (DAT_00B765F8.length() > 0) {
+				User * new_user = new User;
+				memset(new_user, 0, sizeof(User));
+				Wstring name;
+				DAT_00B765F8.removeTail(name);
+				char * rawName = name.get();
+				if (strlen(rawName) > 9) rawName[9] = '\0';
+				strcpy((char *)new_user->name, rawName);
+				if (last_user == NULL) {
+					list = new_user;
+					last_user = new_user;
+				} else {
+					last_user->next = new_user;
+					last_user = new_user;
+				}
+			} else break;
+		}
+		if (g_pChat != NULL) g_pChat->RequestUserLocale(list);
+		User * d = list;
+		while (d != NULL) {
+			User * next = d->next;
+			delete d;
+			d = next;
+		}
+		DAT_00B7617C = time(0);
+	}
+	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3 && time(0) > DAT_00B7646C) {
+		DAT_00B7646C = time(0) + 30;
+		FUN_00786270();
+	}
+	if (g_pChat && DAT_00B77DCC == 0) g_pChat->PumpMessages();
+	if (g_pNetUtil) g_pNetUtil->PumpMessages();
+	if (g_pDownload) g_pDownload->PumpMessages();
+	Call_Back();
+	if (DAT_00B76B10.name[0] && DAT_00B76B10.type == 41 && DAT_00B77E4C) PumpGameopts(false, false);
+	if (g_pChat != NULL && DAT_00B76B10.type != 0 && DAT_00B77E4C) {
+		if (time(NULL) - DAT_00B77E6C > 10) {
+			char info[80];
+			memset(info, 0, sizeof(info));
+			FUN_0077E7A0(info);
+			info[40] = 0;
+			g_pChat->SetChannelExInfo(info);
+			DAT_00B77E6C = time(NULL);
+		}
+	}
+	if (DAT_00B77E28 != 2) {
+		if (g_pChat && DAT_00B76B10.type != 0 && time(NULL) - DAT_00B77E70 > 10) {
+			Wstring self = ((Wstring const &)DAT_00B73E40).toLower();
+			if (!FUN_0077CF40()) {
+				User user;
+				int handle;
+				for (int i = 0; i < DAT_00B77900.length(); i++) {
+					DAT_00B77900.get(user, i);
+					Wstring name((char *)user.name);
+					bool is_self = self == ((Wstring const &)name).toLower();
+					if (is_self) continue;
+					in_addr address;
+					address.s_addr = user.ipaddr;
+					if (user.ipaddr != 0) {
+						g_pNetUtil->RequestPing(inet_ntoa(address), 1000, &handle);
+					}
+				}
+			}
+			DAT_00B77E70 = time(NULL);
+		}
+	}
+	if (DAT_00B77E28 == 2 && DAT_00B77E27 && !DAT_00B77E26) FUN_00794BA0();
+	FUN_00796710();
+	return false;
+}
 
 // FUNCTION: GAMEMD 0x00780110
 void FUN_00780110(void)
@@ -3066,7 +3217,7 @@ void __fastcall FUN_00785740(User *user)
 		if (DAT_00B77E4C) {
 			FUN_005E9850();
 			FUN_0077DB90();
-			FUN_005E32D0(true, true);
+			PumpGameopts(true, true);
 			if (FUN_00775B20() == 0x6b) {
 				HWND window = FUN_00775B10();
 				int index = SendDlgItemMessageA(window, 0x6eb, 0x188, 0, 0);
