@@ -1289,6 +1289,7 @@ address,name,result,size,source,symbol
 0x00433860,FUN_00433860,MATCH,23,src/bitfont.cpp,?FUN_00433860@@YIXXZ
 0x00433880,BitFont::BitFont,MATCH,189,src/bitfont.cpp,??0BitFont@@QAE@PBD@Z
 0x00433940,BitFont::~BitFont,MATCH,75,src/bitfont.cpp,??1BitFont@@UAE@XZ
+0x00433990,BitFont::LoadInternalData,MATCH,624,src/bitfont.cpp,?LoadInternalData@BitFont@@SIPAUInternalData@1@PBD@Z
 0x00433C00,BitFont::InternalData::Destroy,MATCH,46,src/bitfont.cpp,?Destroy@InternalData@BitFont@@QAEXXZ
 0x00433C30,BitFont::Load,MATCH,50,src/bitfont.cpp,?Load@BitFont@@QAE_NPBD@Z
 0x00433C70,BitFont::SetColor,MATCH,16,src/bitfont.cpp,?SetColor@BitFont@@QAEGG@Z
@@ -8473,6 +8474,8 @@ address,name,result,size,source,symbol
 0x0059AFA0,MapGeneratorClass::Seed_Land_Type1,MATCH,605,src/mapgen.cpp,?Seed_Land_Type1@MapGeneratorClass@@QAEXXZ
 0x0059B200,MapGeneratorClass::Seed_Land_Type2,MATCH,1231,src/mapgen.cpp,?Seed_Land_Type2@MapGeneratorClass@@QAEXXZ
 0x00594F40,MapRegionClass::Pick_Spread_Cells,MATCH,1204,src/mapgen.cpp,?Pick_Spread_Cells@MapRegionClass@@QAEPAV?$DynamicVectorClass@VCell@@@@AAV2@@Z
+0x00592440,MapRegionClass::Build_West_Ramp,MATCH,1700,src/mapgen.cpp,?Build_West_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z
+0x00593030,MapRegionClass::Build_Corner_Ramp_NE,MATCH,1303,src/mapgen.cpp,?Build_Corner_Ramp_NE@MapRegionClass@@QAE_NABVCell@@0H@Z
 0x005ADB00,_$E10,MATCH,23,src/mapsel.cpp,_$E10
 0x005ADB20,_$E16,MATCH,40,src/mapsel.cpp,_$E16
 0x005ADB50,_$E19,MATCH,19,src/mapsel.cpp,_$E19
@@ -10852,6 +10855,7 @@ address,name,result,size,source,symbol
 0x0062E5D0,ParticleSystemClass::Delete_Particle,MATCH,119,src/partsys.cpp,?Delete_Particle@ParticleSystemClass@@QAE_NH@Z
 0x0062E650,ParticleSystemClass::Clear_System,MATCH,117,src/partsys.cpp,?Clear_System@ParticleSystemClass@@QAEXXZ
 0x0062E6D0,ParticleSystemClass::Gas_AI,MATCH,366,src/partsys.cpp,?Gas_AI@ParticleSystemClass@@AAEXXZ
+0x0062F230,ParticleSystemClass::Railgun_AI,MATCH,1904,src/partsys.cpp,?Railgun_AI@ParticleSystemClass@@AAEXXZ
 0x0062F9A0,ParticleSystemClass::Fire_AI,MATCH,951,src/partsys.cpp,?Fire_AI@ParticleSystemClass@@AAEXXZ
 0x0062FD60,ParticleSystemClass::AI,MATCH,248,src/partsys.cpp,?AI@ParticleSystemClass@@UAEXXZ
 0x0062FE60,ParticleSystemClass::Is_Inactive,MATCH,29,src/partsys.cpp,?Is_Inactive@ParticleSystemClass@@UBE_NXZ

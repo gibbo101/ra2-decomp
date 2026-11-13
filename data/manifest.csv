@@ -1650,6 +1650,7 @@ address,size,symbol,source,sha256
 0x00433860,23,?FUN_00433860@@YIXXZ,src/bitfont.cpp,7c708d251232d6b50023539cfbc3ebafc5bf8eeb6c77cf16e473a654335e6717
 0x00433880,189,??0BitFont@@QAE@PBD@Z,src/bitfont.cpp,4963f4a2c06170f887b256e09ad58879b4424cf79ff6ff77fa5c7a40d183d8ae
 0x00433940,75,??1BitFont@@UAE@XZ,src/bitfont.cpp,a190ea04b829345dbf6573b727d893bfeabd7d82af0a27ad9c61c499c0cdc1a3
+0x00433990,624,?LoadInternalData@BitFont@@SIPAUInternalData@1@PBD@Z,src/bitfont.cpp,b72e1e467c1c47e48bb45359f17e3a15341e25a7cd3335fb1c5012ebb4ca9ab6
 0x00433C00,46,?Destroy@InternalData@BitFont@@QAEXXZ,src/bitfont.cpp,c246a8ea2dc6ab81e80cdaf7076e5864544855e4c60a25c7c34c5021acb101f4
 0x00433C30,50,?Load@BitFont@@QAE_NPBD@Z,src/bitfont.cpp,db11026cd950360f0d4dbc90b251e7175f14cb72311902c82ab413c36d646b6b
 0x00433C70,16,?SetColor@BitFont@@QAEGG@Z,src/bitfont.cpp,32695094b0eb6bbad07a664b575bd82cfaf7eadefa4739f763a731e6d011d9fe
@@ -8621,6 +8622,8 @@ address,size,symbol,source,sha256
 0x005905D0,920,?Make_Region_Connections@MapRegionClass@@QAEXXZ,src/mapgen.cpp,79db8a4ed9a1b50d53e3918cfdb09143f90fec4a9893955745c7530ad82daeb5
 0x00590970,1625,?Connect_Regions_With_Ramp@MapRegionClass@@QAE_NABVCell@@HM@Z,src/mapgen.cpp,460c6d6af707c092490d30ea5b1ffd5c05aed70be03c1900a36fddf30b9474c8
 0x00590FD0,279,?Build_Neighbor_Region_Mask@MapRegionClass@@QAEIABVCell@@AA_NHM@Z,src/mapgen.cpp,f35820076dea52336e939f41744b88dc47260df87cf83a5965382f041f31b8c3
+0x00592440,1700,?Build_West_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,6515207bf127b7a26b367b229e3a3aa04d0072d5d64b80efef7e18091bc28a4c
+0x00593030,1303,?Build_Corner_Ramp_NE@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,aa8e75552bdb68169785fdd1ee0071add36e6c9946456f7ba3f14b83c758ebd5
 0x00593550,1426,?Build_Corner_Ramp_NW@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,45f18e9447b391ff000276e305d8625a3f914688adf546d78d6a13c046dcab4c
 0x00593AF0,1299,?Build_Corner_Ramp_SW@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,5b3e5dc8c52f24f62eee1f7d21f7e55f13eabf3d8fdc37c426f000644546cd77
 0x00594010,372,?Is_Ramp_Area_Clear@MapRegionClass@@QAE_NAAV?$TRect@H@@H@Z,src/mapgen.cpp,34e2976d7e6aa7e8a0df858125d40f074c8f1395117d8755f20f43409c249102
@@ -11205,6 +11208,7 @@ address,size,symbol,source,sha256
 0x0062E5D0,119,?Delete_Particle@ParticleSystemClass@@QAE_NH@Z,src/partsys.cpp,69d59a9de8c8427a0f6b0dd125297ba117cce7176a22a340e9720ba7382e4ba6
 0x0062E650,117,?Clear_System@ParticleSystemClass@@QAEXXZ,src/partsys.cpp,4e2e8b71c602251f992ec3f34a181a02cb1fdacc76d395d9dc8058721ed7f787
 0x0062E6D0,366,?Gas_AI@ParticleSystemClass@@AAEXXZ,src/partsys.cpp,038044e73115d120dfd2d31cb9d165cdba9610635fff10b979a2bba5d1c0ab7f
+0x0062F230,1904,?Railgun_AI@ParticleSystemClass@@AAEXXZ,src/partsys.cpp,c4dfb575a6357ad462f9c11c19089687523b25d7038b003a2df27fcd7fa6f3d8
 0x0062F9A0,951,?Fire_AI@ParticleSystemClass@@AAEXXZ,src/partsys.cpp,ac628eee20f121a7aa0605273f2fc0b6421743fcc932f3b4d70230f5a72c2edc
 0x0062FD60,248,?AI@ParticleSystemClass@@UAEXXZ,src/partsys.cpp,7188704fe66a558ffd83e07c40668254048783bed443b806d5169ecea882cd6f
 0x0062FE60,29,?Is_Inactive@ParticleSystemClass@@UBE_NXZ,src/partsys.cpp,e478bc0f3bc4aaae130db7fa2bec5b63cd9be84329a29d94dc4f4318b482a56d
