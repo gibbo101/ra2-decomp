@@ -5,6 +5,8 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "fastmath.h"
+#include "wwmath.h"
 #include "geometry.h"
 #include "ion.h"
 #include "_convert.h"
@@ -1086,6 +1088,51 @@ void FUN_0053BB80(void)
 		delete DAT_00A9FA9C_Surface;
 	}
 	DAT_00A9FA9C_Surface = NULL;
+}
+
+// FUNCTION: GAMEMD 0x0053C0A0
+void __fastcall FUN_0053C0A0(unsigned short * dest, unsigned short const * source,
+	unsigned short alpha, int width, int height, int dest_pad, int source_stride)
+{
+	float center_x = float(width / 2);
+	float center_y = float(height / 2);
+	float radius_squared = center_x * center_x + center_y * center_y;
+	float y = -center_y;
+
+	for (int row = height; row > 0; row--) {
+		float x = -center_x;
+		for (int col = width; col > 0; col--) {
+			float falloff = (1.0f - (x * x + y * y) / radius_squared) * 5.0f;
+			float angle = DAT_00A9FAA0 * falloff * falloff;
+			float cosine = fastmath::cosf(angle);
+			float sine = fastmath::sinf(angle);
+			int source_x = WWMath::Float_To_Long(cosine * x + sine * y + center_x);
+			int source_y = WWMath::Float_To_Long(cosine * y - sine * x + center_y);
+
+			if (source_x < 0) {
+				source_x = 0;
+			} else if (source_x >= width) {
+				source_x = width - 1;
+			}
+			if (source_y < 0) {
+				source_y = 0;
+			} else if (source_y >= height) {
+				source_y = height - 1;
+			}
+
+			unsigned short const * pixel = source + source_y * source_stride + source_x;
+			unsigned short red = *pixel >> 11;
+			unsigned short green = (*pixel >> 5) & 0x3F;
+			unsigned short blue = *pixel & 0x1F;
+			red += ((0x1F - red) * alpha) >> 8;
+			green += ((0x3F - green) * alpha) >> 8;
+			blue += ((0x1F - blue) * alpha) >> 8;
+			*dest++ = (red << 11) | (green << 5) | blue;
+			x += 1.0f;
+		}
+		dest += dest_pad;
+		y += 1.0f;
+	}
 }
 
 // FUNCTION: GAMEMD 0x0053C280
