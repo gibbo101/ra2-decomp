@@ -773,10 +773,10 @@ void EventClass::Execute(void)
 			index = Data.General.Value;
 
 			house = Houses[index];
-			if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter && house->FUN_0050B730()) {
+			if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter && house->IsControlledByHuman()) {
 				OwnerTalk.Send_Remove_Player(index);
 			}
-			if ((Session.Type == GAME_INTERNET && Game::Network::Tournament) || house->FUN_0050B730()) {
+			if ((Session.Type == GAME_INTERNET && Game::Network::Tournament) || house->IsControlledByHuman()) {
 				house->Flag_To_Die();
 			}
 			break;

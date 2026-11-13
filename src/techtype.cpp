@@ -201,7 +201,7 @@ int TechnoTypeClass::GetRefund(HouseClass * house, bool unknown) const
 			return(Soylent * a);
 		}
 		int c = Raw_Cost() * b * a;
-		if (house->FUN_0050B730()) {
+		if (house->IsControlledByHuman()) {
 			c = c * refund;
 		}
 		return(c);

@@ -649,7 +649,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		double GetArmorMultiplier(TechnoTypeClass const * type) const;
 		float FUN_0050BDF0(TechnoTypeClass const * type) const;
 		float FUN_0050BEB0(TechnoTypeClass const * type) const;
-		bool FUN_0050B730(void) const;
+		bool IsControlledByHuman(void) const;
 		bool FUN_0050B760(BuildingTypeClass const * type, Cell const & cell);
 		float FUN_0050C160(void) const;
 

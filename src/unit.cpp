@@ -501,7 +501,7 @@ bool UnitClass::Deploy_To_Fire(void) const
 	}
 
 	if (Class->DeploysInto != NULL && Class->DeploysInto->IsTickTank) {
-		if (!House->FUN_0050B730() && TarCom != NULL) {
+		if (!House->IsControlledByHuman() && TarCom != NULL) {
 			switch (TarCom->What_Am_I()) {
 				case RTTI_INFANTRY:
 					return(false);
@@ -947,7 +947,7 @@ ResultType UnitClass::Take_Damage(int & damage, int distance, WarheadTypeClass c
 						object->Assign_Target(NULL);
 					}
 					object->Scatter(COORD_NONE, true);
-					if (!object->House->FUN_0050B730()) {
+					if (!object->House->IsControlledByHuman()) {
 						if (Team != NULL) {
 							Team->AddMember(object, false);
 						} else {
@@ -997,7 +997,7 @@ ResultType UnitClass::Take_Damage(int & damage, int distance, WarheadTypeClass c
 			if (i->Unlimbo(PositionCoord, DIR_N)) {
 				i->Strength = Scen->RandomNumber(5, i->Class->MaxStrength / 2);
 				i->Scatter(COORD_NONE, true);
-				if (!House->FUN_0050B730()) {
+				if (!House->IsControlledByHuman()) {
 					i->QueueMission(MISSION_HUNT, false);
 				} else {
 					i->QueueMission(MISSION_GUARD, false);
@@ -1030,7 +1030,7 @@ ResultType UnitClass::Take_Damage(int & damage, int distance, WarheadTypeClass c
 			}
 		}
 
-		if (Team == NULL && source != NULL && !IsTethered && !House->Is_Ally(source) && !House->FUN_0050B730()) {
+		if (Team == NULL && source != NULL && !IsTethered && !House->Is_Ally(source) && !House->IsControlledByHuman()) {
 			if (Should_Crush_It(source)) {
 				Assign_Destination(source);
 				QueueMission(MISSION_MOVE, false);
@@ -1167,7 +1167,7 @@ bool UnitClass::Enter_Idle_Mode(bool initial, bool resume_waypoint)
 			return(res);
 		}
 		order = MISSION_HARVEST;
-		if (!initial && House->FUN_0050B730()) {
+		if (!initial && House->IsControlledByHuman()) {
 			if (Map[Get_Coord()].Land_Type() != (Class->Harvester ? LAND_TIBERIUM : LAND_WEEDS)) {
 				order = MISSION_GUARD;
 			}
@@ -1738,7 +1738,7 @@ void UnitClass::Per_Cell_Process(PCPType why)
 								QueueMission(MISSION_HARVEST, true);
 							} else if (SlaveManager != NULL) {
 								SlaveManager->FUN_006B0CC0();
-							} else if (!House->FUN_0050B730() && building != NULL && building->Class->IsWeaponsFactory) {
+							} else if (!House->IsControlledByHuman() && building != NULL && building->Class->IsWeaponsFactory) {
 								Cell where = House->Where_To_Go(this);
 								if (where != CELL_NONE) {
 									QueueMission(MISSION_MOVE, false);
@@ -2274,7 +2274,7 @@ bool UnitClass::Harvesting(void)
 // FUNCTION: GAMEMD 0x0073EFC0
 int UnitClass::Do_MISSION_HUNT(void)
 {
-	if (Class->DeploysInto != NULL && (Rule->BuildConst.Is_In_List(Class->DeploysInto) || TarCom != NULL || House->FUN_0050B730())) {
+	if (Class->DeploysInto != NULL && (Rule->BuildConst.Is_In_List(Class->DeploysInto) || TarCom != NULL || House->IsControlledByHuman())) {
 		switch (Status) {
 			case 0:
 				if (Goto_Clear_Spot()) {
@@ -2359,7 +2359,7 @@ MoveType UnitClass::Can_Enter_Cell(CellClass const *cellptr, FacingType dir, int
 
 	if (cellptr->Overlay != OVERLAY_NONE) {
 		OverlayTypeClass const *optr = OverlayTypes[cellptr->Overlay];
-		if (optr->IsCrate && !House->FUN_0050B730() && Session.Type == GAME_NORMAL)
+		if (optr->IsCrate && !House->IsControlledByHuman() && Session.Type == GAME_NORMAL)
 			return (MOVE_NO);
 		if (optr->IsWall) {
 			if ((optr->IsCrushable && (Class->IsCrusher || Has_Ability(ABILITY_CRUSHER))) ||
@@ -2845,7 +2845,7 @@ int UnitClass::Do_MISSION_GUARD(void)
 	}
 
 	if (Class->Harvester || Class->Weeder) {
-		if (!House->FUN_0050B730()) {
+		if (!House->IsControlledByHuman()) {
 			for (int i = 0; i < Class->Dock.Count(); i++) {
 				if (House->BQuantity.Value(Class->Dock[i]->HeapID) > 0) {
 					if (Class->Harvester && House->IsTiberiumShort) {
@@ -2871,7 +2871,7 @@ int UnitClass::Do_MISSION_GUARD(void)
 		}
 	}
 
-	if (Class->DeploysInto != NULL && Rule->BuildConst.Is_In_List(Class->DeploysInto) && House->IsBaseBuilding && !House->FUN_0050B730()) {
+	if (Class->DeploysInto != NULL && Rule->BuildConst.Is_In_List(Class->DeploysInto) && House->IsBaseBuilding && !House->IsControlledByHuman()) {
 		QueueMission(MISSION_UNLOAD, false);
 		return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 	}
@@ -3209,9 +3209,9 @@ static inline ObjectClass * Object_Of(AbstractClass * a)
 // FUNCTION: GAMEMD 0x007414E0
 AbstractClass * UnitClass::Approach_Target(bool force)
 {
-	if (!House->FUN_0050B730() && TarCom != NULL && NavCom == NULL) {
+	if (!House->IsControlledByHuman() && TarCom != NULL && NavCom == NULL) {
 		TechnoClass * target = As_Techno(TarCom);
-		if ((Class->IsCrusher || Has_Ability(ABILITY_CRUSHER)) && Distance(TarCom) < Rule->CrushDistance && target != NULL && ((ObjectClass *)target)->IsCrushable(this) && (Class->IsAutoCrush || !House->FUN_0050B730())) {
+		if ((Class->IsCrusher || Has_Ability(ABILITY_CRUSHER)) && Distance(TarCom) < Rule->CrushDistance && target != NULL && ((ObjectClass *)target)->IsCrushable(this) && (Class->IsAutoCrush || !House->IsControlledByHuman())) {
 			if (!force) {
 				Assign_Destination(TarCom, true);
 			}
@@ -3304,7 +3304,7 @@ void UnitClass::Overrun_Square(Cell const & cell, bool threaten)
 // FUNCTION: GAMEMD 0x00743190
 AbstractClass * UnitClass::Greatest_Threat(ThreatType threat, Coord const & coord, bool onlyenemy) const
 {
-	if (House->FUN_0050B730() && Class->DeployToFire) {
+	if (House->IsControlledByHuman() && Class->DeployToFire) {
 		return(NULL);
 	}
 	if (!(threat & (THREAT_INFANTRY|THREAT_VEHICLES|THREAT_BUILDINGS|THREAT_TIBERIUM|THREAT_CIVILIANS|THREAT_POWER|THREAT_FACTORIES|THREAT_BASE_DEFENSE|0x8000|0x10000))) {
@@ -3488,9 +3488,9 @@ bool UnitClass::Should_Crush_It(TechnoClass const * it) const
 
 	if ((Center_Coord() - it->Center_Coord()).Length() > Rule->CrushDistance) return(false);
 
-	if ((House->FUN_0050B730() && !Rule->IsAutoCrush && !Class->IsAutoCrush) || House->Difficulty == DIFF_HARD) return(false);
+	if ((House->IsControlledByHuman() && !Rule->IsAutoCrush && !Class->IsAutoCrush) || House->Difficulty == DIFF_HARD) return(false);
 
-	if (!House->FUN_0050B730() && House->IQ < Rule->IQCrush) return(false);
+	if (!House->IsControlledByHuman() && House->IQ < Rule->IQCrush) return(false);
 
 	if (it->IsDisguisedAs(House)) return(false);
 

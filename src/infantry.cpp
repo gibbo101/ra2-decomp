@@ -392,7 +392,7 @@ ResultType InfantryClass::Take_Damage(int & damage, int distance, WarheadTypeCla
 	if (res != RESULT_DESTROYED) {
 		Coord source_coord = (source != NULL) ? source->PositionCoord : COORD_NONE;
 
-		if (!House->FUN_0050B730() && Class->IsEngineer && (Get_Mission() == MISSION_GUARD || Get_Mission() == MISSION_GUARD_AREA)) {
+		if (!House->IsControlledByHuman() && Class->IsEngineer && (Get_Mission() == MISSION_GUARD || Get_Mission() == MISSION_GUARD_AREA)) {
 			QueueMission(MISSION_HUNT, false);
 		}
 
@@ -874,7 +874,7 @@ MoveType InfantryClass::Can_Enter_Cell(CellClass const * cellptr, FacingType dir
 	if (cellptr->Overlay != OVERLAY_NONE) {
 		OverlayTypeClass const & otype = *OverlayTypes[cellptr->Overlay];
 
-		if (otype.IsCrate && !House->FUN_0050B730()) {
+		if (otype.IsCrate && !House->IsControlledByHuman()) {
 			return(MOVE_NO);
 		}
 
@@ -1232,7 +1232,7 @@ void InfantryClass::Scatter(Coord const & threat, bool forced, bool nokidding)
 {
 	if ((Doing == 0x1b || Doing == 0x1c || Doing == 0x1d || Doing == 0x1e) && forced && nokidding) {
 		Do_Action((DoType)0x1f, false, false);
-	} else if (House->FUN_0050B730()) {
+	} else if (House->IsControlledByHuman()) {
 		if (Doing == 0x1b || Doing == 0x1c || Doing == 0x1d || Doing == 0x1e) return;
 	}
 
@@ -1244,7 +1244,7 @@ void InfantryClass::Scatter(Coord const & threat, bool forced, bool nokidding)
 
 	if (Doing != DO_NOTHING && Doing != 0x1f && !MasterDoControls[Doing].Interrupt) return;
 
-	if (!Rule->IsScatter && !Has_Ability(ABILITY_SCATTER) && !nokidding && House->FUN_0050B730() && !forced && Team == NULL) return;
+	if (!Rule->IsScatter && !Has_Ability(ABILITY_SCATTER) && !nokidding && House->IsControlledByHuman() && !forced && Team == NULL) return;
 
 	if (forced || Class->IsFraidyCat) {
 		FacingType toface;
@@ -2025,7 +2025,7 @@ int InfantryClass::Do_MISSION_GUARD_AREA(void)
 int InfantryClass::Do_MISSION_MOVE(void)
 {
 	if (Doing == 0x1b || Doing == 0x1c || Doing == 0x1d || Doing == 0x1e) {
-		if (Owner_HouseClass()->FUN_0050B730()) {
+		if (Owner_HouseClass()->IsControlledByHuman()) {
 			Assign_Destination(NULL, true);
 			return(1);
 		}
@@ -2314,7 +2314,7 @@ void InfantryClass::Fear_AI(void)
 			}
 		} else {
 			if (Fear >= 0x32 && Doing != 0x1b && Doing != 0x1c && Doing != 0x1d && Doing != 0x1e) {
-				if (!House->FUN_0050B730() || (NavCom == NULL && !Locomotion->Is_Moving())) {
+				if (!House->IsControlledByHuman() || (NavCom == NULL && !Locomotion->Is_Moving())) {
 					if (!Class->IsFraidyCat) {
 						Do_Action((DoType)5, false, false);
 					}
@@ -2678,7 +2678,7 @@ deployed:
 		return(-1);
 	}
 
-	if (!Owner_HouseClass()->FUN_0050B730() && Class->Deployer && Class->DeployFire && Class->UndeployDelay <= -1 && NavCom == NULL && CurrentMissionStartTime + Rule->AIAutoDeployFrameDelay[House->Difficulty] < Frame) {
+	if (!Owner_HouseClass()->IsControlledByHuman() && Class->Deployer && Class->DeployFire && Class->UndeployDelay <= -1 && NavCom == NULL && CurrentMissionStartTime + Rule->AIAutoDeployFrameDelay[House->Difficulty] < Frame) {
 		if (ArchiveTarget != NULL) {
 			if (ArchiveTarget->Center_Coord().As_Cell() != Center_Coord().As_Cell()) {
 				return(-1);
@@ -2735,7 +2735,7 @@ not_ready:
 bool InfantryClass::Paradrop(Coord const & coord)
 {
 	if (BASECLASS::Paradrop(coord)) {
-		if (House->FUN_0050B730()) {
+		if (House->IsControlledByHuman()) {
 			QueueMission(MISSION_GUARD, false);
 		} else {
 			QueueMission(MISSION_HUNT, false);
@@ -2985,7 +2985,7 @@ bool InfantryClass::Should_JumpJet_Fly(Cell const & from, Cell const & to)
 		return(true);
 	}
 
-	if (House->FUN_0050B730()) {
+	if (House->IsControlledByHuman()) {
 		CellClass * startptr = &Map[from];
 		if (startptr != NULL && startptr->FUN_00484AE0()) {
 			return(false);
@@ -3021,7 +3021,7 @@ AbstractClass * InfantryClass::Approach_Target(bool force)
 		if (!Is_Deploy_Doing(Doing)) {
 			return(BASECLASS::Approach_Target(false));
 		}
-		if (!Owner_HouseClass()->FUN_0050B730() && Class->Deployer && Class->DeployFire) {
+		if (!Owner_HouseClass()->IsControlledByHuman() && Class->Deployer && Class->DeployFire) {
 			int weapon = Class->DeployFireWeapon;
 			bool inrange = In_Range(TarCom, weapon);
 			WeaponTypeClass const * wt = Get_Class_Weapon_Data(weapon)->Weapon;

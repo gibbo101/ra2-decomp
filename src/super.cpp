@@ -308,7 +308,7 @@ static inline int Charge_Time(SuperClass const * super)
 bool SuperClass::Discharged(bool player, Cell const & cell)
 {
 	if (Class->UseChargeDrain) {
-		if (House->FUN_0050B730()) {
+		if (House->IsControlledByHuman()) {
 			if (ChargeDrainState == FIRESTORM_ON) {
 				ChargeDrainState = READY;
 				Control = Charge_Time(this) - Control.Value() / Rule->ChargeToDrainRatio;

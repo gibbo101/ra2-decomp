@@ -1073,7 +1073,7 @@ void BuildingClass::DrawInfoTipAndSpiedSelection(Point2D * location, Rect * rect
 	}
 	if ((SpiedBy & (1 << PlayerPtr->Class->House)) && IsSelected) {
 		FactoryClass * factory;
-		if (House->FUN_0050B730()) {
+		if (House->IsControlledByHuman()) {
 			factory = House->Fetch_Factory(Class->ToBuild, Class->Naval, 0);
 		} else {
 			factory = Factory;
@@ -1767,7 +1767,7 @@ bool BuildingClass::Unlimbo(Coord const & coord, Dir256 dir)
 			return(true);
 		}
 
-		if (Session.Type != GAME_NORMAL && !House->FUN_0050B730() && !House->Class->IsMultiplayPassive) {
+		if (Session.Type != GAME_NORMAL && !House->IsControlledByHuman() && !House->Class->IsMultiplayPassive) {
 			IsToRepair = true;
 		}
 
@@ -1816,7 +1816,7 @@ bool BuildingClass::Unlimbo(Coord const & coord, Dir256 dir)
 			}
 		}
 
-		if (!House->FUN_0050B730()) {
+		if (!House->IsControlledByHuman()) {
 			Revealed(House);
 		}
 
@@ -1892,7 +1892,7 @@ bool BuildingClass::Unlimbo(Coord const & coord, Dir256 dir)
 		}
 		House->Buildings.Add(this);
 
-		if (!House->FUN_0050B730()) {
+		if (!House->IsControlledByHuman()) {
 			House->Base.Mark_Node_Placed(this);
 		}
 
@@ -2208,7 +2208,7 @@ ResultType BuildingClass::Take_Damage(int & damage, int distance, WarheadTypeCla
 				Get_Class_Weapon_Data(0)->Weapon != NULL &&
 				!Get_Class_Weapon_Data(0)->Weapon->Bullet->IsAntiAircraft &&
 				(TarCom == NULL || !IsCloseEnoughToAttack(TarCom))) {
-				if (source->Fetch_RTTI() != RTTI_AIRCRAFT && (!House->FUN_0050B730() || Rule->IsSmartDefense)) {
+				if (source->Fetch_RTTI() != RTTI_AIRCRAFT && (!House->IsControlledByHuman() || Rule->IsSmartDefense)) {
 					Assign_Target(source);
 				} else if (!PrimaryFacing.Is_Rotating() && IsPowerOnline()) {
 					PrimaryFacing.Set_Desired(Random_Dir(DIR_N, DIR_MAX));
@@ -2764,7 +2764,7 @@ void BuildingClass::Grand_Opening(bool captured)
 			CreateGap();
 		}
 
-		if (Class->FreeUnit != NULL && !ScenarioInit && !captured && !Unsorted::ArmageddonMode && (!House->FUN_0050B730() || PurchasePrice == 0 || PurchasePrice > Class->Raw_Cost())) {
+		if (Class->FreeUnit != NULL && !ScenarioInit && !captured && !Unsorted::ArmageddonMode && (!House->IsControlledByHuman() || PurchasePrice == 0 || PurchasePrice > Class->Raw_Cost())) {
 			Cell cell = Adjacent_Cell(Center_Coord().As_Cell(), FACING_S);
 
 			bool placed = false;
@@ -2902,7 +2902,7 @@ void BuildingClass::Sell_Back(int control)
 	} else {
 		if (Class->IsFirestormWall) {
 			Class->Cost_Of(House);
-			House->FUN_0050B730();
+			House->IsControlledByHuman();
 			Limbo();
 			Delete_Me();
 		}
@@ -3649,7 +3649,7 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 								if (!((FootClass *)client)->Locomotion->Is_Powered()) {
 									FootClass * mover = As_Foot(FUN_0065AD30(0));
 									mover->Locomotion->Power_On();
-									if (mover->ArchiveTarget != NULL && !mover->House->FUN_0050B730()) {
+									if (mover->ArchiveTarget != NULL && !mover->House->IsControlledByHuman()) {
 										mover->QueueMission(MISSION_MOVE, false);
 										mover->Assign_Destination(mover->ArchiveTarget, true);
 										mover->ArchiveTarget = NULL;
@@ -3671,7 +3671,7 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 								}
 							}
 						} else {
-							if (client->IsUseless && !client->House->FUN_0050B730()) {
+							if (client->IsUseless && !client->House->IsControlledByHuman()) {
 								client->Sell_Back(1);
 								Status = 0;
 								IsReadyToCommence = true;
@@ -3741,7 +3741,7 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 								Status = 1;
 
 								FootClass * foot = As_Foot(Contact_With_Whom());
-								if (foot->ArchiveTarget != NULL && !foot->House->FUN_0050B730()) {
+								if (foot->ArchiveTarget != NULL && !foot->House->IsControlledByHuman()) {
 									foot->QueueMission(MISSION_MOVE, false);
 									foot->Assign_Destination(foot->ArchiveTarget, true);
 									foot->ArchiveTarget = NULL;
@@ -4369,7 +4369,7 @@ bool BuildingClass::Can_Player_Move(void) const
 		return(true);
 	}
 	if (Class->IsConstructionYard) {
-		if (!House->FUN_0050B730() || !Session.Type || !Session.Options.MCVRedeploy || MindControlledBy != NULL) {
+		if (!House->IsControlledByHuman() || !Session.Type || !Session.Options.MCVRedeploy || MindControlledBy != NULL) {
 			return(false);
 		}
 	}
