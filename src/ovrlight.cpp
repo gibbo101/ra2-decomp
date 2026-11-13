@@ -108,6 +108,56 @@ void SpotLightClass::Update_All(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x005FF420
+void SpotLightClass::One_Time(void)
+{
+	int i;
+	int j;
+	static bool _one_time = false;
+	if (!_one_time) {
+		for (i = 0; i < 64; i++) {
+			if (SpotLightSurfaces[i] == 0) SpotLightSurfaces[i] = new BSurface(256,128,1);
+			SpotLightSurfaces[i]->Fill(0);
+			BSurface surface(256,256,1);
+			surface.Fill(0);
+			Point2D center(128,128);
+			Rect bounds(0,0,255,255);
+			int radius = i*2+1;
+			int ring;
+			if ((ring = radius) > 0) {
+				for (int color = 12; ring > 0; ring -= 2, color += 4)
+					surface.Draw_Circle(center,ring,bounds,(color <= 255 ? color : 255));
+			}
+			for (j = 0; j < 128; j++)
+				SpotLightSurfaces[i]->Blit_From(Rect(0,j,255,1),surface,Rect(0,2*j,255,1),false,true);
+		}
+		for (i = 0; i < 10; i++) {
+			if (SpotLightSurfaces[i+64] == 0) SpotLightSurfaces[i+64] = new BSurface(256,128,1);
+			SpotLightSurfaces[i+64]->Fill(0);
+			BSurface surface(256,256,1);
+			surface.Fill(0);
+			Point2D center(128,128);
+			Rect bounds(0,0,255,255);
+			int radius = 60*Rule->SpotlightRadius;
+			surface.Draw_Circle(center,i-int(radius/-358.4),bounds,128-i*6);
+			for (j = 0; j < 128; j++)
+				SpotLightSurfaces[i+64]->Blit_From(Rect(0,j,255,1),surface,Rect(0,2*j,255,1),false,true);
+		}
+		_one_time = true;
+	}
+	SpotLightColorMode = DSurface::Get_Primary_Color_Mode();
+	int cpu_type = 5;
+	bool mmx = false;
+	Get_CPU_Type(cpu_type, mmx);
+	if (mmx && SpotLightMMXBuffer == 0) {
+		SpotLightMMXBuffer = new int[65536];
+		for (int color = 0; color < 65536; color++) {
+			RGBClass rgb = DSurface::Deconstruct_Hicolor_Pixel((unsigned short)color);
+			SpotLightMMXBuffer[color] = (rgb.Get_Red()<<16)|(rgb.Get_Green()<<8)|rgb.Get_Blue();
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x005FF800
 void SpotLightClass::Clear_All(void)
 {
