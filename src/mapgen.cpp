@@ -6819,3 +6819,190 @@ DynamicVectorClass<Cell> * MapRegionClass::Pick_Spread_Cells(DynamicVectorClass<
 
 	return(layout);
 }
+
+// FUNCTION: GAMEMD 0x00592440
+bool MapRegionClass::Build_West_Ramp(
+	Cell const & cell1, Cell const & cell2, int region_id)
+{
+	Rect rect(
+		MIN(cell1.X, cell2.X) - 7,
+		cell1.Y - 4,
+		MAX(cell1.X, cell2.X) - MIN(cell1.X, cell2.X) + 11,
+		cell2.Y - cell1.Y + 9);
+
+	if (!Is_Ramp_Area_Clear(rect, region_id)) {
+		return(false);
+	}
+
+	int dx = cell2.X - cell1.X;
+	int abs_dx = abs(dx);
+	if (abs_dx > cell2.Y - cell1.Y - 5) {
+		return(false);
+	}
+
+	int half = (cell2.Y - cell1.Y + 1) / 2 + 2;
+
+	Flatten_Area(
+		Rect(rect.X, rect.Y, cell1.X - rect.X, half + 2),
+		region_id);
+	Flatten_Area(
+		Rect(rect.X, cell2.Y - half + 3, cell2.X - rect.X, half + 2),
+		region_id);
+	Flatten_Area(
+		Rect(cell1.X, cell1.Y,
+			 rect.X + rect.Width - cell1.X - 1, half - 1));
+	Flatten_Area(
+		Rect(cell2.X, cell2.Y - half + 3,
+			 rect.X + rect.Width - cell2.X - 1, half - 2));
+
+	MapGeneratorClass::Place_Tile(
+		(IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 7),
+		cell1 - Cell(3, 0), region_id, CellHeight);
+	MapGeneratorClass::Place_Tile(
+		(IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 8),
+		cell2 - Cell(3, 2), region_id, CellHeight);
+	MapGeneratorClass::Place_Tile(
+		(IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 9),
+		cell2 - Cell(1, 1), region_id, CellHeight);
+
+	Cell tail(0, 0);
+
+	if (dx != 0) {
+		int rsel = Pick_Random_UInt(0, 1);
+
+		int right = dx > 0;
+		Cell bias(dx > 0, 0);
+
+		if (rsel == 1) {
+			tail += Cell(dx, abs_dx);
+		} else {
+			bias += Cell(0, cell2.Y - abs_dx - cell1.Y - 5);
+		}
+
+		int forward = 0;
+		if (abs_dx > 0) {
+			int backward = 0;
+			do {
+				static int _heights[] = {3, 2, 1, 0, 0};
+				static int _ramps[] = {9, 13, 13, 13, 5, 12, 16, 16, 16, 8};
+
+				for (int row = 0; row < 5; row++) {
+					short add_x = right ? forward : backward;
+
+					Cell cell;
+					Cell pos =
+						Cell(cell1.X, cell1.Y + 3)
+						+ Cell(-row, forward)
+						+ bias;
+					cell = Cell(pos.X + add_x, pos.Y);
+
+					CellClass * cellptr = &Map[cell];
+
+					cellptr->Height = CellHeight + _heights[row] - 4;
+					cellptr->Ramp = _ramps[5 * right + row];
+					cellptr->ITType = (IsometricTileType)(
+						IsometricTileTypeClass::RampStart
+						+ cellptr->Ramp - 1);
+					cellptr->SubTile = 0;
+				}
+
+				forward++;
+				backward--;
+			} while (forward < abs_dx);
+		}
+	}
+
+	for (int y = 0; y < cell2.Y - cell1.Y - abs_dx - 5; y++) {
+		for (int i = 0; i < 4; i++) {
+			Cell cell = Cell(cell1.X, cell1.Y + 3) + Cell(-i, y) + tail;
+			CellData::Set_Region(cell, region_id);
+			CellClass * cellptr = &Map[cell];
+			cellptr->Height = CellHeight - i - 1;
+			cellptr->Ramp = 1;
+			cellptr->ITType = IsometricTileTypeClass::RampStart;
+			cellptr->SubTile = 0;
+		}
+	}
+
+	return(true);
+}
+
+// FUNCTION: GAMEMD 0x00593030
+bool MapRegionClass::Build_Corner_Ramp_NE(
+	Cell const & cell1, Cell const & cell2, int region_id)
+{
+	int dx = cell1.X - cell2.X;
+	if (dx >= 3) {
+		int dy = cell1.Y - cell2.Y;
+		if (dy >= 3) {
+			Rect rect(
+				cell2.X - 2, cell2.Y - 7, dx + 10,
+				cell1.Y - cell2.Y + 10);
+
+			if (Is_Ramp_Area_Clear(rect, region_id)) {
+				Flatten_Area(
+					Rect(rect.X, rect.Y, rect.Width, 7),
+					region_id);
+				Flatten_Area(
+					Rect(cell1.X + 1, rect.Y, 7, rect.Height),
+					region_id);
+				Flatten_Area(Rect(cell2.X, cell2.Y, 1, 2));
+				Flatten_Area(Rect(cell1.X - 1, cell1.Y, 2, 1));
+				Flatten_Area(Rect(
+					cell2.X + 1, cell2.Y + 1,
+					cell1.X - cell2.X - 1,
+					cell1.Y - cell2.Y - 1));
+
+				MapGeneratorClass::Place_Tile(
+					(IsometricTileType)(
+						IsometricTileTypeClass::SlopeSetPieces + 2),
+					cell1 - Cell(0, 2), region_id, CellHeight);
+				MapGeneratorClass::Place_Tile(
+					(IsometricTileType)(
+						IsometricTileTypeClass::SlopeSetPieces + 4),
+					cell2 - Cell(0, 3), region_id, CellHeight);
+
+				for (int i = 0; i < 4; ++i) {
+					CellClass * cptr =
+						&Map[Cell(cell1.X + i, cell2.Y - i)];
+					cptr->Height = CellHeight - (char)i - 1;
+					cptr->Ramp = 6;
+					cptr->ITType = (IsometricTileType)(
+						IsometricTileTypeClass::RampStart + 5);
+					cptr->SubTile = 0;
+				}
+
+				for (int j = 0; j < 4; ++j) {
+					for (int k = 0;
+						k < cell1.Y - cell2.Y + j - 3;
+						++k) {
+						CellClass * cptr = &Map[Cell(
+							cell1.X + j, cell1.Y - k - 3)];
+						cptr->Height = CellHeight - (char)j - 1;
+						cptr->Ramp = 3;
+						cptr->ITType = (IsometricTileType)(
+							IsometricTileTypeClass::RampStart + 2);
+						cptr->SubTile = 0;
+					}
+				}
+
+				for (int m = 0; m < 4; ++m) {
+					for (int n = 0;
+						n < cell1.X - cell2.X + m - 3;
+						++n) {
+						CellClass * cptr = &Map[Cell(
+							cell2.X + n + 3, cell2.Y - m)];
+						cptr->Height = CellHeight - (char)m - 1;
+						cptr->Ramp = 2;
+						cptr->ITType = (IsometricTileType)(
+							IsometricTileTypeClass::RampStart + 1);
+						cptr->SubTile = 0;
+					}
+				}
+
+				return true;
+			}
+		}
+	}
+	return false;
+}
