@@ -5959,6 +5959,130 @@ void MapGeneratorClass::Generate_Rural_Units(const Cell & cell)
 
 namespace Unsorted { extern bool ArmageddonMode; }
 
+static int Road_N_1Way[] = {95, 96, 97};
+static int Road_N_2Way[] = {0, 1, 2, 3, 4, 5, 11, 84, 85, 86, 87, 88, 89, 90, 91, 98, 99};
+static int Road_N_3Way[] = {24, 26, 27};
+static int Road_N_4Way[] = {28};
+
+// --- FACING 1 (NORTHEAST) ---
+static int Road_NE_1Way[] = {45, 46, 47};
+static int Road_NE_2Way[] = {0, 6, 7, 8, 9, 10, 11, 35, 36, 37, 38, 39, 40, 41, 48, 49};
+static int Road_NE_3Way[] = {29, 31, 32, 34};
+static int Road_NE_4Way[] = {33};
+
+// --- FACING 2 (EAST) ---
+static int Road_E_1Way[] = {62, 63, 64};
+static int Road_E_2Way[] = {1, 6, 12, 13, 14, 15, 51, 52, 53, 54, 55, 56, 57, 58, 65, 66};
+static int Road_E_3Way[] = {24, 25, 27, 34};
+static int Road_E_4Way[] = {28};
+
+// --- FACING 3 (SOUTHEAST) ---
+static int Road_SE_1Way[] = {78, 79, 80};
+static int Road_SE_2Way[] = {2, 7, 12, 16, 17, 18, 68, 69, 70, 71, 72, 73, 74, 81, 82};
+static int Road_SE_3Way[] = {29, 30, 32};
+static int Road_SE_4Way[] = {33};
+
+// --- FACING 4 (SOUTH) ---
+static int Road_S_1Way[] = {92, 93, 94};
+static int Road_S_2Way[] = {8, 13, 16, 19, 20, 21, 84, 85, 86, 87, 88, 89, 90, 91, 98, 99};
+static int Road_S_3Way[] = {24, 25, 26};
+static int Road_S_4Way[] = {28};
+
+// --- FACING 5 (SOUTHWEST) ---
+static int Road_SW_1Way[] = {42, 43, 44};
+static int Road_SW_2Way[] = {3, 14, 17, 19, 22, 35, 36, 37, 38, 39, 40, 41, 48, 49};
+static int Road_SW_3Way[] = {29, 30, 31};
+static int Road_SW_4Way[] = {33};
+
+// --- FACING 6 (WEST) ---
+static int Road_W_1Way[] = {59, 60, 61};
+static int Road_W_2Way[] = {4, 9, 18, 20, 23, 51, 52, 53, 54, 55, 56, 57, 58, 65, 66};
+static int Road_W_3Way[] = {25, 26, 27, 34};
+static int Road_W_4Way[] = {28};
+
+// --- FACING 7 (NORTHWEST) ---
+static int Road_NW_1Way[] = {75, 76, 77};
+static int Road_NW_2Way[] = {5, 10, 15, 21, 22, 23, 68, 69, 70, 71, 72, 73, 74, 81, 82};
+static int Road_NW_3Way[] = {30, 31, 32};
+static int Road_NW_4Way[] = {33};
+
+
+static int * RoadTileLibrary[FACING_COUNT][4] = {
+	{ Road_N_1Way,  Road_N_2Way,  Road_N_3Way,  Road_N_4Way  }, // North
+	{ Road_NE_1Way, Road_NE_2Way, Road_NE_3Way, Road_NE_4Way }, // North-East
+	{ Road_E_1Way,  Road_E_2Way,  Road_E_3Way,  Road_E_4Way  }, // East
+	{ Road_SE_1Way, Road_SE_2Way, Road_SE_3Way, Road_SE_4Way }, // South-East
+	{ Road_S_1Way,  Road_S_2Way,  Road_S_3Way,  Road_S_4Way  }, // South
+	{ Road_SW_1Way, Road_SW_2Way, Road_SW_3Way, Road_SW_4Way }, // South-West
+	{ Road_W_1Way,  Road_W_2Way,  Road_W_3Way,  Road_W_4Way  }, // West
+	{ Road_NW_1Way, Road_NW_2Way, Road_NW_3Way, Road_NW_4Way }  // North-West
+};
+
+
+static int RoadTileCounts[FACING_COUNT][4] = {
+	{ ARRAY_SIZE(Road_N_1Way),  ARRAY_SIZE(Road_N_2Way),  ARRAY_SIZE(Road_N_3Way),  ARRAY_SIZE(Road_N_4Way)  }, // N
+	{ ARRAY_SIZE(Road_NE_1Way), ARRAY_SIZE(Road_NE_2Way), ARRAY_SIZE(Road_NE_3Way), ARRAY_SIZE(Road_NE_4Way) }, // NE
+	{ ARRAY_SIZE(Road_E_1Way),  ARRAY_SIZE(Road_E_2Way),  ARRAY_SIZE(Road_E_3Way),  ARRAY_SIZE(Road_E_4Way)  }, // E
+	{ ARRAY_SIZE(Road_SE_1Way), ARRAY_SIZE(Road_SE_2Way), ARRAY_SIZE(Road_SE_3Way), ARRAY_SIZE(Road_SE_4Way) }, // SE
+	{ ARRAY_SIZE(Road_S_1Way),  ARRAY_SIZE(Road_S_2Way),  ARRAY_SIZE(Road_S_3Way),  ARRAY_SIZE(Road_S_4Way)  }, // S
+	{ ARRAY_SIZE(Road_SW_1Way), ARRAY_SIZE(Road_SW_2Way), ARRAY_SIZE(Road_SW_3Way), ARRAY_SIZE(Road_SW_4Way) }, // SW
+	{ ARRAY_SIZE(Road_W_1Way),  ARRAY_SIZE(Road_W_2Way),  ARRAY_SIZE(Road_W_3Way),  ARRAY_SIZE(Road_W_4Way)  }, // W
+	{ ARRAY_SIZE(Road_NW_1Way), ARRAY_SIZE(Road_NW_2Way), ARRAY_SIZE(Road_NW_3Way), ARRAY_SIZE(Road_NW_4Way) }  // NW
+};
+
+// FUNCTION: GAMEMD 0x005A8F00
+bool MapGeneratorClass::Find_Dirt_Road_Tile(FacingType facing,Cell const &target_cell,int max_connections,IsometricTileType &tile,Cell &origin,int &link_index)
+{
+	int current=1;
+	int initial=1;
+	if(max_connections>1) {
+		double roll=Sample_Truncated_Normal_Inline(2.0,0.5,2.0,max_connections);
+		current=roll;
+		initial=current;
+	}
+	while(true) {
+		int tile_count=RoadTileCounts[facing][current-1];
+		int *tile_list=RoadTileLibrary[facing][current-1];
+		int start_index;
+		if(current==2 && Random_Fraction()<0.7) {
+			start_index=Pick_Random_UInt(7,tile_count-1);
+		} else {
+			start_index=Pick_Random_UInt(0,tile_count-1);
+		}
+		for(int i=0;i<tile_count;i++) {
+			DirtRoadTile &path=DirtRoadTiles[tile_list[(i+start_index)%tile_count]];
+			int index;
+			for(index=0;index<path.Count;index++) {
+				DirtRoadLink connection=path.Links[index];
+				if(connection.Facing==facing) {
+					break;
+				}
+			}
+			DirtRoadLink link;
+			link.Offset=path.Links[index].Offset;
+			Cell position=target_cell-link.Offset;
+			if(Can_Place_Tile(path.ITType,position,1,1)) {
+				DirtRoadLink link2;
+				link2.Offset=path.Links[index].Offset;
+				origin=target_cell-link2.Offset;
+				tile=path.ITType;
+				link_index=index;
+				return true;
+			}
+		}
+		current=(current+1)%(max_connections+1);
+		if(current==0) {
+			current=1;
+		}
+		if(current==initial) {
+			tile=ISOTILE_NONE;
+			origin=Cell(0,0);
+			link_index=-1;
+			return false;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x005A91E0
 void MapGeneratorClass::Generate_Lights(void)
 {
