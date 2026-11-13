@@ -2144,6 +2144,54 @@ static bool WaypointLinePattern[16] = {
 	true, true, true, true, true, false, false, false
 };
 
+// FUNCTION: GAMEMD 0x006DA9D0
+void Tactical::Draw_Rally_Points(bool inshroud)
+{
+	static bool _pattern[16] = {true, true, true, true, true, false, false, false,
+								true, true, true, true, true, false, false, false};
+	int phase = (0x7FFFFFFF - Frame) % TICKS_PER_SECOND;
+	int shadow = DSurface::Build_Hicolor_Pixel(BlackColor);
+	for (int index = CurrentObject.Count() - 1; index >= 0; --index) {
+		ObjectClass * object = CurrentObject[index];
+		if (object->Fetch_RTTI() == RTTI_BUILDING && object->IsActive && object->IsSelected) {
+			BuildingClass * building = (BuildingClass *)object;
+			if (building->House == PlayerPtr && building->Is_Move_Override() &&
+				building->ArchiveTarget != NULL) {
+				Coord center = building->Center_Coord();
+				Point2D start;
+				Coord_To_Pixel(center, start);
+				start += Point2D(TacticalRect.X, TacticalRect.Y);
+				Coord rally = building->ArchiveTarget->Center_Coord();
+				rally.Z = Map.Get_Height_GL(rally);
+				if (Map[rally].IsUnderBridge) {
+					rally.Z += BRIDGE_LEPTON_HEIGHT;
+				}
+				Point2D end;
+				Coord_To_Pixel(rally, end);
+				end += Point2D(TacticalRect.X, TacticalRect.Y);
+				Point2D offset(0, 2);
+				start += offset;
+				end += offset;
+				if (Clip_Line_To_Rect(start, end, TacticalRect)) {
+					LogicalSurface->Draw_Masked_Dashed_Line(start, end, shadow, _pattern, phase, inshroud);
+				}
+				RGBClass & rgb = building->House->RemapColorRGB;
+				int color = DSurface::Build_Hicolor_Pixel(rgb);
+				start.Y--;
+				end.Y--;
+				if (Clip_Line_To_Rect(start, end, TacticalRect)) {
+					LogicalSurface->Draw_Masked_Dashed_Line(start, end, color, _pattern, phase, inshroud);
+				}
+				start.Y--;
+				end.Y--;
+				if (Clip_Line_To_Rect(start, end, TacticalRect)) {
+					LogicalSurface->Draw_Masked_Dashed_Line(start, end, color, _pattern, phase, inshroud);
+				}
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x006DAD60
 void Tactical::Draw_Waypoints(bool inshroud)
 {
