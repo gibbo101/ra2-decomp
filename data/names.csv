@@ -574,3 +574,4 @@ address,name,symbol,evidence
 0x00625560,"DNode<HWND, OwnerDraw::WinData>::scalar deleting destructor",??_G?$DNode@PAUHWND__@@UWinData@OwnerDraw@@@@QAEPAXI@Z,Matched 138-byte compiler-generated deleting destructor from explicit DNode instantiation.
 0x0082AFF0,MapRegionClass::Build_West_Ramp::_heights,_?_heights@?BF@??Build_West_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z@4PAHA,Complete 20-byte lookup table equals original data; SHA-256 f96702bafafa0bd042cbeadfa4b5c92a07eebeb322d605140560d31023401b45
 0x0082B004,MapRegionClass::Build_West_Ramp::_ramps,_?_ramps@?BF@??Build_West_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z@4PAHA,Complete 40-byte lookup table equals original data; SHA-256 0d818a59ee3c06c142a50082be2045aa287ed54c1303a14444fdcb7f40489cee
+0x00A8ECE0,VerNum,?VerNum@@3VVersionClass@@A,Matched initializer 0x004E7DC0 constructs VerNum at this address via VersionClass::VersionClass 0x0074F730; YRpp VersionClass::Instance independently agrees
