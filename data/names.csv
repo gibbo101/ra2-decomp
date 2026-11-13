@@ -339,6 +339,7 @@ address,name,symbol,evidence
 0x00B0B328,SidebarClass::Upgrade,,Static constructor 0x006A4D40 loads this address; Init_IO assigns ID 201 and R-DN.SHP
 0x00886F90,SidebarRect,,YRpp Surface.h SidebarBounds; TibSun _rect.h SidebarRect; matched CCToolTip::Reset 0x00478DB0 uses the same X/Width fields
 0x0088731C,CompositeSurface,,YRpp Surface.h Composite; TibSun _surface.h CompositeSurface; CCToolTip::Draw 0x00478E30
+0x00A9FA9C,DAT_00A9FA9C_Surface,?DAT_00A9FA9C_Surface@@3PAVDSurface@@A,Matched setup 0x0053BAF0 stores its newly constructed DSurface here; matched teardown 0x0053BB80 deletes and clears the same pointer
 0x00B0B518,SidebarClass::IsToBlitSidebar,,"Matched Blit_Sidebar 0x006A70E0 reads at 0x006A7143, clears at 0x006A7166 and sets at 0x006A723A; TibSun sidebar.cpp static flag"
 0x00AC48B8,ODMasks,?ODMasks@@3UODComponentMasks@@A,YRpp OwnerDraw.h ColorShiftRed/Green at +0/+2; existing matched ODInitMasks 0x0061F190 independently confirms both component references
 0x00AC48BC,ODBComponentMask,?ODBComponentMask@@3GA,YRpp OwnerDraw.h ColorShiftBlue; existing matched ODInitMasks 0x0061F190 +0x4A/+0x62/+0x71
@@ -574,4 +575,3 @@ address,name,symbol,evidence
 0x00625560,"DNode<HWND, OwnerDraw::WinData>::scalar deleting destructor",??_G?$DNode@PAUHWND__@@UWinData@OwnerDraw@@@@QAEPAXI@Z,Matched 138-byte compiler-generated deleting destructor from explicit DNode instantiation.
 0x0082AFF0,MapRegionClass::Build_West_Ramp::_heights,_?_heights@?BF@??Build_West_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z@4PAHA,Complete 20-byte lookup table equals original data; SHA-256 f96702bafafa0bd042cbeadfa4b5c92a07eebeb322d605140560d31023401b45
 0x0082B004,MapRegionClass::Build_West_Ramp::_ramps,_?_ramps@?BF@??Build_West_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z@4PAHA,Complete 40-byte lookup table equals original data; SHA-256 0d818a59ee3c06c142a50082be2045aa287ed54c1303a14444fdcb7f40489cee
-0x00A9FA9C,DAT_00A9FA9C_Surface,?DAT_00A9FA9C_Surface@@3PAVDSurface@@A,Matched setup 0x0053BAF0 stores its newly constructed DSurface here; matched teardown 0x0053BB80 deletes and clears the same pointer
