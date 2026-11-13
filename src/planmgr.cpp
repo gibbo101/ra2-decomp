@@ -860,10 +860,7 @@ void PlanningNodeClass::Fill_Lead_Box(int color)
 	Rect rect;
 	Rect clip = Get_Title_Screen_Area();
 	rect = Lead_Rect();
-	rect.X += 1;
-	rect.Y += 1;
-	rect.Width -= 2;
-	rect.Height -= 2;
+	Shrink_Rect(rect);
 	DSurface::Composite->Fill_Rect(clip, rect, color);
 }
 
@@ -875,6 +872,17 @@ static inline Rect Inflated(Rect const & r, int n)
 	o.Width += 2 * n;
 	o.Height += 2 * n;
 	return o;
+}
+
+// FUNCTION: GAMEMD 0x00635560
+void PlanningNodeClass::Frame_Lead_Box(int color)
+{
+	Rect clip = Get_Title_Screen_Area();
+	Rect rect = Lead_Box_Rect();
+	for (int i = 0; i < 3; i++) {
+		DSurface::Composite->Draw_Rect(clip, rect, color);
+		Shrink_Rect(rect);
+	}
 }
 
 // FUNCTION: GAMEMD 0x00635680
@@ -925,6 +933,46 @@ int __fastcall FUN_0063D070(RGBClass const & color, RGBClass const & other, int 
 	return (mixed.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
 		| (mixed.Get_Green() >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
 		| (mixed.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
+}
+
+enum WaypointTint { WAYPOINT_NORMAL, WAYPOINT_BRIGHT };
+
+static inline int Unit_Path_Tint(TechnoClass * techno, WaypointTint tint)
+{
+	int slot = FUN_006339B0(techno);
+	RGBClass color = Houses[slot]->RemapColorRGB;
+	if (tint == WAYPOINT_NORMAL) {
+		return FUN_0063D070(color, DAT_00A83CD9, 80);
+	}
+	return FUN_0063D070(color, DAT_00A80220, 100);
+}
+
+// FUNCTION: GAMEMD 0x00635830
+int PlanningNodeClass::Node_Color(void)
+{
+	int result = Color;
+	if (result == -1) {
+		TechnoClass * owner = PlanningMembers[0]->Owner;
+		result = Unit_Path_Tint(owner, WAYPOINT_NORMAL);
+		Color = result;
+		int count = PlanningBranches.Count();
+		for (int i = 0; i < count; i++) {
+			if (PlanningBranches[i]->Get_Color() == result)
+				goto done;
+		}
+		if (count == 0) {
+			PlanningTokenClass * token = owner->FUN_00705D20();
+			bool past = token->Reached(token->Node_Index(this));
+			if (past) {
+				Color = Unit_Path_Tint(owner, WAYPOINT_BRIGHT);
+			}
+		} else {
+			Color = Unit_Path_Tint(owner, WAYPOINT_BRIGHT);
+		}
+		result = Color;
+	}
+done:
+	return result;
 }
 
 // FUNCTION: GAMEMD 0x00635A40
@@ -2563,6 +2611,34 @@ void __fastcall FUN_0063B0A0(void)
 
 void __fastcall Draw_Filled_Unit_Waypoints(TechnoClass * techno);
 
+// FUNCTION: GAMEMD 0x0063B150
+void __fastcall FUN_0063B150(void)
+{
+	int nodes = PlanningNodeClass::Unknown1.Count();
+	for (int i = 0; i < nodes; i++) {
+		PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
+		HouseClass * house = node->PlanningMembers[0]->Owner->House;
+		if (house->Is_Ally(PlayerPtr)) {
+			node->FUN_0063CAE0();
+		}
+	}
+	for (int j = 0; j < nodes; j++) {
+		PlanningNodeClass * node = PlanningNodeClass::Unknown1[j];
+		HouseClass * house = node->PlanningMembers[0]->Owner->House;
+		if (house->Is_Ally(PlayerPtr)) {
+			node->Fill_Lead_Box(node->Node_Color());
+		}
+	}
+	int count = Technos.Count();
+	for (int k = 0; k < count; k++) {
+		TechnoClass * techno = Technos[k];
+		HouseClass * house = techno->House;
+		if (house->Is_Ally(PlayerPtr)) {
+			Draw_Filled_Unit_Waypoints(techno);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0063BE10
 bool __fastcall FUN_0063BE10(TechnoClass * techno)
 {
@@ -2600,21 +2676,6 @@ static inline bool Should_Draw_Active_Action(TechnoClass * techno, bool has_node
 {
 	return techno->Get_Mission() != MISSION_GUARD && !FUN_0063BE10(techno)
 		&& (has_nodes || techno->IsSelected);
-}
-
-enum WaypointTint {
-	WAYPOINT_NORMAL,
-	WAYPOINT_BRIGHT
-};
-
-static inline int Unit_Path_Tint(TechnoClass * techno, WaypointTint tint)
-{
-	int slot = FUN_006339B0(techno);
-	RGBClass color = Houses[slot]->RemapColorRGB;
-	if (tint == WAYPOINT_NORMAL) {
-		return FUN_0063D070(color, DAT_00A83CD9, 80);
-	}
-	return FUN_0063D070(color, DAT_00A80220, 100);
 }
 
 static inline int RGB_Pixel(RGBClass const & color)
@@ -3161,5 +3222,18 @@ void __fastcall FUN_00634B20(PlanningNodeClass * node)
 				FUN_004068E0("  Member [%s];  Cell location[%d, %d]\n", name, cell.X, cell.Y);
 			}
 		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006395B0
+void __fastcall FUN_006395B0(TechnoClass * techno, PlanningNodeClass * node)
+{
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	if (!token)
+		token = FUN_00638A80(techno);
+	if (token->Has_Node(node)) {
+		FUN_00639740(techno, node);
+	} else {
+		FUN_00639800(techno, node);
 	}
 }
