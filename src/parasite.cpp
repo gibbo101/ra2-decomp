@@ -500,14 +500,14 @@ bool ParasiteClass::CanInfect(FootClass * victim) const
 {
 	if (victim == NULL || victim->IsInLimbo || !victim->IsActive || victim->Strength == 0 || victim->ParasiteEatingMe != NULL) {
 		return false;
-	}
-	if (!victim->Techno_Type_Class()->Parasiteable || victim->BunkerLinkedItem != NULL) {
+	} else if (!victim->Techno_Type_Class()->Parasiteable || victim->BunkerLinkedItem != NULL) {
 		return false;
-	}
-	if (Owner != NULL && Owner->Techno_Type_Class()->Naval && victim->Get_Cell_Ptr() != NULL && !victim->Get_Cell_Ptr()->Is_Tile_Water()) {
+	} else if (Owner != NULL && Owner->Techno_Type_Class()->Naval && victim->Get_Cell_Ptr() != NULL &&
+			   !victim->Get_Cell_Ptr()->Is_Tile_Water()) {
 		return false;
+	} else {
+		return true;
 	}
-	return true;
 }
 
 // FUNCTION: GAMEMD 0x0062AB40
@@ -663,3 +663,29 @@ template class VectorClass<ParasiteClass *>;
 
 // SYNTHETIC: GAMEMD 0x0062B380
 // ??_G?$DynamicVectorClass@PAVParasiteClass@@@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x0062A980
+void ParasiteClass::TryInfect(FootClass * target)
+{
+	FUN_00629530();
+	DamageDeliveryTimer = 0;
+	if (!CanInfect(target)) {
+		if (!Owner->Unlimbo(Map[Owner->LastAdjacencyCell].Center_Coord(), DIR_N)) {
+			Owner->Delete_Me();
+			return;
+		}
+		Owner->vt_entry_48C(false, false, false, NULL);
+		Map.RevealArea3(Coord(Owner->Position), Owner->LastSightRange - 3, Owner->LastSightRange + 2, 0);
+		if (!Owner->HaveMegaMission()) {
+			Owner->Assign_Target(NULL);
+			Owner->Assign_Destination(NULL, true);
+		}
+		Owner->Enter_Idle_Mode(false, true);
+		return;
+	}
+	Coord position;
+	position = Coord(target->Position);
+	Owner->Locomotion->Force_Track(-1, position);
+	target->ParasiteEatingMe = Owner;
+	Victim = target;
+}
