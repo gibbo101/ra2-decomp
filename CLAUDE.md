@@ -23,6 +23,9 @@ setup and the checker.
   constructs:
   - inline asm, `#pragma optimize` and whole `.asm` files that Westwood's own source had,
     copied unchanged from the TibSun archive (`reference/tibsun/code`);
+  - inline asm copied unchanged, licence notice included, from another of EA's Westwood
+    source releases (Renegade, Generals), only where VC6 cannot emit those instructions
+    from C under the fixed flags and the TibSun archive has no equivalent;
   - `volatile` on a field or global (never a local) that the exe re-reads or stores in the
     way only `volatile` makes VC6 do, with every function touching it still matching;
   - Westwood's `div_zero` crash idiom as a local (`volatile int div_zero = 0;

@@ -83,7 +83,9 @@ Every compile counts as a check, including those your own scripts run.
 
 - The flags are fixed (`/O2 /Ob2 /Gr /GR /MT /DWIN32`). No inline assembly, `__emit`,
   `#pragma optimize` or `auto_inline`, hard-coded addresses or `volatile` tricks, except
-  Westwood's own inline asm, copied unchanged from the TibSun archive (header or .cpp).
+  Westwood's own inline asm, copied unchanged from the TibSun archive (header or .cpp),
+  or from another EA Westwood source release when VC6 cannot emit those instructions from
+  C and the TibSun archive has no equivalent.
 - Name callees and globals as `tools/ctx.py` names them (YRpp or TibSun names); an
   unnamed one is `FUN_<ADDR>` / `DAT_<ADDR>`. `data/symbols.csv` labels several one-line
   UI functions `UI::GetResource`; 0x00622B50 is `UI::StandardWndProc`.
