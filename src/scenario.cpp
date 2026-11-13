@@ -1069,7 +1069,7 @@ void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 bool Net2Init_Network(void);
 namespace Game { namespace Network { extern int PreCalcFrameRate; } }
 namespace CopyProtection { bool CheckProtectedData(void); }
-void FUN_0055CF10(void);
+void Disconnect_Gracefully(void);
 class MPScoreScreen { public: MPScoreScreen(void); void Present(void); };
 class STLScoreScreen { public: STLScoreScreen(void); void Present(void); };
 
@@ -1079,7 +1079,7 @@ void Do_Win(void)
 	if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
 		if (!Session.Play) {
 			Wait_For_End_Of_Queue();
-			FUN_0055CF10();
+			Disconnect_Gracefully();
 		}
 	}
 
@@ -1297,7 +1297,7 @@ void Do_Lose(void)
 	if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
 		if (!Session.Play) {
 			Wait_For_End_Of_Queue();
-			FUN_0055CF10();
+			Disconnect_Gracefully();
 		}
 	}
 

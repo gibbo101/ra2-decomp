@@ -7810,7 +7810,7 @@ address,name,result,size,source,symbol
 0x0055CC00,FUN_0055CC00,MATCH,8,src/mainloop.cpp,?FUN_0055CC00@@YIXXZ
 0x0055CC10,FUN_0055CC10,MATCH,8,src/mainloop.cpp,?FUN_0055CC10@@YIXXZ
 0x0055CC20,Motion_Capture,MATCH,742,src/mainloop.cpp,?Motion_Capture@@YIXXZ
-0x0055CF10,FUN_0055CF10,MATCH,182,src/mainloop.cpp,?FUN_0055CF10@@YIXXZ
+0x0055CF10,Disconnect_Gracefully,MATCH,182,src/mainloop.cpp,?Disconnect_Gracefully@@YIXXZ
 0x0055CFD0,FUN_0055CFD0,MATCH,906,src/mainloop.cpp,?FUN_0055CFD0@@YI_NXZ
 0x0055DEE0,Keyboard_Process,MATCH,636,src/mainloop.cpp,?Keyboard_Process@@YIXAAW4KeyNumType@@@Z
 0x0055E160,Sync_Delay,MATCH,676,src/mainloop.cpp,?Sync_Delay@@YIXXZ
@@ -12634,7 +12634,7 @@ address,name,result,size,source,symbol
 0x0069B8B0,FUN_0069B8B0,MATCH,3,src/session.cpp,?FUN_0069B8B0@@YGXHH@Z
 0x0069B8C0,SessionClass::FUN_0069B8C0,MATCH,494,src/session.cpp,?FUN_0069B8C0@SessionClass@@QAEXXZ
 0x0069BAB0,SessionClass::Resume,MATCH,144,src/session.cpp,?Resume@SessionClass@@QAEXXZ
-0x0069BB40,SessionClass::FUN_0069BB40,MATCH,157,src/session.cpp,?FUN_0069BB40@SessionClass@@QAEXXZ
+0x0069BB40,SessionClass::Pause,MATCH,157,src/session.cpp,?Pause@SessionClass@@QAEXXZ
 0x0069BBE0,SessionClass::FUN_0069BBE0,MATCH,7,src/session.cpp,?FUN_0069BBE0@SessionClass@@QBE_NXZ
 0x0069BBF0,SessionClass::FUN_0069BBF0,MATCH,39,src/session.cpp,?FUN_0069BBF0@SessionClass@@QAEXH@Z
 0x0069BC20,SessionClass::FUN_0069BC20,MATCH,63,src/session.cpp,?FUN_0069BC20@SessionClass@@QAEGH@Z

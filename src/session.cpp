@@ -1597,7 +1597,7 @@ void SessionClass::Resume(void)
 }
 
 // FUNCTION: GAMEMD 0x0069BB40
-void SessionClass::FUN_0069BB40(void)
+void SessionClass::Pause(void)
 {
 	if (CurrentlyInGame) {
 		CurrentlyInGame = false;

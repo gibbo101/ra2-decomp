@@ -733,7 +733,7 @@ bool LoadOptionsClass::Load_File(const char * file_name)
 	}
 	ScenarioActive = false;
 	TacticalActive = false;
-	Session.FUN_0069BB40();
+	Session.Pause();
 	bool loaded = Load_Game(file_name);
 	while (Get_Mouse_State() < hidden) {
 		Show_Mouse();

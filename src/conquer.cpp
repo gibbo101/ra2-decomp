@@ -396,7 +396,7 @@ ret_addr:
 			}
 		}
 		FUN_0072DFB0();
-		Session.FUN_0069BB40();
+		Session.Pause();
 		Unsorted::ScenarioStarted = false;
 		Unsorted::TacticalActive = false;
 
