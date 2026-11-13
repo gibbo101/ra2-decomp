@@ -1559,6 +1559,65 @@ static inline bool Can_Capture_Passive_Target(
 	return(true);
 }
 
+// FUNCTION: GAMEMD 0x006F79A0
+double TechnoClass::Area_Modify(Cell const & cell) const
+{
+	WeaponDataStruct const * weapon_data = GetTurretWeapon();
+	if (weapon_data == NULL || weapon_data->Weapon == NULL || !weapon_data->Weapon->IsSupressed) return(1);
+
+	Rect const & bounds = Map.MapRect;
+	int crange = Rule->SupressRadius / CELL_LEPTON;
+	double odds = 1;
+
+	for (int radius = 1; radius < crange; radius++) {
+		for (int x = -radius; x <= radius; x++) {
+			Cell newcell;
+
+			if (cell.X + x < bounds.X) continue;
+			if (cell.X + x >= (bounds.X+bounds.Width)) continue;
+
+			if ((cell.Y - radius) >= bounds.Y) {
+				newcell = cell + Cell(x, -radius);
+				BuildingClass const * building = Map[newcell].Cell_Building();
+				if (building != NULL && House->Is_Ally(building)) {
+					odds /= 2;
+				}
+			}
+
+			if ((cell.Y + radius) < (bounds.Y+bounds.Height)) {
+				newcell = cell + Cell(x, radius);
+				BuildingClass const * building = Map[newcell].Cell_Building();
+				if (building != NULL && House->Is_Ally(building)) {
+					odds /= 2;
+				}
+			}
+		}
+		for (int y = -(radius-1); y < radius; y++) {
+			Cell newcell;
+
+			if ((cell.Y + y) < bounds.Y) continue;
+			if ((cell.Y + y) >= (bounds.Y+bounds.Height)) continue;
+
+			if ((cell.X - radius) >= bounds.X) {
+				newcell = cell + Cell(-radius, y);
+				BuildingClass const * building = Map[newcell].Cell_Building();
+				if (building != NULL && House->Is_Ally(building)) {
+					odds /= 2;
+				}
+			}
+
+			if ((cell.X + radius) < (bounds.X+bounds.Width)) {
+				newcell = cell + Cell(radius, y);
+				BuildingClass const * building = Map[newcell].Cell_Building();
+				if (building != NULL && House->Is_Ally(building)) {
+					odds /= 2;
+				}
+			}
+		}
+	}
+	return(odds);
+}
+
 // FUNCTION: GAMEMD 0x006F7CA0
 bool TechnoClass::CanAutoTargetObject(
 	ThreatType method, int mask, int range,
