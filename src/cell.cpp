@@ -2317,7 +2317,7 @@ bool CellClass::Goodie_Check(FootClass * object)
 				while (utp == NULL) {
 					utp = UnitTypes[Random_Pick(UNIT_FIRST, (UnitType)(UnitTypes.Count() - 1))];
 					bool is_base = Rule->BaseUnit.Is_In_List(utp);
-					bool human = object->House->IsControlledByHuman();
+					bool human = object->House->FUN_0050B730();
 					if (utp->CrateGoodie && (Session.Options.Bases || !is_base) &&
 							(!Session.Options.Bases || !is_base || human || force_mcv)) {
 						break;

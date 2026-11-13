@@ -900,10 +900,10 @@ AbstractClass * FootClass::Approach_Target(bool force)
 				if (CurrentMission == MISSION_ATTACK) {
 					chase = true;
 				}
-				if (CurrentMission == MISSION_GUARD_AREA && House->IsControlledByHuman()) {
+				if (CurrentMission == MISSION_GUARD_AREA && House->FUN_0050B730()) {
 					chase = true;
 				}
-				if (CurrentMission == MISSION_HUNT && !House->IsControlledByHuman()) {
+				if (CurrentMission == MISSION_HUNT && !House->FUN_0050B730()) {
 					chase = true;
 				}
 				if (!chase) {

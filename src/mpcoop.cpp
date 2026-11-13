@@ -905,7 +905,7 @@ int MPCooperative::FUN_005C2D00(int house, DynamicVectorClass<Cell> * coords, un
 	}
 	int humans = 0;
 	for (int h = 0; h < Houses.Count(); h++) {
-		if (Houses[h] != NULL && Houses[h]->IsControlledByHuman()) {
+		if (Houses[h] != NULL && Houses[h]->FUN_0050B730()) {
 			humans++;
 		}
 	}
@@ -938,7 +938,7 @@ Cell * MPCooperative::AssignStartingPositionsToHouse(Cell * result, int house, D
 	}
 	int humans = 0;
 	for (int h = 0; h < Houses.Count(); h++) {
-		if (Houses[h] != NULL && Houses[h]->IsControlledByHuman()) {
+		if (Houses[h] != NULL && Houses[h]->FUN_0050B730()) {
 			humans++;
 		}
 	}
@@ -1186,7 +1186,7 @@ void MPCooperative::vt_entry_A0(bool playerWon)
 {
 	bool playerWins = false;
 	for (int i = 0; i < Houses.Count(); i++) {
-		if (Houses[i] != NULL && Houses[i]->IsControlledByHuman() && !Houses[i]->IsDefeated) {
+		if (Houses[i] != NULL && Houses[i]->FUN_0050B730() && !Houses[i]->IsDefeated) {
 			playerWins = true;
 		}
 	}

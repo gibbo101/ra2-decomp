@@ -2451,7 +2451,7 @@ void Create_Units(bool official)
 					tobj->Veterancy.Set_Elite(true);
 				}
 
-				if (!hptr->IsControlledByHuman()) {
+				if (!hptr->FUN_0050B730()) {
 					tobj->Set_Mission(MISSION_GUARD_AREA);
 				} else {
 					tobj->Set_Mission(MISSION_GUARD);

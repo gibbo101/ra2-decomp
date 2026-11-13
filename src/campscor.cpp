@@ -331,7 +331,7 @@ void CampaignScoreClass::FUN_0046DA70(void)
 	int count = DAT_00A80228.Count();
 	for (int i = 0; i < count; i++) {
 		HouseClass * house = DAT_00A80228[i];
-		if (house && house->Class->IsMultiplayPassive != true && house->IsControlledByHuman()) {
+		if (house && house->Class->IsMultiplayPassive != true && house->FUN_0050B730()) {
 			int index = Session.NumScores++;
 			Session.Score[index].Wins = 0;
 			wcscpy(Session.Score[index].Name, house->UIName);

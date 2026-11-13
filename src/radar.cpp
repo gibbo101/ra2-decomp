@@ -2214,11 +2214,11 @@ LRESULT CALLBACK Diplomacy_Dialog_Proc(HWND dialog, UINT message, WPARAM wparam,
 					SendMessage(allianceControl, BM_SETCHECK, ally, 0);
 					FUN_00603DD0(allianceControl, house->Is_Ally(PlayerPtr));
 					hasAllianceControls = true;
-					if (Unsorted::MuteSWLaunches || !house->IsControlledByHuman()) {
+					if (Unsorted::MuteSWLaunches || !house->FUN_0050B730()) {
 						EnableWindow(allianceControl, FALSE);
 					}
 				}
-				if (!house->IsControlledByHuman()) {
+				if (!house->FUN_0050B730()) {
 					ShowWindow(chatControl, SW_HIDE);
 				} else {
 					if (!Unsorted::MuteSWLaunches) {

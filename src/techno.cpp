@@ -1535,7 +1535,7 @@ static inline bool Can_Capture_Passive_Target(
 	TechnoClass const * attacker,
 	TechnoClass const * object)
 {
-	if (attacker->House->IsControlledByHuman()
+	if (attacker->House->FUN_0050B730()
 		|| object->RTTI != RTTI_BUILDING
 		|| attacker->RTTI != RTTI_INFANTRY) return(false);
 
@@ -1685,7 +1685,7 @@ bool TechnoClass::CanAutoTargetObject(
 
 	if (object->IsDisguisedAs(House) && !TClass->DetectDisguise) {
 		if (object->DisguiseBlinkTimer == 0
-			|| House->IsControlledByHuman()
+			|| House->FUN_0050B730()
 			|| Random_Pick(0, 99)
 				> Rule->DisabledDisguiseDetectionPercent[House->Difficulty]) {
 			return(false);
@@ -1703,7 +1703,7 @@ bool TechnoClass::CanAutoTargetObject(
 	}
 
 	if ((!Is_Foot() || ((FootClass *)this)->Team == NULL)
-		&& House->IsControlledByHuman() && !object->IsStrange()
+		&& House->FUN_0050B730() && !object->IsStrange()
 		&& otype == RTTI_BUILDING) {
 		WeaponDataStruct const * turret = object->GetTurretWeapon();
 		if (turret == NULL || turret->Weapon == NULL || object->Risk() == 0) {
@@ -1937,7 +1937,7 @@ void TechnoClass::AI(void)
 		controller = Transporter->MindControlledBy->House;
 		use_controller = true;
 	}
-	if (((!use_controller && !House->IsControlledByHuman()) || (use_controller && !controller->IsControlledByHuman())) &&
+	if (((!use_controller && !House->FUN_0050B730()) || (use_controller && !controller->FUN_0050B730())) &&
 		TarCom &&
 		((!use_controller && House->CanOverpower(TarCom)) ||
 		 (use_controller && controller->CanOverpower(TarCom)))) {
@@ -2418,7 +2418,7 @@ void TechnoClass::Cloaking_AI(bool)
 								targeting_me[i]->Assign_Target(this);
 							}
 						}
-						if (RTTI == RTTI_UNIT && !House->IsControlledByHuman()) {
+						if (RTTI == RTTI_UNIT && !House->FUN_0050B730()) {
 							Scatter(COORD_NONE, true);
 						}
 						break;
@@ -3812,7 +3812,7 @@ ResultType TechnoClass::Take_Damage(int & damage, int distance, WarheadTypeClass
 			if (Techno_Type_Class()->DamageSound != -1) {
 				VocClass::PlayIndexAtPos(Techno_Type_Class()->DamageSound, PositionCoord, 0);
 			}
-			if ((Techno_Type_Class()->IsToProtect || unknown_bool_3CF) && !House->IsControlledByHuman()) {
+			if ((Techno_Type_Class()->IsToProtect || unknown_bool_3CF) && !House->FUN_0050B730()) {
 				if (source != NULL) {
 					Base_Is_Attacked(source);
 				}
@@ -3851,7 +3851,7 @@ ResultType TechnoClass::Take_Damage(int & damage, int distance, WarheadTypeClass
 			if (CanRetaliateToAttacker(source, (WarheadTypeClass *)warhead)) {
 				if (source != NULL) {
 					int which = What_Weapon_Should_I_Use(source);
-					if (In_Range(source, which) || !House->IsControlledByHuman() || (double)Distance_To(source) <= ((double)Techno_Type_Class()->SightRange + 0.5) * CELL_LEPTON) {
+					if (In_Range(source, which) || !House->FUN_0050B730() || (double)Distance_To(source) <= ((double)Techno_Type_Class()->SightRange + 0.5) * CELL_LEPTON) {
 						Override_Mission(MISSION_ATTACK, source, NULL);
 					}
 				}
@@ -3867,7 +3867,7 @@ ResultType TechnoClass::Take_Damage(int & damage, int distance, WarheadTypeClass
 			} else if (this != NULL && (AbstractFlags & 4)) {
 				FootClass * foot = (FootClass *)this;
 				if (Current_Mission_Control().IsScatter && !IsTethered && !foot->Locomotion->Is_Moving() && TarCom == NULL && foot->NavCom == NULL && Fetch_RTTI() != RTTI_AIRCRAFT) {
-					if (!House->IsControlledByHuman() || Rule->IsScatter || Has_Ability(ABILITY_SCATTER)) {
+					if (!House->FUN_0050B730() || Rule->IsScatter || Has_Ability(ABILITY_SCATTER)) {
 						Scatter(COORD_NONE, true, false);
 					}
 				}
@@ -6044,7 +6044,7 @@ bool TechnoClass::CanPassiveAcquireTargets(void) const
 		return(false);
 	}
 	bool cannotControl = (CaptureManager != NULL && CaptureManager->CannotControlAnyMore());
-	if (Is_Renovator() && House->IsControlledByHuman()) {
+	if (Is_Renovator() && House->FUN_0050B730()) {
 		return(false);
 	}
 	if (!cannotControl) {
@@ -6058,7 +6058,7 @@ bool TechnoClass::CanPassiveAcquireTargets(void) const
 // FUNCTION: GAMEMD 0x00709290
 bool TechnoClass::CanOpportunityFire(void) const
 {
-	if (TarCom == NULL && !House->IsControlledByHuman() && Is_Foot() && ((FootClass const *)this)->Team != NULL
+	if (TarCom == NULL && !House->FUN_0050B730() && Is_Foot() && ((FootClass const *)this)->Team != NULL
 		&& !((FootClass const *)this)->Team->Class->IsSuicide && ((FootClass const *)this)->Team->Class->IsAggressive
 		&& CurrentMission == MISSION_MOVE) {
 		return(true);

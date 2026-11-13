@@ -5810,7 +5810,7 @@ address,name,result,size,source,symbol
 0x0050B1D0,HouseClass::AISupers,MATCH,415,src/house.cpp,?AISupers@HouseClass@@QAEXXZ
 0x0050B370,HouseClass::FUN_0050B370,MATCH,882,src/house.cpp,?FUN_0050B370@HouseClass@@QAE_NPBVTechnoTypeClass@@@Z
 0x0050B6F0,HouseClass::Is_Player_Control,MATCH,52,src/house.cpp,?Is_Player_Control@HouseClass@@QBE_NXZ
-0x0050B730,HouseClass::IsControlledByHuman,MATCH,35,src/house.cpp,?IsControlledByHuman@HouseClass@@QBE_NXZ
+0x0050B730,HouseClass::FUN_0050B730,MATCH,35,src/house.cpp,?FUN_0050B730@HouseClass@@QBE_NXZ
 0x0050B760,HouseClass::FUN_0050B760,MATCH,219,src/house.cpp,?FUN_0050B760@HouseClass@@QAE_NPBVBuildingTypeClass@@ABVCell@@@Z
 0x0050B840,HouseClass::FUN_0050B840,MATCH,213,src/house.cpp,?FUN_0050B840@HouseClass@@QAEXXZ
 0x0050B920,FUN_0050B920,MATCH,219,src/house.cpp,?FUN_0050B920@@YIXPAN00@Z

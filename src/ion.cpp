@@ -836,7 +836,7 @@ void FUN_0053B080(void)
 			techno = As_Techno(techno->Next);
 		}
 	}
-	if (!PsyDom::Owner->IsControlledByHuman()) {
+	if (!PsyDom::Owner->FUN_0050B730()) {
 		for (int i = victims.Count() - 1; i >= 0; i--) {
 			victims[i]->QueueMission(MISSION_HUNT, false);
 		}

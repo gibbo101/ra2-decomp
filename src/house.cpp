@@ -6658,7 +6658,7 @@ bool HouseClass::Is_Player_Control(void) const
 }
 
 // FUNCTION: GAMEMD 0x0050B730
-bool HouseClass::IsControlledByHuman(void) const
+bool HouseClass::FUN_0050B730(void) const
 {
 	if (Session.Type != GAME_NORMAL) {
 		return(IsHuman);

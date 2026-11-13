@@ -469,7 +469,7 @@ static inline bool Is_Observer(HouseClass * house)
 {
 	if (house != NULL) {
 		for (int k = 0; k < Session.Players.Count(); k++) {
-			if (house->IsControlledByHuman() && wcscmp(house->UIName, Session.Players[k]->Name) == 0) {
+			if (house->FUN_0050B730() && wcscmp(house->UIName, Session.Players[k]->Name) == 0) {
 				return(Session.Players[k]->Slot.SpectatorFlag == -1);
 			}
 		}
@@ -740,7 +740,7 @@ bool MultiplayerGameMode::GenerateStartingUnits(HouseClass * house, int & amount
 				if (Scen->Special.IsInitialVeteran) {
 					techno->Veterancy.Set_Elite(true);
 				}
-				if (house->IsControlledByHuman()) {
+				if (house->FUN_0050B730()) {
 					techno->Set_Mission(MISSION_GUARD);
 				} else {
 					techno->Set_Mission(MISSION_GUARD_AREA);

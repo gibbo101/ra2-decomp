@@ -145,7 +145,7 @@ void OwnerTalkClass::Build_Connection_List(void)
 	}
 	for (int i = 0; i < Houses.Count(); i++) {
 		HouseClass * house = Houses[i];
-		if (house->IsControlledByHuman() && !house->IsToDie) {
+		if (house->FUN_0050B730() && !house->IsToDie) {
 			ConnectionListStruct * entry = new ConnectionListStruct;
 			entry->ID = i;
 			strncpy(entry->Name, FUN_007350C0(house->UIName), 20);
