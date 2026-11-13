@@ -20,7 +20,7 @@ bool __fastcall FUN_0048BB40(CommandClass const * command, int key)
 	key &= ~KN_RLSE_BIT;
 	int plain = key & ~(WWKEY_SHIFT_BIT|WWKEY_ALT_BIT|WWKEY_CTRL_BIT|WWKEY_VK_BIT);
 	if (key != plain) {
-		return !command->Unknown14(key);
+		return !command->PreventCombinationOverride(key);
 	}
 	return true;
 }
@@ -34,7 +34,7 @@ bool __fastcall FUN_0048BB60(int input)
 	if (command == NULL) {
 		return true;
 	}
-	return !command->Unknown14(key);
+	return !command->PreventCombinationOverride(key);
 }
 
 // TEMPLATE: GAMEMD 0x0048BC20

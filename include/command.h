@@ -13,8 +13,8 @@ class CommandClass
 		virtual wchar_t const * Get_Display_Name(void) const { return(Get_Description()); }
 		virtual wchar_t const * Get_Category(void) const = 0;
 		virtual wchar_t const * Get_Description(void) const = 0;
-		virtual bool Unknown14(int key) const { return false; }
-		virtual bool Unknown18(int key) const { return !(key & 0x800); }
+		virtual bool PreventCombinationOverride(int key) const { return false; }
+		virtual bool ExtraTriggerCondition(int key) const { return !(key & 0x800); }
 		virtual bool Unknown1C(int key) const { return false; }
 		virtual void Execute(int key) const = 0;
 };

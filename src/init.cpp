@@ -2989,11 +2989,11 @@ class PlanningModeCommandClass : public CommandClass
 		{
 			return StringTable::LoadString("Cmnd:PlanningModeDesc", NULL, "D:\\ra2mdpost\\Init.CPP", 0x19B8);
 		}
-		virtual bool Unknown14(int key) const
+		virtual bool PreventCombinationOverride(int key) const
 		{
 			return (key & WWKEY_SHIFT_BIT) || (key & WWKEY_CTRL_BIT) || (key & WWKEY_ALT_BIT);
 		}
-		virtual bool Unknown18(int key) const
+		virtual bool ExtraTriggerCondition(int key) const
 		{
 			return true;
 		}
@@ -3030,7 +3030,7 @@ class CombatantSelectCommandClass : public CommandClass
 		{
 			return StringTable::LoadString("Cmnd:CombatantSelectDesc", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1A0C);
 		}
-		virtual bool Unknown14(int key) const
+		virtual bool PreventCombinationOverride(int key) const
 		{
 			return (key & WWKEY_SHIFT_BIT) != 0;
 		}
@@ -3059,11 +3059,11 @@ class TypeSelectCommandClass : public CommandClass
 		{
 			return StringTable::LoadString("Cmnd:TypeSelectDesc", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1A26);
 		}
-		virtual bool Unknown14(int key) const
+		virtual bool PreventCombinationOverride(int key) const
 		{
 			return (key & WWKEY_SHIFT_BIT) != 0;
 		}
-		virtual bool Unknown18(int key) const
+		virtual bool ExtraTriggerCondition(int key) const
 		{
 			return true;
 		}
@@ -3100,7 +3100,7 @@ class HealthNavCommandClass : public CommandClass
 		{
 			return StringTable::LoadString("Cmnd:HealthNavigationDesc", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1A4C);
 		}
-		virtual bool Unknown14(int key) const
+		virtual bool PreventCombinationOverride(int key) const
 		{
 			return (key & WWKEY_SHIFT_BIT) != 0;
 		}
@@ -3129,7 +3129,7 @@ class VeterancyNavCommandClass : public CommandClass
 		{
 			return StringTable::LoadString("Cmnd:VetNavigationDesc", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1A66);
 		}
-		virtual bool Unknown14(int key) const
+		virtual bool PreventCombinationOverride(int key) const
 		{
 			return (key & WWKEY_SHIFT_BIT) != 0;
 		}
@@ -4831,9 +4831,9 @@ int FUN_005355D0(void)
 // INIClass::INIClass
 
 // FUNCTION: GAMEMD 0x00535BD0
-// CommandClass::Unknown14
+// CommandClass::PreventCombinationOverride
 // FUNCTION: GAMEMD 0x00535BE0
-// CommandClass::Unknown18
+// CommandClass::ExtraTriggerCondition
 // FUNCTION: GAMEMD 0x00535BF0
 // CommandClass::Unknown1C
 // FUNCTION: GAMEMD 0x00535C00
@@ -4969,9 +4969,9 @@ int FUN_005355D0(void)
 // FUNCTION: GAMEMD 0x005366F0
 // PlanningModeCommandClass::Get_Description
 // FUNCTION: GAMEMD 0x00536710
-// PlanningModeCommandClass::Unknown14
+// PlanningModeCommandClass::PreventCombinationOverride
 // FUNCTION: GAMEMD 0x00536730
-// PlanningModeCommandClass::Unknown18
+// PlanningModeCommandClass::ExtraTriggerCondition
 // FUNCTION: GAMEMD 0x00536740
 // PlanningModeCommandClass::Unknown1C
 // FUNCTION: GAMEMD 0x00536750
@@ -4985,7 +4985,7 @@ int FUN_005355D0(void)
 // FUNCTION: GAMEMD 0x005367C0
 // CombatantSelectCommandClass::Get_Description
 // FUNCTION: GAMEMD 0x005367E0
-// CombatantSelectCommandClass::Unknown14
+// CombatantSelectCommandClass::PreventCombinationOverride
 // FUNCTION: GAMEMD 0x005367F0
 // CombatantSelectCommandClass::Execute
 // FUNCTION: GAMEMD 0x00536810
@@ -4997,9 +4997,9 @@ int FUN_005355D0(void)
 // FUNCTION: GAMEMD 0x00536860
 // TypeSelectCommandClass::Get_Description
 // FUNCTION: GAMEMD 0x00536880
-// TypeSelectCommandClass::Unknown14
+// TypeSelectCommandClass::PreventCombinationOverride
 // FUNCTION: GAMEMD 0x00536890
-// TypeSelectCommandClass::Unknown18
+// TypeSelectCommandClass::ExtraTriggerCondition
 // FUNCTION: GAMEMD 0x005368A0
 // TypeSelectCommandClass::Unknown1C
 // FUNCTION: GAMEMD 0x005368B0
@@ -5013,7 +5013,7 @@ int FUN_005355D0(void)
 // FUNCTION: GAMEMD 0x00536920
 // HealthNavCommandClass::Get_Description
 // FUNCTION: GAMEMD 0x00536940
-// HealthNavCommandClass::Unknown14
+// HealthNavCommandClass::PreventCombinationOverride
 // FUNCTION: GAMEMD 0x00536950
 // HealthNavCommandClass::Execute
 // FUNCTION: GAMEMD 0x00536970
@@ -5025,7 +5025,7 @@ int FUN_005355D0(void)
 // FUNCTION: GAMEMD 0x005369C0
 // VeterancyNavCommandClass::Get_Description
 // FUNCTION: GAMEMD 0x005369E0
-// VeterancyNavCommandClass::Unknown14
+// VeterancyNavCommandClass::PreventCombinationOverride
 // FUNCTION: GAMEMD 0x005369F0
 // VeterancyNavCommandClass::Execute
 // FUNCTION: GAMEMD 0x00536A10

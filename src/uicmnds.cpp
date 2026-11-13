@@ -670,7 +670,7 @@ void FUN_00731CF0(void)
 }
 
 // FUNCTION: GAMEMD 0x00731D00
-void __fastcall FUN_00731D00(int mode)
+void __fastcall SetNavCycleMode(int mode)
 {
 	Unsorted::NavCycleMode = mode;
 	DAT_00B0FE58 = false;
@@ -1047,7 +1047,7 @@ void FUN_00732CC0(void)
 }
 
 // FUNCTION: GAMEMD 0x00732D00
-bool FUN_00732D00(void)
+bool IsTypeSelecting(void)
 {
 	return Unsorted::TypeSelecting;
 }

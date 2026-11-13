@@ -87,7 +87,7 @@ extern const double DAT_007E1740;
 extern const double DAT_007E51E0;
 extern const double DAT_007E51E8;
 
-void __fastcall FUN_00731D00(int mode);
+void __fastcall SetNavCycleMode(int mode);
 extern BeaconManagerClass BeaconManager;
 
 void __fastcall FUN_00406F70(void);
@@ -843,7 +843,7 @@ void Unselect_All(void)
 	while (CurrentObject.Count()) {
 		CurrentObject[0]->Unselect();
 	}
-	FUN_00731D00(0);
+	SetNavCycleMode(0);
 	BeaconManager.ClearSelection();
 }
 

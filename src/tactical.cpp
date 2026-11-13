@@ -99,7 +99,7 @@
 // _$E269
 
 extern Rect TacticalDimensions;
-void __fastcall FUN_00731D00(int mode);
+void __fastcall SetNavCycleMode(int mode);
 extern ObjectClass const * DAT_00880978;
 extern int DAT_0088097C;
 extern int DAT_00880980;
@@ -2033,7 +2033,7 @@ void Tactical::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-bool FUN_00732D00(void);
+bool IsTypeSelecting(void);
 namespace Game { void __fastcall UICommands_TypeSelect_7327D0(char const * name); }
 
 // FUNCTION: GAMEMD 0x006DA5C0
@@ -2056,7 +2056,7 @@ void Tactical::Select_These(Rect const & rect, void (*select_callback)(ObjectCla
 				continue;
 			}
 
-			if (FUN_00732D00()) {
+			if (IsTypeSelecting()) {
 				Game::UICommands_TypeSelect_7327D0(obj->Class_Of()->IniName);
 				continue;
 			}
@@ -2094,7 +2094,7 @@ void __fastcall FUN_006DA740(Tactical * tactical)
 	while (CurrentObject.Count()) {
 		CurrentObject[0]->Unselect();
 	}
-	FUN_00731D00(0);
+	SetNavCycleMode(0);
 }
 
 // FUNCTION: GAMEMD 0x006DA7D0

@@ -398,12 +398,12 @@ void Keyboard_Process(KeyNumType & input)
 	const CommandClass * cmd = HotkeyCommands[plain];
 	if (cmd == NULL) {
 		cmd = HotkeyCommands[key];
-	} else if (!cmd->Unknown14(key)) {
+	} else if (!cmd->PreventCombinationOverride(key)) {
 		cmd = Hotkey_Command(key);
 	}
 
 	if (cmd != NULL && (!UserInputLocked || wcsicmp(cmd->Get_Category(), L"Debug") == 0)) {
-		if (cmd->Unknown18(input)) {
+		if (cmd->ExtraTriggerCondition(input)) {
 			cmd->Execute(input);
 		}
 		if (cmd->Unknown1C(input)) {
