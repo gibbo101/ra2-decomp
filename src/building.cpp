@@ -3445,6 +3445,219 @@ void BuildingClass::FireLaser(Coord coords)
 namespace Unsorted { extern bool ArmageddonMode; }
 void __fastcall FUN_00660B80(Cell const & cell);
 
+// FUNCTION: GAMEMD 0x0044ACF0
+int BuildingClass::Do_MISSION_ATTACK(void)
+{
+	enum { SAM_READY, SAM_FIRING };
+	AircraftClass * air;
+
+	if (Class->IsSAM) {
+		switch (Status) {
+
+
+			case SAM_READY:
+				if ((Class->IsPowered && Class->Drain > 0 && House->Power_Fraction() < 1)) {
+					return(1);
+				}
+				air = As_Aircraft(TarCom);
+				if (TarCom == NULL || !air || air->Get_Height() == 0) {
+					Assign_Target(NULL);
+					Status = SAM_READY;
+					QueueMission(MISSION_GUARD, false);
+					Commence();
+					return(1);
+				} else {
+					if (!PrimaryFacing.Is_Rotating()) {
+						if (DirType(DIR_STEP_8) >= (PrimaryFacing.Current() - Aim_Direction(TarCom))) {
+							Status = SAM_FIRING;
+						} else {
+							PrimaryFacing.Set_Desired(Aim_Direction(TarCom));
+						}
+					}
+				}
+				return(1);
+
+
+			case SAM_FIRING:
+				air = As_Aircraft(TarCom);
+				if (TarCom == NULL || !air || air->Get_Height() == 0) {
+					Assign_Target(NULL);
+					Status = SAM_READY;
+				} else {
+					FireErrorType error = Can_Fire(TarCom, 0, true);
+					if (error == FIRE_ILLEGAL || error == FIRE_CANT || error == FIRE_RANGE) {
+						Assign_Target(NULL);
+						Status = SAM_READY;
+					} else {
+						if (error == FIRE_FACING) {
+							Status = SAM_READY;
+						} else {
+							if (error == FIRE_OK) {
+								Fire_At(TarCom, 0);
+								Fire_At(TarCom, 1);
+								Status = SAM_READY;
+							}
+						}
+					}
+				}
+				return(1);
+
+			default:
+				break;
+		}
+
+		return(Current_Mission_Control().AA_Delay() + Random_Pick(0, 2));
+
+	}
+
+	if (TarCom == NULL) {
+		Assign_Target(NULL);
+		SupportingPrisms = 0;
+		if (IsNotWarpingIn()) FUN_00705D60();
+		if (Get_Mission() != MISSION_WAIT) {
+			QueueMission(MISSION_GUARD, false);
+			Commence();
+		}
+		return(1);
+	}
+
+	int primary = What_Weapon_Should_I_Use(TarCom);
+	IsReadyToCommence = true;
+
+	FireErrorType fire = Can_Fire(TarCom, primary, true);
+
+	if (fire == FIRE_FACING && Is_Turret_Equipped() && Class->IsTurretAnimAVoxel) {
+		DirType dir = Aim_Direction(TarCom);
+		if (Class->ROT == 0 || PrimaryFacing.Current().Is_Complete_Turn(dir, DirType((Dir256)Class->ROT))) {
+			PrimaryFacing.Set(dir);
+			fire = Can_Fire(TarCom, primary, true);
+		}
+	}
+
+	switch (fire) {
+		case FIRE_ILLEGAL:
+		case FIRE_CANT:
+		case FIRE_RANGE:
+		case FIRE_AMMO:
+			Assign_Target(NULL);
+			SupportingPrisms = 0;
+			if (IsNotWarpingIn()) FUN_00705D60();
+			if (Get_Mission() == MISSION_WAIT) return(1);
+			if (Class->IsGattling) {
+				GattlingRateDown(MissionAccumulateTime);
+				MissionAccumulateTime = 0;
+			}
+			QueueMission(MISSION_GUARD, false);
+			Commence();
+			break;
+
+		case FIRE_FACING:
+			if (TarCom != NULL) {
+				PrimaryFacing.Set_Desired(Aim_Direction(TarCom));
+			}
+			if (Class->IsGattling) {
+				GattlingRateUp(MissionAccumulateTime);
+				MissionAccumulateTime = 0;
+			}
+			return(2);
+
+		case FIRE_REARM:
+			if (TarCom != NULL) {
+				PrimaryFacing.Set_Desired(Aim_Direction(TarCom));
+			}
+			if (Class->IsGattling) {
+				GattlingRateUp(MissionAccumulateTime);
+				MissionAccumulateTime = 0;
+			} else {
+				TurretAnimFrame++;
+			}
+			return(2);
+
+		case FIRE_BUSY:
+			if (Class->IsGattling) {
+				GattlingRateDown(MissionAccumulateTime);
+				MissionAccumulateTime = 0;
+			}
+			return(1);
+
+		case FIRE_CLOAKED:
+			Do_Uncloak(false);
+			if (Class->IsGattling) {
+				GattlingRateDown(MissionAccumulateTime);
+				MissionAccumulateTime = 0;
+			}
+			break;
+
+		case FIRE_OK:
+			if (UpgradeLevel != 0 && Upgrades[0] != NULL) {
+				if (Upgrades[0]->Is_Two_Shooter()) {
+					Fire_At(TarCom, 0);
+					Fire_At(TarCom, 1);
+				}
+			} else if (Class == Rule->PrismType) {
+				BuildingClass * best = NULL;
+				int best_distance = INT_MAX;
+				Coord center = Render_Coord();
+				if (SupportingPrisms < Rule->PrismSupportMax) {
+					int count = House->Buildings.Count();
+					for (int i = 0; i < count; i++) {
+						BuildingClass * building = House->Buildings[i];
+						if (building == NULL) continue;
+						if (!building->IsActive) continue;
+						if (building->Class != Rule->PrismType) continue;
+						if (building->Arm != 0) continue;
+						if (building->DelayBeforeFiring != 0) continue;
+						if (building->IsBeingDrained()) continue;
+						if (building->Get_Mission() == MISSION_ATTACK) continue;
+						if (building == this) continue;
+						Coord coord = building->Render_Coord();
+						TPoint3D<float> delta(center.X - coord.X, coord.Y - center.Y, center.Z - coord.Z);
+						int distance = (int)delta.Length();
+						if (distance <= Weapon_Range(1)) {
+							if (best == NULL) {
+								best = building;
+								best_distance = distance;
+							} else if (distance < best_distance) {
+								best = building;
+								best_distance = distance;
+							}
+						}
+
+					}
+				}
+				if (best != NULL) {
+					SupportingPrisms++;
+					best->FUN_004504F0(2, Fire_Coord(0, Coord(0, 0, 0)));
+				} else {
+					CoordStruct coord;
+					coord.X = 0;
+					FUN_004504F0(1, coord);
+				}
+			} else if (Class->IsAnimDelayedFire) {
+				CoordStruct coord;
+				coord.X = primary;
+				FUN_004504F0(1, coord);
+			} else {
+				Fire_At(TarCom, primary);
+			}
+			if (Class->IsGattling) {
+				GattlingRateUp(MissionAccumulateTime);
+				MissionAccumulateTime = 0;
+			} else {
+				TurretAnimFrame++;
+			}
+			return(1);
+
+		default:
+			break;
+	}
+	if (TarCom != NULL) {
+		PrimaryFacing.Set_Desired(Aim_Direction(TarCom));
+	}
+	MissionAccumulateTime = 0;
+	return(1);
+}
+
 // FUNCTION: GAMEMD 0x0044B760
 int BuildingClass::Do_MISSION_CAPTURE(void)
 {
