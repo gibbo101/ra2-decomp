@@ -3458,3 +3458,52 @@ RTTIType InfantryClass::Fetch_RTTI(void) const
 
 // TEMPLATE: GAMEMD 0x00523440
 // ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAVAbstractClass@@@@PAU12@HABU12@@Z
+
+// FUNCTION: GAMEMD 0x0051C8B0
+FireErrorType InfantryClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
+{
+	if (FUN_00522C60(Doing)) {
+		return FIRE_CANT;
+	}
+	if (Combat_Damage() < 0) {
+		InfantryClass * infantry = As_Infantry(target);
+		if (infantry == NULL || infantry->HealthRatio >= Rule->ConditionGreen) {
+			return FIRE_ILLEGAL;
+		}
+	}
+	UnitClass * unit = As_Unit(target);
+	if (unit != NULL && Techno_Type_Class()->Pushy && unit->DirectRockerLinkedUnit != NULL &&
+		unit->DirectRockerLinkedUnit != As_Techno(this)) {
+		return FIRE_ILLEGAL;
+	}
+	FireErrorType result = TechnoClass::Can_Fire(target, which, ignoreRange);
+	if (result == FIRE_OK) {
+		if (Speed > 0.1 || (NavCom != NULL && Doing != DO_NOTHING && !MasterDoControls[Doing].Interrupt)) {
+			return FIRE_MOVING;
+		}
+		if (Is_JumpJet() && Class->JumpJetTurn && Locomotion->Is_Moving_Now()) {
+			return FIRE_MOVING;
+		}
+		WeaponTypeClass const * weapon = Get_Class_Weapon_Data(which)->Weapon;
+		if (weapon != NULL) {
+			if (weapon->UseFireParticles && NavCom != NULL) {
+				return FIRE_MOVING;
+			}
+			if (weapon->AreaFire && target != Get_Cell_Ptr()) {
+				return FIRE_ILLEGAL;
+			}
+			WarheadTypeClass const * warhead = weapon->WarheadPtr;
+			if (warhead != NULL && warhead->IvanBomb) {
+				ObjectClass * object = As_Object(target);
+				if (object != NULL && object->AttachedBomb != NULL) {
+					return FIRE_ILLEGAL;
+				}
+			}
+		}
+		FireErrorType error = Locomotion->Can_Fire();
+		if (error) {
+			return error;
+		}
+	}
+	return result;
+}

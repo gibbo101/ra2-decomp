@@ -317,7 +317,7 @@ inline ObjectClass const * AbstractClass::As_ObjectClass(void) const
 
 inline ObjectClass * As_Object(AbstractClass * target)
 {
-	return(dynamic_cast<ObjectClass *>(target));
+	return(target != NULL && (target->AbstractFlags & 2) ? (ObjectClass *)target : NULL);
 }
 
 Rect Vector_Rect(DynamicVectorClass<ObjectClass *> const & list);
