@@ -17,7 +17,8 @@ attempt so far, the fuzzy match is 94%. Each function is checked on its own, and
 `tools/exelink/` links the whole executable with every matched function at its original
 address: with the original's bytes for what isn't matched yet, the image is identical to
 retail 1.001 in every section, and 81% of its code comes from source. `docs/PLAN.md` has
-the method, and `docs/rounds/` records every batch.
+the method, and `docs/rounds/` records every batch. Live progress, updated on every push:
+https://bytematch.dev/gibbo101/ra2-decomp
 
 ## Getting started
 
