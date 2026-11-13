@@ -27,6 +27,7 @@ address,name,symbol,evidence
 0x00B0CE28,TacticalDimensions,,every reference in src/tactical.cpp implies this base (refaudit)
 0x00A8B218,AircraftTypes,,YRpp AircraftTypeClass::Array
 0x00A83C68,BuildingTypes,,YRpp BuildingTypeClass::Array
+0x00510F60,HouseClass::Index_IsMP,,YRpp HouseClass.h binds Index_IsMP to this address; matched FUN_00510F60 recognizes exactly the Player @ A through H identifiers 0x117B through 0x1182
 0x00A83C80,BulletTypes,,YRpp BulletTypeClass::Array
 0x00A83C98,HouseTypes,,YRpp HouseTypeClass::Array
 0x00A8E348,InfantryTypes,,YRpp InfantryTypeClass::Array
