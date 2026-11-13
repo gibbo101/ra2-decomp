@@ -57,3 +57,7 @@ effect, so it can be fixed in a separate build later.
   encoding. Mode 1 also falls through into the default. The resulting tint ORs
   multiple packed-color encodings together; the recovered source preserves this
   cumulative packing.
+
+- **BitFont::LoadInternalData (0x00433990).** A short read of the range table
+  in the extended font format jumps to failure cleanup without freeing the
+  allocated range buffer. The recovered source preserves this leak.
