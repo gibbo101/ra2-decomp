@@ -2354,19 +2354,34 @@ namespace FPSCounter { extern unsigned CurrentFrameRate; }
 // FUNCTION: GAMEMD 0x00652110
 void __fastcall FUN_00652110(FrameSyncStruct *their, int index)
 {
+	long frame;
+	unsigned int delay;
+	unsigned int half_latency;
+	unsigned int half_response;
+	int frame_delay;
+	int behind;
+	int now;
 	if (Session.Type != GAME_INTERNET) {
 		Session.PlayerLatency[index] = 0;
-	} else {
-		FrameSyncStruct *t = &their[index];
-		int frame = t->frame;
-		unsigned int rtt;
-		if (Session.ViaPacketRouter) {
-			rtt = (t->unknown2 >> 1) - (int)(-60.0f / (float)((double)Session.DesiredFrameRate / (double)Session.FrameSendRate)) / 2 + (Session.unknown_309C >> 1);
-		} else {
-			rtt = Ipx.Avg_Response_Time(index) >> 1;
-		}
-		Session.PlayerLatency[index] = Frame - (FPSCounter::CurrentFrameRate * rtt) / 60 - frame;
+		return;
 	}
+	frame = their[index].frame;
+	if (Session.ViaPacketRouter) {
+		half_latency = Session.unknown_309C / 2;
+		half_response = their[index].unknown2 / 2;
+		double ratio = (double)Session.DesiredFrameRate / Session.FrameSendRate;
+		float rate = (float)ratio;
+		int frames = (int)(-60.0f / rate);
+		frame_delay = frames / 2;
+		delay = half_response - frame_delay + half_latency;
+	} else {
+		delay = Ipx.Avg_Response_Time(index) / 2;
+	}
+	now = Frame;
+	unsigned int scaled = delay * FPSCounter::CurrentFrameRate;
+	unsigned int ticks = scaled / 60;
+	behind = now - ticks - frame;
+	Session.PlayerLatency[index] = behind;
 }
 
 void FUN_005BC400(void);
@@ -2474,3 +2489,361 @@ template class IndexClass<int, ObjectClass *>;
 
 // TEMPLATE: GAMEMD 0x00652630
 // ?search_compfunc@?$IndexClass@HPAVObjectClass@@@@CAHPBX0@Z
+#pragma pack(push, 1)
+struct MegaFrameInfo {
+	int Frame;
+	unsigned int CRC;
+	unsigned short CommandCount;
+	unsigned char Delay;
+	char ID;
+	unsigned char Flags;
+};
+
+struct PacketTiming {
+	char ID;
+	bool Report;
+	unsigned long ResponseTime;
+	unsigned short : 16;
+};
+#pragma pack(pop)
+
+extern unsigned long DAT_00AC5210[8];
+int __fastcall FUN_0064BDD0(void * buf, int bufsize);
+static int Extract_Uncompressed_Events(void * buf, int bufsize);
+static int Breakup_Receive_Packet(void * buf, int bufsize);
+
+// FUNCTION: GAMEMD 0x0064A0C0
+int __fastcall FUN_0064A0C0(ConnManClass * net, char * multi_packet_buf, int id, int packetlen,
+							FrameSyncStruct * their, BasicTimerClass<SystemTimerClass> * timer)
+{
+	EventClass * event = (EventClass *)multi_packet_buf;
+	RetcodeType retcode = RC_NORMAL;
+	int index = net->Connection_Index(id);
+	int i;
+
+	if (Session.ViaPacketRouter &&
+		(event->Type == EventClass::MEGAFRAMEINFO || event->Type == EventClass::PACKET_TIMING)) {
+		int count = event->ID;
+		unsigned long most = 0;
+		if (event->Type == EventClass::PACKET_TIMING) {
+			DebugString("Received PACKETTIMING packet\n");
+		} else if (event->Type == EventClass::MEGAFRAMEINFO) {
+			DebugString("Received MEGAFRAMEINFO packet\n");
+		}
+		if (count == 0) {
+			DebugString("MEGAFRAMEINFO is part of a pserver port blitz!\n");
+		}
+		i = 0;
+		if (i < count) {
+			PacketTiming * timing = (PacketTiming *)&event->Data;
+			MegaFrameInfo * mega = (MegaFrameInfo *)&event->Data;
+			for (; i < count; i++, mega++, timing++) {
+				if (event->Type == EventClass::MEGAFRAMEINFO) {
+					int player = net->Connection_Index(mega->ID);
+					if (player == -1) {
+						continue;
+					}
+					if (their[player].frame < mega->Frame - mega->Delay) {
+						their[player].frame = mega->Frame - mega->Delay;
+						FUN_00652110(their, player);
+						if (Ipx.Connection_Name(mega->ID)) {
+							DebugString("Got MEGAFRAMEINFO frame update from %s. New frame = %d\n",
+										FUN_007350C0(Ipx.Connection_Name(mega->ID)), their[player].frame);
+						}
+						if (their[player].sent < mega->CommandCount) {
+							their[player].sent = mega->CommandCount;
+							DebugString("Command count is %d\n", their[player].sent);
+						}
+					} else {
+						if (Ipx.Connection_Name(mega->ID)) {
+							DebugString("Got useless MEGAFRAMEINFO frame update from %s. frame = %d\n",
+										FUN_007350C0(Ipx.Connection_Name(mega->ID)), their[player].frame);
+						}
+					}
+					if (!(mega->Flags & 1)) {
+						their[player].unknown1 = *timer;
+					}
+				} else {
+					if (timing->ID == PlayerPtr->HeapID) {
+						unsigned long response = timing->ResponseTime;
+						Session.unknown_309C = response;
+						DebugString("My router response time = %d ms\n", response * 1000 / 60);
+						continue;
+					}
+					int player = net->Connection_Index(timing->ID);
+					if (player == -1) {
+						continue;
+					}
+					unsigned long response = timing->ResponseTime;
+					their[player].unknown2 = response;
+					DAT_00AC5210[player] = response;
+					if (most <= response) {
+						most = response;
+					}
+					if (timing->Report && Session.Am_I_Master(NULL) && Session.unknown_3094 != timing->ID) {
+						OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::FALLBACK_HOST, timing->ID));
+					}
+				}
+			}
+		}
+		if (count && most) {
+			Session.unknown_308C = most;
+		}
+	} else {
+		FrameSyncStruct * t = &their[index];
+		if (t->frame < event->Frame - event->Data.FrameInfo.Delay) {
+			if (t->frame == -1) {
+				retcode = RC_PLAYER_READY;
+				DebugString("Player ready\n");
+			}
+			t->frame = event->Frame - event->Data.FrameInfo.Delay;
+			FUN_00652110(their, index);
+		}
+		if (event->Data.FrameInfo.CommandCount > t->sent) {
+			t->sent = event->Data.FrameInfo.CommandCount;
+		}
+		if (event->Type != EventClass::FRAMESYNC) {
+			i = Breakup_Receive_Packet(event, packetlen);
+			if (i == -1) {
+				DebugString("***** Error DOLIST_FULL! ******\n");
+				return RC_DOLIST_FULL;
+			}
+			if (event->Type == EventClass::FRAMEINFO && i > 0) {
+				i--;
+			}
+			DebugString("Frame %d, Receive packet uncompressed into %d commmands\n", Frame, i);
+			t->recv += (unsigned short)i;
+		} else {
+			if (Session.Type == GAME_INTERNET || Session.Type == GAME_IPX) {
+				DebugString("Received FRAMESYNC packet from %s. Frame = %d\n", Ipx.Connection_Name(id),
+							event->Frame - event->Data.FrameInfo.Delay);
+			}
+			if (event->Data.FrameInfo.CRC != ScenarioCRC) {
+				return RC_SCENARIO_MISMATCH;
+			}
+			t->unknown1 = *timer;
+		}
+	}
+	return retcode;
+}
+
+static int Breakup_Receive_Packet(void * buf, int bufsize)
+{
+	int count = 0;
+	switch (Session.CommProtocol) {
+	case COMM_PROTOCOL_SINGLE_NO_COMP:
+		count = Extract_Uncompressed_Events(buf, bufsize);
+		break;
+	default:
+		count = FUN_0064BDD0(buf, bufsize);
+		break;
+	}
+	return count;
+}
+
+static int Extract_Uncompressed_Events(void * buf, int bufsize)
+{
+	int count = 0;
+	int pos = 0;
+	int leftover = bufsize;
+	EventClass * event;
+	while (leftover >= sizeof(EventClass)) {
+		event = (EventClass *)(((char *)buf) + pos);
+		if (event->Type != EventClass::FRAMESYNC) {
+			event->IsExecuted = 0;
+			if (event->Type == EventClass::ADDPLAYER) {
+				event->Data.Variable.Pointer = new char[event->Data.Variable.Size];
+				memcpy(event->Data.Variable.Pointer, ((char *)buf) + sizeof(EventClass),
+					   event->Data.Variable.Size);
+				pos += event->Data.Variable.Size;
+				leftover -= event->Data.Variable.Size;
+			}
+			if (!DoList.Add(*event)) {
+				if (event->Type == EventClass::ADDPLAYER) {
+					delete[] event->Data.Variable.Pointer;
+				}
+				return -1;
+			}
+			count++;
+		}
+		pos += sizeof(EventClass);
+		leftover -= sizeof(EventClass);
+	}
+	return count;
+}
+
+char const * __fastcall FUN_005B3950(int mission);
+
+// FUNCTION: GAMEMD 0x0064B660
+int __fastcall FUN_0064B660(void * buf, int bufsize, int frame_delay, int size, int cap, int * added)
+{
+	int num = 0;
+	unsigned char eventtype;
+	EventClass prevevent;
+	int datasize;
+	int storedsize;
+	unsigned char * unitsptr = 0;
+	unsigned char numunits = 0;
+	bool missiondup = false;
+	bool cached = false;
+	char mission;
+	char * units;
+	char * whom;
+
+	memset(&prevevent, 0, sizeof(EventClass));
+	units = 0;
+	whom = 0;
+
+	if (Debug_Print_Events) {
+		DebugString("\nFrame %d: Building Send Packet\n", ::Frame);
+	}
+
+	while (OutList.Count && num < cap) {
+		eventtype = OutList.First().Type;
+		datasize = EventClass::EventLength[eventtype];
+		if (eventtype == 0x1F) {
+			storedsize = datasize + 1 + OutList.First().Data.Variable.Size;
+		} else {
+			storedsize = datasize + 1;
+		}
+
+		if (prevevent.Type == 4) {
+			if (eventtype == 4) {
+				if (!cached &&
+					(mission = OutList.First().Data.MegaMission.Mission) ==
+						(char)prevevent.Data.MegaMission.Mission &&
+					(OutList.First().Data.MegaMission.Target == prevevent.Data.MegaMission.Target) &&
+					(OutList.First().Data.MegaMission.Destination ==
+					 prevevent.Data.MegaMission.Destination)) {
+					if (Debug_Print_Events) {
+						DebugString("      adding Whom:%x Mission:%s Target:%x Dest:%x\n",
+									OutList.First().Data.MegaMission.Whom.Encode(), FUN_005B3950(mission),
+									OutList.First().Data.MegaMission.Target.Encode(),
+									OutList.First().Data.MegaMission.Destination.Encode());
+					}
+					datasize = 5;
+					storedsize = datasize;
+					numunits++;
+					missiondup = true;
+				} else {
+					if (Debug_Print_Events) {
+						DebugString("  New MEGAMISSION run:\n");
+					}
+					DebugString("Compress: New megamission run - checking for previous repeat of %d units\n",
+								numunits);
+					FUN_0064B4D0(&numunits, &size, (EventClass::EventData::MegaMissionData *)whom,
+								 (xTargetClass *)units, true);
+					*unitsptr = numunits;
+					unitsptr = (unsigned char *)buf + size + 1;
+					storedsize += 1;
+					numunits = 1;
+					missiondup = false;
+				}
+			} else {
+				DebugString("Compress: Non-megamission event - checking for previous repeat of %d units\n",
+							numunits);
+				FUN_0064B4D0(&numunits, &size, (EventClass::EventData::MegaMissionData *)whom,
+							 (xTargetClass *)units, true);
+				*unitsptr = numunits;
+				unitsptr = 0;
+				numunits = 0;
+				missiondup = false;
+			}
+		} else if (eventtype == 4) {
+			if (Debug_Print_Events) {
+				DebugString("  New MEGAMISSION run:\n");
+			}
+			unitsptr = (unsigned char *)buf + size + 1;
+			storedsize += 1;
+			numunits = 1;
+			missiondup = false;
+		}
+		cached = false;
+
+		if (size + storedsize > bufsize) {
+			if (eventtype == 4 && missiondup) {
+				numunits--;
+				DebugString("Compress: Out of buffer space at %d units\n", numunits);
+				FUN_0064B4D0(&numunits, &size, (EventClass::EventData::MegaMissionData *)whom,
+							 (xTargetClass *)units, true);
+				*unitsptr = numunits;
+			}
+			break;
+		}
+
+		if (Session.CommProtocol == 2) {
+			OutList.First().Frame =
+				((::Frame + frame_delay + (Session.FrameSendRate - 1)) / Session.FrameSendRate) *
+				Session.FrameSendRate;
+		} else {
+			OutList.First().Frame = ::Frame + frame_delay;
+		}
+		OutList.First().ID = PlayerPtr->HeapID;
+		OutList.First().IsExecuted = 0;
+
+		if (!DoList.Add(OutList.First(), OutList.Get_Timings()[OutList.Get_Head()])) {
+			break;
+		}
+
+		switch (eventtype) {
+		case EventClass::MEGAMISSION:
+			if (missiondup) {
+				*unitsptr = numunits;
+				memcpy((char *)buf + size, &OutList.First().Data.MegaMission.Whom, datasize);
+				size += datasize;
+				if (OutList.Count != 1 && num != cap - 1) {
+					if (FUN_0064B4D0(&numunits, &size, (EventClass::EventData::MegaMissionData *)whom,
+									 (xTargetClass *)units, false)) {
+						DebugString("Compress: Found early repeat megamission - splitting after %d units\n",
+									numunits);
+						cached = true;
+						*unitsptr = numunits;
+					}
+				} else {
+					DebugString("Compress: Ended megamission run at %d units - no more events\n", numunits);
+					FUN_0064B4D0(&numunits, &size, (EventClass::EventData::MegaMissionData *)whom,
+								 (xTargetClass *)units, true);
+					*unitsptr = numunits;
+				}
+			} else {
+				*unitsptr = numunits;
+				*((char *)buf + size) = 4;
+				whom = (char *)buf + size + 2;
+				memcpy(whom, &OutList.First().Data, datasize);
+				units = whom + datasize;
+				size += datasize + 2;
+			}
+			break;
+
+		case EventClass::RESPONSE_TIME:
+			*((char *)buf + size) = 0x1B;
+			memcpy((char *)buf + size + 1, &OutList.First().Data.FrameInfo.Delay, datasize);
+			size += datasize + 1;
+			break;
+
+		case EventClass::ADDPLAYER:
+			*((char *)buf + size) = 0x1F;
+			memcpy((char *)buf + size + 1, &OutList.First().Data.Variable.Size, datasize);
+			size += datasize + 1;
+			memcpy((char *)buf + size, (void *)OutList.First().Data.Variable.Pointer,
+				   OutList.First().Data.Variable.Size);
+			size += OutList.First().Data.Variable.Size;
+			break;
+
+		default:
+			*((char *)buf + size) = eventtype;
+			memcpy((char *)buf + size + 1, &OutList.First().Data, datasize);
+			size += datasize + 1;
+			break;
+		}
+
+		num++;
+		memcpy(&prevevent, &OutList.First(), sizeof(EventClass));
+		if (!OutList.Next()) {
+			break;
+		}
+	}
+
+	*added = num;
+	return size;
+}
