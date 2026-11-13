@@ -206,6 +206,121 @@ void VoxelAnimClass::Init_Clear(void)
 	}
 }
 
+AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
+
+// FUNCTION: GAMEMD 0x00749F30
+void VoxelAnimClass::AI(void)
+{
+	if (Class->StartSound != -1) {
+		FUN_00750D40(Center_Coord(), &Audio3);
+	}
+	if (IsToDie) {
+		Delete_Me();
+		return;
+	}
+	if (ECCounter != 0) {
+		ECCounter--;
+	}
+	if (ECCounter <= 0) {
+		bool water = Map[Coord(Position)].Land_Type() == LAND_WATER;
+		bool bridge = Coord(Position).Z >= Map.Get_Height_GL(Coord(Position)) + BRIDGE_LEPTON_HEIGHT;
+		if (water && !bridge) {
+			if (Class->IsMeteor) {
+				new AnimClass(Rule->SplashList[Rule->SplashList.Count() - 1], Coord(Position) + Coord(0, 0, 5), 0, 1, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_CENTER), 0);
+			} else {
+				new AnimClass(Rule->Wake, Coord(Position), 0, 1, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_CENTER), 0);
+				new AnimClass(Rule->SplashList[0], Coord(Position) + Coord(0, 0, 10), 0, 1, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_CENTER), 0);
+			}
+		} else if (Class->ExpireAnim != 0) {
+			new AnimClass(Class->ExpireAnim,
+				Coord((int)MyCoord.X, (int)MyCoord.Y, (int)MyCoord.Z),
+				0, 1, ShapeFlags_Type(SHAPE_ZGRAD|SHAPE_WIN_REL|SHAPE_CENTER), -30);
+			Explosion_Damage(Get_Bounce_Coord(), Class->Damage, 0, Class->Warhead, 1);
+			Combat_Lighting(Get_Bounce_Coord(), Class->Damage, Class->Warhead, 0, 0);
+		}
+		if (!water || bridge) {
+			Rect dirty(0, 0, 0, 0);
+			if (Class->IsMeteor) {
+				Coord center = Get_Bounce_Coord();
+				if (Class->Spawns != 0 && Class->SpawnCount > 0) {
+					int count = Random_Pick(0, Class->SpawnCount) + Random_Pick(0, Class->SpawnCount);
+					for (int index = 0; index < count; index++) {
+						new VoxelAnimClass(Class->Spawns, center, 0);
+					}
+				}
+				if (Class->IsTiberium && !bridge) {
+					for (int facing = 0; facing < 8; facing++) {
+						CellClass &cell = Map[Adjacent_Cell(Cell(center), (FacingType)facing)];
+						if (cell.Can_Tiberium_Germinate(0)) {
+							TiberiumClass *tiberium = Tiberiums[Which_Tiberium_Type(OVERLAY_TIBERIUM2_01)];
+							if (cell.Ramp != 0) {
+								new OverlayClass(OverlayTypes[tiberium->Overlay->HeapID + cell.Ramp * 2 + tiberium->Variety + Random_Pick(0, 1) - 2], Cell(cell.CellID), HOUSE_NONE);
+							} else {
+								new OverlayClass(OverlayTypes[tiberium->Overlay->HeapID + Random_Pick(0, 11)], Cell(cell.CellID), HOUSE_NONE);
+							}
+							tiberium->Queue_Growth(cell.CellID);
+							cell.OverlayData = 0;
+							Rect rect = cell.Overlay_Render_Rect();
+							rect.Y -= TacticalRect.Y;
+							dirty = Union(dirty, rect);
+							Map.Radar_Background(cell.CellID);
+						}
+					}
+					TacticalMap->Register_Dirty_Area(dirty, 0);
+				}
+			} else if (Class->IsTiberium && !bridge) {
+				CellClass &cell = Map[Get_Bounce_Coord()];
+				if (cell.Can_Tiberium_Germinate(0)) {
+					TiberiumClass *tiberium = Tiberiums[Which_Tiberium_Type(OVERLAY_TIBERIUM2_01)];
+					if (cell.Ramp != 0) {
+						new OverlayClass(OverlayTypes[tiberium->Overlay->HeapID + cell.Ramp * 2 + tiberium->Variety + Random_Pick(0, 1) - 2], Cell(cell.CellID), HOUSE_NONE);
+					} else {
+						new OverlayClass(OverlayTypes[tiberium->Overlay->HeapID + Random_Pick(0, 11)], Cell(cell.CellID), HOUSE_NONE);
+					}
+					tiberium->Queue_Growth(cell.CellID);
+					cell.OverlayData = 0;
+					dirty = cell.Overlay_Render_Rect();
+					Map.Radar_Background(cell.CellID);
+				}
+			}
+		}
+		Delete_Me();
+		return;
+	}
+	if (Class->TrailerAnim != 0 && Frame % 2 == 0) {
+		new AnimClass(Class->TrailerAnim,
+			Coord((int)MyCoord.X, (int)MyCoord.Y,
+						(int)(MyCoord.Z * CELL_LEPTON_DIAG * 0.019245008972988385 + 0.5)),
+			1, 1, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_CENTER), 0);
+	}
+	int result = BounceClass::AI();
+	if (Class->IsMeteor) {
+		Velocity.Z += Gravity;
+	}
+	switch (result) {
+		case 1:
+			if (Map[Coord(Position)].Land_Type() == LAND_WATER) {
+				ECCounter = 0;
+			} else {
+				if (Class->BounceAnim != 0) {
+					new AnimClass(Class->BounceAnim, Coord(Position), 0, 1, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_CENTER), 0);
+				}
+				for (ObjectClass *object = Map[Get_Bounce_Coord()].Cell_Occupier(); object; object = object->Next) {
+					Coord delta = Get_Bounce_Coord() - Coord(object->Position);
+					int distance = abs(delta.Y) + abs(delta.X);
+					if (distance <= Class->DamageRadius) {
+						object->Take_Damage(Class->Damage, Tactical::Z_Lepton_To_Pixel(distance), Class->Warhead, 0, 0, 0);
+					}
+				}
+			}
+			break;
+		case 2:
+			ECCounter = 0;
+			break;
+	}
+	Set_Coord(Get_Bounce_Coord());
+}
+
 // FUNCTION: GAMEMD 0x0074A960
 LayerType VoxelAnimClass::In_Which_Layer(void) const
 {
