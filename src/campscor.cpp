@@ -53,16 +53,7 @@
 extern int DAT_0089E050;
 extern int DAT_0081B1E8;
 
-class CampaignScoreClass
-{
-	public:
-		CampaignScoreClass(void);
-		virtual ~CampaignScoreClass(void);
-		virtual void Show(DynamicVectorClass<MPlayerScoreType *> list, int a6, bool a7, int a8, wchar_t const * name);
-		void FUN_0046DA70(void);
-
-		int Field4;
-};
+#include "campaignscore.h"
 
 // FUNCTION: GAMEMD 0x0046D330
 CampaignScoreClass::CampaignScoreClass(void)

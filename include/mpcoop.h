@@ -10,15 +10,7 @@
 
 struct NodeNameType;
 
-class MPCoopObject
-{
-	public:
-		MPCoopObject(void);
-		virtual ~MPCoopObject(void);
-		virtual void Send(DynamicVectorClass<MPlayerScoreType *> stats, unsigned time, bool partial, int side, wchar_t const * title);
-
-		int Field4;
-};
+#include "campaignscore.h"
 
 class MPCoopReporter
 {
@@ -86,7 +78,7 @@ class MPCooperative : public MultiplayerGameMode
 		bool Field48;
 		bool Field49;
 		int Field4C;
-		MPCoopObject * Field50;
+		CampaignScoreClass * Field50;
 		int Field54;
 		DynamicVectorClass<NodeNameType *> Names;
 		int Field70;
