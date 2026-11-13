@@ -218,8 +218,9 @@ Each entry: what the diff showed, then the source change that fixed it.
 ### Stack frame
 - Locals are laid out by size, not declaration order. To fix two objects' order, make
   them members of one local struct.
-- In a frame over 128 bytes, VC6 orders tied slots by an interleave of the whole set of
-  frame symbols: adding or removing any one reshuffles the rest (0x0077E900, 0x00780E30).
+- In a frame over 128 bytes, VC6 orders slots by reference count per size, counting each
+  exit's own cleanup before merging, never by declaration order. An early return or
+  per-branch cleanup changes those counts (0x0077E900).
 - A permuter match through a no-op round-trip (`int same0 = x; x = same0;`) can work only
   by adding a local that changes the large-frame interleave (Init_Game). Look for the real
   local the original had before reworking the loop or expression it sits on.
@@ -230,6 +231,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   test into a file-local inline helper to give each its own (0x0073B470).
 - A spill reload one place off at a loop exit can come from a same-named local declared
   again in later blocks: reuse the outer variable (`Cell cell` in 0x00440580).
+- A reload placed just before a store through a pointer means the reloaded local sits in
+  an inner block the pointer was assigned outside: try an early return (0x00621E90).
 - One variable shared by two branches shares a slot; one per branch gets its own.
 - A frame too big by a fixed amount with every `[esp+N]` matching: a local buffer has the
   wrong size (name[200], not [256], in 0x00542620).
