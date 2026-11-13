@@ -3819,11 +3819,7 @@ double MapGeneratorClass::Get_Spread_Score(const Cell & cell1, const Cell & cell
 	int y = cell1.Y - cell2.Y;
 	float dist = fastmath::sqrt(x * x + y * y);
 
-	float random_value = _random_range * (float)Random_Fraction();
-	float step_term = (spread_step * _step_weight);
-	float dist_term = (dist * scale);
-
-	return(random_value + dist_term - step_term);
+	return (_random_range * Random_Fraction() + dist * scale - spread_step * _step_weight);
 }
 
 // FUNCTION: GAMEMD 0x0059D510
@@ -4369,6 +4365,39 @@ IsometricTileType MapGeneratorClass::Pick_Alternate_Cliff(IsometricTileType type
 			break;
 	}
 	return (IsometricTileType)(IsometricTileTypeClass::CliffSet + cliff);
+}
+
+// FUNCTION: GAMEMD 0x005A17F0
+void MapGeneratorClass::Fixup_Cliff_Edges(void)
+{
+	Map.Reset_Iterator();
+	CellClass * cellptr = Map.Iterate();
+	while (cellptr != NULL) {
+		if (cellptr->ITType >= IsometricTileTypeClass::CliffSet &&
+			cellptr->ITType < IsometricTileTypeClass::CliffSet + 40) {
+			CellClass & south = cellptr->Adjacent_Cell((FacingType)4);
+			CellClass & east = cellptr->Adjacent_Cell((FacingType)2);
+			if (cellptr->ITType == south.ITType && cellptr->SubTile > south.SubTile) {
+				IsometricTileType tile = Pick_Alternate_Cliff(cellptr->ITType);
+				if (tile != cellptr->ITType) {
+					int subtile = south.SubTile;
+					IsometricTileTypeClass * type = IsometricTileTypes[cellptr->ITType];
+					Cell origin = south.CellID - Cell(subtile % type->Width, subtile / type->Width);
+					Place_Tile(tile, origin, MapRegionClass::CellData::Get_Region(origin), -1);
+				}
+			}
+			if (cellptr->ITType == east.ITType && cellptr->SubTile > east.SubTile) {
+				IsometricTileType tile = Pick_Alternate_Cliff(cellptr->ITType);
+				if (tile != cellptr->ITType) {
+					IsometricTileTypeClass * type = IsometricTileTypes[cellptr->ITType];
+					int subtile = east.SubTile;
+					Cell origin = east.CellID - Cell(subtile % type->Width, subtile / type->Width);
+					Place_Tile(tile, origin, MapRegionClass::CellData::Get_Region(origin), -1);
+				}
+			}
+		}
+		cellptr = Map.Iterate();
+	}
 }
 
 // FUNCTION: GAMEMD 0x005A19E0
@@ -7004,5 +7033,476 @@ bool MapRegionClass::Build_Corner_Ramp_NE(
 			}
 		}
 	}
+	return false;
+}
+
+// FUNCTION: GAMEMD 0x00591740
+bool MapRegionClass::Build_East_Ramp(Cell const & first, Cell const & second, int lowRegion)
+{
+	static int heights[5] = {3, 2, 1, 0, 0};
+	static int ramps[10] = {10, 14, 14, 14, 6, 11, 15, 15, 15, 7};
+	Rect area((first.X < second.X ? first.X : second.X) - 3, second.Y - 4,
+			  (first.X > second.X ? first.X : second.X) - (first.X < second.X ? first.X : second.X) + 11,
+			  first.Y - second.Y + 9);
+	if (!Is_Ramp_Area_Clear(area, lowRegion)) {
+		return false;
+	}
+	int drift = second.X - first.X;
+	int span = abs(drift);
+	int height = first.Y - second.Y;
+	if (span > height - 5) {
+		return false;
+	}
+	int half = (height + 1) / 2 + 2;
+	Flatten_Area(Rect(first.X + 1, first.Y - half + 2, 7, half + 3), lowRegion);
+	Flatten_Area(Rect(second.X + 1, area.Y, 7, half + 2), lowRegion);
+	Flatten_Area(Rect(area.X + 2, first.Y - half + 2, first.X - area.X - 1, half - 1));
+	Flatten_Area(Rect(area.X + 2, second.Y, second.X - area.X - 1, half - 2));
+	MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 2),
+								  first - Cell(0, 2), lowRegion, CellHeight);
+	MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 3), second,
+								  lowRegion, CellHeight);
+	Cell tail(0, 0);
+	if (drift != 0) {
+		int pick = Pick_Random_UInt(0, 1);
+		int down = drift > 0;
+		Cell bias(drift < 0 ? -1 : 0, 0);
+		if (pick == 1) {
+			tail += Cell(drift, -span);
+		} else {
+			bias -= Cell(0, first.Y - (short)span - second.Y - 5);
+		}
+		for (int forward = 0; forward < span; forward++) {
+			for (int row = 0; row < 5; row++) {
+				short offset = down ? forward : -forward;
+				Cell position = Cell(first.X, first.Y - 3) + Cell(row, -forward) + bias;
+				position = Cell(position.X + offset, position.Y);
+				CellClass & target = Map[position];
+				target.Height = CellHeight + heights[row] - 4;
+				target.Ramp = ramps[5 * down + row];
+				target.ITType = (IsometricTileType)(IsometricTileTypeClass::RampStart + target.Ramp - 1);
+				target.SubTile = 0;
+			}
+		}
+	}
+	for (int column = 0; column < first.Y - second.Y - span - 5; column++) {
+		for (int row = 0; row < 4; row++) {
+			Cell position = Cell(first.X, first.Y - 3) + Cell(row, -column) + tail;
+			CellData::Set_Region(position, lowRegion);
+			CellClass & target = Map[position];
+			target.Height = CellHeight - row - 1;
+			target.Ramp = 3;
+			target.ITType = (IsometricTileType)(IsometricTileTypeClass::RampStart + 2);
+			target.SubTile = 0;
+		}
+	}
+	return true;
+}
+
+// FUNCTION: GAMEMD 0x005910F0
+bool MapRegionClass::Build_South_Ramp(Cell const & first, Cell const & second, int lowRegion)
+{
+	static int heights[5] = {3, 2, 1, 0, 0};
+	static int ramps[10] = {11, 15, 15, 15, 7, 12, 16, 16, 16, 8};
+	Rect area(first.X - 5, (first.Y < second.Y ? first.Y : second.Y) - 3, second.X - first.X + 9,
+			  (first.Y > second.Y ? first.Y : second.Y) - (first.Y < second.Y ? first.Y : second.Y) + 11);
+	if (!Is_Ramp_Area_Clear(area, lowRegion)) {
+		return false;
+	}
+	int drift = second.Y - first.Y;
+	int span = abs(drift);
+	int width = second.X - first.X;
+	if (span > width - 5) {
+		return false;
+	}
+	int half = (width + 1) / 2 + 3;
+	Flatten_Area(Rect(area.X, first.Y + 1, half + 2, area.Y + area.Height - first.Y + 1), lowRegion);
+	Flatten_Area(Rect(second.X - half + 3, second.Y + 1, half + 2, area.Y + area.Height - second.Y + 1),
+				 lowRegion);
+	Flatten_Area(Rect(area.X + 4, area.Y + 2, half - 2, first.Y - area.Y - 1));
+	Flatten_Area(Rect(second.X - half + 2, area.Y + 2, half - 1, second.Y - area.Y - 1));
+	MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces), first,
+								  lowRegion, CellHeight);
+	MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 1),
+								  second - Cell(2, 0), lowRegion, CellHeight);
+	Cell tail(0, 0);
+	if (drift != 0) {
+		int pick = Pick_Random_UInt(0, 1);
+		Cell bias;
+		bias.X = 0;
+		int down = drift > 0;
+		bias.Y = drift < 0 ? -1 : 0;
+		if (pick == 1) {
+			tail += Cell(span, drift);
+		} else {
+			bias.X = (second - Cell(span, 0)).X - first.X - 5;
+		}
+		for (int forward = 0; forward < span; forward++) {
+			for (int row = 0; row < 5; row++) {
+				short offset = down ? forward : -forward;
+				Cell position = Cell(first.X + 3, first.Y) + Cell(forward, row) + bias;
+				position = Cell(position.X, position.Y + offset);
+				CellClass & target = Map[position];
+				target.Height = CellHeight + heights[row] - 4;
+				target.Ramp = ramps[5 * down + row];
+				target.ITType = (IsometricTileType)(IsometricTileTypeClass::RampStart + target.Ramp - 1);
+				target.SubTile = 0;
+			}
+		}
+	}
+	for (int column = 0; column < second.X - first.X - span - 5; column++) {
+		for (int row = 0; row < 4; row++) {
+			Cell position = Cell(first.X + 3, first.Y) + Cell(column, row) + tail;
+			CellData::Set_Region(position, lowRegion);
+			CellClass & target = Map[position];
+			target.Height = CellHeight - row - 1;
+			target.Ramp = 4;
+			target.ITType = (IsometricTileType)(IsometricTileTypeClass::RampStart + 3);
+			target.SubTile = 0;
+		}
+	}
+	return true;
+}
+
+// FUNCTION: GAMEMD 0x005A5B50
+void MapGeneratorClass::Generate_Urban_Roads(DynamicVectorClass<Cell> const & cells)
+{
+	Cell start;
+	Rect bounds = Get_Cell_Bounding_Rect(cells);
+
+	if (bounds.Height > 5) {
+		start.Y = bounds.Y + 2;
+		start.X = bounds.X;
+		int remaining = bounds.Height - 2;
+
+		while (remaining > 3) {
+			Cell junction = Plan_Paved_Road_Junction(start, bounds, FACING_E);
+			Cell end = Plan_Paved_Road(junction, bounds, FACING_E);
+
+			bool valid = false;
+			int first;
+
+			if (end != Cell(0, 0) && start != Cell(0, 0)) {
+				first = start.X;
+				valid = true;
+			}
+
+			if (valid && end.X - first >= 6) {
+				if (Can_Place_Paved_Road(Rect(junction.X - 4, junction.Y, 4, 3), false, false) &&
+					Pick_Random_UInt(0, 1)) {
+					Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 9),
+							   junction - Cell(3, 0));
+				} else {
+					Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoadEnds + 2), junction);
+				}
+
+				for (int x = 0; x < end.X - junction.X - 1; x++) {
+					Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads),
+							   junction + Cell(x + 1, 0));
+				}
+
+				if (Can_Place_Paved_Road(Rect(end.X, end.Y, 4, 3), false, false) && Pick_Random_UInt(0, 1)) {
+					Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 10), end);
+				} else {
+					Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoadEnds), end);
+				}
+
+				remaining -= 10;
+				start.Y += 10;
+			} else {
+				start.Y += 2;
+				remaining -= 2;
+			}
+		}
+	}
+
+	if (bounds.Width > 8) {
+		int remaining = bounds.Height - 5;
+		start.X = bounds.X + 5;
+		start.Y = bounds.Y;
+
+		while (remaining > 3) {
+			Cell cursor = Plan_Paved_Road_Junction(start, bounds, FACING_S);
+			Cell end = Plan_Paved_Road(cursor, bounds, FACING_S);
+
+			if (end != Cell(0, 0) && start != Cell(0, 0) && end.Y - start.Y >= 6) {
+				bool in_segment = false;
+				bool initial = true;
+				bool median_pending = false;
+				bool median_flip = false;
+				bool skip_tail = false;
+
+				while (cursor.Y < end.Y) {
+					if (!in_segment) {
+						Rect road_rect;
+						Rect junction_rect;
+						road_rect = Rect(cursor.X, cursor.Y, 3, 2);
+						junction_rect = Rect(cursor.X, cursor.Y - 3, 3, 4);
+
+						if (end.Y - cursor.Y < 2) {
+							skip_tail = true;
+							break;
+						}
+
+						if (initial &&
+							Can_Place_Paved_Road(Rect(cursor.X, cursor.Y - 3, 3, 4), false, false) &&
+							Pick_Random_UInt(0, 1)) {
+							Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 13),
+									   cursor - Cell(0, 3));
+							in_segment = true;
+						} else if (Can_Place_Paved_Road_Junction(junction_rect)) {
+							Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 5),
+									   cursor - Cell(0, 3));
+							Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 1), cursor);
+							in_segment = true;
+						} else if (Can_Place_Paved_Road(road_rect, false, false)) {
+							Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoadEnds + 1),
+									   cursor);
+							in_segment = true;
+						}
+					} else {
+						if (Can_Place_Paved_Road(Rect(cursor.X, cursor.Y, 3, 1), false, false)) {
+							Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 1), cursor);
+
+							if (median_pending) {
+								if (median_flip) {
+									Place_Tile((IsometricTileType)(IsometricTileTypeClass::Medians + 5),
+											   cursor + Cell(1, 0));
+									median_flip = false;
+								} else {
+									Place_Tile((IsometricTileType)(IsometricTileTypeClass::Medians + 4),
+											   cursor + Cell(1, 0));
+								}
+							}
+						} else {
+							Rect junction_rect(cursor.X, cursor.Y, 3, 4);
+
+							if (median_pending) {
+								Place_Tile((IsometricTileType)(IsometricTileTypeClass::Medians + 3),
+										   cursor + Cell(1, -1));
+								median_pending = false;
+							}
+
+							if (Can_Place_Paved_Road_Junction(junction_rect)) {
+								int bottom = end.Y;
+
+								if (bottom - cursor.Y < 4) {
+									Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 7),
+											   cursor);
+									skip_tail = true;
+									break;
+								}
+
+								if (Can_Place_Paved_Road(Rect(cursor.X, cursor.Y + 3, 3, 2), false, false)) {
+									if (bottom - cursor.Y > 5) {
+										median_pending = true;
+										median_flip = true;
+									}
+								}
+
+								Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 3),
+										   cursor);
+
+								if (Can_Place_Paved_Road(Rect(cursor.X - 1, cursor.Y, 1, 3), true, false)) {
+									Place_Tile((IsometricTileType)(IsometricTileTypeClass::Medians + 12),
+											   cursor - Cell(1, 0));
+								}
+
+								if (Can_Place_Paved_Road(Rect(cursor.X + 3, cursor.Y, 1, 3), true, false)) {
+									Place_Tile((IsometricTileType)(IsometricTileTypeClass::Medians + 12),
+											   cursor + Cell(3, 0));
+								}
+
+								cursor.Y += 2;
+							} else {
+								Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoadEnds + 3),
+										   cursor - Cell(0, 1));
+
+								CellClass * cellptr = &Map[cursor + Cell(1, -2)];
+
+								if (cellptr->Is_Tile_Road_Median()) {
+									while (cellptr->Is_Tile_Road_Median()) {
+										cellptr->ITType =
+											(IsometricTileType)(IsometricTileTypeClass::PavedRoads + 1);
+										cellptr->SubTile = 1;
+										cellptr = &cellptr->Adjacent_Cell(FACING_N);
+									}
+								}
+
+								in_segment = false;
+							}
+						}
+					}
+
+					initial = false;
+					cursor.Y++;
+				}
+
+				if (!skip_tail) {
+					if (median_pending) {
+						Place_Tile((IsometricTileType)(IsometricTileTypeClass::Medians + 3),
+								   cursor + Cell(1, -1));
+					}
+
+					if (Can_Place_Paved_Road(Rect(cursor.X, cursor.Y, 3, 4), false, false) &&
+						Pick_Random_UInt(0, 1)) {
+						Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoads + 12), cursor);
+					} else {
+						Place_Tile((IsometricTileType)(IsometricTileTypeClass::PavedRoadEnds + 3), cursor);
+					}
+				}
+
+				remaining -= 10;
+				start.X += 10;
+			} else {
+				start.X += 2;
+				remaining -= 2;
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0059C920
+bool MapGeneratorClass::Seed_Lake(Cell const & origin)
+{
+	unsigned char success = 1;
+	int spreadLimit = Get_Target_Water_Amount() - SeededWaterAmount;
+	if (spreadLimit <= 75)
+		return false;
+	int capacity = spreadLimit * 2 + 2;
+	CellNode * nodes = new CellNode[capacity > 100 ? capacity : 100];
+	PriorityQueueClass<CellNode> * heap = new PriorityQueueClass<CellNode>(capacity > 100 ? capacity : 100);
+	Map.Reset_Iterator();
+	for (CellClass * cell = Map.Iterate(); cell; cell = Map.Iterate()) {
+		Cell position = cell->CellID;
+		unsigned index = position.Y * MapCellStride + position.X;
+		RMGCellData[index].SpreadID = 0;
+	}
+	int gridSize = MapCellStride * MapCellStride;
+	if (origin == Cell(0, 0)) {
+		for (int i = 0; i < gridSize; ++i)
+			MapRegionClass::Get_Cell_Data(i).Interior = 0;
+		Clear_Region_Border(0, 2, -2);
+		for (i = 0; i < gridSize; ++i) {
+			int storedRegion = MapRegionClass::Get_Cell_Data(i).RegionID;
+			if (storedRegion == 0 || storedRegion == WorkingRegionID)
+				MapRegionClass::Get_Cell_Data(i).Interior = 1;
+			else if (storedRegion == -2)
+				MapRegionClass::Get_Cell_Data(i).RegionID = 0;
+		}
+	} else {
+		for (int i = 0; i < gridSize; ++i)
+			MapRegionClass::Get_Cell_Data(i).Interior = 1;
+	}
+	int tries = 0;
+	Cell seed;
+	if (origin == Cell(0, 0)) {
+		for (;;) {
+			int x = (int)Pick_Random_UInt(0, Map.PlayRect.Width - 1);
+			int y = (int)Pick_Random_UInt(0, Map.PlayRect.Height - 1);
+			Cell firstOffset = Cell(1, Map.PlayRect.Width) + Cell(x, -x);
+			seed = firstOffset + Cell(y, y);
+			if (++tries >= 200)
+				return false;
+			int region = MapRegionClass::CellData::Get_Region(seed);
+			if (region == 0 && Map[seed].Is_Tile_Clear() &&
+				RMGCellData[seed.Y * MapCellStride + seed.X].Interior) {
+				if (tries < 200)
+					break;
+				return false;
+			}
+		}
+	} else
+		seed = origin;
+	int processed = 0;
+	int maximum = 76;
+	if (spreadLimit >= 76)
+		maximum = spreadLimit;
+	double mean = spreadLimit / 3;
+	int spreadCount =
+		(int)Sample_Truncated_Normal_Inline(mean, (double)(spreadLimit / 6), 75.0, (double)maximum);
+	heap->Clear();
+	int used = 1;
+	nodes[0].Element = seed;
+	nodes[0].Score = 0.0f;
+	unsigned seedIndex = seed.Y * MapCellStride + seed.X;
+	RMGCellData[seedIndex].SpreadID = WorkingRegionID;
+	heap->Insert(nodes[0]);
+	CellNode * node = heap->Extract_Min();
+	while (processed < spreadCount) {
+		{
+			if (node == 0 || !success)
+				break;
+			MapRegionClass::CellData::Set_Region(node->Element, WorkingRegionID);
+			CellClass * current = &Map[node->Element];
+			current->ITType = IsometricTileTypeClass::WaterSet;
+			current->SubTile = 0;
+			int facing = 0;
+			CellNode * next = nodes + used;
+			for (; facing < 8; facing += 2) {
+				Cell adjacent = node->Element + AdjacentCell[facing & 7];
+				if (My_In_Radar(adjacent)) {
+					unsigned index = adjacent.Y * MapCellStride + adjacent.X;
+					MapRegionClass::CellData & data = RMGCellData[index];
+					if (data.RegionID == 0 && data.SpreadID != WorkingRegionID &&
+						Map[adjacent].Is_Tile_Clear() && data.Interior) {
+						next->Element = adjacent;
+						next->Score = Get_Spread_Score(seed, adjacent, processed);
+						data.SpreadID = WorkingRegionID;
+						++used;
+						heap->Insert(*next++);
+					} else if (data.RegionID != 0 && data.RegionID != WorkingRegionID)
+						success = 0;
+				}
+			}
+			++processed;
+			node = heap->Extract_Min();
+		}
+	}
+	CellNode * remaining = heap->Extract_Min();
+	while (remaining) {
+		if (!success)
+			break;
+		CellClass * current = &Map[remaining->Element];
+		unsigned index = remaining->Element.Y * MapCellStride + remaining->Element.X;
+		MapRegionClass::CellData & data = RMGCellData[index];
+		if (data.RegionID == 0 && current->Is_Tile_Clear() && data.Interior) {
+			current->ITType = IsometricTileTypeClass::WaterSet;
+			current->SubTile = 0;
+			data.RegionID = WorkingRegionID;
+		} else
+			success = 0;
+		remaining = heap->Extract_Min();
+		++processed;
+	}
+	if (success) {
+		if (processed <= 75 || processed <= spreadCount / 4)
+			success = 0;
+		else {
+			success = 1;
+			if (origin == Cell(0, 0))
+				success = Map.FUN_0057A0C0(WorkingRegionID, false);
+		}
+	}
+	if (success && origin == Cell(0, 0)) {
+		success = Grow_Region(WorkingRegionID, 1, Rect(0, 0, MAP_CELL_W, MAP_CELL_H), 0, 0);
+		if (success) {
+			int region = WorkingRegionID;
+			Map.Reset_Iterator();
+			for (CellClass * cell = Map.Iterate(); cell; cell = Map.Iterate()) {
+				int index = MapRegionClass::CellData::Get_Region(cell->CellID);
+				if (index == region && (cell->ITType == 0 || cell->ITType == 0xffff))
+					cell->ITType = IsometricTileTypeClass::GreenTile;
+			}
+			success = 1;
+		}
+	}
+	delete heap;
+	delete[] nodes;
+	if (success) {
+		SeededWaterAmount = SeededWaterAmount + processed;
+		return true;
+	}
+	Clear_Region_Cells(WorkingRegionID, 0, -1, ISOTILE_CLEAR);
 	return false;
 }
