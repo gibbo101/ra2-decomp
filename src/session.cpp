@@ -1831,3 +1831,258 @@ template class VectorClass<PhoneEntryClass *>;
 // TEMPLATE: GAMEMD 0x0069D870
 // ??0?$VectorClass@PAVHouseClass@@@@QAE@HPBQAVHouseClass@@@Z
 template class VectorClass<HouseClass *>;
+
+#include "firewall.h"
+#include "_rand.h"
+extern bool DAT_00B07788;
+namespace OwnerDraw {
+char * __fastcall WideToCharString(char * dest, wchar_t const * source, int count);
+}
+
+// FUNCTION: GAMEMD 0x006980C0
+void SessionClass::Read_MultiPlayer_Settings(void)
+{
+	char * tokenptr;
+	PhoneEntryClass * phone;
+	char * entry;
+	char buf[0x400];
+	int i;
+
+	Rule->Do_HouseTypes(*RuleINI);
+
+	for (i = 0; i < InitStrings.Count(); i++) {
+		delete[] InitStrings[i];
+	}
+	InitStrings.Clear();
+
+	for (i = 0; i < PhoneBook.Count(); i++) {
+		delete PhoneBook[i];
+	}
+	PhoneBook.Clear();
+
+	CCFileClass file("RA2MD.INI");
+
+	if (!DAT_00B07788) {
+		PortBase = DAT_008870C0.Get_Int("MultiPlayer", "PortBase", 0x4E2);
+		ForcePortBase = DAT_008870C0.Get_Int("MultiPlayer", "ForcePortBase", 0);
+		DAT_00ABFEC8.Port =
+			DAT_008870C0.Get_Int("MultiPlayer", "PortPool", NonCriticalRandomNumber(0, 0x8000) + 0x1000);
+		DAT_00B07788 = true;
+		DAT_00ABFEC8.Read_Settings();
+	}
+	Session.unknown_2F48 = DAT_008870C0.Get_Bool("MultiPlayer", "SendDelay", false);
+	Session.unknown_301C = DAT_008870C0.Get_Int("MultiPlayer", "PortNumberOverride", 0);
+
+	buf[0] = 0;
+	CurPhoneIdx = DAT_008870C0.Get_Int("MultiPlayer", "PhoneIndex", -1);
+	TrapCheckHeap = DAT_008870C0.Get_Int("MultiPlayer", "CheckHeap", 0);
+	WOLLimitResolution = DAT_008870C0.Get_Bool("MultiPlayer", "WOLLimitResolution", WOLLimitResolution);
+	LastNicknameSlot = DAT_008870C0.Get_Int("MultiPlayer", "LastNickSlot", -1);
+
+	wchar_t handle[20];
+	DAT_008870C0.Get_UnicodeString(
+		"MultiPlayer", "Handle",
+		StringTable::LoadString("TXT_NONAME", 0, "D:\\ra2mdpost\\Session.CPP", 0x4ee), handle, 20);
+	OwnerDraw::WideToCharString(Handle, handle, -1);
+
+	Color = DAT_008870C0.Get_Int("MultiPlayer", "Color", Color);
+	Color2 = DAT_008870C0.Get_Int("MultiPlayer", "ColorEx", Color2);
+	Side = DAT_008870C0.Get_HousesType("MultiPlayer", "Side", (HousesType)Side);
+	Side2 = DAT_008870C0.Get_Int("MultiPlayer", "SideEx", Side2);
+	WOLTaunts = DAT_008870C0.Get_Bool("MultiPlayer", "WOLTaunts", WOLTaunts);
+	LANTaunts = DAT_008870C0.Get_Bool("MultiPlayer", "LANTaunts", LANTaunts);
+	WOLScrollText = DAT_008870C0.Get_Bool("MultiPlayer", "WOLScrollText", WOLScrollText);
+	LANScrollText = DAT_008870C0.Get_Bool("MultiPlayer", "LANScrollText", LANScrollText);
+
+	House = Side;
+	if (House == -2) {
+		House = 0;
+	}
+	idxSide2 = Side2;
+
+	MPGameMode = MultiplayerGameMode::Get(DAT_008870C0.Get_Int("MultiPlayer", "GameMode", 1));
+	if (!MPGameMode) {
+		MPGameMode = First_Game_Mode();
+	}
+	Skirmish.Read(DAT_008870C0, "Skirmish", 1, 6);
+	LAN.Read(DAT_008870C0, "LAN", 2, 2);
+	WOL.Read(DAT_008870C0, "WonlinePref", 2, 2);
+
+	DAT_008870C0.Get_String("SerialDefaults", "ModemName", buf, SerialDefaults.ModemName, 0x3F);
+	if (strcmp(SerialDefaults.ModemName, buf) == 0) {
+		SerialDefaults.ModemName[0] = 0;
+	}
+	SerialDefaults.Port = DAT_008870C0.Get_Int("SerialDefaults", "Port", 0);
+	SerialDefaults.IRQ = DAT_008870C0.Get_Int("SerialDefaults", "IRQ", -1);
+	SerialDefaults.Baud = DAT_008870C0.Get_Int("SerialDefaults", "Baud", -1);
+	SerialDefaults.Compression = DAT_008870C0.Get_Int("SerialDefaults", "Compression", 0);
+	SerialDefaults.ErrorCorrection = DAT_008870C0.Get_Int("SerialDefaults", "ErrorCorrection", 0);
+
+	DAT_008870C0.Get_String("SerialDefaults", "DialMethod", "T", buf, 2);
+	for (i = 0; i < 2; i++) {
+		if (!_stricmp(buf, DialMethodCheck[i])) {
+			SerialDefaults.DialMethod = (DialMethodType)i;
+			break;
+		}
+	}
+	if (i == 2) {
+		SerialDefaults.DialMethod = DIAL_TOUCH_TONE;
+	}
+
+	SerialDefaults.InitStringIndex = DAT_008870C0.Get_Int("SerialDefaults", "InitStringIndex", -1);
+	SerialDefaults.CallWaitStringIndex = DAT_008870C0.Get_Int("SerialDefaults", "CallWaitStringIndex", 3);
+	DAT_008870C0.Get_String("SerialDefaults", "CallWaitString", "", SerialDefaults.CallWaitString, 0x10);
+
+	if (SerialDefaults.IRQ == 0 || SerialDefaults.Baud == 0) {
+		SerialDefaults.Port = 0;
+		SerialDefaults.IRQ = -1;
+		SerialDefaults.Baud = -1;
+	}
+
+	int initcount = DAT_008870C0.Entry_Count("InitStrings");
+	int index;
+	for (index = 0; index < initcount; index++) {
+		entry = new char[0x29];
+		if (entry) {
+			entry[0] = 0;
+			DAT_008870C0.Get_String("InitStrings", DAT_008870C0.Get_Entry("InitStrings", index), 0, entry,
+									0x29);
+			_strupr(entry);
+			InitStrings.Add(entry);
+		}
+	}
+	SerialDefaults.InitStringIndex = initcount ? 0 : -1;
+
+	int phonecount = DAT_008870C0.Entry_Count("PhoneBook");
+	for (index = 0; index < phonecount; index++) {
+		phone = new PhoneEntryClass;
+		DAT_008870C0.Get_String("PhoneBook", DAT_008870C0.Get_Entry("PhoneBook", index), 0, buf, sizeof(buf));
+
+		tokenptr = strtok(buf, "|");
+		if (tokenptr) {
+			FUN_00735060(phone->Name, tokenptr, -1);
+			_wcsupr(phone->Name);
+		} else {
+			phone->Name[0] = 0;
+		}
+
+		tokenptr = strtok(0, "|");
+		if (tokenptr) {
+			strcpy(phone->Number, tokenptr);
+			_strupr(phone->Number);
+		} else {
+			phone->Number[0] = 0;
+		}
+
+		tokenptr = strtok(0, "|");
+		if (tokenptr) {
+			sscanf(tokenptr, "%x", &phone->Settings.Port);
+		} else {
+			phone->Settings.Port = 0;
+		}
+
+		tokenptr = strtok(0, "|");
+		if (tokenptr) {
+			phone->Settings.IRQ = atoi(tokenptr);
+		} else {
+			phone->Settings.IRQ = -1;
+		}
+
+		tokenptr = strtok(0, "|");
+		if (tokenptr) {
+			phone->Settings.Baud = atoi(tokenptr);
+		} else {
+			phone->Settings.Baud = -1;
+		}
+
+		tokenptr = strtok(0, "|");
+		if (tokenptr) {
+			phone->Settings.Compression = atoi(tokenptr);
+		} else {
+			phone->Settings.Compression = -1;
+		}
+
+		tokenptr = strtok(0, "|");
+		if (tokenptr) {
+			phone->Settings.ErrorCorrection = atoi(tokenptr);
+		} else {
+			phone->Settings.ErrorCorrection = 0;
+		}
+
+		tokenptr = strtok(0, "|");
+		if (tokenptr) {
+			strcpy(buf, tokenptr);
+			for (i = 0; i < 2; i++) {
+				if (!_stricmp(buf, DialMethodCheck[i])) {
+					phone->Settings.DialMethod = (DialMethodType)i;
+					break;
+				}
+			}
+			if (i == 2) {
+				phone->Settings.DialMethod = DIAL_TOUCH_TONE;
+			}
+		} else {
+			phone->Settings.DialMethod = DIAL_TOUCH_TONE;
+		}
+
+		tokenptr = strtok(0, "|");
+		if (tokenptr) {
+			phone->Settings.InitStringIndex = atoi(tokenptr);
+		} else {
+			phone->Settings.InitStringIndex = -1;
+		}
+
+		tokenptr = strtok(0, "|");
+		if (tokenptr) {
+			phone->Settings.CallWaitStringIndex = atoi(tokenptr);
+		} else {
+			phone->Settings.CallWaitStringIndex = 3;
+		}
+
+		tokenptr = strtok(0, "|");
+		if (tokenptr) {
+			strcpy(phone->Settings.CallWaitString, tokenptr);
+		} else {
+			phone->Settings.CallWaitString[0] = 0;
+		}
+
+		PhoneBook.Add(phone);
+	}
+
+	if (Session.Play) {
+		TrapFrame = DAT_008870C0.Get_Int("SyncBug", "Frame", 0x7FFFFFFF);
+		DAT_008870C0.Get_String("SyncBug", "Type", "NONE", buf, 0x50);
+		if (!_stricmp(buf, "AIRCRAFT")) {
+			TrapObjType = RTTI_AIRCRAFT;
+		} else if (!_stricmp(buf, "ANIM")) {
+			TrapObjType = RTTI_ANIM;
+		} else if (!_stricmp(buf, "BUILDING")) {
+			TrapObjType = RTTI_BUILDING;
+		} else if (!_stricmp(buf, "BULLET")) {
+			TrapObjType = RTTI_BULLET;
+		} else if (!_stricmp(buf, "INFANTRY")) {
+			TrapObjType = RTTI_INFANTRY;
+		} else if (!_stricmp(buf, "UNIT")) {
+			TrapObjType = RTTI_UNIT;
+		} else {
+			TrapObjType = RTTI_NONE;
+		}
+
+		DAT_008870C0.Get_String("SyncBug", "Coord", "0", buf, 0x50);
+		int x;
+		int y;
+		int z;
+		sscanf(buf, "%d,%d,%d", &x, &y, &z);
+		int target = DAT_008870C0.Get_Int("SyncBug", "Target", -1);
+		TrapTarget.Decode(target);
+
+		DAT_008870C0.Get_String("SyncBug", "Cell", "0,0", buf, 0x50);
+		sscanf(buf, "%d,%d", &x, &y);
+		Cell cell(x, y);
+		if (cell != CELL_NONE) {
+			TrapCell = &Map[cell];
+		}
+
+		TrapPrintCRC = DAT_008870C0.Get_Int("SyncBug", "PrintCRC", 0x7FFFFFFF);
+	}
+}
