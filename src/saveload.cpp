@@ -143,7 +143,7 @@ void FUN_0067C670(void)
 }
 
 // FUNCTION: GAMEMD 0x0067C690
-HRESULT FUN_0067C690(IStream * stream)
+HRESULT Load_Vector(IStream * stream)
 {
 	int count;
 	int index;
@@ -682,14 +682,14 @@ bool Get_All(IStream * stream, bool save_net)
 
 	Rule->Load(stream);
 
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
 
 	Map.Load(stream);
 
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
@@ -710,179 +710,179 @@ bool Get_All(IStream * stream, bool save_net)
 		return(false);
 	}
 
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
@@ -929,23 +929,23 @@ bool Get_All(IStream * stream, bool save_net)
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
@@ -955,31 +955,31 @@ bool Get_All(IStream * stream, bool save_net)
 	if (!RadarEventClass::Load(stream)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
@@ -999,11 +999,11 @@ bool Get_All(IStream * stream, bool save_net)
 		return(false);
 	}
 
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
-	res = FUN_0067C690(stream);
+	res = Load_Vector(stream);
 	if (FAILED(res)) {
 		return(false);
 	}
