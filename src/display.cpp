@@ -100,7 +100,7 @@ void __fastcall Bandbox_Selection_Callback(ObjectClass * object);
 bool __fastcall FUN_00639040(void);
 bool __fastcall FUN_00639130(void);
 void __fastcall FUN_00731CF0(void);
-bool __fastcall FUN_00732D00(void);
+bool __fastcall IsTypeSelecting(void);
 void __fastcall FUN_00732600(char const * name);
 namespace Game { void __fastcall UICommands_TypeSelect_7327D0(char const * name); }
 
@@ -1297,13 +1297,13 @@ void DisplayClass::Mouse_Left_Release(Coord const & coord, Cell const & cell, Ob
 		if (!object || !CurrentObject.Count() || !CurrentObject[0]->Owner_HouseClass()->Is_Player_Control()) {
 			action = ACTION_SELECT;
 		} else if (object->IsSelected) {
-			if (FUN_00732D00()) {
+			if (IsTypeSelecting()) {
 				FUN_00732600(object->Class_Of()->IniName);
 			} else {
 				object->Unselect();
 			}
 		} else {
-			if (FUN_00732D00()) {
+			if (IsTypeSelecting()) {
 				Game::UICommands_TypeSelect_7327D0(object->Class_Of()->IniName);
 			} else {
 				object->Select();
@@ -1315,7 +1315,7 @@ void DisplayClass::Mouse_Left_Release(Coord const & coord, Cell const & cell, Ob
 		BuildingClass * building = (BuildingClass *)object;
 		if (building->RTTI != RTTI_BUILDING || building->House->Is_Player_Control() || building->TranslucencyLevel != 15 || building->Is_Sensed_By_Player()) {
 			Unselect_All();
-			if (FUN_00732D00()) {
+			if (IsTypeSelecting()) {
 				Game::UICommands_TypeSelect_7327D0(object->Class_Of()->IniName);
 			} else {
 				object->Select();

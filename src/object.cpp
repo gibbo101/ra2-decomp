@@ -73,7 +73,7 @@
 // _$E47
 namespace Unsorted { extern bool ArmageddonMode; }
 namespace Game { extern bool IsActive; }
-void __fastcall FUN_00731D00(int mode);
+void __fastcall SetNavCycleMode(int mode);
 class SHPStruct
 {
 	public:
@@ -489,7 +489,7 @@ bool ObjectClass::Select(void)
 		CurrentObject.Add(this);
 	}
 
-	FUN_00731D00(0);
+	SetNavCycleMode(0);
 	IsSelected = true;
 
 	return(true);
