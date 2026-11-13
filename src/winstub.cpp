@@ -30,7 +30,7 @@
 #include "windlg.h"
 #include "winfix.h"
 #include "wsproto.h"
-#include "wwmouse.h"
+#include "wwmous.h"
 #include "mainopt.h"
 #include "conquer.h"
 #include "bsurface.h"
@@ -113,19 +113,7 @@ void __fastcall FUN_005BF500(bool state);
 void Audio_Focus_Lose(void);
 void Audio_Focus_Regain(void);
 
-class MouseSlots {
-	public:
-		virtual void Slot0(void);
-		virtual void Slot1(void);
-		virtual void Slot2(void);
-		virtual void Slot3(void);
-		virtual void Slot4(void);
-		virtual void Release_Mouse(void);
-		virtual void Capture_Mouse(void);
-		virtual bool Is_Captured(void);
-		void FUN_007B8960(void);
-};
-extern MouseSlots * DAT_00887640;
+extern WWMouseClass * DAT_00887640;
 extern bool DAT_00B73560;
 extern int DAT_00B73530;
 extern int DAT_00B73528;
@@ -217,7 +205,7 @@ extern bool DAT_00A8ED81;
 extern int DAT_00A8EDD8;
 extern int IMEResult;
 extern wchar_t DAT_00B730EC[];
-extern MouseSlots * DAT_00887640;
+extern WWMouseClass * DAT_00887640;
 
 namespace OwnerDraw { int __fastcall ServiceIMEMessage(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
 
@@ -280,7 +268,7 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 
 		case WM_MOVE:
 			if (WindowedMode == true && DAT_00887640 != NULL) {
-				DAT_00887640->FUN_007B8960();
+				DAT_00887640->Calc_Confining_Rect();
 			}
 			break;
 

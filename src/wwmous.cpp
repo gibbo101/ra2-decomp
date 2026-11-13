@@ -71,7 +71,7 @@ static inline void Unblock_Mouse(void)
 void __cdecl FUN_007B84D0(void)
 {
 	if (DAT_00B7816C == 0 && DAT_00B78164 != 0) {
-		DAT_00B78164->FUN_007BA090();
+		DAT_00B78164->Process_Mouse();
 	}
 }
 
@@ -114,7 +114,7 @@ DWORD WINAPI FUN_007B8610(void * param)
 		do {
 			Block_Mouse();
 			if (DAT_00B78164 != 0) {
-				DAT_00B78164->FUN_007BA090();
+				DAT_00B78164->Process_Mouse();
 			}
 			Unblock_Mouse();
 			Sleep((DWORD)info->Delay);
@@ -169,7 +169,7 @@ WWMouseClass::WWMouseClass(DSurface * surface, HWND window) :
 	field_94(0)
 {
 	Block_Mouse();
-	FUN_007B8960();
+	Calc_Confining_Rect();
 	MouseXHot = Rect0.X + Rect0.Width / 2;
 	MouseYHot = Rect0.Y + Rect0.Height / 2;
 	DAT_00B78164 = this;
@@ -200,7 +200,7 @@ WWMouseClass::~WWMouseClass(void)
 }
 
 // FUNCTION: GAMEMD 0x007B8960
-void WWMouseClass::FUN_007B8960(void)
+void WWMouseClass::Calc_Confining_Rect(void)
 {
 	RECT client;
 	GetClientRect(hWnd, &client);
@@ -252,7 +252,7 @@ bool WWMouseClass::FUN_007B8C50(void)
 }
 
 // FUNCTION: GAMEMD 0x007B8C60
-bool WWMouseClass::FUN_007B8C60(void)
+bool WWMouseClass::Validate_Copy_Buffer(void)
 {
 	if (Image != 0) {
 		if (field_44 != 0) {
@@ -290,7 +290,7 @@ bool WWMouseClass::FUN_007B8C60(void)
 }
 
 // FUNCTION: GAMEMD 0x007B8E80
-Rect WWMouseClass::FUN_007B8E80(void)
+Rect WWMouseClass::Matching_Rect(void)
 {
 	Rect rect(0, 0, 0, 0);
 	if (Image != 0) {
@@ -306,8 +306,8 @@ Rect WWMouseClass::FUN_007B8E80(void)
 // FUNCTION: GAMEMD 0x007B8F30
 void WWMouseClass::Save_Background(void)
 {
-	if (FUN_007B8C60() && Surface != 0) {
-		Rect1 = FUN_007B8E80();
+	if (Validate_Copy_Buffer() && Surface != 0) {
+		Rect1 = Matching_Rect();
 		Rect rect = Rect1;
 		rect.X += Rect0.X;
 		rect.Y += Rect0.Y;
@@ -551,7 +551,7 @@ void WWMouseClass::Update_Mouse_Position(int x, int y, bool forced)
 }
 
 // FUNCTION: GAMEMD 0x007BA090
-void WWMouseClass::FUN_007BA090(void)
+void WWMouseClass::Process_Mouse(void)
 {
 	if (Surface != 0) {
 		Block_Mouse();

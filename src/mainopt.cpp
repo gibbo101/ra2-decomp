@@ -604,7 +604,7 @@ bool Change_Display_Mode(int width, int height)
 
 		Show_Mouse();
 	} else {
-		((WWMouseClass *)MouseCursor)->FUN_007B8960();
+		((WWMouseClass *)MouseCursor)->Calc_Confining_Rect();
 	}
 
 	Map.Set_View_Dimensions(temp);

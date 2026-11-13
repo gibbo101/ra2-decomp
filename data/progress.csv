@@ -18925,12 +18925,12 @@ address,name,result,size,source,symbol
 0x007B86B0,FUN_007B86B0,MATCH,116,src/wwmous.cpp,?FUN_007B86B0@@YAXXZ
 0x007B8730,WWMouseClass::WWMouseClass,MATCH,408,src/wwmous.cpp,??0WWMouseClass@@QAE@PAVDSurface@@PAUHWND__@@@Z
 0x007B88D0,WWMouseClass::~WWMouseClass,MATCH,144,src/wwmous.cpp,??1WWMouseClass@@UAE@XZ
-0x007B8960,WWMouseClass::FUN_007B8960,MATCH,139,src/wwmous.cpp,?FUN_007B8960@WWMouseClass@@QAEXXZ
+0x007B8960,WWMouseClass::Calc_Confining_Rect,MATCH,139,src/wwmous.cpp,?Calc_Confining_Rect@WWMouseClass@@QAEXXZ
 0x007B89F0,WWMouseClass::Get_Mouse_State,MATCH,4,src/wwmous.cpp,?Get_Mouse_State@WWMouseClass@@UBEHXZ
 0x007B8A00,WWMouseClass::Set_Cursor,MATCH,583,src/wwmous.cpp,?Set_Cursor@WWMouseClass@@UAEXABVPoint2D@@PBVShapeSet@@H@Z
 0x007B8C50,WWMouseClass::FUN_007B8C50,MATCH,9,src/wwmous.cpp,?FUN_007B8C50@WWMouseClass@@QAE_NXZ
-0x007B8C60,WWMouseClass::FUN_007B8C60,MATCH,532,src/wwmous.cpp,?FUN_007B8C60@WWMouseClass@@QAE_NXZ
-0x007B8E80,WWMouseClass::FUN_007B8E80,MATCH,166,src/wwmous.cpp,?FUN_007B8E80@WWMouseClass@@QAE?AV?$TRect@H@@XZ
+0x007B8C60,WWMouseClass::Validate_Copy_Buffer,MATCH,532,src/wwmous.cpp,?Validate_Copy_Buffer@WWMouseClass@@QAE_NXZ
+0x007B8E80,WWMouseClass::Matching_Rect,MATCH,166,src/wwmous.cpp,?Matching_Rect@WWMouseClass@@QAE?AV?$TRect@H@@XZ
 0x007B8F30,WWMouseClass::Save_Background,MATCH,258,src/wwmous.cpp,?Save_Background@WWMouseClass@@QAEXXZ
 0x007B9040,WWMouseClass::Restore_Background,MATCH,118,src/wwmous.cpp,?Restore_Background@WWMouseClass@@QAEXXZ
 0x007B90C0,WWMouseClass::Draw_Mouse,MATCH,513,src/wwmous.cpp,?Draw_Mouse@WWMouseClass@@UAEXPAVSurface@@_N@Z
@@ -18947,7 +18947,7 @@ address,name,result,size,source,symbol
 0x007B9D90,WWMouseClass::Convert_Coordinate,MATCH,92,src/wwmous.cpp,?Convert_Coordinate@WWMouseClass@@UBEXAAH0@Z
 0x007B9DF0,WWMouseClass::Get_Bounded_Position,MATCH,53,src/wwmous.cpp,?Get_Bounded_Position@WWMouseClass@@QBEXAAH0@Z
 0x007B9E30,WWMouseClass::Update_Mouse_Position,MATCH,599,src/wwmous.cpp,?Update_Mouse_Position@WWMouseClass@@QAEXHH_N@Z
-0x007BA090,WWMouseClass::FUN_007BA090,MATCH,551,src/wwmous.cpp,?FUN_007BA090@WWMouseClass@@QAEXXZ
+0x007BA090,WWMouseClass::Process_Mouse,MATCH,551,src/wwmous.cpp,?Process_Mouse@WWMouseClass@@QAEXXZ
 0x007BA2C0,FUN_007BA2C0,MATCH,48,src/wwmous.cpp,?FUN_007BA2C0@@YAXXZ
 0x007BA2F0,FUN_007BA2F0,MATCH,13,src/wwmous.cpp,?FUN_007BA2F0@@YAXXZ
 0x007BA300,??_GMouse@@UAEPAXI@Z,MATCH,32,src/wwmous.cpp,??_GMouse@@UAEPAXI@Z

@@ -38,10 +38,10 @@ class WWMouseClass : public Mouse {
 		virtual void Erase_Mouse(Surface * scr, bool issidebarsurface = false) override;
 		virtual void Convert_Coordinate(int & x, int & y) const override;
 
-		void FUN_007B8960(void);
+		void Calc_Confining_Rect(void);
 		bool FUN_007B8C50(void);
-		bool FUN_007B8C60(void);
-		Rect FUN_007B8E80(void);
+		bool Validate_Copy_Buffer(void);
+		Rect Matching_Rect(void);
 		void Save_Background(void);
 		void Restore_Background(void);
 		void Raw_Draw_Mouse(DSurface * surface, int xoffset, int yoffset);
@@ -49,7 +49,7 @@ class WWMouseClass : public Mouse {
 		void Low_Hide_Mouse(void);
 		void Get_Bounded_Position(int & x, int & y) const;
 		void Update_Mouse_Position(int x, int y, bool forced);
-		void FUN_007BA090(void);
+		void Process_Mouse(void);
 
 		SHPStruct * Image;
 		int ImageFrameIndex;
