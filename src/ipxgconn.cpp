@@ -5,6 +5,7 @@
 
 #include "always.h"
 #include "ipxgconn.h"
+#include "ipxmgr.h"
 #include "coord.h"
 #include "rect.h"
 #include "dbgprint.h"
@@ -117,6 +118,87 @@ int IPXGlobalConnClass::Send_Packet (void * buf, int buflen,
 
 	return(Queue->Queue_Send(PacketBuf, buflen + sizeof(GlobalHeaderType),
 		&dest_addr, sizeof (IPXAddressClass), port));
+}
+
+// FUNCTION: GAMEMD 0x0053FCB0
+int IPXGlobalConnClass::Receive_Packet(void * buf, int buflen, IPXAddressClass * address, unsigned short port)
+{
+	GlobalHeaderType * packet;
+	SendQueueType * send_entry;
+	GlobalHeaderType * entry_data;
+	GlobalHeaderType ackpacket;
+	int i;
+	int resend;
+
+	packet = (GlobalHeaderType *)buf;
+	if (packet->MagicNumber != MagicNum)
+		return (0);
+
+	switch (packet->Code) {
+	case PACKET_DATA_ACK: {
+		IPXAddressClass source = *address;
+		if (port)
+			source.Set_Port(port);
+
+		resend = 0;
+		for (i = 0; i < MaxRXIndex; i++) {
+			if ((unsigned)i >= Queue->Receive_Total())
+				break;
+			if (source == LastAddress[i] && packet->PacketID == LastPacketID[i]) {
+				resend = 1;
+				break;
+			}
+		}
+
+		if (!resend) {
+			if (Queue->Queue_Receive(buf, buflen, &source, sizeof(IPXAddressClass))) {
+				LastAddress[LastRXIndex] = source;
+				LastPacketID[LastRXIndex] = packet->PacketID;
+				LastRXIndex++;
+				if (LastRXIndex >= MaxRXIndex)
+					LastRXIndex = 0;
+			} else {
+				FUN_004068E0("Failed to queue incoming packet. Ack not sent\n");
+				break;
+			}
+		}
+
+		ackpacket.MagicNumber = MagicNum;
+		ackpacket.Code = PACKET_ACK;
+		ackpacket.PacketID = packet->PacketID;
+		ackpacket.ProductID = ProductID;
+		ackpacket.Field3 = 0;
+		FUN_004068E0("Sending global ack packet to port %d\n", port);
+		ConnectionClass * global_channel = Ipx.LobbyChannel;
+		if (!Send((char *)&ackpacket, sizeof(GlobalHeaderType), address, sizeof(IPXAddressClass),
+				  this == global_channel, port)) {
+			FUN_004068E0("Failed to ack global packet\n");
+		}
+		break;
+	}
+
+	case PACKET_DATA_NOACK: {
+		IPXAddressClass source = *address;
+		if (port)
+			source.Set_Port(port);
+		Queue->Queue_Receive(buf, buflen, &source, sizeof(IPXAddressClass));
+		break;
+	}
+
+	case PACKET_ACK:
+		for (i = 0; i < Queue->Num_Send(); i++) {
+			send_entry = Queue->Get_Send(i);
+			entry_data = (GlobalHeaderType *)send_entry->Buffer;
+			if (packet->PacketID == entry_data->PacketID && entry_data->Code == PACKET_DATA_ACK) {
+				send_entry->IsACK = 1;
+				break;
+			}
+		}
+		break;
+	default:
+		break;
+	}
+	return (1);
 }
 
 // FUNCTION: GAMEMD 0x0053FF10
