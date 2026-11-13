@@ -1127,6 +1127,27 @@ void __fastcall FUN_00733160(AbstractClass * object)
 	}
 }
 
+bool __fastcall FUN_007335F0(TechnoClass * techno, int unused);
+
+// FUNCTION: GAMEMD 0x007331B0
+void FUN_007331B0(void)
+{
+	if (DAT_00B0FE6C) {
+		delete DAT_00B0FE6C;
+		DAT_00B0FE6C = NULL;
+	}
+	TechnoList * list = FUN_00732050();
+	DAT_00B0FE6C = list;
+	if (list->Count() == 0) {
+		if (list) {
+			delete list;
+		}
+		DAT_00B0FE6C = NULL;
+		list = FUN_00731F70(FUN_007335F0, 0);
+		DAT_00B0FE6C = list;
+	}
+}
+
 extern wchar_t const DAT_00887734[];
 
 // FUNCTION: GAMEMD 0x007335F0
