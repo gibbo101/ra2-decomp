@@ -30,7 +30,7 @@ struct StreamerThreadData {
 };
 
 void __fastcall FUN_0053E5F0(void);
-void __fastcall FUN_0053E6B0(void);
+void __fastcall StreamerThreadFlush(void);
 
 extern int DAT_00AA0374;
 extern CRITICAL_SECTION DAT_00AA0418;
@@ -176,7 +176,7 @@ DWORD WINAPI FUN_0053E070(StreamerThreadData * data)
 void __fastcall FUN_0053E1D0(void)
 {
 	if (DAT_00AA0448) {
-		FUN_0053E6B0();
+		StreamerThreadFlush();
 		FUN_0053E5F0();
 	}
 	if (DAT_00AA044C) {
@@ -310,7 +310,7 @@ void __fastcall FUN_0053E5F0(void)
 {
 	if (DAT_00AA0448) {
 		EnterCriticalSection(&DAT_00AA0418);
-		FUN_0053E6B0();
+		StreamerThreadFlush();
 		DAT_00AA0444 = 0;
 		if (DAT_00AA0468) {
 			fclose(DAT_00AA0468);
@@ -321,7 +321,7 @@ void __fastcall FUN_0053E5F0(void)
 }
 
 // FUNCTION: GAMEMD 0x0053E6B0
-void __fastcall FUN_0053E6B0(void)
+void __fastcall StreamerThreadFlush(void)
 {
 	if (DAT_00AA0448) {
 		EnterCriticalSection(&DAT_00AA0418);
@@ -388,7 +388,7 @@ top:
 			if (msg->message == WM_KEYDOWN && msg->wParam == VK_ESCAPE) {
 				if (DAT_00AA0448) {
 					EnterCriticalSection(&DAT_00AA0418);
-					FUN_0053E6B0();
+					StreamerThreadFlush();
 					DAT_00AA0444 = 0;
 					if (DAT_00AA0468) {
 						fclose(DAT_00AA0468);
@@ -407,7 +407,7 @@ top:
 					if (DAT_00AA046C) {
 						if (DAT_00AA0448) {
 							EnterCriticalSection(&DAT_00AA0418);
-							FUN_0053E6B0();
+							StreamerThreadFlush();
 							DAT_00AA0444 = 0;
 							if (DAT_00AA0468) {
 								fclose(DAT_00AA0468);
