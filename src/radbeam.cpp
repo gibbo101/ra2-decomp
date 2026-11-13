@@ -348,3 +348,74 @@ template class DynamicVectorClass<RadBeam *>;
 
 // SYNTHETIC: GAMEMD 0x0065A4F0
 // ??_G?$DynamicVectorClass@PAVRadBeam@@@@UAEPAXI@Z
+
+#include "cast.h"
+#include "random.h"
+#include "_rand.h"
+#include "bound.h"
+#include "session.h"
+
+namespace FPSCounter {
+extern unsigned CurrentFrameRate;
+}
+
+// FUNCTION: GAMEMD 0x006591B0
+void RadBeam::FUN_006591B0(void)
+{
+	int total = RadBeamArray.Count();
+	int count = 0;
+	int active = 0;
+	for (int i = total - 1; i >= 0; --i) {
+		RadBeam * beam = RadBeamArray[i];
+		if (beam->Type == 2) {
+			++count;
+			if (beam->unknown_9)
+				++active;
+		}
+	}
+	double requested_rate = Session.DesiredFrameRate;
+	double rate = FPSCounter::CurrentFrameRate / requested_rate;
+	rate = rate * rate * rate;
+	double excess = double(active) / count - rate;
+	double drop = 0.0;
+	if (excess > 0.0)
+		drop = count * excess;
+	drop /= active;
+	double inverse_rate = 1.0 / rate;
+	for (i = total - 1; i >= 0; --i) {
+		RadBeam * beam = RadBeamArray[i];
+		bool finished;
+		if (beam->Type == 1) {
+			int step = int(inverse_rate * 10.0);
+			if (step < 10)
+				step = 10;
+			else if (step > 100)
+				step = 100;
+			beam->FUN_00659580(step);
+			finished = beam->FUN_00659650();
+		} else if (beam->Type == 2) {
+			if (beam->unknown_9) {
+				if (NonCriticalRandomNumber(0, 99) < int(drop * 100.0)) {
+					beam->FUN_00659560();
+				}
+			}
+			finished = beam->FUN_00659CA0();
+		} else {
+			continue;
+		}
+		if (finished) {
+			if (beam->unknown_0 != NULL && beam->unknown_0->FiringRadBeam == beam) {
+				beam->unknown_0->FiringRadBeam = NULL;
+				beam->unknown_0 = NULL;
+			}
+			if (beam->Owner != NULL && (beam->Owner->AbstractFlags & 1)) {
+				if (As_Techno(beam->Owner)->FiringRadBeam == beam) {
+					As_Techno(beam->Owner)->FiringRadBeam = NULL;
+					beam->Owner = NULL;
+				}
+			}
+			RadBeamArray.Delete(beam);
+			delete beam;
+		}
+	}
+}
