@@ -401,3 +401,98 @@ template class DynamicVectorClass<IonBlastClass *>;
 // ??_G?$DynamicVectorClass@PAVIonBlastClass@@@@UAEPAXI@Z
 // TEMPLATE: GAMEMD 0x0053DDA0
 // ?Delete_Index@?$DynamicVectorClass@PAVIonBlastClass@@@@QAE_NH@Z
+
+// FUNCTION: GAMEMD 0x0053D580
+void IonBlastClass::Draw_It(void)
+{
+	Point2D point;
+
+	if (Options.DetailLevel == 2 && TacticalMap->Coord_To_Pixel(Position, point)) {
+		Surface * dest_surface = LogicalSurface;
+		Rect dcliprect = TacticalRect;
+		dcliprect.Height -= 7;
+
+		Surface * source_surface = BlastSurfaces[Lifetime];
+		int stride = dest_surface->Stride();
+		bool overlapped = false;
+
+		Rect srect(0, 0, 512, 256);
+		Rect scliprect(0, 0, 512, 256);
+		Rect drect(point.X - 256, point.Y - 128, 512, 256);
+
+		char * sbuffer;
+		short * dbuffer;
+
+		if (XSurface::Prep_For_Blit(*dest_surface, dcliprect, drect, *source_surface, scliprect, srect,
+									overlapped, (void *&)dbuffer, (void *&)sbuffer)) {
+			char * sptr;
+			short * dest_row = dbuffer;
+			short * dptr = dbuffer;
+			char * source_row = sbuffer;
+			sptr = sbuffer;
+
+			int depth_z = TacticalMap->Z_Lepton_To_Pixel(Position.Z);
+			short base_z = (short)DepthBuffer->Get_Scroll() - depth_z;
+			unsigned short draw_z = base_z;
+			draw_z -= drect.Y;
+			draw_z -= 3;
+
+			unsigned short * zbuffer_base =
+				(unsigned short *)DepthBuffer->Get_Buffer_Offset(Point2D(0, drect.Y));
+
+			int height = srect.Height + 1;
+			int surface_width = LogicalSurface->Get_Width();
+			int buffer_width = DepthBuffer->Get_Buffer_Width();
+
+			if (zbuffer_base + surface_width + height * buffer_width <
+				(unsigned short *)DepthBuffer->Get_Buffer_End()) {
+				unsigned short * zptr = zbuffer_base + drect.X;
+				int x;
+
+				for (int y = 0; y < srect.Height; ++y) {
+					for (x = 0; x < srect.Width; ++x) {
+						int index = *sptr++;
+
+						if (index > 0 && *zptr > draw_z) {
+							*dptr = dptr[SpiralIndexToSurfaceLUT[index]];
+						}
+
+						dptr++;
+						zptr++;
+					}
+
+					dest_row = (short *)((char *)dest_row + stride);
+					dptr = dest_row;
+					source_row += 512;
+					draw_z--;
+					sptr = source_row;
+					zptr += buffer_width - x;
+				}
+			} else {
+				short * pixel = dptr;
+
+				for (int y = 0; y < srect.Height; ++y) {
+					for (int x = 0; x < srect.Width; ++x) {
+						int index = *sptr++;
+
+						if (index > 0 && *(unsigned short *)DepthBuffer->Get_Buffer_Offset(
+											 Point2D(drect.X + x, drect.Y + y)) > draw_z) {
+							*pixel = pixel[SpiralIndexToSurfaceLUT[index]];
+						}
+
+						pixel++;
+					}
+
+					dest_row = (short *)((char *)dest_row + stride);
+					pixel = dest_row;
+					source_row += 512;
+					draw_z--;
+					sptr = source_row;
+				}
+			}
+
+			dest_surface->Unlock();
+			source_surface->Unlock();
+		}
+	}
+}

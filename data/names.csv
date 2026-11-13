@@ -2,6 +2,8 @@ address,name,symbol,evidence
 0x00A83D10,Theme,,0x006EDEF0 TeamClass::TMission_PLAY_MUSIC matched with TibSun source
 0x00886080,CCPalette,?CCPalette@@3VPaletteClass@@A,CCPalette static initializer 0x0040D8A0 in _palette.cpp constructs the PaletteClass at this address
 0x00B05584,StillUpdating,?StillUpdating@@3_NA,Animate_Score_Objs at 0x00690360 clears this byte and ScorePrintClass::Update at 0x00690D60 sets it
+0x00A9FFC8,BlastSurfaces,?BlastSurfaces@@3PAPAVBSurface@@A,Existing matched IonBlastClass::Clear_All at 0x0053D550 deletes and clears the 80 BSurface pointers at this base; relocations at +0x2 and +0x1D.
+0x00A9FAE8,SpiralIndexToSurfaceLUT,?SpiralIndexToSurfaceLUT@@3PAHA,"Existing matched Calculate_Index_To_Surface_LUT at 0x0053D9F0 initializes this 289-entry int array; references at +0x5, +0x1E and +0x40."
 0x007D5408,strdup,_strdup,YRpp CRT.h strdup and the name duplication in SfxEntry::SfxEntry at 0x00690EF0
 0x00691160,DynamicVectorClass<ScoreAnimClass *>::Add,?Add@?$DynamicVectorClass@PAVScoreAnimClass@@@@QAE_NABQAVScoreAnimClass@@@Z,All 80 bytes of this specialization are identical to the matched SfxEntry pointer specialization at this address and contain no relocations
 0x00720B20,ThemeClass::Queue_Song,,0x006EDEF0 TeamClass::TMission_PLAY_MUSIC matched with TibSun source
