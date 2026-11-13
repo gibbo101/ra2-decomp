@@ -121,7 +121,7 @@ WorldDominationTour::CampaignProperties::CampaignProperties(rc_ptr<WDTState> con
 }
 
 // FUNCTION: GAMEMD 0x0076BFA0
-int WorldDominationTour::CampaignProperties::FUN_0076BFA0(void)
+int WorldDominationTour::CampaignProperties::Get_Cycle_ID(void)
 {
 	if (State.Get()) {
 		return State->CycleID;
@@ -130,13 +130,13 @@ int WorldDominationTour::CampaignProperties::FUN_0076BFA0(void)
 }
 
 // FUNCTION: GAMEMD 0x0076BFB0
-int WorldDominationTour::CampaignProperties::FUN_0076BFB0(void)
+int WorldDominationTour::CampaignProperties::Get_Layout(void)
 {
 	return 1;
 }
 
 // FUNCTION: GAMEMD 0x0076BFC0
-int WorldDominationTour::CampaignProperties::FUN_0076BFC0(void)
+int WorldDominationTour::CampaignProperties::Get_Map_ID(void)
 {
 	if (State.Get()) {
 		return State->MapID;
@@ -145,7 +145,7 @@ int WorldDominationTour::CampaignProperties::FUN_0076BFC0(void)
 }
 
 // FUNCTION: GAMEMD 0x0076BFE0
-int WorldDominationTour::CampaignProperties::FUN_0076BFE0(void)
+int WorldDominationTour::CampaignProperties::Get_Current_Tick(void)
 {
 	if (State.Get()) {
 		return State->NumTicks - 1;
@@ -154,7 +154,7 @@ int WorldDominationTour::CampaignProperties::FUN_0076BFE0(void)
 }
 
 // FUNCTION: GAMEMD 0x0076BFF0
-Wstring WorldDominationTour::CampaignProperties::FUN_0076BFF0(void)
+Wstring WorldDominationTour::CampaignProperties::Get_Web_URL(void)
 {
 	char const * url;
 	if (State.Get()) {

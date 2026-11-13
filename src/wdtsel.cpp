@@ -153,7 +153,7 @@ void Selection::Update_Hovered_Territory(Point2D const & point)
 void Selection::Remove_Target_Anims(void)
 {
 	for (TERR_ITER it(WorldMap.Get()->Territories, 0); it; it++) {
-		MSShapeAnim * anim = it->FUN_0076FF30();
+		MSShapeAnim * anim = it->Remove_Target_Anim();
 		if (anim != NULL) {
 			Remove_Anim(anim);
 		}
@@ -165,7 +165,7 @@ void Selection::Remove_Target_Anims(void)
 void Selection::Remove_Target_Anims2(void)
 {
 	for (TERR_ITER it(WorldMap.Get()->Territories, 0); it; it++) {
-		MSShapeAnim * anim = it->FUN_0076FF30();
+		MSShapeAnim * anim = it->Remove_Target_Anim();
 		if (anim != NULL) {
 			Remove_Anim(anim);
 		}
@@ -251,7 +251,7 @@ void Selection::Do_Target_Selection(int index)
 		Set_Text(blank, 0);
 	}
 
-	int current_tick = TourCampaign.Get()->Properties->FUN_0076BFE0();
+	int current_tick = TourCampaign.Get()->Properties->Get_Current_Tick();
 	bool silent = true;
 	int previous_tick = TourCampaign.Get()->Get_Previous_Tick(index);
 
@@ -273,7 +273,7 @@ void Selection::Do_Target_Selection(int index)
 	}
 	Check_For_Breakout();
 
-	Do_Target_Anim(TourCampaign.Get()->CycleHistory->FUN_00767BB0(current_tick), true, silent);
+	Do_Target_Anim(TourCampaign.Get()->CycleHistory->Get_State(current_tick), true, silent);
 	TourCampaign.Get()->Write_INI(index);
 }
 
@@ -281,9 +281,9 @@ void Selection::Do_Target_Selection(int index)
 // WorldDominationTour::Selection::Get_Outcome
 int Selection::Get_Outcome(int tick, bool & mega)
 {
-	rc_ptr<State> state = TourCampaign->CycleHistory->FUN_00767BB0(tick);
+	rc_ptr<State> state = TourCampaign->CycleHistory->Get_State(tick);
 	if (state.Get() != NULL) {
-		int owned = state->FUN_0076F670(TourCampaign->PlayerFaction);
+		int owned = state->Count_Owned_Territories(TourCampaign->PlayerFaction);
 		if (owned <= LosingThreshold) {
 			mega = owned <= MegaLosingThreshold;
 			return(OUTCOME_LOSE);
@@ -319,7 +319,7 @@ bool Selection::Present_Ticks(int tick_from, int tick_to)
 			}
 			str1 += WideWstring(StringTable::LoadString("WDT:ReviewingHistoryDay", NULL, "D:\\ra2mdpost\\WDTSel.cpp", 0x3eb)) + WideWstring(L" ") + FUN_007B7E40(i + 1, 2);
 			Set_Text(str1, first == 0 ? len : 0);
-			Do_Target_Anim(TourCampaign.Get()->CycleHistory->FUN_00767BB0(i), false, first);
+			Do_Target_Anim(TourCampaign.Get()->CycleHistory->Get_State(i), false, first);
 			first = false;
 			Wait_For_Anim(TextAnim, 300000);
 			int loops = 5;
@@ -345,16 +345,16 @@ bool Selection::Present_Ticks(int tick_from, int tick_to)
 void Selection::Presentation(int index)
 {
 	Set_Text(L"", 0);
-	int current_tick = TourCampaign->Properties->FUN_0076BFE0();
+	int current_tick = TourCampaign->Properties->Get_Current_Tick();
 	int previous_tick = TourCampaign->Get_Previous_Tick(index);
 	if (current_tick - previous_tick > 8) {
 		previous_tick = current_tick - 8;
 	}
 
-	rc_ptr<State> previous_state = TourCampaign->CycleHistory->FUN_00767BB0(previous_tick);
+	rc_ptr<State> previous_state = TourCampaign->CycleHistory->Get_State(previous_tick);
 	if (previous_state.Get() != NULL) {
 		int faction = TourCampaign->PlayerFaction;
-		int owned = previous_state->FUN_0076F670(faction);
+		int owned = previous_state->Count_Owned_Territories(faction);
 		if (owned >= MegaWinningThreshold) {
 			VoicePlayer.FUN_007712C0(0, OUTCOME_WIN, owned >= 30, true, 0);
 		} else if (owned <= MegaLosingThreshold) {
@@ -375,12 +375,12 @@ void Selection::Presentation(int index)
 // WorldDominationTour::Selection::Present_History
 bool Selection::Present_History(int tick_from, int tick_to)
 {
-	rc_ptr<State> before = TourCampaign->CycleHistory->FUN_00767BB0(tick_from);
+	rc_ptr<State> before = TourCampaign->CycleHistory->Get_State(tick_from);
 	int faction = TourCampaign->PlayerFaction;
-	int old_count = before->FUN_0076F670(faction);
-	rc_ptr<State> after = TourCampaign->CycleHistory->FUN_00767BB0(tick_to);
+	int old_count = before->Count_Owned_Territories(faction);
+	rc_ptr<State> after = TourCampaign->CycleHistory->Get_State(tick_to);
 	faction = TourCampaign->PlayerFaction;
-	int new_count = after->FUN_0076F670(faction);
+	int new_count = after->Count_Owned_Territories(faction);
 	int change = new_count - old_count;
 
 	int outcome;
@@ -522,7 +522,7 @@ void Selection::End(void)
 // ?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z
 rc_ptr<Territory> Map::FUN_0076F000(int id)
 {
-	return(FUN_0076FF40(&Territories, id));
+	return(Find_Territory_By_ID(&Territories, id));
 }
 
 // TEMPLATE: GAMEMD 0x0076F020

@@ -48,7 +48,7 @@ WorldDominationTour::History::History(rc_ptr<WDTState> const & state) :
 }
 
 // FUNCTION: GAMEMD 0x00767BB0
-rc_ptr<WorldDominationTour::State> WorldDominationTour::History::FUN_00767BB0(int tick)
+rc_ptr<WorldDominationTour::State> WorldDominationTour::History::Get_State(int tick)
 {
 	return FUN_0076F470(TourState, tick);
 }

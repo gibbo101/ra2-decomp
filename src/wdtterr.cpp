@@ -122,8 +122,8 @@ Territory::~Territory(void)
 }
 
 // FUNCTION: GAMEMD 0x0076FD40
-// WorldDominationTour::Territory::FUN_0076FD40
-void Territory::FUN_0076FD40(int state, Selection * engine, bool wait)
+// WorldDominationTour::Territory::Set_Owner_State
+void Territory::Set_Owner_State(int state, Selection * engine, bool wait)
 {
 	if (OwnerAnim != NULL) {
 		int frame = -1;
@@ -156,8 +156,8 @@ void Territory::FUN_0076FD40(int state, Selection * engine, bool wait)
 }
 
 // FUNCTION: GAMEMD 0x0076FEB0
-// WorldDominationTour::Territory::FUN_0076FEB0
-void Territory::FUN_0076FEB0(bool active, Selection * engine)
+// WorldDominationTour::Territory::Set_Highlight
+void Territory::Set_Highlight(bool active, Selection * engine)
 {
 	if (HighlightAnim != NULL) {
 		HighlightAnim->Set_Active(active);
@@ -169,15 +169,15 @@ void Territory::FUN_0076FEB0(bool active, Selection * engine)
 }
 
 // FUNCTION: GAMEMD 0x0076FF20
-// WorldDominationTour::Territory::FUN_0076FF20
-void Territory::FUN_0076FF20(MSShapeAnim * anim)
+// WorldDominationTour::Territory::Set_Target_Anim
+void Territory::Set_Target_Anim(MSShapeAnim * anim)
 {
 	TargetAnim = anim;
 }
 
 // FUNCTION: GAMEMD 0x0076FF30
-// WorldDominationTour::Territory::FUN_0076FF30
-MSShapeAnim * Territory::FUN_0076FF30(void)
+// WorldDominationTour::Territory::Remove_Target_Anim
+MSShapeAnim * Territory::Remove_Target_Anim(void)
 {
 	MSShapeAnim * old = TargetAnim;
 	TargetAnim = NULL;
@@ -188,7 +188,7 @@ MSShapeAnim * Territory::FUN_0076FF30(void)
 // ??_GTerritory@WorldDominationTour@@UAEPAXI@Z
 
 // FUNCTION: GAMEMD 0x0076FF40
-rc_ptr<Territory> __fastcall WorldDominationTour::FUN_0076FF40(TERR_LIST * list, int id)
+rc_ptr<Territory> __fastcall WorldDominationTour::Find_Territory_By_ID(TERR_LIST * list, int id)
 {
 	TERR_ITER it(*list);
 	for (; it; it++) {

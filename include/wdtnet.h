@@ -235,8 +235,8 @@ namespace WorldDominationTour
 			State(void);
 			State(rc_ptr<WDTState> const & state, unsigned int tick);
 			virtual ~State(void);
-			int FUN_0076F600(int territory);
-			int FUN_0076F670(int faction);
+			int Get_Territory_State(int territory);
+			int Count_Owned_Territories(int faction);
 
 		public:
 			rc_ptr<WDTState> TourState;
@@ -250,7 +250,7 @@ namespace WorldDominationTour
 		public:
 			History(rc_ptr<WDTState> const & state);
 			virtual ~History(void);
-			rc_ptr<State> FUN_00767BB0(int tick);
+			rc_ptr<State> Get_State(int tick);
 			bool Is_Tick_Valid(unsigned int ticks);
 
 		public:
@@ -263,10 +263,10 @@ namespace WorldDominationTour
 			virtual ~Conflict(void);
 			bool operator==(Conflict const & that) const;
 			bool Is_Territory_Set(void) const;
-			int FUN_00766060(void);
+			int Get_Territory_Index(void);
 			static void Init_Game_Options(void);
 			static void Deinit_Game_Options(void);
-			WideWstring FUN_007665D0(void);
+			WideWstring Process_Game_Options(void);
 
 		public:
 			rc_ptr<WDTTerritory> Territory;
@@ -279,11 +279,11 @@ namespace WorldDominationTour
 		public:
 			CampaignProperties(rc_ptr<WDTState> const & state);
 			virtual ~CampaignProperties(void);
-			int FUN_0076BFA0(void);
-			int FUN_0076BFE0(void);
-			int FUN_0076BFC0(void);
-			int FUN_0076BFB0(void);
-			Wstring FUN_0076BFF0(void);
+			int Get_Cycle_ID(void);
+			int Get_Current_Tick(void);
+			int Get_Map_ID(void);
+			int Get_Layout(void);
+			Wstring Get_Web_URL(void);
 
 		public:
 			rc_ptr<WDTState> State;
@@ -295,7 +295,7 @@ namespace WorldDominationTour
 		public:
 			Campaign(Wstring const & name, rc_ptr<CampaignProperties> const & props);
 			virtual ~Campaign(void);
-			int Get_Current_Tick(void) { return(Properties.Get()->FUN_0076BFE0()); }
+			int Get_Current_Tick(void) { return(Properties.Get()->Get_Current_Tick()); }
 			bool Is_Different_Cycle(void);
 			bool Is_Different(int index);
 			int Get_Previous_Tick(int index);
@@ -320,10 +320,10 @@ namespace WorldDominationTour
 			virtual ~Territory(void);
 			void FUN_0076FB90(Selection * engine, ConvertClass * drawer, Point2D const & pos);
 			void FUN_0076FC50(Selection * engine, ConvertClass * drawer, Point2D const & pos);
-			void FUN_0076FEB0(bool active, Selection * engine);
-			MSShapeAnim * FUN_0076FF30(void);
-			void FUN_0076FF20(MSShapeAnim * anim);
-			void FUN_0076FD40(int state, Selection * engine, bool wait);
+			void Set_Highlight(bool active, Selection * engine);
+			MSShapeAnim * Remove_Target_Anim(void);
+			void Set_Target_Anim(MSShapeAnim * anim);
+			void Set_Owner_State(int state, Selection * engine, bool wait);
 
 		public:
 			int ID;
@@ -340,7 +340,7 @@ namespace WorldDominationTour
 	typedef VectorCursor<rc_ptr<Territory>, TERR_LIST> TERR_ITER;
 
 	rc_ptr<Territory> __fastcall FUN_0076F910(int id, INIClass const & ini, Wstring const & section, Wstring const & fileprefix, Wstring const & labelprefix);
-	rc_ptr<Territory> __fastcall FUN_0076FF40(TERR_LIST * list, int id);
+	rc_ptr<Territory> __fastcall Find_Territory_By_ID(TERR_LIST * list, int id);
 
 	class Map : public ReferenceCounted {
 		public:
