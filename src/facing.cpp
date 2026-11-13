@@ -100,7 +100,7 @@ FacingBias DAT_008B3A60;
 
 void __fastcall FUN_0053E3C0(HWND window);
 void __fastcall FUN_0053E420(HWND window);
-void __fastcall FUN_0053E6B0(void);
+void __fastcall StreamerThreadFlush(void);
 
 static char ExceptionText[EH_BUFFER_SIZE];
 int ExceptionRecursions = -1;
@@ -170,7 +170,7 @@ int Exception_Dialog(void)
 {
 	int retval = 0;
 
-	FUN_0053E6B0();
+	StreamerThreadFlush();
 	switch (ExceptionRecursions) {
 
 		default: {
@@ -546,7 +546,7 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 {
 	DebugString("Exception!\n");
 
-	FUN_0053E6B0();
+	StreamerThreadFlush();
 	ExceptionRecursions++;
 
 	exception_code = exception_code;
