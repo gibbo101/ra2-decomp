@@ -2430,6 +2430,7 @@ address,name,result,size,source,symbol
 0x0047C520,CellClass::Cell_Building,MATCH,47,src/cell.cpp,?Cell_Building@CellClass@@QBEPAVBuildingClass@@XZ
 0x0047C550,CellClass::Cell_Terrain,MATCH,67,src/cell.cpp,?Cell_Terrain@CellClass@@QBEPAVTerrainClass@@_N@Z
 0x0047C5A0,CellClass::Cell_Object,MATCH,121,src/cell.cpp,?Cell_Object@CellClass@@QBEPAVObjectClass@@ABVPoint2D@@_N@Z
+0x0047C620,CellClass::Is_Clear_To_Build,MATCH,1116,src/cell.cpp,?Is_Clear_To_Build@CellClass@@QBE_NW4SpeedType@@PAVBuildingTypeClass@@PAVHouseClass@@@Z
 0x0047CA80,CellClass::Fixup_LAT,MATCH,1930,src/cell.cpp,?Fixup_LAT@CellClass@@QAE_NXZ
 0x0047D210,CellClass::Set_Wall_Owner,MATCH,150,src/cell.cpp,?Set_Wall_Owner@CellClass@@QAEXXZ
 0x0047D2B0,CellClass::Recalc_Attributes,MATCH,2740,src/cell.cpp,?Recalc_Attributes@CellClass@@QAEXH@Z
@@ -8038,6 +8039,7 @@ address,name,result,size,source,symbol
 0x00582D30,MapClass::Register_Subzone_Zone_Connections,MATCH,62,src/map.cpp,?Register_Subzone_Zone_Connections@MapClass@@QAEXH@Z
 0x00583180,MapClass::Get_Bridge_Zone_Connection_Cell,MATCH,620,src/map.cpp,?Get_Bridge_Zone_Connection_Cell@MapClass@@QAE?AVCell@@PAVCellClass@@_N@Z
 0x005833F0,MapClass::Get_Zone_Connection_Destination,MATCH,476,src/map.cpp,?Get_Zone_Connection_Destination@MapClass@@QAE?AVCell@@ABV2@0@Z
+0x005835D0,MapClass::Find_Bridge_Span_End_Cell,MATCH,581,src/map.cpp,?Find_Bridge_Span_End_Cell@MapClass@@QAE?AVCell@@ABV2@0@Z
 0x00583820,MapClass::Find_Bridge_End_Cell_For_Subzone,MATCH,680,src/map.cpp,?Find_Bridge_End_Cell_For_Subzone@MapClass@@QAE?AVCell@@ABV2@HH@Z
 0x00583AD0,MapClass::Find_Largest_Water_Zone,MATCH,392,src/map.cpp,?Find_Largest_Water_Zone@MapClass@@QAEHPAH@Z
 0x00583C60,MapClass::Find_Water_Cells_Around,MATCH,974,src/map.cpp,?Find_Water_Cells_Around@MapClass@@QAEXPBVCell@@HHW4MZoneType@@HPAV?$DynamicVectorClass@VCell@@@@HH@Z
@@ -8369,6 +8371,7 @@ address,name,result,size,source,symbol
 0x005A80B0,MapGeneratorClass::Generate_Rural_Areas,MATCH,546,src/mapgen.cpp,?Generate_Rural_Areas@MapGeneratorClass@@QAEXXZ
 0x005A82E0,MapGeneratorClass::Generate_Rural_Buildings,MATCH,1081,src/mapgen.cpp,?Generate_Rural_Buildings@MapGeneratorClass@@QAEXABVCell@@@Z
 0x005A8720,MapGeneratorClass::Generate_Rural_Units,MATCH,677,src/mapgen.cpp,?Generate_Rural_Units@MapGeneratorClass@@QAEXABVCell@@@Z
+0x005A8F00,MapGeneratorClass::Find_Dirt_Road_Tile,MATCH,734,src/mapgen.cpp,?Find_Dirt_Road_Tile@MapGeneratorClass@@SI_NW4FacingType@@ABVCell@@HAAW4IsometricTileType@@AAV3@AAH@Z
 0x005A91E0,MapGeneratorClass::Generate_Lights,MATCH,974,src/mapgen.cpp,?Generate_Lights@MapGeneratorClass@@QAEXXZ
 0x005A95B0,MapGeneratorClass::Generate_Neutral_Buildings,MATCH,870,src/mapgen.cpp,?Generate_Neutral_Buildings@MapGeneratorClass@@QAEXXZ
 0x005A9920,DirtRoadLink::DirtRoadLink,MATCH,20,src/mapgen.cpp,??0DirtRoadLink@@QAE@ABVCell@@W4FacingType@@@Z
@@ -9065,6 +9068,7 @@ address,name,result,size,source,symbol
 0x005C36F0,MPCooperative::vt_entry_8C,MATCH,5,src/mpcoop.cpp,?vt_entry_8C@MPCooperative@@UAE_NXZ
 0x005C3700,MPCooperative::IsAIAllowed,MATCH,3,src/mpcoop.cpp,?IsAIAllowed@MPCooperative@@UAE_NXZ
 0x005C3710,MPCooperative::vt_entry_A0,MATCH,1012,src/mpcoop.cpp,?vt_entry_A0@MPCooperative@@UAEX_N@Z
+0x005C3B10,MPCooperative::DrawTeamDropdown,MATCH,944,src/mpcoop.cpp,?DrawTeamDropdown@MPCooperative@@UAEXPAUHWND__@@PAV?$DynamicVectorClass@PBVMultiMission@@@@PBVMultiMission@@@Z
 0x005C3EC0,MPCooperative::FUN_005C3EC0,MATCH,111,src/mpcoop.cpp,?FUN_005C3EC0@MPCooperative@@QAE_NXZ
 0x005C3F30,MPCooperative::vt_entry_9C,MATCH,70,src/mpcoop.cpp,?vt_entry_9C@MPCooperative@@UAEXXZ
 0x005C3F80,MPCooperative::vt_entry_90,MATCH,396,src/mpcoop.cpp,?vt_entry_90@MPCooperative@@UAEXXZ
@@ -10412,6 +10416,7 @@ address,name,result,size,source,symbol
 0x005FF2D0,SpotLightClass::~SpotLightClass,MATCH,76,src/ovrlight.cpp,??1SpotLightClass@@QAE@XZ
 0x005FF320,SpotLightClass::AI,MATCH,109,src/ovrlight.cpp,?AI@SpotLightClass@@QAEXXZ
 0x005FF390,SpotLightClass::Update_All,MATCH,132,src/ovrlight.cpp,?Update_All@SpotLightClass@@SIXXZ
+0x005FF420,SpotLightClass::One_Time,MATCH,983,src/ovrlight.cpp,?One_Time@SpotLightClass@@SIXXZ
 0x005FF800,SpotLightClass::Clear_All,MATCH,65,src/ovrlight.cpp,?Clear_All@SpotLightClass@@SIXXZ
 0x005FF850,SpotLightClass::Draw_It,MATCH,1860,src/ovrlight.cpp,?Draw_It@SpotLightClass@@QAEXXZ
 0x005FFFA0,SpotLightClass::Draw_All,MATCH,32,src/ovrlight.cpp,?Draw_All@SpotLightClass@@SIXXZ
@@ -10555,6 +10560,7 @@ address,name,result,size,source,symbol
 0x0060D450,UI::RegisterComboDropAndNewEditClasses,MATCH,201,src/ownrdraw.cpp,?RegisterComboDropAndNewEditClasses@UI@@YIXXZ
 0x0060D520,FUN_0060D520,MATCH,29,src/ownrdraw.cpp,?FUN_0060D520@@YGJPAUHWND__@@IIJ@Z
 0x0060F320,FUN_0060F320,MATCH,385,src/ownrdraw.cpp,?FUN_0060F320@@YGHPAUHWND__@@J@Z
+0x0060F760,OwnerDraw::SetNeedsControlImage,MATCH,566,src/ownrdraw.cpp,?SetNeedsControlImage@OwnerDraw@@YGHPAUHWND__@@J@Z
 0x0060F9A0,OwnerDraw::RegisterChildControlProc,MATCH,2481,src/ownrdraw.cpp,?RegisterChildControlProc@OwnerDraw@@YGHPAUHWND__@@J@Z
 0x00610360,FUN_00610360,MATCH,518,src/ownrdraw.cpp,?FUN_00610360@@YIHPAUHWND__@@@Z
 0x00610570,FUN_00610570,MATCH,548,src/ownrdraw.cpp,?FUN_00610570@@YGHPAUHWND__@@J@Z
@@ -16121,6 +16127,7 @@ address,name,result,size,source,symbol
 0x00732D10,FUN_00732D10,MATCH,722,src/uicmnds.cpp,?FUN_00732D10@@YIPAV?$DynamicVectorClass@PBD@@XZ
 0x00732FF0,FUN_00732FF0,MATCH,365,src/uicmnds.cpp,?FUN_00732FF0@@YIXPBDP6IXPAVObjectClass@@H@ZH@Z
 0x00733160,FUN_00733160,MATCH,74,src/uicmnds.cpp,?FUN_00733160@@YIXPAVAbstractClass@@@Z
+0x007331B0,FUN_007331B0,MATCH,450,src/uicmnds.cpp,?FUN_007331B0@@YIXXZ
 0x007335F0,FUN_007335F0,MATCH,78,src/uicmnds.cpp,?FUN_007335F0@@YI_NPAVTechnoClass@@H@Z
 0x00733640,FUN_00733640,MATCH,89,src/uicmnds.cpp,?FUN_00733640@@YIPBGH@Z
 0x007336A0,FUN_007336A0,MATCH,31,src/uicmnds.cpp,?FUN_007336A0@@YIHH@Z
@@ -16210,9 +16217,11 @@ address,name,result,size,source,symbol
 0x00739CD0,UnitClass::Undeploy,MATCH,494,src/unit.cpp,?Undeploy@UnitClass@@QAEXXZ
 0x00739EC0,UnitClass::Per_Cell_Process,MATCH,4591,src/unit.cpp,?Per_Cell_Process@UnitClass@@UAEXW4PCPType@@@Z
 0x0073B0B0,UnitClass::Render,MATCH,140,src/unit.cpp,?Render@UnitClass@@UBE_NAAV?$TRect@H@@_N1@Z
+0x0073B140,UnitClass::Unit_Blit_Voxel,MATCH,808,src/unit.cpp,?Unit_Blit_Voxel@UnitClass@@UAEXPAVSurface@@VPoint2D@@V?$TRect@H@@HG@Z
 0x0073B470,UnitClass::Unit_Draw_Voxel,MATCH,4473,src/unit.cpp,?Unit_Draw_Voxel@UnitClass@@UAEXVPoint2D@@V?$TRect@H@@HG@Z
 0x0073CEC0,UnitClass::Draw_It,MATCH,1417,src/unit.cpp,?Draw_It@UnitClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x0073D450,UnitClass::Harvesting,MATCH,477,src/unit.cpp,?Harvesting@UnitClass@@QAE_NXZ
+0x0073D630,UnitClass::Do_MISSION_UNLOAD,MATCH,4004,src/unit.cpp,?Do_MISSION_UNLOAD@UnitClass@@UAEHXZ
 0x0073EFC0,UnitClass::Do_MISSION_HUNT,MATCH,212,src/unit.cpp,?Do_MISSION_HUNT@UnitClass@@UAEHXZ
 0x0073F0A0,UnitClass::Can_Enter_Cell,MATCH,3238,src/unit.cpp,?Can_Enter_Cell@UnitClass@@UBE?AW4MoveType@@PBVCellClass@@W4FacingType@@H0_N@Z
 0x0073FD50,UnitClass::What_Action,MATCH,1882,src/unit.cpp,?What_Action@UnitClass@@UBE?AW4ActionType@@PBVObjectClass@@_N@Z
@@ -16367,6 +16376,7 @@ address,name,result,size,source,symbol
 0x00749B20,VoxelAnimClass::Render,MATCH,71,src/vanim.cpp,?Render@VoxelAnimClass@@UBE_NAAV?$TRect@H@@_N1@Z
 0x00749B70,VoxelAnimClass::Draw_It,MATCH,902,src/vanim.cpp,?Draw_It@VoxelAnimClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x00749F00,VoxelAnimClass::Init_Clear,MATCH,37,src/vanim.cpp,?Init_Clear@VoxelAnimClass@@SIXXZ
+0x00749F30,VoxelAnimClass::AI,MATCH,2599,src/vanim.cpp,?AI@VoxelAnimClass@@UAEXXZ
 0x0074A960,VoxelAnimClass::In_Which_Layer,MATCH,6,src/vanim.cpp,?In_Which_Layer@VoxelAnimClass@@UBE?AW4LayerType@@XZ
 0x0074A970,VoxelAnimClass::Load,MATCH,146,src/vanim.cpp,?Load@VoxelAnimClass@@UAGJPAUIStream@@@Z
 0x0074AA10,VoxelAnimClass::Save,MATCH,23,src/vanim.cpp,?Save@VoxelAnimClass@@UAGJPAUIStream@@H@Z
