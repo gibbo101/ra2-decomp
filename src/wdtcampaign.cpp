@@ -73,7 +73,7 @@ WorldDominationTour::Campaign::~Campaign(void)
 // FUNCTION: GAMEMD 0x00764FA0
 bool WorldDominationTour::Campaign::Is_Different_Cycle(void)
 {
-	return(CycleID != Properties->FUN_0076BFA0());
+	return(CycleID != Properties->Get_Cycle_ID());
 }
 
 // FUNCTION: GAMEMD 0x00764FC0
@@ -82,7 +82,7 @@ bool WorldDominationTour::Campaign::Is_Different(int index)
 	if (Is_Different_Cycle()) {
 		return(true);
 	}
-	if (PreviousTicks[index] != Properties->FUN_0076BFE0()) {
+	if (PreviousTicks[index] != Properties->Get_Current_Tick()) {
 		return(true);
 	}
 	return(false);
@@ -110,7 +110,7 @@ static inline void Load_History(INIClass & ini)
 // FUNCTION: GAMEMD 0x00765000
 void WorldDominationTour::Campaign::Write_INI(int index)
 {
-	CycleID = Properties->FUN_0076BFA0();
+	CycleID = Properties->Get_Cycle_ID();
 	PreviousTicks[index] = Get_Current_Tick();
 	INIClass ini;
 	Load_History(ini);
@@ -142,7 +142,7 @@ CONFLICT_ITER WorldDominationTour::Campaign::Get_Conflict_Iterator(int index)
 {
 	CONFLICT_ITER it(Conflicts);
 	for (; it; it++) {
-		if (it->FUN_00766060() == index) {
+		if (it->Get_Territory_Index() == index) {
 			break;
 		}
 	}

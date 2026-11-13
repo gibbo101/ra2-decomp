@@ -97,8 +97,8 @@ bool Conflict::Is_Territory_Set(void) const
 }
 
 // FUNCTION: GAMEMD 0x00766060
-// WorldDominationTour::Conflict::FUN_00766060
-int Conflict::FUN_00766060(void)
+// WorldDominationTour::Conflict::Get_Territory_Index
+int Conflict::Get_Territory_Index(void)
 {
 	if (Territory.Get() != NULL) {
 		return(Territory->Index);
@@ -140,8 +140,8 @@ void Conflict::Deinit_Game_Options(void)
 }
 
 // FUNCTION: GAMEMD 0x007665D0
-// WorldDominationTour::Conflict::FUN_007665D0
-WideWstring Conflict::FUN_007665D0(void)
+// WorldDominationTour::Conflict::Process_Game_Options
+WideWstring Conflict::Process_Game_Options(void)
 {
 	if (WDTGameOptionList.Count() == 0) {
 		Init_Game_Options();

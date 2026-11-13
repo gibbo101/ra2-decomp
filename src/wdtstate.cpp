@@ -67,7 +67,7 @@ WorldDominationTour::State::State(rc_ptr<WDTState> const & state, unsigned int t
 }
 
 // FUNCTION: GAMEMD 0x0076F600
-int WorldDominationTour::State::FUN_0076F600(int territory)
+int WorldDominationTour::State::Get_Territory_State(int territory)
 {
 	if (TourState.operator->() != NULL && Owners != NULL && (unsigned int)territory < TourState.Get()->NumTerritories) {
 		switch (Owners[territory]) {
@@ -88,7 +88,7 @@ WorldDominationTour::State::~State(void)
 }
 
 // FUNCTION: GAMEMD 0x0076F670
-int WorldDominationTour::State::FUN_0076F670(int faction)
+int WorldDominationTour::State::Count_Owned_Territories(int faction)
 {
 	if (TourState.Get() != NULL && Owners != NULL) {
 		int count = 0;
