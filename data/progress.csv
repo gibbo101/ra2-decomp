@@ -14158,6 +14158,7 @@ address,name,result,size,source,symbol
 0x006D6280,Tactical::Cell_To_Rectangular,MATCH,95,src/tactical.cpp,?Cell_To_Rectangular@Tactical@@QAEXHHAAH0@Z
 0x006D62E0,Tactical::Lepton_To_Map_Pixel,MATCH,137,src/tactical.cpp,?Lepton_To_Map_Pixel@Tactical@@QAEXHHAAH0@Z
 0x006D6370,Tactical::Cell_To_Rectangular_Centered,MATCH,147,src/tactical.cpp,?Cell_To_Rectangular_Centered@Tactical@@QAEXHHAAH0@Z
+0x006D6590,Tactical::Pixel_To_Cell,MATCH,1265,src/tactical.cpp,?Pixel_To_Cell@Tactical@@QAE?AVCell@@ABVPoint2D@@@Z
 0x006D6A90,Tactical::Get_Cell_Height,MATCH,51,src/tactical.cpp,?Get_Cell_Height@Tactical@@QAEHABVCoord@@@Z
 0x006D6AD0,Tactical::Get_Cell_Ramp,MATCH,28,src/tactical.cpp,?Get_Cell_Ramp@Tactical@@QAEHABVCoord@@@Z
 0x006D6AF0,Tactical::Add_Shadow_Control,MATCH,181,src/tactical.cpp,?Add_Shadow_Control@Tactical@@QAEXVShadowControlClass@@@Z

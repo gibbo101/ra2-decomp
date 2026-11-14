@@ -1051,6 +1051,85 @@ void Tactical::Cell_To_Rectangular_Centered(int xin, int yin, int & xout, int & 
 	yout = y;
 }
 
+// FUNCTION: GAMEMD 0x006D6590
+Cell Tactical::Pixel_To_Cell(Point2D const &point)
+{
+	Point2D lepton = Pixel_To_Lepton(point + Point2D(TacPixelX, TacPixelY) - TacticalRect.Top_Left());
+
+	Cell fallback(lepton.X / CELL_LEPTON_W, lepton.Y / CELL_LEPTON_H);
+
+	// Project the offset within the first cell before scanning the terrain.
+	Point2D abspixel;
+	Coord_To_Pixel(Coord(lepton.X & (CELL_LEPTON_W - 1), lepton.Y & (CELL_LEPTON_H - 1), 0), abspixel);
+	Point2D xy = point - TacticalRect.Top_Left();
+
+	Point2D scan = xy;
+	const int scan_height = 12 * (ISO_TILE_PIXEL_H / 2);
+	scan.Y += scan_height;
+
+	int count = 0;
+	while (count < scan_height) {
+		abspixel = scan + Point2D(TacPixelX, TacPixelY);
+
+		Point2D scanlepton = Pixel_To_Lepton(abspixel);
+		Cell cell(scanlepton.X / CELL_LEPTON_W, scanlepton.Y / CELL_LEPTON_H);
+
+		CellClass *cellptr = &Map[cell];
+		int celly = scan.Y - cellptr->Height * (ISO_TILE_PIXEL_H / 2);
+
+		if (cellptr->IsUnderBridge) {
+			CellClass &east = cellptr->Adjacent_Cell(FACING_E);
+			CellClass &south = cellptr->Adjacent_Cell(FACING_S);
+
+			bool north_end = (cellptr->IsBridgeEastWest) && !(cellptr->Adjacent_Cell(FACING_N).IsUnderBridge);
+			bool west_end = !(cellptr->IsBridgeEastWest) && !(cellptr->Adjacent_Cell(FACING_W).IsUnderBridge);
+			bool south_end = (cellptr->IsBridgeEastWest) && !(south.IsUnderBridge);
+			bool east_end = !(cellptr->IsBridgeEastWest) && !(east.IsUnderBridge);
+			bool east_approach =
+				(cellptr->IsBridgeEastWest) && abs(cellptr->Height - east.Height) <= 1 && !(east.IsUnderBridge);
+			bool south_approach =
+				!(cellptr->IsBridgeEastWest) && abs(cellptr->Height - south.Height) <= 1 && !(south.IsUnderBridge);
+
+			Coord topcoord = Coord(cellptr->CellID) - Coord(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0);
+			Point2D top;
+			Coord_To_Pixel(topcoord, top);
+			top.Y += ISO_TILE_PIXEL_H * cellptr->Height / -2;
+
+			if (top.Y <= xy.Y) {
+				if (south_end || south_approach) {
+					fallback = cell + Cell(0, 1);
+					break;
+				}
+				if (east_end || east_approach) {
+					fallback = cell + Cell(1, 0);
+					break;
+				}
+			}
+
+			if (north_end || west_end) {
+				int dx = xy.X - top.X;
+				int dy = xy.Y - top.Y;
+				if ((north_end && dy - dx / 2 > ISO_TILE_PIXEL_H / 2) ||
+					(west_end && dx / 2 + dy > ISO_TILE_PIXEL_H / 2)) {
+					celly -= ((cellptr->IsUnderBridge) ? BRIDGE_CELL_HEIGHT * (ISO_TILE_PIXEL_H / 2) : 0);
+				}
+			} else {
+				celly -= ((cellptr->IsUnderBridge) ? BRIDGE_CELL_HEIGHT * (ISO_TILE_PIXEL_H / 2) : 0);
+			}
+		}
+
+		if (celly <= xy.Y) {
+			fallback = cell;
+			break;
+		}
+
+		scan.Y--;
+		count++;
+	}
+
+	return fallback;
+}
+
 // FUNCTION: GAMEMD 0x006D6A90
 int Tactical::Get_Cell_Height(Coord const & coord)
 {
