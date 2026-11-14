@@ -97,6 +97,8 @@ class ShipLocomotionClass : public LocomotionClass, public IPiggyback
 			char					StartTrack;
 			Dir256				Facing;
 			TrackControlType	Flag;
+
+			FacingType Exit_Facing(void) const { return DirType(Facing).As_Dir8(); }
 		};
 
 		struct TrackType {
