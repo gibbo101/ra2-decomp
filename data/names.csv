@@ -648,3 +648,6 @@ address,name,symbol,evidence
 0x0082AFF0,MapRegionClass::Build_West_Ramp::_heights,_?_heights@?BF@??Build_West_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z@4PAHA,Complete 20-byte lookup table equals original data; SHA-256 f96702bafafa0bd042cbeadfa4b5c92a07eebeb322d605140560d31023401b45
 0x0082B004,MapRegionClass::Build_West_Ramp::_ramps,_?_ramps@?BF@??Build_West_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z@4PAHA,Complete 40-byte lookup table equals original data; SHA-256 0d818a59ee3c06c142a50082be2045aa287ed54c1303a14444fdcb7f40489cee
 0x00A8ECE0,VerNum,?VerNum@@3VVersionClass@@A,Matched initializer 0x004E7DC0 constructs VerNum at this address via VersionClass::VersionClass 0x0074F730; YRpp VersionClass::Instance independently agrees
+0x00822724,GadgetClass::CurrentColorScheme,?CurrentColorScheme@GadgetClass@@2PBDB,Matched GadgetClass::Get_Color_Scheme at 0x004E12D0 reads this pointer to the default Grey scheme.
+0x008A3770,EgoList,?EgoList@@3V?$DynamicVectorClass@PAVEgoClass@@@@A,Matched EgoList initializer at 0x004C3C50 and destructor at 0x004C3C10 access the same vector at thirteen sites.
+0x0089F978,WindowedMode,?WindowedMode@@3_NA,YRpp GameOptionsClass.h identifies WindowedMode here. Matched display and window routines use the global bool declaration.
