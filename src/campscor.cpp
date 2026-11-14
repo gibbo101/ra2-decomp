@@ -1106,7 +1106,7 @@ namespace UI {
 }
 namespace OwnerDraw {
 	void __fastcall Paint(HWND window);
-	void __stdcall SetNeedsControlImage(HWND window, int value);
+	BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam);
 }
 void __fastcall FUN_00607FD0(HWND window);
 extern wchar_t DAT_0089E0A4[];
