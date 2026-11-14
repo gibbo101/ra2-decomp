@@ -12810,6 +12810,7 @@ address,name,result,size,source,symbol
 0x006A0470,ShipLocomotionClass::Stop_Driver,MATCH,71,src/ship.cpp,?Stop_Driver@ShipLocomotionClass@@QAE_NXZ
 0x006A04C0,ShipLocomotionClass::Start_Driver,MATCH,242,src/ship.cpp,?Start_Driver@ShipLocomotionClass@@QAE_NABVCoord@@@Z
 0x006A05C0,ShipLocomotionClass::Do_Turn,MATCH,34,src/ship.cpp,?Do_Turn@ShipLocomotionClass@@UAGXUDirStruct@@@Z
+0x006A1C80,ShipLocomotionClass::Start_Of_Move,MATCH,8470,src/ship.cpp,?Start_Of_Move@ShipLocomotionClass@@AAE_NAA_N_N1@Z
 0x006A3DA0,ShipLocomotionClass::Lay_Track,MATCH,1,src/ship.cpp,?Lay_Track@ShipLocomotionClass@@AAEXXZ
 0x006A3DB0,ShipLocomotionClass::Smooth_Turn,MATCH,124,src/ship.cpp,?Smooth_Turn@ShipLocomotionClass@@AAE?AVPoint2D@@ABV2@AAW4Dir256@@@Z
 0x006A3E30,ShipLocomotionClass::Incoming,MATCH,22,src/ship.cpp,?Incoming@ShipLocomotionClass@@QAE_NVCell@@@Z
