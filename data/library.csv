@@ -407,6 +407,10 @@ address,size,symbol,library,object
 0x007CB302,59,_vfprintf,LIBCMT.LIB,vfprintf.obj
 0x007CB33D,168,___initstdio,LIBCMT.LIB,_file.obj
 0x007CB3E5,20,___endstdio,LIBCMT.LIB,_file.obj
+0x007CB3F9,47,__lock_file,LIBCMT.LIB,_file.obj
+0x007CB428,35,__lock_file2,LIBCMT.LIB,_file.obj
+0x007CB44B,47,__unlock_file,LIBCMT.LIB,_file.obj
+0x007CB47A,35,__unlock_file2,LIBCMT.LIB,_file.obj
 0x007CB49D,13,_srand,LIBCMT.LIB,rand.obj
 0x007CB4AA,34,_rand,LIBCMT.LIB,rand.obj
 0x007CB4CC,56,_wcsncmp,LIBCMT.LIB,wcsncmp.obj
@@ -466,7 +470,7 @@ address,size,symbol,library,object
 0x007CCFB3,73,__store_number,LIBCMT.LIB,strftime.obj
 0x007CCFFC,719,__store_winword,LIBCMT.LIB,strftime.obj
 0x007CD2CB,352,_localtime,LIBCMT.LIB,localtim.obj
-0x007CD42B,42,__rmdir,LIBCMT.LIB,rmdir.obj
+0x007CD42B,42,_remove,LIBCMT.LIB,unlink.obj
 0x007CD460,126,_tmpnam,LIBCMT.LIB,tmpfile.obj
 0x007CD4DE,214,_tmpfile,LIBCMT.LIB,tmpfile.obj
 0x007CD5B4,97,_init_namebuf,LIBCMT.LIB,tmpfile.obj
@@ -848,6 +852,8 @@ address,size,symbol,library,object
 0x007DBCF0,486,_ldexp,LIBCMT.LIB,ldexp.obj
 0x007DBED6,544,___ld12mul,LIBCMT.LIB,tenpow.obj
 0x007DC0F6,124,___multtenpow12,LIBCMT.LIB,tenpow.obj
+0x007DC172,28,?_ValidateRead@@YAHPBXI@Z,LIBCMT.LIB,validate.obj
+0x007DC18E,28,?_ValidateWrite@@YAHPAXI@Z,LIBCMT.LIB,validate.obj
 0x007DC1AA,24,?_ValidateExecute@@YAHP6GHXZ@Z,LIBCMT.LIB,validate.obj
 0x007DC1C2,97,?terminate@@YAXXZ,LIBCMT.LIB,hooks.obj
 0x007DC223,24,?unexpected@@YAXXZ,LIBCMT.LIB,hooks.obj

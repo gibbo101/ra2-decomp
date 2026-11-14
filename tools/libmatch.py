@@ -3,9 +3,9 @@
 Usage: uv run tools/libmatch.py [LIB ...]   (default: toolchain/vc6sp3/LIB/LIBCMT.LIB)
 
 Every function in every member of each library is searched for in .text, with the
-fields its relocations fill in left as wildcards. A function found exactly once is
-recorded with its library and member. Functions under 8 bytes are skipped: too short
-to place on their own.
+fields its relocations fill in left as wildcards. Named import slots distinguish bodies
+with otherwise identical instructions. A function found exactly once is recorded with
+its library and member. Functions under 8 bytes are skipped: too short to place on their own.
 
 data/library_identified.json supplements those matches with explicit identities
 corroborated by incoming relocations, referenced globals, or named RTTI vtables.
@@ -29,7 +29,7 @@ from pathlib import Path
 import pefile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from coff import CoffObject  # noqa: E402
+from coff import CoffObject, REL_DIR32  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 MIN_SIZE = 8
@@ -109,6 +109,30 @@ def pattern(code: bytes, masked: set[int]) -> bytes:
     return b"".join(b"." if k in masked else re.escape(code[k:k + 1]) for k in range(len(code)))
 
 
+def named_import_slots(pe):
+    """Map each named import address slot to the symbol stored in it."""
+    pe.parse_data_directories(directories=[pefile.DIRECTORY_ENTRY["IMAGE_DIRECTORY_ENTRY_IMPORT"]])
+    return {imp.address: imp.name.decode() for dll in pe.DIRECTORY_ENTRY_IMPORT
+            for imp in dll.imports if imp.name}
+
+
+def import_fields(obj, section, start, end):
+    fields = []
+    for rel in section.relocs:
+        if start <= rel.offset and rel.offset + 4 <= end and rel.type == REL_DIR32:
+            name = obj.by_index[rel.symbol].name
+            if name.startswith("__imp__"):
+                imported = name[len("__imp__"):].split("@", 1)[0]
+                addend = struct.unpack_from("<i", section.data, rel.offset)[0]
+                fields.append((rel.offset - start, imported, addend))
+    return fields
+
+
+def imports_agree(code, hit, fields, imports):
+    return all(imports.get((struct.unpack_from("<I", code, hit + offset)[0] - addend)
+                           & 0xFFFFFFFF) == name for offset, name, addend in fields)
+
+
 def main() -> None:
     libs = [Path(a) for a in sys.argv[1:]] or [ROOT / "toolchain/vc6sp3/LIB/LIBCMT.LIB"]
     pe = pefile.PE(str(ROOT / "orig/gamemd.exe"), fast_load=True)
@@ -116,6 +140,7 @@ def main() -> None:
     code = text.get_data()
     base = pe.OPTIONAL_HEADER.ImageBase + text.VirtualAddress
     found: dict[int, tuple] = {}
+    imports = named_import_slots(pe)
     ambiguous = 0
     for lib in libs:
         for member, body in members(lib.read_bytes()):
@@ -128,6 +153,10 @@ def main() -> None:
                 masked = {r.offset - start + k for r in sec.relocs
                           if start <= r.offset < end for k in range(4)}
                 hits = [m.start() for m in re.finditer(pattern(sec.data[start:end], masked), code, re.S)]
+                if hits:
+                    fields = import_fields(obj, sec, start, end)
+                    if fields:
+                        hits = [hit for hit in hits if imports_agree(code, hit, fields, imports)]
                 if len(hits) == 1:
                     found.setdefault(base + hits[0], (end - start, sym.name, lib.name,
                                                       member.split("\\")[-1]))

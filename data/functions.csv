@@ -19759,10 +19759,10 @@ address,size,evidence,name
 0x007CB302,59,CYL,CRT::vfprintf
 0x007CB33D,168,L,___initstdio
 0x007CB3E5,20,L,___endstdio
-0x007CB3F9,47,CG,
-0x007CB428,35,CG,
-0x007CB44B,47,CG,
-0x007CB47A,35,CG,
+0x007CB3F9,47,CGL,__lock_file
+0x007CB428,35,CGL,__lock_file2
+0x007CB44B,47,CGL,__unlock_file
+0x007CB47A,35,CGL,__unlock_file2
 0x007CB49D,13,CGL,_srand
 0x007CB4AA,34,CGL,_rand
 0x007CB4CC,56,CGL,_wcsncmp
@@ -19832,7 +19832,7 @@ address,size,evidence,name
 0x007CCFB3,73,CGL,__store_number
 0x007CCFFC,719,CGL,__store_winword
 0x007CD2CB,352,CGL,_localtime
-0x007CD42B,42,CGL,__rmdir
+0x007CD42B,42,CGL,_remove
 0x007CD455,11,CG,
 0x007CD460,126,CGL,_tmpnam
 0x007CD4DE,214,GL,_tmpfile
@@ -20241,7 +20241,9 @@ address,size,evidence,name
 0x007DBC9A,86,CGL,__set_statfp
 0x007DBCF0,486,CGL,_ldexp
 0x007DBED6,544,CGL,___ld12mul
-0x007DC0F6,180,CGL,___multtenpow12
+0x007DC0F6,124,CGL,___multtenpow12
+0x007DC172,28,L,?_ValidateRead@@YAHPBXI@Z
+0x007DC18E,28,L,?_ValidateWrite@@YAHPAXI@Z
 0x007DC1AA,24,CGL,?_ValidateExecute@@YAHP6GHXZ@Z
 0x007DC1C2,92,GL,?terminate@@YAXXZ
 0x007DC21E,5,CV,
