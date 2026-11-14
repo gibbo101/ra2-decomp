@@ -2322,6 +2322,54 @@ void Tactical::Debug_Draw_Occupier_Links(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x006DB620
+void Tactical::Debug_Draw_Occupation_Flags(void)
+{
+	Map.Reset_Iterator();
+	CellClass *cellptr = Map.Iterate();
+	int color = DSurface::Build_Hicolor_Pixel(255, 255, 0);
+	while (cellptr != NULL) {
+		Rect render = cellptr->Cell_Render_Rect();
+		Rect inter = Intersect(render, TacticalRect);
+		if (inter.Is_Valid()) {
+			Coord coord = cellptr->Cell_Coord();
+			Point2D pixel;
+			Coord_To_Pixel(coord, pixel);
+			Rect rect;
+			rect = Rect(pixel.X - 2, TacticalRect.Y + pixel.Y - 2, 4, 4);
+
+			// Mark ground occupancy.
+			if (cellptr->Flag.Occupy.NE) {
+				LogicalSurface->Fill_Rect(rect + Point2D(10, 0), color);
+			}
+			if (cellptr->Flag.Occupy.SE) {
+				LogicalSurface->Fill_Rect(rect + Point2D(0, 6), color);
+			}
+			if (cellptr->Flag.Occupy.SW) {
+				LogicalSurface->Fill_Rect(rect + Point2D(-10, 0), color);
+			}
+			if (cellptr->Flag.Occupy.Building || cellptr->Flag.Occupy.Monolith || cellptr->Flag.Occupy.Vehicle) {
+				LogicalSurface->Fill_Rect(rect, color);
+			}
+
+			// Mark bridge occupancy above ground.
+			if (cellptr->BridgeFlag.Occupy.NE) {
+				LogicalSurface->Fill_Rect(rect + Point2D(10, -60), color);
+			}
+			if (cellptr->BridgeFlag.Occupy.SE) {
+				LogicalSurface->Fill_Rect(rect + Point2D(0, -66), color);
+			}
+			if (cellptr->BridgeFlag.Occupy.SW) {
+				LogicalSurface->Fill_Rect(rect + Point2D(-10, -60), color);
+			}
+			if (cellptr->BridgeFlag.Occupy.Building || cellptr->BridgeFlag.Occupy.Monolith || cellptr->BridgeFlag.Occupy.Vehicle) {
+				LogicalSurface->Fill_Rect(rect + Point2D(0, -60), color);
+			}
+		}
+		cellptr = Map.Iterate();
+	}
+}
+
 // FUNCTION: GAMEMD 0x006DBB60
 bool Tactical::Draw_3D_Line(Coord const & coord1, Coord const & coord2, int color, bool write_depth)
 {
