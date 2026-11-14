@@ -556,7 +556,8 @@ Rect PlanningNodeClass::Lead_Rect(void)
 {
 	Point2D pixel;
 	pixel = Lead_Pixel();
-	return FUN_00634510(pixel, 8);
+	Rect rect = FUN_00634510(pixel, 8);
+	return rect;
 }
 
 // FUNCTION: GAMEMD 0x00634630
@@ -851,6 +852,19 @@ void PlanningNodeClass::Unselect_All(void)
 		if (owner->IsSelected) {
 			owner->Unselect();
 		}
+	}
+}
+
+void __fastcall FUN_00638A20(PlanningNodeClass * node);
+
+// FUNCTION: GAMEMD 0x00635350
+void PlanningNodeClass::Draw_Lead_Box(int color)
+{
+	Rect clip = Get_Title_Screen_Area();
+	Rect const & rect = Lead_Rect();
+	DSurface::Composite->Draw_Rect(clip, rect, color);
+	if (clip.Is_Overlapping(rect)) {
+		FUN_00638A20(this);
 	}
 }
 
