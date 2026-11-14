@@ -296,6 +296,74 @@ extern short SineTable[];
 static int _FireStepX[FACING_COUNT] = { 1,  1,  0, -1, -1, -1,  0,  1 };
 static int _FireStepY[FACING_COUNT] = { 0,  1,  1,  1,  0, -1, -1, -1 };
 
+// FUNCTION: GAMEMD 0x0062E840
+void ParticleSystemClass::Spark_AI(void)
+{
+	if (SparkSpawnFrames > 0) {
+		if (SparkSpawnFrames == 1 || Random_Double(0.0, 1.0) <= Class->SpawnSparkPercentage) {
+			int random = int(Scen->RandomNumber);
+			int count = Class->ParticleCap / 2 + abs(random) % (Class->ParticleCap / 2);
+			ParticleTypeClass *held = ParticleTypes[Class->HoldsWhat];
+			Random2Class &generator = Scen->RandomNumber;
+			int rand_y = int(generator);
+			int rand_x = int(Scen->RandomNumber);
+			Vector3 spark;
+			float vertical_velocity = (float)(int(generator) % held->ZVelocityRange);
+			spark.X = (float)(rand_x % held->XVelocity);
+			spark.Y = (float)(rand_y % held->YVelocity);
+			spark.Z = vertical_velocity;
+			while (count > 0) {
+				ParticleClass *particle = Spawn_Held_Particle(PositionCoord, PositionCoord);
+				ParticleTypeClass const *type = particle->Class;
+				Vector3 &direction = particle->MovementDirection;
+				particle->MovementDirection.X = (float)(int(Scen->RandomNumber) % type->XVelocity);
+				particle->MovementDirection.Y = (float)(int(Scen->RandomNumber) % type->YVelocity);
+				particle->MovementDirection.Z =
+					(float)(type->MinZVelocity + abs(int(Scen->RandomNumber)) % type->ZVelocityRange);
+				float speed = direction.Length();
+				if (IsRandomSparkDirection)
+					direction = Vector3(spark.X + direction.X, spark.Y + direction.Y, spark.Z + direction.Z);
+				else {
+					TPoint3D<float> const &spawn = Class->SpawnDirection;
+					direction = Vector3(spawn.X + direction.X, spawn.Y + direction.Y, spawn.Z + direction.Z);
+				}
+				direction = Normalize(direction);
+				direction = speed * direction;
+				--count;
+			}
+			if (Options.DetailLevel == 2) {
+				if (SparkSpawnFrames == Class->SparkSpawnFrames && Class->LightSize > 0 && !Class->OneFrameLight)
+					new SpotLightClass(PositionCoord, Class->LightSize);
+			}
+		}
+		--SparkSpawnFrames;
+		if (SparkSpawnFrames <= 0)
+			IsMarkedForDeletion = true;
+		double chance = Random_Double(0.0, 1.0);
+		if (chance < 0.3) {
+			int radius;
+			if (SparkRadius - 3 <= 17)
+				radius = 17;
+			else
+				radius = SparkRadius - 3;
+			SparkRadius = radius;
+		} else if (chance < 0.6) {
+			int radius = SparkRadius + 3;
+			if (radius >= 41)
+				radius = 41;
+			SparkRadius = radius;
+		}
+	}
+	int index;
+	for (index = 0; index < SystemParticles.Count(); ++index)
+		SystemParticles[index]->Behavior_AI();
+	for (index = SystemParticles.Count() - 1; index >= 0; --index) {
+		ParticleClass *particle = SystemParticles[index];
+		if (particle->IsToDie)
+			particle->Delete_Me();
+	}
+}
+
 // FUNCTION: GAMEMD 0x0062F230
 void ParticleSystemClass::Railgun_AI(void)
 {

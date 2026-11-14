@@ -10876,6 +10876,7 @@ address,name,result,size,source,symbol
 0x0062E5D0,ParticleSystemClass::Delete_Particle,MATCH,119,src/partsys.cpp,?Delete_Particle@ParticleSystemClass@@QAE_NH@Z
 0x0062E650,ParticleSystemClass::Clear_System,MATCH,117,src/partsys.cpp,?Clear_System@ParticleSystemClass@@QAEXXZ
 0x0062E6D0,ParticleSystemClass::Gas_AI,MATCH,366,src/partsys.cpp,?Gas_AI@ParticleSystemClass@@AAEXXZ
+0x0062E840,ParticleSystemClass::Spark_AI,MATCH,1277,src/partsys.cpp,?Spark_AI@ParticleSystemClass@@AAEXXZ
 0x0062F230,ParticleSystemClass::Railgun_AI,MATCH,1904,src/partsys.cpp,?Railgun_AI@ParticleSystemClass@@AAEXXZ
 0x0062F9A0,ParticleSystemClass::Fire_AI,MATCH,951,src/partsys.cpp,?Fire_AI@ParticleSystemClass@@AAEXXZ
 0x0062FD60,ParticleSystemClass::AI,MATCH,248,src/partsys.cpp,?AI@ParticleSystemClass@@UAEXXZ
