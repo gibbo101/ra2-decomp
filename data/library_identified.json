@@ -590,6 +590,440 @@
           "object": "cprintf.obj"
         }
       ]
+    },
+    {
+      "address": "0x007CBCE1",
+      "size": 50,
+      "symbol": "__ltow",
+      "library": "LIBCMT.LIB",
+      "object": "xtow.obj",
+      "kind": "global",
+      "global_symbol": "__imp__MultiByteToWideChar@24",
+      "global_address": "0x007E11C4",
+      "anchors": [
+        {
+          "symbol": "__itow",
+          "address": "0x007CBCAF",
+          "library": "LIBCMT.LIB",
+          "object": "xtow.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CBD13",
+      "size": 50,
+      "symbol": "__ultow",
+      "library": "LIBCMT.LIB",
+      "object": "xtow.obj",
+      "kind": "global",
+      "global_symbol": "__imp__MultiByteToWideChar@24",
+      "global_address": "0x007E11C4",
+      "anchors": [
+        {
+          "symbol": "__itow",
+          "address": "0x007CBCAF",
+          "library": "LIBCMT.LIB",
+          "object": "xtow.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CBD45",
+      "size": 53,
+      "symbol": "__i64tow",
+      "library": "LIBCMT.LIB",
+      "object": "xtow.obj",
+      "kind": "global",
+      "global_symbol": "__imp__MultiByteToWideChar@24",
+      "global_address": "0x007E11C4",
+      "anchors": [
+        {
+          "symbol": "__itow",
+          "address": "0x007CBCAF",
+          "library": "LIBCMT.LIB",
+          "object": "xtow.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CBD7A",
+      "size": 53,
+      "symbol": "__ui64tow",
+      "library": "LIBCMT.LIB",
+      "object": "xtow.obj",
+      "kind": "global",
+      "global_symbol": "__imp__MultiByteToWideChar@24",
+      "global_address": "0x007E11C4",
+      "anchors": [
+        {
+          "symbol": "__itow",
+          "address": "0x007CBCAF",
+          "library": "LIBCMT.LIB",
+          "object": "xtow.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CA9B4",
+      "size": 24,
+      "symbol": "??0__non_rtti_object@@QAE@ABV0@@Z",
+      "library": "LIBCMT.LIB",
+      "object": "rtti.obj",
+      "kind": "global",
+      "requires": [
+        "0x007CA9AF"
+      ],
+      "global_symbol": "??0exception@@QAE@ABV0@@Z",
+      "global_address": "0x007D2ED8",
+      "anchors": [
+        {
+          "symbol": "??4exception@@QAEAAV0@ABV0@@Z",
+          "address": "0x007D2F22",
+          "library": "LIBCMT.LIB",
+          "object": "stdexcpt.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CA9CC",
+      "size": 24,
+      "symbol": "??0bad_typeid@@QAE@ABV0@@Z",
+      "library": "LIBCMT.LIB",
+      "object": "rtti.obj",
+      "kind": "global",
+      "requires": [
+        "0x007CAA00"
+      ],
+      "global_symbol": "??0exception@@QAE@ABV0@@Z",
+      "global_address": "0x007D2ED8",
+      "anchors": [
+        {
+          "symbol": "??4exception@@QAEAAV0@ABV0@@Z",
+          "address": "0x007D2F22",
+          "library": "LIBCMT.LIB",
+          "object": "stdexcpt.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CABFB",
+      "size": 24,
+      "symbol": "??0bad_cast@@QAE@ABQBD@Z",
+      "library": "LIBCMT.LIB",
+      "object": "rtti.obj",
+      "kind": "global",
+      "requires": [
+        "0x007CAC2F"
+      ],
+      "global_symbol": "??0exception@@QAE@ABQBD@Z",
+      "global_address": "0x007D2E9B",
+      "anchors": [
+        {
+          "symbol": "??0__non_rtti_object@@QAE@PBD@Z",
+          "address": "0x007CA971",
+          "library": "LIBCMT.LIB",
+          "object": "rtti.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CAC34",
+      "size": 24,
+      "symbol": "??0bad_cast@@QAE@ABV0@@Z",
+      "library": "LIBCMT.LIB",
+      "object": "rtti.obj",
+      "kind": "global",
+      "requires": [
+        "0x007CAC2F"
+      ],
+      "global_symbol": "??0exception@@QAE@ABV0@@Z",
+      "global_address": "0x007D2ED8",
+      "anchors": [
+        {
+          "symbol": "??4exception@@QAEAAV0@ABV0@@Z",
+          "address": "0x007D2F22",
+          "library": "LIBCMT.LIB",
+          "object": "stdexcpt.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CA090",
+      "size": 821,
+      "kind": "assembly_section",
+      "symbol": "_memmove",
+      "library": "LIBCMT.LIB",
+      "object": "memmove.obj",
+      "anchors": [
+        {
+          "symbol": "__shift",
+          "address": "0x007CEF29",
+          "library": "LIBCMT.LIB",
+          "object": "cvt.obj"
+        },
+        {
+          "symbol": "___sbh_free_block",
+          "address": "0x007CF7E8",
+          "library": "LIBCMT.LIB",
+          "object": "sbheap.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007D0A20",
+      "size": 821,
+      "kind": "assembly_section",
+      "symbol": "_memcpy",
+      "library": "LIBCMT.LIB",
+      "object": "memcpy.obj",
+      "anchors": [
+        {
+          "symbol": "__fread_lk",
+          "address": "0x007C94EB",
+          "library": "LIBCMT.LIB",
+          "object": "fread.obj"
+        },
+        {
+          "symbol": "__fwrite_lk",
+          "address": "0x007C9602",
+          "library": "LIBCMT.LIB",
+          "object": "fwrite.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007D7C1B",
+      "size": 22,
+      "symbol": "__ld12tod",
+      "library": "LIBCMT.LIB",
+      "object": "intrncvt.obj",
+      "kind": "object_block",
+      "block": "intrncvt"
+    },
+    {
+      "address": "0x007D7C31",
+      "size": 22,
+      "symbol": "__ld12tof",
+      "library": "LIBCMT.LIB",
+      "object": "intrncvt.obj",
+      "kind": "object_block",
+      "block": "intrncvt"
+    },
+    {
+      "address": "0x007D7CC1",
+      "size": 45,
+      "symbol": "__atodbl",
+      "library": "LIBCMT.LIB",
+      "object": "intrncvt.obj",
+      "kind": "object_block",
+      "block": "intrncvt"
+    },
+    {
+      "address": "0x007D7D1C",
+      "size": 45,
+      "symbol": "__atoflt",
+      "library": "LIBCMT.LIB",
+      "object": "intrncvt.obj",
+      "kind": "object_block",
+      "block": "intrncvt"
+    },
+    {
+      "address": "0x007CB85C",
+      "size": 17,
+      "symbol": "_iswalpha",
+      "library": "LIBCMT.LIB",
+      "object": "_wctype.obj",
+      "kind": "global",
+      "global_symbol": "_iswctype",
+      "global_address": "0x007D3920",
+      "anchors": [
+        {
+          "address": "0x007CB9CF",
+          "symbol": "_wcstoxl",
+          "library": "LIBCMT.LIB",
+          "object": "wcstol.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CB86D",
+      "size": 14,
+      "symbol": "_iswupper",
+      "library": "LIBCMT.LIB",
+      "object": "_wctype.obj",
+      "kind": "global",
+      "global_symbol": "_iswctype",
+      "global_address": "0x007D3920",
+      "anchors": [
+        {
+          "address": "0x007CB9CF",
+          "symbol": "_wcstoxl",
+          "library": "LIBCMT.LIB",
+          "object": "wcstol.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CB87B",
+      "size": 14,
+      "symbol": "_iswlower",
+      "library": "LIBCMT.LIB",
+      "object": "_wctype.obj",
+      "kind": "global",
+      "global_symbol": "_iswctype",
+      "global_address": "0x007D3920",
+      "anchors": [
+        {
+          "address": "0x007CB9CF",
+          "symbol": "_wcstoxl",
+          "library": "LIBCMT.LIB",
+          "object": "wcstol.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CB889",
+      "size": 14,
+      "symbol": "_iswdigit",
+      "library": "LIBCMT.LIB",
+      "object": "_wctype.obj",
+      "kind": "global",
+      "global_symbol": "_iswctype",
+      "global_address": "0x007D3920",
+      "anchors": [
+        {
+          "address": "0x007CB9CF",
+          "symbol": "_wcstoxl",
+          "library": "LIBCMT.LIB",
+          "object": "wcstol.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CB897",
+      "size": 17,
+      "symbol": "_iswxdigit",
+      "library": "LIBCMT.LIB",
+      "object": "_wctype.obj",
+      "kind": "global",
+      "global_symbol": "_iswctype",
+      "global_address": "0x007D3920",
+      "anchors": [
+        {
+          "address": "0x007CB9CF",
+          "symbol": "_wcstoxl",
+          "library": "LIBCMT.LIB",
+          "object": "wcstol.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CB8A8",
+      "size": 14,
+      "symbol": "_iswspace",
+      "library": "LIBCMT.LIB",
+      "object": "_wctype.obj",
+      "kind": "global",
+      "global_symbol": "_iswctype",
+      "global_address": "0x007D3920",
+      "anchors": [
+        {
+          "address": "0x007CB9CF",
+          "symbol": "_wcstoxl",
+          "library": "LIBCMT.LIB",
+          "object": "wcstol.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CB8B6",
+      "size": 14,
+      "symbol": "_iswpunct",
+      "library": "LIBCMT.LIB",
+      "object": "_wctype.obj",
+      "kind": "global",
+      "global_symbol": "_iswctype",
+      "global_address": "0x007D3920",
+      "anchors": [
+        {
+          "address": "0x007CB9CF",
+          "symbol": "_wcstoxl",
+          "library": "LIBCMT.LIB",
+          "object": "wcstol.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CB8C4",
+      "size": 17,
+      "symbol": "_iswalnum",
+      "library": "LIBCMT.LIB",
+      "object": "_wctype.obj",
+      "kind": "global",
+      "global_symbol": "_iswctype",
+      "global_address": "0x007D3920",
+      "anchors": [
+        {
+          "address": "0x007CB9CF",
+          "symbol": "_wcstoxl",
+          "library": "LIBCMT.LIB",
+          "object": "wcstol.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CB8D5",
+      "size": 17,
+      "symbol": "_iswprint",
+      "library": "LIBCMT.LIB",
+      "object": "_wctype.obj",
+      "kind": "global",
+      "global_symbol": "_iswctype",
+      "global_address": "0x007D3920",
+      "anchors": [
+        {
+          "address": "0x007CB9CF",
+          "symbol": "_wcstoxl",
+          "library": "LIBCMT.LIB",
+          "object": "wcstol.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CB8E6",
+      "size": 17,
+      "symbol": "_iswgraph",
+      "library": "LIBCMT.LIB",
+      "object": "_wctype.obj",
+      "kind": "global",
+      "global_symbol": "_iswctype",
+      "global_address": "0x007D3920",
+      "anchors": [
+        {
+          "address": "0x007CB9CF",
+          "symbol": "_wcstoxl",
+          "library": "LIBCMT.LIB",
+          "object": "wcstol.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CB8F7",
+      "size": 14,
+      "symbol": "_iswcntrl",
+      "library": "LIBCMT.LIB",
+      "object": "_wctype.obj",
+      "kind": "global",
+      "global_symbol": "_iswctype",
+      "global_address": "0x007D3920",
+      "anchors": [
+        {
+          "address": "0x007CB9CF",
+          "symbol": "_wcstoxl",
+          "library": "LIBCMT.LIB",
+          "object": "wcstol.obj"
+        }
+      ]
     }
   ],
   "blocks": {
@@ -850,6 +1284,76 @@
           "symbol": "__strdup",
           "library": "LIBCMT.LIB",
           "object": "strdup.obj"
+        }
+      ]
+    },
+    "intrncvt": {
+      "address": "0x007D78B5",
+      "size": 1172,
+      "symbols": [
+        "__ZeroTail",
+        "__IncMan",
+        "__RoundMan",
+        "__CopyMan",
+        "__FillZeroMan",
+        "__IsZeroMan",
+        "__ShrMan",
+        "__ld12cvt",
+        "__ld12tod",
+        "__ld12tof",
+        "__ld12told",
+        "__atodbl",
+        "__atoldbl",
+        "__atoflt"
+      ],
+      "anchors": [
+        {
+          "address": "0x007D78B5",
+          "symbol": "__ZeroTail",
+          "library": "LIBCMT.LIB",
+          "object": "intrncvt.obj"
+        },
+        {
+          "address": "0x007D78FE",
+          "symbol": "__IncMan",
+          "library": "LIBCMT.LIB",
+          "object": "intrncvt.obj"
+        },
+        {
+          "address": "0x007D7954",
+          "symbol": "__RoundMan",
+          "library": "LIBCMT.LIB",
+          "object": "intrncvt.obj"
+        },
+        {
+          "address": "0x007D7AAF",
+          "symbol": "__ld12cvt",
+          "library": "LIBCMT.LIB",
+          "object": "intrncvt.obj"
+        }
+      ],
+      "external_anchors": [
+        {
+          "address": "0x007DB066",
+          "symbol": "___addl",
+          "library": "LIBCMT.LIB",
+          "object": "mantold.obj"
+        },
+        {
+          "address": "0x007D9872",
+          "symbol": "___strgtold12",
+          "library": "LIBCMT.LIB",
+          "object": "strgtold.obj"
+        }
+      ],
+      "data_definitions": [
+        {
+          "symbol": "_DoubleFormat",
+          "function": "__ld12tod"
+        },
+        {
+          "symbol": "_FloatFormat",
+          "function": "__ld12tof"
         }
       ]
     }

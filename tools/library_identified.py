@@ -137,7 +137,7 @@ class Audit:
                 "fully_linked_locations": [f"0x{hit:08X}" for hit in hits]}
 
     def block_data(self, obj, addresses, item):
-        """Corroborate a block's named data reference with its archive definition."""
+        """Corroborate a block's named reference with its complete initialized data section."""
         picks = [p for p in obj.functions() if p[0].name == item["function"]]
         require(len(picks) == 1, "Ambiguous data-reference function")
         _, section, lo, hi = picks[0]
@@ -148,20 +148,27 @@ class Audit:
         for ref in references:
             symbol = obj.by_index[ref.symbol]
             require(ref.type == coff.REL_DIR32 and ref.offset + 4 <= hi and
-                    symbol.section == 0 and symbol.type != 0x20 and
-                    symbol.storage == coff.STORAGE_EXTERNAL,
-                    "Object-block reference must name external data")
+                    symbol.type != 0x20, "Expected an absolute object-block data reference")
+            if "definition" in item:
+                require(symbol.section == 0 and symbol.storage == coff.STORAGE_EXTERNAL,
+                        "Object-block reference must name external data")
+            else:
+                require(symbol.section > 0, "Expected data defined in the same archive member")
             addend = struct.unpack_from("<i", section.data, ref.offset)[0]
             at = addresses[item["function"]] + ref.offset - lo
             targets.add((self.original.u32(at) - addend) & 0xFFFFFFFF)
         require(len(targets) == 1, "Object-block data references disagree")
         target = next(iter(targets))
-        _, _, definition, _ = self.object(item["definition"])
+        definition = obj
+        if "definition" in item:
+            _, _, definition, _ = self.object(item["definition"])
         symbols = [s for s in definition.symbols if s.name == item["symbol"] and s.section > 0]
         require(len(symbols) == 1, "Ambiguous archive data definition")
         symbol = symbols[0]
+        if "definition" in item:
+            require(symbol.storage == coff.STORAGE_EXTERNAL, "Expected an external data definition")
         data = definition.sections[symbol.section - 1]
-        require(symbol.storage == coff.STORAGE_EXTERNAL and symbol.type != 0x20 and
+        require(symbol.storage in (coff.STORAGE_EXTERNAL, 3) and symbol.type != 0x20 and
                 data.name == ".data" and not data.is_code and not data.relocs and
                 0 <= symbol.value < len(data.data), "Invalid initialized data definition")
         base = target - symbol.value
@@ -314,9 +321,38 @@ class Audit:
                 "Fully relocated data table differs")
         return {}
 
+    def assembly_section(self, entry):
+        """Verify one public procedure containing private jump tables and assembler labels."""
+        _, _, obj, (procedure, section, start, _) = self.object(entry)
+        public = [s for s in obj.symbols
+                  if s.section == section.number and s.storage == coff.STORAGE_EXTERNAL]
+        require(start == 0 and procedure.value == 0 and public == [procedure] and
+                len(section.data) == entry["size"], "Expected one public procedure spanning the section")
+        address = int(entry["address"], 16)
+        require(entry["anchors"], "Missing named caller of assembly procedure")
+        for anchor in entry["anchors"]:
+            refs = self.unique_anchor(anchor)["references"]
+            targets = {r["target"] for r in refs if r["symbol"] == procedure.name}
+            require(targets == {entry["address"]}, "Caller does not identify the assembly procedure")
+
+        linked = bytearray(section.data)
+        for relocation in section.relocs:
+            label = obj.by_index[relocation.symbol]
+            require(relocation.type == coff.REL_DIR32 and label.section == section.number and
+                    0 <= label.value < len(linked) and 0 <= relocation.offset <= len(linked) - 4,
+                    "Expected an absolute relocation to a label in the same section")
+            addend = struct.unpack_from("<I", section.data, relocation.offset)[0]
+            struct.pack_into("<I", linked, relocation.offset, (address + label.value + addend) & 0xFFFFFFFF)
+        require(bytes(linked) == self.original.read(address, len(linked)),
+                "Relocated assembly section differs")
+
     def target(self, entry):
         address = int(entry["address"], 16)
         bindings = {}
+        if entry["kind"] == "assembly_section":
+            self.assembly_section(entry)
+            return
+        wrapper_row = None
         if entry["kind"] == "object_block":
             bindings = self.object_block(entry)
         elif entry["kind"] == "data_table":
@@ -344,17 +380,22 @@ class Audit:
             require(rtti.owner(deleting) == entry["rtti_type"], "Wrong destructor owner")
             require(rtti.calls(deleting, address), "RTTI-selected wrapper does not call this body")
             bindings[entry["symbol"]] = address
-            # The wrapper is an identity anchor, not an additional recovered function.
             wrapper = {**entry, "address": entry["deleting_destructor"],
                        "symbol": entry["symbol"].replace("??1", "??_G", 1)
                                  .replace("@@UAE@XZ", "@@UAEPAXI@Z")}
-            self.linked_body(wrapper, bindings)
+            linked = self.linked_body(wrapper, bindings)
+            wrapper_row = deleting, (linked["size"], wrapper["symbol"],
+                                     wrapper["library"], wrapper["object"])
 
         result = self.linked_body(entry, bindings)
         require(result["size"] == entry["size"], f"Archive extent differs: {entry}")
         if entry["kind"] == "global":
             require(result["fully_linked_locations"] == [entry["address"]],
                     f"Relocated getter body has more than one location: {entry}")
+        if wrapper_row:
+            vtable_symbol = entry["symbol"].replace("??1", "??_7", 1).replace("@@UAE@XZ", "@@6B@")
+            self.local[vtable_symbol] = vtable
+        return wrapper_row
 
 
 def verify(path=ROOT / "data/library_identified.json"):
@@ -362,6 +403,7 @@ def verify(path=ROOT / "data/library_identified.json"):
     entries = identity_records(document["targets"])
     audit = Audit()
     verified, visiting = set(), set()
+    wrappers = {}
 
     def verify_entry(address):
         require(address in entries, "Unknown library identity prerequisite")
@@ -374,15 +416,21 @@ def verify(path=ROOT / "data/library_identified.json"):
             verify_entry(int(dependency, 16))
         if entry["kind"] == "object_block":
             entry = {**entry, "block": document["blocks"][entry["block"]]}
-        audit.target(entry)
+        result = audit.target(entry)
+        if entry["kind"] == "rtti":
+            address_of_wrapper, row = result
+            require(address_of_wrapper not in wrappers or wrappers[address_of_wrapper] == row,
+                    "Conflicting deleting destructor identity")
+            wrappers[address_of_wrapper] = row
         audit.local[entry["symbol"]] = address
         visiting.remove(address)
         verified.add(address)
 
     for address in entries:
         verify_entry(address)
-    return {address: (row["size"], row["symbol"], row["library"], row["object"])
-            for address, row in entries.items()}
+    manifest = {address: (row["size"], row["symbol"], row["library"], row["object"])
+                for address, row in entries.items()}
+    return merge(manifest, wrappers)
 
 
 def merge(automatic, identified):
