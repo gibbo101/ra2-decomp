@@ -6476,6 +6476,7 @@ address,name,result,size,source,symbol
 0x0052B970,_$E145,MATCH,18,src/init.cpp,_$E145
 0x0052B990,FUN_0052B990,MATCH,26,src/init.cpp,?FUN_0052B990@@YIXXZ
 0x0052B9B0,FUN_0052B9B0,MATCH,161,src/init.cpp,?FUN_0052B9B0@@YIXPAUHWND__@@@Z
+0x0052BA60,Init_Game,MATCH,4333,src/init.cpp,?Init_Game@@YIHXZ
 0x0052CB50,FUN_0052CB50,MATCH,44,src/init.cpp,?FUN_0052CB50@@YI_NXZ
 0x0052CB80,FUN_0052CB80,MATCH,1,src/init.cpp,?FUN_0052CB80@@YIXXZ
 0x0052CB90,FUN_0052CB90,MATCH,473,src/init.cpp,?FUN_0052CB90@@YIXXZ
@@ -6522,6 +6523,7 @@ address,name,result,size,source,symbol
 0x005355C0,FUN_005355C0,MATCH,16,src/init.cpp,?FUN_005355C0@@YI?AW4ThemeType@@XZ
 0x005355D0,FUN_005355D0,MATCH,1168,src/init.cpp,?FUN_005355D0@@YIHXZ
 0x00535AA0,INIClass::INIClass,MATCH,143,src/init.cpp,??0INIClass@@QAE@XZ
+0x00535B30,CCINIClass::CCINIClass,MATCH,146,src/init.cpp,??0CCINIClass@@QAE@XZ
 0x00535BD0,CommandClass::PreventCombinationOverride,MATCH,5,src/init.cpp,?PreventCombinationOverride@CommandClass@@UBE_NH@Z
 0x00535BE0,CommandClass::ExtraTriggerCondition,MATCH,15,src/init.cpp,?ExtraTriggerCondition@CommandClass@@UBE_NH@Z
 0x00535BF0,CommandClass::Unknown1C,MATCH,5,src/init.cpp,?Unknown1C@CommandClass@@UBE_NH@Z
