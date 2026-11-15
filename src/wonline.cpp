@@ -14545,7 +14545,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 	if (channel->type != 0) {
 		{
 			Wstring name((char *)user->name);
-			userinfoindex = FUN_0077D240(&name);
+			userinfoindex = FUN_0077D240(name);
 		}
 		memmove(&g_UserInfo[userinfoindex + 1], g_UserInfo + userinfoindex,
 				sizeof(ChannelUserInfo) * (15 - userinfoindex));
