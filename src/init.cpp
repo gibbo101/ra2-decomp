@@ -80,7 +80,6 @@
 #include "mixfile.h"
 #include "modemgst.h"
 #include "modemhst.h"
-#include "mono.h"
 #include "movie.h"
 #include "mplayer.h"
 #include "msgbox.h"
@@ -124,7 +123,6 @@
 #include "unittype.h"
 #include "vein.h"
 #include "voc.h"
-#include "volinfo.h"
 #include "vox.h"
 #include "vqoption.h"
 #include "wave.h"
@@ -2173,16 +2171,12 @@ extern MFCD * DAT_00884E2C;
 extern DynamicVectorClass<MFCD *> DAT_00884DA8;
 extern DynamicVectorClass<MFCD *> DAT_00884DE0;
 
-static void Open_Secondary_Mixfile(MFCD *&mix, char const *name)
-{
-	if (CCFileClass(name).Is_Available()) {
-		mix = new MFCD(name, &FastKey);
-	}
-}
 // FUNCTION: GAMEMD 0x00530460
 bool Init_Secondary_Mixfiles(void)
 {
-	Open_Secondary_Mixfile(DAT_00884E38, "CONQMD.MIX");
+	if (CCFileClass("CONQMD.MIX").Is_Available()) {
+		DAT_00884E38 = new MFCD("CONQMD.MIX", &FastKey);
+	}
 	DebugStringNoPrefix(" CONQMD.MIX");
 	if (DAT_00884E38 == NULL) return false;
 
@@ -2205,13 +2199,19 @@ bool Init_Secondary_Mixfiles(void)
 	}
 	DAT_00884E24 = new MFCD("ISOGEN.MIX", &FastKey);
 
-	Open_Secondary_Mixfile(DAT_00884E3C, "CONQUER.MIX");
+	if (CCFileClass("CONQUER.MIX").Is_Available()) {
+		DAT_00884E3C = new MFCD("CONQUER.MIX", &FastKey);
+	}
 	DebugStringNoPrefix(" CONQUER.MIX");
 	if (DAT_00884E3C == NULL) return false;
-	Open_Secondary_Mixfile(DAT_00884E40, "CAMEOMD.MIX");
+	if (CCFileClass("CAMEOMD.MIX").Is_Available()) {
+		DAT_00884E40 = new MFCD("CAMEOMD.MIX", &FastKey);
+	}
 	DebugStringNoPrefix(" CAMEOMD.MIX");
 	if (DAT_00884E40 == NULL) return false;
-	Open_Secondary_Mixfile(DAT_00884E44, "CAMEO.MIX");
+	if (CCFileClass("CAMEO.MIX").Is_Available()) {
+		DAT_00884E44 = new MFCD("CAMEO.MIX", &FastKey);
+	}
 	DebugStringNoPrefix(" CAMEO.MIX");
 	if (DAT_00884E44 == NULL) return false;
 
@@ -2259,7 +2259,9 @@ bool Init_Secondary_Mixfiles(void)
 	}
 	if (DAT_00884E60 == NULL) return false;
 
-	Open_Secondary_Mixfile(DAT_00884DD8, "MULTIMD.MIX");
+	if (CCFileClass("MULTIMD.MIX").Is_Available()) {
+		DAT_00884DD8 = new MFCD("MULTIMD.MIX", &FastKey);
+	}
 	DebugStringNoPrefix(" MULTIMD.MIX");
 	if (DAT_00884DD8 == NULL) return false;
 

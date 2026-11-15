@@ -5,6 +5,7 @@
 
 #define INCLUDE_COM
 #include "always.h"
+#include "_rect.h"
 #include "alphashp.h"
 #include "_alpha.h"
 #include "_tactica.h"
@@ -180,6 +181,133 @@ void AlphaShapeClass::Update_All(void)
 	for (int i = AlphaShapes.Count() - 1; i >= 0; i--) {
 		if (AlphaShapes[i]->IsToDelete) {
 			delete AlphaShapes[i];
+		}
+	}
+}
+
+
+// FUNCTION: GAMEMD 0x00420F40
+void AlphaShapeClass::Draw_In_Area(
+	Point2D const &point,
+	Rect const &cliprect)
+{
+#define ALPHA_BLOCK4 "\xDB\xDB\xDB\xDB"
+	static const unsigned char tile_mask[] =
+		"                                                            "
+		"                            " ALPHA_BLOCK4 "                            "
+		"                          " ALPHA_BLOCK4 ALPHA_BLOCK4 "                          "
+		"                        " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "                        "
+		"                      " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "                      "
+		"                    " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "                    "
+		"                  " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "                  "
+		"                " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "                "
+		"              " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "              "
+		"            " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "            "
+		"          " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "          "
+		"        " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "        "
+		"      " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "      "
+		"    " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "    "
+		"  " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "  "
+		ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4
+		"  " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "  "
+		"    " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "    "
+		"      " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "      "
+		"        " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "        "
+		"          " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "          "
+		"            " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "            "
+		"              " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "              "
+		"                " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "                "
+		"                  " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "                  "
+		"                    " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "                    "
+		"                      " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "                      "
+		"                        " ALPHA_BLOCK4 ALPHA_BLOCK4 ALPHA_BLOCK4 "                        "
+		"                          " ALPHA_BLOCK4 ALPHA_BLOCK4 "                          "
+		"                            " ALPHA_BLOCK4 "                            ";
+#undef ALPHA_BLOCK4
+
+	for (int i = 0; i < AlphaShapes.Count(); i++) {
+		if (!AlphaShapes[i]->IsToDelete) {
+			Rect r1 = AlphaShapes[i]->DrawRect;
+			r1 -= Point2D(TacticalMap->TacPixelX, TacticalMap->TacPixelY);
+			r1 += TacticalRect.Top_Left();
+
+			Rect r2 = Intersect(r1, cliprect);
+			Rect r3(point.X, point.Y, ISO_TILE_PIXEL_W, ISO_TILE_PIXEL_H);
+			Rect r4 = Intersect(r2, r3);
+
+			if (r4.Is_Valid()) {
+				Point2D offset = r4.Top_Left() - r3.Top_Left();
+
+				Point2D origin = r1.Top_Left();
+				SHPStruct const *shape = AlphaShapes[i]->ImageData;
+				Rect shape_rect = shape->GetFrameBounds(0);
+
+				int top = MAX(r4.Y, shape_rect.Y + origin.Y);
+				int src_y = top - origin.Y - shape_rect.Y;
+				int bottom = MIN(
+					r4.Y + r4.Height,
+					origin.Y + shape_rect.Height + shape_rect.Y);
+				int left = MAX(r4.X, shape_rect.X + origin.X);
+				int src_x = left - origin.X - shape_rect.X;
+				int right = MIN(
+					r4.X + r4.Width,
+					origin.X + shape_rect.Width + shape_rect.X);
+
+				int shape_skip =
+					origin.X - right + shape_rect.Width
+					+ src_x + shape_rect.X;
+				int alpha_skip =
+					AlphaBuffer->Get_Buffer_Width() - right + left;
+				int mask_skip = ISO_TILE_PIXEL_W - r4.Width;
+
+				const unsigned char *maskptr =
+					&tile_mask[ISO_TILE_PIXEL_W * offset.Y + offset.X];
+				unsigned char *shapeptr =
+					(unsigned char *)shape->GetPixels(0);
+
+				unsigned short *alphaptr =
+					(unsigned short *)AlphaBuffer->Get_Buffer_Offset(
+						Point2D(left, top - TacticalRect.Y));
+
+				shapeptr += src_x + src_y * shape_rect.Width;
+				unsigned char pixel;
+
+				if (&alphaptr[
+						right - left
+						+ (bottom - top) * AlphaBuffer->Get_Buffer_Width()
+						+ 2]
+					>= (unsigned short *)AlphaBuffer->Get_Buffer_End()) {
+					for (int i = top; i < bottom; i++) {
+						for (int j = left; j < right; j++) {
+							pixel = *shapeptr++;
+							if (*maskptr++ != '\x20') {
+								*alphaptr = BrightnessTable[pixel][*alphaptr];
+							}
+							alphaptr++;
+							alphaptr = (unsigned short *)
+								AlphaBuffer->Wrap_Overflow((unsigned)alphaptr);
+						}
+						shapeptr += shape_skip;
+						maskptr += mask_skip;
+						alphaptr += alpha_skip;
+						alphaptr = (unsigned short *)
+							AlphaBuffer->Wrap_Overflow((unsigned)alphaptr);
+					}
+				} else {
+					for (int i = top; i < bottom; i++) {
+						for (int j = left; j < right; j++) {
+							pixel = *shapeptr++;
+							if (*maskptr++ != '\x20') {
+								*alphaptr = BrightnessTable[pixel][*alphaptr];
+							}
+							++alphaptr;
+						}
+						shapeptr += shape_skip;
+						alphaptr += alpha_skip;
+						maskptr += mask_skip;
+					}
+				}
+			}
 		}
 	}
 }
