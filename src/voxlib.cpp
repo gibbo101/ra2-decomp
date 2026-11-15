@@ -9,6 +9,7 @@
 #include "voxdrsys.h"
 #include "wwfile.h"
 #include <climits>
+#include "surface.h"
 
 // SYNTHETIC: GAMEMD 0x00755C90 SYMBOL
 // _$E2
@@ -186,6 +187,145 @@ void VoxelLibrary::Clear(void)
 	Data = NULL;
 }
 
+// FUNCTION: GAMEMD 0x00755DB0
+int VoxelLibrary::Read_File(FileClass & file, int load_file_palette)
+{
+	unsigned int i = 0;
+
+	Clear();
+
+	if (!file.Open(FileClass::READ)) {
+		return(false);
+	}
+
+	VoxelHeaderStruct hdr;
+	file.Read(&hdr, sizeof(hdr));
+
+	LayerCount = hdr.LayerCount;
+	LayerInfoCount = hdr.LayerInfoCount;
+	DataSize = hdr.DataSize;
+
+	LayerHeaders = new LayerStruct[LayerCount];
+	LayerInfos = new LayerInfoStruct[LayerInfoCount];
+	Data = new unsigned char[DataSize];
+
+	if (!LayerHeaders || !LayerInfos || !Data) {
+		Clear();
+		file.Close();
+		return(false);
+	}
+
+	if (load_file_palette) {
+
+		VoxelPaletteLibrary vpl(VoxelRGBColors, VoxelPaletteTranslateTable);
+
+		unsigned char remap_start;
+		unsigned char remap_end;
+
+		if (file.Read(&remap_start, sizeof(remap_start)) != sizeof(remap_start)) {
+			file.Close();
+			Clear();
+			return(false);
+		}
+
+		if (file.Read(&remap_end, sizeof(remap_end)) != sizeof(remap_end)) {
+			file.Close();
+			Clear();
+			return(false);
+		}
+
+		vpl.Header.RemapStart = remap_start;
+		vpl.Header.RemapEnd = remap_end;
+
+		// Read the raw palette data.
+		for (i = 0; i < VOXEL_PALETTE_SIZE; i++) {
+			file.Read(&VoxelRGBColors[i].Red, sizeof(VoxelRGBColors[i].Red));
+			file.Read(&VoxelRGBColors[i].Green, sizeof(VoxelRGBColors[i].Green));
+			file.Read(&VoxelRGBColors[i].Blue, sizeof(VoxelRGBColors[i].Blue));
+		}
+
+		if (hdr.PaletteCount > 1) {
+
+			// Skip past any additional palettes as we only support one per voxel object.
+			int palette_size = (VOXEL_PALETTE_SIZE*sizeof(RGBStruct));
+			int skip_size = (palette_size * hdr.PaletteCount) - palette_size;
+			file.Seek(skip_size);
+		}
+
+		vpl.Calculate_Lookup_Table();
+
+	} else {
+
+		// Skip past the palette data.
+
+		int remap_start_size = sizeof(unsigned char);
+		int remap_end_size = sizeof(unsigned char);
+		int palette_size = (VOXEL_PALETTE_SIZE*sizeof(RGBStruct));
+		int skip_size = (remap_start_size + remap_end_size + palette_size) * hdr.PaletteCount;
+		file.Seek(skip_size);
+	}
+
+	VoxelLayerHeaderStruct lyrhdr;
+	for (i = 0; i < LayerCount; i++) {
+
+		if (file.Read(&lyrhdr, sizeof(lyrhdr)) != sizeof(lyrhdr)) {
+			Clear();
+			file.Close();
+			return(false);
+		}
+
+		LayerHeaders[i].InfoIndex = lyrhdr.InfoIndex;
+		LayerHeaders[i].Unused1 = lyrhdr.Unused1;
+		LayerHeaders[i].Unused2 = lyrhdr.Unused2;
+	}
+
+	if (file.Read(Data, DataSize) != DataSize) {
+		Clear();
+		file.Close();
+		return(false);
+	}
+
+	VoxelLayerInfoStruct layerinfo;
+	for (i = 0; i < LayerInfoCount; i++) {
+
+		if (file.Read(&layerinfo, sizeof(layerinfo)) != sizeof(layerinfo)) {
+			Clear();
+			file.Close();
+			return(false);
+		}
+
+		LayerInfos[i].XSize = layerinfo.XSize;
+		LayerInfos[i].YSize = layerinfo.YSize;
+		LayerInfos[i].ZSize = layerinfo.ZSize;
+		LayerInfos[i].NormalType = layerinfo.NormalType;
+		LayerInfos[i].Scale = layerinfo.Scale;
+		LayerInfos[i].Transform = (Matrix3DStruct &)Matrix3D(layerinfo.Transform);
+
+		Vector3 min;
+		min.X = layerinfo.MinBounds.X;
+		min.Y = layerinfo.MinBounds.Y;
+		min.Z = layerinfo.MinBounds.Z;
+		Vector3 max = layerinfo.MaxBounds;
+
+		LayerInfos[i].BoxCorner[0] = Vector3(max[0], max[1], min[2]);
+		LayerInfos[i].BoxCorner[1] = Vector3(max[0], min[1], min[2]);
+		LayerInfos[i].BoxCorner[2] = Vector3(min[0], min[1], min[2]);
+		LayerInfos[i].BoxCorner[3] = Vector3(min[0], max[1], min[2]);
+		LayerInfos[i].BoxCorner[4] = Vector3(max[0], max[1], max[2]);
+		LayerInfos[i].BoxCorner[5] = Vector3(max[0], min[1], max[2]);
+		LayerInfos[i].BoxCorner[6] = Vector3(min[0], min[1], max[2]);
+		LayerInfos[i].BoxCorner[7] = Vector3(min[0], max[1], max[2]);
+
+		LayerInfos[i].StartOffset = (unsigned char *)(Data + layerinfo.StartOffset);
+		LayerInfos[i].EndOffset = (unsigned char *)(Data + layerinfo.EndOffset);
+		LayerInfos[i].DataOffset = (unsigned char *)(Data + layerinfo.DataOffset);
+	}
+
+	file.Close();
+
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x007564A0
 VoxelLibrary::LayerStruct const & VoxelLibrary::Get_Layer(int layer)
 {
@@ -276,6 +416,96 @@ void VoxelLibrary::Render_Object(VoxelRenderStruct & voxel, Vector3 & center)
 	}
 
 	VoxelDrawFunctions[funcnum](&arg);
+}
+
+inline void Draw_Shadow(VoxelFuncArgumentStruct * state, Surface * surface, int left, int top)
+{
+	unsigned short x = state->TransformMatrix[0].I;
+	unsigned short y = state->TransformMatrix[0].J;
+	unsigned row;
+	unsigned row_index;
+	unsigned short row_x;
+	unsigned short row_y;
+	if (surface) {
+		for (row = 0; row < state->YSize; row++) {
+			row_index = state->StartIndex;
+			row_x = x;
+			row_y = y;
+			for (unsigned column = 0; column < state->XSize; column++) {
+				unsigned offset = ((unsigned *)state->EndOffset)[state->StartIndex];
+				unsigned short column_x = x;
+				unsigned short column_y = y;
+				if (offset != 0xFFFFFFFF) {
+					unsigned index = (x >> 8) | (y & 0xFF00);
+					unsigned short pixel_x = left + (x >> 8);
+					unsigned short pixel_y = top + (y >> 8);
+					int pixel = surface->Get_Pixel(Point2D(pixel_x, pixel_y));
+					int next = surface->Get_Pixel(Point2D(pixel_x + 1, pixel_y));
+					VoxelDrawBuffer[index] = pixel == 0;
+					VoxelDrawBuffer[index + 1] = next == 0;
+				}
+				x = column_x + state->TransformMatrix[1].I;
+				y = column_y + state->TransformMatrix[1].J;
+				state->StartIndex = state->StrideX + state->StartIndex;
+			}
+			x = row_x + state->TransformMatrix[2].I;
+			y = row_y + state->TransformMatrix[2].J;
+			state->StartIndex = state->StrideY + row_index;
+		}
+	} else {
+		for (row = 0; row < state->YSize; row++) {
+			row_index = state->StartIndex;
+			row_x = x;
+			row_y = y;
+			for (unsigned column = 0; column < state->XSize; column++) {
+				unsigned offset = ((unsigned *)state->EndOffset)[state->StartIndex];
+				unsigned short column_x = x;
+				unsigned short column_y = y;
+				if (offset != 0xFFFFFFFF) {
+					unsigned index = (x >> 8) | (y & 0xFF00);
+					VoxelDrawBuffer[index] = 1;
+					VoxelDrawBuffer[index + 1] = 1;
+				}
+				x = column_x + state->TransformMatrix[1].I;
+				y = column_y + state->TransformMatrix[1].J;
+				state->StartIndex = state->StrideX + state->StartIndex;
+			}
+			x = row_x + state->TransformMatrix[2].I;
+			y = row_y + state->TransformMatrix[2].J;
+			state->StartIndex = state->StrideY + row_index;
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00756860
+void VoxelLibrary::Render_Shadow(VoxelShadowRenderStruct & voxel, Vector3 & center)
+{
+	LayerInfoStruct const & layerinfo = Get_Layer_Info(voxel.Layer, voxel.Info);
+	VoxelFuncArgumentStruct arg;
+	unsigned char x_size = layerinfo.XSize;
+	unsigned char y_size = layerinfo.YSize;
+	unsigned char z_size = 1;
+	arg.XSize = x_size;
+	arg.YSize = y_size;
+	arg.ZSize = z_size;
+	arg.StartOffset = NULL;
+	arg.EndOffset = layerinfo.EndOffset;
+	arg.DataOffset = NULL;
+	Vector3 const & corner_x = voxel.ShadowCorner[1];
+	Vector3 const & corner_0 = voxel.ShadowCorner[2];
+	Vector3 const & corner_y = voxel.ShadowCorner[3];
+	arg.StrideX = 1;
+	arg.StrideY = x_size;
+	arg.StartIndex = 0;
+	arg.TransformMatrix[0].I = short(float(corner_0.X + 128 - center.X) * 256);
+	arg.TransformMatrix[0].J = short(float(corner_0.Y + 128 - center.Y) * 256);
+	voxel.ShadowX = voxel.ShadowX + center.X;
+	voxel.ShadowY = voxel.ShadowY + center.Y;
+	arg.TransformMatrix[1].I = (short)((corner_x.X - corner_0.X) / x_size * 256.0f);
+	arg.TransformMatrix[2].I = (short)((corner_y.X - corner_0.X) / y_size * 256.0f);
+	arg.TransformMatrix[1].J = (short)((corner_x.Y - corner_0.Y) / x_size * 256.0f);
+	arg.TransformMatrix[2].J = (short)((corner_y.Y - corner_0.Y) / y_size * 256.0f);
+	Draw_Shadow(&arg, voxel.ShadowSurface, voxel.ShadowX, voxel.ShadowY);
 }
 
 // FUNCTION: GAMEMD 0x00756BB0

@@ -246,6 +246,171 @@ Point2D MapPreviewClass::Cell_To_Preview_Pixel(Cell cell) const
 	return(Point2D(x / 60, y / 30));
 }
 
+#include "overtype.h"
+void __cdecl FUN_004068E0(char const * format, ...);
+
+// FUNCTION: GAMEMD 0x00641140
+void MapPreviewClass::Create_Preview(void)
+{
+	CellClass *cptr;
+
+	Map.Reset_Iterator();
+
+	int minx = 10000;
+	int miny = 10000;
+	int maxx = 0;
+	int maxy = 0;
+
+	cptr = Map.Iterate();
+	while (cptr != 0) {
+		if (Map.In_Local_Radar(cptr->CellID, false)) {
+			Point2D pixel = Cell_To_Preview_Pixel(cptr->CellID);
+			if (pixel.X < minx) {
+				minx = pixel.X;
+			}
+			if (pixel.X > maxx) {
+				maxx = pixel.X;
+			}
+			if (pixel.Y < miny) {
+				miny = pixel.Y;
+			}
+			if (pixel.Y > maxy) {
+				maxy = pixel.Y;
+			}
+		}
+		cptr = Map.Iterate();
+	}
+
+	int width = 2 * (maxx - minx);
+	int height = maxy - miny;
+
+	if (SurfacePtr != 0) {
+		delete SurfacePtr;
+	}
+
+	SurfacePtr = new DSurface(width, height, true);
+	SurfacePtr->Fill(0);
+
+	Map.Reset_Iterator();
+
+	cptr = Map.Iterate();
+
+	SurfacePtr->Lock();
+	while (cptr != 0) {
+		Cell cell = cptr->Fetch_CellID();
+		if (Map.In_Local_Radar(cell, false)) {
+			unsigned char unknown = 0;
+			unsigned int packedcolor =
+				Map[cell].Preview_Cell_Color(unknown, false);
+			Point2D pixel = Cell_To_Preview_Pixel(cell);
+
+			Point2D offset = pixel - Point2D(minx, miny);
+			Rect area(2 * offset.X, offset.Y, 2, 1);
+
+			bool hasradarcolor = false;
+			int level = 100;
+			int radarcolor = 0;
+
+			if (cptr->Overlay != -1) {
+				OverlayTypeClass *optr = OverlayTypes[cptr->Overlay];
+				RGBClass rgb = optr->Get_Radar_Color(cptr->OverlayData);
+				if (optr->IsTiberium) {
+					radarcolor = DSurface::Build_Hicolor_Pixel(
+						optr->RadarColor.Get_Red(),
+						optr->RadarColor.Get_Green(),
+						optr->RadarColor.Get_Blue());
+					if (radarcolor <= 5) {
+						radarcolor = DSurface::Build_Hicolor_Pixel(
+							rgb.Get_Red(),
+							rgb.Get_Green(),
+							rgb.Get_Blue());
+					}
+					level = 75;
+					hasradarcolor = true;
+					if (cptr->OverlayData < 2) {
+						level = 25;
+					} else if (cptr->OverlayData < 5) {
+						level = 50;
+					}
+					packedcolor =
+						DSurface::Blend_Pixel(radarcolor, packedcolor, level);
+				} else {
+					radarcolor = DSurface::Build_Hicolor_Pixel(
+						rgb.Get_Red(),
+						rgb.Get_Green(),
+						rgb.Get_Blue());
+					if (radarcolor <= 5) {
+						radarcolor = DSurface::Build_Hicolor_Pixel(
+							optr->RadarColor.Get_Red(),
+							optr->RadarColor.Get_Green(),
+							optr->RadarColor.Get_Blue());
+					}
+					if (radarcolor != 0) {
+						hasradarcolor = true;
+					}
+				}
+			} else {
+				TerrainClass *optr = (TerrainClass *)cptr->Cell_Occupier();
+				if (optr != 0 && optr->What_Am_I() == 0x24) {
+					hasradarcolor = true;
+					level = 75;
+					radarcolor = DSurface::Build_Hicolor_Pixel(
+						optr->Class->RadarColor.Get_Red(),
+						optr->Class->RadarColor.Get_Green(),
+						optr->Class->RadarColor.Get_Blue());
+				}
+			}
+
+			int highcolor = packedcolor & 0x0000FFFF;
+			unsigned int lowcolor = packedcolor >> 16;
+			if (hasradarcolor) {
+				if (level == 100) {
+					highcolor = radarcolor;
+					lowcolor = radarcolor;
+				} else {
+					highcolor =
+						DSurface::Blend_Pixel(radarcolor, highcolor, level);
+					lowcolor =
+						DSurface::Blend_Pixel(radarcolor, lowcolor, level);
+				}
+			}
+
+			if (lowcolor == 0 || highcolor == 0) {
+				FUN_004068E0(
+					"We just got a black pixel for the preview image. "
+					"The cell where this happened is %d, %d\n",
+					cell.X, cell.Y);
+				highcolor = lowcolor =
+					DSurface::Build_Hicolor_Pixel(128, 128, 128);
+			}
+
+			SurfacePtr->Put_Pixel_Clip(
+				area.Top_Left(), lowcolor, SurfacePtr->Get_Rect());
+			SurfacePtr->Put_Pixel_Clip(
+				area.Bottom_Right(), highcolor, SurfacePtr->Get_Rect());
+		}
+		cptr = Map.Iterate();
+	}
+
+	for (int i = 0; i < 8; i++) {
+		if (Scen->Is_Valid_Waypoint(i)) {
+			Point2D pixel =
+				Cell_To_Preview_Pixel(Scen->Get_Waypoint_Cell(i));
+			pixel = pixel - Point2D(minx, miny);
+			Rect rect;
+			rect.X = 2 * pixel.X - 1;
+			rect.Y = pixel.Y - 1;
+			rect.Width = 4;
+			rect.Height = 4;
+			SurfacePtr->Fill_Rect(
+				SurfacePtr->Get_Rect(), rect,
+				DSurface::Build_Hicolor_Pixel(240, 0, 0));
+		}
+	}
+
+	SurfacePtr->Unlock();
+}
+
 // FUNCTION: GAMEMD 0x006418B0
 bool MapPreviewClass::Write_INI(CCINIClass & ini)
 {

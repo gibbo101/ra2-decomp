@@ -799,8 +799,7 @@ void PlayerProfile::FUN_0077A9F0(HWND dialog, Wstring const * name, bool update)
 		WideWstring label(StringTable::LoadString(
 			"GUI:UserProfileLabel", NULL,
 			"D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x3E3));
-		unsigned label_length = label.length();
-		wchar_t * title = new wchar_t[(label_length += name->length()) + 1];
+		wchar_t * title = new wchar_t[label.length() + name->length() + 1];
 		swprintf(title, label.get(), name->text());
 		Profile_Text(dialog, 0x6EF, title);
 		delete [] title;
@@ -808,19 +807,17 @@ void PlayerProfile::FUN_0077A9F0(HWND dialog, Wstring const * name, bool update)
 		Profile_Text(dialog, 0x6EF, DAT_00887734);
 	}
 
-	WideWstring & date = Wide40;
-	WideWstring & time = Wide3C;
 	wchar_t * text = new wchar_t[
-		date.length() + time.length() +
+		Wide40.length() + Wide3C.length() +
 		wcslen(StringTable::LoadString(
 			"GUI:WelcomeUpdate", NULL,
 			"D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x3ED))];
 
-	if (text && date.length() > 0 && time.length() > 0) {
+	if (text && Wide40.length() > 0 && Wide3C.length() > 0) {
 		swprintf(text, StringTable::LoadString(
 			"GUI:WelcomeUpdate", NULL,
 			"D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x3EF),
-			date.str, time.str);
+			Wide40.str, Wide3C.str);
 		item = GetDlgItem(dialog, 0x797);
 		SendMessageA(item, 0x4B2, 0, (LPARAM)text);
 		goto update_done;
