@@ -61,3 +61,8 @@ effect, so it can be fixed in a separate build later.
 - **BitFont::LoadInternalData (0x00433990).** A short read of the range table
   in the extended font format jumps to failure cleanup without freeing the
   allocated range buffer. The recovered source preserves this leak.
+
+- **MapGeneratorClass::FUN_0059BBC0 (0x0059BBC0).** The region-growth routine
+  allocates its cell-node array and priority queue before searching for a random
+  starting cell. Exhausting the 200-attempt search returns without releasing
+  either allocation. The recovered source preserves this leak.

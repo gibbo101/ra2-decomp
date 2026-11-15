@@ -3667,6 +3667,13 @@ void MapGeneratorClass::Scatter_Green_Tiles(void)
 	}
 }
 
+static double Map_Cell_Distance(Cell const & from, Cell const & to)
+{
+	int dx = from.X - to.X;
+	int dy = from.Y - to.Y;
+	return fastmath::sqrt((double)(dy * dy + dx * dx));
+}
+
 // FUNCTION: GAMEMD 0x0059B940
 double MapGeneratorClass::FUN_0059B940(Cell const & from, Cell const & to, Rect const & rect, Cell const & center, float weight_x, float weight_y)
 {
@@ -3685,9 +3692,7 @@ double MapGeneratorClass::FUN_0059B940(Cell const & from, Cell const & to, Rect 
 		double steps = MAX(abs(x), abs(y));
 		return (weight_x * ratio_u + ratio_v * weight_y) * steps;
 	}
-	int dx = from.X - to.X;
-	int dy = from.Y - to.Y;
-	return fastmath::sqrt((double)(dy * dy + dx * dx));
+	return Map_Cell_Distance(from, to);
 }
 
 // FUNCTION: GAMEMD 0x0059BAB0
@@ -7647,4 +7652,109 @@ bool MapGeneratorClass::Seed_Lake(Cell const & origin)
 	}
 	Clear_Region_Cells(WorkingRegionID, 0, -1, ISOTILE_CLEAR);
 	return false;
+}
+
+// FUNCTION: GAMEMD 0x0059BBC0
+int MapGeneratorClass::FUN_0059BBC0(int size, Rect const & bounds, Point2D const & seed,
+	bool flag, Cell const & center, double ratio, bool flag2)
+{
+	size = MAX(size, 400);
+	int capacity = MAX(size * 8 + 2, 100);
+	CellNode * nodes = new CellNode[capacity];
+	PriorityQueueClass<CellNode> * heap = new PriorityQueueClass<CellNode>(capacity);
+	Cell start;
+	if (seed.X == 0 && seed.Y == 0) {
+		int tries = 0;
+		do {
+			unsigned int x = Pick_Random_UInt(0, Map.PlayRect.Width - 1);
+			unsigned int y = Pick_Random_UInt(0, Map.PlayRect.Height - 1);
+			Cell first_offset = Cell(1, Map.PlayRect.Width) + Cell(x, -x);
+			start = first_offset + Cell(y, y);
+		} while (++tries < 200 && !(MapRegionClass::CellData::Get_Region(start) == 0 && Map[start].Is_Tile_With_Water()));
+		if (tries >= 200) return 0;
+	} else {
+		start = Cell(seed.X, seed.Y);
+	}
+
+	float weight_x = 0.0f;
+	float weight_y = 0.0f;
+	if (!(bounds == RECT_NONE)) {
+		int width = bounds.Width;
+		int height = bounds.Height;
+		if (width > height) {
+			weight_x = 1.0f;
+			weight_y = (double)width / height * 1.2;
+		} else {
+			weight_x = (double)height / width * 1.2;
+			weight_y = 1.0f;
+		}
+	}
+
+	double current_x = start.X;
+	double current_y = start.Y;
+	int seeded_count = 0;
+	heap->Clear();
+	int used = 1;
+	nodes[0].Element = start;
+	nodes[0].Score = 0.0f;
+	MapRegionClass::CellData::Set_Spread(start, WorkingRegionID);
+	heap->Insert(nodes[0]);
+	CellNode * node = heap->Extract_Min();
+	double scale_x = 1.0 / ((bounds.Width * 0.5) * (bounds.Width * 0.5));
+	double scale_y = 1.0 / ((bounds.Height * 0.5) * (bounds.Height * 0.5));
+	while (seeded_count < size) {
+		if (node == NULL) break;
+		MapRegionClass::CellData::Set_Region(node->Element, WorkingRegionID);
+		Map[node->Element].ITType = ISOTILE_CLEAR;
+		int facing = FACING_FIRST;
+		for (; facing < FACING_COUNT; facing += FACING_90) {
+			Cell adjacent = node->Element + AdjacentCell[facing & 7];
+			if (My_In_Radar(adjacent)) {
+				MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(adjacent);
+				if (data.RegionID == 0 && data.SpreadID != WorkingRegionID &&
+					Map[adjacent].Is_Tile_With_Water() && used < capacity &&
+					FUN_0059BAB0(adjacent, bounds, flag, scale_x, scale_y)) {
+					nodes[used].Element = adjacent;
+					Cell moving_seed = Cell((int)(current_x + 0.5), (int)(current_y + 0.5));
+					if (flag2) {
+						nodes[used].Score = FUN_0059B940(moving_seed, adjacent, bounds, center, weight_x, weight_y);
+					} else {
+						double distance = Map_Cell_Distance(adjacent, moving_seed);
+						nodes[used].Score = distance + RMG_RANDOM_DOUBLE(5);
+					}
+					data.SpreadID = WorkingRegionID;
+					heap->Insert(nodes[used++]);
+				}
+			}
+		}
+		current_x += RMGGaussian() * ratio;
+		current_y += RMGGaussian() * ratio;
+		++seeded_count;
+		node = heap->Extract_Min();
+	}
+
+	CellNode * remaining = heap->Extract_Min();
+	while (remaining != NULL) {
+		CellClass * current = &Map[remaining->Element];
+		MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(remaining->Element);
+		if (data.RegionID == 0 && current->Is_Tile_With_Water()) {
+			current->ITType = ISOTILE_CLEAR;
+			data.RegionID = WorkingRegionID;
+		}
+		remaining = heap->Extract_Min();
+		++seeded_count;
+	}
+	delete[] nodes;
+	delete heap;
+	bool success = Map.FUN_0057A0C0(WorkingRegionID, true);
+	Clear_Shore_Tiles();
+	int result;
+	if (!success) {
+		Clear_Region_Cells(WorkingRegionID, 0, -1, IsometricTileTypeClass::WaterSet);
+		result = 0;
+	} else {
+		result = seeded_count;
+		WorkingRegionID++;
+	}
+	return result;
 }
