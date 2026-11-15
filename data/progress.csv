@@ -8386,6 +8386,7 @@ address,name,result,size,source,symbol
 0x005A80B0,MapGeneratorClass::Generate_Rural_Areas,MATCH,546,src/mapgen.cpp,?Generate_Rural_Areas@MapGeneratorClass@@QAEXXZ
 0x005A82E0,MapGeneratorClass::Generate_Rural_Buildings,MATCH,1081,src/mapgen.cpp,?Generate_Rural_Buildings@MapGeneratorClass@@QAEXABVCell@@@Z
 0x005A8720,MapGeneratorClass::Generate_Rural_Units,MATCH,677,src/mapgen.cpp,?Generate_Rural_Units@MapGeneratorClass@@QAEXABVCell@@@Z
+0x005A89D0,MapGeneratorClass::Generate_Rural_Roads,MATCH,1321,src/mapgen.cpp,?Generate_Rural_Roads@MapGeneratorClass@@QAE_NABVCell@@@Z
 0x005A8F00,MapGeneratorClass::Find_Dirt_Road_Tile,MATCH,734,src/mapgen.cpp,?Find_Dirt_Road_Tile@MapGeneratorClass@@SI_NW4FacingType@@ABVCell@@HAAW4IsometricTileType@@AAV3@AAH@Z
 0x005A91E0,MapGeneratorClass::Generate_Lights,MATCH,974,src/mapgen.cpp,?Generate_Lights@MapGeneratorClass@@QAEXXZ
 0x005A95B0,MapGeneratorClass::Generate_Neutral_Buildings,MATCH,870,src/mapgen.cpp,?Generate_Neutral_Buildings@MapGeneratorClass@@QAEXXZ
