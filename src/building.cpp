@@ -8380,3 +8380,29 @@ template class VectorClass<BuildingClass *>;
 // ?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@@Z
 template class VectorClass<Reestablish *>;
 template class DynamicVectorClass<AbstractClass *>;
+
+// FUNCTION: GAMEMD 0x00453060
+void BuildingClass::Disconnect_Laser_Fence(FacingType dir, bool explode)
+{
+	if (Class->IsLaserFencePost) {
+		int range = Class->ThreatRange >> 8;
+		if (range <= 1) range = 1;
+		unsigned face = (unsigned)dir % 4;
+		Cell working_cell = Center_Coord().As_Cell();
+		for (int i = 0; i < range; ++i) {
+			working_cell = Adjacent_Cell(working_cell, dir);
+			BuildingClass * building = Map[working_cell].Cell_Building();
+			if (building) {
+				if (!building->Class->IsLaserFence) return;
+				if (Owner() != building->Owner()) return;
+				if ((unsigned)(building->PrimaryFacing.Current().As_Dir8() & 3) != face) return;
+				if (explode) {
+					Combat_Lighting(building->Center_Coord(), building->Strength, Rule->C4Warhead, false, 0);
+					building->Take_Damage(building->Strength, 0, Rule->C4Warhead, NULL, true, true, NULL);
+				} else {
+					building->Delete_Me();
+				}
+			}
+		}
+	}
+}
