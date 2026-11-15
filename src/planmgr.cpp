@@ -1429,6 +1429,12 @@ extern bool DAT_00AC4C08;
 void __fastcall FUN_006DA740(Tactical * tactical);
 extern int DAT_00AC4C90;
 
+static inline void Reset_Planning_Command_Flags(void)
+{
+	DAT_00AC4CD0 = false;
+	DAT_00AC4CC8 = false;
+}
+
 // FUNCTION: GAMEMD 0x006370B0
 void __fastcall FUN_006370B0(void)
 {
@@ -1446,8 +1452,7 @@ void __fastcall FUN_006370B0(void)
 	PlanningNodeClass::Unknown1.Clear();
 	PlanningNodeClass::Unknown2.Clear();
 	DAT_00AC4CCC = 0;
-	DAT_00AC4CD0 = false;
-	DAT_00AC4CC8 = false;
+	Reset_Planning_Command_Flags();
 	DAT_00AC4C3C = 0;
 	DAT_00AC4C08 = false;
 	DAT_00AC4CF5 = false;
@@ -1552,13 +1557,7 @@ void __fastcall FUN_00637920(void)
 	int count = PlanningNodeClass::Unknown3.Count();
 	for (int i = 0; i < count; i++) {
 		PlanningNodeClass * node = PlanningNodeClass::Unknown3[i];
-		node->Clear();
-		int members = node->PlanningMembers.Count();
-		for (int j = 0; j < members; j++) {
-			node->FUN_00634E10(node->PlanningMembers[j]);
-		}
-		node->Update_Active();
-		node->Queued = false;
+		node->Rebuild();
 	}
 	PlanningNodeClass::Unknown3.Clear();
 }
@@ -1860,12 +1859,16 @@ extern bool DAT_00AC4C08;
 int __fastcall FUN_0063AC70(PlanningNodeClass * node);
 void __fastcall FUN_00634B20(PlanningNodeClass * node);
 
-static inline PlanningNodeClass * Find_Planning_Node(int x, int y)
+static inline PlanningNodeClass * Find_Node_At(DynamicVectorClass<PlanningNodeClass *> const & nodes, Point2D const & point)
 {
-	int count = PlanningNodeClass::Unknown2.Count();
-	for (int i = 0; i < count; i++) {
-		PlanningNodeClass * node = PlanningNodeClass::Unknown2[i];
-		if (node->Hit_Test(x, y)) return node;
+	int count = nodes.Count();
+	int i = 0;
+	if (count > 0) {
+		do {
+			PlanningNodeClass * node = nodes[i];
+			if (node->Hit_Test(point.X, point.Y)) return node;
+			++i;
+		} while (i < count);
 	}
 	return NULL;
 }
@@ -1876,7 +1879,7 @@ void __fastcall FUN_00638E60(void)
 	if (!DAT_00AC4CB0) {
 		int x = MouseCursor->Get_Mouse_X();
 		int y = MouseCursor->Get_Mouse_Y();
-		PlanningNodeClass * node = Find_Planning_Node(x, y);
+		PlanningNodeClass * node = Find_Node_At(PlanningNodeClass::Unknown2, Point2D(x, y));
 		if (node != DAT_00AC4CCC) {
 			DAT_00AC4C3C = 0;
 			if (node) {
@@ -2465,20 +2468,6 @@ PlanningNodeClass * __fastcall FUN_0063AD40(void)
 }
 
 void __fastcall FUN_0063AD50(void);
-
-static inline PlanningNodeClass * Find_Node_At(DynamicVectorClass<PlanningNodeClass *> const & nodes, Point2D const & point)
-{
-	int count = nodes.Count();
-	int i = 0;
-	if (count > 0) {
-		do {
-			PlanningNodeClass * node = nodes[i];
-			if (node->Hit_Test(point.X, point.Y)) return node;
-			++i;
-		} while (i < count);
-	}
-	return NULL;
-}
 
 // FUNCTION: GAMEMD 0x0063A8E0
 bool __stdcall FUN_0063A8E0(Point2D point)
@@ -3250,4 +3239,44 @@ void __fastcall FUN_006395B0(TechnoClass * techno, PlanningNodeClass * node)
 	} else {
 		FUN_00639800(techno, node);
 	}
+}
+
+// FUNCTION: GAMEMD 0x00637270
+void __fastcall FUN_00637270(void)
+{
+	FUN_00638E60();
+	if (DAT_00AC4BF0 && DAT_00A8ECC8 > 0) {
+		DAT_00AC4BF0 = 0;
+	}
+	int count = PlanningTokenClass::Array.Count();
+	for (int i = 0; i < count; ++i) {
+		PlanningTokenClass * token = PlanningTokenClass::Array[i];
+		TechnoClass * owner = token->OwnerUnit;
+		for (int j = token->PlanningNodes.Count() - 1; j >= 0; --j) {
+			EventClass event = token->Event_At(j);
+			bool remove = true;
+			if (event.Type == EventClass::MEGAMISSION) {
+				if (event.Data.MegaMission.Target.Is_Valid()) {
+					remove = event.Data.MegaMission.Target.As_Abstract() == 0;
+				} else if (event.Data.MegaMission.Destination.Is_Valid()) {
+					remove = event.Data.MegaMission.Destination.As_Abstract() == 0;
+				}
+			}
+			if (!remove) {
+				continue;
+			}
+			PlanningNodeClass * node = token->Node_At(j);
+			PlanningNodeClass * next = node->Next_Node(owner);
+			FUN_006378B0(next);
+			token->FUN_00636B50(j);
+		}
+	}
+	FUN_00637920();
+	int refusal = DAT_00AC4C90;
+	if (refusal != -1) {
+		FUN_0063A4B0(refusal);
+		DAT_00AC4C90 = -1;
+	}
+	Reset_Planning_Command_Flags();
+	DAT_00AC4C08 = false;
 }
