@@ -1803,6 +1803,7 @@ address,name,result,size,source,symbol
 0x0045AE10,?Delete_Index@?$DynamicVectorClass@PAVBuildingClass@@@@QAE_NH@Z,MATCH,49,src/building.cpp,?Delete_Index@?$DynamicVectorClass@PAVBuildingClass@@@@QAE_NH@Z
 0x0045AE50,??0?$VectorClass@PAVReestablish@@@@QAE@HPBQAVReestablish@@@Z,MATCH,74,src/building.cpp,??0?$VectorClass@PAVReestablish@@@@QAE@HPBQAVReestablish@@@Z
 0x0045AEA0,?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@@Z,MATCH,117,src/building.cpp,?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@@Z
+0x00453060,BuildingClass::Disconnect_Laser_Fence,MATCH,475,src/building.cpp,?Disconnect_Laser_Fence@BuildingClass@@QAEXW4FacingType@@_N@Z
 0x0045AFA0,_$E2,MATCH,40,src/builtype.cpp,_$E2
 0x0045AFD0,_$E5,MATCH,19,src/builtype.cpp,_$E5
 0x0045AFF0,_$E8,MATCH,19,src/builtype.cpp,_$E8
