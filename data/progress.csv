@@ -14164,6 +14164,7 @@ address,name,result,size,source,symbol
 0x006D4E00,Tactical::Clear_Caption_Text,MATCH,17,src/tactical.cpp,?Clear_Caption_Text@Tactical@@QAEXXZ
 0x006D4E20,Tactical::Draw_Screen_Text,MATCH,514,src/tactical.cpp,?Draw_Screen_Text@Tactical@@QAEXPBG@Z
 0x006D5030,Tactical::Draw_Placement,MATCH,1781,src/tactical.cpp,?Draw_Placement@Tactical@@QAEX_N@Z
+0x006D5C50,Tactical::Draw_Wall_Placement,MATCH,733,src/tactical.cpp,?Draw_Wall_Placement@Tactical@@QAEX_NVCell@@@Z
 0x006D5F30,Tactical::Blit_Tiles,MATCH,33,src/tactical.cpp,?Blit_Tiles@Tactical@@QAE_NXZ
 0x006D5F60,Tactical::Set_View_Dimensions,MATCH,157,src/tactical.cpp,?Set_View_Dimensions@Tactical@@QAEXABV?$TRect@H@@@Z
 0x006D6000,Tactical::Set_Tactical_Position,MATCH,110,src/tactical.cpp,?Set_Tactical_Position@Tactical@@QAEXABVPoint2D@@@Z

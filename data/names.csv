@@ -681,3 +681,4 @@ address,name,symbol,evidence
 0x00A8ECD0,PlayerLoses,,Existing matched end-game handler FUN_0055CFD0 tests PlayerLoses second at operand 0055D066
 0x008B41C0,PlayerRestarts,,Existing matched end-game handler FUN_0055CFD0 tests PlayerRestarts third at operand 0055D06E
 0x00A83D48,PlayerAborts,,Existing matched end-game handler FUN_0055CFD0 tests PlayerAborts fourth at operand 0055D076
+0x0087F6C4,NormalDrawer,?NormalDrawer@@3PAVConvertClass@@A,YRpp FileSystem::PALETTE_PAL and the drawer declared in the archived _convert.cpp
