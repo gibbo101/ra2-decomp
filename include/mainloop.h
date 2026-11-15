@@ -11,4 +11,4 @@ void Keyboard_Process(KeyNumType & input);
 void Message_Input(KeyNumType & input);
 void Sync_Delay(void);
 void Motion_Capture(void);
-void Multiplayer_Debug_Print(void);
+void Multiplayer_Debug_Print(bool noframecheck = false);

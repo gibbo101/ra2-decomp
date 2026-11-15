@@ -660,3 +660,18 @@ address,name,symbol,evidence
 0x0089F6D8,AdjacentPoint,?AdjacentPoint@@3QBVPoint2D@@B,"=_$E95 at 0x0049F3A0 matches independently and references this object at 0x9, 0xF, 0x14, 0x21, 0x26, 0x2B, 0x32, 0x3A, 0x40, 0x46, 0x4B, 0x58, 0x5F, 0x64, 0x69, 0x6F"
 0x0089EA40,Ground,?Ground@@3PAUGroundType@@A,"RulesClass::Land_Types at 0x00674000 matches independently and references this object at 0xD, 0x226"
 0x007F2A40,ShipLocomotionClass::TrackControl,?TrackControl@ShipLocomotionClass@@0QBUTurnTrackType@1@B,ShipLocomotionClass::Mark_Track at 0x006A01A0 matches independently and references this object at 0x56
+0x00A8ED80,GameInFocus,,Known Unsorted::GameInFocus alias; existing Sync_Delay operand 0055E206
+0x00A8ED72,Debug_Trap_Check_Heap,,Source-derived identity: native TS bool definition and Main_Loop Session.TrapCheckHeap conditional; matching RA2 counterpart; retail write 0055D3E8. No independent second code reference.
+0x00A8E378,TacticalActive,,Known Unsorted::TacticalActive alias; existing Play_Movie operand 005BF277
+0x00887348,FrameTimer,,Existing Sync_Delay operand 0055E162; exact SystemTimer initializer 0040EB50 and concrete _script.cpp global
+0x00887328,NetFrameTimer,,Existing Sync_Delay operand 0055E1C3; exact MillisecondSystemTimer initializer 0040EB90 and concrete _script.cpp global
+0x00A8EDA0,SpecialDialog,,Known Game::SpecialDialog alias; existing Sync_Delay operand 0055E1FA
+0x00A8ED9D,drag_select_aborted,,Existing DisplayClass::Abort_Drag_Select sets this bool at 004AEAF0; native radar uses the named flag to suppress left release
+0x00ABCDFC,TeamEvent,,Existing Main_Game initializes the playback pair at operand 0048CE23; native Do_Record_Playback writes and clears TeamEvent before TeamNumber
+0x00ABCE00,TeamNumber,,Existing Main_Game initializes the playback pair at operand 0048CE29; native Do_Record_Playback writes and clears TeamNumber after TeamEvent
+0x00822CF2,AllowVoice,,Known Unsorted::MoveFeedback alias; existing Tactical::Select_These bool store operand 006DA5C8
+0x0067CEF0,Save_Game,,Known ScenarioClass::SaveGame alias; existing LoadOptionsClass::Save_File call 00559E85
+0x00A83D49,PlayerWins,,Existing matched end-game handler FUN_0055CFD0 tests PlayerWins first at operand 0055D05A
+0x00A8ECD0,PlayerLoses,,Existing matched end-game handler FUN_0055CFD0 tests PlayerLoses second at operand 0055D066
+0x008B41C0,PlayerRestarts,,Existing matched end-game handler FUN_0055CFD0 tests PlayerRestarts third at operand 0055D06E
+0x00A83D48,PlayerAborts,,Existing matched end-game handler FUN_0055CFD0 tests PlayerAborts fourth at operand 0055D076
