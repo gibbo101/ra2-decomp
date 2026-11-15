@@ -8553,6 +8553,7 @@ address,name,result,size,source,symbol
 0x005AEBA0,Matrix3D::Shear_XY,MATCH,68,src/matrix3d.cpp,?Shear_XY@Matrix3D@@QAEXMM@Z
 0x005AEBF0,Matrix3D::Shear_XZ,MATCH,68,src/matrix3d.cpp,?Shear_XZ@Matrix3D@@QAEXMM@Z
 0x005AEC40,Matrix3D::Pre_Rotate_X,MATCH,264,src/matrix3d.cpp,?Pre_Rotate_X@Matrix3D@@QAEXM@Z
+0x005AED50,Matrix3D::Pre_Rotate_Y,MATCH,246,src/matrix3d.cpp,?Pre_Rotate_Y@Matrix3D@@QAEXM@Z
 0x005AEE50,Matrix3D::Pre_Rotate_Z,MATCH,262,src/matrix3d.cpp,?Pre_Rotate_Z@Matrix3D@@QAEXM@Z
 0x005AEF60,Matrix3D::Rotate_X,MATCH,158,src/matrix3d.cpp,?Rotate_X@Matrix3D@@QAEXM@Z
 0x005AF000,Matrix3D::Rotate_X,MATCH,117,src/matrix3d.cpp,?Rotate_X@Matrix3D@@QAEXMM@Z
