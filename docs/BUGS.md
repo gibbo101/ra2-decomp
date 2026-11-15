@@ -61,3 +61,8 @@ effect, so it can be fixed in a separate build later.
 - **BitFont::LoadInternalData (0x00433990).** A short read of the range table
   in the extended font format jumps to failure cleanup without freeing the
   allocated range buffer. The recovered source preserves this leak.
+
+- **AircraftClass::Fire_At (0x00415EE0).** The shroud checks around the aircraft
+  test `(2 * CELL_LEPTON_W, -2 * CELL_LEPTON_H)` twice and omit the opposite
+  `(-2 * CELL_LEPTON_W, 2 * CELL_LEPTON_H)` offset. The recovered source
+  preserves the repeated check.

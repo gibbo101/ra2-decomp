@@ -802,6 +802,53 @@ int AircraftClass::Paradrop_Cargo(void)
 	return(0);
 }
 
+static inline Point3D Aircraft_Coord_Offset(Coord coord, Point3D const & offset)
+{
+	return Point3D(offset.X + coord.X, offset.Y + coord.Y, offset.Z + coord.Z);
+}
+
+static inline void Reveal_Aircraft_Coord(Coord coord, int range, HouseClass *house, bool overbridge)
+{
+	Map.RevealArea2(&coord, range, house, false, false, false, true, overbridge);
+}
+
+// FUNCTION: GAMEMD 0x00415EE0
+BulletClass * AircraftClass::Fire_At(AbstractClass * target, int which)
+{
+	if (Cargo.Is_Something_Attached()) {
+		Paradrop_Cargo();
+		return 0;
+	}
+	BulletClass * bullet = BASECLASS::Fire_At(target, which);
+	if (bullet) {
+		if (bullet->Class->ROT == 0) {
+			bullet->Velocity.Set_Speed(Locomotion->Apparent_Speed());
+			bullet->Velocity.Set_Pitch(DIR_E);
+			bullet->Velocity.Set_Yaw(SecondaryFacing.Current());
+		}
+		if (bullet->Class->ROT == 1) {
+			Point3D diff = target->Center_Coord() - Center_Coord();
+			TVelocity3D<double> dir = TVelocity3D<double>(diff.X, diff.Y, diff.Z);
+			bullet->Velocity.Set_Yaw(dir.Get_Yaw());
+			bullet->Velocity.Set_Pitch(dir.Get_Pitch());
+			bullet->Velocity.Set_Speed(PrimaryWeapon->MaxSpeed);
+		}
+		if (House->Is_Player_Control()) {
+			if (Map.Is_Shrouded(PositionCoord) ||
+				Map.Is_Shrouded(Aircraft_Coord_Offset(PositionCoord, Coord(2 * CELL_LEPTON_W, 2 * CELL_LEPTON_H))) ||
+				Map.Is_Shrouded(Aircraft_Coord_Offset(PositionCoord, Coord(-2 * CELL_LEPTON_W, -2 * CELL_LEPTON_H))) ||
+				Map.Is_Shrouded(Aircraft_Coord_Offset(PositionCoord, Coord(2 * CELL_LEPTON_W, -2 * CELL_LEPTON_H))) ||
+				Map.Is_Shrouded(Aircraft_Coord_Offset(PositionCoord, Coord(2 * CELL_LEPTON_W, -2 * CELL_LEPTON_H))) ||
+				Map.Is_Shrouded(target->Center_Coord())) {
+				Reveal_Aircraft_Coord(PositionCoord, Rule->AttackingAircraftSightRange, House, false);
+				Reveal_Aircraft_Coord(PositionCoord, Rule->AttackingAircraftSightRange, House, true);
+			}
+		}
+	}
+	if (IsKamikaze) Delete_Me();
+	return bullet;
+}
+
 // FUNCTION: GAMEMD 0x004165C0
 ResultType AircraftClass::Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced, bool no_crew, HouseClass * source_house)
 {

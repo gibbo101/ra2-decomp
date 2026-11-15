@@ -556,6 +556,7 @@ address,name,result,size,source,symbol
 0x00415A50,AircraftClass::Do_MISSION_RETREAT,MATCH,185,src/aircraft.cpp,?Do_MISSION_RETREAT@AircraftClass@@UAEHXZ
 0x00415B10,AircraftClass::Exit_Object,MATCH,336,src/aircraft.cpp,?Exit_Object@AircraftClass@@UAEHPAVTechnoClass@@VCell@@@Z
 0x00415C60,AircraftClass::Paradrop_Cargo,MATCH,630,src/aircraft.cpp,?Paradrop_Cargo@AircraftClass@@QAEHXZ
+0x00415EE0,AircraftClass::Fire_At,MATCH,1757,src/aircraft.cpp,?Fire_At@AircraftClass@@UAEPAVBulletClass@@PAVAbstractClass@@H@Z
 0x004165C0,AircraftClass::Take_Damage,MATCH,243,src/aircraft.cpp,?Take_Damage@AircraftClass@@UAE?AW4ResultType@@AAHHPBVWarheadTypeClass@@PAVTechnoClass@@_N3PAVHouseClass@@@Z
 0x004166C0,AircraftClass::Do_MISSION_MOVE,MATCH,26,src/aircraft.cpp,?Do_MISSION_MOVE@AircraftClass@@UAEHXZ
 0x004166E0,AircraftClass::Do_MISSION_MOVE_Normal,MATCH,1028,src/aircraft.cpp,?Do_MISSION_MOVE_Normal@AircraftClass@@AAEHXZ
