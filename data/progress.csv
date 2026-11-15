@@ -9929,8 +9929,8 @@ address,name,result,size,source,symbol
 0x005E66D0,FUN_005E66D0,MATCH,27,src/netshare.cpp,?FUN_005E66D0@@YIHXZ
 0x005E66F0,FUN_005E66F0,MATCH,419,src/netshare.cpp,?FUN_005E66F0@@YI_NXZ
 0x005E68A0,Scenario_Dialog,MATCH,127,src/netshare.cpp,?Scenario_Dialog@@YIHPAUHWND__@@@Z
-0x005E6920,Scenario_DlgProc,MATCH,1964,src/netshare.cpp,?Scenario_DlgProc@@YGHPAUHWND__@@IIJ@Z
 0x005E70D0,FUN_005E70D0,MATCH,133,src/netshare.cpp,?FUN_005E70D0@@YIHPAUHWND__@@PAVMultiMission@@@Z
+0x005E6920,Scenario_DlgProc,MATCH,1964,src/netshare.cpp,?Scenario_DlgProc@@YGHPAUHWND__@@IIJ@Z
 0x005E7160,FUN_005E7160,MATCH,767,src/netshare.cpp,?FUN_005E7160@@YI_NPAUHWND__@@@Z
 0x005E7460,PregameSetup,MATCH,126,src/netshare.cpp,?PregameSetup@@YIXXZ
 0x005E74E0,Update_Network_Dialog_Preview,MATCH,1088,src/netshare.cpp,?Update_Network_Dialog_Preview@@YIXPAUHWND__@@@Z
