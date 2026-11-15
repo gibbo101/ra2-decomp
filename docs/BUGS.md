@@ -61,3 +61,8 @@ effect, so it can be fixed in a separate build later.
 - **BitFont::LoadInternalData (0x00433990).** A short read of the range table
   in the extended font format jumps to failure cleanup without freeing the
   allocated range buffer. The recovered source preserves this leak.
+
+- **Do_Reinforcements (0x0065D8E0).** After `_Create_Group`, the routine writes
+  through `object->Team` before checking whether `object` is null. If group
+  creation fails, execution can access-violate before reaching the intended
+  failure return. The recovered source preserves this ordering.
