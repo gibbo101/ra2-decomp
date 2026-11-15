@@ -2383,6 +2383,70 @@ void TechnoClass::FUN_007049C0(Coord start, Coord end, RGBClass color, unsigned 
 	}
 }
 
+// FUNCTION: GAMEMD 0x00704E40
+void TechnoClass::Draw_A_Link_To(Coord src, Coord dst, RGBClass color)
+{
+	RGBClass segment_color;
+	RGBClass white(255, 255, 255);
+	Point2D from;
+	Point2D to;
+
+	TacticalMap->Coord_To_Pixel(src, from);
+	TacticalMap->Coord_To_Pixel(dst, to);
+	from.Y += DSurface::ViewBounds.Y;
+	to.Y += DSurface::ViewBounds.Y;
+
+	int pixel = DSurface::Build_Hicolor_Pixel(color);
+	DSurface::Composite->Fill_Rect(
+		Intersect(
+			DSurface::ViewBounds,
+			Moved_Rect(Rect(-2, -2, 3, 3), from)),
+		pixel);
+	DSurface::Composite->Fill_Rect(
+		Intersect(
+			DSurface::ViewBounds,
+			Moved_Rect(Rect(-2, -2, 3, 3), to)),
+		pixel);
+
+	Rect clip = DSurface::ViewBounds;
+	int time = timeGetTime() >> 4;
+	int i = 1;
+	int remaining = 31;
+	Coord previous = src;
+	Coord next;
+
+	for (; i * 8 <= 256; i++, remaining--, previous = next) {
+		int source_x = src.X * remaining;
+		int target_x = dst.X * i;
+		next.X = (target_x + source_x) / 32;
+		next.Y = (src.Y * remaining + dst.Y * i) / 32;
+		next.Z = (src.Z * remaining + dst.Z * i) / 32;
+
+		double t = i;
+		t -= 16.0;
+		t /= 16.0;
+		double height = -(t * t);
+		height += 1.0;
+		next.Z += height * 512.0;
+
+		TacticalMap->Coord_To_Pixel(previous, from);
+		TacticalMap->Coord_To_Pixel(next, to);
+		from.Y += DSurface::ViewBounds.Y;
+		to.Y += DSurface::ViewBounds.Y;
+
+		if (Clip_Line_To_Rect(from, to, clip)) {
+			segment_color = color;
+			unsigned phase = ((i - time) * 8) & 0x1F8;
+			if (phase <= 248 && phase != 0) {
+				segment_color.Adjust(phase, white);
+			}
+
+			DSurface::Composite->Draw_Line(
+				from, to, DSurface::Build_Hicolor_Pixel(segment_color));
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0070D0D0
 bool TechnoClass::Has_Ability(AbilityType ability) const
 {
