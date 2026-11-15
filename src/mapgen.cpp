@@ -3578,19 +3578,37 @@ void MapGeneratorClass::Partition_Rect(DynamicVectorClass<Rect> & rects, int cou
 	}
 }
 
-static inline double Random_Scale(void)
-{
-	return RMG_RANDOM_DOUBLE2(0.05) + 0.45;
-}
+extern const double DAT_007ED898;
+extern const double DAT_007ED990;
 
-static inline int Double_Area(Rect const & rect)
+// FUNCTION: GAMEMD 0x0059AD10
+void MapGeneratorClass::Seed_Land_Type0(void)
 {
-	return rect.Width * rect.Height * 2;
-}
-
-static inline int Double_Area(int width, int height)
-{
-	return width * height * 2;
+	WorkingRegionID = 1;
+	DynamicVectorClass<Rect> regions;
+	unsigned int range = MAX(2, SeedData.NumPlayers / 2);
+	unsigned int selected;
+	do {
+		selected = (unsigned int)(RMG_RANDOM_DOUBLE(range) + 1.0);
+	} while (selected > range);
+	Rect area = Map.LocalRect;
+	Partition_Rect(regions, SeedData.NumPlayers + selected, area);
+	Clear_Cell_Data_Spreads();
+	while (regions.Count() > 0) {
+		Rect region = regions[0];
+		int count = (int)(((unsigned int)RMGRandom() * DAT_007ED898 * 0.05 + DAT_007ED990) * (region.Width * region.Height * 2));
+		Point2D center;
+		center.X = region.Width / 2 + region.Height / 2 + region.Y + region.X + 1;
+		center.Y = region.Height / 2 - region.Width / 2 - region.X + Map.PlayRect.Width + region.Y;
+		int attempt = 0;
+		int result = 0;
+		while (!result && attempt < 10) {
+			result = FUN_0059BBC0(count, region, center, true, Cell(center.X, center.Y), 0.25, false);
+			if (!result) ++WorkingRegionID;
+			++attempt;
+		}
+		regions.Delete_Index(0);
+	}
 }
 
 // FUNCTION: GAMEMD 0x0059B6D0
