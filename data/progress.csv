@@ -12695,6 +12695,7 @@ address,name,result,size,source,symbol
 0x0069BC60,SessionClass::FUN_0069BC60,MATCH,83,src/session.cpp,?FUN_0069BC60@SessionClass@@QAEHH@Z
 0x0069BCC0,SessionClass::FUN_0069BCC0,MATCH,63,src/session.cpp,?FUN_0069BCC0@SessionClass@@QAEHPBD@Z
 0x0069BD00,SessionClass::FUN_0069BD00,MATCH,90,src/session.cpp,?FUN_0069BD00@SessionClass@@QAEHH@Z
+0x0069BD60,SessionClass::FUN_0069BD60,MATCH,1845,src/session.cpp,?FUN_0069BD60@SessionClass@@QAEXXZ
 0x0069C4A0,?Clear@?$DynamicVectorClass@W4DiskID@@@@UAEXXZ,MATCH,42,src/session.cpp,?Clear@?$DynamicVectorClass@W4DiskID@@@@UAEXXZ
 0x0069C4D0,?ID@?$DynamicVectorClass@W4DiskID@@@@UAEHPBW4DiskID@@@Z,MATCH,27,src/session.cpp,?ID@?$DynamicVectorClass@W4DiskID@@@@UAEHPBW4DiskID@@@Z
 0x0069C4F0,?GetItem@?$VectorClass@W4DiskID@@@@UBE?AW4DiskID@@H@Z,MATCH,13,src/session.cpp,?GetItem@?$VectorClass@W4DiskID@@@@UBE?AW4DiskID@@H@Z
