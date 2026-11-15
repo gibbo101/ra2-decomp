@@ -480,6 +480,103 @@ void MapClass::RevealArea0(int, int, Coord * coord, int sightrange, HouseClass *
 	RevealArea1(coord, sightrange, house, a, b, c, d, true);
 }
 
+// FUNCTION: GAMEMD 0x005673A0
+void MapClass::RevealArea1(Coord * xcoord, int sightrange, HouseClass * house, bool incremental, bool dont_map, bool unfog, bool byheight, bool increase)
+{
+	int cell_height = xcoord->Z / DAT_00ABDE88;
+
+	Coord coord = *xcoord;
+	coord.X = coord.X + (Tactical::Z_Lepton_To_Pixel(coord.Z) / -30) * CELL_LEPTON;
+	coord.Y = coord.Y + (Tactical::Z_Lepton_To_Pixel(coord.Z) / -30) * CELL_LEPTON;
+
+	Cell cell = coord.As_Cell();
+	Cell hoffset = cell - xcoord->As_Cell() - Cell(2, 2);
+
+	if (!In_Radar(cell)) return;
+	if (!sightrange) return;
+	if (sightrange >= 11 || sightrange > 10) {
+		sightrange = 10;
+	}
+
+	int xx = cell.X;
+	int count = DAT_007ED3D0[sightrange];
+	Cell const * ptr = &Unsorted::CellSpreadTable[0];
+	Cell const * ptr2 = &OcclusionOffset[0];
+	if (!Rule->IsRevealByHeight && incremental) {
+		if (sightrange > 2) {
+			ptr += DAT_007ED3D0[sightrange - 3];
+			ptr2 += DAT_007ED3D0[sightrange - 3];
+			count -= DAT_007ED3D0[sightrange - 3];
+		}
+	}
+	ptr2--;
+
+	if (house != NULL && PlayerPtr != NULL) {
+		if (house != PlayerPtr) {
+			if ((house->RadarSpied & (1 << PlayerPtr->Class->House)) != 0) {
+				house = PlayerPtr;
+			}
+		}
+		if (house != PlayerPtr) {
+			if (house->Is_Ally(PlayerPtr) && Rule->IsAllyReveal) {
+				house = PlayerPtr;
+			}
+		}
+	}
+
+	if (house != PlayerPtr) {
+		return;
+	}
+
+	bool edge = (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode != NULL && !Session.MPGameMode->vt_entry_04();
+
+	while (count--) {
+		Cell newcell;
+		newcell = cell + *ptr++;
+		ptr2++;
+
+		if (!In_Radar(newcell)) continue;
+		if (abs(newcell.X - xx) > sightrange) continue;
+		if (Distance(newcell, cell) > sightrange) continue;
+
+		CellClass * cellptr = &(*this)[newcell];
+		if (byheight && Rule->IsRevealByHeight) {
+			Cell offcell;
+			offcell.X = newcell.X - hoffset.X;
+			offcell.Y = newcell.Y - hoffset.Y;
+			if (Map[*ptr2 + offcell].Height > cell_height + 3) continue;
+		}
+
+		int cx = cellptr->CellID.X;
+		int cy = cellptr->CellID.Y;
+		cellptr->IsToFog = false;
+		if (edge) {
+			if (cx == 7) {
+				if (cy == PlayRect.Width + 5) continue;
+			} else if (cx == 13) {
+				if (cy == PlayRect.Width + 11) continue;
+			}
+			if (cx == PlayRect.Height + 13) {
+				if (cy == PlayRect.Width + PlayRect.Height - 15) continue;
+			}
+		}
+		if (unfog) {
+			if ((!cellptr->IsFogVisible || !cellptr->IsFogMapped) && cellptr->IsMapped) {
+				Map.Fog_Map_Cell(newcell, house);
+			}
+		} else {
+			if ((!cellptr->IsMapped || !cellptr->IsVisible || !cellptr->IsFogVisible || !cellptr->IsFogMapped) && !dont_map) {
+				if (increase) {
+					Map.RevealFogShroud(newcell, house, false);
+				} else {
+					cellptr->Unshroud();
+				}
+			}
+		}
+	}
+	RevealArea3(coord, 0, sightrange + 3, 0);
+}
+
 // FUNCTION: GAMEMD 0x005678E0
 void MapClass::RevealArea2(Coord * xcoord, int sightrange, HouseClass * house, bool incremental, bool dont_map, bool unfog, bool byheight, bool increase)
 {
