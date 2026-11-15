@@ -652,3 +652,5 @@ address,name,symbol,evidence
 0x00822724,GadgetClass::CurrentColorScheme,?CurrentColorScheme@GadgetClass@@2PBDB,Matched GadgetClass::Get_Color_Scheme at 0x004E12D0 reads this pointer to the default Grey scheme.
 0x008A3770,EgoList,?EgoList@@3V?$DynamicVectorClass@PAVEgoClass@@@@A,Matched EgoList initializer at 0x004C3C50 and destructor at 0x004C3C10 access the same vector at thirteen sites.
 0x0089F978,WindowedMode,?WindowedMode@@3_NA,YRpp GameOptionsClass.h identifies WindowedMode here. Matched display and window routines use the global bool declaration.
+0x0076C290,WorldDominationTour::Selection::Selection,??0Selection@WorldDominationTour@@QAE@ABV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z,Matched presentation entry 0x0076ECD0 constructs a Selection here. This routine calls the MSEngine constructor and installs the Selection vtable at 0x007F72B4.
+0x0076C6E0,WorldDominationTour::Selection::~Selection,??1Selection@WorldDominationTour@@UAE@XZ,Called by the matched presentation entry at 0x0076ECD0 and the deleting destructor in the Selection vtable at 0x007F72B4. Releases five rc_ptr members and calls the MSEngine destructor.
