@@ -11345,6 +11345,7 @@ address,name,result,size,source,symbol
 0x00640710,MapPreviewClass::DrawStartPoints,MATCH,812,src/preview.cpp,?DrawStartPoints@MapPreviewClass@@QAEXPAUHWND__@@@Z
 0x00640A40,MapPreviewClass::DrawMap,MATCH,1664,src/preview.cpp,?DrawMap@MapPreviewClass@@QAEXAAVXSurface@@@Z
 0x006410C0,MapPreviewClass::Cell_To_Preview_Pixel,MATCH,114,src/preview.cpp,?Cell_To_Preview_Pixel@MapPreviewClass@@ABE?AVPoint2D@@VCell@@@Z
+0x00641140,MapPreviewClass::Create_Preview,MATCH,1894,src/preview.cpp,?Create_Preview@MapPreviewClass@@QAEXXZ
 0x006418B0,MapPreviewClass::Write_INI,MATCH,591,src/preview.cpp,?Write_INI@MapPreviewClass@@QAE_NAAVCCINIClass@@@Z
 0x00641B00,MapPreviewClass::Read_INI,MATCH,681,src/preview.cpp,?Read_INI@MapPreviewClass@@QAE_NABVCCINIClass@@@Z
 0x00641DB0,MapPreviewClass::Read_PCX_Preview,MATCH,303,src/preview.cpp,?Read_PCX_Preview@MapPreviewClass@@QAE_NPBD@Z
