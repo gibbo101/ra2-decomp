@@ -54,7 +54,7 @@ class MultiplayerGameMode
 		virtual ~MultiplayerGameMode(void);
 		virtual bool vt_entry_04(void);
 		virtual bool vt_entry_08(void);
-		virtual bool vt_entry_0C(unsigned a);
+		virtual bool vt_entry_0C(WideWstring * error);
 		virtual bool vt_entry_10(void);
 		virtual bool vt_entry_14(WideWstring * message);
 		virtual bool vt_entry_18(void);

@@ -14,7 +14,7 @@ class MultiplayerBattle : public MultiplayerGameMode
 		virtual bool vt_entry_04(void) override;
 		virtual bool vt_entry_40(void) override;
 		virtual bool vt_entry_08(void) override;
-		virtual bool vt_entry_0C(unsigned a) override;
+		virtual bool vt_entry_0C(WideWstring * error) override;
 		virtual void vt_entry_20(void) override;
 		virtual void vt_entry_24(void) override;
 		virtual void vt_entry_38(unsigned a) override;
