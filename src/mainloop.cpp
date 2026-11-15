@@ -508,7 +508,7 @@ extern int DAT_00ABCE04;
 static inline Point2D * Scratch(Point2D const & p) { return (Point2D *)&p; }
 
 // FUNCTION: GAMEMD 0x0055F1E0
-void Multiplayer_Debug_Print(void)
+void Multiplayer_Debug_Print(bool)
 {
 	wchar_t buffer[256];
 

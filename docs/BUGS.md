@@ -61,3 +61,5 @@ effect, so it can be fixed in a separate build later.
 - **BitFont::LoadInternalData (0x00433990).** A short read of the range table
   in the extended font format jumps to failure cleanup without freeing the
   allocated range buffer. The recovered source preserves this leak.
+
+- **Wait_For_Players (0x00648710).** Command-stall statistics use the frame-stall index instead of the command-stall index.

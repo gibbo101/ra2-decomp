@@ -2847,3 +2847,465 @@ int __fastcall FUN_0064B660(void * buf, int bufsize, int frame_delay, int size, 
 	*added = num;
 	return size;
 }
+
+#include "_surface.h"
+#include "windlg.h"
+#include "win.h"
+
+extern int DAT_00B04468;
+extern bool DAT_00B04470;
+extern bool DAT_00B04894;
+extern HWND DAT_00AC6658;
+extern int DAT_00B04898;
+extern long DAT_00AFA418;
+extern wchar_t const DAT_00887734[];
+extern wchar_t const DAT_0082083C[];
+namespace UI { void __fastcall RegisterWindow(HWND window, int id); }
+
+#define WAIT_TEXT(label, line) StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\Queue.CPP", line)
+
+static inline void Close_Reconnect_Dialog()
+{
+	HWND dialog = WS_Find_Dialog(0xEA);
+	if (dialog) {
+		if (DAT_00B04470) {
+			MouseCursor->Capture_Mouse();
+		}
+		WS_Destroy_Dialog(dialog, 0);
+		TacticalActive = DAT_00B04894;
+		Map.Flag_To_Redraw(GS_REDRAW_ALL);
+		if (TacticalActive) {
+			Map.Render();
+		}
+	}
+}
+
+static inline int Process_Reconnect_Dialog(ConnManClass *net, CDTimerClass<SystemTimerClass> *timeout_timer, FrameSyncStruct *their,
+	int num_conn, int reconn, int fresh, BasicTimerClass<SystemTimerClass> *timer)
+{
+	int new_time;
+	int oldest_index;
+	int i;
+	wchar_t buf[512];
+
+	DAT_00AFA418 = timer->Value();
+	for (i = 0; i < num_conn; i++) {
+		SyncBarFrameSync[i] = their[i];
+	}
+	if (fresh) {
+		DAT_00B04894 = TacticalActive;
+		TacticalActive = false;
+		DAT_00B04468 = -1;
+		DAT_00AC6658 = (HWND)WS_Create_Dialog(ProgramInstance, 0xEA, MainWindow,
+			Reconnect_Dialog_Proc, 0);
+		if (DAT_00AC6658) {
+			SetWindowLongA(DAT_00AC6658, 8, (long)&DAT_00B04468);
+			UI::RegisterWindow(DAT_00AC6658, 0xEA);
+			ShowWindow(DAT_00AC6658, SW_SHOWNORMAL);
+			SendMessageA(DAT_00AC6658, 0x4A9, 0, 1);
+			DAT_00B04470 = MouseCursor->Is_Captured();
+			if (DAT_00B04470) {
+				MouseCursor->Release_Mouse();
+			}
+			MouseCursor->Show_Mouse();
+		}
+	}
+	if (DAT_00B04468 == 2) {
+		return 1;
+	}
+	new_time = timeout_timer->Value() / 60;
+	if (fresh || new_time != DAT_00B04898) {
+		DAT_00B04898 = new_time;
+		HWND item = GetDlgItem(DAT_00AC6658, 0x650);
+		if (item) {
+			swprintf(buf, WAIT_TEXT("TXT_TIME_ALLOWED", 3853), DAT_00B04898);
+			SendMessageA(item, 0x4B2, 0, (LPARAM)buf);
+		}
+		if (!(DAT_00B04898 & 1)) {
+			PostMessageA(DAT_00AC6658, WM_PAINT, 0, 0);
+		}
+		if (fresh) {
+			while (Session.KickProposals.Count()) {
+				delete Session.KickProposals[0];
+				Session.KickProposals.Delete_Index(0);
+			}
+			memset(Session.KickVoteCount, 0, sizeof(Session.KickVoteCount));
+			memset(Session.KickVoteWho, 0xFF, sizeof(Session.KickVoteWho));
+			HWND list = GetDlgItem(DAT_00AC6658, 0x651);
+			if (list) {
+				if (reconn) {
+					int oldest = 0x7FFFFFFF;
+					oldest_index = 0;
+					for (i = 0; i < num_conn; i++) {
+						if (their[i].frame < oldest) {
+							oldest = their[i].frame;
+							oldest_index = i;
+						}
+					}
+					if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+						swprintf(buf, WAIT_TEXT("TXT_RECONNECTING_TO", 3908),
+							Ipx.Connection_Name(Ipx.Connection_ID(oldest_index)));
+					} else {
+						swprintf(buf, WAIT_TEXT("TXT_RECONNECTING_TO", 3914), Session.Players[1]->Name);
+					}
+					_DrawMessage(-1, buf, list);
+					_DrawMessage(-1, DAT_00887734, list);
+					if (Session.Type == GAME_INTERNET) {
+						wcscpy(buf, WAIT_TEXT("TXT_RECONNECT_HELP3", 3928));
+						wcscat(buf, DAT_0082083C);
+						wcscat(buf, WAIT_TEXT("TXT_RECONNECT_HELP3B", 3930));
+						wcscat(buf, DAT_0082083C);
+						wcscat(buf, WAIT_TEXT("TXT_RECONNECT_HELP3C", 3932));
+						_DrawMessage(-1, buf, list);
+						_DrawMessage(-1, DAT_00887734, list);
+					}
+					if (Session.Type == GAME_INTERNET || Session.Type == GAME_IPX) {
+						wcscpy(buf, WAIT_TEXT("TXT_RECONNECT_HELP2", 3939));
+						wcscat(buf, DAT_0082083C);
+						if (Session.Type == GAME_INTERNET) {
+							wcscat(buf, WAIT_TEXT("TXT_RECONNECT_HELP2B", 3943));
+						} else if (Session.Type == GAME_IPX) {
+							wcscat(buf, WAIT_TEXT("TXT_RECONNECT_HELP4", 3945));
+						}
+						_DrawMessage(-1, buf, list);
+						_DrawMessage(-1, DAT_00887734, list);
+					}
+					_DrawMessage(-1, DAT_00887734, list);
+					_DrawMessage(-1, WAIT_TEXT("TXT_RECONNECT_HELP5", 3955), list);
+					_DrawMessage(-1, WAIT_TEXT("TXT_RECONNECT_HELP1", 3960), list);
+					_DrawMessage(-1, DAT_00887734, list);
+				} else {
+					swprintf(buf, WAIT_TEXT("TXT_WAITING_FOR_CONNECTIONS", 3963));
+					_DrawMessage(-1, buf, list);
+				}
+			}
+		}
+	}
+	if (Session.KickProposals.Count() > 0) {
+		Cast_Kick_Vote(Session.KickProposals[0]->Kick.KickerID, Session.KickProposals[0]->Kick.KickeeID);
+		delete Session.KickProposals[0];
+		Session.KickProposals.Delete_Index(0);
+	}
+	for (i = 0; i < Session.Players.Count(); i++) {
+		int votes = Session.KickVoteCount[Session.Players[i]->Player.ID];
+		if (votes >= Session.Players.Count() - 1) {
+			DebugString("Kicking player %s from the game due to %d votes\n", Session.Players[i]->Name, votes);
+			if (i == 0) {
+				DebugString("Outvoted player is me!\n");
+				for (i = 1; i < Session.Players.Count(); i++) {
+					Kick_Player_Now(net, net->Connection_Index(Session.Players[i]->Player.ID), their, 0);
+				}
+				break;
+			}
+			Kick_Player_Now(net, net->Connection_Index(Session.Players[i]->Player.ID), their, 1);
+		}
+	}
+	return 0;
+}
+
+static inline int Can_Advance(ConnManClass *net, int max_ahead, FrameSyncStruct *their, int *frame_stall, int *count_stall)
+{
+	int their_oldest_frame;
+	int count_ok;
+	int i;
+
+	*frame_stall = -1;
+	if (Session.NumPlayers == 1) {
+		return 1;
+	}
+	their_oldest_frame = Frame + 1000;
+	for (i = 0; i < net->Num_Connections(); i++) {
+		if (their[i].frame < their_oldest_frame) {
+			their_oldest_frame = their[i].frame;
+			*frame_stall = i;
+		}
+	}
+	count_ok = 1;
+	for (i = 0; i < net->Num_Connections(); i++) {
+		if (their[i].recv < their[i].sent) {
+			count_ok = 0;
+			break;
+		}
+	}
+	if (count_ok) {
+		if (Frame < their_oldest_frame + max_ahead) {
+			return 1;
+		}
+		i = -1;
+	}
+	if (Frame < their_oldest_frame + max_ahead) {
+		*frame_stall = -1;
+	}
+	*count_stall = i;
+	return 0;
+}
+
+#pragma pack(push, 1)
+union StillHerePacketBuffer {
+	GlobalPacketType Packet;
+	struct {
+		NetCommandType Command;
+		char Name[MPLAYER_NAME_MAX];
+		char Serial[SERIAL_MAX];
+		int ID;
+		unsigned char Address[sizeof(IPXAddressClass)];
+	} StillHere;
+};
+#pragma pack(pop)
+
+// FUNCTION: GAMEMD 0x00648710
+RetcodeType __fastcall Wait_For_Players(int first_time, ConnManClass *net, int resend_delta, int dialog_time, int timeout,
+	char *multi_packet_buf, int my_sent, FrameSyncStruct *their)
+{
+	int packetlen;
+	int id;
+	int num_ready;
+	int loop_count;
+	int messages_this_loop;
+	KeyNumType input;
+	int x, y;
+	int i;
+	RetcodeType rc;
+	bool stall_drawn = false;
+	Surface *surface = VisibleSurface;
+	CDTimerClass<SystemTimerClass> retry_timer;
+	CDTimerClass<SystemTimerClass> dialog_timer;
+	CDTimerClass<SystemTimerClass> timeout_timer;
+	BasicTimerClass<SystemTimerClass> timer;
+	CDTimerClass<SystemTimerClass> progress_timer;
+	int reconnect_dlg = 0;
+	CDTimerClass<SystemTimerClass> resync_timer = dialog_time * 2;
+	CDTimerClass<SystemTimerClass> check_timer = dialog_time / 2;
+
+	num_ready = 0;
+	retry_timer = resend_delta;
+	dialog_timer = dialog_time;
+	timeout_timer = timeout;
+	timer = BasicTimerClass<SystemTimerClass>();
+	progress_timer = 180;
+	CDTimerClass<SystemTimerClass> keepalive_timer = 300;
+	loop_count = 0;
+	unsigned long now = timeGetTime();
+	for (i = 0; i < net->Num_Connections(); i++) {
+		their[i].timing = now;
+	}
+
+	while (true) {
+		Keyboard->Check();
+		if (retry_timer.Value() == 0) {
+			retry_timer = resend_delta;
+			Send_FrameSync(net, my_sent);
+			if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
+				FUN_00543080(&Ipx);
+				DebugString("Time to send IM_STILL_HERE packets\n");
+				StillHerePacketBuffer packet;
+				packet.StillHere.Command = NET_IM_STILL_HERE;
+				strncpy(packet.StillHere.Name, FUN_007350C0(Session.Players[0]->Name), sizeof(packet.StillHere.Name));
+				packet.StillHere.ID = PlayerPtr->HeapID;
+				IPXAddressClass address = Session.PacketRouterAddress;
+				address.Set_Port(Session.PacketRouterPort);
+				memcpy(packet.StillHere.Address, &address, sizeof(address));
+				for (i = 1; i < Session.Players.Count(); i++) {
+					int id2 = Session.Players[i]->Player.ID;
+					if (id2 != PlayerPtr->HeapID) {
+						Ipx.Send_Global_Message(&packet, 0x5B, 0,
+							&Session.Players[i]->Address, Session.PlayerPorts[i], 0);
+					}
+				}
+				Call_Back();
+			}
+		}
+		if (keepalive_timer.Value() == 0 && !first_time) {
+			keepalive_timer = 300;
+		} else if (first_time) {
+			if (progress_timer.Value() == 0) {
+				if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM || Session.ViaPacketRouter) {
+					DebugString("Resending progress message\n");
+					if (Session.Type == GAME_INTERNET) {
+						FUN_00543080(&Ipx);
+					}
+					Session.Update_Progress(Scen->IsRandom ? 200 : 100);
+					progress_timer = 180;
+				}
+			}
+		}
+		net->Service();
+
+		if (dialog_timer.Value() == 0) {
+			if (Session.Type == GAME_INTERNET) {
+				FUN_00543080(&Ipx);
+			}
+			int fresh = reconnect_dlg == 0;
+			int reconn = first_time == 0;
+			if (Process_Reconnect_Dialog(net, &timeout_timer, their, net->Num_Connections(), reconn, fresh, &timer)) {
+				WS_Destroy_Dialog(DAT_00AC6658, 0);
+				if (DAT_00B04470) {
+					MouseCursor->Capture_Mouse();
+				}
+				TacticalActive = DAT_00B04894;
+				Map.Flag_To_Redraw(GS_REDRAW_ALL);
+				if (reconnect_dlg) {
+					Close_Reconnect_Dialog();
+				}
+				if (Session.Type == GAME_INTERNET) {
+					FUN_00543090(&Ipx);
+				}
+				if (!DAT_00B04878) {
+					FUN_006523A0();
+					return RC_CANCEL;
+				}
+				FUN_006523A0();
+				return (RetcodeType)9;
+			}
+			reconnect_dlg = 1;
+		}
+
+		if (timeout_timer.Value() == 0) {
+			if (first_time) {
+				if (reconnect_dlg) {
+					Close_Reconnect_Dialog();
+				}
+				FUN_006523A0();
+				if (Session.Type == GAME_INTERNET) {
+					FUN_00543090(&Ipx);
+				}
+				return RC_NOT_RESPONDING;
+			}
+			if (Handle_Timeout(net, their)) {
+				Map.Flag_To_Redraw(GS_REDRAW_ALL);
+				Map.Render();
+				retry_timer = resend_delta;
+				dialog_timer = dialog_time;
+				timeout_timer = timeout;
+			} else {
+				if (reconnect_dlg) {
+					Close_Reconnect_Dialog();
+				}
+				if (Session.Type == GAME_INTERNET) {
+					FUN_00543090(&Ipx);
+				}
+				return RC_NOT_RESPONDING;
+			}
+		}
+
+		messages_this_loop = 0;
+		while (messages_this_loop++ < 64 && net->Get_Private_Message(multi_packet_buf, &packetlen, &id)) {
+			Keyboard->Check();
+			if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
+				rc = Process_Serial_Packet(multi_packet_buf, first_time);
+				if (rc == RC_SERIAL_PROCESSED) {
+					net->Service();
+					retry_timer = resend_delta;
+					dialog_timer = dialog_time;
+					timeout_timer = timeout;
+					continue;
+				} else if (rc == RC_PLAYER_LEFT) {
+					if (first_time) {
+						num_ready++;
+					}
+					break;
+				} else if (rc == RC_HUNG_UP) {
+					if (Handle_Timeout(net, their)) {
+						Map.Flag_To_Redraw(GS_REDRAW_ALL);
+						Map.Render();
+						retry_timer = resend_delta;
+						dialog_timer = dialog_time;
+						timeout_timer = timeout;
+					} else {
+						if (reconnect_dlg) {
+							Close_Reconnect_Dialog();
+						}
+						if (Session.Type == GAME_INTERNET) {
+							FUN_00543090(&Ipx);
+						}
+						FUN_006523A0();
+						return RC_NOT_RESPONDING;
+					}
+				} else if (rc != RC_NORMAL) {
+					break;
+				}
+			}
+			rc = (RetcodeType)FUN_0064A0C0(net, multi_packet_buf, id, packetlen, their, &timer);
+			if (rc == RC_PLAYER_READY) {
+				num_ready++;
+			} else if (rc == RC_SCENARIO_MISMATCH) {
+				if (reconnect_dlg) {
+					Close_Reconnect_Dialog();
+				}
+				if (Session.Type == GAME_INTERNET) {
+					FUN_00543090(&Ipx);
+				}
+				return RC_SCENARIO_MISMATCH;
+			} else if (rc == RC_DOLIST_FULL) {
+				if (reconnect_dlg) {
+					Close_Reconnect_Dialog();
+				}
+				if (Session.Type == GAME_INTERNET) {
+					FUN_00543090(&Ipx);
+				}
+				FUN_006523A0();
+				return RC_DOLIST_FULL;
+			}
+			net->Service();
+		}
+
+		if (reconnect_dlg) {
+			net->Num_Connections();
+		}
+		if (first_time) {
+			if (num_ready >= net->Num_Connections()) {
+				break;
+			}
+		} else {
+			int frame_stall;
+			int count_stall;
+			if (Can_Advance(net, Session.MaxAhead, their, &frame_stall, &count_stall)) {
+				break;
+			}
+			if (Session.EnableMultiplayerDebug && Session.DrawMPDebugStats && loop_count > 0 && (!stall_drawn || frame_stall != -1 || count_stall != -1)) {
+				Multiplayer_Debug_Print(true);
+			} else if (stall_drawn) {
+				goto service;
+			}
+			if (frame_stall != -1) {
+				if (Session.EnableMultiplayerDebug && Session.DrawMPDebugStats) {
+					surface->Fill_Rect(Rect((frame_stall * 5 + 5) * 20, 400, 35, 3), DSurface::Build_Hicolor_Pixel(255, 255, 40));
+				}
+				Session.ConnectionStats[frame_stall].FrameSyncStalls++;
+			}
+			if (count_stall != -1) {
+				if (Session.EnableMultiplayerDebug && Session.DrawMPDebugStats) {
+					surface->Fill_Rect(Rect(count_stall * 100 + 140, 400, 40, 3), DSurface::Build_Hicolor_Pixel(255, 40, 40));
+				}
+				Session.ConnectionStats[frame_stall].CommandCountStalls++;
+			}
+			stall_drawn = true;
+		}
+service:
+		Call_Back();
+		if (!first_time && !SpecialDialog && !reconnect_dlg) {
+			Map.Input(input, x, y);
+			Keyboard_Process(input);
+			TacticalMap->AI();
+			Map.Render();
+		}
+		loop_count++;
+	}
+	if (reconnect_dlg) {
+		Close_Reconnect_Dialog();
+		if (net->Num_Connections() > 0) {
+			DAT_00B77780 = 0;
+			DAT_00B77CE0 = 0;
+		}
+	}
+	if (stall_drawn && Session.EnableMultiplayerDebug && Session.DrawMPDebugStats) {
+		Rect rect(100, 400, 540, 4);
+		surface->Fill_Rect(rect, 0);
+	}
+	if (Session.Type == GAME_INTERNET) {
+		FUN_00543090(&Ipx);
+	}
+	return RC_NORMAL;
+}
+
+#undef WAIT_TEXT
