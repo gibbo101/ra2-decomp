@@ -12960,6 +12960,7 @@ address,name,result,size,source,symbol
 0x006A94B0,SidebarClass::StripClass::RemoveButtons,MATCH,58,src/sidebar.cpp,?RemoveButtons@StripClass@SidebarClass@@QAEXXZ
 0x006A94F0,SidebarClass::StripClass::FUN_006A94F0,MATCH,67,src/sidebar.cpp,?FUN_006A94F0@StripClass@SidebarClass@@QAEHH@Z
 0x006AACE0,SidebarClass::StripClass::SelectClass::Set_Owner,MATCH,17,src/sidebar.cpp,?Set_Owner@SelectClass@StripClass@SidebarClass@@QAEXAAV23@H@Z
+0x006AAD00,SidebarClass::StripClass::SelectClass::Action,MATCH,3207,src/sidebar.cpp,?Action@SelectClass@StripClass@SidebarClass@@MAEHIAAW4KeyNumType@@H@Z
 0x006AB990,SidebarClass::StripClass::SelectClass::OnMouseEnter,MATCH,66,src/sidebar.cpp,?OnMouseEnter@SelectClass@StripClass@SidebarClass@@UAEXXZ
 0x006AB9E0,SidebarClass::StripClass::SelectClass::OnMouseLeave,MATCH,53,src/sidebar.cpp,?OnMouseLeave@SelectClass@StripClass@SidebarClass@@UAEXXZ
 0x006ABA20,SidebarClass::StripClass::SelectClass::FUN_006ABA20,MATCH,25,src/sidebar.cpp,?FUN_006ABA20@SelectClass@StripClass@SidebarClass@@QAE_NXZ
@@ -13973,7 +13974,7 @@ address,name,result,size,source,symbol
 0x006CB920,SuperClass::Discharged,MATCH,895,src/super.cpp,?Discharged@SuperClass@@QAE_N_NABVCell@@@Z
 0x006CBCA0,SuperClass::AI,MATCH,568,src/super.cpp,?AI@SuperClass@@QAE_N_N@Z
 0x006CBEE0,SuperClass::Anim_Stage,MATCH,397,src/super.cpp,?Anim_Stage@SuperClass@@QBEHXZ
-0x006CC070,FUN_006CC070,MATCH,1,src/super.cpp,?FUN_006CC070@@YIXXZ
+0x006CC070,SuperClass::Impatient_Click,MATCH,1,src/super.cpp,?Impatient_Click@SuperClass@@QBEXXZ
 0x006CC080,SuperClass::Forced_Charge,MATCH,340,src/super.cpp,?Forced_Charge@SuperClass@@QAEX_N@Z
 0x006CC1E0,SuperClass::SetCharge,MATCH,120,src/super.cpp,?SetCharge@SuperClass@@QAEXH@Z
 0x006CC260,SuperClass::GetRechargeTime,MATCH,18,src/super.cpp,?GetRechargeTime@SuperClass@@QAEHXZ
