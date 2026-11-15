@@ -507,6 +507,328 @@ extern int DAT_00ABCE04;
 
 static inline Point2D * Scratch(Point2D const & p) { return (Point2D *)&p; }
 
+#include "_keyboar.h"
+#include "houstype.h"
+#include "dbgprint.h"
+#include "beacon.h"
+#include "txtlabel.h"
+#include "ownertalk.h"
+#include "stringtable.h"
+extern BeaconManagerClass BeaconManager;
+extern wchar_t DAT_00B730EC[];
+extern int DAT_00ABCE18;
+extern char DAT_00B77E30[];
+char * __fastcall FUN_007350C0(wchar_t const * text);
+wchar_t * __fastcall FUN_00735120(char const * text);
+int __fastcall FUN_0078A6B0(wchar_t * text);
+int __fastcall FUN_0078A470(wchar_t * text);
+int __fastcall FUN_0078A8F0(wchar_t * text);
+unsigned int Compute_Name_CRC_W(wchar_t * name);
+
+namespace OwnerDraw {
+extern wchar_t IMECompositionString[];
+extern int IMEComposing;
+char * __fastcall WideToCharString(char * dest, wchar_t const * source, int count);
+}
+
+// FUNCTION: GAMEMD 0x0055E420
+void Message_Input(KeyNumType &input)
+{
+	int rc;
+	int i;
+	int count;
+	wchar_t name[16];
+	wchar_t command[64];
+	wchar_t command2[64];
+	wchar_t edit[162];
+	wchar_t message[224];
+	wchar_t prefix[112];
+	wchar_t rest[224];
+	wchar_t txt[224];
+
+	int len = wcslen(DAT_00B730EC);
+	if (len) {
+		KeyNumType key = KN_NONE;
+		for (int k = 0; k < len; k++) {
+			Session.Messages.Input(key, DAT_00B730EC[k]);
+		}
+		DAT_00B730EC[0] = 0;
+	}
+
+	if (input == 0) {
+		return;
+	}
+
+	if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && !Session.Messages.Is_Edit()) {
+		if (input & 0x8000) {
+			return;
+		}
+		int ascii = (unsigned char)Keyboard->To_ASCII(input);
+		if (ascii == '\r' || ascii == '\\' || ascii == '\b') {
+			txt[0] = 0;
+			bool beacon = BeaconManager.FindSelected(PlayerPtr->HeapID) != 0;
+			if (beacon) {
+				swprintf(txt, StringTable::LoadString("TXT_BEACON_MESSAGE", 0, "D:\\ra2mdpost\\MainLoop.CPP", 1863));
+			} else {
+				swprintf(txt, StringTable::LoadString("TXT_FROM", 0, "D:\\ra2mdpost\\MainLoop.CPP", 1865), PlayerPtr->UIName);
+				if (ascii == '\r') {
+					DAT_00ABCE18 = 1;
+				} else if (ascii == '\\') {
+					DAT_00ABCE18 = 3;
+				} else if (ascii == '\b') {
+					DAT_00ABCE18 = 2;
+				}
+			}
+			input = KN_NONE;
+			int color = Session.Color_Index_To_Scheme(Session.PrefColor);
+			TextLabelClass *label = Session.Messages.Add_Edit(color, TextPrintType(TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW), txt, 0, beacon ? 10000 : -1);
+			if (beacon) {
+				if (label) {
+					label->SkipDraw = true;
+				}
+				Session.Messages.EnableOverflow = false;
+				wcscpy(name, FUN_00735120("_"));
+				BeaconManager.EditBeaconMessage(name, -1, -1, false);
+			} else {
+				Session.Messages.EnableOverflow = true;
+			}
+			Map.Flag_To_Redraw();
+			DAT_00B730EC[0] = 0;
+		}
+	}
+
+	KeyNumType copy_input = input;
+	rc = Session.Messages.Input(input, 0);
+
+	if (rc == 1 && Session.Type != GAME_NORMAL) {
+		Map.Flag_To_Redraw();
+	} else if (rc == 2 && Session.Type != GAME_NORMAL) {
+		if (copy_input == KN_ESC) {
+			Map.Flag_To_Redraw(GS_REDRAW_ALL);
+			DAT_00ABCE18 = 0;
+		} else {
+			Map.Flag_To_Redraw();
+		}
+	}
+
+	if ((BeaconManager.FindSelected(PlayerPtr->HeapID) && copy_input && rc == 1) || rc == 2 || rc == 4 || OwnerDraw::IMEComposing) {
+		if (copy_input == KN_ESC) {
+			BeaconManager.EditBeaconMessage(0, -1, -1, true);
+		} else {
+			wcsncpy(edit, Session.Messages.Get_Edit_Buf(), 162);
+			edit[161] = 0;
+			wcsncat(edit, OwnerDraw::IMECompositionString, 162);
+			edit[161] = 0;
+			wcsncat(edit, FUN_00735120("_"), 162);
+			edit[161] = 0;
+			BeaconManager.EditBeaconMessage(edit, -1, -1, false);
+		}
+	}
+
+	if ((rc == 3 || rc == 4) && Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+		if (Session.Type == GAME_NULL_MODEM || Session.Type == GAME_MODEM) {
+			SerialPacketType *packet = (SerialPacketType *)NullModem.BuildBuf;
+			if (rc == 3 || rc == 4) {
+				packet->Command = SERIAL_MESSAGE;
+			}
+			OwnerDraw::WideToCharString(packet->Name, Session.Players[0]->Name, -1);
+			packet->ID = (char)Session.PrefColor;
+			if (rc == 3) {
+				wcscpy(packet->Message.Message, Session.Messages.Get_Edit_Buf());
+			} else if (rc == 4) {
+				wcscpy(packet->Message.Message, Session.Messages.Get_Overflow_Buf());
+				Session.Messages.Clear_Overflow_Buf();
+			}
+			NullModem.Send_Message(NullModem.BuildBuf, sizeof(SerialPacketType), 1);
+			if (rc == 3 || rc == 4) {
+				wcscpy(Session.LastMessage, packet->Message.Message);
+			}
+		} else if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+			if (BeaconManager.FindSelected(PlayerPtr->HeapID)) {
+				BeaconManager.EditBeaconMessage(Session.Messages.Get_Edit_Buf(), -1, -1, true);
+			} else {
+				if (Session.Type == GAME_INTERNET) {
+					if (rc == 3) {
+						wcscpy(message, Session.Messages.Get_Edit_Buf());
+					} else if (rc == 4) {
+						wcscpy(message, Session.Messages.Get_Overflow_Buf());
+					}
+					int page = FUN_0078A6B0(message);
+					if (page) {
+						if (page == 1) {
+							int n = 0;
+							wcscpy(command, StringTable::LoadString("TXT_PAGE_COMMAND", 0, "D:\\ra2mdpost\\MainLoop.CPP", 2051));
+							wchar_t *p = &message[wcslen(command)];
+							while (*p != 0 && wcsncmp(p, L" ", 1) == 0) {
+								p++;
+							}
+							while (*p != 0 && wcsncmp(p, L" ", 1) != 0 && n <= 10) {
+								name[n++] = *p++;
+							}
+							name[n] = 0;
+							while (*p != 0 && wcsncmp(p, L" ", 1) == 0) {
+								p++;
+							}
+							if (wcslen(name) == 0) {
+								Session.Messages.Add_Message(0, -1,
+									StringTable::LoadString("TXT_NO_NAME_SPECIFIED", 0, "D:\\ra2mdpost\\MainLoop.CPP", 2067),
+									Session.Color_Index_To_Scheme(Session.PrefColor), TextPrintType(TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW), (int)(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+							} else if (wcslen(p) == 0) {
+								Session.Messages.Add_Message(0, -1,
+									StringTable::LoadString("TXT_CANT_SEND_BLANK_PAGE", 0, "D:\\ra2mdpost\\MainLoop.CPP", 2072),
+									Session.Color_Index_To_Scheme(Session.PrefColor), TextPrintType(TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW), (int)(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+							} else {
+								swprintf(command2, L"%s > %s", Session.Players[0]->Name, name);
+								Session.Messages.Add_Message(command2, Session.PrefColor, p,
+									Session.Color_Index_To_Scheme(Session.PrefColor), TextPrintType(TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW), (int)(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+							}
+							if (rc == 4) {
+								wchar_t *buf = Session.Messages.Get_Edit_Buf();
+								if (buf) {
+									swprintf(prefix, StringTable::LoadString("TXT_FROM", 0, "D:\\ra2mdpost\\MainLoop.CPP", 2091), PlayerPtr->UIName);
+									swprintf(rest, L"%s%s %s", command, name, buf);
+									Session.Messages.Remove_Edit();
+									Session.Messages.Add_Edit(Session.PrefColor, TextPrintType(TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW), prefix, 0, -1);
+									buf = Session.Messages.Get_Edit_Buf();
+									if (buf) {
+										wcscat(buf, rest);
+									}
+								}
+							}
+						}
+						Session.Messages.Clear_Overflow_Buf();
+						return;
+					}
+					if (FUN_0078A470(message)) {
+						Session.Messages.Clear_Overflow_Buf();
+						return;
+					}
+					int reply = FUN_0078A8F0(message);
+					if (reply) {
+						if (reply == 1) {
+							bool shortform = false;
+							wcscpy(command, StringTable::LoadString("TXT_REPLY_COMMAND", 0, "D:\\ra2mdpost\\MainLoop.CPP", 2121));
+							wcscpy(command2, StringTable::LoadString("TXT_REPLY_COMMAND_SHORT", 0, "D:\\ra2mdpost\\MainLoop.CPP", 2122));
+							wchar_t *p;
+							if (wcsncmp(message, command, wcslen(command)) == 0) {
+								p = &message[wcslen(command)];
+							} else {
+								p = &message[wcslen(command2)];
+								shortform = true;
+							}
+							while (*p != 0 && wcsncmp(p, L" ", 1) == 0) {
+								p++;
+							}
+							swprintf(prefix, L"%s > %s", Session.Players[0]->Name, FUN_00735120(DAT_00B77E30));
+							if (wcslen(FUN_00735120(DAT_00B77E30)) == 0) {
+								Session.Messages.Add_Message(0, Session.PrefColor,
+									StringTable::LoadString("TXT_NAME_NOT_SPECIFIED", 0, "D:\\ra2mdpost\\MainLoop.CPP", 2136),
+									Session.Color_Index_To_Scheme(Session.PrefColor), TextPrintType(TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW), (int)(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+							} else if (wcslen(p) > 0) {
+								Session.Messages.Add_Message(prefix, Session.PrefColor, p,
+									Session.Color_Index_To_Scheme(Session.PrefColor), TextPrintType(TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW), (int)(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+							} else {
+								Session.Messages.Add_Message(0, Session.PrefColor,
+									StringTable::LoadString("TXT_CANT_SEND_BLANK_PAGE", 0, "D:\\ra2mdpost\\MainLoop.CPP", 2149),
+									Session.Color_Index_To_Scheme(Session.PrefColor), TextPrintType(TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW), (int)(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+							}
+							if (rc == 4) {
+								wchar_t *buf = Session.Messages.Get_Edit_Buf();
+								if (buf) {
+									swprintf(edit, StringTable::LoadString("TXT_FROM", 0, "D:\\ra2mdpost\\MainLoop.CPP", 2161), PlayerPtr->UIName);
+									if (shortform) {
+										swprintf(rest, L"%s %s", command2, buf);
+									} else {
+										swprintf(rest, L"%s %s", command, buf);
+									}
+									Session.Messages.Remove_Edit();
+									Session.Messages.Add_Edit(Session.PrefColor, TextPrintType(TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW), edit, 0, -1);
+									buf = Session.Messages.Get_Edit_Buf();
+									if (buf) {
+										wcscat(buf, rest);
+									}
+								}
+							}
+						}
+						Session.Messages.Clear_Overflow_Buf();
+						return;
+					}
+				}
+
+				if (rc == 3 || rc == 4) {
+					Session.GPacket.Command = NET_MESSAGE;
+				}
+				strcpy(Session.GPacket.Name, FUN_007350C0(Session.Players[0]->Name));
+				Session.GPacket.Message.Color = Session.PrefColor;
+				Session.GPacket.Message.NameCRC = Compute_Name_CRC_W(Session.GameName);
+				Session.GPacket.Message.Recipients = 0;
+				if (rc == 3) {
+					wcscpy((wchar_t *)Session.GPacket.Message.Buf, Session.Messages.Get_Edit_Buf());
+				} else if (rc == 4) {
+					wcscpy((wchar_t *)Session.GPacket.Message.Buf, Session.Messages.Get_Overflow_Buf());
+					Session.Messages.Clear_Overflow_Buf();
+				}
+
+				count = Houses.Count();
+				if (Session.MultiplayerObserver && (DAT_00ABCE18 == 1 || DAT_00ABCE18 == 2)) {
+					for (i = 0; i < count; i++) {
+						HouseClass *house = Houses[i];
+						if (house && house->Class->IsMultiplay
+							&& ((!Session.PlayerChatEnabled[i] && DAT_00ABCE18 == 1)
+								|| (!Houses[Session.Players[0]->Player.ID]->Is_Ally(house) && DAT_00ABCE18 == 2))) {
+							int scheme = GadgetClass::Get_Color_Scheme();
+							Session.Messages.Add_Message(0, 0,
+								StringTable::LoadString("TXT_OBSERVER_CANT_SEND", 0, "D:\\ra2mdpost\\MainLoop.CPP", 2234),
+								scheme, TPF_TEXT, (int)(Rule->MessageDelay * TICKS_PER_MINUTE), true);
+							DAT_00ABCE18 = 0;
+							break;
+						}
+					}
+				}
+
+				for (i = 0; i < count; i++) {
+					HouseClass *house = Houses[i];
+					if (house && house->Class->IsMultiplay
+						&& ((Session.PlayerChatEnabled[i] && DAT_00ABCE18 == 1)
+							|| (Houses[Session.Players[0]->Player.ID]->Is_Ally(house) && DAT_00ABCE18 == 2)
+							|| DAT_00ABCE18 == 3)) {
+						int connections = Ipx.Num_Connections();
+						for (int j = 0; j < connections; j++) {
+							int id = Ipx.Connection_ID(j);
+							if (wcscmp(house->UIName, Ipx.Connection_Name(id)) == 0) {
+								IPXAddressClass *address = Ipx.Connection_Address(id);
+								if (Session.ViaPacketRouter) {
+									Session.GPacket.Message.Recipients |= OwnerTalk.Mask_From_ID(id);
+								} else {
+									Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 1, address, 0, 0);
+									Ipx.Service();
+								}
+							}
+						}
+					}
+				}
+
+				if (Session.ViaPacketRouter && Session.GPacket.Message.Recipients) {
+					DebugString("Sending chat, mask = %d\n", (unsigned char)Session.GPacket.Message.Recipients);
+					Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 1, &Session.Players[0]->Address, 0, 0);
+					Ipx.Service();
+				}
+
+				wchar_t *from = FUN_00735120(Session.GPacket.Name);
+				Session.Messages.Add_Message(from, Session.GPacket.Message.Color,
+					(wchar_t *)Session.GPacket.Message.Buf, Session.Color_Index_To_Scheme(Session.GPacket.Message.Color),
+					TextPrintType(TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW), (int)(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+				wcscpy(Session.LastMessage, (wchar_t *)Session.GPacket.Message.Buf);
+			}
+		}
+		Map.Flag_To_Redraw(GS_REDRAW_ALL);
+	}
+
+	if (rc == 3) {
+		DAT_00ABCE18 = 0;
+	}
+}
+
 // FUNCTION: GAMEMD 0x0055F1E0
 void Multiplayer_Debug_Print(void)
 {
