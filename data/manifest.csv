@@ -8766,6 +8766,7 @@ address,size,symbol,source,sha256
 0x005A80B0,546,?Generate_Rural_Areas@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,b5b4cce614ad06f1074360e668222f65490ae66aaae0a18388c7b86a5116d7ec
 0x005A82E0,1081,?Generate_Rural_Buildings@MapGeneratorClass@@QAEXABVCell@@@Z,src/mapgen.cpp,8fa1b819725a9b2dc27c0a01616de1d5be20d83c7b52539c3700987381de501f
 0x005A8720,677,?Generate_Rural_Units@MapGeneratorClass@@QAEXABVCell@@@Z,src/mapgen.cpp,15f49a9aa38485b9ec2353e26c1f777d5632d8da5aabe7b35cae0126160be4ba
+0x005A89D0,1321,?Generate_Rural_Roads@MapGeneratorClass@@QAE_NABVCell@@@Z,src/mapgen.cpp,93e596d9cc9cfc80f79ed60c115cee0facd9a3c9668f885507aa3f2cf40fb606
 0x005A8F00,734,?Find_Dirt_Road_Tile@MapGeneratorClass@@SI_NW4FacingType@@ABVCell@@HAAW4IsometricTileType@@AAV3@AAH@Z,src/mapgen.cpp,966e45eddcee3298a1928c49407130762374229c19ebda6066f94ee7ea4f6601
 0x005A91E0,974,?Generate_Lights@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,2da85f0555b079660ba65ec04bd6d0c0a904553fc334c59621e21238deab69ea
 0x005A95B0,870,?Generate_Neutral_Buildings@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,e552de30ade668b75482091d9f66c5f8b155e4719af924548de7ecd9f06f885a
@@ -11431,6 +11432,7 @@ address,size,symbol,source,sha256
 0x006349B0,356,?Update_Active@PlanningNodeClass@@QAEXXZ,src/planmgr.cpp,e61acda3a9bd785e5cb45b519de1cbd11d98a82f082f04c6ef91fccd836a8d99
 0x00634B20,407,?FUN_00634B20@@YIXPAVPlanningNodeClass@@@Z,src/planmgr.cpp,b1da3974b3bc54e1091f63c672ebd856efcebfede33bbebd2aebb1d7bdd298f5
 0x00634CC0,326,?Find_Branch@PlanningNodeClass@@QAEHPAVTechnoClass@@@Z,src/planmgr.cpp,44879874e4cd4030a9c332580567a9fc0be95023360644d8f1c6bb0554edc1b6
+0x00634E10,585,?FUN_00634E10@PlanningNodeClass@@QAEHPAVPlanningMemberClass@@@Z,src/planmgr.cpp,3d8919f45a2aa93ad627dc39ef5ef27a88613d12c6df5f709b0ce816e6179706
 0x00635060,183,?Detach@PlanningNodeClass@@QAEXPAVPlanningMemberClass@@@Z,src/planmgr.cpp,e6123ba46c199df42c3b08b4742e8940fdf24fed3fdcb769d630f5d576caff32
 0x00635120,114,?Clear@PlanningNodeClass@@QAEXXZ,src/planmgr.cpp,407b14ca7c125f2998f398aa078083e10cc4044282986ec25e0a8982a75af2dc
 0x006351A0,53,?Is_Loop_Start@PlanningNodeClass@@QAE_NPAVTechnoClass@@@Z,src/planmgr.cpp,e1a349d5e724651fe1b69e77e27062351e6f92c336e8ea33de889d19419e71b2
@@ -14760,6 +14762,7 @@ address,size,symbol,source,sha256
 0x006E3380,141,?TAction_ION_CANNON@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z,src/taction.cpp,7afbdf50734e1f66c86f60a1b50ab78efdd504af2489e6daf77d710035e5d846
 0x006E3410,469,?TAction_MULTI_MISSILE@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z,src/taction.cpp,9018ff561de4d91e73fa4d140347cdee5095fd2964b592fe8d4dee75f8725640
 0x006E35F0,228,?TAction_LIGHTNING_STORM@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z,src/taction.cpp,c5fe7d22b8676bca163f182b6914a7ac3b004ac0dce30a8293519ad1af25b7df
+0x006E36E0,263,?TAction_IRON_CURTAIN@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z,src/taction.cpp,d725c5e63c39b430cb04c317be9016d1aa6da373ca376f574392e7cf68345c28
 0x006E37F0,153,?TAction_SET_TECH_LEVEL@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z,src/taction.cpp,af0f5b3aa32a194bf5c0978795e0032a90d204ca440f851beb359cecf4e9213e
 0x006E3890,30,?TAction_CHRONO_IN_TEAM@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z,src/taction.cpp,be47b4f9c317694531b3bcb595efe3f48db2184bff5d25cb673f9729781b7003
 0x006E38B0,49,?TAction_CREATE_CRATE@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z,src/taction.cpp,cc52f7c3e9e9dc3e096e516a0828e6f32033f42ce717c5038267971e9d4152ce
@@ -17308,6 +17311,7 @@ address,size,symbol,source,sha256
 0x0075F980,98,?Limbo@WaveClass@@UAE_NXZ,src/wave.cpp,d2e7012c2cf1c87b459e75a82f56fd0b5b67b1da354b097b8d83e5bdc2797ca5
 0x0075F9F0,156,?Draw_It@WaveClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/wave.cpp,8ec3608fac28b5f21435586886cb93b8f9e781ad9fe06e15f877682367608075
 0x00760190,332,?FUN_00760190@WaveClass@@ABEXHHHPAG@Z,src/wave.cpp,6b3236ed2cb52653b29c14abd373c59356ff9d6a20ed06ff03a50244bcc6e995
+0x007609E0,1382,?Draw_Laser@WaveClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z,src/wave.cpp,fb09edef81d29c54d5a3f5cbe2320f42782aa9313ffb76980b3bc07d1e31dd08
 0x00760F50,220,?AI@WaveClass@@UAEXXZ,src/wave.cpp,9d5cfe91d19d8b173c0bbc84b37933fe3d67fde4aacf7fdf59025490f9e4d7ed
 0x00761030,106,?Sonic_AI@WaveClass@@AAEXXZ,src/wave.cpp,238bcde1e46ccc592c9c6b599f171b46877510a47cf1cad290e7a6aef94f8061
 0x007610A0,44,?FUN_007610A0@WaveClass@@AAEXXZ,src/wave.cpp,0142a8ab6c0a958404e62340694a900c34f8f0ddd2ac9a7115959cd76e1d7de7
