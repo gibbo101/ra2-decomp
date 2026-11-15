@@ -181,6 +181,38 @@ void SurfaceCacheClass::Remove(char const *name)
 	getEntries();
 }
 
+// FUNCTION: GAMEMD 0x006BA580
+bool SurfaceCacheClass::DrawTrans(Rect const & rect, Surface & tosurface, Surface & fromsurface, short trans)
+{
+	unsigned short * dest = (unsigned short *)tosurface.Lock();
+	if (dest == NULL) {
+		return(false);
+	}
+	unsigned short * src = (unsigned short *)fromsurface.Lock();
+	if (src == NULL) {
+		tosurface.Unlock();
+		return(false);
+	}
+	Rect area = rect;
+	area.Width = fromsurface.Get_Width();
+	area.Height = fromsurface.Get_Height();
+	int pitch = tosurface.Stride() / 2;
+	int index = 0;
+	for (int y = 0; y < area.Height; y++) {
+		int offset = (y + area.Y) * pitch + area.X;
+		for (int x = 0; x < area.Width; x++) {
+			unsigned short value = src[index];
+			if (value != (unsigned short)trans) {
+				dest[offset + x] = value;
+			}
+			index++;
+		}
+	}
+	tosurface.Unlock();
+	fromsurface.Unlock();
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x006BA680
 bool SurfaceCacheClass::DrawNullsub(Rect const & rect, Surface & tosurface, Surface & fromsurface)
 {
