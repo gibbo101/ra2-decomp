@@ -1991,6 +1991,29 @@ bool TActionClass::TAction_LIGHTNING_STORM(HouseClass * house, ObjectClass * , T
 	return(false);
 }
 
+extern int DAT_007ED3D0[];
+namespace Unsorted { extern Cell CellSpreadTable[]; }
+
+// FUNCTION: GAMEMD 0x006E36E0
+bool TActionClass::TAction_IRON_CURTAIN(HouseClass *, ObjectClass *, TriggerClass *, Cell const &)
+{
+	Cell cell;
+	Cell center = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Map[center].Center_Coord();
+	new AnimClass(Rule->IronCurtainInvokeAnim, coord + Coord(0, 0, 5));
+	int count = DAT_007ED3D0[1];
+	for (int index = 0; index < count; index++) {
+		Cell const & offset = Unsorted::CellSpreadTable[index];
+		cell = TPoint2D<short>(center.X + offset.X, center.Y + offset.Y);
+		ObjectClass * object = Map[cell].Cell_Occupier();
+		while (object != NULL) {
+			object->IronCurtain(Rule->IronCurtainDuration, NULL, false);
+			object = object->Next;
+		}
+	}
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x006E37F0
 bool TActionClass::TAction_SET_TECH_LEVEL(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {

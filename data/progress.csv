@@ -14394,6 +14394,7 @@ address,name,result,size,source,symbol
 0x006E3380,TActionClass::TAction_ION_CANNON,MATCH,141,src/taction.cpp,?TAction_ION_CANNON@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
 0x006E3410,TActionClass::TAction_MULTI_MISSILE,MATCH,469,src/taction.cpp,?TAction_MULTI_MISSILE@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
 0x006E35F0,TActionClass::TAction_LIGHTNING_STORM,MATCH,228,src/taction.cpp,?TAction_LIGHTNING_STORM@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
+0x006E36E0,TActionClass::TAction_IRON_CURTAIN,MATCH,263,src/taction.cpp,?TAction_IRON_CURTAIN@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
 0x006E37F0,TActionClass::TAction_SET_TECH_LEVEL,MATCH,153,src/taction.cpp,?TAction_SET_TECH_LEVEL@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
 0x006E3890,TActionClass::TAction_CHRONO_IN_TEAM,MATCH,30,src/taction.cpp,?TAction_CHRONO_IN_TEAM@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
 0x006E38B0,TActionClass::TAction_CREATE_CRATE,MATCH,49,src/taction.cpp,?TAction_CREATE_CRATE@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
