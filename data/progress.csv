@@ -18072,6 +18072,7 @@ address,name,result,size,source,symbol
 0x00783A90,FUN_00783A90,MATCH,240,src/wonline.cpp,?FUN_00783A90@@YIPAVSurface@@H@Z
 0x00783B80,FUN_00783B80,MATCH,245,src/wonline.cpp,?FUN_00783B80@@YIPAVSurface@@PAURankedUser@@@Z
 0x00785360,FUN_00785360,MATCH,9,src/wonline.cpp,?FUN_00785360@@YIXXZ
+0x007A3100,CNetUtilEventSink::OnLadderList,MATCH,2600,src/wonline.cpp,?OnLadderList@CNetUtilEventSink@@UAGJJPAULadder@@HJH@Z
 0x00785370,FUN_00785370,MATCH,976,src/wonline.cpp,?FUN_00785370@@YIHPAUHINSTANCE__@@@Z
 0x00785740,FUN_00785740,MATCH,1883,src/wonline.cpp,?FUN_00785740@@YIXPAUUser@@@Z
 0x00785EA0,FUN_00785EA0,MATCH,471,src/wonline.cpp,?FUN_00785EA0@@YIXXZ
@@ -18164,6 +18165,7 @@ address,name,result,size,source,symbol
 0x00799EA0,FUN_00799EA0,MATCH,3932,src/wonline.cpp,?FUN_00799EA0@@YGHPAUHWND__@@IIJ@Z
 0x0079AE00,FUN_0079AE00,MATCH,260,src/wonline.cpp,?FUN_0079AE00@@YGHPAUHWND__@@IIJ@Z
 0x0079AF10,FUN_0079AF10,MATCH,2892,src/wonline.cpp,?FUN_0079AF10@@YIXPAUHWND__@@@Z
+0x0079BA60,FUN_0079BA60,MATCH,539,src/wonline.cpp,?FUN_0079BA60@@YI_NPAUChannel@@_N1@Z
 0x0079BC80,FUN_0079BC80,MATCH,486,src/wonline.cpp,?FUN_0079BC80@@YI_NXZ
 0x0079BE70,FUN_0079BE70,MATCH,89,src/wonline.cpp,?FUN_0079BE70@@YIXXZ
 0x0079BED0,FUN_0079BED0,MATCH,122,src/wonline.cpp,?FUN_0079BED0@@YI_NXZ
@@ -18213,7 +18215,6 @@ address,name,result,size,source,symbol
 0x007A2FC0,CNetUtilEventSink::CNetUtilEventSink,MATCH,30,src/wonline.cpp,??0CNetUtilEventSink@@QAE@XZ
 0x007A2FE0,CNetUtilEventSink::OnWDTState,MATCH,231,src/wonline.cpp,?OnWDTState@CNetUtilEventSink@@UAGJJPAEH@Z
 0x007A30D0,CNetUtilEventSink::OnGameresSent,MATCH,39,src/wonline.cpp,?OnGameresSent@CNetUtilEventSink@@UAGJJ@Z
-0x007A3100,CNetUtilEventSink::OnLadderList,MATCH,2600,src/wonline.cpp,?OnLadderList@CNetUtilEventSink@@UAGJJPAULadder@@HJH@Z
 0x007A3B30,CNetUtilEventSink::OnHighscore,MATCH,594,src/wonline.cpp,?OnHighscore@CNetUtilEventSink@@UAGJJPAUHighscore@@HJH@Z
 0x007A3D90,CNetUtilEventSink::OnNewNick,MATCH,732,src/wonline.cpp,?OnNewNick@CNetUtilEventSink@@UAGJJPBD00@Z
 0x007A4070,CNetUtilEventSink::OnAgeCheck,MATCH,121,src/wonline.cpp,?OnAgeCheck@CNetUtilEventSink@@UAGJJHH@Z
