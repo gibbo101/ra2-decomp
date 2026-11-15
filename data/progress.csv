@@ -11099,6 +11099,7 @@ address,name,result,size,source,symbol
 0x00634970,PlanningNodeClass::Rebuild,MATCH,53,src/planmgr.cpp,?Rebuild@PlanningNodeClass@@QAEXXZ
 0x006349B0,PlanningNodeClass::Update_Active,MATCH,356,src/planmgr.cpp,?Update_Active@PlanningNodeClass@@QAEXXZ
 0x00634CC0,PlanningNodeClass::Find_Branch,MATCH,326,src/planmgr.cpp,?Find_Branch@PlanningNodeClass@@QAEHPAVTechnoClass@@@Z
+0x00634E10,PlanningNodeClass::FUN_00634E10,MATCH,585,src/planmgr.cpp,?FUN_00634E10@PlanningNodeClass@@QAEHPAVPlanningMemberClass@@@Z
 0x00635060,PlanningNodeClass::Detach,MATCH,183,src/planmgr.cpp,?Detach@PlanningNodeClass@@QAEXPAVPlanningMemberClass@@@Z
 0x00635120,PlanningNodeClass::Clear,MATCH,114,src/planmgr.cpp,?Clear@PlanningNodeClass@@QAEXXZ
 0x006351A0,PlanningNodeClass::Is_Loop_Start,MATCH,53,src/planmgr.cpp,?Is_Loop_Start@PlanningNodeClass@@QAE_NPAVTechnoClass@@@Z

@@ -100,7 +100,7 @@ class PlanningNodeClass
 		bool Get_Queued(void);
 		void Rebuild(void);
 		void Update_Active(void);
-		void FUN_00634E10(PlanningMemberClass * member);
+		int FUN_00634E10(PlanningMemberClass * member);
 		int Find_Branch(TechnoClass * techno);
 		void Detach(PlanningMemberClass * member);
 		void Clear(void);
