@@ -1223,6 +1223,11 @@ bool SessionClass::Is_Random_Map(void) const
 extern char DAT_00B77A04[];
 extern char DAT_00B76568[];
 
+static inline void Copy_Player_Name(char * destination, wchar_t const * name)
+{
+	strcpy(destination, FUN_007350C0(name));
+}
+
 // FUNCTION: GAMEMD 0x0069AE90
 void SessionClass::Update_Progress(int percent)
 {
@@ -1254,7 +1259,7 @@ void SessionClass::Update_Progress(int percent)
 				prog_packet.Command = NET_PROGRESS_REPORT;
 				prog_packet.Progress.Percent = int(100.0 * Progress.Get_Current_Progress(0));
 
-				strcpy(prog_packet.Name, FUN_007350C0(Session.Players[0]->Name));
+				Copy_Player_Name(prog_packet.Name, Session.Players[0]->Name);
 
 				if (prog_packet.Progress.Percent < 99.95) {
 					Ipx.Send_Global_Message(&prog_packet, 0x33, 0, NULL);
@@ -1653,10 +1658,17 @@ unsigned short SessionClass::FUN_0069BC20(int connection_id)
 int SessionClass::FUN_0069BC60(int index)
 {
 	int i = 0;
-	for (NodeNameType ** slot = Session.Slots; (int)slot < (int)&Session.Slots[8]; slot++, i++) {
-		NodeNameType * node = *slot;
-		char * a = FUN_007350C0(Session.Players[index]->Name);
-		if (stricmp(a, FUN_007350C0(node->Name)) == 0) {
+	NodeNameType * node;
+	char * a;
+	char * b;
+
+	for (NodeNameType ** slot = Session.Slots;
+		 (int)slot < (int)&Session.Slots[8];
+		 i++, slot++) {
+		node = *slot;
+		a = FUN_007350C0(Session.Players[index]->Name);
+		b = FUN_007350C0(node->Name);
+		if (stricmp(a, b) == 0) {
 			return i;
 		}
 	}
@@ -1686,6 +1698,156 @@ int SessionClass::FUN_0069BD00(int slot)
 		}
 	}
 	return 0;
+}
+
+#include "wspudp.h"
+extern WinsockInterfaceClass * PacketTransport;
+extern Wstring DAT_00B73E40;
+
+// FUNCTION: GAMEMD 0x0069BD60
+void SessionClass::FUN_0069BD60(void)
+{
+	int player;
+	unsigned short port_offset = 1;
+	DynamicVectorClass<NodeNameType *> ordered;
+
+	FUN_004068E0("Allocating port numbers and local addresses\n");
+	if (Players.Count() < 2) {
+		return;
+	}
+
+	int local_count = 0;
+	memset(unknown_2E28, 0, sizeof(unknown_2E28));
+	unknown_3018 = true;
+
+	for (player = 0; player < Players.Count(); player++) {
+		int slot = FUN_0069BC60(player);
+		if (slot >= 0 && slot < MAX_PLAYERS) {
+			Players[player]->Address.Set_Port(unknown_2FF8[slot]);
+			char * name = FUN_007350C0(Players[player]->Name);
+			char const * address = Players[player]->Address.As_String(NULL);
+			FUN_004068E0("Allocated port for player %s - %s\n", name, address);
+		}
+	}
+
+	bool used[MAX_PLAYERS];
+	memset(used, 0, sizeof(used));
+
+	for (int i = 0; i < Players.Count(); i++) {
+		int index = INT_MAX;
+		int smallest = INT_MAX;
+
+		for (int j = 0; j < Players.Count(); j++) {
+			if (!used[j] && Players[j]->Slot.ColorIdx < smallest) {
+				smallest = Players[j]->Slot.ColorIdx;
+				index = j;
+			}
+		}
+
+		if (index == INT_MAX) {
+			break;
+		}
+
+		used[index] = true;
+		ordered.Add(Players[index]);
+
+		if (ordered.Count() == Players.Count()) {
+			break;
+		}
+	}
+
+	memset(used, 0, sizeof(used));
+
+	for (i = 0; i < ordered.Count(); i++) {
+		if (!used[i]) {
+			IPXAddressClass address = ordered[i]->Address;
+
+			for (int j = 0; j < ordered.Count(); j++) {
+				if (j != i && !used[j] &&
+					address.FUN_0053EF30(ordered[j]->Address)) {
+					int peer_slot =
+						FUN_0069BCC0(FUN_007350C0(ordered[j]->Name));
+					int local_slot =
+						FUN_0069BCC0(FUN_007350C0(ordered[i]->Name));
+
+					if (unknown_2FF8[peer_slot] == unknown_2FF8[local_slot]) {
+						ordered[j]->Address.Set_Port(
+							unknown_2FF8[peer_slot] + port_offset++);
+						used[j] = true;
+						FUN_004068E0(
+							"Adjusted port number to %d for player %s\n",
+							port_offset - 1,
+							FUN_007350C0(ordered[j]->Name));
+					} else {
+						FUN_004068E0(
+							"Two player behand the same NAT but they are using different port bases anyway\n");
+					}
+
+					char * name = FUN_007350C0(ordered[i]->Name);
+					if (stricmp(name, DAT_00B73E40.get()) == 0) {
+						Copy_Player_Name(
+							unknown_2E28[local_count++], ordered[j]->Name);
+					}
+
+					name = FUN_007350C0(ordered[j]->Name);
+					if (stricmp(name, DAT_00B73E40.get()) == 0) {
+						Copy_Player_Name(
+							unknown_2E28[local_count++], ordered[i]->Name);
+					}
+				}
+			}
+		}
+	}
+
+	if (unknown_301C) {
+		FUN_004068E0("Using %d for local port\n", unknown_301C);
+		Players[0]->Address.Set_Port(unknown_301C);
+		Slots[FUN_0069BC60(0)]->Address.Set_Port(unknown_301C);
+	}
+
+	for (i = 0; i < Players.Count(); i++) {
+		PlayerPorts[i] = Players[i]->Address.Get_Port();
+		if (PlayerPorts[i] == 0) {
+			PlayerPorts[i] = 1234;
+		}
+	}
+
+	IPXAddressClass own_address = Players[0]->Address;
+	NetNodeType own_node;
+	own_address.Get_Node(own_node);
+
+	for (i = 1; i < Players.Count(); i++) {
+		if (own_address.FUN_0053EF30(Players[i]->Address)) {
+			FUN_004068E0(
+				"%s has the same IP address as me\n",
+				FUN_007350C0(Players[i]->Name));
+
+			for (int j = 0; j < MAX_PLAYERS; j++) {
+				NodeNameType * node = Slots[j];
+				char * name = FUN_007350C0(Players[i]->Name);
+				char * peer_name = FUN_007350C0(node->Name);
+
+				if (stricmp(name, peer_name) == 0) {
+					NetNodeType local_node;
+					unknown_2994[j].Get_Node(local_node);
+					Players[i]->Address.Set_Address(
+						NULL, local_node, Players[i]->Address.Get_Port());
+
+					name = FUN_007350C0(Players[i]->Name);
+					FUN_004068E0(
+						"Talking to NAT player %s on IP address %s\n",
+						name,
+						Players[i]->Address.As_String(NULL));
+				}
+			}
+		}
+	}
+
+	if (PacketTransport) {
+		((UDPInterfaceClass *)PacketTransport)->Close_All_Port_Sockets();
+		((UDPInterfaceClass *)PacketTransport)->OpenSocket(PlayerPorts[0]);
+		PacketTransport->Start_Listening();
+	}
 }
 
 // TEMPLATE: GAMEMD 0x0069C4A0
