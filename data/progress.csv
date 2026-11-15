@@ -7824,11 +7824,13 @@ address,name,result,size,source,symbol
 0x0055CC20,Motion_Capture,MATCH,742,src/mainloop.cpp,?Motion_Capture@@YIXXZ
 0x0055CF10,Disconnect_Gracefully,MATCH,182,src/mainloop.cpp,?Disconnect_Gracefully@@YIXXZ
 0x0055CFD0,FUN_0055CFD0,MATCH,906,src/mainloop.cpp,?FUN_0055CFD0@@YI_NXZ
+0x0055D360,Main_Loop,MATCH,2940,src/mainloop.cpp,?Main_Loop@@YI_NXZ
 0x0055DEE0,Keyboard_Process,MATCH,636,src/mainloop.cpp,?Keyboard_Process@@YIXAAW4KeyNumType@@@Z
 0x0055E160,Sync_Delay,MATCH,676,src/mainloop.cpp,?Sync_Delay@@YIXXZ
 0x0055E410,_$E145,MATCH,1,src/mainloop.cpp,_$E145
 0x0055E420,Message_Input,MATCH,3507,src/mainloop.cpp,?Message_Input@@YIXAAW4KeyNumType@@@Z
-0x0055F1E0,Multiplayer_Debug_Print,MATCH,1189,src/mainloop.cpp,?Multiplayer_Debug_Print@@YIXXZ
+0x0055F1E0,Multiplayer_Debug_Print,MATCH,1189,src/mainloop.cpp,?Multiplayer_Debug_Print@@YIX_N@Z
+0x0055F690,xTargetClass::Decode,MATCH,40,src/mainloop.cpp,?Decode@xTargetClass@@QAE?AV1@H@Z
 0x0055F6C0,?Is_Archive_Same@?$IndexClass@HPBVCommandClass@@@@ABE_NABH@Z,MATCH,27,src/mainloop.cpp,?Is_Archive_Same@?$IndexClass@HPBVCommandClass@@@@ABE_NABH@Z
 0x0055F6E0,?Search_For_Node@?$IndexClass@HPBVCommandClass@@@@ABEPBUNodeElement@1@ABH@Z,MATCH,121,src/mainloop.cpp,?Search_For_Node@?$IndexClass@HPBVCommandClass@@@@ABEPBUNodeElement@1@ABH@Z
 0x0055F760,_$E2,MATCH,23,src/mainopt.cpp,_$E2
