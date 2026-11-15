@@ -11872,6 +11872,7 @@ address,name,result,size,source,symbol
 0x0065D890,_$E38,MATCH,26,src/reinf.cpp,_$E38
 0x0065D8B0,_$E41,MATCH,23,src/reinf.cpp,_$E41
 0x0065D8D0,FUN_0065D8D0,MATCH,3,src/reinf.cpp,?FUN_0065D8D0@@YI_NXZ
+0x0065D8E0,Do_Reinforcements,MATCH,1093,src/reinf.cpp,?Do_Reinforcements@@YI_NPBVTeamTypeClass@@H@Z
 0x0065DD30,_Create_Group,MATCH,734,src/reinf.cpp,?_Create_Group@@YIPAVFootClass@@PBVTeamTypeClass@@@Z
 0x0065E010,Create_Reinforcement,MATCH,1599,src/reinf.cpp,?Create_Reinforcement@@YI_NPBVTeamTypeClass@@PAVFootClass@@ABVCell@@_N@Z
 0x0065E650,Create_Special_Reinforcement,MATCH,5,src/reinf.cpp,?Create_Special_Reinforcement@@YI_NPAVHouseClass@@PBVTechnoTypeClass@@1W4TeamMissionType@@H@Z

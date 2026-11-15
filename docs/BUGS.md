@@ -66,3 +66,8 @@ effect, so it can be fixed in a separate build later.
   allocates its cell-node array and priority queue before searching for a random
   starting cell. Exhausting the 200-attempt search returns without releasing
   either allocation. The recovered source preserves this leak.
+
+- **Do_Reinforcements (0x0065D8E0).** After `_Create_Group`, the routine writes
+  through `object->Team` before checking whether `object` is null. If group
+  creation fails, execution can access-violate before reaching the intended
+  failure return. The recovered source preserves this ordering.
