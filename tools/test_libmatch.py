@@ -3,7 +3,10 @@ import struct
 import tempfile
 import unittest
 
-from libmatch import short_imports
+from types import SimpleNamespace
+
+from coff import REL_DIR32, REL_REL32
+from libmatch import import_fields, imports_agree, short_imports
 
 
 def short(symbol, dll, hint, how):
@@ -17,6 +20,23 @@ def archive(bodies):
         head = f"M{k}/".ljust(16) + "0".ljust(12) + "".ljust(6) + "".ljust(6) + "0".ljust(8) + str(len(body)).ljust(10) + "`\n"
         out += head.encode() + body + (b"\n" if len(body) & 1 else b"")
     return out
+
+
+class ImportSlotTests(unittest.TestCase):
+    def test_same_instructions_with_different_imports(self):
+        obj = SimpleNamespace(by_index={1: SimpleNamespace(name="__imp__DeleteFileA@4")})
+        data = b"\x90" * 4 + b"\xff\x15" + struct.pack("<I", 4)
+        reloc = SimpleNamespace(offset=6, symbol=1, type=REL_DIR32)
+        section = SimpleNamespace(data=data, relocs=[reloc])
+        fields = import_fields(obj, section, 4, 10)
+        self.assertEqual(fields, [(2, "DeleteFileA", 4)])
+
+        code = b"\xff\x15" + struct.pack("<I", 0x1004) + b"\xff\x15" + struct.pack("<I", 0x2004)
+        slots = {0x1000: "RemoveDirectoryA", 0x2000: "DeleteFileA"}
+        self.assertFalse(imports_agree(code, 0, fields, slots))
+        self.assertTrue(imports_agree(code, 6, fields, slots))
+        reloc.type = REL_REL32
+        self.assertEqual(import_fields(obj, section, 4, 10), [])
 
 
 class ShortImportTests(unittest.TestCase):
