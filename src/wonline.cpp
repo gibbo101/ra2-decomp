@@ -11388,6 +11388,84 @@ long __stdcall FUN_007A7B60(void *sink, long result, Channel *channel, User *use
 	return S_OK;
 }
 
+bool __fastcall FUN_005E3D10(char * options, char * name);
+extern char DAT_0084AE74[];
+extern char DAT_0084AE4C[];
+extern char DAT_0084AE08[];
+
+// FUNCTION: GAMEMD 0x007A7EA0
+long __stdcall FUN_007A7EA0(void * sink, long result, Channel * channel, User * user, char const * options)
+{
+	static BasicTimerClass<SystemTimerClass> timer;
+	if (result < 0) return S_OK;
+	char * buffer = strdup(options);
+	bool scenario_changed = FUN_005E3D10(buffer, (char *)user->name);
+	free(buffer);
+	if (DAT_00B77DC1 || DAT_00B77E28 || options[0] == 'Z' || options[0] == 'W') return S_OK;
+	bool isnew = false;
+	if (Is_Local_Host()) return S_OK;
+	if (Is_Internal_Session()) {
+		WideWstring nickname = FUN_007B7ED0(DAT_00B73E40);
+		NodeNameType * local = FUN_005E8BF0(nickname.get());
+		if (!local) return S_OK;
+		if (local->Get_Country() < 0 || local->Get_Color() < 0) return S_OK;
+		if (options[0] < '0' || options[0] > '9') return S_OK;
+		if (DAT_00B77900.length() == 2) g_pChat->RequestPublicGameOptions("A1");
+		return S_OK;
+	}
+	HWND dialog = FUN_00775B10();
+	if (!MultiplayerMapPreview) {
+		if (scenario_changed) {
+			isnew = true;
+			timer = 0;
+			FUN_004068E0(DAT_0084AE74);
+		}
+		if (timer > 900 && (!MultiplayerMapPreview || !MultiplayerMapPreview->Get_Preview_Surface()) && !DAT_00B77E2C) {
+			if (Session.ScenarioFileName[0] && !FUN_006951F0(Session.ScenarioFileName, Session.ScenarioFileLength, Session.ScenarioDigest, Session.ScenarioIsOfficial, false)) {
+				isnew = true;
+				FUN_004068E0(DAT_0084AE4C);
+			} else {
+				timer = 0;
+			}
+		}
+		if (!Session.Is_Random_Map()) {
+			bool exists = false;
+			if (FUN_006951F0(Session.ScenarioFileName, Session.ScenarioFileLength, Session.ScenarioDigest, Session.ScenarioIsOfficial, false)) {
+				{
+					RawFileClass file(Session.ScenarioFileName);
+					if (file.Is_Available()) exists = true;
+				}
+				if (!exists) {
+					isnew = false;
+					goto update_dialog;
+				}
+			}
+			if (FUN_0077D940() && Session.Players[0]->Slot.Unknown77) {
+				Session.Players[0]->Slot.Unknown77 = 0;
+				FUN_005E3720("A0");
+				EnableWindow(GetDlgItem(dialog, 0x59F), false);
+			}
+update_dialog:
+			if (FUN_00775B20() == 0xC9) InvalidateRect(FUN_00775B10(), NULL, false);
+		}
+	} else {
+		HWND item = GetDlgItem(dialog, 0x71F);
+		if (item) ShowWindow(item, SW_HIDE);
+		ShowWindow(GetDlgItem(dialog, 0x468), SW_SHOWNORMAL);
+	}
+	if (isnew) {
+		char options_str[64];
+		sprintf(options_str, "P%s", Session.ScenarioFileName);
+		User host;
+		DAT_00B77900.getHead(host);
+		g_pChat->RequestPrivateGameOptions(&host, options_str);
+		FUN_004068E0(DAT_0084AE08);
+		FUN_00796960();
+		return S_OK;
+	}
+	return S_OK;
+}
+
 // FUNCTION: GAMEMD 0x007A8DA0
 long __stdcall FUN_007A8DA0(void * sink, long result, void * channel, User * user, char const * text)
 {
@@ -12391,10 +12469,8 @@ long __stdcall FUN_007AC4E0(void * sink, long result, void * arg)
 	return 0;
 }
 
-// FUNCTION: GAMEMD 0x007AC4F0
-void __stdcall FUN_007AC4F0(void)
-{
-}
+// SYNTHETIC: GAMEMD 0x007AC4F0 SYMBOL
+// _$E372
 
 // FUNCTION: GAMEMD 0x007AC500
 long __stdcall FUN_007AC500(AtlModule * module)
