@@ -878,13 +878,18 @@ def main() -> None:
     raise SystemExit(report(src, objpath.read_bytes(), Original(), known_names(), targets, score, summary))
 
 
-def report(src, raw, orig, names, targets, score=False, summary=False):
-    """Verify one compiled source object and print the normal checker result."""
-    obj = CoffObject(raw)
+def mark_asm_object_starts(src, obj):
+    """Mark where an assembled file's routines began a new object in the original (data/asm_objects.csv)."""
     if is_asm(src):
         for symbol in asm_object_starts().get(src.resolve().relative_to(ROOT).as_posix(), ()):
             at = next(s for s in obj.symbols if s.name == symbol and s.section > 0)
             obj.sections[at.section - 1].object_starts.add(at.value)
+
+
+def report(src, raw, orig, names, targets, score=False, summary=False):
+    """Verify one compiled source object and print the normal checker result."""
+    obj = CoffObject(raw)
+    mark_asm_object_starts(src, obj)
     # Which compiled function each annotation is decides what its own symbol resolves to,
     # so pick them first, by bytes alone.
     local, duplicates = bind_annotations(orig, obj, raw, src)
