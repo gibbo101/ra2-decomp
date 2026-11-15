@@ -318,6 +318,278 @@
       "rtti_type": ".?AV_com_error@@",
       "vtable": "0x007FA498",
       "deleting_destructor": "0x007DCDF2"
+    },
+    {
+      "address": "0x007C8B3D",
+      "symbol": "??3@YAXPAX@Z",
+      "library": "LIBCMT.LIB",
+      "object": "delete.obj",
+      "size": 11,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007D2F41",
+          "symbol": "??1exception@@UAE@XZ",
+          "library": "LIBCMT.LIB",
+          "object": "stdexcpt.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007C8E17",
+      "symbol": "??2@YAPAXI@Z",
+      "library": "LIBCMT.LIB",
+      "object": "new.obj",
+      "size": 14,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007D2E9B",
+          "symbol": "??0exception@@QAE@ABQBD@Z",
+          "library": "LIBCMT.LIB",
+          "object": "stdexcpt.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007C9FD9",
+      "symbol": "_strtoul",
+      "library": "LIBCMT.LIB",
+      "object": "strtol.obj",
+      "size": 23,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007CD615",
+          "symbol": "_genfname",
+          "library": "LIBCMT.LIB",
+          "object": "tmpfile.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CEA1B",
+      "symbol": "_write_multi_char",
+      "library": "LIBCMT.LIB",
+      "object": "output.obj",
+      "size": 49,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007CE2A5",
+          "symbol": "__output",
+          "library": "LIBCMT.LIB",
+          "object": "output.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CEA84",
+      "symbol": "_get_int_arg",
+      "library": "LIBCMT.LIB",
+      "object": "output.obj",
+      "size": 13,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007CE2A5",
+          "symbol": "__output",
+          "library": "LIBCMT.LIB",
+          "object": "output.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CEA91",
+      "symbol": "_get_int64_arg",
+      "library": "LIBCMT.LIB",
+      "object": "output.obj",
+      "size": 16,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007CE2A5",
+          "symbol": "__output",
+          "library": "LIBCMT.LIB",
+          "object": "output.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007CEAA1",
+      "symbol": "_get_short_arg",
+      "library": "LIBCMT.LIB",
+      "object": "output.obj",
+      "size": 14,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007CE2A5",
+          "symbol": "__output",
+          "library": "LIBCMT.LIB",
+          "object": "output.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007D12E6",
+      "symbol": "_strncnt",
+      "library": "LIBCMT.LIB",
+      "object": "a_map.obj",
+      "size": 43,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007D10C2",
+          "symbol": "___crtLCMapStringA",
+          "library": "LIBCMT.LIB",
+          "object": "a_map.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007D2995",
+      "symbol": "_get_int_arg",
+      "library": "LIBCMT.LIB",
+      "object": "woutput.obj",
+      "size": 13,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007D21BE",
+          "symbol": "__woutput",
+          "library": "LIBCMT.LIB",
+          "object": "woutput.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007D29A2",
+      "symbol": "_get_int64_arg",
+      "library": "LIBCMT.LIB",
+      "object": "woutput.obj",
+      "size": 16,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007D21BE",
+          "symbol": "__woutput",
+          "library": "LIBCMT.LIB",
+          "object": "woutput.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007D4596",
+      "symbol": "__inc",
+      "library": "LIBCMT.LIB",
+      "object": "winput.obj",
+      "size": 11,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007D3A6D",
+          "symbol": "__winput",
+          "library": "LIBCMT.LIB",
+          "object": "winput.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007D67F9",
+      "symbol": "_fix_grouping",
+      "library": "LIBCMT.LIB",
+      "object": "initnum.obj",
+      "size": 55,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007D6624",
+          "symbol": "___init_numeric",
+          "library": "LIBCMT.LIB",
+          "object": "initnum.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007D6A1D",
+      "symbol": "_fix_grouping",
+      "library": "LIBCMT.LIB",
+      "object": "initmon.obj",
+      "size": 55,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007D68FB",
+          "symbol": "__get_lc_lconv",
+          "library": "LIBCMT.LIB",
+          "object": "initmon.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007DA9A2",
+      "symbol": "_strncnt",
+      "library": "LIBCMT.LIB",
+      "object": "a_cmp.obj",
+      "size": 43,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007DA725",
+          "symbol": "___crtCompareStringA",
+          "library": "LIBCMT.LIB",
+          "object": "a_cmp.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007DDCAB",
+      "symbol": "_get_int_arg",
+      "library": "LIBCMT.LIB",
+      "object": "cprintf.obj",
+      "size": 13,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007DD505",
+          "symbol": "_output",
+          "library": "LIBCMT.LIB",
+          "object": "cprintf.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007DDCB8",
+      "symbol": "_get_int64_arg",
+      "library": "LIBCMT.LIB",
+      "object": "cprintf.obj",
+      "size": 16,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007DD505",
+          "symbol": "_output",
+          "library": "LIBCMT.LIB",
+          "object": "cprintf.obj"
+        }
+      ]
+    },
+    {
+      "address": "0x007DDCC8",
+      "symbol": "_get_short_arg",
+      "library": "LIBCMT.LIB",
+      "object": "cprintf.obj",
+      "size": 14,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007DD505",
+          "symbol": "_output",
+          "library": "LIBCMT.LIB",
+          "object": "cprintf.obj"
+        }
+      ]
     }
   ],
   "blocks": {
