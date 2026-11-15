@@ -3597,12 +3597,12 @@ static inline void Apply_Locale(Wstring & key, int locale, User & user)
 
 static inline void Check_Locale(Wstring & key, int & locale, rc_ptr<PlayerProfile> & profile, User & user)
 {
-	if (profile.Get() != NULL && profile->Field10 != locale) {
-		if (profile->Field10 == 0) {
-			profile->SetLocale(locale, 2);
-			profile->Save(&DAT_00B73E40);
+	if (profile.Get() != NULL && profile.Get()->Field10 != locale) {
+		if (profile.Get()->Field10 == 0) {
+			profile.Get()->SetLocale(locale, 2);
+			profile.Get()->Save(&DAT_00B73E40);
 		}
-		int value = profile->Field10;
+		int value = profile.Get()->Field10;
 		g_pChat->RequestSetLocale((Locale)value);
 		g_pChat->RequestUserLocale(&user);
 		locale = value;
@@ -3682,10 +3682,10 @@ bool __fastcall FUN_007864C0(Server * server)
 	if (Session.unknown_0C == 4 || Session.unknown_0C == 5) {
 		{
 			Wstring name = Strip_Server_Prefix(server);
-			profile->SetName(&name);
+			profile.Get()->SetName(&name);
 		}
 		if (options.Is_Bit1_Clear()) {
-			profile->Save(&DAT_00B73E40);
+			profile.Get()->Save(&DAT_00B73E40);
 		}
 	}
 	strcpy(Session.Handle, DAT_00B73E40.get());
@@ -3734,13 +3734,13 @@ bool __fastcall FUN_007864C0(Server * server)
 	}
 	int pick = 0;
 	if (profile.Get() != NULL) {
-		pick = profile->Field10;
+		pick = profile.Get()->Field10;
 	}
 	if (pick == 0) {
 		pick = Pick_Locale();
 		if (profile.Get() != NULL) {
-			profile->SetLocale(pick, 3);
-			profile->Save(&DAT_00B73E40);
+			profile.Get()->SetLocale(pick, 3);
+			profile.Get()->Save(&DAT_00B73E40);
 		}
 	}
 	if (pick != 0) {

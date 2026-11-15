@@ -63,6 +63,8 @@ using namespace WorldDominationTour;
 // SYNTHETIC: GAMEMD 0x0076C270 SYMBOL
 // _$E67
 
+rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id);
+
 // FUNCTION: GAMEMD 0x0076C970
 // WorldDominationTour::Selection::Init_Voices
 void Selection::Init_Voices(INIClass const & ini, Wstring const & section)
@@ -483,6 +485,45 @@ void __fastcall FUN_0076ECD0(rc_ptr<Campaign> * campaign, int theater)
 	InputManagerClass::Instance->FUN_0054F720();
 	Selection sel(*campaign, theater);
 	sel.Presentation(theater);
+}
+
+// FUNCTION: GAMEMD 0x0076ED10
+bool __fastcall FUN_0076ED10(rc_ptr<Campaign> * campaign, int theater)
+{
+	if (campaign->Get() == NULL) {
+		return(false);
+	}
+
+	Selection sel(*campaign, theater);
+	sel.Set_Long_Description();
+	sel.Do_Target_Selection(theater);
+	rc_ptr<Territory> selected = sel.Pick_Territory();
+	bool valid = selected.Get() != NULL;
+	if (valid) {
+		int index = selected->ID;
+		Session.unknown_08 = index;
+		rc_ptr<WDTTerritory> territory = FUN_007B0390(index);
+		if (territory.Get() != NULL) {
+			Session.Options.UnitCount = territory->UnitCount;
+			BuildLevel = territory->TechLevel;
+			Session.Options.Credits = territory->StartingCredits;
+			Session.Options.AlliesAllowed = territory->AlliesAllowed;
+			Session.Options.HarvTruce = false;
+			Session.Options.Bases = territory->Bases;
+			Session.Options.MCVRedeploy = territory->MCVRedeploy;
+			Session.Options.FogOfWar = false;
+			Session.Options.BridgeDestruction = true;
+			Session.Options.Goodies = territory->Goodies;
+			Session.Options.ShortGame = territory->ShortGame;
+			Session.Options.SWAllowed = territory->BlueTiberium;
+			Session.Options.BuildOffAlly = false;
+			Session.Options.AIPlayers = 0;
+			Session.Options.AIDifficulty = DIFF_NORMAL;
+		} else {
+			valid = false;
+		}
+	}
+	return(valid);
 }
 
 // FUNCTION: GAMEMD 0x0076EEB0
