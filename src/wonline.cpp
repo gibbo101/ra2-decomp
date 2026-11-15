@@ -3550,7 +3550,7 @@ static inline void Focus_Chat_Input_After(unsigned int event)
 	}
 }
 
-int __fastcall FUN_006241F0(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
+int __fastcall Run_Dialog_Control(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
 BOOL CALLBACK FUN_00796B90(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name);
 extern int DAT_00B77A90;
@@ -3573,7 +3573,7 @@ static inline Wstring Strip_Server_Prefix(Server * server)
 static inline int Pick_Locale(void)
 {
 	FUN_007F7624_Class dialog;
-	int result = FUN_006241F0(0xFE, FUN_00796B90, (OwnerDraw::DialogControl *)&dialog);
+	int result = Run_Dialog_Control(0xFE, FUN_00796B90, (OwnerDraw::DialogControl *)&dialog);
 	if (result < 0) {
 		return 0;
 	}
@@ -3834,6 +3834,193 @@ bool FUN_00786EF0(void)
 	return result;
 }
 
+Wstring __fastcall FUN_00779B50(void);
+Wstring __fastcall FUN_00779DD0(void);
+void __fastcall FUN_00779C90(Wstring const & value);
+bool FUN_00779730(void);
+int __fastcall FUN_00797640(int sku);
+int __fastcall StoreLogin(char const * login, char const * password, bool plain, int locale);
+void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
+void Title_Screen_Restore(bool flag);
+void FUN_0072C600(void);
+void FUN_0072C650(void);
+void FUN_0072BCA0(void);
+void FUN_0072BCF0(void);
+BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+extern bool DAT_00B77E68;
+extern char DAT_00889F64[];
+namespace UI { void __fastcall EndDialog(HWND window); }
+
+static inline bool Is_Internal_Session(void)
+{
+	return Session.unknown_0C == 3 || Session.unknown_0C == 1 || Session.unknown_0C == 2;
+}
+
+static void Focus_Dialog_Item(HWND window, int id)
+{
+	SetFocus(GetDlgItem(window, id));
+}
+
+static void Reset_WOL_Globals(void)
+{
+	memset(&DAT_00B76B10, 0, sizeof(DAT_00B76B10));
+	memset(&DAT_00B73BE8, 0, sizeof(DAT_00B73BE8));
+	DAT_00B73E10.setEmpty();
+	DAT_00B76AE0.setEmpty();
+	DAT_00B77900.setEmpty();
+	DAT_00B77DD0 = 0;
+}
+
+static int Fetch_Server_List(void)
+{
+	{
+		WideWstring text(StringTable::LoadString("TXT_FETCHING_SERVLIST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5EEC));
+		FUN_00792BE0(0x10, text, false);
+	}
+	int sku = 0x2300;
+	if (Session.unknown_0C != 3) {
+		sku = 0x2900;
+	}
+	return FUN_00797640(sku);
+}
+
+static void Store_Current_Login(int locale)
+{
+	StoreLogin(DAT_00B73E40.get(), DAT_00B7778C.get(), DAT_0084A238, locale);
+	Session.Write_MultiPlayer_Settings();
+}
+
+// FUNCTION: GAMEMD 0x00787010
+int Login_WOL(void)
+{
+	bool failed = false;
+	DAT_00B77DF8 = 0;
+	int result = FUN_00786390();
+	if (result != 1) {
+		return result;
+	}
+	Reset_WOL_Globals();
+	result = 0;
+	int error = Fetch_Server_List();
+	switch (error) {
+		case 0:
+			break;
+		case 2:
+			failed = true;
+			result = -1;
+			break;
+		default:
+			failed = true;
+			result = -2;
+			break;
+	}
+	WOLOptionsClass options;
+	if (!failed) {
+		if (options.Is_Bit0_Clear()) {
+			Wstring persona = FUN_00779B50();
+			if (persona.length() > 0 && FUN_00786DC0(persona)) {
+				int index = -1;
+				if (Is_Internal_Session()) {
+					rc_ptr<PlayerProfile> profile = FUN_00778A20(&persona);
+					if (profile.Get()) {
+						index = FUN_00786E70(profile.Get()->Name);
+					}
+					if (index == -1) {
+						index = DAT_00B76468;
+					}
+				} else {
+					rc_ptr<PlayerProfile> profile = FUN_00778A20(&persona);
+					if (profile.Get()) {
+						if (profile.Get()->Name.length() == 0) {
+							index = DAT_00B76468;
+						} else {
+							index = FUN_00786E70(profile.Get()->Name);
+						}
+					}
+				}
+				if (index != -1) {
+					DAT_00B76468 = index;
+					if (FUN_00786D90()) {
+						return 1;
+					}
+					failed = FUN_00786EF0();
+				}
+			}
+		}
+		if (DAT_00B73E40.length() == 0 && options.Is_Bit1_Clear()) {
+			DAT_00B73E40 = FUN_00779DD0();
+		}
+		{
+			Wstring empty(DAT_00889F64);
+			FUN_00779C90(empty);
+		}
+		if (failed) {
+			return 0;
+		}
+		FUN_004068E0("Creating login dlg\n");
+		SimpleWonlineDialogControl control;
+		int dialog_id = options.Is_Bit1_Clear() ? 0x10F : 0x11D;
+		FUN_0072C600();
+		FUN_0052FEC0(NULL, true);
+		HWND window = UI::BeginDialog(dialog_id, FUN_00799EA0, (int)&control);
+		OwnerDraw::Display_Dialog(window);
+		if (DAT_00B73E40.length() > 0 && DAT_00B7778C.length() == 0) {
+			Focus_Dialog_Item(window, 0x72C);
+		} else {
+			Focus_Dialog_Item(window, 0x628);
+		}
+		while (!control.F2() && !FUN_0077F900() && !UI::Updated()) {
+			Title_Screen_Restore(false);
+		}
+		UI::EndDialog(window);
+		FUN_0072C650();
+		if (control.F3() == 2) {
+			failed = true;
+		} else {
+			FUN_0077F900();
+			DAT_00B77DC0 = false;
+			WOLOptionsClass saved;
+			rc_ptr<PlayerProfile> profile;
+			if (saved.Is_Bit1_Clear()) {
+				profile = FUN_00778A20(&DAT_00B73E40);
+			} else {
+				profile = DAT_00B75E48;
+			}
+			int found = FUN_00786E70(profile.Get()->Name);
+			if (found != -1) {
+				DAT_00B76468 = found;
+			}
+			if (DAT_00B76468 >= DAT_00B778D8.length()) {
+				DAT_00B76468 = -1;
+			}
+			if (DAT_00B76468 == -1 && DAT_00B778D8.length() > 1) {
+				DAT_00B76468 = 1;
+			}
+			if (FUN_00786D90()) {
+				if (DAT_00B77E68 && saved.Is_Bit1_Clear()) {
+					Store_Current_Login(profile.Get()->Field10);
+				}
+				if (!saved.Is_Bit0_Clear() || !FUN_00779730()) {
+					return 1;
+				}
+				FUN_0052FEC0(NULL, true);
+				SimpleWonlineDialogControl next;
+				FUN_0072BCA0();
+				Run_Dialog_Control(0x112, FUN_0079AE00, &next);
+				FUN_0072BCF0();
+				return 1;
+			}
+		}
+	}
+	Focus_Chat_Input_After(0xFFFFFFFF);
+	if (!failed) {
+		FUN_00786EF0();
+	}
+	DAT_00B77DC0 = true;
+	return result;
+}
+
 
 #include "_mixfile.h"
 #include "_pk.h"
@@ -3959,7 +4146,7 @@ extern int DAT_00841F3C;
 extern long DAT_00B77EA8;
 void __fastcall FUN_005E3720(char const * text);
 extern char DAT_00889F64[];
-int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale);
+int __fastcall StoreLogin(char const * login, char const * password, bool plain, int locale);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void __fastcall FUN_00779C90(Wstring const & value);
 extern char DAT_00889F64[];
@@ -3967,7 +4154,7 @@ int __fastcall FUN_00797640(int sku);
 BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
-int __fastcall FUN_006241F0(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
+int __fastcall Run_Dialog_Control(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
 BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 namespace Unsorted { extern int MuteSWLaunches; }
 extern int DAT_007EEF28;
@@ -4280,7 +4467,7 @@ done:
 }
 
 // FUNCTION: GAMEMD 0x00789500
-int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale)
+int __fastcall StoreLogin(char const * login, char const * password, bool plain, int locale)
 {
 	char const * nick;
 	char const * pass;
@@ -4316,7 +4503,7 @@ int __fastcall FUN_00789500(char const * login, char const * password, int plain
 		}
 	}
 	if (nicknum != 0) {
-		g_pChat->SetNick(nicknum, login, password, (unsigned char)plain);
+		g_pChat->SetNick(nicknum, login, password, plain);
 		g_pChat->SetNickLocale(nicknum, (Locale)locale);
 	}
 	return nicknum;
@@ -4453,7 +4640,7 @@ bool __fastcall FUN_00789960(Channel * chan, bool extra)
 	if (chan->flags & 0x100) {
 		FUN_0052FEC0(NULL, true);
 		WonlineStringDialogControl dialog;
-		if (FUN_006241F0(0xE1, FUN_0078E030, &dialog) == IDCANCEL) {
+		if (Run_Dialog_Control(0xE1, FUN_0078E030, &dialog) == IDCANCEL) {
 			return false;
 		}
 		name = dialog.Text;
@@ -5042,7 +5229,7 @@ BOOL CALLBACK FUN_0078DB70(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 				edit = GetDlgItem(window, 0x72C);
 				SendMessage(edit, 0x4B4, 0, (LPARAM)DAT_00889F64);
 				SendDlgItemMessage(window, 0x72C, 0xC5, 8, 0);
-				SetFocus(GetDlgItem(window, 0x72C));
+				Focus_Dialog_Item(window, 0x72C);
 				CheckDlgButton(window, 0x629, control->Flag10 != 0);
 				CheckDlgButton(window, 0x66C, control->Flag11 != 0);
 				if (!(Session.Type == GAME_INTERNET && Session.unknown_0C == 3) && DAT_00B77DE4 < 1) {
@@ -5118,7 +5305,7 @@ BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 				edit = GetDlgItem(window, 0x72C);
 				SendMessage(edit, 0x4B4, 0, (LPARAM)DAT_00889F64);
 				SendDlgItemMessage(window, 0x72C, 0xC5, 8, 0);
-				SetFocus(GetDlgItem(window, 0x72C));
+				Focus_Dialog_Item(window, 0x72C);
 			}
 			break;
 
@@ -5327,7 +5514,7 @@ BOOL CALLBACK FUN_0078E950(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 				SendMessage(GetDlgItem(window, 0x628), 0xC5, 9, 0);
 				SendMessage(GetDlgItem(window, 0x72C), 0xC5, 8, 0);
 				SendMessage(GetDlgItem(window, 0x627), 0xC5, 8, 0);
-				SetFocus(GetDlgItem(window, 0x628));
+				Focus_Dialog_Item(window, 0x628);
 			}
 			break;
 
@@ -7097,7 +7284,7 @@ BOOL CALLBACK FUN_00796B90(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 int FUN_00796B30(void)
 {
 	SimpleWonlineDialogControl dialog;
-	int result = FUN_006241F0(0xFE, FUN_00796B90, &dialog);
+	int result = Run_Dialog_Control(0xFE, FUN_00796B90, &dialog);
 	if (result < 0) {
 		return 0;
 	}
@@ -8078,13 +8265,13 @@ int FUN_00798DE0(void)
 	FUN_0072C7E0();
 	if (options.Is_Bit1_Clear()) {
 		SimpleWonlineDialogControl dialog;
-		FUN_006241F0(0x10E, FUN_007988C0, &dialog);
+		Run_Dialog_Control(0x10E, FUN_007988C0, &dialog);
 		FUN_0072C830();
 		int chosen = Session.unknown_0C;
 		return chosen != 0;
 	}
 	SimpleWonlineDialogControl dialog;
-	FUN_006241F0(0x11C, FUN_007983E0, &dialog);
+	Run_Dialog_Control(0x11C, FUN_007983E0, &dialog);
 	FUN_0072C830();
 	int chosen = Session.unknown_0C;
 	return chosen != 0;
@@ -8159,15 +8346,7 @@ int FUN_00799D30(void)
 {
 	int result = FUN_00786390();
 	if (result == 1) {
-		{
-			WideWstring text(StringTable::LoadString("TXT_FETCHING_SERVLIST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5EEC));
-			FUN_00792BE0(0x10, text, 0);
-		}
-		int sku = 0x2300;
-		if (Session.unknown_0C != 3) {
-			sku = 0x2900;
-		}
-		result = FUN_00797640(sku);
+		result = Fetch_Server_List();
 		switch (result) {
 			case 0:
 				break;
@@ -8182,7 +8361,7 @@ int FUN_00799D30(void)
 		}
 		FUN_0072C9C0();
 		FUN_007F7624_Class control;
-		FUN_006241F0(0x114, FUN_00799080, (OwnerDraw::DialogControl *)&control);
+		Run_Dialog_Control(0x114, FUN_00799080, (OwnerDraw::DialogControl *)&control);
 		FUN_0072CA10();
 		return Session.unknown_0C != 0;
 	}
@@ -10253,7 +10432,7 @@ void FUN_007A2970(void)
 	DAT_00B77DC1 = 0;
 	if (!busy && FUN_00779940() && FUN_0079C520(&DAT_00B76AC4)) {
 		FUN_007F7624_Class control;
-		FUN_006241F0(0x122, FUN_007A29E0, (OwnerDraw::DialogControl *)&control);
+		Run_Dialog_Control(0x122, FUN_007A29E0, (OwnerDraw::DialogControl *)&control);
 	}
 }
 
@@ -10640,7 +10819,7 @@ HRESULT CNetUtilEventSink::OnNewNick(HRESULT result, LPCSTR message, LPCSTR nick
 		WOLOptionsClass options;
 		if (options.Is_Bit1_Clear()) {
 			int locale = profile->Field10;
-			nicknum = FUN_00789500(nick, pass, 1, locale);
+			nicknum = StoreLogin(nick, pass, true, locale);
 			Session.Write_MultiPlayer_Settings();
 		}
 		char login_mode = 1;
@@ -11256,10 +11435,7 @@ static inline WideWstring Widen(char const * text)
 extern int DAT_007EEF3C;
 extern char DAT_0084AFDC[];
 
-static inline bool Is_Internal_Session(void)
-{
-	return Session.unknown_0C == 3 || Session.unknown_0C == 1 || Session.unknown_0C == 2;
-}
+
 
 extern int DAT_00AC1178;
 

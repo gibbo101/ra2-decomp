@@ -69,7 +69,7 @@ void FUN_00799D10(void);
 int FUN_00799D30(void);
 void FUN_0077DED0(void);
 void FUN_0077E110(void);
-int FUN_00787010(void);
+int Login_WOL(void);
 void FUN_00785EA0(void);
 void FUN_00786080(void);
 int FUN_00798DE0(void);
@@ -108,7 +108,7 @@ int __fastcall FUN_0077B2A0(bool first_time)
 	for (;;) {
 		int kind = FUN_0077B280();
 		if (DAT_00B73678 == 0 && kind != 0) {
-			result = FUN_00787010();
+			result = Login_WOL();
 			switch (result) {
 			case 0:
 				if (Session.unknown_0C == 0) {

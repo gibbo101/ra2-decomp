@@ -20,7 +20,7 @@
 
 bool __fastcall FUN_00551630(const char *url);
 rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name);
-int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale);
+int __fastcall StoreLogin(char const * login, char const * password, bool plain, int locale);
 void __fastcall FUN_00606740(HWND dialog, bool value);
 extern Wstring DAT_00B73E40;
 extern Wstring DAT_00B7778C;
@@ -355,7 +355,7 @@ HRESULT STDMETHODCALLTYPE WebBrowser::OnRegisterLogin(const wchar_t *nick, const
 
 	WOLOptionsClass options;
 	if (options.Is_Bit1_Clear()) {
-		int nicknum = FUN_00789500(nickName, password, 1, profile.Get()->Field10);
+		int nicknum = StoreLogin(nickName, password, true, profile.Get()->Field10);
 		Session.Write_MultiPlayer_Settings();
 	}
 	DAT_00B73E40 = nickName;

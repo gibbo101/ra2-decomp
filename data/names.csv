@@ -715,3 +715,6 @@ address,name,symbol,evidence
 0x00A8ED80,GameInFocus,?GameInFocus@@3_NA,MSEngine::Wait_For_Focus at 0x005D2530 references this object
 0x00B43180,VoxelDrawSystem::EnableZBuffer,?EnableZBuffer@VoxelDrawSystem@@3HA,"Existing matched VoxelLibrary::Render_Layer (0x756590), src/voxlib.cpp, tests this exact DWORD for Z transformation and draw-function bit2; it is distinct from the lighting DWORD."
 0x00B43184,VoxelDrawSystem::EnableLighting,?EnableLighting@VoxelDrawSystem@@3HA,"The same existing matched Render_Layer tests this separate DWORD to set draw-function bit4, identifying lighting independently of the candidate Init_Game stores."
+0x006241F0,Run_Dialog_Control,?Run_Dialog_Control@@YIHHP6GHPAUHWND__@@IIJ@ZPAVDialogControl@OwnerDraw@@@Z,Existing matching OwnerDraw implementation creates the requested dialog and returns its control result.
+0x00787010,Login_WOL,?Login_WOL@@YIHXZ,TibSun Login_WOL has the same server-list request and login dialog. The existing persona-dialog callback calls this start.
+0x00789500,StoreLogin,?StoreLogin@@YIHPBD0_NH@Z,TibSun StoreLogin takes the plaintext flag and locale. The matching implementation calls SetNick and SetNickLocale and is also called by the registration browser.
