@@ -5710,6 +5710,116 @@ fallback:
 	}
 }
 
+static FacingType const wall_step_facings[4] = {FACING_E, FACING_E, FACING_S, FACING_S};
+static FacingType const wall_adjacent_facings[4] = {FACING_N, FACING_S, FACING_W, FACING_E};
+// FUNCTION: GAMEMD 0x005082C0
+void HouseClass::AI_Build_Wall(void)
+{
+	Rect perimeter = Base.BaseAreaRect;
+	--perimeter.X;
+	--perimeter.Y;
+	perimeter.Width += 2;
+	perimeter.Height += 2;
+	Base.LastBaseAreaRect = perimeter;
+	DynamicVectorClass<BaseNodeClass> walls;
+	DynamicVectorClass<BaseNodeClass> gates;
+	Cell starts[4] = {Cell(perimeter.X, perimeter.Y), Cell(perimeter.X, perimeter.Y + perimeter.Height - 1),
+					  Cell(perimeter.X, perimeter.Y + 1),
+					  Cell(perimeter.X + perimeter.Width - 1, perimeter.Y + 1)};
+	Cell ends[4] = {Cell(perimeter.X + perimeter.Width, perimeter.Y),
+					Cell(perimeter.X + perimeter.Width, perimeter.Y + perimeter.Height - 1),
+					Cell(perimeter.X, perimeter.Y + perimeter.Height - 1),
+					Cell(perimeter.X + perimeter.Width - 1, perimeter.Y + perimeter.Height - 1)};
+	BuildingTypeClass const *wall = (BuildingTypeClass const *)FirstBuildableFromArray(Rule->ConcreteWalls);
+	BuildingTypeClass const *east_west_gate = (BuildingTypeClass const *)FirstBuildableFromArray(Rule->EWGates);
+	BuildingTypeClass const *north_south_gate = (BuildingTypeClass const *)FirstBuildableFromArray(Rule->NSGates);
+	BuildingTypeClass const *gate_types[4] = {east_west_gate, east_west_gate, north_south_gate, north_south_gate};
+	Cell beginning(0, 0);
+	int elevation = Map[Base.PlacementCenter].Height;
+	int side;
+	for (side = 0; side < 4; ++side) {
+		FacingType direction = wall_step_facings[side];
+		Cell cell = starts[side];
+		int length = 0;
+		bool running = false;
+		int soft_blocks = 0;
+		while (cell != ends[side]) {
+			CellClass *current = &Map[cell];
+			CellClass *neighbor = &Map[Adjacent_Cell(cell, wall_adjacent_facings[side])];
+			LandType land = current->Land_Type();
+			LandType adjacent_land = neighbor->Land_Type();
+			int height_diff = abs(current->Height - elevation);
+			bool level = height_diff <= 2;
+			bool ground = land != LAND_ROCK && land != LAND_WATER && land != LAND_ICE &&
+						  adjacent_land != LAND_ROCK && adjacent_land != LAND_WATER && adjacent_land != LAND_ICE;
+			bool overlay = current->Overlay == OVERLAY_NONE;
+			bool buildings = !current->Cell_Building() && !neighbor->Cell_Building();
+			bool terrain = !current->Cell_Terrain() && !neighbor->Cell_Terrain();
+			bool flat = current->Ramp == 0;
+			bool visible = Map.In_Local_Radar(cell, true);
+			if (level && ground && overlay && buildings && terrain && flat && visible) {
+				if (!running) {
+					running = true;
+					length = 1;
+					beginning = cell;
+				} else
+					++length;
+			} else {
+				bool hard_blocked = !(level && ground && buildings && terrain && visible);
+				if (hard_blocked) {
+					if (soft_blocks > 0) {
+						hard_blocked = false;
+						soft_blocks = 0;
+					}
+				} else
+					++soft_blocks;
+				if (length >= 5 || !hard_blocked) {
+					Cell position = beginning;
+					int placed = 0;
+					int middle = length / 2 - 1;
+					while (placed < length) {
+						if (placed == middle && hard_blocked) {
+							gates.Add(BaseNodeClass(gate_types[side]->HeapID, position));
+							placed += 3;
+							position = Adjacent_Cell(Adjacent_Cell(Adjacent_Cell(position, direction), direction),
+													 direction);
+						} else {
+							walls.Add(BaseNodeClass(wall->HeapID, position));
+							++placed;
+							position = Adjacent_Cell(position, direction);
+						}
+					}
+				}
+				length = 0;
+				running = false;
+			}
+			cell = Adjacent_Cell(cell, direction);
+		}
+		if (length >= 5) {
+			Cell position = beginning;
+			int placed = 0;
+			int middle = length / 2 - 1;
+			while (placed < length) {
+				if (placed == middle) {
+					gates.Add(BaseNodeClass(gate_types[side]->HeapID, position));
+					placed += 3;
+					position =
+						Adjacent_Cell(Adjacent_Cell(Adjacent_Cell(position, direction), direction), direction);
+				} else {
+					walls.Add(BaseNodeClass(wall->HeapID, position));
+					++placed;
+					position = Adjacent_Cell(position, direction);
+				}
+			}
+		}
+	}
+	for (side = 0; side < walls.Count(); ++side)
+		Base.Nodes.Add(walls[side]);
+	for (side = 0; side < gates.Count(); ++side)
+		Base.Nodes.Add(gates[side]);
+	Base.BaseAreaRect = Base.LastBaseAreaRect;
+}
+
 // FUNCTION: GAMEMD 0x00508C30
 void HouseClass::Recalc_Power_Drain(void)
 {
