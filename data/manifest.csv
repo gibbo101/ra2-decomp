@@ -918,6 +918,7 @@ address,size,symbol,source,sha256
 0x00415A50,185,?Do_MISSION_RETREAT@AircraftClass@@UAEHXZ,src/aircraft.cpp,87bfe71ee53a73dd3341843608375b057d4fac4aa31266f8c4385d7da81fe2f8
 0x00415B10,336,?Exit_Object@AircraftClass@@UAEHPAVTechnoClass@@VCell@@@Z,src/aircraft.cpp,386eabb437df04526cf7e18684950f3c12c8086e39eee50e387450eb7d21f617
 0x00415C60,630,?Paradrop_Cargo@AircraftClass@@QAEHXZ,src/aircraft.cpp,3cd7c492edc169c60b6f1f77b61d43381e2b441324bc24119377903e1b74d67a
+0x00415EE0,1757,?Fire_At@AircraftClass@@UAEPAVBulletClass@@PAVAbstractClass@@H@Z,src/aircraft.cpp,4539546144505edf94d61b7103e0d802ecbc94e4d1998f37b031276f89128b7b
 0x004165C0,243,?Take_Damage@AircraftClass@@UAE?AW4ResultType@@AAHHPBVWarheadTypeClass@@PAVTechnoClass@@_N3PAVHouseClass@@@Z,src/aircraft.cpp,b76fddaecad6115ce418acf48c93d1310e76835574a2f63636e0d40fd3192da3
 0x004166C0,26,?Do_MISSION_MOVE@AircraftClass@@UAEHXZ,src/aircraft.cpp,5cdd7a25231deb0c8cd28c705edb60d6170548b6187a2d7d847eda496b5a72ba
 0x004166E0,1028,?Do_MISSION_MOVE_Normal@AircraftClass@@AAEHXZ,src/aircraft.cpp,52e2deca76d8ae1463c5f0b43b9ed6df423ba113eaa80c20eda7b3de3285f314
@@ -1218,6 +1219,7 @@ address,size,symbol,source,sha256
 0x00420E40,33,?Save@AlphaShapeClass@@UAGJPAUIStream@@H@Z,src/alphashp.cpp,f6f88d471c1fc965e24beaed24e8d9cf8c10f1da514cfa5f1c2ec3e997521bc9
 0x00420E70,18,?Detach@AlphaShapeClass@@UAEXPBVAbstractClass@@_N@Z,src/alphashp.cpp,d6d26de2bbb2ceb9788a6ffe350da40cdcc63617482fbfa7d01d99c72066ee26
 0x00420E90,170,?Update_All@AlphaShapeClass@@SIXXZ,src/alphashp.cpp,7affa6c80b0109f3d4243555a95697b8e69898c16cf512699ceb4fb70dc1b842
+0x00420F40,1031,?Draw_In_Area@AlphaShapeClass@@SIXABVPoint2D@@ABV?$TRect@H@@@Z,src/alphashp.cpp,95c8b3a560534d4cb31c83f9284511c2f3cf73136360c1c719c24ed498d0a696
 0x004216C0,112,?Calculate_Brightness_Table@AlphaShapeClass@@SIXXZ,src/alphashp.cpp,1e5b452ea5e3d00b5dd1e9e6e116d8040df015c3fc0df07f1cfc8bbb95718154
 0x00421730,207,??_GAlphaShapeClass@@UAEPAXI@Z,src/alphashp.cpp,2ffcffc742ed67fb376acb13a0ce863a485fae2cd7475b03f1ee470cf22f7ebc
 0x00421800,42,?Clear@?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEXXZ,src/alphashp.cpp,0196a5f6b0708458cef68387e823c04a1561695201a868e0b666b7cbeef227ed
@@ -1997,6 +1999,7 @@ address,size,symbol,source,sha256
 0x00452BB0,394,?Find_Laser_Fence_Post@BuildingClass@@QAEPAV1@W4FacingType@@_NH@Z,src/building.cpp,39925e98861c20f54d3d5c16dafd818f4cdb1659cda74351159a87c8b79119d4
 0x00452D40,128,?Init_All_Laser_Fences@BuildingClass@@SIXXZ,src/building.cpp,3958081fcf0989ea0b234c2f419d795f7ed3644ae29f9bd9c22bbe02298243f6
 0x00452DC0,660,?Connect_Laser_Fence@BuildingClass@@QAEXW4FacingType@@@Z,src/building.cpp,0a3f297e5a0386a9f7b8f4051ac7108a664b7d9ddb157c82f8190ffd4b049761
+0x00453060,475,?Disconnect_Laser_Fence@BuildingClass@@QAEXW4FacingType@@_N@Z,src/building.cpp,cc2001e92ef3deb3df975dcf0fb6a91f59a381e1540bb1f848d7c530fd1c652f
 0x00453240,296,?Unlimbo_Laser_Fence_Helper@BuildingClass@@SIXABVCell@@@Z,src/building.cpp,14d6b3aa67d947b873d95831219f9bf100534163450be0f7ff90fd2dd2d07af9
 0x00453370,36,?Init_Laser_Fence_Frame@BuildingClass@@QAEXXZ,src/building.cpp,f8bba30a6d021ee5a369f919c0382d5502b4ff2264b65db5b9a47ce1be7aedeb
 0x004533A0,1180,?Toggle_Laser_Fence_Post@BuildingClass@@QAEX_N@Z,src/building.cpp,ea87bf7b9ecb3fc5fb0d705fd68e8ac71435596ad289fda7c64922d0db15a6de
@@ -2209,6 +2212,7 @@ address,size,symbol,source,sha256
 0x0045F1D0,95,?FUN_0045F1D0@BuildingTypeClass@@QAE_NPAPBVShapeSet@@PAH@Z,src/builtype.cpp,a3b4e0449b5701c3550ecc76be6cef457c300ca08d54fc5a2935b7a4b815db9d
 0x0045F230,2138,?Fetch_Building_Normal_Image@BuildingTypeClass@@QAEXW4TheaterType@@@Z,src/builtype.cpp,6b90b02628aa603922b6228f15c73b9295aa9c625ffee4ae00870907044561b1
 0x0045FA90,957,?Fetch_Building_Voxel_Image@BuildingTypeClass@@QAEXXZ,src/builtype.cpp,a495deace0255edaf40ee4e25bbcd8005999faa431e4e739d25ab273eb5fcc96
+0x0045FE50,19475,?Read_INI@BuildingTypeClass@@UAE_NAAVCCINIClass@@@Z,src/builtype.cpp,5388a9be97085cd1b22413d3bf0c7576699523f02ae1fb42a4761edb2f9d1504
 0x00464A70,74,?Coord_Fixup@BuildingTypeClass@@UBE?BVCoord@@ABV2@@Z,src/builtype.cpp,c97d7d4bf01f3e12bb36bf340dfa303bc820c23b45fac8bcdd2f9cd636d1a96f
 0x00464AC0,33,?Legal_Placement@BuildingTypeClass@@UBE_NABVCell@@PAVHouseClass@@@Z,src/builtype.cpp,15267e62e5564cf8b95b58b0ad83d34c68863fe85ee6c044b875df2fabd33bbb
 0x00464AF0,63,?Lepton_Dimensions@BuildingTypeClass@@UBE?AV?$TPoint3D@H@@XZ,src/builtype.cpp,1d2cadcdcf95b6d63c23491d39450b7516596d7ed6283e784c9a287a870c811b
@@ -8177,10 +8181,13 @@ address,size,symbol,source,sha256
 0x0055CC20,742,?Motion_Capture@@YIXXZ,src/mainloop.cpp,ad5a7e610081210f3d7d512c4bcdbb325e02fb872b40b4cce01c298018ab8ab4
 0x0055CF10,182,?Disconnect_Gracefully@@YIXXZ,src/mainloop.cpp,c9516ce43cdc1da0a813012ccd3ddb6355a620cc39524c1cb6f705fc86666930
 0x0055CFD0,906,?FUN_0055CFD0@@YI_NXZ,src/mainloop.cpp,3047a1328f931100a0658dab234f3dc426912a1621dcf73805ae98672690e6b7
+0x0055D360,2940,?Main_Loop@@YI_NXZ,src/mainloop.cpp,f329bdf6634d38b171e5786e2bf1498d61ac0aae73a76bd9d29cf40a8f6d6223
 0x0055DEE0,636,?Keyboard_Process@@YIXAAW4KeyNumType@@@Z,src/mainloop.cpp,2e26da98b7bf79f4fbb86d4cbbdd1321e7edfcf5facf4326ba3102f3589dbfd3
 0x0055E160,676,?Sync_Delay@@YIXXZ,src/mainloop.cpp,e9e5dbabb15b1b5aa998e8ed54f3c3628eedc13ac2e703f444638eb26ea7fafd
 0x0055E410,1,_$E145,src/mainloop.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
-0x0055F1E0,1189,?Multiplayer_Debug_Print@@YIXXZ,src/mainloop.cpp,d5ab2d9f2730b42e8a421ca9be222fbaa5dedc9c2315ec1db55486a35b1b709d
+0x0055E420,3507,?Message_Input@@YIXAAW4KeyNumType@@@Z,src/mainloop.cpp,afdd38b2bec7972af2a87fcae650762d51acac6ee3b8e9b02a32817c45c958ee
+0x0055F1E0,1189,?Multiplayer_Debug_Print@@YIX_N@Z,src/mainloop.cpp,d5ab2d9f2730b42e8a421ca9be222fbaa5dedc9c2315ec1db55486a35b1b709d
+0x0055F690,40,?Decode@xTargetClass@@QAE?AV1@H@Z,src/mainloop.cpp,ccadb37672e939bba5841e18f07edfd7da71869bf053f0c95406ef5a4666b46a
 0x0055F6C0,27,?Is_Archive_Same@?$IndexClass@HPBVCommandClass@@@@ABE_NABH@Z,src/mainloop.cpp,b4be17007c7a21c076634259b8a92af8be05edf2bc1bf564fc6a09cd1ca7ac20
 0x0055F6E0,121,?Search_For_Node@?$IndexClass@HPBVCommandClass@@@@ABEPBUNodeElement@1@ABH@Z,src/mainloop.cpp,202800b871084d719b964cea87b781212568f9e04697e8f24d64171e1221dd08
 0x0055F760,23,_$E2,src/mainopt.cpp,d112f83f006f9512104810287d4cfa1fa8aceed8ac49a8aef18bd8c7d22532c1
@@ -8308,6 +8315,7 @@ address,size,symbol,source,sha256
 0x0056FC80,964,?Internal_Destroy_Train_Bridge_NS_TopRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z,src/map.cpp,68faca696dd05dc63d476c19845e8bdb12775a5a0aaeba820fbb39de4d5bf9d6
 0x00570AE0,1381,?Destroy_Train_Bridge_Span@MapClass@@AAE_NABVCell@@W4FacingType@@PAV?$TRect@H@@@Z,src/map.cpp,37fee9ee290dd3cfae6efc67845728df6ef0e60827651eb41a869def98fe521d
 0x00571050,1088,?Destroy_Train_Bridge_Connections@MapClass@@AAEXABVCell@@@Z,src/map.cpp,06330b1d9b78981f37158ba87ef4bd6c6cfe146c4eab23befb687109469b96ca
+0x00571490,3474,?Damage_Train_Bridge@MapClass@@AAE_NABVCell@@@Z,src/map.cpp,470d7abe27a9c904d3ff500f91953a79d86b7ecc9d68eca220f5665b65859c36
 0x00572230,256,?Internal_Damage_High_Bridge_EW_BottomRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z,src/map.cpp,3ef907b9913b5e76adbe5fc7a43e61a6ceec87415964d607ae1de0168edfef85
 0x00572330,258,?Internal_Damage_High_Bridge_EW_TopLeft@MapClass@@AAEXABVCell@@W4FacingType@@@Z,src/map.cpp,72e8175bfcd26d63989026d540a785f9d4515cc05010aebb25fad1e23b66deac
 0x00572440,917,?Internal_Destroy_High_Bridge_EW_BottomRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z,src/map.cpp,f620f4736ecc10a27eb54ab189240cb711c3f91e11c5adc8f8b14d692f6b5681
@@ -8378,6 +8386,7 @@ address,size,symbol,source,sha256
 0x0057CBE0,266,?FUN_0057CBE0@MapClass@@SIHABVCell@@@Z,src/map.cpp,62d101f0c416a2ee37d1ba149d412c42a6e898606e2f8677a6a697082a131df2
 0x0057CCF0,618,?FUN_0057CCF0@MapClass@@QAE_NABVCell@@@Z,src/map.cpp,2a71b3a2e2fb50e5731412e602ceaa672237643404109243d39b500475fa0313
 0x0057CF60,1477,?FUN_0057CF60@MapClass@@QAE_NABVCell@@@Z,src/map.cpp,f534bc92ae437744e8b9b4ed9c920f2a93f4abe1583f5bad816c7f732749edba
+0x0057D530,1463,?FUN_0057D530@MapClass@@QAE_NABVCell@@@Z,src/map.cpp,b4a99ad895af94fa5a9e94fe64fa73dc0363da022fdc9c64a33774435b4366cf
 0x0057DAF0,295,?FUN_0057DAF0@MapClass@@QAEXVCell@@@Z,src/map.cpp,396685865e5324c67d551a3dece7d8903ff0d62688d879b2124ffe3e69ccc844
 0x0057DC20,295,?FUN_0057DC20@MapClass@@QAEXVCell@@@Z,src/map.cpp,3e9df11b0c7954c95a974e162f92de4070454373f19cb50557e910ce68f24a3d
 0x0057DD50,1357,?Damage_Low_Bridge_Piece_EW@MapClass@@AAEXABVCell@@@Z,src/map.cpp,914d4810fab559de3fae98ddc527ed21df887f828db35f7a698d925fd8bf9649
@@ -8692,6 +8701,7 @@ address,size,symbol,source,sha256
 0x0059B740,505,?Scatter_Green_Tiles@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,3aed3534ef79896f230a75a0d10e1f928a872b7f62947128f308c8b44bb792aa
 0x0059B940,356,?FUN_0059B940@MapGeneratorClass@@QAENABVCell@@0ABV?$TRect@H@@0MM@Z,src/mapgen.cpp,4c9f9eaeec7487edb27060016d4ecb0156a740af3c9ac76f70d082f049e37545
 0x0059BAB0,268,?FUN_0059BAB0@MapGeneratorClass@@QAE_NABVCell@@ABV?$TRect@H@@_NNN@Z,src/mapgen.cpp,4faf871008db2737e7792389325ed23fb159feb49b6f4f55893250876b133183
+0x0059BBC0,2415,?FUN_0059BBC0@MapGeneratorClass@@QAEHHABV?$TRect@H@@ABVPoint2D@@_NABVCell@@N2@Z,src/mapgen.cpp,e022b2ee39d21d0ae04bdfc9fa3462a59f2133c1bda2c3fa9449934f6ffe0825
 0x0059C530,72,?Clear_Shore_Tiles@MapGeneratorClass@@SIXXZ,src/mapgen.cpp,8ec355585791709809c7342d8b12d561936591400a9d03c855caca6836f19df9
 0x0059C580,163,?Seed_Water@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,330d6ca52a7e3dacf9f59a890cb3b8426c1310738e4b65a8d0e5cede118d72f7
 0x0059C630,457,?Vary_Water_Tiles@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,4dde8ca9b686cc2d8f8c8184375d9efd0948bfd0fe0aed41765f0cb9eacbc9f6
@@ -8899,6 +8909,7 @@ address,size,symbol,source,sha256
 0x005AEBA0,68,?Shear_XY@Matrix3D@@QAEXMM@Z,src/matrix3d.cpp,919dba7f49925b15aa7c78fe80adbc44d8bdadec8cc6fbdd2e52432637329eb4
 0x005AEBF0,68,?Shear_XZ@Matrix3D@@QAEXMM@Z,src/matrix3d.cpp,5de64870c31bc0482d69d35f22dd918728480f29c83ecdd2c8db0963ebecb903
 0x005AEC40,264,?Pre_Rotate_X@Matrix3D@@QAEXM@Z,src/matrix3d.cpp,7d413df745c04c89d2b2073e0d9b41064fae4f5f469fa1b7194f6f45b2c06b2d
+0x005AED50,246,?Pre_Rotate_Y@Matrix3D@@QAEXM@Z,src/matrix3d.cpp,6d8e007e42b8b5a65a6504487d818ca2fdcaa477cb68af9392aaa50cfb2cfefb
 0x005AEE50,262,?Pre_Rotate_Z@Matrix3D@@QAEXM@Z,src/matrix3d.cpp,d814c3aa4efbdfa4a4be113108b23c3bc3e1cd4c7513c855bc607300a751a7b5
 0x005AEF60,158,?Rotate_X@Matrix3D@@QAEXM@Z,src/matrix3d.cpp,3bf144d1a861c1f4c67a8608494aef896b8ea0b336d2956cbc049fa482e4cb01
 0x005AF000,117,?Rotate_X@Matrix3D@@QAEXMM@Z,src/matrix3d.cpp,cb1883f0eccaa4156e294dc02be27e401e717bec4a1e3cab96d0964e0dc8c5ae
@@ -10274,6 +10285,7 @@ address,size,symbol,source,sha256
 0x005E74E0,1088,?Update_Network_Dialog_Preview@@YIXPAUHWND__@@@Z,src/netshare.cpp,6d0e980338313e73a6e802e64e1a395b08aeabb18b06ad99a54f94ff90572145
 0x005E7920,707,?Receive_Random_Map_Preview@@YIXXZ,src/netshare.cpp,6a4cdec260dcdf75eeccf61e79fed41328ccafa791a68e998b6c90a323baba97
 0x005E7BF0,699,?Set_Scenario_Info_From_Index@@YI_NH@Z,src/netshare.cpp,b2d3ec69ed94511e9b6eab1b5855f7408c98d8603b07ae0e6b843c8303d24c1d
+0x005E7EB0,1562,?FUN_005E7EB0@@YIXPAVMapPreviewClass@@@Z,src/netshare.cpp,218db0835a8cbc66c0656eb67df21347821305eb358d293682e851f0df4a51cb
 0x005E84D0,177,?CalcRandomMapDigest@@YIPADXZ,src/netshare.cpp,529f6e85442b6c7986aa165128ffb40d71d567886ff71e11136ba56f7e29a964
 0x005E8590,400,?CreateRandomMap@@YIHXZ,src/netshare.cpp,44f8944c45aa37e575def87fb6621875b5cf46fb5e3f80ca4efc04220210838b
 0x005E8720,20,?FUN_005E8720@@YIHPBG@Z,src/netshare.cpp,8e8c7cdf47ff4af0b09836f83ccf26a21caa277057831602a008a9d18ce5a4c6
@@ -11478,6 +11490,7 @@ address,size,symbol,source,sha256
 0x00637070,46,?FUN_00637070@@YIXXZ,src/planmgr.cpp,5d913c6a7d07d84fb0666314a6daebb0edee5017c107cf417958b6b181606ae9
 0x006370A0,5,?FUN_006370A0@@YIXXZ,src/planmgr.cpp,ec7d2aa54ab353ae3e298f2752ca2bce4eae1ebdb8c1ddeefde03cd044576859
 0x006370B0,446,?FUN_006370B0@@YIXXZ,src/planmgr.cpp,fa39a989278d5b8f74f80df0c305a212d51d2f8642b03db122ff2998bd3e87d3
+0x00637270,734,?FUN_00637270@@YIXXZ,src/planmgr.cpp,5928f9a372c129add67ad2fbd7e4f5812212279665530e3af53e826a1c84466b
 0x00637550,92,?FUN_00637550@@YIXXZ,src/planmgr.cpp,64321942a4fe96765f9bdb087672804b9b4c35ff63ac49bc4b7554395617e994
 0x006375B0,139,?FUN_006375B0@@YIXABVEventClass@@@Z,src/planmgr.cpp,c5296e9fa1af58637d1757875befda26e09cfdafca7f2544e95256343a278ac0
 0x00637640,264,?FUN_00637640@PlanningNodeClass@@SIXPAV1@@Z,src/planmgr.cpp,8a11787b974d7bac9e670751365900164bcabf919bdda0c819f1058f1838436c
@@ -11695,6 +11708,7 @@ address,size,symbol,source,sha256
 0x00640710,812,?DrawStartPoints@MapPreviewClass@@QAEXPAUHWND__@@@Z,src/preview.cpp,a8695136db72ccf52deac2424b518140e133f1b91c8d6605aca1d785097c93bd
 0x00640A40,1664,?DrawMap@MapPreviewClass@@QAEXAAVXSurface@@@Z,src/preview.cpp,a879a40469f9edaeefc9edd457687d92bafaa9ab5d8cca62b957e85acf3f12e2
 0x006410C0,114,?Cell_To_Preview_Pixel@MapPreviewClass@@ABE?AVPoint2D@@VCell@@@Z,src/preview.cpp,bd5196a38e80452617707f9e3c2171cb4fa9cd87bbae4fd163b95baa66b7df6e
+0x00641140,1894,?Create_Preview@MapPreviewClass@@QAEXXZ,src/preview.cpp,336a67805560c0e3aaa05b3aad78d8d47af4c75b42a862f2be43b2f4765a8946
 0x006418B0,591,?Write_INI@MapPreviewClass@@QAE_NAAVCCINIClass@@@Z,src/preview.cpp,cb0c4d079771f02bcea41d607e427b4f36fa6651f6bfa58d2564110eb79b90a7
 0x00641B00,681,?Read_INI@MapPreviewClass@@QAE_NABVCCINIClass@@@Z,src/preview.cpp,19ce53675788aa21cafa52c12e1b87aaae9f136a82ddf9ea9e0d80cf0a41b316
 0x00641DB0,303,?Read_PCX_Preview@MapPreviewClass@@QAE_NPBD@Z,src/preview.cpp,d564b804cd0358efde6cff027ff79f0a87dec316c09e5b73d744f3c2b2124c57
@@ -12216,6 +12230,7 @@ address,size,symbol,source,sha256
 0x0065D890,26,_$E38,src/reinf.cpp,3be7e9197e1b99026b8c14c10253d5ad0c9c8fbf73a14804f4b59b299c96954f
 0x0065D8B0,23,_$E41,src/reinf.cpp,853bfeb5e2ce00c188ed7fcd8e1cdaa877ac568e7dabfdf236c2faa8b386c014
 0x0065D8D0,3,?FUN_0065D8D0@@YI_NXZ,src/reinf.cpp,01cb47d078b4841b8408ec4fe278efa83115c6f6e101972987507d2b2b57dcf0
+0x0065D8E0,1093,?Do_Reinforcements@@YI_NPBVTeamTypeClass@@H@Z,src/reinf.cpp,54f57acd087f8592c59946c5622549301e899bfdeca84fa46f2b0360a01f927c
 0x0065DD30,734,?_Create_Group@@YIPAVFootClass@@PBVTeamTypeClass@@@Z,src/reinf.cpp,aa51ebcbcae2674b8534e5f6be4f682de07b2b12ff01277ec605512b5bca7dcf
 0x0065E010,1599,?Create_Reinforcement@@YI_NPBVTeamTypeClass@@PAVFootClass@@ABVCell@@_N@Z,src/reinf.cpp,793822d66593d05b0aea6206237ccf397093eccd08ae8f76c3af3ac20687f2ab
 0x0065E650,5,?Create_Special_Reinforcement@@YI_NPAVHouseClass@@PBVTechnoTypeClass@@1W4TeamMissionType@@H@Z,src/reinf.cpp,0c2c7a212db68f7b6d7634358b03dd94e2358f33eb8fae1ce475dab43e990c0f
@@ -12578,6 +12593,7 @@ address,size,symbol,source,sha256
 0x0067C670,26,?FUN_0067C670@@YIXXZ,src/saveload.cpp,91e436c1cec1f58ce6cdb3dda6e45c6e48eda53fe425b24072fe1cf0b26768f8
 0x0067C690,78,?Load_Vector@@YIJPAUIStream@@@Z,src/saveload.cpp,770f65478530516d5ce6bd705bb08b23bb09f10348286eb93e2931500447c717
 0x0067C6E0,2050,?Object_CRCs@@YI?AVCRCEngine@@XZ,src/saveload.cpp,67b3e02a7c53cc9748eb0d0c9cc0801bfb5044f84faf5a9607aa47e1a0485fee
+0x0067CEF0,1040,?Save_Game@@YI_NPBDPBG_N@Z,src/saveload.cpp,9da18126eac5467692e44d72de3f4313beb2c03a40dce031e16ca09486ceb513
 0x0067D300,4411,?Put_All@@YI_NPAUIStream@@H@Z,src/saveload.cpp,56e8e81e2d8d7ef1cf322da984a40a8ee5d08fd6a034fb3e99ddf73b95fa2217
 0x0067E440,749,?Load_Game@@YI_NPBD@Z,src/saveload.cpp,a0667922a22cbea7396b04c772002e1b6a2156ed6400b90e3cddfc68ad3a9f5f
 0x0067E730,4258,?Get_All@@YI_NPAUIStream@@_N@Z,src/saveload.cpp,b91d26e3a28081ea9bd86416a125b525d670e26dbc349d69ef7f736f3c035014
@@ -12586,7 +12602,7 @@ address,size,symbol,source,sha256
 0x0067FD20,153,?Get_Savefile_Info@@YI_NPBDPAVSaveVersionInfo@@@Z,src/saveload.cpp,ac191fc76be09ce32a5df969d0c2ac651a862f8ec4a07271309a09e6591052f7
 0x0067FDC0,1,?FUN_0067FDC0@@YIXXZ,src/saveload.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x0067FDD0,13,?_Release@?$_com_ptr_t@V?$_com_IIID@UIStorage@@$1?_GUID_0000000b_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ,src/saveload.cpp,75d77bd0a3a4afb5d4a2bf6084d52171f3e5b72dcc4a78108c73cb70fde0c354
-0x0067FDE0,13,?_Release@?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ,src/saveload.cpp,75d77bd0a3a4afb5d4a2bf6084d52171f3e5b72dcc4a78108c73cb70fde0c354
+0x0067FDE0,13,?_Release@?$_com_ptr_t@V?$_com_IIID@UILinkStream@@$1?_GUID_0d5cd78e_6470_11d2_9b74_00104b972fe8@@3U__s_GUID@@A@@@@AAEXXZ,src/saveload.cpp,75d77bd0a3a4afb5d4a2bf6084d52171f3e5b72dcc4a78108c73cb70fde0c354
 0x0067FDF0,127,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVFactoryClass@@@@@Z,src/saveload.cpp,06f414fff9b5209c3453ec8ff4a3e01e8c4e4014d5827bc54c0ce98c77913a20
 0x0067FE70,127,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVVoxelAnimTypeClass@@@@@Z,src/saveload.cpp,06f414fff9b5209c3453ec8ff4a3e01e8c4e4014d5827bc54c0ce98c77913a20
 0x0067FEF0,127,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVVoxelAnimClass@@@@@Z,src/saveload.cpp,06f414fff9b5209c3453ec8ff4a3e01e8c4e4014d5827bc54c0ce98c77913a20
@@ -12622,10 +12638,10 @@ address,size,symbol,source,sha256
 0x00680DF0,127,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVSlaveManagerClass@@@@@Z,src/saveload.cpp,06f414fff9b5209c3453ec8ff4a3e01e8c4e4014d5827bc54c0ce98c77913a20
 0x00680E70,127,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVBombClass@@@@@Z,src/saveload.cpp,06f414fff9b5209c3453ec8ff4a3e01e8c4e4014d5827bc54c0ce98c77913a20
 0x00680EF0,127,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVRadSiteClass@@@@@Z,src/saveload.cpp,06f414fff9b5209c3453ec8ff4a3e01e8c4e4014d5827bc54c0ce98c77913a20
-0x00680F70,117,?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIStorage@@$1?_GUID_0000000b_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABQAUIUnknown@@@Z,src/saveload.cpp,d2eefe79eb0baed0e749d777f63815f32caf621e0982523edf9f6df12a3a7efd
-0x00680FF0,97,??0SavegameInformation@@QAE@XZ,src/savever.cpp,43514689251e15abe859cd1b4135fe1f4c4eb79251f691e5ca97edddd233d77f
-0x00681060,10,?Set_Version@SavegameInformation@@QAEXH@Z,src/savever.cpp,01caaa228fe4f4c7fe4269994a79702b290762107c5e6b67c17e8d8525fc7585
-0x00681070,4,?Get_Version@SavegameInformation@@QAEHXZ,src/savever.cpp,f7e0208f5e988ae39c7a45dfddbd12921d02f9c3deb5695d4c534c8ab0ccdb0f
+0x00680F70,117,?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILinkStream@@$1?_GUID_0d5cd78e_6470_11d2_9b74_00104b972fe8@@3U__s_GUID@@A@@@@@Z,src/saveload.cpp,d2eefe79eb0baed0e749d777f63815f32caf621e0982523edf9f6df12a3a7efd
+0x00680FF0,97,??0SaveVersionInfo@@QAE@XZ,src/savever.cpp,43514689251e15abe859cd1b4135fe1f4c4eb79251f691e5ca97edddd233d77f
+0x00681060,10,?Set_Version@SaveVersionInfo@@QAEXH@Z,src/savever.cpp,01caaa228fe4f4c7fe4269994a79702b290762107c5e6b67c17e8d8525fc7585
+0x00681070,4,?Get_Version@SaveVersionInfo@@QAEHXZ,src/savever.cpp,f7e0208f5e988ae39c7a45dfddbd12921d02f9c3deb5695d4c534c8ab0ccdb0f
 0x00681080,9,?Set_Internal_Version@SaveVersionInfo@@QAEXH@Z,src/savever.cpp,aa1d0523d277f6a14d7950c488982e29fa08fe5d88274b15a712c4427302720a
 0x00681090,3,?Get_Internal_Version@SaveVersionInfo@@QAEHXZ,src/savever.cpp,19d200194d49b34530548575f37a1bb4203ee60f18d42f0084e86b7a8c899faa
 0x006810A0,31,?Set_Scenario_Description@SaveVersionInfo@@QAEXPBG@Z,src/savever.cpp,5ec87d6509035a2bed797e68744d86a3b449c9acd27a075c5acca60bce9d910b
@@ -13644,6 +13660,7 @@ address,size,symbol,source,sha256
 0x006BA140,213,?GetSurface@SurfaceCacheClass@@QAEPAVSurface@@PBDPAX@Z,src/srfcache.cpp,35ae031f8ba978dd502d805c93348b56f72d3337290025091eff3fcbbb957d7e
 0x006BA220,1,_$E27,src/srfcache.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x006BA230,423,?Remove@SurfaceCacheClass@@QAEXPBD@Z,src/srfcache.cpp,9b57e53727a05bfeb4ca3697b37865d1edd3c7656bb487b2a23ae4e7f422727a
+0x006BA580,250,?DrawTrans@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1F@Z,src/srfcache.cpp,d9a453702df725a28dbb046c0f7c1ade0e9da0e5f2006675a137ea348544a571
 0x006BA680,5,?DrawNullsub@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1@Z,src/srfcache.cpp,0c2c7a212db68f7b6d7634358b03dd94e2358f33eb8fae1ce475dab43e990c0f
 0x006BAC40,684,?remove@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@QAEDAAVWstring@@AAUSurfaceCacheEntry@@@Z,src/srfcache.cpp,faffa2da5156416315034543cc03cc5378b292bd49cf511f50d2b28a3c58b0c8
 0x006BAEF0,174,?shrink@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@AAEXXZ,src/srfcache.cpp,b6c3580f51c743da0d33a8658ebeeca9df706a91127a76f4c572c0f1f7862fcf
@@ -14504,6 +14521,7 @@ address,size,symbol,source,sha256
 0x006D4E00,17,?Clear_Caption_Text@Tactical@@QAEXXZ,src/tactical.cpp,9b7beb7aef857cbc8671f3f1aba1cc64d3c2426958bec5d61b464edbca01ef7d
 0x006D4E20,514,?Draw_Screen_Text@Tactical@@QAEXPBG@Z,src/tactical.cpp,01cc22cb0ef9d24c55c85306f36ab48aafe18fd3503e0a633f0659d66039da5d
 0x006D5030,1781,?Draw_Placement@Tactical@@QAEX_N@Z,src/tactical.cpp,815ec5b9a47ec514fb2e0fa44833dcaec7d614a69dfb8c20f798a3d783e00425
+0x006D5C50,733,?Draw_Wall_Placement@Tactical@@QAEX_NVCell@@@Z,src/tactical.cpp,8b8b21d17006b034ebe77dce8859d7c5a65b692a016856704ce21ec4b78b2cb2
 0x006D5F30,33,?Blit_Tiles@Tactical@@QAE_NXZ,src/tactical.cpp,129e43e6ec1f1102b972f0cff6c8d9f30d1d84dbbf8350c0ce9fd39bd0b3db23
 0x006D5F60,157,?Set_View_Dimensions@Tactical@@QAEXABV?$TRect@H@@@Z,src/tactical.cpp,92a43ab4bd33bd2e3d822200449c0a43f76a92a0668d5f7edcd8d648d412ab4b
 0x006D6000,110,?Set_Tactical_Position@Tactical@@QAEXABVPoint2D@@@Z,src/tactical.cpp,47806b68fb0da5bb7dfca2ef6796e8ba07530fbe20aeeba93713621264ec19e4
@@ -15267,6 +15285,7 @@ address,size,symbol,source,sha256
 0x00703E70,385,?Get_Z_Fudge_Column@TechnoClass@@QBEHXZ,src/techno.cpp,a08da7b8052305c261c3979ab3da2e7a39952fd2140172092fc6d7391f650bd2
 0x00704000,575,?Get_Z_Fudge_Tunnel@TechnoClass@@QBEHXZ,src/techno.cpp,d5a0c0331f5d7cf63d6da1e48f356528fa91be83af98ee3ecd5df863c3cc3248
 0x00704240,259,?Get_Z_Fudge_Cliff@TechnoClass@@QBEHXZ,src/techno.cpp,3dbcb6b0d2cd0f682d7ae352240c827fa22a37fb09b73130285e952cd25e2579
+0x00704350,1645,?Get_Z_Adjust@TechnoClass@@UBEHXZ,src/techno.cpp,7a41d36a76e68163c49649cc7af7fea89fbc8eee251ead67fbac0a3fc5c477f9
 0x007049C0,1151,?FUN_007049C0@TechnoClass@@QBEXVCoord@@0VRGBClass@@EE@Z,src/techno.cpp,86c4744d11233597f00bd980a8b8af4f9bbb8c7ba316c16be86b9464dfe56a4a
 0x00705270,1508,?FUN_00705270@TechnoClass@@QAEXVCoord@@0VRGBClass@@E@Z,src/techno.cpp,50692c168256ebc15548a3baae7369e51e4785faee85cf21fd81ed84dc4364fe
 0x00705CA0,105,?GetAttackCoordinates@TechnoClass@@UBE?AVCoord@@XZ,src/techno.cpp,2592b2a8b79bb8e48299ff61b1b1d3dab4aa136d7b40846a2b6ee436db5bf4ea
@@ -16577,6 +16596,7 @@ address,size,symbol,source,sha256
 0x0073B0B0,140,?Render@UnitClass@@UBE_NAAV?$TRect@H@@_N1@Z,src/unit.cpp,95b3aeb14821ab12eb00c6ba78423026f75a199cc5788f8144cb3886fce127de
 0x0073B140,808,?Unit_Blit_Voxel@UnitClass@@UAEXPAVSurface@@VPoint2D@@V?$TRect@H@@HG@Z,src/unit.cpp,7b5af1bf775e712a9b1ed5e146fea790795ec6ed9c7c071ba578d6b4b3f24ffe
 0x0073B470,4473,?Unit_Draw_Voxel@UnitClass@@UAEXVPoint2D@@V?$TRect@H@@HG@Z,src/unit.cpp,4c8f72693f32902338e0e4ce8c4a8c1ac7c61d997eb9c7f6aa2dfadec6babc58
+0x0073C5F0,2256,?Unit_Draw_Shape@UnitClass@@UAEXVPoint2D@@V?$TRect@H@@HH@Z,src/unit.cpp,9babb043ed02ecbfc0a0c78c437b74293e3748e22a8b9def87a1680a7c25dbe6
 0x0073CEC0,1417,?Draw_It@UnitClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/unit.cpp,a46554b4faa000fd5934457d7073af3ec42e1722b7fb19624b90ccb92a4e80c8
 0x0073D450,477,?Harvesting@UnitClass@@QAE_NXZ,src/unit.cpp,a04a8ac64c21bbab76c84aa14923dd9afb42763a9238ebd6834f65a98bf654ef
 0x0073D630,4004,?Do_MISSION_UNLOAD@UnitClass@@UAEHXZ,src/unit.cpp,903f8854727159e62c7ae03ccf3d66be29e33e851da47afac2eb738f2004ffd1
@@ -17065,11 +17085,13 @@ address,size,symbol,source,sha256
 0x00755CD0,55,??0VoxelLibrary@@QAE@AAVFileClass@@H@Z,src/voxlib.cpp,2e01d2d1db9601efd98e01f4a473246e312e10ed400574c09491c1448d50c7b1
 0x00755D10,66,??1VoxelLibrary@@QAE@XZ,src/voxlib.cpp,86c21f2b810d43bbd208e5a965565113e94ebb89204bf7716c0a2dfd5512ecf7
 0x00755D60,66,?Clear@VoxelLibrary@@QAEXXZ,src/voxlib.cpp,a82d0c4ea2916c9d491ccea571cf73b3aadf675a459101bff0331099b36ce156
+0x00755DB0,1762,?Read_File@VoxelLibrary@@QAEHAAVFileClass@@H@Z,src/voxlib.cpp,0936aaee43de59a0d68657a873869d1a7cdbb2823cb68081d0879221c8d4c318
 0x007564A0,16,?Get_Layer@VoxelLibrary@@QAEABULayerStruct@1@H@Z,src/voxlib.cpp,9a57a0f97e8389dbd8dbd25551bed768a425f5dd89a343fb23816490cc493f17
 0x007564B0,34,?Get_Layer_Info@VoxelLibrary@@QAEABULayerInfoStruct@1@HH@Z,src/voxlib.cpp,575a9faac5f2f819552dcb611efcb4e4236cc12935bdd8955bcdc17b4a517507
 0x007564E0,133,?Get_Bounding_Box_Center@VoxelLibrary@@QAE?AVVector3@@HH@Z,src/voxlib.cpp,4ebfad8a3d46d05a3838f8c2449c5eed0d3d710e55a337fee7353e97c8ae5b09
 0x00756570,29,?Memory_Used@VoxelLibrary@@QAEHXZ,src/voxlib.cpp,345a09fbb6c15f3abb2fd344fa15f906143b0299ab90d3d4bf3d5f913f79e526
 0x00756590,711,?Render_Object@VoxelLibrary@@QAEXAAUVoxelRenderStruct@@AAVVector3@@@Z,src/voxlib.cpp,5ef5d64b2b8dc23486f7f70c5f21e1ca86c1dbdd177014376f9ae6c8ae0fe6d3
+0x00756860,837,?Render_Shadow@VoxelLibrary@@QAEXAAUVoxelShadowRenderStruct@@AAVVector3@@@Z,src/voxlib.cpp,dd80ca06eff88b8e1cc6cedf54150d82d3a93c42e92e421396ece951a05fc53c
 0x00756BB0,542,?Compute_Bounding_Box@VoxelLibrary@@QAEXXZ,src/voxlib.cpp,b5374ac067f12fee7dd6fa7df62855632b59df27db1c781118b7b258ebb0943d
 0x00756DD0,417,?Draw_Voxel_Regular_Normals@@YAXPAUVoxelFuncArgumentStruct@@@Z,src/voxlib.cpp,7a90ea4eba6c25a4c92fa50077c6273531816cfd974ba24a9ba9085aa5caede4
 0x00756F80,411,?Draw_Voxel_Reverse_Normals@@YAXPAUVoxelFuncArgumentStruct@@@Z,src/voxlib.cpp,c8d3e4790cea337c60dee2dfd8aa97c030a69d5aef9f901c3ec3ee2c5d960fc1
@@ -17380,6 +17402,7 @@ address,size,symbol,source,sha256
 0x00764A00,26,_$E38,src/wdtcampaign.cpp,602e72509e07b05ec19aa62a2ea54c7e3d71e7be65970096e093414e4615774f
 0x00764A20,264,?WDT_Get_Campaign_ID@@YIHABVWstring@@@Z,src/wdtcampaign.cpp,b809172f523a73d91a68890b4105c140a61364c81a0873f8972ac107bd6c5421
 0x00764B30,95,?FUN_00764B30@@YI?AV?$rc_ptr@VCampaign@WorldDominationTour@@@@ABVWstring@@ABV?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@@Z,src/wdtcampaign.cpp,95b62a6f7ef41c0acc7d45a29f78290238cb545d572e146055bee7215e342db3
+0x00764B90,922,??0Campaign@WorldDominationTour@@QAE@ABVWstring@@ABV?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@@Z,src/wdtcampaign.cpp,d59079da45546749af09b3eeb04fc78008722a69693df616151a0411d55f0ea6
 0x00764F30,103,??1Campaign@WorldDominationTour@@UAE@XZ,src/wdtcampaign.cpp,9278522813d060fb8c117a71471bad59af8a7dba425535e10367b3dc305b5912
 0x00764FA0,25,?Is_Different_Cycle@Campaign@WorldDominationTour@@QAE_NXZ,src/wdtcampaign.cpp,76dc61d4c84284489c7c99bdf8dcd5862fde879c5ccdb6fbd39eb128ddbc6b2b
 0x00764FC0,47,?Is_Different@Campaign@WorldDominationTour@@QAE_NH@Z,src/wdtcampaign.cpp,ff9b4d97171316cf04cf3ffd09c6a21da0829781731dd78374363c2eef411a34
@@ -18188,7 +18211,7 @@ address,size,symbol,source,sha256
 0x0077D1F0,11,??1FUN_007F7624_Class@@UAE@XZ,src/wonline.cpp,e84ee455d6a8ec21c2d9cdf8af73ad454ec0fa64363bc5ab9f59d65e08835e75
 0x0077D200,5,?F4@SimpleWonlineDialogControl@@UAE_NXZ,src/wonline.cpp,8d8da9f78f6ebb44f98cc14f5267c5ed4de5de2338941ee900a46efcec2c4597
 0x0077D210,34,?FUN_0077D210@@YIXPAD@Z,src/wonline.cpp,19961f679490d6b1ddc2dd37632316773de2bf4c28bf22196b9985cc49af877d
-0x0077D240,89,?FUN_0077D240@@YIHPAVWstring@@@Z,src/wonline.cpp,09b437cd0b2c10dc54cbc5ee2dff1cb18c940926a183e3551840ef0ed39fee65
+0x0077D240,89,?FUN_0077D240@@YIHABVWstring@@@Z,src/wonline.cpp,09b437cd0b2c10dc54cbc5ee2dff1cb18c940926a183e3551840ef0ed39fee65
 0x0077D2A0,63,?FUN_0077D2A0@@YI_NPAUUser@@@Z,src/wonline.cpp,9e66f579975f13c6afca21be675e958ca5e917e1e1e117fd17451393061b3d9a
 0x0077D2E0,97,?FUN_0077D2E0@@YI_NPAUUser@@PAVWideWstring@@@Z,src/wonline.cpp,0448dcc18e976343b3900e7741b703ee3293292d59b854cfd47317b639369fcf
 0x0077D350,80,?FUN_0077D350@@YIHPBG@Z,src/wonline.cpp,ebf7060f9e29517c7271495d94689eaa982b390200b4f7dae99205832d38e617
@@ -18196,7 +18219,7 @@ address,size,symbol,source,sha256
 0x0077D3F0,160,?FUN_0077D3F0@@YI_NPAUUser@@@Z,src/wonline.cpp,ede0e3e4c7f0c05e1be782311ab8e745e84a89fedf4b92a2822c4998a36477d2
 0x0077D490,36,?FUN_0077D490@@YI_NPAUUser@@0@Z,src/wonline.cpp,3700a31d925e84cb457a006bc1760a257e5ffaf7937a6dc861ab954b387b2255
 0x0077D4C0,579,?FUN_0077D4C0@@YI_NPAUUser@@@Z,src/wonline.cpp,d12bba5378646a9368b313d2e42b236dcf62a8be4a55da66d17e74cd469a5928
-0x0077D710,5,?FUN_0077D710@@YIXXZ,src/wonline.cpp,77b61b812d6213c9cec6f855171041dfc6f86c295ffd4d1e3561917e7f3b0350
+0x0077D710,5,?FUN_0077D710@@YI_NXZ,src/wonline.cpp,77b61b812d6213c9cec6f855171041dfc6f86c295ffd4d1e3561917e7f3b0350
 0x0077D720,113,?FUN_0077D720@@YI?AVIPXAddressClass@@PAUUser@@@Z,src/wonline.cpp,1cd14f0443d4e162cbf32866163fee36fc3354f017bd3ae7b6364dada4ebc7b2
 0x0077D7A0,119,?FUN_0077D7A0@@YIX_N@Z,src/wonline.cpp,bfaa5188628e6e997473e71e2baf320f1de43740a3484876fbb57f6bfa9d8b88
 0x0077D820,28,?FUN_0077D820@@YI_NXZ,src/wonline.cpp,d4ff02768f31d523f44ea95d69f4d2aecd082a31738cac89f506a5c60335c205
@@ -18300,6 +18323,7 @@ address,size,symbol,source,sha256
 0x0078F5C0,230,?FUN_0078F5C0@@YIPAGPBG@Z,src/wonline.cpp,000d265b08b2a227ba8a95e243e6ee936e36130d724930ff70d1be12ba4a327f
 0x0078F6B0,105,?FUN_0078F6B0@@YIHH@Z,src/wonline.cpp,13679ef778aec6621643f3c3937d30868c7ef5c05319ff58df1dca05a1b0cdd1
 0x0078F720,200,?FUN_0078F720@@YIXPAUHWND__@@@Z,src/wonline.cpp,503d9fd3c656bc7bd644941cf854db3e8bbfe81bbd8ba398f842a4c2bc9ad976
+0x0078F7F0,8874,?WOL_Game_Options_Proc@@YGHPAUHWND__@@IIJ@Z,src/wonline.cpp,84f5e83c01ef1e669b9bbe2312dcc4fa1c4531c08b0fba0696e1f5d5f6122f4b
 0x00791AA0,102,?FUN_00791AA0@@YIXPAUHWND__@@@Z,src/wonline.cpp,2fadc82964b6fabf80b49dbfb8510abf6b273aa83b7369a89025b7835bd6a84e
 0x00791B10,4295,?FUN_00791B10@@YGHPAUHWND__@@IIJ@Z,src/wonline.cpp,7adaecdcd7f7ae42efeec9ff49275e409fdfd570081b30574dd876de6d281edd
 0x00792BE0,268,?FUN_00792BE0@@YIXHABVWideWstring@@D@Z,src/wonline.cpp,3966d9e5dfab2aa7ef12cb269e09d5d3175d7afd839fb621a70a309950d4f3b0
@@ -18420,9 +18444,12 @@ address,size,symbol,source,sha256
 0x007A5290,861,?FUN_007A5290@@YGJPAXJPBD@Z,src/wonline.cpp,a37a44146c512e9dceb9a207e5d79c3c40a44f1d39436f7446d077d2678817cd
 0x007A55F0,145,?FUN_007A55F0@@YGJPAXJPBD@Z,src/wonline.cpp,1e8cb2b95077406a7584501e6ce21c2eece4e1c69fb02cd6420cb032fd741743
 0x007A5690,501,?FUN_007A5690@@YGJPAXJPAUChannel@@@Z,src/wonline.cpp,8629b2efed7d69d62056dc4e71b627f9b40830a792d8c3a432816e35cc866970
+0x007A5890,6216,?OnChannelJoin@CChatEventSink@@QAGJJPAUChannel@@PAUUser@@@Z,src/wonline.cpp,ec2097be3bf60b150356cf156ce4ee3a9205f9c7dcc24f939a5edadf2181a61b
 0x007A70E0,40,?FUN_007A70E0@@YGJPAXJ0PAUUser@@@Z,src/wonline.cpp,1c81e9e384e3c028088065a38e152014e2d59af0a2268ea53ce115bd0669528e
 0x007A7110,2640,?FUN_007A7110@@YGJPAXJ0PAUUser@@@Z,src/wonline.cpp,7ee8ab808265113b016638b00ca4e5821fd7483798d8e8282bb36425d9c47325
 0x007A7B60,820,?FUN_007A7B60@@YGJPAXJPAUChannel@@PAUUser@@H@Z,src/wonline.cpp,69ed2e5c09fb8d16e7e59fe3c77ad89b1c5052462bbe75e1086f6aeaca82e40a
+0x007A7EA0,960,?FUN_007A7EA0@@YGJPAXJPAUChannel@@PAUUser@@PBD@Z,src/wonline.cpp,4b1da99faf9b8d0180e406cb20ed3fd6dbd66f00c32f95c7547cba22ed5fa1f5
+0x007A8260,2874,?FUN_007A8260@@YGJPAXJPAUUser@@PBD@Z,src/wonline.cpp,c5b895a526881fe7005f10a83007651e1ba44aefe19d319e7cda6e377996d321
 0x007A8DA0,297,?FUN_007A8DA0@@YGJPAXJ0PAUUser@@PBD@Z,src/wonline.cpp,f22f85692b6cf6de4be0dfdea23086fa5c1da826f4eff43f154d1e18ef156de2
 0x007A8ED0,239,?FUN_007A8ED0@@YGJPAXJ0PAUUser@@PBG@Z,src/wonline.cpp,def23fb683a211144a6f4d43ba6e9a4cc1cc029701c0f34f20178096db56e464
 0x007A8FC0,322,?FUN_007A8FC0@@YGJPAXJPAUUser@@PBD@Z,src/wonline.cpp,2d1c17c7990ce73e79abb8dd9bbfa94e4d2c77bc6a2f8e4604aa65adeede2176
@@ -18454,7 +18481,7 @@ address,size,symbol,source,sha256
 0x007AC4C0,5,?FUN_007AC4C0@@YGJPAXJ0@Z,src/wonline.cpp,531db4852a682340f10d91199822e1a1aed030bae016ff1e2c9f32d13b9cc9a1
 0x007AC4D0,5,?FUN_007AC4D0@@YGJPAXJ0@Z,src/wonline.cpp,531db4852a682340f10d91199822e1a1aed030bae016ff1e2c9f32d13b9cc9a1
 0x007AC4E0,5,?FUN_007AC4E0@@YGJPAXJ0@Z,src/wonline.cpp,531db4852a682340f10d91199822e1a1aed030bae016ff1e2c9f32d13b9cc9a1
-0x007AC4F0,1,?FUN_007AC4F0@@YGXXZ,src/wonline.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x007AC4F0,1,_$E372,src/wonline.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x007AC500,193,?FUN_007AC500@@YGJPAUAtlModule@@@Z,src/wonline.cpp,500fe139425a96ecfece6a9c2ef0a7ef8f88c68aa16317e1d0c19036acba764b
 0x007AC5D0,52,??_GWonlineStringDialogControl@@UAEPAXI@Z,src/wonline.cpp,b227149173d05c6f45cfafd2d57352e85a518bc97dbc61e4c3bccef3ad88dce7
 0x007AC610,32,??0WonlineStringDialogControl@@QAE@XZ,src/wonline.cpp,276997b358b9a495b6b51268f57744c638490092e283ddc04d253c6aca584126

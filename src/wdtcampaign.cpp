@@ -65,6 +65,61 @@ rc_ptr<Campaign> __fastcall FUN_00764B30(Wstring const & name, rc_ptr<CampaignPr
 	return rc_ptr<Campaign>(new Campaign(name, props));
 }
 
+static inline int Nonnegative(int value)
+{
+	return value < 0 ? 0 : value;
+}
+
+// FUNCTION: GAMEMD 0x00764B90
+// WorldDominationTour::Campaign::Campaign
+Campaign::Campaign(Wstring const &name, rc_ptr<CampaignProperties> const &properties)
+	: Properties(properties), CycleHistory(FUN_00767B00(properties->State)),
+	  Conflicts(4), PlayerFaction(0), Name(name)
+{
+	memset(PreviousTicks, 0, sizeof(PreviousTicks));
+	if (properties->State.Get() != 0) {
+		rc_ptr<State> state = CycleHistory->Get_State(properties->Get_Current_Tick());
+		unsigned index = properties->State->NumTerritories;
+		while (index--) {
+			if (state->Get_Territory_State(index) == 1) {
+				DynamicVectorClass<rc_ptr<WDTTerritory> > &territories = properties->State->Territories;
+				rc_ptr<WDTTerritory> territory = index < (unsigned)territories.Count()
+					? territories[index] : rc_ptr<WDTTerritory>();
+				if (territory.Get() != 0) {
+					rc_ptr<Conflict> conflict = FUN_00765F60(territory);
+					Conflicts.Add(conflict);
+				}
+			}
+		}
+	}
+	CDFileClass file("WDTHist.INI");
+	if (file.Is_Available()) {
+		INIClass ini;
+		ini.Load(file, false);
+		file.Close();
+		int saved_id;
+		{
+			Wstring key("CampaignID");
+			saved_id = ini.Get_Int(Name, key, -1);
+		}
+		CycleID = Nonnegative(saved_id);
+		if (CycleID == properties->Get_Cycle_ID()) {
+			for (int faction = 0; faction < 4; faction++) {
+				Wstring key = Wstring("LastDay") + WDT_Country_Name(faction);
+				int day = ini.Get_Int(Name, key, 0);
+				PreviousTicks[faction] = Nonnegative(day);
+			}
+			{
+				Wstring key("PlayerFaction");
+				PlayerFaction = ini.Get_Int(Name, key, PlayerFaction);
+			}
+		} else {
+			memset(PreviousTicks, 0, sizeof(PreviousTicks));
+		}
+	}
+}
+
+
 // FUNCTION: GAMEMD 0x00764F30
 WorldDominationTour::Campaign::~Campaign(void)
 {

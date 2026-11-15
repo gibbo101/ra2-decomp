@@ -24,6 +24,7 @@
 #include "globals.h"
 #include "house.h"
 #include "incdec.h"
+#include "infatype.h"
 #include "isotype.h"
 #include "mixfile.h"
 #include "msanim.h"
@@ -1027,6 +1028,416 @@ void BuildingTypeClass::Fetch_Building_Voxel_Image(void)
 		}
 	}
 }
+
+#define READ_ANIM_NAMES(INDEX, NAME) \
+	ArtINI.Get_String(GraphicName, NAME, "", key, 16); \
+	if (strlen(key) != 0) { \
+		strcpy(AnimData[INDEX].Anim, key); \
+	} \
+	ArtINI.Get_String(GraphicName, NAME "Damaged", "", key, 16); \
+	if (strlen(key) != 0) { \
+		strcpy(AnimData[INDEX].AnimDamaged, key); \
+	} \
+	if (strlen(AnimData[INDEX].AnimDamaged) == 0) { \
+		strcpy(AnimData[INDEX].AnimDamaged, AnimData[INDEX].Anim); \
+	} \
+	ArtINI.Get_String(GraphicName, NAME "Garrisoned", "", key, 16); \
+	if (strlen(key) != 0) { \
+		strcpy(AnimData[INDEX].AnimGarrisoned, key); \
+	} \
+	if (strlen(AnimData[INDEX].AnimGarrisoned) == 0) { \
+		strcpy(AnimData[INDEX].AnimGarrisoned, AnimData[INDEX].Anim); \
+	}
+
+#define ANIM_NAMED(INDEX) \
+	(strlen(AnimData[INDEX].Anim) != 0 || strlen(AnimData[INDEX].AnimDamaged) != 0 || \
+	 strlen(AnimData[INDEX].AnimGarrisoned) != 0)
+
+#define READ_ANIM_PLACEMENT(INDEX, OFFSET, NAME) \
+	AnimData[INDEX].Location.X = ArtINI.Get_Int(GraphicName, NAME "X", AnimData[OFFSET].Location.X); \
+	AnimData[INDEX].Location.Y = ArtINI.Get_Int(GraphicName, NAME "Y", AnimData[OFFSET].Location.Y); \
+	AnimData[INDEX].ZAdjust = ArtINI.Get_Int(GraphicName, NAME "ZAdjust", AnimData[INDEX].ZAdjust); \
+	AnimData[INDEX].YSort = ArtINI.Get_Int(GraphicName, NAME "YSort", AnimData[INDEX].YSort);
+
+#define READ_ANIM(INDEX, OFFSET, NAME) \
+	READ_ANIM_NAMES(INDEX, NAME) \
+	if (ANIM_NAMED(INDEX)) { \
+		READ_ANIM_PLACEMENT(INDEX, OFFSET, NAME) \
+		AnimData[INDEX].Powered = ArtINI.Get_Bool(GraphicName, NAME "Powered", AnimData[INDEX].Powered); \
+		AnimData[INDEX].PoweredLight = \
+			ArtINI.Get_Bool(GraphicName, NAME "PoweredLight", AnimData[INDEX].PoweredLight); \
+		AnimData[INDEX].PoweredEffect = \
+			ArtINI.Get_Bool(GraphicName, NAME "PoweredEffect", AnimData[INDEX].PoweredEffect); \
+		AnimData[INDEX].PoweredSpecial = \
+			ArtINI.Get_Bool(GraphicName, NAME "PoweredSpecial", AnimData[INDEX].PoweredSpecial); \
+	}
+
+#define READ_ANIM_PLAIN(INDEX, OFFSET, NAME) \
+	READ_ANIM_NAMES(INDEX, NAME) \
+	if (ANIM_NAMED(INDEX)) { \
+		READ_ANIM_PLACEMENT(INDEX, OFFSET, NAME) \
+	}
+
+// FUNCTION: GAMEMD 0x0045FE50
+bool BuildingTypeClass::Read_INI(CCINIClass &ini)
+{
+	char key[128];
+	char triple_out[64];
+	char triple_def[64];
+	char dock_key[40];
+	char y_key[64];
+	char ysort_key[64];
+	char anim_key[64];
+	char damaged_key[64];
+	char z_key[64];
+	char x_key[64];
+	ini.Reset();
+	if (BASECLASS::Read_INI(ini)) {
+		BuildCat = ini.Get_BuildCat(IniName, "BuildCat", BuildCat);
+		AntiInfantryValue = ini.Get_Int(IniName, "AntiInfantryValue", AntiInfantryValue);
+		AntiArmorValue = ini.Get_Int(IniName, "AntiArmorValue", AntiArmorValue);
+		AntiAirValue = ini.Get_Int(IniName, "AntiAirValue", AntiAirValue);
+		HasSpotlight = ini.Get_Bool(IniName, "HasSpotlight", HasSpotlight);
+		HalfDamageSmokeLocation1 = ini.Get_Point(IniName, "HalfDamageSmokeLocation1", HalfDamageSmokeLocation1);
+		HalfDamageSmokeLocation2 = ini.Get_Point(IniName, "HalfDamageSmokeLocation2", HalfDamageSmokeLocation2);
+		IsRadar = ini.Get_Bool(IniName, "Radar", IsRadar);
+		SpySat = ini.Get_Bool(IniName, "SpySat", SpySat);
+		Speed = ini.Get_Bool(IniName, "WaterBound", Speed == SPEED_FLOAT) ? SPEED_FLOAT : SPEED_NONE;
+		Adjacent = ini.Get_Int(IniName, "Adjacent", Adjacent);
+		IsCaptureable = ini.Get_Bool(IniName, "Capturable", IsCaptureable);
+		IsPowered = ini.Get_Bool(IniName, "Powered", IsPowered);
+		PoweredSpecial = ini.Get_Bool(IniName, "PoweredSpecial", PoweredSpecial);
+		Overpowerable = ini.Get_Bool(IniName, "Overpowerable", Overpowerable);
+		Spyable = ini.Get_Bool(IniName, "Spyable", Spyable);
+		CanC4 = ini.Get_Bool(IniName, "CanC4", CanC4);
+		WantsExtraSpace = ini.Get_Bool(IniName, "WantsExtraSpace", WantsExtraSpace);
+		IsBibbed = ini.Get_Bool(IniName, "Bib", IsBibbed);
+		IsUnsellable = ini.Get_Bool(IniName, "Unsellable", IsUnsellable);
+		ClickRepairable = ini.Get_Bool(IniName, "ClickRepairable", ClickRepairable);
+		CanBeOccupied = ini.Get_Bool(IniName, "CanBeOccupied", CanBeOccupied);
+		CanOccupyFire = ini.Get_Bool(IniName, "CanOccupyFire", CanOccupyFire);
+		ShowOccupantPips = ini.Get_Bool(IniName, "ShowOccupantPips", ShowOccupantPips);
+		MaxNumberOccupants = ini.Get_Int(IniName, "MaxNumberOccupants", MaxNumberOccupants);
+		NumberImpassableRows = ini.Get_Int(IniName, "NumberImpassableRows", NumberImpassableRows);
+		ProduceCashStartup = ini.Get_Int(IniName, "ProduceCashStartup", ProduceCashStartup);
+		ProduceCashAmount = ini.Get_Int(IniName, "ProduceCashAmount", ProduceCashAmount);
+		ProduceCashDelay = ini.Get_Int(IniName, "ProduceCashDelay", ProduceCashDelay);
+		InfantryGainSelfHeal = ini.Get_Int(IniName, "InfantryGainSelfHeal", InfantryGainSelfHeal);
+		UnitsGainSelfHeal = ini.Get_Int(IniName, "UnitsGainSelfHeal", UnitsGainSelfHeal);
+		RefinerySmokeFrames = ini.Get_Int(IniName, "RefinerySmokeFrames", RefinerySmokeFrames);
+		IsBase = ini.Get_Bool(IniName, "BaseNormal", IsBase);
+		EligibleForAllyBuilding = ini.Get_Bool(IniName, "EligibileForAllyBuilding", EligibleForAllyBuilding);
+		EligibleForDelayKill = ini.Get_Bool(IniName, "EligibleForDelayKill", EligibleForDelayKill);
+		NeedsEngineer = ini.Get_Bool(IniName, "NeedsEngineer", NeedsEngineer);
+		CaptureEvaEvent = ini.Get_VoxType(IniName, "CaptureEvaEvent", (VoxType)CaptureEvaEvent);
+		ProtectWithWall = ini.Get_Bool(IniName, "ProtectWithWall", ProtectWithWall);
+		int index;
+		{
+			char number[8];
+			Point2D const missing(0xFFFF, 0xFFFF);
+			for (index = 0; index < MaxNumberOccupants; index++) {
+				strcpy(key, "MuzzleFlash");
+				_itoa(index, number, 10);
+				MuzzleFlash[index] = ArtINI.Get_Point(GraphicName, strcat(key, number), Point2D(0xFFFF, 0xFFFF));
+				if (MuzzleFlash[index] == missing) {
+					MuzzleFlash[index] = Point2D(0, 0);
+				}
+			}
+			for (index = 0; index < 8; index++) {
+				strcpy(key, "DamageFireOffset");
+				_itoa(index, number, 10);
+				DamageFireOffset[index] =
+					ArtINI.Get_Point(GraphicName, strcat(key, number), Point2D(0xFFFF, 0xFFFF));
+				if (DamageFireOffset[index] == missing) {
+					DamageFireOffset[index] = COORD_NONE;
+					break;
+				}
+			}
+		}
+		IsWall = ini.Get_Bool(IniName, "Wall", IsWall);
+		IsWeeder = ini.Get_Bool(IniName, "Weeder", IsWeeder);
+		IsHelipad = ini.Get_Bool(IniName, "Helipad", IsHelipad);
+		OrePurifier = ini.Get_Bool(IniName, "OrePurifier", OrePurifier);
+		FactoryPlant = ini.Get_Bool(IniName, "FactoryPlant", FactoryPlant);
+		ToBuild = ini.Get_RTTIType(IniName, "Factory", ToBuild);
+		FreeUnit = TGet_Class(ini, IniName, "FreeUnit", FreeUnit);
+		IsHoverPad = ini.Get_Bool(IniName, "HoverPad", IsHoverPad);
+		IsTemple = ini.Get_Bool(IniName, "IsTemple", IsTemple);
+		IsPlug = ini.Get_Bool(IniName, "IsPlug", IsPlug);
+		SecretInfantry = TGet_Class(ini, IniName, "SecretInfantry", SecretInfantry);
+		SecretUnit = TGet_Class(ini, IniName, "SecretUnit", SecretUnit);
+		SecretBuilding = TGet_Class(ini, IniName, "SecretBuilding", SecretBuilding);
+		InfantryCostBonus = (float)ini.Get_Float(IniName, "InfantryCostBonus", InfantryCostBonus);
+		UnitsCostBonus = (float)ini.Get_Float(IniName, "UnitsCostBonus", UnitsCostBonus);
+		AircraftCostBonus = (float)ini.Get_Float(IniName, "AircraftCostBonus", AircraftCostBonus);
+		BuildingsCostBonus = (float)ini.Get_Float(IniName, "BuildingsCostBonus", BuildingsCostBonus);
+		DefensesCostBonus = (float)ini.Get_Float(IniName, "DefensesCostBonus", DefensesCostBonus);
+		IsCanTogglePower = ini.Get_Bool(IniName, "TogglePower", IsCanTogglePower);
+		BuildupSound = ini.Get_VocType(IniName, "BuildupSound", (VocType)BuildupSound);
+		PackupSound = ini.Get_VocType(IniName, "PackupSound", (VocType)PackupSound);
+		CreateUnitSound = ini.Get_VocType(IniName, "CreateUnitSound", (VocType)CreateUnitSound);
+		UnitExitSound = ini.Get_VocType(IniName, "UnitExitSound", (VocType)UnitExitSound);
+		UnitEnterSound = ini.Get_VocType(IniName, "UnitEnterSound", (VocType)UnitEnterSound);
+		WorkingSound = ini.Get_VocType(IniName, "WorkingSound", (VocType)WorkingSound);
+		NotWorkingSound = ini.Get_VocType(IniName, "NotWorkingSound", (VocType)NotWorkingSound);
+		IsCanUnitRepair = ini.Get_Bool(IniName, "UnitRepair", IsCanUnitRepair);
+		IsCanUnitReload = ini.Get_Bool(IniName, "UnitReload", IsCanUnitReload);
+		Bunker = ini.Get_Bool(IniName, "Bunker", Bunker);
+		Cloning = ini.Get_Bool(IniName, "Cloning", Cloning);
+		Grinding = ini.Get_Bool(IniName, "Grinding", Grinding);
+		UnitAbsorb = ini.Get_Bool(IniName, "UnitAbsorb", UnitAbsorb);
+		InfantryAbsorb = ini.Get_Bool(IniName, "InfantryAbsorb", InfantryAbsorb);
+		SecretLab = ini.Get_Bool(IniName, "SecretLab", SecretLab);
+		IsDockUnload = ini.Get_Bool(IniName, "DockUnload", IsDockUnload);
+		IsGate = ini.Get_Bool(IniName, "Gate", IsGate);
+		IsSAM = ini.Get_Bool(IniName, "SAM", IsSAM);
+		IsConstructionYard = ini.Get_Bool(IniName, "ConstructionYard", IsConstructionYard);
+		IsNukeSilo = ini.Get_Bool(IniName, "NukeSilo", IsNukeSilo);
+		IsRefinery = ini.Get_Bool(IniName, "Refinery", IsRefinery);
+		IsWeaponsFactory = ini.Get_Bool(IniName, "WeaponsFactory", IsWeaponsFactory);
+		IsLaserFencePost = ini.Get_Bool(IniName, "LaserFencePost", IsLaserFencePost);
+		IsLaserFence = ini.Get_Bool(IniName, "LaserFence", IsLaserFence);
+		IsFirestormWall = ini.Get_Bool(IniName, "FirestormWall", IsFirestormWall);
+		IsHospital = ini.Get_Bool(IniName, "Hospital", IsHospital);
+		IsArmory = ini.Get_Bool(IniName, "Armory", IsArmory);
+		IsGDIBarracks = ini.Get_Bool(IniName, "GDIBarracks", IsGDIBarracks);
+		IsNODBarracks = ini.Get_Bool(IniName, "NODBarracks", IsNODBarracks);
+		IsYuriBarracks = ini.Get_Bool(IniName, "YuriBarracks", IsYuriBarracks);
+		IsEMPulseCannon = ini.Get_Bool(IniName, "EMPulseCannon", IsEMPulseCannon);
+		IsTickTank = ini.Get_Bool(IniName, "TickTank", IsTickTank);
+		ChargedAnimTime = (float)ini.Get_Float(IniName, "ChargedAnimTime", ChargedAnimTime);
+		SuperWeapon = ini.Get_SuperWeaponType(IniName, "SuperWeapon", SuperWeapon);
+		SuperWeapon2 = ini.Get_SuperWeaponType(IniName, "SuperWeapon2", SuperWeapon2);
+		IsCloakGenerator = ini.Get_Bool(IniName, "CloakGenerator", IsCloakGenerator);
+		IsSensorArray = ini.Get_Bool(IniName, "SensorArray", IsSensorArray);
+		CloakRadiusInCells = ini.Get_Int(IniName, "CloakRadiusInCells", CloakRadiusInCells);
+		PsychicDetectionRadius = ini.Get_Int(IniName, "PsychicDetectionRadius", PsychicDetectionRadius);
+		StartPitch = Dir256(ini.Get_Int(IniName, "BarrelStartPitch", StartPitch >> 5) << 5);
+		DeployFacing = ini.Get_Int(IniName, "DeployFacing", DeployFacing >> 5) << 5;
+		LightVisibility = ini.Get_Int(IniName, "LightVisibility", LightVisibility);
+
+		{
+			double value = ini.Get_Float(IniName, "LightIntensity", (double)(LightIntensity / 1000));
+			LightIntensity = (int)(value * 1000.0 + 0.1);
+		}
+		{
+			double value = ini.Get_Float(IniName, "LightRedTint", (double)(LightRedTint / 1000));
+			LightRedTint = (int)(value * 1000.0 + 0.1);
+		}
+		{
+			double value = ini.Get_Float(IniName, "LightGreenTint", (double)(LightGreenTint / 1000));
+			LightGreenTint = (int)(value * 1000.0 + 0.1);
+		}
+		LightBlueTint = (int)(ini.Get_Float(IniName, "LightBlueTint", LightBlueTint / 1000) * 1000.0 + 0.1);
+		GateCloseDelay = ini.Get_Float(IniName, "GateCloseDelay", GateCloseDelay);
+		IsInvisibleInGame = ini.Get_Bool(IniName, "InvisibleInGame", IsInvisibleInGame);
+		if (IsInvisibleInGame) {
+			IsInvisible = true;
+			IsRadarVisible = false;
+		}
+		ini.Get_String(IniName, "PowersUpBuilding", "", key, 24);
+		if (strlen(key) != 0) {
+			strcpy(PowersUpBuilding, key);
+		}
+		PowersUpToLevel = ini.Get_Int(IniName, "PowersUpToLevel", PowersUpToLevel);
+		IsBridgeRepairHut = ini.Get_Bool(IniName, "BridgeRepairHut", IsBridgeRepairHut);
+		IsHasStupidGuardMode = ini.Get_Bool(IniName, "HasStupidGuardMode", IsHasStupidGuardMode);
+		CrateBeneath = ini.Get_Bool(IniName, "CrateBeneath", CrateBeneath);
+		CrateBeneathIsMoney = ini.Get_Bool(IniName, "CrateBeneathIsMoney", CrateBeneathIsMoney);
+		LeaveRubble = ini.Get_Bool(IniName, "LeaveRubble", LeaveRubble);
+		IsCanPlaceAnywhere = ini.Get_Bool(IniName, "PlaceAnywhere", IsCanPlaceAnywhere);
+		IsICBMLauncher = ini.Get_Bool(IniName, "ICBMLauncher", IsICBMLauncher);
+		IsArtillary = ini.Get_Bool(IniName, "Artillary", IsArtillary);
+		{
+			Point3D offset = TargetCoordOffset;
+			TargetCoordOffset = ini.Get_Point(IniName, "TargetCoordOffset", offset);
+		}
+		{
+			Point3D offset = ExitCoordinate;
+			ExitCoordinate = ini.Get_Point(IniName, "ExitCoord", offset);
+		}
+		CanAIBuildThis = ini.Get_Bool(IniName, "AIBuildThis", CanAIBuildThis);
+		IsBaseDefense = ini.Get_Bool(IniName, "IsBaseDefense", IsBaseDefense);
+		IsThreatRatingNode = ini.Get_Bool(IniName, "IsThreatRatingNode", IsThreatRatingNode);
+		ConcentricRadialIndicator = ini.Get_Bool(IniName, "ConcentricRadialIndicator", ConcentricRadialIndicator);
+		Rotation = IsTurretEquipped ? 32 : 1;
+		Power = ini.Get_Int(IniName, "Power", Power > 0 ? Power : -Drain);
+		if (Power < 0) {
+			Drain = -Power;
+			Power = 0;
+		} else {
+			Drain = 0;
+		}
+		ExtraPower = ini.Get_Int(IniName, "ExtraPower", ExtraPower > 0 ? ExtraPower : -ExtraDrain);
+		if (ExtraPower < 0) {
+			ExtraDrain = -ExtraPower;
+			ExtraPower = 0;
+		}
+		ZHeight = ArtINI.Get_Int(GraphicName, "Height", ZHeight);
+		OccupyHeight = ArtINI.Get_Int(GraphicName, "OccupyHeight", ZHeight);
+		IsRecoilless = ArtINI.Get_Bool(GraphicName, "Recoilless", IsRecoilless);
+		DoubleThick = ArtINI.Get_Bool(GraphicName, "DoubleThick", DoubleThick);
+		IsFlat = ArtINI.Get_Bool(GraphicName, "Flat", IsFlat);
+		IsSiloDamage = ArtINI.Get_Bool(GraphicName, "SiloDamage", IsSiloDamage);
+		IsHasChargeAnim = ArtINI.Get_Bool(GraphicName, "ChargeAnim", IsHasChargeAnim);
+		IsAnimDelayedFire = ArtINI.Get_Bool(GraphicName, "IsAnimDelayedFire", IsAnimDelayedFire);
+		DelayedFireDelay = ArtINI.Get_Int(GraphicName, "DelayedFireDelay", DelayedFireDelay);
+		ToOverlay = TGet_Class(ArtINI, GraphicName, "ToOverlay", ToOverlay);
+		Size = ArtINI.Get_BSizeType(GraphicName, "Foundation", Size);
+		BSizeType foundation = ArtINI.Get_BSizeType(IniName, "Foundation", Size);
+		if (foundation != 0) {
+			Size = foundation;
+		}
+		MidPoint = ArtINI.Get_Int(GraphicName, "MidPoint", MidPoint);
+		DoorStages = ArtINI.Get_Int(GraphicName, "DoorStages", DoorStages);
+		IsDamagedDoor = ArtINI.Get_Bool(GraphicName, "DamagedDoor", IsDamagedDoor);
+		IsTerrainPalette = ArtINI.Get_Bool(GraphicName, "TerrainPalette", IsTerrainPalette);
+		GateStages = ArtINI.Get_Int(GraphicName, "GateStages", GateStages);
+		PrimaryFirePixelOffset = ArtINI.Get_Point(GraphicName, "PrimaryFirePixelOffset", PrimaryFirePixelOffset);
+		SecondaryFirePixelOffset =
+			ArtINI.Get_Point(GraphicName, "SecondaryFirePixelOffset", SecondaryFirePixelOffset);
+		PrimaryFireDualOffset = ArtINI.Get_Bool(GraphicName, "PrimaryFireDualOffset", PrimaryFireDualOffset);
+		IsExtraDamageStage = ArtINI.Get_Bool(GraphicName, "ExtraDamageStage", IsExtraDamageStage);
+		SpecialZOverlayZAdjust = ArtINI.Get_Int(GraphicName, "SpecialZOverlayZAdjust", SpecialZOverlayZAdjust);
+		NormalZAdjust = ArtINI.Get_Int(GraphicName, "NormalZAdjust", NormalZAdjust);
+		ZShapePointMove = ArtINI.Get_Point(GraphicName, "ZShapePointMove", ZShapePointMove);
+		ExtraLight = ArtINI.Get_Int(GraphicName, "ExtraLight", ExtraLight);
+		CanHideThings = ArtINI.Get_Bool(IniName, "CanHideThings", CanHideThings);
+		for (index = 0; index < 8; index++) {
+			wsprintfA(key, "AddOccupy%d", index + 1);
+			RemoveOccupy[index] = ArtINI.Get_Point(GraphicName, key, Point2D(0xFFFF, 0xFFFF));
+			wsprintfA(key, "RemoveOccupy%d", index + 1);
+			AddOccupy[index] = ArtINI.Get_Point(GraphicName, key, Point2D(0xFFFF, 0xFFFF));
+		}
+		QueueingCell = ArtINI.Get_Point(GraphicName, "QueueingCell", Point2D(0, 0));
+		OccupyList = OccupyLists[Size];
+		ExitList = ExitLists[Size];
+		ArtINI.Get_String(GraphicName, "Buildup", "", key, 16);
+		if (strlen(key) != 0) {
+			strcpy(BuildupFilename, key);
+		}
+		Fetch_Building_Normal_Image(Scen->Theater);
+		sprintf(triple_def, "%d,%d,%d", Anims[BSTATE_IDLE].Start, Anims[BSTATE_IDLE].Count,
+				Anims[BSTATE_IDLE].Rate);
+		if (ArtINI.Get_String(GraphicName, "AnimIdle", triple_def, triple_out, 64) > 0) {
+			sscanf(triple_out, "%d,%d,%d", &Anims[BSTATE_IDLE].Start, &Anims[BSTATE_IDLE].Count,
+				   &Anims[BSTATE_IDLE].Rate);
+		}
+		sprintf(triple_def, "%d,%d,%d", Anims[BSTATE_ACTIVE].Start, Anims[BSTATE_ACTIVE].Count,
+				Anims[BSTATE_ACTIVE].Rate);
+		if (ArtINI.Get_String(GraphicName, "AnimActive", triple_def, triple_out, 64) > 0) {
+			sscanf(triple_out, "%d,%d,%d", &Anims[BSTATE_ACTIVE].Start, &Anims[BSTATE_ACTIVE].Count,
+				   &Anims[BSTATE_ACTIVE].Rate);
+		}
+		sprintf(triple_def, "%d,%d,%d", Anims[BSTATE_AUX1].Start, Anims[BSTATE_AUX1].Count,
+				Anims[BSTATE_AUX1].Rate);
+		if (ArtINI.Get_String(GraphicName, "AnimAux1", triple_def, triple_out, 64) > 0) {
+			sscanf(triple_out, "%d,%d,%d", &Anims[BSTATE_AUX1].Start, &Anims[BSTATE_AUX1].Count,
+				   &Anims[BSTATE_AUX1].Rate);
+		}
+		sprintf(triple_def, "%d,%d,%d", Anims[BSTATE_AUX2].Start, Anims[BSTATE_AUX2].Count,
+				Anims[BSTATE_AUX2].Rate);
+		if (ArtINI.Get_String(GraphicName, "AnimAux2", triple_def, triple_out, 64) > 0) {
+			sscanf(triple_out, "%d,%d,%d", &Anims[BSTATE_AUX2].Start, &Anims[BSTATE_AUX2].Count,
+				   &Anims[BSTATE_AUX2].Rate);
+		}
+		READ_ANIM(BANIM_ACTIVE_ONE, BANIM_ACTIVE_ONE, "ActiveAnim");
+		READ_ANIM(BANIM_ACTIVE_TWO, BANIM_ACTIVE_TWO, "ActiveAnimTwo");
+		READ_ANIM(BANIM_ACTIVE_THREE, BANIM_ACTIVE_THREE, "ActiveAnimThree");
+		READ_ANIM(BANIM_ACTIVE_FOUR, BANIM_ACTIVE_FOUR, "ActiveAnimFour");
+		READ_ANIM(BANIM_SUPER_ONE, BANIM_ACTIVE_FOUR, "SuperAnim");
+		READ_ANIM(BANIM_SUPER_TWO, BANIM_ACTIVE_TWO, "SuperAnimTwo");
+		READ_ANIM(BANIM_SUPER_THREE, BANIM_ACTIVE_THREE, "SuperAnimThree");
+		READ_ANIM(BANIM_SUPER_FOUR, BANIM_ACTIVE_THREE, "SuperAnimFour");
+		READ_ANIM(BANIM_SPECIAL_ONE, BANIM_SPECIAL_ONE, "SpecialAnim");
+		READ_ANIM(BANIM_SPECIAL_TWO, BANIM_SPECIAL_TWO, "SpecialAnimTwo");
+		READ_ANIM(BANIM_SPECIAL_THREE, BANIM_SPECIAL_THREE, "SpecialAnimThree");
+		READ_ANIM(BANIM_SPECIAL_FOUR, BANIM_SPECIAL_FOUR, "SpecialAnimFour");
+		READ_ANIM(BANIM_LOW_POWER, BANIM_LOW_POWER, "LowPower");
+		READ_ANIM(BANIM_SUPER_LOW_POWER, BANIM_SUPER_LOW_POWER, "SuperLowPower");
+		READ_ANIM_PLAIN(BANIM_PRODUCTION, BANIM_PRODUCTION, "ProductionAnim");
+		READ_ANIM(BANIM_IDLE, BANIM_IDLE, "IdleAnim");
+		READ_ANIM_PLAIN(BANIM_PRE_PRODUCTION, BANIM_PRE_PRODUCTION, "PreProductionAnim");
+		ini.Get_String(IniName, "TurretAnim", "", key, 16);
+		if (strlen(key) != 0) {
+			strcpy(AnimData[BANIM_TURRET].Anim, key);
+		}
+		ini.Get_String(IniName, "TurretAnimDamaged", "", key, 16);
+		if (strlen(key) != 0) {
+			strcpy(AnimData[BANIM_TURRET].AnimDamaged, key);
+		}
+		if (strlen(AnimData[BANIM_TURRET].AnimDamaged) == 0) {
+			strcpy(AnimData[BANIM_TURRET].AnimDamaged, AnimData[BANIM_TURRET].Anim);
+		}
+		ini.Get_String(GraphicName, "TurretAnimGarrisoned", "", key, 16);
+		if (strlen(key) != 0) {
+			strcpy(AnimData[BANIM_TURRET].AnimGarrisoned, key);
+		}
+		if (strlen(AnimData[BANIM_TURRET].AnimGarrisoned) == 0) {
+			strcpy(AnimData[BANIM_TURRET].AnimGarrisoned, AnimData[BANIM_TURRET].Anim);
+		}
+		AnimData[BANIM_TURRET].Location.X = ini.Get_Int(IniName, "TurretAnimX", AnimData[BANIM_TURRET].Location.X);
+		AnimData[BANIM_TURRET].Location.Y = ini.Get_Int(IniName, "TurretAnimY", AnimData[BANIM_TURRET].Location.Y);
+		AnimData[BANIM_TURRET].ZAdjust = ini.Get_Int(IniName, "TurretAnimZAdjust", AnimData[BANIM_TURRET].ZAdjust);
+		AnimData[BANIM_TURRET].YSort = ini.Get_Int(IniName, "TurretAnimYSort", AnimData[BANIM_TURRET].YSort);
+		IsTurretAnimAVoxel = ini.Get_Bool(IniName, "TurretAnimIsVoxel", IsTurretAnimAVoxel);
+		IsBarrelAnimAVoxel = ini.Get_Bool(IniName, "BarrelAnimIsVoxel", IsBarrelAnimAVoxel);
+		ini.Get_String(IniName, "VoxelBarrelFile", VoxelBarrelFile, VoxelBarrelFile, 16);
+		VoxelBarrelOffsetToPitchPivotPoint =
+			ini.Get_Point(IniName, "VoxelBarrelOffsetToPitchPivotPoint", VoxelBarrelOffsetToPitchPivotPoint);
+		VoxelBarrelOffsetToRotatePivotPoint =
+			ini.Get_Point(IniName, "VoxelBarrelOffsetToRotatePivotPoint", VoxelBarrelOffsetToRotatePivotPoint);
+		VoxelBarrelOffsetToBuildingPivotPoint =
+			ini.Get_Point(IniName, "VoxelBarrelOffsetToBuildingPivotPoint", VoxelBarrelOffsetToBuildingPivotPoint);
+		VoxelBarrelOffsetToBarrelEnd =
+			ini.Get_Point(IniName, "VoxelBarrelOffsetToBarrelEnd", VoxelBarrelOffsetToBarrelEnd);
+		Upgrades = ini.Get_Int(IniName, "Upgrades", Upgrades);
+		if (Upgrades > 0) {
+			for (index = 0; index < Upgrades; index++) {
+				sprintf(anim_key, "PowerUp%01dAnim", index + 1);
+				sprintf(damaged_key, "PowerUp%01dDamagedAnim", index + 1);
+				sprintf(x_key, "PowerUp%01dLocXX", index + 1);
+				sprintf(y_key, "PowerUp%01dLocYY", index + 1);
+				sprintf(z_key, "PowerUp%01dLocZZ", index + 1);
+				sprintf(ysort_key, "PowerUp%01dYSort", index + 1);
+				ArtINI.Get_String(GraphicName, anim_key, "", key, 16);
+				if (strlen(key) != 0) {
+					strcpy(AnimData[index].Anim, key);
+				}
+				ArtINI.Get_String(GraphicName, damaged_key, "", key, 16);
+				if (strlen(key) != 0) {
+					strcpy(AnimData[index].AnimDamaged, key);
+				}
+				AnimData[index].Location.X = ArtINI.Get_Int(GraphicName, x_key, AnimData[index].Location.X);
+				AnimData[index].Location.Y = ArtINI.Get_Int(GraphicName, y_key, AnimData[index].Location.Y);
+				AnimData[index].ZAdjust = ArtINI.Get_Int(GraphicName, z_key, AnimData[index].ZAdjust);
+				AnimData[index].YSort = ArtINI.Get_Int(GraphicName, ysort_key, AnimData[index].YSort);
+			}
+		}
+		int docks = NumberOfDocks;
+		NumberOfDocks = ini.Get_Int(IniName, "NumberOfDocks", docks);
+		if (NumberOfDocks > DockingOffsets.Length()) {
+			DockingOffsets.Resize(NumberOfDocks);
+			for (index = docks; index < NumberOfDocks; index++) {
+				DockingOffsets[index] = TPoint3D<int>(0, 0, 0);
+			}
+		}
+		for (index = 0; index < NumberOfDocks; index++) {
+			sprintf(dock_key, "DockingOffset%d", index);
+			Point3D offset = DockingOffsets[index];
+			offset = ArtINI.Get_Point(GraphicName, dock_key, offset);
+			DockingOffsets[index] = offset;
+		}
+		return true;
+	}
+	return false;
+}
+
+#undef READ_ANIM_PLAIN
+#undef READ_ANIM
+#undef READ_ANIM_PLACEMENT
+#undef ANIM_NAMED
+#undef READ_ANIM_NAMES
 
 // FUNCTION: GAMEMD 0x00464A70
 Coord const BuildingTypeClass::Coord_Fixup(Coord const & coord) const

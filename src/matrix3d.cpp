@@ -285,6 +285,33 @@ void Matrix3D::Pre_Rotate_X(float theta)
 	Row[2].W = m23 * c + m13 * s;
 }
 
+// FUNCTION: GAMEMD 0x005AED50
+void Matrix3D::Pre_Rotate_Y(float theta)
+{
+	float s = fastmath::sin(theta);
+	float c = fastmath::cos(theta);
+	const float rotation[2][2] = {{c, s}, {-s, c}};
+
+	float m00 = Row[0].X;
+	float m01 = Row[0].Y;
+	float m02 = Row[0].Z;
+	float m03 = Row[0].W;
+	float m20 = Row[2].X;
+	float m21 = Row[2].Y;
+	float m22 = Row[2].Z;
+	float m23 = Row[2].W;
+
+	Row[0].X = m20 * rotation[0][1] + m00 * rotation[0][0];
+	Row[0].Y = m21 * rotation[0][1] + m01 * rotation[0][0];
+	Row[0].Z = m22 * rotation[0][1] + m02 * rotation[0][0];
+	Row[0].W = m23 * rotation[0][1] + m03 * rotation[0][0];
+
+	Row[2].X = m00 * rotation[1][0] + m20 * rotation[1][1];
+	Row[2].Y = m01 * rotation[1][0] + m21 * rotation[1][1];
+	Row[2].Z = m02 * rotation[1][0] + m22 * rotation[1][1];
+	Row[2].W = m03 * rotation[1][0] + m23 * rotation[1][1];
+}
+
 // FUNCTION: GAMEMD 0x005AEE50
 void Matrix3D::Pre_Rotate_Z(float theta)
 {

@@ -64,7 +64,10 @@ class MessageListClass {
 		int MaxChars;
 		int Height;
 
+	public:
 		bool EnableOverflow;
+
+	private:
 		bool IsEdit;
 		bool AdjustEdit;
 
