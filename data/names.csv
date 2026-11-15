@@ -683,3 +683,4 @@ address,name,symbol,evidence
 0x00A83D48,PlayerAborts,,Existing matched end-game handler FUN_0055CFD0 tests PlayerAborts fourth at operand 0055D076
 0x0087F6C4,NormalDrawer,?NormalDrawer@@3PAVConvertClass@@A,YRpp FileSystem::PALETTE_PAL and the drawer declared in the archived _convert.cpp
 0x00B1D13C,EightBitSurface,?EightBitSurface@@3PAVSurface@@A,Existing matched Unit_Draw_Voxel 0x0073B470 assigns this surface to DSurface::Temp for compositing; the external Surface pointer declaration agrees with UnitTypeClass::One_Time 0x007473E0 creating the 256-by-256 8-bit surface.
+0x006FDD50,TechnoClass::Fire_At,?Fire_At@TechnoClass@@UAEPAVBulletClass@@PAVAbstractClass@@H@Z,Unmodified TechnoClass headercheck probe places Fire_At at primary vtable slot 243; pairing the 309-slot primary table with the original TechnoClass RTTI resolves this slot to 0x006FDD50.

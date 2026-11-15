@@ -71,3 +71,8 @@ effect, so it can be fixed in a separate build later.
   through `object->Team` before checking whether `object` is null. If group
   creation fails, execution can access-violate before reaching the intended
   failure return. The recovered source preserves this ordering.
+
+- **AircraftClass::Fire_At (0x00415EE0).** The shroud checks around the aircraft
+  test `(2 * CELL_LEPTON_W, -2 * CELL_LEPTON_H)` twice and omit the opposite
+  `(-2 * CELL_LEPTON_W, 2 * CELL_LEPTON_H)` offset. The recovered source
+  preserves the repeated check.
