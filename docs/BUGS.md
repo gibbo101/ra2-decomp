@@ -61,3 +61,9 @@ effect, so it can be fixed in a separate build later.
 - **BitFont::LoadInternalData (0x00433990).** A short read of the range table
   in the extended font format jumps to failure cleanup without freeing the
   allocated range buffer. The recovered source preserves this leak.
+
+- **BulletClass::Unlimbo (0x00468670).** For an invisible projectile with no
+  Firestorm intercept, the trajectory-obstacle branch sets the projectile's
+  position to the obstacle coordinate, but the unconditional setter call at
+  0x00468986 immediately replaces it with the chosen target coordinate. The
+  recovered source preserves both calls and the overwritten obstacle position.
