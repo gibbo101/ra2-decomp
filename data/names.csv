@@ -689,3 +689,4 @@ address,name,symbol,evidence
 0x00ABC1D4,IsometricTileTypeClass::DirtRoadCurve,?DirtRoadCurve@IsometricTileTypeClass@@2W4IsometricTileType@@A,"IsometricTileTypeClass::Read_Control_File at 0x00545150 independently references this object at 0x9C5, 0xDD7"
 0x00ABBEC0,IsometricTileTypeClass::DirtRoadSlopes,?DirtRoadSlopes@IsometricTileTypeClass@@2W4IsometricTileType@@A,"IsometricTileTypeClass::Read_Control_File at 0x00545150 independently references this object at 0x9ED, 0xE31"
 0x00ABE370,DirtRoadTiles,?DirtRoadTiles@@3PAUDirtRoadTile@@A,"MapGeneratorClass::Find_Dirt_Road_Tile at 0x005A8F00 independently references this object at 0x1B5, 0x1BC"
+0x007E9A60,CLSID_WalkLocomotion,_CLSID_WalkLocomotion,InfantryClass::JumpJet_To_Walk at 0x00521EB0 constructs the walking locomotor using this class ID at +0x106.
