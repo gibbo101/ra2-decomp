@@ -6560,6 +6560,7 @@ address,size,symbol,source,sha256
 0x00518D80,521,?Shape_Number@InfantryClass@@QBEHXZ,src/infantry.cpp,60ee1cdafdd13ab060a3fc6fc80794476f42f943d933090b63d41ced74714608
 0x00518F90,1689,?Draw_It@InfantryClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/infantry.cpp,a351fb666202d5fa0915a33b9919ca2c8cc510dae021c3d379c68d6a62bdd707
 0x0051AA10,42,?Detach@InfantryClass@@UAEXPBVAbstractClass@@_N@Z,src/infantry.cpp,212ba8dff57456ba69a2aba9c394779cd34c96a6d258607527da3f6a0fb659cc
+0x0051AA40,1953,?Assign_Destination@InfantryClass@@UAEXPAVAbstractClass@@_N@Z,src/infantry.cpp,96e71539cd6a3739cf5f527eab669412fcdc0382a643d4f5ef65cb5a638768ab
 0x0051B1F0,347,?Assign_Target@InfantryClass@@UAEXPAVAbstractClass@@@Z,src/infantry.cpp,29adabdcbb0fc67dd4f806d0d3d8ebf5ee825f27241eb5d20b91562e1fef84df
 0x0051BAB0,1239,?AI@InfantryClass@@UAEXXZ,src/infantry.cpp,dd76ae4e4e171d16be608751337383f7c832351cf8e6607ef624e7d0a1761819
 0x0051BF90,2323,?Can_Enter_Cell@InfantryClass@@UBE?AW4MoveType@@PBVCellClass@@W4FacingType@@H0_N@Z,src/infantry.cpp,ace3db9b5f9423affd3e97cb052bb2980957aec2e8ea334da9c26af54c118f1f
@@ -12826,6 +12827,7 @@ address,size,symbol,source,sha256
 0x006907A0,50,?String_Width@ScoreFontClass@@UAEHPBG@Z,src/score.cpp,e5ea280a7ab8f5ac92333ce3a6d4cc88a0646a76cd8623fc032e0902a2c765cf
 0x006907E0,107,?Char_Width@ScoreFontClass@@UAEHG@Z,src/score.cpp,bbec64fc97f020b8b7caf37d6ea9457626f6b95d0fbbbd7fa4576954d7c164d6
 0x00690850,188,?Print_Char@ScoreFontClass@@UAEXPAVSurface@@GHHH_N@Z,src/score.cpp,ec462dd4500479d711f1ec0f5e564248dca73ae0cee0434616005a97b56b6945
+0x00690910,248,?Print_String@ScoreFontClass@@UAEXPAVSurface@@PBGHHH@Z,src/score.cpp,2c4d70403ce6506559d25e16ef19da1d766775405f65d55ec113d62fb2460f77
 0x00690A10,194,??0ScoreFullFontClass@@QAE@PAVConvertClass@@@Z,src/score.cpp,518672d5691d0fc7f482b3ba12cbe0b986955654ab26296a336737ed8f7f48f2
 0x00690AE0,194,??0ScoreBigFontClass@@QAE@PAVConvertClass@@@Z,src/score.cpp,72da8fb9f0f9abfbd34544e3d40bc21b02ff10b9eceefcee27d175f9b7f80754
 0x00690BB0,76,??0ScoreTimeClass@@QAE@HHPBXHHPAVConvertClass@@@Z,src/score.cpp,0697e2a4f2c730e7c5bc28e848cf59aafd754a81a199aad1e2a898505c227a69
@@ -18279,6 +18281,7 @@ address,size,symbol,source,sha256
 0x00781CF0,45,?FUN_00781CF0@@YAHPBUUserSort@@0@Z,src/wonline.cpp,d791995145dfa253ae99eb8c699468eaddbdf09ec43ec997e215bcb541141599
 0x00781D20,655,?FUN_00781D20@@YIX_N@Z,src/wonline.cpp,4456945d0fa61c31c6111f5a47b2527ca21a9e5b1e9c8ca831edcf3258fd6892
 0x00781FB0,877,?FUN_00781FB0@@YIXPAUUser@@_N@Z,src/wonline.cpp,e27f1d902d94265c8afa443f85818b4ad0cbf4d7d3894658eeeb347e57757518
+0x00782320,2179,?FUN_00782320@@YIXPAUUser@@_N@Z,src/wonline.cpp,5cb17e316b8fb1fb2581437b4467f1802db027f79c9e367979deb30c955bf1bf
 0x00782BB0,1201,?FUN_00782BB0@@YIXPAUUser@@_N@Z,src/wonline.cpp,f96a5b817b57ae1343bb97285e7d1754b2214152c48185d451b1a8eeeb0823ad
 0x00783070,72,?FUN_00783070@@YIXPAUUser@@@Z,src/wonline.cpp,b4725e2d1cbce8c7bc837cdc770455611e5f21e78a723540eabac4bc0c4f965b
 0x007830C0,219,?FUN_007830C0@@YAHPBUUserRank@@0@Z,src/wonline.cpp,5ab9683f0b97a1817db7ae69636d42a33315104e64ac471f21a938a2dabdac3c
