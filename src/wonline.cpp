@@ -344,12 +344,12 @@ void __fastcall FUN_0077D210(char * text)
 }
 
 // FUNCTION: GAMEMD 0x0077D240
-int __fastcall FUN_0077D240(Wstring * name)
+int __fastcall FUN_0077D240(Wstring const & name)
 {
 	User * user = NULL;
 	for (int i = 0; i < DAT_00B77900.length(); i++) {
 		DAT_00B77900.getPointer(&user, i);
-		if (strcmpi(name->text(), (char *)user->name) == 0)
+		if (strcmpi(name.text(), (char *)user->name) == 0)
 			return i;
 	}
 	return -1;
@@ -443,7 +443,7 @@ bool __fastcall FUN_0077D4C0(User * user)
 {
 	if (DAT_00B76AF0 || DAT_00B73AD0) {
 		if (WS_Find_Dialog(0x113)) {
-			int index = FUN_0077D240(&DAT_00B73E40);
+			int index = FUN_0077D240(DAT_00B73E40);
 			User * host = NULL;
 			int count = DAT_00B77900.length();
 			if (index >= 0) {
@@ -1014,7 +1014,7 @@ void __fastcall FUN_0077E900(Wstring const & who, int status)
 		HWND w = FUN_00775940(0xC9);
 		FUN_005EDDE0(w, true);
 	}
-	int index = FUN_0077D240(&name);
+	int index = FUN_0077D240(name);
 	if (index != -1) {
 		DAT_00B76E58[index].Accepted = status;
 		FUN_00783C80(0, false);
@@ -9688,7 +9688,7 @@ void FUN_007A1060(void)
 					int index;
 					{
 						Wstring key(name.get());
-						index = FUN_0077D240(&key);
+						index = FUN_0077D240(key);
 					}
 					if (index != -1) {
 						DAT_00B77900.get(user, index);
@@ -9743,7 +9743,7 @@ void FUN_007A1330(void)
 				int index;
 				{
 					Wstring key(name.get());
-					index = FUN_0077D240(&key);
+					index = FUN_0077D240(key);
 				}
 				if (index == -1) {
 					FUN_004068E0("%s not found in info\n", name.get());
@@ -9862,7 +9862,7 @@ void FUN_007A19E0(void)
 	int index;
 	{
 		Wstring key(DAT_00B76AC4.get());
-		index = FUN_0077D240(&key);
+		index = FUN_0077D240(key);
 	}
 	if (index == -1) {
 		FUN_005E2700(0xC0FFFF, StringTable::LoadString("WOL:MatchOpponentPingUnknown", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7073));
@@ -11202,7 +11202,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 
 		if (DAT_00B76B10.type != 0 && !DAT_00B77E4C) {
 			Wstring nick((char *)users->name);
-			int index = FUN_0077D240(&nick);
+			int index = FUN_0077D240(nick);
 			memset(&DAT_00B76E40[index * 0x94], 0, 0x94);
 			strcpy(&DAT_00B76E40[index * 0x94], (char *)users->name);
 			if (stricmp((char *)users->name, DAT_00B73E40.get()) != 0) {
@@ -11414,6 +11414,212 @@ long __stdcall FUN_007A8DA0(void * sink, long result, void * channel, User * use
 		FUN_005E2700(color, L"[%hs] : %s", user->name, wide.get());
 	}
 	return 0;
+}
+
+extern char DAT_0084AF80[], DAT_0084AF4C[], DAT_0084AED8[], DAT_0084AEA0[];
+extern bool DAT_008316D4;
+extern int DAT_008316A4;
+void __fastcall FUN_005E32D0(bool, bool);
+bool FUN_005E9510(void);
+int __fastcall FUN_005E9240(NodeNameType * node);
+void __fastcall FUN_005EC9F0(HWND dialog, int id, NodeNameType * node, int mode);
+bool __fastcall FUN_005E9720(int id);
+void __fastcall FUN_005E7EB0(MapPreviewClass * preview);
+
+// FUNCTION: GAMEMD 0x007A8260
+long __stdcall FUN_007A8260(void * sink, long result, User * user, char const * options)
+{
+	if (DAT_00B77DC1) return S_OK;
+	if (DAT_00B77E28 && options[0] != 'Z') return S_OK;
+	if (Is_Internal_Session() && options[0] != 'Z') return S_OK;
+	int existing_user;
+	{
+		Wstring name((char *)user->name);
+		existing_user = FUN_0077D240(name);
+	}
+	if (existing_user == -1) return S_OK;
+	switch (options[0]) {
+	case 'Z':
+		if (options[1] == '4') {
+			FUN_004068E0(DAT_0084AF80, (char *)user->name);
+			unsigned int port = atol(options + 2);
+			FUN_004068E0(DAT_0084AF4C, (char *)user->name, port & 0xFFFF);
+			for (int i = 0; i < 8; ++i) {
+				if (!stricmp(FUN_007350C0(Session.Slots[i]->Name), (char *)user->name)) {
+					Session.unknown_2E18[i] = (unsigned short)port;
+					break;
+				}
+			}
+		}
+		break;
+	case 'R': {
+		char * buffer = strdup(options + 1);
+		int index = -1;
+		int row = 0;
+		for (; row < 8; ++row) {
+			Wstring name = FUN_007B7F90(Session.Slots[row]->Name);
+			if (!stricmp(name.get(), (char *)user->name)) { index = row; break; }
+		}
+		if (index != -1) {
+			char * token = strtok(buffer, ",");
+			int country = 0;
+			if (token) country = atol(token);
+			token = strtok(NULL, ",");
+			int color = 0;
+			if (token) color = atol(token);
+			token = strtok(NULL, ",");
+			int start = 0;
+			if (token) start = atol(token);
+			token = strtok(NULL, ",");
+			int team = 0;
+			if (token) team = atol(token);
+			token = strtok(NULL, ",");
+			unsigned int ip = 0;
+			sscanf(token, "%X", &ip);
+			IPXAddressClass address;
+			if (ip) {
+				NetNumType net;
+				NetNodeType node;
+				memset(net, 0, sizeof(net));
+				memset(node, 0, sizeof(node));
+				memcpy(node, &ip, sizeof(ip));
+				address.Set_Address(net, node, 0);
+				Session.unknown_2994[row] = address;
+			}
+			token = strtok(NULL, ",");
+			unsigned int port = 0;
+			if (token) sscanf(token, "%X", &port);
+			Session.unknown_29F4[row] = port;
+			token = strtok(NULL, ",");
+			unsigned int value = 0;
+			if (token) sscanf(token, "%X", &value);
+			Session.unknown_2FF8[row] = value;
+			FUN_004068E0(DAT_0084AED8, (char *)user->name, country, color, start, team, address.As_String(NULL), Session.unknown_29F4[row], value);
+			HWND window = FUN_00775940(0xC2);
+			if (!window) window = FUN_00775940(0xC9);
+			int old_country = Session.Slots[row]->Get_Country();
+			NodeNameType * player = Session.Slots[row];
+			bool become_observer = false, become_player = false, changed = false;
+			if (old_country == -3) {
+				if (country != old_country) become_player = true;
+			} else if (country == -3) become_observer = true;
+			User * host = FUN_007931A0();
+			if (host && !stricmp((char *)host->name, DAT_00B73E40.text()) && row == 0 && become_observer && Session.MPGameMode && !Session.MPGameMode->vt_entry_BC()) {
+				become_observer = false;
+				changed = true;
+			}
+			if (become_player) {
+				host = FUN_007931A0();
+				if (host && !stricmp((char *)host->name, DAT_00B73E40.text())) {
+					if (FUN_005E9510()) {
+						FUN_005EC9F0(window, FUN_005E98F0(row), DAT_00AC11B4, 0);
+						changed = true;
+						FUN_0077DB90();
+						FUN_005E32D0(true, false);
+						FUN_00783C80(0, false);
+					} else {
+						player->Set_Country(-2);
+						player->Slot.SpectatorFlag = 0;
+						FUN_005EC9F0(window, FUN_005E98F0(DAT_008316A4), DAT_00AC11B4, 0);
+						index = FUN_005E9240(player);
+						FUN_005EC9F0(window, FUN_005E98F0(index), player, 0);
+						FUN_0077DB90();
+						Session.unknown_29F4[index] = Session.unknown_29F4[row];
+						Session.unknown_2994[index] = Session.unknown_2994[row];
+						Session.unknown_2FF8[index] = Session.unknown_2FF8[row];
+					}
+				}
+			}
+			if (become_observer) {
+				host = FUN_007931A0();
+				if (host && !stricmp((char *)host->name, DAT_00B73E40.text())) {
+					if (FUN_005E9560()) {
+						FUN_005EC9F0(window, FUN_005E98F0(index), DAT_00AC119C, 0);
+						FUN_0077DB90();
+					} else {
+						player->Set_Country(-3);
+						player->Slot.SpectatorFlag = -1;
+						FUN_005EC9F0(window, FUN_005E98F0(index), DAT_00AC119C, 0);
+						FUN_005EC9F0(window, FUN_005E98F0(DAT_008316A4), player, 0);
+						FUN_0077DB90();
+						FUN_004E3B00(window, FUN_004E37D0(DAT_008316A4));
+						int observer_control = FUN_005E98F0(DAT_008316A4);
+						SendMessage(GetDlgItem(window, observer_control), 0x4F1, 0, 1);
+						int control = FUN_004E41D0(DAT_008316A4);
+						FUN_004E4770(window, control);
+						FUN_004E49A0(window, control, 8);
+						index = DAT_008316A4;
+						FUN_005E32D0(true, false);
+						FUN_00783C80(0, false);
+						Session.unknown_29F4[index] = Session.unknown_29F4[row];
+						Session.unknown_2994[index] = Session.unknown_2994[row];
+						Session.unknown_2FF8[index] = Session.unknown_2FF8[row];
+						goto request_done;
+					}
+					goto refresh_options;
+				}
+			}
+			if (changed) goto request_done;
+			bool country_changed = old_country != country;
+			if (Session.MPGameMode && !Session.MPGameMode->vt_entry_1C(country)) {
+				country = Session.MPGameMode->vt_entry_1C(old_country) ? old_country : Session.MPGameMode->vt_entry_28();
+				country_changed = true;
+			}
+			if (country_changed) Session.Slots[index]->Set_Country(country);
+			bool color_changed = Session.Slots[index]->Get_Color() != color;
+			if (color_changed) {
+				if (Session.FUN_0069B600(color)) color = -2;
+				Session.Slots[index]->Set_Color(color);
+			}
+			bool start_changed = Session.Slots[index]->Get_Start() != start;
+			if (start_changed) {
+				if (FUN_005E9720(start)) start = -2;
+				Session.Slots[index]->Set_Start(start);
+			}
+			bool team_changed = Session.Slots[index]->Get_Team() != team;
+			if (team_changed) {
+				if (Session.MPGameMode && !Session.MPGameMode->CanAllyWith(team)) {
+					if (Session.MPGameMode) {
+						Session.Slots[index]->Set_Team(Session.MPGameMode->vt_entry_2C());
+					} else {
+						Session.Slots[index]->Set_Team(-2);
+					}
+				} else {
+					Session.Slots[index]->Set_Team(team);
+				}
+			}
+			if (!country_changed && !color_changed && !start_changed && !team_changed) goto request_done;
+		} else goto request_done;
+refresh_options:
+		FUN_005E32D0(true, false);
+		FUN_00783C80(0, false);
+request_done:
+		free(buffer);
+		break;
+	}
+	case 'P': {
+		if (DAT_00B77E4C != 1) break;
+		FUN_004068E0(DAT_0084AEA0);
+		if (DAT_00B77900.length() >= 2) {
+			User temp;
+			User * host = FUN_007931A0();
+			if (host && !stricmp((char *)host->name, DAT_00B73E40.text()) && !DAT_00B77E28 && DAT_00B76B10.type && MultiplayerMapPreview && MultiplayerMapPreview->Get_Preview_Surface() && DAT_008316D4) {
+				int found = FUN_0077D240((char *)user->name);
+				if (found != -1) {
+					DAT_00B77900.get(temp, found);
+					temp.next = NULL;
+					FUN_00792F10(&temp);
+					int old = DAT_00B77DCC;
+					DAT_00B77DCC = 1;
+					FUN_005E7EB0(MultiplayerMapPreview);
+					DAT_00B77DCC = old;
+				}
+			}
+		}
+		break;
+	}
+	}
+	return S_OK;
 }
 
 // FUNCTION: GAMEMD 0x007A8ED0
