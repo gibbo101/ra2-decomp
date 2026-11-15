@@ -3043,7 +3043,7 @@ static inline void Close_Logout_Wait(unsigned int event)
 }
 
 namespace OwnerDraw {
-	void __stdcall SetNeedsControlImage(HWND window, int value);
+	BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam);
 }
 int __fastcall FUN_00788A30(bool flag);
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
@@ -5208,7 +5208,6 @@ extern int * DAT_00B77E98;
 namespace Game { extern bool IsActive; }
 namespace OwnerDraw {
 	void __fastcall DrawCampaignMenuTransition(HWND window, bool reverse);
-	void __stdcall SetNeedsControlImage(HWND window, int value);
 }
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void FUN_0072B8E0(void);
