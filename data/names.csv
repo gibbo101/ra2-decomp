@@ -660,3 +660,4 @@ address,name,symbol,evidence
 0x0089F6D8,AdjacentPoint,?AdjacentPoint@@3QBVPoint2D@@B,"=_$E95 at 0x0049F3A0 matches independently and references this object at 0x9, 0xF, 0x14, 0x21, 0x26, 0x2B, 0x32, 0x3A, 0x40, 0x46, 0x4B, 0x58, 0x5F, 0x64, 0x69, 0x6F"
 0x0089EA40,Ground,?Ground@@3PAUGroundType@@A,"RulesClass::Land_Types at 0x00674000 matches independently and references this object at 0xD, 0x226"
 0x007F2A40,ShipLocomotionClass::TrackControl,?TrackControl@ShipLocomotionClass@@0QBUTurnTrackType@1@B,ShipLocomotionClass::Mark_Track at 0x006A01A0 matches independently and references this object at 0x56
+0x00AA10B0,IsometricTileTypeClass::ClearTile,?ClearTile@IsometricTileTypeClass@@2W4IsometricTileType@@A,"Three agreeing references in independently matched Read_Control_File (0x00545150) and Load_Tiles (0x00546DA0), actual shared static member"

@@ -14867,6 +14867,7 @@ address,name,result,size,source,symbol
 0x006FB080,TechnoClass::StartReloading,MATCH,229,src/techno.cpp,?StartReloading@TechnoClass@@QAEXXZ
 0x006FB170,TechnoClass::CreateGap,MATCH,753,src/techno.cpp,?CreateGap@TechnoClass@@UAEXXZ
 0x006FB470,TechnoClass::DestroyGap,MATCH,718,src/techno.cpp,?DestroyGap@TechnoClass@@UAEXXZ
+0x00704350,TechnoClass::Get_Z_Adjust,MATCH,1645,src/techno.cpp,?Get_Z_Adjust@TechnoClass@@UBEHXZ
 0x007049C0,TechnoClass::FUN_007049C0,MATCH,1151,src/techno.cpp,?FUN_007049C0@TechnoClass@@QBEXVCoord@@0VRGBClass@@EE@Z
 0x0070D0D0,TechnoClass::Has_Ability,MATCH,128,src/techno.cpp,?Has_Ability@TechnoClass@@QBE_NW4AbilityType@@@Z
 0x006FB740,TechnoClass::Cloaking_AI,MATCH,1354,src/techno.cpp,?Cloaking_AI@TechnoClass@@UAEX_N@Z
