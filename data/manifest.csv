@@ -4115,6 +4115,7 @@ address,size,symbol,source,sha256
 0x004B0DA0,71,?Stop_Driver@DriveLocomotionClass@@QAE_NXZ,src/drive.cpp,fe65f5796df9fb35b2f8c2dadac7927a149fc4b7924ed7af7e2491ab8d7e6105
 0x004B0DF0,242,?Start_Driver@DriveLocomotionClass@@QAE_NABVCoord@@@Z,src/drive.cpp,993fb047886030b0c86d171677ce69b2125f2356658ce96b6ea33df787a0dcc3
 0x004B0EF0,34,?Do_Turn@DriveLocomotionClass@@UAGXUDirStruct@@@Z,src/drive.cpp,10a6521d43b87e784164c886c82b87b6b6309726372ed325225e6b285a44f3e5
+0x004B2630,8503,?Start_Of_Move@DriveLocomotionClass@@AAE_NAA_N_N1@Z,src/drive.cpp,11e321ff23751671400cae05e8745cfc305c989a547a0299d2a1dbbe7d73eeb5
 0x004B4770,1,?Lay_Track@DriveLocomotionClass@@AAEXXZ,src/drive.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x004B4780,124,?Smooth_Turn@DriveLocomotionClass@@AAE?AVPoint2D@@ABV2@AAW4Dir256@@@Z,src/drive.cpp,1b2ace712e698fb207049abf7f5cf4b277c38cd5ab5866d0b0b2bee6c923b8a9
 0x004B4800,22,?Incoming@DriveLocomotionClass@@QAE_NVCell@@@Z,src/drive.cpp,9471c8a3215fb1c6e2410d21ec71d148dbfe14336bfb976de085917a70be868c
@@ -6141,6 +6142,7 @@ address,size,symbol,source,sha256
 0x00507D70,481,?Get_Anti_Armor_Defense_Buildings@HouseClass@@QBE?AV?$DynamicVectorClass@PAVBuildingTypeClass@@@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z,src/house.cpp,cf3ebf26da4e9017b6280f1fa37756f95685b36b2a9d24554088abf3ae0d2cc2
 0x00507F60,481,?Get_Anti_Ground_Defense_Buildings@HouseClass@@QBE?AV?$DynamicVectorClass@PAVBuildingTypeClass@@@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z,src/house.cpp,4e2151106f42d6d7bf80f2c87b2c65fc48700b4e1d91643f5f5e82f4fe4a2f61
 0x00508150,359,?Calculate_Enemy_Predictions@HouseClass@@QAEXXZ,src/house.cpp,f57648ffd9a5b8f76ee5a215c2d42e63bc55fed6132b9cc022d2099002fb3143
+0x005082C0,2405,?AI_Build_Wall@HouseClass@@QAEXXZ,src/house.cpp,766c80336a26243d36c70b7740d8ec6f8a921e003a2ca523cd97619eab7673c1
 0x00508C30,445,?Recalc_Power_Drain@HouseClass@@QAEXXZ,src/house.cpp,22c1cfd7a150deafc8086d165fdbaed9a50a83dd95a59be20ae57e027c328ad3
 0x00508DF0,360,?Recalc_Radar_Availability@HouseClass@@QAEXXZ,src/house.cpp,a229c98491231dcbc65690d7be10652b29fe012bebe8afdd70e7d02c90790d08
 0x00508F60,313,?Recalc_Spy_Satellite@HouseClass@@QAEXXZ,src/house.cpp,7c88a7ea0348b7738e231414f1eab318b5888b7546a2f69a537374f7f3d33c7e
@@ -8247,6 +8249,7 @@ address,size,symbol,source,sha256
 0x00567110,281,?Fresh_Map@MapClass@@QAEXXZ,src/map.cpp,4e1787963a67bd5911a7cde8c6b0039d538606b04a6a173c3efcbcf3d3aba8fb
 0x00567230,315,?Set_Local_Dimensions@MapClass@@UAEXABV?$TRect@H@@@Z,src/map.cpp,ac50091b5159f18f88c867e03f85e99a79f8573fba52cd2872a4047db4857b1e
 0x00567370,45,?RevealArea0@MapClass@@QAEXHHPAVCoord@@HPAVHouseClass@@_N222@Z,src/map.cpp,1e83735a72141aef2ee60d0b72525fe4627e52dd614e2f342e2397ae67484b56
+0x005673A0,1337,?RevealArea1@MapClass@@QAEXPAVCoord@@HPAVHouseClass@@_N2222@Z,src/map.cpp,bee6647b891b886a3f411916a04f1a9fbd3e3a47bde0fb481d3fffd4683d6203
 0x005678E0,1202,?RevealArea2@MapClass@@QAEXPAVCoord@@HPAVHouseClass@@_N2222@Z,src/map.cpp,6a9d6c03b9812f8a15f1eb3e0d3e1792d3bc853a876c4d046233831ce2f5ebc2
 0x00567DA0,452,?RevealArea3@MapClass@@QAEXABVCoord@@HHH@Z,src/map.cpp,6071cef938f99622b76b4170c3f08a51407df17c8855f6a312f135709f04ca5f
 0x00567F70,464,?Shroud_Gap_Area@MapClass@@QAEXABVCoord@@H@Z,src/map.cpp,f8911e6f4d22381f42657240b7336fcbcdd2665bf12e6ff4c0eb2479216ca125
@@ -8682,6 +8685,7 @@ address,size,symbol,source,sha256
 0x0059A670,69,?Update_Progress@MapGeneratorClass@@QAEXH@Z,src/mapgen.cpp,9f869388889f5a9014d03996cc4b2c653d20b9fdab300f76a07d4257aa41c40f
 0x0059A6C0,545,?Seed_Land@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,0438040c6c58970b97ca2e910b5bd837cf7a30145dba8b215503efae2b452273
 0x0059A8F0,1051,?Partition_Rect@MapGeneratorClass@@QAEXAAV?$DynamicVectorClass@V?$TRect@H@@@@HABV?$TRect@H@@@Z,src/mapgen.cpp,c8bacd64c4d6177637148278a3f8bce6a709ccf3936b5101b72c153dd40363b1
+0x0059AD10,645,?Seed_Land_Type0@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,68f230b03ee5a8243714cea525c17f7a1a9b55fc17811cb8298b95dbeed74362
 0x0059AFA0,605,?Seed_Land_Type1@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,c2049dc552f985ab6f24049fbdfbe867718abf18fa8db81f93be74a644b4721b
 0x0059B200,1231,?Seed_Land_Type2@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,4c85061d37a08ce9bc00c46400bb264eb57b575050ad604db3fd4cc6e84cd152
 0x0059B6D0,99,?Green_Shores@MapGeneratorClass@@SIXXZ,src/mapgen.cpp,044606f410ab18ab9017fd5cd3cdeab075ffd941dc12707c694443f73cd24e75
@@ -11422,6 +11426,7 @@ address,size,symbol,source,sha256
 0x00635210,182,?Locate_Loop_Branch@PlanningNodeClass@@QAEXXZ,src/planmgr.cpp,c0dd9255717d617e184a76faae7ff1f2280c4f324660516ef3c0ec4650d61a11
 0x006352D0,49,?Select_All@PlanningNodeClass@@QAEXXZ,src/planmgr.cpp,4d452665832b0efa01ec70ff995864096e67b725d4c4aa0113b5ec0c357074d8
 0x00635310,49,?Unselect_All@PlanningNodeClass@@QAEXXZ,src/planmgr.cpp,568076e3f184b779aebc155c80dededa128cb2ee7059df2fada4062fa7f9dd98
+0x00635350,309,?Draw_Lead_Box@PlanningNodeClass@@QAEXH@Z,src/planmgr.cpp,f84c4d254e73f7a18f4dadb4fed4e0122f410fc4e656f8d5038cc48f6a272c26
 0x00635490,202,?Fill_Lead_Box@PlanningNodeClass@@QAEXH@Z,src/planmgr.cpp,f7c9d7fca651380cd156b542feac09b461d6e72aed69ceb4a581671bc7957982
 0x00635560,281,?Frame_Lead_Box@PlanningNodeClass@@QAEXH@Z,src/planmgr.cpp,69f41a6c1f2f7dcbc049e505dc187fd010a372078c86bd34bfbc1b81ce2a4d7e
 0x00635680,324,?FUN_00635680@PlanningNodeClass@@QAEXH@Z,src/planmgr.cpp,d9d47cd86100d87619ddc543776c48c7a7c7756834d0e22071b0234b53c570ac
@@ -13164,6 +13169,7 @@ address,size,symbol,source,sha256
 0x006A0470,71,?Stop_Driver@ShipLocomotionClass@@QAE_NXZ,src/ship.cpp,5afc11e193c519ad0f32b652b53e23b74c44b5e48807f0306cf47b916c9ab511
 0x006A04C0,242,?Start_Driver@ShipLocomotionClass@@QAE_NABVCoord@@@Z,src/ship.cpp,fcc80b9a7f8b6d579b5d3cd2892c868b572c3332cd5e470f508fc05c9e64652d
 0x006A05C0,34,?Do_Turn@ShipLocomotionClass@@UAGXUDirStruct@@@Z,src/ship.cpp,06efd3b5db11a143d1113f81eb7dbcb9d52bfd494f9b9f3ad494642a9773f98f
+0x006A1C80,8470,?Start_Of_Move@ShipLocomotionClass@@AAE_NAA_N_N1@Z,src/ship.cpp,8974ec297bc0863d8f6228b18fe9850ba02beb7dbfddaae005540c3ac38ae409
 0x006A3DA0,1,?Lay_Track@ShipLocomotionClass@@AAEXXZ,src/ship.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x006A3DB0,124,?Smooth_Turn@ShipLocomotionClass@@AAE?AVPoint2D@@ABV2@AAW4Dir256@@@Z,src/ship.cpp,6a9a35df52cb0d15d8c9c91a52aebe5fb1c7ca39898352f6a65a44f502c7fca1
 0x006A3E30,22,?Incoming@ShipLocomotionClass@@QAE_NVCell@@@Z,src/ship.cpp,4013f2ac582398a6b0add7f3edda4f4898f9a3c3a52a0bcddc108333321c1ee9
@@ -14510,6 +14516,7 @@ address,size,symbol,source,sha256
 0x006D62E0,137,?Lepton_To_Map_Pixel@Tactical@@QAEXHHAAH0@Z,src/tactical.cpp,6c64d764f5996259f3147c02e5df80f51f218e9edbe3eb78506f943315714acd
 0x006D6370,147,?Cell_To_Rectangular_Centered@Tactical@@QAEXHHAAH0@Z,src/tactical.cpp,20e722c558ebe3ceb63e31083644cf78e4d903a1e42ec8ad34976f9c8cfb8b79
 0x006D6410,379,?Coord_To_Cell@Tactical@@QAE?AVCell@@ABVCoord@@@Z,src/tactical.cpp,30c371480a49c3baa149a44071681952d4482c08d26cd29c49fd4a2f17f8ce01
+0x006D6590,1265,?Pixel_To_Cell@Tactical@@QAE?AVCell@@ABVPoint2D@@@Z,src/tactical.cpp,39248c2f238db1aa1416a8354bb4b47a02c64b3176b84dc3026da6026b86e389
 0x006D6A90,51,?Get_Cell_Height@Tactical@@QAEHABVCoord@@@Z,src/tactical.cpp,832bec1d1a1707264feefd4d43b6b28571a5a1a49f8c1c84e2ec2c3f5eddbefd
 0x006D6AD0,28,?Get_Cell_Ramp@Tactical@@QAEHABVCoord@@@Z,src/tactical.cpp,910aa9b9d7e7c96d70e2eb049f279a4b2badc67836d10cf25f3e4e974e62336b
 0x006D6AF0,181,?Add_Shadow_Control@Tactical@@QAEXVShadowControlClass@@@Z,src/tactical.cpp,85c53c00ca96c2cd73513591ae2a61388c28b04876c0d1b50f4ede7983d0e765
@@ -14555,6 +14562,7 @@ address,size,symbol,source,sha256
 0x006DA9D0,910,?Draw_Rally_Points@Tactical@@QAEX_N@Z,src/tactical.cpp,a49ab66c2bcbfe3123f62bed13d23d7916f586a6f72f025655e1da8bebd51055
 0x006DAD60,1199,?Draw_Waypoints@Tactical@@QAEX_N@Z,src/tactical.cpp,f339aabc774c04cccadfb73d83a51b8b01e58e7c5db12f853d54e11b7df15d05
 0x006DB210,1036,?Debug_Draw_Occupier_Links@Tactical@@QAEXXZ,src/tactical.cpp,44bb80d9ad6d3613fcf6b1db88cfcdfaeb4f92fbcf5524b6c6171a7d8c47cacf
+0x006DB620,1332,?Debug_Draw_Occupation_Flags@Tactical@@QAEXXZ,src/tactical.cpp,419604df2bd2e8aaa4d44adf02d7cafd29ecd976be75f5eb97f785f84556dc0c
 0x006DBB60,374,?Draw_3D_Line@Tactical@@UAE_NABVCoord@@0H_N@Z,src/tactical.cpp,40f9bc4bbe0bbeb5e738b00ae7528a9bcd65beb4d1f0009f567dc5aa0b379729
 0x006DBCE0,56,?GetClassID@Tactical@@UAGJPAU_GUID@@@Z,src/tactical.cpp,f204fc48ecc425c802cc35202666b2eaa997b4f9e5a0db5241a36e218bab9512
 0x006DBD20,214,?Load@Tactical@@UAGJPAUIStream@@@Z,src/tactical.cpp,27bdf96ee5fd66b933be1877fc8356bb137d8320e25c84f297347b3f3b1ef81b

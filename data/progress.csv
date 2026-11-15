@@ -5786,6 +5786,7 @@ address,name,result,size,source,symbol
 0x00507D70,HouseClass::Get_Anti_Armor_Defense_Buildings,MATCH,481,src/house.cpp,?Get_Anti_Armor_Defense_Buildings@HouseClass@@QBE?AV?$DynamicVectorClass@PAVBuildingTypeClass@@@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z
 0x00507F60,HouseClass::Get_Anti_Ground_Defense_Buildings,MATCH,481,src/house.cpp,?Get_Anti_Ground_Defense_Buildings@HouseClass@@QBE?AV?$DynamicVectorClass@PAVBuildingTypeClass@@@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z
 0x00508150,HouseClass::Calculate_Enemy_Predictions,MATCH,359,src/house.cpp,?Calculate_Enemy_Predictions@HouseClass@@QAEXXZ
+0x005082C0,HouseClass::AI_Build_Wall,MATCH,2405,src/house.cpp,?AI_Build_Wall@HouseClass@@QAEXXZ
 0x00508C30,HouseClass::Recalc_Power_Drain,MATCH,445,src/house.cpp,?Recalc_Power_Drain@HouseClass@@QAEXXZ
 0x00508DF0,HouseClass::Recalc_Radar_Availability,MATCH,360,src/house.cpp,?Recalc_Radar_Availability@HouseClass@@QAEXXZ
 0x00508F60,HouseClass::Recalc_Spy_Satellite,MATCH,313,src/house.cpp,?Recalc_Spy_Satellite@HouseClass@@QAEXXZ
@@ -7893,6 +7894,7 @@ address,name,result,size,source,symbol
 0x00567110,MapClass::Fresh_Map,MATCH,281,src/map.cpp,?Fresh_Map@MapClass@@QAEXXZ
 0x00567230,MapClass::Set_Local_Dimensions,MATCH,315,src/map.cpp,?Set_Local_Dimensions@MapClass@@UAEXABV?$TRect@H@@@Z
 0x00567370,MapClass::RevealArea0,MATCH,45,src/map.cpp,?RevealArea0@MapClass@@QAEXHHPAVCoord@@HPAVHouseClass@@_N222@Z
+0x005673A0,MapClass::RevealArea1,MATCH,1337,src/map.cpp,?RevealArea1@MapClass@@QAEXPAVCoord@@HPAVHouseClass@@_N2222@Z
 0x005678E0,MapClass::RevealArea2,MATCH,1202,src/map.cpp,?RevealArea2@MapClass@@QAEXPAVCoord@@HPAVHouseClass@@_N2222@Z
 0x00567DA0,MapClass::RevealArea3,MATCH,452,src/map.cpp,?RevealArea3@MapClass@@QAEXABVCoord@@HHH@Z
 0x00567F70,MapClass::Shroud_Gap_Area,MATCH,464,src/map.cpp,?Shroud_Gap_Area@MapClass@@QAEXABVCoord@@H@Z
@@ -8309,6 +8311,7 @@ address,name,result,size,source,symbol
 0x0059A670,MapGeneratorClass::Update_Progress,MATCH,69,src/mapgen.cpp,?Update_Progress@MapGeneratorClass@@QAEXH@Z
 0x0059A6C0,MapGeneratorClass::Seed_Land,MATCH,545,src/mapgen.cpp,?Seed_Land@MapGeneratorClass@@QAEXXZ
 0x0059A8F0,MapGeneratorClass::Partition_Rect,MATCH,1051,src/mapgen.cpp,?Partition_Rect@MapGeneratorClass@@QAEXAAV?$DynamicVectorClass@V?$TRect@H@@@@HABV?$TRect@H@@@Z
+0x0059AD10,MapGeneratorClass::Seed_Land_Type0,MATCH,645,src/mapgen.cpp,?Seed_Land_Type0@MapGeneratorClass@@QAEXXZ
 0x0059B6D0,MapGeneratorClass::Green_Shores,MATCH,99,src/mapgen.cpp,?Green_Shores@MapGeneratorClass@@SIXXZ
 0x0059B740,MapGeneratorClass::Scatter_Green_Tiles,MATCH,505,src/mapgen.cpp,?Scatter_Green_Tiles@MapGeneratorClass@@QAEXXZ
 0x0059B940,MapGeneratorClass::FUN_0059B940,MATCH,356,src/mapgen.cpp,?FUN_0059B940@MapGeneratorClass@@QAENABVCell@@0ABV?$TRect@H@@0MM@Z
@@ -11091,6 +11094,7 @@ address,name,result,size,source,symbol
 0x00635210,PlanningNodeClass::Locate_Loop_Branch,MATCH,182,src/planmgr.cpp,?Locate_Loop_Branch@PlanningNodeClass@@QAEXXZ
 0x006352D0,PlanningNodeClass::Select_All,MATCH,49,src/planmgr.cpp,?Select_All@PlanningNodeClass@@QAEXXZ
 0x00635310,PlanningNodeClass::Unselect_All,MATCH,49,src/planmgr.cpp,?Unselect_All@PlanningNodeClass@@QAEXXZ
+0x00635350,PlanningNodeClass::Draw_Lead_Box,MATCH,309,src/planmgr.cpp,?Draw_Lead_Box@PlanningNodeClass@@QAEXH@Z
 0x00635490,PlanningNodeClass::Fill_Lead_Box,MATCH,202,src/planmgr.cpp,?Fill_Lead_Box@PlanningNodeClass@@QAEXH@Z
 0x00635560,PlanningNodeClass::Frame_Lead_Box,MATCH,281,src/planmgr.cpp,?Frame_Lead_Box@PlanningNodeClass@@QAEXH@Z
 0x00635680,PlanningNodeClass::FUN_00635680,MATCH,324,src/planmgr.cpp,?FUN_00635680@PlanningNodeClass@@QAEXH@Z
@@ -14205,6 +14209,7 @@ address,name,result,size,source,symbol
 0x006DA9D0,Tactical::Draw_Rally_Points,MATCH,910,src/tactical.cpp,?Draw_Rally_Points@Tactical@@QAEX_N@Z
 0x006DAD60,Tactical::Draw_Waypoints,MATCH,1199,src/tactical.cpp,?Draw_Waypoints@Tactical@@QAEX_N@Z
 0x006DB210,Tactical::Debug_Draw_Occupier_Links,MATCH,1036,src/tactical.cpp,?Debug_Draw_Occupier_Links@Tactical@@QAEXXZ
+0x006DB620,Tactical::Debug_Draw_Occupation_Flags,MATCH,1332,src/tactical.cpp,?Debug_Draw_Occupation_Flags@Tactical@@QAEXXZ
 0x006DBB60,Tactical::Draw_3D_Line,MATCH,374,src/tactical.cpp,?Draw_3D_Line@Tactical@@UAE_NABVCoord@@0H_N@Z
 0x006DBCE0,Tactical::GetClassID,MATCH,56,src/tactical.cpp,?GetClassID@Tactical@@UAGJPAU_GUID@@@Z
 0x006DBD20,Tactical::Load,MATCH,214,src/tactical.cpp,?Load@Tactical@@UAGJPAUIStream@@@Z
