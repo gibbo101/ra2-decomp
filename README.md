@@ -11,9 +11,9 @@ over real objects or hard-coded addresses are rejected however well they score.
 `docs/AGENTS.md` holds the rules the agents follow and every lesson learned. Pull requests
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
-**Status (15 November 2026):** 3.25 MB of the game's 3.82 MB of code matches byte for byte
-(85%), in 19,072 of its 19,353 functions (98%). Counting each unmatched function at its best
-attempt so far, the fuzzy match is 95%. Each function is checked on its own, and
+**Status (15 November 2026):** 3.32 MB of the game's 3.82 MB of code matches byte for byte
+(87%), in 19,099 of its 19,353 functions (99%). Counting each unmatched function at its best
+attempt so far, the fuzzy match is 96%. Each function is checked on its own, and
 `tools/exelink/` links the whole executable with every matched function at its original
 address: with the original's bytes for what isn't matched yet, the image is identical to
 retail 1.001 in every section, and 81% of its code comes from source. `docs/PLAN.md` has

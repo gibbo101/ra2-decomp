@@ -65,32 +65,62 @@ bool FUN_0065D8D0(void)
 	return false;
 }
 
-int __fastcall FUN_0050DA80(HouseClass *house);
-void __fastcall FUN_00660B80(Cell const &cell);
-FootClass *_Create_Group(TeamTypeClass const *teamtype);
-bool Create_Reinforcement(TeamTypeClass const *, FootClass *, Cell const &, bool);
+FootClass * _Create_Group(TeamTypeClass const * teamtype);
+bool Create_Reinforcement(TeamTypeClass const * teamtype, FootClass * object, Cell const & cell, bool atwaypoint);
+void __fastcall FUN_00660B80(Cell const & cell);
 
+static bool _Pop_Group_Out_Of_Object(FootClass * group, TechnoClass * object, Cell origin)
+{
+	int quantity = 0;
+	while (group != NULL) {
+		TechnoClass * todo = group;
+		group = (FootClass *)group->Next;
+		todo->Next = NULL;
+		switch (object->Fetch_RTTI()) {
+			case RTTI_BUILDING:
+				if (object->Exit_Object(todo, origin) != 2) {
+					delete todo;
+				} else {
+					object->Transmit_Message(RADIO_OVER_OUT);
+					++quantity;
+				}
+				break;
+			case RTTI_UNIT:
+			case RTTI_AIRCRAFT:
+				object->Cargo.Attach((FootClass *)todo);
+				todo->Hidden();
+				object->QueueMission(MISSION_UNLOAD, false);
+				++quantity;
+				break;
+			default:
+				delete todo;
+				break;
+		}
+	}
+	return quantity != 0;
+}
 
-static bool _Consists_Only_Of_Infantry(FootClass const *first)
+static bool _Consists_Only_Of_Infantry(FootClass const * first)
 {
 	while (first != NULL) {
-		if (first->Fetch_RTTI() != RTTI_INFANTRY)
+		if (first->Fetch_RTTI() != RTTI_INFANTRY) {
 			return false;
+		}
 		first = (FootClass const *)first->Next;
 	}
 	return true;
 }
 
-static TechnoClass *_Who_Can_Pop_Out_Of(Cell origin)
+static TechnoClass * _Who_Can_Pop_Out_Of(Cell origin)
 {
-	CellClass *cellptr = &Map[origin];
-	TechnoClass *candidate = NULL;
+	CellClass * cellptr = &Map[origin];
+	TechnoClass * candidate = NULL;
 	for (int f = FACING_NONE; f < FACING_COUNT; f++) {
-		CellClass *ptr = cellptr;
+		CellClass * ptr = cellptr;
 		if (f != FACING_NONE) {
 			ptr = &ptr->Adjacent_Cell(FacingType(f));
 		}
-		BuildingClass *building = ptr->Cell_Building();
+		BuildingClass * building = ptr->Cell_Building();
 		if (building && building->Strength > 0 && building->FUN_00459CA0()) {
 			candidate = building;
 		}
@@ -98,8 +128,97 @@ static TechnoClass *_Who_Can_Pop_Out_Of(Cell origin)
 	return candidate;
 }
 
+static inline int _Place_Reinforcement(TechnoClass * plane, Cell const & dest)
+{
+	ScenarioInit++;
+	Coord location(dest);
+	int placed = plane->Unlimbo(location, DIR_N);
+	ScenarioInit--;
+	return placed;
+}
 
+static bool _Create_Paradrop(TeamTypeClass const * teamtype, FootClass * object, Cell origin)
+{
+	Cell dest;
+	TechnoTypeClass const * ptype = AircraftTypes[AircraftTypeClass::From_Name("PDPLANE")];
+	ScenarioInit++;
+	AircraftClass * plane = (AircraftClass *)ptype->Create_One_Of(object->House);
+	ScenarioInit--;
+	if (plane) {
+		plane->IsALoaner = true;
+		if (teamtype->IsUseTransportOrigin) {
+			dest = teamtype->Get_Transport_Origin();
+		} else {
+			int source = object->House->Control.Edge;
+			if (source < 0 || source > 3) {
+				source = object->House->FUN_0050DA80();
+			}
+			dest = Map.Calculated_Cell((SourceType)source, CELL_NONE, CELL_NONE, SPEED_WINGED, true, MZONE_NORMAL);
+		}
+		plane->QueueMission(MISSION_PARADROP_APPROACH, false);
+		plane->Assign_Destination(NULL, true);
+		plane->Assign_Target(&Map[origin]);
+		int placed = _Place_Reinforcement(plane, dest);
+		if (placed) {
+			plane->Passenger = true;
+			plane->Cargo.Attach(object);
+			plane->Commence();
+			return true;
+		} else {
+			delete plane;
+		}
+	}
+	return false;
+}
 
+// FUNCTION: GAMEMD 0x0065D8E0
+bool __fastcall Do_Reinforcements(TeamTypeClass const * teamtype, WAYPOINT wp)
+{
+	if (!teamtype || !teamtype->TaskForce->ClassCount) return false;
+	if (teamtype->Script == NULL || teamtype->Script->MissionCount == 0) {
+		TeamMissionClass mission(TMISSION_GUARD, 0);
+		if (teamtype->Script == NULL) {
+			((TeamTypeClass *)teamtype)->Script = new ScriptTypeClass(NULL);
+		}
+		ScriptTypeClass * script = teamtype->Script;
+		int count = script->MissionCount;
+		if (count < MAX_TEAM_MISSIONS) {
+			script->MissionList[count] = mission;
+			script->MissionCount++;
+		}
+	}
+	bool drop_pod = false;
+	if (teamtype->IsDroppod) {
+		drop_pod = true;
+	}
+	FootClass * object = _Create_Group(teamtype);
+	object->Team->IsDeleteTypeWhenDone = false;
+	if (!object) return false;
+	bool atwaypoint = wp != -1;
+	Cell origin;
+	if (atwaypoint) {
+		origin = Scen->Get_Waypoint_Cell(wp);
+	} else {
+		origin = teamtype->Get_Origin();
+	}
+	if (!drop_pod && origin != CELL_NONE && _Consists_Only_Of_Infantry(object)) {
+		TechnoClass * candidate = _Who_Can_Pop_Out_Of(origin);
+		if (candidate != NULL) {
+			return _Pop_Group_Out_Of_Object(object, candidate, origin);
+		}
+	}
+	bool onmap = atwaypoint && Map.In_Local_Radar(origin, true);
+	bool ok;
+	if (!drop_pod) {
+		ok = Create_Reinforcement(teamtype, object, origin, onmap);
+	} else {
+		ok = _Create_Paradrop(teamtype, object, origin);
+	}
+	if (ok && teamtype->Get_House() != NULL && teamtype->Get_House()->Is_Ally(PlayerPtr)) {
+		FUN_00660B80(origin);
+	}
+	return true;
+}
 
 // FUNCTION: GAMEMD 0x0065DD30
 FootClass * _Create_Group(TeamTypeClass const * teamtype)
@@ -356,7 +475,7 @@ bool Create_Special_Reinforcement(HouseClass * house, TechnoTypeClass const * ty
 	return false;
 }
 
-int __fastcall FUN_0050DA80(HouseClass * house);
+
 
 // FUNCTION: GAMEMD 0x0065E660
 int __fastcall Create_Paradrop_Planes(HouseClass * house, int air, int number, MissionType mission, AbstractClass * tarcom, AbstractClass * navcom, int passenger, int passengers)
@@ -373,7 +492,7 @@ int __fastcall Create_Paradrop_Planes(HouseClass * house, int air, int number, M
 		obj->IsALoaner = true;
 
 		int edge = house->Control.Edge;
-		if (edge < 0 || edge > 3) edge = FUN_0050DA80(house);
+		if (edge < 0 || edge > 3) edge = house->FUN_0050DA80();
 		Cell newcell = Map.Calculated_Cell((SourceType)edge, CELL_NONE, CELL_NONE, SPEED_WINGED, true, MZONE_NORMAL);
 
 		obj->QueueMission(mission, false);
@@ -384,9 +503,7 @@ int __fastcall Create_Paradrop_Planes(HouseClass * house, int air, int number, M
 			obj->Assign_Target(tarcom);
 		}
 
-		ScenarioInit++;
-		int placed = obj->Unlimbo(Coord(newcell), DIR_N);
-		ScenarioInit--;
+		int placed = _Place_Reinforcement(obj, newcell);
 		if (!placed) {
 			if (obj) delete obj;
 			return sub - 1;
@@ -417,7 +534,7 @@ int __fastcall Create_Airstrike_Planes(HouseClass * house, int air, int number, 
 	TechnoTypeClass const * type = (TechnoTypeClass *)AircraftTypes[air];
 
 	int edge = house->Control.Edge;
-	if (edge < 0 || edge > 3) edge = FUN_0050DA80(house);
+	if (edge < 0 || edge > 3) edge = house->FUN_0050DA80();
 	Cell edgecell = Map.Calculated_Cell((SourceType)edge, CELL_NONE, CELL_NONE, SPEED_WINGED, true, MZONE_NORMAL);
 
 	int sub;
@@ -445,9 +562,7 @@ int __fastcall Create_Airstrike_Planes(HouseClass * house, int air, int number, 
 			obj->Assign_Target(tarcom);
 		}
 
-		ScenarioInit++;
-		int placed = obj->Unlimbo(Coord(newcell), DIR_N);
-		ScenarioInit--;
+		int placed = _Place_Reinforcement(obj, newcell);
 		if (!placed) {
 			if (obj) delete obj;
 			return sub - 1;
@@ -487,7 +602,7 @@ int __fastcall Create_Spy_Planes(HouseClass * house, int air, int number, Missio
 		obj->IsALoaner = true;
 
 		int edge = house->Control.Edge;
-		if (edge < 0 || edge > 3) edge = FUN_0050DA80(house);
+		if (edge < 0 || edge > 3) edge = house->FUN_0050DA80();
 		Cell newcell = Map.Calculated_Cell((SourceType)edge, CELL_NONE, CELL_NONE, SPEED_WINGED, true, MZONE_NORMAL);
 
 		obj->QueueMission(mission, false);
@@ -498,9 +613,7 @@ int __fastcall Create_Spy_Planes(HouseClass * house, int air, int number, Missio
 			obj->Assign_Target(tarcom);
 		}
 
-		ScenarioInit++;
-		int placed = obj->Unlimbo(Coord(newcell), DIR_N);
-		ScenarioInit--;
+		int placed = _Place_Reinforcement(obj, newcell);
 		if (!placed) {
 			delete obj;
 			return sub - 1;

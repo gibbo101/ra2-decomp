@@ -12,11 +12,11 @@
 #include "fastmath.h"
 
 // FUNCTION: GAMEMD 0x00680FF0
-SavegameInformation::SavegameInformation(void)
+SaveVersionInfo::SaveVersionInfo(void)
 {
 	InternalVersion = 0;
 	Version = 0;
-	Campaign = -1;
+	CampaignNumber = -1;
 	ScenarioNumber = 0;
 	GameType = 0;
 	ScenarioDescription[0] = 0;
@@ -33,13 +33,13 @@ SavegameInformation::SavegameInformation(void)
 }
 
 // FUNCTION: GAMEMD 0x00681060
-void SavegameInformation::Set_Version(int num)
+void SaveVersionInfo::Set_Version(int num)
 {
 	Version = num;
 }
 
 // FUNCTION: GAMEMD 0x00681070
-int SavegameInformation::Get_Version(void)
+int SaveVersionInfo::Get_Version(void)
 {
 	return Version;
 }
