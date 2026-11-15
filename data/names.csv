@@ -660,3 +660,29 @@ address,name,symbol,evidence
 0x0089F6D8,AdjacentPoint,?AdjacentPoint@@3QBVPoint2D@@B,"=_$E95 at 0x0049F3A0 matches independently and references this object at 0x9, 0xF, 0x14, 0x21, 0x26, 0x2B, 0x32, 0x3A, 0x40, 0x46, 0x4B, 0x58, 0x5F, 0x64, 0x69, 0x6F"
 0x0089EA40,Ground,?Ground@@3PAUGroundType@@A,"RulesClass::Land_Types at 0x00674000 matches independently and references this object at 0xD, 0x226"
 0x007F2A40,ShipLocomotionClass::TrackControl,?TrackControl@ShipLocomotionClass@@0QBUTurnTrackType@1@B,ShipLocomotionClass::Mark_Track at 0x006A01A0 matches independently and references this object at 0x56
+0x00754CB0,Init_Voxel_Matrices,?Init_Voxel_Matrices@@YIXXZ,"The four diagonal axes in the archived Init_Voxel_Matrices and the outputs read by Get_Screen_Slope_Matrix, Get_Slope_Matrix and Get_Isometric_View_Matrix"
+0x007E1E68,DefaultLightAngle,?DefaultLightAngle@@3MB,The float in _voxel.cpp from float(45 * (3.1415 / 180.0)) has the retail value 0.785374999
+0x007E1E6C,DefaultCameraAngle,?DefaultCameraAngle@@3MB,The float in _voxel.cpp from float(55 * (3.1415 / 180.0)) has the retail value 0.959902763
+0x008175B0,HicolorFlag,?HicolorFlag@@3_NA,Select_Game at 0x0052D9A0 references this object
+0x0087F6B0,CameoDrawer,?CameoDrawer@@3PAVConvertClass@@A,YRpp FileSystem::CAMEO_PAL and the drawer declared in the archived _convert.cpp
+0x0087F6B4,VoxelDrawer,?VoxelDrawer@@3PAVConvertClass@@A,YRpp FileSystem::UNITx_PAL and the drawer declared in the archived _convert.cpp
+0x0087F6B8,TerrainDrawer,?TerrainDrawer@@3PAVConvertClass@@A,YRpp FileSystem::x_PAL and the drawer declared in the archived _convert.cpp
+0x0087F6BC,TiberiumDrawer,?TiberiumDrawer@@3PAVConvertClass@@A,YRpp FileSystem::GRFTXT_TIBERIUM_PAL and the drawer declared in the archived _convert.cpp
+0x0087F6C0,AnimDrawer,?AnimDrawer@@3PAVConvertClass@@A,YRpp FileSystem::ANIM_PAL and the drawer declared in the archived _convert.cpp
+0x0087F6C4,NormalDrawer,?NormalDrawer@@3PAVConvertClass@@A,YRpp FileSystem::PALETTE_PAL and the drawer declared in the archived _convert.cpp
+0x0087F6C8,MouseDrawer,?MouseDrawer@@3PAVConvertClass@@A,YRpp FileSystem::MOUSE_PAL and the drawer declared in the archived _convert.cpp
+0x00884E80,BlackPalette,?BlackPalette@@3VPaletteClass@@A,The named palette initializer in src/_palette.cpp at 0x0040D900 initializes this 256-entry PaletteClass
+0x00885180,WaypointPalette,?WaypointPalette@@3VPaletteClass@@A,The named palette initializer in src/_palette.cpp at 0x0040D9A0 initializes this 256-entry PaletteClass
+0x00885780,GamePalette,?GamePalette@@3VPaletteClass@@A,The named palette initializer in src/_palette.cpp at 0x0040D8C0 initializes this 256-entry PaletteClass
+0x00885A80,OriginalPalette,?OriginalPalette@@3VPaletteClass@@A,The named palette initializer in src/_palette.cpp at 0x0040D940 initializes this 256-entry PaletteClass
+0x00885D80,WhitePalette,?WhitePalette@@3VPaletteClass@@A,The named palette initializer in src/_palette.cpp at 0x0040D920 initializes this 256-entry PaletteClass
+0x00886380,SchemePalette,?SchemePalette@@3VPaletteClass@@A,The named palette initializer in src/_palette.cpp at 0x0040D8E0 initializes this 256-entry PaletteClass
+0x00886680,VoxelPalette,?VoxelPalette@@3VPaletteClass@@A,The named palette initializer in src/_palette.cpp at 0x0040D980 initializes this 256-entry PaletteClass
+0x0088741C,VoxelCameraAngle,?VoxelCameraAngle@@3MA,"The sole runtime write is the camera-angle parameter stored immediately before initializing the independently identified VoxelCameraMatrix. This is the exact two-operation existing Set_Voxel_Camera_Angle body in include/_voxel.h and the native RA2 source. There are no independent runtime readers of this otherwise unused angle; its semantic name is supported by that source-level setter, not an invented aggregate alias."
+0x00887430,VoxelCameraMatrix,?VoxelCameraMatrix@@3VMatrix3D@@A,YRpp/Drawing.h independently maps Matrix3D VoxelTransformMatrix to 0x887430. Existing matched voxel rendering callers read the same matrix; canonical _voxel.h Set_Voxel_Camera_Angle writes its identity.
+0x0089E3A0,CD::_OverrideSwap,?_OverrideSwap@CD@@0_NA,"CD::Set_Required_Disk at 0x004790B0, CD::Force_Available at 0x004790E0 references this object"
+0x0089E410,CDFileClass::First,?First@CDFileClass@@0PAUSearchDriveType@1@A,"CDFileClass::Add_Search_Drive at 0x0047AD50, CDFileClass::Clear_Search_Drives at 0x0047ADC0 references this object"
+0x00A8E8E8,CDList,?CDList@@3VGetCDClass@@A,_$E406 at 0x004E80F0 references this object
+0x00A8ED80,GameInFocus,?GameInFocus@@3_NA,MSEngine::Wait_For_Focus at 0x005D2530 references this object
+0x00B43180,VoxelDrawSystem::EnableZBuffer,?EnableZBuffer@VoxelDrawSystem@@3HA,"Existing matched VoxelLibrary::Render_Layer (0x756590), src/voxlib.cpp, tests this exact DWORD for Z transformation and draw-function bit2; it is distinct from the lighting DWORD."
+0x00B43184,VoxelDrawSystem::EnableLighting,?EnableLighting@VoxelDrawSystem@@3HA,"The same existing matched Render_Layer tests this separate DWORD to set draw-function bit4, identifying lighting independently of the candidate Init_Game stores."
