@@ -81,7 +81,7 @@ class BuildingTypeClass : public TechnoTypeClass
 
 		RTTIType ToBuild;
 
-		Point3D TargetCoordOffset;
+		Coord TargetCoordOffset;
 
 		Coord ExitCoordinate;
 
