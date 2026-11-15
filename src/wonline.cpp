@@ -2226,6 +2226,149 @@ void __fastcall FUN_00781D20(bool ascending)
 int __cdecl FUN_00783520(const char * a, const char * b);
 int __cdecl FUN_00783570(const char * a, const char * b);
 
+// FUNCTION: GAMEMD 0x00782320
+void __fastcall FUN_00782320(User * user, bool ascending)
+{
+	Wstring name;
+	Ladder ladder;
+	memset(&ladder, 0, sizeof(ladder));
+	int rank = -1;
+	name.set((char const *)user->name);
+	name.toLower();
+	if (DAT_00B77E0C && DAT_00B77E0C->getValue(name, ladder)) {
+		rank = ladder.rung;
+	}
+
+	User temp;
+	memset(&temp, 0, sizeof(temp));
+	int count = DAT_00B77900.length();
+	if (count == 0) {
+		DAT_00B77900.addTail(*user);
+		return;
+	}
+
+	int owners = 0;
+	DAT_00B77900.get(temp, 0);
+	while ((temp.flags & 1) && owners < count) {
+		owners++;
+		DAT_00B77900.get(temp, owners);
+	}
+
+	int pos;
+	int other_rank;
+	if (user->flags & 1) {
+		pos = 0;
+		DAT_00B77900.get(temp, 0);
+		name.set((char const *)temp.name);
+		name.toLower();
+		other_rank = -1;
+		if (DAT_00B77E0C && DAT_00B77E0C->getValue(name, ladder)) {
+			other_rank = ladder.rung;
+		}
+
+		if (ascending) {
+			while (pos < owners) {
+				if (!((other_rank < rank && other_rank > 0)
+					  || (rank == -1 && other_rank > 0))) break;
+				pos++;
+				DAT_00B77900.get(temp, pos);
+				name.set((char const *)temp.name);
+				name.toLower();
+				other_rank = -1;
+				if (DAT_00B77E0C
+					&& DAT_00B77E0C->getValue(name, ladder)) {
+					other_rank = ladder.rung;
+				}
+			}
+		} else {
+			while (pos < owners) {
+				if (!((other_rank > rank && other_rank > 0)
+					  || (rank == -1 && other_rank > 0))) break;
+				pos++;
+				DAT_00B77900.get(temp, pos);
+				name.set((char const *)temp.name);
+				name.toLower();
+				other_rank = -1;
+				if (DAT_00B77E0C
+					&& DAT_00B77E0C->getValue(name, ladder)) {
+					other_rank = ladder.rung;
+				}
+			}
+		}
+
+		while (pos < owners) {
+			if (rank != other_rank) break;
+			if (strcmpi((char const *)temp.name,
+						(char const *)user->name) >= 0) break;
+			pos++;
+			DAT_00B77900.get(temp, pos);
+			name.set((char const *)temp.name);
+			name.toLower();
+			other_rank = -1;
+			if (DAT_00B77E0C
+				&& DAT_00B77E0C->getValue(name, ladder)) {
+				other_rank = ladder.rung;
+			}
+		}
+	} else {
+		pos = owners;
+		DAT_00B77900.get(temp, owners);
+		name.set((char const *)temp.name);
+		name.toLower();
+		other_rank = -1;
+		if (DAT_00B77E0C && DAT_00B77E0C->getValue(name, ladder)) {
+			other_rank = ladder.rung;
+		}
+
+		if (ascending) {
+			while (pos < count) {
+				if (!((other_rank < rank && other_rank > 0)
+					  || (rank == -1 && other_rank > 0))) break;
+				pos++;
+				DAT_00B77900.get(temp, pos);
+				name.set((char const *)temp.name);
+				name.toLower();
+				other_rank = -1;
+				if (DAT_00B77E0C
+					&& DAT_00B77E0C->getValue(name, ladder)) {
+					other_rank = ladder.rung;
+				}
+			}
+		} else {
+			while (pos < count) {
+				if (!((other_rank > rank && other_rank > 0)
+					  || (rank == -1 && other_rank > 0))) break;
+				pos++;
+				DAT_00B77900.get(temp, pos);
+				name.set((char const *)temp.name);
+				name.toLower();
+				other_rank = -1;
+				if (DAT_00B77E0C
+					&& DAT_00B77E0C->getValue(name, ladder)) {
+					other_rank = ladder.rung;
+				}
+			}
+		}
+
+		while (pos < count) {
+			if (rank != other_rank) break;
+			if (strcmpi((char const *)temp.name,
+						(char const *)user->name) >= 0) break;
+			pos++;
+			DAT_00B77900.get(temp, pos);
+			name.set((char const *)temp.name);
+			name.toLower();
+			other_rank = -1;
+			if (DAT_00B77E0C
+				&& DAT_00B77E0C->getValue(name, ladder)) {
+				other_rank = ladder.rung;
+			}
+		}
+	}
+
+	DAT_00B77900.add(*user, pos);
+}
+
 // FUNCTION: GAMEMD 0x00782BB0
 void __fastcall FUN_00782BB0(User * user, bool ascending)
 {
@@ -2311,7 +2454,6 @@ void __fastcall FUN_00782BB0(User * user, bool ascending)
 }
 
 extern int DAT_00B77E48;
-void __fastcall FUN_00782320(User * user, bool ascending);
 
 // FUNCTION: GAMEMD 0x00783070
 void __fastcall FUN_00783070(User * user)
