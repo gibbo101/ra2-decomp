@@ -16229,6 +16229,7 @@ address,name,result,size,source,symbol
 0x0073B0B0,UnitClass::Render,MATCH,140,src/unit.cpp,?Render@UnitClass@@UBE_NAAV?$TRect@H@@_N1@Z
 0x0073B140,UnitClass::Unit_Blit_Voxel,MATCH,808,src/unit.cpp,?Unit_Blit_Voxel@UnitClass@@UAEXPAVSurface@@VPoint2D@@V?$TRect@H@@HG@Z
 0x0073B470,UnitClass::Unit_Draw_Voxel,MATCH,4473,src/unit.cpp,?Unit_Draw_Voxel@UnitClass@@UAEXVPoint2D@@V?$TRect@H@@HG@Z
+0x0073C5F0,UnitClass::Unit_Draw_Shape,MATCH,2256,src/unit.cpp,?Unit_Draw_Shape@UnitClass@@UAEXVPoint2D@@V?$TRect@H@@HH@Z
 0x0073CEC0,UnitClass::Draw_It,MATCH,1417,src/unit.cpp,?Draw_It@UnitClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x0073D450,UnitClass::Harvesting,MATCH,477,src/unit.cpp,?Harvesting@UnitClass@@QAE_NXZ
 0x0073D630,UnitClass::Do_MISSION_UNLOAD,MATCH,4004,src/unit.cpp,?Do_MISSION_UNLOAD@UnitClass@@UAEHXZ
