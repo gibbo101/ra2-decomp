@@ -1625,6 +1625,115 @@ unsigned MapRegionClass::Build_Neighbor_Region_Mask(Cell const & cell, bool & va
 	return(mask);
 }
 
+// FUNCTION: GAMEMD 0x00591D80
+bool MapRegionClass::Build_North_Ramp(
+	Cell const &first,
+	Cell const &second,
+	int lowRegion)
+{
+	static int heights[5] = {3, 2, 1, 0, 0};
+	static int ramps[10] = {10, 14, 14, 14, 6, 9, 13, 13, 13, 5};
+
+	Rect area(
+		second.X - 4,
+		(first.Y < second.Y ? first.Y : second.Y) - 7,
+		first.X - second.X + 8,
+		(first.Y > second.Y ? first.Y : second.Y)
+			- (first.Y < second.Y ? first.Y : second.Y) + 11);
+
+	if (!Is_Ramp_Area_Clear(area, lowRegion)) {
+		return false;
+	}
+
+	int drift = second.Y - first.Y;
+	int span = abs(drift);
+	int width = first.X - second.X;
+
+	if (span > width - 5) {
+		return false;
+	}
+
+	int half = (width + 1) / 2 + 3;
+
+	Flatten_Area(
+		Rect(area.X, area.Y, half + 2, second.Y - area.Y),
+		lowRegion);
+	Flatten_Area(
+		Rect(first.X - half + 2, area.Y, half + 3, first.Y - area.Y),
+		lowRegion);
+	Flatten_Area(
+		Rect(second.X, second.Y, half - 2,
+			 area.Y + area.Height - second.Y - 2));
+	Flatten_Area(
+		Rect(first.X - half + 2, first.Y, half - 1,
+			 area.Y + area.Height - first.Y - 2));
+
+	MapGeneratorClass::Place_Tile(
+		(IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 4),
+		second - Cell(0, 3), lowRegion, CellHeight);
+	MapGeneratorClass::Place_Tile(
+		(IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 5),
+		first - Cell(2, 3), lowRegion, CellHeight);
+	MapGeneratorClass::Place_Tile(
+		(IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 6),
+		first - Cell(1, 1), lowRegion, CellHeight);
+
+	Cell tail(0, 0);
+
+	if (drift != 0) {
+		int pick = Pick_Random_UInt(0, 1);
+		Cell bias;
+		bias.X = 0;
+
+		int down = drift > 0;
+		bias.Y = drift < 0;
+
+		if (pick == 1) {
+			tail += Cell(span, -drift);
+		} else {
+			bias.X = (first - Cell(span, 0)).X - second.X - 5;
+		}
+
+		for (int forward = 0; forward < span; forward++) {
+			for (int row = 0; row < 5; row++) {
+				short offset = down ? -forward : forward;
+				Cell position =
+					Cell(second.X + 3, second.Y)
+					+ Cell(forward, -row) + bias;
+				position = Cell(position.X, position.Y + offset);
+
+				CellClass &target = Map[position];
+				short height = heights[row];
+				target.Height = height + CellHeight - 4;
+				target.Ramp = (unsigned char)ramps[5 * down + row];
+				target.ITType = (IsometricTileType)(
+					IsometricTileTypeClass::RampStart + target.Ramp - 1);
+				target.SubTile = 0;
+			}
+		}
+	}
+
+	for (int column = 0;
+		 column < first.X - second.X - span - 5;
+		 column++) {
+		for (int row = 0; row < 4; row++) {
+			Cell position =
+				Cell(second.X + 3, second.Y)
+				+ Cell(column, -row) + tail;
+
+			CellData::Set_Region(position, lowRegion);
+			CellClass &target = Map[position];
+			target.Height = (char)(CellHeight - (char)row - 1);
+			target.Ramp = 2;
+			target.ITType = (IsometricTileType)(
+				IsometricTileTypeClass::RampStart + 1u);
+			target.SubTile = 0;
+		}
+	}
+
+	return true;
+}
+
 // FUNCTION: GAMEMD 0x00593550
 bool MapRegionClass::Build_Corner_Ramp_NW(Cell const & cell2, Cell const & cell1, int region_id)
 {

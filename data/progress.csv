@@ -8265,6 +8265,7 @@ address,name,result,size,source,symbol
 0x005905D0,MapRegionClass::Make_Region_Connections,MATCH,920,src/mapgen.cpp,?Make_Region_Connections@MapRegionClass@@QAEXXZ
 0x00590970,MapRegionClass::Connect_Regions_With_Ramp,MATCH,1625,src/mapgen.cpp,?Connect_Regions_With_Ramp@MapRegionClass@@QAE_NABVCell@@HM@Z
 0x00590FD0,MapRegionClass::Build_Neighbor_Region_Mask,MATCH,279,src/mapgen.cpp,?Build_Neighbor_Region_Mask@MapRegionClass@@QAEIABVCell@@AA_NHM@Z
+0x00591D80,MapRegionClass::Build_North_Ramp,MATCH,1724,src/mapgen.cpp,?Build_North_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z
 0x00593550,MapRegionClass::Build_Corner_Ramp_NW,MATCH,1426,src/mapgen.cpp,?Build_Corner_Ramp_NW@MapRegionClass@@QAE_NABVCell@@0H@Z
 0x00593AF0,MapRegionClass::Build_Corner_Ramp_SW,MATCH,1299,src/mapgen.cpp,?Build_Corner_Ramp_SW@MapRegionClass@@QAE_NABVCell@@0H@Z
 0x00594010,MapRegionClass::Is_Ramp_Area_Clear,MATCH,372,src/mapgen.cpp,?Is_Ramp_Area_Clear@MapRegionClass@@QAE_NAAV?$TRect@H@@H@Z
