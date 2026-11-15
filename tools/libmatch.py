@@ -1,11 +1,13 @@
 """Locate prebuilt library functions in gamemd.exe: data/library.csv.
 
-Usage: uv run tools/libmatch.py [LIB ...]   (default: toolchain/vc6sp3/LIB/LIBCMT.LIB)
+Usage: uv run tools/libmatch.py [LIB ...]   (default: LIBCMT.LIB and COMSUPP.LIB)
 
 Every function in every member of each library is searched for in .text, with the
-fields its relocations fill in left as wildcards. A function found exactly once is
-recorded with its library and member. Functions under 8 bytes are skipped: too short
-to place on their own.
+fields its relocations fill in left as wildcards. Named import slots distinguish bodies
+with otherwise identical instructions. For ambiguous placements, relative calls to
+uniquely placed functions in the same archive member supply additional evidence.
+A function found exactly once is recorded with
+its library and member. Functions under 8 bytes are skipped: too short to place on their own.
 
 data/library_identified.json supplements those matches with explicit identities
 corroborated by incoming relocations, referenced globals, or named RTTI vtables.
@@ -29,7 +31,7 @@ from pathlib import Path
 import pefile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from coff import CoffObject  # noqa: E402
+from coff import CoffObject, REL_DIR32, REL_REL32  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 MIN_SIZE = 8
@@ -109,30 +111,89 @@ def pattern(code: bytes, masked: set[int]) -> bytes:
     return b"".join(b"." if k in masked else re.escape(code[k:k + 1]) for k in range(len(code)))
 
 
+def named_import_slots(pe):
+    """Map each named import address slot to the symbol stored in it."""
+    pe.parse_data_directories(directories=[pefile.DIRECTORY_ENTRY["IMAGE_DIRECTORY_ENTRY_IMPORT"]])
+    return {imp.address: imp.name.decode() for dll in pe.DIRECTORY_ENTRY_IMPORT
+            for imp in dll.imports if imp.name}
+
+
+def import_fields(obj, section, start, end):
+    fields = []
+    for rel in section.relocs:
+        if start <= rel.offset and rel.offset + 4 <= end and rel.type == REL_DIR32:
+            name = obj.by_index[rel.symbol].name
+            if name.startswith("__imp__"):
+                imported = name[len("__imp__"):].split("@", 1)[0]
+                addend = struct.unpack_from("<i", section.data, rel.offset)[0]
+                fields.append((rel.offset - start, imported, addend))
+    return fields
+
+
+def imports_agree(code, hit, fields, imports):
+    return all(imports.get((struct.unpack_from("<I", code, hit + offset)[0] - addend)
+                           & 0xFFFFFFFF) == name for offset, name, addend in fields)
+
+
+def match_local_calls(code, base, hits, calls, anchors):
+    """Keep placements whose relative calls reach uniquely placed functions in this member."""
+    known = [(offset, anchors[index], addend) for offset, index, addend in calls
+             if index in anchors]
+    if not known:
+        return hits
+    def agrees(hit, offset, target, addend):
+        displacement = struct.unpack_from("<i", code, hit + offset)[0]
+        destination = base + hit + offset + 4 + displacement
+        return (destination - addend) & 0xFFFFFFFF == target
+
+    return [hit for hit in hits if all(agrees(hit, *field) for field in known)]
+
+
 def main() -> None:
-    libs = [Path(a) for a in sys.argv[1:]] or [ROOT / "toolchain/vc6sp3/LIB/LIBCMT.LIB"]
+    libs = [Path(a) for a in sys.argv[1:]] or [LIBDIR / "LIBCMT.LIB", LIBDIR / "COMSUPP.LIB"]
     pe = pefile.PE(str(ROOT / "orig/gamemd.exe"), fast_load=True)
     text = pe.sections[0]
     code = text.get_data()
     base = pe.OPTIONAL_HEADER.ImageBase + text.VirtualAddress
     found: dict[int, tuple] = {}
+    imports = named_import_slots(pe)
     ambiguous = 0
+    resolved = {}
     for lib in libs:
         for member, body in members(lib.read_bytes()):
             if body[:2] != b"\x4c\x01":
                 continue
             obj = CoffObject(body)
+            anchors = {}
+            pending = []
             for sym, sec, start, end in obj.functions():
                 if end - start < MIN_SIZE:
                     continue
                 masked = {r.offset - start + k for r in sec.relocs
                           if start <= r.offset < end for k in range(4)}
                 hits = [m.start() for m in re.finditer(pattern(sec.data[start:end], masked), code, re.S)]
+                if hits:
+                    fields = import_fields(obj, sec, start, end)
+                    if fields:
+                        hits = [hit for hit in hits if imports_agree(code, hit, fields, imports)]
                 if len(hits) == 1:
+                    anchors[sym.index] = base + hits[0]
                     found.setdefault(base + hits[0], (end - start, sym.name, lib.name,
                                                       member.split("\\")[-1]))
                 elif len(hits) > 1:
+                    calls = [(r.offset - start, r.symbol, struct.unpack_from("<i", sec.data, r.offset)[0])
+                             for r in sec.relocs if r.type == REL_REL32 and start <= r.offset <= end - 4]
+                    pending.append((sym.name, end - start, hits, calls))
+            for name, size, hits, calls in pending:
+                hits = match_local_calls(code, base, hits, calls, anchors)
+                if len(hits) == 1:
+                    row = (size, name, lib.name, member.split("\\")[-1])
+                    resolved.setdefault(base + hits[0], set()).add(row)
+                elif len(hits) > 1:
                     ambiguous += 1
+    for address, identities in resolved.items():
+        if len(identities) == 1:
+            found.setdefault(address, identities.pop())
     thunks = import_thunks(pe, code, base, found)
     found.update(thunks)
     identified = ROOT / "data/library_identified.json"

@@ -480,6 +480,103 @@ void MapClass::RevealArea0(int, int, Coord * coord, int sightrange, HouseClass *
 	RevealArea1(coord, sightrange, house, a, b, c, d, true);
 }
 
+// FUNCTION: GAMEMD 0x005673A0
+void MapClass::RevealArea1(Coord * xcoord, int sightrange, HouseClass * house, bool incremental, bool dont_map, bool unfog, bool byheight, bool increase)
+{
+	int cell_height = xcoord->Z / DAT_00ABDE88;
+
+	Coord coord = *xcoord;
+	coord.X = coord.X + (Tactical::Z_Lepton_To_Pixel(coord.Z) / -30) * CELL_LEPTON;
+	coord.Y = coord.Y + (Tactical::Z_Lepton_To_Pixel(coord.Z) / -30) * CELL_LEPTON;
+
+	Cell cell = coord.As_Cell();
+	Cell hoffset = cell - xcoord->As_Cell() - Cell(2, 2);
+
+	if (!In_Radar(cell)) return;
+	if (!sightrange) return;
+	if (sightrange >= 11 || sightrange > 10) {
+		sightrange = 10;
+	}
+
+	int xx = cell.X;
+	int count = DAT_007ED3D0[sightrange];
+	Cell const * ptr = &Unsorted::CellSpreadTable[0];
+	Cell const * ptr2 = &OcclusionOffset[0];
+	if (!Rule->IsRevealByHeight && incremental) {
+		if (sightrange > 2) {
+			ptr += DAT_007ED3D0[sightrange - 3];
+			ptr2 += DAT_007ED3D0[sightrange - 3];
+			count -= DAT_007ED3D0[sightrange - 3];
+		}
+	}
+	ptr2--;
+
+	if (house != NULL && PlayerPtr != NULL) {
+		if (house != PlayerPtr) {
+			if ((house->RadarSpied & (1 << PlayerPtr->Class->House)) != 0) {
+				house = PlayerPtr;
+			}
+		}
+		if (house != PlayerPtr) {
+			if (house->Is_Ally(PlayerPtr) && Rule->IsAllyReveal) {
+				house = PlayerPtr;
+			}
+		}
+	}
+
+	if (house != PlayerPtr) {
+		return;
+	}
+
+	bool edge = (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode != NULL && !Session.MPGameMode->vt_entry_04();
+
+	while (count--) {
+		Cell newcell;
+		newcell = cell + *ptr++;
+		ptr2++;
+
+		if (!In_Radar(newcell)) continue;
+		if (abs(newcell.X - xx) > sightrange) continue;
+		if (Distance(newcell, cell) > sightrange) continue;
+
+		CellClass * cellptr = &(*this)[newcell];
+		if (byheight && Rule->IsRevealByHeight) {
+			Cell offcell;
+			offcell.X = newcell.X - hoffset.X;
+			offcell.Y = newcell.Y - hoffset.Y;
+			if (Map[*ptr2 + offcell].Height > cell_height + 3) continue;
+		}
+
+		int cx = cellptr->CellID.X;
+		int cy = cellptr->CellID.Y;
+		cellptr->IsToFog = false;
+		if (edge) {
+			if (cx == 7) {
+				if (cy == PlayRect.Width + 5) continue;
+			} else if (cx == 13) {
+				if (cy == PlayRect.Width + 11) continue;
+			}
+			if (cx == PlayRect.Height + 13) {
+				if (cy == PlayRect.Width + PlayRect.Height - 15) continue;
+			}
+		}
+		if (unfog) {
+			if ((!cellptr->IsFogVisible || !cellptr->IsFogMapped) && cellptr->IsMapped) {
+				Map.Fog_Map_Cell(newcell, house);
+			}
+		} else {
+			if ((!cellptr->IsMapped || !cellptr->IsVisible || !cellptr->IsFogVisible || !cellptr->IsFogMapped) && !dont_map) {
+				if (increase) {
+					Map.RevealFogShroud(newcell, house, false);
+				} else {
+					cellptr->Unshroud();
+				}
+			}
+		}
+	}
+	RevealArea3(coord, 0, sightrange + 3, 0);
+}
+
 // FUNCTION: GAMEMD 0x005678E0
 void MapClass::RevealArea2(Coord * xcoord, int sightrange, HouseClass * house, bool incremental, bool dont_map, bool unfog, bool byheight, bool increase)
 {
@@ -2808,6 +2905,336 @@ void MapClass::Destroy_Train_Bridge_Connections(Cell const & cell)
 
 		current = Adjacent_Cell(current, FacingType(advance));
 	}
+}
+
+// FUNCTION: GAMEMD 0x00571490
+bool MapClass::Damage_Train_Bridge(Cell const & cell)
+{
+	CellClass * bridge_deck_cell = &Map[cell];
+	int ittype = bridge_deck_cell->ITType - IsometricTileTypeClass::TrainBridgeSet + 1;
+
+	if (!bridge_deck_cell->IsUnderBridge) {
+		bool valid_span =
+			ittype == IsometricTileTypeClass::BridgeMiddle1 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_1 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_2 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_3 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle2 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle2 + BRIDGE_MIDDLE_DAMAGED_1 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle2 + BRIDGE_MIDDLE_DAMAGED_2 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle2 + BRIDGE_MIDDLE_DAMAGED_3;
+		if (!valid_span) {
+			return(false);
+		}
+	}
+
+	if (!bridge_deck_cell->IsUnderBridge) {
+		int subtile = bridge_deck_cell->SubTile;
+		CellClass * middle_cellptr;
+
+		if (ittype == IsometricTileTypeClass::BridgeMiddle1 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_3 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_1 ||
+				ittype == IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_2) {
+			if ((subtile & 1) != 0) {
+				return(false);
+			}
+
+			Cell middle_cell = bridge_deck_cell->CellID;
+			while (subtile != 4) {
+				if (subtile < 4) {
+					middle_cell = Adjacent_Cell(middle_cell, FACING_S);
+				} else {
+					middle_cell = Adjacent_Cell(middle_cell, FACING_N);
+				}
+				subtile = Map[middle_cell].SubTile;
+			}
+
+			middle_cellptr = &Map[middle_cell];
+
+			if (ittype == IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_3) {
+				Cell zone_cell = middle_cellptr->CellID;
+
+				if ((middle_cellptr->SubTile & 1) != 0) {
+					zone_cell += Cell(-1, 0);
+					Map[middle_cell + Cell(-1, -1)].Destroy_Bridge();
+					Map[middle_cell + Cell(-1, 0)].Destroy_Bridge();
+					Map[middle_cell + Cell(-1, 1)].Destroy_Bridge();
+
+					Cell cellid = middle_cellptr->Fetch_CellID();
+					Set_Bridge_Middle_State(
+						middle_cellptr->Fetch_CellID(),
+						IsometricTileType(IsometricTileTypeClass::TrainBridgeSet +
+							IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_3),
+						ISOTILE_INVALID,
+						Map[cellid + Cell(-1, 0)].Height - BRIDGE_CELL_HEIGHT,
+						false
+					);
+				} else {
+					Map[middle_cell + Cell(0, -1)].Destroy_Bridge();
+					Map[Cell(middle_cell.X, middle_cell.Y)].Destroy_Bridge();
+					Map[middle_cell + Cell(0, 1)].Destroy_Bridge();
+
+					Set_Bridge_Middle_State(
+						middle_cellptr->Fetch_CellID(),
+						IsometricTileType(IsometricTileTypeClass::TrainBridgeSet +
+							IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_3),
+						ISOTILE_INVALID,
+						middle_cellptr->Height - BRIDGE_CELL_HEIGHT,
+						false
+					);
+				}
+
+				Internal_Destroy_Train_Bridge_EW_BottomRight(
+					middle_cellptr->Fetch_CellID(), FACING_E);
+				Internal_Destroy_Train_Bridge_EW_TopLeft(
+					middle_cellptr->Fetch_CellID(), FACING_W);
+
+				Destroy_Train_Bridge_Connections(
+					Adjacent_Cell(middle_cellptr->Fetch_CellID(), FACING_W));
+				Destroy_Train_Bridge_Connections(
+					Adjacent_Cell(middle_cellptr->Fetch_CellID(), FACING_E));
+
+				if (Unregister_Subzone_Connections(zone_cell)) {
+					Zone_Reset();
+				}
+
+				DynamicVectorClass<Cell> cells;
+				for (int x = 0; x < 2; x++) {
+					for (int y = -2; y < 3; y++) {
+						cells.Add(Cell(zone_cell + Cell(x, y)));
+					}
+				}
+				Map.Recalc_Cells_In_List(cells);
+			}
+
+			if (ittype == IsometricTileTypeClass::BridgeMiddle1 ||
+					ittype == IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_1 ||
+					ittype == IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_2) {
+				Set_Bridge_Middle_State(
+					middle_cellptr->Fetch_CellID(),
+					IsometricTileType(IsometricTileTypeClass::TrainBridgeSet +
+						IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_2),
+					ISOTILE_INVALID,
+					-1,
+					false
+				);
+				Internal_Damage_Train_Bridge_EW_BottomRight(
+					middle_cellptr->Fetch_CellID(), FACING_E);
+				Internal_Damage_Train_Bridge_EW_TopLeft(
+					middle_cellptr->Fetch_CellID(), FACING_W);
+			}
+
+			return(false);
+		} else {
+			if (subtile > 4) {
+				return(false);
+			}
+
+			Cell middle_cell = bridge_deck_cell->CellID;
+			while (subtile != 2) {
+				if (subtile < 2) {
+					middle_cell = Adjacent_Cell(middle_cell, FACING_E);
+				} else {
+					middle_cell = Adjacent_Cell(middle_cell, FACING_W);
+				}
+				subtile = Map[middle_cell].SubTile;
+			}
+
+			middle_cellptr = &Map[middle_cell];
+
+			if (ittype == IsometricTileTypeClass::BridgeMiddle2 + BRIDGE_MIDDLE_DAMAGED_3) {
+				Cell zone_cell = middle_cellptr->CellID;
+
+				if (middle_cellptr->SubTile > 4) {
+					zone_cell += Cell(0, -1);
+					Map[middle_cell + Cell(-1, -1)].Destroy_Bridge();
+					Map[middle_cell + Cell(0, -1)].Destroy_Bridge();
+					Map[middle_cell + Cell(1, -1)].Destroy_Bridge();
+
+					Cell cellid = middle_cellptr->Fetch_CellID();
+					Set_Bridge_Middle_State(
+						middle_cellptr->Fetch_CellID(),
+						IsometricTileType(IsometricTileTypeClass::TrainBridgeSet +
+							IsometricTileTypeClass::BridgeMiddle2 + BRIDGE_MIDDLE_DAMAGED_3),
+						ISOTILE_INVALID,
+						Map[cellid + Cell(0, -1)].Height - BRIDGE_CELL_HEIGHT,
+						false
+					);
+				} else {
+					Map[middle_cell + Cell(-1, 0)].Destroy_Bridge();
+					Map[Cell(middle_cell.X, middle_cell.Y)].Destroy_Bridge();
+					Map[middle_cell + Cell(1, 0)].Destroy_Bridge();
+
+					Set_Bridge_Middle_State(
+						middle_cellptr->Fetch_CellID(),
+						IsometricTileType(IsometricTileTypeClass::TrainBridgeSet +
+							IsometricTileTypeClass::BridgeMiddle2 + BRIDGE_MIDDLE_DAMAGED_3),
+						ISOTILE_INVALID,
+						middle_cellptr->Height - BRIDGE_CELL_HEIGHT,
+						false
+					);
+				}
+
+				Internal_Destroy_Train_Bridge_NS_BottomLeft(
+					middle_cellptr->Fetch_CellID(), FACING_S);
+				Internal_Destroy_Train_Bridge_NS_TopRight(
+					middle_cellptr->Fetch_CellID(), FACING_N);
+
+				Destroy_Train_Bridge_Connections(
+					Adjacent_Cell(middle_cellptr->Fetch_CellID(), FACING_N));
+				Destroy_Train_Bridge_Connections(
+					Adjacent_Cell(middle_cellptr->Fetch_CellID(), FACING_S));
+
+				if (Unregister_Subzone_Connections(zone_cell)) {
+					Zone_Reset();
+				}
+
+				DynamicVectorClass<Cell> cells;
+				for (int y = 0; y < 2; y++) {
+					for (int x = -2; x < 3; x++) {
+						cells.Add(Cell(zone_cell + Cell(x, y)));
+					}
+				}
+				Map.Recalc_Cells_In_List(cells);
+			}
+
+			if (ittype == IsometricTileTypeClass::BridgeMiddle2 ||
+					ittype == IsometricTileTypeClass::BridgeMiddle2 + BRIDGE_MIDDLE_DAMAGED_1 ||
+					ittype == IsometricTileTypeClass::BridgeMiddle2 + BRIDGE_MIDDLE_DAMAGED_2) {
+				Set_Bridge_Middle_State(
+					middle_cellptr->Fetch_CellID(),
+					IsometricTileType(IsometricTileTypeClass::TrainBridgeSet +
+						IsometricTileTypeClass::BridgeMiddle2 + BRIDGE_MIDDLE_DAMAGED_2),
+					ISOTILE_INVALID,
+					-1,
+					false
+				);
+				Internal_Damage_High_Bridge_NS_BottomLeft(
+					middle_cellptr->Fetch_CellID(), FACING_S);
+				Internal_Damage_High_Bridge_NS_TopRight(
+					middle_cellptr->Fetch_CellID(), FACING_N);
+			}
+
+			return(false);
+		}
+	} else {
+		if (!bridge_deck_cell->IsBridgeDeck) {
+			bridge_deck_cell = bridge_deck_cell->BridgeDeckCell;
+		}
+
+		int overlay_data = bridge_deck_cell->OverlayData;
+		FacingType dir =
+			overlay_data < OVERLAYDATA_BRIDGE_NS_FULL1 ? FACING_E : FACING_S;
+
+		switch (overlay_data) {
+			case OVERLAYDATA_BRIDGE_EW_FULL1:
+			case OVERLAYDATA_BRIDGE_EW_FULL2:
+			case OVERLAYDATA_BRIDGE_EW_FULL3:
+			case OVERLAYDATA_BRIDGE_EW_FULL4:
+			case OVERLAYDATA_BRIDGE_EW_TRANSITION1:
+			case OVERLAYDATA_BRIDGE_EW_TRANSITION2:
+				bridge_deck_cell->OverlayData = OVERLAYDATA_BRIDGE_EW_DAMAGED;
+				Internal_Damage_Train_Bridge_EW_BottomRight(
+					bridge_deck_cell->Fetch_CellID(), dir);
+				Internal_Damage_Train_Bridge_EW_TopLeft(
+					bridge_deck_cell->Fetch_CellID(), Facing_Sub(dir, FACING_180));
+				return(false);
+
+			case OVERLAYDATA_BRIDGE_EW_DAMAGED:
+				Internal_Destroy_Train_Bridge_EW_BottomRight(
+					bridge_deck_cell->Fetch_CellID(), dir);
+				Internal_Destroy_Train_Bridge_EW_TopLeft(
+					bridge_deck_cell->Fetch_CellID(), Facing_Sub(dir, FACING_180));
+				bridge_deck_cell->Set_Under_Rail_Bridge(FACING_N, false);
+				bridge_deck_cell->OverlayData = 0;
+				bridge_deck_cell->Overlay = OVERLAY_NONE;
+				Destroy_Train_Bridge_Connections(cell);
+				if (Unregister_Subzone_Connections(bridge_deck_cell->CellID)) {
+					Zone_Reset();
+				}
+				return(true);
+
+			case OVERLAYDATA_BRIDGE_EW_END1:
+				Internal_Destroy_Train_Bridge_EW_BottomRight(
+					bridge_deck_cell->Fetch_CellID(), dir);
+				bridge_deck_cell->Set_Under_Rail_Bridge(FACING_N, false);
+				bridge_deck_cell->OverlayData = 0;
+				bridge_deck_cell->Overlay = OVERLAY_NONE;
+				Destroy_Train_Bridge_Connections(cell);
+				if (Unregister_Subzone_Connections(bridge_deck_cell->CellID)) {
+					Zone_Reset();
+				}
+				return(true);
+
+			case OVERLAYDATA_BRIDGE_EW_END2:
+				Internal_Destroy_Train_Bridge_EW_TopLeft(
+					bridge_deck_cell->Fetch_CellID(), Facing_Sub(dir, FACING_180));
+				bridge_deck_cell->Set_Under_Rail_Bridge(FACING_N, false);
+				bridge_deck_cell->OverlayData = 0;
+				bridge_deck_cell->Overlay = OVERLAY_NONE;
+				Destroy_Train_Bridge_Connections(cell);
+				if (Unregister_Subzone_Connections(bridge_deck_cell->CellID)) {
+					Zone_Reset();
+				}
+				return(true);
+
+			case OVERLAYDATA_BRIDGE_NS_FULL1:
+			case OVERLAYDATA_BRIDGE_NS_FULL2:
+			case OVERLAYDATA_BRIDGE_NS_FULL3:
+			case OVERLAYDATA_BRIDGE_NS_FULL4:
+			case OVERLAYDATA_BRIDGE_NS_TRANSITION1:
+			case OVERLAYDATA_BRIDGE_NS_TRANSITION2:
+				bridge_deck_cell->OverlayData = OVERLAYDATA_BRIDGE_NS_DAMAGED;
+				Internal_Damage_Train_Bridge_NS_BottomLeft(
+					bridge_deck_cell->Fetch_CellID(), dir);
+				Internal_Damage_Train_Bridge_NS_TopRight(
+					bridge_deck_cell->Fetch_CellID(), Facing_Sub(dir, FACING_180));
+				return(false);
+
+			case OVERLAYDATA_BRIDGE_NS_DAMAGED:
+				Internal_Destroy_Train_Bridge_NS_BottomLeft(
+					bridge_deck_cell->Fetch_CellID(), dir);
+				Internal_Destroy_Train_Bridge_NS_TopRight(
+					bridge_deck_cell->Fetch_CellID(), Facing_Sub(dir, FACING_180));
+				bridge_deck_cell->Set_Under_Rail_Bridge(FACING_W, false);
+				bridge_deck_cell->OverlayData = 0;
+				bridge_deck_cell->Overlay = OVERLAY_NONE;
+				Destroy_Train_Bridge_Connections(cell);
+				if (Unregister_Subzone_Connections(bridge_deck_cell->CellID)) {
+					Zone_Reset();
+				}
+				return(true);
+
+			case OVERLAYDATA_BRIDGE_NS_END1:
+				Internal_Destroy_Train_Bridge_NS_TopRight(
+					bridge_deck_cell->Fetch_CellID(), Facing_Sub(dir, FACING_180));
+				bridge_deck_cell->Set_Under_Rail_Bridge(FACING_W, false);
+				bridge_deck_cell->OverlayData = 0;
+				bridge_deck_cell->Overlay = OVERLAY_NONE;
+				Destroy_Train_Bridge_Connections(cell);
+				if (Unregister_Subzone_Connections(bridge_deck_cell->CellID)) {
+					Zone_Reset();
+				}
+				return(true);
+
+			case OVERLAYDATA_BRIDGE_NS_END2:
+				Internal_Destroy_Train_Bridge_NS_BottomLeft(
+					bridge_deck_cell->Fetch_CellID(), dir);
+				bridge_deck_cell->Set_Under_Rail_Bridge(FACING_W, false);
+				bridge_deck_cell->OverlayData = 0;
+				bridge_deck_cell->Overlay = OVERLAY_NONE;
+				Destroy_Train_Bridge_Connections(cell);
+				if (Unregister_Subzone_Connections(bridge_deck_cell->CellID)) {
+					Zone_Reset();
+				}
+				return(true);
+
+			default:
+				return(false);
+		}
+	}
+	return(false);
 }
 
 // FUNCTION: GAMEMD 0x00572230
@@ -6099,20 +6526,95 @@ bool MapClass::FUN_0057CF60(Cell const & cell)
 	return(didwork);
 }
 
+// FUNCTION: GAMEMD 0x0057D530
+bool MapClass::FUN_0057D530(Cell const & cell)
+{
+	CellClass * cellptr1 = &Map[cell];
+	CellClass * cellptr2 = &Map[cell - Cell(1, 0)];
+	CellClass * cellptr3 = &Map[cell + Cell(1, 0)];
+
+	OverlayType otype = cellptr1->Overlay;
+	bool collapsed = false;
+
+	Rect draw_rect = Union(cellptr1->Overlay_Render_Rect(), cellptr1->Overlay_Shadow_Render_Rect());
+	Rect recalc_rect(0, 0, 0, 0);
+
+	do {
+		if (otype == LB2(23)) {
+			OverlayType const replacement = LB2(24);
+			cellptr2->Overlay = replacement;
+			cellptr3->Overlay = replacement;
+			cellptr1->Overlay = replacement;
+			FUN_0057ED00(cell + Cell(0, 1));
+		} else if (otype == LB2(25)) {
+			OverlayType const replacement = LB2(26);
+			cellptr2->Overlay = replacement;
+			cellptr3->Overlay = replacement;
+			cellptr1->Overlay = replacement;
+			FUN_0057ED00(cell - Cell(0, 1));
+		} else if (otype < LB2(16)) {
+			OverlayType const replacement = LB2(16);
+			cellptr2->Overlay = replacement;
+			cellptr3->Overlay = replacement;
+			cellptr1->Overlay = replacement;
+			FUN_0057ED00(cell - Cell(0, 1));
+			FUN_0057ED00(cell + Cell(0, 1));
+		} else if (otype < LB2(19)) {
+			OverlayType const replacement = LB2(28);
+			cellptr2->Overlay = replacement;
+			cellptr3->Overlay = replacement;
+			cellptr1->Overlay = replacement;
+			Map.Radar_Background(cellptr2->CellID);
+			Map.Radar_Background(cellptr3->CellID);
+			Map.Radar_Background(cellptr1->CellID);
+			FUN_0057ED00(cell - Cell(0, 1));
+			FUN_0057ED00(cell + Cell(0, 1));
+			FUN_0057DAF0(cell);
+			collapsed = true;
+			recalc_rect = Rect(cell.X - 1, cell.Y - 1, 3, 3);
+		} else {
+			break;
+		}
+
+		draw_rect = Union(draw_rect, Union(cellptr1->Overlay_Render_Rect(), cellptr1->Overlay_Shadow_Render_Rect())) - TacticalRect.TopLeft;
+		TacticalMap->Register_Dirty_Area(draw_rect);
+
+		cellptr1->Recalc_Attributes(-1);
+		cellptr2->Recalc_Attributes(-1);
+		cellptr3->Recalc_Attributes(-1);
+		cellptr1->Kill_Illegal_Occupiers(true);
+		cellptr2->Kill_Illegal_Occupiers(true);
+		cellptr3->Kill_Illegal_Occupiers(true);
+
+		if (collapsed) {
+			Zone_Reset();
+		}
+
+		if (recalc_rect.Is_Valid()) {
+			Recalc_Cells_In_Rect(recalc_rect);
+		}
+	} while (false);
+
+	return(collapsed);
+}
+
 // FUNCTION: GAMEMD 0x0057DAF0
 void MapClass::FUN_0057DAF0(Cell cell)
 {
 	Cell tmp = cell;
+	OverlayType overlay;
 	do {
 		tmp = Adjacent_Cell(tmp, FACING_N);
-	} while (Is_Low_Bridge2(tmp));
+		overlay = Map[tmp].Overlay;
+	} while (overlay >= LB2(1) && overlay <= LB2(28));
 
 	Cell start = Adjacent_Cell(tmp, FACING_S);
 
 	tmp = cell;
 	do {
 		tmp = Adjacent_Cell(tmp, FACING_S);
-	} while (Is_Low_Bridge2(tmp));
+		overlay = Map[tmp].Overlay;
+	} while (overlay >= LB2(1) && overlay <= LB2(28));
 
 	Cell end = Adjacent_Cell(tmp, FACING_N);
 

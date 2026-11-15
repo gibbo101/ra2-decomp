@@ -8,6 +8,7 @@ address,name,symbol,evidence
 0x00691160,DynamicVectorClass<ScoreAnimClass *>::Add,?Add@?$DynamicVectorClass@PAVScoreAnimClass@@@@QAE_NABQAVScoreAnimClass@@@Z,All 80 bytes of this specialization are identical to the matched SfxEntry pointer specialization at this address and contain no relocations
 0x007F2970,ShipLocomotionClass::RawTracks,?RawTracks@ShipLocomotionClass@@0QBURawTrackType@1@B,Ship Mark_Track at 0x006A01A0 reads this table at +0x67 and +0x6D. Will_Jump_Tracks at 0x006A4130 reads it at +0x82 and +0xC3.
 0x00720B20,ThemeClass::Queue_Song,,0x006EDEF0 TeamClass::TMission_PLAY_MUSIC matched with TibSun source
+0x007E7B28,DriveLocomotionClass::TrackControl,?TrackControl@DriveLocomotionClass@@0QBUTurnTrackType@1@B,The matched Drive Mark_Track and Will_Jump_Tracks use this table to select the track and its flags.
 0x00578460,MapClass::In_Local_Radar,?In_Local_Radar@MapClass@@QBE_NABVCell@@_N@Z,"called by 0x00578390 MapClass::In_Local_Radar(Rect const &, bool), matched with TibSun source"
 0x007C8E17,operator new,??2@YAPAXI@Z,YRpp CRT.h _new; the call target of operator new in matched 0x0043C0D0 and 0x00733E10
 0x007C8B3D,operator delete,??3@YAXPAX@Z,YRpp CRT.h _delete; the call target of operator delete in matched 0x0063EE30
@@ -649,3 +650,39 @@ address,name,symbol,evidence
 0x0082AFF0,MapRegionClass::Build_West_Ramp::_heights,_?_heights@?BF@??Build_West_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z@4PAHA,Complete 20-byte lookup table equals original data; SHA-256 f96702bafafa0bd042cbeadfa4b5c92a07eebeb322d605140560d31023401b45
 0x0082B004,MapRegionClass::Build_West_Ramp::_ramps,_?_ramps@?BF@??Build_West_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z@4PAHA,Complete 40-byte lookup table equals original data; SHA-256 0d818a59ee3c06c142a50082be2045aa287ed54c1303a14444fdcb7f40489cee
 0x00A8ECE0,VerNum,?VerNum@@3VVersionClass@@A,Matched initializer 0x004E7DC0 constructs VerNum at this address via VersionClass::VersionClass 0x0074F730; YRpp VersionClass::Instance independently agrees
+0x00ABCF60,MapClass::OcclusionOffset,?OcclusionOffset@MapClass@@1QBVCell@@B,Matched initializer at 0x005638D0 writes 309 consecutive Cells at this base.
+0x00822724,GadgetClass::CurrentColorScheme,?CurrentColorScheme@GadgetClass@@2PBDB,Matched GadgetClass::Get_Color_Scheme at 0x004E12D0 reads this pointer to the default Grey scheme.
+0x008A3770,EgoList,?EgoList@@3V?$DynamicVectorClass@PAVEgoClass@@@@A,Matched EgoList initializer at 0x004C3C50 and destructor at 0x004C3C10 access the same vector at thirteen sites.
+0x0089F978,WindowedMode,?WindowedMode@@3_NA,YRpp GameOptionsClass.h identifies WindowedMode here. Matched display and window routines use the global bool declaration.
+0x0076C290,WorldDominationTour::Selection::Selection,??0Selection@WorldDominationTour@@QAE@ABV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z,Matched presentation entry 0x0076ECD0 constructs a Selection here. This routine calls the MSEngine constructor and installs the Selection vtable at 0x007F72B4.
+0x0076C6E0,WorldDominationTour::Selection::~Selection,??1Selection@WorldDominationTour@@UAE@XZ,Called by the matched presentation entry at 0x0076ECD0 and the deleting destructor in the Selection vtable at 0x007F72B4. Releases five rc_ptr members and calls the MSEngine destructor.
+0x007EA790,wall_step_facings,_wall_step_facings,TibSun HouseClass::AI_Build_Wall facing table. All four 32-bit FacingType entries agree with retail at this address.
+0x007EA7A0,wall_adjacent_facings,_wall_adjacent_facings,TibSun HouseClass::AI_Build_Wall facing table. All four 32-bit FacingType entries agree with retail at this address.
+0x0089F6D8,AdjacentPoint,?AdjacentPoint@@3QBVPoint2D@@B,"=_$E95 at 0x0049F3A0 matches independently and references this object at 0x9, 0xF, 0x14, 0x21, 0x26, 0x2B, 0x32, 0x3A, 0x40, 0x46, 0x4B, 0x58, 0x5F, 0x64, 0x69, 0x6F"
+0x0089EA40,Ground,?Ground@@3PAUGroundType@@A,"RulesClass::Land_Types at 0x00674000 matches independently and references this object at 0xD, 0x226"
+0x007F2A40,ShipLocomotionClass::TrackControl,?TrackControl@ShipLocomotionClass@@0QBUTurnTrackType@1@B,ShipLocomotionClass::Mark_Track at 0x006A01A0 matches independently and references this object at 0x56
+0x00B76E40,g_UserInfo,?g_UserInfo@@3PAUChannelUserInfo@@A,"Native TibSun wonline.cpp g_UserInfo array; YR matched OnChannelCreate at 0x007A5690 clears 0x940 bytes at this base and writes Name +0x0, Color +0x14, House +0x18 and Accepted +0x20; OnChannelJoin has six consistent base relocations and uses 0x94-byte records for insertion and accept reset."
+0x005E3D10,DecodePubGameopt,?DecodePubGameopt@@YI_NPAD0@Z,"TibSun netshare.cpp DecodePubGameopt: duplicates options, recognizes A accept status with player name, disables users control and parses comma-separated game options; YR body at 0x005E3D10 has this same sequence after RA2-only Z/N preview handling, and the OnChannelJoin options callback calls it with char* options and null char* name."
+0x007CAF30,strchr,_strchr,YRpp CRT.h names CRT::strchr at 0x007CAF30; this entry zero-extends its character argument before falling through into the prebuilt LIBCMT strchr.obj body at 0x007CAF36. Standard cdecl _strchr references use the same entry.
+0x0089C900,BuildingTypeClass::OccupyLists,?OccupyLists@BuildingTypeClass@@0QAY0BO@$$CBVCell@@A,Independently matched 4389-byte initializer 0x0045B1C0 writes OccupyLists; every array relocation resolves to base 0x0089C900. Read_INI uses same table base.
+0x0089D368,BuildingTypeClass::ExitLists,?ExitLists@BuildingTypeClass@@0QAY0BO@$$CBVCell@@A,Independently matched initializer 0x0045C300 writes ExitLists; every array relocation resolves to base 0x0089D368. Read_INI uses same table base.
+0x0056D100,MapClass::Is_Same_Cell_Zone,?Is_Same_Cell_Zone@MapClass@@QAE_NABVCell@@0W4MZoneType@@_N22@Z,"FootClass::Is_In_Same_Zone at 0x004D3810 calls this method at +0xFB. UnitClass::Plan_Route at 0x007447B0 calls it at +0x2C4. Both match the retail executable."
+0x00A8ED80,GameInFocus,,Known Unsorted::GameInFocus alias; existing Sync_Delay operand 0055E206
+0x00A8ED72,Debug_Trap_Check_Heap,,Source-derived identity: native TS bool definition and Main_Loop Session.TrapCheckHeap conditional; matching RA2 counterpart; retail write 0055D3E8. No independent second code reference.
+0x00A8E378,TacticalActive,,Known Unsorted::TacticalActive alias; existing Play_Movie operand 005BF277
+0x00887348,FrameTimer,,Existing Sync_Delay operand 0055E162; exact SystemTimer initializer 0040EB50 and concrete _script.cpp global
+0x00887328,NetFrameTimer,,Existing Sync_Delay operand 0055E1C3; exact MillisecondSystemTimer initializer 0040EB90 and concrete _script.cpp global
+0x00A8EDA0,SpecialDialog,,Known Game::SpecialDialog alias; existing Sync_Delay operand 0055E1FA
+0x00A8ED9D,drag_select_aborted,,Existing DisplayClass::Abort_Drag_Select sets this bool at 004AEAF0; native radar uses the named flag to suppress left release
+0x00ABCDFC,TeamEvent,,Existing Main_Game initializes the playback pair at operand 0048CE23; native Do_Record_Playback writes and clears TeamEvent before TeamNumber
+0x00ABCE00,TeamNumber,,Existing Main_Game initializes the playback pair at operand 0048CE29; native Do_Record_Playback writes and clears TeamNumber after TeamEvent
+0x00822CF2,AllowVoice,,Known Unsorted::MoveFeedback alias; existing Tactical::Select_These bool store operand 006DA5C8
+0x0067CEF0,Save_Game,,Known ScenarioClass::SaveGame alias; existing LoadOptionsClass::Save_File call 00559E85
+0x00A83D49,PlayerWins,,Existing matched end-game handler FUN_0055CFD0 tests PlayerWins first at operand 0055D05A
+0x00A8ECD0,PlayerLoses,,Existing matched end-game handler FUN_0055CFD0 tests PlayerLoses second at operand 0055D066
+0x008B41C0,PlayerRestarts,,Existing matched end-game handler FUN_0055CFD0 tests PlayerRestarts third at operand 0055D06E
+0x00A83D48,PlayerAborts,,Existing matched end-game handler FUN_0055CFD0 tests PlayerAborts fourth at operand 0055D076
+0x0087F6C4,NormalDrawer,?NormalDrawer@@3PAVConvertClass@@A,YRpp FileSystem::PALETTE_PAL and the drawer declared in the archived _convert.cpp
+0x00B1D13C,EightBitSurface,?EightBitSurface@@3PAVSurface@@A,Existing matched Unit_Draw_Voxel 0x0073B470 assigns this surface to DSurface::Temp for compositing; the external Surface pointer declaration agrees with UnitTypeClass::One_Time 0x007473E0 creating the 256-by-256 8-bit surface.
+0x006FDD50,TechnoClass::Fire_At,?Fire_At@TechnoClass@@UAEPAVBulletClass@@PAVAbstractClass@@H@Z,Unmodified TechnoClass headercheck probe places Fire_At at primary vtable slot 243; pairing the 309-slot primary table with the original TechnoClass RTTI resolves this slot to 0x006FDD50.
+0x00AA10B0,IsometricTileTypeClass::ClearTile,?ClearTile@IsometricTileTypeClass@@2W4IsometricTileType@@A,"Three agreeing references in independently matched Read_Control_File (0x00545150) and Load_Tiles (0x00546DA0), actual shared static member"

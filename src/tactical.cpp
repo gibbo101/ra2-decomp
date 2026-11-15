@@ -927,6 +927,60 @@ void Tactical::Draw_Placement(bool drawtrans)
 	}
 }
 
+// FUNCTION: GAMEMD 0x006D5C50
+void Tactical::Draw_Wall_Placement(bool drawtrans, Cell cell)
+{
+	OverlayTypeClass const * to_overlay = ((BuildingClass *)Map.PendingObjectPtr)->Class->ToOverlay;
+	if (to_overlay == 0) {
+		return;
+	}
+
+	for (int index = 0; index < FACING_COUNT; index += FACING_COUNT / 4) {
+		FacingType facing = (FacingType)index;
+		Cell scan = cell;
+		int count = 0;
+		BuildingTypeClass * type = ((BuildingClass *)Map.PendingObjectPtr)->Class;
+		int range = type->ThreatRange >> 8;
+		if (range <= 0) {
+			continue;
+		}
+		bool found = false;
+		for (; count < range; count++) {
+			scan = Adjacent_Cell(scan, facing);
+			CellClass * cellptr = &Map[scan];
+			if (cellptr->Overlay != OVERLAY_NONE && to_overlay->HeapID == cellptr->Overlay && PlayerPtr->HeapID == Map[scan].Owner) {
+				found = true;
+				break;
+			}
+			if (!Map[scan].Is_Clear_To_Build(type->Speed, type, PlayerPtr)) {
+				break;
+			}
+		}
+
+		if (found && count > 0) {
+			int flags = drawtrans ? (SHAPE_ZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75)
+				: (SHAPE_NONZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75);
+			Cell drawcell = cell;
+			drawcell = Adjacent_Cell(drawcell, facing);
+			for (int i = 0; i < count; i++, drawcell = Adjacent_Cell(drawcell, facing)) {
+				int height = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				int zoff = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				Point2D cursor_offset(ISO_TILE_PIXEL_W / 2, -1 - height);
+				zoff = -2 - zoff;
+				Coord coord = Coord_Whole(Coord(drawcell));
+				Point2D tile_origin;
+				Coord_To_Pixel(coord, tile_origin);
+				tile_origin.X -= ISO_TILE_PIXEL_W / 2;
+				Point2D point;
+				point.X = tile_origin.X + cursor_offset.X;
+				point.Y = tile_origin.Y + cursor_offset.Y;
+				Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)DisplayClass::PlacementShapes, 0, point,
+					TacticalRect, (ShapeFlags_Type)flags, 0, zoff);
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x006D5F30
 bool Tactical::Blit_Tiles(void)
 {
@@ -1049,6 +1103,85 @@ void Tactical::Cell_To_Rectangular_Centered(int xin, int yin, int & xout, int & 
 
 	xout = x;
 	yout = y;
+}
+
+// FUNCTION: GAMEMD 0x006D6590
+Cell Tactical::Pixel_To_Cell(Point2D const &point)
+{
+	Point2D lepton = Pixel_To_Lepton(point + Point2D(TacPixelX, TacPixelY) - TacticalRect.Top_Left());
+
+	Cell fallback(lepton.X / CELL_LEPTON_W, lepton.Y / CELL_LEPTON_H);
+
+	// Project the offset within the first cell before scanning the terrain.
+	Point2D abspixel;
+	Coord_To_Pixel(Coord(lepton.X & (CELL_LEPTON_W - 1), lepton.Y & (CELL_LEPTON_H - 1), 0), abspixel);
+	Point2D xy = point - TacticalRect.Top_Left();
+
+	Point2D scan = xy;
+	const int scan_height = 12 * (ISO_TILE_PIXEL_H / 2);
+	scan.Y += scan_height;
+
+	int count = 0;
+	while (count < scan_height) {
+		abspixel = scan + Point2D(TacPixelX, TacPixelY);
+
+		Point2D scanlepton = Pixel_To_Lepton(abspixel);
+		Cell cell(scanlepton.X / CELL_LEPTON_W, scanlepton.Y / CELL_LEPTON_H);
+
+		CellClass *cellptr = &Map[cell];
+		int celly = scan.Y - cellptr->Height * (ISO_TILE_PIXEL_H / 2);
+
+		if (cellptr->IsUnderBridge) {
+			CellClass &east = cellptr->Adjacent_Cell(FACING_E);
+			CellClass &south = cellptr->Adjacent_Cell(FACING_S);
+
+			bool north_end = (cellptr->IsBridgeEastWest) && !(cellptr->Adjacent_Cell(FACING_N).IsUnderBridge);
+			bool west_end = !(cellptr->IsBridgeEastWest) && !(cellptr->Adjacent_Cell(FACING_W).IsUnderBridge);
+			bool south_end = (cellptr->IsBridgeEastWest) && !(south.IsUnderBridge);
+			bool east_end = !(cellptr->IsBridgeEastWest) && !(east.IsUnderBridge);
+			bool east_approach =
+				(cellptr->IsBridgeEastWest) && abs(cellptr->Height - east.Height) <= 1 && !(east.IsUnderBridge);
+			bool south_approach =
+				!(cellptr->IsBridgeEastWest) && abs(cellptr->Height - south.Height) <= 1 && !(south.IsUnderBridge);
+
+			Coord topcoord = Coord(cellptr->CellID) - Coord(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0);
+			Point2D top;
+			Coord_To_Pixel(topcoord, top);
+			top.Y += ISO_TILE_PIXEL_H * cellptr->Height / -2;
+
+			if (top.Y <= xy.Y) {
+				if (south_end || south_approach) {
+					fallback = cell + Cell(0, 1);
+					break;
+				}
+				if (east_end || east_approach) {
+					fallback = cell + Cell(1, 0);
+					break;
+				}
+			}
+
+			if (north_end || west_end) {
+				int dx = xy.X - top.X;
+				int dy = xy.Y - top.Y;
+				if ((north_end && dy - dx / 2 > ISO_TILE_PIXEL_H / 2) ||
+					(west_end && dx / 2 + dy > ISO_TILE_PIXEL_H / 2)) {
+					celly -= ((cellptr->IsUnderBridge) ? BRIDGE_CELL_HEIGHT * (ISO_TILE_PIXEL_H / 2) : 0);
+				}
+			} else {
+				celly -= ((cellptr->IsUnderBridge) ? BRIDGE_CELL_HEIGHT * (ISO_TILE_PIXEL_H / 2) : 0);
+			}
+		}
+
+		if (celly <= xy.Y) {
+			fallback = cell;
+			break;
+		}
+
+		scan.Y--;
+		count++;
+	}
+
+	return fallback;
 }
 
 // FUNCTION: GAMEMD 0x006D6A90
@@ -2319,6 +2452,54 @@ void Tactical::Debug_Draw_Occupier_Links(void)
 			Coord_To_Pixel(coord2, end);
 			DSurface::Temp->Draw_Line(DSurface::ViewBounds, start, end, lcolor);
 		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006DB620
+void Tactical::Debug_Draw_Occupation_Flags(void)
+{
+	Map.Reset_Iterator();
+	CellClass *cellptr = Map.Iterate();
+	int color = DSurface::Build_Hicolor_Pixel(255, 255, 0);
+	while (cellptr != NULL) {
+		Rect render = cellptr->Cell_Render_Rect();
+		Rect inter = Intersect(render, TacticalRect);
+		if (inter.Is_Valid()) {
+			Coord coord = cellptr->Cell_Coord();
+			Point2D pixel;
+			Coord_To_Pixel(coord, pixel);
+			Rect rect;
+			rect = Rect(pixel.X - 2, TacticalRect.Y + pixel.Y - 2, 4, 4);
+
+			// Mark ground occupancy.
+			if (cellptr->Flag.Occupy.NE) {
+				LogicalSurface->Fill_Rect(rect + Point2D(10, 0), color);
+			}
+			if (cellptr->Flag.Occupy.SE) {
+				LogicalSurface->Fill_Rect(rect + Point2D(0, 6), color);
+			}
+			if (cellptr->Flag.Occupy.SW) {
+				LogicalSurface->Fill_Rect(rect + Point2D(-10, 0), color);
+			}
+			if (cellptr->Flag.Occupy.Building || cellptr->Flag.Occupy.Monolith || cellptr->Flag.Occupy.Vehicle) {
+				LogicalSurface->Fill_Rect(rect, color);
+			}
+
+			// Mark bridge occupancy above ground.
+			if (cellptr->BridgeFlag.Occupy.NE) {
+				LogicalSurface->Fill_Rect(rect + Point2D(10, -60), color);
+			}
+			if (cellptr->BridgeFlag.Occupy.SE) {
+				LogicalSurface->Fill_Rect(rect + Point2D(0, -66), color);
+			}
+			if (cellptr->BridgeFlag.Occupy.SW) {
+				LogicalSurface->Fill_Rect(rect + Point2D(-10, -60), color);
+			}
+			if (cellptr->BridgeFlag.Occupy.Building || cellptr->BridgeFlag.Occupy.Monolith || cellptr->BridgeFlag.Occupy.Vehicle) {
+				LogicalSurface->Fill_Rect(rect + Point2D(0, -60), color);
+			}
+		}
+		cellptr = Map.Iterate();
 	}
 }
 

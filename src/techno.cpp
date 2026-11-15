@@ -2344,6 +2344,129 @@ static inline Rect Moved_Rect(Rect const & rect, Point2D const & point)
 	return(Rect(rect.Top_Left() + point, rect.Width, rect.Height));
 }
 
+static inline bool Overlay_Is_Rock(int overlay)
+{
+	OverlayTypeClass *otype = OverlayTypes[overlay];
+	return otype->IsARock;
+}
+
+// FUNCTION: GAMEMD 0x00704350
+int TechnoClass::Get_Z_Adjust(void) const
+{
+	CellClass *cptrs[3];
+	int width;
+	int height;
+	static int _techno_zadj_ramp1 = -1;
+	static int _techno_zadj_ramp2 = -1;
+	static int _techno_zadj_rock = 3;
+	int z = -TacticalMap->Z_Lepton_To_Pixel(Get_Height());
+	int zadjust2 = z;
+	int zadjust = z;
+	Cell cell = PositionCell;
+	CellClass *cptr = &Map[cell];
+	if (RTTI == RTTI_UNIT) {
+		UnitClass const *unit = static_cast<UnitClass const *>(this);
+		if (unit->IsTethered) {
+			BuildingClass *building = (BuildingClass *)unit->FUN_0065AD40(0);
+			if (building->RTTI == RTTI_BUILDING && building->Get_Mission() == MISSION_UNLOAD) {
+				return zadjust2 - 3;
+			}
+		}
+		if (unit->Class->Harvester) {
+			BuildingClass *building = Get_Cell_Ptr()->Cell_Building();
+			if (building != 0 && building->Class->IsRefinery) {
+				return zadjust2 - 14;
+			}
+		}
+	}
+	if (cptr->Ramp) {
+		CellClass *cell_s = &Map[Adjacent_Cell(cell, FACING_S)];
+		CellClass *cell_e = &Map[Adjacent_Cell(cell, FACING_E)];
+		CellClass *cell_se = &Map[Adjacent_Cell(cell, FACING_SE)];
+		if (cell_s != 0 && cell_e != 0 && cell_se != 0) {
+			bool rock = false;
+			if (cell_s->Overlay != -1) {
+				if (Overlay_Is_Rock(cell_s->Overlay)) {
+					rock = true;
+				}
+			} else if (cell_e->Overlay != -1) {
+				if (Overlay_Is_Rock(cell_e->Overlay)) {
+					rock = true;
+				}
+			} else if (cell_se->Overlay != -1) {
+				if (Overlay_Is_Rock(cell_se->Overlay)) {
+					rock = true;
+				}
+			}
+			if (rock) {
+				return _techno_zadj_rock + zadjust2 - 1;
+			}
+		}
+	}
+	CellClass *ahead_right = &Map[Adjacent_Cell(cell, Facing_Add(PrimaryFacing.Current().As_Dir8(), FACING_45))];
+	CellClass *ahead_left = &Map[Adjacent_Cell(cell, Facing_Sub(PrimaryFacing.Current().As_Dir8(), FACING_45))];
+	CellClass *ahead = &Map[Adjacent_Cell(cell, Facing_Add(PrimaryFacing.Current().As_Dir8(), FACING_0))];
+	CellClass *behind = &Map[Adjacent_Cell(cell, Facing_Sub(PrimaryFacing.Current().As_Dir8(), FACING_180))];
+	CellClass *behind_right = &Map[Adjacent_Cell(cell, Facing_Add(PrimaryFacing.Current().As_Dir8(), FACING_135))];
+	CellClass *behind_left = &Map[Adjacent_Cell(cell, Facing_Sub(PrimaryFacing.Current().As_Dir8(), FACING_135))];
+	bool ramp = false;
+	if (ahead_right != 0 && ahead_left != 0 && ahead != 0) {
+		if (ahead_right->Ramp == 0 && ahead_left->Ramp == 0 && ahead->Ramp == 0) {
+			if (behind != 0 && behind_right != 0 && behind_left != 0) {
+				if (behind->Ramp == 0 && behind_right->Ramp == 0 && behind_left->Ramp == 0) {
+					if (cptr->Ramp) {
+						return zadjust + _techno_zadj_ramp1;
+					}
+					if (PrimaryFacing.Current().As_Dir8() == FACING_W || PrimaryFacing.Current().As_Dir8() == FACING_N) {
+						cptrs[0] = behind;
+						cptrs[1] = behind_right;
+						cptrs[2] = behind_left;
+					} else if (PrimaryFacing.Current().As_Dir8() == FACING_S || PrimaryFacing.Current().As_Dir8() == FACING_E) {
+						cptrs[0] = ahead_right;
+						cptrs[1] = ahead_left;
+						cptrs[2] = ahead;
+					} else {
+						return zadjust - 1;
+					}
+					if (cptr->IsOvershadowed) {
+						return zadjust - 1;
+					}
+					for (int i = 0; i < 3; i++) {
+						if (cptrs[i]->IsOvershadowed) {
+							return zadjust - 1;
+						}
+					}
+					for (int j = 0; j < 3; j++) {
+						IsometricTileType ittype = cptrs[j]->ITType;
+						int subtile;
+						IsometricTileTypeClass *iptr;
+						if (ittype == ISOTILE_NONE || ittype == ISOTILE_NONE_LEGACY) {
+							iptr = IsometricTileTypes[TILE_CLEAR];
+							subtile = 0;
+						} else {
+							iptr = IsometricTileTypes[ittype];
+							subtile = cptrs[j]->SubTile;
+						}
+						iptr->Get_Tile_Pixel_Dimensions(subtile, width, height);
+						if (height > 36) {
+							return zadjust - 2;
+						}
+					}
+					return zadjust - 1;
+				} else {
+					ramp = true;
+				}
+			}
+		} else {
+			ramp = true;
+		}
+	}
+	if (ramp) {
+		return _techno_zadj_ramp2 + zadjust;
+	}
+	return zadjust - 1;
+}
+
 // FUNCTION: GAMEMD 0x007049C0
 void TechnoClass::FUN_007049C0(Coord start, Coord end, RGBClass color, unsigned char a, unsigned char b) const
 {
