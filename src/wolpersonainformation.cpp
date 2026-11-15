@@ -690,6 +690,156 @@ void __fastcall FUN_0077A8D0(HWND dialog, bool clearBadge)
 	SendMessageA(item, 0x4b2, 0, (LPARAM)unknown.text());
 }
 
+WideWstring __fastcall FUN_007B7ED0(Wstring const & text);
+WideWstring __fastcall FUN_007B7DD0(int value);
+
+static inline void Profile_Text(HWND dialog, int id, WideWstring const & text)
+{
+	HWND item = GetDlgItem(dialog, id);
+	SendMessageA(item, 0x4B2, 0, (LPARAM)text.text());
+}
+
+static inline void Profile_Text(HWND dialog, int id, wchar_t const * text)
+{
+	HWND item = GetDlgItem(dialog, id);
+	SendMessageA(item, 0x4B2, 0, (LPARAM)text);
+}
+// FUNCTION: GAMEMD 0x0077A9F0
+void PlayerProfile::FUN_0077A9F0(HWND dialog, Wstring const * name, bool update)
+{
+	if (update) {
+		HWND item = GetDlgItem(dialog, 0x628);
+		bool wide = SendMessageA(item, 0x4CE, 0, 0) != 0;
+		if (name->length() != 0 && !wide) {
+			int selected = SendMessageA(item, 0x4B9, -1, (LPARAM)name->text());
+			SendMessageA(item, 0x14E, selected, 0);
+			if (selected == -1) {
+				SendMessageA(item, 0x4B4, 0, (LPARAM)name->text());
+			}
+		} else {
+			WideWstring nickname = FUN_007B7ED0(*name);
+			int selected = -1;
+			if (name->length() > 0) {
+				selected = SendMessageA(item, 0x4BF, -1, (LPARAM)nickname.text());
+			}
+			if (selected == -1) {
+				nickname = StringTable::LoadString(
+					"GUI:Default", NULL,
+					"D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x399);
+				selected = SendMessageA(item, 0x4BF, -1, (LPARAM)nickname.text());
+			}
+			SendMessageA(item, 0x14E, selected, 0);
+			if (selected == -1) {
+				SendMessageA(item, 0x4B2, 0, (LPARAM)nickname.text());
+			}
+		}
+	}
+
+	HWND item = GetDlgItem(dialog, 0x629);
+	int selected = SendMessageA(item, 0x4B9, -1, (LPARAM)Name.text());
+	SendMessageA(item, 0x14E, selected, 0);
+
+	item = GetDlgItem(dialog, 0x62A);
+	if (item) {
+		int count = SendMessageA(item, 0x146, 0, 0);
+		for (int i = 0; i < count; i++) {
+			LRESULT data = SendMessageA(item, 0x150, i, 0);
+			if (data == Field10) {
+				SendMessageA(item, 0x14E, i, 0);
+				break;
+			}
+		}
+	}
+
+	item = GetDlgItem(dialog, 0x6A1);
+	if (item) {
+		int count = SendMessageA(item, 0x146, 0, 0);
+		for (int i = 0; i < count; i++) {
+			LRESULT data = SendMessageA(item, 0x150, i, 0);
+			if (data == Field1C) {
+				SendMessageA(item, 0x14E, i, 0);
+				break;
+			}
+		}
+	}
+
+	item = GetDlgItem(dialog, 0x6A2);
+	if (item) {
+		int count = SendMessageA(item, 0x146, 0, 0);
+		for (int i = 0; i < count; i++) {
+			LRESULT data = SendMessageA(item, 0x150, i, 0);
+			if (data == Field20) {
+				SendMessageA(item, 0x14E, i, 0);
+				break;
+			}
+		}
+	}
+
+	item = GetDlgItem(dialog, 0x773);
+	if (item) {
+		SendMessageA(item, 0xF1, Field38, 0);
+	}
+
+	WideWstring unknown(StringTable::LoadString(
+		"GUI:UnknownStats", NULL,
+		"D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x3DB));
+
+	Profile_Text(dialog, 0x6F4,
+		Field24 == -1 ? unknown : FUN_007B7DD0(Field24));
+	Profile_Text(dialog, 0x6F5,
+		Field28 == -1 ? unknown : FUN_007B7DD0(Field28));
+	Profile_Text(dialog, 0x6F0,
+		Field2C == -1 ? unknown : FUN_007B7DD0(Field2C));
+	Profile_Text(dialog, 0x6F1,
+		Field30 == -1 ? unknown : FUN_007B7DD0(Field30));
+	Profile_Text(dialog, 0x701,
+		Field34 == -1 ? unknown : FUN_007B7DD0(Field34));
+
+	if (name->length() > 0) {
+		WideWstring label(StringTable::LoadString(
+			"GUI:UserProfileLabel", NULL,
+			"D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x3E3));
+		unsigned label_length = label.length();
+		wchar_t * title = new wchar_t[(label_length += name->length()) + 1];
+		swprintf(title, label.get(), name->text());
+		Profile_Text(dialog, 0x6EF, title);
+		delete [] title;
+	} else {
+		Profile_Text(dialog, 0x6EF, DAT_00887734);
+	}
+
+	WideWstring & date = Wide40;
+	WideWstring & time = Wide3C;
+	wchar_t * text = new wchar_t[
+		date.length() + time.length() +
+		wcslen(StringTable::LoadString(
+			"GUI:WelcomeUpdate", NULL,
+			"D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x3ED))];
+
+	if (text && date.length() > 0 && time.length() > 0) {
+		swprintf(text, StringTable::LoadString(
+			"GUI:WelcomeUpdate", NULL,
+			"D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x3EF),
+			date.str, time.str);
+		item = GetDlgItem(dialog, 0x797);
+		SendMessageA(item, 0x4B2, 0, (LPARAM)text);
+		goto update_done;
+	}
+
+	{
+		wchar_t const * blank = StringTable::LoadString(
+			"GUI:Blank", NULL,
+			"D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x3F2);
+		item = GetDlgItem(dialog, 0x797);
+		SendMessageA(item, 0x4B2, 0, (LPARAM)blank);
+	}
+
+update_done:
+	if (text) {
+		delete [] text;
+	}
+}
+
 // SYNTHETIC: GAMEMD 0x0077B030
 // ??_GPlayerProfile@@UAEPAXI@Z
 
