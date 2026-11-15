@@ -3,7 +3,7 @@ import struct
 import unittest
 
 from coff import CODE, REL_DIR32, REL_REL32, STORAGE_EXTERNAL, CoffObject, Reloc, Section, Symbol
-from functions import assembly_bounds
+from functions import assembly_bounds, library_boundaries
 
 
 def archive(data, entries, relocs=()):
@@ -13,6 +13,16 @@ def archive(data, entries, relocs=()):
                    for i, (off, name) in enumerate(entries)]
     obj.by_index = {s.index: s for s in obj.symbols}
     return obj
+
+
+class LibraryBoundsTest(unittest.TestCase):
+    def test_only_padding_and_flow_splits_can_be_removed(self):
+        evidence = {100: "CL", 104: "P", 108: "F", 112: "C"}
+        self.assertEqual(library_boundaries(evidence, {100: 12}), {100: 112})
+        self.assertEqual(evidence, {100: "CL", 112: "C"})
+        evidence[104] = "PG"
+        self.assertEqual(library_boundaries(evidence, {100: 12}), {})
+        self.assertIn(104, evidence)
 
 
 class AssemblyBoundsTest(unittest.TestCase):

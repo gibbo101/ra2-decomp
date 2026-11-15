@@ -5,6 +5,7 @@
 
 #define NDEBUG
 #include "always.h"
+#include "firewall.h"
 #include "geometry.h"
 #include "netshare.h"
 #include "_rules.h"
@@ -1448,6 +1449,176 @@ bool Set_Scenario_Info_From_Index(int index)
 	Session.ScenarioFileLength = CCFileClass(Session.ScenarioFileName).Size();
 	Session.ScenarioFileLength = CCFileClass(Session.ScenarioFileName).Size();
 	return(true);
+}
+
+Point2D FUN_0058BB00(int index);
+
+// FUNCTION: GAMEMD 0x005E7EB0
+void __fastcall FUN_005E7EB0(MapPreviewClass * preview)
+{
+	CDTimerClass<SystemTimerClass> response_timer;
+	char suffix[64];
+	char options[256];
+	Cell cell;
+	GlobalPacketType packet;
+	GlobalPacketType response;
+	bool responses[MAX_PLAYERS];
+	int length;
+	unsigned short product_id;
+	int size;
+
+	if (preview != NULL && Session.Players.Count() > 1) {
+		if (Scen != NULL) {
+			sprintf(options, "%c%d,%d,%d,%d,%d", 'W',
+				Scen->Width, Scen->Height,
+				Scen->StartX, Scen->StartY,
+				Scen->NumberStartingPoints);
+
+			for (int i = 0; i < MAX_PLAYERS; i++) {
+				Point2D point = FUN_0058BB00(i);
+				if (Scen->Is_Valid_Waypoint((WAYPOINT)i)) {
+					cell = Scen->Get_Waypoint_Cell((WAYPOINT)i);
+				} else {
+					cell = CELL_NONE;
+				}
+				sprintf(suffix, ",%d,%d,%d,%d",
+					point.X, point.Y, cell.X, cell.Y);
+				strcat(options, suffix);
+			}
+			SendPublicGameopts(options);
+		}
+
+		if (Session.Type == GAME_INTERNET) {
+			if (DAT_00ABFEC8.Detected != 0
+				&& !(DAT_00ABFEC8.Detected & 1)) {
+			no_preview:
+				options[0] = 'Z';
+				options[1] = '3';
+				options[2] = 0;
+				FUN_004068E0(
+					"Sending public options string %s\n",
+					options);
+				g_pChat->RequestPublicGameOptions(options);
+				return;
+			}
+
+			int peer = 1;
+			if (peer < Session.Players.Count()) {
+				do {
+					int slot = Session.FUN_0069BC60(peer);
+					if (slot >= 0 && slot < MAX_PLAYERS) {
+						int flags = Session.unknown_29F4[slot];
+						if (flags == 0 || (flags & 1)) {
+							if (Session.unknown_2994[slot].
+								FUN_0053EF30(
+									Session.Players[peer]->Address)) {
+								goto next_peer;
+							}
+							FUN_004068E0(
+								"Player %s has different local and external IPs - no preview download possible\n",
+								FUN_007350C0(
+									Session.Players[peer]->Name));
+						} else {
+							FUN_004068E0(
+								"Player %s has a NAT - no preview download possible\n",
+								FUN_007350C0(
+									Session.Players[peer]->Name));
+						}
+						goto no_preview;
+					}
+
+				next_peer:
+					peer++;
+				} while (peer < Session.Players.Count());
+			}
+		}
+
+		FUN_004068E0("Starting map preview upload\n");
+		memset(&packet, 0, sizeof(packet));
+		packet.Command = NET_PREVIEW_MODE;
+		strcpy(packet.Name, Session.Handle);
+		Ipx.Set_Timing(50, -1, 5000);
+		response_timer = TIMER_SECOND * 20;
+
+		for (int i = 1; i < Session.Players.Count(); i++) {
+			Ipx.Send_Global_Message_To_Name(
+				&packet, sizeof(packet), 1,
+				Session.Players[i]->Name);
+			Call_Back();
+		}
+
+		while (Ipx.Global_Num_Send() != 0 && response_timer) {
+			Call_Back();
+		}
+		if (!response_timer) return;
+
+		IPXAddressClass sender_address;
+		memset(responses, 0, sizeof(responses));
+		int num_responses = 0;
+		response_timer = TIMER_SECOND * 30;
+		FUN_004068E0(
+			"Waiting for %d players to signal ready to receive\n",
+			Session.Players.Count() - 1);
+
+		while (num_responses < Session.Players.Count() - 1
+			&& response_timer) {
+			Call_Back();
+			length = 455;
+			if (Ipx.Get_Global_Message(
+				&response, &length,
+				&sender_address, &product_id)) {
+				if (response.Command == NET_PREVIEW_ACK) {
+					for (int j = 1;
+						j < Session.Players.Count(); j++) {
+						if (sender_address.FUN_0053EF30(
+							Session.Players[j]->Address)) {
+							if (!responses[j]) {
+								responses[j] = true;
+								num_responses++;
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		if (num_responses == Session.Players.Count() - 1) {
+			FUN_004068E0("Creating low-res preview image\n");
+			size = 0;
+			unsigned * palette =
+				preview->Create_Paletted_Preview(64, size);
+			FUN_004068E0("Preview size is %d bytes\n", size);
+
+			unsigned * buffer = new unsigned[size];
+			BufferPipe bpipe(buffer, size * sizeof(unsigned));
+			LZOPipe lzopipe(LZOPipe::COMPRESS);
+			lzopipe.Put_To(&bpipe);
+			int comp_size = lzopipe.Put(palette, size);
+			comp_size += lzopipe.End();
+			delete [] palette;
+
+			FUN_004068E0(
+				"Compressed preview image is %d bytes\n",
+				comp_size);
+			RawFileClass file("Preview.bin");
+			if (file.Is_Available()) {
+				file.Delete();
+			}
+			file.Open(RawFileClass::WRITE);
+			file.Write(&size, sizeof(size));
+			file.Write(buffer, comp_size);
+			file.Close();
+			delete [] buffer;
+
+			FUN_004068E0(
+				"Calling Send_Remote_File to send the preview\n");
+			Send_Remote_File(
+				"Preview.bin", GAME_IPX, true, false);
+			Ipx.Set_Timing(
+				TIMER_SECOND / 2, -1, 10 * TIMER_SECOND);
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x005E8590

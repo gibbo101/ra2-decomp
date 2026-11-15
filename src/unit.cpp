@@ -2189,6 +2189,7 @@ plain:
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 	static ConvertClass * ANIM_PAL;
+	static ConvertClass * PALETTE_PAL;
 };
 
 struct PsyDom {
@@ -2202,6 +2203,121 @@ struct NukeFlash {
 inline void Coord_Pixel(Coord coord, Point2D & pixel)
 {
 	TacticalMap->Coord_To_Pixel(coord, pixel);
+}
+
+// FUNCTION: GAMEMD 0x0073C5F0
+void UnitClass::Unit_Draw_Shape(Point2D xdrawpoint, Rect xcliprect, int brightness, int tint)
+{
+	VoxelDataStruct * voxl;
+	ShapeSet const * shapefile = (ShapeSet const *)Get_Image_Data();
+	bool barrel_above_turret = true;
+	int shapenum;
+
+	if (Class->Facings == FACING_COUNT && !IsDisguised()) {
+		shapenum = Facing_Add(PrimaryFacing.Current().Round_To_8(), FACING_45);
+	} else {
+		shapenum = 0;
+	}
+
+	if (FiringSyncDelay >= 0) {
+		shapenum = Class->StartFiringFrame + Class->FiringFrames * shapenum + FiringSyncDelay / 2;
+	} else if (!Locomotion->Is_Moving() && Class->IdleRate == 0) {
+		if (DeathCounter >= 0) {
+			int deathframe = DeathCounter / Class->DeathFrameRate;
+			int startframe = Class->StartDeathFrame;
+			int lastframe = Class->DeathFrames - 1;
+			if (deathframe >= lastframe) deathframe = lastframe;
+			shapenum = startframe + deathframe;
+		} else if (IsOccupyingCell) {
+			if (Class->StandingFrames == 0) shapenum = Class->StartWalkFrame + shapenum * Class->WalkFrames;
+			else shapenum = Class->StartStandFrame + shapenum * Class->StandingFrames;
+		}
+	} else {
+		shapenum = Class->StartWalkFrame + shapenum * Class->WalkFrames + TotalFramesWalked % Class->WalkFrames;
+	}
+
+	if (Class->IsTurretEquipped) {
+
+		Point2D drawpoint = xdrawpoint;
+		if (IsInTransport) {
+			drawpoint.Y -= 14;
+		}
+
+		Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, shapefile, shapenum + shapefile->Get_Count() / 2, drawpoint, xcliprect, ShapeFlags_Type(SHAPE_DARKEN | SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_ALPHA | SHAPE_ZGRAD), NULL, Get_Z_Adjust() - 2);
+
+		Surface * old_surface = LogicalSurface;
+		LogicalSurface = EightBitSurface;
+		Point2D pt = Point2D(128,128);
+
+		Matrix3D nmtx;
+		Rect srect = LogicalSurface->Get_Rect();
+		TerrainPalette = true;
+		UnitCompositeDirtyRect = RECT_NONE;
+
+		voxl = &Class->AuxVoxel2;
+		if (voxl->VoxLib != NULL && voxl->MotLib != NULL) {
+			int key = -1;
+			Matrix3D mtx = Locomotion->Draw_Matrix(&key);
+			mtx.Translate_X(Class->TurretOffset / 8);
+			mtx.Rotate_Z(SecondaryFacing.Current().As_Radian32() - PrimaryFacing.Current().As_Radian32());
+
+			nmtx = mtx;
+
+			Vector3 trans = mtx.Get_Translation();
+			nmtx.Translate(-trans);
+			if (TurretRecoil.State) mtx.Translate_X(-TurretRecoil.TravelSoFar);
+
+			Vector3 flh = Vector3(Get_Class_Weapon_Data()->FireFLH.X / -8, 0, Get_Class_Weapon_Data()->FireFLH.Z / -8);
+			nmtx.Translate(-flh);
+
+			FacingClass face = BarrelPitch;
+			BulletTypeClass const * bullet = Get_Class_Weapon_Data()->Weapon->Bullet;
+			if (bullet->IsInvisible) {
+				Dir256 dir256 = face.Current().As_Dir256();
+				if (dir256 > DIR_E && dir256 <= DIR_S) {
+					dir256 = (Dir256)((dir256 - DIR_E) / 3 + DIR_E);
+				} else {
+					dir256 = (Dir256)((DIR_E - dir256) / 3 + DIR_E);
+				}
+				face.Set(dir256);
+			}
+
+			if (BarrelRecoil.State) nmtx.Translate_X(-BarrelRecoil.TravelSoFar);
+			nmtx.Rotate_Y(-face.Current().As_Radian32());
+			nmtx.Translate(flh);
+			nmtx.Translate(trans);
+			barrel_above_turret = SecondaryFacing.Current().As_Dir4() > 0 && SecondaryFacing.Current().As_Dir4() < 3;
+		}
+
+		// Draw the main shape.
+		Draw_Object(shapefile, shapenum, pt, srect, DIR_N, 256, 0, ZGRAD_GROUND, 0, brightness, 0, NULL, 0, Point2D(0, 0), ShapeFlags_Type(SHAPE_ALPHA|SHAPE_ZGRAD));
+
+		voxl = &Class->AuxVoxel2;
+		if (voxl->VoxLib != NULL && voxl->MotLib != NULL && !barrel_above_turret) {
+			Draw_A_VXL(Class->AuxVoxel2, 0, -1, 0, srect, pt, Get_Isometric_View_Matrix() * nmtx, brightness, ShapeFlags_Type(SHAPE_ZGRAD|SHAPE_ALPHA), 0);
+		}
+
+		Dir32 d = SecondaryFacing.Current().As_Dir32();
+		Draw_Object(shapefile, ((d + 4) % 32U) + 8 * Class->WalkFrames, pt, srect, DIR_N, 256, 0, ZGRAD_GROUND, false, brightness, 0, NULL, 0, Point2D(0, 0), ShapeFlags_Type(SHAPE_NOTRANS|SHAPE_ALPHA|SHAPE_ZGRAD));
+
+		voxl = &Class->AuxVoxel2;
+		if (voxl->VoxLib != NULL && voxl->MotLib != NULL && barrel_above_turret) {
+			Draw_A_VXL(Class->AuxVoxel2, 0, -1, 0, srect, pt, Get_Isometric_View_Matrix() * nmtx, brightness, ShapeFlags_Type(SHAPE_NOTRANS|SHAPE_ZGRAD|SHAPE_ALPHA), 0);
+		}
+
+		int apparent_brightness = Apparent_Brightness(brightness);
+		Unit_Blit_Voxel(old_surface, xdrawpoint, xcliprect, apparent_brightness, tint);
+		LogicalSurface->Fill_Rect(UnitCompositeDirtyRect, 0);
+		LogicalSurface = old_surface;
+		TerrainPalette = false;
+
+	} else {
+		if (Class->TooBigToFitUnderBridge && Is_Z_Fudge_Bridge() && Get_Z_Fudge_Column() == 0) {
+			Draw_Object(shapefile, shapenum, xdrawpoint, xcliprect, DIR_N, 256, -16, ZGRAD_GROUND, false, brightness, 0, NULL, 0, Point2D(0, 0), SHAPE_NORMAL);
+			return;
+		}
+		Draw_Object(shapefile, shapenum, xdrawpoint, xcliprect, DIR_N, 256, 0, Get_Z_Gradient(), false, brightness, 0, NULL, 0, Point2D(0, 0), SHAPE_NORMAL);
+	}
 }
 
 // FUNCTION: GAMEMD 0x0073CEC0

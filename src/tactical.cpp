@@ -927,6 +927,60 @@ void Tactical::Draw_Placement(bool drawtrans)
 	}
 }
 
+// FUNCTION: GAMEMD 0x006D5C50
+void Tactical::Draw_Wall_Placement(bool drawtrans, Cell cell)
+{
+	OverlayTypeClass const * to_overlay = ((BuildingClass *)Map.PendingObjectPtr)->Class->ToOverlay;
+	if (to_overlay == 0) {
+		return;
+	}
+
+	for (int index = 0; index < FACING_COUNT; index += FACING_COUNT / 4) {
+		FacingType facing = (FacingType)index;
+		Cell scan = cell;
+		int count = 0;
+		BuildingTypeClass * type = ((BuildingClass *)Map.PendingObjectPtr)->Class;
+		int range = type->ThreatRange >> 8;
+		if (range <= 0) {
+			continue;
+		}
+		bool found = false;
+		for (; count < range; count++) {
+			scan = Adjacent_Cell(scan, facing);
+			CellClass * cellptr = &Map[scan];
+			if (cellptr->Overlay != OVERLAY_NONE && to_overlay->HeapID == cellptr->Overlay && PlayerPtr->HeapID == Map[scan].Owner) {
+				found = true;
+				break;
+			}
+			if (!Map[scan].Is_Clear_To_Build(type->Speed, type, PlayerPtr)) {
+				break;
+			}
+		}
+
+		if (found && count > 0) {
+			int flags = drawtrans ? (SHAPE_ZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75)
+				: (SHAPE_NONZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75);
+			Cell drawcell = cell;
+			drawcell = Adjacent_Cell(drawcell, facing);
+			for (int i = 0; i < count; i++, drawcell = Adjacent_Cell(drawcell, facing)) {
+				int height = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				int zoff = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				Point2D cursor_offset(ISO_TILE_PIXEL_W / 2, -1 - height);
+				zoff = -2 - zoff;
+				Coord coord = Coord_Whole(Coord(drawcell));
+				Point2D tile_origin;
+				Coord_To_Pixel(coord, tile_origin);
+				tile_origin.X -= ISO_TILE_PIXEL_W / 2;
+				Point2D point;
+				point.X = tile_origin.X + cursor_offset.X;
+				point.Y = tile_origin.Y + cursor_offset.Y;
+				Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)DisplayClass::PlacementShapes, 0, point,
+					TacticalRect, (ShapeFlags_Type)flags, 0, zoff);
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x006D5F30
 bool Tactical::Blit_Tiles(void)
 {

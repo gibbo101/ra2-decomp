@@ -161,8 +161,26 @@ class LibraryIdentityTests(unittest.TestCase):
             audit.block_data(obj, {'_caller': 0x1000}, item)
         definition.sections[0].data = bytes(range(12))
         obj.sections[0].relocs[0].type = REL_REL32
-        with self.assertRaisesRegex(ValueError, 'external data'):
+        with self.assertRaisesRegex(ValueError, 'absolute object-block data reference'):
             audit.block_data(obj, {'_caller': 0x1000}, item)
+
+    def test_local_format_data_checks_the_whole_section(self):
+        code = b"\x68" + bytes(4) + b"\xc3"
+        audit = audit_fixture(code, b"\x68" + struct.pack("<I", 0x3004) + b"\xc3", [Reloc(1, 1, REL_DIR32)])
+        obj = audit.object(ENTRY)[2]
+        data = b"abcdefgh"
+        obj.sections.append(Section(2, ".data", data, 0))
+        obj.symbols[1] = obj.by_index[1] = Symbol(1, "_format", 4, 2, 0, 3)
+        read = audit.original.read
+        audit.original.read = lambda at, size: data if at == 0x3000 else read(at, size)
+        audit.original.base = 0
+        audit.original.pe = SimpleNamespace(sections=[SimpleNamespace(
+            VirtualAddress=0x3000, Misc_VirtualSize=len(data), Characteristics=0x40)])
+        item = {"symbol": "_format", "function": "_caller"}
+        self.assertEqual(audit.block_data(obj, {"_caller": 0x1000}, item), 0x3004)
+        obj.sections[1].data = b"1234efgh"
+        with self.assertRaisesRegex(ValueError, "definition differs"):
+            audit.block_data(obj, {"_caller": 0x1000}, item)
 
     def test_object_block_requires_complete_ordered_member_and_target_position(self):
         audit, entry = block_fixture()
@@ -228,6 +246,25 @@ class LibraryIdentityTests(unittest.TestCase):
         audit.unique_anchor({**ENTRY, "object": "other.obj"})
         self.assertEqual(audit.object.call_count, 2)
 
+    def test_assembly_section_relocates_local_label_and_requires_named_caller(self):
+        raw = b"AB" + struct.pack("<I", 1)
+        image = b"AB" + struct.pack("<I", 0x1002)
+        audit = audit_fixture(raw, image, [Reloc(2, 1, REL_DIR32)])
+        obj = audit.object(ENTRY)[2]
+        label = Symbol(1, "label", 1, 1, 0, 3)
+        obj.symbols[1] = obj.by_index[1] = label
+        audit.unique_anchor = Mock(return_value={"references": [{"symbol": "_caller", "target": "0x00001000"}]})
+        entry = {**ENTRY, "kind": "assembly_section", "anchors": [ENTRY]}
+        audit.target(entry)
+        with self.assertRaisesRegex(ValueError, "Missing named caller"):
+            audit.target({**entry, "anchors": []})
+        audit.original.read = lambda address, size: raw
+        with self.assertRaisesRegex(ValueError, "section differs"):
+            audit.assembly_section(entry)
+        audit.unique_anchor.return_value = {"references": []}
+        with self.assertRaisesRegex(ValueError, "does not identify"):
+            audit.assembly_section(entry)
+
     def test_rtti_name_must_agree_with_destructor_symbol(self):
         rtti = Rtti.__new__(Rtti)
         rtti.types = {".?AVbad_cast@@", ".?AVbad_typeid@@"}
@@ -242,7 +279,8 @@ class LibraryIdentityTests(unittest.TestCase):
         entry = {**ENTRY, "size": 5, "symbol": "??1bad_cast@@UAE@XZ",
                  "kind": "rtti", "rtti_type": ".?AVbad_cast@@",
                  "vtable": "0x00003000", "deleting_destructor": "0x00002000"}
-        audit.target(entry)
+        self.assertEqual(audit.target(entry),
+                         (0x2000, (5, "??_Gbad_cast@@UAEPAXI@Z", "FIXTURE.LIB", "fixture.obj")))
         with self.assertRaisesRegex(ValueError, "does not name the RTTI class"):
             audit.target({**entry, "symbol": "??1bad_typeid@@UAE@XZ"})
 
