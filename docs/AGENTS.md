@@ -15,6 +15,10 @@ original compiler turns into that function's exact bytes. MATCH means
 - Keep helper scripts and variant files in `build/spike/<ADDR>/` too: the scratchpad is
   shared. No two files may differ only in case: under Wine they write one `.obj`, and
   the compile fails with only the file name in the log.
+- To splice a banked attempt into today's source, insert it after the highest annotated
+  address below it, not before the first higher marker: src files are not always sorted
+  (sidebar.cpp), and a function in the wrong spot fails on undeclared names, which reads
+  as API drift.
 - The session scratchpad is shared with the coordinator and other agents: delete only
   files you created, one by name.
 - A scratch root copies the files it changes; never symlink `orig/`, `toolchain/`, `src/`,
@@ -216,6 +220,10 @@ Each entry: what the diff showed, then the source change that fixed it.
 - Declare variables used across `case`s once at function scope, TibSun style.
 - A global the original loads before a branch: copy it to a local with two uses. One use,
   or the global read directly, leaves the load after the branch (0x005FF850).
+- A temporary of a global taking EDX where the original has ESI, pushing out a fastcall
+  parameter's live copy: write TibSun's named temporaries for the later calls before the
+  test (`int buildnum = Build_Number(); int crc = GetINIHash();`). Rewording the expression
+  that differed did not help (0x0079BA60).
 
 ### Stack frame
 - Locals are laid out by size, not declaration order. To fix two objects' order, make
@@ -450,6 +458,12 @@ Each entry: what the diff showed, then the source change that fixed it.
   An unused `#include` is one too: dropping overtype.h restored DrawMap 0x00640A40.
   A user-declared destructor on a widely included struct (AbilityFlagsType) flipped three.
   Header fixes that each pass alone can clash: gate a round's header changes together.
+- A function that flips with code added above it, not with declarations, may be defined in
+  the wrong place. The line in its `LoadString`/assert file argument dates it: wonline's COM
+  sink methods carry lines 4785-8912 while their address neighbours carry ~29000, because
+  the original defined them early and VC6 emitted them at the object's end. Defined
+  `inline` right after its class, OnLadderList 0x007A3100 matched with or without new code
+  above it; at its address position it flipped with every function landed before it.
   To hold one, drop each unused include in turn, then move declarations to the file's top.
 - A short global is read as a dword only at offset 0 of an extern aggregate, or where its
   definition lands 4-aligned in .bss, which VC6 orders by a hash of the name.
