@@ -12473,6 +12473,7 @@ address,name,result,size,source,symbol
 0x006907A0,ScoreFontClass::String_Width,MATCH,50,src/score.cpp,?String_Width@ScoreFontClass@@UAEHPBG@Z
 0x006907E0,ScoreFontClass::Char_Width,MATCH,107,src/score.cpp,?Char_Width@ScoreFontClass@@UAEHG@Z
 0x00690850,ScoreFontClass::Print_Char,MATCH,188,src/score.cpp,?Print_Char@ScoreFontClass@@UAEXPAVSurface@@GHHH_N@Z
+0x00690910,ScoreFontClass::Print_String,MATCH,248,src/score.cpp,?Print_String@ScoreFontClass@@UAEXPAVSurface@@PBGHHH@Z
 0x00690A10,ScoreFullFontClass::ScoreFullFontClass,MATCH,194,src/score.cpp,??0ScoreFullFontClass@@QAE@PAVConvertClass@@@Z
 0x00690AE0,ScoreBigFontClass::ScoreBigFontClass,MATCH,194,src/score.cpp,??0ScoreBigFontClass@@QAE@PAVConvertClass@@@Z
 0x00690BB0,ScoreTimeClass::ScoreTimeClass,MATCH,76,src/score.cpp,??0ScoreTimeClass@@QAE@HHPBXHHPAVConvertClass@@@Z
