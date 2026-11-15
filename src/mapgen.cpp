@@ -7648,3 +7648,145 @@ bool MapGeneratorClass::Seed_Lake(Cell const & origin)
 	Clear_Region_Cells(WorkingRegionID, 0, -1, ISOTILE_CLEAR);
 	return false;
 }
+
+static inline bool Road_Tile_Set(IsometricTileType tile)
+{
+	return tile != ISOTILE_NONE;
+}
+
+// FUNCTION: GAMEMD 0x005A89D0
+bool MapGeneratorClass::Generate_Rural_Roads(const Cell & cell)
+{
+	QueueClass<DirtRoadNode, 1024> queue;
+	int processed = 0;
+
+	unsigned int random_offset = Pick_Random_UInt(0, 10);
+	int attempt = 0;
+	IsometricTileType junction;
+	while (true) {
+		junction = (IsometricTileType)(
+			IsometricTileTypeClass::DirtRoadJunction
+			+ (int)(random_offset + attempt) % DIRT_ROAD_JUNCTION_COUNT);
+		if (Can_Place_Tile(junction, cell, false, false)) {
+			break;
+		}
+		if (++attempt >= 11) {
+			return(false);
+		}
+	}
+
+	DirtRoadNode root(junction, cell, ISOTILE_NONE, cell, -1);
+	queue.Add(root);
+	while (queue.Count != 0) {
+		if (queue.Count >= 1020) {
+			break;
+		}
+		bool success = true;
+		DirtRoadNode node = queue.First();
+		bool placed = Road_Tile_Set(node.Tile);
+
+		int child_count = 0;
+		DirtRoadNode * children = NULL;
+
+		if (placed) {
+			if (Road_Tile_Set(node.CapTile)) {
+				Mark_Tile(node.CapTile, node.CapOrigin, false);
+			}
+			Place_Tile(node.Tile, node.Origin);
+
+			DirtRoadTile & tile =
+				DirtRoadTiles[Dirt_Road_Tile_Index(node.Tile)];
+
+			if (tile.Count > 1) {
+				int link_count =
+					tile.Count - (node.BackLinkIndex != -1);
+				children = new DirtRoadNode[link_count];
+				if (children != NULL) {
+					DirtRoadNode * child = children;
+					for (int link_index = 0;
+						 link_index < tile.Count;
+						 link_index++) {
+						if (link_index != node.BackLinkIndex) {
+							DirtRoadLink link = tile.Links[link_index];
+							FacingType reverse =
+								Facing_Sub(link.Facing, FACING_180);
+
+							Cell connection = Adjacent_Cell(
+								node.Origin + link.Offset, link.Facing);
+							int cap_link = 0;
+							if (Find_Dirt_Road_Tile(
+									reverse, connection, 1,
+									child->CapTile, child->CapOrigin,
+									cap_link)) {
+								if (!Find_Dirt_Road_Tile(
+										reverse, connection, 4,
+										child->Tile, child->Origin,
+										child->BackLinkIndex)) {
+									child->BackLinkIndex = cap_link;
+								} else {
+									Mark_Tile(
+										child->Tile,
+										child->Origin, true);
+								}
+								Mark_Tile(
+									child->CapTile,
+									child->CapOrigin, true);
+								child_count++;
+								child++;
+							} else {
+								success = false;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (placed && success) {
+			if (children != NULL) {
+				DirtRoadNode * src = children;
+				for (int j = 0; j < child_count; j++) {
+					queue.Add(*src);
+					src++;
+				}
+			}
+		} else {
+			if (Road_Tile_Set(node.Tile)) {
+				Remove_Tile(node.Tile, node.Origin);
+				DirtRoadNode * undo = children;
+				while (child_count > 0) {
+					if (Road_Tile_Set(undo->Tile)) {
+						Mark_Tile(undo->Tile, undo->Origin, false);
+					}
+					if (Road_Tile_Set(undo->CapTile)) {
+						Mark_Tile(
+							undo->CapTile, undo->CapOrigin, false);
+					}
+					undo++;
+					--child_count;
+				}
+			}
+			if (Road_Tile_Set(node.CapTile)) {
+				Place_Tile(node.CapTile, node.CapOrigin);
+			}
+		}
+
+		if (children != NULL) {
+			delete [] children;
+		}
+
+		queue.Next();
+		processed++;
+	}
+
+	while (queue.Count != 0) {
+		DirtRoadNode node = queue.First();
+		Place_Tile(node.CapTile, node.CapOrigin);
+		queue.Next();
+	}
+	if (processed > 1) {
+		return true;
+	}
+	return false;
+}
