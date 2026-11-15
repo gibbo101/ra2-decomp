@@ -8495,6 +8495,7 @@ address,name,result,size,source,symbol
 0x005910F0,MapRegionClass::Build_South_Ramp,MATCH,1616,src/mapgen.cpp,?Build_South_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z
 0x005A5B50,MapGeneratorClass::Generate_Urban_Roads,MATCH,2482,src/mapgen.cpp,?Generate_Urban_Roads@MapGeneratorClass@@QAEXABV?$DynamicVectorClass@VCell@@@@@Z
 0x0059C920,MapGeneratorClass::Seed_Lake,MATCH,2839,src/mapgen.cpp,?Seed_Lake@MapGeneratorClass@@QAE_NABVCell@@@Z
+0x0059BBC0,MapGeneratorClass::FUN_0059BBC0,MATCH,2415,src/mapgen.cpp,?FUN_0059BBC0@MapGeneratorClass@@QAEHHABV?$TRect@H@@ABVPoint2D@@_NABVCell@@N2@Z
 0x005ADB00,_$E10,MATCH,23,src/mapsel.cpp,_$E10
 0x005ADB20,_$E16,MATCH,40,src/mapsel.cpp,_$E16
 0x005ADB50,_$E19,MATCH,19,src/mapsel.cpp,_$E19
