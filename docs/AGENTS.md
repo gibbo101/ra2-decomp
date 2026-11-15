@@ -258,6 +258,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   function, or mirrors a TibSun or YRpp helper. Single-use helpers, forwarders and dummy
   locals that exist to shift inlining or allocation are forcing: their match is banked, not
   landed.
+- Source forms, as ruled: a goto to an exit several paths share, a scoped block that sets
+  when a temporary's destructor runs, a helper that factors code repeated inside one
+  function, and a named bool where the plain `if` does not match.
 - Before casting operands to steer a hand-written expression, try the header's own inline
   for it: RadBeam's tint matched as `DSurface::Build_Hicolor_Pixel(Tint)` with no casts.
 - A nested call left out of line under an inlined wrapper (`Cell_Terrain()` around

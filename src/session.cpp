@@ -1259,7 +1259,7 @@ void SessionClass::Update_Progress(int percent)
 				prog_packet.Command = NET_PROGRESS_REPORT;
 				prog_packet.Progress.Percent = int(100.0 * Progress.Get_Current_Progress(0));
 
-				Copy_Player_Name(prog_packet.Name, Session.Players[0]->Name);
+				strcpy(prog_packet.Name, FUN_007350C0(Session.Players[0]->Name));
 
 				if (prog_packet.Progress.Percent < 99.95) {
 					Ipx.Send_Global_Message(&prog_packet, 0x33, 0, NULL);
