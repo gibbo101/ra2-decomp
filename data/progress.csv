@@ -17149,6 +17149,7 @@ address,name,result,size,source,symbol
 0x00764A00,_$E38,MATCH,26,src/wdtcampaign.cpp,_$E38
 0x00764A20,WDT_Get_Campaign_ID,MATCH,264,src/wdtcampaign.cpp,?WDT_Get_Campaign_ID@@YIHABVWstring@@@Z
 0x00764B30,FUN_00764B30,MATCH,95,src/wdtcampaign.cpp,?FUN_00764B30@@YI?AV?$rc_ptr@VCampaign@WorldDominationTour@@@@ABVWstring@@ABV?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@@Z
+0x00764B90,WorldDominationTour::Campaign::Campaign,MATCH,922,src/wdtcampaign.cpp,??0Campaign@WorldDominationTour@@QAE@ABVWstring@@ABV?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@@Z
 0x00764F30,WorldDominationTour::Campaign::~Campaign,MATCH,103,src/wdtcampaign.cpp,??1Campaign@WorldDominationTour@@UAE@XZ
 0x00764FA0,WorldDominationTour::Campaign::Is_Different_Cycle,MATCH,25,src/wdtcampaign.cpp,?Is_Different_Cycle@Campaign@WorldDominationTour@@QAE_NXZ
 0x00764FC0,WorldDominationTour::Campaign::Is_Different,MATCH,47,src/wdtcampaign.cpp,?Is_Different@Campaign@WorldDominationTour@@QAE_NH@Z
