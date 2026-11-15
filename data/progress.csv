@@ -12224,6 +12224,7 @@ address,name,result,size,source,symbol
 0x0067C670,FUN_0067C670,MATCH,26,src/saveload.cpp,?FUN_0067C670@@YIXXZ
 0x0067C690,Load_Vector,MATCH,78,src/saveload.cpp,?Load_Vector@@YIJPAUIStream@@@Z
 0x0067C6E0,Object_CRCs,MATCH,2050,src/saveload.cpp,?Object_CRCs@@YI?AVCRCEngine@@XZ
+0x0067CEF0,Save_Game,MATCH,1040,src/saveload.cpp,?Save_Game@@YI_NPBDPBG_N@Z
 0x0067D300,Put_All,MATCH,4411,src/saveload.cpp,?Put_All@@YI_NPAUIStream@@H@Z
 0x0067E440,Load_Game,MATCH,749,src/saveload.cpp,?Load_Game@@YI_NPBD@Z
 0x0067E730,Get_All,MATCH,4258,src/saveload.cpp,?Get_All@@YI_NPAUIStream@@_N@Z
@@ -12232,7 +12233,7 @@ address,name,result,size,source,symbol
 0x0067FD20,Get_Savefile_Info,MATCH,153,src/saveload.cpp,?Get_Savefile_Info@@YI_NPBDPAVSaveVersionInfo@@@Z
 0x0067FDC0,FUN_0067FDC0,MATCH,1,src/saveload.cpp,?FUN_0067FDC0@@YIXXZ
 0x0067FDD0,?_Release@?$_com_ptr_t@V?$_com_IIID@UIStorage@@$1?_GUID_0000000b_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ,MATCH,13,src/saveload.cpp,?_Release@?$_com_ptr_t@V?$_com_IIID@UIStorage@@$1?_GUID_0000000b_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
-0x0067FDE0,?_Release@?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ,MATCH,13,src/saveload.cpp,?_Release@?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
+0x0067FDE0,?_Release@?$_com_ptr_t@V?$_com_IIID@UILinkStream@@$1?_GUID_0d5cd78e_6470_11d2_9b74_00104b972fe8@@3U__s_GUID@@A@@@@AAEXXZ,MATCH,13,src/saveload.cpp,?_Release@?$_com_ptr_t@V?$_com_IIID@UILinkStream@@$1?_GUID_0d5cd78e_6470_11d2_9b74_00104b972fe8@@3U__s_GUID@@A@@@@AAEXXZ
 0x0067FDF0,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVFactoryClass@@@@@Z,MATCH,127,src/saveload.cpp,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVFactoryClass@@@@@Z
 0x0067FE70,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVVoxelAnimTypeClass@@@@@Z,MATCH,127,src/saveload.cpp,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVVoxelAnimTypeClass@@@@@Z
 0x0067FEF0,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVVoxelAnimClass@@@@@Z,MATCH,127,src/saveload.cpp,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVVoxelAnimClass@@@@@Z
@@ -12268,10 +12269,10 @@ address,name,result,size,source,symbol
 0x00680DF0,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVSlaveManagerClass@@@@@Z,MATCH,127,src/saveload.cpp,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVSlaveManagerClass@@@@@Z
 0x00680E70,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVBombClass@@@@@Z,MATCH,127,src/saveload.cpp,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVBombClass@@@@@Z
 0x00680EF0,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVRadSiteClass@@@@@Z,MATCH,127,src/saveload.cpp,?Save_Vector@@YIJPAUIStream@@ABV?$DynamicVectorClass@PAVRadSiteClass@@@@@Z
-0x00680F70,?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIStorage@@$1?_GUID_0000000b_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABQAUIUnknown@@@Z,MATCH,117,src/saveload.cpp,?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIStorage@@$1?_GUID_0000000b_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABQAUIUnknown@@@Z
-0x00680FF0,SavegameInformation::SavegameInformation,MATCH,97,src/savever.cpp,??0SavegameInformation@@QAE@XZ
-0x00681060,SavegameInformation::Set_Version,MATCH,10,src/savever.cpp,?Set_Version@SavegameInformation@@QAEXH@Z
-0x00681070,SavegameInformation::Get_Version,MATCH,4,src/savever.cpp,?Get_Version@SavegameInformation@@QAEHXZ
+0x00680F70,?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILinkStream@@$1?_GUID_0d5cd78e_6470_11d2_9b74_00104b972fe8@@3U__s_GUID@@A@@@@@Z,MATCH,117,src/saveload.cpp,?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILinkStream@@$1?_GUID_0d5cd78e_6470_11d2_9b74_00104b972fe8@@3U__s_GUID@@A@@@@@Z
+0x00680FF0,SaveVersionInfo::SaveVersionInfo,MATCH,97,src/savever.cpp,??0SaveVersionInfo@@QAE@XZ
+0x00681060,SaveVersionInfo::Set_Version,MATCH,10,src/savever.cpp,?Set_Version@SaveVersionInfo@@QAEXH@Z
+0x00681070,SaveVersionInfo::Get_Version,MATCH,4,src/savever.cpp,?Get_Version@SaveVersionInfo@@QAEHXZ
 0x00681080,SaveVersionInfo::Set_Internal_Version,MATCH,9,src/savever.cpp,?Set_Internal_Version@SaveVersionInfo@@QAEXH@Z
 0x00681090,SaveVersionInfo::Get_Internal_Version,MATCH,3,src/savever.cpp,?Get_Internal_Version@SaveVersionInfo@@QAEHXZ
 0x006810A0,SaveVersionInfo::Set_Scenario_Description,MATCH,31,src/savever.cpp,?Set_Scenario_Description@SaveVersionInfo@@QAEXPBG@Z
