@@ -1846,6 +1846,7 @@ address,name,result,size,source,symbol
 0x0045F1D0,BuildingTypeClass::FUN_0045F1D0,MATCH,95,src/builtype.cpp,?FUN_0045F1D0@BuildingTypeClass@@QAE_NPAPBVShapeSet@@PAH@Z
 0x0045F230,BuildingTypeClass::Fetch_Building_Normal_Image,MATCH,2138,src/builtype.cpp,?Fetch_Building_Normal_Image@BuildingTypeClass@@QAEXW4TheaterType@@@Z
 0x0045FA90,BuildingTypeClass::Fetch_Building_Voxel_Image,MATCH,957,src/builtype.cpp,?Fetch_Building_Voxel_Image@BuildingTypeClass@@QAEXXZ
+0x0045FE50,BuildingTypeClass::Read_INI,MATCH,19475,src/builtype.cpp,?Read_INI@BuildingTypeClass@@UAE_NAAVCCINIClass@@@Z
 0x00464A70,BuildingTypeClass::Coord_Fixup,MATCH,74,src/builtype.cpp,?Coord_Fixup@BuildingTypeClass@@UBE?BVCoord@@ABV2@@Z
 0x00464AC0,BuildingTypeClass::Legal_Placement,MATCH,33,src/builtype.cpp,?Legal_Placement@BuildingTypeClass@@UBE_NABVCell@@PAVHouseClass@@@Z
 0x00464AF0,BuildingTypeClass::Lepton_Dimensions,MATCH,63,src/builtype.cpp,?Lepton_Dimensions@BuildingTypeClass@@UBE?AV?$TPoint3D@H@@XZ
