@@ -744,7 +744,7 @@ bool MultiplayerBattle::vt_entry_08(void)
 }
 
 // FUNCTION: GAMEMD 0x005C0E50
-bool MultiplayerBattle::vt_entry_0C(unsigned a)
+bool MultiplayerBattle::vt_entry_0C(WideWstring * error)
 {
 	return(true);
 }
