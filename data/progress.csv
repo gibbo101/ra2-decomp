@@ -8028,6 +8028,7 @@ address,name,result,size,source,symbol
 0x0057CBE0,MapClass::FUN_0057CBE0,MATCH,266,src/map.cpp,?FUN_0057CBE0@MapClass@@SIHABVCell@@@Z
 0x0057CCF0,MapClass::FUN_0057CCF0,MATCH,618,src/map.cpp,?FUN_0057CCF0@MapClass@@QAE_NABVCell@@@Z
 0x0057CF60,MapClass::FUN_0057CF60,MATCH,1477,src/map.cpp,?FUN_0057CF60@MapClass@@QAE_NABVCell@@@Z
+0x0057D530,MapClass::FUN_0057D530,MATCH,1463,src/map.cpp,?FUN_0057D530@MapClass@@QAE_NABVCell@@@Z
 0x0057DAF0,MapClass::FUN_0057DAF0,MATCH,295,src/map.cpp,?FUN_0057DAF0@MapClass@@QAEXVCell@@@Z
 0x0057DC20,MapClass::FUN_0057DC20,MATCH,295,src/map.cpp,?FUN_0057DC20@MapClass@@QAEXVCell@@@Z
 0x0057DD50,MapClass::Damage_Low_Bridge_Piece_EW,MATCH,1357,src/map.cpp,?Damage_Low_Bridge_Piece_EW@MapClass@@AAEXABVCell@@@Z
