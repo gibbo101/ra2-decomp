@@ -6153,6 +6153,7 @@ address,name,result,size,source,symbol
 0x00516370,HoverLocomotionClass::Do_Turn,MATCH,34,src/hover.cpp,?Do_Turn@HoverLocomotionClass@@UAGXUDirStruct@@@Z
 0x005163A0,HoverLocomotionClass::Is_Moving1,MATCH,15,src/hover.cpp,?Is_Moving1@HoverLocomotionClass@@AAE_NXZ
 0x005163B0,HoverLocomotionClass::Reduce_Path_Length,MATCH,283,src/hover.cpp,?Reduce_Path_Length@HoverLocomotionClass@@AAE_NXZ
+0x005164D0,HoverLocomotionClass::Start_Of_Move,MATCH,1809,src/hover.cpp,?Start_Of_Move@HoverLocomotionClass@@AAEXH@Z
 0x00516BF0,HoverLocomotionClass::Power_Off,MATCH,120,src/hover.cpp,?Power_Off@HoverLocomotionClass@@UAGEXZ
 0x00516C70,HoverLocomotionClass::Is_Powered,MATCH,42,src/hover.cpp,?Is_Powered@HoverLocomotionClass@@UAGEXZ
 0x00516CA0,HoverLocomotionClass::Is_Ion_Sensitive,MATCH,360,src/hover.cpp,?Is_Ion_Sensitive@HoverLocomotionClass@@UAGEXZ

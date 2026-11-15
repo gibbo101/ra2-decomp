@@ -400,6 +400,151 @@ bool HoverLocomotionClass::Reduce_Path_Length(void)
 	return(false);
 }
 
+// FUNCTION: GAMEMD 0x005164D0
+void HoverLocomotionClass::Start_Of_Move(int num)
+{
+	FacingType facing;
+
+	Reduce_Path_Length();
+
+	facing = LinkedTo->Path[0];
+
+	if (DestinationCoord != COORD_NONE) {
+		if (LinkedTo->PositionCell == DestinationCoord.As_Cell() &&
+			abs(LinkedTo->Destination_Coord().Z - DestinationCoord.Z) <
+				2 * LEVEL_LEPTON_H) {
+			Stop_Moving();
+			LinkedTo->Assign_Destination(NULL);
+			return;
+		}
+	}
+
+	if (facing == FACING_NONE) {
+		if (DestinationCoord == COORD_NONE) {
+			return;
+		}
+
+		if (LinkedTo->PositionCell == DestinationCoord.As_Cell() &&
+			abs(LinkedTo->Destination_Coord().Z - DestinationCoord.Z) <=
+				2 * LEVEL_LEPTON_H) {
+			return;
+		}
+
+		if (LinkedTo->PathDelay != 0) {
+			return;
+		}
+
+		if (!LinkedTo->Basic_Path(DestinationCoord.As_Cell(), 0, num)) {
+			LinkedTo->PathDelay = Rule->PathDelay * TICKS_PER_MINUTE;
+
+			if (!LinkedTo->Is_In_Same_Zone(DestinationCoord)) {
+				LinkedTo->Assign_Destination(NULL);
+				return;
+			}
+
+			if (!LinkedTo->Is_On_Priority_Mission() &&
+				LinkedTo->Center_Coord().Distance_To(DestinationCoord) <
+					Rule->CloseEnoughDistance &&
+				(LinkedTo->Mission == MISSION_MOVE ||
+				 LinkedTo->Mission == MISSION_GUARD_AREA)) {
+				LinkedTo->Assign_Destination(NULL);
+				if (!LinkedTo->IsActive) return;
+			} else {
+				if (LinkedTo->TryTryAgain > 0) {
+					LinkedTo->TryTryAgain--;
+				} else {
+					LinkedTo->Assign_Destination(NULL);
+					if (!LinkedTo->IsActive) return;
+					if (LinkedTo->IsNewNavCom) {
+						VocClass::PlayGlobal(
+							Rule->ScoldSound, 1.0f, 0x2000);
+					}
+					LinkedTo->IsNewNavCom = false;
+				}
+			}
+
+			if (!Is_Moving() &&
+				LinkedTo->TarCom != NULL &&
+				!LinkedTo->IsCloseEnoughToAttack(LinkedTo->TarCom)) {
+				LinkedTo->IsScanLimited = true;
+				if (LinkedTo->Team != NULL) {
+					LinkedTo->Team->Scan_Limit();
+				}
+				LinkedTo->Assign_Target(NULL);
+			}
+
+			if (HeadToCoord != COORD_NONE) {
+				LinkedTo->Clear_Occupy_Bit(HeadToCoord);
+				HeadToCoord = COORD_NONE;
+			}
+			Stop_Moving();
+			return;
+		} else {
+			LinkedTo->PathDelay = Rule->PathDelay * TICKS_PER_MINUTE;
+
+			Cell cell =
+				AdjacentCell[(int)LinkedTo->Path[0] & 7] +
+				LinkedTo->Center_Coord().As_Cell();
+
+			if (Map.In_Local_Radar(cell, true)) {
+				MoveType ok = LinkedTo->Can_Enter_Cell(
+					&Map[cell],
+					LinkedTo->Path[0],
+					LinkedTo->Get_Cell_Height());
+
+				if (ok == MOVE_TEMP) {
+					CellClass * cellptr = &Map[cell];
+					int distance;
+
+					{
+						Coord const current = LinkedTo->PositionCoord;
+int height = current.Z;
+Coord position(cell);
+						ObjectClass * blockage = cellptr->Cell_Techno(
+							Point2D(0, 0),
+							height > Map.Get_Height_GL(position) +
+								3 * LEVEL_LEPTON_H);
+
+						if (!blockage ||
+							!LinkedTo->House->Is_Ally(blockage)) {
+							goto path_ready;
+						}
+
+						distance = LinkedTo->Distance(DestinationCoord);
+					}
+
+					{
+						if (distance < Rule->CloseEnoughDistance &&
+							!LinkedTo->HasAnyLink() &&
+							abs(DestinationCoord.Z -
+								LinkedTo->PositionCoord.Z) <
+								2 * LEVEL_LEPTON_H &&
+							Map[LinkedTo->Get_Coord()].Land_Type() !=
+								LAND_TUNNEL) {
+							Stop_Moving();
+							LinkedTo->Assign_Destination(NULL);
+							return;
+						} else {
+							bool bridge =
+								cellptr->IsUnderBridge &&
+								abs(LinkedTo->PositionCoord.Z /
+										LEVEL_LEPTON_H -
+									cellptr->Height) > 2;
+
+							cellptr->Incoming(
+								COORD_NONE, true, true, bridge);
+						}
+					}
+				}
+			}
+
+		path_ready:
+			LinkedTo->TryTryAgain = FootClass::PATH_RETRY;
+			facing = LinkedTo->Path[0];
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00516BF0
 boolean STDMETHODCALLTYPE HoverLocomotionClass::Power_Off(void)
 {
