@@ -3487,7 +3487,7 @@ address,name,result,size,source,symbol
 0x004A3B40,Fetch_Resource,MATCH,52,src/data.cpp,?Fetch_Resource@@YIPBXPBD0@Z
 0x004A3B80,Load_Picture,MATCH,39,src/data.cpp,?Load_Picture@@YIHAAVFileClass@@AAVBuffer@@1PAEW4PicturePlaneType@@@Z
 0x004A3BB0,Hires_Load,MATCH,55,src/data.cpp,?Hires_Load@@YIPAXAAVFileClass@@@Z
-0x004A3BF0,FUN_004A3BF0,MATCH,3,src/data.cpp,?FUN_004A3BF0@@YI_NXZ
+0x004A3BF0,Init_Language_Resources,MATCH,3,src/data.cpp,?Init_Language_Resources@@YI_N_N@Z
 0x004A3C00,Flag3D::FUN_004A3C00,MATCH,4,src/data.cpp,?FUN_004A3C00@Flag3D@@QAEXXZ
 0x004A3C10,_$E2,MATCH,23,src/ddraw.cpp,_$E2
 0x004A3C30,Set_Palette,MATCH,401,src/ddraw.cpp,?Set_Palette@@YIXABVPaletteClass@@HP6IXXZ@Z

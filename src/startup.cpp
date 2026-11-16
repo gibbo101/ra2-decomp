@@ -365,7 +365,7 @@ extern HINSTANCE DAT_0089F974;
 extern HANDLE DAT_00B0BCE8;
 extern DWORD DAT_00B0BCEC;
 namespace Unsorted { extern HANDLE AppMutex; }
-namespace StringTable { void Unload(void); }
+#include "stringtable.h"
 namespace CopyProtection { void ShutDown(void); }
 extern DynamicVectorClass<VirtualObject *> DAT_0087F698;
 extern DynamicVectorClass<VirtualObject *> DAT_00884D90;

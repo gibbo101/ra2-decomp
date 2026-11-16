@@ -82,3 +82,7 @@ effect, so it can be fixed in a separate build later.
   whose OEM byte gives a negative signed offset can therefore select a negative shape frame.
 
 - **Wait_For_Players (0x00648710).** Command-stall statistics use the frame-stall index instead of the command-stall index.
+
+- **WinMain (0x006BB9A0).** The IPX destination-network parser writes the node
+  address without checking its length. An invalid configuration can corrupt
+  stack memory during startup.
