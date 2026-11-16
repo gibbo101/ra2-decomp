@@ -80,3 +80,7 @@ effect, so it can be fixed in a separate build later.
 - **ScoreFontClass glyph selection (0x006907E0, 0x00690850, 0x00690910).** The lower
   frame bound uses an unsigned comparison after subtracting the first glyph. Characters
   whose OEM byte gives a negative signed offset can therefore select a negative shape frame.
+
+- **WinMain (0x006BB9A0).** The IPX destination-network parser writes the node
+  address without checking its length. An invalid configuration can corrupt
+  stack memory during startup.

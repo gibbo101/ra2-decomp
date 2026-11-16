@@ -898,7 +898,6 @@ void ListBox_Trim(HWND listbox)
 }
 
 void __fastcall Cast_Kick_Vote(int kicker, int kickee);
-char * __fastcall FUN_007350C0(wchar_t const * text);
 
 // FUNCTION: GAMEMD 0x0064AAE0
 void __fastcall Propose_Kick_Player(HWND window, int id)
@@ -1630,7 +1629,6 @@ void Add_CRC(unsigned int *crc, unsigned int val)
 namespace FPSCounter { extern unsigned TotalFramesElapsed; extern unsigned TotalTimeElapsed; }
 extern WinsockInterfaceClass * PacketTransport;
 const char * FUN_004E62B0(void);
-char * __fastcall FUN_007350C0(wchar_t const * text);
 DebugPage * __fastcall FUN_005BC450(int index);
 void __cdecl FUN_005BD1F0(DebugPage * page, char const * format, ...);
 

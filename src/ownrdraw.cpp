@@ -252,7 +252,6 @@ int WINAPI ODUpdateWindowRect(HWND window, RECT *rect);
 
 BOOL CALLBACK ODAddWindowToList(HWND window, ArrayList<HWND> * list);
 
-namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 // SYNTHETIC: GAMEMD 0x00600340 SYMBOL
 // _$E57
 // SYNTHETIC: GAMEMD 0x00600370 SYMBOL

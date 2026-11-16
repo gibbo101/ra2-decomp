@@ -35,6 +35,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <time.h>
+#include "srfcache.h"
 #include "stringtable.h"
 
 HWND WS_Find_Dialog(int id);
@@ -1887,7 +1888,6 @@ struct UserSort {
 	int Flag;
 };
 
-#include "srfcache.h"
 namespace Game { extern int ObserverMode; }
 extern int DAT_007EEF28;
 
@@ -4141,7 +4141,6 @@ namespace Unsorted { extern int MuteSWLaunches; }
 extern int DAT_007EEF28;
 extern char DAT_00B77E30[];
 bool __fastcall FUN_0069BBE0(SessionClass * session);
-wchar_t * __fastcall FUN_00735120(char const * text);
 extern int DAT_007EEF2C;
 void __cdecl FUN_005E2790(int color, wchar_t const * text, ...);
 extern int DAT_00B76C20;
@@ -11219,7 +11218,6 @@ long __stdcall FUN_007A55F0(void * sink, long result, char const * motd)
 	return 0;
 }
 
-wchar_t * __fastcall FUN_00735120(char const * narrow);
 extern char DAT_0084ACA0[];
 
 static inline void Close_Wait_Window(unsigned int event)

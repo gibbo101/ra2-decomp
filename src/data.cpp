@@ -438,7 +438,7 @@ struct Flag3D {
 };
 
 // FUNCTION: GAMEMD 0x004A3BF0
-bool FUN_004A3BF0(void)
+bool Init_Language_Resources(bool show_error)
 {
 	return(true);
 }

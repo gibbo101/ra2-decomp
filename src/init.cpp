@@ -136,7 +136,6 @@
 #include "wwfont.h"
 #include "bench.hh"
 #include "scrnsel.hh"
-#include <conio.h>
 #include <ctime>
 #include <dos.h>
 
