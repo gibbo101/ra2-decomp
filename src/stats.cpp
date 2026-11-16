@@ -125,7 +125,414 @@ void Queue_Send(void)
 	Queue.replace(entry, 0);
 }
 
+#include "aircraft.h"
+#include "airctype.h"
+#include "building.h"
+#include "builtype.h"
+#include "dsurface.h"
+#include "getcpu.h"
+#include "globals.h"
+#include "goptions.h"
+#include "house.h"
+#include "houstype.h"
+#include "infantry.h"
+#include "infatype.h"
+#include "mpu.h"
+#include "multiplayer.h"
+#include "packet.h"
+#include "rawfile.h"
+#include "session.h"
+#include "unit.h"
+#include "unittype.h"
+#include "utracker.h"
+#include "version.h"
+#include "win.h"
+#include <winsock.h>
+
+extern HouseClass *DAT_00AC1198;
+extern int DAT_00B779D4;
+extern int DAT_00B77D6C;
+extern int DAT_00B73814;
+extern int DAT_00B779C4;
+extern int DAT_00B77780;
+extern int DAT_00B77CE0;
+extern int DAT_00B77788;
+extern char DAT_00B779E0[];
+extern char DAT_00B77830[];
+extern unsigned char DAT_00A8F900;
+extern INetUtil *g_pNetUtil;
+extern char DAT_00B77CE8[];
+extern int DAT_00B75F5C;
+extern char DAT_00B77930[];
+extern int DAT_00B76184;
+extern Wstring DAT_00B73E40;
+namespace DirectDrawWrap { extern LPDIRECTDRAW lpDD; }
+void __cdecl FUN_004068E0(char const * format, ...);
+rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name);
+
 int Get_Unit_Count(int *buf, int count);
+
+#define ADD_TOTALS(field, member) stats.Add_Field(field, (void *)player->member.Get_All_Totals(), Get_Unit_Count(player->member.Get_All_Totals(), player->member.Get_Unit_Count()) * sizeof(int))
+
+// FUNCTION: GAMEMD 0x006C6F50
+void __fastcall Send_Statistics_Packet(bool wdt)
+{
+	PacketClass stats;
+	unsigned int playercount = 0;
+	unsigned int statsid = 0;
+	if (DAT_00AC1198 && PlayerPtr == DAT_00AC1198) {
+		return;
+	}
+	HouseClass *player;
+	static int packet_size;
+	unsigned int i;
+	char *packet;
+	unsigned int temp;
+	static char field_player_handle[5] = { "NAM?" };
+	static char field_player_team[5] = { "SID?" };
+	static char field_player_t_team[5] = { "TID?" };
+	static char field_player_color[5] = { "COL?" };
+	static char field_player_country[5] = { "CTY?" };
+	static char field_player_credits[5] = { "CRD?" };
+	static char field_player_units_left[5] = { "UNL?" };
+	static char field_player_infantry_left[5] = { "INL?" };
+	static char field_player_planes_left[5] = { "PLL?" };
+	static char field_player_buildings_left[5] = { "BLL?" };
+	static char field_player_units_bought[5] = { "UNB?" };
+	static char field_player_infantry_bought[5] = { "INB?" };
+	static char field_player_planes_bought[5] = { "PLB?" };
+	static char field_player_buildings_bought[5] = { "BLB?" };
+	static char field_player_units_killed[5] = { "UNK?" };
+	static char field_player_infantry_killed[5] = { "INK?" };
+	static char field_player_planes_killed[5] = { "PLK?" };
+	static char field_player_buildings_killed[5] = { "BLK?" };
+	static char field_player_buildings_captured[5] = { "BLC?" };
+	static char field_player_crates_found[5] = { "CRA?" };
+	static char field_player_harvested[5] = { "HRV?" };
+	static char field_player_completion[5] = { "CMP?" };
+	static char field_player_ip[5] = { "IPA?" };
+	static char field_player_clan[5] = { "CID?" };
+	static char field_player_lost_connection[5] = { "LCN?" };
+	static char field_player_cpu_type[5] = { "CPT?" };
+	static char field_player_cpu_speed[5] = { "CPS?" };
+	static char field_player_memory[5] = { "MEM?" };
+	static char field_player_video_memory[5] = { "VID?" };
+
+	FUN_004068E0("Sending game results.  SawCompletion=%d\n", Session.SawGameCompletion);
+
+	stats.Add_Field("IDNO", (unsigned int)DAT_00B779D4);
+	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+		stats.Add_Field("WDTT", Session.unknown_08);
+		if (wdt) {
+			stats.Add_Field("GSKU", (unsigned int)DAT_00B77D6C);
+		} else {
+			stats.Add_Field("GSKU", (unsigned int)DAT_00B73814);
+		}
+	} else {
+		stats.Add_Field("GSKU", (unsigned int)DAT_00B77D6C);
+	}
+	stats.Add_Field("TRNY", (unsigned int)DAT_00B779C4);
+	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3 && wdt) {
+		DAT_00B779C4 = 0;
+	}
+	stats.Add_Field("OOSY", (unsigned char)(Session.OutOfSync == true));
+	stats.Add_Field("FINI", (unsigned char)(Session.SawGameCompletion == true));
+	stats.Add_Field("DURA", (unsigned int)GameEndTime / 60);
+	stats.Add_Field("CRED", (unsigned int)Session.Options.Credits);
+	char option = Session.Options.ShortGame != false;
+	stats.Add_Field(new FieldClass("SHRT", (unsigned int)option & 0xff));
+	option = Session.Options.SWAllowed != false;
+	stats.Add_Field(new FieldClass("SUPR", (unsigned int)option & 0xff));
+	stats.Add_Field("MODE", (unsigned int)Session.Options.MPModeIndex);
+	stats.Add_Field("BAMR", (unsigned int)(((Session.Options.BuildOffAlly == true) << 1) + (Session.Options.MCVRedeploy == true)));
+	stats.Add_Field("BASE", (unsigned char)(Session.Options.Bases != false));
+	option = Session.Options.Goodies != false;
+	stats.Add_Field(new FieldClass("CRAT", (unsigned int)option & 0xff));
+	stats.Add_Field("AIPL", (unsigned int)Session.Options.AIPlayers);
+	stats.Add_Field("UNIT", (unsigned int)Session.Options.UnitCount);
+	stats.Add_Field("SCEN", Session.ScenarioFileName);
+	stats.Add_Field("PNGS", (unsigned int)DAT_00B77780);
+	stats.Add_Field("PNGR", (unsigned int)DAT_00B77CE0);
+
+	HouseClass *houses[MAX_PLAYERS];
+	for (int h = 0; h < Houses.Count(); h++) {
+		HouseClass *ptr = Houses[h];
+		if (ptr->IsHuman && ptr != DAT_00AC1198) {
+			houses[playercount] = ptr;
+			playercount++;
+		}
+	}
+	for (i = 0; i < playercount; i++) {
+		for (unsigned int j = 0; j < (playercount - i) - 1; j++) {
+			HouseClass *ptr1 = houses[j + 1];
+			HouseClass *ptr2 = houses[j];
+			if (stricmp(ptr2->IniName, ptr1->IniName) > 0) {
+				houses[j] = ptr1;
+				houses[j + 1] = ptr2;
+			}
+		}
+	}
+	for (i = 1; i < playercount; i++) {
+		HouseClass *ptr = houses[i];
+		if (stricmp(ptr->IniName, DAT_00B779E0) == 0) {
+			HouseClass *tmp = houses[0];
+			houses[0] = ptr;
+			houses[i] = tmp;
+		}
+	}
+	for (i = 0; i < playercount; i++) {
+		HouseClass *ptr = houses[i];
+		if (stricmp(ptr->IniName, DAT_00B77830) == 0) {
+			statsid = i;
+			break;
+		}
+	}
+	stats.Add_Field("PLRS", playercount);
+	stats.Add_Field("SPID", statsid);
+
+	if (DAT_00B779C4 == 1) {
+		rc_ptr<PlayerProfile> profile = FUN_00778A20(&DAT_00B73E40);
+		if (!wdt) {
+			if (Session.SawGameCompletion && !PlayerPtr->LostConnection) {
+				if (!PlayerPtr->IsDefeated && !PlayerPtr->IsGiverUpper && !PlayerPtr->IsResigner) {
+					profile->AddField2C(1);
+				} else {
+					profile->AddField30(1);
+				}
+			} else {
+				profile->AddField34(1);
+			}
+			profile->Save(&DAT_00B73E40);
+		}
+	}
+
+	int completion[MAX_PLAYERS];
+	for (i = 0; i < playercount; i++) {
+		if (!Session.SawGameCompletion) {
+			completion[i] = 1 << 3;
+		} else {
+			HouseClass *hptr = houses[i];
+			if (hptr->LostConnection) {
+				completion[i] = 1 << 1;
+			} else if (hptr->IsGiverUpper || hptr->IsResigner) {
+				completion[i] = (1 << 9) | (1 << 4);
+			} else if (hptr->IsDefeated) {
+				completion[i] = 1 << 9;
+			} else {
+				completion[i] = 1 << 8;
+			}
+		}
+	}
+	stats.Add_Field("TIME", (int)DAT_00B77788);
+	int minutes = GameEndTime / 60;
+	if (minutes != 0) {
+		stats.Add_Field("AFPS", (unsigned int)Frame / minutes);
+	} else {
+		stats.Add_Field("AFPS", 0);
+	}
+	stats.Add_Field("SPED", (unsigned int)Options.GameSpeed);
+
+	char version[128];
+	wsprintfA(version, "V%s", VerNum.Version_Name());
+	stats.Add_Field("VERS", version);
+
+	char path_to_exe[280];
+	FILETIME write_time;
+	GetModuleFileNameA(ProgramInstance, path_to_exe, sizeof(path_to_exe));
+	RawFileClass file;
+	file.Set_Name(path_to_exe);
+	file.Open();
+	HANDLE handle = file.Get_File_Handle();
+	if (handle != INVALID_HANDLE_VALUE) {
+		if (GetFileTime(handle, 0, 0, &write_time)) {
+			write_time.dwLowDateTime = htonl(write_time.dwLowDateTime);
+			write_time.dwHighDateTime = htonl(write_time.dwHighDateTime);
+			stats.Add_Field("DATE", (void *)&write_time, sizeof(write_time));
+		}
+	}
+
+	if (Session.unknown_0C == 1) stats.Add_Field("BROK", (unsigned int)2);
+	else if (Session.unknown_0C == 2) stats.Add_Field("BROK", (unsigned int)4);
+	else if (Session.unknown_0C == 4) stats.Add_Field("BROK", (unsigned int)1);
+	if (Session.MPGameMode) stats.Add_Field("ACCO", (unsigned int)Session.MPGameMode->vt_entry_B8());
+
+	for (i = 0; i < playercount; i++) {
+		player = houses[i];
+		char digit = '0' + (char)i;
+
+		field_player_handle[3] = digit;
+		stats.Add_Field(field_player_handle, (char const *)player->IniName);
+
+		temp = player->IPAddress;
+		field_player_ip[3] = digit;
+		stats.Add_Field(field_player_ip, temp);
+
+		temp = player->SquadID;
+		field_player_clan[3] = digit;
+		stats.Add_Field(field_player_clan, temp);
+
+		field_player_team[3] = digit;
+		stats.Add_Field(field_player_team, (unsigned int)player->ActLike);
+
+		field_player_t_team[3] = digit;
+		temp = i;
+		if (DAT_00B779C4 == 2) {
+			temp = player->SquadID;
+		}
+		stats.Add_Field(field_player_t_team, temp);
+
+		field_player_completion[3] = digit;
+		stats.Add_Field(field_player_completion, (unsigned int)completion[i]);
+
+		field_player_lost_connection[3] = digit;
+		bool lcn = false;
+		if (player->LostConnection && !player->IsResigner) {
+			lcn = true;
+		}
+		stats.Add_Field(field_player_lost_connection, (unsigned char)lcn);
+
+		field_player_color[3] = digit;
+		stats.Add_Field(field_player_color, (unsigned int)player->Scheme);
+
+		field_player_country[3] = digit;
+		stats.Add_Field(field_player_country, (unsigned int)player->Class->House);
+
+		field_player_credits[3] = digit;
+		stats.Add_Field(field_player_credits, (int)player->Available_Money());
+
+		field_player_infantry_bought[3] = digit;
+		field_player_units_bought[3] = digit;
+		field_player_planes_bought[3] = digit;
+		field_player_buildings_bought[3] = digit;
+		player->InfantryTotals.To_Network_Format();
+		player->UnitTotals.To_Network_Format();
+		player->AircraftTotals.To_Network_Format();
+		player->BuildingTotals.To_Network_Format();
+		ADD_TOTALS(field_player_infantry_bought, InfantryTotals);
+		ADD_TOTALS(field_player_units_bought, UnitTotals);
+		ADD_TOTALS(field_player_planes_bought, AircraftTotals);
+		ADD_TOTALS(field_player_buildings_bought, BuildingTotals);
+		player->InfantryTotals.To_PC_Format();
+		player->UnitTotals.To_PC_Format();
+		player->AircraftTotals.To_PC_Format();
+		player->BuildingTotals.To_PC_Format();
+
+		player->InfantryTotals.Clear_Unit_Total();
+		player->AircraftTotals.Clear_Unit_Total();
+		player->UnitTotals.Clear_Unit_Total();
+		player->BuildingTotals.Clear_Unit_Total();
+
+		int index;
+		for (index = 0; index < Units.Count(); index++) {
+			UnitClass const *unit = Units[index];
+			if (player == unit->House) {
+				player->UnitTotals.Increment_Unit_Total(unit->Class->HeapID);
+			}
+		}
+		for (index = 0; index < Infantry.Count(); index++) {
+			InfantryClass const *infantry = Infantry[index];
+			if (player == infantry->House && !infantry->Class->IsCivilian) {
+				player->InfantryTotals.Increment_Unit_Total(infantry->Class->HeapID);
+			}
+		}
+		for (index = 0; index < Aircraft.Count(); index++) {
+			AircraftClass const *aircraft = Aircraft[index];
+			if (player == aircraft->House) {
+				player->AircraftTotals.Increment_Unit_Total(aircraft->Class->HeapID);
+			}
+		}
+		int count = player->Buildings.Count();
+		for (index = 0; index < count; index++) {
+			BuildingClass const *building = player->Buildings[index];
+			player->BuildingTotals.Increment_Unit_Total(building->Class->HeapID);
+		}
+
+		player->InfantryTotals.To_Network_Format();
+		player->UnitTotals.To_Network_Format();
+		player->AircraftTotals.To_Network_Format();
+		player->BuildingTotals.To_Network_Format();
+		field_player_infantry_left[3] = digit;
+		field_player_units_left[3] = digit;
+		field_player_planes_left[3] = digit;
+		field_player_buildings_left[3] = digit;
+		ADD_TOTALS(field_player_infantry_left, InfantryTotals);
+		ADD_TOTALS(field_player_units_left, UnitTotals);
+		ADD_TOTALS(field_player_planes_left, AircraftTotals);
+		ADD_TOTALS(field_player_buildings_left, BuildingTotals);
+
+		player->DestroyedInfantry.To_Network_Format();
+		player->DestroyedUnits.To_Network_Format();
+		player->DestroyedAircraft.To_Network_Format();
+		player->DestroyedBuildings.To_Network_Format();
+		field_player_infantry_killed[3] = digit;
+		field_player_units_killed[3] = digit;
+		field_player_planes_killed[3] = digit;
+		field_player_buildings_killed[3] = digit;
+		ADD_TOTALS(field_player_infantry_killed, DestroyedInfantry);
+		ADD_TOTALS(field_player_units_killed, DestroyedUnits);
+		ADD_TOTALS(field_player_planes_killed, DestroyedAircraft);
+		ADD_TOTALS(field_player_buildings_killed, DestroyedBuildings);
+
+		field_player_buildings_captured[3] = digit;
+		player->CapturedBuildings.To_Network_Format();
+		ADD_TOTALS(field_player_buildings_captured, CapturedBuildings);
+
+		field_player_crates_found[3] = digit;
+		player->TotalCrates.To_Network_Format();
+		ADD_TOTALS(field_player_crates_found, TotalCrates);
+
+		field_player_harvested[3] = digit;
+		stats.Add_Field(field_player_harvested, (unsigned int)player->HarvestedCredits);
+		field_player_cpu_type[3] = digit;
+		if (statsid == i) {
+			stats.Add_Field(field_player_cpu_type, (unsigned int)(char)CPUType);
+		} else {
+			stats.Add_Field(field_player_cpu_type, -1);
+		}
+		field_player_cpu_speed[3] = digit;
+		if (statsid == i) {
+			stats.Add_Field(field_player_cpu_speed, Get_RDTSC_CPU_Speed());
+		} else {
+			stats.Add_Field(field_player_cpu_speed, -1);
+		}
+		field_player_memory[3] = digit;
+		if (statsid == i) {
+			MEMORYSTATUS mem_info;
+			mem_info.dwLength = sizeof(mem_info);
+			GlobalMemoryStatus(&mem_info);
+			stats.Add_Field(field_player_memory, (int)mem_info.dwTotalPhys);
+		} else {
+			stats.Add_Field(field_player_memory, -1);
+		}
+		field_player_video_memory[3] = digit;
+		if (statsid == i && DirectDrawWrap::lpDD) {
+			DDCAPS video_capabilities;
+			video_capabilities.dwSize = sizeof(video_capabilities);
+			if (DD_OK == DirectDrawWrap::lpDD->GetCaps(&video_capabilities, NULL)) {
+				int video_memory = video_capabilities.dwVidMemTotal;
+				video_memory += 1024 * 1024 - 1;
+				video_memory &= 0xfff00000;
+				stats.Add_Field(field_player_video_memory, video_memory);
+			}
+		} else {
+			stats.Add_Field(field_player_video_memory, -1);
+		}
+	}
+
+	packet = stats.Create_Comms_Packet(packet_size);
+	if (g_pNetUtil) {
+		if (wdt) {
+			g_pNetUtil->RequestGameresSend(DAT_00B77CE8, DAT_00B75F5C, (unsigned char *)packet, packet_size);
+		} else {
+			g_pNetUtil->RequestGameresSend(DAT_00B77930, DAT_00B76184, (unsigned char *)packet, packet_size);
+		}
+	}
+	Queue_Packet(packet, packet_size);
+	delete[] packet;
+	DAT_00A8F900 = true;
+}
+
+#undef ADD_TOTALS
 
 // FUNCTION: GAMEMD 0x006C87D0
 int Get_Unit_Count(int *buf, int count)
