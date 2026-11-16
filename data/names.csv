@@ -720,3 +720,6 @@ address,name,symbol,evidence
 0x006241F0,Run_Dialog_Control,?Run_Dialog_Control@@YIHHP6GHPAUHWND__@@IIJ@ZPAVDialogControl@OwnerDraw@@@Z,Existing matching OwnerDraw implementation creates the requested dialog and returns its control result.
 0x00787010,Login_WOL,?Login_WOL@@YIHXZ,TibSun Login_WOL has the same server-list request and login dialog. The existing persona-dialog callback calls this start.
 0x00789500,StoreLogin,?StoreLogin@@YIHPBD0_NH@Z,TibSun StoreLogin takes the plaintext flag and locale. The matching implementation calls SetNick and SetNickLocale and is also called by the registration browser.
+0x00AFA278,SyncBarFrameSync,?SyncBarFrameSync@@3PAUFrameSyncStruct@@A,Independent 40-byte initializer 00646D20; operand 00646D21 is AFA280 with actual COFF addend 8.
+0x00B732F0,ProgramInstance,?ProgramInstance@@3PAUHINSTANCE__@@A,Independent 78-byte Get_Dialog_Resolution 00775B50; actual HINSTANCE load at 00775B51.
+0x0055F1E0,Multiplayer_Debug_Print,?Multiplayer_Debug_Print@@YIX_N@Z,Existing 1189-byte matched bool definition at 0055F1E0; native TibSun declares the same bool API.

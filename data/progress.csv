@@ -11540,6 +11540,7 @@ address,name,result,size,source,symbol
 0x00647260,Queue_AI,MATCH,912,src/queue.cpp,?Queue_AI@@YIXXZ
 0x00648340,Check_Mirror,MATCH,1,src/queue.cpp,?Check_Mirror@@YIXXZ
 0x00648350,Wait_For_End_Of_Queue,MATCH,948,src/queue.cpp,?Wait_For_End_Of_Queue@@YIXXZ
+0x00648710,Wait_For_Players,MATCH,5519,src/queue.cpp,?Wait_For_Players@@YI?AW4RetcodeType@@HPAVConnManClass@@HHHPADHPAUFrameSyncStruct@@@Z
 0x00649CA0,Send_Packets,MATCH,860,src/queue.cpp,?Send_Packets@@YIHPAVConnManClass@@PADHHH@Z
 0x0064A000,Send_FrameSync,MATCH,178,src/queue.cpp,?Send_FrameSync@@YIXPAVConnManClass@@H@Z
 0x0064A630,Process_Serial_Packet,MATCH,381,src/queue.cpp,?Process_Serial_Packet@@YI?AW4RetcodeType@@PADH@Z
