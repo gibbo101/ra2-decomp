@@ -42,7 +42,6 @@
 #include "incdec.h"
 #include "infantry.h"
 #include "infatype.h"
-#include "internet.h"
 #include "ipxmgr.h"
 #include "keyboard.h"
 #include "language\language.h"
@@ -51,7 +50,6 @@
 #include "mono.h"
 #include "msgbox.h"
 #include "msgloop.h"
-#include "netdlg.h"
 #include "netshare.h"
 #include "nulldlg.h"
 #include "nullmgr.h"
@@ -69,13 +67,11 @@
 #include "session.h"
 #include "side.h"
 #include "smudge.h"
-#include "smudtype.h"
 #include "stats.h"
 #include "stimer.h"
 #include "stringtable.h"
 #include "tactical.h"
 #include "taction.h"
-#include "tag.h"
 #include "tagtype.h"
 #include "taskforc.h"
 #include "terrain.h"
@@ -309,7 +305,7 @@ bool Queue_Exit(void)
 extern unsigned int DAT_00AC51FC;
 extern unsigned int DAT_00B04474[256];
 
-int __fastcall FUN_0064C380(int max_houses, HousesType base_house, void *net, void *skip_crc, void *their);
+int __fastcall FUN_0064C380(int max_houses, HousesType base_house, ConnManClass *net, CDTimerClass<FrameTimerClass> *skip_crc, FrameSyncStruct *their);
 void __fastcall Clean_DoList(ConnManClass *net);
 
 static inline void _Clean_DoList1(ConnManClass *net)
@@ -348,7 +344,7 @@ void __fastcall Queue_Record(void);
 void __fastcall FUN_006475F0(void);
 void __fastcall FUN_00652540(void *list);
 void __fastcall FUN_0064DAB0(void);
-void __fastcall FUN_0064DEA0(EventClass *ev);
+void __fastcall Print_CRCs(EventClass *ev);
 void __fastcall FUN_006516F0(int index, EventClass *ev);
 void __fastcall FUN_006BEC60(void);
 void __fastcall FUN_006BEC50(int code);
@@ -391,7 +387,7 @@ void Queue_AI(void)
 			if (DAT_00B04880) {
 				FUN_006516F0(Frame % 256, NULL);
 			} else {
-				FUN_0064DEA0(NULL);
+				Print_CRCs(NULL);
 			}
 			FUN_006BEC60();
 			FUN_006BEC50(0);
@@ -887,7 +883,6 @@ extern int DAT_00B04888;
 extern unsigned char DAT_00B0488C;
 extern unsigned char DAT_00B0488D;
 extern unsigned char DAT_00B04878;
-extern DSurface * DAT_00887310;
 
 void __fastcall Draw_Sync_Bars(HWND window);
 
@@ -1283,6 +1278,238 @@ bool __fastcall FUN_0064B4D0(unsigned char * type, int * size, EventClass::Event
 }
 
 extern QueueClass<EventClass, 256> MegaMissionList;
+extern unsigned int DAT_008373A0;
+int CountOtherUndefeatedHumanHouses(HouseClass * house);
+void __fastcall FUN_0064CDA0(int start, int count);
+void __fastcall Dump_Packet_Too_Late_Stuff(EventClass *event);
+
+// FUNCTION: GAMEMD 0x0064C380
+int __fastcall FUN_0064C380(int max_houses, HousesType base_house, ConnManClass *net, CDTimerClass<FrameTimerClass> *skip_crc, FrameSyncStruct *their)
+{
+	HousesType house;
+	HouseClass *hptr;
+	int i, j, k;
+	int index;
+	int check_crc;
+	int event_count = DoList.Count;
+	int house_count = Houses.Count();
+
+	Check_Mirror();
+
+	for (j = 0; j < event_count; j++) {
+		if (DoList[j].Type != EventClass::FRAMEINFO &&
+			DoList[j].Frame > NewMaxAheadFrame1 &&
+			DoList[j].Frame < NewMaxAheadFrame2) {
+			DebugString("DoList: Moving event from frame %d to frame %d\n", DoList[j].Frame, NewMaxAheadFrame2);
+			DoList[j].Frame = NewMaxAheadFrame2;
+		}
+	}
+
+	if (Session.unknown_30A0 && Session.unknown_30A4 && Session.unknown_30A8 != -1) {
+		for (j = 0; j < event_count; j++) {
+			if (DoList[j].Type == EventClass::EXIT &&
+				DoList[j].ID == Session.unknown_30A8 &&
+				DoList[j].Frame > Session.unknown_30A0 &&
+				DoList[j].Frame < Session.unknown_30A4) {
+				DebugString("DoList: Moving EXIT event from frame %d to frame %d\n", DoList[j].Frame, Session.unknown_30A4);
+				DoList[j].Frame = Session.unknown_30A4;
+			}
+		}
+		if (Frame > Session.unknown_30A4) {
+			Session.unknown_30A0 = 0;
+			Session.unknown_30A4 = 0;
+			Session.unknown_30A8 = -1;
+		}
+	}
+
+	for (i = 0; i < house_count; i++) {
+		house = (HousesType)(i);
+		hptr = Houses[house];
+
+		if (!hptr) {
+			continue;
+		}
+		if (!hptr->IsHuman && !hptr->IsPlayerControl) {
+			continue;
+		}
+
+		for (j = 0; j < event_count; j++) {
+			if (DoList[j].ID == hptr->HeapID && Frame >= DoList[j].Frame &&
+				!DoList[j].IsExecuted) {
+
+				if (Frame > DoList[j].Frame && DoList[j].Type !=
+					EventClass::FRAMEINFO && Session.Type != GAME_NORMAL &&
+					Session.Type != GAME_SKIRMISH) {
+					Dump_Packet_Too_Late_Stuff(&DoList[j]);
+					net->Num_Connections();
+					continue;
+				}
+
+				if (DoList[j].Type == EventClass::EXIT ||
+					DoList[j].Type == EventClass::OPTIONS ||
+					DoList[j].Type == EventClass::PAGEUSER) {
+
+					if (DoList[j].Type == EventClass::EXIT) {
+						HousesType quithouse = HOUSE_NONE;
+						HouseClass *quithptr = NULL;
+
+						for (int player = 0; player < house_count; player++) {
+							quithouse = (HousesType)(player);
+							quithptr = Houses[quithouse];
+							if (!quithptr) {
+								continue;
+							}
+							if (quithptr->HeapID == DoList[j].ID) {
+								quithptr->IsGiverUpper = true;
+								break;
+							}
+						}
+
+						if (CountAliveTeams(quithptr) == 1 &&
+							Session.Type == GAME_INTERNET &&
+							!DAT_00A8F900) {
+							Session.SawGameCompletion = true;
+							Register_Game_End_Time();
+							Send_Statistics_Packet(false);
+						}
+						if (Session.Type == GAME_INTERNET && !DAT_00A8F900 && PlayerPtr != NULL && PlayerPtr == quithptr) {
+							DebugString("Sending game results because I quit, but didn't see completion");
+							Send_Statistics_Packet(false);
+						}
+						if (CountOtherUndefeatedHumanHouses(quithptr) == 0) {
+							quithptr->Flag_To_Die();
+						}
+					}
+
+					if (Debug_Print_Events) {
+						if (DoList[j].Type == EventClass::EXIT) {
+							DebugString("Exit Event: ID:%d (%s),  Event Frame:%d,  My Frame:%d\n",
+								DoList[j].ID,
+								(char *)Houses[(HousesType)(DoList[j].ID)]->IniName,
+								DoList[j].Frame,
+								Frame);
+						}
+					}
+
+					if (DoList[j].ID == PlayerPtr->HeapID) {
+						unsigned long timing = DoList.Timing(j);
+						DAT_008373A0 = timeGetTime() - timing;
+						DoList[j].Execute();
+					} else if (DoList[j].Type == EventClass::EXIT) {
+						DebugString("Processing EXIT event on frame %d\n", Frame);
+						if (Session.Type == GAME_MODEM ||
+							Session.Type == GAME_NULL_MODEM) {
+							Destroy_Null_Connection(house, 0);
+						} else if ((Session.Type == GAME_IPX ||
+							Session.Type == GAME_INTERNET) && net) {
+							index = net->Connection_Index(house);
+							if (index != -1) {
+								for (k = index; k < net->Num_Connections() - 1; k++) {
+									their[k] = their[k+1];
+								}
+								FUN_005DA750(house, 0);
+							}
+						}
+						if (Session.Play && DoList[j].Type == EventClass::EXIT) {
+							hptr->IsHuman = false;
+							hptr->IQ = Rule->MaxIQ;
+							HouseClass::Computer_Paranoid();
+							hptr->IniName = TStringID<HOUSE_NAME_MAX>("Computer");
+#line 5672 "D:\\ra2mdpost\\Queue.CPP"
+							wcsncpy(hptr->UIName, StringTable::LoadString("TXT_COMPUTER", NULL, "D:\\ra2mdpost\\Queue.CPP", __LINE__), 21);
+							hptr->UIName[20] = 0;
+							DebugString("Removing a player %s:%d\n", __FILE__, __LINE__);
+							Session.NumPlayers--;
+						}
+					}
+				}
+				else if (DoList[j].Type == EventClass::FRAMEINFO) {
+					if (!skip_crc || *skip_crc == 0) {
+						check_crc = 1;
+					}
+					else {
+						check_crc = 0;
+					}
+					if (check_crc
+						&& DoList[j].Frame == Frame
+						&& DoList[j].Data.FrameInfo.Delay < 256) {
+						index = ((DoList[j].Frame - DoList[j].Data.FrameInfo.Delay) & 256 - 1);
+						if (DAT_00B04474[index] != DoList[j].Data.FrameInfo.CRC) {
+							if (DAT_00B04880) {
+								k = 0;
+								for (int n = 256; n; n--) {
+									k &= 0xFF;
+									FUN_006516F0(k, &DoList[j]);
+									k++;
+								}
+							} else {
+								Print_CRCs(&DoList[j]);
+							}
+							Session.Suspended++;
+							if (WWMessageBox().Process(StringTable::LoadString("TXT_OUT_OF_SYNC", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x165a), StringTable::LoadString("TXT_STOP", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x165b), NULL, NULL) == 0) {
+								Session.Suspended--;
+							} else {
+								Session.Suspended--;
+							}
+							return(0);
+						}
+					}
+				}
+				else {
+					unsigned long timing = DoList.Timing(j);
+					DAT_008373A0 = timeGetTime() - timing;
+					if (DoList[j].Type == EventClass::MEGAMISSION) {
+						MegaMissionList.Add(DoList[j]);
+					} else {
+						DoList[j].Execute();
+					}
+				}
+
+				DoList[j].IsExecuted = 1;
+			}
+		}
+
+		{
+			int prevmission = -1;
+			xTargetClass prevtarget;
+			xTargetClass prevdest;
+			prevtarget.Invalidate();
+			prevdest.Invalidate();
+			int start = 0;
+			for (int m = 0; m < MegaMissionList.Count; m++) {
+				bool differ = false;
+				if (prevmission != -1) {
+					if (MegaMissionList[m].Data.MegaMission.Mission != (char)prevmission) {
+						differ = true;
+					}
+					if (!(MegaMissionList[m].Data.MegaMission.Target == prevtarget &&
+						MegaMissionList[m].Data.MegaMission.Destination == prevdest)) {
+						differ = true;
+					}
+				}
+				prevmission = MegaMissionList[m].Data.MegaMission.Mission;
+				prevtarget = MegaMissionList[m].Data.MegaMission.Target;
+				prevdest = MegaMissionList[m].Data.MegaMission.Destination;
+				if (differ) {
+					if (m - start > 1) {
+						FUN_0064CDA0(start, m - start);
+					}
+					start = m;
+				} else if (m == MegaMissionList.Count - 1) {
+					if (m - start + 1 > 1) {
+						FUN_0064CDA0(start, m - start + 1);
+					}
+				}
+			}
+			while (MegaMissionList.Count) {
+				MegaMissionList.First().Execute();
+				MegaMissionList.Next();
+			}
+		}
+	}
+
+	return(1);
+}
 
 // FUNCTION: GAMEMD 0x0064CD30
 void __fastcall FUN_0064CD30(int start, int count, xTargetClass whom, xTargetClass * destination)
@@ -3262,26 +3489,28 @@ RetcodeType __fastcall Wait_For_Players(int first_time, ConnManClass *net, int r
 			if (Can_Advance(net, Session.MaxAhead, their, &frame_stall, &count_stall)) {
 				break;
 			}
+			int show_stall = 1;
 			if (Session.EnableMultiplayerDebug && Session.DrawMPDebugStats && loop_count > 0 && (!stall_drawn || frame_stall != -1 || count_stall != -1)) {
 				Multiplayer_Debug_Print(true);
 			} else if (stall_drawn) {
-				goto service;
+				show_stall = 0;
 			}
-			if (frame_stall != -1) {
-				if (Session.EnableMultiplayerDebug && Session.DrawMPDebugStats) {
-					surface->Fill_Rect(Rect((frame_stall * 5 + 5) * 20, 400, 35, 3), DSurface::Build_Hicolor_Pixel(255, 255, 40));
+			if (show_stall) {
+				if (frame_stall != -1) {
+					if (Session.EnableMultiplayerDebug && Session.DrawMPDebugStats) {
+						surface->Fill_Rect(Rect((frame_stall * 5 + 5) * 20, 400, 35, 3), DSurface::Build_Hicolor_Pixel(255, 255, 40));
+					}
+					Session.ConnectionStats[frame_stall].FrameSyncStalls++;
 				}
-				Session.ConnectionStats[frame_stall].FrameSyncStalls++;
-			}
-			if (count_stall != -1) {
-				if (Session.EnableMultiplayerDebug && Session.DrawMPDebugStats) {
-					surface->Fill_Rect(Rect(count_stall * 100 + 140, 400, 40, 3), DSurface::Build_Hicolor_Pixel(255, 40, 40));
+				if (count_stall != -1) {
+					if (Session.EnableMultiplayerDebug && Session.DrawMPDebugStats) {
+						surface->Fill_Rect(Rect(count_stall * 100 + 140, 400, 40, 3), DSurface::Build_Hicolor_Pixel(255, 40, 40));
+					}
+					Session.ConnectionStats[frame_stall].CommandCountStalls++;
 				}
-				Session.ConnectionStats[frame_stall].CommandCountStalls++;
+				stall_drawn = true;
 			}
-			stall_drawn = true;
 		}
-service:
 		Call_Back();
 		if (!first_time && !SpecialDialog && !reconnect_dlg) {
 			Map.Input(input, x, y);

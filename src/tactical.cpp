@@ -927,6 +927,101 @@ void Tactical::Draw_Placement(bool drawtrans)
 	}
 }
 
+// FUNCTION: GAMEMD 0x006D5730
+void Tactical::Draw_Fence_Placement(bool drawtrans, Cell cell)
+{
+	for (int index = 0; index < FACING_COUNT; index += FACING_COUNT / 4) {
+		Cell scan = cell;
+		int count = 0;
+		int range = ((BuildingClass *)Map.PendingObjectPtr)->Class->ThreatRange >> 8;
+		if (range <= 0) {
+			continue;
+		}
+
+		FacingType facing = (FacingType)index;
+		BuildingClass * building;
+		bool found = false;
+		while (true) {
+			scan = Adjacent_Cell(scan, facing);
+			building = Map[scan].Cell_Building();
+			if (building) {
+				found = true;
+				break;
+			}
+			CellClass * nearby = &Map[scan];
+			if (nearby->Cell_Terrain(false) || nearby->Ramp > 0 || nearby->Passability != PASSABLE_LAND || ++count >= range) {
+				break;
+			}
+		}
+		if (found && building->Class->IsLaserFencePost && building->House->Is_Player_Control() && count > 0) {
+			int flags = drawtrans ? (SHAPE_ZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75)
+				: (SHAPE_NONZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75);
+			Cell drawcell = Adjacent_Cell(cell, facing);
+			for (int i = 0; i < count; ++i, drawcell = Adjacent_Cell(drawcell, facing)) {
+				int height = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				int zheight = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				Point2D cursor_offset(ISO_TILE_PIXEL_W / 2, -1 - height);
+				int zoff = -2 - zheight;
+				Coord coord = Coord_Whole(drawcell.As_Coord());
+				Point2D tile_origin;
+				Coord_To_Pixel(coord, tile_origin);
+				tile_origin.X -= ISO_TILE_PIXEL_W / 2;
+				int px = tile_origin.X + cursor_offset.X;
+				int py = cursor_offset.Y + tile_origin.Y;
+				Point2D point(px, py);
+				Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)DisplayClass::PlacementShapes, 0, point,
+					TacticalRect, (ShapeFlags_Type)flags, 0, zoff);
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006D59D0
+void Tactical::Draw_Firestorm_Wall_Placement(bool drawtrans, Cell cell)
+{
+	for (int index = 0; index < FACING_COUNT; index += FACING_COUNT / 4) {
+		Cell scan = cell;
+		int count = 0;
+		BuildingTypeClass * type = ((BuildingClass *)Map.PendingObjectPtr)->Class;
+		int range = type->ThreatRange >> 8;
+
+		FacingType facing = (FacingType)index;
+		bool found = false;
+		for (; count < range; count++) {
+			scan = Adjacent_Cell(scan, facing);
+			BuildingClass * building = Map[scan].Cell_Building();
+			if (building != NULL && building->Class->IsFirestormWall && building->House->Is_Player_Control()) {
+				found = true;
+				break;
+			}
+			if (!Map[scan].Is_Clear_To_Build(type->Speed, type, PlayerPtr)) {
+				break;
+			}
+		}
+
+		if (found && count > 0) {
+			int flags = drawtrans ? (SHAPE_ZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75)
+				: (SHAPE_NONZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75);
+			Cell drawcell = Adjacent_Cell(cell, facing);
+			for (int i = 0; i < count; ++i, drawcell = Adjacent_Cell(drawcell, facing)) {
+				int height = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				int zheight = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				Point2D cursor_offset(ISO_TILE_PIXEL_W / 2, -1 - height);
+				int zoff = -2 - zheight;
+				Coord coord = Coord_Whole(Coord(drawcell));
+				Point2D tile_origin;
+				Coord_To_Pixel(coord, tile_origin);
+				tile_origin.X -= ISO_TILE_PIXEL_W / 2;
+				int px = tile_origin.X + cursor_offset.X;
+				int py = cursor_offset.Y + tile_origin.Y;
+				Point2D point(px, py);
+				Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)DisplayClass::PlacementShapes, 0, point,
+					TacticalRect, (ShapeFlags_Type)flags, 0, zoff);
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x006D5C50
 void Tactical::Draw_Wall_Placement(bool drawtrans, Cell cell)
 {

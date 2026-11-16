@@ -77,4 +77,8 @@ effect, so it can be fixed in a separate build later.
   `(-2 * CELL_LEPTON_W, 2 * CELL_LEPTON_H)` offset. The recovered source
   preserves the repeated check.
 
+- **ScoreFontClass glyph selection (0x006907E0, 0x00690850, 0x00690910).** The lower
+  frame bound uses an unsigned comparison after subtracting the first glyph. Characters
+  whose OEM byte gives a negative signed offset can therefore select a negative shape frame.
+
 - **Wait_For_Players (0x00648710).** Command-stall statistics use the frame-stall index instead of the command-stall index.

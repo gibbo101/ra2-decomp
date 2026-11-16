@@ -182,12 +182,11 @@ void WaveClass::Set_Sonic_Pixel(int x, int xoff, int y, unsigned short * buffer)
 void WaveClass::Set_Laser_Pixel(unsigned short * buffer, int mult) const
 {
 	RGBClass rgb = DSurface::Deconstruct_Hicolor_Pixel(*buffer);
-	int red = rgb.Get_Red();
+	int red = rgb.Get_Red() + ((mult * 64) >> 8);
 	int green = rgb.Get_Green();
-	int blue = rgb.Get_Blue();
-	red += ((mult * 64) >> 8);
-	blue += ((mult * 96) >> 8);
-	*buffer = DSurface::Build_Hicolor_Pixel(MIN(255, red), MIN(255, green), MIN(255, blue));
+	int blue = rgb.Get_Blue() + ((mult * 96) >> 8);
+	*buffer = DSurface::Build_Hicolor_Pixel(
+		MIN(255, red), MIN(255, green), MIN(255, blue));
 }
 
 // FUNCTION: GAMEMD 0x0075F020
@@ -522,6 +521,112 @@ void WaveClass::FUN_00760190(int x, int xoff, int y, unsigned short * buffer) co
 	blue += ((blue * mult * 4) >> 8);
 
 	*buffer = DSurface::Build_Hicolor_Pixel(MIN(255, red), green, MIN(255, blue));
+}
+
+// FUNCTION: GAMEMD 0x007609E0
+void WaveClass::Draw_Laser(Point2D const & point, Rect const & cliprect)
+{
+	if (Options.DetailLevel == 2) {
+		int zpix = Tactical::Z_Lepton_To_Pixel(StartCoord.Z);
+
+		unsigned short * buffer = (unsigned short *)LogicalSurface->Lock();
+		if (buffer != NULL) {
+			int top = cliprect.Y;
+			int bottom = cliprect.Y + cliprect.Height;
+			int left = cliprect.X;
+			int right = cliprect.X + cliprect.Width;
+
+			int xoff = point.X - WaveStartMiddle.X;
+			int yoff = point.Y - WaveStartMiddle.Y + TacticalRect.Y;
+
+			Rasterize_Polygon(WaveShape, DrawData);
+
+			if (DrawData.Points != NULL) {
+				int ystart = yoff + DrawData.BaseY;
+				int yend = MIN(
+					DrawData.Count + ystart - 1,
+					cliprect.Y + cliprect.Height);
+
+				unsigned short base_z = DepthBuffer->Get_Scroll_Delta(ystart);
+				unsigned short depth = base_z - zpix - 2;
+				unsigned int zoff = DepthBuffer->Get_Buffer_Offset(
+					Point2D(0, ystart - TacticalRect.Y));
+				int y;
+				int surfwidth = LogicalSurface->Get_Width();
+
+				if (zoff + 2 * (surfwidth + (yend - ystart + 1)
+					* DepthBuffer->Get_Buffer_Width())
+					< DepthBuffer->Get_Buffer_End()) {
+					int zwidth = DepthBuffer->Get_Buffer_Width();
+					int stride = LogicalSurface->Stride() >> 1;
+					unsigned short * scrptr = &buffer[ystart * stride];
+					Point2D * points = DrawData.Points;
+
+					for (y = ystart; y <= yend; y++) {
+						if (y >= top && y <= bottom) {
+							int xstop = MIN(points->Y + xoff, right);
+							int xstart = MAX(points->X + xoff, left);
+
+							zoff += 2 * xstart;
+							scrptr += xstart;
+
+							int x = xstart;
+							for (; x <= xstop; x++) {
+								if (*(unsigned short *)zoff > depth) {
+									Set_Laser_Pixel(scrptr, LaserEC);
+								}
+								zoff += 2;
+								scrptr++;
+							}
+
+							zoff -= 2 * x;
+							scrptr -= x;
+						}
+						scrptr += stride;
+						zoff += 2 * zwidth;
+						depth--;
+						points++;
+					}
+				} else {
+					int i = 0;
+					for (y = ystart; y <= yend; y++, i++) {
+						if (y >= cliprect.Y + 2
+							&& y <= cliprect.Y + cliprect.Height - 2) {
+							Point2D const & span = DrawData.Points[i];
+							int xstop = MIN(
+								span.Y + xoff,
+								cliprect.Width + cliprect.X - 2);
+							int xstart = MAX(span.X + xoff, cliprect.X + 2);
+
+							unsigned short * scrptr = &buffer[
+								xstart + y * (LogicalSurface->Stride() >> 1)];
+							Point2D zpos(xstart, y - TacticalRect.Y);
+
+							if (zpos.X <= xstop) {
+								int remaining = xstop - zpos.X + 1;
+								do {
+									if (*(unsigned short *)DepthBuffer
+										->Get_Buffer_Offset(zpos) > depth) {
+										Set_Laser_Pixel(scrptr, LaserEC);
+									}
+									zpos.X++;
+									scrptr++;
+								} while (--remaining != 0);
+							}
+						}
+						depth--;
+					}
+				}
+			}
+
+			LogicalSurface->Unlock();
+
+			if (DrawData.Points != NULL) {
+				delete [] DrawData.Points;
+				DrawData.Points = NULL;
+			}
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x00760F50

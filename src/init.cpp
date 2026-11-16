@@ -63,6 +63,7 @@
 #include "getcpu.h"
 #include "geometry.h"
 #include "globals.h"
+#include "goptions.h"
 #include "houstype.h"
 #include "incdec.h"
 #include "infatype.h"
@@ -79,7 +80,6 @@
 #include "mixfile.h"
 #include "modemgst.h"
 #include "modemhst.h"
-#include "mono.h"
 #include "movie.h"
 #include "mplayer.h"
 #include "msgbox.h"
@@ -107,6 +107,7 @@
 #include "skirmish.h"
 #include "smudtype.h"
 #include "stimer.h"
+#undef LoadString
 #include "stringtable.h"
 #include "tactical.h"
 #include "tag.h"
@@ -122,7 +123,6 @@
 #include "unittype.h"
 #include "vein.h"
 #include "voc.h"
-#include "volinfo.h"
 #include "vox.h"
 #include "vqoption.h"
 #include "wave.h"
@@ -217,6 +217,199 @@ struct Game {
 	static unsigned __int64 __fastcall AudioGetTime(void);
 	static int ObserverMode;
 };
+
+bool FUN_0052CB50(void);
+
+#include "debugpage.h"
+#include "playcd.h"
+#include "voxdrsys.h"
+#include "animtype.h"
+
+DebugPage * __fastcall FUN_005BC450(int page);
+void __fastcall FUN_0060D430(void);
+void __fastcall FUN_0072AA40(void);
+void __fastcall FUN_00406B10(int value);
+void * __fastcall FileSystem_LoadWholeFileEx(char const * filename, bool & allocated);
+void __fastcall FUN_007510D0(INIClass & ini);
+void __fastcall FUN_00753000(INIClass & ini);
+void __fastcall FUN_007531A0(void);
+void Init_Game_Modes(void);
+extern int DAT_00840A70;
+extern RGBStruct DAT_00B2FB78[256];
+extern void * DAT_00A8F790;
+extern void * DAT_00A8F794;
+extern ConvertClass * DAT_00A8F798;
+extern SHPStruct * DAT_00B0BCF0;
+extern bool DAT_00B0BCF4;
+
+static bool Bootstrap(void);
+static void Init_Mouse(void)
+{
+	DAT_00B0BCF0 = (SHPStruct *)FileSystem_LoadWholeFileEx("MOUSE.SHA", DAT_00B0BCF4);
+	if (DAT_00B0BCF0 != NULL) {
+		MouseCursor->Hide_Mouse();
+		Point2D point = Point2D(0, 0);
+		MouseCursor->Set_Cursor(point, (ShapeSet const *)DAT_00B0BCF0, 0);
+	}
+	Map.Set_Default_Mouse(MOUSE_NORMAL, false);
+	Game::CallBack();
+}
+static bool Init_CDROM_Access(void);
+
+
+void __cdecl FUN_004A4AC0(const char * text);
+bool Init_Secondary_Mixfiles(void);
+void FUN_005312A0(void);
+void FUN_0052CB90(void);
+bool Init_Bulk_Data(void);
+bool FUN_0052CD70(void);
+extern unsigned __int64 DAT_00A8F788;
+void Init_Commands(void);
+
+// FUNCTION: GAMEMD 0x0052BA60
+int Init_Game(void)
+{
+	FUN_004068E0("Init Game\n");
+	Scen = new ScenarioClass;
+	if (Scen == NULL) {
+		FUN_004068E0("Failed to instantiate Scenario!\n");
+		return -1;
+	}
+	Rule = new RulesClass;
+	if (Rule == NULL) {
+		FUN_004068E0("Failed to instantiate Rules!\n");
+		return -1;
+	}
+	FUN_004068E0("Bootstrap.....");
+	if (!Bootstrap()) {
+		FUN_004A4AC0(" ..Failed to bootstrap!\n");
+		return -1;
+	}
+	FUN_004A4AC0(" ...OK\n");
+	FUN_004068E0("Init Mouse\n");
+	Init_Mouse();
+	FUN_004068E0("Init CDROM\n");
+	if (!Init_CDROM_Access()) {
+		FUN_004068E0("Failed to initialize CDROM access!\n");
+		return 1;
+	}
+	FUN_004068E0("Init Secondary Mixfiles.....");
+	if (!Init_Secondary_Mixfiles()) {
+		FUN_004A4AC0(" ...Failed!!!\n");
+		return -1;
+	}
+	FUN_004A4AC0(" ...OK\n");
+	Game::PlayMovie("EA_WWLOGO", -1, 1, 1, 1, 0);
+	FUN_005312A0();
+	FUN_004068E0("Init Campaigns\n");
+	FUN_0052CB90();
+	FUN_004068E0("Init Heaps\n");
+	FUN_004068E0("Init Threads\n");
+	FUN_004068E0("Reading Game Settings\n");
+	Options.Load_Settings();
+	FUN_004068E0("Init Anim System\n");
+	Initialize_Options();
+	Set_Option(0);
+	FUN_004068E0("Init Color Remap Tables\n");
+	GadgetClass::Set_Color_Scheme(DEFAULT_GADGET_SCHEME);
+	FUN_004068E0("Creating TacticalMap\n");
+	delete TacticalMap;
+	TacticalMap = new Tactical;
+	if (TacticalMap == NULL) {
+		FUN_004068E0("Failed to create TacticalMap!\n");
+		return -1;
+	}
+	LogicalSurface = HiddenSurface;
+
+	FUN_004068E0("Reading SOUNDMD.INI\n");
+	CCFileClass voc_file("SOUNDMD.INI");
+	if (!voc_file.Is_Available()) {
+		FUN_004068E0("Failed to find SOUNDMD.INI!\n");
+		return -1;
+	}
+	CCINIClass voc_ini;
+	if (!voc_ini.ReadCCFile(voc_file, false, false)) {
+		FUN_004068E0("Failed to load SOUNDMD.INI!\n");
+		return -1;
+	}
+	Free_Vocs();
+	FUN_007510D0(voc_ini);
+
+	FUN_004068E0("Reading EVAMD.INI\n");
+	CCFileClass eva_file("EVAMD.INI");
+	if (!eva_file.Is_Available()) {
+		FUN_004068E0("Failed to find EVAMD.INI!\n");
+		return -1;
+	}
+	CCINIClass eva_ini;
+	if (!eva_ini.ReadCCFile(eva_file, false, false)) {
+		FUN_004068E0("Failed to load EVAMD.INI!\n");
+		return -1;
+	}
+	FUN_007531A0();
+	FUN_00753000(eva_ini);
+
+	FUN_004068E0("Reading THEMEMD.INI\n");
+	CCFileClass theme_file("THEMEMD.INI");
+	if (!theme_file.Is_Available()) {
+		FUN_004068E0("Failed to find THEMEMD.INI!\n");
+		return -1;
+	}
+	CCINIClass theme_ini;
+	if (!theme_ini.ReadCCFile(theme_file, false, false)) {
+		FUN_004068E0("Failed to load THEMEMD.INI!\n");
+		return -1;
+	}
+	Theme.Free_Themes();
+	Theme.Init_Themes(theme_ini);
+	Theme.Scan();
+
+	FUN_004068E0("Init Bulk Data\n");
+	if (!Init_Bulk_Data()) {
+		return -1;
+	}
+	FUN_004068E0("Init Rules\n");
+	if (!FUN_0052CD70()) {
+		FUN_004068E0("Failed to initialize Rules!\n");
+		return -1;
+	}
+	Rule->Do_AnimTypes(*RuleINI);
+	for (int anim = 0; anim < AnimTypes.Count(); ++anim) {
+		AnimTypeClass *type = AnimTypes[anim];
+		type->Read_INI(ArtINI);
+	}
+	Rule->Do_BuildingTypes(*RuleINI);
+	for (int building = 0; building < BuildingTypes.Count(); ++building) {
+		BuildingTypeClass *type = BuildingTypes[building];
+		type->Read_INI(*RuleINI);
+	}
+	while (Game::AudioGetTime() < DAT_00A8F788) {
+	}
+	FUN_0052CB50();
+	Session.MaxPlayers = Rule->MaxPlayers;
+	GadgetClass::Set_Color_Scheme(DEFAULT_GADGET_SCHEME);
+	Session.GamesPlayed = 0;
+	Session.NumScores = 0;
+	Session.CurGame = 0;
+	for (int i = 0; i < MAX_MULTI_NAMES; ++i) {
+		Session.Score[i].Name[0] = 0;
+		Session.Score[i].Wins = 0;
+		for (int j = 0; j < MAX_MULTI_GAMES; ++j) {
+			Session.Score[i].Kills[j] = -1;
+			Session.Score[i].Lost[j] = -1;
+			Session.Score[i].Built[j] = -1;
+			Session.Score[i].Score[j] = -1;
+		}
+	}
+	memset(Session.PlayerChatEnabled, true, sizeof(Session.PlayerChatEnabled));
+	Game::InitRandom();
+	FUN_004068E0("Init Commands\n");
+	Init_Commands();
+	FUN_004068E0("Game Init Completed.\n");
+	Init_Game_Modes();
+	return 0;
+}
+
 
 // FUNCTION: GAMEMD 0x0052CB50
 bool FUN_0052CB50(void)
@@ -2196,7 +2389,6 @@ struct FileSystem
 	static void const * LoadFile(char const * name, bool flag);
 	static char TEMPERAT_PAL[];
 };
-extern unsigned __int64 DAT_00A8F788;
 
 // FUNCTION: GAMEMD 0x005312A0
 void FUN_005312A0(void)
@@ -2439,7 +2631,6 @@ void Version_Dialog(void)
 
 extern char DAT_00A8F7B8[32];
 void __fastcall FUN_004790B0(int disk);
-void __cdecl FUN_004A4AC0(const char * text);
 void __fastcall FUN_0052B9B0(HWND dialog);
 
 static bool Cheat_Key_Process(char chr)
@@ -4830,6 +5021,9 @@ int FUN_005355D0(void)
 // FUNCTION: GAMEMD 0x00535AA0
 // INIClass::INIClass
 
+// FUNCTION: GAMEMD 0x00535B30
+// CCINIClass::CCINIClass
+
 // FUNCTION: GAMEMD 0x00535BD0
 // CommandClass::PreventCombinationOverride
 // FUNCTION: GAMEMD 0x00535BE0
@@ -5481,4 +5675,194 @@ void __fastcall XMP_Init(unsigned long * number, unsigned long value, int precis
 void FUN_00538C10(void)
 {
 	XMP_Init(DAT_00A8F7F8, 0, 64);
+}
+
+
+
+static bool Init_CDROM_Access(void)
+{
+	if (!CCFileClass::Is_There_Search_Drives()) {
+		FUN_004068E0("Calling Force_CD_Available\n");
+		if (!CD().Force_Available(DISK_ANY)) {
+			FUN_004068E0("Failed to find disk (user cancel)!\n");
+			return false;
+		}
+		int error;
+		do {
+			char path[10240];
+			char drive[200];
+			path[0] = 0;
+			for (int i = 0; i < CDList.CDCount; ) {
+				sprintf(drive, "%c:\\", CDList.CDDrives[i] + 'A');
+				strcat(path, drive);
+				++i;
+				if (i < CDList.CDCount) strcat(path, ";");
+			}
+			error = CCFileClass::Set_Search_Drives(path);
+			switch (error) {
+			case 1:
+				if (!CD::Force_Available()) {
+					FUN_004068E0("Failed to find disk (user cancel)!\n");
+					return false;
+				}
+			case 2:
+				Set_Palette(GamePalette, 0, 0);
+				if (WWMessageBox().Process(
+					StringTable::LoadString("TXT_CD_DIALOG_1", 0, "D:\\ra2mdpost\\Init.CPP", 0x10b4),
+					StringTable::LoadString("TXT_OK", 0, "D:\\ra2mdpost\\Init.CPP", 0x10b4),
+					StringTable::LoadString("TXT_CANCEL", 0, "D:\\ra2mdpost\\Init.CPP", 0x10b4), 0, false) == 1) {
+					FUN_004068E0("Failed to find disk (user cancel)!\n");
+					return false;
+				}
+				break;
+			default:
+				if (!CD::Force_Available()) {
+					FUN_004068E0("Failed to find disk (user cancel)!\n");
+					return false;
+				}
+				break;
+			}
+		} while (error);
+		CD::Set_Required_Disk(DISK_ANY);
+	} else {
+		FUN_004068E0("-CD parameter was specified. No CD init - all files must be local\n");
+		CD::Set_Required_Disk(DISK_LOCAL);
+	}
+	return true;
+}
+
+static bool Bootstrap(void)
+{
+	int index;
+
+	if (!HicolorFlag) {
+		Set_Palette(BlackPalette, 0, 0);
+	}
+
+	if (CD::Is_Override_Swap() == true) {
+		CD::Set_Required_Disk(DISK_LOCAL);
+	}
+
+	do {
+		Keyboard->Check();
+	} while (!GameInFocus);
+
+	SurfacesRestored = false;
+	FUN_005BC450(4)->Reset();
+
+	if (!Init_Bootstrap_Mixfiles()) {
+		FUN_004068E0("Failed to initialize bootstrap mixfiles!\n");
+		return false;
+	}
+
+	BitText::Instance = new BitText;
+	FUN_0060D430();
+	FUN_0072AA40();
+	FUN_00406B10(DAT_00840A70);
+	Keyboard->Clear();
+
+	memmove(&SchemePalette[0], FileSystem::LoadFile("UNITSNO.PAL", false), sizeof(SchemePalette));
+	for (index = 0; index < 256; index++) {
+		SchemePalette[index] = RGBClass(
+			(unsigned char)(SchemePalette[index].Get_Red() << 2),
+			(unsigned char)(SchemePalette[index].Get_Green() << 2),
+			(unsigned char)(SchemePalette[index].Get_Blue() << 2));
+	}
+
+	memmove(&GamePalette[0], FileSystem::LoadFile("TEMPERAT.PAL", false), sizeof(GamePalette));
+	for (index = 0; index < 256; index++) {
+		GamePalette[index] = RGBClass(
+			(unsigned char)(GamePalette[index].Get_Red() << 2),
+			(unsigned char)(GamePalette[index].Get_Green() << 2),
+			(unsigned char)(GamePalette[index].Get_Blue() << 2));
+	}
+	OriginalPalette = GamePalette;
+	CCPalette = GamePalette;
+	WhitePalette[0] = BlackPalette[0];
+
+	memmove(&WaypointPalette[0], FileSystem::LoadFile("WAYPOINT.PAL", false), sizeof(WaypointPalette));
+	for (index = 0; index < 256; index++) {
+		WaypointPalette[index] = RGBClass(
+			(unsigned char)(WaypointPalette[index].Get_Red() << 2),
+			(unsigned char)(WaypointPalette[index].Get_Green() << 2),
+			(unsigned char)(WaypointPalette[index].Get_Blue() << 2));
+	}
+
+	CCFileClass vplfile("voxels.vpl");
+	VoxelDrawSystem::Load_VPL_File(vplfile);
+	for (int i = 0; i < 256; i++) {
+		VoxelPalette[i] = RGBClass(DAT_00B2FB78[i].Red, DAT_00B2FB78[i].Green,
+			DAT_00B2FB78[i].Blue);
+	}
+	UseVoxelCache = true;
+	Set_Voxel_Camera_Angle(DefaultCameraAngle);
+	Set_Voxel_Light_Angle(DefaultLightAngle);
+	VoxelDrawSystem::EnableLighting = 1;
+	VoxelDrawSystem::EnableZBuffer = 0;
+	Init_Voxel_Matrices();
+
+	TerrainDrawer = new ConvertClass(GamePalette, GamePalette, *VisibleSurface, 0x35, false);
+
+	PaletteClass pal;
+	memmove(&pal[0], FileSystem::LoadFile("ANIM.PAL", false), sizeof(pal));
+	for (index = 0; index < 256; index++) {
+		pal[index] = RGBClass((unsigned char)(pal[index].Get_Red() << 2), (unsigned char)(pal[index].Get_Green() << 2),
+			(unsigned char)(pal[index].Get_Blue() << 2));
+	}
+	AnimDrawer = new ConvertClass(pal, GamePalette, *VisibleSurface, 0x35, false);
+
+	memmove(&pal[0], FileSystem::LoadFile("PALETTE.PAL", false), sizeof(pal));
+	for (index = 0; index < 256; index++) {
+		pal[index] = RGBClass((unsigned char)(pal[index].Get_Red() << 2), (unsigned char)(pal[index].Get_Green() << 2),
+			(unsigned char)(pal[index].Get_Blue() << 2));
+	}
+	NormalDrawer = new ConvertClass(pal, GamePalette, *VisibleSurface, 0x35, false);
+
+	memmove(&pal[0], FileSystem::LoadFile("UNITSNO.PAL", false), sizeof(pal));
+	for (index = 0; index < 256; index++) {
+		pal[index] = RGBClass((unsigned char)(pal[index].Get_Red() << 2), (unsigned char)(pal[index].Get_Green() << 2),
+			(unsigned char)(pal[index].Get_Blue() << 2));
+	}
+	VoxelDrawer = new ConvertClass(pal, GamePalette, *VisibleSurface, 0x35, false);
+
+	memmove(&pal[0], FileSystem::LoadFile("CAMEO.PAL", false), sizeof(pal));
+	for (index = 0; index < 256; index++) {
+		pal[index] = RGBClass((unsigned char)(pal[index].Get_Red() << 2), (unsigned char)(pal[index].Get_Green() << 2),
+			(unsigned char)(pal[index].Get_Blue() << 2));
+	}
+	CameoDrawer = new ConvertClass(pal, GamePalette, *VisibleSurface, 0x35, false);
+
+	memmove(&pal[0], FileSystem::LoadFile("MOUSEPAL.PAL", false), sizeof(pal));
+	for (index = 0; index < 256; index++) {
+		pal[index] = RGBClass((unsigned char)(pal[index].Get_Red() << 2), (unsigned char)(pal[index].Get_Green() << 2),
+			(unsigned char)(pal[index].Get_Blue() << 2));
+	}
+	MouseDrawer = new ConvertClass(pal, GamePalette, *VisibleSurface, 1, false);
+
+	TiberiumDrawer = VoxelDrawer;
+
+	CCFileClass palfile("GRFXTXT.PAL");
+	if (palfile.Is_Available()) {
+		DAT_00A8F790 = Load_Alloc_Data(palfile);
+		palfile.Close();
+		for (index = 0; index < 256; index++) {
+			(*(PaletteClass *)DAT_00A8F790)[index] = RGBClass(
+				(unsigned char)((*(PaletteClass *)DAT_00A8F790)[index].Get_Red() << 2),
+				(unsigned char)((*(PaletteClass *)DAT_00A8F790)[index].Get_Green() << 2),
+				(unsigned char)((*(PaletteClass *)DAT_00A8F790)[index].Get_Blue() << 2));
+		}
+	}
+	if (DAT_00A8F790 != 0) {
+		DAT_00A8F798 = new ConvertClass(*(PaletteClass *)DAT_00A8F790,
+			GamePalette, *VisibleSurface, 1, false);
+	}
+
+	CCFileClass shpfile("GRFXTXT.SHP");
+	if (shpfile.Is_Available()) {
+		DAT_00A8F794 = Load_Alloc_Data(shpfile);
+		shpfile.Close();
+	}
+
+	Init_Expansion_Files();
+	return true;
 }

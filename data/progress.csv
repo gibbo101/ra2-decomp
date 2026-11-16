@@ -1223,6 +1223,7 @@ address,name,result,size,source,symbol
 0x004308B0,BeaconClass::VisibleToPlayer,MATCH,94,src/beacon.cpp,?VisibleToPlayer@BeaconClass@@QBE_NXZ
 0x004309D0,BeaconManagerClass::LoadArt,MATCH,235,src/beacon.cpp,?LoadArt@BeaconManagerClass@@QAEXXZ
 0x00430AC0,BeaconManagerClass::Draw,MATCH,212,src/beacon.cpp,?Draw@BeaconManagerClass@@QAEXPAVSurface@@V?$TRect@H@@@Z
+0x00430BA0,BeaconManagerClass::PlaceBeacon,MATCH,909,src/beacon.cpp,?PlaceBeacon@BeaconManagerClass@@QAEXHVCoord@@H@Z
 0x00430F30,BeaconManagerClass::CanPlaceBeacon,MATCH,36,src/beacon.cpp,?CanPlaceBeacon@BeaconManagerClass@@QAE_NH@Z
 0x00430F60,FUN_00430F60,MATCH,16,src/beacon.cpp,?FUN_00430F60@@YG?AVPoint2D@@XZ
 0x00430F70,BeaconManagerClass::SelectBeacon,MATCH,237,src/beacon.cpp,?SelectBeacon@BeaconManagerClass@@QAE_NVCoord@@@Z
@@ -1860,6 +1861,7 @@ address,name,result,size,source,symbol
 0x004653C0,BuildingTypeClass::Find_Or_Make,MATCH,131,src/builtype.cpp,?Find_Or_Make@BuildingTypeClass@@SIPAV1@PBD@Z
 0x00465450,BuildingTypeClass::Post_Load_Game,MATCH,248,src/builtype.cpp,?Post_Load_Game@BuildingTypeClass@@SIXXZ
 0x00465550,BuildingTypeClass::Exit_List,MATCH,30,src/builtype.cpp,?Exit_List@BuildingTypeClass@@QBEPBVCell@@XZ
+0x00465570,BuildingTypeClass::Get_Draw_Rect,MATCH,913,src/builtype.cpp,?Get_Draw_Rect@BuildingTypeClass@@QAE?AV?$TRect@H@@XZ
 0x00465910,BuildingTypeClass::CanUseWaypoint,MATCH,3,src/builtype.cpp,?CanUseWaypoint@BuildingTypeClass@@UBE_NXZ
 0x00465920,BuildingTypeClass::CanAttackMove,MATCH,3,src/builtype.cpp,?CanAttackMove@BuildingTypeClass@@UBE_NXZ
 0x00465930,BuildingTypeClass::Get_Max_Drain,MATCH,35,src/builtype.cpp,?Get_Max_Drain@BuildingTypeClass@@SIHABV?$DynamicVectorClass@PAVBuildingTypeClass@@@@@Z
@@ -5662,6 +5664,7 @@ address,name,result,size,source,symbol
 0x004F6EC0,HouseClass::Assign_Handicap,MATCH,632,src/house.cpp,?Assign_Handicap@HouseClass@@QAE?AW4DiffType@@W42@@Z
 0x004F7140,HouseClass::~HouseClass,MATCH,1799,src/house.cpp,??1HouseClass@@UAE@XZ
 0x004F7850,HouseStaticClass::HouseStaticClass,MATCH,27,src/house.cpp,??0HouseStaticClass@@QAE@XZ
+0x004F7870,HouseClass::Can_Build,MATCH,2886,src/house.cpp,?Can_Build@HouseClass@@QBEHPBVObjectTypeClass@@_N1@Z
 0x004F83C0,HouseClass::Factory_Producing_This,MATCH,113,src/house.cpp,?Factory_Producing_This@HouseClass@@QBEPAVFactoryClass@@PBVObjectTypeClass@@@Z
 0x004F8440,HouseClass::AI,MATCH,3879,src/house.cpp,?AI@HouseClass@@UAEXXZ
 0x004F9370,HouseClass::Super_Weapon_Handler,MATCH,104,src/house.cpp,?Super_Weapon_Handler@HouseClass@@QAEXXZ
@@ -5775,14 +5778,16 @@ address,name,result,size,source,symbol
 0x00504740,HouseClass::Ensure_Path,MATCH,67,src/house.cpp,?Ensure_Path@HouseClass@@QAEPAVWaypointPathClass@@W4PathType@@@Z
 0x00504790,HouseClass::Add_Anger,MATCH,205,src/house.cpp,?Add_Anger@HouseClass@@QAEXHPBV1@@Z
 0x00504860,HouseClass::Mark_Scouted,MATCH,54,src/house.cpp,?Mark_Scouted@HouseClass@@QAEXPBV1@@Z
+0x005048A0,HouseClass::FUN_005048A0,MATCH,2270,src/house.cpp,?FUN_005048A0@HouseClass@@QAEXH@Z
 0x00505180,HouseClass::Begin_Construction,MATCH,95,src/house.cpp,?Begin_Construction@HouseClass@@QAEXXZ
 0x005051E0,HouseClass::FirstBuildableFromArray,MATCH,291,src/house.cpp,?FirstBuildableFromArray@HouseClass@@QBEPBVTechnoTypeClass@@ABV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z
 0x00505310,HouseClass::Get_First_Ownable,MATCH,79,src/house.cpp,?Get_First_Ownable@HouseClass@@QBEPBVBuildingTypeClass@@ABV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z
 0x00505360,HouseClass::AI_Has_Prerequisites,MATCH,324,src/house.cpp,?AI_Has_Prerequisites@HouseClass@@QBE_NPBVTechnoTypeClass@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@H@Z
 0x005054B0,HouseClass::Make_Base_Nodes,MATCH,2755,src/house.cpp,?Make_Base_Nodes@HouseClass@@QAEXXZ
 0x00505F80,HouseClass::Base_Cell_Weight_By_Distance,MATCH,66,src/house.cpp,?Base_Cell_Weight_By_Distance@HouseClass@@SIHABV1@ABVCell@@HH@Z
-0x00506B70,FUN_00506B70,MATCH,1,src/house.cpp,?FUN_00506B70@@YIXXZ
-0x00506B80,FUN_00506B80,MATCH,1,src/house.cpp,?FUN_00506B80@@YIXXZ
+0x005060B0,HouseClass::Where_To_Place_Building,MATCH,2742,src/house.cpp,?Where_To_Place_Building@HouseClass@@QAE?AVCell@@PAVBuildingTypeClass@@P6IHABV1@ABV2@HH@ZH@Z
+0x00506B70,_$E206,MATCH,1,src/house.cpp,_$E206
+0x00506B80,_$E205,MATCH,1,src/house.cpp,_$E205
 0x00506B90,HouseClass::Where_To_Place_Upgrade,MATCH,320,src/house.cpp,?Where_To_Place_Upgrade@HouseClass@@QBE?AVCell@@PBVBuildingTypeClass@@@Z
 0x00506CD0,Clamp_Cell,MATCH,124,src/house.cpp,?Clamp_Cell@@YI?AVCell@@ABV?$TRect@H@@ABV1@@Z
 0x00506D50,HouseClass::Calculate_Defense_Values,MATCH,406,src/house.cpp,?Calculate_Defense_Values@HouseClass@@QBEXPBVBuildingClass@@HPAHABV?$TRect@H@@@Z
@@ -5994,8 +5999,8 @@ address,name,result,size,source,symbol
 0x005106E0,??0?$VectorClass@UAngerStruct@@@@QAE@HPBUAngerStruct@@@Z,MATCH,147,src/house.cpp,??0?$VectorClass@UAngerStruct@@@@QAE@HPBUAngerStruct@@@Z
 0x00510780,??0?$VectorClass@UScoutStruct@@@@QAE@HPBUScoutStruct@@@Z,MATCH,147,src/house.cpp,??0?$VectorClass@UScoutStruct@@@@QAE@HPBUScoutStruct@@@Z
 0x00510820,?Delete_Index@?$DynamicVectorClass@PAVHouseClass@@@@QAE_NH@Z,MATCH,49,src/house.cpp,?Delete_Index@?$DynamicVectorClass@PAVHouseClass@@@@QAE_NH@Z
-0x00510860,BasePlanningCellContainer::AddCapacity,MATCH,134,src/house.cpp,?AddCapacity@BasePlanningCellContainer@@QAE_NH@Z
-0x005108F0,BasePlanningCellContainer::Comparator,MATCH,34,src/house.cpp,?Comparator@BasePlanningCellContainer@@SAHPBX0@Z
+0x00510860,?Increase_Table_Size@?$IndexClass@HVCell@@@@AAE_NH@Z,MATCH,134,src/house.cpp,?Increase_Table_Size@?$IndexClass@HVCell@@@@AAE_NH@Z
+0x005108F0,?search_compfunc@?$IndexClass@HVCell@@@@CAHPBX0@Z,MATCH,34,src/house.cpp,?search_compfunc@?$IndexClass@HVCell@@@@CAHPBX0@Z
 0x00510920,??0?$VectorClass@_N@@QAE@HPB_N@Z,MATCH,71,src/house.cpp,??0?$VectorClass@_N@@QAE@HPB_N@Z
 0x00510970,??0?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@QAE@HPBV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@Z,MATCH,162,src/house.cpp,??0?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@QAE@HPBV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@Z
 0x00510A20,HouseClass::QueryInterface,MATCH,10,src/house.cpp,?QueryInterface@HouseClass@@W3AGJABU_GUID@@PAPAX@Z
@@ -6207,6 +6212,7 @@ address,name,result,size,source,symbol
 0x00518D80,InfantryClass::Shape_Number,MATCH,521,src/infantry.cpp,?Shape_Number@InfantryClass@@QBEHXZ
 0x00518F90,InfantryClass::Draw_It,MATCH,1689,src/infantry.cpp,?Draw_It@InfantryClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x0051AA10,InfantryClass::Detach,MATCH,42,src/infantry.cpp,?Detach@InfantryClass@@UAEXPBVAbstractClass@@_N@Z
+0x0051AA40,InfantryClass::Assign_Destination,MATCH,1953,src/infantry.cpp,?Assign_Destination@InfantryClass@@UAEXPAVAbstractClass@@_N@Z
 0x0051B1F0,InfantryClass::Assign_Target,MATCH,347,src/infantry.cpp,?Assign_Target@InfantryClass@@UAEXPAVAbstractClass@@@Z
 0x0051BAB0,InfantryClass::AI,MATCH,1239,src/infantry.cpp,?AI@InfantryClass@@UAEXXZ
 0x0051BF90,InfantryClass::Can_Enter_Cell,MATCH,2323,src/infantry.cpp,?Can_Enter_Cell@InfantryClass@@UBE?AW4MoveType@@PBVCellClass@@W4FacingType@@H0_N@Z
@@ -6475,6 +6481,7 @@ address,name,result,size,source,symbol
 0x0052B970,_$E145,MATCH,18,src/init.cpp,_$E145
 0x0052B990,FUN_0052B990,MATCH,26,src/init.cpp,?FUN_0052B990@@YIXXZ
 0x0052B9B0,FUN_0052B9B0,MATCH,161,src/init.cpp,?FUN_0052B9B0@@YIXPAUHWND__@@@Z
+0x0052BA60,Init_Game,MATCH,4333,src/init.cpp,?Init_Game@@YIHXZ
 0x0052CB50,FUN_0052CB50,MATCH,44,src/init.cpp,?FUN_0052CB50@@YI_NXZ
 0x0052CB80,FUN_0052CB80,MATCH,1,src/init.cpp,?FUN_0052CB80@@YIXXZ
 0x0052CB90,FUN_0052CB90,MATCH,473,src/init.cpp,?FUN_0052CB90@@YIXXZ
@@ -6521,6 +6528,7 @@ address,name,result,size,source,symbol
 0x005355C0,FUN_005355C0,MATCH,16,src/init.cpp,?FUN_005355C0@@YI?AW4ThemeType@@XZ
 0x005355D0,FUN_005355D0,MATCH,1168,src/init.cpp,?FUN_005355D0@@YIHXZ
 0x00535AA0,INIClass::INIClass,MATCH,143,src/init.cpp,??0INIClass@@QAE@XZ
+0x00535B30,CCINIClass::CCINIClass,MATCH,146,src/init.cpp,??0CCINIClass@@QAE@XZ
 0x00535BD0,CommandClass::PreventCombinationOverride,MATCH,5,src/init.cpp,?PreventCombinationOverride@CommandClass@@UBE_NH@Z
 0x00535BE0,CommandClass::ExtraTriggerCondition,MATCH,15,src/init.cpp,?ExtraTriggerCondition@CommandClass@@UBE_NH@Z
 0x00535BF0,CommandClass::Unknown1C,MATCH,5,src/init.cpp,?Unknown1C@CommandClass@@UBE_NH@Z
@@ -8274,6 +8282,7 @@ address,name,result,size,source,symbol
 0x005905D0,MapRegionClass::Make_Region_Connections,MATCH,920,src/mapgen.cpp,?Make_Region_Connections@MapRegionClass@@QAEXXZ
 0x00590970,MapRegionClass::Connect_Regions_With_Ramp,MATCH,1625,src/mapgen.cpp,?Connect_Regions_With_Ramp@MapRegionClass@@QAE_NABVCell@@HM@Z
 0x00590FD0,MapRegionClass::Build_Neighbor_Region_Mask,MATCH,279,src/mapgen.cpp,?Build_Neighbor_Region_Mask@MapRegionClass@@QAEIABVCell@@AA_NHM@Z
+0x00591D80,MapRegionClass::Build_North_Ramp,MATCH,1724,src/mapgen.cpp,?Build_North_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z
 0x00593550,MapRegionClass::Build_Corner_Ramp_NW,MATCH,1426,src/mapgen.cpp,?Build_Corner_Ramp_NW@MapRegionClass@@QAE_NABVCell@@0H@Z
 0x00593AF0,MapRegionClass::Build_Corner_Ramp_SW,MATCH,1299,src/mapgen.cpp,?Build_Corner_Ramp_SW@MapRegionClass@@QAE_NABVCell@@0H@Z
 0x00594010,MapRegionClass::Is_Ramp_Area_Clear,MATCH,372,src/mapgen.cpp,?Is_Ramp_Area_Clear@MapRegionClass@@QAE_NAAV?$TRect@H@@H@Z
@@ -8353,6 +8362,7 @@ address,name,result,size,source,symbol
 0x005A1E50,MapGeneratorClass::Region_Cell_Count_At_Least,MATCH,265,src/mapgen.cpp,?Region_Cell_Count_At_Least@MapGeneratorClass@@SI_NABV?$TRect@H@@HHH@Z
 0x005A1F60,MapGeneratorClass::Expand_All_High_Ground,MATCH,76,src/mapgen.cpp,?Expand_All_High_Ground@MapGeneratorClass@@QAE_NXZ
 0x005A1FB0,MapGeneratorClass::Init_Start_Points,MATCH,1007,src/mapgen.cpp,?Init_Start_Points@MapGeneratorClass@@QAE_NXZ
+0x005A23A0,MapGeneratorClass::Create_Tiberium,MATCH,1300,src/mapgen.cpp,?Create_Tiberium@MapGeneratorClass@@QAEXXZ
 0x005A28C0,MapGeneratorClass::Create_Tiberium_Patch,MATCH,1547,src/mapgen.cpp,?Create_Tiberium_Patch@MapGeneratorClass@@QAEXABVCell@@HH_N@Z
 0x005A2ED0,MapGeneratorClass::Get_Tiberium_Score,MATCH,117,src/mapgen.cpp,?Get_Tiberium_Score@MapGeneratorClass@@QBENABVCell@@0@Z
 0x005A2F50,MapGeneratorClass::Seed_Hill_Heights,MATCH,1184,src/mapgen.cpp,?Seed_Hill_Heights@MapGeneratorClass@@QAEXXZ
@@ -8505,6 +8515,7 @@ address,name,result,size,source,symbol
 0x005A5B50,MapGeneratorClass::Generate_Urban_Roads,MATCH,2482,src/mapgen.cpp,?Generate_Urban_Roads@MapGeneratorClass@@QAEXABV?$DynamicVectorClass@VCell@@@@@Z
 0x0059C920,MapGeneratorClass::Seed_Lake,MATCH,2839,src/mapgen.cpp,?Seed_Lake@MapGeneratorClass@@QAE_NABVCell@@@Z
 0x0059BBC0,MapGeneratorClass::FUN_0059BBC0,MATCH,2415,src/mapgen.cpp,?FUN_0059BBC0@MapGeneratorClass@@QAEHHABV?$TRect@H@@ABVPoint2D@@_NABVCell@@N2@Z
+0x005A89D0,MapGeneratorClass::Generate_Rural_Roads,MATCH,1321,src/mapgen.cpp,?Generate_Rural_Roads@MapGeneratorClass@@QAE_NABVCell@@@Z
 0x005ADB00,_$E10,MATCH,23,src/mapsel.cpp,_$E10
 0x005ADB20,_$E16,MATCH,40,src/mapsel.cpp,_$E16
 0x005ADB50,_$E19,MATCH,19,src/mapsel.cpp,_$E19
@@ -9008,10 +9019,10 @@ address,name,result,size,source,symbol
 0x005C0E20,MultiplayerBattle::vt_entry_40,MATCH,3,src/movies.cpp,?vt_entry_40@MultiplayerBattle@@UAE_NXZ
 0x005C0E30,MultiplayerBattle::vt_entry_04,MATCH,3,src/movies.cpp,?vt_entry_04@MultiplayerBattle@@UAE_NXZ
 0x005C0E40,MultiplayerBattle::vt_entry_08,MATCH,3,src/movies.cpp,?vt_entry_08@MultiplayerBattle@@UAE_NXZ
-0x005C0E50,MultiplayerBattle::vt_entry_0C,MATCH,5,src/movies.cpp,?vt_entry_0C@MultiplayerBattle@@UAE_NI@Z
+0x005C0E50,MultiplayerBattle::vt_entry_0C,MATCH,5,src/movies.cpp,?vt_entry_0C@MultiplayerBattle@@UAE_NPAVWideWstring@@@Z
 0x005C0E60,MultiplayerBattle::vt_entry_20,MATCH,1,src/movies.cpp,?vt_entry_20@MultiplayerBattle@@UAEXXZ
 0x005C0E70,MultiplayerBattle::vt_entry_24,MATCH,1,src/movies.cpp,?vt_entry_24@MultiplayerBattle@@UAEXXZ
-0x005C0E80,MultiplayerBattle::vt_entry_38,MATCH,3,src/movies.cpp,?vt_entry_38@MultiplayerBattle@@UAEXI@Z
+0x005C0E80,MultiplayerBattle::vt_entry_38,MATCH,3,src/movies.cpp,?vt_entry_38@MultiplayerBattle@@UAEXPAUHWND__@@@Z
 0x005C0E90,MultiplayerBattle::vt_entry_58,MATCH,30,src/movies.cpp,?vt_entry_58@MultiplayerBattle@@UAE_NHV?$DynamicVectorClass@H@@PBD1@Z
 0x005C0EB0,MultiplayerBattle::vt_entry_54,MATCH,30,src/movies.cpp,?vt_entry_54@MultiplayerBattle@@UAE_NHV?$DynamicVectorClass@H@@@Z
 0x005C0ED0,MultiplayerBattle::vt_entry_5C,MATCH,5,src/movies.cpp,?vt_entry_5C@MultiplayerBattle@@UAE_NIII@Z
@@ -9068,7 +9079,7 @@ address,name,result,size,source,symbol
 0x005C21D0,MPCooperative::FUN_005C21D0,MATCH,469,src/mpcoop.cpp,?FUN_005C21D0@MPCooperative@@QAEXPAUHWND__@@_N@Z
 0x005C23B0,MPCooperative::FUN_005C23B0,MATCH,335,src/mpcoop.cpp,?FUN_005C23B0@MPCooperative@@QAEXPAUHWND__@@H@Z
 0x005C2500,MPCooperative::FUN_005C2500,MATCH,317,src/mpcoop.cpp,?FUN_005C2500@MPCooperative@@QAEXPAUHWND__@@@Z
-0x005C2640,MPCooperative::vt_entry_38,MATCH,64,src/mpcoop.cpp,?vt_entry_38@MPCooperative@@UAEXI@Z
+0x005C2640,MPCooperative::vt_entry_38,MATCH,64,src/mpcoop.cpp,?vt_entry_38@MPCooperative@@UAEXPAUHWND__@@@Z
 0x005C2680,MPCooperative::vt_entry_60,MATCH,70,src/mpcoop.cpp,?vt_entry_60@MPCooperative@@UAE_NXZ
 0x005C26D0,FUN_005C26D0,MATCH,59,src/mpcoop.cpp,?FUN_005C26D0@@YIXXZ
 0x005C2710,MPCooperative::vt_entry_64,MATCH,833,src/mpcoop.cpp,?vt_entry_64@MPCooperative@@UAE_NXZ
@@ -9925,6 +9936,7 @@ address,name,result,size,source,symbol
 0x005E66F0,FUN_005E66F0,MATCH,419,src/netshare.cpp,?FUN_005E66F0@@YI_NXZ
 0x005E68A0,Scenario_Dialog,MATCH,127,src/netshare.cpp,?Scenario_Dialog@@YIHPAUHWND__@@@Z
 0x005E70D0,FUN_005E70D0,MATCH,133,src/netshare.cpp,?FUN_005E70D0@@YIHPAUHWND__@@PAVMultiMission@@@Z
+0x005E6920,Scenario_DlgProc,MATCH,1964,src/netshare.cpp,?Scenario_DlgProc@@YGHPAUHWND__@@IIJ@Z
 0x005E7160,FUN_005E7160,MATCH,767,src/netshare.cpp,?FUN_005E7160@@YI_NPAUHWND__@@@Z
 0x005E7460,PregameSetup,MATCH,126,src/netshare.cpp,?PregameSetup@@YIXXZ
 0x005E74E0,Update_Network_Dialog_Preview,MATCH,1088,src/netshare.cpp,?Update_Network_Dialog_Preview@@YIXPAUHWND__@@@Z
@@ -11099,6 +11111,7 @@ address,name,result,size,source,symbol
 0x00634970,PlanningNodeClass::Rebuild,MATCH,53,src/planmgr.cpp,?Rebuild@PlanningNodeClass@@QAEXXZ
 0x006349B0,PlanningNodeClass::Update_Active,MATCH,356,src/planmgr.cpp,?Update_Active@PlanningNodeClass@@QAEXXZ
 0x00634CC0,PlanningNodeClass::Find_Branch,MATCH,326,src/planmgr.cpp,?Find_Branch@PlanningNodeClass@@QAEHPAVTechnoClass@@@Z
+0x00634E10,PlanningNodeClass::FUN_00634E10,MATCH,585,src/planmgr.cpp,?FUN_00634E10@PlanningNodeClass@@QAEHPAVPlanningMemberClass@@@Z
 0x00635060,PlanningNodeClass::Detach,MATCH,183,src/planmgr.cpp,?Detach@PlanningNodeClass@@QAEXPAVPlanningMemberClass@@@Z
 0x00635120,PlanningNodeClass::Clear,MATCH,114,src/planmgr.cpp,?Clear@PlanningNodeClass@@QAEXXZ
 0x006351A0,PlanningNodeClass::Is_Loop_Start,MATCH,53,src/planmgr.cpp,?Is_Loop_Start@PlanningNodeClass@@QAE_NPAVTechnoClass@@@Z
@@ -11539,6 +11552,7 @@ address,name,result,size,source,symbol
 0x0064B240,Kick_Player_Now,MATCH,461,src/queue.cpp,?Kick_Player_Now@@YIXPAVConnManClass@@HPAUFrameSyncStruct@@_N@Z
 0x0064B410,Handle_Timeout,MATCH,187,src/queue.cpp,?Handle_Timeout@@YIHPAVConnManClass@@PAUFrameSyncStruct@@@Z
 0x0064B4D0,FUN_0064B4D0,MATCH,397,src/queue.cpp,?FUN_0064B4D0@@YI_NPAEPAHPAUMegaMissionData@EventData@EventClass@@PAVxTargetClass@@_N@Z
+0x0064C380,FUN_0064C380,MATCH,2474,src/queue.cpp,?FUN_0064C380@@YIHHW4HousesType@@PAVConnManClass@@PAV?$CDTimerClass@VFrameTimerClass@@@@PAUFrameSyncStruct@@@Z
 0x0064CD30,FUN_0064CD30,MATCH,106,src/queue.cpp,?FUN_0064CD30@@YIXHHVxTargetClass@@PAV1@@Z
 0x0064D990,Clean_DoList,MATCH,73,src/queue.cpp,?Clean_DoList@@YIXPAVConnManClass@@@Z
 0x0064D9E0,Queue_Record,MATCH,205,src/queue.cpp,?Queue_Record@@YIXXZ
@@ -11642,6 +11656,7 @@ address,name,result,size,source,symbol
 0x006579E0,RadarClass::Play_Movie,MATCH,764,src/radar.cpp,?Play_Movie@RadarClass@@QAEXXZ
 0x00657CE0,RadarClass::Complete_Radar_Refresh,MATCH,178,src/radar.cpp,?Complete_Radar_Refresh@RadarClass@@QAEXXZ
 0x00657DA0,Diplomacy_Dialog_Proc,MATCH,1413,src/radar.cpp,?Diplomacy_Dialog_Proc@@YGJPAUHWND__@@IIJ@Z
+0x00658330,RadarClass::FUN_00658330,MATCH,775,src/radar.cpp,?FUN_00658330@RadarClass@@QAEXPAUHWND__@@HPAVHouseClass@@@Z
 0x00658640,RadarClass::FUN_00658640,MATCH,141,src/radar.cpp,?FUN_00658640@RadarClass@@QAEXPAUHWND__@@@Z
 0x006586D0,RadarClass::FUN_006586D0,MATCH,150,src/radar.cpp,?FUN_006586D0@RadarClass@@QAEXXZ
 0x00658770,RadarClass::Help_Text,MATCH,13,src/radar.cpp,?Help_Text@RadarClass@@UAEPBDH@Z
@@ -12471,6 +12486,7 @@ address,name,result,size,source,symbol
 0x006907A0,ScoreFontClass::String_Width,MATCH,50,src/score.cpp,?String_Width@ScoreFontClass@@UAEHPBG@Z
 0x006907E0,ScoreFontClass::Char_Width,MATCH,107,src/score.cpp,?Char_Width@ScoreFontClass@@UAEHG@Z
 0x00690850,ScoreFontClass::Print_Char,MATCH,188,src/score.cpp,?Print_Char@ScoreFontClass@@UAEXPAVSurface@@GHHH_N@Z
+0x00690910,ScoreFontClass::Print_String,MATCH,248,src/score.cpp,?Print_String@ScoreFontClass@@UAEXPAVSurface@@PBGHHH@Z
 0x00690A10,ScoreFullFontClass::ScoreFullFontClass,MATCH,194,src/score.cpp,??0ScoreFullFontClass@@QAE@PAVConvertClass@@@Z
 0x00690AE0,ScoreBigFontClass::ScoreBigFontClass,MATCH,194,src/score.cpp,??0ScoreBigFontClass@@QAE@PAVConvertClass@@@Z
 0x00690BB0,ScoreTimeClass::ScoreTimeClass,MATCH,76,src/score.cpp,??0ScoreTimeClass@@QAE@HHPBXHHPAVConvertClass@@@Z
@@ -12690,6 +12706,7 @@ address,name,result,size,source,symbol
 0x0069BC60,SessionClass::FUN_0069BC60,MATCH,83,src/session.cpp,?FUN_0069BC60@SessionClass@@QAEHH@Z
 0x0069BCC0,SessionClass::FUN_0069BCC0,MATCH,63,src/session.cpp,?FUN_0069BCC0@SessionClass@@QAEHPBD@Z
 0x0069BD00,SessionClass::FUN_0069BD00,MATCH,90,src/session.cpp,?FUN_0069BD00@SessionClass@@QAEHH@Z
+0x0069BD60,SessionClass::FUN_0069BD60,MATCH,1845,src/session.cpp,?FUN_0069BD60@SessionClass@@QAEXXZ
 0x0069C4A0,?Clear@?$DynamicVectorClass@W4DiskID@@@@UAEXXZ,MATCH,42,src/session.cpp,?Clear@?$DynamicVectorClass@W4DiskID@@@@UAEXXZ
 0x0069C4D0,?ID@?$DynamicVectorClass@W4DiskID@@@@UAEHPBW4DiskID@@@Z,MATCH,27,src/session.cpp,?ID@?$DynamicVectorClass@W4DiskID@@@@UAEHPBW4DiskID@@@Z
 0x0069C4F0,?GetItem@?$VectorClass@W4DiskID@@@@UBE?AW4DiskID@@H@Z,MATCH,13,src/session.cpp,?GetItem@?$VectorClass@W4DiskID@@@@UBE?AW4DiskID@@H@Z
@@ -14171,6 +14188,8 @@ address,name,result,size,source,symbol
 0x006D4E00,Tactical::Clear_Caption_Text,MATCH,17,src/tactical.cpp,?Clear_Caption_Text@Tactical@@QAEXXZ
 0x006D4E20,Tactical::Draw_Screen_Text,MATCH,514,src/tactical.cpp,?Draw_Screen_Text@Tactical@@QAEXPBG@Z
 0x006D5030,Tactical::Draw_Placement,MATCH,1781,src/tactical.cpp,?Draw_Placement@Tactical@@QAEX_N@Z
+0x006D5730,Tactical::Draw_Fence_Placement,MATCH,660,src/tactical.cpp,?Draw_Fence_Placement@Tactical@@QAEX_NVCell@@@Z
+0x006D59D0,Tactical::Draw_Firestorm_Wall_Placement,MATCH,637,src/tactical.cpp,?Draw_Firestorm_Wall_Placement@Tactical@@QAEX_NVCell@@@Z
 0x006D5C50,Tactical::Draw_Wall_Placement,MATCH,733,src/tactical.cpp,?Draw_Wall_Placement@Tactical@@QAEX_NVCell@@@Z
 0x006D5F30,Tactical::Blit_Tiles,MATCH,33,src/tactical.cpp,?Blit_Tiles@Tactical@@QAE_NXZ
 0x006D5F60,Tactical::Set_View_Dimensions,MATCH,157,src/tactical.cpp,?Set_View_Dimensions@Tactical@@QAEXABV?$TRect@H@@@Z
@@ -14413,6 +14432,7 @@ address,name,result,size,source,symbol
 0x006E3380,TActionClass::TAction_ION_CANNON,MATCH,141,src/taction.cpp,?TAction_ION_CANNON@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
 0x006E3410,TActionClass::TAction_MULTI_MISSILE,MATCH,469,src/taction.cpp,?TAction_MULTI_MISSILE@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
 0x006E35F0,TActionClass::TAction_LIGHTNING_STORM,MATCH,228,src/taction.cpp,?TAction_LIGHTNING_STORM@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
+0x006E36E0,TActionClass::TAction_IRON_CURTAIN,MATCH,263,src/taction.cpp,?TAction_IRON_CURTAIN@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
 0x006E37F0,TActionClass::TAction_SET_TECH_LEVEL,MATCH,153,src/taction.cpp,?TAction_SET_TECH_LEVEL@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
 0x006E3890,TActionClass::TAction_CHRONO_IN_TEAM,MATCH,30,src/taction.cpp,?TAction_CHRONO_IN_TEAM@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
 0x006E38B0,TActionClass::TAction_CREATE_CRATE,MATCH,49,src/taction.cpp,?TAction_CREATE_CRATE@TActionClass@@AAE_NPAVHouseClass@@PAVObjectClass@@PAVTriggerClass@@ABVCell@@@Z
@@ -16636,6 +16656,7 @@ address,name,result,size,source,symbol
 0x00752590,FUN_00752590,MATCH,227,src/vox.cpp,?FUN_00752590@@YIXPAVVoxClass@@HH@Z
 0x00752680,FUN_00752680,MATCH,126,src/vox.cpp,?FUN_00752680@@YIPAUVoxNode@@PAVVoxClass@@@Z
 0x00752700,VoxClass::Play,MATCH,95,src/vox.cpp,?Play@VoxClass@@SIXPBDHH@Z
+0x00752760,FUN_00752760,MATCH,572,src/vox.cpp,?FUN_00752760@@YIXXZ
 0x007529A0,FUN_007529A0,MATCH,55,src/vox.cpp,?FUN_007529A0@@YIX_N@Z
 0x007529E0,FUN_007529E0,MATCH,86,src/vox.cpp,?FUN_007529E0@@YIHXZ
 0x00752A40,VoxClass::SilenceIndex,MATCH,107,src/vox.cpp,?SilenceIndex@VoxClass@@SIXH@Z
@@ -17061,6 +17082,7 @@ address,name,result,size,source,symbol
 0x0075F980,WaveClass::Limbo,MATCH,98,src/wave.cpp,?Limbo@WaveClass@@UAE_NXZ
 0x0075F9F0,WaveClass::Draw_It,MATCH,156,src/wave.cpp,?Draw_It@WaveClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x00760190,WaveClass::FUN_00760190,MATCH,332,src/wave.cpp,?FUN_00760190@WaveClass@@ABEXHHHPAG@Z
+0x007609E0,WaveClass::Draw_Laser,MATCH,1382,src/wave.cpp,?Draw_Laser@WaveClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x00760F50,WaveClass::AI,MATCH,220,src/wave.cpp,?AI@WaveClass@@UAEXXZ
 0x00761030,WaveClass::Sonic_AI,MATCH,106,src/wave.cpp,?Sonic_AI@WaveClass@@AAEXXZ
 0x007610A0,WaveClass::FUN_007610A0,MATCH,44,src/wave.cpp,?FUN_007610A0@WaveClass@@AAEXXZ
@@ -17482,6 +17504,7 @@ address,name,result,size,source,symbol
 0x0076EBE0,WorldDominationTour::Selection::Play_SFX,MATCH,158,src/wdtsel.cpp,?Play_SFX@Selection@WorldDominationTour@@QAEXABVWstring@@@Z
 0x0076EC80,WorldDominationTour::Selection::Set_Long_Description,MATCH,80,src/wdtsel.cpp,?Set_Long_Description@Selection@WorldDominationTour@@QAEXXZ
 0x0076ECD0,FUN_0076ECD0,MATCH,62,src/wdtsel.cpp,?FUN_0076ECD0@@YIXPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z
+0x0076ED10,FUN_0076ED10,MATCH,415,src/wdtsel.cpp,?FUN_0076ED10@@YI_NPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z
 0x0076EEB0,WorldDominationTour::Selection::FUN_0076EEB0,MATCH,195,src/wdtsel.cpp,?FUN_0076EEB0@Selection@WorldDominationTour@@QAEXXZ
 0x0076EF80,WorldDominationTour::Selection::End,MATCH,91,src/wdtsel.cpp,?End@Selection@WorldDominationTour@@QAEXXZ
 0x0076F000,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z,MATCH,26,src/wdtsel.cpp,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z
@@ -17854,6 +17877,7 @@ address,name,result,size,source,symbol
 0x0077A890,PlayerProfile::AddField30,MATCH,24,src/wolpersonainformation.cpp,?AddField30@PlayerProfile@@QAEXH@Z
 0x0077A8B0,PlayerProfile::AddField34,MATCH,24,src/wolpersonainformation.cpp,?AddField34@PlayerProfile@@QAEXH@Z
 0x0077A8D0,FUN_0077A8D0,MATCH,279,src/wolpersonainformation.cpp,?FUN_0077A8D0@@YIXPAUHWND__@@_N@Z
+0x0077A9F0,PlayerProfile::FUN_0077A9F0,MATCH,1585,src/wolpersonainformation.cpp,?FUN_0077A9F0@PlayerProfile@@QAEXPAUHWND__@@PBVWstring@@_N@Z
 0x0077B030,??_GPlayerProfile@@UAEPAXI@Z,MATCH,62,src/wolpersonainformation.cpp,??_GPlayerProfile@@UAEPAXI@Z
 0x0077B070,FUN_0077B070,MATCH,23,src/wolpersonainformation.cpp,?FUN_0077B070@@YIXXZ
 0x0077B090,_$E2,MATCH,40,src/wolpersonainformation2.cpp,_$E2
@@ -18047,6 +18071,7 @@ address,name,result,size,source,symbol
 0x00781CF0,FUN_00781CF0,MATCH,45,src/wonline.cpp,?FUN_00781CF0@@YAHPBUUserSort@@0@Z
 0x00781FB0,FUN_00781FB0,MATCH,877,src/wonline.cpp,?FUN_00781FB0@@YIXPAUUser@@_N@Z
 0x00781D20,FUN_00781D20,MATCH,655,src/wonline.cpp,?FUN_00781D20@@YIX_N@Z
+0x00782320,FUN_00782320,MATCH,2179,src/wonline.cpp,?FUN_00782320@@YIXPAUUser@@_N@Z
 0x00782BB0,FUN_00782BB0,MATCH,1201,src/wonline.cpp,?FUN_00782BB0@@YIXPAUUser@@_N@Z
 0x00783070,FUN_00783070,MATCH,72,src/wonline.cpp,?FUN_00783070@@YIXPAUUser@@@Z
 0x007830C0,FUN_007830C0,MATCH,219,src/wonline.cpp,?FUN_007830C0@@YAHPBUUserRank@@0@Z
@@ -18060,6 +18085,7 @@ address,name,result,size,source,symbol
 0x00783A90,FUN_00783A90,MATCH,240,src/wonline.cpp,?FUN_00783A90@@YIPAVSurface@@H@Z
 0x00783B80,FUN_00783B80,MATCH,245,src/wonline.cpp,?FUN_00783B80@@YIPAVSurface@@PAURankedUser@@@Z
 0x00785360,FUN_00785360,MATCH,9,src/wonline.cpp,?FUN_00785360@@YIXXZ
+0x007A3100,CNetUtilEventSink::OnLadderList,MATCH,2600,src/wonline.cpp,?OnLadderList@CNetUtilEventSink@@UAGJJPAULadder@@HJH@Z
 0x00785370,FUN_00785370,MATCH,976,src/wonline.cpp,?FUN_00785370@@YIHPAUHINSTANCE__@@@Z
 0x00785740,FUN_00785740,MATCH,1883,src/wonline.cpp,?FUN_00785740@@YIXPAUUser@@@Z
 0x00785EA0,FUN_00785EA0,MATCH,471,src/wonline.cpp,?FUN_00785EA0@@YIXXZ
@@ -18152,6 +18178,7 @@ address,name,result,size,source,symbol
 0x00799EA0,FUN_00799EA0,MATCH,3932,src/wonline.cpp,?FUN_00799EA0@@YGHPAUHWND__@@IIJ@Z
 0x0079AE00,FUN_0079AE00,MATCH,260,src/wonline.cpp,?FUN_0079AE00@@YGHPAUHWND__@@IIJ@Z
 0x0079AF10,FUN_0079AF10,MATCH,2892,src/wonline.cpp,?FUN_0079AF10@@YIXPAUHWND__@@@Z
+0x0079BA60,FUN_0079BA60,MATCH,539,src/wonline.cpp,?FUN_0079BA60@@YI_NPAUChannel@@_N1@Z
 0x0079BC80,FUN_0079BC80,MATCH,486,src/wonline.cpp,?FUN_0079BC80@@YI_NXZ
 0x0079BE70,FUN_0079BE70,MATCH,89,src/wonline.cpp,?FUN_0079BE70@@YIXXZ
 0x0079BED0,FUN_0079BED0,MATCH,122,src/wonline.cpp,?FUN_0079BED0@@YI_NXZ
@@ -18201,7 +18228,6 @@ address,name,result,size,source,symbol
 0x007A2FC0,CNetUtilEventSink::CNetUtilEventSink,MATCH,30,src/wonline.cpp,??0CNetUtilEventSink@@QAE@XZ
 0x007A2FE0,CNetUtilEventSink::OnWDTState,MATCH,231,src/wonline.cpp,?OnWDTState@CNetUtilEventSink@@UAGJJPAEH@Z
 0x007A30D0,CNetUtilEventSink::OnGameresSent,MATCH,39,src/wonline.cpp,?OnGameresSent@CNetUtilEventSink@@UAGJJ@Z
-0x007A3100,CNetUtilEventSink::OnLadderList,MATCH,2600,src/wonline.cpp,?OnLadderList@CNetUtilEventSink@@UAGJJPAULadder@@HJH@Z
 0x007A3B30,CNetUtilEventSink::OnHighscore,MATCH,594,src/wonline.cpp,?OnHighscore@CNetUtilEventSink@@UAGJJPAUHighscore@@HJH@Z
 0x007A3D90,CNetUtilEventSink::OnNewNick,MATCH,732,src/wonline.cpp,?OnNewNick@CNetUtilEventSink@@UAGJJPBD00@Z
 0x007A4070,CNetUtilEventSink::OnAgeCheck,MATCH,121,src/wonline.cpp,?OnAgeCheck@CNetUtilEventSink@@UAGJJHH@Z

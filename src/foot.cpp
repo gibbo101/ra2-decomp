@@ -38,7 +38,7 @@
 #include "infatype.h"
 #include "inline.h"
 #include "ion.h"
-#include "ipiggy.h"
+#include "piggyback.h"
 #include "mono.h"
 #include "notify.h"
 #include "parasite.h"
@@ -4038,8 +4038,7 @@ bool FootClass::ChronoWarpTo(Coord dest)
 	Assign_Destination(&Map[dest], true);
 	Assign_Destination(NULL, true);
 	teleport->Link_To_Object(this);
-	piggy->Begin_Piggyback(Locomotion);
-	Locomotion = teleport;
+	Begin_Piggyback_Locomotion(Locomotion, piggy, teleport);
 	IsImmobilized = true;
 	(Coord &)ChronoDestCoords = dest;
 	Assign_Destination(&Map[dest], true);

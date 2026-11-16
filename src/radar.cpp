@@ -2322,6 +2322,86 @@ LRESULT CALLBACK Diplomacy_Dialog_Proc(HWND dialog, UINT message, WPARAM wparam,
 	return 0;
 }
 
+Surface * FUN_004E3560(int index);
+void FUN_00603D30(HWND window, Surface * surface);
+extern wchar_t const DAT_0081B3D0[];
+
+// FUNCTION: GAMEMD 0x00658330
+void RadarClass::FUN_00658330(HWND dialog, int index, HouseClass * house)
+{
+	int kills_id = DiplomacyKillsIDs[index];
+	int name_id = DiplomacyNameIDs[index];
+	wchar_t buffer[100];
+	buffer[0] = 0;
+
+	if (house && house->Class->IsMultiplay) {
+		wcscpy(buffer, house->UIName);
+
+		ColorScheme * scheme;
+		if (house == DAT_00AC1198) {
+			scheme = Fetch_Scheme_By_Name("LightGrey", 1);
+		} else if (house->IsDefeated) {
+			scheme = Fetch_Scheme_By_Name("Grey", 1);
+		} else {
+			scheme = ColorSchemes[house->Scheme];
+		}
+		RGBClass rgb = scheme->HSV;
+		COLORREF color = RGB(rgb.Get_Red(), rgb.Get_Green(), rgb.Get_Blue());
+
+		HWND name = GetDlgItem(dialog, name_id);
+		SendMessage(name, 0x498, 0, color);
+		SendMessage(name, 0x4B2, 0, (LPARAM)buffer);
+
+		HWND flag = GetDlgItem(dialog, FUN_004E3320(index));
+		Surface * surface = FUN_004E3560(house->Class->HeapID);
+		if (house == DAT_00AC1198) {
+			surface = FUN_004E3560(-3);
+		}
+		FUN_00603D30(flag, surface);
+
+		if (DiplomacyAllianceIDs[index] != -1) {
+			HWND alliance = GetDlgItem(dialog, DiplomacyAllianceIDs[index]);
+			if (Unsorted::MuteSWLaunches) {
+				EnableWindow(alliance, FALSE);
+			}
+			if (house->IsDefeated) {
+				ShowWindow(alliance, SW_HIDE);
+			} else {
+				bool ally = PlayerPtr->Is_Ally(house);
+				SendMessage(alliance, BM_SETCHECK, ally, 0);
+			}
+			bool allied = house->Is_Ally(PlayerPtr);
+			FUN_00603DD0(alliance, allied);
+		}
+
+		if (house->IsGiverUpper) {
+			int chat_id = DiplomacyChatIDs[index];
+			HWND chat = GetDlgItem(dialog, chat_id);
+			ShowWindow(chat, SW_HIDE);
+		} else if (Unsorted::MuteSWLaunches) {
+			int chat_id = DiplomacyChatIDs[index];
+			HWND chat = GetDlgItem(dialog, chat_id);
+			SendMessage(chat, BM_SETCHECK, 1, 0);
+			EnableWindow(chat, FALSE);
+		}
+
+		int total = 0;
+		for (int i = 0; i < 20; i++) {
+			total += house->UnitsKilled[i] + house->BuildingsKilled[i];
+		}
+		swprintf(buffer, DAT_0081B3D0, total);
+
+		HWND kills = GetDlgItem(dialog, kills_id);
+		SendMessage(kills, 0x498, 0, color);
+		SendMessage(kills, 0x4B2, 0, (LPARAM)buffer);
+	} else {
+		HWND name = GetDlgItem(dialog, name_id);
+		SendMessage(name, 0x4B2, 0, (LPARAM)buffer);
+		HWND kills = GetDlgItem(dialog, kills_id);
+		SendMessage(kills, 0x4B2, 0, (LPARAM)buffer);
+	}
+}
+
 // FUNCTION: GAMEMD 0x00658640
 void RadarClass::FUN_00658640(HWND dialog)
 {

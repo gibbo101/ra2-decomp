@@ -44,6 +44,7 @@
 #include "surface.h"
 #include "dsurface.h"
 #include "_surface.h"
+#include "bsurface.h"
 #include "rgb.h"
 
 struct Drawing {
