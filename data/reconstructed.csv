@@ -1,0 +1,7 @@
+address,name,source,approved,evidence
+0x0047EFE0,CellClass::Draw_Shroud_Or_Fog_Shape,the exe (C prologue and inline asm),2026-11-16,EBP frame without floating point and an asm-shaped second loop; no asm for it in TibSun's cell.cpp or any EA release
+0x00492830,BlitTransLucent50<unsigned short>::BlitForward,the exe (C prologue and inline asm),2026-11-16,"EBP frame without floating point, table and mask spilled to locals, a memory-decremented loop count; not in the blitblit.h of TibSun, Renegade or Generals"
+0x007C5F3D,Detect_MMX_Availability,"TibSun detproc.asm, revised",2026-11-16,the archive routine assembles to 73.1%; RA2 adds an edx save and stores the CPU model
+0x007C60C0,Iso_Blit_Asm1,"TibSun isoasm.asm, revised",2026-11-16,RA2 reads the tile step from the argument where the archive adds 48; Iso_Blit_Asm2 beside it matches the archive unchanged
+0x007DF7C0,Draw_Voxel_Regular_Normals_ASM,"TibSun winasm.asm, revised",2026-11-16,RA2 drops the second VoxelDrawBuffer store and aligns the procs to 32
+0x007DF8C0,Draw_Voxel_Reverse_Normals_ASM,"TibSun winasm.asm, revised",2026-11-16,as 0x007DF7C0; covers the four following procs with no start of their own in functions.csv

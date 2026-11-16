@@ -11580,6 +11580,12 @@ address,name,result,size,source,symbol
 0x0064A0C0,FUN_0064A0C0,MATCH,1377,src/queue.cpp,?FUN_0064A0C0@@YIHPAVConnManClass@@PADHHPAUFrameSyncStruct@@PAV?$BasicTimerClass@VSystemTimerClass@@@@@Z
 0x0064B660,FUN_0064B660,MATCH,1896,src/queue.cpp,?FUN_0064B660@@YIHPAXHHHHPAH@Z
 0x00648710,Wait_For_Players,MATCH,5519,src/queue.cpp,?Wait_For_Players@@YI?AW4RetcodeType@@HPAVConnManClass@@HHHPADHPAUFrameSyncStruct@@@Z
+0x0047EFE0,?Draw_Shroud_Or_Fog_Shape@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@H@Z,RECONSTRUCTED,621,src/ra2asm/cell.asm,?Draw_Shroud_Or_Fog_Shape@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@H@Z
+0x00492830,?BlitForward@?$BlitTransLucent50@G@@UBEXPAXPBXHH00HH@Z,RECONSTRUCTED,90,src/ra2asm/convert.asm,?BlitForward@?$BlitTransLucent50@G@@UBEXPAXPBXHH00HH@Z
+0x007C5F3D,Detect_MMX_Availability,RECONSTRUCTED,194,src/ra2asm/detproc.asm,_Detect_MMX_Availability
+0x007C60C0,Iso_Blit_Asm1,RECONSTRUCTED,271,src/ra2asm/isoasm.asm,_Iso_Blit_Asm1
+0x007DF7C0,Draw_Voxel_Regular_Normals_ASM,RECONSTRUCTED,255,src/ra2asm/winasm.asm,_Draw_Voxel_Regular_Normals_ASM
+0x007DF8C0,Draw_Voxel_Reverse_Normals_ASM,RECONSTRUCTED,1344,src/ra2asm/winasm.asm,_Draw_Voxel_Reverse_Normals_ASM
 0x00652660,_$E2,MATCH,23,src/radar.cpp,_$E2
 0x00652680,_$E109,MATCH,40,src/radar.cpp,_$E109
 0x006526B0,_$E112,MATCH,19,src/radar.cpp,_$E112
@@ -17729,6 +17735,7 @@ address,name,result,size,source,symbol
 0x007DF640,_MMX_Brighten_Color_655,MATCH,321,src/winasm.asm,_MMX_Brighten_Color_655
 0x007DFE00,Draw_Voxel_Regular_UNUSED_ASM,MATCH,256,src/winasm.asm,_Draw_Voxel_Regular_UNUSED_ASM
 0x007DFF00,Draw_Voxel_Reverse_UNUSED_ASM,MATCH,252,src/winasm.asm,_Draw_Voxel_Reverse_UNUSED_ASM
+0x007E0000,_Int3,MATCH,1,src/winasm.asm,__Int3
 0x007E0001,Asm_Interpolate,MATCH,165,src/winasm.asm,_Asm_Interpolate
 0x007E00A6,Asm_Interpolate_Line_Double,MATCH,202,src/winasm.asm,_Asm_Interpolate_Line_Double
 0x007E0170,Interpolate_Single_Line,MATCH,98,src/winasm.asm,_Interpolate_Single_Line

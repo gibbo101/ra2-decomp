@@ -43,6 +43,11 @@ uv run tools/exelink/link.py --hybrid --source-data --search-literals
   from the original outside relocation sites gives its slot back to the original's bytes, and
   is listed in `link_report.json` (`hybrid_rows_demoted_to_retail_bytes`). In an assembly
   object, every routine must also sit at the offset the original has it at.
+- **Reconstructed assembly is placed like a match.** `prepare.py` adds the rows
+  `data/progress.csv` records as `RECONSTRUCTED` (`src/ra2asm/`, rebuilt from the exe) to the
+  manifest's, and `build.py` retires an archive object's own copy of each routine `src/ra2asm/`
+  rebuilds (a static in a section of its own, which `/OPT:REF` drops), so the routines after it
+  in the archive's object start a placeable section of their own.
 - **References are pinned from the original, not from names.** `pindata.py` reads each
   relocation site of each placed matched function in the original: the dword there, less the
   object's addend, is where the original's reference goes. A name with one address everywhere

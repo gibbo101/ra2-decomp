@@ -8,8 +8,9 @@ library in data/library.csv is a library unit, with the span's unidentified func
 library/unidentified. Game functions match as tools/gamecode.py says; a library function
 matches when data/library.csv identifies it, since that is a byte match against the
 toolchain's own library objects. Fuzzy scores weigh each function by its size; an unmatched
-function whose best attempt matched outside src/ scores 99.99. A unit is complete when every
-function in it matches.
+function whose best attempt matched outside src/ scores 99.99. A reconstructed function scores
+100 and counts in matched and complete code, since it links from source, but not in the
+matched functions. A unit is complete when every function in it matches or is reconstructed.
 """
 
 import bisect
@@ -27,12 +28,13 @@ DEFAULT_OUT = gamecode.ROOT / "build/GAMEMD_1.001/report.json"
 UNLANDED_CAP = 99.99
 
 
-def measures(functions: list[dict], complete: bool) -> dict:
+def measures(functions: list[dict], complete: bool, reconstructed: set[int] = frozenset()) -> dict:
     total = sum(f["size"] for f in functions)
     done = sum(f["size"] for f in functions if f["fuzzy_match_percent"] == 100)
     fuzzy = sum(f["size"] * f["fuzzy_match_percent"] / 100 for f in functions)
     count = len(functions)
-    hits = sum(1 for f in functions if f["fuzzy_match_percent"] == 100)
+    hits = sum(1 for f in functions if f["fuzzy_match_percent"] == 100
+               and f["metadata"]["virtual_address"] not in reconstructed)
     return {
         "fuzzy_match_percent": pct(fuzzy, total),
         "total_code": total, "matched_code": done, "matched_code_percent": pct(done, total),
@@ -69,7 +71,8 @@ def build() -> dict:
     game, library = gamecode.split_functions()
     names = {int(r["address"], 16): r["name"] for r in gamecode.rows("functions.csv")}
     manifest = {int(r["address"], 16): r for r in gamecode.rows("manifest.csv")}
-    best = gamecode.best_scores(game, set(manifest))
+    rebuilt = gamecode.reconstructed() & game.keys()
+    best = gamecode.best_scores(game, set(manifest) | rebuilt)
     libs = {int(r["address"], 16): r for r in gamecode.rows("library.csv")}
     modules = sorted((int(r["first"], 16), int(r["last"], 16), r["module"])
                      for r in gamecode.rows("modules.csv"))
@@ -90,7 +93,7 @@ def build() -> dict:
         grouped[unit].append({
             "name": row["symbol"] if row else (names.get(a) or f"FUN_{a:08X}"),
             "size": size,
-            "fuzzy_match_percent": 100 if row else min(best.get(a, 0.0), UNLANDED_CAP),
+            "fuzzy_match_percent": 100 if row or a in rebuilt else min(best.get(a, 0.0), UNLANDED_CAP),
             "metadata": {"virtual_address": a},
         })
     for a, size in sorted(library.items()):
@@ -110,7 +113,7 @@ def build() -> dict:
         meta = {"complete": complete, "progress_categories": [category]}
         if sources[name]:
             meta["source_path"] = sources[name].most_common(1)[0][0]
-        units.append({"name": name, "measures": measures(functions, complete), "sections": [],
+        units.append({"name": name, "measures": measures(functions, complete, rebuilt), "sections": [],
                       "functions": functions, "metadata": meta})
     categories = [{"id": cid, "name": cname,
                    "measures": combine([u for u in units if cid in u["metadata"]["progress_categories"]])}
@@ -123,9 +126,11 @@ def main(argv: list[str]) -> int:
     report = build()
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, indent=1) + "\n")
+    rebuilt = len(gamecode.reconstructed() & gamecode.split_functions()[0].keys())
     for c in report["categories"]:
         m = c["measures"]
-        print(f"{c['id']}: {m['matched_functions']:,} of {m['total_functions']:,} functions, "
+        extra = f" + {rebuilt:,} reconstructed" if c["id"] == "game" and rebuilt else ""
+        print(f"{c['id']}: {m['matched_functions']:,} of {m['total_functions']:,} functions{extra}, "
               f"{m['matched_code_percent']:.1f}% of code, fuzzy {m['fuzzy_match_percent']:.1f}%, "
               f"{m['complete_units']} of {m['total_units']} units complete")
     print(f"-> {out}")

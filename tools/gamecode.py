@@ -4,7 +4,9 @@ Game code is every function outside the library's span (the CRT and the import t
 everything below the first library function, and Westwood's assembly after the last one.
 Unidentified functions inside the span are library code. A function matches when
 data/manifest.csv lists it; its fuzzy score is 100 when it matches, else its best score
-in data/attempts.csv, and 0 when it was never tried.
+in data/attempts.csv, and 0 when it was never tried. A function data/progress.csv records
+as RECONSTRUCTED (assembly rebuilt from the exe) links from source too, but is never a
+match: it is counted on its own.
 """
 
 import csv
@@ -37,6 +39,10 @@ def split_functions() -> tuple[dict[int, int], dict[int, int]]:
 
 def matched() -> set[int]:
     return {int(r["address"], 16) for r in rows("manifest.csv")}
+
+
+def reconstructed() -> set[int]:
+    return {int(r["address"], 16) for r in rows("progress.csv") if r["result"] == "RECONSTRUCTED"}
 
 
 def best_scores(addresses, done: set[int]) -> dict[int, float]:

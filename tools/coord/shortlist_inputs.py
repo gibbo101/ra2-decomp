@@ -7,8 +7,9 @@ from pathlib import Path
 
 
 def finished_addresses(path):
+    """Addresses no retry should pick: matched, or reconstructed from the exe's assembly."""
     with open(path, newline="") as f:
-        return {int(r["address"], 16) for r in csv.DictReader(f) if r["result"] == "MATCH"}
+        return {int(r["address"], 16) for r in csv.DictReader(f) if r["result"] in ("MATCH", "RECONSTRUCTED")}
 
 
 def banked_paths(attempts, root=Path(".")):

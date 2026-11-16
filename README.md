@@ -12,12 +12,13 @@ over real objects or hard-coded addresses are rejected however well they score.
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
 **Status (16 November 2026):** 3.36 MB of the game's 3.82 MB of code matches byte for byte
-(88%), in 19,138 of its 19,353 functions (99%). Counting each unmatched function at its best
-attempt so far, the fuzzy match is 96%. Each function is checked on its own, and
-`tools/exelink/` links the whole executable with every matched function at its original
-address: with the original's bytes for what isn't matched yet, the image is identical to
-retail 1.001 in every section, and 81% of its code comes from source. `docs/PLAN.md` has
-the method, and `docs/rounds/` records every batch. Live progress, updated on every push:
+(88%), in 19,139 of its 19,353 functions (99%) + 6 reconstructed. Counting each unmatched
+function at its best attempt so far, the fuzzy match is 96%. Each function is checked on
+its own, and `tools/exelink/` links the whole executable with every matched function at its
+original address: with the original's bytes for what isn't matched yet, the image is
+identical to retail 1.001 in every section, and 87% of its code comes from source.
+`docs/PLAN.md` has the method, and `docs/rounds/` records every batch. Live progress,
+updated on every push:
 https://bytematch.dev/gibbo101/ra2-decomp
 
 ## Getting started
@@ -51,6 +52,9 @@ https://bytematch.dev/gibbo101/ra2-decomp
 
 - `src/`, `include/`: the reconstructed source. A marker in reccmp's format
   (`// FUNCTION: GAMEMD 0x...`) ties each function to its address in the original.
+  `src/ra2asm/` holds the few routines the original wrote in assembly that no source
+  release contains, rebuilt from the executable; the checker prints `RECONSTRUCTED` for
+  them, never `MATCH`, and the counts list them apart.
 - `data/`: the map of the executable (`functions.csv`, `modules.csv`), what matches
   (`progress.csv`), proven names for globals (`names.csv`), and every attempt that fell
   short (`attempts.csv`).

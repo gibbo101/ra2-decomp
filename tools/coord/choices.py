@@ -231,7 +231,8 @@ def main():
             raise ValueError("job names must be unique")
         if args.command in ("suggest", "plan"):
             with (check.ROOT / "data/progress.csv").open() as f:
-                done = {int(r["address"], 16) for r in csv.DictReader(f) if r["result"] == "MATCH"}
+                done = {int(r["address"], 16) for r in csv.DictReader(f)
+                        if r["result"] in ("MATCH", "RECONSTRUCTED")}
             with (check.ROOT / "data/functions.csv").open() as f:
                 known = {int(r["address"], 16) for r in csv.DictReader(f)}
             taken = claimed()

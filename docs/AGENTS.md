@@ -103,6 +103,31 @@ Every compile counts as a check, including those your own scripts run.
 - A bug in the original is matched as it is; add it to `docs/BUGS.md` with its address
   and effect.
 
+## Reconstructed assembly
+
+A few routines the original wrote in assembly are in no source release: hand-written inline
+asm in a C function, or an archive routine RA2 revised. They cannot MATCH. With the
+maintainer's approval, one is rebuilt from the exe as MASM in `src/ra2asm/`:
+
+- It qualifies only with evidence that it is assembly (an `attempts.csv` row), a search
+  of the TibSun, Renegade and Generals releases that found no copy, and a row in
+  `data/reconstructed.csv`, which records the approval; check.py refuses any other. Never for code a
+  compiler could have emitted from C: keep matching that.
+- Its marker is `; RECONSTRUCTED: GAMEMD 0x...` before the PROC, never `; FUNCTION:`. A
+  decorated C++ name is the PROC's name as it is (`?BlitForward@?$...`). A PROC the exe gives
+  no start of its own in `data/functions.csv` is checked as part of the marked one before it.
+- A file starting from an archive routine names that archive file in its first comment
+  after the licence header and keeps its labels, structure and register use; only RA2's
+  changes differ. One from the exe alone writes its instructions as the exe has them.
+- Externals carry their real decorated names, as in C++, so references verify the same
+  way; data a C function kept file-local (string literals, static locals) is defined in the
+  file under the compiler's names.
+- The checker prints `RECONSTRUCTED` where it would print `MATCH`; `checkall.py` counts it
+  apart (`, N reconstructed`) and guards it like a match. It links from source in
+  `tools/exelink/`, which retires the archive's own copy of the routine.
+- MASM picks some encodings differently from the original's compiler: `[ecx+edx]` makes
+  `edx` the base, so the C part of a routine writes `[edx+ecx]` where the exe has base `ecx`.
+
 ## What has worked
 
 Each entry: what the diff showed, then the source change that fixed it.

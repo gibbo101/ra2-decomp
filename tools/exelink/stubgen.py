@@ -557,6 +557,13 @@ def plan(objdir, library_names, out, extra_unresolved=(), manifest=None, extents
                        "names": len(names) - 1})
 
     realign = {}
+    # An assembly object in the engine block starts at its retail address, which can be less
+    # aligned than MASM's segment (an object that follows another's last routine directly).
+    for va in sorted(v for v in asm_heads if v in provider and not (order_tail and v >= first)):
+        obj, sym = tu_object[provider_rows[va]["tu"]], provider_rows[va]["sym"]
+        section = next(x for x in parsed_of(obj)[2].values() if x["name"] == sym)["section"]
+        if coffgen.section_alignment(obj.read_bytes(), section) > va & -va:
+            realign.setdefault(obj, []).append((section, va & -va))
     if order_tail:
         # Westwood's assembly after the library keeps its retail address among the library's
         # sections: plain .text, with the alignment that address has where its own is stricter.

@@ -6,7 +6,8 @@ Writes, under build/exelink/ (ignored by git):
   gamemd_1001.exe              orig/gamemd.exe with the build's post-link changes put back
                                (tools/exebuild.py), the image every later step compares with
   inputs/progress_totals.json  its SHA-256, which every module checks before reading it
-  inputs/match_manifest.json   data/manifest.csv as manifest rows (all matched)
+  inputs/match_manifest.json   data/manifest.csv as manifest rows (all matched), and the rows
+                               data/progress.csv records as RECONSTRUCTED, which link from source too
   inputs/symbol_bindings.json  decorated symbol -> address from data/names.csv
   inputs/rtti_classes.json     the exe's RTTI graph: type descriptors, locators, vtables
   inputs/crt_tail_layout.json  the library tail of .text (tail_layout.py over the toolchain's LIB)
@@ -74,12 +75,15 @@ def restored_image(source):
     return bytes(data), build
 
 
-def manifest_rows():
+def manifest_rows(progress=DATA / "progress.csv"):
     rows = []
     with (DATA / "manifest.csv").open() as f:
-        for r in csv.DictReader(f):
-            rows.append({"tu": r["source"], "addr": f"0x{hx(r['address']):X}", "sym": r["symbol"],
-                         "len": f"0x{int(r['size']):X}", "status": "matched", "name": r["symbol"]})
+        listed = list(csv.DictReader(f))
+    with progress.open() as f:
+        listed += [r for r in csv.DictReader(f) if r["result"] == "RECONSTRUCTED"]
+    for r in listed:
+        rows.append({"tu": r["source"], "addr": f"0x{hx(r['address']):X}", "sym": r["symbol"],
+                     "len": f"0x{int(r['size']):X}", "status": "matched", "name": r["symbol"]})
     return rows
 
 
@@ -190,13 +194,15 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--exe", type=Path, default=paths.ROOT / "orig/gamemd.exe")
     ap.add_argument("--objdir", type=Path, help="build.py output, to settle ambiguous library sections")
+    ap.add_argument("--progress", type=Path, default=DATA / "progress.csv",
+                    help="the progress table whose RECONSTRUCTED rows link from source")
     args = ap.parse_args(argv)
     image, build = restored_image(args.exe)
     paths.RETAIL.parent.mkdir(parents=True, exist_ok=True)
     paths.RETAIL.write_bytes(image)
     os.environ["GAMEMD_BINARY"] = str(paths.RETAIL)
     write_json(paths.TOTALS, {"_meta": {"sha256": hashlib.sha256(image).hexdigest(), "build": build}})
-    manifest = manifest_rows()
+    manifest = manifest_rows(args.progress)
     write_json(paths.MANIFEST, manifest)
     write_json(paths.BINDINGS, bindings())
     write_json(paths.RTTI_CLASSES, rtti_classes(image))

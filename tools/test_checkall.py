@@ -190,6 +190,44 @@ sys.exit(case['exit'])
         self.assertEqual(self.run_gate(record=True)[0], 0)
         self.assertIn("WRONG TARGETS", self.progress.read_text())
 
+    def reconstructed(self, address="0x00401020", name="Third"):
+        return f"{address} {name}: RECONSTRUCTED (4/4 bytes) _{name}\n"
+
+    def test_reconstruction_is_recorded_and_counted_apart_from_matches(self):
+        self.child(self.baseline() + self.complete(2))
+        self.child(self.reconstructed() + self.complete(1), name="ra2asm.asm")
+        code, out = self.run_gate(record=True)
+        self.assertEqual(code, 0)
+        self.assertIn("2 of 2 functions match (2 of 2 bytes), 1 reconstructed", out)
+        with self.progress.open() as f:
+            rows = {r["address"]: r["result"] for r in csv.DictReader(f)}
+        self.assertEqual(rows["0x00401020"], "RECONSTRUCTED")
+
+    def recorded_reconstruction(self):
+        with self.progress.open("a") as f:
+            f.write("0x00401020,Third,RECONSTRUCTED,4,src/ra2asm.asm,_Third\n")
+
+    def test_recorded_reconstruction_regressing_fails(self):
+        self.recorded_reconstruction()
+        self.child(self.baseline() + self.complete(2))
+        self.child("0x00401020 Third: 82.1% (3/4 bytes) _Third\n" + self.complete(1, 1),
+                   exit_code=1, name="ra2asm.asm")
+        code, out = self.run_gate(record=True)
+        self.assertEqual(code, 1)
+        self.assertIn("no longer matching: 0x00401020 Third", out)
+
+    def test_recorded_reconstruction_disappearing_fails(self):
+        self.recorded_reconstruction()
+        self.child(self.baseline() + self.complete(2))
+        code, out = self.run_gate(record=True)
+        self.assertEqual(code, 1)
+        self.assertIn("0x00401020: previously reconstructed function missing", out)
+
+    def test_match_cannot_turn_into_a_reconstruction(self):
+        self.child(self.match() + self.complete(1))
+        self.child(self.reconstructed("0x00401010", "Second") + self.complete(1), name="ra2asm.asm")
+        self.assertEqual(self.run_gate(record=True)[0], 1)
+
 
     def test_lost_reference_cannot_be_offset_by_a_new_one(self):
         import os

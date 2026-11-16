@@ -458,7 +458,8 @@ def main() -> None:
             evidence[target] = "F"
             ordered.insert(i, target)
 
-    sources = sorted((ROOT / "src").rglob("*.asm"))
+    # Assembly rebuilt from the exe (src/ra2asm/) is no independent evidence of its bounds.
+    sources = sorted(p for p in (ROOT / "src").rglob("*.asm") if ROOT / "src/ra2asm" not in p.parents)
     stops = {}
     if sources and not args.no_asm:
         from check import assemble_source

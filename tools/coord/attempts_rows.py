@@ -138,6 +138,12 @@ def merge(table, date, paths, known, done):
     return added
 
 
+def settled(progress):
+    """Addresses that take no more attempts: matched, or reconstructed from the exe's assembly."""
+    with progress.open() as f:
+        return {r["address"] for r in csv.DictReader(f) if r["result"] in ("MATCH", "RECONSTRUCTED")}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("date")
@@ -146,8 +152,7 @@ def main():
     args = parser.parse_args()
     with open("data/functions.csv") as f:
         known = {r["address"] for r in csv.DictReader(f)}
-    with open("data/progress.csv") as f:
-        done = {r["address"] for r in csv.DictReader(f) if r["result"] == "MATCH"}
+    done = settled(Path("data/progress.csv"))
     lock = os.open(args.table.parent, os.O_RDONLY)
     try:
         fcntl.flock(lock, fcntl.LOCK_EX)

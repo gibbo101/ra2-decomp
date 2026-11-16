@@ -11,6 +11,8 @@ define helpers before the public routine at offset 0), the public routine's entr
 ahead of it and every relocation's symbol index follows. The bytes are left alone.
 split() first cuts a code section where the original began a new object at one of its
 routines (build.py reads those from data/asm_objects.csv), so each part is placed on its own.
+retire() takes out of an archive object the routines src/ra2asm/ rebuilds as the original has
+them: they go to sections of their own as statics, which nothing binds and /OPT:REF drops.
 
 Usage: comdatize.py IN.obj [OUT.obj]    (in place when OUT is omitted)
 """
@@ -107,6 +109,11 @@ def split(data, symbol):
     relocs[section] = [r for r in relocs[section] if r[0] < cut]
     bodies[newsec], bodies[section] = bodies[section][cut:], bodies[section][:cut]
     heads.append(bytearray(heads[section - 1]))
+    # The new section starts `cut` bytes into the old one, so it can be no more aligned than that.
+    code = (struct.unpack_from("<I", heads[-1], 36)[0] >> 20) & 0xF
+    if code and cut % (1 << (code - 1)):
+        flags = struct.unpack_from("<I", heads[-1], 36)[0] & ~0x00F00000
+        struct.pack_into("<I", heads[-1], 36, flags | ((cut & -cut).bit_length() << 20))
     for sec, idx in ((section, remap[sec_sym[0]]), (newsec, new_sym)):
         struct.pack_into("<IH", table[idx + 1], 0, len(bodies[sec]), len(relocs[sec]))
 
@@ -124,6 +131,54 @@ def split(data, symbol):
     struct.pack_into("<H", header, 2, len(heads))
     struct.pack_into("<II", header, 8, pos + len(blob), len(table))
     return bytes(header) + b"".join(heads) + bytes(blob) + b"".join(bytes(r) for r in table) + strtab
+
+
+def retire(data, names):
+    """Copy of the object in which each code routine in `names` is a static named "$retired$" and
+    its name, in a section that holds no other routine. A relocation from outside those sections
+    that targets one is refused."""
+    data = bytes(data)
+    names = set(names)
+    while True:
+        symbols = list(coffgen.read_symbols(data))
+        routines = {}
+        for idx, name, value, section, scl, _ in symbols:
+            if section > 0 and scl == coffgen.CLASS_EXTERNAL:
+                routines.setdefault(section, []).append((value, name))
+        cut = next((b for section, defs in routines.items() if code_section(data, section)
+                    for a, b in zip(sorted(defs), sorted(defs)[1:]) if (a[1] in names) != (b[1] in names)), None)
+        if cut is None:
+            break
+        data = split(data, cut[1])
+    retired = {idx: section for idx, name, _, section, scl, _ in symbols
+               if section > 0 and scl == coffgen.CLASS_EXTERNAL and name in names and code_section(data, section)}
+    nsec, symptr = struct.unpack_from("<H", data, 2)[0], struct.unpack_from("<I", data, 8)[0]
+    for i in range(1, nsec + 1):
+        off = 20 + 40 * (i - 1)
+        relptr, nrel = struct.unpack_from("<I", data, off + 24)[0], struct.unpack_from("<H", data, off + 32)[0]
+        for r in range(nrel):
+            idx = struct.unpack_from("<I", data, relptr + 10 * r + 4)[0]
+            if idx in retired and retired[idx] != i:
+                raise ValueError(f"section {i} refers to a retired routine")
+    # A "$" name is no key /ORDER or the stub plan can take for the rebuilt routine's.
+    data, _ = coffgen.rename_symbols(data, {name: "$retired$" + name for idx, name, *_ in symbols
+                                            if idx in retired}, retarget=False)
+    data = bytearray(data)
+    for idx in retired:
+        data[symptr + 18 * idx + 16] = coffgen.CLASS_STATIC
+    return bytes(data)
+
+
+def ungroup_retired(data):
+    """Copy of the object with each section of retired routines named plain .text: LINK keeps a
+    grouped section's alignment padding even when /OPT:REF drops all of its contents."""
+    sections = {section for _, name, _, section, _, _ in coffgen.read_symbols(data)
+                if section > 0 and name.startswith("$retired$")}
+    return coffgen.set_section_names(data, {section: ".text" for section in sections})
+
+
+def code_section(data, section):
+    return bool(struct.unpack_from("<I", data, 20 + 40 * (section - 1) + 36)[0] & CNT_CODE)
 
 
 def section_name(data, off, strtab):
