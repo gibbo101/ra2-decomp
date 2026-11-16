@@ -28,6 +28,7 @@
 #include "capmgr.h"
 #include "ccrand.h"
 #include "cell.h"
+#include "targetcell.h"
 #include "combat.h"
 #include "conquer.h"
 #include "dbgprint.h"
@@ -3668,11 +3669,6 @@ int BuildingClass::Do_MISSION_CAPTURE(void)
 int BuildingClass::Do_MISSION_HARVEST(void)
 {
 	return(MissionClass::Do_MISSION_HARVEST());
-}
-
-static inline Cell Target_Cell(AbstractClass * target)
-{
-	return(target->Center_Coord().As_Cell());
 }
 
 // FUNCTION: GAMEMD 0x0044B780
