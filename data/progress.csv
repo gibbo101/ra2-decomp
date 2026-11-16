@@ -11540,7 +11540,6 @@ address,name,result,size,source,symbol
 0x00647260,Queue_AI,MATCH,912,src/queue.cpp,?Queue_AI@@YIXXZ
 0x00648340,Check_Mirror,MATCH,1,src/queue.cpp,?Check_Mirror@@YIXXZ
 0x00648350,Wait_For_End_Of_Queue,MATCH,948,src/queue.cpp,?Wait_For_End_Of_Queue@@YIXXZ
-0x00648710,Wait_For_Players,MATCH,5519,src/queue.cpp,?Wait_For_Players@@YI?AW4RetcodeType@@HPAVConnManClass@@HHHPADHPAUFrameSyncStruct@@@Z
 0x00649CA0,Send_Packets,MATCH,860,src/queue.cpp,?Send_Packets@@YIHPAVConnManClass@@PADHHH@Z
 0x0064A000,Send_FrameSync,MATCH,178,src/queue.cpp,?Send_FrameSync@@YIXPAVConnManClass@@H@Z
 0x0064A630,Process_Serial_Packet,MATCH,381,src/queue.cpp,?Process_Serial_Packet@@YI?AW4RetcodeType@@PADH@Z
@@ -11573,6 +11572,7 @@ address,name,result,size,source,symbol
 0x00652630,?search_compfunc@?$IndexClass@HPAVObjectClass@@@@CAHPBX0@Z,MATCH,34,src/queue.cpp,?search_compfunc@?$IndexClass@HPAVObjectClass@@@@CAHPBX0@Z
 0x0064A0C0,FUN_0064A0C0,MATCH,1377,src/queue.cpp,?FUN_0064A0C0@@YIHPAVConnManClass@@PADHHPAUFrameSyncStruct@@PAV?$BasicTimerClass@VSystemTimerClass@@@@@Z
 0x0064B660,FUN_0064B660,MATCH,1896,src/queue.cpp,?FUN_0064B660@@YIHPAXHHHHPAH@Z
+0x00648710,Wait_For_Players,MATCH,5519,src/queue.cpp,?Wait_For_Players@@YI?AW4RetcodeType@@HPAVConnManClass@@HHHPADHPAUFrameSyncStruct@@@Z
 0x00652660,_$E2,MATCH,23,src/radar.cpp,_$E2
 0x00652680,_$E109,MATCH,40,src/radar.cpp,_$E109
 0x006526B0,_$E112,MATCH,19,src/radar.cpp,_$E112
