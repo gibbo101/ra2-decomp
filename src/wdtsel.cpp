@@ -168,10 +168,10 @@ void Selection::Init_Target(INIClass const & ini, Wstring const & section)
 // WorldDominationTour::Selection::Update_Hovered_Territory
 void Selection::Update_Hovered_Territory(Point2D const & point)
 {
-	int id = WorldMap.Get()->FUN_00769330(point);
+	int id = WorldMap->FUN_00769330(point);
 	if (id != HoveredTerritoryID) {
 		HoveredTerritoryID = id;
-		Select_Territory(WorldMap.Get()->FUN_0076F000(id));
+		Select_Territory(WorldMap->FUN_0076F000(id));
 	}
 }
 
@@ -201,44 +201,18 @@ void Selection::Remove_Target_Anims2(void)
 
 extern bool UserInputLocked;
 
-class InputManagerClass {
-public:
-	static InputManagerClass * Instance;
-	short FUN_0054F000(void);
-	short FUN_0054F050(void);
-	void FUN_0054F720(void);
-};
-
-typedef VectorCursor<MSSfxEntry *, DynamicVectorClass<MSSfxEntry *> > WDT_SFX_ITER;
-
-static inline void Play_Sfx_Named(Selection * sel, char const * text)
-{
-	Wstring name(text);
-	if (name != (char const *)NULL) {
-		WDT_SFX_ITER it(sel->SfxEntries, 0);
-		for (; it; it++) {
-			if (!(name == it->Get_Name())) {
-				break;
-			}
-		}
-		if (it) {
-			it->Play();
-		}
-	}
-}
-
 // FUNCTION: GAMEMD 0x0076DFD0
 // WorldDominationTour::Selection::On_Map_Enter
 void Selection::On_Map_Enter(void)
 {
-	Play_Sfx_Named(this, "MapEnter");
+	Play_SFX("MapEnter");
 }
 
 // FUNCTION: GAMEMD 0x0076E090
 // WorldDominationTour::Selection::On_Map_Leave
 void Selection::On_Map_Leave(void)
 {
-	Play_Sfx_Named(this, "MapLeave");
+	Play_SFX("MapLeave");
 	HoveredTerritoryID = -1;
 	rc_ptr<Territory> none;
 	Select_Territory(none);
@@ -433,8 +407,8 @@ bool Selection::Present_History(int tick_from, int tick_to)
 void Selection::Check_For_Breakout(void)
 {
 	Wait_For_Focus();
-	while (InputManagerClass::Instance->FUN_0054F000()) {
-		if (InputManagerClass::Instance->FUN_0054F050() == VK_ESCAPE) {
+	while (Keyboard->Check()) {
+		if (Keyboard->Get() == VK_ESCAPE) {
 			Brokeout = true;
 		}
 	}
@@ -507,7 +481,7 @@ void Selection::Set_Long_Description(void)
 // FUNCTION: GAMEMD 0x0076ECD0
 void __fastcall FUN_0076ECD0(rc_ptr<Campaign> * campaign, int theater)
 {
-	InputManagerClass::Instance->FUN_0054F720();
+	Keyboard->Clear();
 	Selection sel(*campaign, theater);
 	sel.Presentation(theater);
 }
@@ -564,7 +538,7 @@ void Selection::FUN_0076EEB0(void)
 	AlternateSurface->Fill(0);
 	HiddenSurface->Fill(0);
 	VisibleSurface->Blit_From(*HiddenSurface);
-	InputManagerClass::Instance->FUN_0054F720();
+	Keyboard->Clear();
 	WorldMap.Get()->FUN_007692F0(this, &VoicePlayer);
 	while (MouseCursor->Get_Mouse_State() < 0) {
 		MouseCursor->Show_Mouse();
@@ -583,6 +557,9 @@ void Selection::End(void)
 		MouseCursor->Show_Mouse();
 	}
 }
+
+// SYNTHETIC: GAMEMD 0x0076EFE0
+// ??_GSelection@WorldDominationTour@@UAEPAXI@Z
 
 // TEMPLATE: GAMEMD 0x0076F000
 // ?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z

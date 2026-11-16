@@ -17759,6 +17759,7 @@ address,size,symbol,source,sha256
 0x0076ED10,415,?FUN_0076ED10@@YI_NPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z,src/wdtsel.cpp,ce4344481d5c653fc4cbf45716367cd70d88ad939c7f57027fa9d41b61d667b8
 0x0076EEB0,195,?FUN_0076EEB0@Selection@WorldDominationTour@@QAEXXZ,src/wdtsel.cpp,c861f3415a558df0c724c8b166e94fac81df1ab7813143bf9d4794c21178ee0b
 0x0076EF80,91,?End@Selection@WorldDominationTour@@QAEXXZ,src/wdtsel.cpp,b4accd2121b698fa9d15eedca00d5eca7ee8932497a436f885c7daf59e177f6f
+0x0076EFE0,30,??_GSelection@WorldDominationTour@@UAEPAXI@Z,src/wdtsel.cpp,913d463765c446188fedb02f2743f0d72aea318e25f77268069292002f2a3a14
 0x0076F000,26,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z,src/wdtsel.cpp,e4d7dab4ee7037d2743ae2d15ed5d0a8ac288cc4c0d1190da60c76b129dfbb87
 0x0076F020,4,?Get@?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@QBEPAVCampaignProperties@WorldDominationTour@@XZ,src/wdtsel.cpp,f7e0208f5e988ae39c7a45dfddbd12921d02f9c3deb5695d4c534c8ab0ccdb0f
 0x0076F030,35,??0?$rc_ptr@VTerritory@WorldDominationTour@@@@QAE@ABV0@@Z,src/wdtsel.cpp,234e41dbf05983a6949d1295572bbf6739a7d75a53bc0c280d02bd97bd38b9db

@@ -17511,6 +17511,7 @@ address,name,result,size,source,symbol
 0x0076ED10,FUN_0076ED10,MATCH,415,src/wdtsel.cpp,?FUN_0076ED10@@YI_NPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z
 0x0076EEB0,WorldDominationTour::Selection::FUN_0076EEB0,MATCH,195,src/wdtsel.cpp,?FUN_0076EEB0@Selection@WorldDominationTour@@QAEXXZ
 0x0076EF80,WorldDominationTour::Selection::End,MATCH,91,src/wdtsel.cpp,?End@Selection@WorldDominationTour@@QAEXXZ
+0x0076EFE0,??_GSelection@WorldDominationTour@@UAEPAXI@Z,MATCH,30,src/wdtsel.cpp,??_GSelection@WorldDominationTour@@UAEPAXI@Z
 0x0076F000,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z,MATCH,26,src/wdtsel.cpp,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z
 0x0076F020,?Get@?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@QBEPAVCampaignProperties@WorldDominationTour@@XZ,MATCH,4,src/wdtsel.cpp,?Get@?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@QBEPAVCampaignProperties@WorldDominationTour@@XZ
 0x0076F030,??0?$rc_ptr@VTerritory@WorldDominationTour@@@@QAE@ABV0@@Z,MATCH,35,src/wdtsel.cpp,??0?$rc_ptr@VTerritory@WorldDominationTour@@@@QAE@ABV0@@Z
