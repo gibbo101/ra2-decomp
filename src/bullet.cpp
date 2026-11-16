@@ -313,55 +313,6 @@ void BulletClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-// FUNCTION: GAMEMD 0x00468670
-bool BulletClass::Unlimbo(Coord const & coord, TVelocity3D<double> const & velocity)
-{
-	if (BASECLASS::Unlimbo(coord, DIR_N)) {
-		Velocity = velocity;
-		SourceCoords = coord;
-		LastMapCoords = SourceCoords;
-		Map.Remove(this);
-		Coord tcoord = TarCom->As_Coord();
-		TargetCoords = tcoord;
-		if (Class->FlakScatter && Class->IsInvisible) {
-			int dx = coord.X - tcoord.X;
-			TPoint3D<float> delta(dx, tcoord.Y - coord.Y, coord.Z - tcoord.Z);
-			float distance = delta.Length();
-			int scatter = Random_Pick(0, Rule->BallisticScatter * 2);
-			scatter *= (int)distance;
-			scatter /= WeaponType->Range;
-			tcoord = Move_Coord(tcoord, DirType(Random_Double(0.0, M_PI * 2)), scatter);
-		}
-		if (Class->IsInvisible) {
-			HouseClass * owner = Payback != NULL ? Payback->House : NULL;
-			Coord firestorm_coord = Map.Firestorm_On_Path(coord, tcoord, owner);
-			if (firestorm_coord != COORD_NONE) {
-				firestorm_coord.Z = Map.Get_Height_GL(firestorm_coord);
-				PositionCoord = firestorm_coord;
-			} else {
-				CellClass * obstacle = TrajectoryHelper::FindFirstObstacle(coord, tcoord, Class, owner);
-				if (obstacle != NULL) {
-					PositionCoord = obstacle->Center_Coord();
-				} else {
-					PositionCoord = tcoord;
-				}
-				PositionCoord = tcoord;
-				MaxSpeed = 0;
-				Velocity.Set_Speed(0);
-			}
-		}
-		Fuse.Arm_Fuse(PositionCoord, tcoord, TarCom != NULL && TarCom->Fetch_RTTI() == RTTI_AIRCRAFT ? 0 : Class->Arming);
-		if (Class->ROT > 0) {
-			Velocity.Set_Speed(1);
-		}
-		if (IsActive) {
-			Map.Submit(this);
-		}
-		return true;
-	}
-	return false;
-}
-
 // FUNCTION: GAMEMD 0x00468B90
 LayerType BulletClass::In_Which_Layer(void) const
 {

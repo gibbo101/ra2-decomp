@@ -4,6 +4,12 @@ The source reproduces the game as shipped, bugs included, so these stay until th
 decompilation is finished. Each entry gives the address, what the original does, and its
 effect, so it can be fixed in a separate build later.
 
+- **BulletClass::Unlimbo (0x00468670).** An invisible projectile with no
+  Firestorm intercept checks for a trajectory obstacle. If it finds one, it
+  sets its position to the obstacle’s center at 0x00468966. Both paths then
+  set the position to the intended target at 0x00468986, overwriting the
+  obstacle position before the fuse is armed.
+
 - **HouseClass::AI_Building (0x004FE3E0).** When the AI adds a power plant ahead of a
   building that needs more power, a house whose ActLike is neither 0 nor 2 fills the
   owned list for its prerequisite check with BuildingClass instances instead of their
@@ -82,9 +88,3 @@ effect, so it can be fixed in a separate build later.
   whose OEM byte gives a negative signed offset can therefore select a negative shape frame.
 
 - **Wait_For_Players (0x00648710).** Command-stall statistics use the frame-stall index instead of the command-stall index.
-
-- **BulletClass::Unlimbo (0x00468670).** For an invisible projectile with no
-  Firestorm intercept, the trajectory-obstacle branch sets the projectile's
-  position to the obstacle coordinate, but the unconditional setter call at
-  0x00468986 immediately replaces it with the chosen target coordinate. The
-  recovered source preserves both calls and the overwritten obstacle position.

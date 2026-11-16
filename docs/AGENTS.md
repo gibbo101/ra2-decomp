@@ -275,14 +275,20 @@ Each entry: what the diff showed, then the source change that fixed it.
   `Cell_Find_Object`) is the inline budget: call the wrapper, as TibSun does.
 - A callee the original inlines that lives in the same module is defined in that file
   (`Do_AnimTypes`, `Read_X`); define it there and VC6 inlines it.
-- Each function has an inline budget, spent from the end of the function backwards:
-  moving one member's cleanup into a file-local inline helper shifts which stay calls,
-  and a late expression's shape decides whether an earlier call inlines
-  (`Clear_Occupy_Bit(Coord(Position))`, not `PositionCoord`, in 0x0051DBD0).
+- VC6's inline budget, measured with probe files: a function may grow by about 2.4 units
+  per statement of its own code (before inlining), with a floor of about 90; an
+  expansion costs about its body size plus 2. Calls expand one nesting level at a time:
+  direct calls in source order, then the calls inside those bodies from the end of the
+  function backwards, then the next level. A call that does not fit stays a call;
+  later, smaller ones still inline.
+- So code written out in the caller raises the budget, and code moved into an inline
+  helper lowers it and spends it. A nested call the exe keeps out of line while every
+  outer call inlines means the original spent more at that depth, later in the source
+  (`Clear_Occupy_Bit(Coord(Position))`, not `PositionCoord`, in 0x0051DBD0). Find where
+  with unused trivial inline calls (diagnostic only, never landed;
+  `tools/inlineprobe.py`), then look for the natural source that spends the same.
 - In a very large function VC6 can stop scheduling the last switch cases fully: a tail
   that resists every rewrite may be fixed by a leaner form of an earlier case (0x004C6CB0).
-- Nested inline decisions depend on how many expansions a function already holds; a
-  code-neutral inline helper can flip them.
 - A plain function defined above its callers is inlined and also emitted; at /Ob2 VC6
   can also inline a member defined later in the same file, so a newly landed neighbour
   can break a matched caller (0x006CB560). One too big

@@ -6,6 +6,7 @@
 #define NDEBUG
 #include "always.h"
 #include "ownrdraw.h"
+#include "draw.h"
 
 namespace OwnerDraw {
 	struct WinData {
@@ -1420,11 +1421,11 @@ int Control_Volume(HWND dialog, HWND control)
 	return 0;
 }
 
-int FUN_0072E280(void);
+ConvertClass *FUN_0072E280(void);
 void FUN_0072E2A0(void);
 void FUN_0072DAC0(void);
 void FUN_0072DAD0(void);
-int FUN_0072D450(void);
+ConvertClass *FUN_0072D450(void);
 void FUN_0072CC80(void);
 
 // FUNCTION: GAMEMD 0x006035F0
@@ -3114,7 +3115,243 @@ BOOL FUN_006071D0(HWND window)
 	return EnumChildWindows(window, FUN_00606800, 0);
 }
 
-void __fastcall DrawCampaignMenuTransition(HWND window, bool reverse);
+class SHPStruct;
+namespace OwnerDraw {
+	extern SHPStruct *SmallButtonAnimShape;
+	ConvertClass *GetSmallButtonAnimConvert(void);
+	void __fastcall DrawCampaignMenuTransition(HWND dialog, bool reverse);
+}
+namespace Drawing { extern int RenderWidth; }
+extern SHPStruct *DAT_00B0FAF8;
+extern SHPStruct *DAT_00B0F9DC;
+extern SHPStruct *DAT_00B0FAC0;
+extern SHPStruct *DAT_00B0FB00;
+extern SHPStruct *DAT_00B0FB34;
+extern int DAT_00B0FA20;
+extern Rect *DAT_00B0FC10;
+extern Rect *DAT_00B0FC14;
+extern Rect *DAT_00B0FC18;
+extern Rect *DAT_00B0FC1C;
+extern Rect *DAT_00B0FC20;
+Point2D __fastcall FUN_0072A9C0(Rect const *rect);
+void FUN_00406F70(void);
+int FUN_0060A230(HWND window);
+int FUN_0060A300(HWND window);
+extern Rect *DAT_00B0FC28;
+extern int DAT_007F5BE4;
+// A piece's slide phase at a step: -1 before it starts, -2 once its six frames are done.
+static inline int Slide_Phase(int delta)
+{
+	if (delta < 0) return -1;
+	if (delta >= 6) return -2;
+	return delta;
+}
+
+// Slides the frame pieces in sequence and then notifies the dialog.
+// FUNCTION: GAMEMD 0x006071E0
+void __fastcall OwnerDraw::DrawCampaignMenuTransition(HWND dialog, bool reverse)
+{
+	OwnerDraw::WinData *record = Get_Data(dialog);
+	bool animate_main_screen = record ? record->Dialog.HasMainScreenAnimation : false;
+	record = Get_Data(dialog);
+	bool animate_buttons = record ? record->Dialog.HasButtonAnimation : false;
+	record = Get_Data(dialog);
+	bool animate_top_panel = record ? record->Dialog.HasTopPanelAnimation : false;
+
+	ConvertClass *drawer = FUN_0072E280();
+	ConvertClass *button_convert = OwnerDraw::GetSmallButtonAnimConvert();
+	ShapeSet const *top_background_shape = (ShapeSet const *)DAT_00B0FAF8;
+	ShapeSet const *button_shape = (ShapeSet const *)OwnerDraw::SmallButtonAnimShape;
+	ShapeSet const *button_panel_shape = (ShapeSet const *)DAT_00B0F9DC;
+	ShapeSet const *top_panel_shape = (ShapeSet const *)DAT_00B0FAC0;
+	ConvertClass *main_screen_convert = FUN_0072D450();
+	ShapeSet const *main_screen_shape = (ShapeSet const *)DAT_00B0FB00;
+	int count = DAT_00B0FA20;
+	Rect window = AlternateSurface->Get_Rect();
+	Rect top_background = *DAT_00B0FC20;
+	Rect button_panel = *DAT_00B0FC14;
+	Rect top_panel = *DAT_00B0FC18;
+	Rect button_row = *DAT_00B0FC10;
+	Rect main_screen = *DAT_00B0FC1C;
+
+	RECT client;
+	Get_Display_Rect(dialog, &client);
+	RECT screen;
+	GetWindowRect(dialog, &screen);
+	int dx = screen.left - client.left;
+	int dy = screen.top - client.top;
+
+	int x = button_row.X;
+	int y = button_row.Y;
+	int width = button_row.Width;
+	int height = button_row.Height * count;
+	if (animate_top_panel) {
+		x = top_panel.X;
+		width = top_panel.Width;
+		y = top_panel.Y;
+		height += button_row.Y;
+	}
+	Rect from(x, y, width, height);
+	Rect to = from;
+	to.X += dx;
+	to.Y += dy;
+	Rect main_source = main_screen;
+	Rect main_destination = main_source;
+	main_destination.X += dx;
+	main_destination.Y += dy;
+
+	int dir = reverse ? -1 : 1;
+	int button_frame = 5;
+	if (reverse) button_frame = 10;
+	int empty_row_frame = 11;
+	if (reverse) empty_row_frame = 16;
+	int button_panel_frame = 1;
+	if (reverse) button_panel_frame = 6;
+	int top_panel_frame = 0;
+	if (reverse) top_panel_frame = 5;
+	int main_screen_frame = 0;
+	if (reverse) main_screen_frame = 5;
+
+	int buttons = FUN_0060A230(dialog);
+	int last = count - 1;
+	int top = button_row.Y;
+	if (animate_buttons) top += button_row.Height;
+	bool any = FUN_0060A300(dialog);
+	if (!any) last++;
+
+	// One start step per piece: the button rows, then the button panel, top panel and main screen.
+	const int pieces = count + 3;
+	const int button_panel_index = pieces - 3;
+	const int top_panel_index = pieces - 2;
+	int *order = new int[pieces];
+	const int main_screen_index = pieces - 1;
+	int value = 1;
+	for (int i = 0; i < top_panel_index; i++) {
+		order[i] = value++;
+	}
+	order[main_screen_index] = 0;
+	order[top_panel_index] = value + 1;
+	order[button_panel_index] = 0;
+	int steps;
+	{
+		int last_start = 0;
+		for (int j = 0; j < pieces; ++j) {
+			if (last_start <= order[j]) last_start = order[j];
+		}
+		steps = last_start + 6;
+	}
+
+	for (int step = 0; step < steps; step++) {
+		if (animate_buttons) {
+			Point2D point = FUN_0072A9C0(&button_panel);
+			int phase = Slide_Phase(step - order[button_panel_index]);
+			if (phase == -1) {
+				Draw_Shape(*AlternateSurface, *drawer, button_panel_shape, reverse ? 6 : 0, point, window, SHAPE_WIN_REL);
+			} else if (phase == -2) {
+				if (!reverse) {
+					Draw_Shape(*AlternateSurface, *drawer, button_panel_shape, 6, point, window, SHAPE_WIN_REL);
+				}
+			}
+		}
+		if (animate_top_panel) {
+			Point2D point = FUN_0072A9C0(&top_panel);
+			int phase = Slide_Phase(step - order[top_panel_index]);
+			if (phase == -1) {
+				Draw_Shape(*AlternateSurface, *drawer, top_background_shape, !reverse, point, window, SHAPE_WIN_REL);
+			} else if (phase == -2) {
+				Draw_Shape(*AlternateSurface, *drawer, top_background_shape, reverse ? 1 : 0, point, window, SHAPE_WIN_REL);
+			} else {
+				point = FUN_0072A9C0(&top_background);
+				Draw_Shape(*AlternateSurface, *drawer, top_background_shape, 1, point, window, SHAPE_WIN_REL);
+				point = FUN_0072A9C0(&top_panel);
+				Draw_Shape(*AlternateSurface, *drawer, top_panel_shape, phase * dir + top_panel_frame, point, window, SHAPE_WIN_REL);
+			}
+		}
+		if (animate_buttons) {
+			Point2D point = FUN_0072A9C0(&button_panel);
+			int phase = Slide_Phase(step - order[button_panel_index]);
+			if (phase == -2) {
+				if (reverse) {
+					Draw_Shape(*AlternateSurface, *drawer, button_panel_shape, 0, point, window, SHAPE_WIN_REL);
+				}
+			} else {
+				Draw_Shape(*AlternateSurface, *drawer, button_panel_shape, phase * dir + button_panel_frame, point, window, SHAPE_WIN_REL);
+			}
+		}
+		int k;
+		for (k = 0; k < buttons; k++) {
+			Point2D point(button_row.X, k * button_row.Height + top);
+			int phase = Slide_Phase(step - order[k]);
+			if (phase == -1) {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, reverse ? 10 : 1, point, window, SHAPE_WIN_REL);
+			} else if (phase == -2) {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, reverse ? 1 : 10, point, window, SHAPE_WIN_REL);
+			} else {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, phase * dir + button_frame, point, window, SHAPE_WIN_REL);
+			}
+		}
+		for (k = buttons; k < last; k++) {
+			Point2D point(button_row.X, k * button_row.Height + top);
+			int phase = Slide_Phase(step - order[k]);
+			if (phase == -1) {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, reverse ? 10 : 0, point, window, SHAPE_WIN_REL);
+			} else if (phase == -2) {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, reverse ? 0 : 10, point, window, SHAPE_WIN_REL);
+			} else {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, phase * dir + empty_row_frame, point, window, SHAPE_WIN_REL);
+			}
+		}
+		if (any) {
+			Point2D point(button_row.X, DAT_00B0FC28->Y - button_row.Height);
+			int phase = Slide_Phase(step - order[count - 1]);
+			if (phase == -1) {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, reverse ? 10 : 1, point, window, SHAPE_WIN_REL);
+			} else if (phase == -2) {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, reverse ? 1 : 10, point, window, SHAPE_WIN_REL);
+			} else {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, phase * dir + button_frame, point, window, SHAPE_WIN_REL);
+			}
+		}
+		if (animate_main_screen) {
+			Point2D point = FUN_0072A9C0(&main_screen);
+			int phase = Slide_Phase(step - order[main_screen_index]);
+			if (phase == -1) {
+				if (!reverse) {
+					if (Drawing::RenderWidth >= DAT_007F5BE4) point.X += 0x50;
+				}
+				Draw_Shape(*AlternateSurface, *main_screen_convert, (reverse ? (ShapeSet const *)DAT_00B0FB34 : main_screen_shape), 0, point, window, SHAPE_WIN_REL);
+			} else if (phase == -2) {
+				if (reverse) {
+					if (Drawing::RenderWidth >= DAT_007F5BE4) point.X += 0x50;
+				}
+				Draw_Shape(*AlternateSurface, *main_screen_convert, (reverse ? main_screen_shape : (ShapeSet const *)DAT_00B0FB34), 0, point, window, SHAPE_WIN_REL);
+			} else {
+				if (Drawing::RenderWidth >= DAT_007F5BE4) point.X += 0x50;
+				Draw_Shape(*AlternateSurface, *main_screen_convert, main_screen_shape, phase * dir + main_screen_frame, point, window, SHAPE_WIN_REL);
+			}
+		}
+		VisibleSurface->Lock();
+		AlternateSurface->Lock();
+		VisibleSurface->Blit_From(to, *AlternateSurface, from, false, true);
+		if (animate_main_screen) {
+			VisibleSurface->Blit_From(main_destination, *AlternateSurface, main_source, false, true);
+		}
+		AlternateSurface->Unlock();
+		VisibleSurface->Unlock();
+		FUN_00406F70();
+		Sleep(30);
+	}
+	delete [] order;
+	if (reverse) {
+		VocClass::PlayGlobal(Rule->ShellButtonSlideSound, 1.0f, 0x2000);
+		while (MouseCursor->Get_Mouse_State()) {
+			MouseCursor->Show_Mouse();
+		}
+		SendMessageA(dialog, 0x4ec, 0, 0);
+	} else {
+		SendMessageA(dialog, 0x4ed, 0, 0);
+	}
+}
 
 // FUNCTION: GAMEMD 0x00607FD0
 void FUN_00607FD0(HWND dialog)
@@ -3128,7 +3365,7 @@ void FUN_00607FD0(HWND dialog)
 			if (item != NULL) {
 				SendMessage(item, 0x4e2, 0, 0);
 			}
-			DrawCampaignMenuTransition(dialog, false);
+			OwnerDraw::DrawCampaignMenuTransition(dialog, false);
 			*((char *)data + 0xbe) = 0;
 		}
 	}
@@ -3210,7 +3447,7 @@ bool RunOpenAnimationIfNeeded(HWND dialog)
 	bool wasEnabled = IsWindowEnabled(dialog) != 0;
 	EnableWindow(dialog, FALSE);
 	EnumChildWindows(dialog, FUN_00606800, 1);
-	DrawCampaignMenuTransition(dialog, true);
+	OwnerDraw::DrawCampaignMenuTransition(dialog, true);
 	EnumChildWindows(dialog, FUN_00606800, 0);
 	EnableWindow(dialog, wasEnabled);
 	InvalidateRect(dialog, NULL, FALSE);
@@ -4730,7 +4967,7 @@ extern int DAT_00B0FAB8;
 extern int DAT_00B0FB0C;
 extern int DAT_00B0FB1C;
 extern int DAT_00B0FB2C;
-extern int DAT_00B0FB34;
+extern SHPStruct *DAT_00B0FB34;
 extern int DAT_00B0FB50;
 extern int DAT_00B0FB54;
 
@@ -4748,21 +4985,21 @@ void __fastcall FUN_0060CF00(HWND dialog)
 		*(int *)(p + 0xe0) = DAT_00B0FA6C;
 		*(int *)(p + 0xe4) = DAT_00B0FA6C;
 	} else if (type == 0x103) {
-		*(int *)(p + 0x74) = FUN_0072D450();
-		*(int *)(p + 0xe0) = DAT_00B0FB34;
-		*(int *)(p + 0xe4) = DAT_00B0FB34;
+		*(int *)(p + 0x74) = (int)FUN_0072D450();
+		*(int *)(p + 0xe0) = (int)DAT_00B0FB34;
+		*(int *)(p + 0xe4) = (int)DAT_00B0FB34;
 	} else if (type == 0x108) {
 		*(int *)(p + 0x74) = FUN_0072D820();
 		*(int *)(p + 0xe0) = DAT_00B0FB1C;
 		*(int *)(p + 0xe4) = DAT_00B0FB1C;
 	} else if (type == 0xbc6) {
-		*(int *)(p + 0x74) = FUN_0072D450();
-		*(int *)(p + 0xe0) = DAT_00B0FB34;
-		*(int *)(p + 0xe4) = DAT_00B0FB34;
+		*(int *)(p + 0x74) = (int)FUN_0072D450();
+		*(int *)(p + 0xe0) = (int)DAT_00B0FB34;
+		*(int *)(p + 0xe4) = (int)DAT_00B0FB34;
 	} else if (type == 0xbc7) {
-		*(int *)(p + 0x74) = FUN_0072D450();
-		*(int *)(p + 0xe0) = DAT_00B0FB34;
-		*(int *)(p + 0xe4) = DAT_00B0FB34;
+		*(int *)(p + 0x74) = (int)FUN_0072D450();
+		*(int *)(p + 0xe0) = (int)DAT_00B0FB34;
+		*(int *)(p + 0xe4) = (int)DAT_00B0FB34;
 	} else if (type == 0x6b) {
 		*(int *)(p + 0x74) = FUN_0072D210();
 		*(int *)(p + 0xe0) = DAT_00B0FB50;
@@ -4816,7 +5053,7 @@ void __fastcall FUN_0060CF00(HWND dialog)
 		*(int *)(p + 0xe0) = DAT_00B0FB50;
 		*(int *)(p + 0xe4) = DAT_00B0FB54;
 	} else {
-		*(int *)(p + 0x74) = FUN_0072E280();
+		*(int *)(p + 0x74) = (int)FUN_0072E280();
 		*(int *)(p + 0xe0) = DAT_00B0FB50;
 		*(int *)(p + 0xe4) = DAT_00B0FA04;
 	}
@@ -7792,7 +8029,6 @@ void ODDrawBitsStrand(Rect const & rect, Surface & surface)
 
 class ConvertClass;
 namespace OwnerDraw { void Paint(HWND window); }
-#include "draw.h"
 extern ShapeSet const * DAT_00B0FC80;
 extern ShapeSet const * DAT_00B0FC84;
 extern ShapeSet const * DAT_00B0FC88;
