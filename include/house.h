@@ -503,6 +503,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 
 		void Add_Anger(int level, HouseClass const * house);
 		void Mark_Scouted(HouseClass const * house);
+		void FUN_005048A0(int index);
 
 		void Begin_Construction(void);
 		BuildingTypeClass const * Get_First_Ownable(DynamicVectorClass<BuildingTypeClass const *> const & owned) const;
@@ -686,8 +687,6 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		Cell NukeDest;
 
 		void Clobber_All(void);
-
-		void Blowup_All(void);
 
 		void MPlayer_Defeated(void);
 

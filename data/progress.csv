@@ -1860,6 +1860,7 @@ address,name,result,size,source,symbol
 0x004653C0,BuildingTypeClass::Find_Or_Make,MATCH,131,src/builtype.cpp,?Find_Or_Make@BuildingTypeClass@@SIPAV1@PBD@Z
 0x00465450,BuildingTypeClass::Post_Load_Game,MATCH,248,src/builtype.cpp,?Post_Load_Game@BuildingTypeClass@@SIXXZ
 0x00465550,BuildingTypeClass::Exit_List,MATCH,30,src/builtype.cpp,?Exit_List@BuildingTypeClass@@QBEPBVCell@@XZ
+0x00465570,BuildingTypeClass::Get_Draw_Rect,MATCH,913,src/builtype.cpp,?Get_Draw_Rect@BuildingTypeClass@@QAE?AV?$TRect@H@@XZ
 0x00465910,BuildingTypeClass::CanUseWaypoint,MATCH,3,src/builtype.cpp,?CanUseWaypoint@BuildingTypeClass@@UBE_NXZ
 0x00465920,BuildingTypeClass::CanAttackMove,MATCH,3,src/builtype.cpp,?CanAttackMove@BuildingTypeClass@@UBE_NXZ
 0x00465930,BuildingTypeClass::Get_Max_Drain,MATCH,35,src/builtype.cpp,?Get_Max_Drain@BuildingTypeClass@@SIHABV?$DynamicVectorClass@PAVBuildingTypeClass@@@@@Z
@@ -5662,6 +5663,7 @@ address,name,result,size,source,symbol
 0x004F6EC0,HouseClass::Assign_Handicap,MATCH,632,src/house.cpp,?Assign_Handicap@HouseClass@@QAE?AW4DiffType@@W42@@Z
 0x004F7140,HouseClass::~HouseClass,MATCH,1799,src/house.cpp,??1HouseClass@@UAE@XZ
 0x004F7850,HouseStaticClass::HouseStaticClass,MATCH,27,src/house.cpp,??0HouseStaticClass@@QAE@XZ
+0x004F7870,HouseClass::Can_Build,MATCH,2886,src/house.cpp,?Can_Build@HouseClass@@QBEHPBVObjectTypeClass@@_N1@Z
 0x004F83C0,HouseClass::Factory_Producing_This,MATCH,113,src/house.cpp,?Factory_Producing_This@HouseClass@@QBEPAVFactoryClass@@PBVObjectTypeClass@@@Z
 0x004F8440,HouseClass::AI,MATCH,3879,src/house.cpp,?AI@HouseClass@@UAEXXZ
 0x004F9370,HouseClass::Super_Weapon_Handler,MATCH,104,src/house.cpp,?Super_Weapon_Handler@HouseClass@@QAEXXZ
@@ -5775,14 +5777,16 @@ address,name,result,size,source,symbol
 0x00504740,HouseClass::Ensure_Path,MATCH,67,src/house.cpp,?Ensure_Path@HouseClass@@QAEPAVWaypointPathClass@@W4PathType@@@Z
 0x00504790,HouseClass::Add_Anger,MATCH,205,src/house.cpp,?Add_Anger@HouseClass@@QAEXHPBV1@@Z
 0x00504860,HouseClass::Mark_Scouted,MATCH,54,src/house.cpp,?Mark_Scouted@HouseClass@@QAEXPBV1@@Z
+0x005048A0,HouseClass::FUN_005048A0,MATCH,2270,src/house.cpp,?FUN_005048A0@HouseClass@@QAEXH@Z
 0x00505180,HouseClass::Begin_Construction,MATCH,95,src/house.cpp,?Begin_Construction@HouseClass@@QAEXXZ
 0x005051E0,HouseClass::FirstBuildableFromArray,MATCH,291,src/house.cpp,?FirstBuildableFromArray@HouseClass@@QBEPBVTechnoTypeClass@@ABV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z
 0x00505310,HouseClass::Get_First_Ownable,MATCH,79,src/house.cpp,?Get_First_Ownable@HouseClass@@QBEPBVBuildingTypeClass@@ABV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z
 0x00505360,HouseClass::AI_Has_Prerequisites,MATCH,324,src/house.cpp,?AI_Has_Prerequisites@HouseClass@@QBE_NPBVTechnoTypeClass@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@H@Z
 0x005054B0,HouseClass::Make_Base_Nodes,MATCH,2755,src/house.cpp,?Make_Base_Nodes@HouseClass@@QAEXXZ
 0x00505F80,HouseClass::Base_Cell_Weight_By_Distance,MATCH,66,src/house.cpp,?Base_Cell_Weight_By_Distance@HouseClass@@SIHABV1@ABVCell@@HH@Z
-0x00506B70,FUN_00506B70,MATCH,1,src/house.cpp,?FUN_00506B70@@YIXXZ
-0x00506B80,FUN_00506B80,MATCH,1,src/house.cpp,?FUN_00506B80@@YIXXZ
+0x005060B0,HouseClass::Where_To_Place_Building,MATCH,2742,src/house.cpp,?Where_To_Place_Building@HouseClass@@QAE?AVCell@@PAVBuildingTypeClass@@P6IHABV1@ABV2@HH@ZH@Z
+0x00506B70,_$E206,MATCH,1,src/house.cpp,_$E206
+0x00506B80,_$E205,MATCH,1,src/house.cpp,_$E205
 0x00506B90,HouseClass::Where_To_Place_Upgrade,MATCH,320,src/house.cpp,?Where_To_Place_Upgrade@HouseClass@@QBE?AVCell@@PBVBuildingTypeClass@@@Z
 0x00506CD0,Clamp_Cell,MATCH,124,src/house.cpp,?Clamp_Cell@@YI?AVCell@@ABV?$TRect@H@@ABV1@@Z
 0x00506D50,HouseClass::Calculate_Defense_Values,MATCH,406,src/house.cpp,?Calculate_Defense_Values@HouseClass@@QBEXPBVBuildingClass@@HPAHABV?$TRect@H@@@Z
@@ -5994,8 +5998,8 @@ address,name,result,size,source,symbol
 0x005106E0,??0?$VectorClass@UAngerStruct@@@@QAE@HPBUAngerStruct@@@Z,MATCH,147,src/house.cpp,??0?$VectorClass@UAngerStruct@@@@QAE@HPBUAngerStruct@@@Z
 0x00510780,??0?$VectorClass@UScoutStruct@@@@QAE@HPBUScoutStruct@@@Z,MATCH,147,src/house.cpp,??0?$VectorClass@UScoutStruct@@@@QAE@HPBUScoutStruct@@@Z
 0x00510820,?Delete_Index@?$DynamicVectorClass@PAVHouseClass@@@@QAE_NH@Z,MATCH,49,src/house.cpp,?Delete_Index@?$DynamicVectorClass@PAVHouseClass@@@@QAE_NH@Z
-0x00510860,BasePlanningCellContainer::AddCapacity,MATCH,134,src/house.cpp,?AddCapacity@BasePlanningCellContainer@@QAE_NH@Z
-0x005108F0,BasePlanningCellContainer::Comparator,MATCH,34,src/house.cpp,?Comparator@BasePlanningCellContainer@@SAHPBX0@Z
+0x00510860,?Increase_Table_Size@?$IndexClass@HVCell@@@@AAE_NH@Z,MATCH,134,src/house.cpp,?Increase_Table_Size@?$IndexClass@HVCell@@@@AAE_NH@Z
+0x005108F0,?search_compfunc@?$IndexClass@HVCell@@@@CAHPBX0@Z,MATCH,34,src/house.cpp,?search_compfunc@?$IndexClass@HVCell@@@@CAHPBX0@Z
 0x00510920,??0?$VectorClass@_N@@QAE@HPB_N@Z,MATCH,71,src/house.cpp,??0?$VectorClass@_N@@QAE@HPB_N@Z
 0x00510970,??0?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@QAE@HPBV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@Z,MATCH,162,src/house.cpp,??0?$VectorClass@V?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@@QAE@HPBV?$DistributionObject@PAVBuildingTypeClass@@@?$DiscreteDistributionClass@VBuildingTypeClass@@@@@Z
 0x00510A20,HouseClass::QueryInterface,MATCH,10,src/house.cpp,?QueryInterface@HouseClass@@W3AGJABU_GUID@@PAPAX@Z
