@@ -458,6 +458,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   An unused `#include` is one too: dropping overtype.h restored DrawMap 0x00640A40.
   A user-declared destructor on a widely included struct (AbilityFlagsType) flipped three.
   Header fixes that each pass alone can clash: gate a round's header changes together.
+- Print_CRCs 0x0064DEA0 and RulesClass::General 0x0066D530 follow the number of
+  declarations in the file, not their names or positions. A new member in house.h goes in
+  one-for-one for an unused declaration of the same kind (a `void X(void)` for a
+  `void Y(void)`); seven unused TibSun members are left there as free slots.
 - A function that flips with code added above it, not with declarations, may be defined in
   the wrong place. The line in its `LoadString`/assert file argument dates it: wonline's COM
   sink methods carry lines 4785-8912 while their address neighbours carry ~29000, because
