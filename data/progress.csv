@@ -8347,6 +8347,7 @@ address,name,result,size,source,symbol
 0x0059D510,MapGeneratorClass::Seed_River,MATCH,4386,src/mapgen.cpp,?Seed_River@MapGeneratorClass@@QAE_NABVCell@@N_N@Z
 0x0059E640,MapGeneratorClass::Set_Height_Of_ID,MATCH,114,src/mapgen.cpp,?Set_Height_Of_ID@MapGeneratorClass@@QAEXHD@Z
 0x0059E6C0,MapGeneratorClass::Increase_Height_Of_ID,MATCH,114,src/mapgen.cpp,?Increase_Height_Of_ID@MapGeneratorClass@@QAEXHD@Z
+0x0059E740,MapGeneratorClass::Place_Waterfall,MATCH,6472,src/mapgen.cpp,?Place_Waterfall@MapGeneratorClass@@QAE_NHABVCell@@0HAA_NAAN2@Z
 0x005A0090,MapGeneratorClass::Set_Cell_Data_Region,MATCH,47,src/mapgen.cpp,?Set_Cell_Data_Region@MapGeneratorClass@@QAEXABVCell@@H@Z
 0x005A00C0,MapGeneratorClass::Get_Cell_Data_Region,MATCH,49,src/mapgen.cpp,?Get_Cell_Data_Region@MapGeneratorClass@@QAEHABVCell@@@Z
 0x005A0100,MapGeneratorClass::Set_Cell_Data_Spread,MATCH,43,src/mapgen.cpp,?Set_Cell_Data_Spread@MapGeneratorClass@@QAEXABVCell@@H@Z
