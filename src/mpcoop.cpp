@@ -727,9 +727,8 @@ void MPCooperative::FUN_005C2500(HWND dialog)
 }
 
 // FUNCTION: GAMEMD 0x005C2640
-void MPCooperative::vt_entry_38(unsigned a)
+void MPCooperative::vt_entry_38(HWND dialog)
 {
-	HWND dialog = (HWND)a;
 	if (dialog) {
 		int count = Session.Players.Count();
 		for (int i = 0; i < count; i++) {

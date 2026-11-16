@@ -9022,7 +9022,7 @@ address,name,result,size,source,symbol
 0x005C0E50,MultiplayerBattle::vt_entry_0C,MATCH,5,src/movies.cpp,?vt_entry_0C@MultiplayerBattle@@UAE_NPAVWideWstring@@@Z
 0x005C0E60,MultiplayerBattle::vt_entry_20,MATCH,1,src/movies.cpp,?vt_entry_20@MultiplayerBattle@@UAEXXZ
 0x005C0E70,MultiplayerBattle::vt_entry_24,MATCH,1,src/movies.cpp,?vt_entry_24@MultiplayerBattle@@UAEXXZ
-0x005C0E80,MultiplayerBattle::vt_entry_38,MATCH,3,src/movies.cpp,?vt_entry_38@MultiplayerBattle@@UAEXI@Z
+0x005C0E80,MultiplayerBattle::vt_entry_38,MATCH,3,src/movies.cpp,?vt_entry_38@MultiplayerBattle@@UAEXPAUHWND__@@@Z
 0x005C0E90,MultiplayerBattle::vt_entry_58,MATCH,30,src/movies.cpp,?vt_entry_58@MultiplayerBattle@@UAE_NHV?$DynamicVectorClass@H@@PBD1@Z
 0x005C0EB0,MultiplayerBattle::vt_entry_54,MATCH,30,src/movies.cpp,?vt_entry_54@MultiplayerBattle@@UAE_NHV?$DynamicVectorClass@H@@@Z
 0x005C0ED0,MultiplayerBattle::vt_entry_5C,MATCH,5,src/movies.cpp,?vt_entry_5C@MultiplayerBattle@@UAE_NIII@Z
@@ -9079,7 +9079,7 @@ address,name,result,size,source,symbol
 0x005C21D0,MPCooperative::FUN_005C21D0,MATCH,469,src/mpcoop.cpp,?FUN_005C21D0@MPCooperative@@QAEXPAUHWND__@@_N@Z
 0x005C23B0,MPCooperative::FUN_005C23B0,MATCH,335,src/mpcoop.cpp,?FUN_005C23B0@MPCooperative@@QAEXPAUHWND__@@H@Z
 0x005C2500,MPCooperative::FUN_005C2500,MATCH,317,src/mpcoop.cpp,?FUN_005C2500@MPCooperative@@QAEXPAUHWND__@@@Z
-0x005C2640,MPCooperative::vt_entry_38,MATCH,64,src/mpcoop.cpp,?vt_entry_38@MPCooperative@@UAEXI@Z
+0x005C2640,MPCooperative::vt_entry_38,MATCH,64,src/mpcoop.cpp,?vt_entry_38@MPCooperative@@UAEXPAUHWND__@@@Z
 0x005C2680,MPCooperative::vt_entry_60,MATCH,70,src/mpcoop.cpp,?vt_entry_60@MPCooperative@@UAE_NXZ
 0x005C26D0,FUN_005C26D0,MATCH,59,src/mpcoop.cpp,?FUN_005C26D0@@YIXXZ
 0x005C2710,MPCooperative::vt_entry_64,MATCH,833,src/mpcoop.cpp,?vt_entry_64@MPCooperative@@UAE_NXZ

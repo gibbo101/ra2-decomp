@@ -760,7 +760,7 @@ void MultiplayerBattle::vt_entry_24(void)
 }
 
 // FUNCTION: GAMEMD 0x005C0E80
-void MultiplayerBattle::vt_entry_38(unsigned a)
+void MultiplayerBattle::vt_entry_38(HWND dialog)
 {
 }
 

@@ -65,7 +65,7 @@ class MultiplayerGameMode
 		virtual int vt_entry_2C(void);
 		virtual int vt_entry_30(void);
 		virtual bool CanAllyWith(int index);
-		virtual void vt_entry_38(unsigned a);
+		virtual void vt_entry_38(HWND dialog);
 		virtual bool IsAIAllowed(void);
 		virtual bool vt_entry_40(void);
 		virtual int FirstValidMapIndex(void);

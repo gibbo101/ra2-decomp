@@ -9377,7 +9377,7 @@ address,size,symbol,source,sha256
 0x005C0E50,5,?vt_entry_0C@MultiplayerBattle@@UAE_NPAVWideWstring@@@Z,src/movies.cpp,f4c6d7ae520f88aecb3ea65952e885437fa4a6ce4b5c3439a161d1c5d8e42863
 0x005C0E60,1,?vt_entry_20@MultiplayerBattle@@UAEXXZ,src/movies.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x005C0E70,1,?vt_entry_24@MultiplayerBattle@@UAEXXZ,src/movies.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
-0x005C0E80,3,?vt_entry_38@MultiplayerBattle@@UAEXI@Z,src/movies.cpp,e598d0c3ba86d917b177d7adde0556aa99bc355543c57aee0a3e50b684dd7e99
+0x005C0E80,3,?vt_entry_38@MultiplayerBattle@@UAEXPAUHWND__@@@Z,src/movies.cpp,e598d0c3ba86d917b177d7adde0556aa99bc355543c57aee0a3e50b684dd7e99
 0x005C0E90,30,?vt_entry_58@MultiplayerBattle@@UAE_NHV?$DynamicVectorClass@H@@PBD1@Z,src/movies.cpp,aaf5e31404d5ed6cc9532c762364fdc95f8dd19a62991f5fb2cb4d57a06fd84f
 0x005C0EB0,30,?vt_entry_54@MultiplayerBattle@@UAE_NHV?$DynamicVectorClass@H@@@Z,src/movies.cpp,1e486c4a8c4253a2e0a2a6d0b365874e00fa79b14c357956fe42219ed9ab4fdb
 0x005C0ED0,5,?vt_entry_5C@MultiplayerBattle@@UAE_NIII@Z,src/movies.cpp,d94cc1c82e8ea202d242e9bd83dcad4b047b4cc733a571a749d0f2613aae60ee
@@ -9434,7 +9434,7 @@ address,size,symbol,source,sha256
 0x005C21D0,469,?FUN_005C21D0@MPCooperative@@QAEXPAUHWND__@@_N@Z,src/mpcoop.cpp,c4845f8b2c2a12c34d648e0bf33b4c080913159d0fa0c760ea6a0b7da0a4e401
 0x005C23B0,335,?FUN_005C23B0@MPCooperative@@QAEXPAUHWND__@@H@Z,src/mpcoop.cpp,15b4d84d6b50f48a6f909203ce4eeb91a0fa1a864097d261d2432aa36b972ba8
 0x005C2500,317,?FUN_005C2500@MPCooperative@@QAEXPAUHWND__@@@Z,src/mpcoop.cpp,97f1aae27431c2b31c0223ca5549a0363254d329caaaa2f6c3745279c2ec6115
-0x005C2640,64,?vt_entry_38@MPCooperative@@UAEXI@Z,src/mpcoop.cpp,62de8cb7feb25e95d1466ec808d2a688c84f336154c8b7d48314b7bc1daa03e2
+0x005C2640,64,?vt_entry_38@MPCooperative@@UAEXPAUHWND__@@@Z,src/mpcoop.cpp,62de8cb7feb25e95d1466ec808d2a688c84f336154c8b7d48314b7bc1daa03e2
 0x005C2680,70,?vt_entry_60@MPCooperative@@UAE_NXZ,src/mpcoop.cpp,6b259f34e6ab17257199bc255518cc5c2c6bf6a87ad1560314776cb7f9fce1d2
 0x005C26D0,59,?FUN_005C26D0@@YIXXZ,src/mpcoop.cpp,093d157911a47e1faac77845f06c7e8711d28d60db231bd4668706d669569c95
 0x005C2710,833,?vt_entry_64@MPCooperative@@UAE_NXZ,src/mpcoop.cpp,83d506502098375b8cc01236e7767188db78582c1c4f1a1d73333a26c1fd9d67
