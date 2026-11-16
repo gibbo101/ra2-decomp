@@ -17498,6 +17498,7 @@ address,name,result,size,source,symbol
 0x0076EBE0,WorldDominationTour::Selection::Play_SFX,MATCH,158,src/wdtsel.cpp,?Play_SFX@Selection@WorldDominationTour@@QAEXABVWstring@@@Z
 0x0076EC80,WorldDominationTour::Selection::Set_Long_Description,MATCH,80,src/wdtsel.cpp,?Set_Long_Description@Selection@WorldDominationTour@@QAEXXZ
 0x0076ECD0,FUN_0076ECD0,MATCH,62,src/wdtsel.cpp,?FUN_0076ECD0@@YIXPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z
+0x0076ED10,FUN_0076ED10,MATCH,415,src/wdtsel.cpp,?FUN_0076ED10@@YI_NPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z
 0x0076EEB0,WorldDominationTour::Selection::FUN_0076EEB0,MATCH,195,src/wdtsel.cpp,?FUN_0076EEB0@Selection@WorldDominationTour@@QAEXXZ
 0x0076EF80,WorldDominationTour::Selection::End,MATCH,91,src/wdtsel.cpp,?End@Selection@WorldDominationTour@@QAEXXZ
 0x0076F000,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z,MATCH,26,src/wdtsel.cpp,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z
