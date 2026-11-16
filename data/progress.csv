@@ -859,6 +859,7 @@ address,name,result,size,source,symbol
 0x00420E70,AlphaShapeClass::Detach,MATCH,18,src/alphashp.cpp,?Detach@AlphaShapeClass@@UAEXPBVAbstractClass@@_N@Z
 0x00420E90,AlphaShapeClass::Update_All,MATCH,170,src/alphashp.cpp,?Update_All@AlphaShapeClass@@SIXXZ
 0x00420F40,AlphaShapeClass::Draw_In_Area,MATCH,1031,src/alphashp.cpp,?Draw_In_Area@AlphaShapeClass@@SIXABVPoint2D@@ABV?$TRect@H@@@Z
+0x00421350,AlphaShapeClass::Draw_All,MATCH,865,src/alphashp.cpp,?Draw_All@AlphaShapeClass@@SIXABV?$TRect@H@@@Z
 0x004216C0,AlphaShapeClass::Calculate_Brightness_Table,MATCH,112,src/alphashp.cpp,?Calculate_Brightness_Table@AlphaShapeClass@@SIXXZ
 0x00421730,??_GAlphaShapeClass@@UAEPAXI@Z,MATCH,207,src/alphashp.cpp,??_GAlphaShapeClass@@UAEPAXI@Z
 0x00421800,?Clear@?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEXXZ,MATCH,42,src/alphashp.cpp,?Clear@?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEXXZ

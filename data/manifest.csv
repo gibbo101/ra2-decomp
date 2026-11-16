@@ -1221,6 +1221,7 @@ address,size,symbol,source,sha256
 0x00420E70,18,?Detach@AlphaShapeClass@@UAEXPBVAbstractClass@@_N@Z,src/alphashp.cpp,d6d26de2bbb2ceb9788a6ffe350da40cdcc63617482fbfa7d01d99c72066ee26
 0x00420E90,170,?Update_All@AlphaShapeClass@@SIXXZ,src/alphashp.cpp,7affa6c80b0109f3d4243555a95697b8e69898c16cf512699ceb4fb70dc1b842
 0x00420F40,1031,?Draw_In_Area@AlphaShapeClass@@SIXABVPoint2D@@ABV?$TRect@H@@@Z,src/alphashp.cpp,95c8b3a560534d4cb31c83f9284511c2f3cf73136360c1c719c24ed498d0a696
+0x00421350,865,?Draw_All@AlphaShapeClass@@SIXABV?$TRect@H@@@Z,src/alphashp.cpp,e849f2a8b86bbaea9b9e1483570fa8461a2914c73a3b4ca1ba536eb4f11033d2
 0x004216C0,112,?Calculate_Brightness_Table@AlphaShapeClass@@SIXXZ,src/alphashp.cpp,1e5b452ea5e3d00b5dd1e9e6e116d8040df015c3fc0df07f1cfc8bbb95718154
 0x00421730,207,??_GAlphaShapeClass@@UAEPAXI@Z,src/alphashp.cpp,2ffcffc742ed67fb376acb13a0ce863a485fae2cd7475b03f1ee470cf22f7ebc
 0x00421800,42,?Clear@?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEXXZ,src/alphashp.cpp,0196a5f6b0708458cef68387e823c04a1561695201a868e0b666b7cbeef227ed
