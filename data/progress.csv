@@ -10555,7 +10555,7 @@ address,name,result,size,source,symbol
 0x0060AAA0,FUN_0060AAA0,MATCH,15,src/ownrdraw.cpp,?FUN_0060AAA0@@YIXPAUHWND__@@@Z
 0x0060AAB0,OwnerDraw::InitCompactDialogControlsProc,MATCH,1156,src/ownrdraw.cpp,?InitCompactDialogControlsProc@OwnerDraw@@YGHPAUHWND__@@J@Z
 0x0060AF40,FUN_0060AF40,MATCH,15,src/ownrdraw.cpp,?FUN_0060AF40@@YIXPAUHWND__@@@Z
-0x0060AF50,FUN_0060AF50,MATCH,173,src/ownrdraw.cpp,?FUN_0060AF50@@YIXPAUHWND__@@PAUtagRECT@@@Z
+0x0060AF50,FUN_0060AF50,MATCH,173,src/ownrdraw.cpp,?FUN_0060AF50@@YIXPAUHWND__@@PAV?$TRect@H@@@Z
 0x0060B000,FUN_0060B000,MATCH,463,src/ownrdraw.cpp,?FUN_0060B000@@YIXPAUHWND__@@ABVPoint2D@@@Z
 0x0060B1D0,FUN_0060B1D0,MATCH,370,src/ownrdraw.cpp,?FUN_0060B1D0@@YIXPAUHWND__@@ABVPoint2D@@@Z
 0x0060B350,FUN_0060B350,MATCH,206,src/ownrdraw.cpp,?FUN_0060B350@@YIXPAUHWND__@@@Z
@@ -10565,6 +10565,7 @@ address,name,result,size,source,symbol
 0x0060B740,FUN_0060B740,MATCH,87,src/ownrdraw.cpp,?FUN_0060B740@@YIXPAUHWND__@@@Z
 0x0060B7A0,FUN_0060B7A0,MATCH,217,src/ownrdraw.cpp,?FUN_0060B7A0@@YIXPAUHWND__@@@Z
 0x0060B880,FUN_0060B880,MATCH,204,src/ownrdraw.cpp,?FUN_0060B880@@YI_NPAUHWND__@@0@Z
+0x0060C0C0,FUN_0060C0C0,MATCH,987,src/ownrdraw.cpp,?FUN_0060C0C0@@YGHPAUHWND__@@J@Z
 0x0060C4A0,OwnerDraw::UpdateControlPosition,MATCH,54,src/ownrdraw.cpp,?UpdateControlPosition@OwnerDraw@@YIXPAUHWND__@@J@Z
 0x0060C4E0,FUN_0060C4E0,MATCH,90,src/ownrdraw.cpp,?FUN_0060C4E0@@YIHPAUHWND__@@@Z
 0x0060C540,OwnerDraw::TrySetDialogLayoutBand1,MATCH,648,src/ownrdraw.cpp,?TrySetDialogLayoutBand1@OwnerDraw@@YI_NPAUHWND__@@@Z
