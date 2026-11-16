@@ -8362,6 +8362,7 @@ address,name,result,size,source,symbol
 0x005A1E50,MapGeneratorClass::Region_Cell_Count_At_Least,MATCH,265,src/mapgen.cpp,?Region_Cell_Count_At_Least@MapGeneratorClass@@SI_NABV?$TRect@H@@HHH@Z
 0x005A1F60,MapGeneratorClass::Expand_All_High_Ground,MATCH,76,src/mapgen.cpp,?Expand_All_High_Ground@MapGeneratorClass@@QAE_NXZ
 0x005A1FB0,MapGeneratorClass::Init_Start_Points,MATCH,1007,src/mapgen.cpp,?Init_Start_Points@MapGeneratorClass@@QAE_NXZ
+0x005A23A0,MapGeneratorClass::Create_Tiberium,MATCH,1300,src/mapgen.cpp,?Create_Tiberium@MapGeneratorClass@@QAEXXZ
 0x005A28C0,MapGeneratorClass::Create_Tiberium_Patch,MATCH,1547,src/mapgen.cpp,?Create_Tiberium_Patch@MapGeneratorClass@@QAEXABVCell@@HH_N@Z
 0x005A2ED0,MapGeneratorClass::Get_Tiberium_Score,MATCH,117,src/mapgen.cpp,?Get_Tiberium_Score@MapGeneratorClass@@QBENABVCell@@0@Z
 0x005A2F50,MapGeneratorClass::Seed_Hill_Heights,MATCH,1184,src/mapgen.cpp,?Seed_Hill_Heights@MapGeneratorClass@@QAEXXZ
@@ -11654,6 +11655,7 @@ address,name,result,size,source,symbol
 0x006579E0,RadarClass::Play_Movie,MATCH,764,src/radar.cpp,?Play_Movie@RadarClass@@QAEXXZ
 0x00657CE0,RadarClass::Complete_Radar_Refresh,MATCH,178,src/radar.cpp,?Complete_Radar_Refresh@RadarClass@@QAEXXZ
 0x00657DA0,Diplomacy_Dialog_Proc,MATCH,1413,src/radar.cpp,?Diplomacy_Dialog_Proc@@YGJPAUHWND__@@IIJ@Z
+0x00658330,RadarClass::FUN_00658330,MATCH,775,src/radar.cpp,?FUN_00658330@RadarClass@@QAEXPAUHWND__@@HPAVHouseClass@@@Z
 0x00658640,RadarClass::FUN_00658640,MATCH,141,src/radar.cpp,?FUN_00658640@RadarClass@@QAEXPAUHWND__@@@Z
 0x006586D0,RadarClass::FUN_006586D0,MATCH,150,src/radar.cpp,?FUN_006586D0@RadarClass@@QAEXXZ
 0x00658770,RadarClass::Help_Text,MATCH,13,src/radar.cpp,?Help_Text@RadarClass@@UAEPBDH@Z

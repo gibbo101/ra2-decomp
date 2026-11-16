@@ -8740,6 +8740,7 @@ address,size,symbol,source,sha256
 0x005A1E50,265,?Region_Cell_Count_At_Least@MapGeneratorClass@@SI_NABV?$TRect@H@@HHH@Z,src/mapgen.cpp,34e8b379cb69c52bfe9b0e6b396b9f1806b15247c7f616892e78a1c501b009e5
 0x005A1F60,76,?Expand_All_High_Ground@MapGeneratorClass@@QAE_NXZ,src/mapgen.cpp,fca03015739affb2b3548e20df9510066d4f2ecf22baea9e06f479d360b56a61
 0x005A1FB0,1007,?Init_Start_Points@MapGeneratorClass@@QAE_NXZ,src/mapgen.cpp,eb66689ffec0eae42f048911c3bd836149c99b2d17cc53c5f515047a1145b978
+0x005A23A0,1300,?Create_Tiberium@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,7cb1395a222e3f2395284f63c97c871cafbc733110d6dba588fb2eb61071fa4d
 0x005A28C0,1547,?Create_Tiberium_Patch@MapGeneratorClass@@QAEXABVCell@@HH_N@Z,src/mapgen.cpp,7ef089e77d4a0ab7d4dff53ab8ed20edeeb6517e471a80614db765fe342e1771
 0x005A2ED0,117,?Get_Tiberium_Score@MapGeneratorClass@@QBENABVCell@@0@Z,src/mapgen.cpp,04efad47cfdffa1de1bcbbbe3e15f1d02c56db0b4e83060c20e13c70781165ef
 0x005A2F50,1184,?Seed_Hill_Heights@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,44b53be3212bbd748cdced128276a30fc1205109a2df928cc2f393acff7206ba
@@ -12008,6 +12009,7 @@ address,size,symbol,source,sha256
 0x006579E0,764,?Play_Movie@RadarClass@@QAEXXZ,src/radar.cpp,5635f8c2829ed1126a97f14f08bec0255d288efc7e9ce791bf6d0504e0f11c75
 0x00657CE0,178,?Complete_Radar_Refresh@RadarClass@@QAEXXZ,src/radar.cpp,c75a041cd4f88e68cc89f3a18cef55e0f5335c64453079dc2f9a967efb1048d5
 0x00657DA0,1413,?Diplomacy_Dialog_Proc@@YGJPAUHWND__@@IIJ@Z,src/radar.cpp,03aaff82ababe48e73266a41f538834d11deebd12e71185553c2aa4888b4fff0
+0x00658330,775,?FUN_00658330@RadarClass@@QAEXPAUHWND__@@HPAVHouseClass@@@Z,src/radar.cpp,9a0687f54eeb4db1bb32e92d616c8102b772407ebd86c1ed2234e71027853812
 0x00658640,141,?FUN_00658640@RadarClass@@QAEXPAUHWND__@@@Z,src/radar.cpp,5aa0c3b98a45b91ec2a242f2e7964e060d2655c0ed1af20c30b9b92c0ed58623
 0x006586D0,150,?FUN_006586D0@RadarClass@@QAEXXZ,src/radar.cpp,c11eb95069381234a9128c1fb5cff993e7b62507ddb4560e7b902830cf8eb8de
 0x00658770,13,?Help_Text@RadarClass@@UAEPBDH@Z,src/radar.cpp,0cf87274fce6ab976997a7a3eb0fade5f162fffc82aae5eee91d3ac5ccd3a663

@@ -4697,6 +4697,91 @@ bool MapGeneratorClass::Init_Start_Points(void)
 	return(true);
 }
 
+// FUNCTION: GAMEMD 0x005A23A0
+void MapGeneratorClass::Create_Tiberium(void)
+{
+	int waypoint_base = 0;
+	bool use_nearest = FUN_0058BD80(SeedData.MapType, SeedData.Resources);
+
+	for (int r = 0; r < MapRegionClass::MapRegions.Count(); r++) {
+		MapRegionClass * region = MapRegionClass::MapRegions[r];
+		if (region->Unknown0 == NULL) {
+			continue;
+		}
+
+		int chosen = -1;
+		if (use_nearest) {
+			Cell center(0, 0);
+			if (region->Unknown20 > 0) {
+				for (int w = 0; w < region->Unknown20; w++) {
+					Cell waypoint = Scen->Get_Waypoint_Cell((WAYPOINT)(waypoint_base + w));
+					center += waypoint;
+				}
+				center.X = center.X / region->Unknown20;
+				center.Y = center.Y / region->Unknown20;
+			} else {
+				center = region->Cells[Pick_Random_UInt(0, region->Cells.Count() - 1)];
+			}
+
+			int best = 500000;
+			for (int k = 0; k < region->Unknown0->Count(); k++) {
+				Cell c = (*region->Unknown0)[k];
+				int dx = c.X - center.X;
+				int dy = c.Y - center.Y;
+				double dist = fastmath::sqrt((double)(dy * dy + dx * dx));
+				if (dist < best) {
+					best = (int)dist;
+					chosen = k;
+				}
+			}
+		}
+
+		int total = (int)((RMGMaximumTiberium - RMGMinimumTiberium) * (SeedData.Tiberium * 0.01) + RMGMinimumTiberium);
+		double weight = MAX(0.5, (double)region->Unknown20);
+		int amount = (int)(total * weight);
+		int layout_count = region->Unknown0->Count();
+		if (layout_count == 0 || amount == 0) {
+			continue;
+		}
+
+		int per_patch = amount / layout_count;
+		for (int p = 0; p < region->Unknown0->Count(); p++) {
+			int patch_amount = (int)(per_patch + Sample_Truncated_Normal_Inline(0.0, 50.0, -100.0, 100.0));
+			if (patch_amount >= 0) {
+				Create_Tiberium_Patch((*region->Unknown0)[p], patch_amount, waypoint_base + p + 1, p == chosen);
+			}
+		}
+
+		DynamicVectorClass<double> mean_distances;
+		Cell waypoint;
+		Cell c;
+		for (int s = 0; s < region->Unknown20; s++) {
+			double total_distance = 0.0;
+			waypoint = Scen->Get_Waypoint_Cell((WAYPOINT)(waypoint_base + s));
+			for (int q = 0; q < region->Unknown0->Count(); q++) {
+				c = (*region->Unknown0)[q];
+				total_distance += Map_Cell_Distance(c, waypoint);
+			}
+			mean_distances.Add(total_distance / (double)region->Unknown0->Count());
+		}
+
+		double min_mean_distance = 9999999.0;
+		for (int m = 0; m < region->Unknown20; m++) {
+			if (mean_distances[m] < min_mean_distance) {
+				min_mean_distance = mean_distances[m];
+			}
+		}
+
+		bool flag = (SeedData.Resources == 3 && FUN_0058BCD0(SeedData.MapType));
+		for (int f = 0; f < region->Unknown20; f++) {
+			amount = (int)((mean_distances[f] - min_mean_distance) * 15.0);
+			Create_Tiberium_Patch(Scen->Get_Waypoint_Cell((WAYPOINT)(waypoint_base + f)), amount + 500, waypoint_base + f + 1, flag);
+		}
+
+		waypoint_base += region->Unknown20;
+	}
+}
+
 // FUNCTION: GAMEMD 0x005A28C0
 void MapGeneratorClass::Create_Tiberium_Patch(Cell const &cell, int count, int patch_id, bool use_gems)
 {
