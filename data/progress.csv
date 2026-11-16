@@ -13355,14 +13355,13 @@ address,name,result,size,source,symbol
 0x006BB210,_$E32,MATCH,15,src/startup.cpp,_$E32
 0x006BB220,_$E35,MATCH,18,src/startup.cpp,_$E35
 0x006BB240,_$E38,MATCH,26,src/startup.cpp,_$E38
-0x006BB260,_$E346,MATCH,61,src/startup.cpp,_$E346
-0x006BB2A0,_$E344,MATCH,59,src/startup.cpp,_$E344
+0x006BB260,_$E329,MATCH,61,src/startup.cpp,_$E329
+0x006BB2A0,_$E327,MATCH,59,src/startup.cpp,_$E327
 0x006BB2E0,SetRegKeyValue,MATCH,164,src/startup.cpp,?SetRegKeyValue@@YI_NQBD00@Z
 0x006BB390,RegisterServer,MATCH,961,src/startup.cpp,?RegisterServer@@YIJXZ
 0x006BB760,UnregisterServer,MATCH,378,src/startup.cpp,?UnregisterServer@@YIJXZ
 0x006BB8E0,DirectDrawWrap::DisposeOfStuff,MATCH,175,src/startup.cpp,?DisposeOfStuff@DirectDrawWrap@@YIXXZ
 0x006BB990,Top_Level_Exception_Filter,MATCH,11,src/startup.cpp,?Top_Level_Exception_Filter@@YIJPAU_EXCEPTION_POINTERS@@@Z
-0x006BB9A0,WinMain,MATCH,10261,src/startup.cpp,_WinMain@16
 0x006BE1C0,Prog_End,MATCH,2697,src/startup.cpp,?Prog_End@@YAXXZ
 0x006BEC50,Exit_Process,MATCH,6,src/startup.cpp,?Exit_Process@@YIXH@Z
 0x006BEC60,Emergency_Exit,MATCH,239,src/startup.cpp,?Emergency_Exit@@YIXXZ
