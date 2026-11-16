@@ -7967,6 +7967,7 @@ address,name,result,size,source,symbol
 0x0056F7A0,MapClass::Internal_Damage_Train_Bridge_NS_TopRight,MATCH,263,src/map.cpp,?Internal_Damage_Train_Bridge_NS_TopRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z
 0x0056F8B0,MapClass::Internal_Destroy_Train_Bridge_NS_BottomLeft,MATCH,964,src/map.cpp,?Internal_Destroy_Train_Bridge_NS_BottomLeft@MapClass@@AAEXABVCell@@W4FacingType@@@Z
 0x0056FC80,MapClass::Internal_Destroy_Train_Bridge_NS_TopRight,MATCH,964,src/map.cpp,?Internal_Destroy_Train_Bridge_NS_TopRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z
+0x00570050,MapClass::Repair_Train_Bridge,MATCH,2692,src/map.cpp,?Repair_Train_Bridge@MapClass@@QAEXABVCell@@@Z
 0x00570AE0,MapClass::Destroy_Train_Bridge_Span,MATCH,1381,src/map.cpp,?Destroy_Train_Bridge_Span@MapClass@@AAE_NABVCell@@W4FacingType@@PAV?$TRect@H@@@Z
 0x00571050,MapClass::Destroy_Train_Bridge_Connections,MATCH,1088,src/map.cpp,?Destroy_Train_Bridge_Connections@MapClass@@AAEXABVCell@@@Z
 0x00571490,MapClass::Damage_Train_Bridge,MATCH,3474,src/map.cpp,?Damage_Train_Bridge@MapClass@@AAE_NABVCell@@@Z

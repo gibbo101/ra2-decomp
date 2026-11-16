@@ -8322,6 +8322,7 @@ address,size,symbol,source,sha256
 0x0056F7A0,263,?Internal_Damage_Train_Bridge_NS_TopRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z,src/map.cpp,992dd4a9fe328c331922957e6de692202e38254a33772dbacfbcac1651e4d7d3
 0x0056F8B0,964,?Internal_Destroy_Train_Bridge_NS_BottomLeft@MapClass@@AAEXABVCell@@W4FacingType@@@Z,src/map.cpp,33ddad0a81eb930bf922fb3744603804669595da850d8b1ba63aacab53896fa0
 0x0056FC80,964,?Internal_Destroy_Train_Bridge_NS_TopRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z,src/map.cpp,68faca696dd05dc63d476c19845e8bdb12775a5a0aaeba820fbb39de4d5bf9d6
+0x00570050,2692,?Repair_Train_Bridge@MapClass@@QAEXABVCell@@@Z,src/map.cpp,5d2bbfc879a720749439ce084b66fd36653dad8f2573ce52fbc1790ad6073945
 0x00570AE0,1381,?Destroy_Train_Bridge_Span@MapClass@@AAE_NABVCell@@W4FacingType@@PAV?$TRect@H@@@Z,src/map.cpp,37fee9ee290dd3cfae6efc67845728df6ef0e60827651eb41a869def98fe521d
 0x00571050,1088,?Destroy_Train_Bridge_Connections@MapClass@@AAEXABVCell@@@Z,src/map.cpp,06330b1d9b78981f37158ba87ef4bd6c6cfe146c4eab23befb687109469b96ca
 0x00571490,3474,?Damage_Train_Bridge@MapClass@@AAE_NABVCell@@@Z,src/map.cpp,470d7abe27a9c904d3ff500f91953a79d86b7ecc9d68eca220f5665b65859c36
