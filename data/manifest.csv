@@ -8725,6 +8725,7 @@ address,size,symbol,source,sha256
 0x0059D510,4386,?Seed_River@MapGeneratorClass@@QAE_NABVCell@@N_N@Z,src/mapgen.cpp,133331f727c536895c64a80fc082946f4185670c1adfb5358e6dc58c39353c06
 0x0059E640,114,?Set_Height_Of_ID@MapGeneratorClass@@QAEXHD@Z,src/mapgen.cpp,e78e3b0b000c5ea7de406199ac67595b1f38b8569ce5e94bc665580064847d66
 0x0059E6C0,114,?Increase_Height_Of_ID@MapGeneratorClass@@QAEXHD@Z,src/mapgen.cpp,2a83fdb3d8328b5344c52f87944b9f6d12f1966dd3eec3baba7f726b799fba30
+0x0059E740,6472,?Place_Waterfall@MapGeneratorClass@@QAE_NHABVCell@@0HAA_NAAN2@Z,src/mapgen.cpp,fe7f08ff6b8f2f9c5933fb9aba2ed8ef1267110a19cdd286840c02f3c2d33222
 0x005A0090,47,?Set_Cell_Data_Region@MapGeneratorClass@@QAEXABVCell@@H@Z,src/mapgen.cpp,412b8e9edc058a89e259d9edeb4a806aa88167c2580945c142ca76eb32b0301c
 0x005A00C0,49,?Get_Cell_Data_Region@MapGeneratorClass@@QAEHABVCell@@@Z,src/mapgen.cpp,44421bf6fa6af7d98359ba1ffed5a7c86bb47a77f2cf054e2b7afe41cac1fdb6
 0x005A0100,43,?Set_Cell_Data_Spread@MapGeneratorClass@@QAEXABVCell@@H@Z,src/mapgen.cpp,412e0860a57970a86c3a9095b1537a1f7bde9990a3485ae2e33d5b924e4b8004
@@ -10881,6 +10882,7 @@ address,size,symbol,source,sha256
 0x00606800,2496,?FUN_00606800@@YGHPAUHWND__@@J@Z,src/ownrdraw.cpp,77b4597e8f1713ff82706493cacc3cd3ada31abc34594436ca12b5ad937707ac
 0x006071C0,15,?FUN_006071C0@@YIHPAUHWND__@@@Z,src/ownrdraw.cpp,21bc5ddac74e5b15403bc45fa5bdf1e1f73bd10a5a8d666fa0533dd3c7547498
 0x006071D0,15,?FUN_006071D0@@YIHPAUHWND__@@@Z,src/ownrdraw.cpp,1e11b50c94a42c4b62128ce69f4f9dc28a77cd420e0420adcc81a9d007a3ac4f
+0x006071E0,3553,?DrawCampaignMenuTransition@OwnerDraw@@YIXPAUHWND__@@_N@Z,src/ownrdraw.cpp,6c53aae34a768a129c154379c3ccb07837077374a88f3f5d8b57999d0d16d8ba
 0x00607FD0,155,?FUN_00607FD0@@YIXPAUHWND__@@@Z,src/ownrdraw.cpp,95930ef64d2542e14794b45eb33b3bc78616fad9bf332b131d997e27f50847b1
 0x00608070,496,?WS_Save_Dialog_Values@@YI_NPAUHWND__@@@Z,src/ownrdraw.cpp,bd6152c3c631dc79e04429f536d68daea07c808704dd9f8aeede92f943f002be
 0x00608260,273,?RunOpenAnimationIfNeeded@@YI_NPAUHWND__@@@Z,src/ownrdraw.cpp,ffda4757dce6830e0a9e8188c6bfde0c93e868d9ab79d97bc2154ad665ef08a7
