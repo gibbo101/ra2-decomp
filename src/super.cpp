@@ -463,7 +463,7 @@ int SuperClass::Anim_Stage(void) const
 }
 
 // FUNCTION: GAMEMD 0x006CC070
-void FUN_006CC070(void)
+void SuperClass::Impatient_Click(void) const
 {
 }
 
