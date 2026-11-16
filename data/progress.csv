@@ -11550,6 +11550,7 @@ address,name,result,size,source,symbol
 0x0064B240,Kick_Player_Now,MATCH,461,src/queue.cpp,?Kick_Player_Now@@YIXPAVConnManClass@@HPAUFrameSyncStruct@@_N@Z
 0x0064B410,Handle_Timeout,MATCH,187,src/queue.cpp,?Handle_Timeout@@YIHPAVConnManClass@@PAUFrameSyncStruct@@@Z
 0x0064B4D0,FUN_0064B4D0,MATCH,397,src/queue.cpp,?FUN_0064B4D0@@YI_NPAEPAHPAUMegaMissionData@EventData@EventClass@@PAVxTargetClass@@_N@Z
+0x0064C380,FUN_0064C380,MATCH,2474,src/queue.cpp,?FUN_0064C380@@YIHHW4HousesType@@PAVConnManClass@@PAV?$CDTimerClass@VFrameTimerClass@@@@PAUFrameSyncStruct@@@Z
 0x0064CD30,FUN_0064CD30,MATCH,106,src/queue.cpp,?FUN_0064CD30@@YIXHHVxTargetClass@@PAV1@@Z
 0x0064D990,Clean_DoList,MATCH,73,src/queue.cpp,?Clean_DoList@@YIXPAVConnManClass@@@Z
 0x0064D9E0,Queue_Record,MATCH,205,src/queue.cpp,?Queue_Record@@YIXXZ

@@ -11906,6 +11906,7 @@ address,size,symbol,source,sha256
 0x0064B410,187,?Handle_Timeout@@YIHPAVConnManClass@@PAUFrameSyncStruct@@@Z,src/queue.cpp,7087c46634f85ab0b3f8b379f3629d4130556ec385471d0e8dd7fc3ab5203208
 0x0064B4D0,397,?FUN_0064B4D0@@YI_NPAEPAHPAUMegaMissionData@EventData@EventClass@@PAVxTargetClass@@_N@Z,src/queue.cpp,a3c3ca2c26dab88333378982086f2399ce54f277996eea27cb60768f76826dd9
 0x0064B660,1896,?FUN_0064B660@@YIHPAXHHHHPAH@Z,src/queue.cpp,3bddde33f33fd83107206995eb4df6b33c534c086a9eb37b7a2bf28c8f2a744a
+0x0064C380,2474,?FUN_0064C380@@YIHHW4HousesType@@PAVConnManClass@@PAV?$CDTimerClass@VFrameTimerClass@@@@PAUFrameSyncStruct@@@Z,src/queue.cpp,8a976638b37ff76a92de963277f2784d7312ee5e2e66c2518779f2ca653b5622
 0x0064CD30,106,?FUN_0064CD30@@YIXHHVxTargetClass@@PAV1@@Z,src/queue.cpp,5980151ad740b692bad4955c77ca952eacd9f91b942d38111438e3e84d6d7bd0
 0x0064D990,73,?Clean_DoList@@YIXPAVConnManClass@@@Z,src/queue.cpp,4a29ac52bdeb7003bdcea2113c8f5ea7efef448babd90fce8754a6c8b9be7126
 0x0064D9E0,205,?Queue_Record@@YIXXZ,src/queue.cpp,fbf7674c87261329b1558b3792621fc34621079f2ef32eeca899ea9455fcc8b8
