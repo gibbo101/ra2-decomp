@@ -1663,7 +1663,7 @@ int SidebarClass::StripClass::SelectClass::Action(
 			if (factory != 0 && (!factory->Is_Building())) {
 				if (factory->Has_Completed()) {
 					TechnoClass *pending =
-						(TechnoClass *)factory->Get_Object();
+						factory->Get_Object();
 					if (!pending) {
 						if (factory->Get_Special_Item() != -1) {
 							Map.IsTargettingMode = SUPER_ANY;
@@ -1713,7 +1713,7 @@ int SidebarClass::StripClass::SelectClass::Action(
 					Map.IsForceCompleteRedraw = true;
 				}
 			} else {
-				factory = (FactoryClass *)PlayerPtr->Fetch_Factory(
+				factory = PlayerPtr->Fetch_Factory(
 					kind, choice->Naval, arg);
 				TechnoTypeClass const *type = Fetch_Techno_Type(
 					Strip->Buildables[index].BuildableType,
@@ -1773,7 +1773,7 @@ int SidebarClass::StripClass::SelectClass::Action(
 										>= tech->Cost_Of(PlayerPtr) * ahead / 54
 									&& tech->Who_Can_Build_Me(
 										true, false, false,
-										(HouseClass *)PlayerPtr)) {
+										PlayerPtr)) {
 									int time = tech->Time_To_Build();
 									if (tech->Fetch_RTTI() == RTTI_BUILDINGTYPE
 										&& ((BuildingTypeClass const *)tech)->IsWall) {
