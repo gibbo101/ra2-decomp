@@ -11539,6 +11539,7 @@ address,name,result,size,source,symbol
 0x006470F0,Queue_PageUser,MATCH,162,src/queue.cpp,?Queue_PageUser@@YI_NXZ
 0x006471A0,Queue_Exit,MATCH,186,src/queue.cpp,?Queue_Exit@@YI_NXZ
 0x00647260,Queue_AI,MATCH,912,src/queue.cpp,?Queue_AI@@YIXXZ
+0x006475F0,Queue_AI_Multiplayer,MATCH,3404,src/queue.cpp,?Queue_AI_Multiplayer@@YIXXZ
 0x00648340,Check_Mirror,MATCH,1,src/queue.cpp,?Check_Mirror@@YIXXZ
 0x00648350,Wait_For_End_Of_Queue,MATCH,948,src/queue.cpp,?Wait_For_End_Of_Queue@@YIXXZ
 0x00649CA0,Send_Packets,MATCH,860,src/queue.cpp,?Send_Packets@@YIHPAVConnManClass@@PADHHH@Z

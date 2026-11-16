@@ -124,6 +124,7 @@
 // SYNTHETIC: GAMEMD 0x00646C70 SYMBOL
 // _$E55
 
+extern unsigned long DAT_00AC5210[8];
 extern unsigned int DAT_00B04474[256];
 void Add_CRC(unsigned int *crc, unsigned int val);
 HWND FUN_00775B10(void);
@@ -341,7 +342,7 @@ static inline void _Clean_DoList8(ConnManClass *net)
 	_Clean_DoList7(net);
 }
 void __fastcall Queue_Record(void);
-void __fastcall FUN_006475F0(void);
+void __fastcall Queue_AI_Multiplayer(void);
 void __fastcall FUN_00652540(void *list);
 void __fastcall FUN_0064DAB0(void);
 void __fastcall Print_CRCs(EventClass *ev);
@@ -465,7 +466,7 @@ void Queue_AI(void)
 			case GAME_NULL_MODEM:
 			case GAME_IPX:
 			case GAME_INTERNET:
-				FUN_006475F0();
+				Queue_AI_Multiplayer();
 				break;
 		}
 	}
@@ -481,9 +482,432 @@ enum RetcodeType {
 	RC_HUNG_UP,
 	RC_NOT_RESPONDING,
 	RC_CANCEL,
+	RC_DISCON_ABORT,
 };
 
 void __fastcall Send_FrameSync(ConnManClass *net, int cmd_count);
+
+#include "debugpage.h"
+DebugPage * __fastcall FUN_005BC450(int index);
+void __cdecl FUN_005BD1F0(DebugPage * page, char const * format, ...);
+extern int DAT_00B04874;
+extern bool ConnectionLost;
+void __fastcall Send_Statistics_Packet(bool arg);
+void __fastcall FUN_0072DDB0(void);
+void FUN_005BC400(void);
+void FUN_005BC3C0(void);
+extern int DAT_00AFA338[8];
+extern int DAT_00AFA42C[8];
+extern int DAT_00AC50FC[64];
+void Reset_Ping_Counters(void);
+int __fastcall Send_Packets(ConnManClass *net, char *multi_packet_buf, int multi_packet_max, int max_ahead, int my_sent);
+RetcodeType __fastcall Wait_For_Players(int first_time, ConnManClass *net, int resend_delta, int dialog_time, int timeout, char *multi_packet_buf, int my_sent, FrameSyncStruct *their);
+extern unsigned short SentCommandCount;
+extern int SentFrameSyncCount;
+void __fastcall Clean_DoList(ConnManClass *net);
+static inline void Stop_Game(bool is_cancelled);
+
+static void Generate_Real_Timing_Event(ConnManClass *net, int my_sent)
+{
+	unsigned int resp_time;
+	EventClass ev;
+	int highest_ticks;
+	int i;
+	int specified_frame_rate;
+	int desired;
+	int maxahead;
+	unsigned char frame_send_rate;
+
+	DebugString("Generate_Real_Timing_Event\n");
+
+	if (Session.PrecalcMaxAhead == 0 && Session.PrecalcDesiredFrameRate == 0) {
+		if (my_sent < 5) {
+			return;
+		}
+
+		highest_ticks = 0;
+		for (i = 0; i < Session.Players.Count(); i++) {
+			if (Session.Players[i]->Player.ProcessTime == -1) {
+				return;
+			}
+			if (Session.Players[i]->Player.ProcessTime > highest_ticks) {
+				highest_ticks = Session.Players[i]->Player.ProcessTime;
+			}
+		}
+
+		if (highest_ticks == 0) {
+			desired = 60;
+		} else {
+			desired = MAX(1, 1000 / highest_ticks);
+		}
+
+		switch (Options.GameSpeed) {
+			case 0:
+				specified_frame_rate = 60;
+				break;
+			case 1:
+				specified_frame_rate = 45;
+				break;
+			default:
+				specified_frame_rate = 60 / Options.GameSpeed;
+				break;
+		}
+
+		desired = MIN(desired, specified_frame_rate);
+
+		if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
+			resp_time = ((IPXManagerClass *)net)->Multicast_Response_Time();
+			unsigned int worst = 0;
+			for (i = 0; i < net->Num_Connections(); i++) {
+				if (worst <= TheirFrameSync[i].unknown2) {
+					worst = TheirFrameSync[i].unknown2;
+				}
+			}
+			resp_time += worst;
+		} else {
+			resp_time = net->Response_Time();
+		}
+
+		int net_resp = net->Response_Time();
+		frame_send_rate = Session.FrameSendRate;
+		if (Session.Type == GAME_INTERNET) {
+			frame_send_rate = desired > 30 ? 10 : 5;
+		}
+
+		int fudge = 0;
+		if (resp_time != 0) {
+			switch (Session.LatencyFudge) {
+				case 0:
+					DebugString("Response time = %d\n", resp_time);
+					break;
+				case 1:
+					resp_time += resp_time >> 1;
+					net_resp += net_resp / 2;
+					fudge = 10;
+					DebugString("Response time = %d\n", resp_time);
+					break;
+				case 2:
+					resp_time *= 2;
+					net_resp *= 2;
+					fudge = 20;
+					DebugString("Response time = %d\n", resp_time);
+					break;
+				case 3:
+					resp_time *= 3;
+					net_resp *= 3;
+					fudge = 30;
+					DebugString("Response time = %d\n", resp_time);
+					break;
+			}
+		}
+
+		maxahead = (resp_time * desired) / (2 * TIMER_SECOND) + fudge;
+		if (maxahead > (int)Session.MaxAhead) {
+			maxahead = MIN(maxahead, (int)Session.MaxAhead + frame_send_rate);
+		}
+		maxahead = ((maxahead + frame_send_rate - 1) / frame_send_rate) * frame_send_rate;
+		maxahead = MAX(maxahead, (int)frame_send_rate * 3);
+		maxahead = MIN(maxahead, frame_send_rate * ((frame_send_rate + 249) / frame_send_rate));
+
+		ev.Data.Timing.DesiredFrameRate = desired;
+		ev.Frame = Frame;
+		ev.Type = EventClass::TIMING;
+		ev.ID = PlayerPtr->HeapID;
+		ev.Data.Timing.MaxAhead = maxahead + (Scen->Special.IsFogOfWar ? 10 : 0);
+		ev.Data.Timing.FrameSendRate = frame_send_rate;
+
+		OutList.Add(ev);
+
+		net->Set_Timing(net_resp + 10, -1, MAX(120, (net_resp * 8) + 15), false);
+	}
+	else {
+		DebugString("Sending precalculated network timings on frame %d\n");
+
+		ev.Type = EventClass::TIMING;
+		ev.Data.Timing.DesiredFrameRate = Session.PrecalcDesiredFrameRate;
+		ev.Data.Timing.MaxAhead = Session.PrecalcMaxAhead;
+		ev.Data.Timing.FrameSendRate = Session.PrecalcDesiredFrameRate > 30u ? 10 : 5;
+		ev.Frame = Frame;
+		ev.ID = PlayerPtr->HeapID;
+
+		OutList.Add(ev);
+
+		Session.PrecalcMaxAhead = 0;
+		Session.PrecalcDesiredFrameRate = 0;
+	}
+}
+
+static void Generate_Process_Time_Event(ConnManClass *net)
+{
+	EventClass ev;
+	int avgticks;
+	unsigned int resp_time;
+
+	resp_time = net->Response_Time();
+
+	switch (Session.LatencyFudge) {
+		case 0:
+			DebugString("Response time = %d\n", resp_time);
+			break;
+		case 1:
+			resp_time += resp_time >> 1;
+			DebugString("Response time = %d\n", resp_time);
+			break;
+		case 2:
+			resp_time *= 2;
+			DebugString("Response time = %d\n", resp_time);
+			break;
+		case 3:
+			resp_time *= 3;
+			DebugString("Response time = %d\n", resp_time);
+			break;
+	}
+	net->Set_Timing(resp_time + 10, -1, MAX(120, (resp_time * 8) + 15), false);
+
+	if (DAT_00B04874) {
+		FUN_005BC3C0();
+		DebugPage * page = FUN_005BC450(4);
+		page->Set_Cursor(0, 23);
+		FUN_005BD1F0(page, "Processing Ticks:%03d Frames:%03d\n", Session.ProcessTicks, Session.ProcessFrames);
+		FUN_005BC400();
+	}
+
+	avgticks = Session.ProcessTicks / Session.ProcessFrames;
+
+	ev.Type = EventClass::PROCESS_TIME;
+	ev.Data.ProcessTime.AverageTicks = avgticks;
+	ev.Frame = Frame;
+	ev.ID = PlayerPtr->HeapID;
+	OutList.Add(ev);
+
+	Session.ProcessTicks = 0;
+	Session.ProcessFrames = 0;
+
+	if (Session.Type == GAME_INTERNET && (Frame & 0x7FF) == 0) {
+		net->Reset_Response_Time(false);
+	}
+}
+
+static int Process_Send_Period(ConnManClass *net)
+{
+	if (Frame != (int)(((Frame + (Session.FrameSendRate - 1)) / Session.FrameSendRate) * Session.FrameSendRate)) {
+		net->Service();
+		if (DAT_00B04874) {
+			FUN_005BC400();
+		}
+		return(0);
+	}
+	return(1);
+}
+
+// FUNCTION: GAMEMD 0x006475F0
+void __fastcall Queue_AI_Multiplayer(void)
+{
+	if (Session.Type == GAME_SKIRMISH) return;
+
+	ConnManClass *net;
+	char *multi_packet_buf;
+	int multi_packet_max;
+	bool is_error;
+	static CDTimerClass<FrameTimerClass> skip_crc;
+	static struct {
+		int MIXFILE_RESEND_DELTA;
+		int FRAMESYNC_DLG_TIME;
+		int FRAMESYNC_TIMEOUT;
+		int MIXFILE_TIMEOUT;
+	} _timings[6] = {
+		{ 0, 0, 0, 0 },
+		{ 120, 900, 420, 3600 },
+		{ 120, 900, 420, 3600 },
+		{ 60, 900, 420, 2400 },
+		{ 120, 1800, 720, 7200 },
+		{ 0, 0, 0, 0 }
+	};
+	int i;
+	RetcodeType rc;
+
+	if (Session.Type >= GAME_IPX && Session.Type <= GAME_INTERNET) {
+		multi_packet_buf = Session.MetaPacket;
+		multi_packet_max = Session.MetaSize;
+		net = &Ipx;
+	} else {
+		multi_packet_buf = NullModem.BuildBuf;
+		multi_packet_max = NullModem.MaxLen - sizeof (CommHeaderType);
+		net = &NullModem;
+	}
+
+	FUN_0064DAB0();
+	DAT_00B04474[Frame & 255] = DAT_00AC51FC;
+
+	if (Frame == 0 || Session.LoadGame) {
+		for (i = 0; i < MAX_PLAYERS - 1; i++) {
+			TheirFrameSync[i].frame = -1;
+			TheirFrameSync[i].sent = 0;
+			TheirFrameSync[i].recv = 0;
+			TheirFrameSync[i].unknown1 = 0;
+			TheirFrameSync[i].timing = 0;
+			TheirFrameSync[i].unknown2 = 20;
+		}
+		SentCommandCount = 0;
+		skip_crc = Frame + 256;
+		for (i = 0; i < 256; i++)
+			DAT_00B04474[i] = 0;
+		Reset_Ping_Counters();
+		for (i = 0; i < 8; i++) {
+			DAT_00AFA338[i] = 0;
+			DAT_00AFA42C[i] = 0;
+			for (int j = 0; j < 8; j++) {
+				DAT_00AC50FC[j * 8 + i] = 0;
+			}
+		}
+
+		if (Session.LoadGame) {
+			if (Session.EmergencySave)
+				ScenarioCRC = 0;
+			else
+				ScenarioCRC = DAT_00AC51FC;
+		}
+
+		SentFrameSyncCount = 0;
+		SentFrameSyncTimer = BasicTimerClass<SystemTimerClass>();
+		Send_FrameSync(net, SentCommandCount);
+
+		rc = Wait_For_Players(1, net, _timings[Session.Type].MIXFILE_RESEND_DELTA, _timings[Session.Type].FRAMESYNC_DLG_TIME,
+			_timings[Session.Type].MIXFILE_TIMEOUT, multi_packet_buf, SentCommandCount, TheirFrameSync);
+
+		if (rc != RC_NORMAL) {
+			if (Session.Type == GAME_INTERNET) {
+				Register_Game_End_Time();
+			}
+			is_error = true;
+			Session.Suspended++;
+			if (rc == RC_NOT_RESPONDING) {
+				WWMessageBox().Process(StringTable::LoadString("TXT_SYSTEM_NOT_RESPONDING", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x40c), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x40c), NULL, NULL);
+			}
+			else if (rc == RC_SCENARIO_MISMATCH) {
+				WWMessageBox().Process(StringTable::LoadString("TXT_SCENARIOS_DO_NOT_MATCH", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x40f), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x40f), NULL, NULL);
+			}
+			else if (rc == RC_DOLIST_FULL) {
+				WWMessageBox().Process(StringTable::LoadString("TXT_QUEUE_FULL", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x412), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x412), NULL, NULL);
+			}
+			else if (rc == RC_CANCEL) {
+				is_error = false;
+			}
+			else if (rc == RC_DISCON_ABORT) {
+				WWMessageBox().Process(StringTable::LoadString("TXT_DISCON_ABORT", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x418), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x418), NULL, NULL);
+				is_error = false;
+			}
+			Session.Suspended--;
+			Stop_Game(!is_error);
+			FUN_0072DDB0();
+			Toggle_Display_Mode(false);
+			return;
+		}
+
+		for (i = 0; i < MAX_PLAYERS - 1; i++) {
+			Session.PlayerLatency[i] = 0;
+			TheirFrameSync[i].frame = 0;
+		}
+
+		net->Reset_Response_Time(true);
+
+		if (Session.CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
+			Process_Send_Period(net);
+		}
+
+		if (Session.LoadGame) {
+			Session.EmergencySave = false;
+			Session.LoadGame = false;
+		}
+	}
+
+	else if ((Frame & 0x007f) == 0) {
+		Generate_Process_Time_Event(net);
+	}
+
+	if (Session.Am_I_Master() && (Session.PrecalcMaxAhead != 0 || Session.PrecalcDesiredFrameRate != 0 || !(char)Frame)) {
+		Generate_Real_Timing_Event(net, SentCommandCount);
+	}
+
+	if (Session.CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
+		if (!Process_Send_Period(net)) {
+			if (DAT_00B04874) {
+				FUN_005BC400();
+			}
+			return;
+		}
+	}
+
+	int sent = (unsigned short)Send_Packets(net, multi_packet_buf, multi_packet_max, Session.MaxAhead, SentCommandCount);
+	SentCommandCount += sent;
+	if (sent) {
+		DebugString("Frame %d, my sent = %d\n", Frame, SentCommandCount);
+	}
+
+	if (Frame == 0) {
+		if (DAT_00B04874) {
+			FUN_005BC400();
+		}
+		return;
+	}
+
+	rc = Wait_For_Players(0, net,
+		TIMER_SECOND * 3,
+		MAX((int)net->Response_Time() * 3, _timings[Session.Type].FRAMESYNC_TIMEOUT),
+		_timings[Session.Type].MIXFILE_TIMEOUT,
+		multi_packet_buf, SentCommandCount, TheirFrameSync);
+
+	if (rc != RC_NORMAL) {
+		DebugString("Wait_For_Players returned %d\n", rc);
+		if (Session.Type == GAME_INTERNET) {
+			Register_Game_End_Time();
+		}
+		is_error = true;
+		Session.Suspended++;
+		if (rc == RC_NOT_RESPONDING) {
+			WWMessageBox().Process(StringTable::LoadString("TXT_SYSTEM_NOT_RESPONDING", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x4aa), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x4aa), NULL, NULL);
+		}
+		else if (rc == RC_SCENARIO_MISMATCH) {
+			WWMessageBox().Process(StringTable::LoadString("TXT_SCENARIOS_DO_NOT_MATCH", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x4ae), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x4ae), NULL, NULL);
+		}
+		else if (rc == RC_DOLIST_FULL) {
+			WWMessageBox().Process(StringTable::LoadString("TXT_QUEUE_FULL", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x4b2), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x4b2), NULL, NULL);
+		}
+		else if (rc == RC_CANCEL) {
+			is_error = false;
+		}
+		else if (rc == RC_DISCON_ABORT) {
+			WWMessageBox().Process(StringTable::LoadString("TXT_DISCON_ABORT", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x4ba), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Queue.CPP", 0x4ba), NULL, NULL);
+			is_error = false;
+		}
+		Session.Suspended--;
+		Stop_Game(!is_error);
+		FUN_0072DDB0();
+		Toggle_Display_Mode(false);
+		return;
+	}
+
+	if (Session.Record) {
+		Queue_Record();
+	}
+
+	if (!FUN_0064C380(Session.MaxPlayers, HOUSE_FIRST, net, &skip_crc, TheirFrameSync)) {
+		DebugString("Failure executing DoList\n");
+		if (Session.Type == GAME_INTERNET) {
+			Register_Game_End_Time();
+		}
+		Stop_Game(false);
+		FUN_0072DDB0();
+		Toggle_Display_Mode(false);
+		return;
+	}
+
+	Clean_DoList(net);
+
+	if (DAT_00B04874) {
+		FUN_005BC400();
+	}
+}
 
 // FUNCTION: GAMEMD 0x00648340
 void Check_Mirror(void)
@@ -1625,15 +2049,11 @@ void Add_CRC(unsigned int *crc, unsigned int val)
 	(*crc) += hibit;
 }
 
-#include "debugpage.h"
 
 namespace FPSCounter { extern unsigned TotalFramesElapsed; extern unsigned TotalTimeElapsed; }
 extern WinsockInterfaceClass * PacketTransport;
 const char * FUN_004E62B0(void);
 char * __fastcall FUN_007350C0(wchar_t const * text);
-DebugPage * __fastcall FUN_005BC450(int index);
-void __cdecl FUN_005BD1F0(DebugPage * page, char const * format, ...);
-
 // FUNCTION: GAMEMD 0x0064DEA0
 void __fastcall Print_CRCs(EventClass *ev)
 {
@@ -2734,7 +3154,6 @@ struct PacketTiming {
 };
 #pragma pack(pop)
 
-extern unsigned long DAT_00AC5210[8];
 int __fastcall FUN_0064BDD0(void * buf, int bufsize);
 static int Extract_Uncompressed_Events(void * buf, int bufsize);
 static int Breakup_Receive_Packet(void * buf, int bufsize);

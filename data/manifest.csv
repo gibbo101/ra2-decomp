@@ -11893,6 +11893,7 @@ address,size,symbol,source,sha256
 0x006470F0,162,?Queue_PageUser@@YI_NXZ,src/queue.cpp,fb13a90a348f3b276eaa1b622e688794b978c7ee0f087e890130a951de452e17
 0x006471A0,186,?Queue_Exit@@YI_NXZ,src/queue.cpp,f43ef688399a2e4cbbfdf9e96a1811872501c57cc8caa1ce11952f7aed5b4813
 0x00647260,912,?Queue_AI@@YIXXZ,src/queue.cpp,3853d753f3b636889a0e5a83438d1119ce664aa8d7249f0a4698e0c3b7d4c699
+0x006475F0,3404,?Queue_AI_Multiplayer@@YIXXZ,src/queue.cpp,138fa4e74c08ffa43bd25d8436f127a3b3ecbb518ed587118458f272eec7e4fd
 0x00648340,1,?Check_Mirror@@YIXXZ,src/queue.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x00648350,948,?Wait_For_End_Of_Queue@@YIXXZ,src/queue.cpp,0c16001ade0643a113206f97b78be9fceb87356df73a6e770533a2ff4d913aff
 0x00648710,5519,?Wait_For_Players@@YI?AW4RetcodeType@@HPAVConnManClass@@HHHPADHPAUFrameSyncStruct@@@Z,src/queue.cpp,043d0e98bbab4b53ba6a309168db00475bfcfb75ec39708333c749f9d8d23533
