@@ -14534,6 +14534,8 @@ address,size,symbol,source,sha256
 0x006D4E00,17,?Clear_Caption_Text@Tactical@@QAEXXZ,src/tactical.cpp,9b7beb7aef857cbc8671f3f1aba1cc64d3c2426958bec5d61b464edbca01ef7d
 0x006D4E20,514,?Draw_Screen_Text@Tactical@@QAEXPBG@Z,src/tactical.cpp,01cc22cb0ef9d24c55c85306f36ab48aafe18fd3503e0a633f0659d66039da5d
 0x006D5030,1781,?Draw_Placement@Tactical@@QAEX_N@Z,src/tactical.cpp,815ec5b9a47ec514fb2e0fa44833dcaec7d614a69dfb8c20f798a3d783e00425
+0x006D5730,660,?Draw_Fence_Placement@Tactical@@QAEX_NVCell@@@Z,src/tactical.cpp,5d40ebab1c786443012b241b29ac3b1f87756b918a5f236798a79c0f0fd4e8fb
+0x006D59D0,637,?Draw_Firestorm_Wall_Placement@Tactical@@QAEX_NVCell@@@Z,src/tactical.cpp,e9d8ba11ca4f0c40b138c7594b549be78bb9760c9cc7cd7ff75f74063dc19934
 0x006D5C50,733,?Draw_Wall_Placement@Tactical@@QAEX_NVCell@@@Z,src/tactical.cpp,8b8b21d17006b034ebe77dce8859d7c5a65b692a016856704ce21ec4b78b2cb2
 0x006D5F30,33,?Blit_Tiles@Tactical@@QAE_NXZ,src/tactical.cpp,129e43e6ec1f1102b972f0cff6c8d9f30d1d84dbbf8350c0ce9fd39bd0b3db23
 0x006D5F60,157,?Set_View_Dimensions@Tactical@@QAEXABV?$TRect@H@@@Z,src/tactical.cpp,92a43ab4bd33bd2e3d822200449c0a43f76a92a0668d5f7edcd8d648d412ab4b
@@ -17744,6 +17746,7 @@ address,size,symbol,source,sha256
 0x0076EBE0,158,?Play_SFX@Selection@WorldDominationTour@@QAEXABVWstring@@@Z,src/wdtsel.cpp,20de160552795cab21ec7d932266f837e02e47644b75da3302cf3fe8b9751c1a
 0x0076EC80,80,?Set_Long_Description@Selection@WorldDominationTour@@QAEXXZ,src/wdtsel.cpp,d880a8978b3c21aec77771a203dcd03ae2cf4919401fef32ef5bb78da143a120
 0x0076ECD0,62,?FUN_0076ECD0@@YIXPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z,src/wdtsel.cpp,a390e1125af728d5e846c5fcdfe55529a986ccf45f7b3f7c69fcffd069808a37
+0x0076ED10,415,?FUN_0076ED10@@YI_NPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z,src/wdtsel.cpp,ce4344481d5c653fc4cbf45716367cd70d88ad939c7f57027fa9d41b61d667b8
 0x0076EEB0,195,?FUN_0076EEB0@Selection@WorldDominationTour@@QAEXXZ,src/wdtsel.cpp,c861f3415a558df0c724c8b166e94fac81df1ab7813143bf9d4794c21178ee0b
 0x0076EF80,91,?End@Selection@WorldDominationTour@@QAEXXZ,src/wdtsel.cpp,b4accd2121b698fa9d15eedca00d5eca7ee8932497a436f885c7daf59e177f6f
 0x0076F000,26,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z,src/wdtsel.cpp,e4d7dab4ee7037d2743ae2d15ed5d0a8ac288cc4c0d1190da60c76b129dfbb87
