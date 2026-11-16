@@ -2042,7 +2042,7 @@ address,size,symbol,source,sha256
 0x004566B0,159,?GetRadialIndicatorRange@BuildingClass@@QBEHXZ,src/building.cpp,60fcd42f5252a7899ab5a714664881fffdf11f542cd7017909e05556322e7e7a
 0x00456750,538,?Draw_Radial_Indicator@BuildingClass@@UAEXK@Z,src/building.cpp,b75fb77ebc63b411f4e1233a6ded85fe356e109fb796f9fc4492c5ad669af427
 0x00456970,1,_$E44,src/building.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
-0x00456980,1148,?DrawRadialIndicator@@YIX_N0VCoord@@VRGBClass@@M00@Z,src/building.cpp,57ee5cdc7c2558d0c93bb1bba087ac782b47822e687a2a319e264c995041287b
+0x00456980,1148,?DrawRadialIndicator@@YIXVCoord@@VRGBClass@@M_N222@Z,src/building.cpp,57ee5cdc7c2558d0c93bb1bba087ac782b47822e687a2a319e264c995041287b
 0x00456E00,384,?Clicked_As_Target@BuildingClass@@UAEXH@Z,src/building.cpp,199d1d2200e9ebba71590b334348ca08ddd410f30c0eb5e58e990c680feb1a5e
 0x00456F80,40,?Apparent_Brightness@BuildingClass@@UBEHH@Z,src/building.cpp,8eccfbb4ff6f01791dcc9f21f92982af70b855ed2cd7c3604fc6a34aed5b16f4
 0x00456FB0,102,?Tinted_Brightness@BuildingClass@@QAEHH@Z,src/building.cpp,220d9aa3c7d299dbd58f55563b07432c69488a2c987db25bac7a3eaa063e50bd
@@ -17730,6 +17730,7 @@ address,size,symbol,source,sha256
 0x0076C240,15,_$E61,src/wdtsel.cpp,7ebabef2220cd0cca28f15225de94476e85b6e82981d7be89c305ddde12298ae
 0x0076C250,18,_$E64,src/wdtsel.cpp,eeb5a5078f3b71f772e99571565267bb4543e41292b5c0edbb9d0e5459287092
 0x0076C270,26,_$E67,src/wdtsel.cpp,d893a709787ce0e58b2679b2baccf346a41c144cfe8ee008b3a4f111a0ec717d
+0x0076C6E0,646,??1Selection@WorldDominationTour@@UAE@XZ,src/wdtsel.cpp,42e1a6d8cb547fd070a8457566bcaa335c445e41b2fb0ad52c71e3b833ac62cc
 0x0076C970,225,?Init_Voices@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z,src/wdtsel.cpp,b638e1ea3dcfd6256040dbfea31397accda43a058d693bada3d7c170c6358d8d
 0x0076CA60,400,?Init_Sounds@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z,src/wdtsel.cpp,4c239a7a8cfb1eda44d002beb0c2701a7fc804f4d44d58363eed8c730ad8c1cf
 0x0076CBF0,417,?Init_Target@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z,src/wdtsel.cpp,7a3223a8d16dac5fa1347d26026a82800749f2b55e5686929965a6d0be3bc16c
@@ -17758,7 +17759,7 @@ address,size,symbol,source,sha256
 0x0076F020,4,?Get@?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@QBEPAVCampaignProperties@WorldDominationTour@@XZ,src/wdtsel.cpp,f7e0208f5e988ae39c7a45dfddbd12921d02f9c3deb5695d4c534c8ab0ccdb0f
 0x0076F030,35,??0?$rc_ptr@VTerritory@WorldDominationTour@@@@QAE@ABV0@@Z,src/wdtsel.cpp,234e41dbf05983a6949d1295572bbf6739a7d75a53bc0c280d02bd97bd38b9db
 0x0076F060,11,??1?$rc_ptr@VTerritory@WorldDominationTour@@@@UAE@XZ,src/wdtsel.cpp,a56fa45703277983755dc313aa42c9494478f5591a88b9969f9a7d240c3cbb98
-0x0076F070,4,?Get@?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ,src/wdtsel.cpp,f7e0208f5e988ae39c7a45dfddbd12921d02f9c3deb5695d4c534c8ab0ccdb0f
+0x0076F070,4,??C?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ,src/wdtsel.cpp,f7e0208f5e988ae39c7a45dfddbd12921d02f9c3deb5695d4c534c8ab0ccdb0f
 0x0076F080,4,?Get@?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ,src/wdtsel.cpp,f7e0208f5e988ae39c7a45dfddbd12921d02f9c3deb5695d4c534c8ab0ccdb0f
 0x0076F090,25,??0?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@QAE@AAV?$DynamicVectorClass@PAVMSSfxEntry@@@@H@Z,src/wdtsel.cpp,32914b4b3ac92a50de3830efa5d9da1c69a3830e2c77c5dba6fa7f750f3b4b78
 0x0076F0B0,14,??B?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UBE_NXZ,src/wdtsel.cpp,65928e72743eaf9020009560cd7a304f982043da5d52b280521c28d758627639

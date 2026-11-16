@@ -63,6 +63,31 @@ using namespace WorldDominationTour;
 // SYNTHETIC: GAMEMD 0x0076C270 SYMBOL
 // _$E67
 
+#include "bitfont.h"
+
+// FUNCTION: GAMEMD 0x0076C6E0
+// WorldDominationTour::Selection::~Selection
+Selection::~Selection(void)
+{
+	End();
+
+	MousedTerritory = NULL;
+
+	Remove_Target_Anims();
+	Remove_Target_Anims2();
+
+	for (SFX_ITER sfx(SfxEntries); sfx; sfx++) {
+		delete *sfx;
+	}
+
+	delete TargetDrawer;
+	delete ZoomingTarget;
+	delete ThrobbingTarget;
+	delete Font;
+
+	BitFont::Instance->SetColor((unsigned short)TextColor);
+}
+
 rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id);
 
 // FUNCTION: GAMEMD 0x0076C970
@@ -154,7 +179,7 @@ void Selection::Update_Hovered_Territory(Point2D const & point)
 // WorldDominationTour::Selection::Remove_Target_Anims
 void Selection::Remove_Target_Anims(void)
 {
-	for (TERR_ITER it(WorldMap.Get()->Territories, 0); it; it++) {
+	for (TERR_ITER it(WorldMap->Territories, 0); it; it++) {
 		MSShapeAnim * anim = it->Remove_Target_Anim();
 		if (anim != NULL) {
 			Remove_Anim(anim);
@@ -166,7 +191,7 @@ void Selection::Remove_Target_Anims(void)
 // WorldDominationTour::Selection::Remove_Target_Anims2
 void Selection::Remove_Target_Anims2(void)
 {
-	for (TERR_ITER it(WorldMap.Get()->Territories, 0); it; it++) {
+	for (TERR_ITER it(WorldMap->Territories, 0); it; it++) {
 		MSShapeAnim * anim = it->Remove_Target_Anim();
 		if (anim != NULL) {
 			Remove_Anim(anim);
@@ -575,7 +600,7 @@ template class rc_ptr<CampaignProperties>;
 // TEMPLATE: GAMEMD 0x0076F060
 // ??1?$rc_ptr@VTerritory@WorldDominationTour@@@@UAE@XZ
 // TEMPLATE: GAMEMD 0x0076F070
-// ?Get@?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ
+// ??C?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ
 template class rc_ptr<Territory>;
 
 // TEMPLATE: GAMEMD 0x0076F080

@@ -400,7 +400,7 @@ class BuildingClass : public TechnoClass
 		static char const * const INI_NAME;
 };
 
-void __fastcall DrawRadialIndicator(bool draw_line, bool adjust_color, Coord center, RGBClass color, float radius, bool in_pixels, bool whole);
+void __fastcall DrawRadialIndicator(Coord center, RGBClass color, float radius, bool draw_line, bool adjust_color, bool in_pixels, bool whole);
 void Adjust_House_Power(HouseClass * house);
 BuildingClass * Find_Unit_Repair_Facility(HouseClass * house, TechnoClass * obj);
 

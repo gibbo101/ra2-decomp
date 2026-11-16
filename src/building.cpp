@@ -7111,15 +7111,15 @@ void BuildingClass::Draw_Radial_Indicator(DWORD which)
 				if (!(pulse & 0x100)) {
 					color.Adjust(~pulse & 0xff, white);
 				}
-				DrawRadialIndicator(false, false, Center_Coord(), color, (float)range, false, true);
+				DrawRadialIndicator(Center_Coord(), color, (float)range, false, false, false, true);
 			}
 			int radius = (int)(((double)range + 0.5) / fastmath::sqrt(2.0) * 60.0);
 			unsigned size = (radius * pulse) >> 10;
 			if (size > 32) {
-				DrawRadialIndicator(false, false, Center_Coord(), House->RemapColorRGB, (float)size, true, true);
+				DrawRadialIndicator(Center_Coord(), House->RemapColorRGB, (float)size, false, false, true, true);
 			}
 		} else {
-			DrawRadialIndicator(*(bool *)&which, true, Center_Coord(), House->RemapColorRGB, (float)range, false, true);
+			DrawRadialIndicator(Center_Coord(), House->RemapColorRGB, (float)range, *(bool *)&which, true, false, true);
 		}
 	}
 }
@@ -7130,7 +7130,7 @@ void BuildingClass::Draw_Radial_Indicator(DWORD which)
 namespace Unsorted { extern int CurrentFrame; }
 
 // FUNCTION: GAMEMD 0x00456980
-void __fastcall DrawRadialIndicator(bool draw_line, bool adjust_color, Coord center, RGBClass color, float radius_in, bool in_pixels, bool whole)
+void __fastcall DrawRadialIndicator(Coord center, RGBClass color, float radius_in, bool draw_line, bool adjust_color, bool in_pixels, bool whole)
 {
 	if (whole) {
 		radius_in = (float)(int)radius_in;

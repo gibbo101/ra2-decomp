@@ -1679,7 +1679,7 @@ address,name,result,size,source,symbol
 0x004566B0,BuildingClass::GetRadialIndicatorRange,MATCH,159,src/building.cpp,?GetRadialIndicatorRange@BuildingClass@@QBEHXZ
 0x00456750,BuildingClass::Draw_Radial_Indicator,MATCH,538,src/building.cpp,?Draw_Radial_Indicator@BuildingClass@@UAEXK@Z
 0x00456970,_$E44,MATCH,1,src/building.cpp,_$E44
-0x00456980,DrawRadialIndicator,MATCH,1148,src/building.cpp,?DrawRadialIndicator@@YIX_N0VCoord@@VRGBClass@@M00@Z
+0x00456980,DrawRadialIndicator,MATCH,1148,src/building.cpp,?DrawRadialIndicator@@YIXVCoord@@VRGBClass@@M_N222@Z
 0x00456E00,BuildingClass::Clicked_As_Target,MATCH,384,src/building.cpp,?Clicked_As_Target@BuildingClass@@UAEXH@Z
 0x00456F80,BuildingClass::Apparent_Brightness,MATCH,40,src/building.cpp,?Apparent_Brightness@BuildingClass@@UBEHH@Z
 0x00456FB0,BuildingClass::Tinted_Brightness,MATCH,102,src/building.cpp,?Tinted_Brightness@BuildingClass@@QAEHH@Z
@@ -17482,6 +17482,7 @@ address,name,result,size,source,symbol
 0x0076C240,_$E61,MATCH,15,src/wdtsel.cpp,_$E61
 0x0076C250,_$E64,MATCH,18,src/wdtsel.cpp,_$E64
 0x0076C270,_$E67,MATCH,26,src/wdtsel.cpp,_$E67
+0x0076C6E0,WorldDominationTour::Selection::~Selection,MATCH,646,src/wdtsel.cpp,??1Selection@WorldDominationTour@@UAE@XZ
 0x0076C970,WorldDominationTour::Selection::Init_Voices,MATCH,225,src/wdtsel.cpp,?Init_Voices@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
 0x0076CA60,WorldDominationTour::Selection::Init_Sounds,MATCH,400,src/wdtsel.cpp,?Init_Sounds@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
 0x0076CBF0,WorldDominationTour::Selection::Init_Target,MATCH,417,src/wdtsel.cpp,?Init_Target@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
@@ -17510,7 +17511,7 @@ address,name,result,size,source,symbol
 0x0076F020,?Get@?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@QBEPAVCampaignProperties@WorldDominationTour@@XZ,MATCH,4,src/wdtsel.cpp,?Get@?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@QBEPAVCampaignProperties@WorldDominationTour@@XZ
 0x0076F030,??0?$rc_ptr@VTerritory@WorldDominationTour@@@@QAE@ABV0@@Z,MATCH,35,src/wdtsel.cpp,??0?$rc_ptr@VTerritory@WorldDominationTour@@@@QAE@ABV0@@Z
 0x0076F060,??1?$rc_ptr@VTerritory@WorldDominationTour@@@@UAE@XZ,MATCH,11,src/wdtsel.cpp,??1?$rc_ptr@VTerritory@WorldDominationTour@@@@UAE@XZ
-0x0076F070,?Get@?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ,MATCH,4,src/wdtsel.cpp,?Get@?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ
+0x0076F070,??C?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ,MATCH,4,src/wdtsel.cpp,??C?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ
 0x0076F080,?Get@?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ,MATCH,4,src/wdtsel.cpp,?Get@?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ
 0x0076F090,??0?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@QAE@AAV?$DynamicVectorClass@PAVMSSfxEntry@@@@H@Z,MATCH,25,src/wdtsel.cpp,??0?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@QAE@AAV?$DynamicVectorClass@PAVMSSfxEntry@@@@H@Z
 0x0076F0B0,??B?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UBE_NXZ,MATCH,14,src/wdtsel.cpp,??B?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UBE_NXZ
