@@ -510,6 +510,7 @@ address,name,result,size,source,symbol
 0x004129C0,AircraftTrackerClass::FUN_004129C0,MATCH,119,src/ahandle2.cpp,?FUN_004129C0@AircraftTrackerClass@@QAEXH@Z
 0x00412A40,AircraftTrackerClass::FUN_00412A40,MATCH,116,src/ahandle2.cpp,?FUN_00412A40@AircraftTrackerClass@@QAEHHVPoint2D@@@Z
 0x00412AC0,AircraftTrackerClass::GetVectorIndex,MATCH,128,src/ahandle2.cpp,?GetVectorIndex@AircraftTrackerClass@@QAEHVCell@@@Z
+0x00412B40,AircraftTrackerClass::FillCurrentVector,MATCH,2373,src/ahandle2.cpp,?FillCurrentVector@AircraftTrackerClass@@QAEXPAVCellClass@@H@Z
 0x00413490,AircraftTrackerClass::FUN_00413490,MATCH,3,src/ahandle2.cpp,?FUN_00413490@AircraftTrackerClass@@QAEXPAVAbstractClass@@@Z
 0x004134A0,AircraftTrackerClass::Add,MATCH,236,src/ahandle2.cpp,?Add@AircraftTrackerClass@@QAEXPAVTechnoClass@@@Z
 0x00413590,FUN_00413590,MATCH,6,src/ahandle2.cpp,?FUN_00413590@@YIHXZ
@@ -858,6 +859,7 @@ address,name,result,size,source,symbol
 0x00420E70,AlphaShapeClass::Detach,MATCH,18,src/alphashp.cpp,?Detach@AlphaShapeClass@@UAEXPBVAbstractClass@@_N@Z
 0x00420E90,AlphaShapeClass::Update_All,MATCH,170,src/alphashp.cpp,?Update_All@AlphaShapeClass@@SIXXZ
 0x00420F40,AlphaShapeClass::Draw_In_Area,MATCH,1031,src/alphashp.cpp,?Draw_In_Area@AlphaShapeClass@@SIXABVPoint2D@@ABV?$TRect@H@@@Z
+0x00421350,AlphaShapeClass::Draw_All,MATCH,865,src/alphashp.cpp,?Draw_All@AlphaShapeClass@@SIXABV?$TRect@H@@@Z
 0x004216C0,AlphaShapeClass::Calculate_Brightness_Table,MATCH,112,src/alphashp.cpp,?Calculate_Brightness_Table@AlphaShapeClass@@SIXXZ
 0x00421730,??_GAlphaShapeClass@@UAEPAXI@Z,MATCH,207,src/alphashp.cpp,??_GAlphaShapeClass@@UAEPAXI@Z
 0x00421800,?Clear@?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEXXZ,MATCH,42,src/alphashp.cpp,?Clear@?$DynamicVectorClass@PAVAlphaShapeClass@@@@UAEXXZ
@@ -1679,7 +1681,7 @@ address,name,result,size,source,symbol
 0x004566B0,BuildingClass::GetRadialIndicatorRange,MATCH,159,src/building.cpp,?GetRadialIndicatorRange@BuildingClass@@QBEHXZ
 0x00456750,BuildingClass::Draw_Radial_Indicator,MATCH,538,src/building.cpp,?Draw_Radial_Indicator@BuildingClass@@UAEXK@Z
 0x00456970,_$E44,MATCH,1,src/building.cpp,_$E44
-0x00456980,DrawRadialIndicator,MATCH,1148,src/building.cpp,?DrawRadialIndicator@@YIX_N0VCoord@@VRGBClass@@M00@Z
+0x00456980,DrawRadialIndicator,MATCH,1148,src/building.cpp,?DrawRadialIndicator@@YIXVCoord@@VRGBClass@@M_N222@Z
 0x00456E00,BuildingClass::Clicked_As_Target,MATCH,384,src/building.cpp,?Clicked_As_Target@BuildingClass@@UAEXH@Z
 0x00456F80,BuildingClass::Apparent_Brightness,MATCH,40,src/building.cpp,?Apparent_Brightness@BuildingClass@@UBEHH@Z
 0x00456FB0,BuildingClass::Tinted_Brightness,MATCH,102,src/building.cpp,?Tinted_Brightness@BuildingClass@@QAEHH@Z
@@ -7966,6 +7968,7 @@ address,name,result,size,source,symbol
 0x0056F7A0,MapClass::Internal_Damage_Train_Bridge_NS_TopRight,MATCH,263,src/map.cpp,?Internal_Damage_Train_Bridge_NS_TopRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z
 0x0056F8B0,MapClass::Internal_Destroy_Train_Bridge_NS_BottomLeft,MATCH,964,src/map.cpp,?Internal_Destroy_Train_Bridge_NS_BottomLeft@MapClass@@AAEXABVCell@@W4FacingType@@@Z
 0x0056FC80,MapClass::Internal_Destroy_Train_Bridge_NS_TopRight,MATCH,964,src/map.cpp,?Internal_Destroy_Train_Bridge_NS_TopRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z
+0x00570050,MapClass::Repair_Train_Bridge,MATCH,2692,src/map.cpp,?Repair_Train_Bridge@MapClass@@QAEXABVCell@@@Z
 0x00570AE0,MapClass::Destroy_Train_Bridge_Span,MATCH,1381,src/map.cpp,?Destroy_Train_Bridge_Span@MapClass@@AAE_NABVCell@@W4FacingType@@PAV?$TRect@H@@@Z
 0x00571050,MapClass::Destroy_Train_Bridge_Connections,MATCH,1088,src/map.cpp,?Destroy_Train_Bridge_Connections@MapClass@@AAEXABVCell@@@Z
 0x00571490,MapClass::Damage_Train_Bridge,MATCH,3474,src/map.cpp,?Damage_Train_Bridge@MapClass@@AAE_NABVCell@@@Z
@@ -10553,7 +10556,7 @@ address,name,result,size,source,symbol
 0x0060AAA0,FUN_0060AAA0,MATCH,15,src/ownrdraw.cpp,?FUN_0060AAA0@@YIXPAUHWND__@@@Z
 0x0060AAB0,OwnerDraw::InitCompactDialogControlsProc,MATCH,1156,src/ownrdraw.cpp,?InitCompactDialogControlsProc@OwnerDraw@@YGHPAUHWND__@@J@Z
 0x0060AF40,FUN_0060AF40,MATCH,15,src/ownrdraw.cpp,?FUN_0060AF40@@YIXPAUHWND__@@@Z
-0x0060AF50,FUN_0060AF50,MATCH,173,src/ownrdraw.cpp,?FUN_0060AF50@@YIXPAUHWND__@@PAUtagRECT@@@Z
+0x0060AF50,FUN_0060AF50,MATCH,173,src/ownrdraw.cpp,?FUN_0060AF50@@YIXPAUHWND__@@PAV?$TRect@H@@@Z
 0x0060B000,FUN_0060B000,MATCH,463,src/ownrdraw.cpp,?FUN_0060B000@@YIXPAUHWND__@@ABVPoint2D@@@Z
 0x0060B1D0,FUN_0060B1D0,MATCH,370,src/ownrdraw.cpp,?FUN_0060B1D0@@YIXPAUHWND__@@ABVPoint2D@@@Z
 0x0060B350,FUN_0060B350,MATCH,206,src/ownrdraw.cpp,?FUN_0060B350@@YIXPAUHWND__@@@Z
@@ -10563,6 +10566,7 @@ address,name,result,size,source,symbol
 0x0060B740,FUN_0060B740,MATCH,87,src/ownrdraw.cpp,?FUN_0060B740@@YIXPAUHWND__@@@Z
 0x0060B7A0,FUN_0060B7A0,MATCH,217,src/ownrdraw.cpp,?FUN_0060B7A0@@YIXPAUHWND__@@@Z
 0x0060B880,FUN_0060B880,MATCH,204,src/ownrdraw.cpp,?FUN_0060B880@@YI_NPAUHWND__@@0@Z
+0x0060C0C0,FUN_0060C0C0,MATCH,987,src/ownrdraw.cpp,?FUN_0060C0C0@@YGHPAUHWND__@@J@Z
 0x0060C4A0,OwnerDraw::UpdateControlPosition,MATCH,54,src/ownrdraw.cpp,?UpdateControlPosition@OwnerDraw@@YIXPAUHWND__@@J@Z
 0x0060C4E0,FUN_0060C4E0,MATCH,90,src/ownrdraw.cpp,?FUN_0060C4E0@@YIHPAUHWND__@@@Z
 0x0060C540,OwnerDraw::TrySetDialogLayoutBand1,MATCH,648,src/ownrdraw.cpp,?TrySetDialogLayoutBand1@OwnerDraw@@YI_NPAUHWND__@@@Z
@@ -11537,6 +11541,7 @@ address,name,result,size,source,symbol
 0x006470F0,Queue_PageUser,MATCH,162,src/queue.cpp,?Queue_PageUser@@YI_NXZ
 0x006471A0,Queue_Exit,MATCH,186,src/queue.cpp,?Queue_Exit@@YI_NXZ
 0x00647260,Queue_AI,MATCH,912,src/queue.cpp,?Queue_AI@@YIXXZ
+0x006475F0,Queue_AI_Multiplayer,MATCH,3404,src/queue.cpp,?Queue_AI_Multiplayer@@YIXXZ
 0x00648340,Check_Mirror,MATCH,1,src/queue.cpp,?Check_Mirror@@YIXXZ
 0x00648350,Wait_For_End_Of_Queue,MATCH,948,src/queue.cpp,?Wait_For_End_Of_Queue@@YIXXZ
 0x00649CA0,Send_Packets,MATCH,860,src/queue.cpp,?Send_Packets@@YIHPAVConnManClass@@PADHHH@Z
@@ -11571,6 +11576,7 @@ address,name,result,size,source,symbol
 0x00652630,?search_compfunc@?$IndexClass@HPAVObjectClass@@@@CAHPBX0@Z,MATCH,34,src/queue.cpp,?search_compfunc@?$IndexClass@HPAVObjectClass@@@@CAHPBX0@Z
 0x0064A0C0,FUN_0064A0C0,MATCH,1377,src/queue.cpp,?FUN_0064A0C0@@YIHPAVConnManClass@@PADHHPAUFrameSyncStruct@@PAV?$BasicTimerClass@VSystemTimerClass@@@@@Z
 0x0064B660,FUN_0064B660,MATCH,1896,src/queue.cpp,?FUN_0064B660@@YIHPAXHHHHPAH@Z
+0x00648710,Wait_For_Players,MATCH,5519,src/queue.cpp,?Wait_For_Players@@YI?AW4RetcodeType@@HPAVConnManClass@@HHHPADHPAUFrameSyncStruct@@@Z
 0x00652660,_$E2,MATCH,23,src/radar.cpp,_$E2
 0x00652680,_$E109,MATCH,40,src/radar.cpp,_$E109
 0x006526B0,_$E112,MATCH,19,src/radar.cpp,_$E112
@@ -12977,6 +12983,7 @@ address,name,result,size,source,symbol
 0x006A94B0,SidebarClass::StripClass::RemoveButtons,MATCH,58,src/sidebar.cpp,?RemoveButtons@StripClass@SidebarClass@@QAEXXZ
 0x006A94F0,SidebarClass::StripClass::FUN_006A94F0,MATCH,67,src/sidebar.cpp,?FUN_006A94F0@StripClass@SidebarClass@@QAEHH@Z
 0x006AACE0,SidebarClass::StripClass::SelectClass::Set_Owner,MATCH,17,src/sidebar.cpp,?Set_Owner@SelectClass@StripClass@SidebarClass@@QAEXAAV23@H@Z
+0x006AAD00,SidebarClass::StripClass::SelectClass::Action,MATCH,3207,src/sidebar.cpp,?Action@SelectClass@StripClass@SidebarClass@@MAEHIAAW4KeyNumType@@H@Z
 0x006AB990,SidebarClass::StripClass::SelectClass::OnMouseEnter,MATCH,66,src/sidebar.cpp,?OnMouseEnter@SelectClass@StripClass@SidebarClass@@UAEXXZ
 0x006AB9E0,SidebarClass::StripClass::SelectClass::OnMouseLeave,MATCH,53,src/sidebar.cpp,?OnMouseLeave@SelectClass@StripClass@SidebarClass@@UAEXXZ
 0x006ABA20,SidebarClass::StripClass::SelectClass::FUN_006ABA20,MATCH,25,src/sidebar.cpp,?FUN_006ABA20@SelectClass@StripClass@SidebarClass@@QAE_NXZ
@@ -13991,7 +13998,7 @@ address,name,result,size,source,symbol
 0x006CB920,SuperClass::Discharged,MATCH,895,src/super.cpp,?Discharged@SuperClass@@QAE_N_NABVCell@@@Z
 0x006CBCA0,SuperClass::AI,MATCH,568,src/super.cpp,?AI@SuperClass@@QAE_N_N@Z
 0x006CBEE0,SuperClass::Anim_Stage,MATCH,397,src/super.cpp,?Anim_Stage@SuperClass@@QBEHXZ
-0x006CC070,FUN_006CC070,MATCH,1,src/super.cpp,?FUN_006CC070@@YIXXZ
+0x006CC070,SuperClass::Impatient_Click,MATCH,1,src/super.cpp,?Impatient_Click@SuperClass@@QBEXXZ
 0x006CC080,SuperClass::Forced_Charge,MATCH,340,src/super.cpp,?Forced_Charge@SuperClass@@QAEX_N@Z
 0x006CC1E0,SuperClass::SetCharge,MATCH,120,src/super.cpp,?SetCharge@SuperClass@@QAEXH@Z
 0x006CC260,SuperClass::GetRechargeTime,MATCH,18,src/super.cpp,?GetRechargeTime@SuperClass@@QAEHXZ
@@ -16656,6 +16663,7 @@ address,name,result,size,source,symbol
 0x00752590,FUN_00752590,MATCH,227,src/vox.cpp,?FUN_00752590@@YIXPAVVoxClass@@HH@Z
 0x00752680,FUN_00752680,MATCH,126,src/vox.cpp,?FUN_00752680@@YIPAUVoxNode@@PAVVoxClass@@@Z
 0x00752700,VoxClass::Play,MATCH,95,src/vox.cpp,?Play@VoxClass@@SIXPBDHH@Z
+0x00752760,FUN_00752760,MATCH,572,src/vox.cpp,?FUN_00752760@@YIXXZ
 0x007529A0,FUN_007529A0,MATCH,55,src/vox.cpp,?FUN_007529A0@@YIX_N@Z
 0x007529E0,FUN_007529E0,MATCH,86,src/vox.cpp,?FUN_007529E0@@YIHXZ
 0x00752A40,VoxClass::SilenceIndex,MATCH,107,src/vox.cpp,?SilenceIndex@VoxClass@@SIXH@Z
@@ -17482,6 +17490,7 @@ address,name,result,size,source,symbol
 0x0076C240,_$E61,MATCH,15,src/wdtsel.cpp,_$E61
 0x0076C250,_$E64,MATCH,18,src/wdtsel.cpp,_$E64
 0x0076C270,_$E67,MATCH,26,src/wdtsel.cpp,_$E67
+0x0076C6E0,WorldDominationTour::Selection::~Selection,MATCH,646,src/wdtsel.cpp,??1Selection@WorldDominationTour@@UAE@XZ
 0x0076C970,WorldDominationTour::Selection::Init_Voices,MATCH,225,src/wdtsel.cpp,?Init_Voices@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
 0x0076CA60,WorldDominationTour::Selection::Init_Sounds,MATCH,400,src/wdtsel.cpp,?Init_Sounds@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
 0x0076CBF0,WorldDominationTour::Selection::Init_Target,MATCH,417,src/wdtsel.cpp,?Init_Target@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
@@ -17506,11 +17515,12 @@ address,name,result,size,source,symbol
 0x0076ED10,FUN_0076ED10,MATCH,415,src/wdtsel.cpp,?FUN_0076ED10@@YI_NPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z
 0x0076EEB0,WorldDominationTour::Selection::FUN_0076EEB0,MATCH,195,src/wdtsel.cpp,?FUN_0076EEB0@Selection@WorldDominationTour@@QAEXXZ
 0x0076EF80,WorldDominationTour::Selection::End,MATCH,91,src/wdtsel.cpp,?End@Selection@WorldDominationTour@@QAEXXZ
+0x0076EFE0,??_GSelection@WorldDominationTour@@UAEPAXI@Z,MATCH,30,src/wdtsel.cpp,??_GSelection@WorldDominationTour@@UAEPAXI@Z
 0x0076F000,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z,MATCH,26,src/wdtsel.cpp,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z
 0x0076F020,?Get@?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@QBEPAVCampaignProperties@WorldDominationTour@@XZ,MATCH,4,src/wdtsel.cpp,?Get@?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@QBEPAVCampaignProperties@WorldDominationTour@@XZ
 0x0076F030,??0?$rc_ptr@VTerritory@WorldDominationTour@@@@QAE@ABV0@@Z,MATCH,35,src/wdtsel.cpp,??0?$rc_ptr@VTerritory@WorldDominationTour@@@@QAE@ABV0@@Z
 0x0076F060,??1?$rc_ptr@VTerritory@WorldDominationTour@@@@UAE@XZ,MATCH,11,src/wdtsel.cpp,??1?$rc_ptr@VTerritory@WorldDominationTour@@@@UAE@XZ
-0x0076F070,?Get@?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ,MATCH,4,src/wdtsel.cpp,?Get@?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ
+0x0076F070,??C?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ,MATCH,4,src/wdtsel.cpp,??C?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ
 0x0076F080,?Get@?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ,MATCH,4,src/wdtsel.cpp,?Get@?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ
 0x0076F090,??0?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@QAE@AAV?$DynamicVectorClass@PAVMSSfxEntry@@@@H@Z,MATCH,25,src/wdtsel.cpp,??0?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@QAE@AAV?$DynamicVectorClass@PAVMSSfxEntry@@@@H@Z
 0x0076F0B0,??B?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UBE_NXZ,MATCH,14,src/wdtsel.cpp,??B?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UBE_NXZ
@@ -18097,12 +18107,13 @@ address,name,result,size,source,symbol
 0x00786DC0,FUN_00786DC0,MATCH,164,src/wonline.cpp,?FUN_00786DC0@@YI_NAAVWstring@@@Z
 0x00786E70,FUN_00786E70,MATCH,117,src/wonline.cpp,?FUN_00786E70@@YIHAAVWstring@@@Z
 0x00786EF0,FUN_00786EF0,MATCH,276,src/wonline.cpp,?FUN_00786EF0@@YI_NXZ
+0x00787010,Login_WOL,MATCH,1882,src/wonline.cpp,?Login_WOL@@YIHXZ
 0x00788180,FUN_00788180,MATCH,1412,src/wonline.cpp,?FUN_00788180@@YIH_N@Z
 0x00788710,FUN_00788710,MATCH,237,src/wonline.cpp,?FUN_00788710@@YI_NHH@Z
 0x00788800,FUN_00788800,MATCH,552,src/wonline.cpp,?FUN_00788800@@YIJPAUChannel@@AAVWstring@@VWideWstring@@@Z
 0x00788A30,FUN_00788A30,MATCH,208,src/wonline.cpp,?FUN_00788A30@@YIH_N@Z
 0x00788B00,FUN_00788B00,MATCH,2558,src/wonline.cpp,?FUN_00788B00@@YIXPAUHWND__@@@Z
-0x00789500,FUN_00789500,MATCH,304,src/wonline.cpp,?FUN_00789500@@YIHPBD0HH@Z
+0x00789500,StoreLogin,MATCH,304,src/wonline.cpp,?StoreLogin@@YIHPBD0_NH@Z
 0x00789630,FUN_00789630,MATCH,103,src/wonline.cpp,?FUN_00789630@@YI?AVWstring@@PAUServer@@@Z
 0x007896A0,FUN_007896A0,MATCH,702,src/wonline.cpp,?FUN_007896A0@@YI_NPAUHWND__@@_N@Z
 0x00789960,FUN_00789960,MATCH,507,src/wonline.cpp,?FUN_00789960@@YI_NPAUChannel@@_N@Z

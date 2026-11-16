@@ -18,7 +18,10 @@ the repository root; generated round files go to `build/coord/`, which is not tr
 - Both generators skip functions claimed by outside work: `claims.py` reads the open pull
   requests' diffs and open issues labelled `claims`, and stops the generator if GitHub
   cannot be read. Run it alone to list the claims. The maintainer's comments never claim;
-  one that says "taking back" releases the addresses it lists from earlier claims.
+  one that says "taking back" releases the addresses it lists from earlier claims. A
+  contributor releases their own claims with a sentence saying "Releasing": the addresses it
+  lists, else the claim comments it links, else their latest claim. The rest of a releasing
+  comment claims nothing unless it says it is taking, claiming, picking up or checking.
 - `segfiles.json` maps the unnamed `seg_` ranges to the src/ file each lands in;
   `segnames.md` records how they were named.
 

@@ -3578,7 +3578,7 @@ void __fastcall FUN_004E50C0(HWND dialog, int id);
 void __fastcall FUN_004E5B60(HWND dialog, int id);
 void __fastcall FUN_005EE510(int arg);
 void FUN_0078F000(void);
-void __fastcall FUN_007A28B0(NodeNameType * node);
+void __fastcall FUN_007A28B0(wchar_t const * wide);
 void __fastcall FUN_005DB600(NodeNameType * node);
 void FUN_0077DB90(void);
 void FUN_005DAF30(void);
