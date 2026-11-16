@@ -1625,6 +1625,115 @@ unsigned MapRegionClass::Build_Neighbor_Region_Mask(Cell const & cell, bool & va
 	return(mask);
 }
 
+// FUNCTION: GAMEMD 0x00591D80
+bool MapRegionClass::Build_North_Ramp(
+	Cell const &first,
+	Cell const &second,
+	int lowRegion)
+{
+	static int heights[5] = {3, 2, 1, 0, 0};
+	static int ramps[10] = {10, 14, 14, 14, 6, 9, 13, 13, 13, 5};
+
+	Rect area(
+		second.X - 4,
+		(first.Y < second.Y ? first.Y : second.Y) - 7,
+		first.X - second.X + 8,
+		(first.Y > second.Y ? first.Y : second.Y)
+			- (first.Y < second.Y ? first.Y : second.Y) + 11);
+
+	if (!Is_Ramp_Area_Clear(area, lowRegion)) {
+		return false;
+	}
+
+	int drift = second.Y - first.Y;
+	int span = abs(drift);
+	int width = first.X - second.X;
+
+	if (span > width - 5) {
+		return false;
+	}
+
+	int half = (width + 1) / 2 + 3;
+
+	Flatten_Area(
+		Rect(area.X, area.Y, half + 2, second.Y - area.Y),
+		lowRegion);
+	Flatten_Area(
+		Rect(first.X - half + 2, area.Y, half + 3, first.Y - area.Y),
+		lowRegion);
+	Flatten_Area(
+		Rect(second.X, second.Y, half - 2,
+			 area.Y + area.Height - second.Y - 2));
+	Flatten_Area(
+		Rect(first.X - half + 2, first.Y, half - 1,
+			 area.Y + area.Height - first.Y - 2));
+
+	MapGeneratorClass::Place_Tile(
+		(IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 4),
+		second - Cell(0, 3), lowRegion, CellHeight);
+	MapGeneratorClass::Place_Tile(
+		(IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 5),
+		first - Cell(2, 3), lowRegion, CellHeight);
+	MapGeneratorClass::Place_Tile(
+		(IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 6),
+		first - Cell(1, 1), lowRegion, CellHeight);
+
+	Cell tail(0, 0);
+
+	if (drift != 0) {
+		int pick = Pick_Random_UInt(0, 1);
+		Cell bias;
+		bias.X = 0;
+
+		int down = drift > 0;
+		bias.Y = drift < 0;
+
+		if (pick == 1) {
+			tail += Cell(span, -drift);
+		} else {
+			bias.X = (first - Cell(span, 0)).X - second.X - 5;
+		}
+
+		for (int forward = 0; forward < span; forward++) {
+			for (int row = 0; row < 5; row++) {
+				short offset = down ? -forward : forward;
+				Cell position =
+					Cell(second.X + 3, second.Y)
+					+ Cell(forward, -row) + bias;
+				position = Cell(position.X, position.Y + offset);
+
+				CellClass &target = Map[position];
+				short height = heights[row];
+				target.Height = height + CellHeight - 4;
+				target.Ramp = (unsigned char)ramps[5 * down + row];
+				target.ITType = (IsometricTileType)(
+					IsometricTileTypeClass::RampStart + target.Ramp - 1);
+				target.SubTile = 0;
+			}
+		}
+	}
+
+	for (int column = 0;
+		 column < first.X - second.X - span - 5;
+		 column++) {
+		for (int row = 0; row < 4; row++) {
+			Cell position =
+				Cell(second.X + 3, second.Y)
+				+ Cell(column, -row) + tail;
+
+			CellData::Set_Region(position, lowRegion);
+			CellClass &target = Map[position];
+			target.Height = CellHeight - row - 1;
+			target.Ramp = 2;
+			target.ITType = (IsometricTileType)(
+				IsometricTileTypeClass::RampStart + 1);
+			target.SubTile = 0;
+		}
+	}
+
+	return true;
+}
+
 // FUNCTION: GAMEMD 0x00593550
 bool MapRegionClass::Build_Corner_Ramp_NW(Cell const & cell2, Cell const & cell1, int region_id)
 {
@@ -4586,6 +4695,91 @@ bool MapGeneratorClass::Init_Start_Points(void)
 		} while (player_index < SeedData.NumPlayers);
 	}
 	return(true);
+}
+
+// FUNCTION: GAMEMD 0x005A23A0
+void MapGeneratorClass::Create_Tiberium(void)
+{
+	int waypoint_base = 0;
+	bool use_nearest = FUN_0058BD80(SeedData.MapType, SeedData.Resources);
+
+	for (int r = 0; r < MapRegionClass::MapRegions.Count(); r++) {
+		MapRegionClass * region = MapRegionClass::MapRegions[r];
+		if (region->Unknown0 == NULL) {
+			continue;
+		}
+
+		int chosen = -1;
+		if (use_nearest) {
+			Cell center(0, 0);
+			if (region->Unknown20 > 0) {
+				for (int w = 0; w < region->Unknown20; w++) {
+					Cell waypoint = Scen->Get_Waypoint_Cell((WAYPOINT)(waypoint_base + w));
+					center += waypoint;
+				}
+				center.X = center.X / region->Unknown20;
+				center.Y = center.Y / region->Unknown20;
+			} else {
+				center = region->Cells[Pick_Random_UInt(0, region->Cells.Count() - 1)];
+			}
+
+			int best = 500000;
+			for (int k = 0; k < region->Unknown0->Count(); k++) {
+				Cell c = (*region->Unknown0)[k];
+				int dx = c.X - center.X;
+				int dy = c.Y - center.Y;
+				double dist = fastmath::sqrt((double)(dy * dy + dx * dx));
+				if (dist < best) {
+					best = (int)dist;
+					chosen = k;
+				}
+			}
+		}
+
+		int total = (int)((RMGMaximumTiberium - RMGMinimumTiberium) * (SeedData.Tiberium * 0.01) + RMGMinimumTiberium);
+		double weight = MAX(0.5, (double)region->Unknown20);
+		int amount = (int)(total * weight);
+		int layout_count = region->Unknown0->Count();
+		if (layout_count == 0 || amount == 0) {
+			continue;
+		}
+
+		int per_patch = amount / layout_count;
+		for (int p = 0; p < region->Unknown0->Count(); p++) {
+			int patch_amount = (int)(per_patch + Sample_Truncated_Normal_Inline(0.0, 50.0, -100.0, 100.0));
+			if (patch_amount >= 0) {
+				Create_Tiberium_Patch((*region->Unknown0)[p], patch_amount, waypoint_base + p + 1, p == chosen);
+			}
+		}
+
+		DynamicVectorClass<double> mean_distances;
+		Cell waypoint;
+		Cell c;
+		for (int s = 0; s < region->Unknown20; s++) {
+			double total_distance = 0.0;
+			waypoint = Scen->Get_Waypoint_Cell((WAYPOINT)(waypoint_base + s));
+			for (int q = 0; q < region->Unknown0->Count(); q++) {
+				c = (*region->Unknown0)[q];
+				total_distance += Map_Cell_Distance(c, waypoint);
+			}
+			mean_distances.Add(total_distance / (double)region->Unknown0->Count());
+		}
+
+		double min_mean_distance = 9999999.0;
+		for (int m = 0; m < region->Unknown20; m++) {
+			if (mean_distances[m] < min_mean_distance) {
+				min_mean_distance = mean_distances[m];
+			}
+		}
+
+		bool flag = (SeedData.Resources == 3 && FUN_0058BCD0(SeedData.MapType));
+		for (int f = 0; f < region->Unknown20; f++) {
+			amount = (int)((mean_distances[f] - min_mean_distance) * 15.0);
+			Create_Tiberium_Patch(Scen->Get_Waypoint_Cell((WAYPOINT)(waypoint_base + f)), amount + 500, waypoint_base + f + 1, flag);
+		}
+
+		waypoint_base += region->Unknown20;
+	}
 }
 
 // FUNCTION: GAMEMD 0x005A28C0
@@ -7757,4 +7951,146 @@ int MapGeneratorClass::FUN_0059BBC0(int size, Rect const & bounds, Point2D const
 		WorkingRegionID++;
 	}
 	return result;
+}
+
+static inline bool Road_Tile_Set(IsometricTileType tile)
+{
+	return tile != ISOTILE_NONE;
+}
+
+// FUNCTION: GAMEMD 0x005A89D0
+bool MapGeneratorClass::Generate_Rural_Roads(const Cell & cell)
+{
+	QueueClass<DirtRoadNode, 1024> queue;
+	int processed = 0;
+
+	unsigned int random_offset = Pick_Random_UInt(0, 10);
+	int attempt = 0;
+	IsometricTileType junction;
+	while (true) {
+		junction = (IsometricTileType)(
+			IsometricTileTypeClass::DirtRoadJunction
+			+ (int)(random_offset + attempt) % DIRT_ROAD_JUNCTION_COUNT);
+		if (Can_Place_Tile(junction, cell, false, false)) {
+			break;
+		}
+		if (++attempt >= 11) {
+			return(false);
+		}
+	}
+
+	DirtRoadNode root(junction, cell, ISOTILE_NONE, cell, -1);
+	queue.Add(root);
+	while (queue.Count != 0) {
+		if (queue.Count >= 1020) {
+			break;
+		}
+		bool success = true;
+		DirtRoadNode node = queue.First();
+		bool placed = Road_Tile_Set(node.Tile);
+
+		int child_count = 0;
+		DirtRoadNode * children = NULL;
+
+		if (placed) {
+			if (Road_Tile_Set(node.CapTile)) {
+				Mark_Tile(node.CapTile, node.CapOrigin, false);
+			}
+			Place_Tile(node.Tile, node.Origin);
+
+			DirtRoadTile & tile =
+				DirtRoadTiles[Dirt_Road_Tile_Index(node.Tile)];
+
+			if (tile.Count > 1) {
+				int link_count =
+					tile.Count - (node.BackLinkIndex != -1);
+				children = new DirtRoadNode[link_count];
+				if (children != NULL) {
+					DirtRoadNode * child = children;
+					for (int link_index = 0;
+						 link_index < tile.Count;
+						 link_index++) {
+						if (link_index != node.BackLinkIndex) {
+							DirtRoadLink link = tile.Links[link_index];
+							FacingType reverse =
+								Facing_Sub(link.Facing, FACING_180);
+
+							Cell connection = Adjacent_Cell(
+								node.Origin + link.Offset, link.Facing);
+							int cap_link = 0;
+							if (Find_Dirt_Road_Tile(
+									reverse, connection, 1,
+									child->CapTile, child->CapOrigin,
+									cap_link)) {
+								if (!Find_Dirt_Road_Tile(
+										reverse, connection, 4,
+										child->Tile, child->Origin,
+										child->BackLinkIndex)) {
+									child->BackLinkIndex = cap_link;
+								} else {
+									Mark_Tile(
+										child->Tile,
+										child->Origin, true);
+								}
+								Mark_Tile(
+									child->CapTile,
+									child->CapOrigin, true);
+								child_count++;
+								child++;
+							} else {
+								success = false;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (placed && success) {
+			if (children != NULL) {
+				DirtRoadNode * src = children;
+				for (int j = 0; j < child_count; j++) {
+					queue.Add(*src);
+					src++;
+				}
+			}
+		} else {
+			if (Road_Tile_Set(node.Tile)) {
+				Remove_Tile(node.Tile, node.Origin);
+				DirtRoadNode * undo = children;
+				while (child_count > 0) {
+					if (Road_Tile_Set(undo->Tile)) {
+						Mark_Tile(undo->Tile, undo->Origin, false);
+					}
+					if (Road_Tile_Set(undo->CapTile)) {
+						Mark_Tile(
+							undo->CapTile, undo->CapOrigin, false);
+					}
+					undo++;
+					--child_count;
+				}
+			}
+			if (Road_Tile_Set(node.CapTile)) {
+				Place_Tile(node.CapTile, node.CapOrigin);
+			}
+		}
+
+		if (children != NULL) {
+			delete [] children;
+		}
+
+		queue.Next();
+		processed++;
+	}
+
+	while (queue.Count != 0) {
+		DirtRoadNode node = queue.First();
+		Place_Tile(node.CapTile, node.CapOrigin);
+		queue.Next();
+	}
+	if (processed > 1) {
+		return true;
+	}
+	return false;
 }

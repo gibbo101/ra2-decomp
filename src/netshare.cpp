@@ -51,6 +51,7 @@
 #include <stdarg.h>
 #include <wchar.h>
 #include "widewstring.h"
+#include "tiprequest.h"
 
 // SYNTHETIC: GAMEMD 0x005E2410 SYMBOL
 // _$E51
@@ -512,17 +513,21 @@ MultiplayerGameMode * FUN_005E2F80(void)
 	return(mode);
 }
 
+static inline MultiplayerGameMode *Get_Selected_Game_Mode(HWND window)
+{
+	int selected = SendDlgItemMessage(window, 0x6eb, LB_GETCURSEL, 0, 0);
+	if (selected == -1) return NULL;
+	return (MultiplayerGameMode *)SendDlgItemMessage(window, 0x6eb, LB_GETITEMDATA, selected, 0);
+}
+
 // FUNCTION: GAMEMD 0x005E2FA0
 void FUN_005E2FA0(void)
 {
 	if (FUN_00775B20() == 0x6b) {
 		HWND dialog = FUN_00775B10();
-		int sel = SendDlgItemMessage(dialog, 0x6eb, LB_GETCURSEL, 0, 0);
-		if (sel != -1) {
-			MultiplayerGameMode * mode = (MultiplayerGameMode *)SendDlgItemMessage(dialog, 0x6eb, LB_GETITEMDATA, sel, 0);
-			if (mode != NULL) {
-				mode->vt_entry_94();
-			}
+		MultiplayerGameMode *mode = Get_Selected_Game_Mode(dialog);
+		if (mode != NULL) {
+			mode->vt_entry_94();
 		}
 	} else if (Session.MPGameMode != NULL) {
 		Session.MPGameMode->vt_entry_94();
@@ -991,7 +996,7 @@ void __fastcall FUN_005E7BF0(int slot);
 void __fastcall FUN_005E74E0(HWND dialog);
 void FUN_0058BB30(void);
 bool FUN_0077F900(void);
-int CALLBACK FUN_005E6920(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+int CALLBACK Scenario_DlgProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void FUN_0072D120(void);
 void FUN_0072D170(void);
@@ -1004,6 +1009,20 @@ int FUN_005E66D0(void)
 
 bool FUN_005DAF20(void);
 bool FUN_005BB260(void);
+
+static inline void Save_Scenario_Name(void)
+{
+	HWND list = DAT_00AC0D40;
+	int sel = SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0);
+	if (sel != -1) {
+		MultiMission * title = (MultiMission *)SendDlgItemMessage(list, 0x553, LB_GETITEMDATA, sel, 0);
+		if (title != NULL) {
+			wcscpy(DAT_00AC0EC8, title->Description());
+			return;
+		}
+	}
+	DAT_00AC0EC8[0] = 0;
+}
 
 // FUNCTION: GAMEMD 0x005E66F0
 bool FUN_005E66F0(void)
@@ -1037,18 +1056,7 @@ bool FUN_005E66F0(void)
 			FUN_005E7BF0(DAT_00AC10E0);
 		}
 	}
-	HWND list = DAT_00AC0D40;
-	int sel = SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0);
-	if (sel != -1) {
-		wchar_t * title = (wchar_t *)SendDlgItemMessage(list, 0x553, 0x199, sel, 0);
-		if (title != NULL) {
-			wcscpy(DAT_00AC0EC8, title);
-		} else {
-			DAT_00AC0EC8[0] = 0;
-		}
-	} else {
-		DAT_00AC0EC8[0] = 0;
-	}
+	Save_Scenario_Name();
 	if (Session.Type == GAME_IPX) {
 		return(FUN_005DAF20());
 	}
@@ -1067,7 +1075,7 @@ int Scenario_Dialog(HWND top)
 {
 	FUN_0052FEC0(NULL, true);
 	FUN_0072D120();
-	DAT_00AC0D40 = WS_Create_Dialog(Game::hInstance, 0x6b, top, FUN_005E6920, FALSE);
+	DAT_00AC0D40 = WS_Create_Dialog(Game::hInstance, 0x6b, top, Scenario_DlgProc, FALSE);
 	UI::RegisterWindow(DAT_00AC0D40, 0x6b);
 	SendMessage(DAT_00AC0D40, 0x4a9, 0, 1);
 	ShowWindow(DAT_00AC0D40, SW_NORMAL);
@@ -1075,6 +1083,17 @@ int Scenario_Dialog(HWND top)
 	FUN_0072D170();
 	return(result);
 }
+
+extern bool DAT_00AC11C8;
+extern bool DAT_00AC11C9;
+extern int DAT_008316FC;
+bool WS_Save_Dialog_Values(HWND dialog);
+namespace OwnerDraw { void __fastcall Paint(HWND window); }
+bool RunOpenAnimationIfNeeded(HWND dialog);
+void __fastcall FUN_0060AAA0(HWND dialog);
+void __fastcall FUN_005D6130(HWND list, int mode);
+
+bool FUN_005E7160(HWND dialog);
 
 // FUNCTION: GAMEMD 0x005E70D0
 int FUN_005E70D0(HWND dialog, MultiMission * map)
@@ -1092,6 +1111,169 @@ int FUN_005E70D0(HWND dialog, MultiMission * map)
 	SendDlgItemMessage(dialog, 0x553, LB_SETCURSEL, found, 0);
 	SendDlgItemMessage(dialog, 0x553, 0x197, found, 0);
 	return(found);
+}
+
+static inline int Select_Scenario_By_Name(HWND window, wchar_t const *name)
+{
+	if (name == NULL) {
+		return(-1);
+	}
+	int found = 0;
+	int count = SendDlgItemMessage(window, 0x553, LB_GETCOUNT, 0, 0);
+	for (int i = 0; i < count; i++) {
+		MultiMission *candidate = (MultiMission *)SendDlgItemMessage(window, 0x553, LB_GETITEMDATA, i, 0);
+		if (wcscmp(candidate->Description(), name) == 0) {
+			found = i;
+		}
+	}
+	SendDlgItemMessage(window, 0x553, LB_SETCURSEL, found, 0);
+	SendDlgItemMessage(window, 0x553, LB_SETTOPINDEX, found, 0);
+	return(found);
+}
+
+static inline void Select_Scenario_Index(HWND window, int index)
+{
+	if (index < Session.Scenarios.Count()) {
+		FUN_005E70D0(window, Session.Scenarios[index]);
+	}
+}
+
+static inline void Enable_Random_Scenario(HWND window, MultiplayerGameMode *mode)
+{
+	bool allowed = mode->IsAIAllowed();
+	HWND button = GetDlgItem(window, 0x583);
+	EnableWindow(button, allowed);
+}
+
+static inline void Populate_Scenario_List(HWND window, MultiplayerGameMode * mode)
+{
+	DynamicVectorClass<MultiMission const *> maps;
+	int count = Session.Scenarios.Count();
+	for (int i = 0; i < count; i++) {
+		MultiMission const * map = Session.Scenarios[i];
+		if (mode->FUN_005D63E0(map)) {
+			maps.Add(map);
+		}
+	}
+	HWND list = GetDlgItem(window, 0x553);
+	mode->DrawTeamDropdown(list, &maps, NULL);
+}
+
+// FUNCTION: GAMEMD 0x005E6920
+int CALLBACK Scenario_DlgProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+	case WM_DRAWITEM:
+		OwnerDraw::Draw_Item((LPDRAWITEMSTRUCT)lparam);
+		// Fall through: both messages have been handled.
+	case WM_ERASEBKGND:
+		return(TRUE);
+
+	case WM_PAINT:
+		OwnerDraw::Paint(window);
+		if (MultiplayerMapPreview) MultiplayerMapPreview->DrawStartPoints(window);
+		FUN_00607FD0(window);
+		ValidateRect(window, NULL);
+		break;
+
+	case WM_NCDESTROY:
+		On_WM_NCDESTROY(window);
+		break;
+
+	case WM_COMMAND:
+		switch (LOWORD(wparam)) {
+		case 0x5c0:
+			WS_Destroy_Dialog(window, 2);
+			break;
+		case 0x583: {
+			WS_Save_Dialog_Values(window);
+			ShowWindow(window, SW_HIDE);
+			int scenario = CreateRandomMap();
+			if (scenario != -1) {
+				MultiplayerGameMode *mode = Get_Selected_Game_Mode(window);
+				if (mode) {
+					Populate_Scenario_List(window, mode);
+				}
+				Select_Scenario_Index(window, scenario);
+				Set_Scenario_Info_From_Index(scenario);
+				if (!MultiplayerMapPreview->Get_Preview_Surface()) Update_Network_Dialog_Preview(window);
+				Session.Options.ScenarioIndex = DAT_00AC10E0;
+				Set_Scenario_Info_From_Index(DAT_00AC10E0);
+				bool accepted = FUN_005E7160(window);
+				FUN_0052FEC0(NULL, true);
+				if (accepted) break;
+			}
+			RunOpenAnimationIfNeeded(window);
+			ShowWindow(window, SW_SHOW);
+			break;
+		}
+		case 0x6c5:
+			FUN_005E7160(window);
+			break;
+		case 0x6eb:
+			if (!DAT_00AC11C8 && HIWORD(wparam) == LBN_SELCHANGE) {
+				int selected = SendDlgItemMessage(window, 0x6eb, LB_GETCURSEL, 0, 0);
+				if (selected != DAT_008316FC && selected != -1) {
+					DAT_008316FC = selected;
+					MultiplayerGameMode *mode = Get_Selected_Game_Mode(window);
+					if (mode) {
+						WideWstring error;
+						if (mode->vt_entry_0C(&error)) {
+							mode->vt_entry_10();
+							Populate_Scenario_List(window, mode);
+							Enable_Random_Scenario(window, mode);
+							Select_Scenario_By_Name(window, DAT_00AC0EC8);
+							Save_Scenario_Name();
+							DAT_00AC11C9 = false;
+						} else {
+							if (!DAT_00AC11C9) {
+								ODMessageBox(error.get(), 0, NULL, false);
+								DAT_00AC11C9 = true;
+							}
+							SendDlgItemMessage(window, 0x6eb, LB_SETCURSEL, 0, 0);
+						}
+					}
+				}
+			}
+			break;
+		}
+		break;
+
+	case 0x4ec:
+		FUN_0052FEC0(NULL, true);
+		FUN_0060AAA0(window);
+		break;
+
+	case 0x4e9: {
+		TooltipRequest * request = (TooltipRequest *)lparam;
+		int id = GetDlgCtrlID(request->Window);
+		request->Text = (wchar_t const *)NULL;
+		if (id == 0x6eb && request->Index != -1) {
+			MultiplayerGameMode * mode = (MultiplayerGameMode *)SendDlgItemMessage(window, id, LB_GETITEMDATA, request->Index, 0);
+			if (mode) request->Text = mode->CSFTooltip.text();
+		}
+		return(TRUE);
+	}
+
+	case OD_SUBCLASSED: {
+		DAT_00AC11C8 = true;
+		MultiplayerGameMode * mode = FUN_005E2F80();
+		HWND list = GetDlgItem(window, 0x6eb);
+		FUN_005D6130(list, mode->MPModeIndex);
+		if (mode) {
+			Populate_Scenario_List(window, mode);
+		}
+		Enable_Random_Scenario(window, mode);
+		if (Session.Options.ScenarioIndex != -1) {
+			Select_Scenario_Index(window, Session.Options.ScenarioIndex);
+		}
+		DAT_00AC10E0 = Session.Options.ScenarioIndex;
+		DAT_00AC0D30 = -1;
+		DAT_00AC11C8 = false;
+		break;
+	}
+	}
+	return(FALSE);
 }
 
 bool FUN_0048D1D0(void);

@@ -4,8 +4,10 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #define INCLUDE_COM
+#define NDEBUG
 #include "always.h"
 #include "rect.h"
+#include "velocity.h"
 #include "geometry.h"
 #include "house.h"
 #include "_logic.h"
@@ -858,6 +860,257 @@ HouseStaticClass::HouseStaticClass(void) :
 	InitialCredits(0),
 	Edge(SOURCE_NONE)
 {
+}
+
+// FUNCTION: GAMEMD 0x004F7870
+int HouseClass::Can_Build(ObjectTypeClass const * type, bool forced, bool include_in_progress) const
+{
+	TechnoTypeClass const * ttype = (TechnoTypeClass const *)type;
+
+	if (!forced) {
+		if (ttype->IsUnbuildable) return(0);
+
+		TypeList<int> over = ttype->PrerequisiteOverride;
+		for (int ov = 0; ov < over.Count(); ov++) {
+			int building = over[ov];
+			if (ABQuantity.Value(building) > 0) goto classify;
+		}
+		for (int lab = 0; lab < SecretLabs.Count(); lab++) {
+			if (SecretLabs[lab]->FUN_00459840() == ttype) goto classify;
+		}
+
+		if (ttype->Level == -1) return(0);
+
+		TypeList<int> pre = ttype->Prerequisite;
+		int level = Control.TechLevel;
+
+		if (ttype->RequiresStolenAlliedTech && !Side0TechInfiltrated) return(0);
+		if (ttype->RequiresStolenSovietTech && !Side1TechInfiltrated) return(0);
+		if (ttype->RequiresStolenThirdTech && !Side2TechInfiltrated) return(0);
+
+		if (ttype->RequiredHouses != -1 && !((1 << Class->House) & ttype->RequiredHouses) &&
+			!((InfantryAltOwner & ttype->RequiredHouses) && ttype->Fetch_RTTI() == RTTI_INFANTRYTYPE) &&
+			!((UnitAltOwner & ttype->RequiredHouses) && ttype->Fetch_RTTI() == RTTI_UNITTYPE) &&
+			!((AircraftAltOwner & ttype->RequiredHouses) && ttype->Fetch_RTTI() == RTTI_AIRCRAFTTYPE) &&
+			!((BuildingAltOwner & ttype->RequiredHouses) && ttype->Fetch_RTTI() == RTTI_BUILDINGTYPE)) {
+			return(0);
+		}
+
+		if (ttype->ForbiddenHouses != -1 && ((1 << Class->House) & ttype->ForbiddenHouses)) return(0);
+
+		if (!Unsorted::SWAllowed && ttype->Fetch_RTTI() == RTTI_BUILDINGTYPE) {
+			BuildingTypeClass const * btype = (BuildingTypeClass const *)ttype;
+			if (btype->SuperWeapon != -1) {
+				bool listed = false;
+				for (int b = 0; b < Rule->BuildTech.Count(); b++) {
+					if (Rule->BuildTech[b] == btype) {
+						listed = true;
+						break;
+					}
+				}
+				if (!listed && SuperWeapon[btype->SuperWeapon]->Class->DisableableFromShell) return(0);
+			}
+		}
+
+		if (ttype->Level > level) return(0);
+
+		if (!Is_Human_Player()) return(1);
+
+		for (int i = 0; i < pre.Count(); i++) {
+			switch (pre[i]) {
+				case -1: {
+					bool found = false;
+					for (int j = 0; j < Rule->PrerequisitePower.Count(); j++) {
+						if (ABQuantity.Value(Rule->PrerequisitePower[j]) > 0) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) return(0);
+				}
+				break;
+
+				case -2: {
+					bool found = false;
+					for (int j = 0; j < Rule->PrerequisiteFactory.Count(); j++) {
+						if (ABQuantity.Value(Rule->PrerequisiteFactory[j]) > 0) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) return(0);
+				}
+				break;
+
+				case -3: {
+					bool found = false;
+					for (int j = 0; j < Rule->PrerequisiteBarracks.Count(); j++) {
+						if (ABQuantity.Value(Rule->PrerequisiteBarracks[j]) > 0) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) return(0);
+				}
+				break;
+
+				case -4: {
+					bool found = false;
+					for (int j = 0; j < Rule->PrerequisiteRadar.Count(); j++) {
+						if (ABQuantity.Value(Rule->PrerequisiteRadar[j]) > 0) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) return(0);
+				}
+				break;
+
+				case -5: {
+					bool found = false;
+					for (int j = 0; j < Rule->PrerequisiteTech.Count(); j++) {
+						if (ABQuantity.Value(Rule->PrerequisiteTech[j]) > 0) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) return(0);
+				}
+				break;
+
+				case -6: {
+					bool found = false;
+					for (int j = 0; j < Rule->PrerequisiteProc.Count(); j++) {
+						if (ABQuantity.Value(Rule->PrerequisiteProc[j]) > 0) {
+							found = true;
+							break;
+						}
+					}
+					if (Rule->PrerequisiteProcAlternate != NULL) {
+						if (AUQuantity.Value(Rule->PrerequisiteProcAlternate->HeapID) > 0) break;
+					}
+					if (!found) return(0);
+				}
+				break;
+
+				default: {
+					BuildingTypeClass * btype = BuildingTypes[pre[i]];
+					if (btype->PowersUpBuilding[0] != '\0') {
+						BuildingClass * bptr;
+						bool found = false;
+						for (int j = Buildings.Count() - 1; j >= 0; j--) {
+							bptr = Buildings[j];
+							if (!bptr->IsInLimbo && bptr->IsOn) {
+								if (bptr->Get_Mission() != MISSION_DECONSTRUCTION && bptr->MissionQueue != MISSION_DECONSTRUCTION) {
+									found = true;
+									break;
+								}
+							}
+						}
+						bool upgraded = false;
+						if (found) {
+							for (int k = 0; k < 3; k++) {
+								if (bptr->Upgrades[k] == btype) {
+									upgraded = true;
+									break;
+								}
+							}
+						}
+						if (!upgraded) return(0);
+					} else {
+						if (ABQuantity.Value(pre[i]) == 0) return(0);
+					}
+				}
+				break;
+			}
+		}
+	}
+
+classify:
+	switch (type->Fetch_RTTI()) {
+		case RTTI_UNITTYPE: {
+			int limit = ttype->BuildLimit;
+			if (ttype->BuildLimit <= 0 && PUQuantity.Value(type->Fetch_Heap_ID()) >= abs(limit)) return(0);
+			if (limit <= 0) return(1);
+			int count = UQuantity.Value(type->Fetch_Heap_ID());
+			if (count < ttype->BuildLimit) {
+				return(1);
+			}
+			if (include_in_progress) {
+				if (Factory_Producing_This(type) != NULL) {
+					return(1);
+				}
+				return(-1);
+			}
+		}
+		break;
+
+		case RTTI_INFANTRYTYPE: {
+			if (ttype->BuildLimit <= 0 && PIQuantity.Value(type->Fetch_Heap_ID()) >= abs(ttype->BuildLimit)) {
+				return(0);
+			}
+			int count = IQuantity.Value(type->Fetch_Heap_ID());
+			if (((InfantryTypeClass const *)type)->IsVehicleThief) {
+				for (int i = 0; i < Units.Count(); i++) {
+					UnitClass * unit = Units[i];
+					if (unit->House == this && unit->EnteredByInfType == type->Fetch_Heap_ID()) {
+						count++;
+					}
+				}
+			}
+			if (ttype->BuildLimit <= 0) {
+				return(1);
+			}
+			if (count < ttype->BuildLimit) {
+				return(1);
+			}
+			if (include_in_progress && count == ttype->BuildLimit) {
+				if (Factory_Producing_This(type) != NULL) {
+					return(1);
+				}
+				return(-1);
+			}
+		}
+		break;
+
+		case RTTI_BUILDINGTYPE: {
+			int limit = ttype->BuildLimit;
+			if (ttype->BuildLimit <= 0 && PBQuantity.Value(type->Fetch_Heap_ID()) >= abs(limit)) return(0);
+			if (limit <= 0) return(1);
+			int count = BQuantity.Value(type->Fetch_Heap_ID());
+			if (count < ttype->BuildLimit) {
+				return(1);
+			}
+			if (include_in_progress) {
+				if (Factory_Producing_This(type) != NULL) {
+					return(1);
+				}
+				return(-1);
+			}
+		}
+		break;
+
+		case RTTI_AIRCRAFTTYPE: {
+			int limit = ttype->BuildLimit;
+			if (ttype->BuildLimit <= 0 && PAQuantity.Value(type->Fetch_Heap_ID()) >= abs(limit)) return(0);
+			if (limit <= 0) return(1);
+			int count = AQuantity.Value(type->Fetch_Heap_ID());
+			if (count < ttype->BuildLimit) {
+				return(1);
+			}
+			if (include_in_progress) {
+				if (Factory_Producing_This(type) != NULL) {
+					return(1);
+				}
+				return(-1);
+			}
+		}
+		break;
+
+		default:
+			return(1);
+	}
+	return(-1);
 }
 
 // FUNCTION: GAMEMD 0x004F83C0
@@ -5222,6 +5475,118 @@ void HouseClass::Mark_Scouted(HouseClass const * house)
 	}
 }
 
+#include "astar.h"
+
+// Sites the naval yard node on reachable shore near the base and queues dummy nodes
+// along the path to it; the node is dropped when no site is found.
+// FUNCTION: GAMEMD 0x005048A0
+void HouseClass::FUN_005048A0(int index)
+{
+	int i;
+
+	Cell center = Get_Base_Center();
+	int zone = Map.Get_Cell_Zone(&center, MZONE_NORMAL, false);
+	Cell start = Map.Nearby_Location(center, SPEED_FOOT, zone, MZONE_NORMAL, false, Point2D(1, 1), false, false, false, true, Cell(0, 0));
+	int waterzone = -1;
+	if (Map.Find_Largest_Water_Zone(&waterzone) < 3000) {
+		Base.Nodes.Delete_Index(index);
+		NodeLogic_1F0 = false;
+		return;
+	}
+
+	int width = 1;
+	int height = 1;
+	for (i = 0; i < Rule->BuildNavalYard.Count(); i++) {
+		if (Rule->BuildNavalYard[i]->AIBasePlanningSide == Class->Side || Rule->BuildNavalYard[i]->AIBasePlanningSide == -1) {
+			width = Rule->BuildNavalYard[i]->Width() + 1;
+			height = Rule->BuildNavalYard[i]->Height(false) + 1;
+			break;
+		}
+	}
+
+	DynamicVectorClass<Cell> cells;
+	Map.Find_Water_Cells_Around(&center, 25, 30, MZONE_WATER, waterzone, &cells, width, height);
+	if (cells.Count() == 0) {
+		Base.Nodes.Delete_Index(index);
+		NodeLogic_1F0 = false;
+		return;
+	}
+
+	IndexClass<int, Cell> ranking;
+	for (i = 0; i < cells.Count(); i++) {
+		Cell spot = Map.Nearby_Location(cells[i], SPEED_FOOT, zone, MZONE_NORMAL, false, Point2D(1, 1), false, false, false, true, Cell(0, 0));
+		int distance = Search.Test_Cell_Walk(center, spot, NULL, false, false, MZONE_NORMAL);
+		ranking.Add_Index(cells.Count() * distance + i, cells[i]);
+	}
+	cells.Clear();
+	for (i = 0; i < ranking.Count(); i++) {
+		cells.Add(ranking.Fetch_By_Position(i));
+	}
+
+	bool found = false;
+	PathStruct * path = NULL;
+	Cell target = CELL_NONE;
+	Cell spot = CELL_NONE;
+	FacingType moves[2048];
+	UnitClass * unit = new UnitClass(UnitTypes[UnitTypeClass::From_Name("HARV")], this);
+	unit->Unlimbo(Coord(start), DIR_N);
+	while (!found && cells.Count() > 0) {
+		target = cells[0];
+		spot = Map.Nearby_Location(cells[0], SPEED_FOOT, zone, MZONE_NORMAL, false, Point2D(1, 1), false, false, false, true, Cell(0, 0));
+		if (spot != CELL_NONE) {
+			path = Search.Find_Path(start, spot, unit, moves, -1, MZONE_NORMAL, AStarClass::AVOIDANCE_NONE);
+		} else {
+			path = NULL;
+		}
+		if (path != NULL && path->Length <= 25) {
+			found = true;
+		} else {
+			cells.Delete_Index(0);
+		}
+	}
+	unit->Limbo();
+	delete unit;
+	if (!found) {
+		Base.Nodes.Delete_Index(index);
+		NodeLogic_1F0 = false;
+		return;
+	}
+
+	int mask = 1 << HeapID;
+	Cell cell = start;
+	int first = 0;
+	Cell last = start;
+	for (i = 0; i < path->Length; i++) {
+		cell = AdjacentCell[moves[i] & 7] + cell;
+		if (Map[cell].OccupiedBy & mask) {
+			first = i + 1;
+			last = cell;
+		}
+	}
+
+	cell = last;
+	int counter = 2;
+	int after = index - 1;
+	StructType dummy = STRUCT_NONE;
+	for (i = 0; i < Rule->BuildDummy.Count(); i++) {
+		if (Rule->BuildDummy[i]->AIBasePlanningSide == Class->Side || Rule->BuildDummy[i]->AIBasePlanningSide == -1) {
+			dummy = Rule->BuildDummy[i]->HeapID;
+			break;
+		}
+	}
+	for (i = first; i < path->Length; i++) {
+		if (counter == 0) {
+			counter = 3;
+			Base.Nodes.Insert_After(BaseNodeClass(dummy, cell), after);
+			after++;
+		} else {
+			counter--;
+		}
+		cell = AdjacentCell[moves[i] & 7] + cell;
+	}
+	Base.Nodes[after + 1].CellID = target;
+}
+
 // FUNCTION: GAMEMD 0x00505180
 void HouseClass::Begin_Construction(void)
 {
@@ -5509,15 +5874,142 @@ int HouseClass::Base_Cell_Weight_By_Distance(HouseClass const & house, Cell cons
 	return(tie_breaker + size * 1000);
 }
 
-// FUNCTION: GAMEMD 0x00506B70
-void FUN_00506B70(void)
+// FUNCTION: GAMEMD 0x005060B0
+Cell HouseClass::Where_To_Place_Building(BuildingTypeClass *buildingtype, int (*func)(HouseClass const &, Cell const &, int, int), int context)
 {
+	int i;
+
+	if (buildingtype == NULL) {
+		return(CELL_NONE);
+	}
+
+	if (buildingtype->Naval) {
+		Cell nearto(0, 0);
+		int width = ((BuildingTypeClass const *)FirstBuildableFromArray(Rule->Shipyard))->Width() + 2;
+		int height = ((BuildingTypeClass const *)FirstBuildableFromArray(Rule->Shipyard))->Height(false) + 2;
+		Cell cell = Map.Nearby_Location(Get_Base_Center(), SPEED_FLOAT, -1, MZONE_NORMAL, false, Point2D(width, height), false, false, false, true, nearto);
+		if (cell != CELL_NONE && ConYards[0] != NULL) {
+			if (Distance(Map[cell].Center_Coord(), ConYards[0]->Center_Coord()) > Rule->AINavalYardAdjacency * CELL_LEPTON_W) {
+				return(CELL_NONE);
+			}
+		}
+		return(cell);
+	}
+
+	DynamicVectorClass<Cell> sorted_cells;
+
+	if (Base.PlacementCenter == Cell(0, 0)) {
+		return(Get_Base_Center());
+	}
+
+	IndexClass<int, Cell> ranking;
+	sorted_cells.Clear();
+
+	for (i = 0; i < Base.InnerCells.Count(); i++) {
+		Cell cell = Base.InnerCells[i];
+		int score;
+		if (!buildingtype->IsCloakGenerator) {
+			score = func(*this, cell, i, context);
+		} else {
+			score = i + 1000 * (FUN_0050DF30() - Coord(cell)).Length();
+		}
+		ranking.Add_Index(score, cell);
+	}
+
+	for (i = 0; i < ranking.Count(); i++) {
+		sorted_cells.Add(ranking.Fetch_By_Position(i));
+	}
+
+	int base_height = Map[Base.PlacementCenter].Height;
+	int house_mask = 1 << HeapID;
+
+	for (int pass = 0; pass < 2; pass++) {
+		for (i = 0; i < sorted_cells.Count(); i++) {
+			Cell base_cell = sorted_cells[i];
+			Cell occupied_dir(0, 0);
+
+			for (int face = 0; face < FACING_COUNT; face++) {
+				CellClass *cptr = &Map[Adjacent_Cell(base_cell, (FacingType)face)];
+				if (cptr->OccupiedBy & house_mask) {
+					occupied_dir = Adjacent_Cell(occupied_dir, (FacingType)face);
+				}
+			}
+
+			if (occupied_dir == Cell(0, 0)) {
+				continue;
+			}
+
+			DirType dir = TVelocity2D<int>(-occupied_dir.X, -occupied_dir.Y).Get_Yaw();
+			FacingType facing = dir.As_Facing();
+
+			Cell place_offset(0, 0);
+			int width = buildingtype->Width();
+			int height = buildingtype->Height(false);
+			bool extra = buildingtype->ProtectWithWall || buildingtype->WantsExtraSpace;
+			int spacing = Rule->AIBaseSpacing;
+			if (extra) {
+				spacing++;
+			}
+			if (facing >= FACING_NE && facing <= FACING_SE) {
+				place_offset.X = spacing;
+			} else if (facing >= FACING_SW && facing <= FACING_NW) {
+				place_offset.X = 1 - width - spacing;
+			}
+			if (facing >= FACING_SE && facing <= FACING_SW) {
+				place_offset.Y = spacing + 1;
+			} else if (facing >= FACING_NW || facing <= FACING_NE) {
+				place_offset.Y = 1 - height - spacing;
+			}
+
+			int trial = 0;
+
+			do {
+				static Cell scan_offsets[FACING_COUNT] = {
+					Cell(-1,  0), Cell(-1, -1), Cell( 0, -1), Cell( 1, -1),
+					Cell( 1,  0), Cell( 1,  1), Cell( 0,  1), Cell(-1,  1)
+				};
+				static Cell step_offsets[FACING_COUNT] = {
+					Cell( 1,  0), Cell( 1,  1), Cell( 0,  1), Cell(-1,  1),
+					Cell(-1,  0), Cell(-1, -1), Cell( 0, -1), Cell( 1, -1)
+				};
+
+				Cell pos = base_cell + place_offset + scan_offsets[facing];
+
+				if (trial == 1) {
+					pos = Adjacent_Cell(pos, Facing_Sub(facing, FACING_COUNT / 2));
+					spacing -= Rule->AIBaseSpacing;
+				}
+
+				for (int attempt = 0; attempt < 3; attempt++) {
+					int h = height + 2 * spacing;
+					int w = width + 2 * spacing;
+					int y = pos.Y - spacing;
+					int x = pos.X - spacing;
+					Rect rect(x, y, w, h);
+
+					if (Map.IsAreaFree(rect, HeapID)) {
+						if (buildingtype->Legal_Placement(pos, this)) {
+							if (abs(base_height - Map[pos].Height) < 3 && FUN_0050B760(buildingtype, pos)) {
+								return(pos);
+							}
+						}
+					}
+
+					pos += step_offsets[facing];
+				}
+				trial++;
+			} while (trial < 2);
+		}
+	}
+
+	return(Cell(0, 0));
 }
 
-// FUNCTION: GAMEMD 0x00506B80
-void FUN_00506B80(void)
-{
-}
+// SYNTHETIC: GAMEMD 0x00506B70 SYMBOL
+// _$E206
+
+// SYNTHETIC: GAMEMD 0x00506B80 SYMBOL
+// _$E205
 
 // FUNCTION: GAMEMD 0x00506B90
 Cell HouseClass::Where_To_Place_Upgrade(BuildingTypeClass const * upgrade) const
@@ -8051,42 +8543,10 @@ template class VectorClass<ScoutStruct>;
 // TEMPLATE: GAMEMD 0x00510820
 // ?Delete_Index@?$DynamicVectorClass@PAVHouseClass@@@@QAE_NH@Z
 template class DynamicVectorClass<HouseClass *>;
-// FUNCTION: GAMEMD 0x00510860
-// BasePlanningCellContainer::AddCapacity
-bool BasePlanningCellContainer::AddCapacity(int additional)
-{
-	if (additional >= 0) {
-		int newcap = Capacity + additional;
-		BasePlanningCell * items = new BasePlanningCell[newcap];
-		if (items) {
-			int last = newcap - 1;
-			for (; last >= 0; last--) {
-			}
-			for (int i = 0; i < Count; i++) {
-				items[i] = Items[i];
-			}
-			delete Items;
-			Items = items;
-			Capacity += additional;
-			Unknown_10 = 0;
-			return true;
-		}
-	}
-	return false;
-}
-
-// FUNCTION: GAMEMD 0x005108F0
-// BasePlanningCellContainer::Comparator
-int __cdecl BasePlanningCellContainer::Comparator(const void * a, const void * b)
-{
-	int wa = ((BasePlanningCell const *)a)->Weight;
-	int wb = ((BasePlanningCell const *)b)->Weight;
-	if (wa == wb) {
-		return 0;
-	}
-	return (wa < wb) ? -1 : 1;
-}
-
+// TEMPLATE: GAMEMD 0x00510860
+// ?Increase_Table_Size@?$IndexClass@HVCell@@@@AAE_NH@Z
+// TEMPLATE: GAMEMD 0x005108F0
+// ?search_compfunc@?$IndexClass@HVCell@@@@CAHPBX0@Z
 // TEMPLATE: GAMEMD 0x00510920
 // ??0?$VectorClass@_N@@QAE@HPB_N@Z
 template class VectorClass<bool>;

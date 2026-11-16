@@ -757,6 +757,58 @@ int PlanningNodeClass::Find_Branch(TechnoClass * techno)
 	return -1;
 }
 
+static inline void Find_Loop_Branch(PlanningNodeClass * node)
+{
+	node->LoopBranchIndex = -1;
+	if (node->LoopBranch.Get_Count()) {
+		EventClass self = node->LoopBranch.Get_Event();
+		int branches = node->PlanningBranches.Count();
+		for (int b = 0; b < branches; b++) {
+			EventClass other = node->PlanningBranches[b]->Get_Event();
+			Coord a = FUN_00633BC0(self);
+			Coord c = FUN_00633BC0(other);
+			if (a == c) {
+				node->LoopBranchIndex = b;
+				return;
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00634E10
+int PlanningNodeClass::FUN_00634E10(PlanningMemberClass * member)
+{
+	TechnoClass * owner = member->Get_Owner();
+	int index = Find_Branch(owner);
+	if (index == -1) {
+		PlanningNodeClass * previous = Prev_Node(owner);
+		PlanningNodeClass * last = owner->FUN_00705D20()->Last_Node();
+		if (previous == last) {
+			member->Set_Branch(-1);
+			return -1;
+		}
+		EventClass event = previous->Get_Event_For(owner);
+		PlanningBranchClass * branch = new PlanningBranchClass;
+		branch->Set_Event(event);
+		branch->Inc_Count();
+		PlanningBranches.Add(branch);
+		int count = PlanningBranches.Count() - 1;
+		if (Is_Loop_Alone()) {
+			Find_Loop_Branch(this);
+		}
+		Reset_Colors(false);
+		member->Set_Branch(count);
+		return count;
+	} else {
+		PlanningBranchClass * branch = PlanningBranches[index];
+		branch->Set_Color(-1);
+		Reset_Colors(false);
+		branch->Inc_Count();
+		member->Set_Branch(index);
+		return index;
+	}
+}
+
 // FUNCTION: GAMEMD 0x00635060
 void PlanningNodeClass::Detach(PlanningMemberClass * member)
 {
@@ -811,24 +863,7 @@ void PlanningNodeClass::Deactivate(PlanningMemberClass * member)
 // FUNCTION: GAMEMD 0x00635210
 void PlanningNodeClass::Locate_Loop_Branch(void)
 {
-	LoopBranchIndex = -1;
-	if (LoopBranch.Get_Count()) {
-		EventClass self = LoopBranch.Get_Event();
-		int branches = PlanningBranches.Count();
-		int b = 0;
-		if (branches > 0) {
-			do {
-				EventClass other = PlanningBranches[b]->Get_Event();
-				Coord a = FUN_00633BC0(self);
-				Coord c = FUN_00633BC0(other);
-				if (a == c) {
-					LoopBranchIndex = b;
-					return;
-				}
-				b++;
-			} while (b < branches);
-		}
-	}
+	Find_Loop_Branch(this);
 }
 
 // FUNCTION: GAMEMD 0x006352D0
