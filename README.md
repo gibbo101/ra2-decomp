@@ -12,7 +12,7 @@ over real objects or hard-coded addresses are rejected however well they score.
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
 **Status (16 November 2026):** 3.36 MB of the game's 3.82 MB of code matches byte for byte
-(88%), in 19,125 of its 19,353 functions (99%). Counting each unmatched function at its best
+(88%), in 19,135 of its 19,353 functions (99%). Counting each unmatched function at its best
 attempt so far, the fuzzy match is 96%. Each function is checked on its own, and
 `tools/exelink/` links the whole executable with every matched function at its original
 address: with the original's bytes for what isn't matched yet, the image is identical to
@@ -44,7 +44,8 @@ https://bytematch.dev/gibbo101/ra2-decomp
    uv run tools/checkall.py                       # the whole tree
    ```
 
-   Each function prints MATCH, or how close it came and why.
+   Each function prints MATCH, or how close it came and why. A near miss prints a diff
+   with two lines of context; `CHECK_CTX=40` before the command widens it.
 
 ## Layout
 

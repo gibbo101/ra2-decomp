@@ -81,6 +81,8 @@ effect, so it can be fixed in a separate build later.
   frame bound uses an unsigned comparison after subtracting the first glyph. Characters
   whose OEM byte gives a negative signed offset can therefore select a negative shape frame.
 
+- **Wait_For_Players (0x00648710).** Command-stall statistics use the frame-stall index instead of the command-stall index.
+
 - **BulletClass::Unlimbo (0x00468670).** For an invisible projectile with no
   Firestorm intercept, the trajectory-obstacle branch sets the projectile's
   position to the obstacle coordinate, but the unconditional setter call at

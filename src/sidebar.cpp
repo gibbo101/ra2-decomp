@@ -1527,6 +1527,289 @@ void SidebarClass::StripClass::SelectClass::Set_Owner(StripClass & strip, int in
 
 extern bool UserInputLocked;
 
+// FUNCTION: GAMEMD 0x006AAD00
+// SidebarClass::StripClass::SelectClass::Action
+int SidebarClass::StripClass::SelectClass::Action(
+	unsigned flags, KeyNumType &key, int modifier)
+{
+	if (Strip == 0) {
+		return 1;
+	}
+
+	TechnoTypeClass const *choice = 0;
+	int spc = -1;
+
+	int index = Strip->TopIndex * 2 + Index;
+	RTTIType kind = Strip->Buildables[index].BuildableType;
+	int id = Strip->Buildables[index].BuildableID;
+	int arg = Strip->Buildables[index].IsAlt;
+	FactoryClass *factory = Strip->Buildables[index].Factory;
+
+	Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
+	bool multiple = (modifier & 1) != 0;
+
+	if (index < Strip->BuildableCount) {
+		if (kind != RTTI_SPECIAL) {
+			choice = Fetch_Techno_Type(kind, id);
+		} else {
+			spc = id;
+		}
+	}
+
+	if (spc != -1) {
+		if (flags & LEFTUP) {
+			flags &= ~LEFTUP;
+		}
+		if (flags & RIGHTPRESS) {
+			Map.IsTargettingMode = SUPER_NONE;
+		}
+		if (flags & LEFTPRESS) {
+			if ((unsigned)spc < (unsigned)PlayerPtr->SuperWeapon.Count()) {
+				VocClass::PlayGlobal(Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+				SuperClass *super = PlayerPtr->SuperWeapon[spc];
+				if (super->CanFire()) {
+					if (PlayerPtr->SuperWeapon[spc]->Class->Action == ACTION_NONE) {
+						Cell cell;
+						cell.X = 0;
+						cell.Y = 0;
+						OutList.Add(EventClass(
+							PlayerPtr->HeapID, EventClass::SPECIAL_PLACE,
+							PlayerPtr->SuperWeapon[spc]->Class->HeapID, cell));
+					} else {
+						Map.PendingObjectPtr = 0;
+						Map.PendingObject = 0;
+						Map.PendingHouse = HOUSE_NONE;
+						Map.SetActiveFoundation(NULL);
+						Map.Repair_Mode_Control(0);
+						Map.Sell_Mode_Control(0);
+						Map.IsPowerMode = false;
+						Map.IsWaypointMode = false;
+						Map.PlaceBeaconMode = false;
+						Map.IsTargettingMode = SuperWeaponType(spc);
+						Unselect_All();
+						VoxClass::Play("EVA_SelectTarget", -1, -1);
+					}
+				} else {
+					super->Impatient_Click();
+				}
+			}
+		}
+	} else if (choice != 0) {
+		if (flags & LEFTUP) {
+			flags &= ~LEFTUP;
+		}
+
+		if (flags & RIGHTPRESS) {
+			if (factory != 0) {
+				if (Map.PendingObjectPtr
+					&& Dynamic_Cast<TechnoClass *>(Map.PendingObjectPtr)) {
+					Map.PendingObjectPtr = 0;
+					Map.PendingObject = 0;
+					Map.PendingHouse = HOUSE_NONE;
+					Map.SetActiveFoundation(NULL);
+				}
+				if (!factory->Is_Building()) {
+					VocClass::PlayGlobal(
+						Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+					VoxClass::Play("EVA_Canceled", -1, -1);
+					if (multiple) {
+						OutList.Add(EventClass(
+							PlayerPtr->HeapID, EventClass::ABANDON_ALL,
+							kind, id, choice->Naval));
+					} else {
+						OutList.Add(EventClass(
+							PlayerPtr->HeapID, EventClass::ABANDON,
+							kind, id, choice->Naval));
+					}
+				} else {
+					VocClass::PlayGlobal(
+						Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+					VoxClass::Play("EVA_OnHold", -1, -1);
+					OutList.Add(EventClass(
+						PlayerPtr->HeapID, EventClass::SUSPEND,
+						kind, id, choice->Naval));
+					Map.Column[Strip->ID].IsToRedraw = true;
+				}
+			} else {
+				if (Strip->Buildables[index].unknown_10 == 1) {
+					Strip->Buildables[index].unknown_10 = 2;
+					Strip->Flag_To_Redraw();
+					VocClass::PlayGlobal(
+						Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+					VoxClass::Play("EVA_OnHold", -1, -1);
+					OutList.Add(EventClass(
+						PlayerPtr->HeapID, EventClass::SUSPEND,
+						kind, id, choice->Naval));
+				}
+				FactoryClass *fptr =
+					PlayerPtr->Fetch_Factory(kind, choice->Naval, arg);
+				if (fptr != 0 && fptr->Is_Queued(choice)) {
+					VocClass::PlayGlobal(
+						Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+					if (multiple) {
+						OutList.Add(EventClass(
+							PlayerPtr->HeapID, EventClass::ABANDON_ALL,
+							kind, id, choice->Naval));
+					} else {
+						OutList.Add(EventClass(
+							PlayerPtr->HeapID, EventClass::ABANDON,
+							kind, id, choice->Naval));
+					}
+				}
+			}
+		}
+
+		if (flags & LEFTPRESS) {
+			if (factory != 0 && (!factory->Is_Building())) {
+				if (factory->Has_Completed()) {
+					TechnoClass *pending =
+						factory->Get_Object();
+					if (!pending) {
+						if (factory->Get_Special_Item() != -1) {
+							Map.IsTargettingMode = SUPER_ANY;
+						}
+					} else {
+						VocClass::PlayGlobal(
+							Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+						BuildingClass *builder =
+							pending->Who_Can_Build_Me(false, false);
+						if (!builder) {
+							OutList.Add(EventClass(
+								pending->Owner(), EventClass::ABANDON,
+								kind, id, choice->Naval));
+							VoxClass::Play("EVA_UnableToComply", -1, -1);
+						} else if (pending->Fetch_RTTI() == RTTI_BUILDING) {
+							PlayerPtr->Manual_Place(
+								builder, (BuildingClass *)pending);
+						} else {
+							OutList.Add(EventClass(
+								pending->Owner(), EventClass::PLACE,
+								kind, -1, choice->Naval, CELL_NONE));
+						}
+					}
+				} else {
+					VocClass::PlayGlobal(
+						Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+					if (kind == RTTI_INFANTRYTYPE) {
+						VoxClass::Play("EVA_Training", -1, -1);
+					} else {
+						VoxClass::Play("EVA_Building", -1, -1);
+					}
+					TechnoTypeClass const *type = Fetch_Techno_Type(
+						Strip->Buildables[index].BuildableType,
+						Strip->Buildables[index].BuildableID);
+					bool naval = type && type->Naval;
+					PlayerPtr->FUN_005005B0(kind, choice->Naval, arg);
+					OutList.Add(EventClass(
+						PlayerPtr->HeapID, EventClass::PRODUCE,
+						Strip->Buildables[index].BuildableType,
+						Strip->Buildables[index].BuildableID, naval));
+					Strip->Buildables[index].unknown_10 = 1;
+					Strip->Buildables[index].Progress.Set_Stage(
+						Strip->FUN_006A94F0(index));
+					int rate = factory->Build_Rate();
+					Strip->Buildables[index].Progress.Set_Rate(rate + 1);
+					Strip->Flag_To_Redraw();
+					Map.IsForceCompleteRedraw = true;
+				}
+			} else {
+				factory = PlayerPtr->Fetch_Factory(
+					kind, choice->Naval, arg);
+				TechnoTypeClass const *type = Fetch_Techno_Type(
+					Strip->Buildables[index].BuildableType,
+					Strip->Buildables[index].BuildableID);
+				bool naval = type && type->Naval;
+				bool limited = PlayerPtr->FUN_0050B370(type);
+				bool busy;
+				bool produce = false;
+				if (factory != 0
+					&& (factory->Is_Building()
+						|| factory->Has_Production_Target())) {
+					busy = true;
+					if (kind == RTTI_BUILDINGTYPE) {
+						VoxClass::Play("EVA_UnableToComply", -1, -1);
+					} else {
+						produce = true;
+					}
+				} else {
+					busy = false;
+					if (kind == RTTI_INFANTRYTYPE) {
+						if (!limited) {
+							VoxClass::Play("EVA_Training", -1, -1);
+						}
+					} else {
+						if (!limited) {
+							VoxClass::Play("EVA_Building", -1, -1);
+						}
+					}
+					produce = true;
+				}
+
+				if (produce) {
+					unsigned char queued =
+						PlayerPtr->FUN_00500700(kind, choice->Naval, arg);
+					bool started = false;
+					if (!limited) {
+						VocClass::PlayGlobal(
+							Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+						if (factory == 0 && !queued) {
+							PlayerPtr->FUN_005005B0(kind, choice->Naval, arg);
+							started = true;
+						}
+						OutList.Add(EventClass(
+							PlayerPtr->HeapID, EventClass::PRODUCE,
+							Strip->Buildables[index].BuildableType,
+							Strip->Buildables[index].BuildableID, naval));
+					}
+					if (started || !queued) {
+						if (!busy && !limited) {
+							Strip->Buildables[index].unknown_10 = 1;
+							Strip->Flag_To_Redraw();
+							TechnoTypeClass const *tech = Fetch_Techno_Type(
+								kind, Strip->Buildables[index].BuildableID);
+							if (tech) {
+								int ahead = Session.MaxAhead;
+								if (PlayerPtr->Available_Money()
+										>= tech->Cost_Of(PlayerPtr) * ahead / 54
+									&& tech->Who_Can_Build_Me(
+										true, false, false,
+										PlayerPtr)) {
+									int time = tech->Time_To_Build();
+									if (tech->Fetch_RTTI() == RTTI_BUILDINGTYPE
+										&& ((BuildingTypeClass const *)tech)->IsWall) {
+										time = time
+											* Rule->WallBuildSpeedCoefficient;
+									}
+									int least = ahead + 15;
+									if (time <= least) {
+										time = least;
+									}
+									int steps = time / 54;
+									if (steps * 54 < least) {
+										steps++;
+									}
+									if (steps < 1) {
+										steps = 1;
+									} else if (steps > 255) {
+										steps = 255;
+									}
+									Strip->Buildables[index].Progress.Set_Stage(0);
+									Strip->Buildables[index].Progress.Set_Rate(steps);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	} else {
+		flags = 0;
+	}
+
+	ControlClass::Action(flags, key, 0);
+	return 1;
+}
+
 // FUNCTION: GAMEMD 0x006AB990
 void SidebarClass::StripClass::SelectClass::OnMouseEnter(void)
 {

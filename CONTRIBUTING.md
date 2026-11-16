@@ -12,7 +12,8 @@ new features, refactors or ports at this time.
 2. Claim what you will work on with a comment on that issue giving its address range,
    such as `0x00401000-0x0040AD89` (`data/modules.csv` lists each module's first and last
    address). Our batch tools skip claimed functions and every function in an open pull
-   request.
+   request. To hand work back, comment "Releasing" with the addresses, or with a link to
+   the claim comment you are releasing.
 3. Read `docs/AGENTS.md`: what counts as a match, and what does not (no inline asm,
    hard-coded addresses, stand-in structs or casts over real objects to force one).
 4. Turn on the commit guard (`docs/COMMIT_GUARD.md`).
