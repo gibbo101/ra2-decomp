@@ -10528,6 +10528,7 @@ address,name,result,size,source,symbol
 0x00606800,FUN_00606800,MATCH,2496,src/ownrdraw.cpp,?FUN_00606800@@YGHPAUHWND__@@J@Z
 0x006071C0,FUN_006071C0,MATCH,15,src/ownrdraw.cpp,?FUN_006071C0@@YIHPAUHWND__@@@Z
 0x006071D0,FUN_006071D0,MATCH,15,src/ownrdraw.cpp,?FUN_006071D0@@YIHPAUHWND__@@@Z
+0x006071E0,OwnerDraw::DrawCampaignMenuTransition,MATCH,3553,src/ownrdraw.cpp,?DrawCampaignMenuTransition@OwnerDraw@@YIXPAUHWND__@@_N@Z
 0x00607FD0,FUN_00607FD0,MATCH,155,src/ownrdraw.cpp,?FUN_00607FD0@@YIXPAUHWND__@@@Z
 0x00608070,WS_Save_Dialog_Values,MATCH,496,src/ownrdraw.cpp,?WS_Save_Dialog_Values@@YI_NPAUHWND__@@@Z
 0x00608260,RunOpenAnimationIfNeeded,MATCH,273,src/ownrdraw.cpp,?RunOpenAnimationIfNeeded@@YI_NPAUHWND__@@@Z
