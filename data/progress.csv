@@ -1223,6 +1223,7 @@ address,name,result,size,source,symbol
 0x004308B0,BeaconClass::VisibleToPlayer,MATCH,94,src/beacon.cpp,?VisibleToPlayer@BeaconClass@@QBE_NXZ
 0x004309D0,BeaconManagerClass::LoadArt,MATCH,235,src/beacon.cpp,?LoadArt@BeaconManagerClass@@QAEXXZ
 0x00430AC0,BeaconManagerClass::Draw,MATCH,212,src/beacon.cpp,?Draw@BeaconManagerClass@@QAEXPAVSurface@@V?$TRect@H@@@Z
+0x00430BA0,BeaconManagerClass::PlaceBeacon,MATCH,909,src/beacon.cpp,?PlaceBeacon@BeaconManagerClass@@QAEXHVCoord@@H@Z
 0x00430F30,BeaconManagerClass::CanPlaceBeacon,MATCH,36,src/beacon.cpp,?CanPlaceBeacon@BeaconManagerClass@@QAE_NH@Z
 0x00430F60,FUN_00430F60,MATCH,16,src/beacon.cpp,?FUN_00430F60@@YG?AVPoint2D@@XZ
 0x00430F70,BeaconManagerClass::SelectBeacon,MATCH,237,src/beacon.cpp,?SelectBeacon@BeaconManagerClass@@QAE_NVCoord@@@Z

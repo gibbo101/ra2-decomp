@@ -1584,6 +1584,7 @@ address,size,symbol,source,sha256
 0x00430980,67,?Reset@BeaconManagerClass@@QAEXXZ,src/beacon.cpp,b846f00e17cd9dde3b9f1de73d79dec70bb349f4c106fb5f677e52b36563f767
 0x004309D0,235,?LoadArt@BeaconManagerClass@@QAEXXZ,src/beacon.cpp,e34af90a98689c90bbab635586be93721ff3aea41fb9019ee0d2a626ae1f89c4
 0x00430AC0,212,?Draw@BeaconManagerClass@@QAEXPAVSurface@@V?$TRect@H@@@Z,src/beacon.cpp,67a62733e21e7094f64bf1afc814e9e62e6bfa6f3110df6c3233b999510885b8
+0x00430BA0,909,?PlaceBeacon@BeaconManagerClass@@QAEXHVCoord@@H@Z,src/beacon.cpp,ef83a7321e61302e1a2de2693c109d14f243dfd1538df96a3f4728eed5d05b03
 0x00430F30,36,?CanPlaceBeacon@BeaconManagerClass@@QAE_NH@Z,src/beacon.cpp,ecafe24509421b0bd6eb38049004b5986e36db710032ce78e335c34d17837fdd
 0x00430F60,16,?FUN_00430F60@@YG?AVPoint2D@@XZ,src/beacon.cpp,2fcff88854b5e465e3a75987703c240e256ad79b2ef7835ac39a1008a09644a5
 0x00430F70,237,?SelectBeacon@BeaconManagerClass@@QAE_NVCoord@@@Z,src/beacon.cpp,a98159d3f345d4bc3ac12a1aa2081b63d2d0c053d9c71a5d0b9409820d32e658
