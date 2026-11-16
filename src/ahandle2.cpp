@@ -106,8 +106,7 @@ int AircraftTrackerClass::GetVectorIndex(Cell pos)
 void AircraftTrackerClass::FillCurrentVector(CellClass *cell, int radius)
 {
 	radius = MAX(radius, 1);
-	Cell center;
-	center = Target_Cell(cell);
+	Cell center = Target_Cell(cell);
 	int index = GetVectorIndex(center);
 	FUN_004129C0(index);
 
@@ -118,39 +117,38 @@ void AircraftTrackerClass::FillCurrentVector(CellClass *cell, int radius)
 
 	Cell edge = center;
 	edge.X += radius;
-	int bin = GetVectorIndex(edge);
-	while (bin != index) {
+	for (int right_bin = GetVectorIndex(edge);
+	     right_bin != index;
+	     right_bin = FUN_00412A40(right_bin, Point2D(-1, 0))) {
 		right++;
-		FUN_004129C0(bin);
-		bin = FUN_00412A40(bin, Point2D(-1, 0));
+		FUN_004129C0(right_bin);
 	}
 
 	edge = center;
 	edge.Y -= radius;
-	bin = GetVectorIndex(edge);
-	while (bin != index) {
+	for (int up_bin = GetVectorIndex(edge);
+	     up_bin != index;
+	     up_bin = FUN_00412A40(up_bin, Point2D(0, 1))) {
 		up++;
-		FUN_004129C0(bin);
-		bin = FUN_00412A40(bin, Point2D(0, 1));
+		FUN_004129C0(up_bin);
 	}
 
-	int south_y = center.Y + radius;
 	edge = center;
-	edge.Y = south_y;
-	bin = GetVectorIndex(edge);
-	while (bin != index) {
+	edge.Y += radius;
+	for (int down_bin = GetVectorIndex(edge);
+	     down_bin != index;
+	     down_bin = FUN_00412A40(down_bin, Point2D(0, -1))) {
 		down++;
-		FUN_004129C0(bin);
-		bin = FUN_00412A40(bin, Point2D(0, -1));
+		FUN_004129C0(down_bin);
 	}
 
 	edge = center;
 	edge.X -= radius;
-	bin = GetVectorIndex(edge);
-	while (bin != index) {
+	for (int left_bin = GetVectorIndex(edge);
+	     left_bin != index;
+	     left_bin = FUN_00412A40(left_bin, Point2D(1, 0))) {
 		left++;
-		FUN_004129C0(bin);
-		bin = FUN_00412A40(bin, Point2D(1, 0));
+		FUN_004129C0(left_bin);
 	}
 
 	if (up && left) {
