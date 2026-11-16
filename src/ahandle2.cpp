@@ -59,6 +59,7 @@ AircraftTrackerClass AircraftTracker;
 
 #include "swizzle.h"
 #include "cell.h"
+#include "targetcell.h"
 #include "_map.h"
 
 void __cdecl FUN_004068E0(char const * text, ...);
@@ -99,6 +100,111 @@ int AircraftTrackerClass::GetVectorIndex(Cell pos)
 	int qy = y / (Map.MapRect.Height / 20);
 	int cy = (qy > 19) ? 19 : qy;
 	return cx + cy * 20;
+}
+
+// FUNCTION: GAMEMD 0x00412B40
+void AircraftTrackerClass::FillCurrentVector(CellClass *cell, int radius)
+{
+	radius = MAX(radius, 1);
+	Cell center;
+	center = Target_Cell(cell);
+	int index = GetVectorIndex(center);
+	FUN_004129C0(index);
+
+	int up = 0;
+	int down = 0;
+	int right = 0;
+	int left = 0;
+
+	Cell edge = center;
+	edge.X += radius;
+	int bin = GetVectorIndex(edge);
+	while (bin != index) {
+		right++;
+		FUN_004129C0(bin);
+		bin = FUN_00412A40(bin, Point2D(-1, 0));
+	}
+
+	edge = center;
+	edge.Y -= radius;
+	bin = GetVectorIndex(edge);
+	while (bin != index) {
+		up++;
+		FUN_004129C0(bin);
+		bin = FUN_00412A40(bin, Point2D(0, 1));
+	}
+
+	int south_y = center.Y + radius;
+	edge = center;
+	edge.Y = south_y;
+	bin = GetVectorIndex(edge);
+	while (bin != index) {
+		down++;
+		FUN_004129C0(bin);
+		bin = FUN_00412A40(bin, Point2D(0, -1));
+	}
+
+	edge = center;
+	edge.X -= radius;
+	bin = GetVectorIndex(edge);
+	while (bin != index) {
+		left++;
+		FUN_004129C0(bin);
+		bin = FUN_00412A40(bin, Point2D(1, 0));
+	}
+
+	if (up && left) {
+		for (int i = MIN(up, left), bin = index; i > 0; i--) {
+			bin = FUN_00412A40(bin, Point2D(-1, -1));
+			FUN_004129C0(bin);
+		}
+		if (up >= 2 && left >= 2) {
+			FUN_004129C0(FUN_00412A40(index, Point2D(-2, -1)));
+			FUN_004129C0(FUN_00412A40(index, Point2D(-1, -2)));
+		}
+	}
+
+	if (down && left) {
+		for (int i = MIN(down, left), bin = index; i > 0; i--) {
+			bin = FUN_00412A40(bin, Point2D(-1, 1));
+			FUN_004129C0(bin);
+		}
+		if (down >= 2 && left >= 2) {
+			int side;
+			side = FUN_00412A40(index, Point2D(-2, 1));
+			FUN_004129C0(side);
+			side = FUN_00412A40(index, Point2D(-1, 2));
+			FUN_004129C0(side);
+		}
+	}
+
+	if (up && right) {
+		for (int i = MIN(up, right), bin = index; i > 0; i--) {
+			bin = FUN_00412A40(bin, Point2D(1, -1));
+			FUN_004129C0(bin);
+		}
+		if (up >= 2 && right >= 2) {
+			int side;
+			side = FUN_00412A40(index, Point2D(2, -1));
+			FUN_004129C0(side);
+			side = FUN_00412A40(index, Point2D(1, -2));
+			FUN_004129C0(side);
+		}
+	}
+
+	if (down && right) {
+		for (int i = MIN(down, right), bin = index; i > 0; i--) {
+			bin = FUN_00412A40(bin, Point2D(1, 1));
+			FUN_004129C0(bin);
+		}
+		if (down >= 2 && right >= 2) {
+			int side;
+			side = FUN_00412A40(index, Point2D(2, 1));
+			FUN_004129C0(side);
+			side = FUN_00412A40(index, Point2D(1, 2));
+			FUN_004129C0(side);
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x00413490
