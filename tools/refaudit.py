@@ -33,6 +33,7 @@ def collect(objects):
         else:
             raw = saved.read(path)
         obj = check.CoffObject(raw)
+        check.mark_asm_object_starts(src, obj)
         local, dup = check.bind_annotations(orig, obj, raw, src)
         if dup:
             raise ValueError("\n".join(dup))

@@ -1726,6 +1726,58 @@ Cell const * BuildingTypeClass::Exit_List(void) const
 	return(ExitLists[size]);
 }
 
+// FUNCTION: GAMEMD 0x00465570
+Rect BuildingTypeClass::Get_Draw_Rect(void)
+{
+	int i;
+
+	if (DrawRect != RECT_NONE) {
+		return(DrawRect);
+	}
+
+	SHPStruct const * shape = (SHPStruct const *)Get_Image_Data();
+	if (shape == NULL) {
+		return(RECT_NONE);
+	}
+
+	int frames = shape->Get_Count();
+	Rect rect = RECT_NONE;
+	int width = shape->Get_Width();
+	int height = shape->Get_Height();
+
+	for (i = 0; i < frames; i++) {
+		rect = Union(rect, shape->GetFrameBounds(i));
+	}
+
+	bool free_buildup = (BuildupData == NULL);
+	shape = (SHPStruct const *)Get_Buildup_Data();
+
+	if (shape != NULL) {
+		frames = shape->Get_Count();
+		for (i = 0; i < frames; i++) {
+			rect = Union(rect, shape->GetFrameBounds(i));
+		}
+		if (free_buildup) {
+			Free_Buildup_Data();
+		}
+	}
+
+	if (BibShape != NULL) {
+		Rect bibrect = ((SHPStruct const *)BibShape)->GetFrameBounds(0);
+		rect = Union(rect, bibrect);
+	}
+
+	int x = rect.X - width / 2;
+	int y = rect.Y - height / 2;
+	Rect drawrect;
+	drawrect.X = x;
+	drawrect.Y = y;
+	drawrect.Width = rect.Width;
+	drawrect.Height = rect.Height;
+	DrawRect = drawrect;
+	return(DrawRect);
+}
+
 // FUNCTION: GAMEMD 0x00465910
 bool BuildingTypeClass::CanUseWaypoint(void) const
 {

@@ -9,7 +9,7 @@
 #include "rect.h"
 
 class MixFileClass;
-class DSurface;
+class BSurface;
 class SHPStruct;
 class Surface;
 
@@ -40,8 +40,8 @@ class LoadProgressManager : public INoticeSink
 		Rect TitleBarRect;
 		Rect LoadBarSHPRect;
 		Rect LoadScreenSHPRect;
-		wchar_t * LoadMessage;
-		wchar_t * LoadBriefing;
+		wchar_t const * LoadMessage;
+		wchar_t const * LoadBriefing;
 		SHPStruct * TitleBarSHP;
 		SHPStruct * LoadScreenSHP;
 		SHPStruct * LoadBarSHP;
@@ -51,5 +51,5 @@ class LoadProgressManager : public INoticeSink
 		int Field54;
 		int Field58;
 		int Field5C;
-		DSurface * ProgressSurface;
+		BSurface * ProgressSurface;
 };

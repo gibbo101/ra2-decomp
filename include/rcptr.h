@@ -44,7 +44,7 @@ class rc_ptr : public rc_ptr_base
 		T * operator->(void) const
 		{
 			// Empty handles are valid; a pointee must have an owning reference.
-			if (Ptr != NULL) {
+			if (Get() != NULL) {
 #ifdef _DEBUG
 				assert(Ptr->RefCount > 0);
 #endif
