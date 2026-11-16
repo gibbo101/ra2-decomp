@@ -143,6 +143,22 @@ void FUN_00752340(void)
 	}
 }
 
+static inline VoxClass * Release_Vox_Node(VoxNode * node, bool cancel, int * type = NULL, int * priority = NULL)
+{
+	VoxClass * vox = node->Vox;
+	if (cancel) {
+		vox->State = 2;
+	}
+	if (type != NULL) {
+		*type = node->Type;
+	}
+	if (priority != NULL) {
+		*priority = node->Priority;
+	}
+	delete node;
+	return vox;
+}
+
 // FUNCTION: GAMEMD 0x00752370
 void FUN_00752370(void)
 {
@@ -157,19 +173,16 @@ void FUN_00752370(void)
 	VoxNode * node;
 	while ((node = (VoxNode *)DAT_00B1D3F0.FUN_004073C0()) != NULL) {
 		node->FUN_00407450();
-		node->Vox->State = 2;
-		delete node;
+		Release_Vox_Node(node, true);
 	}
 	while ((node = (VoxNode *)DAT_00B1D3C8.FUN_004073C0()) != NULL) {
 		node->FUN_00407450();
-		node->Vox->State = 2;
-		delete node;
+		Release_Vox_Node(node, true);
 	}
 	for (int i = 0; i < 4; i++) {
 		while ((node = (VoxNode *)DAT_00B1D450[i].FUN_004073C0()) != NULL) {
 			node->FUN_00407450();
-			node->Vox->State = 2;
-			delete node;
+			Release_Vox_Node(node, true);
 		}
 	}
 }
@@ -199,8 +212,7 @@ void VoxClass::PlayIndex(int index, int a, int b)
 				VoxNode * node;
 				while ((node = (VoxNode *)DAT_00B1D3C8.FUN_004073C0()) != NULL) {
 					node->FUN_00407450();
-					node->Vox->State = 2;
-					delete node;
+					Release_Vox_Node(node, true);
 				}
 				if (DAT_00B1D4C4) {
 					DAT_00B1D4C4->State = 2;
@@ -299,6 +311,68 @@ void VoxClass::Play(char const * name, int a, int b)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00752760
+void FUN_00752760(void)
+{
+	if (DAT_00A8ED64 || !FUN_00407000() || !DAT_00B1D4CC || DAT_00B1D4CC->FUN_00408070()) {
+		return;
+	}
+	if (FUN_004093B0() <= DAT_00B1D4D0 + DAT_00B1D4CC->FUN_00408140() || DAT_00B1D428) {
+		return;
+	}
+	if (DAT_00B1D4C4) {
+		DAT_00B1D4C4->State = 2;
+		DAT_00B1D4C4 = NULL;
+	}
+	int type = 0;
+	int priority = 0;
+	VoxNode * node = (VoxNode *)DAT_00B1D3C8.FUN_004073C0();
+	if (node) {
+		node->FUN_00407450();
+		if (DAT_00B1D4B8) {
+			delete DAT_00B1D4B8;
+			DAT_00B1D4B8 = NULL;
+		}
+	} else {
+		node = (VoxNode *)DAT_00B1D3F0.FUN_004073C0();
+		if (node) {
+			node->FUN_00407450();
+			if (DAT_00B1D4B8) {
+				delete DAT_00B1D4B8;
+				DAT_00B1D4B8 = NULL;
+			}
+		} else if (DAT_00B1D4B8) {
+			node = DAT_00B1D4B8;
+			DAT_00B1D4B8 = NULL;
+		} else {
+			for (int i = 3; i >= 0; --i) {
+				node = (VoxNode *)DAT_00B1D450[i].FUN_004073C0();
+				if (node) {
+					node->FUN_00407450();
+					break;
+				}
+			}
+		}
+	}
+	VoxClass * vox = NULL;
+	if (node) {
+		vox = Release_Vox_Node(node, false, &type, &priority);
+	}
+	if (vox) {
+		vox->State = 2;
+		char name[256];
+		strcpy(name, vox->GetFilename());
+		strcat(name, ".WAV");
+		if (FUN_00407B60(DAT_00B1D4CC, name, 1)) {
+			DAT_00B1D4D0 = 500;
+			DAT_00B1D4C4 = vox;
+			DAT_00B1D3B8 = type;
+			DAT_00B1D3E0 = priority;
+			vox->State = 0;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x007529A0
 void __fastcall FUN_007529A0(bool clear)
 {
@@ -348,8 +422,7 @@ void VoxClass::SilenceIndex(int index)
 			if (node == DAT_00B1D4B8) {
 				DAT_00B1D4B8 = NULL;
 			}
-			node->Vox->State = 2;
-			delete node;
+			Release_Vox_Node(node, true);
 		}
 	}
 }

@@ -3220,17 +3220,18 @@ void __fastcall OwnerDraw::DrawCampaignMenuTransition(HWND dialog, bool reverse)
 	if (!any) last++;
 
 	// One start step per piece: the button rows, then the button panel, top panel and main screen.
-	int pieces = count + 3;
-	int limit = pieces - 2;
+	const int pieces = count + 3;
+	const int button_panel_index = pieces - 3;
+	const int top_panel_index = pieces - 2;
 	int *order = new int[pieces];
-	int total = count + 3;
+	const int main_screen_index = pieces - 1;
 	int value = 1;
-	for (int i = 0; i < limit; i++) {
+	for (int i = 0; i < top_panel_index; i++) {
 		order[i] = value++;
 	}
-	order[total - 1] = 0;
-	order[limit] = value + 1;
-	order[pieces - 3] = 0;
+	order[main_screen_index] = 0;
+	order[top_panel_index] = value + 1;
+	order[button_panel_index] = 0;
 	int steps;
 	{
 		int last_start = 0;
@@ -3243,7 +3244,7 @@ void __fastcall OwnerDraw::DrawCampaignMenuTransition(HWND dialog, bool reverse)
 	for (int step = 0; step < steps; step++) {
 		if (animate_buttons) {
 			Point2D point = FUN_0072A9C0(&button_panel);
-			int phase = Slide_Phase(step - order[pieces - 3]);
+			int phase = Slide_Phase(step - order[button_panel_index]);
 			if (phase == -1) {
 				Draw_Shape(*AlternateSurface, *drawer, button_panel_shape, reverse ? 6 : 0, point, window, SHAPE_WIN_REL);
 			} else if (phase == -2) {
@@ -3254,7 +3255,7 @@ void __fastcall OwnerDraw::DrawCampaignMenuTransition(HWND dialog, bool reverse)
 		}
 		if (animate_top_panel) {
 			Point2D point = FUN_0072A9C0(&top_panel);
-			int phase = Slide_Phase(step - order[pieces - 2]);
+			int phase = Slide_Phase(step - order[top_panel_index]);
 			if (phase == -1) {
 				Draw_Shape(*AlternateSurface, *drawer, top_background_shape, !reverse, point, window, SHAPE_WIN_REL);
 			} else if (phase == -2) {
@@ -3268,7 +3269,7 @@ void __fastcall OwnerDraw::DrawCampaignMenuTransition(HWND dialog, bool reverse)
 		}
 		if (animate_buttons) {
 			Point2D point = FUN_0072A9C0(&button_panel);
-			int phase = Slide_Phase(step - order[pieces - 3]);
+			int phase = Slide_Phase(step - order[button_panel_index]);
 			if (phase == -2) {
 				if (reverse) {
 					Draw_Shape(*AlternateSurface, *drawer, button_panel_shape, 0, point, window, SHAPE_WIN_REL);
@@ -3313,7 +3314,7 @@ void __fastcall OwnerDraw::DrawCampaignMenuTransition(HWND dialog, bool reverse)
 		}
 		if (animate_main_screen) {
 			Point2D point = FUN_0072A9C0(&main_screen);
-			int phase = Slide_Phase(step - order[total - 1]);
+			int phase = Slide_Phase(step - order[main_screen_index]);
 			if (phase == -1) {
 				if (!reverse) {
 					if (Drawing::RenderWidth >= DAT_007F5BE4) point.X += 0x50;
@@ -4064,13 +4065,8 @@ bool FUN_00609730(HWND dialog, HWND control)
 // FUNCTION: GAMEMD 0x00609AA0
 bool FUN_00609AA0(HWND parent, HWND child)
 {
-	OwnerDraw::WinData *data = NULL;
-
-	if ((GetWindowLong(child, GWL_STYLE) & 0xb) == 0xb) {
-		HWND key = child;
-		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
-			return FUN_00609730(parent, child);
-		}
+	if (Is_Plain_Control(child)) {
+		return FUN_00609730(parent, child);
 	}
 	return false;
 }
@@ -4078,14 +4074,8 @@ bool FUN_00609AA0(HWND parent, HWND child)
 // FUNCTION: GAMEMD 0x00609B30
 bool FUN_00609B30(HWND dialog, HWND control)
 {
-	OwnerDraw::WinData *data = NULL;
-	int type;
-
-	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
-	} else {
-		type = 0;
-	}
+	OwnerDraw::WinData *data = Find_Data(dialog);
+	int type = data ? data->Dialog.DialogID : 0;
 	int id = GetDlgCtrlID(control);
 	if (Is_Owner_Draw_Message(type) && id == 0x695) {
 		return true;
@@ -4207,14 +4197,8 @@ bool FUN_00609E20(HWND dialog, HWND control)
 // FUNCTION: GAMEMD 0x0060A100
 bool FUN_0060A100(HWND dialog, HWND control)
 {
-	OwnerDraw::WinData *data = NULL;
-	int type;
-
-	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
-	} else {
-		type = 0;
-	}
+	OwnerDraw::WinData *data = Find_Data(dialog);
+	int type = data ? data->Dialog.DialogID : 0;
 	int id = GetDlgCtrlID(control);
 	if (type == 0xe2) {
 		return id == 0x71d;
@@ -4354,16 +4338,6 @@ void __fastcall FUN_0060AF40(HWND dialog)
 extern int DAT_007F5BE4;
 extern int DAT_007F5BF0;
 
-inline int Centre_X(int span, bool compact)
-{
-	int offset = 0;
-	if (!compact) {
-		int half = (span - DAT_007F5BE4) / 2;
-		offset = (((span - DAT_007F5BE4) / 2) < 0) ? 0 : half;
-	}
-	return offset;
-}
-
 inline int Centre_Y(int span, bool compact)
 {
 	int offset = 0;
@@ -4375,15 +4349,25 @@ inline int Centre_Y(int span, bool compact)
 }
 
 // FUNCTION: GAMEMD 0x0060AF50
-void __fastcall FUN_0060AF50(HWND window, RECT *rect)
+void __fastcall FUN_0060AF50(HWND window, Rect *rect)
 {
 	HWND parent = GetParent(window);
 	bool compact = FUN_0069BBE0(&Session);
 	RECT frame;
 	GetWindowRect(parent, &frame);
-	int dx = Centre_X(frame.right - frame.left, compact);
-	int tmp0 = Centre_Y(frame.bottom - frame.top, compact);
-	MoveWindow(window, rect->left + dx, rect->top + tmp0, rect->right, rect->bottom, FALSE);
+	int span = frame.right - frame.left;
+	int dx = 0;
+	if (!compact) {
+		int hh = (span - DAT_007F5BE4) / 2;
+		dx = (((span - DAT_007F5BE4) / 2) < 0) ? 0 : hh;
+	}
+	int spanY = frame.bottom - frame.top;
+	int dy = 0;
+	if (!compact) {
+		int hv = (spanY - DAT_007F5BF0) / 2;
+		dy = (((spanY - DAT_007F5BF0) / 2) < 0) ? 0 : hv;
+	}
+	MoveWindow(window, rect->X + dx, rect->Y + dy, rect->Width, rect->Height, FALSE);
 	InvalidateRect(window, NULL, FALSE);
 }
 
@@ -4603,7 +4587,6 @@ void __fastcall FUN_0060B610(HWND window)
 namespace OwnerDraw {
 extern HWND CurrentDialogHwnd;
 }
-BOOL CALLBACK FUN_0060C0C0(HWND window, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x0060B740
 void __fastcall FUN_0060B740(HWND window)
@@ -4658,8 +4641,8 @@ void __fastcall FUN_0060B7A0(HWND window)
 // FUNCTION: GAMEMD 0x0060B880
 bool __fastcall FUN_0060B880(HWND dialog, HWND control)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
-	int type = (data != NULL) ? *(int *)((char *)data + 0x6c) : 0;
+	OwnerDraw::WinData *data = Find_Data(dialog);
+	int type = data ? data->Dialog.DialogID : 0;
 	GetDlgCtrlID(control);
 	if (type == 0xb7 || type == 0x2b4 || type == 0xbbb || type == 0xf5 || type == 0x2b5 || type == 0xb8 ||
 		type == 0xa3 || type == 0xb6 || type == 0x10c || type == 0x73 || type == 0xff || type == 0xea) {
@@ -4680,6 +4663,40 @@ extern int BlueShiftLeft;
 }
 
 void __fastcall FUN_0060B950(HWND window);
+
+// FUNCTION: GAMEMD 0x0060C0C0
+BOOL CALLBACK FUN_0060C0C0(HWND window, LPARAM lparam)
+{
+	HWND parent = GetParent(window);
+	if (OwnerDraw::CurrentDialogHwnd == parent) {
+		Rect rect;
+		rect.X = 0;
+		rect.Y = 0;
+		rect.Width = 0;
+		rect.Height = 0;
+		if (FUN_00608500(parent, window, &rect)) {
+			FUN_0060AF50(window, &rect);
+		} else if (FUN_006096A0(parent, window)) {
+			FUN_0060B000(window, *(Point2D const *)lparam);
+		} else if (FUN_00608CD0(parent, window)) {
+			FUN_0060B1D0(window, *(Point2D const *)lparam);
+		} else if (FUN_00609AA0(parent, window)) {
+			FUN_0060B350(window);
+		} else if (FUN_00609730(parent, window)) {
+			FUN_0060B420(window);
+		} else if (FUN_00609B30(parent, window)) {
+			FUN_0060B550(window);
+		} else if (FUN_0060A100(parent, window)) {
+			FUN_0060B610(window);
+		} else if (FUN_0060B880(parent, window)) {
+			FUN_0060B7A0(window);
+		} else {
+			FUN_0060B740(window);
+		}
+		FUN_0060B950(window);
+	}
+	return TRUE;
+}
 
 namespace OwnerDraw {
 // FUNCTION: GAMEMD 0x0060C4A0
@@ -6610,10 +6627,6 @@ LRESULT CALLBACK OwnerDraw::ProgressHandler(HWND window, UINT message, WPARAM wp
 		}
 	}
 	return 0;
-}
-
-namespace OwnerDraw {
-LRESULT CALLBACK TrackBarHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 }
 
 // FUNCTION: GAMEMD 0x0061D950
