@@ -4,6 +4,12 @@ The source reproduces the game as shipped, bugs included, so these stay until th
 decompilation is finished. Each entry gives the address, what the original does, and its
 effect, so it can be fixed in a separate build later.
 
+- **BulletClass::Unlimbo (0x00468670).** An invisible projectile with no
+  Firestorm intercept checks for a trajectory obstacle. If it finds one, it
+  sets its position to the obstacle’s center at 0x00468966. Both paths then
+  set the position to the intended target at 0x00468986, overwriting the
+  obstacle position before the fuse is armed.
+
 - **HouseClass::AI_Building (0x004FE3E0).** When the AI adds a power plant ahead of a
   building that needs more power, a house whose ActLike is neither 0 nor 2 fills the
   owned list for its prerequisite check with BuildingClass instances instead of their
