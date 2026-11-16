@@ -635,7 +635,7 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
             if score:
                 res.norm_ratio = similarity(mask_stack(left), mask_stack(right))
             a, b = left, right
-        for line in difflib.unified_diff(a, b, "original", "ours", n=2, lineterm=""):
+        for line in difflib.unified_diff(a, b, "original", "ours", n=int(os.environ.get("CHECK_CTX", "2")), lineterm=""):
             res.diff.append(line)
         if a == b:
             res.diff += encoding_diff(theirs, ours, address, masked)

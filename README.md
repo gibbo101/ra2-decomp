@@ -44,7 +44,8 @@ https://bytematch.dev/gibbo101/ra2-decomp
    uv run tools/checkall.py                       # the whole tree
    ```
 
-   Each function prints MATCH, or how close it came and why.
+   Each function prints MATCH, or how close it came and why. A near miss prints a diff
+   with two lines of context; `CHECK_CTX=40` before the command widens it.
 
 ## Layout
 
