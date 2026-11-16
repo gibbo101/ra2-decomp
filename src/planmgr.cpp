@@ -31,6 +31,9 @@
 #include "queue.h"
 #include "mission.h"
 
+void __fastcall FUN_0063C690(PlanningNodeClass * node);
+void __fastcall FUN_0063CAE0(PlanningNodeClass * node);
+
 extern double __cdecl FUN_004CAC40(double);
 extern Rect __fastcall Get_Title_Screen_Area(void);
 Coord __fastcall FUN_00633BC0(EventClass const & event);
@@ -656,14 +659,14 @@ EventClass * PlanningNodeClass::Loop_Event(void)
 // FUNCTION: GAMEMD 0x00634810
 Coord PlanningNodeClass::Branch_Coord(int index)
 {
-	Coord coord = FUN_00633BC0(PlanningBranches[index]->Event);
+	Coord coord = Get_Branch(index)->Get_Coord();
 	return coord;
 }
 
 // FUNCTION: GAMEMD 0x00634850
 Coord PlanningNodeClass::Loop_Coord(void)
 {
-	Coord coord = FUN_00633BC0(LoopBranch.Event);
+	Coord coord = LoopBranch.Get_Coord();
 	return coord;
 }
 
@@ -2634,7 +2637,7 @@ void __fastcall FUN_0063B0A0(void)
 		PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
 		HouseClass * house = node->PlanningMembers[0]->Owner->House;
 		if (house->Is_Ally(PlayerPtr)) {
-			node->FUN_0063C690();
+			FUN_0063C690(node);
 		}
 	}
 	int count = Technos.Count();
@@ -2657,7 +2660,7 @@ void __fastcall FUN_0063B150(void)
 		PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
 		HouseClass * house = node->PlanningMembers[0]->Owner->House;
 		if (house->Is_Ally(PlayerPtr)) {
-			node->FUN_0063CAE0();
+			FUN_0063CAE0(node);
 		}
 	}
 	for (int j = 0; j < nodes; j++) {
@@ -2924,19 +2927,7 @@ Point2D __fastcall FUN_0063D210(EventClass const * event, TechnoClass * owner)
 // FUNCTION: GAMEMD 0x0063D2D0
 int PlanningNodeClass::Lead_Color(void)
 {
-	TechnoClass * techno = PlanningMembers[0]->Owner;
-	int result = Pack_Wide(DAT_00A83CD9);
-	if (techno) {
-		int highlight = Pack_Wide(DAT_00A80220);
-		if (DAT_00AC4BF0) {
-			if (DAT_00AC4BF0->Has_Member(techno)) {
-				result = highlight;
-			}
-		} else if (techno->IsSelected) {
-			result = highlight;
-		}
-	}
-	return result;
+	return FUN_0063D0F0(Member_Owner(0));
 }
 
 // FUNCTION: GAMEMD 0x0063D400
