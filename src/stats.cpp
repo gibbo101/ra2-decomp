@@ -295,14 +295,14 @@ void __fastcall Send_Statistics_Packet(bool wdt)
 		if (!wdt) {
 			if (Session.SawGameCompletion && !PlayerPtr->LostConnection) {
 				if (!PlayerPtr->IsDefeated && !PlayerPtr->IsGiverUpper && !PlayerPtr->IsResigner) {
-					profile->AddField2C(1);
+					profile.Get()->AddField2C(1);
 				} else {
-					profile->AddField30(1);
+					profile.Get()->AddField30(1);
 				}
 			} else {
-				profile->AddField34(1);
+				profile.Get()->AddField34(1);
 			}
-			profile->Save(&DAT_00B73E40);
+			profile.Get()->Save(&DAT_00B73E40);
 		}
 	}
 
