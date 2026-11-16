@@ -723,6 +723,13 @@ address,name,symbol,evidence
 0x00AFA278,SyncBarFrameSync,?SyncBarFrameSync@@3PAUFrameSyncStruct@@A,Independent 40-byte initializer 00646D20; operand 00646D21 is AFA280 with actual COFF addend 8.
 0x00B732F0,ProgramInstance,?ProgramInstance@@3PAUHINSTANCE__@@A,Independent 78-byte Get_Dialog_Resolution 00775B50; actual HINSTANCE load at 00775B51.
 0x0055F1E0,Multiplayer_Debug_Print,?Multiplayer_Debug_Print@@YIX_N@Z,Existing 1189-byte matched bool definition at 0055F1E0; native TibSun declares the same bool API.
+0x005A08D0,MapGeneratorClass::Grow_Water_Region,?Grow_Water_Region@MapGeneratorClass@@QAE_NHMABV?$TRect@H@@ABVCell@@_N@Z,Seed_River at 0x0059D510 calls this method at +0xEB3.
+0x004A91B0,DisplayClass::Set_Cursor_Pos,?Set_Cursor_Pos@DisplayClass@@QAE?AVCell@@ABV2@@Z,The matched Place_Cliff and Place_Shore call this method at +0x4FC and +0x49A.
+0x0057B440,MapClass::Pick_Random_Tile_Variant,?Pick_Random_Tile_Variant@MapClass@@QAE_NW4IsometricTileType@@HHHAA_N_N@Z,The matched Place_Cliff and Place_Shore call this method at +0x520 and +0x4F4.
+0x00AA073C,IsometricTileTypeClass::WaterfallEast,?WaterfallEast@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File at 0x00545150 reads the WaterfallEast INI key and stores the matching tile set at +0xD41.
+0x00ABB110,IsometricTileTypeClass::WaterfallWest,?WaterfallWest@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File at 0x00545150 reads the WaterfallWest INI key and stores the matching tile set at +0xD50.
+0x00AA10A0,IsometricTileTypeClass::WaterfallNorth,?WaterfallNorth@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File at 0x00545150 reads the WaterfallNorth INI key and stores the matching tile set at +0xD5F.
+0x00AA1050,IsometricTileTypeClass::WaterfallSouth,?WaterfallSouth@IsometricTileTypeClass@@2W4IsometricTileType@@A,Read_Control_File at 0x00545150 reads the WaterfallSouth INI key and stores the matching tile set at +0xD6E.
 0x00533FD0,Allocate_Surfaces,?Allocate_Surfaces@@YI_NABV?$TRect@H@@000_N@Z,Change_Display_Mode at 0x00560BF0 (src/mainopt.cpp) calls Allocate_Surfaces at 0x0056100E; Get_All at 0x0067E730 (src/saveload.cpp) independently calls it at 0x0067E7EA. Both native calls target 0x00533FD0 and use the four-Rect-reference/bool signature declared in TibSun init.h.
 0x007E1A80,Keys,?Keys@@3QBDB,"The release Keys string in reference/tibsun/code/_pk.cpp equals all 73 bytes at this address, including the terminator (SHA-256 4904a4d74351d85ad6f6cf5d6496f2269e2d493eeb8ee947f522efcff3c6c6b3)."
 0x007E9520,CLSID_TiberianSun,_CLSID_TiberianSun,The 16-byte CLSID_TiberianSun initializer in reference/tibsun/code/isun_i.c equals the complete GUID at this address (SHA-256 338c3f639a04af9d2c9fe60fbbedbe4776bc50871764e18ae58e80520897b4b1).

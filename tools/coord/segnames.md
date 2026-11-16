@@ -97,7 +97,7 @@ unverified before. They now resolve to these addresses.
 | seg_004E6140 (1) | getcd .. getcpu | stays | A 1-byte `ret` called by globals. |
 | seg_004F2C50 (6) | grphmenu .. grphmimg | stays | A header initialiser, then `GraphicMenuAnimItem` (RTTI). The class name does not sort there. |
 | seg_004F4C20 (9) | gscreen .. hicolor | stays | Palette's `HashString` helpers. HashString is YRpp's name for a char[256] struct, not a proven class, and only one function carries it. |
-| seg_00510B00 (19) | House .. houstype | stays | A header run, then `HouseClass` statics (`FindByIndex`, `<Player @ A>`). This is a second HouseClass file sorting after `house`, name unknown (like progress2). |
+| seg_00510B00 (19) | House .. houstype | stays | A header run, then `HouseClass` statics (`FindByIndex`, `<Player @ A>`). This is a second HouseClass file sorting after `house`, name unknown (as progress2 once seemed to be). |
 | seg_00517340 (1) | hover .. hsv | stays | Held only by data. |
 | seg_00551E50 (1) | lcw .. lcwpipe | lcw | L: names row `LCW_Comp` (TibSun lcw.cpp). |
 | seg_00556790 (37) | link .. list | stays | A header run, then `LineTrail` (YRpp and RTTI). `linetrail` sorts before `link`. |
@@ -192,7 +192,6 @@ None of these have been moved.
 | src/uicmnds.cpp | seg_00734430 | 14 | 0x00734430-0x00734620 (header run) |
 | src/wdtgameoptions.cpp | wdthistory | 1 | 0x007678F0 (header initialiser) |
 | src/wolpersonainformation.cpp | seg_0077B070 | 1 | 0x0077B070 (header initialiser) |
-| src/progress2.cpp | progress | 11 | 0x006433D0-0x00643E90 (not a former seg_ range) |
 
 In every former-seg_ case, the header initialisers that begin the next module were landed in
 the src file of the module before it.
@@ -203,8 +202,9 @@ the src file of the module before it.
   0x006C9960) are landed in `src/straw.cpp` and lie inside straw's range, before
   subtitle's header initialiser at 0x006C99B0. Either they are header inlines that straw
   happens to use first, or a module with no header sorts between straw and subtitle.
-- **progress2.** No general evidence separates it from progress: it has no header
-  initialisers, and the class is the same as progress's. It stays inside `progress`.
+- **progress2.** Settled: there is no second file. Draw_Player inlines Fit_Size and
+  Get_Current_Progress(int), and Set_Progress_Percent inlines Get_Current_Progress(), across
+  the old split, so the whole range is one translation unit, `src/progress.cpp`.
 - **wonline.** Its range (477 functions, anchored by `__FILE__`) was not split. Nothing new
   marks a boundary inside it.
 - **alphalighting.** The 0x00420120 lead is already settled in the committed map: that
