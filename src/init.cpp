@@ -166,17 +166,9 @@
 // SYNTHETIC: GAMEMD 0x0052B970 SYMBOL
 // _$E145
 
-extern int DAT_00A8F768;
-extern int DAT_00A8F76C;
-extern int DAT_00A8F770;
 
-// FUNCTION: GAMEMD 0x0052B990
-void FUN_0052B990(void)
-{
-	DAT_00A8F770 = 0;
-	DAT_00A8F768 = 128;
-	DAT_00A8F76C = 128;
-}
+// SYNTHETIC: GAMEMD 0x0052B990 SYMBOL
+// _$E148
 
 extern int VideoModeWidth;
 extern int VideoModeHeight;

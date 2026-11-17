@@ -7,7 +7,6 @@
 #include "savever.h"
 #include "saveload.h"
 #include "dbgprint.h"
-#include "session.h"
 #include <comdef.h>
 #include "fastmath.h"
 

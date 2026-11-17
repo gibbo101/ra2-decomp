@@ -13,7 +13,6 @@
 #include <cstdio>
 #include <math.h>
 #include "geometry.h"
-#include "rect.h"
 
 // SYNTHETIC: GAMEMD 0x00410610 SYMBOL
 // _$E10

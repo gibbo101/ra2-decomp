@@ -4,7 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
 #include "flasher.h"
 #include "mono.h"
 #include "rect.h"
@@ -12,7 +11,7 @@
 
 
 // SYNTHETIC: GAMEMD 0x004CC750 SYMBOL
-// _$E43
+// _$E4
 
 // FUNCTION: GAMEMD 0x004CC770
 bool FlasherClass::Process(void)

@@ -4,7 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 #include "always.h"
 #include "geometry.h"
-#include "rect.h"
 #include "mixfile.h"
 #include "ccfile.h"
 #include "auddev.h"

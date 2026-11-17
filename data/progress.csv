@@ -1291,7 +1291,7 @@ address,name,result,size,source,symbol
 0x004335E0,Bit_Stuff,MATCH,217,src/bfiofile2.cpp,?Bit_Stuff@@YIHPAE0H@Z
 0x004336C0,Bit_Unstuff,MATCH,169,src/bfiofile2.cpp,?Bit_Unstuff@@YIIPAE0I@Z
 0x00433770,Bit_Unstuff_String,MATCH,232,src/bfiofile2.cpp,?Bit_Unstuff_String@@YIIPAEPAGI@Z
-0x00433860,FUN_00433860,MATCH,23,src/bitfont.cpp,?FUN_00433860@@YIXXZ
+0x00433860,_$E8,MATCH,23,src/bitfont.cpp,_$E8
 0x00433880,BitFont::BitFont,MATCH,189,src/bitfont.cpp,??0BitFont@@QAE@PBD@Z
 0x00433940,BitFont::~BitFont,MATCH,75,src/bitfont.cpp,??1BitFont@@UAE@XZ
 0x00433990,BitFont::LoadInternalData,MATCH,624,src/bitfont.cpp,?LoadInternalData@BitFont@@SIPAUInternalData@1@PBD@Z
@@ -1325,7 +1325,7 @@ address,name,result,size,source,symbol
 0x00435530,Release_Font,MATCH,40,src/bittext.cpp,?Release_Font@@YGXPAVBitFont@@@Z
 0x004354D0,Create_Font,MATCH,43,src/bittext.cpp,?Create_Font@@YIXXZ
 0x00435500,Destroy_Font,MATCH,40,src/bittext.cpp,?Destroy_Font@@YIXXZ
-0x00434AB0,_$E41,MATCH,23,src/bittext.cpp,_$E41
+0x00434AB0,_$E2,MATCH,23,src/bittext.cpp,_$E2
 0x00434AD0,BitText::BitText,MATCH,58,src/bittext.cpp,??0BitText@@QAE@XZ
 0x00434B10,BitText::~BitText,MATCH,46,src/bittext.cpp,??1BitText@@UAE@XZ
 0x00434B40,BitText::PrintChar,MATCH,80,src/bittext.cpp,?PrintChar@BitText@@QAEHPAVBitFont@@PAVSurface@@GHH@Z
@@ -2176,7 +2176,7 @@ address,name,result,size,source,symbol
 0x00473940,Description_From_Category,MATCH,19,src/category.cpp,?Description_From_Category@@YIPBDW4CategoryType@@@Z
 0x00473960,Name_From_Category,MATCH,19,src/category.cpp,?Name_From_Category@@YIPBDW4CategoryType@@@Z
 0x00473980,Category_From_Name,MATCH,74,src/category.cpp,?Category_From_Name@@YI?AW4CategoryType@@PBD@Z
-0x004739D0,_$E41,MATCH,23,src/ccfile.cpp,_$E41
+0x004739D0,_$E2,MATCH,23,src/ccfile.cpp,_$E2
 0x004739F0,CCFileClass::CCFileClass,MATCH,58,src/ccfile.cpp,??0CCFileClass@@QAE@PBD@Z
 0x00473A30,CCFileClass::CCFileClass,MATCH,70,src/ccfile.cpp,??0CCFileClass@@QAE@ABVWstring@@@Z
 0x00473A80,CCFileClass::CCFileClass,MATCH,44,src/ccfile.cpp,??0CCFileClass@@QAE@XZ
@@ -2584,7 +2584,7 @@ address,name,result,size,source,symbol
 0x004880D0,_$E2,MATCH,23,src/checkbox.cpp,_$E2
 0x004880F0,CheckBoxClass::Draw_Me,MATCH,285,src/checkbox.cpp,?Draw_Me@CheckBoxClass@@UAEHH@Z
 0x00488210,CheckBoxClass::Action,MATCH,70,src/checkbox.cpp,?Action@CheckBoxClass@@UAEHIAAW4KeyNumType@@H@Z
-0x00488260,_$E41,MATCH,23,src/cheklist.cpp,_$E41
+0x00488260,_$E2,MATCH,23,src/cheklist.cpp,_$E2
 0x00488280,CheckListClass::CheckListClass,MATCH,69,src/cheklist.cpp,??0CheckListClass@@QAE@HHHHHW4TextPrintType@@PBVShapeSet@@1@Z
 0x004882D0,CheckListClass::~CheckListClass,MATCH,63,src/cheklist.cpp,??1CheckListClass@@UAE@XZ
 0x00488310,CheckListClass::Add_Item,MATCH,53,src/cheklist.cpp,?Add_Item@CheckListClass@@UAEHPBG@Z
@@ -4365,7 +4365,7 @@ address,name,result,size,source,symbol
 0x004CC360,TrajectoryHelper::GetObstacle,MATCH,788,src/findpath2.cpp,?GetObstacle@TrajectoryHelper@@SIPAVCellClass@@PBV2@00VCoord@@PBVBulletTypeClass@@PBVHouseClass@@@Z
 0x004CC680,TrajectoryHelper::IsCliffHit,MATCH,73,src/findpath2.cpp,?IsCliffHit@TrajectoryHelper@@SI_NPBVCellClass@@00@Z
 0x004CC6D0,TrajectoryHelper::IsWallHit,MATCH,121,src/findpath2.cpp,?IsWallHit@TrajectoryHelper@@SI_NPBVCellClass@@00PBVHouseClass@@@Z
-0x004CC750,_$E43,MATCH,23,src/flasher.cpp,_$E43
+0x004CC750,_$E4,MATCH,23,src/flasher.cpp,_$E4
 0x004CC770,FlasherClass::Process,MATCH,27,src/flasher.cpp,?Process@FlasherClass@@QAE_NXZ
 0x004CC790,_$E2,MATCH,40,src/fly.cpp,_$E2
 0x004CC7C0,_$E5,MATCH,19,src/fly.cpp,_$E5
@@ -4746,7 +4746,7 @@ address,name,result,size,source,symbol
 0x004E2460,GameTimeClass::Get_Time,MATCH,23,src/gametime.cpp,?Get_Time@GameTimeClass@@QAEIXZ
 0x004E2480,Get_Game_Time,MATCH,23,src/gametime.cpp,?Get_Game_Time@@YIIXZ
 0x004E24A0,Get_Game_Time_50,MATCH,53,src/gametime.cpp,?Get_Game_Time_50@@YIIXZ
-0x004E24E0,_$E41,MATCH,23,src/gauge.cpp,_$E41
+0x004E24E0,_$E2,MATCH,23,src/gauge.cpp,_$E2
 0x004E2500,GaugeClass::GaugeClass,MATCH,127,src/gauge.cpp,??0GaugeClass@@QAE@IHHHH@Z
 0x004E2580,GaugeClass::Set_Maximum,MATCH,32,src/gauge.cpp,?Set_Maximum@GaugeClass@@UAEHH@Z
 0x004E25A0,GaugeClass::Set_Value,MATCH,47,src/gauge.cpp,?Set_Value@GaugeClass@@UAEHH@Z
@@ -5544,13 +5544,13 @@ address,name,result,size,source,symbol
 0x004F2B60,??_G?$VectorClass@PAVGraphicMenuItem@@@@UAEPAXI@Z,MATCH,73,src/grphmenu.cpp,??_G?$VectorClass@PAVGraphicMenuItem@@@@UAEPAXI@Z
 0x004F2BB0,??_G?$DynamicVectorClass@PAVGraphicMenuItem@@@@UAEPAXI@Z,MATCH,73,src/grphmenu.cpp,??_G?$DynamicVectorClass@PAVGraphicMenuItem@@@@UAEPAXI@Z
 0x004F2C00,??0?$VectorClass@PAVGraphicMenuItem@@@@QAE@HPBQAVGraphicMenuItem@@@Z,MATCH,74,src/grphmenu.cpp,??0?$VectorClass@PAVGraphicMenuItem@@@@QAE@HPBQAVGraphicMenuItem@@@Z
-0x004F2C50,_$E41,MATCH,23,src/grphmenu2.cpp,_$E41
+0x004F2C50,_$E2,MATCH,23,src/grphmenu2.cpp,_$E2
 0x004F2C70,GM_Read_Anim_Item,MATCH,669,src/grphmenu2.cpp,?GM_Read_Anim_Item@@YIPAVGraphicMenuItem@@ABVWstring@@ABVINIClass@@AAVMSEngine@@AAVPoint2D@@@Z
 0x004F2F10,GraphicMenuAnimItem::GraphicMenuAnimItem,MATCH,348,src/grphmenu2.cpp,??0GraphicMenuAnimItem@@QAE@HAAVMSEngine@@ABVPoint2D@@ABV?$TRect@H@@ABVWstring@@3H_N@Z
 0x004F3070,GraphicMenuAnimItem::~GraphicMenuAnimItem,MATCH,31,src/grphmenu2.cpp,??1GraphicMenuAnimItem@@UAE@XZ
 0x004F3090,GraphicMenuAnimItem::Is_Mouse_Over,MATCH,66,src/grphmenu2.cpp,?Is_Mouse_Over@GraphicMenuAnimItem@@UAE_NABVPoint2D@@@Z
 0x004F30E0,??_GGraphicMenuAnimItem@@UAEPAXI@Z,MATCH,51,src/grphmenu2.cpp,??_GGraphicMenuAnimItem@@UAEPAXI@Z
-0x004F3120,_$E41,MATCH,23,src/grphmimg.cpp,_$E41
+0x004F3120,_$E2,MATCH,23,src/grphmimg.cpp,_$E2
 0x004F3140,GM_Read_Image_Item,MATCH,798,src/grphmimg.cpp,?GM_Read_Image_Item@@YIPAVGraphicMenuItem@@ABVWstring@@ABVINIClass@@AAVMSEngine@@AAVPoint2D@@@Z
 0x004F3460,GraphicMenuImageItem::GraphicMenuImageItem,MATCH,413,src/grphmimg.cpp,??0GraphicMenuImageItem@@QAE@HAAVMSEngine@@ABVPoint2D@@ABV?$TRect@H@@ABVWstring@@3333@Z
 0x004F3600,GraphicMenuImageItem::~GraphicMenuImageItem,MATCH,51,src/grphmimg.cpp,??1GraphicMenuImageItem@@UAE@XZ
@@ -6480,7 +6480,7 @@ address,name,result,size,source,symbol
 0x0052B930,_$E139,MATCH,39,src/init.cpp,_$E139
 0x0052B960,_$E142,MATCH,15,src/init.cpp,_$E142
 0x0052B970,_$E145,MATCH,18,src/init.cpp,_$E145
-0x0052B990,FUN_0052B990,MATCH,26,src/init.cpp,?FUN_0052B990@@YIXXZ
+0x0052B990,_$E148,MATCH,26,src/init.cpp,_$E148
 0x0052B9B0,FUN_0052B9B0,MATCH,161,src/init.cpp,?FUN_0052B9B0@@YIXPAUHWND__@@@Z
 0x0052BA60,Init_Game,MATCH,4333,src/init.cpp,?Init_Game@@YIHXZ
 0x0052CB50,FUN_0052CB50,MATCH,44,src/init.cpp,?FUN_0052CB50@@YI_NXZ
@@ -16816,7 +16816,7 @@ address,name,result,size,source,symbol
 0x00758B70,VoxelPaletteLibrary::Calculate_Lookup_Table,MATCH,665,src/voxpal.cpp,?Calculate_Lookup_Table@VoxelPaletteLibrary@@AAEXPAMH@Z
 0x00758E10,VoxelPaletteLibrary::Closest_Color,MATCH,133,src/voxpal.cpp,?Closest_Color@VoxelPaletteLibrary@@ABEEMMM@Z
 0x00758EA0,VoxelPaletteLibrary::Closest_Color,MATCH,198,src/voxpal.cpp,?Closest_Color@VoxelPaletteLibrary@@ABEEMMM_N@Z
-0x00758F70,FUN_00758F70,MATCH,23,src/vqa.cpp,?FUN_00758F70@@YIXXZ
+0x00758F70,_$E6,MATCH,23,src/vqa.cpp,_$E6
 0x00758F90,_$E36,MATCH,40,src/vqa.cpp,_$E36
 0x00758FC0,_$E39,MATCH,19,src/vqa.cpp,_$E39
 0x00758FE0,_$E42,MATCH,19,src/vqa.cpp,_$E42
