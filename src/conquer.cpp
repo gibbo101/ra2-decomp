@@ -81,7 +81,7 @@ void __fastcall FUN_00406F70(void);
 struct CallBackObject { virtual void V0(); virtual void V1(); virtual void V2(); };
 extern CallBackObject ** DAT_00B45B5C;
 extern int DAT_00B45B68;
-extern bool DAT_00B77DC2;
+extern bool g_ConnectionLost;
 extern int g_SuspendChatPump;
 extern time_t DAT_0089E9B0;
 
@@ -414,7 +414,7 @@ void Call_Back(void)
 	}
 
 	if (Session.Type == GAME_INTERNET) {
-		if (!DAT_00B77DC2 && time(0) != DAT_0089E9B0) {
+		if (!g_ConnectionLost && time(0) != DAT_0089E9B0) {
 			if (g_pChat != NULL && !g_SuspendChatPump) {
 				g_pChat->PumpMessages();
 			}

@@ -23,7 +23,7 @@ rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name);
 int __fastcall StoreLogin(char const * login, char const * password, bool plain, int locale);
 void __fastcall FUN_00606740(HWND dialog, bool value);
 extern Wstring DAT_00B73E40;
-extern Wstring DAT_00B7778C;
+extern Wstring g_LoginPassword;
 extern WebBrowser *DAT_00B72D0C;
 namespace UI {
 	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
@@ -351,7 +351,7 @@ HRESULT STDMETHODCALLTYPE WebBrowser::OnRegisterLogin(const wchar_t *nick, const
 		Session.Write_MultiPlayer_Settings();
 	}
 	DAT_00B73E40 = nickName;
-	DAT_00B7778C = password;
+	g_LoginPassword = password;
 	return S_OK;
 }
 
