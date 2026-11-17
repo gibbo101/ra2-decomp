@@ -2337,7 +2337,6 @@ void TechnoClass::DestroyGap(void)
 }
 
 extern bool DAT_00843128[];
-namespace FileSystem { extern ConvertClass * PALETTE_PAL; }
 
 static inline Rect Moved_Rect(Rect const & rect, Point2D const & point)
 {
@@ -2482,14 +2481,14 @@ void TechnoClass::FUN_007049C0(Coord start, Coord end, RGBClass color, unsigned 
 	shadow_end.Y += 1;
 	char shadow = b;
 	if (shadow) {
-		int black = FileSystem::PALETTE_PAL->Convert_Pixel(0);
+		int black = NormalDrawer->Convert_Pixel(0);
 		DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), shadow_start)), black);
-		black = FileSystem::PALETTE_PAL->Convert_Pixel(0);
+		black = NormalDrawer->Convert_Pixel(0);
 		DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), shadow_end)), black);
 	}
 	Rect clip = DSurface::ViewBounds;
 	if (shadow && Clip_Line_To_Rect(shadow_start, shadow_end, clip)) {
-		DSurface::Composite->Draw_Line(shadow_start, shadow_end, FileSystem::PALETTE_PAL->Convert_Pixel(0));
+		DSurface::Composite->Draw_Line(shadow_start, shadow_end, NormalDrawer->Convert_Pixel(0));
 	}
 	int pixel = ((color.Get_Red() >> DSurface::RedLeft) << DSurface::RedRight) | ((color.Get_Blue() >> DSurface::BlueLeft) << DSurface::BlueRight) | ((color.Get_Green() >> DSurface::GreenLeft) << DSurface::GreenRight);
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), start_point)), pixel);
@@ -5140,7 +5139,7 @@ void TechnoClass::FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned ch
 	}
 	Rect clip = DSurface::ViewBounds;
 	if (shadow && Clip_Line_To_Rect(shadow_start, shadow_end, clip)) {
-		DSurface::Composite->Draw_Line(shadow_start, shadow_end, FileSystem::PALETTE_PAL->Convert_Pixel(0));
+		DSurface::Composite->Draw_Line(shadow_start, shadow_end, NormalDrawer->Convert_Pixel(0));
 	}
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Target_Laser_Rect(start_point)), black);
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Target_Laser_Rect(end_point)), pixel);
@@ -6398,7 +6397,7 @@ bool TechnoClass::Enter_Idle_Mode(bool, bool)
 	return(false);
 }
 
-namespace FileSystem { extern ShapeSet * PIPS_SHP; extern ConvertClass * PALETTE_PAL; }
+namespace FileSystem { extern ShapeSet * PIPS_SHP; }
 
 inline Rect Drawing_GetTextDimensions(wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY)
 {
@@ -6435,7 +6434,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 		for (i = 0; i < spawns; i++) {
 			int full = 1;
 			int empty = 0;
-			Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, i < docked ? full : empty, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, i < docked ? full : empty, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 		}
 	}
 	if (building) {
@@ -6447,7 +6446,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 				int frame;
 				if (i < count && self->Occupants[i] != NULL) frame = self->Occupants[i]->Class->OccupyPip;
 				else frame = 6;
-				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			}
 		}
 	}
@@ -6488,12 +6487,12 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 		}
 		int start = 0;
 		if (Techno_Type_Class()->Gunner) {
-			Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, colors[0], xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, colors[0], xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			start = 1;
 			shift = offset * 2;
 		}
 		for (int j = start; j < pips; j++) {
-			Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, colors[j], xy + shift + offset * j, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, colors[j], xy + shift + offset * j, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 		}
 		delete colors;
 	} else {
@@ -6503,14 +6502,14 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 			for (i = 0; i < maximum; i++) {
 				int frame = 0;
 				if (i < pips) frame = 1;
-				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			}
 			bool flag = false;
 			if (CaptureManager && CaptureManager->IsOverloading(&flag)) {
 				int overload_frame = 3;
 				int ordinary_frame = 4;
 				int frame = flag ? overload_frame : ordinary_frame;
-				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			}
 		}
 		if (Techno_Type_Class()->PipScale == PIPSCALE_TIBERIUM) {
@@ -6529,7 +6528,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 					shape = 2;
 					greenpips--;
 				}
-				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, shape, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, shape, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			}
 		} else if (Techno_Type_Class()->PipScale == PIPSCALE_AMMO) {
 			int wrap = Techno_Type_Class()->PipWrap;
@@ -6538,7 +6537,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 				for (int i = 0; i < maximum; i++) {
 					if (left > 0) {
 						left--;
-						Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips2, 13, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+						Draw_Shape(*LogicalSurface, *NormalDrawer, pips2, 13, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 					}
 				}
 			} else {
@@ -6551,7 +6550,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 							break;
 						}
 					}
-					Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips2, frame, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+					Draw_Shape(*LogicalSurface, *NormalDrawer, pips2, frame, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 				}
 			}
 		}
@@ -6577,8 +6576,8 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 	if (Fetch_RTTI() == RTTI_UNIT) { heal_offset = Point2D(38, -32); }
 	else if (Fetch_RTTI() == RTTI_INFANTRY) { heal_offset = Point2D(19, -35); }
 	if (selfheal) {
-		if (flash) Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_DARKEN));
-		else Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+		if (flash) Draw_Shape(*LogicalSurface, *NormalDrawer, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_DARKEN));
+		else Draw_Shape(*LogicalSurface, *NormalDrawer, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 	}
 	if (Fetch_RTTI() != RTTI_BUILDING) Draw_Text_Overlay(point + Point2D(-10, 10), point, window);
 	if (Group >= 0 && Group < 10) {
@@ -6623,7 +6622,7 @@ void TechnoClass::DrawVeterancyPips(Point2D const & point, Rect const & rect) co
 		xy.X += 5;
 		xy.Y += 4;
 	}
-	Draw_Shape(*DSurface::Temp, *FileSystem::PALETTE_PAL, shapes, frame, xy, rect, ShapeFlags_Type(0xE00), NULL, -2, ZGRAD_GROUND, 1000);
+	Draw_Shape(*DSurface::Temp, *NormalDrawer, shapes, frame, xy, rect, ShapeFlags_Type(0xE00), NULL, -2, ZGRAD_GROUND, 1000);
 }
 
 Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, int unused);
@@ -8321,7 +8320,7 @@ void TechnoClass::FUN_0070F1D0(Point2D const &center, Rect const &rect)
 					BehindAnim->Invisible = true;
 			}
 		} else {
-			int color = FileSystem::PALETTE_PAL->Convert_Pixel(12);
+			int color = NormalDrawer->Convert_Pixel(12);
 			Point2D origin = center;
 			int outside, inside;
 			if (Frame & 8) {

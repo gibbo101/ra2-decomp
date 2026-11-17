@@ -613,7 +613,6 @@ void __fastcall FUN_006B5490(TheaterType theater);
 void __fastcall Set_Frame_Rate_Limit(int value);
 void __fastcall FUN_0055AF50(int value);
 
-struct FileSystem { static char TEMPERAT_PAL[]; };
 void __fastcall FUN_004A3C30(void * palette, int rate, void (* callback)(void));
 bool Wait_For_Players_To_Load(void);
 namespace Game { namespace Network { extern int Tournament; extern int WOLGameID; } }
@@ -729,7 +728,7 @@ bool Read_Scenario(char const * fname)
 
 	if (!read_ok) {
 		DebugString("Error - Unable to read scenario: %s\n", name);
-		FUN_004A3C30(&FileSystem::TEMPERAT_PAL, 7, Call_Back);
+		FUN_004A3C30(&GamePalette, 7, Call_Back);
 		WWMessageBox().Process(StringTable::LoadString("TXT_UNABLE_READ_SCENARIO", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0x50d), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0x50d), NULL, NULL, false);
 
 		ScenarioInit--;
@@ -1280,7 +1279,7 @@ void Do_Win(void)
 	}
 
 	Map.Render();
-	FUN_004A3C30(&FileSystem::TEMPERAT_PAL, 7, Call_Back);
+	FUN_004A3C30(&GamePalette, 7, Call_Back);
 }
 
 // FUNCTION: GAMEMD 0x00685DC0

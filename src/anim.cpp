@@ -62,11 +62,6 @@
 // _$E2
 
 extern DynamicVectorClass<AnimClass *> DAT_00A83E00;
-struct FileSystem
-{
-	static char TEMPERAT_PAL[];
-	static ConvertClass * ANIM_PAL;
-};
 namespace Game { extern bool bDirect3DIsUseable; }
 void __fastcall FUN_00489280(Coord const & coord, int damage, TechnoClass * source, WarheadTypeClass const * warhead, bool affect_tiberium, HouseClass * house);
 void __fastcall FUN_004A3C30(void * palette, int rate, void (* callback)(void));
@@ -423,7 +418,7 @@ Cell const * AnimClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x00423920 SYMBOL
-// _$E173
+// _$E171
 
 // FUNCTION: GAMEMD 0x00423930
 BounceResultType AnimClass::Bounce_AI(void)
@@ -902,7 +897,7 @@ void AnimClass::Do_Atom_Damage(HousesType ownerhouse, Cell const & cell)
 	Coord coord(cell.X * 256 + 128, cell.Y * 256 + 128, 0);
 	FUN_00489280(coord, Rule->AtomDamage, NULL, Rule->NukeWarhead, false, NULL);
 	if (Session.Type == GAME_NORMAL) {
-		FUN_004A3C30(&FileSystem::TEMPERAT_PAL, 30, Call_Back);
+		FUN_004A3C30(&GamePalette, 30, Call_Back);
 	}
 }
 
@@ -1534,7 +1529,7 @@ void AnimClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 					brightness = TintColor;
 				}
 			} else {
-				convert = FileSystem::ANIM_PAL;
+				convert = AnimDrawer;
 				if (Type->AltPalette) {
 					convert = ColorSchemes[0]->Converter;
 				}
@@ -1588,7 +1583,7 @@ void AnimClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 				bool done = false;
 				int height_offset = ZAdjust + Type->YDrawOffset - TacticalMap->Z_Lepton_To_Pixel(Height) - 50;
 				while (!done) {
-					Draw_Shape(*LogicalSurface, *FileSystem::ANIM_PAL, shapefile, shapenum, Point2D(origin.X, drawpoint.Y + Type->YDrawOffset), TacticalRect, ShapeFlags_Type(flags | SHAPE_ZGRAD), 0, height_offset, ZGRAD_90DEG, brightness, tint, 0, 0, Point2D(0, 0));
+					Draw_Shape(*LogicalSurface, *AnimDrawer, shapefile, shapenum, Point2D(origin.X, drawpoint.Y + Type->YDrawOffset), TacticalRect, ShapeFlags_Type(flags | SHAPE_ZGRAD), 0, height_offset, ZGRAD_90DEG, brightness, tint, 0, 0, Point2D(0, 0));
 					if (drawpoint.Y < 0) {
 						done = true;
 					}

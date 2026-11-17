@@ -2375,7 +2375,6 @@ static bool Init_One_Time_Systems(void)
 struct FileSystem
 {
 	static void const * LoadFile(char const * name, bool flag);
-	static char TEMPERAT_PAL[];
 };
 
 // FUNCTION: GAMEMD 0x005312A0
@@ -2396,7 +2395,7 @@ void FUN_005312A0(void)
 				(unsigned char)((*pal)[index].Get_Blue() << 2));
 		}
 		if (pal != NULL) {
-			convert = new ConvertClass(*pal, *(PaletteClass *)FileSystem::TEMPERAT_PAL, *VisibleSurface, 1, false);
+			convert = new ConvertClass(*pal, GamePalette, *VisibleSurface, 1, false);
 			if (convert != NULL) {
 				shp = (SHPStruct *)FileSystem::LoadFile(VideoModeWidth == 640 ? "GLSSMD.SHP" : "GLSLMD.SHP", false);
 			}

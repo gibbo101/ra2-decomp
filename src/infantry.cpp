@@ -468,7 +468,6 @@ int InfantryClass::Shape_Number(void) const
 
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
-	static ConvertClass * PALETTE_PAL;
 };
 
 extern ShapeSet const * DAT_00A8F244;
@@ -510,7 +509,7 @@ void InfantryClass::Draw_It(Point2D const & xpoint, Rect const & cliprect) const
 			Point2D spoint = xpoint + Point2D(Locomotion->Shadow_Point());
 			Draw_Shape(
 				*DSurface::Temp,
-				*FileSystem::PALETTE_PAL,
+				*NormalDrawer,
 				shapefile,
 				Locomotion->Drawing_Code(),
 				spoint,
@@ -573,7 +572,7 @@ void InfantryClass::Draw_It(Point2D const & xpoint, Rect const & cliprect) const
 				if (DAT_00A8F244 != NULL) {
 					Draw_Shape(
 						*DSurface::Temp,
-						*FileSystem::PALETTE_PAL,
+						*NormalDrawer,
 						DAT_00A8F244,
 						1,
 						point + Point2D(0, -IonBlastYDrawOffset) + Point2D(0, TacticalMap->Z_Lepton_To_Pixel(height)),

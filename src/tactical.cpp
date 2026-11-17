@@ -96,7 +96,7 @@
 // SYNTHETIC: GAMEMD 0x006D1A20 SYMBOL
 // _$E47
 // SYNTHETIC: GAMEMD 0x006D1A40 SYMBOL
-// _$E269
+// _$E268
 
 extern Rect TacticalDimensions;
 void __fastcall SetNavCycleMode(int mode);
@@ -108,7 +108,6 @@ struct FileSystem {
 	static void const * LoadFile(char const * name, bool as_shape);
 	static ShapeSet * GRFXTXT_SHP;
 	static ConvertClass * GRFXTXT_Convert;
-	static ConvertClass * MOUSE_PAL;
 };
 Point2D Lerp(Point2D const & a, Point2D const & b, float t);
 
@@ -133,25 +132,25 @@ static double ZPixelsPerLepton = fastmath::sin(RAD_60) * (PixelsPerLepton = 60.0
 static double ZLeptonsPerPixel = CELL_LEPTON_DIAG / (fastmath::sin(RAD_60) * 60.0);
 
 // SYNTHETIC: GAMEMD 0x006D1A60 SYMBOL
-// _$E247
+// _$E246
 
 // SYNTHETIC: GAMEMD 0x006D1AA0 SYMBOL
-// _$E244
+// _$E243
 
 // SYNTHETIC: GAMEMD 0x006D1B00 SYMBOL
 // _$E41
 
 // SYNTHETIC: GAMEMD 0x006D1B10 SYMBOL
-// _$E256
+// _$E255
 
 // SYNTHETIC: GAMEMD 0x006D1B50 SYMBOL
-// _$E253
+// _$E252
 
 // SYNTHETIC: GAMEMD 0x006D1BB0 SYMBOL
-// _$E259
+// _$E258
 
 // SYNTHETIC: GAMEMD 0x006D1BF0 SYMBOL
-// _$E262
+// _$E261
 
 // FUNCTION: GAMEMD 0x006D1C20
 Tactical::Tactical(void) :
@@ -2177,7 +2176,7 @@ FacingType Tactical::Scroll_Dir(FacingType dir)
 }
 
 // SYNTHETIC: GAMEMD 0x006DA350 SYMBOL
-// _$E250
+// _$E249
 
 // FUNCTION: GAMEMD 0x006DA360
 Cell Tactical::Clamp_Cursor_To_Tactical(Cell const & cell, Cell const * list)
@@ -2431,7 +2430,7 @@ void Tactical::Draw_Waypoints(bool inshroud)
 		return;
 	}
 
-	unsigned short * table = (unsigned short *)FileSystem::MOUSE_PAL->Get_Translate_Table();
+	unsigned short * table = (unsigned short *)MouseDrawer->Get_Translate_Table();
 	unsigned short saved_colors[8];
 	memcpy(saved_colors, table + 1, sizeof(saved_colors));
 
@@ -2462,7 +2461,7 @@ void Tactical::Draw_Waypoints(bool inshroud)
 			pixel.Y += TacticalRect.Y;
 
 			if (onscreen) {
-				Draw_Shape(*DSurface::Temp, *FileSystem::MOUSE_PAL, mouseshapes, frame, pixel - offset,
+				Draw_Shape(*DSurface::Temp, *MouseDrawer, mouseshapes, frame, pixel - offset,
 					TacticalRect, (ShapeFlags_Type)(SHAPE_CENTER | SHAPE_WIN_REL));
 
 				static wchar_t buffer[4];
@@ -2481,10 +2480,10 @@ void Tactical::Draw_Waypoints(bool inshroud)
 				if (Clip_Line_To_Rect(pixel, nextpixel, TacticalRect)) {
 					if (path == PlayerPtr->SelectedPath) {
 						phase = DSurface::Temp->Draw_Masked_Dashed_Line(pixel, nextpixel,
-							FileSystem::MOUSE_PAL->Convert_Pixel(3), WaypointLinePattern, phase, inshroud);
+							MouseDrawer->Convert_Pixel(3), WaypointLinePattern, phase, inshroud);
 					} else {
 						DSurface::Temp->Draw_Masked_Line(pixel, nextpixel,
-							FileSystem::MOUSE_PAL->Convert_Pixel(3), inshroud);
+							MouseDrawer->Convert_Pixel(3), inshroud);
 					}
 				}
 			}

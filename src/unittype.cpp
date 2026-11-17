@@ -59,7 +59,6 @@
 
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
-	static char TEMPERAT_PAL[];
 };
 
 // SYNTHETIC: GAMEMD 0x007470B0 SYMBOL
@@ -162,7 +161,7 @@ void UnitTypeClass::One_Time(void)
 		EightBitSurface->Fill(0);
 	}
 	if (EightBitDrawer == NULL) {
-		EightBitDrawer = new ConvertClass(*(PaletteClass *)FileSystem::TEMPERAT_PAL, *(PaletteClass *)FileSystem::TEMPERAT_PAL, *EightBitSurface, 1, false);
+		EightBitDrawer = new ConvertClass(GamePalette, GamePalette, *EightBitSurface, 1, false);
 	}
 	SmallVisceroidShapes = FileSystem::LoadFile("VISC_SML.SHP", false);
 	LargeVisceroidShapes = FileSystem::LoadFile("VISC_LRG.SHP", false);

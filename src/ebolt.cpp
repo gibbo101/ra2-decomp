@@ -6,6 +6,7 @@
 #include "always.h"
 #include "geometry.h"
 #include "ebolt.h"
+#include "_convert.h"
 #include "_rect.h"
 #include "_rules.h"
 #include "_surface.h"
@@ -50,18 +51,14 @@
 // SYNTHETIC: GAMEMD 0x004C1D70 SYMBOL
 // _$E42
 
-struct FileSystem {
-	static ConvertClass * PALETTE_PAL;
-};
-
 DynamicVectorClass<EBolt *> EBoltArray;
 
 #include "ccrand.h"
 
 // SYNTHETIC: GAMEMD 0x004C1D90 SYMBOL
-// _$E103
+// _$E102
 // SYNTHETIC: GAMEMD 0x004C1DD0 SYMBOL
-// _$E101
+// _$E100
 
 // FUNCTION: GAMEMD 0x004C1E10
 EBolt::EBolt(void)
@@ -94,7 +91,7 @@ void __stdcall FUN_004C1E70(Coord start, Coord end, int color, int start_depth, 
 	TacticalMap->Coord_To_Pixel(end, p2);
 	int d1 = start_depth - Tactical::Z_Lepton_To_Pixel(start.Z) - 2;
 	int d2 = end_depth - Tactical::Z_Lepton_To_Pixel(end.Z) - 2;
-	DSurface::Composite->Draw_Depth_Shaded_Line(DSurface::ViewBounds, p1, p2, FileSystem::PALETTE_PAL->Convert_Pixel(color), d1, d2);
+	DSurface::Composite->Draw_Depth_Shaded_Line(DSurface::ViewBounds, p1, p2, NormalDrawer->Convert_Pixel(color), d1, d2);
 }
 
 struct BoltSegment

@@ -19,13 +19,13 @@
 #include "dialog.h"
 #include "draw.h"
 #include "hsv.h"
+#include "_convert.h"
 
 // SYNTHETIC: GAMEMD 0x00642770 SYMBOL
 // _$E41
 
 struct FileSystem {
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
-	static ConvertClass * PALETTE_PAL;
 };
 void __fastcall Load_Title_Page(char const * name, bool visible);
 Surface * __fastcall FUN_004E3560(int index);
@@ -70,9 +70,9 @@ ProgressScreenClass Progress;
 // SYNTHETIC: GAMEMD 0x00642960 SYMBOL
 // _$E38
 // SYNTHETIC: GAMEMD 0x00642980 SYMBOL
-// _$E99
+// _$E98
 // SYNTHETIC: GAMEMD 0x006429A0 SYMBOL
-// _$E97
+// _$E96
 // FUNCTION: GAMEMD 0x006429E0
 // ProgressScreenClass::ProgressScreenClass
 ProgressScreenClass::ProgressScreenClass(void) :
@@ -382,7 +382,7 @@ void ProgressScreenClass::Draw_Bar(Point2D pos, double ratio, Surface * surface,
 	ConvertClass * drawer;
 	if (scheme == 0) {
 		scheme = Fetch_Scheme_By_Name("DarkRed");
-		drawer = FileSystem::PALETTE_PAL;
+		drawer = NormalDrawer;
 	} else {
 		drawer = (ConvertClass *)scheme->Converter;
 	}

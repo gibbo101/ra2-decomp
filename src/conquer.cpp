@@ -119,10 +119,6 @@ void Conquer_Nop(void)
 
 namespace Game { extern int ObserverMode; }
 void __fastcall FUN_0065F520(ScenarioClass * scen);
-struct FileSystem
-{
-	static char TEMPERAT_PAL[];
-};
 namespace Unsorted { extern int ScenarioInit; extern bool ScenarioStarted; extern bool TacticalActive; }
 namespace FPSCounter { extern unsigned TotalTimeElapsed; extern unsigned TotalFramesElapsed; }
 extern bool UserInputLocked;
@@ -300,7 +296,7 @@ ret_addr:
 		Unsorted::ScenarioInit = 0;
 		fade = true;
 
-		Set_Palette(*(PaletteClass const *)FileSystem::TEMPERAT_PAL, 15, NULL);
+		Set_Palette(GamePalette, 15, NULL);
 		Keyboard->Clear();
 		if (Session.Play) {
 			MouseCursor->Hide_Mouse();
@@ -707,7 +703,7 @@ void IPX_Call_Back(void)
 }
 
 // SYNTHETIC: GAMEMD 0x0048DB70 SYMBOL
-// _$E129
+// _$E128
 
 // FUNCTION: GAMEMD 0x0048DB80
 SourceType Source_From_Name(char const * name)

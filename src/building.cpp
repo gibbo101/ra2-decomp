@@ -684,10 +684,6 @@ void BuildingClass::Editor_Draw_It(Point2D const & xdrawpoint, Rect const & xcli
 	}
 }
 
-struct FileSystem {
-	static ConvertClass * PALETTE_PAL;
-};
-
 // FUNCTION: GAMEMD 0x0043D290
 void BuildingClass::Draw_It(Point2D const &drawpoint, Rect const &cliprect) const
 {
@@ -1082,7 +1078,7 @@ void BuildingClass::DrawInfoTipAndSpiedSelection(Point2D * location, Rect * rect
 		if (factory) {
 			TechnoClass * object = factory->Get_Object();
 			if (object) {
-				Draw_Shape(*DSurface::Temp, *FileSystem::PALETTE_PAL, (ShapeSet const *)object->Techno_Type_Class()->Get_Cameo_Data(), 0, *location, *rect, ShapeFlags_Type(0xe00));
+				Draw_Shape(*DSurface::Temp, *NormalDrawer, (ShapeSet const *)object->Techno_Type_Class()->Get_Cameo_Data(), 0, *location, *rect, ShapeFlags_Type(0xe00));
 			}
 		}
 	}

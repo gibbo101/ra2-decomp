@@ -2183,8 +2183,6 @@ plain:
 
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
-	static ConvertClass * ANIM_PAL;
-	static ConvertClass * PALETTE_PAL;
 };
 
 inline void Coord_Pixel(Coord coord, Point2D & pixel)
@@ -2230,7 +2228,7 @@ void UnitClass::Unit_Draw_Shape(Point2D xdrawpoint, Rect xcliprect, int brightne
 			drawpoint.Y -= 14;
 		}
 
-		Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, shapefile, shapenum + shapefile->Get_Count() / 2, drawpoint, xcliprect, ShapeFlags_Type(SHAPE_DARKEN | SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_ALPHA | SHAPE_ZGRAD), NULL, Get_Z_Adjust() - 2);
+		Draw_Shape(*LogicalSurface, *NormalDrawer, shapefile, shapenum + shapefile->Get_Count() / 2, drawpoint, xcliprect, ShapeFlags_Type(SHAPE_DARKEN | SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_ALPHA | SHAPE_ZGRAD), NULL, Get_Z_Adjust() - 2);
 
 		Surface * old_surface = LogicalSurface;
 		LogicalSurface = EightBitSurface;
@@ -2363,7 +2361,7 @@ void UnitClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 			if (TemporalTargetingMe == NULL) {
 				if (!IsBeingWarpedOut()) {
 					if (!IsWarpingIn()) {
-						Draw_Shape(*DSurface::Temp, *FileSystem::ANIM_PAL, harvesting_shape, row * 15 + (Frame + TotalFramesWalked) % 15, pixel, cliprect, ShapeFlags_Type(0x2a00), NULL, Get_Z_Adjust() - 2, ZGRAD_GROUND, brightness);
+						Draw_Shape(*DSurface::Temp, *AnimDrawer, harvesting_shape, row * 15 + (Frame + TotalFramesWalked) % 15, pixel, cliprect, ShapeFlags_Type(0x2a00), NULL, Get_Z_Adjust() - 2, ZGRAD_GROUND, brightness);
 					}
 				}
 			}
