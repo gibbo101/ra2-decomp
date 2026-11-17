@@ -10291,7 +10291,7 @@ address,size,symbol,source,sha256
 0x005E64C0,91,?FUN_005E64C0@@YIHH@Z,src/netshare.cpp,ff4d8f74c3ca6f3a9106d1c27f335c006b077e30cfc793c3d9186ec97d5c33bc
 0x005E6520,429,?RandomMapWaypointCount@@YIHH@Z,src/netshare.cpp,d05c3206fa09e08b2fd996b0cb9dcf5a81c04d45cbef53be75dcd5564713f389
 0x005E66D0,27,?FUN_005E66D0@@YIHXZ,src/netshare.cpp,339ae14f963cdb0c06b4d6dbe31e494c0d5cfd5667a590cd1b775e80592fe8ef
-0x005E66F0,419,?FUN_005E66F0@@YI_NXZ,src/netshare.cpp,691fe5f5bd625ada4c8f848cf327e4ab7bfd30f21a706935315ce8602be5c16d
+0x005E66F0,419,?Scenario_Select_Callback@@YI_NXZ,src/netshare.cpp,691fe5f5bd625ada4c8f848cf327e4ab7bfd30f21a706935315ce8602be5c16d
 0x005E68A0,127,?Scenario_Dialog@@YIHPAUHWND__@@@Z,src/netshare.cpp,e9afeba19cd93787a8767575e400dc2a17cac1f16aebcc96a1305403fcec3ce2
 0x005E6920,1964,?Scenario_DlgProc@@YGHPAUHWND__@@IIJ@Z,src/netshare.cpp,e15228c2afb282f67e03f9ecfe4610737179cc01810ea07946638543ccd14933
 0x005E70D0,133,?FUN_005E70D0@@YIHPAUHWND__@@PAVMultiMission@@@Z,src/netshare.cpp,f68f0eebd072db8b64cb1846ae53c2859517011eb22d333d7e5474b872dd65a4
@@ -10300,7 +10300,7 @@ address,size,symbol,source,sha256
 0x005E74E0,1088,?Update_Network_Dialog_Preview@@YIXPAUHWND__@@@Z,src/netshare.cpp,6d0e980338313e73a6e802e64e1a395b08aeabb18b06ad99a54f94ff90572145
 0x005E7920,707,?Receive_Random_Map_Preview@@YIXXZ,src/netshare.cpp,6a4cdec260dcdf75eeccf61e79fed41328ccafa791a68e998b6c90a323baba97
 0x005E7BF0,699,?Set_Scenario_Info_From_Index@@YI_NH@Z,src/netshare.cpp,b2d3ec69ed94511e9b6eab1b5855f7408c98d8603b07ae0e6b843c8303d24c1d
-0x005E7EB0,1562,?FUN_005E7EB0@@YIXPAVMapPreviewClass@@@Z,src/netshare.cpp,218db0835a8cbc66c0656eb67df21347821305eb358d293682e851f0df4a51cb
+0x005E7EB0,1562,?Send_Preview_To_Guests@@YIXPAVMapPreviewClass@@@Z,src/netshare.cpp,218db0835a8cbc66c0656eb67df21347821305eb358d293682e851f0df4a51cb
 0x005E84D0,177,?CalcRandomMapDigest@@YIPADXZ,src/netshare.cpp,529f6e85442b6c7986aa165128ffb40d71d567886ff71e11136ba56f7e29a964
 0x005E8590,400,?CreateRandomMap@@YIHXZ,src/netshare.cpp,44f8944c45aa37e575def87fb6621875b5cf46fb5e3f80ca4efc04220210838b
 0x005E8720,20,?FUN_005E8720@@YIHPBG@Z,src/netshare.cpp,8e8c7cdf47ff4af0b09836f83ccf26a21caa277057831602a008a9d18ce5a4c6

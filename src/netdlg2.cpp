@@ -2297,7 +2297,7 @@ int __fastcall FUN_005E9240(NodeNameType * node);
 void FUN_005E2FA0(void);
 bool __fastcall FUN_005E9720(int id);
 void __fastcall FUN_005E8D90(int slot, NodeNameType * name);
-void __fastcall FUN_005E7EB0(MapPreviewClass * preview);
+void __fastcall Send_Preview_To_Guests(MapPreviewClass * preview);
 
 // FUNCTION: GAMEMD 0x005E00B0
 static void Get_Join_Responses(void)
@@ -2338,7 +2338,7 @@ static void Get_Join_Responses(void)
 			if (WS_Top_Window_ID() == IDD_MPLAYER_HOST) {
 				FUN_005E9850();
 				display_users = true;
-				FUN_005E7EB0(MultiplayerMapPreview);
+				Send_Preview_To_Guests(MultiplayerMapPreview);
 			}
 			continue;
 		}

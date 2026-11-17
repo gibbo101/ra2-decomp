@@ -11864,7 +11864,7 @@ bool FUN_005E9510(void);
 int __fastcall FUN_005E9240(NodeNameType * node);
 void __fastcall FUN_005EC9F0(HWND dialog, int id, NodeNameType * node, int mode);
 bool __fastcall FUN_005E9720(int id);
-void __fastcall FUN_005E7EB0(MapPreviewClass * preview);
+void __fastcall Send_Preview_To_Guests(MapPreviewClass * preview);
 
 // FUNCTION: GAMEMD 0x007A8260
 long __stdcall FUN_007A8260(void * sink, long result, User * user, char const * options)
@@ -12051,7 +12051,7 @@ request_done:
 					User_List_To_Session_Players(&temp);
 					int old = g_SuspendChatPump;
 					g_SuspendChatPump = 1;
-					FUN_005E7EB0(MultiplayerMapPreview);
+					Send_Preview_To_Guests(MultiplayerMapPreview);
 					g_SuspendChatPump = old;
 				}
 			}

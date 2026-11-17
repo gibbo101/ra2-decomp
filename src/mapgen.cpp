@@ -135,7 +135,7 @@ extern bool (*RMGCallback)();
 BOOL CALLBACK Map_Seed_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id);
 char * CalcRandomMapDigest(void);
-void __fastcall FUN_005E7EB0(MapPreviewClass * preview);
+void __fastcall Send_Preview_To_Guests(MapPreviewClass * preview);
 extern int FUN_00734FD0(void);
 extern int DAT_00ABED0C;
 extern int DAT_00ABDFD0;
@@ -2309,7 +2309,7 @@ void Do_Random_Map(HWND dialog, bool (*callback)())
 	RandomMapGen.Generate_Random_Map(true, dialog);
 	RandomMapGen.MapPreview->Create_Preview();
 	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
-		FUN_005E7EB0(RandomMapGen.MapPreview);
+		Send_Preview_To_Guests(RandomMapGen.MapPreview);
 	}
 
 	if (RandomMapGen.MapSeeder != NULL) {

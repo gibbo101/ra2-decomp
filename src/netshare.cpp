@@ -1024,7 +1024,7 @@ static inline void Save_Scenario_Name(void)
 }
 
 // FUNCTION: GAMEMD 0x005E66F0
-bool FUN_005E66F0(void)
+bool Scenario_Select_Callback(void)
 {
 	int index = SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0);
 	if (index != -1) {
@@ -1078,7 +1078,7 @@ int Scenario_Dialog(HWND top)
 	UI::RegisterWindow(DAT_00AC0D40, 0x6b);
 	SendMessage(DAT_00AC0D40, 0x4a9, 0, 1);
 	ShowWindow(DAT_00AC0D40, SW_NORMAL);
-	int result = FUN_007759E0(DAT_00AC0D40, FUN_005E66F0, 0, 1, 1);
+	int result = FUN_007759E0(DAT_00AC0D40, Scenario_Select_Callback, 0, 1, 1);
 	FUN_0072D170();
 	return(result);
 }
@@ -1634,7 +1634,7 @@ bool Set_Scenario_Info_From_Index(int index)
 Point2D FUN_0058BB00(int index);
 
 // FUNCTION: GAMEMD 0x005E7EB0
-void __fastcall FUN_005E7EB0(MapPreviewClass * preview)
+void __fastcall Send_Preview_To_Guests(MapPreviewClass * preview)
 {
 	CDTimerClass<SystemTimerClass> response_timer;
 	char suffix[64];

@@ -9936,7 +9936,7 @@ address,name,result,size,source,symbol
 0x005E64C0,FUN_005E64C0,MATCH,91,src/netshare.cpp,?FUN_005E64C0@@YIHH@Z
 0x005E6520,RandomMapWaypointCount,MATCH,429,src/netshare.cpp,?RandomMapWaypointCount@@YIHH@Z
 0x005E66D0,FUN_005E66D0,MATCH,27,src/netshare.cpp,?FUN_005E66D0@@YIHXZ
-0x005E66F0,FUN_005E66F0,MATCH,419,src/netshare.cpp,?FUN_005E66F0@@YI_NXZ
+0x005E66F0,Scenario_Select_Callback,MATCH,419,src/netshare.cpp,?Scenario_Select_Callback@@YI_NXZ
 0x005E68A0,Scenario_Dialog,MATCH,127,src/netshare.cpp,?Scenario_Dialog@@YIHPAUHWND__@@@Z
 0x005E70D0,FUN_005E70D0,MATCH,133,src/netshare.cpp,?FUN_005E70D0@@YIHPAUHWND__@@PAVMultiMission@@@Z
 0x005E6920,Scenario_DlgProc,MATCH,1964,src/netshare.cpp,?Scenario_DlgProc@@YGHPAUHWND__@@IIJ@Z
@@ -9945,7 +9945,7 @@ address,name,result,size,source,symbol
 0x005E74E0,Update_Network_Dialog_Preview,MATCH,1088,src/netshare.cpp,?Update_Network_Dialog_Preview@@YIXPAUHWND__@@@Z
 0x005E7920,Receive_Random_Map_Preview,MATCH,707,src/netshare.cpp,?Receive_Random_Map_Preview@@YIXXZ
 0x005E7BF0,Set_Scenario_Info_From_Index,MATCH,699,src/netshare.cpp,?Set_Scenario_Info_From_Index@@YI_NH@Z
-0x005E7EB0,FUN_005E7EB0,MATCH,1562,src/netshare.cpp,?FUN_005E7EB0@@YIXPAVMapPreviewClass@@@Z
+0x005E7EB0,Send_Preview_To_Guests,MATCH,1562,src/netshare.cpp,?Send_Preview_To_Guests@@YIXPAVMapPreviewClass@@@Z
 0x005E8590,CreateRandomMap,MATCH,400,src/netshare.cpp,?CreateRandomMap@@YIHXZ
 0x005E8720,FUN_005E8720,MATCH,20,src/netshare.cpp,?FUN_005E8720@@YIHPBG@Z
 0x005E8740,FUN_005E8740,MATCH,28,src/netshare.cpp,?FUN_005E8740@@YI_NH@Z
