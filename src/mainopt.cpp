@@ -460,11 +460,6 @@ struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 };
 
-struct Drawing {
-	static int RenderWidth;
-	static int RenderHeight;
-};
-
 extern int SidebarWidth;
 Rect Get_Title_Screen_Area(void);
 void FUN_0072E1B0(int width, int height);
@@ -480,7 +475,7 @@ bool Change_Display_Mode(int width, int height)
 {
 	DebugString("About to set video mode\n");
 
-	Point2D oldsize(Drawing::RenderWidth, Drawing::RenderHeight);
+	Point2D oldsize(VideoModeWidth, VideoModeHeight);
 
 	int redleft = DSurface::Get_Red_Left();
 	int redright = DSurface::Get_Red_Right();
@@ -495,8 +490,8 @@ bool Change_Display_Mode(int width, int height)
 
 	if (WindowedMode == true) {
 		VisibleRect = Rect(0, 0, width, height);
-		Drawing::RenderWidth = width;
-		Drawing::RenderHeight = height;
+		VideoModeWidth = width;
+		VideoModeHeight = height;
 		DebugString("VisibleRect: %dx%d\n", width, height);
 	} else {
 		if (MouseCursor != NULL) {
@@ -608,7 +603,7 @@ bool Change_Display_Mode(int width, int height)
 	}
 
 	Map.Set_View_Dimensions(temp);
-	FUN_0072E1B0(Drawing::RenderWidth, Drawing::RenderHeight);
+	FUN_0072E1B0(VideoModeWidth, VideoModeHeight);
 	Map.Init_IO();
 	Map.Activate(1);
 	Map.Reposition_Sidebar();

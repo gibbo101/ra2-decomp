@@ -332,9 +332,7 @@ unsigned int __fastcall FUN_00769540(unsigned int value)
 
 Wstring operator+(Wstring const & a, Wstring const & b);
 
-struct Drawing {
-	static int RenderWidth;
-};
+extern int VideoModeWidth;
 
 typedef VectorClass<Rect> RECT_LIST;
 typedef VectorCursor<Rect, RECT_LIST> RECT_ITER;
@@ -415,7 +413,7 @@ void __fastcall FUN_00769550(Wstring const & map_name, Wstring const & pcx_file_
 	int ci = 0;
 	while (riter) {
 		Wstring section = operator+(map_name, Wstring_FromInt(ci, 2));
-		Wstring width_text = Wstring_FromInt(Drawing::RenderWidth);
+		Wstring width_text = Wstring_FromInt(VideoModeWidth);
 		Point2D target = centroids[ci].Center_Point();
 		Point2D center = target;
 		ini.Put_Point(section, Wstring("Target_").operator+(width_text), center);
