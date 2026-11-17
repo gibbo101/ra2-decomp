@@ -1204,19 +1204,19 @@ void MPCooperative::vt_entry_A0(bool playerWon)
 	Scen->IsEndOfGame = false;
 	Scen->IsNoMapSel = true;
 	Scen->IsOneTimeOnly = false;
-	Field54 = 0;
+	HostIndex = 0;
 	for (int k = 0; k < Session.Players.Count(); k++) {
 		if (Session.HostAddress == Session.Players[k]->Address) {
-			Field54 = k;
+			HostIndex = k;
 		}
 	}
 	memcpy(Addresses, Session.PlayerLocalAddress, sizeof(Addresses));
-	memcpy(Field124, Session.PlayerFirewall, sizeof(Field124));
-	memcpy(Field144, Session.PlayerPortBase, sizeof(Field144));
-	memcpy(Field194, Session.PlayerPorts, sizeof(Field194));
-	wcscpy(Field164, Session.MasterPlayerName);
-	Field190 = Session.MasterPlayerID;
-	Field70 = Session.House;
+	memcpy(PlayerFirewall, Session.PlayerFirewall, sizeof(PlayerFirewall));
+	memcpy(PlayerPortBase, Session.PlayerPortBase, sizeof(PlayerPortBase));
+	memcpy(PlayerPorts, Session.PlayerPorts, sizeof(PlayerPorts));
+	wcscpy(MasterPlayerName, Session.MasterPlayerName);
+	MasterPlayerID = Session.MasterPlayerID;
+	House = Session.House;
 	Seed = ::Seed;
 	TechLevel = BuildLevel;
 	UnitCount = Session.Options.UnitCount;
@@ -1611,10 +1611,10 @@ void MPCooperative::vt_entry_AC(void)
 	DAT_00B779C4 = 0;
 	DAT_00A8F900 = 0;
 	strcpy(DAT_00B77830, DAT_00B73E40.get());
-	Session.HostAddress = Session.Players[Field54]->Address;
-	wcscpy(Session.MasterPlayerName, Session.Players[Field54]->Name);
+	Session.HostAddress = Session.Players[HostIndex]->Address;
+	wcscpy(Session.MasterPlayerName, Session.Players[HostIndex]->Name);
 	Session.MasterPlayerID = -1;
-	Session.House = Field70;
+	Session.House = House;
 	PacketTransport->Clear_Broadcast_Addresses();
 	char ip[32] = "xxx.xxx.xxx.xxx";
 	for (int i = 1; i < Session.Players.Count(); i++) {
@@ -1625,11 +1625,11 @@ void MPCooperative::vt_entry_AC(void)
 		PacketTransport->Set_Broadcast_Address(ip, port);
 	}
 	memcpy(Session.PlayerLocalAddress, Addresses, sizeof(Addresses));
-	memcpy(Session.PlayerFirewall, Field124, sizeof(Field124));
-	memcpy(Session.PlayerPortBase, Field144, sizeof(Field144));
-	memcpy(Session.PlayerPorts, Field194, sizeof(Field194));
-	wcscpy(Session.MasterPlayerName, Field164);
-	Session.MasterPlayerID = Field190;
+	memcpy(Session.PlayerFirewall, PlayerFirewall, sizeof(PlayerFirewall));
+	memcpy(Session.PlayerPortBase, PlayerPortBase, sizeof(PlayerPortBase));
+	memcpy(Session.PlayerPorts, PlayerPorts, sizeof(PlayerPorts));
+	wcscpy(Session.MasterPlayerName, MasterPlayerName);
+	Session.MasterPlayerID = MasterPlayerID;
 	::Seed = Seed;
 	Init_Random();
 	FUN_004068E0("Setup Rematch: Random Seed = %d\n", ::Seed);
