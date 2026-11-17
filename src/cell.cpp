@@ -1323,17 +1323,7 @@ struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 };
 
-class SHPStruct
-{
-	public:
-		short Type;
-		short Width;
-		short Height;
-		short Count;
-		void Load(void);
-		Rect GetFrameBounds(int frame) const;
-		unsigned char * GetPixels(int frame) const;
-};
+#include "msanim.h"
 
 // FUNCTION: GAMEMD 0x0047EC90
 bool CellClass::Draw_Placement_Cursor(Point2D const & xpoint, Rect const & cliprect, bool zeroalpha)

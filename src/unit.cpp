@@ -82,6 +82,7 @@ namespace Unsorted { extern int CurrentFrame; extern bool MoveFeedback; }
 #include "bench.hh"
 #include "color.hh"
 #include "tube.hh"
+#include "lightstorm.h"
 
 template class IndexClass<int, StaticBufferClass::Entry *>;
 
@@ -2184,14 +2185,6 @@ struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 	static ConvertClass * ANIM_PAL;
 	static ConvertClass * PALETTE_PAL;
-};
-
-struct PsyDom {
-	static bool Active(void);
-};
-
-struct NukeFlash {
-	static bool IsFadingIn(void);
 };
 
 inline void Coord_Pixel(Coord coord, Point2D & pixel)

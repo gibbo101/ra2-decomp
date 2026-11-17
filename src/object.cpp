@@ -74,15 +74,8 @@
 namespace Unsorted { extern bool ArmageddonMode; }
 namespace Game { extern bool IsActive; }
 void __fastcall SetNavCycleMode(int mode);
-class SHPStruct
-{
-	public:
-		short Type;
-		short Width;
-		short Height;
-		short Count;
-		Rect GetFrameBounds(int frame) const;
-};
+#include "msanim.h"
+
 #define	GRAVITY	1.4
 
 // FUNCTION: GAMEMD 0x005F3900
