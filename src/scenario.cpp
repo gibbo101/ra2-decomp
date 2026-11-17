@@ -159,12 +159,6 @@ void __fastcall FUN_00406F40(void);
 int __fastcall FUN_004072B0(void * p);
 void __fastcall FUN_00407150(void * p, int value);
 void __fastcall FUN_005BF500(bool pause);
-class InputManagerClass {
-	public:
-		void DoSomething(void);
-		void FUN_0054F000(void);
-		static InputManagerClass * Instance;
-};
 
 // FUNCTION: GAMEMD 0x00683280
 // FUNCTION: GAMEMD 0x006832B0
@@ -529,7 +523,7 @@ void __fastcall Hold_Scenario(int seconds)
 			}
 			Scen->IsInputLocked = true;
 			UserInputLocked = true;
-			InputManagerClass::Instance->DoSomething();
+			Keyboard->Clear();
 			DAT_00B07784 = 0;
 		}
 	}
@@ -555,7 +549,7 @@ void Release_Scenario(void)
 		}
 		Scen->IsInputLocked = false;
 		UserInputLocked = false;
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 		DAT_00B07784 = 0;
 	}
 
@@ -574,7 +568,7 @@ void Lock_Scenario_Input(void)
 
 	Scen->IsInputLocked = true;
 	UserInputLocked = true;
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	DAT_00B07784 = 0;
 }
 
@@ -589,7 +583,7 @@ void Unlock_Scenario_Input(void)
 
 	Scen->IsInputLocked = false;
 	UserInputLocked = false;
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	DAT_00B07784 = 0;
 }
 
@@ -1159,7 +1153,7 @@ void Do_Win(void)
 	FUN_005BF260(Scen->WinMovie, -1, true, true, true);
 
 	if (!Session.Play) {
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 
 		if (!Scen->IsSkipScore) {
 			STLScoreScreen().Present();
@@ -1209,7 +1203,7 @@ void Do_Win(void)
 			}
 		}
 
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 	}
 
 	MouseCursor->Show_Mouse();
@@ -1258,7 +1252,7 @@ void Do_Win(void)
 			Session.Options.AISlots.Colors[i] = saved_colors[i];
 			Session.Slots[i] = saved_slots[i];
 		}
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 	}
 
 	Game::IsActive = CopyProtection::CheckProtectedData();
@@ -1425,7 +1419,7 @@ void Do_Lose(void)
 				Session.Options.AISlots.Colors[i] = saved_colors[i];
 				Session.Slots[i] = saved_slots[i];
 			}
-			InputManagerClass::Instance->DoSomething();
+			Keyboard->Clear();
 		}
 
 		Start_Scenario(Scen->ScenarioName, false, Scen->Campaign);
@@ -1481,7 +1475,7 @@ void Do_Restart(void)
 	FUN_007529A0(true);
 	FUN_00752CA0();
 	Map.Set_Default_Mouse(MOUSE_NORMAL, false);
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 
 	Start_Scenario(Scen->ScenarioName, false, Scen->Campaign);
 	Environment.Restore();
@@ -1489,7 +1483,7 @@ void Do_Restart(void)
 	while (timer > 0) {
 		Game::CallBack();
 	}
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 
 	if (ToolTips != NULL) {
 		ToolTips->Activate(Options.ToolTips);
@@ -1507,7 +1501,7 @@ void Do_Abort(void)
 	Scen->Scenario = 1;
 
 	FUN_005BF450();
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 
 	MouseCursor->Erase_Mouse(HiddenSurface);
 	MouseCursor->Release_Mouse();

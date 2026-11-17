@@ -13,6 +13,7 @@
 #include "surface.h"
 #include "dsurface.h"
 #include "_surface.h"
+#include "_keyboar.h"
 #include "keyboard.h"
 #include "globals.h"
 #include "gscreen.h"
@@ -43,11 +44,6 @@ extern int MessageLoopCount;
 int FUN_00407000(void);
 unsigned int FUN_0040A7A0(void);
 extern float BinkVolume;
-
-class InputManagerClass : public KeyboardClass {
-	public:
-		static InputManagerClass * Instance;
-};
 
 int __fastcall Peek_Windows_Message(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
 int __fastcall Get_Windows_Message(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max);
@@ -207,7 +203,7 @@ void BinkHandle::FUN_00432C70(void)
 		FUN_004068E0("Bink Error: %s\n", BinkGetError());
 		return;
 	}
-	InputManagerClass::Instance->Clear();
+	Keyboard->Clear();
 	Playing = true;
 	Finished = false;
 	for (;;) {
@@ -243,13 +239,13 @@ void BinkHandle::FUN_00432C70(void)
 			dest.Y += rc.top;
 			VisibleSurface->Blit_From(dest, *DrawSurface, DestRect, false, true);
 		}
-		if (InputManagerClass::Instance->Check() != KN_NONE && Flag == false) {
-			if (InputManagerClass::Instance->Get() == (KN_ESC | KN_RLSE_BIT)) {
+		if (Keyboard->Check() != KN_NONE && Flag == false) {
+			if (Keyboard->Get() == (KN_ESC | KN_RLSE_BIT)) {
 				break;
 			}
 		}
 	}
-	InputManagerClass::Instance->Clear();
+	Keyboard->Clear();
 }
 
 // FUNCTION: GAMEMD 0x00432E40

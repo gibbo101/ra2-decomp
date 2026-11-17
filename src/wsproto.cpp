@@ -61,12 +61,6 @@ struct WinsockBufferType {
 // SYNTHETIC: GAMEMD 0x007B19A0 SYMBOL
 // _$E41
 
-class InputManagerClass {
-public:
-	static InputManagerClass *Instance;
-	void FUN_0054F000(void);
-};
-
 // FUNCTION: GAMEMD 0x007B19C0
 WinsockInterfaceClass::WinsockInterfaceClass(void) :
 Socket(INVALID_SOCKET),
@@ -422,7 +416,7 @@ void *WinsockInterfaceClass::Get_New_In_Buffer(void)
 // FUNCTION: GAMEMD 0x007B22E0
 int WinsockInterfaceClass::Read(void *buffer, int &buffer_len, void *address, int &address_len, unsigned short &port)
 {
-	InputManagerClass::Instance->FUN_0054F000();
+	Keyboard->Check();
 
 	if (InBuffers.Count() == 0) return(0);
 
@@ -475,7 +469,7 @@ void WinsockInterfaceClass::WriteTo(void *buffer, int buffer_len, void *address,
 
 	SendMessage(Game::hWnd, Protocol_Event_Message(sock), 0, (LONG)FD_WRITE);
 
-	InputManagerClass::Instance->FUN_0054F000();
+	Keyboard->Check();
 }
 
 // FUNCTION: GAMEMD 0x007B24E0
@@ -501,7 +495,7 @@ void WinsockInterfaceClass::Broadcast(void *buffer, int buffer_len, bool alterna
 
 	SendMessage(Game::hWnd, Protocol_Event_Message(sock), 0, (LONG)FD_WRITE);
 
-	InputManagerClass::Instance->FUN_0054F000();
+	Keyboard->Check();
 }
 
 // FUNCTION: GAMEMD 0x007B25E0

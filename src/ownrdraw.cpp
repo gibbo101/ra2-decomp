@@ -5081,11 +5081,6 @@ namespace UI {
 	HWND __fastcall BeginDialog(int resource, DLGPROC proc, int param);
 	void __fastcall EndDialog(HWND window);
 }
-class InputManagerClass {
-	public:
-		void DoSomething(void);
-		static InputManagerClass * Instance;
-};
 
 // FUNCTION: GAMEMD 0x0060D380
 int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus)
@@ -5097,7 +5092,7 @@ int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus)
 		SetWindowLong(dialog, 8, (LONG)&result);
 		ShowWindow(dialog, 1);
 		SetForegroundWindow(dialog);
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 		if (focus) {
 			FUN_0052B9B0(dialog);
 		}
@@ -5404,7 +5399,7 @@ union ODColorBits {
 };
 
 // SYNTHETIC: GAMEMD 0x006107A0 SYMBOL
-// _$E120
+// _$E119
 OwnerDraw::Tooltip ODTooltip;
 
 // FUNCTION: GAMEMD 0x006107E0
@@ -5530,11 +5525,11 @@ bool OwnerDraw::End_Tooltip(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00612910 SYMBOL
-// _$E123
+// _$E122
 static ArrayList<HWND> ActiveWindows;
 
 // SYNTHETIC: GAMEMD 0x00612930 SYMBOL
-// _$E128
+// _$E127
 static Dictionary<OwnerDraw::CtrlMsgData, bool> ProcessedMessages(Hash_CtrlMsg);
 
 // FUNCTION: GAMEMD 0x00612A60
@@ -8256,7 +8251,7 @@ HWND __fastcall UI::BeginDialog(int resource, DLGPROC proc, int param)
 // FUNCTION: GAMEMD 0x00622720
 void __fastcall UI::EndDialog(HWND window)
 {
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	WS_Save_Dialog_Values(window);
 	DestroyWindow(window);
 
@@ -8715,7 +8710,7 @@ int __fastcall FUN_00623CD0(wchar_t const * text)
 		SetWindowLong(dialog, 8, (LONG)&result);
 		ShowWindow(dialog, 1);
 		SetForegroundWindow(dialog);
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 		while (result < 0) {
 			FUN_005D4D50();
 			if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && !Session.NetOpen && !Session.Suspended) {
@@ -8913,7 +8908,7 @@ int __fastcall Run_Dialog_Control(int resource, DLGPROC proc, OwnerDraw::DialogC
 	}
 	ShowWindow(dialog, SW_SHOWNORMAL);
 	SetForegroundWindow(dialog);
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	while (!control->F2() && !control->F4()) {
 		FUN_005D4D50();
 		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {

@@ -2418,11 +2418,6 @@ namespace UI {
 	void __fastcall EndDialog(HWND window);
 	bool Updated(void);
 }
-class InputManagerClass {
-	public:
-		void DoSomething(void);
-		static InputManagerClass * Instance;
-};
 extern bool UserInputLocked;
 #include "scenario.h"
 
@@ -2433,7 +2428,7 @@ void RadarClass::FUN_006586D0(void)
 
 	HWND dialog = UI::BeginDialog(0x73, Diplomacy_Dialog_Proc, 0);
 	UserInputLocked = true;
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	if (dialog) {
 		SetWindowLong(dialog, DWL_USER, (LONG)&result);
 		UI::FocusOnWindow(dialog);
@@ -2449,7 +2444,7 @@ void RadarClass::FUN_006586D0(void)
 		}
 		UI::EndDialog(dialog);
 	}
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	UserInputLocked = Scen->IsInputLocked;
 	Map.Flag_To_Redraw(GS_REDRAW_ALL);
 }

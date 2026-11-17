@@ -4529,19 +4529,6 @@ AbstractClass * TechnoClass::Greatest_Threat(ThreatType method, Coord const & co
 	return((ObjectClass *)bestobject);
 }
 
-class InputManagerClass
-{
-	public:
-		static InputManagerClass * Instance;
-		bool IsKeyPressed(int key);
-};
-
-static inline bool Key_Down(int key)
-{
-	return InputManagerClass::Instance->IsKeyPressed(key);
-}
-
-
 // FUNCTION: GAMEMD 0x006FFEC0
 ActionType TechnoClass::What_Action(ObjectClass const * object, bool disallow_force) const
 {
@@ -4577,9 +4564,9 @@ ActionType TechnoClass::What_Action(ObjectClass const * object, bool disallow_fo
 		}
 	}
 
-	bool altdown = !disallow_force && (Key_Down(Options.KeyForceMove1) || Key_Down(Options.KeyForceMove2));
-	bool ctrldown = !disallow_force && (Key_Down(Options.KeyForceAttack1) || Key_Down(Options.KeyForceAttack2));
-	bool shiftdown = !disallow_force && (Key_Down(Options.KeySelect1) || Key_Down(Options.KeySelect2));
+	bool altdown = !disallow_force && (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
+	bool ctrldown = !disallow_force && (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+	bool shiftdown = !disallow_force && (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
 
 	if (shiftdown) {
 		if (ctrldown) {
@@ -4710,9 +4697,9 @@ ActionType TechnoClass::What_Action(Cell const & cell, bool check_fog, bool disa
 	CellClass const * cellptr = &Map[cell];
 	OverlayTypeClass const * optr = NULL;
 
-	bool ctrldown = !disallow_force && (Key_Down(Options.KeyForceAttack1) || Key_Down(Options.KeyForceAttack2));
-	bool shiftdown = !disallow_force && (Key_Down(Options.KeySelect1) || Key_Down(Options.KeySelect2));
-	bool altdown = !disallow_force && (Key_Down(Options.KeyForceMove1) || Key_Down(Options.KeyForceMove2));
+	bool ctrldown = !disallow_force && (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+	bool shiftdown = !disallow_force && (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+	bool altdown = !disallow_force && (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
 	if (shiftdown && ctrldown) {
 		shiftdown = false;
 		ctrldown = false;

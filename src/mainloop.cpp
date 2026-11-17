@@ -321,11 +321,6 @@ extern unsigned DAT_00ABCE14;
 extern int DAT_00ABCD40;
 namespace FPSCounter { extern unsigned CurrentFrameRate; extern unsigned TotalFramesElapsed; extern unsigned TotalTimeElapsed; }
 
-class InputManagerClass : public KeyboardClass {
-	public:
-		static InputManagerClass * Instance;
-};
-
 static inline const CommandClass * Hotkey_Command(KeyNumType key)
 {
 	return HotkeyCommands[key];
@@ -576,9 +571,9 @@ bool Main_Loop(void)
 	Logic.AI();
 
 	int scroll = DAT_0082A030;
-	if (InputManagerClass::Instance->Down(Options.KeySelect1) || InputManagerClass::Instance->Down(Options.KeySelect2)) {
+	if (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2)) {
 		scroll = scroll * DAT_0082A034;
-	} else if (InputManagerClass::Instance->Down(Options.KeyForceAttack1) || InputManagerClass::Instance->Down(Options.KeyForceAttack2)) {
+	} else if (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2)) {
 		scroll = Map.PlayRect.Width > Map.PlayRect.Height ? Map.PlayRect.Width : Map.PlayRect.Height;
 		scroll <<= 8;
 	}
@@ -654,11 +649,11 @@ void Keyboard_Process(KeyNumType & input)
 		}
 		if (cmd->Unknown1C(input)) {
 			int count = 0;
-			int next = InputManagerClass::Instance->Check() & 0xFFFF;
+			int next = Keyboard->Check() & 0xFFFF;
 			if (next == input) {
 				do {
-					InputManagerClass::Instance->Get();
-					next = InputManagerClass::Instance->Check() & 0xFFFF;
+					Keyboard->Get();
+					next = Keyboard->Check() & 0xFFFF;
 					count++;
 				} while (count < 10 && next == input);
 			}
@@ -746,7 +741,7 @@ void Sync_Delay(void)
 }
 
 // SYNTHETIC: GAMEMD 0x0055E410 SYMBOL
-// _$E148
+// _$E147
 
 extern unsigned DAT_008373A0;
 

@@ -110,11 +110,6 @@ extern DynamicVectorClass<TriggerClass *> DAT_00A8EAE8;
 extern DynamicVectorClass<TagClass *> DAT_00B0E720;
 #define Tags DAT_00B0E720
 extern bool UserInputLocked;
-class InputManagerClass {
-	public:
-		void DoSomething(void);
-		static InputManagerClass * Instance;
-};
 void __fastcall FUN_007315A0(void);
 extern wchar_t DAT_00887734[];
 extern char DAT_00889F64[];
@@ -1583,7 +1578,7 @@ bool TActionClass::TAction_ZOOM_IN(HouseClass * , ObjectClass * , TriggerClass *
 {
 	TacticalMap->ZoomFactor = Rule->ZoomInFactor;
 	UserInputLocked = true;
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 
 	Hide_Mouse();
 	Map.Abort_Drag_Select();
@@ -1598,7 +1593,7 @@ bool TActionClass::TAction_ZOOM_IN(HouseClass * , ObjectClass * , TriggerClass *
 bool TActionClass::TAction_ZOOM_OUT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	TacticalMap->ZoomFactor = 1;
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	UserInputLocked = Scen->IsInputLocked;
 
 	Show_Mouse();

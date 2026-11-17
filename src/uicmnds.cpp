@@ -38,12 +38,14 @@
 // _$E41
 
 
+#include "_keyboar.h"
 #include "_rules.h"
 #include "building.h"
 #include "event.h"
 #include "goptions.h"
 #include "house.h"
 #include "infantry.h"
+#include "keyboard.h"
 #include "msglist.h"
 #include "object.h"
 #include "queue.h"
@@ -551,12 +553,6 @@ void __fastcall FUN_00731A70(bool flag)
 	}
 }
 
-class InputManagerClass
-{
-	public:
-		static InputManagerClass * Instance;
-		bool IsKeyPressed(int key);
-};
 extern bool DAT_00B0FE58;
 extern bool DAT_00B0FE64;
 namespace Unsorted { extern int NavCycleMode; }
@@ -608,19 +604,14 @@ void FUN_00731BE0(void)
 	DAT_00B0FE58 = false;
 }
 
-static inline bool Key_Down(int key)
-{
-	return InputManagerClass::Instance->IsKeyPressed(key);
-}
-
 // FUNCTION: GAMEMD 0x00731BF0
 bool FUN_00731BF0(void)
 {
 	if (DAT_00B0FE58) {
 		return true;
 	}
-	bool a = Key_Down(Options.KeyForceAttack1) || Key_Down(Options.KeyForceAttack2);
-	bool b = Key_Down(Options.KeySelect1) || Key_Down(Options.KeySelect2);
+	bool a = Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2);
+	bool b = Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2);
 	if (a && b) {
 		int count = CurrentObject.Count();
 		for (int i = 0; i < count; i++) {
