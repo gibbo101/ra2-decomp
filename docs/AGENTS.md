@@ -492,10 +492,15 @@ Each entry: what the diff showed, then the source change that fixed it.
   cut them to the comment rules (two `//` lines of behaviour) before landing.
 - `#define NDEBUG` before the includes is how a file whose original has its asserts
   compiled out is built (ownrdraw.cpp, wonline.cpp).
-- A match that flips with unrelated header declarations is VC6 ordering spill reloads by
-  heap address: sweep dummy declarations and keep the form that fails at fewest offsets.
+- A heap-sensitive match flips with the weighted count of declarations before the
+  function, not their names: 1 per variable, typedef, forward declaration or data member
+  (named or unnamed), 2 per function declaration or `enum`, 3 per inline definition, 8
+  plus its members per class definition; redeclarations and `#define`s weigh nothing.
+  Keep a change's net weight zero before the function, or sweep it with
+  `tools/declprobe.py`.
 - When no body form helps, moving real declarations the file already uses to before or
-  after the function shifts its heap offsets too (wonline 0x00788180); never add unused ones.
+  after the function shifts its heap offsets too (wonline 0x00788180). Never invent
+  declarations; one TibSun's header has at that place may be restored to keep the count.
   One move may not be enough: move several together (six held it against a new inline).
   Removing declarations nothing uses works too (nine held it); results jump with set size.
   An unused `#include` is one too: dropping overtype.h restored DrawMap 0x00640A40.
