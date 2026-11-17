@@ -566,6 +566,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   own .cpp uses stay out of the shared header: that file declares the full class itself.
   When one must land, shift each includer's markers by one from the first number the
   checker reports as 'no compiled function has this name'.
+- An `#include` can add static initialisers that the exe's module does not have (inline.h
+  pulls in sun.h's), and the checker never flags extra compiled code. Compare the file's
+  compiled `$E` count before and after adding a header.
 - An inline constructor or destructor in a shared header on a class with vector members
   shifts `$E` and `$S` numbers in every includer: declare it, define it inline in its file.
 - Two heap-sensitive functions in different files that want opposite states of a header's
