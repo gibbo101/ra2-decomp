@@ -186,18 +186,18 @@ int IPXConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 		dest = Session.PacketRouterAddress;
 		dest_port = DAT_00841F3C;
 		if (Session.PacketRouterAddressTranslate == Session.Players[0]->Address && dest.FUN_0053EF30(Session.Players[0]->Address)) {
-			((GlobalHeaderType *)buf)->FieldC = 0;
-			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+			((GlobalHeaderType *)buf)->ForwardPort = 0;
+			memset(&((GlobalHeaderType *)buf)->ForwardAddress, 0, 4);
 		}
 		else {
 			dest_port = Session.PacketRouterPort;
-			((GlobalHeaderType *)buf)->FieldC = DAT_00841F3C;
-			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+			((GlobalHeaderType *)buf)->ForwardPort = DAT_00841F3C;
+			memset(&((GlobalHeaderType *)buf)->ForwardAddress, 0, 4);
 		}
 	}
 	else {
-		((GlobalHeaderType *)buf)->FieldC = 0;
-		memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+		((GlobalHeaderType *)buf)->ForwardPort = 0;
+		memset(&((GlobalHeaderType *)buf)->ForwardAddress, 0, 4);
 	}
 
 	if (Session.Type == GAME_INTERNET && !Session.ViaPacketRouter) {

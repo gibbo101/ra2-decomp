@@ -13,8 +13,8 @@ struct GlobalHeaderType {
 	unsigned char Code;
 	unsigned char Field3;
 	unsigned int PacketID;
-	unsigned int Field8;
-	unsigned short FieldC;
+	unsigned int ForwardAddress;
+	unsigned short ForwardPort;
 	unsigned short ProductID;
 };
 #pragma pack(pop)

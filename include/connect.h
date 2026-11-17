@@ -14,8 +14,8 @@ struct CommHeaderType {
 	unsigned char Code;
 	unsigned char Field3;
 	unsigned int PacketID;
-	unsigned int Field8;
-	unsigned short FieldC;
+	unsigned int ForwardAddress;
+	unsigned short ForwardPort;
 };
 #pragma pack(pop)
 

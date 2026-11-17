@@ -663,29 +663,29 @@ bool IPXManagerClass::FUN_00541680(CommHeaderType *packet, void *buf, int buflen
 	static unsigned long loopback[2] = {0, htonl(0x7F000001)};
 
 	if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter && OwnerTalk.RouterProcess) {
-		if (packet->FieldC == DAT_00841F3C) {
-			packet->FieldC = port;
-			memcpy(&packet->Field8, from + 4, 4);
+		if (packet->ForwardPort == DAT_00841F3C) {
+			packet->ForwardPort = port;
+			memcpy(&packet->ForwardAddress, from + 4, 4);
 			FUN_004068E0("Forwarding packet from %s ; %d to forwarder\n", ((IPXAddressClass *)from)->As_String(0), port);
 			PacketTransport->WriteTo(buf, buflen, loopback, 12, false, true, DAT_00841F3C);
 			return true;
 		}
-		if (packet->FieldC) {
+		if (packet->ForwardPort) {
 			NetNodeType node;
 			Session.Players[0]->Address.Get_Node(node);
-			if (memcmp(node, &packet->Field8, 4) == 0 && Session.PlayerPorts[0] == packet->FieldC) {
+			if (memcmp(node, &packet->ForwardAddress, 4) == 0 && Session.PlayerPorts[0] == packet->ForwardPort) {
 				FUN_004068E0("Packet is supposed to be forwarded to us - just adding it to our queue\n");
 				return false;
 			}
-			if (packet->Field8) {
-				unsigned short oldport = packet->FieldC;
+			if (packet->ForwardAddress) {
+				unsigned short oldport = packet->ForwardPort;
 				IPXAddressClass address;
 				NetNodeType dest;
-				memcpy(dest, &packet->Field8, 4);
+				memcpy(dest, &packet->ForwardAddress, 4);
 				address.Set_Node(dest);
 				address.Set_Port(oldport);
-				packet->FieldC = 0;
-				memset(&packet->Field8, 0, 4);
+				packet->ForwardPort = 0;
+				memset(&packet->ForwardAddress, 0, 4);
 				FUN_004068E0("Forwarding packet from router to %s\n", address.As_String(0));
 				PacketTransport->WriteTo(buf, buflen, &address, 12, false, true, oldport);
 				return true;
