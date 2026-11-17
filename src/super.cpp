@@ -40,24 +40,13 @@
 #include "vox.h"
 #include "weapon.h"
 #include "stringtable.h"
+#include "lightstorm.h"
 
 extern Cell DAT_00B0C038[9];
 extern wchar_t DAT_00887734[];
 extern int DAT_008809A0;
 
-class LightningStorm
-{
-	public:
-		static bool HasDeferment(void);
-		static void PrintMessage(void);
-};
 
-class PsyDom
-{
-	public:
-		static bool Active(void);
-		static void PrintMessage(void);
-};
 
 static inline void Release_Animation(SuperClass * super)
 {

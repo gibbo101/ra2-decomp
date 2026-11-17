@@ -37,6 +37,7 @@
 #include "infatype.h"
 #include "inline.h"
 #include "ion.h"
+#include "lightstorm.h"
 #include "piggyback.h"
 #include "isotype.h"
 #include "language\language.h"
@@ -473,17 +474,7 @@ struct FileSystem {
 
 extern ShapeSet const * DAT_00A8F244;
 
-class PsyDom
-{
-	public:
-		static bool Active(void);
-};
 
-class NukeFlash
-{
-	public:
-		static bool IsFadingIn(void);
-};
 
 // FUNCTION: GAMEMD 0x00518F90
 void InfantryClass::Draw_It(Point2D const & xpoint, Rect const & cliprect) const

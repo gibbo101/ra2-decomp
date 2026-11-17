@@ -7,6 +7,7 @@
 #include "always.h"
 #include "geometry.h"
 #include "cell.h"
+#include "lightstorm.h"
 #include "_alpha.h"
 #include "_bench.h"
 #include "_convert.h"
@@ -3100,17 +3101,7 @@ void CellClass::Init_Drawer(LightConvertClass * drawer, int intensity, int ambie
 	Ambient = 0;
 }
 
-class PsyDom
-{
-	public:
-		static bool Active(void);
-};
 
-class NukeFlash
-{
-	public:
-		static bool IsFadingIn(void);
-};
 
 // FUNCTION: GAMEMD 0x00484050
 void CellClass::Pick_Drawer(LightConvertClass * & drawer, int & intensity, int & ambient, int & brightness, int & tile_brightness, int & alt_brightness) const

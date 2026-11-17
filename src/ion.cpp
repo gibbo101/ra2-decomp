@@ -44,6 +44,7 @@
 #include <objidl.h>
 #include "msanim.h"
 #include "cast.h"
+#include "lightstorm.h"
 
 // SYNTHETIC: GAMEMD 0x00539350 SYMBOL
 // _$E2
@@ -108,37 +109,8 @@ class IonBlastClass
 		BOOL DisableIonBeam;
 };
 
-class LightningStorm
-{
-	public:
-		static Cell Coords;
-		static DynamicVectorClass<AnimClass const *> CloudsManifesting;
-		static DynamicVectorClass<AnimClass const *> CloudsPresent;
-		static DynamicVectorClass<AnimClass const *> BoltsPresent;
-		static bool Active;
-		static int StartTime;
-		static int Duration;
-		static int Deferment;
-		static bool TimeToEnd;
-		static HouseClass * Owner;
-};
 
-class PsyDom
-{
-	public:
-		static Cell Coords;
-		static int Status;
-		static AnimClass * Anim;
-		static HouseClass * Owner;
-};
 
-class NukeFlash
-{
-	public:
-		static int StartTime;
-		static int Duration;
-		static int Status;
-};
 
 Cell LightningStorm::Coords = DAT_00A9F9F8;
 Cell PsyDom::Coords = DAT_00A9F9F8;
