@@ -104,7 +104,7 @@ done:
 }
 
 // FUNCTION: GAMEMD 0x004AF2A0
-void Blit_Block(Surface & surface, ConvertClass & convert, Surface const & source, Rect const & sourcerect, Point2D const & point, Rect const & clipwindow, unsigned char const * remap, Blitter const * blitter, int height_offset, ZGradientType zgrad, int intensity, int tint, int unknown)
+void Blit_Block(Surface & surface, ConvertClass & convert, Surface const & source, Rect const & sourcerect, Point2D const & point, Rect const & clipwindow, unsigned char const * remap, Blitter const * blitter, int height_offset, ZGradientType zgrad, int intensity, unsigned short tint, int unknown)
 {
 	convert.Set_Remap(remap);
 

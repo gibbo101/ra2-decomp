@@ -3725,7 +3725,7 @@ address,name,result,size,source,symbol
 0x004AECD0,GetDllVersion,MATCH,116,src/dllver.cpp,?GetDllVersion@@YIKPBD@Z
 0x004AED50,_$E2,MATCH,23,src/draw.cpp,_$E2
 0x004AED70,Draw_Shape,MATCH,1317,src/draw.cpp,?Draw_Shape@@YIXAAVSurface@@AAVConvertClass@@PBVShapeSet@@HABVPoint2D@@ABV?$TRect@H@@W4ShapeFlags_Type@@PBEHW4ZGradientType@@HG2HV4@@Z
-0x004AF2A0,Blit_Block,MATCH,144,src/draw.cpp,?Blit_Block@@YIXAAVSurface@@AAVConvertClass@@ABV1@ABV?$TRect@H@@ABVPoint2D@@3PBEPBVBlitter@@HW4ZGradientType@@HHH@Z
+0x004AF2A0,Blit_Block,MATCH,144,src/draw.cpp,?Blit_Block@@YIXAAVSurface@@AAVConvertClass@@ABV1@ABV?$TRect@H@@ABVPoint2D@@3PBEPBVBlitter@@HW4ZGradientType@@HGH@Z
 0x004AF330,_$E2,MATCH,40,src/drive.cpp,_$E2
 0x004AF360,_$E5,MATCH,19,src/drive.cpp,_$E5
 0x004AF380,_$E8,MATCH,19,src/drive.cpp,_$E8

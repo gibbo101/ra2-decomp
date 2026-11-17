@@ -4080,7 +4080,7 @@ address,size,symbol,source,sha256
 0x004AECD0,116,?GetDllVersion@@YIKPBD@Z,src/dllver.cpp,1db197fe5c8f107edfa209f5df6a3ce941f5bd86ee14498cf69ae5a27d01b1f9
 0x004AED50,23,_$E2,src/draw.cpp,565dcf1f082e713d8913ebaadd9c5c7fa8bb00fbb7950284dbfcd15829236f4a
 0x004AED70,1317,?Draw_Shape@@YIXAAVSurface@@AAVConvertClass@@PBVShapeSet@@HABVPoint2D@@ABV?$TRect@H@@W4ShapeFlags_Type@@PBEHW4ZGradientType@@HG2HV4@@Z,src/draw.cpp,fcbb1f906be8b4fa529040fb70dbeea31fdf8d87806fd8fc92691987d3f7e91b
-0x004AF2A0,144,?Blit_Block@@YIXAAVSurface@@AAVConvertClass@@ABV1@ABV?$TRect@H@@ABVPoint2D@@3PBEPBVBlitter@@HW4ZGradientType@@HHH@Z,src/draw.cpp,32ad54725dbaf6c7183a4ab274ff501b9e9b6af9602eb0bcef44ebd63d9725e6
+0x004AF2A0,144,?Blit_Block@@YIXAAVSurface@@AAVConvertClass@@ABV1@ABV?$TRect@H@@ABVPoint2D@@3PBEPBVBlitter@@HW4ZGradientType@@HGH@Z,src/draw.cpp,32ad54725dbaf6c7183a4ab274ff501b9e9b6af9602eb0bcef44ebd63d9725e6
 0x004AF330,40,_$E2,src/drive.cpp,5cbc8d332b37ee2e53a32d7a2bd424b591e2a972975d546fa3b86a05643f3413
 0x004AF360,19,_$E5,src/drive.cpp,e450e22d27315f8639a33a3e0cc291c30b225044deaf47edefb05b262f71d596
 0x004AF380,19,_$E8,src/drive.cpp,582b9338b03c97ddaa7e89ab988b759eb569116bb39b01c46152681d927c5db7
