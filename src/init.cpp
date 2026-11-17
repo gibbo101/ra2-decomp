@@ -1609,7 +1609,7 @@ BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 							pick->Done = true;
 						}
 						if (pick->Done) {
-							DAT_00ABCE08 = 0;
+							ScenarioClass::WasGameSaved = false;
 							SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D5, 0, 0);
 							SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D4, 0, 0);
 							HWND item = GetDlgItem(window, 0x50F);
