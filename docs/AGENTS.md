@@ -312,6 +312,13 @@ Each entry: what the diff showed, then the source change that fixed it.
   (`Clear_Occupy_Bit(Coord(Position))`, not `PositionCoord`, in 0x0051DBD0). Find where
   with unused trivial inline calls (diagnostic only, never landed;
   `tools/inlineprobe.py`), then look for the natural source that spends the same.
+- Register and slot ties can follow the count of named, initialised locals, measured:
+  VC6 numbers them ahead of its temporaries, so names, places and scopes do not matter and
+  uninitialised ones do not count. Some functions follow the count mod 8 (one extra local
+  matches, so do nine and seventeen); others follow which run of eight it falls in.
+- `tools/localprobe.py` sweeps the count. A matching count is a target, not a fix: the
+  original had that many more named locals, or 8 minus that many fewer (a one-use local it
+  wrote inline). Land only locals TibSun or a matched sibling has; padding is forcing.
 - In a very large function VC6 can stop scheduling the last switch cases fully: a tail
   that resists every rewrite may be fixed by a leaner form of an earlier case (0x004C6CB0).
 - A plain function defined above its callers is inlined and also emitted; at /Ob2 VC6
