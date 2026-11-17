@@ -249,17 +249,10 @@ struct FileSystem {
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
 };
 
-struct TextColor {
-	unsigned char R;
-	unsigned char G;
-	unsigned char B;
-	unsigned char A;
-};
+#include "_tooltip.h"
+#include "cctooltip.h"
 
-struct CCToolTip {
-	static TextColor ToolTipTextColor;
-	static ToolTipManager * Instance;
-};
+extern RGBClass DAT_00B0FA1C;
 
 // FUNCTION: GAMEMD 0x00652CF0
 void RadarClass::One_Time(void)
@@ -328,13 +321,6 @@ void RadarClass::Set_Buttons(bool on)
 	}
 }
 
-inline int Pack_Color(TextColor const & c)
-{
-	return (c.R >> DSurface::RedLeft << DSurface::RedRight)
-		| (c.G >> DSurface::GreenLeft << DSurface::GreenRight)
-		| (c.B >> DSurface::BlueLeft << DSurface::BlueRight);
-}
-
 // FUNCTION: GAMEMD 0x00652E90
 void RadarClass::Init_For_House(void)
 {
@@ -369,7 +355,7 @@ void RadarClass::Init_For_House(void)
 	OptionsButtonRect.Height = ((ShpHeader *)OptionsButtonShape)->Height;
 	DAT_00B04A38 = RadarAnimShape;
 
-	RadPHeight = Pack_Color(CCToolTip::ToolTipTextColor);
+	RadPHeight = DSurface::Build_Hicolor_Pixel(DAT_00B0FA1C.Get_Red(), DAT_00B0FA1C.Get_Green(), DAT_00B0FA1C.Get_Blue());
 }
 
 // FUNCTION: GAMEMD 0x00653010
@@ -872,8 +858,8 @@ void RadarClass::Reposition_Sidebar(void)
 	tip.Region.Y = RadarStatics::DAT_00B04978.Y;
 	tip.Region.Width = RadarStatics::DAT_00B04978.Width;
 	tip.Region.Height = RadarStatics::DAT_00B04978.Height;
-	CCToolTip::Instance->Remove(242);
-	CCToolTip::Instance->Add(&tip);
+	ToolTips->Remove(242);
+	ToolTips->Add(&tip);
 
 	tip.ID = 243;
 	tip.Text = (int)"Tip:OptionsButton";
@@ -881,8 +867,8 @@ void RadarClass::Reposition_Sidebar(void)
 	tip.Region.Y = RadarStatics::DAT_00B04910.Y;
 	tip.Region.Width = RadarStatics::DAT_00B04910.Width;
 	tip.Region.Height = RadarStatics::DAT_00B04910.Height;
-	CCToolTip::Instance->Remove(243);
-	CCToolTip::Instance->Add(&tip);
+	ToolTips->Remove(243);
+	ToolTips->Add(&tip);
 
 	FullRedraw = true;
 }
