@@ -27,6 +27,10 @@ extern "C" {
 	void __cdecl FUN_007DEBBA(void * palette, void * translator, int red, int green, int blue, int intensity, bool * mask);
 }
 
+struct ChronoScreenEffect {
+	static bool Active(void);
+};
+
 // SYNTHETIC: GAMEMD 0x00555B90 SYMBOL
 // _$E3
 // SYNTHETIC: GAMEMD 0x00555BB0 SYMBOL
