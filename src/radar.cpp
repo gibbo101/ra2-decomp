@@ -185,9 +185,9 @@ RadarClass::RadarClass(void) :
 	RadarState(0),
 	RadarMode(0),
 	SuspendedRadarMode(0),
-	unknown_bool_14BC(false),
+	IsScenarioHeld(false),
 	unknown_bool_14BD(false),
-	unknown_int_14D4(-1),
+	TransmissionVox(-1),
 	DoesRadarExist(false),
 	IsToRedraw(0),
 	FullRedraw(0),
@@ -280,7 +280,7 @@ void RadarClass::One_Time(void)
 	DAT_00B04A20.Y = RadIHeight;
 	DAT_00B04A20.Width = RadPWidth;
 	DAT_00B04A30 = 223;
-	unknown_int_14D4 = FUN_00753250("EVA_IncomingTransmission");
+	TransmissionVox = FUN_00753250("EVA_IncomingTransmission");
 }
 
 // FUNCTION: GAMEMD 0x00652D90
@@ -307,7 +307,7 @@ void RadarClass::Init_Clear(void)
 	RadarState = RSTATE_INACTIVE;
 	RadarMode = RMODE_UNAVAILABLE;
 	unknown_bool_14BD = false;
-	unknown_bool_14BC = false;
+	IsScenarioHeld = false;
 	RadarAnimFrame = 0;
 	DoesRadarExist = false;
 	IsToRedraw = true;
@@ -1998,12 +1998,12 @@ void RadarClass::Update_Transmission(void)
 	switch (unknown_14B8) {
 		case 0:
 			FUN_00752370();
-			FUN_00752480(unknown_int_14D4, 0, 3);
+			FUN_00752480(TransmissionVox, 0, 3);
 			Add_Speech_Hold();
 			unknown_14B8 = 1;
 			break;
 		case 1:
-			if (Is_Speech_Finished(unknown_int_14D4)) {
+			if (Is_Speech_Finished(TransmissionVox)) {
 				if (DAT_00B45B68) {
 					FUN_00408390();
 				}
@@ -2093,13 +2093,13 @@ void RadarClass::Play_Movie(void)
 	}
 
 	unknown_bool_14BD = !finished;
-	if (unknown_bool_14BC != hold) {
+	if (IsScenarioHeld != hold) {
 		if (hold) {
 			Hold_Scenario(0);
-			unknown_bool_14BC = true;
+			IsScenarioHeld = true;
 		} else {
 			Release_Scenario();
-			unknown_bool_14BC = false;
+			IsScenarioHeld = false;
 		}
 	}
 }

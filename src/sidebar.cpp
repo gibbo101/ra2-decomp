@@ -148,7 +148,7 @@ SidebarClass::SidebarClass(void) :
 	IsSidebarActive(false),
 	IsToRedraw(true),
 	IsToRedrawCredits(false),
-	unknown_bool_5514(false),
+	IsRepairActive(false),
 	unknown_bool_5515(false)
 {
 	for (int index = 0; index < STRIPS; index++) {
@@ -192,7 +192,7 @@ void SidebarClass::Init_Clear(void)
 
 	IsToRedraw = true;
 	unknown_bool_5515 = false;
-	unknown_bool_5514 = false;
+	IsRepairActive = false;
 
 	for (int index = 0; index < STRIPS; index++) {
 		Column[index].Init_Clear();
@@ -402,25 +402,25 @@ void SidebarClass::Init_IO(void)
 
 				DiplomacyKills[DiplomacyNumHouses] = Kills_Of(house);
 				DiplomacyOwned[DiplomacyNumHouses] = Owned_Of(house);
-				DiplomacyPowerDrain[DiplomacyNumHouses] = Money_Of(house);
+				DiplomacyCredits[DiplomacyNumHouses] = Money_Of(house);
 				DiplomacyColors[DiplomacyNumHouses] = Color_Of(house);
 
-				unknown_544C[DiplomacyNumHouses] = 0;
-				unknown_546C[DiplomacyNumHouses] = 0;
-				unknown_548C[DiplomacyNumHouses] = 0;
-				unknown_54AC[DiplomacyNumHouses] = 0;
-				unknown_54CC[DiplomacyNumHouses] = 0;
-				unknown_54EC[DiplomacyNumHouses] = 0;
+				DiplomacyRung[DiplomacyNumHouses] = 0;
+				DiplomacyPoints[DiplomacyNumHouses] = 0;
+				DiplomacyWins[DiplomacyNumHouses] = 0;
+				DiplomacyLosses[DiplomacyNumHouses] = 0;
+				DiplomacyDisconnects[DiplomacyNumHouses] = 0;
+				DiplomacyWinStreak[DiplomacyNumHouses] = 0;
 
 				if (Session.Type == GAME_INTERNET) {
 					int * stats = FUN_0077DA50(house->UIName);
 					if (stats) {
-						unknown_544C[DiplomacyNumHouses] = stats[7];
-						unknown_546C[DiplomacyNumHouses] = stats[4];
-						unknown_548C[DiplomacyNumHouses] = stats[2];
-						unknown_54AC[DiplomacyNumHouses] = stats[3];
-						unknown_54CC[DiplomacyNumHouses] = stats[8];
-						unknown_54EC[DiplomacyNumHouses] = stats[12];
+						DiplomacyRung[DiplomacyNumHouses] = stats[7];
+						DiplomacyPoints[DiplomacyNumHouses] = stats[4];
+						DiplomacyWins[DiplomacyNumHouses] = stats[2];
+						DiplomacyLosses[DiplomacyNumHouses] = stats[3];
+						DiplomacyDisconnects[DiplomacyNumHouses] = stats[8];
+						DiplomacyWinStreak[DiplomacyNumHouses] = stats[12];
 						delete stats;
 					}
 				}
@@ -680,24 +680,24 @@ bool SidebarClass::FUN_006A6220(int control)
 // FUNCTION: GAMEMD 0x006A6290
 bool SidebarClass::FUN_006A6290(int control)
 {
-	bool old = unknown_bool_5514;
+	bool old = IsRepairActive;
 	if (control == -1) {
-		control = unknown_bool_5514 ? 0 : 1;
+		control = IsRepairActive ? 0 : 1;
 	}
 	switch (control) {
 		case 1:
-			unknown_bool_5514 = true;
+			IsRepairActive = true;
 			break;
 
 		default:
 		case 0:
-			unknown_bool_5514 = false;
+			IsRepairActive = false;
 			break;
 	}
-	if (old != unknown_bool_5514) {
+	if (old != IsRepairActive) {
 		Flag_To_Redraw();
 		IsToRedraw = true;
-		if (!unknown_bool_5514) {
+		if (!IsRepairActive) {
 			Set_Default_Mouse(MOUSE_NORMAL, false);
 		}
 	}
@@ -1786,7 +1786,7 @@ void SidebarClass::StripClass::SelectClass::OnMouseEnter(void)
 {
 	ToolTips->Save_Timer_Delay();
 	ToolTips->Set_Timer_Delay(0);
-	unknown_34 = true;
+	IsMouseOver = true;
 	Strip->IsToRedraw = true;
 	Map.Flag_To_Redraw();
 	Map.IsForceCompleteRedraw = true;
@@ -1797,7 +1797,7 @@ void SidebarClass::StripClass::SelectClass::OnMouseEnter(void)
 void SidebarClass::StripClass::SelectClass::OnMouseLeave(void)
 {
 	ToolTips->Restore_Timer_Delay();
-	unknown_34 = false;
+	IsMouseOver = false;
 	Strip->IsToRedraw = true;
 	Map.Flag_To_Redraw();
 	Map.IsForceCompleteRedraw = true;
@@ -1807,7 +1807,7 @@ void SidebarClass::StripClass::SelectClass::OnMouseLeave(void)
 // FUNCTION: GAMEMD 0x006ABA20
 bool SidebarClass::StripClass::SelectClass::FUN_006ABA20(void)
 {
-	return unknown_34 && !UserInputLocked;
+	return IsMouseOver && !UserInputLocked;
 }
 
 // FUNCTION: GAMEMD 0x006ABA40
