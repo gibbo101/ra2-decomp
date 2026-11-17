@@ -14133,7 +14133,7 @@ address,name,result,size,source,symbol
 0x006D0680,TabClass::AI,MATCH,822,src/tab.cpp,?AI@TabClass@@UAEXAAW4KeyNumType@@ABVPoint2D@@@Z
 0x006D09C0,FUN_006D09C0,MATCH,83,src/tab.cpp,?FUN_006D09C0@@YIXPAVShapeButtonClass@@PBD@Z
 0x006D0A20,TabClass::Draw_It,MATCH,1063,src/tab.cpp,?Draw_It@TabClass@@UAEX_N@Z
-0x006D0E50,_$E136,MATCH,1,src/tab.cpp,_$E136
+0x006D0E50,_$E135,MATCH,1,src/tab.cpp,_$E135
 0x006D0E60,TabClass::Draw_Credits_Tab,MATCH,90,src/tab.cpp,?Draw_Credits_Tab@TabClass@@QAEXXZ
 0x006D0EC0,TabClass::Flash_Money,MATCH,53,src/tab.cpp,?Flash_Money@TabClass@@QAEXXZ
 0x006D0F00,TabClass::Redraw_Tab,MATCH,15,src/tab.cpp,?Redraw_Tab@TabClass@@QAEXXZ

@@ -62,9 +62,8 @@
 extern int DAT_00B0B504;
 extern bool DAT_00AC4E78;
 extern bool DAT_00884B8D;
-struct CCToolTip {
-	static ToolTipManager * Instance;
-};
+#include "_tooltip.h"
+#include "cctooltip.h"
 
 void * __fastcall FileSystem_LoadWholeFileEx(char const * name, bool & loaded);
 
@@ -411,7 +410,7 @@ void PowerClass::Reposition_Sidebar(void)
 {
 	BASECLASS::Reposition_Sidebar();
 
-	if (CCToolTip::Instance != NULL) {
+	if (ToolTips != NULL) {
 		ToolTip tt;
 		tt.ID = GADGET_POWER;
 		tt.Text = TXT_NONE;
@@ -432,8 +431,8 @@ void PowerClass::Reposition_Sidebar(void)
 		tt.Region.Y = SidebarRect.Y + yoff;
 		tt.Region.Width = 8;
 		tt.Region.Height = DAT_00B0B504;
-		CCToolTip::Instance->Remove(tt.ID);
-		CCToolTip::Instance->Add(&tt);
+		ToolTips->Remove(tt.ID);
+		ToolTips->Add(&tt);
 	}
 }
 

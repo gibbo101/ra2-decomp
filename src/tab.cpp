@@ -313,9 +313,8 @@ void TabClass::FUN_006D04D0(void)
 	}
 }
 
-struct CCToolTip {
-	static ToolTipManager * Instance;
-};
+#include "_tooltip.h"
+#include "cctooltip.h"
 
 void __fastcall FUN_006D09C0(ShapeButtonClass * button, char const * text);
 
@@ -337,13 +336,13 @@ bool TabClass::Activate(int control)
 			for (int i = 0; i < 25; i++) {
 				ShapeButtonClass * b = FUN_006CFD40(i);
 				if (b) {
-					CCToolTip::Instance->Remove(b->ID);
+					ToolTips->Remove(b->ID);
 				}
 			}
-			CCToolTip::Instance->Remove(0xF0);
+			ToolTips->Remove(0xF0);
 		} else {
 			Remove_A_Button(CommandBarStatics::ButtonB);
-			CCToolTip::Instance->Remove(0xF1);
+			ToolTips->Remove(0xF1);
 		}
 		Flag_To_Redraw(GS_REDRAW_ALL);
 	}
@@ -390,10 +389,10 @@ inline void TabClass::Hide_Buttons(void)
 	for (int i = 0; i < 25; i++) {
 		ShapeButtonClass * b = FUN_006CFD40(i);
 		if (b) {
-			CCToolTip::Instance->Remove(b->ID);
+			ToolTips->Remove(b->ID);
 		}
 	}
-	CCToolTip::Instance->Remove(0xF0);
+	ToolTips->Remove(0xF0);
 }
 
 inline void TabClass::Close_Thumb(void)
@@ -412,7 +411,7 @@ inline void TabClass::Open_Thumb(void)
 {
 	if (!ThumbActive) {
 		Remove_A_Button(CommandBarStatics::ButtonB);
-		CCToolTip::Instance->Remove(0xF1);
+		ToolTips->Remove(0xF1);
 		ThumbActive = true;
 		FUN_006D1200();
 		IsToRedraw = true;
@@ -496,8 +495,8 @@ void __fastcall FUN_006D09C0(ShapeButtonClass * button, char const * text)
 		tip.Region.Y = button->Y;
 		tip.Region.Width = button->Width;
 		tip.Region.Height = button->Height;
-		CCToolTip::Instance->Remove(tip.ID);
-		CCToolTip::Instance->Add(&tip);
+		ToolTips->Remove(tip.ID);
+		ToolTips->Add(&tip);
 	}
 }
 
@@ -608,7 +607,7 @@ drawn:
 }
 
 // SYNTHETIC: GAMEMD 0x006D0E50 SYMBOL
-// _$E136
+// _$E135
 
 // FUNCTION: GAMEMD 0x006D0E60
 void TabClass::Draw_Credits_Tab(void)
@@ -771,10 +770,10 @@ void TabClass::FUN_006D14F0(void)
 	for (int i = 0; i < 25; i++) {
 		ShapeButtonClass * b = FUN_006CFD40(i);
 		if (b) {
-			CCToolTip::Instance->Remove(b->ID);
+			ToolTips->Remove(b->ID);
 		}
 	}
-	CCToolTip::Instance->Remove(0xF0);
+	ToolTips->Remove(0xF0);
 }
 
 // FUNCTION: GAMEMD 0x006D1570
@@ -788,7 +787,7 @@ void TabClass::FUN_006D1570(void)
 void TabClass::FUN_006D15F0(void)
 {
 	Remove_A_Button(CommandBarStatics::ButtonB);
-	CCToolTip::Instance->Remove(0xF1);
+	ToolTips->Remove(0xF1);
 }
 
 // FUNCTION: GAMEMD 0x006D1610
@@ -796,7 +795,7 @@ void TabClass::FUN_006D1610(void)
 {
 	if (!ThumbActive) {
 		Remove_A_Button(CommandBarStatics::ButtonB);
-		CCToolTip::Instance->Remove(0xF1);
+		ToolTips->Remove(0xF1);
 		ThumbActive = true;
 		FUN_006D1200();
 		IsToRedraw = true;

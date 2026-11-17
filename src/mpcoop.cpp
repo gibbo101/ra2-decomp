@@ -1600,9 +1600,8 @@ extern unsigned char DAT_00B76568;
 extern int DAT_00A8EA0C;
 #include "ownertalk.h"
 void __fastcall FUN_005E7460(void);
-struct CCToolTip {
-	static ToolTipManager * Instance;
-};
+#include "_tooltip.h"
+#include "cctooltip.h"
 
 // FUNCTION: GAMEMD 0x005C46E0
 void MPCooperative::vt_entry_AC(void)
@@ -1742,7 +1741,7 @@ void MPCooperative::vt_entry_AC(void)
 	FUN_005E7460();
 	DoList.Init();
 	OutList.Init();
-	CCToolTip::Instance->Activate(false);
+	ToolTips->Activate(false);
 	FUN_004068E0("@@@@ Before destroying connections players.count() = %d\n", Session.Players.Count());
 	while (Ipx.Num_Connections()) {
 		Ipx.Delete_Connection(Ipx.Connection_ID(0));
