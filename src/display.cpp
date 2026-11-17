@@ -95,7 +95,6 @@ template<class T> inline T Bound2(T original, T minval, T maxval)
 extern bool DAT_00884D44;
 void __fastcall UnselectAll(void);
 extern BeaconManagerClass BeaconManager;
-extern bool DAT_00A8ED9D;
 void __fastcall Bandbox_Selection_Callback(ObjectClass * object);
 bool __fastcall FUN_00639040(void);
 bool __fastcall FUN_00639130(void);
@@ -1286,7 +1285,7 @@ void DisplayClass::Mouse_Left_Release(Coord const & coord, Cell const & cell, Ob
 		IsRubberBand = false;
 		Set_Default_Mouse(MOUSE_NORMAL, wsmall);
 		IsTentative = false;
-		DAT_00A8ED9D = true;
+		drag_select_aborted = true;
 		if (!empty_band) {
 			FUN_00731CF0();
 			return;
@@ -2165,14 +2164,13 @@ void DisplayClass::Restore_Map_State(void * stash)
 	}
 }
 
-extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
 
 // FUNCTION: GAMEMD 0x004ADCD0
 void DisplayClass::FUN_004ADCD0(bool units_only, bool is_fog)
 {
-	int count = DAT_00A8EC78.Count();
+	int count = Technos.Count();
 	for (int index = 0; index < count; index++) {
-		TechnoClass * tech = DAT_00A8EC78[index];
+		TechnoClass * tech = Technos[index];
 		if (tech != NULL && !tech->IsInLimbo) {
 			if (tech->Fetch_RTTI() == RTTI_BUILDING && units_only) continue;
 
@@ -2203,9 +2201,9 @@ void DisplayClass::FUN_004ADCD0(bool units_only, bool is_fog)
 // FUNCTION: GAMEMD 0x004ADEE0
 void DisplayClass::FUN_004ADEE0(bool units_only, bool is_fog)
 {
-	int count = DAT_00A8EC78.Count();
+	int count = Technos.Count();
 	for (int index = 0; index < count; index++) {
-		TechnoClass * tech = DAT_00A8EC78[index];
+		TechnoClass * tech = Technos[index];
 		if (tech != NULL && !tech->IsInLimbo) {
 			if (tech->Fetch_RTTI() == RTTI_BUILDING && units_only) continue;
 
@@ -2505,7 +2503,6 @@ void DisplayClass::Update_Waypoint_Color(int index)
 	}
 }
 
-extern bool DAT_00A8ED9D;
 
 // FUNCTION: GAMEMD 0x004AEAD0
 void DisplayClass::Abort_Drag_Select(void)
@@ -2516,7 +2513,7 @@ void DisplayClass::Abort_Drag_Select(void)
 
 	IsRubberBand = false;
 	IsTentative = false;
-	DAT_00A8ED9D = true;
+	drag_select_aborted = true;
 	Set_Default_Mouse(MOUSE_NORMAL, false);
 }
 

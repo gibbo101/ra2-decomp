@@ -965,7 +965,6 @@ void __fastcall FUN_006357D0(Rect * rect, int amount)
 	rect->Height += twice;
 }
 
-extern RGBClass DAT_00A83CD9;
 extern RGBClass DAT_00A80220;
 struct Drawing {
 	static int RGB_To_Int(int red, int green, int blue);
@@ -994,7 +993,7 @@ static inline int Unit_Path_Tint(TechnoClass * techno, WaypointTint tint)
 	int slot = FUN_006339B0(techno);
 	RGBClass color = Houses[slot]->RemapColorRGB;
 	if (tint == WAYPOINT_NORMAL) {
-		return FUN_0063D070(color, DAT_00A83CD9, 80);
+		return FUN_0063D070(color, BlackColor, 80);
 	}
 	return FUN_0063D070(color, DAT_00A80220, 100);
 }
@@ -1041,7 +1040,7 @@ int PlanningNodeClass::Branch_Color(int index)
 			PlanningTokenClass * token = owner->FUN_00705D20();
 			if (!token->Reached(token->Node_Index(this))) {
 				int slot = FUN_006339B0(owner);
-				return branch->Color = FUN_0063D070(Houses[slot]->RemapColorRGB, DAT_00A83CD9, 0x50);
+				return branch->Color = FUN_0063D070(Houses[slot]->RemapColorRGB, BlackColor, 0x50);
 			}
 			last_owner = owner;
 		}
@@ -1064,7 +1063,7 @@ int PlanningNodeClass::Loop_Color(void)
 			PlanningTokenClass * token = owner->FUN_00705D20();
 			if (!token->Get_F98()) {
 				int slot = FUN_006339B0(owner);
-				return LoopBranch.Color = FUN_0063D070(Houses[slot]->RemapColorRGB, DAT_00A83CD9, 0x50);
+				return LoopBranch.Color = FUN_0063D070(Houses[slot]->RemapColorRGB, BlackColor, 0x50);
 			}
 			last_owner = owner;
 		}
@@ -2460,14 +2459,13 @@ PlanningNodeClass * __fastcall FUN_0063AC60(void)
 	return DAT_00AC4BF0;
 }
 
-extern DynamicVectorClass<ObjectClass *> DAT_00A8ECB8;
 
 // FUNCTION: GAMEMD 0x0063AC70
 int __fastcall FUN_0063AC70(PlanningNodeClass * node)
 {
-	int count = DAT_00A8ECB8.Count();
+	int count = CurrentObject.Count();
 	for (int i = 0; i < count; i++) {
-		ObjectClass * object = DAT_00A8ECB8[i];
+		ObjectClass * object = CurrentObject[i];
 		if (object && object->Is_Techno()) {
 			TechnoClass * techno = (TechnoClass *)object;
 			PlanningTokenClass * token = techno->FUN_00705D20();
@@ -2726,7 +2724,7 @@ static inline int RGB_Pixel(RGBClass const & color)
 
 static inline int Waypoint_Fill_Color(TechnoClass * techno)
 {
-	int normal = RGB_Pixel(DAT_00A83CD9);
+	int normal = RGB_Pixel(BlackColor);
 	int result;
 	if (techno) {
 		int highlight = FUN_0063DAD0(DAT_00A80220);
@@ -2851,21 +2849,18 @@ int __fastcall FUN_0063CF10(TechnoClass * techno)
 {
 	int slot = FUN_006339B0(techno);
 	RGBClass mixed = Houses[slot]->RemapColorRGB;
-	mixed.Adjust(0x50, DAT_00A83CD9);
+	mixed.Adjust(0x50, BlackColor);
 	return (mixed.Get_Green() >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
 		| (mixed.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
 		| (mixed.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
 }
 
-extern int DAT_008A0DD4;
-extern int DAT_008A0DE4;
-extern int DAT_008A0DDC;
 
 static inline int Pack_Wide(RGBClass const & c)
 {
-	unsigned char rr = DAT_008A0DD4;
-	unsigned char gr = DAT_008A0DE4;
-	unsigned char br = DAT_008A0DDC;
+	unsigned char rr = DSurface::RedLeft;
+	unsigned char gr = DSurface::GreenLeft;
+	unsigned char br = DSurface::BlueLeft;
 	return (c.Get_Red() >> rr << Drawing::RedShiftLeft)
 		| (c.Get_Green() >> gr << Drawing::GreenShiftLeft)
 		| (c.Get_Blue() >> br << Drawing::BlueShiftLeft);
@@ -2894,7 +2889,7 @@ int __fastcall FUN_0063DAD0(RGBClass const & c);
 // FUNCTION: GAMEMD 0x0063D0F0
 int __fastcall FUN_0063D0F0(TechnoClass * techno)
 {
-	int normal = FUN_0063DAD0(DAT_00A83CD9);
+	int normal = FUN_0063DAD0(BlackColor);
 	int result;
 	if (techno) {
 		int highlight = FUN_0063DAD0(DAT_00A80220);
@@ -3041,9 +3036,9 @@ void __fastcall FUN_0063D960(Point2D p1, Point2D p2, int width, int color)
 // FUNCTION: GAMEMD 0x0063DAD0
 int __fastcall FUN_0063DAD0(RGBClass const & c)
 {
-	unsigned char rr = DAT_008A0DD4;
-	unsigned char gr = DAT_008A0DE4;
-	unsigned char br = DAT_008A0DDC;
+	unsigned char rr = DSurface::RedLeft;
+	unsigned char gr = DSurface::GreenLeft;
+	unsigned char br = DSurface::BlueLeft;
 	return (c.Get_Red() >> rr << Drawing::RedShiftLeft)
 		| (c.Get_Green() >> gr << Drawing::GreenShiftLeft)
 		| (c.Get_Blue() >> br << Drawing::BlueShiftLeft);

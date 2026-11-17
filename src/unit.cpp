@@ -86,7 +86,6 @@ namespace Unsorted { extern int CurrentFrame; extern bool MoveFeedback; }
 template class IndexClass<int, StaticBufferClass::Entry *>;
 
 extern int DAT_00B1CFA8, DAT_00B1CFAC, DAT_00B1CFB0, DAT_00B1CFB4;
-extern int DAT_00B1CFC0, DAT_00B1CFC4, DAT_00B1CFC8, DAT_00B1CFCC;
 extern int __fastcall FUN_0050C170(char const * name);
 extern const double DAT_007E3570;
 
@@ -122,10 +121,10 @@ extern const double DAT_007E3570;
 // FUNCTION: GAMEMD 0x00735390
 void FUN_00735390(void)
 {
-	DAT_00B1CFC0 = DAT_00B1CFA8;
-	DAT_00B1CFC4 = DAT_00B1CFAC;
-	DAT_00B1CFC8 = DAT_00B1CFB0;
-	DAT_00B1CFCC = DAT_00B1CFB4;
+	UnitCompositeDirtyRect.X = DAT_00B1CFA8;
+	UnitCompositeDirtyRect.Y = DAT_00B1CFAC;
+	UnitCompositeDirtyRect.Width = DAT_00B1CFB0;
+	UnitCompositeDirtyRect.Height = DAT_00B1CFB4;
 }
 
 // FUNCTION: GAMEMD 0x007353C0

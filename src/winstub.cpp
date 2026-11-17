@@ -200,9 +200,7 @@ bool FUN_00774070(void);
 extern int DAT_00822D1C;
 extern bool _MouseWheel;
 extern bool DAT_00884D34;
-extern bool DAT_008A00A0;
 extern bool DAT_00A8ED81;
-extern int DAT_00A8EDD8;
 extern int IMEResult;
 extern wchar_t DAT_00B730EC[];
 extern WWMouseClass * DAT_00887640;
@@ -278,10 +276,10 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 				ToolTips = NULL;
 			}
 			Game::hWnd = 0;
-			switch (DAT_00A8EDD8) {
+			switch (ReadyToQuit) {
 				default:
 				case 1:
-					DAT_00A8EDD8 = 2;
+					ReadyToQuit = 2;
 					break;
 
 				case 0:
@@ -317,7 +315,7 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 					Focus_Restore();
 					FUN_004068E0("Focus gained\n");
 				}
-				DAT_008A00A0 = true;
+				SurfacesRestored = true;
 			}
 			return(0);
 

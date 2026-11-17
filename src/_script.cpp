@@ -77,13 +77,13 @@ template class DynamicVectorClass<ScriptClass *>;
 // _$E48
 // SYNTHETIC: GAMEMD 0x0040EB80 SYMBOL
 // _$E46
-CDTimerClass<SystemTimerClass> DAT_00887348;
+CDTimerClass<SystemTimerClass> FrameTimer;
 
 // SYNTHETIC: GAMEMD 0x0040EB90 SYMBOL
 // _$E53
 // SYNTHETIC: GAMEMD 0x0040EBC0 SYMBOL
 // _$E51
-CDTimerClass<MillisecondSystemTimerClass> DAT_00887328;
+CDTimerClass<MillisecondSystemTimerClass> NetFrameTimer;
 
 // SYNTHETIC: GAMEMD 0x0040EBD0 SYMBOL
 // _$E58

@@ -502,7 +502,6 @@ void __fastcall FUN_006D09C0(ShapeButtonClass * button, char const * text)
 }
 
 extern ShapeSet const * DAT_00B0FB08;
-extern bool DAT_00B0B518;
 
 extern ShapeSet const *DAT_00B0FA3C;
 extern ShapeSet const *DAT_00B0FAA8;
@@ -616,7 +615,7 @@ void TabClass::Draw_Credits_Tab(void)
 {
 	ShapeSet const * shape = DAT_00B0FB08;
 	Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, shape, 0, Point2D(0, 0), SidebarSurface->Get_Rect());
-	DAT_00B0B518 = true;
+	SidebarClass::IsToBlitSidebar = true;
 }
 
 // FUNCTION: GAMEMD 0x006D0EC0

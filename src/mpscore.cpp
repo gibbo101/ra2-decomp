@@ -55,7 +55,7 @@ struct Drawing {
 	static int RenderWidth;
 	static int RenderHeight;
 };
-extern Surface * DAT_0088730C;
+extern Surface * HiddenSurface;
 void __fastcall FUN_0072D730(int side);
 void FUN_0072D780(void);
 void __fastcall FUN_0072EAD0(Surface * surface, Rect * rect);
@@ -88,11 +88,11 @@ void MPScoreScreen::Present(void)
 {
 	FUN_0072D730(Scen->PlayerSideIndex);
 	Rect rect(0, 0, Drawing::RenderWidth, Drawing::RenderHeight);
-	FUN_0072EAD0(DAT_0088730C, &rect);
-	FUN_004F4780(true, DAT_0088730C, false);
+	FUN_0072EAD0(HiddenSurface, &rect);
+	FUN_004F4780(true, HiddenSurface, false);
 	FUN_0060D380(0x108, FUN_005C9B10, false);
-	FUN_0072EAD0(DAT_0088730C, &rect);
-	FUN_004F4780(true, DAT_0088730C, false);
+	FUN_0072EAD0(HiddenSurface, &rect);
+	FUN_004F4780(true, HiddenSurface, false);
 	FUN_0072D780();
 }
 
@@ -120,7 +120,6 @@ void __fastcall FUN_005C9850(HWND dialog, int id, int value)
 	SendMessage(item, 0x4b2, 0, (LPARAM)text);
 }
 
-extern DynamicVectorClass<HouseClass *> DAT_00A80228;
 extern HouseClass * DAT_00AC1198;
 void __cdecl FUN_004068E0(char const * format, ...);
 
@@ -128,9 +127,9 @@ void __cdecl FUN_004068E0(char const * format, ...);
 void FUN_005C98A0(void)
 {
 	Session.NumScores = 0;
-	int count = DAT_00A80228.Count();
+	int count = Houses.Count();
 	for (int house = 0; house < count; house++) {
-		HouseClass * hptr = DAT_00A80228[house];
+		HouseClass * hptr = Houses[house];
 		if (!hptr || hptr->Class->IsMultiplayPassive == true || hptr == DAT_00AC1198) {
 			continue;
 		}
@@ -214,7 +213,7 @@ struct OwnerDraw {
 	static void __fastcall GetRectangle(HWND window, RECT * rect);
 };
 extern int DAT_00B779D4;
-extern Surface * DAT_00887310;
+extern Surface * AlternateSurface;
 void __fastcall FUN_00603D30(HWND item, Surface * surface);
 void __fastcall FUN_0072AA10(Rect * rect, int dx, int dy);
 void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha);
@@ -333,7 +332,7 @@ int CALLBACK FUN_005C9B10(HWND window, UINT message, WPARAM wparam, LPARAM lpara
 			OwnerDraw::GetRectangle(item, &last);
 			Rect rect(first.left, first.top, last.right - first.left, last.bottom - first.top);
 			FUN_0072AA10(&rect, -4, -8);
-			FUN_00621B80(&rect, DAT_00887310, 0, 0x9f);
+			FUN_00621B80(&rect, AlternateSurface, 0, 0x9f);
 			break;
 	}
 	return 0;

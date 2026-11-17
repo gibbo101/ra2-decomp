@@ -68,8 +68,6 @@ extern const double DAT_00B048F0;
 extern const double DAT_00B04970;
 extern const int DAT_00B049F4;
 extern int DAT_00B04A30;
-extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
-#define Technos DAT_00A8EC78
 extern HouseClass * PlayerPtr;
 namespace Unsorted { extern int MuteSWLaunches; }
 inline bool RadarTrackingStruct::Use_Head(void) const { return(Object->House == PlayerPtr); }
@@ -416,7 +414,6 @@ void RadarClass::Init_IO(void)
 extern void * RadarFrameShape;
 extern bool DAT_00B04964;
 extern bool DAT_00B049CC;
-extern bool DAT_00B0B518;
 extern ShapeButtonClass DAT_00B0B3A0;
 extern ShapeButtonClass DAT_00B07DF8;
 
@@ -525,12 +522,12 @@ void RadarClass::Draw_It(bool forced)
 
 	if (DAT_00B049CC) {
 		LastDrawRect = Union(LastDrawRect, BriefingButtonRect);
-		DAT_00B0B518 = true;
+		SidebarClass::IsToBlitSidebar = true;
 	}
 
 	if (DAT_00B04964) {
 		LastDrawRect = Union(LastDrawRect, OptionsButtonRect);
-		DAT_00B0B518 = true;
+		SidebarClass::IsToBlitSidebar = true;
 	}
 }
 

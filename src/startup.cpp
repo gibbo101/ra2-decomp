@@ -367,15 +367,8 @@ extern DWORD DAT_00B0BCEC;
 namespace Unsorted { extern HANDLE AppMutex; }
 #include "stringtable.h"
 namespace CopyProtection { void ShutDown(void); }
-extern DynamicVectorClass<VirtualObject *> DAT_0087F698;
 extern DynamicVectorClass<VirtualObject *> DAT_00884D90;
 extern DynamicVectorClass<VirtualObject *> DAT_00884DC0;
-extern VirtualObject * DAT_0087F6B0;
-extern VirtualObject * DAT_0087F6B4;
-extern VirtualObject * DAT_0087F6B8;
-extern VirtualObject * DAT_0087F6C0;
-extern VirtualObject * DAT_0087F6C4;
-extern VirtualObject * DAT_0087F6C8;
 extern VirtualObject * DAT_0087F6CC;
 extern VirtualObject * DAT_0087F6D0;
 extern VirtualObject * DAT_00884DD8;
@@ -414,17 +407,9 @@ extern VirtualObject * DAT_00884E70;
 extern VirtualObject * DAT_00884E74;
 extern VirtualObject * DAT_00884E78;
 extern VirtualObject * DAT_00887320;
-extern VirtualObject * DAT_00887640;
 extern VirtualObject * DAT_0089DDC0;
-extern VirtualObject * DAT_00B1D13C;
 extern VirtualObject * DAT_00B1D140;
-extern unsigned char * DAT_0087F770;
 extern unsigned char * DAT_0089DDBC;
-extern unsigned char * DAT_00AA1060;
-extern unsigned char * DAT_00AA1064;
-extern unsigned char * DAT_00AA1068;
-extern unsigned char * DAT_00AA106C;
-extern unsigned char * DAT_00ABC554;
 void FUN_007531A0(void);
 void FUN_00534450(void);
 void FUN_0069E180(void);
@@ -506,9 +491,9 @@ void __cdecl Prog_End(void)
 
 	FUN_005FF800();
 	FUN_0053D550();
-	if (DAT_00887640 != NULL) {
-		delete DAT_00887640;
-		DAT_00887640 = NULL;
+	if (MouseCursor != NULL) {
+		delete MouseCursor;
+		MouseCursor = NULL;
 	}
 
 	Map.Free_Cells();
@@ -528,25 +513,25 @@ void __cdecl Prog_End(void)
 		BitText::Instance = NULL;
 	}
 
-	if (DAT_0087F6B8 != NULL) {
-		delete DAT_0087F6B8;
-		DAT_0087F6B8 = NULL;
+	if (TerrainDrawer != NULL) {
+		delete TerrainDrawer;
+		TerrainDrawer = NULL;
 	}
-	if (DAT_0087F6C0 != NULL) {
-		delete DAT_0087F6C0;
-		DAT_0087F6C0 = NULL;
+	if (AnimDrawer != NULL) {
+		delete AnimDrawer;
+		AnimDrawer = NULL;
 	}
-	if (DAT_0087F6C4 != NULL) {
-		delete DAT_0087F6C4;
-		DAT_0087F6C4 = NULL;
+	if (NormalDrawer != NULL) {
+		delete NormalDrawer;
+		NormalDrawer = NULL;
 	}
-	if (DAT_0087F6B4 != NULL) {
-		delete DAT_0087F6B4;
-		DAT_0087F6B4 = NULL;
+	if (VoxelDrawer != NULL) {
+		delete VoxelDrawer;
+		VoxelDrawer = NULL;
 	}
-	if (DAT_0087F6C8 != NULL) {
-		delete DAT_0087F6C8;
-		DAT_0087F6C8 = NULL;
+	if (MouseDrawer != NULL) {
+		delete MouseDrawer;
+		MouseDrawer = NULL;
 	}
 	if (DAT_0087F6CC != NULL) {
 		delete DAT_0087F6CC;
@@ -556,17 +541,17 @@ void __cdecl Prog_End(void)
 		delete DAT_0087F6D0;
 		DAT_0087F6D0 = NULL;
 	}
-	if (DAT_0087F6B0 != NULL) {
-		delete DAT_0087F6B0;
-		DAT_0087F6B0 = NULL;
+	if (CameoDrawer != NULL) {
+		delete CameoDrawer;
+		CameoDrawer = NULL;
 	}
 	if (DAT_00B1D140 != NULL) {
 		delete DAT_00B1D140;
 		DAT_00B1D140 = NULL;
 	}
-	if (DAT_00B1D13C != NULL) {
-		delete DAT_00B1D13C;
-		DAT_00B1D13C = NULL;
+	if (EightBitSurface != NULL) {
+		delete EightBitSurface;
+		EightBitSurface = NULL;
 	}
 	if (DAT_0089DDC0 != NULL) {
 		delete DAT_0089DDC0;
@@ -579,10 +564,10 @@ void __cdecl Prog_End(void)
 
 	Map.Shutdown();
 
-	for (i = 0; i < DAT_0087F698.Count(); i++) {
-		delete DAT_0087F698[i];
+	for (i = 0; i < TileDrawers.Count(); i++) {
+		delete TileDrawers[i];
 	}
-	DAT_0087F698.Clear();
+	TileDrawers.Clear();
 
 	if (DAT_00884E08 != NULL) {
 		delete DAT_00884E08;
@@ -620,25 +605,25 @@ void __cdecl Prog_End(void)
 		delete DAT_00884E28;
 		DAT_00884E28 = NULL;
 	}
-	if (DAT_00ABC554 != NULL) {
-		delete DAT_00ABC554;
-		DAT_00ABC554 = NULL;
+	if (IsometricTileTypeClass::CellShadowShapes != NULL) {
+		delete IsometricTileTypeClass::CellShadowShapes;
+		IsometricTileTypeClass::CellShadowShapes = NULL;
 	}
-	if (DAT_00AA1060 != NULL) {
-		delete DAT_00AA1060;
-		DAT_00AA1060 = NULL;
+	if (SlopeZShapes[0] != NULL) {
+		delete SlopeZShapes[0];
+		SlopeZShapes[0] = NULL;
 	}
-	if (DAT_00AA1064 != NULL) {
-		delete DAT_00AA1064;
-		DAT_00AA1064 = NULL;
+	if (SlopeZShapes[1] != NULL) {
+		delete SlopeZShapes[1];
+		SlopeZShapes[1] = NULL;
 	}
-	if (DAT_00AA1068 != NULL) {
-		delete DAT_00AA1068;
-		DAT_00AA1068 = NULL;
+	if (SlopeZShapes[2] != NULL) {
+		delete SlopeZShapes[2];
+		SlopeZShapes[2] = NULL;
 	}
-	if (DAT_00AA106C != NULL) {
-		delete DAT_00AA106C;
-		DAT_00AA106C = NULL;
+	if (SlopeZShapes[3] != NULL) {
+		delete SlopeZShapes[3];
+		SlopeZShapes[3] = NULL;
 	}
 	if (DAT_00887320 != NULL) {
 		delete DAT_00887320;
@@ -778,9 +763,9 @@ void __cdecl Prog_End(void)
 	FUN_007531A0();
 	FUN_0047ADC0();
 
-	if (DAT_0087F770 != NULL) {
-		delete DAT_0087F770;
-		DAT_0087F770 = NULL;
+	if (Keyboard != NULL) {
+		delete Keyboard;
+		Keyboard = NULL;
 	}
 
 	FUN_005DA720();

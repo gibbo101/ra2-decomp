@@ -246,7 +246,6 @@ void Motion_Capture(void)
 
 #include "ownertalk.h"
 extern int DAT_00A8EA0C;
-extern WinsockInterfaceClass * DAT_00887628;
 extern void __cdecl FUN_004068E0(char const * format, ...);
 void FUN_006523A0(void);
 
@@ -254,7 +253,7 @@ void FUN_006523A0(void);
 void Disconnect_Gracefully(void)
 {
 	FUN_004068E0("Disconnect_Gracefully\n");
-	if (Session.Type == GAME_INTERNET && DAT_00887628 && Session.ViaPacketRouter) {
+	if (Session.Type == GAME_INTERNET && PacketTransport && Session.ViaPacketRouter) {
 		if (DAT_00A8EA0C) {
 			OwnerTalk.Send_Shutdown();
 			CDTimerClass<SystemTimerClass> timer(480);

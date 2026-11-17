@@ -21,7 +21,6 @@ extern char DAT_0089F118[];
 char * __fastcall FUN_007350C0(wchar_t const * text);
 void __cdecl FUN_004068E0(char const * format, ...);
 void __fastcall FUN_005E3720(char const * text);
-extern DynamicVectorClass<HouseClass *> DAT_00A80228;
 extern char DAT_0089F5D8[];
 
 char __fastcall FUN_0049B430(int nibble);
@@ -233,9 +232,9 @@ void CoopCampaignClass::FUN_0049B760(wchar_t const * name, wchar_t const * map)
 // FUNCTION: GAMEMD 0x0049B7E0
 void __fastcall FUN_0049B7E0(MPlayerScoreType * stats, bool second)
 {
-	int count = DAT_00A80228.Count();
+	int count = Houses.Count();
 	for (int i = 0; i < count; i++) {
-		HouseClass * house = DAT_00A80228[i];
+		HouseClass * house = Houses[i];
 		if (house && house->Class->IsMultiplayPassive != true && house->IsHuman) {
 			if (!second) {
 				stats->Wins = 0;

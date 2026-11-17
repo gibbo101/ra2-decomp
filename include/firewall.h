@@ -32,6 +32,6 @@ public:
 	int Port;
 };
 
-extern FirewallHelperClass DAT_00ABFEC8;
+extern FirewallHelperClass FirewallHelper;
 
 #endif

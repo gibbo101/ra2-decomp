@@ -5347,7 +5347,6 @@ BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam)
 }
 }
 
-extern DSurface * DAT_00887308;
 extern int DAT_00AC48D8;
 void __fastcall FUN_006219D0(Rect const & rect, Surface & surface, int xpos, int ypos);
 namespace OwnerDraw {
@@ -5457,7 +5456,7 @@ bool OwnerDraw::DrawTooltip(bool save_background)
 		ODTooltip.background = backgd;
 
 		Rect drect(0, 0, ODTooltip.bounds.Width, ODTooltip.bounds.Height);
-		backgd->Blit_From(drect, *DAT_00887308, ODTooltip.bounds, false, true);
+		backgd->Blit_From(drect, *VisibleSurface, ODTooltip.bounds, false, true);
 	}
 
 	ODTooltip.isHidden = false;
@@ -5472,18 +5471,18 @@ bool OwnerDraw::DrawTooltip(bool save_background)
 		color = DSurface::Build_Hicolor_Pixel(c->red, c->green, c->blue);
 	}
 
-	DAT_00887308->Lock();
-	DAT_00887308->Fill_Rect(rect, color);
-	DAT_00887308->Unlock();
+	VisibleSurface->Lock();
+	VisibleSurface->Fill_Rect(rect, color);
+	VisibleSurface->Unlock();
 
-	FUN_006219D0(rect, *DAT_00887308, 8, 4);
+	FUN_006219D0(rect, *VisibleSurface, 8, 4);
 
-	OwnerDraw::PrintTextFixedLength(OwnerDraw::PrimaryTextColor, 0, rect, ODTooltip.text, wcslen(ODTooltip.text), 1, 1, DAT_00887308, 0);
+	OwnerDraw::PrintTextFixedLength(OwnerDraw::PrimaryTextColor, 0, rect, ODTooltip.text, wcslen(ODTooltip.text), 1, 1, VisibleSurface, 0);
 	rect.X += 1;
 	rect.Y += 1;
 	rect.Width -= 2;
 	rect.Height -= 2;
-	OwnerDraw::DrawBeveledBorder(*DAT_00887308, rect, 1, -1);
+	OwnerDraw::DrawBeveledBorder(*VisibleSurface, rect, 1, -1);
 
 	return true;
 }
@@ -5506,7 +5505,7 @@ bool OwnerDraw::RestoreTooltipBackground(void)
 
 	Rect drect = ODTooltip.bounds;
 	Rect srect(0, 0, ODTooltip.bounds.Width, ODTooltip.bounds.Height);
-	DAT_00887308->Blit_From(drect, *ODTooltip.background, srect, false, true);
+	VisibleSurface->Blit_From(drect, *ODTooltip.background, srect, false, true);
 	ODTooltip.isHidden = true;
 	return true;
 }
@@ -5563,7 +5562,6 @@ LRESULT CALLBACK OwnerDraw::SysListViewHandler(HWND window, UINT message, WPARAM
 	return CallWindowProc(original, window, message, wparam, lparam);
 }
 
-extern DSurface * DAT_00887310;
 namespace OwnerDraw {
 extern int CachedSurfaceCount;
 void __fastcall BlendGradientRect(Rect const & rect, Surface & surface, int color, int amount);
@@ -5739,7 +5737,7 @@ LRESULT CALLBACK OwnerDraw::EditHandler(HWND window, UINT message, WPARAM wparam
 
 			OwnerDraw::CopyDimmedBackground(draw_rect, window, data->Edit.alpha);
 			if (!is_combo) {
-				OwnerDraw::DrawBeveledBorder(*DAT_00887310, draw_rect, 2, -1);
+				OwnerDraw::DrawBeveledBorder(*AlternateSurface, draw_rect, 2, -1);
 			}
 
 			static wchar_t _buffer[0x1400];
@@ -5753,7 +5751,7 @@ LRESULT CALLBACK OwnerDraw::EditHandler(HWND window, UINT message, WPARAM wparam
 			text_rect.Height = display_rect.bottom - display_rect.top + 1;
 
 			LONG text_style = GetWindowLong(window, GWL_STYLE);
-			FUN_00623880(DAT_00887310, &text_rect, _buffer, cursor, data->Wide.font, OwnerDraw::PrimaryTextColor, &data->Edit.scrollStart, data->Wide.hasFocus, (text_style & ES_PASSWORD) != 0, 0, 0);
+			FUN_00623880(AlternateSurface, &text_rect, _buffer, cursor, data->Wide.font, OwnerDraw::PrimaryTextColor, &data->Edit.scrollStart, data->Wide.hasFocus, (text_style & ES_PASSWORD) != 0, 0, 0);
 
 			ValidateRect(window, NULL);
 		}
@@ -5881,9 +5879,9 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 			Surface *image = SurfaceCache.GetSurface(name, NULL);
 			int image_height = image->Get_Height();
 			Rect srect(0, 0, image->Get_Width(), image_height);
-			DAT_00887310->Blit_From(drect, *image, srect, false, true);
+			AlternateSurface->Blit_From(drect, *image, srect, false, true);
 			if (style & WS_DISABLED) {
-				FUN_00621B80(&drect, DAT_00887310, 0, OwnerDraw::DisabledOverlayAlpha);
+				FUN_00621B80(&drect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
 			}
 			trect.Left += 26;
 			if (data->Wide.text) {
@@ -5891,7 +5889,7 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 				if (style & WS_DISABLED) {
 					color = OwnerDraw::DisabledTextColor;
 				}
-				OwnerDraw::DrawWideText(DAT_00887310, data->Wide.text, (LTRBStruct *)&trect, data->Wide.font, color, 4, 0xc, 0, 0, 0);
+				OwnerDraw::DrawWideText(AlternateSurface, data->Wide.text, (LTRBStruct *)&trect, data->Wide.font, color, 4, 0xc, 0, 0, 0);
 			}
 			ValidateRect(window, NULL);
 			return 0;
@@ -6006,7 +6004,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			Rect dest(0, 0, crect.right + 1, crect.bottom + 1);
 			Rect src(drect.left, drect.top, crect.right + 1, crect.bottom + 1);
 
-			surface->Blit_From(dest, *DAT_00887310, src);
+			surface->Blit_From(dest, *AlternateSurface, src);
 		}
 
 		if (data->image != NULL) {
@@ -6018,7 +6016,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			Rect src = rect;
 			src.X = 0;
 			src.Y = 0;
-			DAT_00887310->Blit_From(rect, *image, src);
+			AlternateSurface->Blit_From(rect, *image, src);
 
 		} else {
 			char updown = 'u';
@@ -6048,7 +6046,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			if (data->cachedSurface != NULL) {
 				Rect cachesrc(0, 0, crect.right + 1, crect.bottom + 1);
 				Rect cachedest(drect.left, drect.top, crect.right + 1, crect.bottom + 1);
-				DAT_00887310->Blit_From(cachedest, *data->cachedSurface, cachesrc);
+				AlternateSurface->Blit_From(cachedest, *data->cachedSurface, cachesrc);
 				InvalidateRect(window, NULL, FALSE);
 			}
 
@@ -6071,7 +6069,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			sourcerect.X = 0;
 			destrect.Height = height;
 			sourcerect.Height = height;
-			DAT_00887310->Blit_From(destrect, *image, sourcerect);
+			AlternateSurface->Blit_From(destrect, *image, sourcerect);
 
 			sprintf(buffer, "b%c%c_mi%d.pcx", updown, 'e', height);
 			image = SurfaceCache.GetSurface(buffer);
@@ -6079,7 +6077,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			midrect.X += w;
 			midrect.Width -= margin;
 			midrect.Height = image->Get_Height();
-			SurfaceCache.Draw(midrect, *DAT_00887310, *image, 0, 0);
+			SurfaceCache.Draw(midrect, *AlternateSurface, *image, 0, 0);
 
 			sprintf(buffer, "b%c%c_ri%d.pcx", updown, 'e', height);
 			image = SurfaceCache.GetSurface(buffer);
@@ -6091,7 +6089,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			sourcerect.Y = 0;
 			sourcerect.X = 0;
 			sourcerect.Width = destrect.Width;
-			DAT_00887310->Blit_From(destrect, *image, sourcerect);
+			AlternateSurface->Blit_From(destrect, *image, sourcerect);
 		}
 
 		if (data->image == NULL && data->Wide.text) {
@@ -6107,11 +6105,11 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 				text_rect.X += 2;
 				text_rect.Y += 4;
 			}
-			OwnerDraw::DrawWideText(DAT_00887310, data->Wide.text, (LTRBStruct *)&text_rect, data->Wide.font, color, 5, 0xc, 0, 0, 0);
+			OwnerDraw::DrawWideText(AlternateSurface, data->Wide.text, (LTRBStruct *)&text_rect, data->Wide.font, color, 5, 0xc, 0, 0, 0);
 		}
 
 		if (style & WS_DISABLED) {
-			FUN_00621B80(&rect, DAT_00887310, 0, 128);
+			FUN_00621B80(&rect, AlternateSurface, 0, 128);
 		}
 		ValidateRect(window, NULL);
 		return 0;
@@ -6340,14 +6338,14 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			}
 
 			if (parent_data != NULL && parent_data->cachedSurface != NULL) {
-				DAT_00887310->Blit_From(full_rect, *parent_data->cachedSurface, source_rect);
+				AlternateSurface->Blit_From(full_rect, *parent_data->cachedSurface, source_rect);
 			}
 
 			int color = ODColorToHiColor(OwnerDraw::DefaultBorderColor);
 			if (data->ScrollBar.disabled) {
 				color = ODColorToHiColor(OwnerDraw::AltBorderColor);
 			}
-			OwnerDraw::DrawBeveledBorder(*DAT_00887310, full_rect, 2, color);
+			OwnerDraw::DrawBeveledBorder(*AlternateSurface, full_rect, 2, color);
 
 			Rect grip_rect(display_rect.left, grip_top + display_rect.top, client_rect.right, grip_bottom - grip_top);
 			full_rect = grip_rect;
@@ -6364,7 +6362,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			if (grip_center != NULL) {
 				grip_rect.Width = grip_center->Get_Width();
 			}
-			SurfaceCache.Draw(grip_rect, *DAT_00887310, *grip_center, 0, 0);
+			SurfaceCache.Draw(grip_rect, *AlternateSurface, *grip_center, 0, 0);
 
 			Rect grip_src(0, 0, grip_center->Get_Height(), grip_center->Get_Width());
 
@@ -6377,7 +6375,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			if (grip_top_surf != NULL) {
 				full_rect.Height = grip_top_surf->Get_Height();
 			}
-			DAT_00887310->Blit_From(full_rect, *grip_top_surf, grip_src);
+			AlternateSurface->Blit_From(full_rect, *grip_top_surf, grip_src);
 
 			Surface * grip_bottom_surf;
 			if (data->ScrollBar.disabled) {
@@ -6388,25 +6386,25 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			if (grip_bottom_surf != NULL) {
 				full_rect.Y = display_rect.top + grip_bottom - grip_bottom_surf->Get_Height();
 			}
-			DAT_00887310->Blit_From(full_rect, *grip_bottom_surf, grip_src);
+			AlternateSurface->Blit_From(full_rect, *grip_bottom_surf, grip_src);
 
 			Rect up_rect(display_rect.left, display_rect.top, client_rect.right, 22);
 			full_rect = up_rect;
 			src_rect = up_rect;
 			src_rect.X = 0;
 			src_rect.Y = 0;
-			DAT_00887310->Blit_From(full_rect, *data->cachedSurface, src_rect);
-			ODDrawEdgeGlows(*DAT_00887310, up_rect, up_pressed == 0, 2, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha);
-			ODDrawArrowBitmap(DAT_00887310, up_rect, 1, up_pressed, data->ScrollBar.disabled);
+			AlternateSurface->Blit_From(full_rect, *data->cachedSurface, src_rect);
+			ODDrawEdgeGlows(*AlternateSurface, up_rect, up_pressed == 0, 2, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha);
+			ODDrawArrowBitmap(AlternateSurface, up_rect, 1, up_pressed, data->ScrollBar.disabled);
 
 			Rect down_rect(display_rect.left, display_rect.bottom - 22, client_rect.right, 22);
 			full_rect = down_rect;
 			src_rect = down_rect;
 			src_rect.X = 0;
 			src_rect.Y = client_rect.bottom - 22;
-			DAT_00887310->Blit_From(full_rect, *data->cachedSurface, src_rect);
-			ODDrawEdgeGlows(*DAT_00887310, down_rect, down_pressed == 0, 2, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha);
-			ODDrawArrowBitmap(DAT_00887310, down_rect, 0, down_pressed, data->ScrollBar.disabled);
+			AlternateSurface->Blit_From(full_rect, *data->cachedSurface, src_rect);
+			ODDrawEdgeGlows(*AlternateSurface, down_rect, down_pressed == 0, 2, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha);
+			ODDrawArrowBitmap(AlternateSurface, down_rect, 0, down_pressed, data->ScrollBar.disabled);
 
 			ValidateRect(window, NULL);
 			break;
@@ -6611,14 +6609,14 @@ LRESULT CALLBACK OwnerDraw::ProgressHandler(HWND window, UINT message, WPARAM wp
 				Surface *surf = new BSurface(rect.right - rect.left + 1, rect.bottom - rect.top + 1, 2);
 				data->cachedSurface = surf;
 				OwnerDraw::CachedSurfaceCount++;
-				surf->Blit_From(sourcerect, *DAT_00887310, destrect);
+				surf->Blit_From(sourcerect, *AlternateSurface, destrect);
 			}
 
-			DAT_00887310->Blit_From(destrect, *data->cachedSurface, sourcerect);
+			AlternateSurface->Blit_From(destrect, *data->cachedSurface, sourcerect);
 			int pos = (data->ProgressBar.position << 16) / (data->ProgressBar.maximum - data->ProgressBar.minimum);
 			int color = 0x000000FF;
 			color = ODColorToHiColor(color);
-			OwnerDraw::BlendGradientRect(destrect, *DAT_00887310, color, pos);
+			OwnerDraw::BlendGradientRect(destrect, *AlternateSurface, color, pos);
 			ValidateRect(window, NULL);
 			break;
 		}
@@ -6755,7 +6753,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 
 				Rect src_rect(0, 0, client_copy.right + 1, client_copy.bottom + 1);
 				Rect dst_rect(disp_copy.left, disp_copy.top, client_copy.right + 1, client_copy.bottom + 1);
-				surf->Blit_From(src_rect, *DAT_00887310, dst_rect);
+				surf->Blit_From(src_rect, *AlternateSurface, dst_rect);
 				FUN_00621B80(&src_rect, surf, 0, data->Edit.alpha);
 			}
 
@@ -6767,14 +6765,14 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 
 				Rect src_rect(0, 0, client_copy.right + 1, client_copy.bottom + 1);
 				Rect dst_rect(disp_copy.left, disp_copy.top, client_copy.right + 1, client_copy.bottom + 1);
-				DAT_00887310->Blit_From(dst_rect, *data->cachedSurface, src_rect);
+				AlternateSurface->Blit_From(dst_rect, *data->cachedSurface, src_rect);
 			}
 
 			if (show_numbers) {
 				{
 					Surface *center = SurfaceCache.GetSurface("trofm.pcx", NULL);
 					Rect center_rect(disp_rect.X + disp_rect.Width - number_width + 1, disp_rect.Y - 1, number_width, center->Get_Height());
-					SurfaceCache.Draw(center_rect, *DAT_00887310, *center, 0, 0);
+					SurfaceCache.Draw(center_rect, *AlternateSurface, *center, 0, 0);
 				}
 				{
 					Surface *left = SurfaceCache.GetSurface("trofl.pcx", NULL);
@@ -6782,7 +6780,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 					Rect left_src = left_dst;
 					left_src.Y = 0;
 					left_src.X = 0;
-					DAT_00887310->Blit_From(left_dst, *left, left_src);
+					AlternateSurface->Blit_From(left_dst, *left, left_src);
 				}
 				{
 					Surface *right = SurfaceCache.GetSurface("trofr.pcx", NULL);
@@ -6791,7 +6789,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 					right_src.Y = 0;
 					right_src.X = 0;
 
-					DAT_00887310->Blit_From(right_dst, *right, right_src);
+					AlternateSurface->Blit_From(right_dst, *right, right_src);
 				}
 			}
 
@@ -6802,11 +6800,11 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 			grip_src.Y = 0;
 			grip_src.Width = grip->Get_Width();
 			grip_src.Height = grip->Get_Height();
-			DAT_00887310->Blit_From(grip_rect, *grip, grip_src);
+			AlternateSurface->Blit_From(grip_rect, *grip, grip_src);
 
 			int disabled = style & WS_DISABLED;
 			if (disabled) {
-				FUN_00621B80(&grip_rect, DAT_00887310, 0, OwnerDraw::DisabledOverlayAlpha);
+				FUN_00621B80(&grip_rect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
 			}
 
 			int frame_color = ODColorToHiColor(OwnerDraw::DefaultBorderColor);
@@ -6816,13 +6814,13 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 
 			Rect frame_rect = disp_rect;
 			frame_rect.Width = disp_rect.Width - number_width;
-			OwnerDraw::DrawBeveledBorder(*DAT_00887310, frame_rect, 2, frame_color);
+			OwnerDraw::DrawBeveledBorder(*AlternateSurface, frame_rect, 2, frame_color);
 
 			Rect number_rect = disp_rect;
 			int inset = (show_numbers != 0) + 1;
 			number_rect.X = inset - number_width + disp_rect.Width + disp_rect.X;
 			number_rect.Width = number_width - inset;
-			OwnerDraw::DrawBeveledBorder(*DAT_00887310, number_rect, 2, frame_color);
+			OwnerDraw::DrawBeveledBorder(*AlternateSurface, number_rect, 2, frame_color);
 
 			if (show_numbers) {
 				wchar_t buffer[32];
@@ -6837,7 +6835,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 
 				RECT text_rect = paint_rect;
 				text_rect.left = paint_rect.right - 49;
-				OwnerDraw::DrawWideText(DAT_00887310, buffer, (LTRBStruct *)&text_rect, data->Wide.font, text_color, 5, 0xc, 0, 0, 0);
+				OwnerDraw::DrawWideText(AlternateSurface, buffer, (LTRBStruct *)&text_rect, data->Wide.font, text_color, 5, 0xc, 0, 0, 0);
 			}
 
 			ValidateRect(window, NULL);
@@ -7083,21 +7081,21 @@ LRESULT CALLBACK OwnerDraw::HotkeyHandler(HWND window, UINT message, WPARAM wpar
 				Surface *surf = new BSurface(alt_rect.Width, alt_rect.Height, 2);
 				data->cachedSurface = surf;
 				OwnerDraw::CachedSurfaceCount++;
-				surf->Blit_From(win_rect, *DAT_00887310, alt_rect);
+				surf->Blit_From(win_rect, *AlternateSurface, alt_rect);
 			}
 			wchar_t text[64];
 			int key = SendMessage(window, 0x402, 0, 0);
 			UI::GetKeyboardKeyString(key, text);
 			if (data->cachedSurface != NULL) {
-				DAT_00887310->Blit_From(alt_rect, *data->cachedSurface, win_rect);
+				AlternateSurface->Blit_From(alt_rect, *data->cachedSurface, win_rect);
 			}
-			OwnerDraw::DrawBeveledBorder(*DAT_00887310, alt_rect, 2, -1);
+			OwnerDraw::DrawBeveledBorder(*AlternateSurface, alt_rect, 2, -1);
 			if (wcslen(text) > 0) {
 				rect.left += 4;
 				rect.top += 4;
 				rect.right -= 4;
 				rect.bottom -= 4;
-				Draw_Hotkey_Text7(DAT_00887310, text, &rect, data->Wide.font, OwnerDraw::PrimaryTextColor, DT_SINGLELINE | DT_VCENTER);
+				Draw_Hotkey_Text7(AlternateSurface, text, &rect, data->Wide.font, OwnerDraw::PrimaryTextColor, DT_SINGLELINE | DT_VCENTER);
 			}
 			ValidateRect(window, NULL);
 		}
@@ -7758,7 +7756,7 @@ int __fastcall OwnerDraw::PrintTextFixedLength(unsigned color, BitFont * font, R
 		return 0;
 	}
 	if (surface == NULL) {
-		surface = DAT_00887310;
+		surface = AlternateSurface;
 	}
 	int pixel = DSurface::Build_Hicolor_Pixel(GetRValue(color), GetGValue(color), GetBValue(color));
 	int x = rect.X;
@@ -7801,7 +7799,7 @@ int __fastcall OwnerDraw::PrintTextFixedLength(unsigned color, BitFont * font, R
 // FUNCTION: GAMEMD 0x006213A0
 void OwnerDraw::Draw_Item(LPDRAWITEMSTRUCT drawit)
 {
-	if (DAT_00887308 != NULL && DAT_00887310 != NULL) {
+	if (VisibleSurface != NULL && AlternateSurface != NULL) {
 		RECT rect1;
 		Get_Display_Rect(drawit->hwndItem, &rect1);
 		RECT rect2;
@@ -7867,7 +7865,7 @@ void __fastcall OwnerDraw::CopyDimmedBackground(Rect const & rect, HWND hWnd, in
 
 			surface->Blit_From(dstFull, *parentSurf, srcRel, false, true);
 		} else {
-			Surface * srcSurf = DAT_00887308;
+			Surface * srcSurf = VisibleSurface;
 
 			Rect srcAbs;
 			srcAbs.X = dispChild.left;
@@ -7896,7 +7894,7 @@ void __fastcall OwnerDraw::CopyDimmedBackground(Rect const & rect, HWND hWnd, in
 	src.X -= dispChild.left;
 	src.Y -= dispChild.top;
 
-	DAT_00887310->Blit_From(rect, *surface, src, false, true);
+	AlternateSurface->Blit_From(rect, *surface, src, false, true);
 }
 
 // FUNCTION: GAMEMD 0x006217E0
@@ -8098,7 +8096,7 @@ void __fastcall OwnerDraw::Paint(HWND window)
 			Rect dst = rFull;
 			dst.X = 0;
 			dst.Y = 0;
-			surf->Blit_From(dst, *DAT_00887310, rFull, false, true);
+			surf->Blit_From(dst, *AlternateSurface, rFull, false, true);
 
 			ShapeSet const * shape;
 			ConvertClass * palette;
@@ -8145,7 +8143,7 @@ void __fastcall OwnerDraw::Paint(HWND window)
 			Rect srcOnXs = rFull;
 			srcOnXs.X -= rcDisp.left;
 			srcOnXs.Y -= rcDisp.top;
-			DAT_00887310->Blit_From(rFull, *surf, srcOnXs, false, true);
+			AlternateSurface->Blit_From(rFull, *surf, srcOnXs, false, true);
 		}
 	}
 }
@@ -8216,8 +8214,6 @@ extern DialogStackEntry DAT_00B72D28[];
 extern int DAT_00B72F50;
 extern HWND DAT_00B72F44;
 extern int DAT_00B72F48;
-extern HWND DAT_00B73550;
-extern HINSTANCE DAT_00B732F0;
 void __fastcall Add_Modeless_Dialog(HWND dialog);
 
 // FUNCTION: GAMEMD 0x00622650
@@ -8241,7 +8237,7 @@ HWND __fastcall UI::BeginDialog(int resource, DLGPROC proc, int param)
 	init.id = (unsigned short)resource;
 	init.param = param;
 
-	HWND dialog = CreateDialogIndirectParam(DAT_00B732F0, templ, DAT_00B73550, proc, (LPARAM)&init);
+	HWND dialog = CreateDialogIndirectParam(ProgramInstance, templ, MainWindow, proc, (LPARAM)&init);
 	if (dialog == NULL) {
 		DAT_00B72F50--;
 		return NULL;
@@ -8283,8 +8279,8 @@ void __fastcall UI::EndDialog(HWND window)
 				DAT_00B72F44 = NULL;
 				DAT_00B72F48 = 0;
 
-				SetForegroundWindow(DAT_00B73550);
-				SetFocus(DAT_00B73550);
+				SetForegroundWindow(MainWindow);
+				SetFocus(MainWindow);
 			}
 			break;
 		}

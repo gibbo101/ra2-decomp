@@ -32,7 +32,6 @@ extern int DAT_00AA0590, DAT_00AA0588, DAT_00AA058C;
 extern int DAT_00AA05B8, DAT_00AA05BC, DAT_00AA05C0, DAT_00AA05C4;
 extern const double DAT_007EC0B8;
 extern int DAT_00841F3C;
-extern WinsockInterfaceClass * DAT_00887628;
 #include "ownertalk.h"
 
 extern const double DAT_007EC0C0;
@@ -281,8 +280,8 @@ int IPXConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 		none:;
 	}
 
-	if (DAT_00887628) {
-		DAT_00887628->WriteTo(buf, buflen, &dest, sizeof(dest), flag, false, dest_port);
+	if (PacketTransport) {
+		PacketTransport->WriteTo(buf, buflen, &dest, sizeof(dest), flag, false, dest_port);
 	}
 	return(1);
 }

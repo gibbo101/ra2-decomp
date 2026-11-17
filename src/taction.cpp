@@ -87,10 +87,6 @@ HouseClass * __fastcall FUN_00510ED0(int index);
 HouseClass * __fastcall FUN_00502D30(int index);
 void __fastcall FUN_004549B0(BuildingClass * building);
 
-extern DynamicVectorClass<BuildingClass *> DAT_00A8EB40;
-#define Buildings DAT_00A8EB40
-extern DynamicVectorClass<InfantryClass *> DAT_00A83DE8;
-#define Infantry DAT_00A83DE8
 
 DynamicVectorClass<TActionClass *> Actions;
 
@@ -123,8 +119,6 @@ void __fastcall FUN_007315A0(void);
 extern wchar_t DAT_00887734[];
 extern char DAT_00889F64[];
 
-extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
-#define Technos DAT_00A8EC78
 
 // FUNCTION: GAMEMD 0x00413A30
 // ?As_Cell@Coord@@QBE?AVCell@@XZ

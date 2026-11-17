@@ -2365,7 +2365,6 @@ void Tactical::Reset_Dirty_Rectangles(void)
 	}
 }
 
-extern DynamicVectorClass<ObjectClass *> DAT_00A8E360;
 
 static bool WaypointLinePattern[16] = {
 	true, true, true, true, true, false, false, false,
@@ -2536,8 +2535,8 @@ void Tactical::Debug_Draw_Occupier_Links(void)
 		cellptr = Map.Iterate();
 	}
 
-	for (int i = DAT_00A8E360.Count() - 1; i >= 0; i--) {
-		ObjectClass * object = DAT_00A8E360[i];
+	for (int i = Objects.Count() - 1; i >= 0; i--) {
+		ObjectClass * object = Objects[i];
 		if (object->Next != NULL) {
 			Coord coord1 = object->Center_Coord();
 			Point2D start;

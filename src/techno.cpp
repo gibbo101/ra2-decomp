@@ -5357,7 +5357,6 @@ void TechnoClass::Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, in
 	}
 }
 
-extern int DAT_00B43180;
 
 // FUNCTION: GAMEMD 0x00707280
 SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int layer_index, ShapeFlags_Type flags, bool cached, Surface * surface, int shadow_x, int shadow_y) const
@@ -5366,7 +5365,7 @@ SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & vo
 	Matrix3D mtx2 = matrix * Matrix3D(voxeldata.MotLib->Get_Layer_Matrix(layer_index, 0));
 
 	if (Techno_Type_Class()->UseBuffer) {
-		DAT_00B43180 = 1;
+		VoxelDrawSystem::EnableZBuffer = 1;
 	}
 
 	mtx3.Make_Identity();
@@ -5384,7 +5383,7 @@ SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & vo
 	}
 
 	if (Techno_Type_Class()->UseBuffer) {
-		DAT_00B43180 = 1;
+		VoxelDrawSystem::EnableZBuffer = 1;
 	}
 
 	return(region);

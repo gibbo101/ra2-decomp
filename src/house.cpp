@@ -86,15 +86,12 @@
 #include "color.hh"
 #include "strategy.hh"
 
-extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
-#define Technos DAT_00A8EC78
 extern DynamicVectorClass<FootClass *> DAT_008B3DC0;
 #define Foots DAT_008B3DC0
 extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
 namespace Game { extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; extern int MuteSWLaunches; extern Cell CellSpreadTable[]; extern bool SWAllowed; extern bool ArmageddonMode; }
 #define Factories DAT_00A83E30
-extern DynamicVectorClass<ObjectClass *> DAT_00A8ECB8;
 extern HouseClass * DAT_00AC1198;
 extern int DAT_007ED3FC;
 ThreatType __fastcall FUN_00645BB0(QuarryType quarry);
@@ -4432,10 +4429,10 @@ void HouseClass::Adjust_Drain(int adjust)
 // FUNCTION: GAMEMD 0x00501A20
 void HouseClass::Update_Spied_Power_Plants(void)
 {
-	int count = DAT_00A8ECB8.Count();
+	int count = CurrentObject.Count();
 	if (count) {
 		for (int index = 0; index < count; index++) {
-			ObjectClass const * tech = DAT_00A8ECB8[index];
+			ObjectClass const * tech = CurrentObject[index];
 			if (tech && tech->Fetch_RTTI() == RTTI_BUILDING) {
 				BuildingClass *bldg = (BuildingClass *)tech;
 				if (!bldg->IsOwnedByPlayer && bldg->Class->Power > 0) {

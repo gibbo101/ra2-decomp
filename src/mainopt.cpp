@@ -262,7 +262,7 @@ void Main_Options_Dialog(void)
 #include "firewall.h"
 
 extern WinsockInterfaceClass * PacketTransport;
-extern CCINIClass DAT_008870C0;
+extern CCINIClass INI_RA2MD;
 
 namespace UI {
 	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
@@ -427,12 +427,12 @@ BOOL CALLBACK FUN_00560480(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 							WWMessageBox().Process(StringTable::LoadString("TXT_FIREWALL_SETTINGS_WARNING2", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x436), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x436), NULL, NULL);
 						}
 						Session.unknown_301C = port;
-						DAT_00ABFEC8.Clear();
+						FirewallHelper.Clear();
 
 						RawFileClass file("RA2MD.INI");
-						DAT_008870C0.Put_Bool("MultiPlayer", "SendDelay", Session.unknown_2F48);
-						DAT_008870C0.Put_Int("MultiPlayer", "PortNumberOverride", Session.unknown_301C, 0);
-						DAT_008870C0.Save(file, false);
+						INI_RA2MD.Put_Bool("MultiPlayer", "SendDelay", Session.unknown_2F48);
+						INI_RA2MD.Put_Int("MultiPlayer", "PortNumberOverride", Session.unknown_301C, 0);
+						INI_RA2MD.Save(file, false);
 						break;
 					}
 

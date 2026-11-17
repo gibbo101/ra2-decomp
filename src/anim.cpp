@@ -72,7 +72,6 @@ void __fastcall FUN_00489280(Coord const & coord, int damage, TechnoClass * sour
 void __fastcall FUN_004A3C30(void * palette, int rate, bool (__cdecl * callback)(void));
 extern const double DAT_007E3570;
 
-extern ParticleSystemClass * DAT_00A8ED78;
 class AudioEvent;
 AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 bool __fastcall FUN_0043B4C0(HouseClass * house, CellClass * cell);
@@ -868,7 +867,7 @@ void AnimClass::Middle(void)
 	if (Type->SpawnsParticle != -1) {
 		for (int i = 0; i < Type->NumParticles; i++) {
 			Coord pos = PositionCoord;
-			DAT_00A8ED78->Spawn_Particle(ParticleTypes[Type->SpawnsParticle], pos);
+			GasSystem->Spawn_Particle(ParticleTypes[Type->SpawnsParticle], pos);
 		}
 	}
 

@@ -1592,7 +1592,6 @@ void Receive_Random_Map_Preview(void)
 	Ipx.Set_Timing(30, -1, 600);
 }
 
-extern int DAT_0081C1D0;
 int __fastcall FUN_004790A0(int timeout);
 
 // FUNCTION: GAMEMD 0x005E7BF0
@@ -1611,7 +1610,7 @@ bool Set_Scenario_Info_From_Index(int index)
 	bool unavailable = CCFileClass(Session.Scenarios[index]->Get_Filename()).Is_Available() == false;
 
 	if (unavailable) {
-		if (DAT_0081C1D0 != -2) {
+		if (CD::Get_Required_Disk() != -2) {
 			if (!Session.Scenarios[index]->Is_On_CD((DiskID)FUN_004790A0(60)) && !CD().Force_Available(Session.Scenarios[index]->On_Which_CD())) {
 				return(false);
 			}
@@ -1671,8 +1670,8 @@ void __fastcall FUN_005E7EB0(MapPreviewClass * preview)
 		}
 
 		if (Session.Type == GAME_INTERNET) {
-			if (DAT_00ABFEC8.Detected != 0
-				&& !(DAT_00ABFEC8.Detected & 1)) {
+			if (FirewallHelper.Detected != 0
+				&& !(FirewallHelper.Detected & 1)) {
 			no_preview:
 				options[0] = 'Z';
 				options[1] = '3';
@@ -3982,21 +3981,21 @@ int __fastcall FUN_005EE100(Wstring const & name)
 	return(0);
 }
 
-extern CCINIClass DAT_008870C0;
+extern CCINIClass INI_RA2MD;
 namespace Game { extern int ObserverMode; }
 
 // FUNCTION: GAMEMD 0x005EE190
 void FUN_005EE190(void)
 {
-	Game::ObserverMode = DAT_008870C0.Get_Int("MultiPlayer", "ObserverMode", 0);
+	Game::ObserverMode = INI_RA2MD.Get_Int("MultiPlayer", "ObserverMode", 0);
 }
 
 // FUNCTION: GAMEMD 0x005EE1B0
 void FUN_005EE1B0(void)
 {
 	RawFileClass file("RA2MD.INI");
-	DAT_008870C0.Put_Int("MultiPlayer", "ObserverMode", Game::ObserverMode, 0);
-	DAT_008870C0.Save(file, false);
+	INI_RA2MD.Put_Int("MultiPlayer", "ObserverMode", Game::ObserverMode, 0);
+	INI_RA2MD.Save(file, false);
 }
 
 void __fastcall FUN_00603D30(HWND item, Surface * surface);

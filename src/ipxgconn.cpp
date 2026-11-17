@@ -23,7 +23,6 @@
 
 void __cdecl FUN_004068E0(char const * format, ...);
 extern int DAT_00841F3C;
-extern WinsockInterfaceClass * DAT_00887628;
 #include "ownertalk.h"
 // SYNTHETIC: GAMEMD 0x0053F8A0 SYMBOL
 // _$E40
@@ -449,8 +448,8 @@ int IPXGlobalConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 		dest_port = port;
 	}
 
-	if (DAT_00887628) {
-		DAT_00887628->WriteTo(buf, buflen, &dest, sizeof(dest), flag, FieldC8 == 0, dest_port);
+	if (PacketTransport) {
+		PacketTransport->WriteTo(buf, buflen, &dest, sizeof(dest), flag, FieldC8 == 0, dest_port);
 	}
 	return(1);
 }

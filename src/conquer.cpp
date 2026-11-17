@@ -184,13 +184,11 @@ struct FileSystem
 namespace Unsorted { extern int ScenarioInit; extern bool ScenarioStarted; extern bool TacticalActive; }
 namespace FPSCounter { extern unsigned TotalTimeElapsed; extern unsigned TotalFramesElapsed; }
 extern bool UserInputLocked;
-extern int DAT_00ABCDFC;
-extern int DAT_00ABCE00;
+extern int TeamEvent;
+extern int TeamNumber;
 extern unsigned char DAT_00A8F900;
 extern int DAT_00B0BDB8;
 extern bool ConnectionLost;
-extern unsigned char DAT_008175B0;
-extern PaletteClass DAT_00884E80;
 bool __fastcall FUN_0055CFD0(void);
 void __fastcall FUN_0072DFB0(void);
 void Print_MP_Stats(void);
@@ -364,8 +362,8 @@ ret_addr:
 		Keyboard->Clear();
 		if (Session.Play) {
 			MouseCursor->Hide_Mouse();
-			DAT_00ABCDFC = 0;
-			DAT_00ABCE00 = 0;
+			TeamEvent = 0;
+			TeamNumber = 0;
 		}
 
 		if (Session.Type == GAME_INTERNET) {
@@ -404,8 +402,8 @@ ret_addr:
 
 		Print_MP_Stats();
 
-		if (!DAT_008175B0) {
-			Set_Palette(DAT_00884E80, 30, NULL);
+		if (!HicolorFlag) {
+			Set_Palette(BlackPalette, 30, NULL);
 		}
 		Title_Screen_Restore(true);
 

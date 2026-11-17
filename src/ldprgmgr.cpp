@@ -62,7 +62,7 @@ extern int DAT_007F5BE0;
 extern int DAT_007F5BE4;
 extern int DAT_007F5BEC;
 extern int DAT_007F5BF0;
-extern PKey DAT_00886980;
+extern PKey FastKey;
 
 void __cdecl FUN_0072B460(void);
 void __cdecl FUN_0072B870(void);
@@ -182,13 +182,13 @@ void LoadProgressManager::Load_Mixes(void)
 {
 	if (LoadMDMix == NULL) {
 		FUN_004A4AC0(" loadmd.MIX");
-		LoadMDMix = new MixFileClass("LOADMD.MIX", &DAT_00886980);
+		LoadMDMix = new MixFileClass("LOADMD.MIX", &FastKey);
 		if (LoadMDMix == NULL) {
 			return;
 		}
 	}
 	if (LoadMix == NULL) {
-		LoadMix = new MixFileClass("LOAD.MIX", &DAT_00886980);
+		LoadMix = new MixFileClass("LOAD.MIX", &FastKey);
 		if (LoadMix == NULL) {
 			return;
 		}

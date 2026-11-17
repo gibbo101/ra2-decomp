@@ -476,7 +476,6 @@ extern bool DAT_00B0B48B;
 extern bool DAT_00B0B48F;
 extern ConvertClass * DAT_0087F6D0;
 
-extern DSurface * DAT_00887308;
 PaletteClass * __fastcall FUN_0072F4A0(void);
 PaletteClass * __fastcall FUN_0072F4E0(void);
 
@@ -490,7 +489,7 @@ void SidebarClass::Init_For_House(void)
 		delete FileSystem::SIDEBAR_PAL;
 		FileSystem::SIDEBAR_PAL = NULL;
 	}
-	FileSystem::SIDEBAR_PAL = new ConvertClass(palette, palette, *DAT_00887308, 1, false);
+	FileSystem::SIDEBAR_PAL = new ConvertClass(palette, palette, *VisibleSurface, 1, false);
 
 	FileSystem::GCLOCK2_SHP = FileSystem::LoadWholeFileEx("GCLOCK2.SHP", DAT_00B0B48F);
 
@@ -529,7 +528,7 @@ void SidebarClass::Init_For_House(void)
 		delete DAT_0087F6D0;
 		DAT_0087F6D0 = NULL;
 	}
-	DAT_0087F6D0 = new ConvertClass(observer, observer, *DAT_00887308, 1, false);
+	DAT_0087F6D0 = new ConvertClass(observer, observer, *VisibleSurface, 1, false);
 
 	DAT_00B0B490 = FileSystem::LoadWholeFileEx("OBSALLI.SHP", DAT_00B0B4CC);
 	DAT_00B0B494 = FileSystem::LoadWholeFileEx("OBSSOVI.SHP", DAT_00B0B4CD);
@@ -549,7 +548,6 @@ void SidebarClass::Init_For_House(void)
 }
 
 extern void * DAT_00B0B478;
-extern bool DAT_00B0B518;
 bool __fastcall FUN_004E1470(GadgetClass * gadget);
 
 extern void * DAT_00B0B47C;
@@ -725,7 +723,7 @@ bool SidebarClass::AddCameo(RTTIType type, int id)
 			IsToRedraw = true;
 			Flag_To_Redraw();
 			if (tab == ActiveTabIndex) {
-				DAT_00B0B518 = true;
+				IsToBlitSidebar = true;
 			}
 			return true;
 		}
@@ -886,7 +884,7 @@ void SidebarClass::Draw_It(bool complete)
 			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B47C, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
 			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B480, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
 		}
-		DAT_00B0B518 = true;
+		IsToBlitSidebar = true;
 	}
 
 	Column[ActiveTabIndex].Draw_It(IsForceCompleteRedraw);
@@ -894,31 +892,31 @@ void SidebarClass::Draw_It(bool complete)
 
 	if (Power.IsDrawn) {
 		Power.IsDrawn = false;
-		DAT_00B0B518 = true;
+		IsToBlitSidebar = true;
 	}
 	if (Repair.IsDrawn) {
 		Repair.IsDrawn = false;
-		DAT_00B0B518 = true;
+		IsToBlitSidebar = true;
 	}
 	for (int index = 0; index < STRIPS; index++) {
 		if (TabButtons[index].IsDrawn) {
-			DAT_00B0B518 = true;
+			IsToBlitSidebar = true;
 			TabButtons[index].IsDrawn = false;
 		}
 	}
 	if (Upgrade.IsDrawn) {
 		Upgrade.IsDrawn = false;
-		DAT_00B0B518 = true;
+		IsToBlitSidebar = true;
 	}
 	if (Waypoint.IsDrawn) {
 		Waypoint.IsDrawn = false;
-		DAT_00B0B518 = true;
+		IsToBlitSidebar = true;
 	}
 	if (ToolTips != NULL) {
 		ToolTips->Draw_Current(true);
 	}
 
-	Blit_Sidebar(DAT_00B0B518 || IsForceCompleteRedraw);
+	Blit_Sidebar(IsToBlitSidebar || IsForceCompleteRedraw);
 	IsToRedraw = false;
 	IsForceCompleteRedraw = false;
 	DSurface::Temp = (DSurface *)old;
@@ -928,27 +926,6 @@ namespace Game { extern bool IsActive; extern HWND hWnd; }
 namespace Unsorted { extern bool ScenarioStarted; }
 extern bool DAT_00B0B519;
 extern int DAT_00886F98;
-
-class MouseSlots {
-	public:
-		virtual void Slot0(void);
-		virtual void Slot1(void);
-		virtual void Slot2(void);
-		virtual void Slot3(void);
-		virtual void Slot4(void);
-		virtual void Slot5(void);
-		virtual void Slot6(void);
-		virtual void Slot7(void);
-		virtual void Slot8(void);
-		virtual void Slot9(void);
-		virtual void Slot10(void);
-		virtual void Slot11(void);
-		virtual void Slot12(void);
-		virtual void Slot13(void);
-		virtual void Slot14(void);
-		virtual void Draw_Mouse(Surface * scr, bool issidebarsurface);
-};
-extern MouseSlots * DAT_00887640;
 
 // FUNCTION: GAMEMD 0x006A70E0
 void SidebarClass::Blit_Sidebar(bool complete)
@@ -963,12 +940,12 @@ void SidebarClass::Blit_Sidebar(bool complete)
 		scrnpt.y = crect.top;
 		ClientToScreen(Game::hWnd, &scrnpt);
 
-		if (!DAT_00B0B518 && !complete) {
-			DAT_00B0B518 = false;
+		if (!IsToBlitSidebar && !complete) {
+			IsToBlitSidebar = false;
 			if (DAT_008809F4 == DAT_00B07DC8) {
 				if (IsToRedrawCredits) {
-					DAT_00887640->Draw_Mouse(SidebarSurface, true);
-					DAT_00887308->Blit_From(
+					MouseCursor->Draw_Mouse(SidebarSurface, true);
+					VisibleSurface->Blit_From(
 						Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, DAT_00886F98, 16),
 						*SidebarSurface,
 						Rect(0, 0, DAT_00886F98, 16),
@@ -978,29 +955,29 @@ void SidebarClass::Blit_Sidebar(bool complete)
 					IsToRedrawCredits = false;
 					DAT_00B0B519 = true;
 				}
-				DAT_00B0B518 = false;
+				IsToBlitSidebar = false;
 				return;
 			}
 		} else {
-			DAT_00B0B518 = true;
+			IsToBlitSidebar = true;
 		}
 
-		DAT_00887640->Draw_Mouse(SidebarSurface, true);
+		MouseCursor->Draw_Mouse(SidebarSurface, true);
 		if (DAT_008809F4 == DAT_00B07DC8 && !complete) {
 			if (IsToRedrawCredits) {
-				DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, DAT_00886F98, 16), *SidebarSurface, Rect(0, 0, DAT_00886F98, 16), false, true);
+				VisibleSurface->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, DAT_00886F98, 16), *SidebarSurface, Rect(0, 0, DAT_00886F98, 16), false, true);
 				IsToRedrawCredits = false;
 			}
-			DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_00886F94, DAT_00886F98, SidebarSurface->Get_Height() - DAT_00886F94), *SidebarSurface, Rect(0, DAT_00886F94, DAT_00886F98, DAT_00886F9C), false, true);
-		} else if (DAT_00B0B518) {
+			VisibleSurface->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_00886F94, DAT_00886F98, SidebarSurface->Get_Height() - DAT_00886F94), *SidebarSurface, Rect(0, DAT_00886F94, DAT_00886F98, DAT_00886F9C), false, true);
+		} else if (IsToBlitSidebar) {
 			Rect sb_rect = SidebarSurface->Get_Rect();
-			DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, sb_rect.Width, sb_rect.Height), *SidebarSurface, Rect(0, 0, sb_rect.Width, sb_rect.Height), false, true);
+			VisibleSurface->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, sb_rect.Width, sb_rect.Height), *SidebarSurface, Rect(0, 0, sb_rect.Width, sb_rect.Height), false, true);
 		} else {
-			DAT_00887308->Blit_From(Rect(scrnpt.x + DAT_008809F4.X + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_008809F4.Y, DAT_008809F4.Width, DAT_008809F4.Height), *SidebarSurface, DAT_008809F4, false, true);
+			VisibleSurface->Blit_From(Rect(scrnpt.x + DAT_008809F4.X + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_008809F4.Y, DAT_008809F4.Width, DAT_008809F4.Height), *SidebarSurface, DAT_008809F4, false, true);
 		}
 		DAT_00B0B519 = true;
 	}
-	DAT_00B0B518 = false;
+	IsToBlitSidebar = false;
 }
 
 // FUNCTION: GAMEMD 0x006A74A0
@@ -1819,7 +1796,7 @@ void SidebarClass::StripClass::SelectClass::OnMouseEnter(void)
 	Strip->IsToRedraw = true;
 	Map.Flag_To_Redraw();
 	Map.IsForceCompleteRedraw = true;
-	DAT_00B0B518 = true;
+	IsToBlitSidebar = true;
 }
 
 // FUNCTION: GAMEMD 0x006AB9E0
@@ -1830,7 +1807,7 @@ void SidebarClass::StripClass::SelectClass::OnMouseLeave(void)
 	Strip->IsToRedraw = true;
 	Map.Flag_To_Redraw();
 	Map.IsForceCompleteRedraw = true;
-	DAT_00B0B518 = true;
+	IsToBlitSidebar = true;
 }
 
 // FUNCTION: GAMEMD 0x006ABA20

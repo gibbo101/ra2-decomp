@@ -38,7 +38,7 @@
 #include <math.h>
 
 MultiplayerGameMode * First_Game_Mode(void);
-extern CCINIClass DAT_008870C0;
+extern CCINIClass INI_RA2MD;
 extern signed char PlayerColorToColorSchemeLUT[9];
 extern char DAT_00889F64[];
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int length);
@@ -627,45 +627,45 @@ void SessionClass::Write_MultiPlayer_Settings(void)
 {
 	RawFileClass file("RA2MD.INI");
 
-	DAT_008870C0.Put_Int("MultiPlayer", "PhoneIndex", CurPhoneIdx);
-	DAT_008870C0.Put_Bool("MultiPlayer", "WOLLimitResolution", WOLLimitResolution);
-	DAT_008870C0.Put_Int("MultiPlayer", "LastNickSlot", LastNicknameSlot);
-	DAT_008870C0.Put_UnicodeString("MultiPlayer", "Handle", FUN_00735120(Handle));
-	DAT_008870C0.Put_Int("MultiPlayer", "Color", Color);
-	DAT_008870C0.Put_Int("MultiPlayer", "ColorEx", Color2);
-	DAT_008870C0.Put_HousesType("MultiPlayer", "Side", (HousesType)Side);
-	DAT_008870C0.Put_Int("MultiPlayer", "SideEx", Side2);
+	INI_RA2MD.Put_Int("MultiPlayer", "PhoneIndex", CurPhoneIdx);
+	INI_RA2MD.Put_Bool("MultiPlayer", "WOLLimitResolution", WOLLimitResolution);
+	INI_RA2MD.Put_Int("MultiPlayer", "LastNickSlot", LastNicknameSlot);
+	INI_RA2MD.Put_UnicodeString("MultiPlayer", "Handle", FUN_00735120(Handle));
+	INI_RA2MD.Put_Int("MultiPlayer", "Color", Color);
+	INI_RA2MD.Put_Int("MultiPlayer", "ColorEx", Color2);
+	INI_RA2MD.Put_HousesType("MultiPlayer", "Side", (HousesType)Side);
+	INI_RA2MD.Put_Int("MultiPlayer", "SideEx", Side2);
 	if (MPGameMode) {
-		DAT_008870C0.Put_Int("MultiPlayer", "GameMode", MPGameMode->MPModeIndex);
+		INI_RA2MD.Put_Int("MultiPlayer", "GameMode", MPGameMode->MPModeIndex);
 	} else {
-		DAT_008870C0.Put_Int("MultiPlayer", "GameMode", 0);
+		INI_RA2MD.Put_Int("MultiPlayer", "GameMode", 0);
 	}
 
-	Skirmish.Write(DAT_008870C0, "Skirmish");
-	LAN.Write(DAT_008870C0, "LAN");
-	WOL.Write(DAT_008870C0, "WonlinePref");
+	Skirmish.Write(INI_RA2MD, "Skirmish");
+	LAN.Write(INI_RA2MD, "LAN");
+	WOL.Write(INI_RA2MD, "WonlinePref");
 
-	DAT_008870C0.Clear("SerialDefaults");
-	DAT_008870C0.Put_String("SerialDefaults", "CallWaitString", SerialDefaults.CallWaitString);
-	DAT_008870C0.Put_Int("SerialDefaults", "CallWaitStringIndex", SerialDefaults.CallWaitStringIndex);
-	DAT_008870C0.Put_Int("SerialDefaults", "InitStringIndex", SerialDefaults.InitStringIndex);
-	DAT_008870C0.Put_String("SerialDefaults", "DialMethod", DialMethodCheck[SerialDefaults.DialMethod]);
-	DAT_008870C0.Put_Int("SerialDefaults", "Baud", SerialDefaults.Baud);
-	DAT_008870C0.Put_Int("SerialDefaults", "IRQ", SerialDefaults.IRQ);
-	DAT_008870C0.Put_Int("SerialDefaults", "Port", SerialDefaults.Port, 1);
-	DAT_008870C0.Put_Int("SerialDefaults", "Compression", SerialDefaults.Compression);
-	DAT_008870C0.Put_Int("SerialDefaults", "ErrorCorrection", SerialDefaults.ErrorCorrection);
-	DAT_008870C0.Put_String("SerialDefaults", "ModemName", SerialDefaults.ModemName);
+	INI_RA2MD.Clear("SerialDefaults");
+	INI_RA2MD.Put_String("SerialDefaults", "CallWaitString", SerialDefaults.CallWaitString);
+	INI_RA2MD.Put_Int("SerialDefaults", "CallWaitStringIndex", SerialDefaults.CallWaitStringIndex);
+	INI_RA2MD.Put_Int("SerialDefaults", "InitStringIndex", SerialDefaults.InitStringIndex);
+	INI_RA2MD.Put_String("SerialDefaults", "DialMethod", DialMethodCheck[SerialDefaults.DialMethod]);
+	INI_RA2MD.Put_Int("SerialDefaults", "Baud", SerialDefaults.Baud);
+	INI_RA2MD.Put_Int("SerialDefaults", "IRQ", SerialDefaults.IRQ);
+	INI_RA2MD.Put_Int("SerialDefaults", "Port", SerialDefaults.Port, 1);
+	INI_RA2MD.Put_Int("SerialDefaults", "Compression", SerialDefaults.Compression);
+	INI_RA2MD.Put_Int("SerialDefaults", "ErrorCorrection", SerialDefaults.ErrorCorrection);
+	INI_RA2MD.Put_String("SerialDefaults", "ModemName", SerialDefaults.ModemName);
 
-	DAT_008870C0.Clear("InitStrings");
+	INI_RA2MD.Clear("InitStrings");
 
 	for (int index = 0; index < InitStrings.Count(); index++) {
 		char buf[10];
 		wsprintf(buf, "%03d", index);
-		DAT_008870C0.Put_String("InitStrings", buf, InitStrings[index]);
+		INI_RA2MD.Put_String("InitStrings", buf, InitStrings[index]);
 	}
 
-	DAT_008870C0.Clear("PhoneBook");
+	INI_RA2MD.Clear("PhoneBook");
 
 	for (int i = (PhoneBook.Count() - 1); i >= 0; i--) {
 		char buf[128];
@@ -683,10 +683,10 @@ void SessionClass::Write_MultiPlayer_Settings(void)
 			PhoneBook[i]->Settings.CallWaitStringIndex,
 			PhoneBook[i]->Settings.CallWaitString);
 		wsprintf(entrytext, "%03d", i);
-		DAT_008870C0.Put_String("PhoneBook", entrytext, buf);
+		INI_RA2MD.Put_String("PhoneBook", entrytext, buf);
 	}
 
-	DAT_008870C0.Save(file, false);
+	INI_RA2MD.Save(file, false);
 }
 
 // FUNCTION: GAMEMD 0x00699450
@@ -694,16 +694,16 @@ void SessionClass::Write_Chat_Settings(void)
 {
 	RawFileClass file("RA2MD.INI");
 
-	DAT_008870C0.Put_Bool("MultiPlayer", "WOLTaunts", WOLTaunts);
-	DAT_008870C0.Put_Bool("MultiPlayer", "LANTaunts", LANTaunts);
-	DAT_008870C0.Put_Bool("MultiPlayer", "WOLScrollText", WOLScrollText);
-	DAT_008870C0.Put_Bool("MultiPlayer", "LANScrollText", LANScrollText);
-	DAT_008870C0.Save(file, false);
+	INI_RA2MD.Put_Bool("MultiPlayer", "WOLTaunts", WOLTaunts);
+	INI_RA2MD.Put_Bool("MultiPlayer", "LANTaunts", LANTaunts);
+	INI_RA2MD.Put_Bool("MultiPlayer", "WOLScrollText", WOLScrollText);
+	INI_RA2MD.Put_Bool("MultiPlayer", "LANScrollText", LANScrollText);
+	INI_RA2MD.Save(file, false);
 }
 
 #include "mixfile.h"
 
-extern PKey DAT_00886980;
+extern PKey FastKey;
 extern int DAT_0081C1D0;
 void __fastcall FUN_004790B0(int disk);
 extern DynamicVectorClass<MixFileClass *> DAT_00884DC0;
@@ -871,7 +871,7 @@ void SessionClass::Read_Scenario_Descriptions(void)
 			}
 
 			if (stricmp(name, "MISSIONS.YRO")) {
-				MixFileClass * mix = new MixFileClass(name, &DAT_00886980);
+				MixFileClass * mix = new MixFileClass(name, &FastKey);
 				if (mix != NULL) {
 					DAT_00884DC0.Add(mix);
 
@@ -2025,36 +2025,36 @@ void SessionClass::Read_MultiPlayer_Settings(void)
 	CCFileClass file("RA2MD.INI");
 
 	if (!DAT_00B07788) {
-		PortBase = DAT_008870C0.Get_Int("MultiPlayer", "PortBase", 0x4E2);
-		ForcePortBase = DAT_008870C0.Get_Int("MultiPlayer", "ForcePortBase", 0);
-		DAT_00ABFEC8.Port =
-			DAT_008870C0.Get_Int("MultiPlayer", "PortPool", NonCriticalRandomNumber(0, 0x8000) + 0x1000);
+		PortBase = INI_RA2MD.Get_Int("MultiPlayer", "PortBase", 0x4E2);
+		ForcePortBase = INI_RA2MD.Get_Int("MultiPlayer", "ForcePortBase", 0);
+		FirewallHelper.Port =
+			INI_RA2MD.Get_Int("MultiPlayer", "PortPool", NonCriticalRandomNumber(0, 0x8000) + 0x1000);
 		DAT_00B07788 = true;
-		DAT_00ABFEC8.Read_Settings();
+		FirewallHelper.Read_Settings();
 	}
-	Session.unknown_2F48 = DAT_008870C0.Get_Bool("MultiPlayer", "SendDelay", false);
-	Session.unknown_301C = DAT_008870C0.Get_Int("MultiPlayer", "PortNumberOverride", 0);
+	Session.unknown_2F48 = INI_RA2MD.Get_Bool("MultiPlayer", "SendDelay", false);
+	Session.unknown_301C = INI_RA2MD.Get_Int("MultiPlayer", "PortNumberOverride", 0);
 
 	buf[0] = 0;
-	CurPhoneIdx = DAT_008870C0.Get_Int("MultiPlayer", "PhoneIndex", -1);
-	TrapCheckHeap = DAT_008870C0.Get_Int("MultiPlayer", "CheckHeap", 0);
-	WOLLimitResolution = DAT_008870C0.Get_Bool("MultiPlayer", "WOLLimitResolution", WOLLimitResolution);
-	LastNicknameSlot = DAT_008870C0.Get_Int("MultiPlayer", "LastNickSlot", -1);
+	CurPhoneIdx = INI_RA2MD.Get_Int("MultiPlayer", "PhoneIndex", -1);
+	TrapCheckHeap = INI_RA2MD.Get_Int("MultiPlayer", "CheckHeap", 0);
+	WOLLimitResolution = INI_RA2MD.Get_Bool("MultiPlayer", "WOLLimitResolution", WOLLimitResolution);
+	LastNicknameSlot = INI_RA2MD.Get_Int("MultiPlayer", "LastNickSlot", -1);
 
 	wchar_t handle[20];
-	DAT_008870C0.Get_UnicodeString(
+	INI_RA2MD.Get_UnicodeString(
 		"MultiPlayer", "Handle",
 		StringTable::LoadString("TXT_NONAME", 0, "D:\\ra2mdpost\\Session.CPP", 0x4ee), handle, 20);
 	OwnerDraw::WideToCharString(Handle, handle, -1);
 
-	Color = DAT_008870C0.Get_Int("MultiPlayer", "Color", Color);
-	Color2 = DAT_008870C0.Get_Int("MultiPlayer", "ColorEx", Color2);
-	Side = DAT_008870C0.Get_HousesType("MultiPlayer", "Side", (HousesType)Side);
-	Side2 = DAT_008870C0.Get_Int("MultiPlayer", "SideEx", Side2);
-	WOLTaunts = DAT_008870C0.Get_Bool("MultiPlayer", "WOLTaunts", WOLTaunts);
-	LANTaunts = DAT_008870C0.Get_Bool("MultiPlayer", "LANTaunts", LANTaunts);
-	WOLScrollText = DAT_008870C0.Get_Bool("MultiPlayer", "WOLScrollText", WOLScrollText);
-	LANScrollText = DAT_008870C0.Get_Bool("MultiPlayer", "LANScrollText", LANScrollText);
+	Color = INI_RA2MD.Get_Int("MultiPlayer", "Color", Color);
+	Color2 = INI_RA2MD.Get_Int("MultiPlayer", "ColorEx", Color2);
+	Side = INI_RA2MD.Get_HousesType("MultiPlayer", "Side", (HousesType)Side);
+	Side2 = INI_RA2MD.Get_Int("MultiPlayer", "SideEx", Side2);
+	WOLTaunts = INI_RA2MD.Get_Bool("MultiPlayer", "WOLTaunts", WOLTaunts);
+	LANTaunts = INI_RA2MD.Get_Bool("MultiPlayer", "LANTaunts", LANTaunts);
+	WOLScrollText = INI_RA2MD.Get_Bool("MultiPlayer", "WOLScrollText", WOLScrollText);
+	LANScrollText = INI_RA2MD.Get_Bool("MultiPlayer", "LANScrollText", LANScrollText);
 
 	House = Side;
 	if (House == -2) {
@@ -2062,25 +2062,25 @@ void SessionClass::Read_MultiPlayer_Settings(void)
 	}
 	idxSide2 = Side2;
 
-	MPGameMode = MultiplayerGameMode::Get(DAT_008870C0.Get_Int("MultiPlayer", "GameMode", 1));
+	MPGameMode = MultiplayerGameMode::Get(INI_RA2MD.Get_Int("MultiPlayer", "GameMode", 1));
 	if (!MPGameMode) {
 		MPGameMode = First_Game_Mode();
 	}
-	Skirmish.Read(DAT_008870C0, "Skirmish", 1, 6);
-	LAN.Read(DAT_008870C0, "LAN", 2, 2);
-	WOL.Read(DAT_008870C0, "WonlinePref", 2, 2);
+	Skirmish.Read(INI_RA2MD, "Skirmish", 1, 6);
+	LAN.Read(INI_RA2MD, "LAN", 2, 2);
+	WOL.Read(INI_RA2MD, "WonlinePref", 2, 2);
 
-	DAT_008870C0.Get_String("SerialDefaults", "ModemName", buf, SerialDefaults.ModemName, 0x3F);
+	INI_RA2MD.Get_String("SerialDefaults", "ModemName", buf, SerialDefaults.ModemName, 0x3F);
 	if (strcmp(SerialDefaults.ModemName, buf) == 0) {
 		SerialDefaults.ModemName[0] = 0;
 	}
-	SerialDefaults.Port = DAT_008870C0.Get_Int("SerialDefaults", "Port", 0);
-	SerialDefaults.IRQ = DAT_008870C0.Get_Int("SerialDefaults", "IRQ", -1);
-	SerialDefaults.Baud = DAT_008870C0.Get_Int("SerialDefaults", "Baud", -1);
-	SerialDefaults.Compression = DAT_008870C0.Get_Int("SerialDefaults", "Compression", 0);
-	SerialDefaults.ErrorCorrection = DAT_008870C0.Get_Int("SerialDefaults", "ErrorCorrection", 0);
+	SerialDefaults.Port = INI_RA2MD.Get_Int("SerialDefaults", "Port", 0);
+	SerialDefaults.IRQ = INI_RA2MD.Get_Int("SerialDefaults", "IRQ", -1);
+	SerialDefaults.Baud = INI_RA2MD.Get_Int("SerialDefaults", "Baud", -1);
+	SerialDefaults.Compression = INI_RA2MD.Get_Int("SerialDefaults", "Compression", 0);
+	SerialDefaults.ErrorCorrection = INI_RA2MD.Get_Int("SerialDefaults", "ErrorCorrection", 0);
 
-	DAT_008870C0.Get_String("SerialDefaults", "DialMethod", "T", buf, 2);
+	INI_RA2MD.Get_String("SerialDefaults", "DialMethod", "T", buf, 2);
 	for (i = 0; i < 2; i++) {
 		if (!_stricmp(buf, DialMethodCheck[i])) {
 			SerialDefaults.DialMethod = (DialMethodType)i;
@@ -2091,9 +2091,9 @@ void SessionClass::Read_MultiPlayer_Settings(void)
 		SerialDefaults.DialMethod = DIAL_TOUCH_TONE;
 	}
 
-	SerialDefaults.InitStringIndex = DAT_008870C0.Get_Int("SerialDefaults", "InitStringIndex", -1);
-	SerialDefaults.CallWaitStringIndex = DAT_008870C0.Get_Int("SerialDefaults", "CallWaitStringIndex", 3);
-	DAT_008870C0.Get_String("SerialDefaults", "CallWaitString", "", SerialDefaults.CallWaitString, 0x10);
+	SerialDefaults.InitStringIndex = INI_RA2MD.Get_Int("SerialDefaults", "InitStringIndex", -1);
+	SerialDefaults.CallWaitStringIndex = INI_RA2MD.Get_Int("SerialDefaults", "CallWaitStringIndex", 3);
+	INI_RA2MD.Get_String("SerialDefaults", "CallWaitString", "", SerialDefaults.CallWaitString, 0x10);
 
 	if (SerialDefaults.IRQ == 0 || SerialDefaults.Baud == 0) {
 		SerialDefaults.Port = 0;
@@ -2101,13 +2101,13 @@ void SessionClass::Read_MultiPlayer_Settings(void)
 		SerialDefaults.Baud = -1;
 	}
 
-	int initcount = DAT_008870C0.Entry_Count("InitStrings");
+	int initcount = INI_RA2MD.Entry_Count("InitStrings");
 	int index;
 	for (index = 0; index < initcount; index++) {
 		entry = new char[0x29];
 		if (entry) {
 			entry[0] = 0;
-			DAT_008870C0.Get_String("InitStrings", DAT_008870C0.Get_Entry("InitStrings", index), 0, entry,
+			INI_RA2MD.Get_String("InitStrings", INI_RA2MD.Get_Entry("InitStrings", index), 0, entry,
 									0x29);
 			_strupr(entry);
 			InitStrings.Add(entry);
@@ -2115,10 +2115,10 @@ void SessionClass::Read_MultiPlayer_Settings(void)
 	}
 	SerialDefaults.InitStringIndex = initcount ? 0 : -1;
 
-	int phonecount = DAT_008870C0.Entry_Count("PhoneBook");
+	int phonecount = INI_RA2MD.Entry_Count("PhoneBook");
 	for (index = 0; index < phonecount; index++) {
 		phone = new PhoneEntryClass;
-		DAT_008870C0.Get_String("PhoneBook", DAT_008870C0.Get_Entry("PhoneBook", index), 0, buf, sizeof(buf));
+		INI_RA2MD.Get_String("PhoneBook", INI_RA2MD.Get_Entry("PhoneBook", index), 0, buf, sizeof(buf));
 
 		tokenptr = strtok(buf, "|");
 		if (tokenptr) {
@@ -2212,8 +2212,8 @@ void SessionClass::Read_MultiPlayer_Settings(void)
 	}
 
 	if (Session.Play) {
-		TrapFrame = DAT_008870C0.Get_Int("SyncBug", "Frame", 0x7FFFFFFF);
-		DAT_008870C0.Get_String("SyncBug", "Type", "NONE", buf, 0x50);
+		TrapFrame = INI_RA2MD.Get_Int("SyncBug", "Frame", 0x7FFFFFFF);
+		INI_RA2MD.Get_String("SyncBug", "Type", "NONE", buf, 0x50);
 		if (!_stricmp(buf, "AIRCRAFT")) {
 			TrapObjType = RTTI_AIRCRAFT;
 		} else if (!_stricmp(buf, "ANIM")) {
@@ -2230,21 +2230,21 @@ void SessionClass::Read_MultiPlayer_Settings(void)
 			TrapObjType = RTTI_NONE;
 		}
 
-		DAT_008870C0.Get_String("SyncBug", "Coord", "0", buf, 0x50);
+		INI_RA2MD.Get_String("SyncBug", "Coord", "0", buf, 0x50);
 		int x;
 		int y;
 		int z;
 		sscanf(buf, "%d,%d,%d", &x, &y, &z);
-		int target = DAT_008870C0.Get_Int("SyncBug", "Target", -1);
+		int target = INI_RA2MD.Get_Int("SyncBug", "Target", -1);
 		TrapTarget.Decode(target);
 
-		DAT_008870C0.Get_String("SyncBug", "Cell", "0,0", buf, 0x50);
+		INI_RA2MD.Get_String("SyncBug", "Cell", "0,0", buf, 0x50);
 		sscanf(buf, "%d,%d", &x, &y);
 		Cell cell(x, y);
 		if (cell != CELL_NONE) {
 			TrapCell = &Map[cell];
 		}
 
-		TrapPrintCRC = DAT_008870C0.Get_Int("SyncBug", "PrintCRC", 0x7FFFFFFF);
+		TrapPrintCRC = INI_RA2MD.Get_Int("SyncBug", "PrintCRC", 0x7FFFFFFF);
 	}
 }

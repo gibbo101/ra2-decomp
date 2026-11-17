@@ -199,7 +199,6 @@ InfantryClass::~InfantryClass(void)
 	IsActive = false;
 }
 
-extern ParticleSystemClass * DAT_00A8ED78;
 
 // FUNCTION: GAMEMD 0x00517FA0
 ResultType InfantryClass::Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source, bool forced, bool no_crew, HouseClass * house)
@@ -263,7 +262,7 @@ ResultType InfantryClass::Take_Damage(int & damage, int distance, WarheadTypeCla
 			if (Doing == 0x21) {
 				if (infdeath == 8) {
 					AnimClass * anim = new AnimClass(Rule->InfantryVirus, PositionCoord);
-					DAT_00A8ED78->Spawn_Particle(ParticleTypes[anim->Type->SpawnsParticle], PositionCoord);
+					GasSystem->Spawn_Particle(ParticleTypes[anim->Type->SpawnsParticle], PositionCoord);
 					if (anim != NULL) {
 						delete anim;
 					}
@@ -287,7 +286,7 @@ ResultType InfantryClass::Take_Damage(int & damage, int distance, WarheadTypeCla
 				Do_Action(DO_GUN_DEATH, true);
 				if (infdeath == 8) {
 					AnimClass * anim = new AnimClass(Rule->InfantryVirus, PositionCoord);
-					DAT_00A8ED78->Spawn_Particle(ParticleTypes[anim->Type->SpawnsParticle], PositionCoord);
+					GasSystem->Spawn_Particle(ParticleTypes[anim->Type->SpawnsParticle], PositionCoord);
 					if (anim != NULL) {
 						delete anim;
 					}

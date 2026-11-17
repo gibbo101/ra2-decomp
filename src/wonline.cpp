@@ -709,8 +709,6 @@ void FUN_0077DB90(void)
 }
 
 int ODMessageBox(const wchar_t * text, int type, bool (*callback)(void), bool large);
-extern char DAT_00A8ED80;
-extern HWND DAT_00B73550;
 int __cdecl FUN_007CD455(const char * path);
 
 // FUNCTION: GAMEMD 0x0077DC90
@@ -760,7 +758,7 @@ void __fastcall FUN_0077DC90(const char * name, int no_ask)
 						done_waiting = TRUE;
 					}
 
-					if (DAT_00A8ED80 || GetTopWindow(NULL) == DAT_00B73550 || GetForegroundWindow() == DAT_00B73550) {
+					if (GameInFocus || GetTopWindow(NULL) == MainWindow || GetForegroundWindow() == MainWindow) {
 						done_waiting = TRUE;
 					}
 					FUN_0077F900();
@@ -768,10 +766,10 @@ void __fastcall FUN_0077DC90(const char * name, int no_ask)
 
 				FUN_0077F900();
 
-				if (GetTopWindow(NULL) != DAT_00B73550) {
+				if (GetTopWindow(NULL) != MainWindow) {
 					FUN_0077F900();
-					SetForegroundWindow(DAT_00B73550);
-					ShowWindow(DAT_00B73550, SW_RESTORE);
+					SetForegroundWindow(MainWindow);
+					ShowWindow(MainWindow, SW_RESTORE);
 					FUN_0077F900();
 				}
 
@@ -789,7 +787,7 @@ void __fastcall FUN_0077DC90(const char * name, int no_ask)
 	}
 }
 
-extern CCINIClass DAT_008870C0;
+extern CCINIClass INI_RA2MD;
 extern int DAT_00B76234;
 extern int DAT_00B779F0;
 extern int DAT_00B779BC;
@@ -802,15 +800,15 @@ void __fastcall FUN_005EE350(HWND dialog);
 // FUNCTION: GAMEMD 0x0077DED0
 void FUN_0077DED0(void)
 {
-	DAT_00B76234 = DAT_008870C0.Get_Int("WOnline", "AllowPage", 1);
-	DAT_00B779F0 = DAT_008870C0.Get_Int("WOnline", "AllowFind", 1);
-	DAT_00B779BC = DAT_008870C0.Get_Int("WOnline", "LangFilter", 1);
-	DAT_00B7690C = DAT_008870C0.Get_Int("WOnline", "LobMusic", 1);
-	DAT_00B77784 = DAT_008870C0.Get_Int("WOnline", "ShowAll", 1);
-	DAT_00B779DC = DAT_008870C0.Get_Int("WOnline", "DisplayAsian", 1);
-	DAT_00B779C0 = DAT_008870C0.Get_Int("WOnline", "DisplayLatin", 1);
-	DAT_00B76AF0 = DAT_008870C0.Get_Bool("WOnline", "DisplayBuddies", false);
-	DAT_00B73AD0 = DAT_008870C0.Get_Bool("WOnline", "DisplayClan", false);
+	DAT_00B76234 = INI_RA2MD.Get_Int("WOnline", "AllowPage", 1);
+	DAT_00B779F0 = INI_RA2MD.Get_Int("WOnline", "AllowFind", 1);
+	DAT_00B779BC = INI_RA2MD.Get_Int("WOnline", "LangFilter", 1);
+	DAT_00B7690C = INI_RA2MD.Get_Int("WOnline", "LobMusic", 1);
+	DAT_00B77784 = INI_RA2MD.Get_Int("WOnline", "ShowAll", 1);
+	DAT_00B779DC = INI_RA2MD.Get_Int("WOnline", "DisplayAsian", 1);
+	DAT_00B779C0 = INI_RA2MD.Get_Int("WOnline", "DisplayLatin", 1);
+	DAT_00B76AF0 = INI_RA2MD.Get_Bool("WOnline", "DisplayBuddies", false);
+	DAT_00B73AD0 = INI_RA2MD.Get_Bool("WOnline", "DisplayClan", false);
 	FUN_005EE190();
 }
 
@@ -818,16 +816,16 @@ void FUN_0077DED0(void)
 void FUN_0077DFD0(void)
 {
 	RawFileClass file("RA2MD.INI");
-	DAT_008870C0.Put_Int("WOnline", "AllowPage", DAT_00B76234);
-	DAT_008870C0.Put_Int("WOnline", "AllowFind", DAT_00B779F0);
-	DAT_008870C0.Put_Int("WOnline", "LangFilter", DAT_00B779BC);
-	DAT_008870C0.Put_Int("WOnline", "LobMusic", DAT_00B7690C);
-	DAT_008870C0.Put_Int("WOnline", "ShowAll", DAT_00B77784);
-	DAT_008870C0.Put_Int("WOnline", "DisplayAsian", DAT_00B779DC);
-	DAT_008870C0.Put_Int("WOnline", "DisplayLatin", DAT_00B779C0);
-	DAT_008870C0.Put_Bool("WOnline", "DisplayBuddies", DAT_00B76AF0);
-	DAT_008870C0.Put_Bool("WOnline", "DisplayClan", DAT_00B73AD0);
-	DAT_008870C0.Save(file, false);
+	INI_RA2MD.Put_Int("WOnline", "AllowPage", DAT_00B76234);
+	INI_RA2MD.Put_Int("WOnline", "AllowFind", DAT_00B779F0);
+	INI_RA2MD.Put_Int("WOnline", "LangFilter", DAT_00B779BC);
+	INI_RA2MD.Put_Int("WOnline", "LobMusic", DAT_00B7690C);
+	INI_RA2MD.Put_Int("WOnline", "ShowAll", DAT_00B77784);
+	INI_RA2MD.Put_Int("WOnline", "DisplayAsian", DAT_00B779DC);
+	INI_RA2MD.Put_Int("WOnline", "DisplayLatin", DAT_00B779C0);
+	INI_RA2MD.Put_Bool("WOnline", "DisplayBuddies", DAT_00B76AF0);
+	INI_RA2MD.Put_Bool("WOnline", "DisplayClan", DAT_00B73AD0);
+	INI_RA2MD.Save(file, false);
 	FUN_005EE1B0();
 }
 
@@ -1332,7 +1330,7 @@ bool FUN_00786270(void);
 int WS_Top_Window_ID(void);
 void Title_Screen_Restore(bool force);
 BOOL __fastcall Peek_Windows_Message(MSG * message, HWND window, UINT first, UINT last, UINT flags);
-extern int DAT_00AA0430;
+extern int MessageLoopCount;
 extern int DAT_00B77E6C;
 extern int DAT_00B77E70;
 extern bool DAT_00B77E26;
@@ -1346,7 +1344,7 @@ bool FUN_0077F900(void)
 	Title_Screen_Restore(false);
 	MSG msg;
 	int counter = 0;
-	DAT_00AA0430++;
+	MessageLoopCount++;
 	while (Peek_Windows_Message(&msg, NULL, 0, 0, PM_REMOVE)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
@@ -6429,7 +6427,7 @@ int __fastcall FUN_007937B0(int (*pairs)[2])
 		for (int b = 0; b < Session.Players.Count() - 1; b++) {
 			int cur_value = Session.unknown_29F4[order[b]];
 			int next_value = Session.unknown_29F4[order[b + 1]];
-			if (DAT_00ABFEC8.Rank_A(cur_value) < DAT_00ABFEC8.Rank_A(next_value)) {
+			if (FirewallHelper.Rank_A(cur_value) < FirewallHelper.Rank_A(next_value)) {
 				int temp = order[b];
 				order[b] = order[b + 1];
 				order[b + 1] = temp;
@@ -6620,10 +6618,10 @@ bool FUN_007947B0(void)
 		}
 		if (partner != -1) {
 			int retries;
-			if (DAT_00ABFEC8.Rank_B(Session.unknown_29F4[first]) > DAT_00ABFEC8.Rank_B(Session.unknown_29F4[second])) {
-				retries = DAT_00ABFEC8.Rank_B(Session.unknown_29F4[first]);
+			if (FirewallHelper.Rank_B(Session.unknown_29F4[first]) > FirewallHelper.Rank_B(Session.unknown_29F4[second])) {
+				retries = FirewallHelper.Rank_B(Session.unknown_29F4[first]);
 			} else {
-				retries = DAT_00ABFEC8.Rank_B(Session.unknown_29F4[second]);
+				retries = FirewallHelper.Rank_B(Session.unknown_29F4[second]);
 			}
 			FUN_004068E0("About to enter Start_Talking_To, retries = %d", retries);
 			if (!FUN_00793D20(partner, tag, retries)) {
@@ -10094,7 +10092,7 @@ bool FUN_007A0690(void)
 	request += ", ADR=";
 	request += Wstring_FromInt(address);
 	request += ", NAT=";
-	request += Wstring_FromInt((unsigned short)DAT_00ABFEC8.Detected);
+	request += Wstring_FromInt((unsigned short)FirewallHelper.Detected);
 	request += ", PRT=";
 	request += Wstring_FromInt(Session.PortBase);
 	request += wdt;
@@ -11157,7 +11155,7 @@ long __stdcall FUN_007A41C0(void * sink, long result, Server * servers)
 	FUN_004068E0("CurrentManglerServer = %d\n", DAT_00B77E20);
 
 	FUN_00792E90(StringTable::LoadString("TXT_DETECTING_FIREWALL_SETTINGS", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1552));
-	DAT_00ABFEC8.Save_Detected();
+	FirewallHelper.Save_Detected();
 	SetEvent(DAT_00B73684[1]);
 	return 0;
 }
@@ -11654,7 +11652,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 					NetNodeType node;
 					unsigned short port;
 					Session.unknown_2988.Get_Address(net, node, &port);
-					sprintf(buffer, "R%d,%d,%d,%d,%x,%x,%x", Session.FUN_0069B700(), Session.FUN_0069B720(), -2, -2, *(int *)node, (unsigned short)DAT_00ABFEC8.Detected, Session.PortBase);
+					sprintf(buffer, "R%d,%d,%d,%d,%x,%x,%x", Session.FUN_0069B700(), Session.FUN_0069B720(), -2, -2, *(int *)node, (unsigned short)FirewallHelper.Detected, Session.PortBase);
 				}
 				FUN_004068E0("Sending private game options (%s)\n", buffer);
 				User host;
@@ -14498,7 +14496,7 @@ BOOL CALLBACK FUN_00791B10(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 				Session.unknown_2988.Get_Address(net, node, &port);
 				char options[128];
 				sprintf(options, "R%d,%d,%d,%d,%X,%x,%x", country, color, start, team, *(int *)node,
-						(unsigned short)DAT_00ABFEC8.Detected, Session.PortBase);
+						(unsigned short)FirewallHelper.Detected, Session.PortBase);
 				FUN_004068E0("Sending private game options (%s)\n", options);
 				Wstring host = FUN_007B7F90(Session.GameName);
 				SendPrivateGameopts(host.get(), options);

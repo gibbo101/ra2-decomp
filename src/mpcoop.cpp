@@ -1612,7 +1612,6 @@ extern int DAT_00B779C4;
 extern unsigned char DAT_00A8F900;
 extern Wstring DAT_00B73E40;
 extern char DAT_00B77830[];
-extern WinsockInterfaceClass * DAT_00887628;
 extern int DAT_00B7790C[];
 extern unsigned char DAT_00B77A04;
 extern unsigned char DAT_00B76568;
@@ -1635,14 +1634,14 @@ void MPCooperative::vt_entry_AC(void)
 	wcscpy(Session.MasterPlayerName, Session.Players[Field54]->Name);
 	Session.MasterPlayerID = -1;
 	Session.House = Field70;
-	DAT_00887628->Clear_Broadcast_Addresses();
+	PacketTransport->Clear_Broadcast_Addresses();
 	char ip[32] = "xxx.xxx.xxx.xxx";
 	for (int i = 1; i < Session.Players.Count(); i++) {
 		NetNumType net;
 		NetNodeType node;
 		int port;
 		Session.Players[i]->Address.Get_Address(net, node, (unsigned short *)&port);
-		DAT_00887628->Set_Broadcast_Address(ip, port);
+		PacketTransport->Set_Broadcast_Address(ip, port);
 	}
 	memcpy(Session.unknown_2994, Addresses, sizeof(Addresses));
 	memcpy(Session.unknown_29F4, Field124, sizeof(Field124));

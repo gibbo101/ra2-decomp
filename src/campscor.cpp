@@ -304,7 +304,6 @@ int __fastcall FUN_004E37D0(int index);
 int __fastcall FUN_004E41D0(int index);
 int __fastcall FUN_004E4E60(int index);
 void __fastcall FUN_004E3F70(HWND dialog, int combo, int wanted);
-extern DynamicVectorClass<HouseClass *> DAT_00A80228;
 
 // FUNCTION: GAMEMD 0x0046DA20
 void __fastcall FUN_0046DA20(HWND dialog, int id, int value)
@@ -319,9 +318,9 @@ void __fastcall FUN_0046DA20(HWND dialog, int id, int value)
 void CampaignScoreClass::FUN_0046DA70(void)
 {
 	Session.NumScores = 0;
-	int count = DAT_00A80228.Count();
+	int count = Houses.Count();
 	for (int i = 0; i < count; i++) {
-		HouseClass * house = DAT_00A80228[i];
+		HouseClass * house = Houses[i];
 		if (house && house->Class->IsMultiplayPassive != true && house->FUN_0050B730()) {
 			int index = Session.NumScores++;
 			Session.Score[index].Wins = 0;

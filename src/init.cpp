@@ -413,7 +413,7 @@ int Init_Game(void)
 // FUNCTION: GAMEMD 0x0052CB50
 bool FUN_0052CB50(void)
 {
-	if (DAT_00A8E960 & 4) {
+	if (Special.IsFromInstall) {
 		Game::PlayMovie("A00_F00E", -1, 1, 1, 1, 0);
 	}
 	FUN_0052FEC0(NULL, true);
@@ -926,8 +926,8 @@ static CampaignType Choose_Campaign(void)
 				VocClass::PlayGlobal(DAT_00825C20, 1.0f, 0x2000, &DAT_00A8F300);
 				DAT_00825C20 = -1;
 			}
-			if (DAT_008A00A0) {
-				DAT_008A00A0 = 0;
+			if (SurfacesRestored) {
+				SurfacesRestored = 0;
 				FUN_0052FEC0(NULL, true);
 				Update_Visible_Surface(false, HiddenSurface);
 			}
@@ -1713,7 +1713,7 @@ BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return(0);
 }
 
-extern CCINIClass DAT_008870C0;
+extern CCINIClass INI_RA2MD;
 extern int DAT_00ABFED8;
 
 // FUNCTION: GAMEMD 0x0052F3F0
@@ -1767,9 +1767,9 @@ bool FUN_0052F3F0(void)
 	}
 
 	RawFileClass file("RA2MD.INI");
-	DAT_008870C0.Put_Int("MultiPlayer", "PortBase", Session.PortBase, 0);
-	DAT_008870C0.Put_Int("MultiPlayer", "PortPool", DAT_00ABFED8, 0);
-	DAT_008870C0.Save(file, false);
+	INI_RA2MD.Put_Int("MultiPlayer", "PortBase", Session.PortBase, 0);
+	INI_RA2MD.Put_Int("MultiPlayer", "PortPool", DAT_00ABFED8, 0);
+	INI_RA2MD.Save(file, false);
 	OwnerTalk.Reset();
 	Session.NetOpen = true;
 	return(success);
@@ -1800,7 +1800,7 @@ void __fastcall FUN_007B2720(int value);
 bool Parse_Command_Line(int argc, char * argv[])
 {
 	Special.Init();
-	DAT_00A8ED6B = false;
+	Debug_Map = false;
 
 	for (int index = 1; index < argc; index++) {
 		char * string = strupr(argv[index]);
@@ -1846,7 +1846,7 @@ bool Parse_Command_Line(int argc, char * argv[])
 		}
 
 		if (strstr(string, "-CD")) {
-			DAT_0089E3A0 = 1;
+			CD::Override_Swap(true);
 			CDFileClass::Set_Search_Drives(&string[3]);
 			continue;
 		}
@@ -1934,11 +1934,11 @@ bool Parse_Command_Line(int argc, char * argv[])
 			continue;
 		}
 		if (strcmp(string, "-16") == 0) {
-			DAT_008175B0 = true;
+			HicolorFlag = true;
 			continue;
 		}
 		if (stricmp(string, "-WIN") == 0) {
-			DAT_0089F978 = true;
+			WindowedMode = true;
 			continue;
 		}
 
@@ -2216,7 +2216,7 @@ bool Init_Secondary_Mixfiles(void)
 
 	int cd = CD::Get_Current_Disk(60) + 1;
 	char name[260];
-	if (DAT_0089E3A0 == true) {
+	if (CD::Is_Override_Swap() == true) {
 		strcpy(name, "MAPSMD*.MIX");
 		if (CDFileClass::Find_First_File(name) == true) {
 			DebugStringNoPrefix(" %s", name);
@@ -2266,16 +2266,16 @@ bool Init_Secondary_Mixfiles(void)
 
 	if (CCFileClass("THEMEMD.MIX").Is_Available()) {
 		FUN_004068E0("     Initializing ThemesMD.MIX\n");
-		DAT_0087E738 = new MFCD("THEMEMD.MIX", &FastKey);
+		ScoresMix = new MFCD("THEMEMD.MIX", &FastKey);
 	} else if (CCFileClass("THEME.MIX").Is_Available()) {
 		FUN_004068E0("     Initializing Themes.MIX\n");
-		DAT_0087E738 = new MFCD("THEME.MIX", &FastKey);
+		ScoresMix = new MFCD("THEME.MIX", &FastKey);
 	}
 	DebugStringNoPrefix(" THEME.MIX");
 	ScoresPresent = true;
 	Theme.Scan();
 
-	if (DAT_0089E3A0 == true) {
+	if (CD::Is_Override_Swap() == true) {
 		strcpy(name, "MOVMD*.MIX");
 		if (RawFileClass("MOVIES01.MIX").Is_Available()) {
 			strcpy(name, "MOVIES*.MIX");
@@ -2514,7 +2514,7 @@ bool Save_Recording_Values(CCFileClass & file)
 	file.Write(&Scen->Scenario, sizeof(Scen->Scenario));
 	file.Write(Scen->ScenarioName, sizeof(Scen->ScenarioName));
 	file.Write(&DAT_00A8EC90, sizeof(DAT_00A8EC90));
-	file.Write(&DAT_00A8E960, 4);
+	file.Write(&Special, 4);
 	file.Write(&Options, sizeof(OptionsClass));
 	return(true);
 }
@@ -2527,7 +2527,7 @@ bool Load_Recording_Values(CCFileClass & file)
 	file.Read(&Scen->Scenario, sizeof(Scen->Scenario));
 	file.Read(Scen->ScenarioName, sizeof(Scen->ScenarioName));
 	file.Read(&DAT_00A8EC90, sizeof(DAT_00A8EC90));
-	file.Read(&DAT_00A8E960, 4);
+	file.Read(&Special, 4);
 	file.Read(&Options, sizeof(OptionsClass));
 	FUN_004068E0("Loaded recording values for scenario : %s\n", Scen->ScenarioName);
 	return(true);
@@ -4378,7 +4378,6 @@ void __fastcall FUN_00550000(void);
 void __fastcall FUN_00565B00(void * map);
 void __fastcall FUN_00430980(void * beacon);
 int __cdecl FUN_0041C610(const void * a, const void * b);
-extern int DAT_00A8E7AC;
 extern DynamicVectorClass<AbstractClass *> DAT_00B0F698;
 struct TargetEntryStruct {
 	int ID;
@@ -4388,18 +4387,13 @@ extern TargetEntryStruct * DAT_00B0E840;
 extern int DAT_00B0E844;
 extern bool DAT_00B0E84C;
 extern int DAT_00B0E850;
-extern char DAT_0089C3B0[];
+class BeaconManagerClass;
+extern BeaconManagerClass BeaconManager;
 void __fastcall FUN_00725C70(void);
 void __fastcall FUN_00556DF0(void);
-class SpotlightClass {
-	public:
-		~SpotlightClass(void);
-};
 extern DynamicVectorClass<AbstractClass *> DAT_00A8ED40;
-extern DynamicVectorClass<AbstractClass *> DAT_00A8E360;
 extern DynamicVectorClass<AbstractClass *> DAT_00B0E720;
 extern DynamicVectorClass<AbstractClass *> DAT_00A8EAE8;
-extern DynamicVectorClass<AbstractClass *> DAT_008B4138;
 extern DynamicVectorClass<AbstractClass *> DAT_008B4190;
 extern DynamicVectorClass<AbstractClass *> DAT_00A8EC50;
 extern DynamicVectorClass<AbstractClass *> DAT_00A80208;
@@ -4407,10 +4401,8 @@ extern DynamicVectorClass<AbstractClass *> DAT_00A8EC38;
 extern DynamicVectorClass<AbstractClass *> DAT_00A83E30;
 extern DynamicVectorClass<AbstractClass *> DAT_008B4120;
 extern DynamicVectorClass<AbstractClass *> DAT_008B40E8;
-extern DynamicVectorClass<AbstractClass *> DAT_00A80228;
 extern DynamicVectorClass<AbstractClass *> DAT_00A8E9A8;
 extern DynamicVectorClass<AbstractClass *> DAT_00B04BD0;
-extern DynamicVectorClass<AbstractClass *> DAT_00ABCA10;
 extern DynamicVectorClass<AbstractClass *> DAT_008A3870;
 extern DynamicVectorClass<AbstractClass *> DAT_0089E0F0;
 extern DynamicVectorClass<AbstractClass *> DAT_008A0208;
@@ -4423,12 +4415,11 @@ extern DynamicVectorClass<AbstractClass *> DAT_008B3D10;
 extern DynamicVectorClass<AbstractClass *> DAT_0088A0F0;
 extern DynamicVectorClass<AbstractClass *> DAT_00A8E988;
 extern DynamicVectorClass<AbstractClass *> DAT_00A8E968;
-extern DynamicVectorClass<SpotlightClass *> DAT_00AC1678;
 
 // FUNCTION: GAMEMD 0x00534450
 void Delete_All_Objects(void)
 {
-	DAT_00A8E7AC++;
+	ScenarioInit++;
 	DAT_00B0F698.Reset_Active();
 	DAT_00B0F698.Clear();
 	FUN_0069E210();
@@ -4445,8 +4436,8 @@ void Delete_All_Objects(void)
 		DAT_00A8ED40[0]->Release();
 	}
 	FUN_00725C70();
-	while (DAT_00A8E360.Count()) {
-		delete DAT_00A8E360[0];
+	while (Objects.Count()) {
+		delete Objects[0];
 	}
 	FUN_00725C70();
 	while (DAT_00B0E720.Count()) {
@@ -4457,8 +4448,8 @@ void Delete_All_Objects(void)
 		delete DAT_00A8EAE8[0];
 	}
 	FUN_00725C70();
-	while (DAT_008B4138.Count()) {
-		delete DAT_008B4138[0];
+	while (Tubes.Count()) {
+		delete Tubes[0];
 	}
 	FUN_00725C70();
 	while (DAT_008B4190.Count()) {
@@ -4489,8 +4480,8 @@ void Delete_All_Objects(void)
 		delete DAT_008B40E8[0];
 	}
 	FUN_00725C70();
-	while (DAT_00A80228.Count()) {
-		delete DAT_00A80228[0];
+	while (Houses.Count()) {
+		delete Houses[0];
 	}
 	FUN_00725C70();
 	while (DAT_00A8E9A8.Count()) {
@@ -4505,8 +4496,8 @@ void Delete_All_Objects(void)
 		delete DAT_00B04BD0[0];
 	}
 	FUN_00725C70();
-	while (DAT_00ABCA10.Count()) {
-		delete DAT_00ABCA10[0];
+	while (LightSources.Count()) {
+		delete LightSources[0];
 	}
 	FUN_00725C70();
 	while (DAT_008A3870.Count()) {
@@ -4541,8 +4532,8 @@ void Delete_All_Objects(void)
 		delete DAT_0089C668[0];
 	}
 	FUN_00725C70();
-	while (DAT_00AC1678.Count()) {
-		delete DAT_00AC1678[0];
+	while (SpotLights.Count()) {
+		delete SpotLights[0];
 	}
 	FUN_00725C70();
 	while (DAT_008B3D10.Count()) {
@@ -4568,8 +4559,8 @@ void Delete_All_Objects(void)
 	TacticalMap = NULL;
 	FUN_00565B00(&Map);
 	FUN_00725C70();
-	FUN_00430980(&DAT_0089C3B0);
-	DAT_00A8E7AC--;
+	FUN_00430980(&BeaconManager);
+	ScenarioInit--;
 }
 
 extern MFCD * DAT_00884E0C;
@@ -4577,8 +4568,6 @@ extern MFCD * DAT_00884E08;
 extern MFCD * DAT_00884E10;
 extern MFCD * DAT_00884E20;
 extern MFCD * DAT_00884E1C;
-extern PaletteClass DAT_00885A80;
-extern PaletteClass DAT_00886380;
 void const * __fastcall FUN_005B40B0(char const * name, bool flag);
 void __fastcall FUN_006267A0(TheaterType theater);
 void __fastcall FUN_00717840(void);
@@ -4657,7 +4646,7 @@ void __fastcall Init_Theater(TheaterType theater)
 			}
 		}
 
-		DAT_00885A80 = GamePalette;
+		OriginalPalette = GamePalette;
 
 		wsprintf(n.fullname, "UNIT%s.PAL", Theaters[theater].Suffix);
 		PaletteClass * unitpal = (PaletteClass *)FUN_005B40B0(n.fullname, false);
@@ -4665,20 +4654,20 @@ void __fastcall Init_Theater(TheaterType theater)
 		Game::CallBack();
 
 		if (unitpal != NULL) {
-			DAT_00886380 = *unitpal;
+			SchemePalette = *unitpal;
 		}
 
 		for (int index = 0; index < 256; index++) {
-			DAT_00886380[index] = RGBClass(
-				(unsigned char)(DAT_00886380[index].Get_Red()<<2),
-				(unsigned char)(DAT_00886380[index].Get_Green()<<2),
-				(unsigned char)(DAT_00886380[index].Get_Blue()<<2));
+			SchemePalette[index] = RGBClass(
+				(unsigned char)(SchemePalette[index].Get_Red()<<2),
+				(unsigned char)(SchemePalette[index].Get_Green()<<2),
+				(unsigned char)(SchemePalette[index].Get_Blue()<<2));
 		}
 
 		int last_percent = 12;
 		int prog_step = ColorSchemes.Count() / (25 - 12);
 		for (int s = 0; s < ColorSchemes.Count(); s++) {
-			ColorSchemes[s]->Build_Light_Converters(DAT_00886380, GamePalette);
+			ColorSchemes[s]->Build_Light_Converters(SchemePalette, GamePalette);
 			int percent = (min(12 + (s / prog_step), 25));
 			if (percent != last_percent) {
 				Session.Update_Progress(percent);

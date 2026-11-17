@@ -62,8 +62,6 @@
 extern int DAT_00B0B504;
 extern bool DAT_00AC4E78;
 extern bool DAT_00884B8D;
-extern bool DAT_00B0B518;
-extern int DAT_00886F90;
 extern int DAT_00886F94;
 struct CCToolTip {
 	static ToolTipManager * Instance;
@@ -226,7 +224,7 @@ void PowerClass::Draw_It(bool complete)
 	if (complete || IsToRedraw) {
 		if (DAT_00884B8D) {
 			IsToRedraw = false;
-			DAT_00B0B518 = true;
+			SidebarClass::IsToBlitSidebar = true;
 
 			int side = Scen->PlayerSideIndex;
 			int x;
@@ -426,7 +424,7 @@ void PowerClass::Reposition_Sidebar(void)
 		if (Scen->PlayerSideIndex == 0) {
 			x = 5;
 		}
-		tt.Region.X = DAT_00886F90 + x;
+		tt.Region.X = SidebarRect.X + x;
 		int side = Scen->PlayerSideIndex;
 		int yoff;
 		if (side == 0) {

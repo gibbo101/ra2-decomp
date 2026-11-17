@@ -35,7 +35,7 @@ wchar_t * __fastcall FUN_00735120(char const * text);
 void __fastcall OwnerDraw_GetRectangle(HWND window, Rect * rect);
 void __fastcall FUN_0072A9E0(Rect * rect, int amount);
 void __fastcall FUN_004F4780(bool flag, Surface * surface, bool other);
-extern Surface * DAT_00887310;
+extern Surface * AlternateSurface;
 extern wchar_t DAT_00887734[];
 
 struct Drawing {
@@ -507,7 +507,7 @@ void ProgressScreenClass::Display_Progress(Point2D xpt)
 			HWND item = GetDlgItem((HWND)Dialog, 0x639);
 			OwnerDraw_GetRectangle(item, &rect);
 			pt = Point2D(rect.X, rect.Y);
-			Draw_Bar(pt, Get_Current_Progress(0), DAT_00887310, 0);
+			Draw_Bar(pt, Get_Current_Progress(0), AlternateSurface, 0);
 			return;
 		}
 		pt = xpt;

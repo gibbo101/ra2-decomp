@@ -129,7 +129,6 @@ void FUN_0072EB50(void);
 extern int DAT_00B0FA20;
 void FUN_0072B130(void);
 void FUN_0072B230(void);
-extern DSurface * DAT_00887310;
 #include "goptions.h"
 extern GameOptionsClass Options;
 namespace Unsorted { extern bool ArmageddonMode; }

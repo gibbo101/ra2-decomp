@@ -57,7 +57,7 @@ struct Drawing {
 	static int RenderWidth;
 	static int RenderHeight;
 };
-extern Surface * DAT_0088730C;
+extern Surface * HiddenSurface;
 void __fastcall FUN_004F4780(bool flag, Surface * surface, bool other);
 void __fastcall FUN_0072D300(int side);
 void FUN_0072D350(void);
@@ -91,11 +91,11 @@ void STLScoreScreen::Present(void)
 {
 	FUN_0072D300(Scen->PlayerSideIndex);
 	Rect rect(0, 0, Drawing::RenderWidth, Drawing::RenderHeight);
-	FUN_0072E9F0(DAT_0088730C, &rect);
-	FUN_004F4780(true, DAT_0088730C, false);
+	FUN_0072E9F0(HiddenSurface, &rect);
+	FUN_004F4780(true, HiddenSurface, false);
 	FUN_0060D380(0x103, FUN_006C8FF0, false);
-	FUN_0072E9F0(DAT_0088730C, &rect);
-	FUN_004F4780(true, DAT_0088730C, false);
+	FUN_0072E9F0(HiddenSurface, &rect);
+	FUN_004F4780(true, HiddenSurface, false);
 	FUN_0072D350();
 }
 
