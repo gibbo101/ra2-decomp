@@ -99,6 +99,7 @@ sys.exit(case['exit'])
         self.assertIn("duplicate retail address: src/example.cpp _First, src/other.cpp _Other", out)
         self.assertIn("2 of 2 functions match (2 of 2 bytes)", out)
 
+    @patch.object(checkall, "SHARED", {"0x004F2C50": {("src/grphmenu.cpp", "_$E12"), ("src/grphmenu2.cpp", "_$E41")}})
     def test_acknowledged_pair_counts_once_and_does_not_hide_a_third_owner(self):
         for module, symbol in checkall.SHARED["0x004F2C50"]:
             self.child(f"0x004F2C50 Init: MATCH (23/23 bytes) {symbol}\n" + self.complete(1),

@@ -37,9 +37,9 @@ SUMMARY = re.compile(r"^CHECK-SUMMARY: checked=(\d+) failed=(\d+)$")
 KEPT = ("MATCH", "RECONSTRUCTED")
 
 
-# Both objects emit this initializer: keep both records for symbol lookup but count
-# it once. Any other address claimed twice fails the gate.
-SHARED = {"0x004F2C50": {("src/grphmenu.cpp", "_$E12"), ("src/grphmenu2.cpp", "_$E41")}}
+# Addresses two objects may both claim, each with its exact owners: counted once, kept in
+# both records. Any other address claimed twice fails the gate.
+SHARED = {}
 
 
 def retail_totals(rows):

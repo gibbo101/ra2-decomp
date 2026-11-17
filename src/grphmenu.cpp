@@ -288,6 +288,3 @@ template class VectorClass<GraphicMenuItem *>;
 template class VectorCursor<GraphicMenuItem *, DynamicVectorClass<GraphicMenuItem *> >;
 template class DynamicVectorClass<GraphicMenuItem *>;
 
-// SYNTHETIC: GAMEMD 0x004F2C50 SYMBOL
-// _$E12
-Rect DAT_00A8EE98(0, 0, 0, 0);

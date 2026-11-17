@@ -5544,7 +5544,6 @@ address,name,result,size,source,symbol
 0x004F2B60,??_G?$VectorClass@PAVGraphicMenuItem@@@@UAEPAXI@Z,MATCH,73,src/grphmenu.cpp,??_G?$VectorClass@PAVGraphicMenuItem@@@@UAEPAXI@Z
 0x004F2BB0,??_G?$DynamicVectorClass@PAVGraphicMenuItem@@@@UAEPAXI@Z,MATCH,73,src/grphmenu.cpp,??_G?$DynamicVectorClass@PAVGraphicMenuItem@@@@UAEPAXI@Z
 0x004F2C00,??0?$VectorClass@PAVGraphicMenuItem@@@@QAE@HPBQAVGraphicMenuItem@@@Z,MATCH,74,src/grphmenu.cpp,??0?$VectorClass@PAVGraphicMenuItem@@@@QAE@HPBQAVGraphicMenuItem@@@Z
-0x004F2C50,_$E12,MATCH,23,src/grphmenu.cpp,_$E12
 0x004F2C50,_$E41,MATCH,23,src/grphmenu2.cpp,_$E41
 0x004F2C70,GM_Read_Anim_Item,MATCH,669,src/grphmenu2.cpp,?GM_Read_Anim_Item@@YIPAVGraphicMenuItem@@ABVWstring@@ABVINIClass@@AAVMSEngine@@AAVPoint2D@@@Z
 0x004F2F10,GraphicMenuAnimItem::GraphicMenuAnimItem,MATCH,348,src/grphmenu2.cpp,??0GraphicMenuAnimItem@@QAE@HAAVMSEngine@@ABVPoint2D@@ABV?$TRect@H@@ABVWstring@@3H_N@Z

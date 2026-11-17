@@ -5898,7 +5898,6 @@ address,size,symbol,source,sha256
 0x004F2B60,73,??_G?$VectorClass@PAVGraphicMenuItem@@@@UAEPAXI@Z,src/grphmenu.cpp,18ce7b1035ec0f785ccb7a0bf43f56ca14b6f39d5072c3f90a6e97865d45ff6b
 0x004F2BB0,73,??_G?$DynamicVectorClass@PAVGraphicMenuItem@@@@UAEPAXI@Z,src/grphmenu.cpp,a86d8308e5da9258074b64f4bdb59210d38f3cfc1da579fff7d84f76dee8123c
 0x004F2C00,74,??0?$VectorClass@PAVGraphicMenuItem@@@@QAE@HPBQAVGraphicMenuItem@@@Z,src/grphmenu.cpp,80df91966d37cdc61e637b7119baccc66773c6b6343977073f167aaf240011c6
-0x004F2C50,23,_$E12,src/grphmenu.cpp,ccdc2fb634e545576f2960e76406f3cbaedab52a61b9a3303e9cffa6d2eda578
 0x004F2C50,23,_$E41,src/grphmenu2.cpp,ccdc2fb634e545576f2960e76406f3cbaedab52a61b9a3303e9cffa6d2eda578
 0x004F2C70,669,?GM_Read_Anim_Item@@YIPAVGraphicMenuItem@@ABVWstring@@ABVINIClass@@AAVMSEngine@@AAVPoint2D@@@Z,src/grphmenu2.cpp,bab8aecd6748f293987c52a73e8bc9dfcf2dc6fbe6bb526efc5a9a974d2ca812
 0x004F2F10,348,??0GraphicMenuAnimItem@@QAE@HAAVMSEngine@@ABVPoint2D@@ABV?$TRect@H@@ABVWstring@@3H_N@Z,src/grphmenu2.cpp,33af89d782eccf642a8f9e6ce1eafde66df97c510dba872abd3fa5a63ccc2d29
