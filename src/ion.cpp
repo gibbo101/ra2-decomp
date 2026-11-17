@@ -100,14 +100,7 @@ extern Coord DAT_00A9FA30;
 extern int DAT_007ED3D0[];
 namespace Unsorted { extern Cell CellSpreadTable[]; extern int CurrentFrame; extern int MuteSWLaunches; }
 
-class IonBlastClass
-{
-	public:
-		IonBlastClass(Coord coord);
-
-		unsigned char Before[0x10];
-		BOOL DisableIonBeam;
-};
+#include "ionblast.h"
 
 
 
@@ -120,21 +113,21 @@ DynamicVectorClass<AnimClass const *> LightningStorm::CloudsPresent;
 DynamicVectorClass<AnimClass const *> LightningStorm::BoltsPresent;
 
 // SYNTHETIC: GAMEMD 0x00539560 SYMBOL
-// _$E163
+// _$E164
 // SYNTHETIC: GAMEMD 0x00539570 SYMBOL
-// _$E166
+// _$E167
 // SYNTHETIC: GAMEMD 0x00539580 SYMBOL
-// _$E172
+// _$E173
 // SYNTHETIC: GAMEMD 0x005395C0 SYMBOL
-// _$E169
+// _$E170
 // SYNTHETIC: GAMEMD 0x00539620 SYMBOL
-// _$E178
+// _$E179
 // SYNTHETIC: GAMEMD 0x00539660 SYMBOL
-// _$E175
+// _$E176
 // SYNTHETIC: GAMEMD 0x005396C0 SYMBOL
-// _$E183
+// _$E184
 // SYNTHETIC: GAMEMD 0x00539700 SYMBOL
-// _$E181
+// _$E182
 
 // FUNCTION: GAMEMD 0x00539760
 void FUN_00539760(void)

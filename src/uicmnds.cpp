@@ -95,11 +95,7 @@ void __fastcall FUN_00637D00(PlanningNode * node);
 void FUN_006379C0(void);
 void FUN_00637A10(void);
 void __fastcall FUN_0063A120(bool a, bool b);
-class BeaconManagerClass
-{
-	public:
-		void Remove_Beacon(int x, int y);
-};
+#include "beacon.h"
 extern BeaconManagerClass BeaconManager;
 
 
@@ -523,7 +519,7 @@ void FUN_00731A10(void)
 	if (node) {
 		FUN_00637D00(node);
 	} else {
-		BeaconManager.Remove_Beacon(-1, -1);
+		BeaconManager.DeleteBeacon(-1, -1);
 	}
 }
 
