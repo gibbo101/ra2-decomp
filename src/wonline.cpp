@@ -1008,7 +1008,7 @@ void FUN_0072CF90(void);
 void __fastcall FUN_005E9340(char const * name);
 
 // FUNCTION: GAMEMD 0x0077E900
-void __fastcall FUN_0077E900(Wstring const & who, int status)
+void __fastcall SetPlayerAccepted(Wstring const & who, int status)
 {
 	Wstring name(who.length() > 0 ? who : g_NickName);
 	if (name == g_NickName && status == 0) {
@@ -1061,7 +1061,7 @@ void __fastcall FUN_0077E900(Wstring const & who, int status)
 }
 
 // FUNCTION: GAMEMD 0x0077EBA0
-int __fastcall FUN_0077EBA0(Wstring const & who)
+int __fastcall GetPlayerAccepted(Wstring const & who)
 {
 	Wstring name(who.length() > 0 ? who : g_NickName);
 	Wstring lower = ((Wstring const &)name).toLower();
@@ -10573,7 +10573,7 @@ void FUN_007A2750(void)
 	bool notHost;
 	{
 		Wstring empty((char *)NULL);
-		notHost = FUN_0077EBA0(empty) != 1;
+		notHost = GetPlayerAccepted(empty) != 1;
 	}
 	if (notHost) {
 		SendMessage(list, 0x4DC, 0, 1);

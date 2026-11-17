@@ -786,8 +786,6 @@ void SendPrivateGameopts(char const * player, char const * options)
 }
 
 extern bool DAT_00AC11C2;
-int __fastcall FUN_0077EBA0(Wstring const & who);
-void __fastcall FUN_0077E900(Wstring const & who, int status);
 int __fastcall FUN_005DBEC0(char * who);
 void __fastcall FUN_005DBE20(char * who, int status);
 HWND __fastcall FUN_00775940(int id);
@@ -823,7 +821,7 @@ void FUN_005E3AB0(void)
 {
 	int accept;
 	if (g_pChat != NULL) {
-		accept = FUN_0077EBA0(NULL);
+		accept = GetPlayerAccepted(NULL);
 	} else {
 		accept = FUN_005DBEC0(NULL);
 	}
@@ -831,7 +829,7 @@ void FUN_005E3AB0(void)
 	if (accept == 1) {
 		char buffer[64];
 		if (g_pChat != NULL) {
-			FUN_0077E900(NULL, 0);
+			SetPlayerAccepted(NULL, 0);
 		} else {
 			FUN_005DBE20(NULL, 0);
 		}

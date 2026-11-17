@@ -18063,8 +18063,8 @@ address,name,result,size,source,symbol
 0x0077E780,GetINIHash,MATCH,22,src/wonline.cpp,?GetINIHash@@YIHXZ
 0x0077E7A0,Encode_Channel_ExInfo,MATCH,114,src/wonline.cpp,?Encode_Channel_ExInfo@@YIXPAD@Z
 0x0077E820,FUN_0077E820,MATCH,217,src/wonline.cpp,?FUN_0077E820@@YIXPADPAH1111PAVWstring@@@Z
-0x0077E900,FUN_0077E900,MATCH,666,src/wonline.cpp,?FUN_0077E900@@YIXABVWstring@@H@Z
-0x0077EBA0,FUN_0077EBA0,MATCH,350,src/wonline.cpp,?FUN_0077EBA0@@YIHABVWstring@@@Z
+0x0077E900,SetPlayerAccepted,MATCH,666,src/wonline.cpp,?SetPlayerAccepted@@YIXABVWstring@@H@Z
+0x0077EBA0,GetPlayerAccepted,MATCH,350,src/wonline.cpp,?GetPlayerAccepted@@YIHABVWstring@@@Z
 0x0077ED00,Assign_House_And_Color,MATCH,645,src/wonline.cpp,?Assign_House_And_Color@@YIHABVWstring@@HHHH@Z
 0x0077EF90,FUN_0077EF90,MATCH,399,src/wonline.cpp,?FUN_0077EF90@@YI_NHE@Z
 0x0077F120,FUN_0077F120,MATCH,499,src/wonline.cpp,?FUN_0077F120@@YI_NXZ
