@@ -3283,12 +3283,12 @@ none:
 			break;
 	}
 
-	beam->FUN_006594A0(source);
-	beam->FUN_006594C0(dest);
-	beam->FUN_006594E0(15);
-	beam->FUN_006594F0(40.0);
-	beam->FUN_00659470(color);
-	beam->FUN_00659490(zadjust);
+	beam->Set_Source(source);
+	beam->Set_Target(dest);
+	beam->Set_Period(15);
+	beam->Set_Amplitude(40.0);
+	beam->Set_Color(color);
+	beam->Set_Z_Adjust(zadjust);
 	if (type == 2) {
 		beam->FUN_00659540(1);
 		beam->FUN_00659550(true);
@@ -3320,14 +3320,14 @@ void TechnoClass::CreateRadBeams(int spread)
 			dest.X += dx;
 			dest.Y += dy;
 			RadBeam * beam = RadBeam::Allocate(2);
-			beam->FUN_00659470(color);
+			beam->Set_Color(color);
 			int period = NonCriticalRandomNumber(5, 20);
 			int amplitude = NonCriticalRandomNumber(100, 500);
 			int end = NonCriticalRandomNumber(0, 20);
-			beam->FUN_006594A0(source);
-			beam->FUN_006594C0(dest);
-			beam->FUN_006594E0(period);
-			beam->FUN_006594F0(amplitude);
+			beam->Set_Source(source);
+			beam->Set_Target(dest);
+			beam->Set_Period(period);
+			beam->Set_Amplitude(amplitude);
 			beam->FUN_00659510(0.0);
 			beam->FUN_00659530(end);
 			if (longest <= period) longest = period;
