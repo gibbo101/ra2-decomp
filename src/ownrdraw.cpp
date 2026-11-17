@@ -1421,14 +1421,14 @@ int Control_Volume(HWND dialog, HWND control)
 }
 
 ConvertClass *FUN_0072E280(void);
-void FUN_0072E2A0(void);
-void FUN_0072DAC0(void);
-void FUN_0072DAD0(void);
+ConvertClass *FUN_0072E2A0(void);
+ConvertClass *FUN_0072DAC0(void);
+ConvertClass *FUN_0072DAD0(void);
 ConvertClass *FUN_0072D450(void);
-void FUN_0072CC80(void);
+ConvertClass *FUN_0072CC80(void);
 
 // FUNCTION: GAMEMD 0x006035F0
-void Play_Control_Sound(HWND dialog, HWND control)
+ConvertClass *Get_Static_Drawer(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
 	int type;
@@ -1439,7 +1439,7 @@ void Play_Control_Sound(HWND dialog, HWND control)
 		type = 0;
 	}
 	int id = GetDlgCtrlID(control);
-	FUN_0072E280();
+	ConvertClass *drawer = FUN_0072E280();
 
 	if (type == 0x94 ||
 		type == 0xd8 ||
@@ -1472,17 +1472,15 @@ void Play_Control_Sound(HWND dialog, HWND control)
 		type == 0xbc6 ||
 		type == 0xbc7) {
 		if (id == 0x71c) {
-			FUN_0072E2A0();
+			drawer = FUN_0072E2A0();
 		}
 	}
 	if (type == 0x94) {
 		if (id == 0x6ea) {
-			FUN_0072DAC0();
-			return;
+			return FUN_0072DAC0();
 		}
 		if (id == 0x6ec) {
-			FUN_0072DAD0();
-			return;
+			return FUN_0072DAD0();
 		}
 	}
 	if (type == 0x103) {
@@ -1491,15 +1489,16 @@ void Play_Control_Sound(HWND dialog, HWND control)
 	if (type == 0xbc7) {
 typed:
 		if (id == 0x72b) {
-			FUN_0072D450();
+			return FUN_0072D450();
 		}
-		return;
+		return drawer;
 	}
 	if (type == 0xc4) {
 		if (id == 0x7a9) {
-			FUN_0072CC80();
+			return FUN_0072CC80();
 		}
 	}
+	return drawer;
 }
 
 int __fastcall FUN_004A38D0(int a, int b);

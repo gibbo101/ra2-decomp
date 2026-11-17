@@ -10507,7 +10507,7 @@ address,name,result,size,source,symbol
 0x00603040,Control_Sound_Slot,MATCH,503,src/ownrdraw.cpp,?Control_Sound_Slot@@YIHPAUHWND__@@0@Z
 0x00603240,Is_Typed_Control_Int,MATCH,432,src/ownrdraw.cpp,?Is_Typed_Control_Int@@YIHPAUHWND__@@0@Z
 0x006033F0,Control_Volume,MATCH,508,src/ownrdraw.cpp,?Control_Volume@@YIHPAUHWND__@@0@Z
-0x006035F0,Play_Control_Sound,MATCH,530,src/ownrdraw.cpp,?Play_Control_Sound@@YIXPAUHWND__@@0@Z
+0x006035F0,Get_Static_Drawer,MATCH,530,src/ownrdraw.cpp,?Get_Static_Drawer@@YIPAVConvertClass@@PAUHWND__@@0@Z
 0x00603810,FUN_00603810,MATCH,85,src/ownrdraw.cpp,?FUN_00603810@@YIHPAUHWND__@@0@Z
 0x00603870,FUN_00603870,MATCH,550,src/ownrdraw.cpp,?FUN_00603870@@YIHPAUHWND__@@0H@Z
 0x00603AA0,FUN_00603AA0,MATCH,646,src/ownrdraw.cpp,?FUN_00603AA0@@YIHPAUHWND__@@0@Z
