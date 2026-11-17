@@ -115,18 +115,8 @@ void DiskLaserClass::Fire(TechnoClass * owner, TechnoClass * target, WeaponTypeC
 #include "map.h"
 #include "rules.h"
 #include "voc.h"
+#include "inline.h"
 
-static inline int Coord_Dist2(int x, int y, int z, Coord const & b)
-{
-	Coord c = Coord(x, y, z) - b;
-	return c.Length();
-}
-
-static inline int Coord_Dist(Coord const & a, Coord const & b)
-{
-	Coord c = a - b;
-	return c.Length();
-}
 
 // FUNCTION: GAMEMD 0x004A7340
 void DiskLaserClass::AI(void)
@@ -146,7 +136,7 @@ void DiskLaserClass::AI(void)
 		if (Owner->In_Air()) {
 			oc.Z = Target->Center_Coord().Z;
 		}
-		distance = Coord_Dist(oc, Target->Center_Coord());
+		distance = Distance(oc, Target->Center_Coord());
 	}
 	if (Target->Fetch_RTTI() == RTTI_BUILDING) {
 		BuildingClass * building = (BuildingClass *)Target;
