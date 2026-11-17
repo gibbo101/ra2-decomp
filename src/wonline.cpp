@@ -1302,7 +1302,7 @@ extern char DAT_00B77DC1;
 extern char g_ConnectionLost;
 extern char g_ShowMOTD;
 extern int DAT_0084A1BC;
-extern int DAT_00B77DCC;
+extern int g_SuspendChatPump;
 extern int DAT_00B77DB8;
 extern int DAT_00B77DBC;
 extern wchar_t const * g_Lobbies[8];
@@ -1437,7 +1437,7 @@ bool WOL_Wait_Callback(void)
 		g_NextWDTStatePollTime = time(0) + 30;
 		Get_WDT_State_Silent();
 	}
-	if (g_pChat && DAT_00B77DCC == 0) g_pChat->PumpMessages();
+	if (g_pChat && g_SuspendChatPump == 0) g_pChat->PumpMessages();
 	if (g_pNetUtil) g_pNetUtil->PumpMessages();
 	if (g_pDownload) g_pDownload->PumpMessages();
 	Call_Back();
@@ -1530,7 +1530,7 @@ void FUN_00780110(void)
 	DAT_00B77DC1 = 0;
 	g_ConnectionLost = 0;
 	DAT_0084A1BC = -1;
-	DAT_00B77DCC = 0;
+	g_SuspendChatPump = 0;
 	DAT_00B77DB8 = -1;
 	DAT_00B77DBC = -1;
 	g_Lobbies[0] = StringTable::LoadString("TXT_LOB_1", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xAC0);
@@ -4298,8 +4298,8 @@ int __fastcall Pick_Lobby(bool flag)
 void FUN_0052F3F0(void);
 void __fastcall FUN_0079FC10(int a, int b, int c);
 void __fastcall FUN_005E7460(void);
-extern char DAT_00B77A04[];
-extern char DAT_00B76568[];
+extern char WestwoodOnline_Clan1_Players[];
+extern char WestwoodOnline_Clan2_Players[];
 extern int DAT_00841F34;
 extern int DAT_00841F38;
 extern int DAT_00841F3C;
@@ -5274,7 +5274,7 @@ BOOL CALLBACK WOL_Download_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 	return TRUE;
 }
 
-extern int DAT_00B77DC4;
+extern int g_MaxPlayers;
 
 class WonlineGameControl : public SimpleWonlineDialogControl
 {
@@ -5319,7 +5319,7 @@ BOOL CALLBACK WOL_New_Game_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 
 				case IDOK:
 					{
-						DAT_00B77DC4 = 7;
+						g_MaxPlayers = 7;
 						Wstring text;
 						FUN_00623E40(GetDlgItem(window, 0x72C), text);
 						control->Text = text;
@@ -6585,7 +6585,7 @@ bool FUN_007947B0(void)
 	int partner;
 	Session.KeepAliveCount = 0;
 	memset(Session.unknown_2F4C, 0, sizeof(Session.unknown_2F4C));
-	DAT_00B77DCC = 0;
+	g_SuspendChatPump = 0;
 	if (!Session.NumConnectionPairs) {
 		return false;
 	}
@@ -6692,7 +6692,7 @@ void Start_Game_Now(void)
 
 	bool verified = FUN_007947B0();
 	if (!verified) {
-		DAT_00B77DCC = 0;
+		g_SuspendChatPump = 0;
 		if (!Is_Local_Host()) {
 			FUN_004068E0("Failed to verify connection paths\n");
 		}
@@ -6856,8 +6856,8 @@ void Start_Game_Now(void)
 	if (Session.UsePacketRouter) {
 		OwnerTalk.Wait_For_Router_Shutdown(2000, true);
 	}
-	DAT_00B77A04[0] = 0;
-	DAT_00B76568[0] = 0;
+	WestwoodOnline_Clan1_Players[0] = 0;
+	WestwoodOnline_Clan2_Players[0] = 0;
 
 	if (FUN_0077D970()) {
 		User * user = NULL;
@@ -6866,12 +6866,12 @@ void Start_Game_Now(void)
 		for (int i = 0; i < g_UserList.length(); i++) {
 			g_UserList.getPointer(&user, i);
 			if (squad1 == 0 || squad1 == (int)user->squadID) {
-				strcat(DAT_00B77A04, (char *)user->name);
-				strcat(DAT_00B77A04, ",");
+				strcat(WestwoodOnline_Clan1_Players, (char *)user->name);
+				strcat(WestwoodOnline_Clan1_Players, ",");
 				squad1 = user->squadID;
 			} else if (squad2 == 0 || squad2 == (int)user->squadID) {
-				strcat(DAT_00B76568, (char *)user->name);
-				strcat(DAT_00B76568, ",");
+				strcat(WestwoodOnline_Clan2_Players, (char *)user->name);
+				strcat(WestwoodOnline_Clan2_Players, ",");
 				squad2 = user->squadID;
 			}
 		}
@@ -6881,11 +6881,11 @@ void Start_Game_Now(void)
 		for (int i = 0; i < g_UserList.length(); i++) {
 			g_UserList.getPointer(&user, i);
 			if (g_UserInfo[i].House == 0) {
-				strcat(DAT_00B77A04, (char *)user->name);
-				strcat(DAT_00B77A04, ",");
+				strcat(WestwoodOnline_Clan1_Players, (char *)user->name);
+				strcat(WestwoodOnline_Clan1_Players, ",");
 			} else {
-				strcat(DAT_00B76568, (char *)user->name);
-				strcat(DAT_00B76568, ",");
+				strcat(WestwoodOnline_Clan2_Players, (char *)user->name);
+				strcat(WestwoodOnline_Clan2_Players, ",");
 			}
 		}
 	}
@@ -7608,8 +7608,8 @@ namespace Game {
 		extern int Tournament;
 	}
 }
-extern int DAT_00B77D6C;
-extern char DAT_00B77830[];
+extern int WestwoodOnline_GameSKU_TS;
+extern char WestwoodOnline_LoginName[];
 void __fastcall FUN_005C6120(DynamicVectorClass<NodeNameType *> * vec);
 void __fastcall FUN_005E7BF0(int slot);
 void __fastcall FUN_005E7460(void);
@@ -7622,9 +7622,9 @@ void FUN_007970D0(void)
 	bool flag;
 
 	Game::Network::WOLGameID = 0;
-	DAT_00B77D6C = g_GameSKU;
+	WestwoodOnline_GameSKU_TS = g_GameSKU;
 	Game::Network::Tournament = 0;
-	strcpy(DAT_00B77830, DAT_00B73E40.get());
+	strcpy(WestwoodOnline_LoginName, DAT_00B73E40.get());
 	FUN_005C6120(&Session.Players);
 	size = 0x3F7;
 	GetComputerName(computer, &size);
@@ -7773,8 +7773,8 @@ void FUN_007970D0(void)
 	DAT_00841F38 = 1236;
 	DAT_00841F3C = 1237;
 	Frame = 0;
-	DAT_00B77A04[0] = 0;
-	DAT_00B76568[0] = 0;
+	WestwoodOnline_Clan1_Players[0] = 0;
+	WestwoodOnline_Clan2_Players[0] = 0;
 	FUN_005E7460();
 }
 
@@ -10718,12 +10718,12 @@ struct AtlObjectEntry {
 
 
 extern int g_AgeCheckResult;
-extern int DAT_00B77DCC;
+extern int g_SuspendChatPump;
 extern HANDLE DAT_00B736A4;
 extern long g_OnNewNickResult;
 extern int g_UserConsent;
-extern int DAT_00B77780;
-extern int DAT_00B77CE0;
+extern int g_PingsSent;
+extern int g_PingsReceived;
 extern int DAT_00B736F4;
 void FUN_007A1330(void);
 void FUN_007A1060(void);
@@ -10952,9 +10952,9 @@ HRESULT CNetUtilEventSink::OnAgeCheck(HRESULT result, int age, int consent)
 // FUNCTION: GAMEMD 0x007A40F0
 HRESULT CNetUtilEventSink::OnPing(HRESULT result, int time, unsigned long address, int extra)
 {
-	if (DAT_00B77DC1 && DAT_00B77780) {
+	if (DAT_00B77DC1 && g_PingsSent) {
 		if (result == 0 && time >= 0 && time < 1000) {
-			DAT_00B77CE0++;
+			g_PingsReceived++;
 		}
 		return 0;
 	}
@@ -10987,8 +10987,8 @@ CChatEventSink::CChatEventSink(void)
 {
 }
 
-extern char DAT_00B77930[];
-extern int DAT_00B76184;
+extern char g_GameServerHost[];
+extern int g_GameServerPort;
 extern char DAT_00B77CE8[];
 extern int DAT_00B75F5C;
 extern char DAT_00B73E44[64][128];
@@ -11072,11 +11072,11 @@ long __stdcall FUN_007A41C0(void * sink, long result, Server * servers)
 			strtok(conndata, ";");
 			host = strtok(NULL, ";");
 			if (host != NULL) {
-				strcpy(DAT_00B77930, host);
+				strcpy(g_GameServerHost, host);
 			}
 			port = strtok(NULL, ";");
 			if (port != NULL) {
-				DAT_00B76184 = atol(port);
+				g_GameServerPort = atol(port);
 			}
 			DAT_00B77CE8[0] = 0;
 			DAT_00B75F5C = 0;
@@ -11167,7 +11167,7 @@ long __stdcall FUN_007A4C10(void * sink, long result, Update * updates)
 		SetEvent(g_WaitEventHandles[0]);
 		return 0;
 	}
-	DAT_00B77DCC = 1;
+	g_SuspendChatPump = 1;
 	Update * tmp = updates;
 	while (tmp != NULL) {
 		tmp = tmp->next;
@@ -11672,7 +11672,7 @@ extern int GameStockKeepingUnit;
 extern long PlanetWestwoodStartTime;
 }
 }
-extern char DAT_00B779E0[];
+extern char WestwoodOnline_UserName[];
 
 // FUNCTION: GAMEMD 0x007A7B60
 long __stdcall FUN_007A7B60(void *sink, long result, Channel *channel, User *users, int game_id)
@@ -11683,7 +11683,7 @@ long __stdcall FUN_007A7B60(void *sink, long result, Channel *channel, User *use
 	DAT_00B76478 = CDTimerClass<SystemTimerClass>(0);
 	if (DAT_00B77E27)
 		return S_OK;
-	DAT_00B77DCC = 1;
+	g_SuspendChatPump = 1;
 	User *user = users;
 	while (user) {
 		++listed;
@@ -11716,16 +11716,16 @@ long __stdcall FUN_007A7B60(void *sink, long result, Channel *channel, User *use
 		HWND dialog = FUN_00775940(0xCF);
 		FUN_007757E0(dialog, 0);
 		Game::Network::WOLGameID = game_id;
-		DAT_00B77D6C = g_GameSKU;
+		WestwoodOnline_GameSKU_TS = g_GameSKU;
 		Game::Network::GameStockKeepingUnit = 0x2300;
 		Game::Network::Tournament = g_CurrentChannel.tournament;
 		if (FUN_0077D970())
 			Game::Network::Tournament = 2;
-		strcpy(DAT_00B77830, DAT_00B73E40.get());
+		strcpy(WestwoodOnline_LoginName, DAT_00B73E40.get());
 		User *first = NULL;
 		g_UserList.getPointer(&first, 0);
 		if (first)
-			strcpy(DAT_00B779E0, (char *)first->name);
+			strcpy(WestwoodOnline_UserName, (char *)first->name);
 		Game::Network::PlanetWestwoodStartTime = time(0);
 		FUN_004068E0("OnGameStart\n");
 		if (channel)
@@ -12049,10 +12049,10 @@ request_done:
 					g_UserList.get(temp, found);
 					temp.next = NULL;
 					User_List_To_Session_Players(&temp);
-					int old = DAT_00B77DCC;
-					DAT_00B77DCC = 1;
+					int old = g_SuspendChatPump;
+					g_SuspendChatPump = 1;
 					FUN_005E7EB0(MultiplayerMapPreview);
-					DAT_00B77DCC = old;
+					g_SuspendChatPump = old;
 				}
 			}
 		}

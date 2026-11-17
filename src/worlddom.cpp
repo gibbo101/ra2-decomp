@@ -308,7 +308,7 @@ int FUN_0079FC40(void);
 void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before, bool fullscreen);
 extern int DAT_00B77F94;
 extern int DAT_00B77F98;
-extern int DAT_00B77DC4;
+extern int g_MaxPlayers;
 rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0370(void);
 rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0380(void);
 
@@ -387,7 +387,7 @@ int __fastcall FUN_007AFB90(bool first_time)
 						}
 						Session.House = DAT_00B77F94 == 3;
 						if (FUN_0076ED10(&campaign, DAT_00B77F98)) {
-							DAT_00B77DC4 = 0;
+							g_MaxPlayers = 0;
 							RandomMapGen.SeedData.Fixup_WDT_Settings();
 							state = 5;
 						} else {

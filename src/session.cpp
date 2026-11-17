@@ -1219,8 +1219,8 @@ bool SessionClass::Is_Random_Map(void) const
 	return stricmp(ScenarioFileName, "RandMap.Sed") == 0;
 }
 
-extern char DAT_00B77A04[];
-extern char DAT_00B76568[];
+extern char WestwoodOnline_Clan1_Players[];
+extern char WestwoodOnline_Clan2_Players[];
 
 static inline void Copy_Player_Name(char * destination, wchar_t const * name)
 {
@@ -1321,8 +1321,8 @@ void SessionClass::Init_Fixed_Alliances(void)
 
 	Scen->Special.IsAllianceFixed = false;
 
-	char * names1 = DAT_00B77A04;
-	char * names2 = DAT_00B76568;
+	char * names1 = WestwoodOnline_Clan1_Players;
+	char * names2 = WestwoodOnline_Clan2_Players;
 
 	DebugString("Squad 1 = %s\n", names1);
 	DebugString("Squad 2 = %s\n", names2);

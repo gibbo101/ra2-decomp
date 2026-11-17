@@ -1416,10 +1416,10 @@ extern bool ConnectionLost;
 void __fastcall Send_Statistics_Packet(bool arg);
 void __fastcall FUN_005DA750(int id, int error);
 
-extern int DAT_00B77780;
-extern int DAT_00B77CE0;
+extern int g_PingsSent;
+extern int g_PingsReceived;
 extern int DAT_00B04890;
-extern char DAT_00B77930[];
+extern char g_GameServerHost[];
 
 // FUNCTION: GAMEMD 0x0064AE50
 BOOL CALLBACK Reconnect_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -1487,17 +1487,17 @@ BOOL CALLBACK Reconnect_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 		case WM_TIMER:
 			if (Session.Type == GAME_INTERNET && wparam == 1 && g_pNetUtil != NULL) {
 				int handle;
-				if (DAT_00B77780 < 5) {
-					g_pNetUtil->RequestPing(DAT_00B77930, 1000, &handle);
-					DAT_00B77780++;
+				if (g_PingsSent < 5) {
+					g_pNetUtil->RequestPing(g_GameServerHost, 1000, &handle);
+					g_PingsSent++;
 				}
 				DAT_00B04890++;
 				if (DAT_00B779C4) {
-					if (!DAT_00B0488C && DAT_00B04890 > 5 && !DAT_00B77CE0) {
+					if (!DAT_00B0488C && DAT_00B04890 > 5 && !g_PingsReceived) {
 						DAT_00B0488C = 1;
 						DAT_00B04884++;
 					}
-					else if (!DAT_00B0488D && DAT_00B04890 > 10 && !DAT_00B77CE0) {
+					else if (!DAT_00B0488D && DAT_00B04890 > 10 && !g_PingsReceived) {
 						DAT_00B0488D = 1;
 						DAT_00B04888++;
 					}
@@ -1545,8 +1545,8 @@ BOOL CALLBACK Reconnect_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 			}
 
 			if (Session.Type == GAME_INTERNET) {
-				DAT_00B77780 = 0;
-				DAT_00B77CE0 = 0;
+				g_PingsSent = 0;
+				g_PingsReceived = 0;
 				DAT_00B0488C = 0;
 				DAT_00B0488D = 0;
 				DAT_00B04890 = 0;
@@ -3943,8 +3943,8 @@ RetcodeType __fastcall Wait_For_Players(int first_time, ConnManClass *net, int r
 	if (reconnect_dlg) {
 		Close_Reconnect_Dialog();
 		if (net->Num_Connections() > 0) {
-			DAT_00B77780 = 0;
-			DAT_00B77CE0 = 0;
+			g_PingsSent = 0;
+			g_PingsReceived = 0;
 		}
 	}
 	if (stall_drawn && Session.EnableMultiplayerDebug && Session.DrawMPDebugStats) {

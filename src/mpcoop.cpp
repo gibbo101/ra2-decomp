@@ -1588,15 +1588,15 @@ int MPCooperative::vt_entry_B8(void)
 }
 
 extern int g_GameSKU;
-extern int DAT_00B77D6C;
+extern int WestwoodOnline_GameSKU_TS;
 extern int DAT_00B779D4;
 extern int DAT_00B779C4;
 extern unsigned char DAT_00A8F900;
 extern Wstring DAT_00B73E40;
-extern char DAT_00B77830[];
+extern char WestwoodOnline_LoginName[];
 extern int WestwoodOnline_PingTimes[];
-extern unsigned char DAT_00B77A04;
-extern unsigned char DAT_00B76568;
+extern unsigned char WestwoodOnline_Clan1_Players;
+extern unsigned char WestwoodOnline_Clan2_Players;
 extern int DAT_00A8EA0C;
 #include "ownertalk.h"
 void __fastcall FUN_005E7460(void);
@@ -1607,10 +1607,10 @@ void __fastcall FUN_005E7460(void);
 void MPCooperative::vt_entry_AC(void)
 {
 	DAT_00B779D4 = 0;
-	DAT_00B77D6C = g_GameSKU;
+	WestwoodOnline_GameSKU_TS = g_GameSKU;
 	DAT_00B779C4 = 0;
 	DAT_00A8F900 = 0;
-	strcpy(DAT_00B77830, DAT_00B73E40.get());
+	strcpy(WestwoodOnline_LoginName, DAT_00B73E40.get());
 	Session.HostAddress = Session.Players[HostIndex]->Address;
 	wcscpy(Session.MasterPlayerName, Session.Players[HostIndex]->Name);
 	Session.MasterPlayerID = -1;
@@ -1735,9 +1735,9 @@ void MPCooperative::vt_entry_AC(void)
 	}
 	Session.MaxMaxAhead = Session.MaxAhead;
 	memset(Session.ConnectionStats, 0, sizeof(Session.ConnectionStats));
-	DAT_00B77A04 = 0;
+	WestwoodOnline_Clan1_Players = 0;
 	Options.GameSpeed = Session.Options.GameSpeed;
-	DAT_00B76568 = 0;
+	WestwoodOnline_Clan2_Players = 0;
 	FUN_005E7460();
 	DoList.Init();
 	OutList.Init();
