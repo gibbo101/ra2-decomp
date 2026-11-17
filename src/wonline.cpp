@@ -921,6 +921,7 @@ int __fastcall FUN_0077E300(WideWstring const & msg)
 
 #include "goptions.h"
 namespace Game { extern int Seed; }
+extern int Seed;
 
 extern int DAT_00B77E00;
 extern int DAT_00B77E04;
@@ -7606,7 +7607,6 @@ namespace Game {
 		extern int WOLGameID;
 		extern int Tournament;
 	}
-	extern int Seed;
 }
 extern int DAT_00B77D6C;
 extern char DAT_00B77830[];
@@ -7656,7 +7656,7 @@ void FUN_007970D0(void)
 	FUN_00735060(Session.MasterPlayerName, "PotatoToo", -1);
 	Session.MasterPlayerID = -1;
 	Session.House = 0;
-	Game::Seed = 1;
+	Seed = 1;
 	BuildLevel = 10;
 	Session.Options.UnitCount = 10;
 	Session.Options.Credits = 10000;

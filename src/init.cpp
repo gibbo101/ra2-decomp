@@ -200,13 +200,13 @@ struct Game {
 	static bool __cdecl CallBack(void);
 	static int Seed;
 	static unsigned char RecordingFlag;
-	static void InitRandom(void);
 	static HWND hWnd;
 	static HINSTANCE hInstance;
 	static int ObserverMode;
 };
 
 bool FUN_0052CB50(void);
+void Init_Random(void);
 
 #include "debugpage.h"
 #include "playcd.h"
@@ -390,7 +390,7 @@ int Init_Game(void)
 		}
 	}
 	memset(Session.PlayerChatEnabled, true, sizeof(Session.PlayerChatEnabled));
-	Game::InitRandom();
+	Init_Random();
 	FUN_004068E0("Init Commands\n");
 	Init_Commands();
 	FUN_004068E0("Game Init Completed.\n");
@@ -1369,7 +1369,7 @@ restart:
 
 	Keyboard->Clear();
 
-	Game::InitRandom();
+	Init_Random();
 	FUN_006370B0();
 
 	if (!gameloaded && !Session.LoadGame) {
@@ -1952,15 +1952,15 @@ bool Parse_Command_Line(int argc, char * argv[])
 
 void __fastcall Fill_Surface_Rect(BSurface * image, Rect * rect, int flag);
 
-extern int DAT_00A8ED98;
 extern RandomStraw CryptRandom;
 int __cdecl FUN_0053E720(void);
 
+extern int DAT_00A8ED98;
 // FUNCTION: GAMEMD 0x0052FC20
-void Game::InitRandom(void)
+void Init_Random(void)
 {
 	FUN_004068E0("Init random number\n");
-	if (Session.LoadGame || (RecordingFlag & 2) || FUN_0053E720()) {
+	if (Session.LoadGame || Session.Play || FUN_0053E720()) {
 		Scen->RandomNumber = Seed;
 		NonCriticalRandomNumber = Seed;
 		FUN_004068E0("Seed is %08x\n", Seed);
@@ -1987,8 +1987,8 @@ void Game::InitRandom(void)
 		CryptRandom.Seed_Bit(t.wMonth);
 		CryptRandom.Seed_Bit(t.wYear);
 
-		if (DAT_00A8ED98 != 0) {
-			Seed = DAT_00A8ED98;
+		if (CustomSeed != 0) {
+			Seed = CustomSeed;
 		} else {
 			CryptRandom.Get(&Seed, sizeof(Seed));
 			Seed = GetTickCount();
@@ -2498,7 +2498,7 @@ bool Save_Recording_Values(CCFileClass & file)
 {
 	FUN_004068E0("Saving recording values for scenario : %s\n", Scen->ScenarioName);
 	file.Write(&BuildLevel, sizeof(BuildLevel));
-	file.Write(&Game::Seed, sizeof(Game::Seed));
+	file.Write(&Seed, sizeof(Seed));
 	file.Write(&Scen->Scenario, sizeof(Scen->Scenario));
 	file.Write(Scen->ScenarioName, sizeof(Scen->ScenarioName));
 	file.Write(&DAT_00A8EC90, sizeof(DAT_00A8EC90));
@@ -2511,7 +2511,7 @@ bool Save_Recording_Values(CCFileClass & file)
 bool Load_Recording_Values(CCFileClass & file)
 {
 	file.Read(&BuildLevel, sizeof(BuildLevel));
-	file.Read(&Game::Seed, sizeof(Game::Seed));
+	file.Read(&Seed, sizeof(Seed));
 	file.Read(&Scen->Scenario, sizeof(Scen->Scenario));
 	file.Read(Scen->ScenarioName, sizeof(Scen->ScenarioName));
 	file.Read(&DAT_00A8EC90, sizeof(DAT_00A8EC90));

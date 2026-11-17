@@ -462,10 +462,6 @@ void Net2DisplayGameList(void)
 	}
 }
 
-namespace Game
-{
-extern int Seed;
-}
 Wstring __fastcall FUN_007B82E0(WideWstring const &text);
 
 // FUNCTION: GAMEMD 0x005DBB60
@@ -474,7 +470,7 @@ void __fastcall FUN_005DBB60(char *out)
 	static char useroptions[512];
 	Wstring name = Session.Options.ScenarioDescription ? FUN_007B82E0(Session.Options.ScenarioDescription) : "";
 	int value = Session.unknown_8D4;
-	sprintf(out, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%d,%d,%d,%s,%s:", Game::Seed, Options.GameSpeed,
+	sprintf(out, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%d,%d,%d,%s,%s:", Seed, Options.GameSpeed,
 	        Session.Options.GameSpeed, Session.Options.Credits, Session.Options.UnitCount, Session.Options.ShortGame,
 	        Session.Options.SWAllowed, Session.Options.BuildOffAlly, Session.Options.MCVRedeploy, Session.Options.Goodies,
 	        Session.Options.MPModeIndex, Options.CampDifficulty, name.get(), value, Session.ScenarioIsOfficial,

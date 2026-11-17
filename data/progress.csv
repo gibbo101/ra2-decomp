@@ -6500,7 +6500,7 @@ address,name,result,size,source,symbol
 0x0052F3F0,FUN_0052F3F0,MATCH,539,src/init.cpp,?FUN_0052F3F0@@YI_NXZ
 0x0052F610,Anim_Init,MATCH,12,src/init.cpp,?Anim_Init@@YIXXZ
 0x0052F620,Parse_Command_Line,MATCH,1531,src/init.cpp,?Parse_Command_Line@@YI_NHQAPAD@Z
-0x0052FC20,Game::InitRandom,MATCH,670,src/init.cpp,?InitRandom@Game@@SIXXZ
+0x0052FC20,Init_Random,MATCH,670,src/init.cpp,?Init_Random@@YIXXZ
 0x0052FEC0,FUN_0052FEC0,MATCH,202,src/init.cpp,?FUN_0052FEC0@@YIXPAVSurface@@_N@Z
 0x0052FF90,Load_Title_Page,MATCH,59,src/init.cpp,?Load_Title_Page@@YIXPBD_N@Z
 0x0052FFD0,Blank_Hidden_Surface,MATCH,37,src/init.cpp,?Blank_Hidden_Surface@@YIX_N@Z
