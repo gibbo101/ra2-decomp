@@ -92,3 +92,7 @@ effect, so it can be fixed in a separate build later.
 - **WinMain (0x006BB9A0).** The IPX destination-network parser writes the node
   address without checking its length. An invalid configuration can corrupt
   stack memory during startup.
+
+- **WorldDominationTour::Selection::Play_SFX (0x0076EBE0).** The lookup loop stops at the
+  first sound entry whose name differs from the one asked for, and plays that entry, so a
+  named campaign-map sound plays only when it is not the first entry.
