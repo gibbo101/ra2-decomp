@@ -146,24 +146,24 @@ CoopCampaignClass * CoopCampaignClass::FUN_0049B610(void)
 {
 	Name[0] = 0;
 	Map[0] = 0;
-	Field14 = -2;
-	Field30 = -2;
-	Field18 = -2;
-	Field34 = -2;
+	House1 = -2;
+	House2 = -2;
+	Color1 = -2;
+	Color2 = -2;
 	Items = 0;
-	Field44 = -1;
+	CampaignType = -1;
 	Field6C = false;
 	ItemCount = 0;
-	Field38 = -1;
-	Field48 = 0;
-	Field4C = 0;
-	Field50 = 0;
-	Field54 = 0;
-	Field58 = 0;
-	Field5C = 0;
-	Field68 = 0;
-	Field60 = 0;
-	Field64 = 0;
+	CurrentMap = -1;
+	Kills1 = 0;
+	Kills2 = 0;
+	Built1 = 0;
+	Built2 = 0;
+	Lost1 = 0;
+	Lost2 = 0;
+	Time = 0;
+	Score1 = 0;
+	Score2 = 0;
 	return this;
 }
 
@@ -180,24 +180,24 @@ CoopCampaignClass * CoopCampaignClass::FUN_0049B660(wchar_t const * name, wchar_
 	} else {
 		Map[0] = 0;
 	}
-	Field14 = -2;
-	Field30 = -2;
-	Field18 = -2;
-	Field34 = -2;
+	House1 = -2;
+	House2 = -2;
+	Color1 = -2;
+	Color2 = -2;
 	Items = 0;
-	Field44 = -1;
-	Field38 = -1;
+	CampaignType = -1;
+	CurrentMap = -1;
 	Field6C = false;
 	ItemCount = 0;
-	Field48 = 0;
-	Field4C = 0;
-	Field50 = 0;
-	Field54 = 0;
-	Field58 = 0;
-	Field5C = 0;
-	Field68 = 0;
-	Field60 = 0;
-	Field64 = 0;
+	Kills1 = 0;
+	Kills2 = 0;
+	Built1 = 0;
+	Built2 = 0;
+	Lost1 = 0;
+	Lost2 = 0;
+	Time = 0;
+	Score1 = 0;
+	Score2 = 0;
 	return this;
 }
 
@@ -303,30 +303,30 @@ bool CoopCampaignClass::FUN_0049B930(void)
 	FUN_0049B7E0(&second, true);
 	if (!strcmp(Name, FUN_007350C0(first.Name))) {
 		FUN_004068E0("@@@@ %s is local\n", FUN_007350C0(first.Name));
-		Field48 += first.Kills[0];
-		Field4C += second.Kills[0];
-		Field50 += first.Built[0];
-		Field54 += second.Built[0];
-		Field58 += first.Lost[0];
-		Field5C += second.Lost[0];
-		Field60 += first.Score[0];
-		Field64 += second.Score[0];
+		Kills1 += first.Kills[0];
+		Kills2 += second.Kills[0];
+		Built1 += first.Built[0];
+		Built2 += second.Built[0];
+		Lost1 += first.Lost[0];
+		Lost2 += second.Lost[0];
+		Score1 += first.Score[0];
+		Score2 += second.Score[0];
 	} else {
 		FUN_004068E0("@@@@ Assuming %s is local\n", FUN_007350C0(second.Name));
-		Field4C += first.Kills[0];
-		Field48 += second.Kills[0];
-		Field54 += first.Built[0];
-		Field50 += second.Built[0];
-		Field5C += first.Lost[0];
-		Field58 += second.Lost[0];
-		Field64 += first.Score[0];
-		Field60 += second.Score[0];
+		Kills2 += first.Kills[0];
+		Kills1 += second.Kills[0];
+		Built2 += first.Built[0];
+		Built1 += second.Built[0];
+		Lost2 += first.Lost[0];
+		Lost1 += second.Lost[0];
+		Score2 += first.Score[0];
+		Score1 += second.Score[0];
 	}
 	Coop_Format_Time(gameTime, Scen->ElapsedTimer / 60);
-	Field68 += Scen->ElapsedTimer;
-	Coop_Format_Time(totalTime, Field68);
+	Time += Scen->ElapsedTimer;
+	Coop_Format_Time(totalTime, Time);
 	FUN_004068E0("@@@@ Game Time: %s, Total Time: %s\n", gameTime, totalTime);
-	Field38++;
+	CurrentMap++;
 	return true;
 }
 
@@ -336,7 +336,7 @@ bool CoopCampaignClass::FUN_0049BC80(int * out)
 	if (!Field6C) {
 		return false;
 	}
-	*out = Field44;
+	*out = CampaignType;
 	return true;
 }
 
@@ -356,7 +356,7 @@ bool CoopCampaignClass::FUN_0049BCC0(int * out)
 	if (!Field6C) {
 		return false;
 	}
-	*out = Field38;
+	*out = CurrentMap;
 	return true;
 }
 
@@ -381,14 +381,14 @@ bool CoopCampaignClass::FUN_0049BCE0(DynamicVectorClass<MPlayerScoreType *> * li
 	}
 	for (int i = 0; i < 2; i++) {
 		MPlayerScoreType * s = (i == 0) ? a : b;
-		s->Kills[0] = (&Field48)[i];
-		s->Built[0] = (&Field50)[i];
-		s->Lost[0] = (&Field58)[i];
-		s->Wins = Field38;
-		s->Score[0] = (&Field60)[i];
+		s->Kills[0] = (&Kills1)[i];
+		s->Built[0] = (&Built1)[i];
+		s->Lost[0] = (&Lost1)[i];
+		s->Wins = CurrentMap;
+		s->Score[0] = (&Score1)[i];
 		list->Add(s);
 	}
-	*out = Field68;
+	*out = Time;
 	return true;
 }
 
@@ -490,23 +490,23 @@ bool CoopCampaignClass::FUN_0049C0D0(void)
 	if (!ini.ReadCCFile(file, false, false)) {
 		return false;
 	}
-	Field38 = ini.Get_Int(section, "CurrentMap", 0);
+	CurrentMap = ini.Get_Int(section, "CurrentMap", 0);
 	ini.Get_Int(section, "Score", 0);
-	Field44 = ini.Get_Int(section, "CampaignType", -1);
-	Field14 = ini.Get_HousesType(section, "House1", (HousesType)-2);
-	Field18 = ini.Get_Int(section, "Color1", -2);
-	Field30 = ini.Get_HousesType(section, "House2", (HousesType)-2);
-	Field34 = ini.Get_Int(section, "Color2", -2);
-	Field48 = ini.Get_Int(section, "Kills1", 0);
-	Field4C = ini.Get_Int(section, "Kills2", 0);
-	Field50 = ini.Get_Int(section, "Built1", 0);
-	Field54 = ini.Get_Int(section, "Built2", 0);
-	Field58 = ini.Get_Int(section, "Lost1", 0);
-	Field5C = ini.Get_Int(section, "Lost2", 0);
-	Field60 = ini.Get_Int(section, "Score1", 0);
-	Field64 = ini.Get_Int(section, "Score2", 0);
-	Field68 = ini.Get_Int(section, "Time", 0);
-	campaign = Field44;
+	CampaignType = ini.Get_Int(section, "CampaignType", -1);
+	House1 = ini.Get_HousesType(section, "House1", (HousesType)-2);
+	Color1 = ini.Get_Int(section, "Color1", -2);
+	House2 = ini.Get_HousesType(section, "House2", (HousesType)-2);
+	Color2 = ini.Get_Int(section, "Color2", -2);
+	Kills1 = ini.Get_Int(section, "Kills1", 0);
+	Kills2 = ini.Get_Int(section, "Kills2", 0);
+	Built1 = ini.Get_Int(section, "Built1", 0);
+	Built2 = ini.Get_Int(section, "Built2", 0);
+	Lost1 = ini.Get_Int(section, "Lost1", 0);
+	Lost2 = ini.Get_Int(section, "Lost2", 0);
+	Score1 = ini.Get_Int(section, "Score1", 0);
+	Score2 = ini.Get_Int(section, "Score2", 0);
+	Time = ini.Get_Int(section, "Time", 0);
+	campaign = CampaignType;
 	if (!DAT_0089F518.Loaded) {
 		DAT_0089F518.FUN_0049DB00();
 	}
@@ -532,11 +532,11 @@ bool CoopCampaignClass::FUN_0049C0D0(void)
 bool CoopCampaignClass::FUN_0049C5A0(void)
 {
 	if (!Field6C || !Name[0] || !Map[0]) return false;
-	int campaign = Field44;
+	int campaign = CampaignType;
 	if (!DAT_0089F518.Loaded) DAT_0089F518.FUN_0049DB00();
 	if (campaign < 0 || campaign >= DAT_0089F518.EntryCount) return false;
 	CoopCampEntry * entry = &DAT_0089F518.Entries[campaign];
-	if (ItemCount == Field38) return true;
+	if (ItemCount == CurrentMap) return true;
 	{
 		char section[100];
 		char key[32];
@@ -582,8 +582,8 @@ bool CoopCampaignClass::FUN_0049C5A0(void)
 		pf->Open(2);
 		ini.Clear(section, NULL);
 
-		ini.Put_Int(section, "CurrentMap", Field38);
-		ini.Put_Int(section, "CampaignType", Field44);
+		ini.Put_Int(section, "CurrentMap", CurrentMap);
+		ini.Put_Int(section, "CampaignType", CampaignType);
 		for (int map = 0; map < entry->MapCount; map++) {
 			sprintf(key, "Map%d", map + 1);
 			ini.Put_String(section, key, (char const *)Items[map]);
@@ -599,15 +599,15 @@ bool CoopCampaignClass::FUN_0049C5A0(void)
 				break;
 			}
 		}
-		ini.Put_Int(section, "Time", Field68);
-		ini.Put_Int(section, "Kills1", Field48);
-		ini.Put_Int(section, "Kills2", Field4C);
-		ini.Put_Int(section, "Built1", Field50);
-		ini.Put_Int(section, "Built2", Field54);
-		ini.Put_Int(section, "Lost1", Field58);
-		ini.Put_Int(section, "Lost2", Field5C);
-		ini.Put_Int(section, "Score1", Field60);
-		ini.Put_Int(section, "Score2", Field64);
+		ini.Put_Int(section, "Time", Time);
+		ini.Put_Int(section, "Kills1", Kills1);
+		ini.Put_Int(section, "Kills2", Kills2);
+		ini.Put_Int(section, "Built1", Built1);
+		ini.Put_Int(section, "Built2", Built2);
+		ini.Put_Int(section, "Lost1", Lost1);
+		ini.Put_Int(section, "Lost2", Lost2);
+		ini.Put_Int(section, "Score1", Score1);
+		ini.Put_Int(section, "Score2", Score2);
 		ini.Save(out, false);
 		out.Close();
 	}
@@ -622,18 +622,18 @@ bool CoopCampaignClass::FUN_0049CAF0(int index)
 	if (index < 0 || index >= DAT_0089F518.EntryCount) return false;
 	CoopCampEntry * entry = &DAT_0089F518.Entries[index];
 	Field6C = true;
-	Field38 = -1;
-	Field48 = 0;
-	Field4C = 0;
-	Field50 = 0;
-	Field54 = 0;
-	Field60 = 0;
-	Field64 = 0;
-	Field58 = 0;
-	Field5C = 0;
-	Field68 = 0;
+	CurrentMap = -1;
+	Kills1 = 0;
+	Kills2 = 0;
+	Built1 = 0;
+	Built2 = 0;
+	Score1 = 0;
+	Score2 = 0;
+	Lost1 = 0;
+	Lost2 = 0;
+	Time = 0;
 
-	if (Field44 != index) {
+	if (CampaignType != index) {
 		FUN_0049B720();
 		Items = NULL;
 		ItemCount = 0;
@@ -644,9 +644,9 @@ bool CoopCampaignClass::FUN_0049CAF0(int index)
 			strncpy((char *)Items[i], entry->Names + (i * 3 + choice) * 260, 259);
 		}
 		ItemCount = entry->MapCount;
-		Field38 = 0;
+		CurrentMap = 0;
 	}
-	Field44 = index;
+	CampaignType = index;
 	return true;
 }
 
@@ -654,16 +654,16 @@ bool CoopCampaignClass::FUN_0049CAF0(int index)
 bool CoopCampaignClass::FUN_0049CC50(int index, int time, MPlayerScoreType first, MPlayerScoreType second)
 {
 	if (index >= 0 && index < ItemCount) {
-		Field48 += first.Kills[0];
-		Field4C += second.Kills[0];
-		Field50 += first.Built[0];
-		Field54 += second.Built[0];
-		Field58 += first.Lost[0];
-		Field5C += second.Lost[0];
-		Field60 += first.Score[0];
-		Field64 += second.Score[0];
-		Field68 = time;
-		Field38 = index;
+		Kills1 += first.Kills[0];
+		Kills2 += second.Kills[0];
+		Built1 += first.Built[0];
+		Built2 += second.Built[0];
+		Lost1 += first.Lost[0];
+		Lost2 += second.Lost[0];
+		Score1 += first.Score[0];
+		Score2 += second.Score[0];
+		Time = time;
+		CurrentMap = index;
 		return true;
 	}
 	return false;
@@ -675,18 +675,18 @@ bool CoopCampaignClass::FUN_0049CCF0(int index, DynamicVectorClass<int> picks, c
 	if (!DAT_0089F518.Loaded) DAT_0089F518.FUN_0049DB00();
 	if (index >= 0 && index < DAT_0089F518.EntryCount) {
 		CoopCampEntry * entry = &DAT_0089F518.Entries[index];
-		Field38 = -1;
-		Field48 = 0;
-		Field4C = 0;
-		Field50 = 0;
-		Field54 = 0;
-		Field58 = 0;
-		Field5C = 0;
-		Field60 = 0;
-		Field64 = 0;
-		Field68 = 0;
+		CurrentMap = -1;
+		Kills1 = 0;
+		Kills2 = 0;
+		Built1 = 0;
+		Built2 = 0;
+		Lost1 = 0;
+		Lost2 = 0;
+		Score1 = 0;
+		Score2 = 0;
+		Time = 0;
 		if (entry->MapCount != picks.Count()) return false;
-		Field44 = index;
+		CampaignType = index;
 		Field6C = true;
 		FUN_0049B720();
 		Items = NULL;
@@ -697,7 +697,7 @@ bool CoopCampaignClass::FUN_0049CCF0(int index, DynamicVectorClass<int> picks, c
 			strncpy((char *)Items[i], entry->Names + (i * 3 + picks[i]) * 260, 259);
 		}
 		ItemCount = picks.Count();
-		Field38 = 0;
+		CurrentMap = 0;
 		if (name) {
 			char const * text = name;
 			char * out = DAT_0089F118;
@@ -738,7 +738,7 @@ bool CoopCampaignClass::FUN_0049CCF0(int index, DynamicVectorClass<int> picks, c
 			strcpy(Map, DAT_0089F118);
 		}
 		else Map[0] = 0;
-		FUN_004068E0("@@@@ SetCampaignInfo saw campaign_type %d\n", Field44);
+		FUN_004068E0("@@@@ SetCampaignInfo saw campaign_type %d\n", CampaignType);
 	}
 	return Field6C;
 }
@@ -749,7 +749,7 @@ bool CoopCampaignClass::FUN_0049D070(void ** out, int index)
 	bool result = false;
 	*out = 0;
 	if (index == -1) {
-		index = Field38;
+		index = CurrentMap;
 	}
 	if (index < 0 || index >= ItemCount) {
 		index = -1;
@@ -769,8 +769,8 @@ bool CoopCampaignClass::FUN_0049D070(void ** out, int index)
 bool CoopCampaignClass::FUN_0049D0C0(int * house, int * color)
 {
 	if (Field6C) {
-		*house = Field14;
-		*color = Field18;
+		*house = House1;
+		*color = Color1;
 		return true;
 	}
 	return false;
@@ -780,8 +780,8 @@ bool CoopCampaignClass::FUN_0049D0C0(int * house, int * color)
 bool CoopCampaignClass::FUN_0049D0F0(int * house, int * color)
 {
 	if (Field6C) {
-		*house = Field30;
-		*color = Field34;
+		*house = House2;
+		*color = Color2;
 		return true;
 	}
 	return false;
@@ -902,12 +902,12 @@ bool CoopCampaignClass::FUN_0049D680(void)
 		return false;
 	}
 	CoopCampEntry * entry;
-	if (!DAT_0089F518.FUN_0049E3B0(Field44, &entry)) {
+	if (!DAT_0089F518.FUN_0049E3B0(CampaignType, &entry)) {
 		return false;
 	}
 	char line[0x190];
 	char pick[16];
-	sprintf(line, "C0,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", Field44, Field38, Field68, Field48, Field50, Field58, Field60, Field4C, Field54, Field5C, Field64);
+	sprintf(line, "C0,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", CampaignType, CurrentMap, Time, Kills1, Built1, Lost1, Score1, Kills2, Built2, Lost2, Score2);
 	for (int k = 0; k < ItemCount; k++) {
 		int found = 0;
 		for (int j = 0; j < 3; j++) {
