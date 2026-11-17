@@ -150,8 +150,8 @@ Cell const * AircraftTypeClass::Occupy_List(bool) const
 	return(_list);
 }
 
-// FUNCTION: GAMEMD 0x0041CBD0
-void AircraftTypeClass::Init(TheaterType) {}
+// SYNTHETIC: GAMEMD 0x0041CBD0 SYMBOL
+// _$E79
 
 // FUNCTION: GAMEMD 0x0041CBE0
 bool AircraftTypeClass::Create_And_Place(Cell const &, HouseClass *) const

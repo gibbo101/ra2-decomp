@@ -703,7 +703,7 @@ address,name,result,size,source,symbol
 0x0041CB50,AircraftTypeClass::CanUseWaypoint,MATCH,3,src/airctype.cpp,?CanUseWaypoint@AircraftTypeClass@@UBE_NXZ
 0x0041CB60,AircraftTypeClass::CanAttackMove,MATCH,3,src/airctype.cpp,?CanAttackMove@AircraftTypeClass@@UBE_NXZ
 0x0041CB70,AircraftTypeClass::Occupy_List,MATCH,91,src/airctype.cpp,?Occupy_List@AircraftTypeClass@@UBEPBVCell@@_N@Z
-0x0041CBD0,AircraftTypeClass::Init,MATCH,1,src/airctype.cpp,?Init@AircraftTypeClass@@SIXW4TheaterType@@@Z
+0x0041CBD0,_$E79,MATCH,1,src/airctype.cpp,_$E79
 0x0041CBE0,AircraftTypeClass::Create_And_Place,MATCH,5,src/airctype.cpp,?Create_And_Place@AircraftTypeClass@@UBE_NABVCell@@PAVHouseClass@@@Z
 0x0041CBF0,AircraftTypeClass::Lepton_Dimensions,MATCH,36,src/airctype.cpp,?Lepton_Dimensions@AircraftTypeClass@@UBE?AV?$TPoint3D@H@@XZ
 0x0041CC20,AircraftTypeClass::Read_INI,MATCH,388,src/airctype.cpp,?Read_INI@AircraftTypeClass@@UAE_NAAVCCINIClass@@@Z
@@ -6331,7 +6331,7 @@ address,name,result,size,source,symbol
 0x00523B10,InfantryTypeClass::Create_One_Of,MATCH,43,src/infatype.cpp,?Create_One_Of@InfantryTypeClass@@UBEPAVObjectClass@@PAVHouseClass@@@Z
 0x00523B40,InfantryTypeClass::Create_And_Place,MATCH,224,src/infatype.cpp,?Create_And_Place@InfantryTypeClass@@UBE_NABVCell@@PAVHouseClass@@@Z
 0x00523C20,InfantryTypeClass::Occupy_List,MATCH,91,src/infatype.cpp,?Occupy_List@InfantryTypeClass@@UBEPBVCell@@_N@Z
-0x00523C80,InfantryTypeClass::Init,MATCH,1,src/infatype.cpp,?Init@InfantryTypeClass@@SIXW4TheaterType@@@Z
+0x00523C80,_$E117,MATCH,1,src/infatype.cpp,_$E117
 0x00523C90,InfantryTypeClass::From_Name,MATCH,97,src/infatype.cpp,?From_Name@InfantryTypeClass@@SI?AW4InfantryType@@PBD@Z
 0x00523D00,InfantryTypeClass::Read_Sequence_INI,MATCH,919,src/infatype.cpp,?Read_Sequence_INI@InfantryTypeClass@@QAEXXZ
 0x005240A0,InfantryTypeClass::Read_INI,MATCH,1725,src/infatype.cpp,?Read_INI@InfantryTypeClass@@UAE_NAAVCCINIClass@@@Z

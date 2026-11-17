@@ -1065,7 +1065,7 @@ address,size,symbol,source,sha256
 0x0041CB50,3,?CanUseWaypoint@AircraftTypeClass@@UBE_NXZ,src/airctype.cpp,01cb47d078b4841b8408ec4fe278efa83115c6f6e101972987507d2b2b57dcf0
 0x0041CB60,3,?CanAttackMove@AircraftTypeClass@@UBE_NXZ,src/airctype.cpp,01cb47d078b4841b8408ec4fe278efa83115c6f6e101972987507d2b2b57dcf0
 0x0041CB70,91,?Occupy_List@AircraftTypeClass@@UBEPBVCell@@_N@Z,src/airctype.cpp,c0e9845630ae63a454023b47ba89cc7dcd21c24b318ff51d1c6fcea2790a34b9
-0x0041CBD0,1,?Init@AircraftTypeClass@@SIXW4TheaterType@@@Z,src/airctype.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x0041CBD0,1,_$E79,src/airctype.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x0041CBE0,5,?Create_And_Place@AircraftTypeClass@@UBE_NABVCell@@PAVHouseClass@@@Z,src/airctype.cpp,8cad4061f7462df3586af0942fd0de860c94376587768a065839209dcaf67fd5
 0x0041CBF0,36,?Lepton_Dimensions@AircraftTypeClass@@UBE?AV?$TPoint3D@H@@XZ,src/airctype.cpp,075a8f4b8f36fc341af27da6a3232d14d711530354ae720e465b25f8abd43383
 0x0041CC20,388,?Read_INI@AircraftTypeClass@@UAE_NAAVCCINIClass@@@Z,src/airctype.cpp,d48e74b0c45ad0f5a0513262b0ddaa8b491aece11bb3c2513255da9339dfac4e
@@ -6685,7 +6685,7 @@ address,size,symbol,source,sha256
 0x00523B10,43,?Create_One_Of@InfantryTypeClass@@UBEPAVObjectClass@@PAVHouseClass@@@Z,src/infatype.cpp,a88de2be3fbe5b4d6b4bc70e1fda921d456e851ea5a8c7a39ef53b676ea17873
 0x00523B40,224,?Create_And_Place@InfantryTypeClass@@UBE_NABVCell@@PAVHouseClass@@@Z,src/infatype.cpp,d09a43e571b312682f46c0c912375014f4c7cfbdf3e4cb64c618d1a18c4cabc6
 0x00523C20,91,?Occupy_List@InfantryTypeClass@@UBEPBVCell@@_N@Z,src/infatype.cpp,3a6c573f90ea81283d02a662fd14aa3987183d8e69d42f99624982b5a8dba958
-0x00523C80,1,?Init@InfantryTypeClass@@SIXW4TheaterType@@@Z,src/infatype.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x00523C80,1,_$E117,src/infatype.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x00523C90,97,?From_Name@InfantryTypeClass@@SI?AW4InfantryType@@PBD@Z,src/infatype.cpp,b47b000b5c789046d56994268f0d45ea702a4586d8e9b6a29854e9217669663e
 0x00523D00,919,?Read_Sequence_INI@InfantryTypeClass@@QAEXXZ,src/infatype.cpp,e8560669b1bab1e318c4769272062f92f58331f511f8dd3477876a3983c15119
 0x005240A0,1725,?Read_INI@InfantryTypeClass@@UAE_NAAVCCINIClass@@@Z,src/infatype.cpp,2550e53107e69aef4523b16f12af93a2d41a750b3ad822391b256ebe2416eea3
