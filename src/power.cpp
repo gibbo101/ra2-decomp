@@ -62,7 +62,6 @@
 extern int DAT_00B0B504;
 extern bool DAT_00AC4E78;
 extern bool DAT_00884B8D;
-extern int DAT_00886F94;
 struct CCToolTip {
 	static ToolTipManager * Instance;
 };
@@ -246,7 +245,7 @@ void PowerClass::Draw_It(bool complete)
 			} else {
 				yoff = 69;
 			}
-			int y = DAT_00886F94 + yoff;
+			int y = SidebarRect.Y + yoff;
 			Rect rect = SidebarSurface->Get_Rect();
 
 			int num = Max_Power_Height() - RedPipCount - YellowPipCount - GreenPipCount;
@@ -434,7 +433,7 @@ void PowerClass::Reposition_Sidebar(void)
 		} else {
 			yoff = 69;
 		}
-		tt.Region.Y = DAT_00886F94 + yoff;
+		tt.Region.Y = SidebarRect.Y + yoff;
 		tt.Region.Width = 8;
 		tt.Region.Height = DAT_00B0B504;
 		CCToolTip::Instance->Remove(tt.ID);

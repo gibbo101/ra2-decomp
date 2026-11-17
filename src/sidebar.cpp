@@ -204,7 +204,6 @@ void SidebarClass::Init_Clear(void)
 	Activate(false);
 }
 
-extern int DAT_00886F94;
 extern int DAT_00B0B4E0;
 extern int DAT_00B0B4E4;
 extern int DAT_00B0B4EC;
@@ -217,10 +216,10 @@ extern int DAT_00B0B500;
 void SidebarClass::FUN_006A5090(void)
 {
 	int side = Scen->PlayerSideIndex;
-	int span = DAT_00886F94 * 3 + side * 5 + DAT_00886F94 * 7 + side * 9 + DAT_00886F94 * 11 + side * 13;
+	int span = SidebarRect.Y * 3 + side * 5 + SidebarRect.Y * 7 + side * 9 + SidebarRect.Y * 11 + side * 13;
 
 	if (side == 0) {
-		int y = DAT_00886F94;
+		int y = SidebarRect.Y;
 		DAT_00B0B4E4 = 0x40;
 		DAT_00B0B4F0 = 0x1d;
 		DAT_00B0B4FC = 0x3f;
@@ -230,9 +229,9 @@ void SidebarClass::FUN_006A5090(void)
 	} else {
 		int y;
 		if (side == 1) {
-			y = DAT_00886F94 + 7;
+			y = SidebarRect.Y + 7;
 		} else {
-			y = DAT_00886F94 + 7;
+			y = SidebarRect.Y + 7;
 		}
 		DAT_00B0B4E0 = y;
 		DAT_00B0B4EC = y + 0x20;
@@ -731,7 +730,6 @@ bool SidebarClass::AddCameo(RTTIType type, int id)
 	return false;
 }
 
-extern int DAT_00886F9C;
 extern int DAT_00884CF8;
 
 static inline int Visible_Cameos(void)
@@ -745,7 +743,7 @@ static inline int Visible_Cameos(void)
 	} else {
 		reserved = 0x12;
 	}
-	return (DAT_00886F94 + DAT_00886F9C - DAT_00B0B4F8 - reserved - 7) / 50 * 2;
+	return (SidebarRect.Y + SidebarRect.Height - DAT_00B0B4F8 - reserved - 7) / 50 * 2;
 }
 
 // FUNCTION: GAMEMD 0x006A6610
@@ -835,7 +833,7 @@ static inline int Max_Visible_Cameos(void)
 	} else {
 		reserved = 0x12;
 	}
-	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
+	return (SidebarRect.Y - DAT_00B0B4F8 - reserved + SidebarRect.Height - 7) / 50;
 }
 
 extern Rect DAT_008809F4;
@@ -859,7 +857,7 @@ void SidebarClass::Draw_It(bool complete)
 		if (IsForceCompleteRedraw) {
 			redrawn = true;
 
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B468, 0, Point2D(0, DAT_00886F94), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B468, 0, Point2D(0, SidebarRect.Y), window, SHAPE_WIN_REL);
 
 			int y = DAT_00B0B4F8;
 			for (int i = 0; i < Max_Visible_Cameos(); i++) {
@@ -925,7 +923,6 @@ void SidebarClass::Draw_It(bool complete)
 namespace Game { extern bool IsActive; extern HWND hWnd; }
 namespace Unsorted { extern bool ScenarioStarted; }
 extern bool DAT_00B0B519;
-extern int DAT_00886F98;
 
 // FUNCTION: GAMEMD 0x006A70E0
 void SidebarClass::Blit_Sidebar(bool complete)
@@ -946,9 +943,9 @@ void SidebarClass::Blit_Sidebar(bool complete)
 				if (IsToRedrawCredits) {
 					MouseCursor->Draw_Mouse(SidebarSurface, true);
 					VisibleSurface->Blit_From(
-						Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, DAT_00886F98, 16),
+						Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, SidebarRect.Width, 16),
 						*SidebarSurface,
-						Rect(0, 0, DAT_00886F98, 16),
+						Rect(0, 0, SidebarRect.Width, 16),
 						false,
 						true
 					);
@@ -965,10 +962,10 @@ void SidebarClass::Blit_Sidebar(bool complete)
 		MouseCursor->Draw_Mouse(SidebarSurface, true);
 		if (DAT_008809F4 == DAT_00B07DC8 && !complete) {
 			if (IsToRedrawCredits) {
-				VisibleSurface->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, DAT_00886F98, 16), *SidebarSurface, Rect(0, 0, DAT_00886F98, 16), false, true);
+				VisibleSurface->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, SidebarRect.Width, 16), *SidebarSurface, Rect(0, 0, SidebarRect.Width, 16), false, true);
 				IsToRedrawCredits = false;
 			}
-			VisibleSurface->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_00886F94, DAT_00886F98, SidebarSurface->Get_Height() - DAT_00886F94), *SidebarSurface, Rect(0, DAT_00886F94, DAT_00886F98, DAT_00886F9C), false, true);
+			VisibleSurface->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + SidebarRect.Y, SidebarRect.Width, SidebarSurface->Get_Height() - SidebarRect.Y), *SidebarSurface, Rect(0, SidebarRect.Y, SidebarRect.Width, SidebarRect.Height), false, true);
 		} else if (IsToBlitSidebar) {
 			Rect sb_rect = SidebarSurface->Get_Rect();
 			VisibleSurface->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, sb_rect.Width, sb_rect.Height), *SidebarSurface, Rect(0, 0, sb_rect.Width, sb_rect.Height), false, true);
@@ -1214,7 +1211,7 @@ static inline int Strip_Rows(void)
 	} else {
 		reserved = 0x12;
 	}
-	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
+	return (SidebarRect.Y - DAT_00B0B4F8 - reserved + SidebarRect.Height - 7) / 50;
 }
 
 // FUNCTION: GAMEMD 0x006A8220
@@ -1938,7 +1935,6 @@ int SidebarClass::FUN_006ABD10(void)
 	return -1;
 }
 
-extern int DAT_00886F9C;
 
 // FUNCTION: GAMEMD 0x006AC3E0
 int SidebarClass::Max_Visible(void)
@@ -1967,7 +1963,7 @@ int SidebarClass::GetVisibleCameoCount(void)
 	} else {
 		reserved = 0x12;
 	}
-	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50 * 2;
+	return (SidebarRect.Y - DAT_00B0B4F8 - reserved + SidebarRect.Height - 7) / 50 * 2;
 }
 
 #include "bitfont.h"
@@ -2132,7 +2128,7 @@ char const * SidebarClass::Help_Text(int id)
 		if (side == 0) reserved = 26;
 		else if (side == 1) reserved = 18;
 		else reserved = 18;
-		int rows = (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
+		int rows = (SidebarRect.Y - DAT_00B0B4F8 - reserved + SidebarRect.Height - 7) / 50;
 		if (id >= 1000 && id < 1000 + rows * 2) return (char const *)Column[ActiveTabIndex].Help_Text(id - 1000);
 	}
 	if (disabled) {
