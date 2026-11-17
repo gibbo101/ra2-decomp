@@ -63,7 +63,7 @@ Point2D __fastcall FUN_0072A9C0(Rect const * rect);
 void __fastcall FUN_0072A9E0(Rect * rect, int amount);
 void __fastcall FUN_0072B3E0(int side);
 void __fastcall FUN_0072B530(int country);
-void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha);
+void __fastcall ODFillRectTrans(Rect * rect, Surface * surface, unsigned short color, int alpha);
 
 LoadProgressManager * LoadProgressManager::Instance;
 
@@ -235,7 +235,7 @@ void __fastcall FUN_005541C0(wchar_t const * text, Surface * surface, Point2D po
 		rect.X = point.X - width + max_width;
 	}
 	FUN_0072A9E0(&rect, -4);
-	FUN_00621B80(&rect, surface, 0, 0x9f);
+	ODFillRectTrans(&rect, surface, 0, 0x9f);
 }
 
 namespace OwnerDraw {

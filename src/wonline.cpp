@@ -3356,7 +3356,7 @@ static inline void Close_Logout_Wait(unsigned int event)
 }
 
 namespace OwnerDraw {
-	BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam);
+	BOOL CALLBACK SetUserData2(HWND window, LPARAM lparam);
 }
 int __fastcall Join_Lobby(bool flag);
 bool FUN_0077CF40(void);
@@ -3408,19 +3408,19 @@ void __fastcall Handle_User_Leave(User *user)
 		HWND main = FUN_00775940(0x113);
 		if (main && DAT_00B77DC1) {
 			ShowWindow(main, SW_HIDE);
-			OwnerDraw::SetNeedsControlImage(main, 1);
+			OwnerDraw::SetUserData2(main, 1);
 		}
 		HWND guest = FUN_00775940(0xc9);
 		if (guest) {
 			FUN_007757E0(guest, 2);
 			FUN_0072CF90();
 			ShowWindow(guest, SW_HIDE);
-			OwnerDraw::SetNeedsControlImage(guest, 1);
+			OwnerDraw::SetUserData2(guest, 1);
 			if (Session.WOLWelcomeChoice == 4) {
 				if (DAT_00B77DC1) {
 					if (main) {
 						ShowWindow(main, SW_HIDE);
-						OwnerDraw::SetNeedsControlImage(main, 1);
+						OwnerDraw::SetUserData2(main, 1);
 					}
 				} else {
 					Join_Lobby(false);
@@ -3438,12 +3438,12 @@ void __fastcall Handle_User_Leave(User *user)
 			FUN_007757E0(game, 2);
 			FUN_0072CF90();
 			ShowWindow(game, SW_HIDE);
-			OwnerDraw::SetNeedsControlImage(game, 1);
+			OwnerDraw::SetUserData2(game, 1);
 			if (Session.WOLWelcomeChoice == 4) {
 				if (DAT_00B77DC1) {
 					if (main) {
 						ShowWindow(main, SW_HIDE);
-						OwnerDraw::SetNeedsControlImage(main, 1);
+						OwnerDraw::SetUserData2(main, 1);
 					}
 				} else {
 					Join_Lobby(false);
@@ -3458,7 +3458,7 @@ void __fastcall Handle_User_Leave(User *user)
 		if (main) {
 			if (!DAT_00B77DC1) {
 				ShowWindow(main, SW_SHOW);
-				OwnerDraw::SetNeedsControlImage(main, 0);
+				OwnerDraw::SetUserData2(main, 0);
 			}
 			FUN_00781480();
 		}
@@ -4458,13 +4458,13 @@ void __fastcall NewLogin(HWND win)
 	Focus_Chat_Input_After(0xFFFFFFFF);
 	if (wait == 0) {
 		ShowWindow(win, SW_SHOW);
-		OwnerDraw::SetNeedsControlImage(win, 0);
+		OwnerDraw::SetUserData2(win, 0);
 		return;
 	}
 	if (wait == 8) {
 		SetEvent(g_WaitEventHandles[8]);
 		ShowWindow(win, SW_SHOW);
-		OwnerDraw::SetNeedsControlImage(win, 0);
+		OwnerDraw::SetUserData2(win, 0);
 		return;
 	}
 
@@ -4615,12 +4615,12 @@ cant_connect:
 	ODMessageBox(StringTable::LoadString("TXT_CANT_CONNECT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2B4B), 0, FUN_0077D710, 0);
 done:
 	ShowWindow(win, SW_SHOW);
-	OwnerDraw::SetNeedsControlImage(win, 0);
+	OwnerDraw::SetUserData2(win, 0);
 	FUN_0072C470();
 	} else {
 		ShowWindow(win, SW_SHOWNORMAL);
 		ShowWindow(win, SW_SHOW);
-		OwnerDraw::SetNeedsControlImage(win, 0);
+		OwnerDraw::SetUserData2(win, 0);
 		FUN_0072C290();
 	}
 }
@@ -5819,7 +5819,7 @@ BOOL CALLBACK WOL_Options_Dialog_Proc(HWND window, UINT message, WPARAM wparam, 
 					FUN_0072B8E0();
 					FUN_006B6230(&lparam);
 					ShowWindow(window, SW_SHOW);
-					OwnerDraw::SetNeedsControlImage(window, 0);
+					OwnerDraw::SetUserData2(window, 0);
 					FUN_0072B930();
 					return FALSE;
 			}
@@ -5827,7 +5827,7 @@ BOOL CALLBACK WOL_Options_Dialog_Proc(HWND window, UINT message, WPARAM wparam, 
 
 		case 0x4ED:
 			ShowWindow(window, SW_HIDE);
-			OwnerDraw::SetNeedsControlImage(window, 1);
+			OwnerDraw::SetUserData2(window, 1);
 			return FALSE;
 
 		case 0x497:
@@ -8835,7 +8835,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 
 		case 0x4ED:
 			ShowWindow(window, SW_HIDE);
-			OwnerDraw::SetNeedsControlImage(window, 1);
+			OwnerDraw::SetUserData2(window, 1);
 			return FALSE;
 
 		case 0x4DB:
@@ -13598,7 +13598,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 			FUN_007757E0(window, 2);
 			FUN_0072CF90();
 			ShowWindow(window, 0);
-			OwnerDraw::SetNeedsControlImage(window, 1);
+			OwnerDraw::SetUserData2(window, 1);
 			g_pChat->RequestChannelLeave();
 			g_JoinLobbyNow = 1;
 			return 0;
@@ -13966,7 +13966,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 			FUN_0052FEC0(0, true);
 			bool cancelled = Scenario_Dialog(MainWindow) == 2;
 			ShowWindow(window, 5);
-			OwnerDraw::SetNeedsControlImage(window, 0);
+			OwnerDraw::SetUserData2(window, 0);
 			SetFocus(GetDlgItem(window, 0x540));
 			if (cancelled) {
 				Session.Options.ScenarioIndex = old;
@@ -13974,7 +13974,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 				FUN_005E74E0(window);
 				DAT_008316D4 = true;
 				ShowWindow(window, 5);
-				OwnerDraw::SetNeedsControlImage(window, 0);
+				OwnerDraw::SetUserData2(window, 0);
 				FUN_005ED370(window);
 				PumpGameopts(true, false);
 				InvalidateRect(window, 0, 0);
@@ -14002,7 +14002,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 			FUN_0078F000();
 			DAT_008316D4 = true;
 			ShowWindow(window, 5);
-			OwnerDraw::SetNeedsControlImage(window, 0);
+			OwnerDraw::SetUserData2(window, 0);
 			FUN_005E2F60(window);
 			if (strcmp(filename, Session.ScenarioFileName) ||
 				wcscmp(description, Session.Options.ScenarioDescription)) {
@@ -14230,7 +14230,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 	}
 	case 0x4ed:
 		ShowWindow(window, 0);
-		OwnerDraw::SetNeedsControlImage(window, 1);
+		OwnerDraw::SetUserData2(window, 1);
 	host_unhandled:
 		return 0;
 	case WM_MOVE:
@@ -14500,7 +14500,7 @@ BOOL CALLBACK WOL_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 		return FALSE;
 	case 0x4ED:
 		ShowWindow(window, SW_HIDE);
-		OwnerDraw::SetNeedsControlImage(window, 1);
+		OwnerDraw::SetUserData2(window, 1);
 		return FALSE;
 	case 0x4E9: {
 		TooltipRequest *request = (TooltipRequest *)lparam;
@@ -14718,7 +14718,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 		HWND main = FUN_00775940(0x113);
 		if (main) {
 			ShowWindow(main, SW_SHOW);
-			OwnerDraw::SetNeedsControlImage(main, 0);
+			OwnerDraw::SetUserData2(main, 0);
 		}
 		return 0;
 	}
@@ -14796,7 +14796,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 				HWND main = FUN_00775940(0x113);
 				if (main) {
 					ShowWindow(main, SW_HIDE);
-					OwnerDraw::SetNeedsControlImage(main, 0);
+					OwnerDraw::SetUserData2(main, 0);
 				}
 				SendMessage(dlg, 0x4A9, 0, 1);
 				ShowWindow(dlg, SW_NORMAL);

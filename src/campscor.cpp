@@ -1102,7 +1102,7 @@ namespace UI {
 }
 namespace OwnerDraw {
 	void __fastcall Paint(HWND window);
-	BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam);
+	BOOL CALLBACK SetUserData2(HWND window, LPARAM lparam);
 }
 void __fastcall FUN_00607FD0(HWND window);
 extern wchar_t DAT_0089E0A4[];
@@ -1222,7 +1222,7 @@ int CALLBACK FUN_00470D30(HWND window, UINT message, WPARAM wparam, LPARAM lpara
 		case 0x4ed:
 			FUN_0052FEC0(NULL, true);
 			ShowWindow(window, 0);
-			OwnerDraw::SetNeedsControlImage(window, 1);
+			OwnerDraw::SetUserData2(window, 1);
 			break;
 	}
 	return 0;

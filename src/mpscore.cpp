@@ -215,7 +215,7 @@ extern int DAT_00B779D4;
 extern Surface * AlternateSurface;
 void __fastcall FUN_00603D30(HWND item, Surface * surface);
 void __fastcall FUN_0072AA10(Rect * rect, int dx, int dy);
-void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha);
+void __fastcall ODFillRectTrans(Rect * rect, Surface * surface, unsigned short color, int alpha);
 Surface * __fastcall FUN_005CA110(int index);
 
 static const int DAT_0082FD5C[8][5] = {
@@ -331,7 +331,7 @@ int CALLBACK FUN_005C9B10(HWND window, UINT message, WPARAM wparam, LPARAM lpara
 			OwnerDraw::GetRectangle(item, &last);
 			Rect rect(first.left, first.top, last.right - first.left, last.bottom - first.top);
 			FUN_0072AA10(&rect, -4, -8);
-			FUN_00621B80(&rect, AlternateSurface, 0, 0x9f);
+			ODFillRectTrans(&rect, AlternateSurface, 0, 0x9f);
 			break;
 	}
 	return 0;

@@ -5221,8 +5221,8 @@ LRESULT CALLBACK AutoRadioButtonHandler(HWND window, UINT message, WPARAM wparam
 LRESULT CALLBACK DefaultHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x0060F760
-// OwnerDraw::SetNeedsControlImage
-BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam)
+// OwnerDraw::SetUserData2
+BOOL CALLBACK SetUserData2(HWND window, LPARAM lparam)
 {
 	WinData *data = NULL;
 	if (!Dialogs.getPointer(window, &data)) {
@@ -5236,8 +5236,8 @@ BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam)
 
 
 // FUNCTION: GAMEMD 0x0060F9A0
-// OwnerDraw::RegisterChildControlProc
-BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam)
+// OwnerDraw::InitializeCtrl
+BOOL CALLBACK InitializeCtrl(HWND window, LPARAM lparam)
 {
 	char class_name[128];
 	GetClassName(window, class_name, sizeof(class_name));
@@ -5343,14 +5343,14 @@ BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam)
 }
 
 extern int DAT_00AC48D8;
-void __fastcall FUN_006219D0(Rect const & rect, Surface & surface, int xpos, int ypos);
+void __fastcall ODDrawBevelDarken(Rect const & rect, Surface & surface, int xpos, int ypos);
 namespace OwnerDraw {
 int __fastcall PrintTextFixedLength(unsigned color, BitFont * font, Rect const & rect, wchar_t const * text, int length, int x_alignment, int y_alignment, Surface * surface, int unknown);
 void DrawBeveledBorder(Surface & surface, Rect const & rect, int offset, int color);
 }
 
 void __fastcall FUN_0053E420(HWND window);
-BOOL CALLBACK FUN_00610570(HWND window, LPARAM lparam);
+BOOL CALLBACK ODRemoveFromDict(HWND window, LPARAM lparam);
 
 static inline char Remove_Entry(Dictionary<HWND, WNDPROC> & dict, HWND & window)
 {
@@ -5365,15 +5365,15 @@ static inline char Remove_Entry(Dictionary<HWND, OwnerDraw::WinData> & dict, HWN
 }
 
 // FUNCTION: GAMEMD 0x00610360
-BOOL __fastcall FUN_00610360(HWND window)
+BOOL __fastcall ODCleanupDicts(HWND window)
 {
-	EnumChildWindows(window, FUN_00610570, 0);
-	FUN_00610570(window, 0);
+	EnumChildWindows(window, ODRemoveFromDict, 0);
+	ODRemoveFromDict(window, 0);
 	return TRUE;
 }
 
 // FUNCTION: GAMEMD 0x00610570
-BOOL CALLBACK FUN_00610570(HWND window, LPARAM lparam)
+BOOL CALLBACK ODRemoveFromDict(HWND window, LPARAM lparam)
 {
 	Remove_Entry(OwnerDraw::DialogProcs, window);
 	Remove_Entry(OwnerDraw::Dialogs, window);
@@ -5470,7 +5470,7 @@ bool OwnerDraw::DrawTooltip(bool save_background)
 	VisibleSurface->Fill_Rect(rect, color);
 	VisibleSurface->Unlock();
 
-	FUN_006219D0(rect, *VisibleSurface, 8, 4);
+	ODDrawBevelDarken(rect, *VisibleSurface, 8, 4);
 
 	OwnerDraw::PrintTextFixedLength(OwnerDraw::PrimaryTextColor, 0, rect, ODTooltip.text, wcslen(ODTooltip.text), 1, 1, VisibleSurface, 0);
 	rect.X += 1;
@@ -5563,7 +5563,7 @@ void __fastcall BlendGradientRect(Rect const & rect, Surface & surface, int colo
 void __fastcall CopyDimmedBackground(Rect const & rect, HWND hWnd, int alpha);
 }
 
-void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha);
+void __fastcall ODFillRectTrans(Rect * rect, Surface * surface, unsigned short color, int alpha);
 namespace OwnerDraw {
 int __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int style, int p5, int p6, int p7, int p8);
 }
@@ -5876,7 +5876,7 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 			Rect srect(0, 0, image->Get_Width(), image_height);
 			AlternateSurface->Blit_From(drect, *image, srect, false, true);
 			if (style & WS_DISABLED) {
-				FUN_00621B80(&drect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
+				ODFillRectTrans(&drect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
 			}
 			trect.Left += 26;
 			if (data->Wide.text) {
@@ -6104,7 +6104,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 		}
 
 		if (style & WS_DISABLED) {
-			FUN_00621B80(&rect, AlternateSurface, 0, 128);
+			ODFillRectTrans(&rect, AlternateSurface, 0, 128);
 		}
 		ValidateRect(window, NULL);
 		return 0;
@@ -6749,7 +6749,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 				Rect src_rect(0, 0, client_copy.right + 1, client_copy.bottom + 1);
 				Rect dst_rect(disp_copy.left, disp_copy.top, client_copy.right + 1, client_copy.bottom + 1);
 				surf->Blit_From(src_rect, *AlternateSurface, dst_rect);
-				FUN_00621B80(&src_rect, surf, 0, data->Edit.alpha);
+				ODFillRectTrans(&src_rect, surf, 0, data->Edit.alpha);
 			}
 
 			if (data->cachedSurface != NULL) {
@@ -6799,7 +6799,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 
 			int disabled = style & WS_DISABLED;
 			if (disabled) {
-				FUN_00621B80(&grip_rect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
+				ODFillRectTrans(&grip_rect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
 			}
 
 			int frame_color = ODColorToHiColor(OwnerDraw::DefaultBorderColor);
@@ -6963,8 +6963,8 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 namespace UI {
 void __fastcall GetKeyboardKeyString(unsigned short key, wchar_t *buffer);
 }
-int __fastcall FUN_00620F60(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags);
-inline int Draw_Hotkey_Text0(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return FUN_00620F60(surface, text, rect, font, color, flags); }
+int __fastcall ODDrawTextBG(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags);
+inline int Draw_Hotkey_Text0(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return ODDrawTextBG(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text1(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text0(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text2(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text1(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text3(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text2(surface, text, rect, font, color, flags); }
@@ -7673,7 +7673,7 @@ inline unsigned Color_To_Pixel(unsigned color)
 }
 
 // FUNCTION: GAMEMD 0x00620F60
-int __fastcall FUN_00620F60(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags)
+int __fastcall ODDrawTextBG(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags)
 {
 	unsigned pixel = Color_To_Pixel(color);
 	int x = rect->left;
@@ -7933,7 +7933,7 @@ void __fastcall OwnerDraw::BlendGradientRect(Rect const & rect, Surface & surfac
 }
 
 // FUNCTION: GAMEMD 0x006219D0
-void __fastcall FUN_006219D0(Rect const &rect, Surface &surface, int xpos, int ypos)
+void __fastcall ODDrawBevelDarken(Rect const &rect, Surface &surface, int xpos, int ypos)
 {
 	unsigned short *surfptr = (unsigned short *)surface.Lock();
 
@@ -7974,7 +7974,7 @@ void __fastcall FUN_006219D0(Rect const &rect, Surface &surface, int xpos, int y
 }
 
 // FUNCTION: GAMEMD 0x00621B80
-void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha)
+void __fastcall ODFillRectTrans(Rect * rect, Surface * surface, unsigned short color, int alpha)
 {
 	unsigned short * pixels = (unsigned short *)surface->Lock();
 	if (pixels) {
@@ -8291,8 +8291,8 @@ void OwnerDraw::Display_Dialog(HWND window)
 }
 
 namespace OwnerDraw {
-BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam);
-BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam);
+BOOL CALLBACK SetUserData2(HWND window, LPARAM lparam);
+BOOL CALLBACK InitializeCtrl(HWND window, LPARAM lparam);
 }
 BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam);
 void __fastcall FUN_0060CF00(HWND dialog);
