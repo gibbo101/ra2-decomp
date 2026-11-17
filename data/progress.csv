@@ -5704,7 +5704,7 @@ address,name,result,size,source,symbol
 0x004FBF60,HouseClass::Flag_Attach,MATCH,252,src/house.cpp,?Flag_Attach@HouseClass@@QAE_NABVCell@@_N@Z
 0x004FC060,HouseClass::Flag_Attach,MATCH,78,src/house.cpp,?Flag_Attach@HouseClass@@QAE_NPAVUnitClass@@_N@Z
 0x004FC0B0,HouseClass::MPlayer_Defeated,MATCH,1559,src/house.cpp,?MPlayer_Defeated@HouseClass@@QAEXXZ
-0x004FC6D0,HouseClass::Destroy_All,MATCH,181,src/house.cpp,?Destroy_All@HouseClass@@QAEXXZ
+0x004FC6D0,HouseClass::Blowup_All,MATCH,181,src/house.cpp,?Blowup_All@HouseClass@@QAEXXZ
 0x004FC790,HouseClass::Destroy_All_Buildings,MATCH,143,src/house.cpp,?Destroy_All_Buildings@HouseClass@@QAEXXZ
 0x004FC820,HouseClass::Destroy_All_Non_Buildings_Non_Naval,MATCH,171,src/house.cpp,?Destroy_All_Non_Buildings_Non_Naval@HouseClass@@QAEXXZ
 0x004FC8D0,HouseClass::Destroy_All_Non_Buildings_Naval,MATCH,171,src/house.cpp,?Destroy_All_Non_Buildings_Naval@HouseClass@@QAEXXZ
@@ -5810,7 +5810,7 @@ address,name,result,size,source,symbol
 0x005095D0,HouseClass::Owned_Team_Count,MATCH,61,src/house.cpp,?Owned_Team_Count@HouseClass@@QBEHPBVTeamTypeClass@@@Z
 0x00509610,HouseClass::Can_Create_Team,MATCH,237,src/house.cpp,?Can_Create_Team@HouseClass@@QAE_NPBVTeamTypeClass@@@Z
 0x00509700,HouseClass::Update_Production_Mode,MATCH,492,src/house.cpp,?Update_Production_Mode@HouseClass@@QAEXW4RTTIType@@@Z
-0x005098F0,HouseClass::AI_TryFireSW,MATCH,552,src/house.cpp,?AI_TryFireSW@HouseClass@@QAEXXZ
+0x005098F0,HouseClass::AI_Super_Weapons,MATCH,552,src/house.cpp,?AI_Super_Weapons@HouseClass@@QAEXXZ
 0x00509B20,HouseClass::AI_Multi_Missile,MATCH,167,src/house.cpp,?AI_Multi_Missile@HouseClass@@QAEXPAVSuperClass@@@Z
 0x00509BD0,HouseClass::AI_Hunter_Seeker,MATCH,49,src/house.cpp,?AI_Hunter_Seeker@HouseClass@@QAEXPAVSuperClass@@@Z
 0x00509C10,HouseClass::AI_Chem_Missile,MATCH,167,src/house.cpp,?AI_Chem_Missile@HouseClass@@QAEXPAVSuperClass@@@Z

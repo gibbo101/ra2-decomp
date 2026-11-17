@@ -1194,7 +1194,7 @@ void HouseClass::AI()
 	}
 	if (IsToDie && BorrowedTime.Value() == 0) {
 		IsToDie = false;
-		Destroy_All();
+		Blowup_All();
 	}
 	Power = MAX(Power, 0);
 	Drain = MAX(Drain, 0);
@@ -1305,7 +1305,7 @@ void HouseClass::AI()
 				defeated = true;
 		}
 		if (defeated) {
-			Destroy_All();
+			Blowup_All();
 			MPlayer_Defeated();
 		}
 	}
@@ -2725,7 +2725,7 @@ void HouseClass::MPlayer_Defeated(void)
 }
 
 // FUNCTION: GAMEMD 0x004FC6D0
-void HouseClass::Destroy_All(void)
+void HouseClass::Blowup_All(void)
 {
 	int i = 0;
 	TechnoClass * last = NULL;
@@ -3017,7 +3017,7 @@ int HouseClass::Expert_AI(void)
 	}
 
 	if (Session.Type != GAME_NORMAL || IQ >= Rule->IQSuperWeapons) {
-		AI_TryFireSW();
+		AI_Super_Weapons();
 	}
 
 	if (State == STATE_ENDGAME) {
@@ -6695,7 +6695,7 @@ static inline void Fire_At_Defensive_Cell(HouseClass * house, SuperClass * super
 }
 
 // FUNCTION: GAMEMD 0x005098F0
-void HouseClass::AI_TryFireSW(void)
+void HouseClass::AI_Super_Weapons(void)
 {
 	if (!Is_Human_Player()) {
 		for (int i = 0; i < SuperWeapon.Count(); i++) {

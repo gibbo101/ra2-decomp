@@ -1861,7 +1861,7 @@ bool TActionClass::TAction_DESTROY_ALL_OBJECTS(HouseClass * , ObjectClass * , Tr
 {
 	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) return(false);
-	hptr->Destroy_All();
+	hptr->Blowup_All();
 	return(true);
 }
 

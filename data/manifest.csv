@@ -6058,7 +6058,7 @@ address,size,symbol,source,sha256
 0x004FBF60,252,?Flag_Attach@HouseClass@@QAE_NABVCell@@_N@Z,src/house.cpp,c96f0733f726040589272572363fdd5ec28849b80dd62e7052167ee075247a98
 0x004FC060,78,?Flag_Attach@HouseClass@@QAE_NPAVUnitClass@@_N@Z,src/house.cpp,2595d7b653b5947445569e2e0ca087a7d859c27ac7a8bc93d74209b4940240ae
 0x004FC0B0,1559,?MPlayer_Defeated@HouseClass@@QAEXXZ,src/house.cpp,ed1f610c10a3cbd71efd57141c7aef36b6f964077bb099d442a412ce2f6d7616
-0x004FC6D0,181,?Destroy_All@HouseClass@@QAEXXZ,src/house.cpp,e86784cf18e6f845838e6342a05232f3ba9d0d70ee0ba9e2a65ee46d63492e4e
+0x004FC6D0,181,?Blowup_All@HouseClass@@QAEXXZ,src/house.cpp,e86784cf18e6f845838e6342a05232f3ba9d0d70ee0ba9e2a65ee46d63492e4e
 0x004FC790,143,?Destroy_All_Buildings@HouseClass@@QAEXXZ,src/house.cpp,d9276552043bac7602264f7fe8660644aeda03536efb6ae17652febd0fa1de0d
 0x004FC820,171,?Destroy_All_Non_Buildings_Non_Naval@HouseClass@@QAEXXZ,src/house.cpp,e30b718ccfe57f82ca5664b66e1c3625c937d89aaccfedf9097520467778b7de
 0x004FC8D0,171,?Destroy_All_Non_Buildings_Naval@HouseClass@@QAEXXZ,src/house.cpp,b6436281ecbafdd3279e50aae0764ac1be6c7b1d943733cf670217fd6bee9f75
@@ -6166,7 +6166,7 @@ address,size,symbol,source,sha256
 0x005095D0,61,?Owned_Team_Count@HouseClass@@QBEHPBVTeamTypeClass@@@Z,src/house.cpp,e51ad14b566f5be484a87875238120aa5c0906b929bd6f57e63a023472ee1c68
 0x00509610,237,?Can_Create_Team@HouseClass@@QAE_NPBVTeamTypeClass@@@Z,src/house.cpp,7d9704692696cb40c4392feb137fe798e2f4c88bc48209f8003161fac61d5108
 0x00509700,492,?Update_Production_Mode@HouseClass@@QAEXW4RTTIType@@@Z,src/house.cpp,3c9703c6417b4dbf767aa11e54199e6a68f45cd7c43b4b4c4ecd04d1db599acc
-0x005098F0,552,?AI_TryFireSW@HouseClass@@QAEXXZ,src/house.cpp,49c1cf7569b474b9473a3826a84526f73ee8a86631163caa4ba6e82d0a24cd81
+0x005098F0,552,?AI_Super_Weapons@HouseClass@@QAEXXZ,src/house.cpp,49c1cf7569b474b9473a3826a84526f73ee8a86631163caa4ba6e82d0a24cd81
 0x00509B20,167,?AI_Multi_Missile@HouseClass@@QAEXPAVSuperClass@@@Z,src/house.cpp,1ca97d6e9e6e1226fd0fc27b59cc5efdb56da9c712dfe6c0258053511acc283b
 0x00509BD0,49,?AI_Hunter_Seeker@HouseClass@@QAEXPAVSuperClass@@@Z,src/house.cpp,e14ba2dac635ce9e7d6dd43c6b489ba5a88b519f272273e006948c12436d7e6f
 0x00509C10,167,?AI_Chem_Missile@HouseClass@@QAEXPAVSuperClass@@@Z,src/house.cpp,f8d29a9e02f600a4eaa2c037eaaa2da438076225131e7680f2f07459de93b908

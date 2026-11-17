@@ -234,7 +234,6 @@ address,name,source
 0x00502A80,HouseClass::RegisterGain,symbols.csv
 0x00502D30,HouseClass::FindByCountryIndex,symbols.csv
 0x005051E0,HouseClass::FirstBuildableFromArray,symbols.csv
-0x005098F0,HouseClass::AI_TryFireSW,symbols.csv
 0x00509CD0,HouseClass::Fire_ParaDrop,symbols.csv
 0x00509E00,HouseClass::Fire_LightningStorm,symbols.csv
 0x00509F60,HouseClass::Fire_GenMutator,symbols.csv
