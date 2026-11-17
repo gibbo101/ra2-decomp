@@ -251,15 +251,6 @@ struct FileSystem {
 	static ConvertClass * SIDEBAR_PAL;
 };
 
-struct Drawing {
-	static unsigned char RedShiftRight;
-	static unsigned char GreenShiftRight;
-	static unsigned char BlueShiftRight;
-	static int RedShiftLeft;
-	static int GreenShiftLeft;
-	static int BlueShiftLeft;
-};
-
 struct TextColor {
 	unsigned char R;
 	unsigned char G;
@@ -341,9 +332,9 @@ void RadarClass::Set_Buttons(bool on)
 
 inline int Pack_Color(TextColor const & c)
 {
-	return (c.R >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
-		| (c.G >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
-		| (c.B >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
+	return (c.R >> DSurface::RedLeft << DSurface::RedRight)
+		| (c.G >> DSurface::GreenLeft << DSurface::GreenRight)
+		| (c.B >> DSurface::BlueLeft << DSurface::BlueRight);
 }
 
 // FUNCTION: GAMEMD 0x00652E90
