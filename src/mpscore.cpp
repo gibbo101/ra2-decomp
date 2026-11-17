@@ -51,10 +51,9 @@
 // _$E38
 
 class Surface;
-struct Drawing {
-	static int RenderWidth;
-	static int RenderHeight;
-};
+extern int VideoModeWidth;
+extern int VideoModeHeight;
+
 extern Surface * HiddenSurface;
 void __fastcall FUN_0072D730(int side);
 void FUN_0072D780(void);
@@ -87,7 +86,7 @@ MPScoreScreen::MPScoreScreen(void)
 void MPScoreScreen::Present(void)
 {
 	FUN_0072D730(Scen->PlayerSideIndex);
-	Rect rect(0, 0, Drawing::RenderWidth, Drawing::RenderHeight);
+	Rect rect(0, 0, VideoModeWidth, VideoModeHeight);
 	FUN_0072EAD0(HiddenSurface, &rect);
 	FUN_004F4780(true, HiddenSurface, false);
 	FUN_0060D380(0x108, FUN_005C9B10, false);

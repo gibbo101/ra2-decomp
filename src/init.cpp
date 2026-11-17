@@ -178,21 +178,19 @@ void FUN_0052B990(void)
 	DAT_00A8F76C = 128;
 }
 
-struct Drawing {
-	static int RenderWidth;
-	static int RenderHeight;
-};
+extern int VideoModeWidth;
+extern int VideoModeHeight;
 
 // FUNCTION: GAMEMD 0x0052B9B0
 void __fastcall FUN_0052B9B0(HWND dialog)
 {
 	HWND control = GetDlgItem(dialog, 0x71A);
 	if (control) {
-		int x = (Drawing::RenderWidth <= 800) ? 0 : (Drawing::RenderWidth - 800) / 2;
-		int y = (Drawing::RenderHeight <= 600) ? 0 : (Drawing::RenderHeight - 600) / 2;
+		int x = (VideoModeWidth <= 800) ? 0 : (VideoModeWidth - 800) / 2;
+		int y = (VideoModeHeight <= 600) ? 0 : (VideoModeHeight - 600) / 2;
 		SetWindowPos(control, NULL, x, y, -1, -1, SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW);
 		SendMessage(control, 0x4E3, 1, 0);
-		if (Drawing::RenderWidth == 640) {
+		if (VideoModeWidth == 640) {
 			SendMessage(control, 0x4E4, 0, (LPARAM)"Ra2ts_s");
 		} else {
 			SendMessage(control, 0x4E4, 0, (LPARAM)"Ra2ts_l");
@@ -2409,7 +2407,7 @@ void FUN_005312A0(void)
 		if (pal != NULL) {
 			convert = new ConvertClass(*pal, *(PaletteClass *)FileSystem::TEMPERAT_PAL, *VisibleSurface, 1, false);
 			if (convert != NULL) {
-				shp = (SHPStruct *)FileSystem::LoadFile(Drawing::RenderWidth == 640 ? "GLSSMD.SHP" : "GLSLMD.SHP", false);
+				shp = (SHPStruct *)FileSystem::LoadFile(VideoModeWidth == 640 ? "GLSSMD.SHP" : "GLSLMD.SHP", false);
 			}
 		}
 	}
