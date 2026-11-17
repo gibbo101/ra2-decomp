@@ -18103,7 +18103,7 @@ address,name,result,size,source,symbol
 0x00783B80,FUN_00783B80,MATCH,245,src/wonline.cpp,?FUN_00783B80@@YIPAVSurface@@PAURankedUser@@@Z
 0x00785360,FUN_00785360,MATCH,9,src/wonline.cpp,?FUN_00785360@@YIXXZ
 0x007A3100,CNetUtilEventSink::OnLadderList,MATCH,2600,src/wonline.cpp,?OnLadderList@CNetUtilEventSink@@UAGJJPAULadder@@HJH@Z
-0x00785370,FUN_00785370,MATCH,976,src/wonline.cpp,?FUN_00785370@@YIHPAUHINSTANCE__@@@Z
+0x00785370,Startup_Chat,MATCH,976,src/wonline.cpp,?Startup_Chat@@YIHPAUHINSTANCE__@@@Z
 0x00785740,FUN_00785740,MATCH,1883,src/wonline.cpp,?FUN_00785740@@YIXPAUUser@@@Z
 0x00785EA0,FUN_00785EA0,MATCH,471,src/wonline.cpp,?FUN_00785EA0@@YIXXZ
 0x00786080,FUN_00786080,MATCH,496,src/wonline.cpp,?FUN_00786080@@YIXXZ
@@ -18241,8 +18241,8 @@ address,name,result,size,source,symbol
 0x007A2970,FUN_007A2970,MATCH,100,src/wonline.cpp,?FUN_007A2970@@YIXXZ
 0x007A29E0,FUN_007A29E0,MATCH,1167,src/wonline.cpp,?FUN_007A29E0@@YGHPAUHWND__@@IIJ@Z
 0x007A2E70,??_GSimpleWonlineDialogControl@@UAEPAXI@Z,MATCH,36,src/wonline.cpp,??_GSimpleWonlineDialogControl@@UAEPAXI@Z
-0x007A2EA0,FUN_007A2EA0,MATCH,130,src/wonline.cpp,?FUN_007A2EA0@@YGJPAUIUnknown@@0ABU_GUID@@PAK@Z
-0x007A2F30,FUN_007A2F30,MATCH,136,src/wonline.cpp,?FUN_007A2F30@@YGJPAUAtlModule@@PAXPAUHINSTANCE__@@@Z
+0x007A2EA0,AtlAdvise,MATCH,130,src/wonline.cpp,?AtlAdvise@@YGJPAUIUnknown@@0ABU_GUID@@PAK@Z
+0x007A2F30,AtlModuleInit,MATCH,136,src/wonline.cpp,?AtlModuleInit@@YGJPAUAtlModule@@PAXPAUHINSTANCE__@@@Z
 0x007A2FC0,CNetUtilEventSink::CNetUtilEventSink,MATCH,30,src/wonline.cpp,??0CNetUtilEventSink@@QAE@XZ
 0x007A2FE0,CNetUtilEventSink::OnWDTState,MATCH,231,src/wonline.cpp,?OnWDTState@CNetUtilEventSink@@UAGJJPAEH@Z
 0x007A30D0,CNetUtilEventSink::OnGameresSent,MATCH,39,src/wonline.cpp,?OnGameresSent@CNetUtilEventSink@@UAGJJ@Z
@@ -18298,7 +18298,7 @@ address,name,result,size,source,symbol
 0x007AC4D0,FUN_007AC4D0,MATCH,5,src/wonline.cpp,?FUN_007AC4D0@@YGJPAXJ0@Z
 0x007AC4E0,FUN_007AC4E0,MATCH,5,src/wonline.cpp,?FUN_007AC4E0@@YGJPAXJ0@Z
 0x007AC4F0,_$E372,MATCH,1,src/wonline.cpp,_$E372
-0x007AC500,FUN_007AC500,MATCH,193,src/wonline.cpp,?FUN_007AC500@@YGJPAUAtlModule@@@Z
+0x007AC500,AtlModuleTerm,MATCH,193,src/wonline.cpp,?AtlModuleTerm@@YGJPAUAtlModule@@@Z
 0x007AC670,??1?$CComPtr@UIConnectionPointContainer@@@ATL@@QAE@XZ,MATCH,13,src/wonline.cpp,??1?$CComPtr@UIConnectionPointContainer@@@ATL@@QAE@XZ
 0x007AC680,??1?$CComPtr@UIConnectionPoint@@@ATL@@QAE@XZ,MATCH,13,src/wonline.cpp,??1?$CComPtr@UIConnectionPoint@@@ATL@@QAE@XZ
 0x007AC690,?AddRef@?$CComObject@VCChatEventSink@@@ATL@@UAGKXZ,MATCH,17,src/wonline.cpp,?AddRef@?$CComObject@VCChatEventSink@@@ATL@@UAGKXZ

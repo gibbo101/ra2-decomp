@@ -1306,9 +1306,9 @@ extern int DAT_00B77DCC;
 extern int DAT_00B77DB8;
 extern int DAT_00B77DBC;
 extern wchar_t const * DAT_00B73E1C[8];
-extern DWORD DAT_00B77E54;
-extern DWORD DAT_00B77E58;
-extern DWORD DAT_00B77E5C;
+extern DWORD g_dwChatAdvise;
+extern DWORD g_dwNetUtilAdvise;
+extern DWORD g_dwDownloadAdvise;
 extern int DAT_00B77DDC;
 extern int DAT_00B77DE0;
 extern int DAT_00B77DE4;
@@ -1545,9 +1545,9 @@ void FUN_00780110(void)
 	g_pChat = NULL;
 	g_pNetUtil = NULL;
 	g_pDownload = NULL;
-	DAT_00B77E54 = 0;
-	DAT_00B77E58 = 0;
-	DAT_00B77E5C = 0;
+	g_dwChatAdvise = 0;
+	g_dwNetUtilAdvise = 0;
+	g_dwDownloadAdvise = 0;
 	DAT_00B77DDC = 0;
 	DAT_00B77DE0 = 0;
 	memset(DAT_00B77A94, 0, sizeof(DAT_00B77A94));
@@ -2825,8 +2825,8 @@ struct AtlModule {
 	long Unlock(void);
 };
 
-extern AtlModule DAT_00B76488;
-long __stdcall FUN_007AC500(AtlModule * module);
+extern AtlModule _Module;
+long __stdcall AtlModuleTerm(AtlModule * module);
 
 struct AtlIntMapEntry {
 	IID const * piid;
@@ -2837,9 +2837,9 @@ struct AtlIntMapEntry {
 extern AtlIntMapEntry DAT_007F7698[];
 extern AtlIntMapEntry DAT_007F7650[];
 extern AtlIntMapEntry DAT_007F7638[];
-extern AtlModule * DAT_00A8F7F0;
-extern GUID const DAT_00825CD0;
-long __stdcall FUN_007A2F30(AtlModule * module, void * objects, HINSTANCE instance);
+extern AtlModule * _pModule;
+extern GUID const GUID_ATLVer30;
+long __stdcall AtlModuleInit(AtlModule * module, void * objects, HINSTANCE instance);
 
 namespace ATL {
 
@@ -2870,7 +2870,7 @@ class CComPtr
 
 }
 
-inline long __stdcall FUN_007A2EA0(IUnknown * source, IUnknown * sink, IID const & iid, DWORD * cookie)
+inline long __stdcall AtlAdvise(IUnknown * source, IUnknown * sink, IID const & iid, DWORD * cookie)
 {
 	ATL::CComPtr<IConnectionPointContainer> container;
 	ATL::CComPtr<IConnectionPoint> point;
@@ -2884,26 +2884,26 @@ inline long __stdcall FUN_007A2EA0(IUnknown * source, IUnknown * sink, IID const
 	return result;
 }
 
-static inline bool Is_Unknown_Iid(IID const & iid)
+static inline bool InlineIsEqualUnknown(IID const & iid)
 {
 	long const * words = (long const *)&iid;
 	return words[0] == 0 && words[1] == 0 && words[2] == 0xC0 && words[3] == 0x46000000;
 }
 
-static inline bool Same_Iid(IID const & a, IID const & b)
+static inline bool InlineIsEqualGUID(IID const & a, IID const & b)
 {
 	long const * x = (long const *)&a;
 	long const * y = (long const *)&b;
 	return x[0] == y[0] && x[1] == y[1] && x[2] == y[2] && x[3] == y[3];
 }
 
-static inline long Atl_Internal_Query_Interface(void * pThis, AtlIntMapEntry * entries, IID const & iid, void ** object)
+static inline long AtlInternalQueryInterface(void * pThis, AtlIntMapEntry * entries, IID const & iid, void ** object)
 {
 	if (object == NULL) {
 		return E_POINTER;
 	}
 	*object = NULL;
-	if (Is_Unknown_Iid(iid)) {
+	if (InlineIsEqualUnknown(iid)) {
 		IUnknown * unknown = (IUnknown *)((int)pThis + entries->dw);
 		unknown->AddRef();
 		*object = unknown;
@@ -2911,7 +2911,7 @@ static inline long Atl_Internal_Query_Interface(void * pThis, AtlIntMapEntry * e
 	}
 	while (entries->pFunc != NULL) {
 		BOOL blind = (entries->piid == NULL);
-		if (blind || Same_Iid(*entries->piid, iid)) {
+		if (blind || InlineIsEqualGUID(*entries->piid, iid)) {
 			if (entries->pFunc == (void *)1) {
 				IUnknown * unknown = (IUnknown *)((int)pThis + entries->dw);
 				unknown->AddRef();
@@ -2941,11 +2941,11 @@ struct AtlThreadModel {
 
 inline long AtlModule::Init(void * objects, HINSTANCE instance, GUID const * libid)
 {
-	VersionGuid = &DAT_00825CD0;
-	DAT_00A8F7F0 = this;
+	VersionGuid = &GUID_ATLVer30;
+	_pModule = this;
 	cbSize = 0x84;
 	BuildVersion = 0x300;
-	FUN_007A2F30(this, objects, instance);
+	AtlModuleInit(this, objects, instance);
 	return S_OK;
 }
 
@@ -2968,7 +2968,7 @@ struct AtlRootBase {
 	void InternalFinalConstructRelease(void) {}
 	static long __stdcall InternalQueryInterface(void * pThis, AtlIntMapEntry * entries, IID const & iid, void ** object)
 	{
-		return Atl_Internal_Query_Interface(pThis, entries, iid, object);
+		return AtlInternalQueryInterface(pThis, entries, iid, object);
 	}
 
 	long RefCount;
@@ -3202,12 +3202,12 @@ template <class Base>
 class CComObject : public Base
 {
 	public:
-		CComObject(void * = NULL) { InterlockedIncrement(&DAT_00B76488.LockCount); }
+		CComObject(void * = NULL) { InterlockedIncrement(&_Module.LockCount); }
 		~CComObject(void)
 		{
 			RefCount = 1;
 			FinalRelease();
-			DAT_00B76488.Unlock();
+			_Module.Unlock();
 		}
 		virtual unsigned long __stdcall AddRef(void) { return InternalAddRef(); }
 		virtual unsigned long __stdcall Release(void)
@@ -3253,11 +3253,11 @@ extern IID const DAT_007F7560;
 extern IID const DAT_007F7550;
 extern IID const DAT_007F7590;
 extern IID const DAT_007F7570;
-extern ATL::CComObject<CChatEventSink> * DAT_00B778F8;
-extern ATL::CComObject<CNetUtilEventSink> * DAT_00B736EC;
-extern ATL::CComObject<CDownloadEventSink> * DAT_00B75F68;
+extern ATL::CComObject<CChatEventSink> * g_pChatSink;
+extern ATL::CComObject<CNetUtilEventSink> * g_pNetUtilSink;
+extern ATL::CComObject<CDownloadEventSink> * g_pDownloadSink;
 
-static inline HRESULT Unadvise_Sink(IUnknown * source, IID const & iid, DWORD cookie)
+static inline HRESULT AtlUnadvise(IUnknown * source, IID const & iid, DWORD cookie)
 {
 	ATL::CComPtr<IConnectionPointContainer> container;
 	ATL::CComPtr<IConnectionPoint> point;
@@ -3274,20 +3274,20 @@ static inline HRESULT Unadvise_Sink(IUnknown * source, IID const & iid, DWORD co
 #define APP_REG_KEY "SOFTWARE\\Westwood\\Yuri's Revenge"
 
 // FUNCTION: GAMEMD 0x00785370
-int __fastcall FUN_00785370(HINSTANCE instance)
+int __fastcall Startup_Chat(HINSTANCE instance)
 {
 	HRESULT result = 0;
-	DAT_00B76488.Init(NULL, instance);
+	_Module.Init(NULL, instance);
 	g_pChat = NULL;
 	g_pNetUtil = NULL;
 	g_pDownload = NULL;
-	DAT_00B77E54 = 0;
-	DAT_00B77E58 = 0;
-	DAT_00B77E5C = 0;
+	g_dwChatAdvise = 0;
+	g_dwNetUtilAdvise = 0;
+	g_dwDownloadAdvise = 0;
 	CoCreateInstance(DAT_007F75E0, NULL, CLSCTX_INPROC_SERVER, DAT_007F7540, (void **)&g_pChat);
 	if (g_pChat) {
-		ATL::CComObject<CChatEventSink>::CreateInstance(&DAT_00B778F8);
-		result = FUN_007A2EA0(g_pChat, DAT_00B778F8->GetUnknown(), DAT_007F7550, &DAT_00B77E54);
+		ATL::CComObject<CChatEventSink>::CreateInstance(&g_pChatSink);
+		result = AtlAdvise(g_pChat, g_pChatSink->GetUnknown(), DAT_007F7550, &g_dwChatAdvise);
 	}
 	if (g_pChat == NULL || result != S_OK) {
 		ODMessageBox(StringTable::LoadString("TXT_APIMISSING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x23DC), 0, (bool (*)(void))NULL, 0);
@@ -3295,8 +3295,8 @@ int __fastcall FUN_00785370(HINSTANCE instance)
 	}
 	CoCreateInstance(DAT_007F7600, NULL, CLSCTX_INPROC_SERVER, DAT_007F7580, (void **)&g_pNetUtil);
 	if (g_pNetUtil) {
-		ATL::CComObject<CNetUtilEventSink>::CreateInstance(&DAT_00B736EC);
-		result = FUN_007A2EA0(g_pNetUtil, DAT_00B736EC->GetUnknown(), DAT_007F7590, &DAT_00B77E58);
+		ATL::CComObject<CNetUtilEventSink>::CreateInstance(&g_pNetUtilSink);
+		result = AtlAdvise(g_pNetUtil, g_pNetUtilSink->GetUnknown(), DAT_007F7590, &g_dwNetUtilAdvise);
 	}
 	if (g_pNetUtil == NULL || result != S_OK) {
 		ODMessageBox(StringTable::LoadString("TXT_APIMISSING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x23EC), 0, (bool (*)(void))NULL, 0);
@@ -3304,8 +3304,8 @@ int __fastcall FUN_00785370(HINSTANCE instance)
 	}
 	CoCreateInstance(DAT_007F75F0, NULL, CLSCTX_INPROC_SERVER, DAT_007F7560, (void **)&g_pDownload);
 	if (g_pDownload) {
-		ATL::CComObject<CDownloadEventSink>::CreateInstance(&DAT_00B75F68);
-		result = FUN_007A2EA0(g_pDownload, DAT_00B75F68->GetUnknown(), DAT_007F7570, &DAT_00B77E5C);
+		ATL::CComObject<CDownloadEventSink>::CreateInstance(&g_pDownloadSink);
+		result = AtlAdvise(g_pDownload, g_pDownloadSink->GetUnknown(), DAT_007F7570, &g_dwDownloadAdvise);
 	}
 	if (g_pDownload == NULL || result != S_OK) {
 		ODMessageBox(StringTable::LoadString("TXT_APIMISSING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x23FC), 0, (bool (*)(void))NULL, 0);
@@ -3596,15 +3596,15 @@ void FUN_00786080(void)
 	if (DAT_00B77E75) {
 		FUN_005E8A20();
 		if (g_pChat) {
-			Unadvise_Sink(g_pChat, DAT_007F7550, DAT_00B77E54);
+			AtlUnadvise(g_pChat, DAT_007F7550, g_dwChatAdvise);
 			g_pChat->Release();
 		}
 		if (g_pNetUtil) {
-			Unadvise_Sink(g_pNetUtil, DAT_007F7590, DAT_00B77E58);
+			AtlUnadvise(g_pNetUtil, DAT_007F7590, g_dwNetUtilAdvise);
 			g_pNetUtil->Release();
 		}
 		if (g_pDownload) {
-			Unadvise_Sink(g_pDownload, DAT_007F7570, DAT_00B77E5C);
+			AtlUnadvise(g_pDownload, DAT_007F7570, g_dwDownloadAdvise);
 			g_pDownload->Release();
 		}
 		g_pChat = NULL;
@@ -3613,7 +3613,7 @@ void FUN_00786080(void)
 		for (int i = 0; i < 18; i++) {
 			CloseHandle(DAT_00B73684[i]);
 		}
-		FUN_007AC500(&DAT_00B76488);
+		AtlModuleTerm(&_Module);
 		DAT_00B77E75 = 0;
 	}
 }
@@ -3652,7 +3652,7 @@ bool FUN_00786270(void)
 void FUN_005E87A0(void);
 void FUN_005E8B40(void);
 void FUN_005E8B60(void);
-int __fastcall FUN_00785370(HINSTANCE instance);
+int __fastcall Startup_Chat(HINSTANCE instance);
 
 // FUNCTION: GAMEMD 0x00786390
 int FUN_00786390(void)
@@ -3684,7 +3684,7 @@ int FUN_00786390(void)
 	for (int i = 0; i < 18; i++) {
 		DAT_00B73684[i] = CreateEvent(NULL, FALSE, FALSE, NULL);
 	}
-	return FUN_00785370(ProgramInstance);
+	return Startup_Chat(ProgramInstance);
 }
 
 class SimpleWonlineDialogControl : public OwnerDraw::SimpleDialogControl
@@ -10735,9 +10735,9 @@ void __fastcall FUN_007B02A0(rc_ptr<WDTState> const & state);
 void __fastcall FUN_007B0220(rc_ptr<WDTState> const & state);
 
 // FUNCTION: GAMEMD 0x007A2EA0
-// FUN_007A2EA0
+// AtlAdvise
 
-static inline AtlObjectEntry * Next_Object_Entry(AtlModule * module, AtlObjectEntry * entry)
+static inline AtlObjectEntry * _NextObjectMapEntry(AtlModule * module, AtlObjectEntry * entry)
 {
 	if (module->cbSize == 0x64) {
 		return (AtlObjectEntry *)((char *)entry + 0x1C);
@@ -10746,7 +10746,7 @@ static inline AtlObjectEntry * Next_Object_Entry(AtlModule * module, AtlObjectEn
 }
 
 // FUNCTION: GAMEMD 0x007A2F30
-long __stdcall FUN_007A2F30(AtlModule * module, void * objects, HINSTANCE instance)
+long __stdcall AtlModuleInit(AtlModule * module, void * objects, HINSTANCE instance)
 {
 	if (module == NULL) {
 		return E_INVALIDARG;
@@ -10768,7 +10768,7 @@ long __stdcall FUN_007A2F30(AtlModule * module, void * objects, HINSTANCE instan
 		AtlObjectEntry * entry = module->Entries;
 		while (entry->Clsid != NULL) {
 			entry->ObjectMain(TRUE);
-			entry = Next_Object_Entry(module, entry);
+			entry = _NextObjectMapEntry(module, entry);
 		}
 	}
 	return S_OK;
@@ -13035,7 +13035,7 @@ long __stdcall FUN_007AC4E0(void * sink, long result, void * arg)
 // _$E372
 
 // FUNCTION: GAMEMD 0x007AC500
-long __stdcall FUN_007AC500(AtlModule * module)
+long __stdcall AtlModuleTerm(AtlModule * module)
 {
 	if (module == NULL) {
 		return E_INVALIDARG;
