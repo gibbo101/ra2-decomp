@@ -628,7 +628,7 @@ Cell const * BuildingTypeClass::Occupy_List(bool placement) const
 }
 
 // SYNTHETIC: GAMEMD 0x0045EC80 SYMBOL
-// _$E44
+// _$E251
 // FUNCTION: GAMEMD 0x0045EC90
 int BuildingTypeClass::Width(void) const
 {

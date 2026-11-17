@@ -192,7 +192,7 @@ Cell const * BulletClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x004666B0 SYMBOL
-// _$E41
+// _$E171
 
 // FUNCTION: GAMEMD 0x004666C0
 bool BulletClass::Mark(MarkType mark)

@@ -2043,7 +2043,7 @@ address,size,symbol,source,sha256
 0x00456640,102,?Plot_On_Radar@BuildingClass@@UBEXXZ,src/building.cpp,666d494b46a569918c797c355a248eeaf3857e344e6a6457c1ea6edf70e1f61e
 0x004566B0,159,?GetRadialIndicatorRange@BuildingClass@@QBEHXZ,src/building.cpp,60fcd42f5252a7899ab5a714664881fffdf11f542cd7017909e05556322e7e7a
 0x00456750,538,?Draw_Radial_Indicator@BuildingClass@@UAEXK@Z,src/building.cpp,b75fb77ebc63b411f4e1233a6ded85fe356e109fb796f9fc4492c5ad669af427
-0x00456970,1,_$E44,src/building.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x00456970,1,_$E298,src/building.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x00456980,1148,?DrawRadialIndicator@@YIXVCoord@@VRGBClass@@M_N222@Z,src/building.cpp,57ee5cdc7c2558d0c93bb1bba087ac782b47822e687a2a319e264c995041287b
 0x00456E00,384,?Clicked_As_Target@BuildingClass@@UAEXH@Z,src/building.cpp,199d1d2200e9ebba71590b334348ca08ddd410f30c0eb5e58e990c680feb1a5e
 0x00456F80,40,?Apparent_Brightness@BuildingClass@@UBEHH@Z,src/building.cpp,8eccfbb4ff6f01791dcc9f21f92982af70b855ed2cd7c3604fc6a34aed5b16f4
@@ -2203,7 +2203,7 @@ address,size,symbol,source,sha256
 0x0045E970,594,?Init@BuildingTypeClass@@SIXW4TheaterType@@@Z,src/builtype.cpp,70e32975e038d8bfc144d86b9bbf081cb564fd3c8d56f07d007a30e6a86e3d0f
 0x0045EBD0,76,?Pixel_Dimensions@BuildingTypeClass@@UBE?AV?$TPoint3D@H@@XZ,src/builtype.cpp,74a54ccb56f847c5e5b0174c512e22ef1b700ca7e7aeae2ae455356dcff5c4ca
 0x0045EC20,83,?Occupy_List@BuildingTypeClass@@UBEPBVCell@@_N@Z,src/builtype.cpp,b1bde6a4dc71a61f1207563d3d3eb09719ed24e0cd5ea82e038e447473c80a8f
-0x0045EC80,1,_$E44,src/builtype.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x0045EC80,1,_$E251,src/builtype.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x0045EC90,14,?Width@BuildingTypeClass@@QBEHXZ,src/builtype.cpp,ee698717a034b1a4cf0a2c6ff9abf3f3e4f77926554b9bdee5b923a709bde189
 0x0045ECA0,61,?Height@BuildingTypeClass@@QBEH_N@Z,src/builtype.cpp,99b8ff144de1fadba5abaf83372f106dd04d06a682e1f3276a3934126becda22
 0x0045ECE0,108,?Max_Pips@BuildingTypeClass@@UBEHXZ,src/builtype.cpp,0c41ad8e2b845f512a0732cee03a6efaf1350d1fed8820f0cf29ac7a46cd9ed1
@@ -2276,7 +2276,7 @@ address,size,symbol,source,sha256
 0x004664C0,160,?Construct@BulletClass@@QAEXPBVBulletTypeClass@@PAVAbstractClass@@PAVTechnoClass@@HPBVWarheadTypeClass@@H_N@Z,src/bullet.cpp,c1cfb8cbd64757640fdabe56acd385929e62b49c6d05568ce677c2ce139f51af
 0x00466560,250,??1BulletClass@@UAE@XZ,src/bullet.cpp,de1df786b226cff05b24c573011321c8642cdbc0deac8b603a675e9631413448
 0x00466660,69,?Occupy_List@BulletClass@@UBEPBVCell@@_N@Z,src/bullet.cpp,df8f11b1f7f435d781949d4ae7b7586fcd15e0e40d6122ec8070a088c86ee723
-0x004666B0,1,_$E41,src/bullet.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x004666B0,1,_$E171,src/bullet.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x004666C0,18,?Mark@BulletClass@@UAE_NW4MarkType@@@Z,src/bullet.cpp,d820a0de43fa2aca8f561398fd10fd275f92132d67a17d617ca1562f2c2fa8b3
 0x00468000,137,?Shape_Number@BulletClass@@UBEHXZ,src/bullet.cpp,f808d9543b06100f768d03fc2840f43536552abf4dbfbfe906c1dd1fe2eff4d2
 0x00468090,923,?Draw_It@BulletClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/bullet.cpp,17b49ce3fb58a75b200b3265aa40be9b9335c24d7bd9b23b245bd64b5162afe4
@@ -14574,7 +14574,7 @@ address,size,symbol,source,sha256
 0x006D8260,619,?Draw_Tile_Shadows@Tactical@@QAEXHABV?$TRect@H@@@Z,src/tactical.cpp,34375508b399b10ee780f622877d9e15566f8e72c91031a5de39d31e17eee5eb
 0x006D84D0,89,?Clamp_Pixel_To_Tactical@Tactical@@QAE?AVPoint2D@@ABV2@@Z,src/tactical.cpp,93aafd7b08818c49e13beefdbc4c741cf0b5eff339b279f5b9d1db005849330a
 0x006D8530,254,?Scroll_Map@Tactical@@QAEXW4FacingType@@H@Z,src/tactical.cpp,c2ac53dc2af5befa3aeef1144c83659c7a297f9052e131dd3f03146191640687
-0x006D8630,1,_$E44,src/tactical.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x006D8630,1,_$E264,src/tactical.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x006D8640,190,?Clamp_To_Tactical_Rect@Tactical@@QAE_NAAVPoint2D@@@Z,src/tactical.cpp,030210ee27fee1606fcc8842ab97fee50b649efd244f0d1f7dde5bf4cc2a9bab
 0x006D8700,989,?Cell_Shadow@Tactical@@QAEHABVCell@@_N@Z,src/tactical.cpp,deac95154e51bd279103a58e7eed2f4e3def0a9c2cde0e05b9ca530f49a752e8
 0x006D8AE0,70,?Is_Cell_Visible@Tactical@@QAE_NABVCell@@@Z,src/tactical.cpp,eea0555a859079c65b1166aadfa4078e6846d9495a1de8f5c47d56777234c373
@@ -14595,7 +14595,7 @@ address,size,symbol,source,sha256
 0x006DA160,29,?End_Rubber_Band@Tactical@@QAEXXZ,src/tactical.cpp,7190eb97e343deaed02033d2f28fd6e8dafe751116d2284a85b89b2ccf075064
 0x006DA180,168,?Draw_Rubber_Band@Tactical@@QAEXXZ,src/tactical.cpp,67bcac043f55fe0b9a17a960b5797419f725052bc806998b7c24b6701cb2c3f7
 0x006DA230,284,?Scroll_Dir@Tactical@@QAE?AW4FacingType@@W42@@Z,src/tactical.cpp,0d740a30ee23c8d7081ea56a0a77e7e5f71659e7c6a35884b344249ffb5d9f6c
-0x006DA350,1,_$E249,src/tactical.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x006DA350,1,_$E266,src/tactical.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x006DA360,15,?Clamp_Cursor_To_Tactical@Tactical@@QAE?AVCell@@ABV2@PBV2@@Z,src/tactical.cpp,2b0c4b64fa9a5cdba17aef53a8735d90d01650144428c19287d609f292fd9bbc
 0x006DA370,3,?Noop@Tactical@@QAEXH@Z,src/tactical.cpp,e598d0c3ba86d917b177d7adde0556aa99bc355543c57aee0a3e50b684dd7e99
 0x006DA380,467,?Get_Selectable_Object@Tactical@@QAEPAVObjectClass@@ABVPoint2D@@@Z,src/tactical.cpp,cf3525102b6f1a9f41f11e692a8c797eee76e620d2a15d83690b17df8d3ac363

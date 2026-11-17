@@ -7117,7 +7117,7 @@ void BuildingClass::Draw_Radial_Indicator(DWORD which)
 }
 
 // SYNTHETIC: GAMEMD 0x00456970 SYMBOL
-// _$E44
+// _$E298
 
 namespace Unsorted { extern int CurrentFrame; }
 

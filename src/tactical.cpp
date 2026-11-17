@@ -1654,7 +1654,7 @@ void Tactical::Scroll_Map(FacingType facing, int distance)
 }
 
 // SYNTHETIC: GAMEMD 0x006D8630 SYMBOL
-// _$E44
+// _$E264
 
 // FUNCTION: GAMEMD 0x006D8640
 bool Tactical::Clamp_To_Tactical_Rect(Point2D & pixel)
@@ -2176,7 +2176,7 @@ FacingType Tactical::Scroll_Dir(FacingType dir)
 }
 
 // SYNTHETIC: GAMEMD 0x006DA350 SYMBOL
-// _$E249
+// _$E266
 
 // FUNCTION: GAMEMD 0x006DA360
 Cell Tactical::Clamp_Cursor_To_Tactical(Cell const & cell, Cell const * list)

@@ -1680,7 +1680,7 @@ address,name,result,size,source,symbol
 0x00456640,BuildingClass::Plot_On_Radar,MATCH,102,src/building.cpp,?Plot_On_Radar@BuildingClass@@UBEXXZ
 0x004566B0,BuildingClass::GetRadialIndicatorRange,MATCH,159,src/building.cpp,?GetRadialIndicatorRange@BuildingClass@@QBEHXZ
 0x00456750,BuildingClass::Draw_Radial_Indicator,MATCH,538,src/building.cpp,?Draw_Radial_Indicator@BuildingClass@@UAEXK@Z
-0x00456970,_$E44,MATCH,1,src/building.cpp,_$E44
+0x00456970,_$E298,MATCH,1,src/building.cpp,_$E298
 0x00456980,DrawRadialIndicator,MATCH,1148,src/building.cpp,?DrawRadialIndicator@@YIXVCoord@@VRGBClass@@M_N222@Z
 0x00456E00,BuildingClass::Clicked_As_Target,MATCH,384,src/building.cpp,?Clicked_As_Target@BuildingClass@@UAEXH@Z
 0x00456F80,BuildingClass::Apparent_Brightness,MATCH,40,src/building.cpp,?Apparent_Brightness@BuildingClass@@UBEHH@Z
@@ -1840,7 +1840,7 @@ address,name,result,size,source,symbol
 0x0045E970,BuildingTypeClass::Init,MATCH,594,src/builtype.cpp,?Init@BuildingTypeClass@@SIXW4TheaterType@@@Z
 0x0045EBD0,BuildingTypeClass::Pixel_Dimensions,MATCH,76,src/builtype.cpp,?Pixel_Dimensions@BuildingTypeClass@@UBE?AV?$TPoint3D@H@@XZ
 0x0045EC20,BuildingTypeClass::Occupy_List,MATCH,83,src/builtype.cpp,?Occupy_List@BuildingTypeClass@@UBEPBVCell@@_N@Z
-0x0045EC80,_$E44,MATCH,1,src/builtype.cpp,_$E44
+0x0045EC80,_$E251,MATCH,1,src/builtype.cpp,_$E251
 0x0045EC90,BuildingTypeClass::Width,MATCH,14,src/builtype.cpp,?Width@BuildingTypeClass@@QBEHXZ
 0x0045ECA0,BuildingTypeClass::Height,MATCH,61,src/builtype.cpp,?Height@BuildingTypeClass@@QBEH_N@Z
 0x0045ECE0,BuildingTypeClass::Max_Pips,MATCH,108,src/builtype.cpp,?Max_Pips@BuildingTypeClass@@UBEHXZ
@@ -1913,7 +1913,7 @@ address,name,result,size,source,symbol
 0x004664C0,BulletClass::Construct,MATCH,160,src/bullet.cpp,?Construct@BulletClass@@QAEXPBVBulletTypeClass@@PAVAbstractClass@@PAVTechnoClass@@HPBVWarheadTypeClass@@H_N@Z
 0x00466560,BulletClass::~BulletClass,MATCH,250,src/bullet.cpp,??1BulletClass@@UAE@XZ
 0x00466660,BulletClass::Occupy_List,MATCH,69,src/bullet.cpp,?Occupy_List@BulletClass@@UBEPBVCell@@_N@Z
-0x004666B0,_$E41,MATCH,1,src/bullet.cpp,_$E41
+0x004666B0,_$E171,MATCH,1,src/bullet.cpp,_$E171
 0x004666C0,BulletClass::Mark,MATCH,18,src/bullet.cpp,?Mark@BulletClass@@UAE_NW4MarkType@@@Z
 0x00468000,BulletClass::Shape_Number,MATCH,137,src/bullet.cpp,?Shape_Number@BulletClass@@UBEHXZ
 0x00468090,BulletClass::Draw_It,MATCH,923,src/bullet.cpp,?Draw_It@BulletClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
@@ -14228,7 +14228,7 @@ address,name,result,size,source,symbol
 0x006D8260,Tactical::Draw_Tile_Shadows,MATCH,619,src/tactical.cpp,?Draw_Tile_Shadows@Tactical@@QAEXHABV?$TRect@H@@@Z
 0x006D84D0,Tactical::Clamp_Pixel_To_Tactical,MATCH,89,src/tactical.cpp,?Clamp_Pixel_To_Tactical@Tactical@@QAE?AVPoint2D@@ABV2@@Z
 0x006D8530,Tactical::Scroll_Map,MATCH,254,src/tactical.cpp,?Scroll_Map@Tactical@@QAEXW4FacingType@@H@Z
-0x006D8630,_$E44,MATCH,1,src/tactical.cpp,_$E44
+0x006D8630,_$E264,MATCH,1,src/tactical.cpp,_$E264
 0x006D8640,Tactical::Clamp_To_Tactical_Rect,MATCH,190,src/tactical.cpp,?Clamp_To_Tactical_Rect@Tactical@@QAE_NAAVPoint2D@@@Z
 0x006D8700,Tactical::Cell_Shadow,MATCH,989,src/tactical.cpp,?Cell_Shadow@Tactical@@QAEHABVCell@@_N@Z
 0x006D8AE0,Tactical::Is_Cell_Visible,MATCH,70,src/tactical.cpp,?Is_Cell_Visible@Tactical@@QAE_NABVCell@@@Z
@@ -14249,7 +14249,7 @@ address,name,result,size,source,symbol
 0x006DA160,Tactical::End_Rubber_Band,MATCH,29,src/tactical.cpp,?End_Rubber_Band@Tactical@@QAEXXZ
 0x006DA180,Tactical::Draw_Rubber_Band,MATCH,168,src/tactical.cpp,?Draw_Rubber_Band@Tactical@@QAEXXZ
 0x006DA230,Tactical::Scroll_Dir,MATCH,284,src/tactical.cpp,?Scroll_Dir@Tactical@@QAE?AW4FacingType@@W42@@Z
-0x006DA350,_$E249,MATCH,1,src/tactical.cpp,_$E249
+0x006DA350,_$E266,MATCH,1,src/tactical.cpp,_$E266
 0x006DA360,Tactical::Clamp_Cursor_To_Tactical,MATCH,15,src/tactical.cpp,?Clamp_Cursor_To_Tactical@Tactical@@QAE?AVCell@@ABV2@PBV2@@Z
 0x006DA370,Tactical::Noop,MATCH,3,src/tactical.cpp,?Noop@Tactical@@QAEXH@Z
 0x006DA380,Tactical::Get_Selectable_Object,MATCH,467,src/tactical.cpp,?Get_Selectable_Object@Tactical@@QAEPAVObjectClass@@ABVPoint2D@@@Z
