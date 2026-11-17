@@ -47,6 +47,9 @@ extern float BinkVolume;
 int __fastcall Peek_Windows_Message(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
 int __fastcall Get_Windows_Message(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max);
 
+// SYNTHETIC: GAMEMD 0x00432670 SYMBOL
+// _$E2
+
 // FUNCTION: GAMEMD 0x00432690
 BinkHandle::BinkHandle(char const * name)
 {

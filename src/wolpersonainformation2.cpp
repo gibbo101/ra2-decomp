@@ -8,6 +8,9 @@
 #include "rect.h"
 #include "session.h"
 
+// SYNTHETIC: GAMEMD 0x0077B070 SYMBOL
+// _$E41
+
 // SYNTHETIC: GAMEMD 0x0077B090 SYMBOL
 // _$E2
 

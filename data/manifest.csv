@@ -1622,7 +1622,7 @@ address,size,symbol,source,sha256
 0x004325A0,23,?Size@BufferIOFileClass@@UAEHXZ,src/bfiofile.cpp,61165acaed9a26a0321d17701ce477ca7eebca8db65509308e363be93079b50c
 0x004325C0,78,?Close@BufferIOFileClass@@UAEXXZ,src/bfiofile.cpp,85fbcc2e6a6e388462d36b19c4b2493aa88bf61aa80fe845f80448c03a13a715
 0x00432610,84,??_GBufferIOFileClass@@UAEPAXI@Z,src/bfiofile.cpp,034dac7e8b97c72ee1e1553c38c16eda415f5fac71914f13e38a2627a5f4a0f9
-0x00432670,23,?FUN_00432670@@YIXXZ,src/bfiofile.cpp,e410031766b2dcd40cabe4e2c5e13649840e59e7115d2d7b607ba027f050264a
+0x00432670,23,_$E2,src/bfiofile2.cpp,e410031766b2dcd40cabe4e2c5e13649840e59e7115d2d7b607ba027f050264a
 0x00432690,46,??0BinkHandle@@QAE@PBD@Z,src/bfiofile2.cpp,e6d6be96efc1f0df6a7c399f1c14964cd3cd69104c0ee7793f8d73bb0f095484
 0x004326C0,52,??0BinkHandle@@QAE@PBDPAVSurface@@@Z,src/bfiofile2.cpp,aa04541d344c16d5e785366a51ffb982df1a7300484d0ce119663ab21aaa7655
 0x00432700,80,??1BinkHandle@@QAE@XZ,src/bfiofile2.cpp,1949e1291dd41cfc782b06331fc751769d0d1428c62d680dc9c100be85f84c98
@@ -3031,7 +3031,7 @@ address,size,symbol,source,sha256
 0x0048BAA0,44,?Reset_Response_Time@CommBufferClass@@QAEX_N@Z,src/combuf.cpp,718f5ca992e438403ece43274dcbb3038d8c9c14547d4969356de3c5b3b2d4b5
 0x0048BAD0,38,?Configure_Debug@CommBufferClass@@QAEXHHPAPADHH@Z,src/combuf.cpp,ce4cb7f17fc93ea17602be69c0239e9d0331db5e83401628b4577e65ab5d57e1
 0x0048BB00,30,??_GCommBufferClass@@UAEPAXI@Z,src/combuf.cpp,fa0a75bd77f4fd4a4d6f609f11c936971568cf531ac852787e892fa456945fd6
-0x0048BB20,23,_$E8,src/combuf.cpp,b81f6164227a0c452a25d03722bdd6de03599719114bae469c987e0db7b40844
+0x0048BB20,23,_$E2,src/combuf2.cpp,b81f6164227a0c452a25d03722bdd6de03599719114bae469c987e0db7b40844
 0x0048BB40,27,?FUN_0048BB40@@YI_NPBVCommandClass@@H@Z,src/combuf2.cpp,3da6b550dcb5150fdb0d68abbdf0900e560e045a94297cd912825ca2f0cdb7eb
 0x0048BB60,192,?FUN_0048BB60@@YI_NH@Z,src/combuf2.cpp,15ec3a6b308014d484e51bfc3e3f593940894a7eb733d4b93e7ec2e0fa6557cf
 0x0048BC20,34,?search_compfunc@?$IndexClass@HPBVCommandClass@@@@CAHPBX0@Z,src/combuf2.cpp,2120aa9971aa1c646b5dc0d2b456a6b53069e85b83636d7e0d7a71bdf3866b7f
@@ -14286,7 +14286,7 @@ address,size,symbol,source,sha256
 0x006C9930,15,??1SubTitle@@QAE@XZ,src/straw.cpp,d110d0dc8bf8f7a3aebea389a1fc7fd6191e17c6469596a65c5d75c0fd736e47
 0x006C9940,31,?Set_RGB_Color@SubTitle@@QAEXEEE@Z,src/straw.cpp,02a6421effaa7223472c8de8c627aea9fcfd36a580ede8fc031bfc6c13dbf785
 0x006C9960,76,?Set_Caption@SubTitle@@QAEXPAG@Z,src/straw.cpp,c525db35fe0f6f0b4cd8efe003450ae125e12c220b981f54c33e8921d239bf2a
-0x006C99B0,23,?FUN_006C99B0@@YIXXZ,src/straw.cpp,fd99e8fe1afb3ac83ffee69016cd3db02a8e69ff46dab797ff578d2d01e836e8
+0x006C99B0,23,_$E2,src/subtitle.cpp,fd99e8fe1afb3ac83ffee69016cd3db02a8e69ff46dab797ff578d2d01e836e8
 0x006C99D0,236,?Subtitles_Open@@YIPAVMovieSubtitles@@PBD@Z,src/subtitle.cpp,f9b49c9dbd11d64dbf57bcddae6d8cd9d49cfa3d86d78b05c850b2017b31432b
 0x006C9AC0,31,??0MovieSubtitles@@QAE@XZ,src/subtitle.cpp,1bb6e19541316f9dbda3bd12d78aec4e4d01fede8f94a576e0e00050abede78f
 0x006C9AE0,83,??1MovieSubtitles@@QAE@XZ,src/subtitle.cpp,ce3e644673846f9db750a1772d30e31f52e48b9a2e15a83e03f21699112f378f
@@ -16188,7 +16188,7 @@ address,size,symbol,source,sha256
 0x0072A4A0,439,?Draw_Me@TextLabelClass@@UAEHH@Z,src/txtlabel.cpp,7c42b2d03064467ca442c391832eb098ad73dc0cb9f94d04378695161658dfe0
 0x0072A660,10,?Set_Text@TextLabelClass@@UAEXPAG@Z,src/txtlabel.cpp,396b31693515cb75cdf9173465c8199f0fd5acb695d04b0d980f5707d6686b6f
 0x0072A670,30,??_GTextLabelClass@@UAEPAXI@Z,src/txtlabel.cpp,f302a8fdad621ee659729d50c3c076645312bae88ec7a679ec437d9081aae9f6
-0x0072A690,23,_$E82,src/txtlabel.cpp,1b407f2a649f44f2438d9cb38b8ac0763aa837e98df75d47b29561a03934ba7f
+0x0072A690,23,_$E41,src/txtlabel2.cpp,1b407f2a649f44f2438d9cb38b8ac0763aa837e98df75d47b29561a03934ba7f
 0x0072A6B0,40,_$E2,src/txtlabel2.cpp,5d352efacb995f5bbd7e39d2751ea5e7f42b3e92c693e6fb29db633c7b60f52a
 0x0072A6E0,19,_$E5,src/txtlabel2.cpp,3ab0c24e37a2c48eec091e9064f9cc8de96ff4f385a326157297319555205d23
 0x0072A700,19,_$E8,src/txtlabel2.cpp,6b24e2168595557cbe0e2894f622745d45f9386c17ccea430eb56709e49a2a04
@@ -17558,7 +17558,7 @@ address,size,symbol,source,sha256
 0x00767820,93,??0FlagGameOption@WorldDominationTour@@QAE@IVWstring@@I0I@Z,src/wdtgameoptions.cpp,7fd9efbb00e3c4388d191113c6c913995e5dba4ebc895022e37c5a05fdac000f
 0x00767880,54,??_GFlagGameOption@WorldDominationTour@@UAEPAXI@Z,src/wdtgameoptions.cpp,4106ebca86b2cd85f8283ba73dd9121d86928fa5be351cb53458a78b7eebc13f
 0x007678C0,36,??_GMapSizeGameOption@WorldDominationTour@@UAEPAXI@Z,src/wdtgameoptions.cpp,6798c0b4305e25b02d049d3cb09c860a4d35c2fad4aae4b477d592622f100653
-0x007678F0,23,_$E44,src/wdtgameoptions.cpp,edddf76c50dcd4c53cdb669603d08b347a2eff3f868848b09d8fc3b0d4166761
+0x007678F0,23,_$E2,src/wdthistory.cpp,edddf76c50dcd4c53cdb669603d08b347a2eff3f868848b09d8fc3b0d4166761
 0x00767910,40,_$E5,src/wdthistory.cpp,42aaaa37669a24df17787bed84e5f8642405ba68ccd740b5586fddc6a2170cde
 0x00767940,19,_$E8,src/wdthistory.cpp,c423e9a903abe08bb829a4c0baa8ac4b40bdfb8f8eb10b06a7a8b8b58a120c03
 0x00767960,19,_$E11,src/wdthistory.cpp,1e874b6429f4c835987742f3fa5d3c85f592b0d17ca0cccf95ae18ce2bed604d
@@ -18117,7 +18117,7 @@ address,size,symbol,source,sha256
 0x0077A8D0,279,?FUN_0077A8D0@@YIXPAUHWND__@@_N@Z,src/wolpersonainformation.cpp,3edff1b9ed8c0c78ac5501fa13a18fa18be3d566987332d8a87c51452b260ee6
 0x0077A9F0,1585,?FUN_0077A9F0@PlayerProfile@@QAEXPAUHWND__@@PBVWstring@@_N@Z,src/wolpersonainformation.cpp,884d5f287ab3870c9cbd5178da99a4b2094530c67d08cc385765fafc123f3807
 0x0077B030,62,??_GPlayerProfile@@UAEPAXI@Z,src/wolpersonainformation.cpp,c4b93da8c02a90b1d67d286b4ad684d869b247fa329711e27d7d04e551a6c8a3
-0x0077B070,23,?FUN_0077B070@@YIXXZ,src/wolpersonainformation.cpp,b44d6d066c1a6843108f0e409f3830b07ce2e5ee049418b77ca5cd566800a649
+0x0077B070,23,_$E41,src/wolpersonainformation2.cpp,b44d6d066c1a6843108f0e409f3830b07ce2e5ee049418b77ca5cd566800a649
 0x0077B090,40,_$E2,src/wolpersonainformation2.cpp,95e8c761d331f554e7ac15249c04075aa7bf1da83e6ca9ac68607a591b407090
 0x0077B0C0,19,_$E5,src/wolpersonainformation2.cpp,ccbc1b9025ca15e271daccec24a9247341af04b63429d33f18e3846653db7997
 0x0077B0E0,19,_$E8,src/wolpersonainformation2.cpp,d885ca9d90f6671eef58f296174716301f106824564320605abbb84c3f0d7165

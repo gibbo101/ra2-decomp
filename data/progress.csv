@@ -1261,7 +1261,7 @@ address,name,result,size,source,symbol
 0x004325A0,BufferIOFileClass::Size,MATCH,23,src/bfiofile.cpp,?Size@BufferIOFileClass@@UAEHXZ
 0x004325C0,BufferIOFileClass::Close,MATCH,78,src/bfiofile.cpp,?Close@BufferIOFileClass@@UAEXXZ
 0x00432610,??_GBufferIOFileClass@@UAEPAXI@Z,MATCH,84,src/bfiofile.cpp,??_GBufferIOFileClass@@UAEPAXI@Z
-0x00432670,FUN_00432670,MATCH,23,src/bfiofile.cpp,?FUN_00432670@@YIXXZ
+0x00432670,_$E2,MATCH,23,src/bfiofile2.cpp,_$E2
 0x00432690,BinkHandle::BinkHandle,MATCH,46,src/bfiofile2.cpp,??0BinkHandle@@QAE@PBD@Z
 0x004326C0,BinkHandle::BinkHandle,MATCH,52,src/bfiofile2.cpp,??0BinkHandle@@QAE@PBDPAVSurface@@@Z
 0x00432700,BinkHandle::~BinkHandle,MATCH,80,src/bfiofile2.cpp,??1BinkHandle@@QAE@XZ
@@ -2673,7 +2673,7 @@ address,name,result,size,source,symbol
 0x0048BAA0,CommBufferClass::Reset_Response_Time,MATCH,44,src/combuf.cpp,?Reset_Response_Time@CommBufferClass@@QAEX_N@Z
 0x0048BAD0,CommBufferClass::Configure_Debug,MATCH,38,src/combuf.cpp,?Configure_Debug@CommBufferClass@@QAEXHHPAPADHH@Z
 0x0048BB00,??_GCommBufferClass@@UAEPAXI@Z,MATCH,30,src/combuf.cpp,??_GCommBufferClass@@UAEPAXI@Z
-0x0048BB20,_$E8,MATCH,23,src/combuf.cpp,_$E8
+0x0048BB20,_$E2,MATCH,23,src/combuf2.cpp,_$E2
 0x0048BB40,FUN_0048BB40,MATCH,27,src/combuf2.cpp,?FUN_0048BB40@@YI_NPBVCommandClass@@H@Z
 0x0048BB60,FUN_0048BB60,MATCH,192,src/combuf2.cpp,?FUN_0048BB60@@YI_NH@Z
 0x0048BC20,?search_compfunc@?$IndexClass@HPBVCommandClass@@@@CAHPBX0@Z,MATCH,34,src/combuf2.cpp,?search_compfunc@?$IndexClass@HPBVCommandClass@@@@CAHPBX0@Z
@@ -13941,7 +13941,7 @@ address,name,result,size,source,symbol
 0x006C9930,SubTitle::~SubTitle,MATCH,15,src/straw.cpp,??1SubTitle@@QAE@XZ
 0x006C9940,SubTitle::Set_RGB_Color,MATCH,31,src/straw.cpp,?Set_RGB_Color@SubTitle@@QAEXEEE@Z
 0x006C9960,SubTitle::Set_Caption,MATCH,76,src/straw.cpp,?Set_Caption@SubTitle@@QAEXPAG@Z
-0x006C99B0,FUN_006C99B0,MATCH,23,src/straw.cpp,?FUN_006C99B0@@YIXXZ
+0x006C99B0,_$E2,MATCH,23,src/subtitle.cpp,_$E2
 0x006C99D0,Subtitles_Open,MATCH,236,src/subtitle.cpp,?Subtitles_Open@@YIPAVMovieSubtitles@@PBD@Z
 0x006C9AC0,MovieSubtitles::MovieSubtitles,MATCH,31,src/subtitle.cpp,??0MovieSubtitles@@QAE@XZ
 0x006C9AE0,MovieSubtitles::~MovieSubtitles,MATCH,83,src/subtitle.cpp,??1MovieSubtitles@@QAE@XZ
@@ -15842,11 +15842,11 @@ address,name,result,size,source,symbol
 0x0072A3F0,_$E58,MATCH,15,src/txtlabel.cpp,_$E58
 0x0072A400,_$E61,MATCH,18,src/txtlabel.cpp,_$E61
 0x0072A420,_$E64,MATCH,26,src/txtlabel.cpp,_$E64
-0x0072A690,_$E82,MATCH,23,src/txtlabel.cpp,_$E82
 0x0072A440,TextLabelClass::TextLabelClass,MATCH,91,src/txtlabel.cpp,??0TextLabelClass@@QAE@PAGHHHW4TextPrintType@@@Z
 0x0072A4A0,TextLabelClass::Draw_Me,MATCH,439,src/txtlabel.cpp,?Draw_Me@TextLabelClass@@UAEHH@Z
 0x0072A660,TextLabelClass::Set_Text,MATCH,10,src/txtlabel.cpp,?Set_Text@TextLabelClass@@UAEXPAG@Z
 0x0072A670,??_GTextLabelClass@@UAEPAXI@Z,MATCH,30,src/txtlabel.cpp,??_GTextLabelClass@@UAEPAXI@Z
+0x0072A690,_$E41,MATCH,23,src/txtlabel2.cpp,_$E41
 0x0072A6B0,_$E2,MATCH,40,src/txtlabel2.cpp,_$E2
 0x0072A6E0,_$E5,MATCH,19,src/txtlabel2.cpp,_$E5
 0x0072A700,_$E8,MATCH,19,src/txtlabel2.cpp,_$E8
@@ -17315,8 +17315,8 @@ address,name,result,size,source,symbol
 0x00767800,?Get_Display_Priority@MapSizeGameOption@WorldDominationTour@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z,MATCH,30,src/wdtgameoptions.cpp,?Get_Display_Priority@MapSizeGameOption@WorldDominationTour@@UAEHABV?$rc_ptr@VWDTTerritory@@@@@Z
 0x00767820,WorldDominationTour::FlagGameOption::FlagGameOption,MATCH,93,src/wdtgameoptions.cpp,??0FlagGameOption@WorldDominationTour@@QAE@IVWstring@@I0I@Z
 0x00767880,??_GFlagGameOption@WorldDominationTour@@UAEPAXI@Z,MATCH,54,src/wdtgameoptions.cpp,??_GFlagGameOption@WorldDominationTour@@UAEPAXI@Z
-0x007678F0,_$E44,MATCH,23,src/wdtgameoptions.cpp,_$E44
 0x007678C0,??_GMapSizeGameOption@WorldDominationTour@@UAEPAXI@Z,MATCH,36,src/wdtgameoptions.cpp,??_GMapSizeGameOption@WorldDominationTour@@UAEPAXI@Z
+0x007678F0,_$E2,MATCH,23,src/wdthistory.cpp,_$E2
 0x00767910,_$E5,MATCH,40,src/wdthistory.cpp,_$E5
 0x00767940,_$E8,MATCH,19,src/wdthistory.cpp,_$E8
 0x00767960,_$E11,MATCH,19,src/wdthistory.cpp,_$E11
@@ -17896,7 +17896,7 @@ address,name,result,size,source,symbol
 0x0077A8D0,FUN_0077A8D0,MATCH,279,src/wolpersonainformation.cpp,?FUN_0077A8D0@@YIXPAUHWND__@@_N@Z
 0x0077A9F0,PlayerProfile::FUN_0077A9F0,MATCH,1585,src/wolpersonainformation.cpp,?FUN_0077A9F0@PlayerProfile@@QAEXPAUHWND__@@PBVWstring@@_N@Z
 0x0077B030,??_GPlayerProfile@@UAEPAXI@Z,MATCH,62,src/wolpersonainformation.cpp,??_GPlayerProfile@@UAEPAXI@Z
-0x0077B070,FUN_0077B070,MATCH,23,src/wolpersonainformation.cpp,?FUN_0077B070@@YIXXZ
+0x0077B070,_$E41,MATCH,23,src/wolpersonainformation2.cpp,_$E41
 0x0077B090,_$E2,MATCH,40,src/wolpersonainformation2.cpp,_$E2
 0x0077B0C0,_$E5,MATCH,19,src/wolpersonainformation2.cpp,_$E5
 0x0077B0E0,_$E8,MATCH,19,src/wolpersonainformation2.cpp,_$E8
