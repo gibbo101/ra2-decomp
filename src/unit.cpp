@@ -3466,7 +3466,7 @@ DirType UnitClass::Fire_Direction(void) const
 }
 
 // FUNCTION: GAMEMD 0x00740FD0
-FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
+FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool check_range) const
 {
 	if (DeathCounter >= 0) {
 		return(FIRE_CANT);
@@ -3480,7 +3480,7 @@ FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool ignore
 		return(FIRE_ILLEGAL);
 	}
 
-	FireErrorType fire = BASECLASS::Can_Fire(target, which, ignoreRange);
+	FireErrorType fire = BASECLASS::Can_Fire(target, which, check_range);
 
 	if (fire == FIRE_OK || fire == FIRE_FACING) {
 		bool buildable = Map[(Coord const &)PositionCoord].Can_Build_Here();

@@ -3597,7 +3597,7 @@ RTTIType InfantryClass::Fetch_RTTI(void) const
 // ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAVAbstractClass@@@@PAU12@HABU12@@Z
 
 // FUNCTION: GAMEMD 0x0051C8B0
-FireErrorType InfantryClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
+FireErrorType InfantryClass::Can_Fire(AbstractClass * target, int which, bool check_range) const
 {
 	if (FUN_00522C60(Doing)) {
 		return FIRE_CANT;
@@ -3613,7 +3613,7 @@ FireErrorType InfantryClass::Can_Fire(AbstractClass * target, int which, bool ig
 		unit->DirectRockerLinkedUnit != As_Techno(this)) {
 		return FIRE_ILLEGAL;
 	}
-	FireErrorType result = TechnoClass::Can_Fire(target, which, ignoreRange);
+	FireErrorType result = TechnoClass::Can_Fire(target, which, check_range);
 	if (result == FIRE_OK) {
 		if (Speed > 0.1 || (NavCom != NULL && Doing != DO_NOTHING && !MasterDoControls[Doing].Interrupt)) {
 			return FIRE_MOVING;

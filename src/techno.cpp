@@ -2720,7 +2720,7 @@ FireErrorType TechnoClass::FUN_006FC090(AbstractClass * target, int which) const
 #include "temporal.h"
 
 // FUNCTION: GAMEMD 0x006FC0B0
-FireErrorType TechnoClass::Can_Fire(AbstractClass * target, int weaponIndex, bool ignoreRange) const
+FireErrorType TechnoClass::Can_Fire(AbstractClass * target, int weaponIndex, bool check_range) const
 {
 	if (!target) {
 		return FIRE_ILLEGAL;
@@ -2996,7 +2996,7 @@ FireErrorType TechnoClass::Can_Fire(AbstractClass * target, int weaponIndex, boo
 	if (Techno_Type_Class()->Organic && IsParalyzed()) {
 		return FIRE_ILLEGAL;
 	}
-	if (ignoreRange && !In_Range(target, weaponIndex)) {
+	if (check_range && !In_Range(target, weaponIndex)) {
 		return FIRE_RANGE;
 	}
 	return FIRE_OK;
@@ -4029,7 +4029,7 @@ ResultType TechnoClass::Take_Damage(int & damage, int distance, WarheadTypeClass
 		}
 
 		if (!negative) {
-			if (CanRetaliateToAttacker(source, (WarheadTypeClass *)warhead)) {
+			if (Is_Allowed_To_Retaliate(source, (WarheadTypeClass *)warhead)) {
 				if (source != NULL) {
 					int which = What_Weapon_Should_I_Use(source);
 					if (In_Range(source, which) || !House->FUN_0050B730() || (double)Distance_To(source) <= ((double)Techno_Type_Class()->SightRange + 0.5) * CELL_LEPTON) {
@@ -5916,7 +5916,7 @@ void TechnoClass::Base_Is_Attacked(TechnoClass const * enemy)
 
 
 // FUNCTION: GAMEMD 0x007087C0
-bool TechnoClass::CanRetaliateToAttacker(ObjectClass * attacker, WarheadTypeClass * warhead)
+bool TechnoClass::Is_Allowed_To_Retaliate(ObjectClass * attacker, WarheadTypeClass * warhead)
 {
 	if (attacker == NULL) return(false);
 

@@ -471,7 +471,7 @@ class TechnoClass : public RadioClass
 		virtual bool InAuxiliarySearchRange(AbstractClass * target) const;
 		virtual void Death_Announcement(TechnoClass const * source=0) const = 0;
 		virtual int GetFireErrorWithoutRange(AbstractClass * target, int which) const;
-		virtual FireErrorType Can_Fire(AbstractClass * target, int which=0, bool ignoreRange=false) const;
+		virtual FireErrorType Can_Fire(AbstractClass * target, int which=0, bool check_range=false) const;
 		virtual AbstractClass * Greatest_Threat(ThreatType threat, Coord const & coord, bool) const;
 		virtual void Assign_Target(AbstractClass * target);
 		virtual BulletClass * Fire_At(AbstractClass * target, int which=0);
@@ -593,7 +593,7 @@ class TechnoClass : public RadioClass
 
 
 
-		bool CanRetaliateToAttacker(ObjectClass * attacker, WarheadTypeClass * warhead);
+		bool Is_Allowed_To_Retaliate(ObjectClass * attacker, WarheadTypeClass * warhead);
 		virtual bool Is_Players_Army(void) const override;
 		int Combat_Damage(int which=-1) const;
 

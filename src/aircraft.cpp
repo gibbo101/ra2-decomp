@@ -3213,9 +3213,9 @@ int AircraftClass::Do_MISSION_GUARD_AREA(void)
 }
 
 // FUNCTION: GAMEMD 0x0041A9E0
-FireErrorType AircraftClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
+FireErrorType AircraftClass::Can_Fire(AbstractClass * target, int which, bool check_range) const
 {
-	FireErrorType fire = BASECLASS::Can_Fire(target, which, ignoreRange);
+	FireErrorType fire = BASECLASS::Can_Fire(target, which, check_range);
 	if (fire != FIRE_OK) {
 		return(fire);
 	}

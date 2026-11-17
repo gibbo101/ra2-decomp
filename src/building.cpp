@@ -3136,7 +3136,7 @@ Coord BuildingClass::Destination_Coord(TechnoClass * docker) const
 }
 
 // FUNCTION: GAMEMD 0x00447F10
-FireErrorType BuildingClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
+FireErrorType BuildingClass::Can_Fire(AbstractClass * target, int which, bool check_range) const
 {
 	if (Class->CanBeOccupied && (!Class->CanOccupyFire || !GetOccupantCount())) {
 		return(FIRE_ILLEGAL);
@@ -3157,7 +3157,7 @@ FireErrorType BuildingClass::Can_Fire(AbstractClass * target, int which, bool ig
 		return(FIRE_REARM);
 	}
 
-	FireErrorType canfire = TechnoClass::Can_Fire(target, which, ignoreRange);
+	FireErrorType canfire = TechnoClass::Can_Fire(target, which, check_range);
 	if (canfire == FIRE_OK && Is_Turret_Equipped()) {
 		DirType towards = Aim_Direction(target);
 		DirType by = Class->IsTurretAnimAVoxel ? DIR_MIN : DIR_STEP_32;

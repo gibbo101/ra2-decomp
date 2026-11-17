@@ -498,7 +498,6 @@ address,name,source
 0x006F8960,TechnoClass::TryAutoTargetObject,symbols.csv
 0x006FB080,TechnoClass::StartReloading,symbols.csv
 0x006FD210,TechnoClass::CreateLaser,symbols.csv
-0x007087C0,TechnoClass::CanRetaliateToAttacker,symbols.csv
 0x007091D0,TechnoClass::CanPassiveAcquireTargets,symbols.csv
 0x00709290,TechnoClass::CanOpportunityFire,symbols.csv
 0x0070D4A0,AbstractClass::BecomeUntargetable,symbols.csv

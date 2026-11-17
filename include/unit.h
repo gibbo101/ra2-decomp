@@ -72,7 +72,7 @@ class UnitClass : public FootClass
 		virtual int Pip_Count(void) const override;
 		virtual InfantryTypeClass const * Crew_Type(void) const override;
 		virtual DirType Fire_Direction(void) const override;
-		virtual FireErrorType Can_Fire(AbstractClass * target, int which, bool ignoreRange) const override;
+		virtual FireErrorType Can_Fire(AbstractClass * target, int which, bool check_range) const override;
 		virtual double Tiberium_Load(void) const override;
 		virtual int What_Weapon_Should_I_Use(AbstractClass * target) const override;
 		virtual bool IsUnderEMP(void) const override;

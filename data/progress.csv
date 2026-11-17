@@ -14995,7 +14995,7 @@ address,name,result,size,source,symbol
 0x00707E60,TechnoClass::Threat_Range,MATCH,241,src/techno.cpp,?Threat_Range@TechnoClass@@UBEHH@Z
 0x00707F60,TechnoClass::Is_In_Same_Zone,MATCH,278,src/techno.cpp,?Is_In_Same_Zone@TechnoClass@@UBE_NABVCoord@@@Z
 0x00708080,TechnoClass::Base_Is_Attacked,MATCH,1846,src/techno.cpp,?Base_Is_Attacked@TechnoClass@@QAEXPBV1@@Z
-0x007087C0,TechnoClass::CanRetaliateToAttacker,MATCH,867,src/techno.cpp,?CanRetaliateToAttacker@TechnoClass@@QAE_NPAVObjectClass@@PAVWarheadTypeClass@@@Z
+0x007087C0,TechnoClass::Is_Allowed_To_Retaliate,MATCH,867,src/techno.cpp,?Is_Allowed_To_Retaliate@TechnoClass@@QAE_NPAVObjectClass@@PAVWarheadTypeClass@@@Z
 0x00708B30,TechnoClass::Get_Ownable,MATCH,15,src/techno.cpp,?Get_Ownable@TechnoClass@@UBEHXZ
 0x00708B40,TechnoClass::Risk,MATCH,113,src/techno.cpp,?Risk@TechnoClass@@UBEHXZ
 0x00708BC0,TechnoClass::Tiberium_Load,MATCH,75,src/techno.cpp,?Tiberium_Load@TechnoClass@@UBENXZ

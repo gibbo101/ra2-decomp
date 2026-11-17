@@ -15336,7 +15336,7 @@ address,size,symbol,source,sha256
 0x00707E60,241,?Threat_Range@TechnoClass@@UBEHH@Z,src/techno.cpp,3f77f7bedf40d102a13a82cbddf9db0f44b3ab6c9769ed55f001f8d65f239587
 0x00707F60,278,?Is_In_Same_Zone@TechnoClass@@UBE_NABVCoord@@@Z,src/techno.cpp,e17ae9cfa4976561be82774f48f9cb665af5fefb12be3869ed61368bec0301d7
 0x00708080,1846,?Base_Is_Attacked@TechnoClass@@QAEXPBV1@@Z,src/techno.cpp,d92c635190185db8ff5abc493f49d334af99abe4fb749148112e194b15895648
-0x007087C0,867,?CanRetaliateToAttacker@TechnoClass@@QAE_NPAVObjectClass@@PAVWarheadTypeClass@@@Z,src/techno.cpp,1641e266cbe2a34ff9e8432bbeeb95693f49d88448cf87e50b65441afb766fa8
+0x007087C0,867,?Is_Allowed_To_Retaliate@TechnoClass@@QAE_NPAVObjectClass@@PAVWarheadTypeClass@@@Z,src/techno.cpp,1641e266cbe2a34ff9e8432bbeeb95693f49d88448cf87e50b65441afb766fa8
 0x00708B30,15,?Get_Ownable@TechnoClass@@UBEHXZ,src/techno.cpp,d6acb026497e1b9959c50e6c1315596bc382c2eb8e8861c593a9d5b38cb9b52d
 0x00708B40,113,?Risk@TechnoClass@@UBEHXZ,src/techno.cpp,495f24e94234ad481c51871a0ffd4aef3f6f842ddb498c3af67bbcc7c5feafa7
 0x00708BC0,75,?Tiberium_Load@TechnoClass@@UBENXZ,src/techno.cpp,7a6040ae516840a001d71a385a65abbef7f390decfdc2bec69618072a88ee370
