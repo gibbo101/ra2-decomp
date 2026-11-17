@@ -76,7 +76,7 @@ ProgressScreenClass Progress;
 // FUNCTION: GAMEMD 0x006429E0
 // ProgressScreenClass::ProgressScreenClass
 ProgressScreenClass::ProgressScreenClass(void) :
-	MainProgress(0), Field50(0), Buffer(0), BufferOwned(false), Field5C(0), IsActive(false),
+	MainProgress(0), String(0), Buffer(0), BufferOwned(false), Background(0), IsActive(false),
 	PlayerCount(0), Field62(false), Dialog(0), Pos(0, 0), Field70(false),
 	Field78(-1), Percentage(0), Side(-1)
 {
@@ -112,7 +112,7 @@ void ProgressScreenClass::Initialize(double progress, char count, void * dialog)
 	} else {
 		HiddenSurface->Fill(0);
 	}
-	Field50 = 0;
+	String = 0;
 	Percentage = -1;
 }
 
@@ -215,7 +215,7 @@ void ProgressScreenClass::Set_Graphic_Data(char const * progbar, char const * ba
 		Buffer = FileSystem::LoadWholeFileEx(progbar, BufferOwned);
 		if (Buffer != 0) {
 			if (background != 0) {
-				Field5C = (int)background;
+				Background = (int)background;
 				Load_Title_Page(background, false);
 			}
 			Field74 = string;
@@ -236,7 +236,7 @@ void ProgressScreenClass::Set_Layout(Point2D pt, wchar_t const * title, bool use
 		Pos.X = pt.X;
 		Pos.Y = pt.Y;
 	}
-	Field50 = title;
+	String = title;
 	Field70 = usedialog;
 	Field71 = flag;
 }
@@ -499,7 +499,7 @@ void ProgressScreenClass::Display_Progress(Point2D xpt)
 		if (pt.X == -1 && pt.Y == -1) {
 			pt = Pos;
 		}
-		wchar_t const * name = Field50;
+		wchar_t const * name = String;
 		if (PlayerCount == 1) {
 			ColorScheme * scheme;
 			if (Session.Type == 0) {
