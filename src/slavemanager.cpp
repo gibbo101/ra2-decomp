@@ -47,7 +47,6 @@
 
 extern "C" const CLSID CLSID_SlaveManagerClass;
 namespace Unsorted { extern int CurrentFrame; }
-namespace Game { extern bool IsActive; }
 extern SideType FUN_006A46D0(char const * name);
 
 DynamicVectorClass<SlaveManagerClass *> SlaveManagers;
@@ -309,7 +308,7 @@ void SlaveManagerClass::Killed(TechnoClass * killer, HouseClass * owner)
 	TechnoClass * first = NULL;
 	for (int index = SlaveNodes.Count() - 1; index >= 0; index--) {
 		InfantryClass * slave = SlaveNodes[index]->Slave;
-		if (slave != NULL && Game::IsActive) {
+		if (slave != NULL && GameActive) {
 			bool limbo = slave->IsInLimbo;
 			slave->SlaveOwner = NULL;
 			if (limbo) {
@@ -337,7 +336,7 @@ void SlaveManagerClass::Killed(TechnoClass * killer, HouseClass * owner)
 			}
 		}
 	}
-	if (Game::IsActive && first != NULL && !ScenarioInit && Rule->SlavesFreeSound != -1) {
+	if (GameActive && first != NULL && !ScenarioInit && Rule->SlavesFreeSound != -1) {
 		VocClass::PlayAt(Rule->SlavesFreeSound, Coord(first->Position));
 	}
 	Owner = NULL;

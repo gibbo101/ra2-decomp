@@ -58,7 +58,6 @@ void FUN_00750FA0(void);
 void FUN_007535D0(void);
 void FUN_00752CA0(void);
 extern int DAT_00B07784;
-namespace Game { extern int PlayerColor; extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; }
 
 // SYNTHETIC: GAMEMD 0x00696D00 SYMBOL
@@ -1560,7 +1559,7 @@ void SessionClass::FUN_0069B8C0(void)
 			player->Set_Color(8);
 		}
 		if (i == 0) {
-			Game::PlayerColor = player->Slot.ColorIdx;
+			Session.PrefColor = player->Slot.ColorIdx;
 		}
 		FUN_004068E0("Player %i, %s: Side = %i, Color = %i\n", i, FUN_007350C0(player->Name), player->Get_Country(), player->Get_Color());
 	}
@@ -1582,7 +1581,7 @@ void SessionClass::FUN_0069B8C0(void)
 // FUNCTION: GAMEMD 0x0069BAB0
 void SessionClass::Resume(void)
 {
-	if (!CurrentlyInGame && Game::IsActive) {
+	if (!CurrentlyInGame && GameActive) {
 		CurrentlyInGame = true;
 		if (DAT_0083ED20 == -1) {
 			DAT_0083ED20 = ::Options.GameSpeed;

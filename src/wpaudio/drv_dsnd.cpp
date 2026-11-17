@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "auddsnd.h"
+#include "win.h"
 
-namespace Game { extern HWND hWnd; }
 
 #define vAUD_DRV_MAX_CHANNELS 100
 #define vAUD_DRV_POLL_INTERVAL (SECONDS(1) / 30)
@@ -343,7 +343,7 @@ static int __fastcall audioLoad(AudioSystem * system)
 	if (result != DS_OK) {
 		return ERROR_CODE_FAIL;
 	}
-	result = AUD_sound_object->SetCooperativeLevel(Game::hWnd, DSSCL_PRIORITY);
+	result = AUD_sound_object->SetCooperativeLevel(MainWindow, DSSCL_PRIORITY);
 	system->numUnits = 1;
 	if (!thread_created) {
 		drv_ref.count = 0;

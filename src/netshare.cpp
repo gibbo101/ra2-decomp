@@ -61,7 +61,6 @@ void FUN_0060B350(HWND button);
 void FUN_00607FD0(HWND dialog);
 int FUN_007759E0(HWND window, bool (*callback)(void), int a, int b, int c);
 namespace UI { void RegisterWindow(HWND window, int id); }
-namespace Game { extern HWND hWnd; extern HINSTANCE hInstance; extern int PlayerColor; }
 
 class GameModeOptionsClass { public: static int Instance; };
 MultiplayerGameMode * First_Game_Mode(void);
@@ -417,7 +416,7 @@ int ODMessageBox(const wchar_t * text, int type, bool (*callback)(void), bool la
 		} else {
 			id = (type != 4) ? 0xfb : 0x126;
 		}
-		HWND dialog = WS_Create_Dialog(Game::hInstance, id, Game::hWnd, ODMessageBox_Proc, FALSE);
+		HWND dialog = WS_Create_Dialog(ProgramInstance, id, MainWindow, ODMessageBox_Proc, FALSE);
 		UI::RegisterWindow(dialog, id);
 		if (type == 0) {
 			HWND ok = GetDlgItem(dialog, 1);
@@ -749,7 +748,7 @@ void SendPublicGameopts(char const * options)
 		packet.Command = NET_PUB_GAMEOPT;
 		strcpy(packet.Name, Session.Handle);
 		strcpy(packet.Options.Buf, options);
-		packet.Options.Color = Game::PlayerColor;
+		packet.Options.Color = Session.PrefColor;
 		packet.Options.NameCRC = FUN_005DAC00(Session.GameName);
 		for (int i = 1; i < Session.Players.Count(); i++) {
 			NodeNameType * node = Session.Players[i];
@@ -1075,7 +1074,7 @@ int Scenario_Dialog(HWND top)
 {
 	FUN_0052FEC0(NULL, true);
 	FUN_0072D120();
-	DAT_00AC0D40 = WS_Create_Dialog(Game::hInstance, 0x6b, top, Scenario_DlgProc, FALSE);
+	DAT_00AC0D40 = WS_Create_Dialog(ProgramInstance, 0x6b, top, Scenario_DlgProc, FALSE);
 	UI::RegisterWindow(DAT_00AC0D40, 0x6b);
 	SendMessage(DAT_00AC0D40, 0x4a9, 0, 1);
 	ShowWindow(DAT_00AC0D40, SW_NORMAL);

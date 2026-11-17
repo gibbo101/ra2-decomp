@@ -49,7 +49,6 @@
 // _$E47
 
 extern "C" const CLSID CLSID_AirstrikeClass;
-namespace Game { extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; }
 
 // SYNTHETIC: GAMEMD 0x0041D280 SYMBOL
@@ -96,7 +95,7 @@ AirstrikeClass::~AirstrikeClass(void)
 // FUNCTION: GAMEMD 0x0041D540
 void AirstrikeClass::InvalidatePointer(AbstractClass * ptr)
 {
-	if (Game::IsActive) {
+	if (GameActive) {
 		FootClass * foot;
 		TechnoClass * object;
 		if (ptr == NULL) {
@@ -299,7 +298,7 @@ void AirstrikeClass::ResetTarget(ObjectClass * target)
 // FUNCTION: GAMEMD 0x0041DB40
 void AirstrikeClass::ClearTarget(void)
 {
-	if (Game::IsActive) {
+	if (GameActive) {
 		FootClass * foot = FirstObject;
 		if (foot != NULL) {
 			while (foot != NULL && foot->Ammo != 0) {
@@ -328,7 +327,7 @@ void AirstrikeClass::ClearTarget(void)
 				if (strike != this && strike->Target == target) other = strike;
 			}
 			((TechnoClass *)target)->Airstrike = other;
-			if (other == NULL && Game::IsActive) {
+			if (other == NULL && GameActive) {
 				target->Mark(MARK_CHANGE);
 			}
 			if (((TechnoClass *)target)->Airstrike == this) {

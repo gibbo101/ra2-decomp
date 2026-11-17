@@ -25,9 +25,7 @@ namespace UI {
 	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 }
 
-namespace Game {
-	bool __fastcall OnWindowMoving(HWND window, WPARAM wparam, LPARAM lparam);
-}
+bool On_WM_MOVING(HWND window, WPARAM wparam, LPARAM lparam);
 BOOL CALLBACK Message_Box_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 void __fastcall Message_Box_On_WM_COMMAND(HWND window, int id, int control, int notify_code);
 int FUN_00ABFC18;
@@ -122,7 +120,7 @@ BOOL CALLBACK Message_Box_Proc(HWND window, UINT message, WPARAM wparam, LPARAM 
 				break;
 
 			case WM_MOVING:
-				rc = Game::OnWindowMoving(window, wparam, lparam);
+				rc = On_WM_MOVING(window, wparam, lparam);
 				break;
 
 			default:

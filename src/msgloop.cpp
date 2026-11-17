@@ -36,7 +36,6 @@ static DynamicVectorClass<AcceleratorTracker> _Accelerators;
 bool (*Message_Intercept_Handler)(MSG &msg);
 
 
-namespace Game { extern HWND hWnd; }
 namespace CopyProtection { void __fastcall DispatchLauncherMessage(MSG *msg); }
 int __fastcall Peek_Windows_Message(MSG *msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
 int __fastcall Get_Windows_Message(MSG *msg, HWND window, unsigned int filter_min, unsigned int filter_max);
@@ -45,7 +44,7 @@ extern int MessageLoopCount;
 // FUNCTION: GAMEMD 0x005D4D50
 void Windows_Message_Handler(void)
 {
-	if (Game::hWnd == 0) return;
+	if (MainWindow == 0) return;
 
 	MSG msg;
 

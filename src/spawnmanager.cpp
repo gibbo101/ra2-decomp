@@ -52,7 +52,6 @@
 // _$E49
 
 extern "C" const CLSID CLSID_SpawnManagerClass;
-namespace Game { extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; }
 
 // SYNTHETIC: GAMEMD 0x006B6C10 SYMBOL
@@ -128,7 +127,7 @@ SpawnManagerClass::SpawnManagerClass(NoInitClass const & x) :
 // FUNCTION: GAMEMD 0x006B7010
 SpawnManagerClass::~SpawnManagerClass(void)
 {
-	if (Game::IsActive) {
+	if (GameActive) {
 		KillNodes();
 	}
 	for (int index = SpawnedNodes.Count() - 1; index >= 0; index--) {

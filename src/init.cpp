@@ -194,16 +194,15 @@ void __cdecl FUN_004068E0(char const * format, ...);
 extern unsigned char DAT_00A8E960;
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void __fastcall FUN_0046CE10(CCINIClass * ini);
+void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before, bool fullscreen);
+#include "audtimer.h"
 struct Game {
-	static void __fastcall PlayMovie(const char * name, int theme, int a, int b, int c, int d);
 	static bool __cdecl CallBack(void);
-	static int TechLevel;
 	static int Seed;
 	static unsigned char RecordingFlag;
 	static void InitRandom(void);
 	static HWND hWnd;
 	static HINSTANCE hInstance;
-	static unsigned __int64 __fastcall AudioGetTime(void);
 	static int ObserverMode;
 };
 
@@ -241,7 +240,7 @@ static void Init_Mouse(void)
 		MouseCursor->Set_Cursor(point, (ShapeSet const *)DAT_00B0BCF0, 0);
 	}
 	Map.Set_Default_Mouse(MOUSE_NORMAL, false);
-	Game::CallBack();
+	Call_Back();
 }
 static bool Init_CDROM_Access(void);
 
@@ -288,7 +287,7 @@ int Init_Game(void)
 		return -1;
 	}
 	FUN_004A4AC0(" ...OK\n");
-	Game::PlayMovie("EA_WWLOGO", -1, 1, 1, 1, 0);
+	Play_Movie("EA_WWLOGO", THEME_NONE, 1, 1, 1, 0);
 	FUN_005312A0();
 	FUN_004068E0("Init Campaigns\n");
 	FUN_0052CB90();
@@ -372,7 +371,7 @@ int Init_Game(void)
 		BuildingTypeClass *type = BuildingTypes[building];
 		type->Read_INI(*RuleINI);
 	}
-	while (Game::AudioGetTime() < DAT_00A8F788) {
+	while (AudioGetTime() < DAT_00A8F788) {
 	}
 	FUN_0052CB50();
 	Session.MaxPlayers = Rule->MaxPlayers;
@@ -404,7 +403,7 @@ int Init_Game(void)
 bool FUN_0052CB50(void)
 {
 	if (Special.IsFromInstall) {
-		Game::PlayMovie("A00_F00E", -1, 1, 1, 1, 0);
+		Play_Movie("A00_F00E", THEME_NONE, 1, 1, 1, 0);
 	}
 	FUN_0052FEC0(NULL, true);
 	return Game::CallBack();
@@ -911,7 +910,7 @@ static CampaignType Choose_Campaign(void)
 		Center_Window_Within_Window(dialog, Game::hWnd);
 		OwnerDraw::Display_Dialog(dialog);
 		while (!pick.Done && UI::Updated() != true) {
-			if (DAT_00825C20 != -1 && DAT_00A8F7A0 < Game::AudioGetTime()) {
+			if (DAT_00825C20 != -1 && DAT_00A8F7A0 < AudioGetTime()) {
 				DAT_00A8F300.Stop();
 				VocClass::PlayGlobal(DAT_00825C20, 1.0f, 0x2000, &DAT_00A8F300);
 				DAT_00825C20 = -1;
@@ -925,8 +924,8 @@ static CampaignType Choose_Campaign(void)
 		UI::EndDialog(dialog);
 	}
 
-	DAT_00A8F7A0 = Game::AudioGetTime() + 3000;
-	while (DAT_00A8F300.GetEvent() && DAT_00A8F7A0 > Game::AudioGetTime()) {
+	DAT_00A8F7A0 = AudioGetTime() + 3000;
+	while (DAT_00A8F300.GetEvent() && DAT_00A8F7A0 > AudioGetTime()) {
 		Call_Back();
 	}
 	FUN_0072DAA0();
@@ -1091,7 +1090,7 @@ restart:
 
 				case 13:
 					selection = 4;
-					Game::PlayMovie("RENEGADE.BIK", -1, 1, 1, 1, 0);
+					Play_Movie("RENEGADE.BIK", THEME_NONE, 1, 1, 1, 0);
 					FUN_0052FEC0(NULL, true);
 					break;
 
@@ -1099,7 +1098,7 @@ restart:
 					MovieUnlockableInfo * movie = (MovieUnlockableInfo *)FUN_0060D380(0x129, FUN_0052D870, true);
 					if (movie != (MovieUnlockableInfo *)-1 && movie != NULL) {
 						if (CD().Force_Available((DiskID)movie->DiskRequired)) {
-							Game::PlayMovie(movie->Filename, -1, 1, 1, 1, 0);
+							Play_Movie(movie->Filename, THEME_NONE, 1, 1, 1, 0);
 							FUN_0052FEC0(NULL, true);
 						}
 					} else {
@@ -1538,7 +1537,7 @@ BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					if (DAT_00A8F7A8 != id) {
 						SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D5, 0, 0);
 						SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D4, 0, 0);
-						DAT_00A8F7A0 = Game::AudioGetTime() + 500;
+						DAT_00A8F7A0 = AudioGetTime() + 500;
 						DAT_00825C20 = -1;
 						DAT_00A8F7A8 = 0;
 					}
@@ -2335,7 +2334,7 @@ extern DropPodVoxelStruct DAT_00A8ECD8;
 
 static bool Init_One_Time_Systems(void)
 {
-	Game::CallBack();
+	Call_Back();
 
 	Map.One_Time();
 	Options.One_Time();
@@ -2460,7 +2459,7 @@ void FUN_005312A0(void)
 	}
 
 	Update_Visible_Surface(true, HiddenSurface);
-	DAT_00A8F788 = Game::AudioGetTime() + 5000;
+	DAT_00A8F788 = AudioGetTime() + 5000;
 
 	if (pal != NULL) {
 		delete pal;
@@ -2489,7 +2488,7 @@ bool Init_Bulk_Data(void)
 		return(false);
 	}
 
-	Game::CallBack();
+	Call_Back();
 	return(Init_One_Time_Systems());
 }
 
@@ -2499,7 +2498,7 @@ extern int DAT_00A8EC90;
 bool Save_Recording_Values(CCFileClass & file)
 {
 	FUN_004068E0("Saving recording values for scenario : %s\n", Scen->ScenarioName);
-	file.Write(&Game::TechLevel, sizeof(Game::TechLevel));
+	file.Write(&BuildLevel, sizeof(BuildLevel));
 	file.Write(&Game::Seed, sizeof(Game::Seed));
 	file.Write(&Scen->Scenario, sizeof(Scen->Scenario));
 	file.Write(Scen->ScenarioName, sizeof(Scen->ScenarioName));
@@ -2512,7 +2511,7 @@ bool Save_Recording_Values(CCFileClass & file)
 // FUNCTION: GAMEMD 0x00531960
 bool Load_Recording_Values(CCFileClass & file)
 {
-	file.Read(&Game::TechLevel, sizeof(Game::TechLevel));
+	file.Read(&BuildLevel, sizeof(BuildLevel));
 	file.Read(&Game::Seed, sizeof(Game::Seed));
 	file.Read(&Scen->Scenario, sizeof(Scen->Scenario));
 	file.Read(Scen->ScenarioName, sizeof(Scen->ScenarioName));
@@ -4641,7 +4640,7 @@ void __fastcall Init_Theater(TheaterType theater)
 		wsprintf(n.fullname, "UNIT%s.PAL", Theaters[theater].Suffix);
 		PaletteClass * unitpal = (PaletteClass *)FUN_005B40B0(n.fullname, false);
 
-		Game::CallBack();
+		Call_Back();
 
 		if (unitpal != NULL) {
 			SchemePalette = *unitpal;
@@ -4663,7 +4662,7 @@ void __fastcall Init_Theater(TheaterType theater)
 				Session.Update_Progress(percent);
 				last_percent = percent;
 			}
-			Game::CallBack();
+			Call_Back();
 		}
 
 		FUN_006267A0(theater);

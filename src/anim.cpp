@@ -67,9 +67,9 @@ struct FileSystem
 	static char TEMPERAT_PAL[];
 	static ConvertClass * ANIM_PAL;
 };
-namespace Game { bool __cdecl CallBack(void); extern bool bDirect3DIsUseable; }
+namespace Game { extern bool bDirect3DIsUseable; }
 void __fastcall FUN_00489280(Coord const & coord, int damage, TechnoClass * source, WarheadTypeClass const * warhead, bool affect_tiberium, HouseClass * house);
-void __fastcall FUN_004A3C30(void * palette, int rate, bool (__cdecl * callback)(void));
+void __fastcall FUN_004A3C30(void * palette, int rate, void (* callback)(void));
 extern const double DAT_007E3570;
 
 class AudioEvent;
@@ -902,7 +902,7 @@ void AnimClass::Do_Atom_Damage(HousesType ownerhouse, Cell const & cell)
 	Coord coord(cell.X * 256 + 128, cell.Y * 256 + 128, 0);
 	FUN_00489280(coord, Rule->AtomDamage, NULL, Rule->NukeWarhead, false, NULL);
 	if (Session.Type == GAME_NORMAL) {
-		FUN_004A3C30(&FileSystem::TEMPERAT_PAL, 30, Game::CallBack);
+		FUN_004A3C30(&FileSystem::TEMPERAT_PAL, 30, Call_Back);
 	}
 }
 

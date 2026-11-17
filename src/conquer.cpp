@@ -117,7 +117,7 @@ void Conquer_Nop(void)
 {
 }
 
-namespace Game { extern int SpecialDialog; extern int ObserverMode; extern HWND hWnd; extern HINSTANCE hInstance; }
+namespace Game { extern int ObserverMode; }
 void __fastcall FUN_0065F520(ScenarioClass * scen);
 struct FileSystem
 {
@@ -138,17 +138,17 @@ void Print_MP_Stats(void);
 // FUNCTION: GAMEMD 0x0048C8B0
 void Ingame_Menu_Dialog(void)
 {
-	if (Game::SpecialDialog != SDLG_NONE) {
+	if (SpecialDialog != SDLG_NONE) {
 		if (Session.Type != GAME_NORMAL) {
 			if (PlayerPtr->IsToLose || PlayerPtr->IsToWin || PlayerPtr->IsToDie) {
-				Game::SpecialDialog = SDLG_NONE;
+				SpecialDialog = SDLG_NONE;
 				return;
 			}
 			if (!_special_dialog_flag) {
 				if (PlayerPtr->IsDefeated) {
 					_special_dialog_flag = true;
 				} else {
-					Game::SpecialDialog = SDLG_NONE;
+					SpecialDialog = SDLG_NONE;
 					return;
 				}
 			}
@@ -160,46 +160,46 @@ void Ingame_Menu_Dialog(void)
 			MouseCursor->Show_Mouse();
 		}
 
-		while (Game::SpecialDialog != SDLG_NONE) {
-			switch (Game::SpecialDialog) {
+		while (SpecialDialog != SDLG_NONE) {
+			switch (SpecialDialog) {
 				case 9:
 					FUN_0065F520(Scen);
-					if (Game::SpecialDialog == 9) {
-						Game::SpecialDialog = SDLG_NONE;
+					if (SpecialDialog == 9) {
+						SpecialDialog = SDLG_NONE;
 					}
 					break;
 
 				case 8:
 					Map.FUN_006586D0();
-					if (Game::SpecialDialog == 8) {
-						Game::SpecialDialog = SDLG_NONE;
+					if (SpecialDialog == 8) {
+						SpecialDialog = SDLG_NONE;
 					}
 					break;
 
 				case 1:
 					Game_Options_Dialog();
-					if (Game::SpecialDialog != 1) {
+					if (SpecialDialog != 1) {
 						break;
 					}
-					Game::SpecialDialog = SDLG_NONE;
+					SpecialDialog = SDLG_NONE;
 					break;
 
 				case 5:
 					GameControlsClass().Dialog();
-					if (Game::SpecialDialog != 5) {
+					if (SpecialDialog != 5) {
 						break;
 					}
-					Game::SpecialDialog = 1;
+					SpecialDialog = SDLG_OPTIONS;
 					break;
 
 				case 6:
 					SoundControlsClass().Dialog();
-					Game::SpecialDialog = 5;
+					SpecialDialog = SDLG_SETTINGS;
 					break;
 
 				case 4:
 					Options.Hotkey_Dialog();
-					Game::SpecialDialog = 5;
+					SpecialDialog = SDLG_SETTINGS;
 					break;
 
 				case 3:
@@ -223,7 +223,7 @@ void Ingame_Menu_Dialog(void)
 							PlayerRestarts = true;
 							break;
 					}
-					Game::SpecialDialog = SDLG_NONE;
+					SpecialDialog = SDLG_NONE;
 					break;
 
 				case 2:
@@ -234,12 +234,12 @@ void Ingame_Menu_Dialog(void)
 						Queue_Exit();
 						_special_dialog_flag = false;
 					}
-					Game::SpecialDialog = SDLG_NONE;
+					SpecialDialog = SDLG_NONE;
 					break;
 
 				case 7:
 					DoFindPage();
-					Game::SpecialDialog = SDLG_NONE;
+					SpecialDialog = SDLG_NONE;
 					break;
 
 				default:
@@ -247,7 +247,7 @@ void Ingame_Menu_Dialog(void)
 			}
 		}
 
-		UpdateWindow(Game::hWnd);
+		UpdateWindow(MainWindow);
 		if (Scen->IsInputLocked) {
 			MouseCursor->Hide_Mouse();
 		}
@@ -271,8 +271,8 @@ void Main_Game(int argc, char * argv[])
 			WideCharToMultiByte(0, 0, StringTable::LoadString("TXT_INITGAME_FAILED", NULL, "D:\\ra2mdpost\\Conquer.CPP", 0x236), -1, text, sizeof(text), 0, 0);
 			WideCharToMultiByte(0, 0, StringTable::LoadString("TXT_SHORT_TITLE", NULL, "D:\\ra2mdpost\\Conquer.CPP", 0x237), -1, caption, sizeof(caption), 0, 0);
 			params.cbSize = sizeof(MSGBOXPARAMS);
-			params.hwndOwner = Game::hWnd;
-			params.hInstance = Game::hInstance;
+			params.hwndOwner = MainWindow;
+			params.hInstance = ProgramInstance;
 			params.lpszText = text;
 			params.lpszCaption = caption;
 			params.dwStyle = (MB_OK | MB_ICONSTOP | MB_SETFOREGROUND | MB_TOPMOST);
@@ -320,7 +320,7 @@ ret_addr:
 		}
 
 		UserInputLocked = Scen->IsInputLocked;
-		Game::SpecialDialog = SDLG_NONE;
+		SpecialDialog = SDLG_NONE;
 		_special_dialog_flag = true;
 		Session.Resume();
 

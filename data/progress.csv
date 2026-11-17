@@ -10599,14 +10599,14 @@ address,name,result,size,source,symbol
 0x0060F9A0,OwnerDraw::RegisterChildControlProc,MATCH,2481,src/ownrdraw.cpp,?RegisterChildControlProc@OwnerDraw@@YGHPAUHWND__@@J@Z
 0x00610360,FUN_00610360,MATCH,518,src/ownrdraw.cpp,?FUN_00610360@@YIHPAUHWND__@@@Z
 0x00610570,FUN_00610570,MATCH,548,src/ownrdraw.cpp,?FUN_00610570@@YGHPAUHWND__@@J@Z
-0x006107A0,_$E119,MATCH,49,src/ownrdraw.cpp,_$E119
+0x006107A0,_$E118,MATCH,49,src/ownrdraw.cpp,_$E118
 0x006107E0,OwnerDraw::Tooltip::Tooltip,MATCH,41,src/ownrdraw.cpp,??0Tooltip@OwnerDraw@@QAE@XZ
 0x00610810,OwnerDraw::Start_Tooltip,MATCH,306,src/ownrdraw.cpp,?Start_Tooltip@OwnerDraw@@YI_NABV?$TRect@H@@PBGPAUHWND__@@@Z
 0x00610950,OwnerDraw::DrawTooltip,MATCH,500,src/ownrdraw.cpp,?DrawTooltip@OwnerDraw@@YI_N_N@Z
 0x00610B50,OwnerDraw::RestoreTooltipBackground,MATCH,151,src/ownrdraw.cpp,?RestoreTooltipBackground@OwnerDraw@@YI_NXZ
 0x00610BF0,OwnerDraw::End_Tooltip,MATCH,173,src/ownrdraw.cpp,?End_Tooltip@OwnerDraw@@YI_NXZ
-0x00612910,_$E122,MATCH,23,src/ownrdraw.cpp,_$E122
-0x00612930,_$E127,MATCH,291,src/ownrdraw.cpp,_$E127
+0x00612910,_$E121,MATCH,23,src/ownrdraw.cpp,_$E121
+0x00612930,_$E126,MATCH,291,src/ownrdraw.cpp,_$E126
 0x00612A60,OwnerDraw::SysListViewHandler,MATCH,264,src/ownrdraw.cpp,?SysListViewHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x00614190,OwnerDraw::EditHandler,MATCH,2075,src/ownrdraw.cpp,?EditHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x006149B0,FUN_006149B0,MATCH,373,src/ownrdraw.cpp,?FUN_006149B0@@YIHPAUHWND__@@PAGHPAH@Z

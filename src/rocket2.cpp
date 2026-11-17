@@ -51,7 +51,6 @@
 
 
 char * __fastcall FUN_007350C0(wchar_t const * text);
-namespace Game { extern HWND hWnd; }
 
 #pragma pack(push, 1)
 struct TalkPacketType {
@@ -266,7 +265,7 @@ bool OwnerTalkClass::Start_Router(unsigned char * ip)
 	} else {
 		RouterProcess = process.hProcess;
 		DebugString("hRouterProcess = %d\n", process.hProcess);
-		SetFocus(Game::hWnd);
+		SetFocus(MainWindow);
 		timer = 1800;
 		result = 0;
 		while (timer) {

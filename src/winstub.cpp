@@ -66,7 +66,7 @@
 // SYNTHETIC: GAMEMD 0x00777380 SYMBOL
 // _$E100
 
-namespace Game { extern HWND hWnd; extern HINSTANCE hInstance; extern void * hIMC; extern bool IsFocused; extern int SpecialDialog; }
+namespace Game { extern void * hIMC; }
 namespace Unsorted { extern bool ScenarioStarted; extern int CurrentFrame; extern bool ArmageddonMode; }
 
 void __cdecl FUN_004068E0(char const * format, ...);
@@ -134,7 +134,7 @@ void Focus_Restore(void)
 		}
 	}
 	Map.Flag_To_Redraw(GS_REDRAW_ALL);
-	InvalidateRect(Game::hWnd, 0, 0);
+	InvalidateRect(MainWindow, 0, 0);
 	FUN_005BF500(false);
 	if (FUN_00775B10()) {
 		SetActiveWindow(FUN_00775B10());
@@ -175,8 +175,8 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 
 	Map.Message_Handler(hwnd, message, wParam, lParam);
 
-	if (Game::hWnd) {
-		GetMenu(Game::hWnd);
+	if (MainWindow) {
+		GetMenu(MainWindow);
 	}
 
 	if (OwnerDraw::ServiceIMEMessage(hwnd, message, wParam, lParam)) {
@@ -189,8 +189,8 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 			return(0);
 
 		case WM_PAINT:
-			if (Game::SpecialDialog == 0) {
-				if (Game::IsFocused == true || WindowedMode == true) {
+			if (SpecialDialog == 0) {
+				if (GameInFocus == true || WindowedMode == true) {
 					if (DAT_00887640 != NULL && VisibleSurface != NULL && HiddenSurface != NULL && CompositeSurface != NULL) {
 						if (Unsorted::ScenarioStarted == true) {
 							Update_Visible_Surface(DAT_00887640->Is_Captured(), CompositeSurface);
@@ -228,7 +228,7 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 				delete ToolTips;
 				ToolTips = NULL;
 			}
-			Game::hWnd = 0;
+			MainWindow = 0;
 			switch (ReadyToQuit) {
 				default:
 				case 1:
@@ -259,9 +259,9 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 			break;
 
 		case WM_ACTIVATEAPP:
-			if (hwnd == Game::hWnd && Game::IsFocused != (wParam != 0)) {
-				Game::IsFocused = (wParam != 0);
-				if (!Game::IsFocused) {
+			if (hwnd == MainWindow && GameInFocus != (wParam != 0)) {
+				GameInFocus = (wParam != 0);
+				if (!GameInFocus) {
 					Focus_Loss();
 					FUN_004068E0("Focus lost\n");
 				} else {
@@ -402,7 +402,7 @@ void Create_Main_Window(HINSTANCE instance, int command_show, int width, int hei
 	InitCommonControls();
 
 	ProgramIcon = LoadIcon(instance, MAKEINTRESOURCE(93));
-	ProgramCursor = LoadCursor(Game::hInstance, MAKEINTRESOURCE(104));
+	ProgramCursor = LoadCursor(ProgramInstance, MAKEINTRESOURCE(104));
 
 	WNDCLASS wndclass;
 	wndclass.style = CS_HREDRAW | CS_VREDRAW;
@@ -419,27 +419,27 @@ void Create_Main_Window(HINSTANCE instance, int command_show, int width, int hei
 	RegisterClass(&wndclass);
 
 	if (WindowedMode) {
-		Game::hWnd = CreateWindowEx(0, "Yuri's Revenge", "Yuri's Revenge", WS_SYSMENU|WS_CAPTION|WS_MINIMIZEBOX|WS_CLIPCHILDREN, 0, 0, 0, 0, NULL, NULL, instance, NULL);
+		MainWindow = CreateWindowEx(0, "Yuri's Revenge", "Yuri's Revenge", WS_SYSMENU|WS_CAPTION|WS_MINIMIZEBOX|WS_CLIPCHILDREN, 0, 0, 0, 0, NULL, NULL, instance, NULL);
 
 		RECT rect;
 		SetRect(&rect, 0, 0, width, height);
-		AdjustWindowRectEx(&rect, GetWindowLong(Game::hWnd, GWL_STYLE), GetMenu(Game::hWnd) != 0, GetWindowLong(Game::hWnd, GWL_EXSTYLE));
-		MoveWindow(Game::hWnd, 0, 0, rect.right - rect.left, rect.bottom - rect.top, 1);
+		AdjustWindowRectEx(&rect, GetWindowLong(MainWindow, GWL_STYLE), GetMenu(MainWindow) != 0, GetWindowLong(MainWindow, GWL_EXSTYLE));
+		MoveWindow(MainWindow, 0, 0, rect.right - rect.left, rect.bottom - rect.top, 1);
 	} else {
-		Game::hWnd = CreateWindowEx(WS_EX_TOPMOST, "Yuri's Revenge", "Yuri's Revenge", WS_POPUP|WS_CLIPCHILDREN, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, instance, NULL);
+		MainWindow = CreateWindowEx(WS_EX_TOPMOST, "Yuri's Revenge", "Yuri's Revenge", WS_POPUP|WS_CLIPCHILDREN, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, instance, NULL);
 	}
 
-	Game::hIMC = FUN_007C8A22(Game::hWnd);
-	FUN_007C8A1C(Game::hWnd, NULL);
+	Game::hIMC = FUN_007C8A22(MainWindow);
+	FUN_007C8A1C(MainWindow, NULL);
 
-	ShowWindow(Game::hWnd, SW_NORMAL);
+	ShowWindow(MainWindow, SW_NORMAL);
 	ShowCommand = command_show;
-	UpdateWindow(Game::hWnd);
-	SetFocus(Game::hWnd);
+	UpdateWindow(MainWindow);
+	SetFocus(MainWindow);
 
-	RegisterHotKey(Game::hWnd, 1, MOD_ALT|MOD_CONTROL|MOD_SHIFT, 'M');
+	RegisterHotKey(MainWindow, 1, MOD_ALT|MOD_CONTROL|MOD_SHIFT, 'M');
 
-	SetCursor(LoadCursor(Game::hInstance, MAKEINTRESOURCE(104)));
+	SetCursor(LoadCursor(ProgramInstance, MAKEINTRESOURCE(104)));
 }
 
 // FUNCTION: GAMEMD 0x00777E00
@@ -614,14 +614,14 @@ void FUN_00778170(void)
 void FUN_00778180(void)
 {
 	if (Game::hIMC) {
-		FUN_007C8A1C(Game::hWnd, Game::hIMC);
+		FUN_007C8A1C(MainWindow, Game::hIMC);
 	}
 }
 
 // FUNCTION: GAMEMD 0x007781A0
 void FUN_007781A0(void)
 {
-	FUN_007C8A1C(Game::hWnd, NULL);
+	FUN_007C8A1C(MainWindow, NULL);
 }
 
 // FUNCTION: GAMEMD 0x007781B0

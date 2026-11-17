@@ -89,7 +89,6 @@
 extern DynamicVectorClass<FootClass *> DAT_008B3DC0;
 #define Foots DAT_008B3DC0
 extern DynamicVectorClass<FactoryClass *> DAT_00A83E30;
-namespace Game { extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; extern int MuteSWLaunches; extern Cell CellSpreadTable[]; extern bool SWAllowed; extern bool ArmageddonMode; }
 #define Factories DAT_00A83E30
 extern HouseClass * DAT_00AC1198;
@@ -812,7 +811,7 @@ HouseClass::~HouseClass(void)
 	}
 	SuperWeapon.Clear();
 
-	if (AIGeneral != NULL && Game::IsActive) {
+	if (AIGeneral != NULL && GameActive) {
 		AIGeneral->Release();
 		AIGeneral = NULL;
 	}
@@ -2575,7 +2574,6 @@ extern bool DAT_00884D2C;
 extern bool DAT_00824410;
 void __fastcall FUN_00637A10(void);
 void __cdecl FUN_004068E0(char const * format, ...);
-namespace Game { extern int PlayerColor; extern bool ChatMask[8]; }
 
 // FUNCTION: GAMEMD 0x004FC0B0
 void HouseClass::MPlayer_Defeated(void)
@@ -2626,13 +2624,13 @@ void HouseClass::MPlayer_Defeated(void)
 		Map.Toggle_Radar(true);
 		HiddenSurface->Fill(0);
 		Map.Flag_To_Redraw(GS_REDRAW_ALL);
-		memset(Game::ChatMask, true, sizeof(Game::ChatMask));
+		memset(Session.PlayerChatEnabled, true, sizeof(Session.PlayerChatEnabled));
 		if (WS_Top_Window_ID() == 0x73) {
 			Map.FUN_00658640(WS_Top_Window());
 		}
 		if (DAT_00AC1198 != PlayerPtr) {
 			swprintf(txt, StringTable::LoadString("TXT_PLAYER_DEFEATED", NULL, "D:\\ra2mdpost\\House.CPP", 4995), UIName);
-			Session.Messages.Add_Message(NULL, 0, txt, Session.Color_Index_To_Scheme(Game::PlayerColor), TextPrintType(0x4046), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
+			Session.Messages.Add_Message(NULL, 0, txt, Session.Color_Index_To_Scheme(Session.PrefColor), TextPrintType(0x4046), int(Rule->MessageDelay * TICKS_PER_MINUTE), false);
 			VoxClass::Play("EVA_YouHaveLost", -1, -1);
 		}
 		Map.Flag_To_Redraw();
@@ -8145,7 +8143,7 @@ void HouseClass::FUN_0050E010(UnitTypeClass * type)
 				found = true;
 			}
 		}
-		if (found && Game::IsActive && Is_Player_Control() && !ScenarioInit) {
+		if (found && GameActive && Is_Player_Control() && !ScenarioInit) {
 			VoxClass::Play("EVA_RobotTanksBackOnline", -1, -1);
 		}
 	}
@@ -8164,7 +8162,7 @@ void HouseClass::LostPoweredCenter(UnitTypeClass * type)
 				found = true;
 			}
 		}
-		if (found && Game::IsActive && Is_Player_Control() && !ScenarioInit) {
+		if (found && GameActive && Is_Player_Control() && !ScenarioInit) {
 			VoxClass::Play("EVA_RobotTanksOffline", -1, -1);
 		}
 	}
@@ -8188,7 +8186,7 @@ void HouseClass::FUN_0050E1C0(UnitTypeClass * type)
 				found = true;
 			}
 		}
-		if (found && Game::IsActive && Is_Player_Control() && !ScenarioInit) {
+		if (found && GameActive && Is_Player_Control() && !ScenarioInit) {
 			VoxClass::Play("EVA_RobotTanksOffline", -1, -1);
 		}
 	}
@@ -8206,7 +8204,7 @@ void HouseClass::FUN_0050E280(UnitTypeClass * type)
 				found = true;
 			}
 		}
-		if (found && Game::IsActive && Is_Player_Control() && !ScenarioInit) {
+		if (found && GameActive && Is_Player_Control() && !ScenarioInit) {
 			VoxClass::Play("EVA_RobotTanksBackOnline", -1, -1);
 		}
 	}

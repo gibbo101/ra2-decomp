@@ -1080,7 +1080,6 @@ int __fastcall FUN_0077EBA0(Wstring const & who)
 	return -1;
 }
 
-namespace Game { extern int PlayerColor; }
 int __fastcall FUN_004E37D0(int side);
 int __fastcall FUN_004E41D0(int side);
 int __fastcall FUN_004E4170(HWND dialog, int id, int flag);
@@ -1160,7 +1159,7 @@ int __fastcall FUN_0077ED00(Wstring const & who, int country, int color, int sta
 		slot->Set_Color(color);
 	}
 	if (Session.Slots[index] == Session.Players[0]) {
-		Game::PlayerColor = color;
+		Session.PrefColor = color;
 	}
 	FUN_00783C80(0, false);
 	return result;
@@ -3652,7 +3651,6 @@ bool FUN_00786270(void)
 void FUN_005E87A0(void);
 void FUN_005E8B40(void);
 void FUN_005E8B60(void);
-namespace Game { extern HINSTANCE hInstance; }
 int __fastcall FUN_00785370(HINSTANCE instance);
 
 // FUNCTION: GAMEMD 0x00786390
@@ -3685,7 +3683,7 @@ int FUN_00786390(void)
 	for (int i = 0; i < 18; i++) {
 		DAT_00B73684[i] = CreateEvent(NULL, FALSE, FALSE, NULL);
 	}
-	return FUN_00785370(Game::hInstance);
+	return FUN_00785370(ProgramInstance);
 }
 
 class SimpleWonlineDialogControl : public OwnerDraw::SimpleDialogControl
@@ -4389,7 +4387,6 @@ int __fastcall FUN_00788A30(bool flag)
 	return -1;
 }
 
-namespace Game { extern HWND hWnd; }
 HWND WS_Create_Dialog(HINSTANCE instance, int id, HWND parent, DLGPROC proc, BOOL force_show);
 namespace UI { void __fastcall RegisterWindow(HWND window, int id); }
 namespace OwnerDraw {
@@ -4473,7 +4470,7 @@ void __fastcall FUN_00788B00(HWND win)
 first_nick_retry:
 	FUN_0072C240();
 	FUN_0052FEC0(NULL, true);
-	dlg = WS_Create_Dialog(Game::hInstance, 0xE7, Game::hWnd, FUN_0078E230, FALSE);
+	dlg = WS_Create_Dialog(ProgramInstance, 0xE7, MainWindow, FUN_0078E230, FALSE);
 	UI::RegisterWindow(dlg, 0xE7);
 	SendDlgItemMessage(dlg, 0x62E, 0x14E, month - 1, 0);
 	if (day > 0) {
@@ -4535,7 +4532,7 @@ pick_dialog:
 	} else {
 		dialog_id = (DAT_00B77E60 >= 18) + 0xF3;
 	}
-	dlg = WS_Create_Dialog(Game::hInstance, dialog_id, Game::hWnd, FUN_0078E950, FALSE);
+	dlg = WS_Create_Dialog(ProgramInstance, dialog_id, MainWindow, FUN_0078E950, FALSE);
 	UI::RegisterWindow(dlg, dialog_id);
 	if (DAT_00B77794.length() > 0) {
 		Set_Item_Text(dlg, 0x628, DAT_00B77794.get());
@@ -5697,7 +5694,6 @@ extern int DAT_00B76AC0;
 extern int DAT_00B73680;
 extern int DAT_00B77790;
 extern int * DAT_00B77E98;
-namespace Game { extern bool IsActive; }
 namespace OwnerDraw {
 	void __fastcall DrawCampaignMenuTransition(HWND window, bool reverse);
 }
@@ -5726,7 +5722,7 @@ BOOL CALLBACK FUN_0078EBC0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 			return FALSE;
 
 		case WM_DESTROY:
-			Game::IsActive = true;
+			GameActive = true;
 			return FALSE;
 
 		case WM_COMMAND:
@@ -5818,7 +5814,7 @@ BOOL CALLBACK FUN_0078EBC0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 				case 0x63A:
 					OwnerDraw::DrawCampaignMenuTransition(window, false);
 					FUN_0052FEC0(NULL, true);
-					Game::IsActive = false;
+					GameActive = false;
 					FUN_0072B8E0();
 					FUN_006B6230(&lparam);
 					ShowWindow(window, SW_SHOW);
@@ -5999,7 +5995,6 @@ void __fastcall FUN_00791AA0(HWND window)
 	}
 }
 
-namespace Game { extern HWND hWnd; }
 HWND WS_Create_Dialog(HINSTANCE instance, int id, HWND parent, DLGPROC proc, BOOL force_show);
 void FUN_0072CBA0(void);
 namespace UI { void __fastcall RegisterWindow(HWND window, int id); }
@@ -6019,7 +6014,7 @@ void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag)
 		HWND top = FUN_00775B10();
 		HWND input = GetDlgItem(top, 0x540);
 		FUN_0072CBA0();
-		dialog = WS_Create_Dialog(Game::hInstance, 0xC4, Game::hWnd, FUN_00792CF0, FALSE);
+		dialog = WS_Create_Dialog(ProgramInstance, 0xC4, MainWindow, FUN_00792CF0, FALSE);
 		UI::RegisterWindow(dialog, 0xC4);
 		HWND list = GetDlgItem(dialog, 0x5B2);
 		SendMessage(list, 0x4B2, 0, (LPARAM)text.text());
@@ -6223,7 +6218,7 @@ BOOL CALLBACK FUN_00793280(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 // FUNCTION: GAMEMD 0x00793250
 void FUN_00793250(void)
 {
-	HWND dialog = WS_Create_Dialog(Game::hInstance, 0x130, Game::hWnd, FUN_00793280, FALSE);
+	HWND dialog = WS_Create_Dialog(ProgramInstance, 0x130, MainWindow, FUN_00793280, FALSE);
 	if (dialog) {
 		UI::RegisterWindow(dialog, 0x130);
 	}
@@ -7612,7 +7607,6 @@ namespace Game {
 		extern int Tournament;
 	}
 	extern int Seed;
-	extern int TechLevel;
 }
 extern int DAT_00B77D6C;
 extern char DAT_00B77830[];
@@ -7663,7 +7657,7 @@ void FUN_007970D0(void)
 	Session.MasterPlayerID = -1;
 	Session.House = 0;
 	Game::Seed = 1;
-	Game::TechLevel = 10;
+	BuildLevel = 10;
 	Session.Options.UnitCount = 10;
 	Session.Options.Credits = 10000;
 	Session.Options.FogOfWar = 0;
@@ -9217,7 +9211,7 @@ bool FUN_0079BC80(void)
 // FUNCTION: GAMEMD 0x0079BE70
 void FUN_0079BE70(void)
 {
-	HWND dialog = WS_Create_Dialog(Game::hInstance, 0x11E, Game::hWnd, FUN_0079DB50, FALSE);
+	HWND dialog = WS_Create_Dialog(ProgramInstance, 0x11E, MainWindow, FUN_0079DB50, FALSE);
 	UI::RegisterWindow(dialog, 0x11E);
 	SendMessage(dialog, 0x4A9, 0, 1);
 	ShowWindow(dialog, SW_SHOWNORMAL);
@@ -9856,7 +9850,7 @@ int FUN_0079FC40(void)
 	}
 
 	FUN_0072BE80();
-	HWND dialog = WS_Create_Dialog(Game::hInstance, 0x117, Game::hWnd, FUN_007A2110, FALSE);
+	HWND dialog = WS_Create_Dialog(ProgramInstance, 0x117, MainWindow, FUN_007A2110, FALSE);
 	UI::RegisterWindow(dialog, 0x117);
 	SendMessage(dialog, 0x4A9, 0, 1);
 	ShowWindow(dialog, SW_SHOWNORMAL);
@@ -11427,7 +11421,7 @@ long __stdcall FUN_007A5690(void * sink, long result, Channel * channel)
 		strcpy(g_UserInfo[0].Name, DAT_00B73E40.get());
 		g_UserInfo[0].House = Session.House;
 		g_UserInfo[0].Unknown = 0;
-		g_UserInfo[0].Color = Game::PlayerColor;
+		g_UserInfo[0].Color = Session.PrefColor;
 		g_UserInfo[0].Accepted = 1;
 		memcpy(&DAT_00B76B10, channel, 0x10C);
 	}
@@ -13970,7 +13964,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 			DAT_008316D4 = false;
 			OwnerDraw::DrawCampaignMenuTransition(window, false);
 			FUN_0052FEC0(0, true);
-			bool cancelled = Scenario_Dialog(Game::hWnd) == 2;
+			bool cancelled = Scenario_Dialog(MainWindow) == 2;
 			ShowWindow(window, 5);
 			OwnerDraw::SetNeedsControlImage(window, 0);
 			SetFocus(GetDlgItem(window, 0x540));
@@ -14797,7 +14791,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 			if (!Is_Internal_Session()) {
 				FUN_0052FEC0(NULL, true);
 				FUN_0072CF40();
-				HWND dlg = WS_Create_Dialog(Game::hInstance, 0xC9, Game::hWnd, FUN_00791B10, FALSE);
+				HWND dlg = WS_Create_Dialog(ProgramInstance, 0xC9, MainWindow, FUN_00791B10, FALSE);
 				UI::RegisterWindow(dlg, 0xC9);
 				HWND main = FUN_00775940(0x113);
 				if (main) {

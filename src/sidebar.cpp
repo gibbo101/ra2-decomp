@@ -920,22 +920,21 @@ void SidebarClass::Draw_It(bool complete)
 	DSurface::Temp = (DSurface *)old;
 }
 
-namespace Game { extern bool IsActive; extern HWND hWnd; }
 namespace Unsorted { extern bool ScenarioStarted; }
 extern bool DAT_00B0B519;
 
 // FUNCTION: GAMEMD 0x006A70E0
 void SidebarClass::Blit_Sidebar(bool complete)
 {
-	if (IsSidebarActive && Game::IsActive && Unsorted::ScenarioStarted) {
+	if (IsSidebarActive && GameActive && Unsorted::ScenarioStarted) {
 
 		RECT crect;
-		GetClientRect(Game::hWnd, &crect);
+		GetClientRect(MainWindow, &crect);
 
 		POINT scrnpt;
 		scrnpt.x = crect.left;
 		scrnpt.y = crect.top;
-		ClientToScreen(Game::hWnd, &scrnpt);
+		ClientToScreen(MainWindow, &scrnpt);
 
 		if (!IsToBlitSidebar && !complete) {
 			IsToBlitSidebar = false;
@@ -1038,7 +1037,6 @@ void SidebarClass::Recalc(void)
 	}
 }
 
-namespace Game { extern unsigned char RecordingFlag; }
 void FUN_005BF450(void);
 
 // FUNCTION: GAMEMD 0x006A7D70
@@ -1046,7 +1044,7 @@ bool SidebarClass::Activate(int control)
 {
 	bool old = IsSidebarActive;
 
-	if ((Game::RecordingFlag & 2) && Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+	if (Session.Play && Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
 		return(old);
 	}
 
@@ -1433,7 +1431,7 @@ extern unsigned short DAT_00B07BC4[];
 unsigned short const * SidebarClass::StripClass::Help_Text(int id)
 {
 	int i = id + TopIndex * 2;
-	if (Game::IsActive) {
+	if (GameActive) {
 		if (i < BuildableCount && BuildableCount < MAX_BUILDABLES) {
 			if (Buildables[i].BuildableType == RTTI_SPECIAL) {
 				return SuperWeaponTypes[Buildables[i].BuildableID]->UIName;
@@ -1881,13 +1879,12 @@ bool SidebarClass::StripClass::Abandon_Production(FactoryClass const * factory)
 	return abandoned;
 }
 
-namespace Game { extern int SpecialDialog; }
 
 // FUNCTION: GAMEMD 0x006ABC40
 void FUN_006ABC40(void)
 {
 	if (Session.Type != GAME_NORMAL) {
-		Game::SpecialDialog = 8;
+		SpecialDialog = SDLG_SPECIAL;
 	}
 }
 

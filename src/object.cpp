@@ -72,7 +72,6 @@
 // SYNTHETIC: GAMEMD 0x005F38E0 SYMBOL
 // _$E47
 namespace Unsorted { extern bool ArmageddonMode; }
-namespace Game { extern bool IsActive; }
 void __fastcall SetNavCycleMode(int mode);
 #include "msanim.h"
 
@@ -586,7 +585,7 @@ void ObjectClass::Mark_For_Redraw(void)
 // FUNCTION: GAMEMD 0x005F4D30
 bool ObjectClass::Limbo(void)
 {
-	if (Game::IsActive && !IsInLimbo) {
+	if (GameActive && !IsInLimbo) {
 
 		Unselect();
 

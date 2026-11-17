@@ -36,7 +36,6 @@ __declspec(dllimport) char * __stdcall BinkGetError(void);
 __declspec(dllimport) int __stdcall BinkCopyToBuffer(BinkInfo *, void *, int, unsigned int, unsigned int, unsigned int, unsigned int);
 }
 
-namespace Game { extern bool IsFocused; extern HWND hWnd; }
 
 void __cdecl FUN_004068E0(char const *, ...);
 extern int MessageLoopCount;
@@ -132,7 +131,7 @@ bool BinkHandle::FUN_00432750(char const * name)
 		} else {
 			DrawSurface = VisibleSurface;
 			RECT rc;
-			GetClientRect(Game::hWnd, &rc);
+			GetClientRect(MainWindow, &rc);
 			draw.X = (rc.right - rc.left - draw.Width) / 2;
 			draw.Y = (rc.bottom - rc.top - draw.Height) / 2;
 		}
@@ -227,15 +226,15 @@ void BinkHandle::FUN_00432C70(void)
 		}
 		if (DrawSurface == VisibleSurface) {
 			RECT rc;
-			GetClientRect(Game::hWnd, &rc);
-			ClientToScreen(Game::hWnd, (POINT *)&rc);
+			GetClientRect(MainWindow, &rc);
+			ClientToScreen(MainWindow, (POINT *)&rc);
 			int px = DestRect.X + rc.left;
 			int py = DestRect.Y + rc.top;
 			FUN_00432E40(DrawSurface, px, py);
 		} else if (FUN_00432E40(DrawSurface, DestRect.X, DestRect.Y)) {
 			RECT rc;
-			GetClientRect(Game::hWnd, &rc);
-			ClientToScreen(Game::hWnd, (POINT *)&rc);
+			GetClientRect(MainWindow, &rc);
+			ClientToScreen(MainWindow, (POINT *)&rc);
 			Rect dest = DestRect;
 			dest.X += rc.left;
 			dest.Y += rc.top;
@@ -257,7 +256,7 @@ bool BinkHandle::FUN_00432E40(Surface * surface, int x, int y)
 		memcpy(&BinkVolume, &Options.VoiceVolume, sizeof(BinkVolume));
 		BinkSetVolume(Bink, (int)(BinkVolume * 32768));
 	}
-	if (!Game::IsFocused) {
+	if (!GameInFocus) {
 		if (Playing == true) {
 			FUN_004068E0("Pause bink movie\n");
 			Playing = false;
@@ -269,8 +268,8 @@ bool BinkHandle::FUN_00432E40(Surface * surface, int x, int y)
 		BinkPause(Bink, 0);
 		if (DrawSurface == VisibleSurface) {
 			RECT rc;
-			GetClientRect(Game::hWnd, &rc);
-			ClientToScreen(Game::hWnd, (POINT *)&rc);
+			GetClientRect(MainWindow, &rc);
+			ClientToScreen(MainWindow, (POINT *)&rc);
 			int px = DestRect.X + rc.left;
 			int py = DestRect.Y + rc.top;
 			Copy_Frame(DrawSurface, px, py, true);
@@ -332,8 +331,8 @@ void BinkHandle::FUN_00433060(void)
 {
 	if (DrawSurface == VisibleSurface) {
 		RECT rc;
-		GetClientRect(Game::hWnd, &rc);
-		ClientToScreen(Game::hWnd, (POINT *)&rc);
+		GetClientRect(MainWindow, &rc);
+		ClientToScreen(MainWindow, (POINT *)&rc);
 		int x = DestRect.X + rc.left;
 		int y = DestRect.Y + rc.top;
 		Redraw_Frame(DrawSurface, x, y);
@@ -425,7 +424,7 @@ int BinkHandle::Current_Time(void)
 // FUNCTION: GAMEMD 0x004333F0
 void BinkHandle::Update_Focus(void)
 {
-	if (!Game::IsFocused) {
+	if (!GameInFocus) {
 		if (Playing == true) {
 			FUN_004068E0("Pause bink movie\n");
 			Playing = false;

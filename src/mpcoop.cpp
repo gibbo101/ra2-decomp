@@ -87,7 +87,6 @@ extern int DAT_00880990;
 extern int DAT_00880994;
 void __fastcall FUN_0049B930(CoopCampaignClass * camp);
 struct Game {
-	static int TechLevel;
 	static int Seed;
 	static void InitRandom(void);
 };
@@ -1236,7 +1235,7 @@ void MPCooperative::vt_entry_A0(bool playerWon)
 	Field190 = Session.MasterPlayerID;
 	Field70 = Session.House;
 	Seed = Game::Seed;
-	TechLevel = Game::TechLevel;
+	TechLevel = BuildLevel;
 	UnitCount = Session.Options.UnitCount;
 	Credits = Session.Options.Credits;
 	FogOfWar = Session.Options.FogOfWar;
@@ -1652,7 +1651,7 @@ void MPCooperative::vt_entry_AC(void)
 	Game::Seed = Seed;
 	Game::InitRandom();
 	FUN_004068E0("Setup Rematch: Random Seed = %d\n", Game::Seed);
-	Game::TechLevel = TechLevel;
+	BuildLevel = TechLevel;
 	Session.Options.UnitCount = UnitCount;
 	Session.Options.Credits = Credits;
 	Session.Options.FogOfWar = FogOfWar;

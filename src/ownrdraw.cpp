@@ -1716,7 +1716,7 @@ inline int Get_Dialog_Type(HWND dialog)
 	return 0;
 }
 
-struct Game { static HINSTANCE hInstance; static bool __cdecl CallBack(void); static bool __fastcall MainLoop(void); static int ObserverMode; static int PCXInitialized; };
+struct Game { static int ObserverMode; static int PCXInitialized; };
 
 // FUNCTION: GAMEMD 0x006040B0
 char const * __fastcall OwnerDraw::GetTooltipStringLabel(HWND window, HWND control)
@@ -3407,8 +3407,8 @@ bool WS_Save_Dialog_Values(HWND dialog)
 	do {
 		FUN_005D4D50();
 		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
-			Game::CallBack();
-		} else if (!FUN_0055CBF0() && Game::MainLoop()) {
+			Call_Back();
+		} else if (!FUN_0055CBF0() && Main_Loop()) {
 			break;
 		}
 		int done = *((char *)data + 0xbe) == 0;
@@ -5099,8 +5099,8 @@ int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus)
 		while (result == 0) {
 			FUN_005D4D50();
 			if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
-				Game::CallBack();
-			} else if (!FUN_0055CBF0() && Game::MainLoop()) {
+				Call_Back();
+			} else if (!FUN_0055CBF0() && Main_Loop()) {
 				break;
 			}
 		}
@@ -5138,7 +5138,7 @@ void UI::RegisterComboDropAndNewEditClasses(void)
 	wc.lpfnWndProc = FUN_0060D540;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hInstance = Game::hInstance;
+	wc.hInstance = ProgramInstance;
 	wc.hIcon = NULL;
 	wc.hCursor = NULL;
 	wc.hbrBackground = NULL;
@@ -5150,7 +5150,7 @@ void UI::RegisterComboDropAndNewEditClasses(void)
 	wc.lpfnWndProc = FUN_0060D520;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hInstance = Game::hInstance;
+	wc.hInstance = ProgramInstance;
 	wc.hIcon = NULL;
 	wc.hCursor = NULL;
 	wc.hbrBackground = NULL;
@@ -5190,7 +5190,7 @@ BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam)
 			if (style & WS_TABSTOP) {
 				flags = 0x40010110;
 			}
-			HWND list = CreateWindowEx(0, "ListBox", NULL, flags, x, y, rect.right - rect.left, rect.bottom - rect.top, parent, NULL, Game::hInstance, NULL);
+			HWND list = CreateWindowEx(0, "ListBox", NULL, flags, x, y, rect.right - rect.left, rect.bottom - rect.top, parent, NULL, ProgramInstance, NULL);
 			NewEditLink *link = new NewEditLink;
 			link->className = "NewEdit";
 			link->style = GetWindowLong(edit, GWL_STYLE);
@@ -5399,7 +5399,7 @@ union ODColorBits {
 };
 
 // SYNTHETIC: GAMEMD 0x006107A0 SYMBOL
-// _$E119
+// _$E118
 OwnerDraw::Tooltip ODTooltip;
 
 // FUNCTION: GAMEMD 0x006107E0
@@ -5525,11 +5525,11 @@ bool OwnerDraw::End_Tooltip(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00612910 SYMBOL
-// _$E122
+// _$E121
 static ArrayList<HWND> ActiveWindows;
 
 // SYNTHETIC: GAMEMD 0x00612930 SYMBOL
-// _$E127
+// _$E126
 static Dictionary<OwnerDraw::CtrlMsgData, bool> ProcessedMessages(Hash_CtrlMsg);
 
 // FUNCTION: GAMEMD 0x00612A60
@@ -8308,10 +8308,10 @@ bool UI::Updated(void)
 {
 	FUN_005D4D50();
 	if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
-		Game::CallBack();
+		Call_Back();
 		return false;
 	}
-	if (!FUN_0055CBF0() && Game::MainLoop()) {
+	if (!FUN_0055CBF0() && Main_Loop()) {
 		return true;
 	}
 	return false;
@@ -8714,7 +8714,7 @@ int __fastcall FUN_00623CD0(wchar_t const * text)
 		while (result < 0) {
 			FUN_005D4D50();
 			if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && !Session.NetOpen && !Session.Suspended) {
-				if (!FUN_0055CBF0() && Game::MainLoop()) {
+				if (!FUN_0055CBF0() && Main_Loop()) {
 					break;
 				}
 			}
@@ -8912,8 +8912,8 @@ int __fastcall Run_Dialog_Control(int resource, DLGPROC proc, OwnerDraw::DialogC
 	while (!control->F2() && !control->F4()) {
 		FUN_005D4D50();
 		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
-			Game::CallBack();
-		} else if (!FUN_0055CBF0() && Game::MainLoop()) {
+			Call_Back();
+		} else if (!FUN_0055CBF0() && Main_Loop()) {
 			break;
 		}
 		Title_Screen_Restore(false);

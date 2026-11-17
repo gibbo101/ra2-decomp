@@ -696,7 +696,7 @@ namespace UI {
 	void RegisterComboDropAndNewEditClasses(void);
 	void RegisterWindow(HWND window, int id);
 }
-namespace Game { extern HINSTANCE hInstance; extern HWND hWnd; extern int ObserverMode; }
+namespace Game { extern int ObserverMode; }
 BOOL CALLBACK MPlayer_Game_List_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 bool __fastcall FUN_005E7BF0(int slot);
 extern int DAT_008316A4;
@@ -761,7 +761,7 @@ bool Net2Remote_Connect(void)
 
 	UI::RegisterComboDropAndNewEditClasses();
 
-	HWND game_list_dialog = WS_Create_Dialog(Game::hInstance, IDD_MPLAYER_GAME_LIST, Game::hWnd, MPlayer_Game_List_Dialog_Proc, FALSE);
+	HWND game_list_dialog = WS_Create_Dialog(ProgramInstance, IDD_MPLAYER_GAME_LIST, MainWindow, MPlayer_Game_List_Dialog_Proc, FALSE);
 	UI::RegisterWindow(game_list_dialog, IDD_MPLAYER_GAME_LIST);
 	ShowWindow(game_list_dialog, SW_SHOWNORMAL);
 	Net2DisplayUsers();
@@ -842,7 +842,7 @@ bool Net2Remote_Connect(void)
 				WS_Destroy_Dialog(WS_Top_Window(), 0);
 				FUN_0072CF90();
 				FUN_005E8B60();
-				game_list_dialog = WS_Create_Dialog(Game::hInstance, IDD_MPLAYER_GAME_LIST, Game::hWnd, MPlayer_Game_List_Dialog_Proc, 0);
+				game_list_dialog = WS_Create_Dialog(ProgramInstance, IDD_MPLAYER_GAME_LIST, MainWindow, MPlayer_Game_List_Dialog_Proc, 0);
 				UI::RegisterWindow(game_list_dialog, IDD_MPLAYER_GAME_LIST);
 				ShowWindow(game_list_dialog, SW_SHOWNORMAL);
 				Send_Join_Queries(0, 0, 1, 0);
@@ -886,7 +886,7 @@ bool Net2Remote_Connect(void)
 				Clear_Vector(&Session.Players);
 				FUN_005E8B40();
 				FUN_005E8B60();
-				game_list_dialog = WS_Create_Dialog(Game::hInstance, IDD_MPLAYER_GAME_LIST, Game::hWnd, MPlayer_Game_List_Dialog_Proc, 0);
+				game_list_dialog = WS_Create_Dialog(ProgramInstance, IDD_MPLAYER_GAME_LIST, MainWindow, MPlayer_Game_List_Dialog_Proc, 0);
 				UI::RegisterWindow(game_list_dialog, IDD_MPLAYER_GAME_LIST);
 				ShowWindow(game_list_dialog, SW_SHOWNORMAL);
 			} else {
@@ -927,7 +927,7 @@ bool Net2Remote_Connect(void)
 				Clear_Vector(&Session.Players);
 				FUN_005E8B40();
 				FUN_005E8B60();
-				game_list_dialog = WS_Create_Dialog(Game::hInstance, IDD_MPLAYER_GAME_LIST, Game::hWnd, MPlayer_Game_List_Dialog_Proc, 0);
+				game_list_dialog = WS_Create_Dialog(ProgramInstance, IDD_MPLAYER_GAME_LIST, MainWindow, MPlayer_Game_List_Dialog_Proc, 0);
 				UI::RegisterWindow(game_list_dialog, IDD_MPLAYER_GAME_LIST);
 				ShowWindow(game_list_dialog, SW_SHOWNORMAL);
 			}
@@ -1045,7 +1045,7 @@ bool Net2Remote_Connect(void)
 				CurGame = Session.Games.Count() - 1;
 
 				FUN_0072CF40();
-				HWND host_dialog = WS_Create_Dialog(Game::hInstance, IDD_MPLAYER_HOST, Game::hWnd, MPlayer_Host_Dialog_Proc, 0);
+				HWND host_dialog = WS_Create_Dialog(ProgramInstance, IDD_MPLAYER_HOST, MainWindow, MPlayer_Host_Dialog_Proc, 0);
 				UI::RegisterWindow(host_dialog, IDD_MPLAYER_HOST);
 				SendMessage(host_dialog, OD_SETTOP, 0, 1);
 				ShowWindow(host_dialog, SW_SHOWNORMAL);
@@ -1664,7 +1664,6 @@ void __fastcall FUN_005EC9F0(HWND dialog, int id, NodeNameType * node, int flag)
 bool FUN_005E8760(void);
 void FUN_005DAF30(void);
 namespace UI { void __fastcall CenterWindow(HWND window); }
-namespace Game { extern HWND hWnd; }
 void __fastcall FUN_005E32D0(bool force, bool now);
 namespace Randomizer { extern Random2Class Global; }
 BOOL CALLBACK FUN_005DF180(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
@@ -1803,7 +1802,7 @@ BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 			WS_Save_Dialog_Values(window);
 			ShowWindow(window, SW_HIDE);
 			DAT_008316D4 = false;
-			if (FUN_005E68A0(Game::hWnd) == 2) {
+			if (FUN_005E68A0(MainWindow) == 2) {
 				Session.Options.ScenarioIndex = scenario;
 				FUN_005E7BF0(scenario);
 				FUN_005E74E0(window);
@@ -2505,7 +2504,7 @@ static void Get_Join_Responses(void)
 				FUN_005E8B60();
 				FUN_005E8DA0(Session.GPacket.PlayerInfo.unknown_24);
 				FUN_0072CF40();
-				dialog = WS_Create_Dialog(Game::hInstance, IDD_MPLAYER_GUEST, Game::hWnd, MPlayer_Guest_Dialog_Proc, FALSE);
+				dialog = WS_Create_Dialog(ProgramInstance, IDD_MPLAYER_GUEST, MainWindow, MPlayer_Guest_Dialog_Proc, FALSE);
 				UI::RegisterWindow(dialog, IDD_MPLAYER_GUEST);
 				ShowWindow(dialog, SW_SHOWNORMAL);
 				display_users = true;

@@ -104,7 +104,6 @@ extern ObjectClass const * DAT_00880978;
 extern int DAT_0088097C;
 extern int DAT_00880980;
 namespace Unsorted { extern bool ArmageddonMode; }
-namespace Game { extern HWND hWnd; }
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool as_shape);
 	static ShapeSet * GRFXTXT_SHP;
@@ -733,7 +732,7 @@ struct TimerFlashSource {
 extern TimerFlashSource * DAT_00B054D4;
 
 BitFont * __fastcall FUN_004A60D0(int flags);
-namespace Game { unsigned __int64 __fastcall AudioGetTime(void); }
+#include "audtimer.h"
 
 static inline Point2D * Print_Timer(wchar_t const * text, Point2D const & pt, ColorScheme * scheme)
 {
@@ -769,8 +768,8 @@ int Tactical::DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const
 
 	ColorScheme * flash = scheme;
 	if (time == 0 && flashtime && flashstate) {
-		if (*flashtime <= Game::AudioGetTime()) {
-			*flashtime = Game::AudioGetTime() + 1000;
+		if (*flashtime <= AudioGetTime()) {
+			*flashtime = AudioGetTime() + 1000;
 			*flashstate = !*flashstate;
 		}
 		if (*flashstate) {
@@ -1442,7 +1441,7 @@ void Tactical::Draw_Shroud(Rect const & area)
 	base.X -= 2;
 	Cell cell = base;
 
-	if (Game::hWnd != NULL) {
+	if (MainWindow != NULL) {
 		int ix, iy;
 		for (iy = 0; iy < ycount; iy++) {
 			Cell step(iy / 2, (iy + 1) / 2);
@@ -1928,7 +1927,7 @@ void Tactical::Draw_Objects(bool forced)
 			if (obj2->IsVisible && obj2 != NULL && obj2->Is_Techno()) {
 				if (Is_Foot_Object(obj2)) {
 					obj2->Destination_Coord();
-					if (Game::hWnd && !Unsorted::ArmageddonMode && Scen->Special.IsFogOfWar && Map.IsLocationFogged(obj2->PositionCoord)) {
+					if (MainWindow && !Unsorted::ArmageddonMode && Scen->Special.IsFogOfWar && Map.IsLocationFogged(obj2->PositionCoord)) {
 						continue;
 					}
 				}

@@ -45,7 +45,7 @@ extern void * DAT_00816514;
 
 struct AudioIDXData;
 struct ChronoScreenEffect { static bool Active(void); };
-struct Game { static bool __cdecl CallBack(void); };
+void Call_Back(void);
 
 void __fastcall FUN_00401580(AudioIDXData * idx);
 AudioIDXData * __fastcall FUN_004011C0(char const * name, int flags);
@@ -374,6 +374,6 @@ void __fastcall AudioLevelWaitFade(AudioLevel * level)
 	TimeStamp end = AudioGetTime() + level->duration;
 
 	while (level->level != level->newLevel && AudioGetTime() < end) {
-		Game::CallBack();
+		Call_Back();
 	}
 }

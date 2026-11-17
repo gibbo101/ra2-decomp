@@ -30,7 +30,6 @@
 
 namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 namespace Unsorted { extern int MuteSWLaunches; }
-namespace Game { extern int SpecialDialog; }
 extern char const * DAT_00822730[];
 extern char const * DAT_0082274C[];
 extern char const * DAT_00822768[];
@@ -274,14 +273,14 @@ BOOL CALLBACK Game_Controls_Dialog_Proc(HWND window, UINT message, WPARAM wparam
 			switch (LOWORD(wparam)) {
 				case 0x52C:
 					if (code == 0 && GameActive == true) {
-						Game::SpecialDialog = SDLG_KEYBOARD;
+						SpecialDialog = SDLG_KEYBOARD;
 						*retval = 1;
 					}
 					break;
 
 				case 0x52D:
 					if (code == 0 && GameActive == true) {
-						Game::SpecialDialog = SDLG_SOUND;
+						SpecialDialog = SDLG_SOUND;
 						*retval = 1;
 					}
 					break;
@@ -330,14 +329,14 @@ void __fastcall FUN_004E23C0(HWND window, int id, int unused, int code)
 	switch (id) {
 		case 0x52C:
 			if (code == 0 && GameActive == true) {
-				Game::SpecialDialog = SDLG_KEYBOARD;
+				SpecialDialog = SDLG_KEYBOARD;
 				*retval = 1;
 			}
 			break;
 
 		case 0x52D:
 			if (code == 0 && GameActive == true) {
-				Game::SpecialDialog = SDLG_SOUND;
+				SpecialDialog = SDLG_SOUND;
 				*retval = 1;
 			}
 			break;

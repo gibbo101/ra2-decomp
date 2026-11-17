@@ -231,7 +231,6 @@ extern Rect OptionsButtonRect;
 extern int DAT_00B04A1C;
 extern int DAT_00B04A38;
 
-namespace Game { extern int SpecialDialog; }
 extern int DAT_00886FA8;
 extern int DAT_00B45B68;
 bool __fastcall FUN_0053BAE0(void);
@@ -583,12 +582,12 @@ void RadarClass::AI(KeyNumType & input, Point2D const & xy)
 
 	if (input == 0x80F2) {
 		if (Session.Type != GAME_NORMAL && !((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode && Session.MPGameMode->vt_entry_08() && Session.MPGameMode->vt_entry_04())) {
-			Game::SpecialDialog = 8;
+			SpecialDialog = SDLG_SPECIAL;
 		} else {
-			Game::SpecialDialog = 9;
+			SpecialDialog = SpecialDialogType(9);
 		}
 	} else if (input == 0x80F3) {
-		Game::SpecialDialog = 1;
+		SpecialDialog = SDLG_OPTIONS;
 	}
 
 	if (DAT_00B45B68 > 0 && RadarMode != 3 && RadarMode != 4) {

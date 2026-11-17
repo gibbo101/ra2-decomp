@@ -661,10 +661,7 @@ void __fastcall FUN_004E5480(HWND dialog, int combo, int value);
 void __fastcall FUN_00603D30(HWND item, Surface * surface);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus);
-struct Game
-{
-	static bool __cdecl CallBack(void);
-};
+void Call_Back(void);
 
 // FUNCTION: GAMEMD 0x0046F8F0
 void __fastcall FUN_0046F8F0(HWND dialog)
@@ -787,7 +784,7 @@ bool FUN_0046FBD0(void)
 	if (Session.Type == GAME_INTERNET) {
 		return FUN_0077F900();
 	}
-	Game::CallBack();
+	Call_Back();
 	return false;
 }
 

@@ -191,7 +191,6 @@ void __fastcall FUN_006ACE80(HWND dialog, int first)
 namespace OwnerDraw {
 	char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
 }
-namespace Game { extern HWND hWnd; }
 
 MultiplayerGameMode * First_Game_Mode(void);
 void __fastcall FUN_006ADC20(HWND dialog, int id);
@@ -419,7 +418,7 @@ allied:
 			wcscpy(buffer, Session.Options.ScenarioDescription);
 			WS_Save_Dialog_Values(window);
 			ShowWindow(window, SW_HIDE);
-			if (Scenario_Dialog(Game::hWnd) == IDCANCEL) {
+			if (Scenario_Dialog(MainWindow) == IDCANCEL) {
 				Session.Options.MPModeIndex = old_mode;
 				Session.Options.ScenarioIndex = old_scen;
 				Set_Scenario_Info_From_Index(old_scen);

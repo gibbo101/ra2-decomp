@@ -20,7 +20,6 @@
 
 extern int DAT_00B780A0;
 extern bool DAT_00B7809C;
-namespace Game { extern HWND hWnd; }
 extern void Add_CRC(unsigned int *crc, unsigned int val);
 extern "C" int __stdcall EnumProtocolsA(int *protocols, void *buffer, unsigned long *len);
 struct PROTOCOL_INFOA { DWORD dwServiceFlags; int iAddressFamily; int iMaxSockAddr; int iMinSockAddr; int iSocketType; int iProtocol; int dwMessageSize; char *lpProtocol; };
@@ -129,13 +128,13 @@ void WinsockInterfaceClass::Close_Socket(void)
 // FUNCTION: GAMEMD 0x007B1BC0
 bool WinsockInterfaceClass::Start_Listening(void)
 {
-	if (WSAAsyncSelect(Socket, Game::hWnd, Protocol_Event_Message(INVALID_SOCKET), FD_READ | FD_WRITE) == SOCKET_ERROR) {
+	if (WSAAsyncSelect(Socket, MainWindow, Protocol_Event_Message(INVALID_SOCKET), FD_READ | FD_WRITE) == SOCKET_ERROR) {
 		DebugString("Async select failed on primary socket - error code %d.\n", LAST_ERROR);
 		return(false);
 	}
 
 	if (AlternateSocket != INVALID_SOCKET) {
-		if (WSAAsyncSelect(AlternateSocket, Game::hWnd, Protocol_Event_Message(AlternateSocket), FD_READ | FD_WRITE) == SOCKET_ERROR) {
+		if (WSAAsyncSelect(AlternateSocket, MainWindow, Protocol_Event_Message(AlternateSocket), FD_READ | FD_WRITE) == SOCKET_ERROR) {
 			DebugString("Async select failed on alternate socket - error code %d.\n", LAST_ERROR);
 			return(false);
 		}
@@ -146,11 +145,11 @@ bool WinsockInterfaceClass::Start_Listening(void)
 // FUNCTION: GAMEMD 0x007B1C50
 void WinsockInterfaceClass::Stop_Listening(void)
 {
-	if (Socket != INVALID_SOCKET && Game::hWnd) {
-		WSAAsyncSelect(Socket, Game::hWnd, 0, 0);
+	if (Socket != INVALID_SOCKET && MainWindow) {
+		WSAAsyncSelect(Socket, MainWindow, 0, 0);
 	}
-	if (AlternateSocket != INVALID_SOCKET && Game::hWnd) {
-		WSAAsyncSelect(AlternateSocket, Game::hWnd, 0, 0);
+	if (AlternateSocket != INVALID_SOCKET && MainWindow) {
+		WSAAsyncSelect(AlternateSocket, MainWindow, 0, 0);
 	}
 }
 
@@ -219,7 +218,7 @@ bool WinsockInterfaceClass::Init(void)
 
 	if (DAT_00B780A0 > 0 && !DAT_00B7809C) {
 		DAT_00B7809C = true;
-		MessageBox(Game::hWnd, "Warning - Packet Loss Simulation mode enabled", "Note", MB_OK);
+		MessageBox(MainWindow, "Warning - Packet Loss Simulation mode enabled", "Note", MB_OK);
 	}
 
 	char *buffer = new char [sizeof (WSADATA) + 1024];
@@ -467,7 +466,7 @@ void WinsockInterfaceClass::WriteTo(void *buffer, int buffer_len, void *address,
 		sock = Socket;
 	}
 
-	SendMessage(Game::hWnd, Protocol_Event_Message(sock), 0, (LONG)FD_WRITE);
+	SendMessage(MainWindow, Protocol_Event_Message(sock), 0, (LONG)FD_WRITE);
 
 	Keyboard->Check();
 }
@@ -493,7 +492,7 @@ void WinsockInterfaceClass::Broadcast(void *buffer, int buffer_len, bool alterna
 		sock = Socket;
 	}
 
-	SendMessage(Game::hWnd, Protocol_Event_Message(sock), 0, (LONG)FD_WRITE);
+	SendMessage(MainWindow, Protocol_Event_Message(sock), 0, (LONG)FD_WRITE);
 
 	Keyboard->Check();
 }
