@@ -171,7 +171,6 @@ void SidebarClass::Set_Cameo_Text(bool state)
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 	static void const * DARKEN_SHP;
-	static ConvertClass * SIDEBAR_PAL;
 	static void * GCLOCK2_SHP;
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
 };
@@ -330,7 +329,7 @@ void SidebarClass::Init_IO(void)
 		Repair.DrawOffset.X = -480;
 		Repair.DrawOffset.Y = 0;
 		Repair.DrawOnSidebar = 1;
-		Repair.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		Repair.ShapeDrawer = SidebarDrawer;
 		Repair.IsOn = false;
 		Repair.IsToggleType = 1;
 		Repair.ReflectButtonState = 1;
@@ -343,7 +342,7 @@ void SidebarClass::Init_IO(void)
 		Power.DrawOffset.X = -480;
 		Power.DrawOffset.Y = 0;
 		Power.DrawOnSidebar = 1;
-		Power.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		Power.ShapeDrawer = SidebarDrawer;
 		Power.IsOn = false;
 		Power.IsToggleType = 1;
 		Power.ReflectButtonState = 1;
@@ -357,7 +356,7 @@ void SidebarClass::Init_IO(void)
 			TabButtons[index].DrawOffset.X = -480;
 			TabButtons[index].DrawOffset.Y = 0;
 			TabButtons[index].DrawOnSidebar = 1;
-			TabButtons[index].ShapeDrawer = FileSystem::SIDEBAR_PAL;
+			TabButtons[index].ShapeDrawer = SidebarDrawer;
 			TabButtons[index].IsOn = false;
 			TabButtons[index].IsToggleType = 2;
 			TabButtons[index].ReflectButtonState = 1;
@@ -368,14 +367,14 @@ void SidebarClass::Init_IO(void)
 		Upgrade.IsSticky = 1;
 		Upgrade.ID = 201;
 		Upgrade.DrawOnSidebar = 1;
-		Upgrade.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		Upgrade.ShapeDrawer = SidebarDrawer;
 		Upgrade.Set_Flags(0x55);
 		Upgrade.StopFlashing();
 
 		Waypoint.IsSticky = 1;
 		Waypoint.ID = 200;
 		Waypoint.DrawOnSidebar = 1;
-		Waypoint.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		Waypoint.ShapeDrawer = SidebarDrawer;
 		Waypoint.Set_Flags(0x55);
 		Waypoint.StopFlashing();
 
@@ -484,38 +483,38 @@ void SidebarClass::Init_For_House(void)
 	BASECLASS::Init_For_House();
 
 	PaletteClass palette = *FUN_0072F4A0();
-	if (FileSystem::SIDEBAR_PAL) {
-		delete FileSystem::SIDEBAR_PAL;
-		FileSystem::SIDEBAR_PAL = NULL;
+	if (SidebarDrawer) {
+		delete SidebarDrawer;
+		SidebarDrawer = NULL;
 	}
-	FileSystem::SIDEBAR_PAL = new ConvertClass(palette, palette, *VisibleSurface, 1, false);
+	SidebarDrawer = new ConvertClass(palette, palette, *VisibleSurface, 1, false);
 
 	FileSystem::GCLOCK2_SHP = FileSystem::LoadWholeFileEx("GCLOCK2.SHP", DAT_00B0B48F);
 
 	bool loaded = false;
 	Power.Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx("SELL.SHP", loaded), 0, 0);
 	Power.SetLoadedStatus(loaded);
-	Power.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	Power.ShapeDrawer = SidebarDrawer;
 
 	Repair.Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx("REPAIR.SHP", loaded), 0, 0);
 	Repair.SetLoadedStatus(loaded);
-	Repair.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	Repair.ShapeDrawer = SidebarDrawer;
 
 	for (int index = 0; index < STRIPS; index++) {
 		char name[256];
 		sprintf(name, "TAB%02d.SHP", index);
 		TabButtons[index].Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx(name, loaded), 0, 0);
 		TabButtons[index].SetLoadedStatus(loaded);
-		TabButtons[index].ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		TabButtons[index].ShapeDrawer = SidebarDrawer;
 	}
 
 	Upgrade.Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx("R-DN.SHP", loaded), 0, 0);
 	Upgrade.SetLoadedStatus(loaded);
-	Upgrade.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	Upgrade.ShapeDrawer = SidebarDrawer;
 
 	Waypoint.Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx("R-UP.SHP", loaded), 0, 0);
 	Waypoint.SetLoadedStatus(loaded);
-	Waypoint.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	Waypoint.ShapeDrawer = SidebarDrawer;
 
 	DAT_00B0B468 = FileSystem::LoadWholeFileEx("SIDE1.SHP", DAT_00B0B488);
 	DAT_00B0B46C = FileSystem::LoadWholeFileEx("SIDE2.SHP", DAT_00B0B489);
@@ -857,16 +856,16 @@ void SidebarClass::Draw_It(bool complete)
 		if (IsForceCompleteRedraw) {
 			redrawn = true;
 
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B468, 0, Point2D(0, SidebarRect.Y), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B468, 0, Point2D(0, SidebarRect.Y), window, SHAPE_WIN_REL);
 
 			int y = DAT_00B0B4F8;
 			for (int i = 0; i < Max_Visible_Cameos(); i++) {
-				Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B46C, 0, Point2D(0, y), window, SHAPE_WIN_REL);
+				Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B46C, 0, Point2D(0, y), window, SHAPE_WIN_REL);
 				y += ((ShapeSet const *)DAT_00B0B46C)->Get_Height();
 			}
 
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B470, 0, Point2D(0, y), window, SHAPE_WIN_REL);
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B474, 0, Point2D(0, y + ((ShapeSet const *)DAT_00B0B470)->Get_Height()), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B470, 0, Point2D(0, y), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B474, 0, Point2D(0, y + ((ShapeSet const *)DAT_00B0B470)->Get_Height()), window, SHAPE_WIN_REL);
 		}
 
 		Power.Draw_Me(redrawn);
@@ -878,9 +877,9 @@ void SidebarClass::Draw_It(bool complete)
 		Waypoint.Draw_Me(redrawn);
 
 		if (unknown_5398 != 0) {
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B478, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B47C, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B480, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B478, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B47C, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B480, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
 		}
 		IsToBlitSidebar = true;
 	}

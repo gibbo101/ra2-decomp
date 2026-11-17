@@ -247,7 +247,6 @@ struct ShpHeader {
 
 struct FileSystem {
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
-	static ConvertClass * SIDEBAR_PAL;
 };
 
 struct TextColor {
@@ -381,7 +380,7 @@ void RadarClass::Init_IO(void)
 	if (!Debug_Map) {
 		RadarStatics::DAT_00B04978.ID = 242;
 		RadarStatics::DAT_00B04978.DrawOnSidebar = true;
-		RadarStatics::DAT_00B04978.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		RadarStatics::DAT_00B04978.ShapeDrawer = SidebarDrawer;
 		RadarStatics::DAT_00B04978.IsOn = false;
 		RadarStatics::DAT_00B04978.IsToggleType = 0;
 		RadarStatics::DAT_00B04978.Set_Flags(5);
@@ -389,7 +388,7 @@ void RadarClass::Init_IO(void)
 		RadarStatics::DAT_00B04978.Set_Shape((ShapeSet const *)BriefingButtonShape, 0, 0);
 		RadarStatics::DAT_00B04978.Flag_To_Redraw();
 
-		RadarStatics::DAT_00B04910.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		RadarStatics::DAT_00B04910.ShapeDrawer = SidebarDrawer;
 		RadarStatics::DAT_00B04910.ID = 243;
 		RadarStatics::DAT_00B04910.DrawOnSidebar = true;
 		RadarStatics::DAT_00B04910.IsOn = false;
@@ -423,7 +422,7 @@ void RadarClass::Draw_It(bool forced)
 
 	if (IsToRedraw) {
 		ShapeSet const * frame_shape = (ShapeSet const *)RadarFrameShape;
-		Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, frame_shape, 0, Point2D(RadX, RadY), SidebarSurface->Get_Rect());
+		Draw_Shape(*SidebarSurface, *SidebarDrawer, frame_shape, 0, Point2D(RadX, RadY), SidebarSurface->Get_Rect());
 		RadarStatics::DAT_00B04978.Draw_Me(true);
 		RadarStatics::DAT_00B04910.Draw_Me(true);
 	}
@@ -802,7 +801,7 @@ void RadarClass::Draw_Names(void)
 	Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), StringTable::LoadString("TXT_KILLS_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1270), SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x219));
 
 	y += 7;
-	SidebarSurface->Draw_Line(Point2D(RadHeight, y), Point2D(RadOffY + RadHeight - 1, y), FileSystem::SIDEBAR_PAL->Convert_Pixel(14));
+	SidebarSurface->Draw_Line(Point2D(RadHeight, y), Point2D(RadOffY + RadHeight - 1, y), SidebarDrawer->Convert_Pixel(14));
 	y += 4;
 
 	for (house = 0; house < Houses.Count(); house++) {

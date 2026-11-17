@@ -6397,15 +6397,12 @@ bool TechnoClass::Enter_Idle_Mode(bool, bool)
 	return(false);
 }
 
-namespace FileSystem { extern ShapeSet * PIPS_SHP; }
-
 inline Rect Drawing_GetTextDimensions(wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY)
 {
 	Rect result;
 	return *Drawing_GetTextDimensions(&result, text, loc, flags, marginX, marginY);
 }
 
-namespace FileSystem { extern ShapeSet * PIPS2_SHP; }
 Point2D Plain_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flag, int scheme, int unused);
 
 // FUNCTION: GAMEMD 0x00709A90
@@ -6414,12 +6411,9 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 	int i;
 	Point2D offset(4, 2);
 	Point2D xy = point + Point2D(6, -1);
-	Class_Of();
-	ShapeSet const *pip_shapes = FileSystem::PIPS_SHP;
-	Class_Of();
-	ShapeSet const *pips1 = FileSystem::PIPS_SHP;
-	Class_Of();
-	ShapeSet const *pips2 = FileSystem::PIPS2_SHP;
+	ShapeSet const *pip_shapes = (ShapeSet const *)Class_Of()->PipShapes;
+	ShapeSet const *pips1 = (ShapeSet const *)Class_Of()->PipShapes;
+	ShapeSet const *pips2 = (ShapeSet const *)Class_Of()->Pip2Shapes;
 	bool building = Fetch_RTTI() == RTTI_BUILDING;
 	if (!building) {
 		xy = point + Point2D(-5, 0);
@@ -6602,8 +6596,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 // FUNCTION: GAMEMD 0x0070A990
 void TechnoClass::DrawVeterancyPips(Point2D const & point, Rect const & rect) const
 {
-	Class_Of();
-	ShapeSet * shapes = FileSystem::PIPS_SHP;
+	ShapeSet const * shapes = (ShapeSet const *)Class_Of()->PipShapes;
 	int frame = -1;
 	if (Veterancy.Is_Veteran()) {
 		frame = 14;

@@ -68,10 +68,6 @@ struct CCToolTip {
 
 void * __fastcall FileSystem_LoadWholeFileEx(char const * name, bool & loaded);
 
-struct FileSystem {
-	static ConvertClass * SIDEBAR_PAL;
-};
-
 void const * PowerClass::PowerPipShape;
 
 // FUNCTION: GAMEMD 0x0063F6B0
@@ -252,14 +248,14 @@ void PowerClass::Draw_It(bool complete)
 
 			int index;
 			for (index = 0; index < num; index++) {
-				Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)PowerPipShape, POWER_PIP_EMPTY, Point2D(x, y), rect, SHAPE_WIN_REL);
+				Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)PowerPipShape, POWER_PIP_EMPTY, Point2D(x, y), rect, SHAPE_WIN_REL);
 				y += POWER_PIP_HEIGHT;
 			}
 
 			index = 0;
 			if (FlashCount > 0) {
 				if ((FlashCount % 2) == 0) {
-					Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)PowerPipShape, POWER_PIP_WHITE, Point2D(x, y), rect, SHAPE_WIN_REL);
+					Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)PowerPipShape, POWER_PIP_WHITE, Point2D(x, y), rect, SHAPE_WIN_REL);
 					y += POWER_PIP_HEIGHT;
 					index++;
 				}
@@ -267,7 +263,7 @@ void PowerClass::Draw_It(bool complete)
 
 			if (GreenPipCount > 0) {
 				while (index < GreenPipCount) {
-					Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)PowerPipShape, POWER_PIP_GREEN, Point2D(x, y), rect, SHAPE_WIN_REL);
+					Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)PowerPipShape, POWER_PIP_GREEN, Point2D(x, y), rect, SHAPE_WIN_REL);
 					y += POWER_PIP_HEIGHT;
 					index++;
 				}
@@ -276,7 +272,7 @@ void PowerClass::Draw_It(bool complete)
 
 			if (YellowPipCount > 0) {
 				while (index < YellowPipCount) {
-					Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)PowerPipShape, POWER_PIP_YELLOW, Point2D(x, y), rect, SHAPE_WIN_REL);
+					Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)PowerPipShape, POWER_PIP_YELLOW, Point2D(x, y), rect, SHAPE_WIN_REL);
 					y += POWER_PIP_HEIGHT;
 					index++;
 				}
@@ -285,7 +281,7 @@ void PowerClass::Draw_It(bool complete)
 
 			if (RedPipCount > 0) {
 				while (index < RedPipCount) {
-					Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)PowerPipShape, POWER_PIP_RED, Point2D(x, y), rect, SHAPE_WIN_REL);
+					Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)PowerPipShape, POWER_PIP_RED, Point2D(x, y), rect, SHAPE_WIN_REL);
 					y += POWER_PIP_HEIGHT;
 					index++;
 				}
