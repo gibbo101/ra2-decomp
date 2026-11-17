@@ -1317,9 +1317,7 @@ InfantryClass * CellClass::Cell_Infantry(bool bridge) const
 	return((InfantryClass*)Cell_Find_Object(RTTI_INFANTRY, bridge));
 }
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 #include "msanim.h"
 

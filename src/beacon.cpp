@@ -239,9 +239,7 @@ bool BeaconClass::VisibleToPlayer(void) const
 }
 
 #include "rawfile.h"
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 void * Load_Alloc_Data(FileClass & file);
 extern double __cdecl FUN_004CAC40(double);
 void __cdecl FUN_004068E0(char const * format, ...);

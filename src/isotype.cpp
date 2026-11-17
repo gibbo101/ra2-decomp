@@ -41,9 +41,7 @@
 #include "vector.h"
 #include "zbuffer.h"
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool as_shape);
-};
+#include "filesystem.h"
 
 // SYNTHETIC: GAMEMD 0x00543C40 SYMBOL
 // _$E41

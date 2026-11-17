@@ -25,9 +25,7 @@
 // SYNTHETIC: GAMEMD 0x006CE360 SYMBOL
 // _$E47
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 extern char DAT_00889F64[];
 

@@ -2372,10 +2372,7 @@ static bool Init_One_Time_Systems(void)
 #include "bitfont.h"
 #include "draw.h"
 
-struct FileSystem
-{
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 // FUNCTION: GAMEMD 0x005312A0
 void FUN_005312A0(void)

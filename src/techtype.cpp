@@ -72,9 +72,7 @@
 
 extern char DAT_00889F64[];
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 // FUNCTION: GAMEMD 0x00711840
 TechnoTypeClass::TechnoTypeClass(NoInitClass const & x) :

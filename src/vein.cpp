@@ -50,9 +50,7 @@
 
 static bool * GlobalGrowthState = NULL;
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 void const * VeinholeMonsterClass::MonsterShape = NULL;
 
 inline VeinholeLogic::VeinholeLogic(bool) :

@@ -185,9 +185,7 @@ int DropshipLoadoutClass::Get_Allowable_Index(TechnoTypeClass *ttype)
 #undef LoadString
 #include "stringtable.h"
 
-struct FileSystem {
-	static void const * LoadFile(char const *name, bool as_shape);
-};
+#include "filesystem.h"
 
 struct ButtonFadeEffect
 {

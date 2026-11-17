@@ -186,9 +186,7 @@ DisplayClass::DisplayClass(void) :
 	DAT_008A0418 = NULL;
 }
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 extern Rect __fastcall Get_Title_Screen_Area(void);
 
 // FUNCTION: GAMEMD 0x004A8850

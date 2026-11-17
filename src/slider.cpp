@@ -15,9 +15,7 @@
 #include "xmouse.h"
 #include "dialog.hh"
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 // SYNTHETIC: GAMEMD 0x006B1B00 SYMBOL
 // _$E2

@@ -54,9 +54,7 @@
 
 extern char DAT_00889F64[];
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 void const * AircraftTypeClass::LRotorData = NULL;
 void const * AircraftTypeClass::RRotorData = NULL;

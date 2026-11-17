@@ -466,9 +466,7 @@ int InfantryClass::Shape_Number(void) const
 	return(shapenum);
 }
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 extern ShapeSet const * DAT_00A8F244;
 

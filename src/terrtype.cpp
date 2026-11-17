@@ -68,9 +68,7 @@ static Cell const _OccupyLists[BSIZE_COUNT][10] = {
 	{ Cell(0, 0), Cell(1, 0), Cell(2, 0), Cell(3, 0), Cell(0, 1), Cell(1, 1), Cell(2, 1), Cell(3, 1), REFRESH_EOL },
 };
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 // FUNCTION: GAMEMD 0x0071DA80
 TerrainTypeClass::TerrainTypeClass(char const * ininame) :

@@ -96,10 +96,7 @@ int PaletteClass::Closest_Color(RGBClass const & rgb) const
 	return(closest);
 }
 
-struct FileSystem
-{
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 extern char * DAT_00836464;
 

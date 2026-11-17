@@ -57,9 +57,7 @@
 // SYNTHETIC: GAMEMD 0x00747090 SYMBOL
 // _$E35
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 // SYNTHETIC: GAMEMD 0x007470B0 SYMBOL
 // _$E38

@@ -456,9 +456,7 @@ BOOL CALLBACK FUN_00560480(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return(rc);
 }
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 extern int SidebarWidth;
 Rect Get_Title_Screen_Area(void);

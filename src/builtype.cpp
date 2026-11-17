@@ -504,9 +504,7 @@ void BuildingTypeClass::Init_Anim(BStateType state, int start, int count, int ra
 	((int &)Anims[state].Rate) = rate;
 }
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 // FUNCTION: GAMEMD 0x0045E8F0
 void BuildingTypeClass::Fetch_Z_Data(void)

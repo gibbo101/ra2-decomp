@@ -2179,9 +2179,7 @@ plain:
 	composite->Fill_Rect(dirty, 0);
 }
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 inline void Coord_Pixel(Coord coord, Point2D & pixel)
 {

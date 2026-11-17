@@ -38,9 +38,7 @@ void Exit_Process(int code);
 
 #include "msanim.h"
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool as_shape);
-};
+#include "filesystem.h"
 
 // SYNTHETIC: GAMEMD 0x005B3AC0 SYMBOL
 // _$E22

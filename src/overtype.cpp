@@ -138,9 +138,7 @@ Cell const * OverlayTypeClass::Occupy_List(bool) const
 
 extern char DAT_00889F64[];
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 void FUN_005F9710(char * name);
 void FUN_005F96B0(char * name, TheaterType theater);
