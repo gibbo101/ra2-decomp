@@ -48,9 +48,6 @@
 // SYNTHETIC: GAMEMD 0x006C8E30 SYMBOL
 // _$E35
 
-extern int DAT_00B0BF48;
-extern int DAT_00B0BF4C;
-extern int DAT_00B0BF50;
 
 class Surface;
 struct Drawing {
@@ -66,13 +63,8 @@ int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus);
 int CALLBACK FUN_006C8FF0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 int __fastcall FUN_00622B50(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: GAMEMD 0x006C8E50
-void FUN_006C8E50(void)
-{
-	DAT_00B0BF50 = 0;
-	DAT_00B0BF48 = 128;
-	DAT_00B0BF4C = 128;
-}
+// SYNTHETIC: GAMEMD 0x006C8E50 SYMBOL
+// _$E38
 
 class STLScoreScreen
 {

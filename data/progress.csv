@@ -5595,7 +5595,7 @@ address,name,result,size,source,symbol
 0x004F41D0,_$E32,MATCH,15,src/gscreen.cpp,_$E32
 0x004F41E0,_$E35,MATCH,18,src/gscreen.cpp,_$E35
 0x004F4010,_$E41,MATCH,23,src/gscreen.cpp,_$E41
-0x004F4200,FUN_004F4200,MATCH,26,src/gscreen.cpp,?FUN_004F4200@@YIXXZ
+0x004F4200,_$E38,MATCH,26,src/gscreen.cpp,_$E38
 0x004F4220,GScreenClass::GScreenClass,MATCH,24,src/gscreen.cpp,??0GScreenClass@@QAE@XZ
 0x004F4240,GScreenClass::QueryInterface,MATCH,91,src/gscreen.cpp,?QueryInterface@GScreenClass@@UAGJABU_GUID@@PAPAX@Z
 0x004F42A0,GScreenClass::One_Time,MATCH,11,src/gscreen.cpp,?One_Time@GScreenClass@@UAEXXZ
@@ -6032,7 +6032,7 @@ address,name,result,size,source,symbol
 0x00510C70,_$E29,MATCH,39,src/house2.cpp,_$E29
 0x00510CA0,_$E32,MATCH,15,src/house2.cpp,_$E32
 0x00510CB0,_$E35,MATCH,18,src/house2.cpp,_$E35
-0x00510CD0,FUN_00510CD0,MATCH,26,src/house2.cpp,?FUN_00510CD0@@YIXXZ
+0x00510CD0,_$E38,MATCH,26,src/house2.cpp,_$E38
 0x00510CF0,_$E41,MATCH,23,src/house2.cpp,_$E41
 0x00510D10,FUN_00510D10,MATCH,245,src/house2.cpp,?FUN_00510D10@@YIXPAUHWND__@@@Z
 0x00510E10,FUN_00510E10,MATCH,180,src/house2.cpp,?FUN_00510E10@@YIXHPADH@Z
@@ -7739,7 +7739,7 @@ address,name,result,size,source,symbol
 0x0055A640,_$E29,MATCH,39,src/loco.cpp,_$E29
 0x0055A670,_$E32,MATCH,15,src/loco.cpp,_$E32
 0x0055A680,_$E35,MATCH,18,src/loco.cpp,_$E35
-0x0055A6A0,FUN_0055A6A0,MATCH,26,src/loco.cpp,?FUN_0055A6A0@@YIXXZ
+0x0055A6A0,_$E38,MATCH,26,src/loco.cpp,_$E38
 0x0055A6C0,LocomotionClass::LocomotionClass,MATCH,35,src/loco.cpp,??0LocomotionClass@@QAE@XZ
 0x0055A6F0,LocomotionClass::~LocomotionClass,MATCH,21,src/loco.cpp,??1LocomotionClass@@UAE@XZ
 0x0055A710,LocomotionClass::Link_To_Object,MATCH,19,src/loco.cpp,?Link_To_Object@LocomotionClass@@UAGJPAX@Z
@@ -8841,8 +8841,8 @@ address,name,result,size,source,symbol
 0x005BC0D0,_$E26,MATCH,44,src/motlib.cpp,_$E26
 0x005BC100,_$E29,MATCH,39,src/motlib.cpp,_$E29
 0x005BC130,_$E32,MATCH,15,src/motlib.cpp,_$E32
-0x005BC140,FUN_005BC140,MATCH,18,src/motlib.cpp,?FUN_005BC140@@YIXXZ
-0x005BC160,FUN_005BC160,MATCH,26,src/motlib.cpp,?FUN_005BC160@@YIXXZ
+0x005BC140,_$E35,MATCH,18,src/motlib.cpp,_$E35
+0x005BC160,_$E38,MATCH,26,src/motlib.cpp,_$E38
 0x005BC180,FUN_005BC180,MATCH,382,src/motlib.cpp,?FUN_005BC180@@YIXPAUHINSTANCE__@@PAUHWND__@@_N@Z
 0x005BC300,FUN_005BC300,MATCH,105,src/motlib.cpp,?FUN_005BC300@@YIXXZ
 0x005BC370,FUN_005BC370,MATCH,75,src/motlib.cpp,?FUN_005BC370@@YIXXZ
@@ -12265,7 +12265,7 @@ address,name,result,size,source,symbol
 0x0067C610,_$E182,MATCH,39,src/saveload.cpp,_$E182
 0x0067C640,_$E185,MATCH,15,src/saveload.cpp,_$E185
 0x0067C650,_$E188,MATCH,18,src/saveload.cpp,_$E188
-0x0067C670,FUN_0067C670,MATCH,26,src/saveload.cpp,?FUN_0067C670@@YIXXZ
+0x0067C670,_$E191,MATCH,26,src/saveload.cpp,_$E191
 0x0067C690,Load_Vector,MATCH,78,src/saveload.cpp,?Load_Vector@@YIJPAUIStream@@@Z
 0x0067C6E0,Object_CRCs,MATCH,2050,src/saveload.cpp,?Object_CRCs@@YI?AVCRCEngine@@XZ
 0x0067CEF0,Save_Game,MATCH,1040,src/saveload.cpp,?Save_Game@@YI_NPBDPBG_N@Z
@@ -13904,7 +13904,7 @@ address,name,result,size,source,symbol
 0x006C8DF0,_$E29,MATCH,39,src/stlscore.cpp,_$E29
 0x006C8E20,_$E32,MATCH,15,src/stlscore.cpp,_$E32
 0x006C8E30,_$E35,MATCH,18,src/stlscore.cpp,_$E35
-0x006C8E50,FUN_006C8E50,MATCH,26,src/stlscore.cpp,?FUN_006C8E50@@YIXXZ
+0x006C8E50,_$E38,MATCH,26,src/stlscore.cpp,_$E38
 0x006C8E70,STLScoreScreen::STLScoreScreen,MATCH,3,src/stlscore.cpp,??0STLScoreScreen@@QAE@XZ
 0x006C8E80,STLScoreScreen::Present,MATCH,141,src/stlscore.cpp,?Present@STLScoreScreen@@QAEXXZ
 0x006C8F10,FUN_006C8F10,MATCH,133,src/stlscore.cpp,?FUN_006C8F10@@YIXPAUHWND__@@HH@Z
@@ -17689,7 +17689,7 @@ address,name,result,size,source,symbol
 0x007733D0,_$E29,MATCH,39,src/webbrowser.cpp,_$E29
 0x00773400,_$E32,MATCH,15,src/webbrowser.cpp,_$E32
 0x00773410,_$E35,MATCH,18,src/webbrowser.cpp,_$E35
-0x00773430,FUN_00773430,MATCH,26,src/webbrowser.cpp,?FUN_00773430@@YIXXZ
+0x00773430,_$E38,MATCH,26,src/webbrowser.cpp,_$E38
 0x00773450,Create_Web_Browser,MATCH,169,src/webbrowser.cpp,?Create_Web_Browser@@YIPAVWebBrowser@@PAUHWND__@@PAUtagRECT@@@Z
 0x00773500,WebBrowser::WebBrowser,MATCH,50,src/webbrowser.cpp,??0WebBrowser@@QAE@XZ
 0x00773540,WebBrowser::~WebBrowser,MATCH,76,src/webbrowser.cpp,??1WebBrowser@@UAE@XZ

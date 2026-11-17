@@ -61,17 +61,9 @@ namespace OwnerDraw { void __fastcall UpdateControlPosition(HWND dialog, LPARAM 
 // SYNTHETIC: GAMEMD 0x00773410 SYMBOL
 // _$E35
 
-extern int DAT_00B72CF0;
-extern int DAT_00B72CF4;
-extern int DAT_00B72CF8;
 
-// FUNCTION: GAMEMD 0x00773430
-void FUN_00773430(void)
-{
-	DAT_00B72CF8 = 0;
-	DAT_00B72CF0 = 128;
-	DAT_00B72CF4 = 128;
-}
+// SYNTHETIC: GAMEMD 0x00773430 SYMBOL
+// _$E38
 
 // FUNCTION: GAMEMD 0x00773450
 WebBrowser * __fastcall Create_Web_Browser(HWND window, RECT *rect)

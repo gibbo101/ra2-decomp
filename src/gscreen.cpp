@@ -83,17 +83,9 @@ extern Texture3D * DAT_008A0E0C;
 extern Texture3DCache * DAT_008A0E10;
 extern bool DAT_00A9FA94;
 
-extern int DAT_00A8EF38;
-extern int DAT_00A8EF3C;
-extern int DAT_00A8EF40;
 
-// FUNCTION: GAMEMD 0x004F4200
-void FUN_004F4200(void)
-{
-	DAT_00A8EF40 = 0;
-	DAT_00A8EF38 = 0x80;
-	DAT_00A8EF3C = 0x80;
-}
+// SYNTHETIC: GAMEMD 0x004F4200 SYMBOL
+// _$E38
 
 // FUNCTION: GAMEMD 0x004F4220
 GScreenClass::GScreenClass(void) :

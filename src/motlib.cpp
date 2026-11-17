@@ -52,12 +52,6 @@ struct DebugPoint {
 
 extern int DAT_00ABF1D8;
 extern int DAT_00ABF1E0;
-extern int DAT_00ABF188;
-extern int DAT_00ABF18C;
-extern int DAT_00ABF190;
-extern int DAT_00ABF200;
-extern int DAT_00ABF204;
-extern int DAT_00ABF208;
 extern DebugPage * DAT_00ABF168[8];
 extern HINSTANCE DAT_00ABF230;
 extern HWND DAT_00ABF234;
@@ -98,21 +92,11 @@ extern int __fastcall FUN_00407B60(AudioStream * stream, char const * name, int 
 extern void Audio_Stop_All(void);
 extern AudioStream * DAT_00ABF114[5];
 
-// FUNCTION: GAMEMD 0x005BC140
-void FUN_005BC140(void)
-{
-	DAT_00ABF188 = 0;
-	DAT_00ABF18C = 0;
-	DAT_00ABF190 = 0;
-}
+// SYNTHETIC: GAMEMD 0x005BC140 SYMBOL
+// _$E35
 
-// FUNCTION: GAMEMD 0x005BC160
-void FUN_005BC160(void)
-{
-	DAT_00ABF208 = 0;
-	DAT_00ABF200 = 128;
-	DAT_00ABF204 = 128;
-}
+// SYNTHETIC: GAMEMD 0x005BC160 SYMBOL
+// _$E38
 
 // FUNCTION: GAMEMD 0x005BC180
 void __fastcall FUN_005BC180(HINSTANCE instance, HWND window, bool enabled)
