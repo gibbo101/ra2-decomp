@@ -3762,12 +3762,12 @@ static inline void Apply_Locale(Wstring & key, int locale, User & user)
 
 static inline void Check_Locale(Wstring & key, int & locale, rc_ptr<PlayerProfile> & profile, User & user)
 {
-	if (profile.Get() != NULL && profile.Get()->Field10 != locale) {
-		if (profile.Get()->Field10 == 0) {
+	if (profile.Get() != NULL && profile.Get()->Locale != locale) {
+		if (profile.Get()->Locale == 0) {
 			profile.Get()->SetLocale(locale, 2);
 			profile.Get()->Save(&DAT_00B73E40);
 		}
-		int value = profile.Get()->Field10;
+		int value = profile.Get()->Locale;
 		g_pChat->RequestSetLocale((Locale)value);
 		g_pChat->RequestUserLocale(&user);
 		locale = value;
@@ -3854,7 +3854,7 @@ bool __fastcall FUN_007864C0(Server * server)
 		}
 	}
 	strcpy(Session.Handle, DAT_00B73E40.get());
-	Session.FUN_0069B760(profile.Get()->Field1C, false);
+	Session.FUN_0069B760(profile.Get()->Country, false);
 	Session.FUN_0069B7E0(profile.Get()->Field20, false);
 	Session.Write_MultiPlayer_Settings();
 	FUN_00779F10(DAT_00B73E40);
@@ -3899,7 +3899,7 @@ bool __fastcall FUN_007864C0(Server * server)
 	}
 	int pick = 0;
 	if (profile.Get() != NULL) {
-		pick = profile.Get()->Field10;
+		pick = profile.Get()->Locale;
 	}
 	if (pick == 0) {
 		pick = Pick_Locale();
@@ -4158,7 +4158,7 @@ int Login_WOL(void)
 			}
 			if (FUN_00786D90()) {
 				if (DAT_00B77E68 && saved.Is_Bit1_Clear()) {
-					int locale = profile->Field10;
+					int locale = profile->Locale;
 					StoreLogin(DAT_00B73E40.get(), DAT_00B7778C.get(), DAT_0084A238, locale);
 					Session.Write_MultiPlayer_Settings();
 				}
@@ -8458,7 +8458,7 @@ void __fastcall FUN_00798F50(HWND combo)
 				item = SendMessage(combo, 0x4C2, 0, (LPARAM)name.get());
 			}
 			SendMessage(combo, 0x151, item, i);
-			if (profile.Get() && i == profile->Field10) {
+			if (profile.Get() && i == profile->Locale) {
 				SendMessage(combo, 0x14E, item, 0);
 			}
 		}
@@ -8811,7 +8811,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					int count = SendMessage(country, CB_GETCOUNT, 0, 0);
 					for (int j = 0; j < count; j++) {
 						int data = SendMessage(country, CB_GETITEMDATA, j, 0);
-						if (data == DAT_00B75E48.Get()->Field1C) {
+						if (data == DAT_00B75E48.Get()->Country) {
 							SendMessage(country, CB_SETCURSEL, j, 0);
 							break;
 						}
@@ -10017,7 +10017,7 @@ bool FUN_007A0690(void)
 	} else {
 		profile = DAT_00B75E48;
 	}
-	int country = profile.Get()->Field1C;
+	int country = profile.Get()->Country;
 	Wstring game("Match ");
 	Wstring wdt;
 
@@ -10059,7 +10059,7 @@ bool FUN_007A0690(void)
 	request += ", COL=";
 	request += Wstring_FromInt(profile.Get()->Field20);
 	request += ", MBR=";
-	if (profile.Get()->Field38) {
+	if (profile.Get()->MatchByRes) {
 		request += "1";
 	} else {
 		request += "0";
@@ -10857,7 +10857,7 @@ HRESULT CNetUtilEventSink::OnNewNick(HRESULT result, LPCSTR message, LPCSTR nick
 		int nicknum = 0;
 		WOLOptionsClass options;
 		if (options.Is_Bit1_Clear()) {
-			int locale = profile->Field10;
+			int locale = profile->Locale;
 			nicknum = StoreLogin(nick, pass, true, locale);
 			Session.Write_MultiPlayer_Settings();
 		}
@@ -11623,7 +11623,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 				} else {
 					profile = DAT_00B75E48;
 				}
-				Session.FUN_0069B760(profile.Get()->Field1C, false);
+				Session.FUN_0069B760(profile.Get()->Country, false);
 				Session.FUN_0069B7E0(profile.Get()->Field20, false);
 
 				if (Game::ObserverMode && !Is_Internal_Session()) {

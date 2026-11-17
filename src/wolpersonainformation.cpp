@@ -256,21 +256,21 @@ char __fastcall FUN_00779670(WideWstring const * from, Wstring * to)
 
 // FUNCTION: GAMEMD 0x00779690
 PlayerProfile::PlayerProfile(Wstring const & name, int a, bool b, int c, int d, int e, int f, int g, int h, int i, int j, bool k, WideWstring const & l, WideWstring const & m) :
-	Field8(0),
+	IsChanged(0),
 	Name(name),
-	Field10(a),
+	Locale(a),
 	Field14(b),
 	Field18(c),
-	Field1C(d),
+	Country(d),
 	Field20(e),
-	Field24(f),
-	Field28(g),
-	Field2C(h),
-	Field30(i),
-	Field34(j),
-	Field38(k),
-	Wide3C(m),
-	Wide40(l)
+	Rung(f),
+	Points(g),
+	Wins(h),
+	Losses(i),
+	Disconnects(j),
+	MatchByRes(k),
+	UpdateTime(m),
+	UpdateDate(l)
 {
 }
 
@@ -429,7 +429,7 @@ static inline void WOL_PutInt(INIClass & ini, Wstring const & section, char cons
 void PlayerProfile::Save(Wstring const * name)
 {
 	WOLOptionsClass options;
-	if (Field8) {
+	if (IsChanged) {
 		Wstring section(*name);
 		if (!name->length()) {
 			section = DAT_00B73590;
@@ -449,25 +449,25 @@ void PlayerProfile::Save(Wstring const * name)
 			INIClass ini;
 			ini.Load(file, false);
 			{ Wstring k("Server"); ini.Put_String(section, k, Name); }
-			{ Wstring k("Locale"); ini.Put_Int(section, k, Field10, 0); }
+			{ Wstring k("Locale"); ini.Put_Int(section, k, Locale, 0); }
 			{ Wstring k("LocaleVerified"); ini.Put_Bool(section, k, Field14); }
-			{ Wstring k("Country"); ini.Put_Int(section, k, Field1C, 0); }
+			{ Wstring k("Country"); ini.Put_Int(section, k, Country, 0); }
 			{ Wstring k("Color"); ini.Put_Int(section, k, Field20, 0); }
-			{ Wstring k("Rank"); ini.Put_Int(section, k, Field24, 0); }
-			{ Wstring k("Points"); ini.Put_Int(section, k, Field28, 0); }
-			{ Wstring k("Wins"); ini.Put_Int(section, k, Field2C, 0); }
-			{ Wstring k("Losses"); ini.Put_Int(section, k, Field30, 0); }
-			{ Wstring k("Disconnects"); ini.Put_Int(section, k, Field34, 0); }
-			{ Wstring k("MatchByRes"); ini.Put_Bool(section, k, Field38); }
+			{ Wstring k("Rank"); ini.Put_Int(section, k, Rung, 0); }
+			{ Wstring k("Points"); ini.Put_Int(section, k, Points, 0); }
+			{ Wstring k("Wins"); ini.Put_Int(section, k, Wins, 0); }
+			{ Wstring k("Losses"); ini.Put_Int(section, k, Losses, 0); }
+			{ Wstring k("Disconnects"); ini.Put_Int(section, k, Disconnects, 0); }
+			{ Wstring k("MatchByRes"); ini.Put_Bool(section, k, MatchByRes); }
 			Wstring text;
-			FUN_00779230(&Wide3C, &text);
+			FUN_00779230(&UpdateTime, &text);
 			{ Wstring k("UpdateTime"); ini.Put_String(section, k, text); }
 			text.clear();
-			text.set(FUN_007350C0(Wide40.text()));
+			text.set(FUN_007350C0(UpdateDate.text()));
 			{ Wstring k("UpdateDate"); ini.Put_String(section, k, text); }
 			ini.Save(file);
 			file.Close();
-			Field8 = 0;
+			IsChanged = 0;
 			char const * unused0 = Name.c_str();
 			char const * unused1 = Name.c_str();
 			char const * unused2 = Name.c_str();
@@ -480,7 +480,7 @@ void PlayerProfile::SetName(Wstring const * name)
 {
 	if (!(*name == Name)) {
 		Name = *name;
-		Field8 = 1;
+		IsChanged = 1;
 	}
 }
 
@@ -489,62 +489,62 @@ void PlayerProfile::SetUpdateStamp(void)
 {
 	time_t now = time(0);
 	struct tm * local = localtime(&now);
-	Wide40.clear();
+	UpdateDate.clear();
 	char buf[16];
 	strftime(buf, 16, "%m", local);
 	int month = atoi(buf);
 	strftime(buf, 16, "%d", local);
 	if (month == 1) {
-		Wide40.set(StringTable::LoadString("TXT_JANUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x261));
+		UpdateDate.set(StringTable::LoadString("TXT_JANUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x261));
 	} else if (month == 2) {
-		Wide40.set(StringTable::LoadString("TXT_FEBRUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x263));
+		UpdateDate.set(StringTable::LoadString("TXT_FEBRUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x263));
 	} else if (month == 3) {
-		Wide40.set(StringTable::LoadString("TXT_MARCH", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x265));
+		UpdateDate.set(StringTable::LoadString("TXT_MARCH", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x265));
 	} else if (month == 4) {
-		Wide40.set(StringTable::LoadString("TXT_APRIL", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x267));
+		UpdateDate.set(StringTable::LoadString("TXT_APRIL", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x267));
 	} else if (month == 5) {
-		Wide40.set(StringTable::LoadString("TXT_MAY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x269));
+		UpdateDate.set(StringTable::LoadString("TXT_MAY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x269));
 	} else if (month == 6) {
-		Wide40.set(StringTable::LoadString("TXT_JUNE", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x26B));
+		UpdateDate.set(StringTable::LoadString("TXT_JUNE", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x26B));
 	} else if (month == 7) {
-		Wide40.set(StringTable::LoadString("TXT_JULY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x26D));
+		UpdateDate.set(StringTable::LoadString("TXT_JULY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x26D));
 	} else if (month == 8) {
-		Wide40.set(StringTable::LoadString("TXT_AUGUST", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x26F));
+		UpdateDate.set(StringTable::LoadString("TXT_AUGUST", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x26F));
 	} else if (month == 9) {
-		Wide40.set(StringTable::LoadString("TXT_SEPTEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x271));
+		UpdateDate.set(StringTable::LoadString("TXT_SEPTEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x271));
 	} else if (month == 10) {
-		Wide40.set(StringTable::LoadString("TXT_OCTOBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x273));
+		UpdateDate.set(StringTable::LoadString("TXT_OCTOBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x273));
 	} else if (month == 11) {
-		Wide40.set(StringTable::LoadString("TXT_NOVEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x275));
+		UpdateDate.set(StringTable::LoadString("TXT_NOVEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x275));
 	} else if (month == 12) {
-		Wide40.set(StringTable::LoadString("TXT_DECEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x277));
+		UpdateDate.set(StringTable::LoadString("TXT_DECEMBER", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x277));
 	} else {
-		Wide40.set(StringTable::LoadString("TXT_JANUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x279));
+		UpdateDate.set(StringTable::LoadString("TXT_JANUARY", 0, "D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x279));
 	}
-	Wide40.cat(L" ");
-	Wide40.cat(FUN_00735120(buf));
-	Wide40.cat(L" ");
+	UpdateDate.cat(L" ");
+	UpdateDate.cat(FUN_00735120(buf));
+	UpdateDate.cat(L" ");
 	strftime(buf, 16, "%Y", local);
-	Wide40.cat(FUN_00735120(buf));
+	UpdateDate.cat(FUN_00735120(buf));
 	char timeBuf[64];
 	timeBuf[0] = 0;
 	strftime(timeBuf, 64, "%H:%M:%S", local);
-	Wide3C.set(FUN_00735120(timeBuf));
-	Field8 = 1;
+	UpdateTime.set(FUN_00735120(timeBuf));
+	IsChanged = 1;
 }
 
 // FUNCTION: GAMEMD 0x0077A700
 void PlayerProfile::SetLocale(int locale, int state)
 {
-	if (locale == Field10) {
+	if (locale == Locale) {
 		if (state == 2 && !Field14) {
 			Field14 = 1;
-			Field8 = 1;
+			IsChanged = 1;
 		}
 		return;
 	}
 	bool newer = state >= Field18;
-	if (Field10 == 0) {
+	if (Locale == 0) {
 		newer = true;
 	} else if (!newer) {
 		return;
@@ -555,26 +555,26 @@ void PlayerProfile::SetLocale(int locale, int state)
 	if (state == 3) {
 		Field14 = 0;
 	}
-	Field10 = locale;
+	Locale = locale;
 	Field18 = state;
-	Field8 = 1;
+	IsChanged = 1;
 }
 
 // FUNCTION: GAMEMD 0x0077A760
 void PlayerProfile::SetMatchByRes(bool value)
 {
-	if (value != Field38) {
-		Field38 = value;
-		Field8 = 1;
+	if (value != MatchByRes) {
+		MatchByRes = value;
+		IsChanged = 1;
 	}
 }
 
 // FUNCTION: GAMEMD 0x0077A780
 void PlayerProfile::SetCountry(int country)
 {
-	if (country != Field1C) {
-		Field1C = country;
-		Field8 = 1;
+	if (country != Country) {
+		Country = country;
+		IsChanged = 1;
 	}
 }
 
@@ -583,7 +583,7 @@ void PlayerProfile::SetField20(int value)
 {
 	if (value != Field20) {
 		Field20 = value;
-		Field8 = 1;
+		IsChanged = 1;
 	}
 }
 
@@ -591,29 +591,29 @@ void PlayerProfile::SetField20(int value)
 void PlayerProfile::UpdateStats(Ladder const * record)
 {
 	char changed = 0;
-	if (record->rung != Field24) {
-		Field24 = record->rung;
-		Field8 = 1;
+	if (record->rung != Rung) {
+		Rung = record->rung;
+		IsChanged = 1;
 		changed = 1;
 	}
-	if (record->points != Field28) {
-		Field28 = record->points;
-		Field8 = 1;
+	if (record->points != Points) {
+		Points = record->points;
+		IsChanged = 1;
 		changed = 1;
 	}
-	if (record->wins != Field2C) {
-		Field2C = record->wins;
-		Field8 = 1;
+	if (record->wins != Wins) {
+		Wins = record->wins;
+		IsChanged = 1;
 		changed = 1;
 	}
-	if (record->losses != Field30) {
-		Field30 = record->losses;
-		Field8 = 1;
+	if (record->losses != Losses) {
+		Losses = record->losses;
+		IsChanged = 1;
 		changed = 1;
 	}
-	if (record->disconnects != Field34) {
-		Field34 = record->disconnects;
-		Field8 = 1;
+	if (record->disconnects != Disconnects) {
+		Disconnects = record->disconnects;
+		IsChanged = 1;
 		SetUpdateStamp();
 		return;
 	}
@@ -625,10 +625,10 @@ void PlayerProfile::UpdateStats(Ladder const * record)
 // FUNCTION: GAMEMD 0x0077A840
 bool PlayerProfile::StatsDiffer(Ladder const * record) const
 {
-	if (record->rung != Field24) {
+	if (record->rung != Rung) {
 		return true;
 	} else {
-		if (record->points != Field28) {
+		if (record->points != Points) {
 			return true;
 		} else {
 			return false;
@@ -637,29 +637,29 @@ bool PlayerProfile::StatsDiffer(Ladder const * record) const
 }
 
 // FUNCTION: GAMEMD 0x0077A870
-void PlayerProfile::AddField2C(int delta)
+void PlayerProfile::AddWins(int delta)
 {
-	if (Field2C != -1) {
-		Field8 = 1;
-		Field2C += delta;
+	if (Wins != -1) {
+		IsChanged = 1;
+		Wins += delta;
 	}
 }
 
 // FUNCTION: GAMEMD 0x0077A890
-void PlayerProfile::AddField30(int delta)
+void PlayerProfile::AddLosses(int delta)
 {
-	if (Field30 != -1) {
-		Field8 = 1;
-		Field30 += delta;
+	if (Losses != -1) {
+		IsChanged = 1;
+		Losses += delta;
 	}
 }
 
 // FUNCTION: GAMEMD 0x0077A8B0
-void PlayerProfile::AddField34(int delta)
+void PlayerProfile::AddDisconnects(int delta)
 {
-	if (Field34 != -1) {
-		Field8 = 1;
-		Field34 += delta;
+	if (Disconnects != -1) {
+		IsChanged = 1;
+		Disconnects += delta;
 	}
 }
 
@@ -744,7 +744,7 @@ void PlayerProfile::FUN_0077A9F0(HWND dialog, Wstring const * name, bool update)
 		int count = SendMessageA(item, 0x146, 0, 0);
 		for (int i = 0; i < count; i++) {
 			LRESULT data = SendMessageA(item, 0x150, i, 0);
-			if (data == Field10) {
+			if (data == Locale) {
 				SendMessageA(item, 0x14E, i, 0);
 				break;
 			}
@@ -756,7 +756,7 @@ void PlayerProfile::FUN_0077A9F0(HWND dialog, Wstring const * name, bool update)
 		int count = SendMessageA(item, 0x146, 0, 0);
 		for (int i = 0; i < count; i++) {
 			LRESULT data = SendMessageA(item, 0x150, i, 0);
-			if (data == Field1C) {
+			if (data == Country) {
 				SendMessageA(item, 0x14E, i, 0);
 				break;
 			}
@@ -777,7 +777,7 @@ void PlayerProfile::FUN_0077A9F0(HWND dialog, Wstring const * name, bool update)
 
 	item = GetDlgItem(dialog, 0x773);
 	if (item) {
-		SendMessageA(item, 0xF1, Field38, 0);
+		SendMessageA(item, 0xF1, MatchByRes, 0);
 	}
 
 	WideWstring unknown(StringTable::LoadString(
@@ -785,15 +785,15 @@ void PlayerProfile::FUN_0077A9F0(HWND dialog, Wstring const * name, bool update)
 		"D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x3DB));
 
 	Profile_Text(dialog, 0x6F4,
-		Field24 == -1 ? unknown : FUN_007B7DD0(Field24));
+		Rung == -1 ? unknown : FUN_007B7DD0(Rung));
 	Profile_Text(dialog, 0x6F5,
-		Field28 == -1 ? unknown : FUN_007B7DD0(Field28));
+		Points == -1 ? unknown : FUN_007B7DD0(Points));
 	Profile_Text(dialog, 0x6F0,
-		Field2C == -1 ? unknown : FUN_007B7DD0(Field2C));
+		Wins == -1 ? unknown : FUN_007B7DD0(Wins));
 	Profile_Text(dialog, 0x6F1,
-		Field30 == -1 ? unknown : FUN_007B7DD0(Field30));
+		Losses == -1 ? unknown : FUN_007B7DD0(Losses));
 	Profile_Text(dialog, 0x701,
-		Field34 == -1 ? unknown : FUN_007B7DD0(Field34));
+		Disconnects == -1 ? unknown : FUN_007B7DD0(Disconnects));
 
 	if (name->length() > 0) {
 		WideWstring label(StringTable::LoadString(
@@ -808,16 +808,16 @@ void PlayerProfile::FUN_0077A9F0(HWND dialog, Wstring const * name, bool update)
 	}
 
 	wchar_t * text = new wchar_t[
-		Wide40.length() + Wide3C.length() +
+		UpdateDate.length() + UpdateTime.length() +
 		wcslen(StringTable::LoadString(
 			"GUI:WelcomeUpdate", NULL,
 			"D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x3ED))];
 
-	if (text && Wide40.length() > 0 && Wide3C.length() > 0) {
+	if (text && UpdateDate.length() > 0 && UpdateTime.length() > 0) {
 		swprintf(text, StringTable::LoadString(
 			"GUI:WelcomeUpdate", NULL,
 			"D:\\ra2mdpost\\WOLPersonaInformation.cpp", 0x3EF),
-			Wide40.str, Wide3C.str);
+			UpdateDate.str, UpdateTime.str);
 		item = GetDlgItem(dialog, 0x797);
 		SendMessageA(item, 0x4B2, 0, (LPARAM)text);
 		goto update_done;

@@ -17890,9 +17890,9 @@ address,name,result,size,source,symbol
 0x0077A7A0,PlayerProfile::SetField20,MATCH,21,src/wolpersonainformation.cpp,?SetField20@PlayerProfile@@QAEXH@Z
 0x0077A7C0,PlayerProfile::UpdateStats,MATCH,125,src/wolpersonainformation.cpp,?UpdateStats@PlayerProfile@@QAEXPBULadder@@@Z
 0x0077A840,PlayerProfile::StatsDiffer,MATCH,35,src/wolpersonainformation.cpp,?StatsDiffer@PlayerProfile@@QBE_NPBULadder@@@Z
-0x0077A870,PlayerProfile::AddField2C,MATCH,24,src/wolpersonainformation.cpp,?AddField2C@PlayerProfile@@QAEXH@Z
-0x0077A890,PlayerProfile::AddField30,MATCH,24,src/wolpersonainformation.cpp,?AddField30@PlayerProfile@@QAEXH@Z
-0x0077A8B0,PlayerProfile::AddField34,MATCH,24,src/wolpersonainformation.cpp,?AddField34@PlayerProfile@@QAEXH@Z
+0x0077A870,PlayerProfile::AddWins,MATCH,24,src/wolpersonainformation.cpp,?AddWins@PlayerProfile@@QAEXH@Z
+0x0077A890,PlayerProfile::AddLosses,MATCH,24,src/wolpersonainformation.cpp,?AddLosses@PlayerProfile@@QAEXH@Z
+0x0077A8B0,PlayerProfile::AddDisconnects,MATCH,24,src/wolpersonainformation.cpp,?AddDisconnects@PlayerProfile@@QAEXH@Z
 0x0077A8D0,FUN_0077A8D0,MATCH,279,src/wolpersonainformation.cpp,?FUN_0077A8D0@@YIXPAUHWND__@@_N@Z
 0x0077A9F0,PlayerProfile::FUN_0077A9F0,MATCH,1585,src/wolpersonainformation.cpp,?FUN_0077A9F0@PlayerProfile@@QAEXPAUHWND__@@PBVWstring@@_N@Z
 0x0077B030,??_GPlayerProfile@@UAEPAXI@Z,MATCH,62,src/wolpersonainformation.cpp,??_GPlayerProfile@@UAEPAXI@Z

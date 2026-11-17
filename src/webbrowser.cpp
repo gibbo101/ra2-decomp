@@ -347,7 +347,7 @@ HRESULT STDMETHODCALLTYPE WebBrowser::OnRegisterLogin(const wchar_t *nick, const
 
 	WOLOptionsClass options;
 	if (options.Is_Bit1_Clear()) {
-		int nicknum = StoreLogin(nickName, password, true, profile.Get()->Field10);
+		int nicknum = StoreLogin(nickName, password, true, profile.Get()->Locale);
 		Session.Write_MultiPlayer_Settings();
 	}
 	DAT_00B73E40 = nickName;
