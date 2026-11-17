@@ -6,6 +6,7 @@ import io
 import json
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -254,6 +255,43 @@ sys.exit(case['exit'])
                 self.assertIn("lost proven reference 00401000 1/6/0/405000", log)
             exe.unlink()
             exe.parent.rmdir()
+
+
+    def record_with(self, outputs):
+        """Record with a checker returning `outputs` in turn; the call count and exit code."""
+        calls = []
+
+        def run(src):
+            calls.append(src)
+            out = outputs[min(len(calls), len(outputs)) - 1]
+            return SimpleNamespace(stdout=out, stderr="", returncode=0 if "%" not in out else 1)
+
+        self.child("")
+        argv = ["checkall.py", "--record"]
+        with patch.object(checkall, "ROOT", self.root), \
+             patch.object(checkall, "PROGRESS", self.progress), \
+             patch.object(checkall.sys, "argv", argv), contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaises(SystemExit) as result:
+                checkall.main(run_source=run)
+        return len(calls), result.exception.code
+
+    def test_recorded_rename_is_rechecked(self):
+        renamed = self.match() + "0x00401010 Second: MATCH (1/1 bytes) _Renamed\n" + self.complete(2)
+        calls, code = self.record_with([renamed])
+        self.assertEqual((calls, code), (2, 0))
+        self.assertIn("_Renamed", self.progress.read_text())
+
+    def test_rename_that_breaks_once_recorded_keeps_the_old_table(self):
+        original = self.progress.read_bytes()
+        renamed = self.match() + "0x00401010 Second: MATCH (1/1 bytes) _Renamed\n" + self.complete(2)
+        flipped = self.match() + "0x00401010 Second: WRONG TARGETS (1/1 bytes) _Renamed\n" + self.complete(2, 1)
+        calls, code = self.record_with([renamed, flipped.replace("WRONG TARGETS", "50.0%")])
+        self.assertEqual((calls, code), (2, 1))
+        self.assertEqual(original, self.progress.read_bytes())
+
+    def test_unchanged_symbols_are_not_rechecked(self):
+        calls, code = self.record_with([self.baseline() + self.complete(2)])
+        self.assertEqual((calls, code), (1, 0))
 
 
 if __name__ == "__main__":

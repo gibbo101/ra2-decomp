@@ -10,7 +10,9 @@ if two annotations in one file claim the same compiled function, or if a templat
 instance's label names a class whose vtables in the exe do not hold the function
 (check.py's class check). The class check's warnings are counted.
 An incomplete checker run fails; a completed run containing new partials is allowed.
---record rewrites data/progress.csv with the results. For proven relocation sites, see
+--record rewrites data/progress.csv with the results, then re-checks every source whose object
+names a symbol the new table adds, drops or moves, since the checker binds names through it;
+a result that changes puts the old table back and fails. For proven relocation sites, see
 tools/REFERENCE_BASELINE.md.
 """
 
@@ -22,6 +24,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 from reference_baseline import ReferenceBaseline
 
@@ -72,15 +75,8 @@ def run_checker(src):
                           capture_output=True, text=True, cwd=ROOT)
 
 
-def main(run_source=run_checker, validate=None) -> None:
-    record = "--record" in sys.argv[1:]
-    before = {}
-    if PROGRESS.exists():
-        with PROGRESS.open() as f:
-            before = {r["address"]: r["result"] for r in csv.DictReader(f) if r["result"] in KEPT}
-    before.update(baseline_matches(sys.argv[1:]))
-    sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext))
-    refs = ReferenceBaseline(ROOT, record)
+def check_sources(sources, before, refs, run_source):
+    """Run the checker on each source: its result rows, what broke, and the class warnings."""
     rows, broken, warnings = [], [], 0
     for src in sources:
         proc = run_source(src)
@@ -129,6 +125,42 @@ def main(run_source=run_checker, validate=None) -> None:
         if not found:
             print(f"{src.relative_to(ROOT)}: {(proc.stdout + proc.stderr).strip()}")
             broken.append(str(src.relative_to(ROOT)))
+    return rows, broken, warnings
+
+
+def changed_symbols(old_table: bytes | None, rows) -> set[str]:
+    """Symbols whose recorded address the new rows add, drop or move."""
+    old = set()
+    if old_table:
+        old = {(r["address"], r["symbol"]) for r in csv.DictReader(io.StringIO(old_table.decode()))}
+    new = {(r[0], r[5]) for r in rows}
+    return {symbol for _, symbol in old ^ new if symbol}
+
+
+def affected_sources(sources, symbols):
+    """Sources whose compiled object names any of `symbols`; one with no object counts."""
+    names = [s.encode() for s in symbols]
+    if not names:
+        return []
+    out = []
+    for src in sources:
+        obj = ROOT / "build/obj" / src.relative_to(ROOT).with_suffix(".obj")
+        data = obj.read_bytes() if obj.exists() else None
+        if data is None or any(n in data for n in names):
+            out.append(src)
+    return out
+
+
+def main(run_source=run_checker, validate=None) -> None:
+    record = "--record" in sys.argv[1:]
+    before = {}
+    if PROGRESS.exists():
+        with PROGRESS.open() as f:
+            before = {r["address"]: r["result"] for r in csv.DictReader(f) if r["result"] in KEPT}
+    before.update(baseline_matches(sys.argv[1:]))
+    sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext))
+    refs = ReferenceBaseline(ROOT, record)
+    rows, broken, warnings = check_sources(sources, before, refs, run_source)
     seen = {r[0] for r in rows}
     for addr in sorted(before.keys() - seen):
         problem = f"{addr}: previously {'reconstructed' if before[addr] == 'RECONSTRUCTED' else 'matched'} function missing from results"
@@ -146,10 +178,25 @@ def main(run_source=run_checker, validate=None) -> None:
     if validate is not None:
         validate()
     if record and not broken:
+        old_table = PROGRESS.read_bytes() if PROGRESS.exists() else None
         with PROGRESS.open("w", newline="") as f:
             w = csv.writer(f, lineterminator="\n")
             w.writerow(["address", "name", "result", "size", "source", "symbol"])
             w.writerows(rows)
+        # The checker binds names through progress.csv, so a recorded rename can change a result.
+        affected = affected_sources(sources, changed_symbols(old_table, rows))
+        if affected:
+            print(f"rechecking {len(affected)} sources against the recorded symbols")
+            recorded = {r[0]: r[2] for r in rows if r[2] in KEPT}
+            _, again, _ = check_sources(affected, recorded, SimpleNamespace(enabled=False), run_source)
+            if again:
+                if old_table is None:
+                    PROGRESS.unlink()
+                else:
+                    PROGRESS.write_bytes(old_table)
+                print("no longer matching once recorded: " + ", ".join(again))
+                print("data/progress.csv left as it was")
+                broken.extend(again)
     if not broken:
         refs.save()
     sys.exit(1 if broken else 0)
