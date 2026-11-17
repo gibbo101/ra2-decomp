@@ -101,6 +101,35 @@ for sub in MFC ATL; do
     fi
 done
 
+# SP3 also replaces five ATL and four MFC headers; its ATLBASE.H is the one that calls
+# SP3's OLEAUTO.H VarCmp with four arguments.
+sp3_atl_mfc() {
+    (cd "$VC" && sha256sum -c --quiet --status) <<'EOF'
+82d5f5e73c404f8063f8d0d64aadb71be61276fee57486d3d04deb0ef3ce573b  ATL/INCLUDE/ATLBASE.H
+dc6e421f30ad62a9df047412a534eabb2af7ff185679cb79d11b35dd6443aa7e  ATL/INCLUDE/ATLCOM.H
+a64942a2cd150cf38e47785bfb0d98911c73478753590fc77962617f6f102f5d  ATL/INCLUDE/ATLDBCLI.H
+b1be4b24e6b1b3fcdeae15cf4128a7941bae9fdec9a92430690aea0dfc896aea  ATL/INCLUDE/ATLDB.H
+9b053271596badaef2e2c4acc3db78abbc01413b976e9845c4af71fb5147c5c3  ATL/INCLUDE/ATLIMPL.CPP
+622f4215d17479dccc82f971380ef3a52463655d85245f7915a49f52abe1ba67  MFC/INCLUDE/AFXBLD_.H
+32fc64158900b8f5181e4ecb19786f34e55c7198f6560f75dd47fe5cc0efd16e  MFC/INCLUDE/AFXISAPI.H
+8d766ff1a320790f487143e096d4970cb01bf45bfd7ac524bcb2e51bee3b2367  MFC/INCLUDE/AFXODLGS.H
+0aac8da0f7e2df2ba770328696a61523cdc43c17a95d2e29161dceaca002cd37  MFC/INCLUDE/AFXWIN1.INL
+EOF
+}
+if ! sp3_atl_mfc; then
+    tmp="$(mktemp -d -p "$TC")"
+    # The ATL headers lie wholly inside VS6sp3_4.cab and the MFC ones inside VS6sp3_6.cab.
+    7z e -y -bso0 -bsp0 "$SP3_ISO" -o"$tmp" 'VSTUDIO/SP3/VS6SP3_5.EXE' 'VSTUDIO/SP3/VS6SP3_7.EXE'
+    7z e -y -bso0 -bsp0 "$tmp/VS6SP3_5.EXE" -o"$tmp/4" VS6sp3_4.cab
+    7z e -y -bso0 -bsp0 "$tmp/VS6SP3_7.EXE" -o"$tmp/6" VS6sp3_6.cab
+    cabextract -q -F 'vc98/atl/include/*' -d "$tmp/x" "$tmp/4/VS6sp3_4.cab" 2>/dev/null || true
+    cabextract -q -F 'vc98/mfc/include/*' -d "$tmp/x" "$tmp/6/VS6sp3_6.cab" 2>/dev/null || true
+    overlay "$tmp/x/vc98/atl/include" "$VC/ATL/INCLUDE"
+    overlay "$tmp/x/vc98/mfc/include" "$VC/MFC/INCLUDE"
+    rm -rf "$tmp"
+    sp3_atl_mfc || { echo "SP3's ATL and MFC headers did not apply" >&2; exit 1; }
+fi
+
 # The disc stores some files under short names that its installer renames, as listed in
 # SETUP/VS98ENT.INF ("vc98\include\xception<exception>").
 inf="$(mktemp -d -p "$TC")"

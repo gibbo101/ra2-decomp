@@ -251,15 +251,6 @@ int __fastcall FUN_0077B2A0(bool first_time)
 	}
 }
 
-#include <oleauto.h>
-
-// ATL3 calls VarCmp with three arguments; the bundled SDK requires the flags argument.
-extern "C" HRESULT __stdcall VarCmp(
-	LPVARIANT left,
-	LPVARIANT right,
-	LCID lcid,
-	ULONG flags = 0);
-
 #include <atlbase.h>
 extern ATL::CComModule _Module;
 #include <atlcom.h>
