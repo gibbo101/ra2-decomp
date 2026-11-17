@@ -62,8 +62,6 @@
 // SYNTHETIC: GAMEMD 0x006F0660 SYMBOL
 // _$E59
 
-DynamicVectorClass<TeamTypeClass *> TeamTypeClass::Array;
-
 // FUNCTION: GAMEMD 0x006F0680
 int _ahtoi(const char *string)
 {
@@ -130,9 +128,9 @@ TeamTypeClass::TeamTypeClass(char const * name) :
 	IsBaseDefense(false),
 	OnlyTargetHouseEnemy(false)
 {
-	Array.Add(this);
+	TeamTypes.Add(this);
 
-	HeapID = Array.ID(this);
+	HeapID = TeamTypes.ID(this);
 	PointerExpiredNotification::NotifyInvalidType.Add(this);
 }
 
@@ -140,7 +138,7 @@ TeamTypeClass::TeamTypeClass(char const * name) :
 TeamTypeClass::~TeamTypeClass(void)
 {
 	Detach_This_From_All(this, true);
-	Array.Delete(this);
+	TeamTypes.Delete(this);
 	PointerExpiredNotification::NotifyInvalidType.Delete(this);
 }
 
@@ -300,9 +298,9 @@ SUGGESTED_TEAM_LIST TeamTypeClass::Suggested_New_Team(HouseClass * house, bool)
 TeamTypeClass * TeamTypeClass::From_Name(char const * name)
 {
 	if (name) {
-		for (int index = 0; index < Array.Count(); index++) {
-			if (stricmp(name, Array[index]->IniName) == 0 || stricmp(name, Array[index]->GivenName) == 0) {
-				return(Array[index]);
+		for (int index = 0; index < TeamTypes.Count(); index++) {
+			if (stricmp(name, TeamTypes[index]->IniName) == 0 || stricmp(name, TeamTypes[index]->GivenName) == 0) {
+				return(TeamTypes[index]);
 			}
 		}
 	}
@@ -494,7 +492,7 @@ Cell TeamTypeClass::Get_Transport_Origin(void) const
 // FUNCTION: GAMEMD 0x006F1920
 TeamTypeClass * TeamTypeClass::Find_Or_Make(char const * name)
 {
-	return(TFind_Or_Make<TeamTypeClass>(name, Array));
+	return(TFind_Or_Make<TeamTypeClass>(name, TeamTypes));
 }
 
 // FUNCTION: GAMEMD 0x006F19B0
@@ -527,11 +525,11 @@ void TeamTypeClass::Write_All(CCINIClass & ini, INIScopeType scope)
 	ini.Clear("TeamTypes");
 
 	int i = 0;
-	for (index = 0; index < Array.Count(); index++) {
-		if (Array[index]->Scope == scope) {
+	for (index = 0; index < TeamTypes.Count(); index++) {
+		if (TeamTypes[index]->Scope == scope) {
 			sprintf(buffer, "%d", i++);
-			ini.Put_String("TeamTypes", buffer, (char const *)Array[index]->IniName);
-			Array[index]->Write_INI(ini);
+			ini.Put_String("TeamTypes", buffer, (char const *)TeamTypes[index]->IniName);
+			TeamTypes[index]->Write_INI(ini);
 		}
 	}
 }
@@ -702,8 +700,8 @@ void TeamTypeClass::Process_Task_Force(void)
 // FUNCTION: GAMEMD 0x006F2040
 void TeamTypeClass::Process_All_Task_Forces(void)
 {
-	for (int index = 0; index < Array.Count(); index++) {
-		Array[index]->Process_Task_Force();
+	for (int index = 0; index < TeamTypes.Count(); index++) {
+		TeamTypes[index]->Process_Task_Force();
 	}
 }
 

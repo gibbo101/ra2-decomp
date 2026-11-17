@@ -235,9 +235,9 @@ void __fastcall FUN_004E3A00(HWND dialog, int id)
 	SendMessage(item, 0x4de, 0, 7);
 	int index = SendMessage(item, 0x4c2, 0, (LPARAM)StringTable::LoadString("GUI:RandomEx", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x114));
 	SendMessage(item, CB_SETITEMDATA, index, -2);
-	int count = HouseTypeClass::Array.Count();
+	int count = HouseTypes.Count();
 	for (int i = 0; i < count; i++) {
-		HouseTypeClass *type = HouseTypeClass::Array[i];
+		HouseTypeClass *type = HouseTypes[i];
 		if (type && type->IsMultiplay && type->House > -3 && type->House <= 9 && *type->UIName) {
 			index = SendMessage(item, 0x4c2, 0, (LPARAM)type->UIName);
 			SendMessage(item, CB_SETITEMDATA, index, type->House);
