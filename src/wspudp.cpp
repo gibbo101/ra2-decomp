@@ -504,7 +504,7 @@ int UDPInterfaceClass::Message_Handler(HWND, UINT message, UINT wParam, LONG lPa
 					memset(packet->Address, 0, sizeof(packet->Address));
 					if (addr.sin_addr.s_addr == htonl(INADDR_LOOPBACK)) {
 						packet->SrcPort = 0;
-						*(IPXAddressClass *)packet->Address = Session.unknown_2978;
+						*(IPXAddressClass *)packet->Address = Session.PacketRouterAddressTranslate;
 					} else {
 						packet->SrcPort = ntohs(addr.sin_port);
 						memcpy(packet->Address + 4, &addr.sin_addr.s_addr, 4);
@@ -560,8 +560,8 @@ int UDPInterfaceClass::Message_Handler(HWND, UINT message, UINT wParam, LONG lPa
 				} else {
 					addr.sin_port = htons((unsigned short)UDPListenPort);
 				}
-				if (!memcmp(packet->Address + 4, (unsigned char *)&Session.unknown_2978 + 4, 4)
-					&& (Session.Players.Count() == 0 || Session.unknown_2978 == Session.Players[0]->Address)) {
+				if (!memcmp(packet->Address + 4, (unsigned char *)&Session.PacketRouterAddressTranslate + 4, 4)
+					&& (Session.Players.Count() == 0 || Session.PacketRouterAddressTranslate == Session.Players[0]->Address)) {
 					addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 					addr.sin_port = htons((unsigned short)DAT_00841F3C);
 				}

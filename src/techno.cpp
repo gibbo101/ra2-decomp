@@ -282,7 +282,7 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	IsBeingManipulated(false),
 	BeingManipulatedBy(NULL),
 	ChronoWarpedByHouse(NULL),
-	unknown_bool_430(false),
+	IsPatrolling(false),
 	IsMouseHovering(false),
 	ShouldBeReselectOnUnlimbo(false),
 	OldTeam(NULL),
@@ -313,7 +313,7 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	UnusedGattlingSoundController.FUN_00405BE0();
 	QueuedVoiceSoundController.FUN_00405BE0();
 	QueuedVoiceIndex = -1;
-	unknown_4F4 = -1;
+	PlayingVoiceIndex = -1;
 	Technos.Add(this);
 	PointerExpiredNotification::NotifyInvalidHouse.Add(this);
 	AbstractFlags |= 1;
@@ -765,7 +765,7 @@ TechnoClass::TechnoClass(NoInitClass const & x) :
 	UnusedGattlingSoundController.FUN_00405BE0();
 	QueuedVoiceSoundController.FUN_00405BE0();
 	QueuedVoiceIndex = -1;
-	unknown_4F4 = -1;
+	PlayingVoiceIndex = -1;
 	if (!found) {
 		Array.Add(this);
 	}
@@ -1892,10 +1892,10 @@ void TechnoClass::AI(void)
 	FUN_0070E920();
 	if (QueuedVoiceIndex != -1) {
 		if (!QueuedVoiceSoundController.GetEvent()) {
-			unknown_4F4 = QueuedVoiceIndex;
-			VocClass::PlayGlobal(unknown_4F4, 1.0f, 0x2000, &QueuedVoiceSoundController);
+			PlayingVoiceIndex = QueuedVoiceIndex;
+			VocClass::PlayGlobal(PlayingVoiceIndex, 1.0f, 0x2000, &QueuedVoiceSoundController);
 			QueuedVoiceIndex = -1;
-		} else if (unknown_4F4 == QueuedVoiceIndex) {
+		} else if (PlayingVoiceIndex == QueuedVoiceIndex) {
 			QueuedVoiceIndex = -1;
 		}
 	}
@@ -7001,7 +7001,7 @@ HRESULT STDMETHODCALLTYPE TechnoClass::Load(IStream * stream)
 		unknown_4D8 = 0;
 		QueuedVoiceSoundController.FUN_00405BE0();
 		QueuedVoiceIndex = -1;
-		unknown_4F4 = -1;
+		PlayingVoiceIndex = -1;
 		result = S_OK;
 	}
 	return(result);

@@ -441,7 +441,7 @@ static inline ObjectClass * To_Object(AbstractClass * a)
 int FootClass::Do_MISSION_PATROL(void)
 {
 	int trange = Threat_Range(2);
-	unknown_bool_430 = true;
+	IsPatrolling = true;
 	int dist = (trange / CELL_LEPTON_W) + 6;
 
 	enum {
@@ -3068,7 +3068,7 @@ bool FootClass::Execute_Waypoint_Path(WaypointClass * waypoint)
 	int waypoint_zone;
 	int adjusted_zone;
 
-	if (unknown_bool_430) {
+	if (IsPatrolling) {
 		unknown_bool_43A = true;
 	}
 

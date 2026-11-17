@@ -2271,7 +2271,7 @@ void Do_Random_Map(HWND dialog, bool (*callback)())
 {
 	rc_ptr<WDTTerritory> territory;
 	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
-		territory = FUN_007B0390(Session.unknown_08);
+		territory = FUN_007B0390(Session.WDTTerritory);
 	}
 	if (territory.Get() != NULL) {
 		RandomMapGen.SeedData.NumPlayers = 4;
@@ -2814,7 +2814,7 @@ void MapSeedClass::Fixup_WDT_Settings(void)
 {
 	rc_ptr<WDTTerritory> territory;
 	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
-		territory = FUN_007B0390(Session.unknown_08);
+		territory = FUN_007B0390(Session.WDTTerritory);
 	}
 
 	if (territory.Get() != NULL) {

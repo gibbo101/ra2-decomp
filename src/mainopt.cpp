@@ -339,14 +339,14 @@ BOOL CALLBACK FUN_00560480(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					SendMessage(handle, 0x4B4, 0, (LPARAM)Options.DestNet);
 				}
 				SendMessage(handle, EM_LIMITTEXT, 11, 0);
-				if (Session.unknown_2F48) {
+				if (Session.SendDelay) {
 					SendDlgItemMessage(window, 0x762, BM_SETCHECK, 1, 0);
 				} else {
 					SendDlgItemMessage(window, 0x762, BM_SETCHECK, 0, 0);
 				}
 				handle = GetDlgItem(window, 0x5D7);
-				if (handle != (HWND)-1 && Session.unknown_301C) {
-					sprintf(socket_string, "%d", Session.unknown_301C);
+				if (handle != (HWND)-1 && Session.PortNumberOverride) {
+					sprintf(socket_string, "%d", Session.PortNumberOverride);
 					SendMessage(handle, 0x4B4, 0, (LPARAM)socket_string);
 				}
 				return(0);
@@ -415,23 +415,23 @@ BOOL CALLBACK FUN_00560480(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 						}
 
 						if (SendDlgItemMessage(window, 0x762, BM_GETCHECK, 0, 0) == 1) {
-							if (!Session.unknown_2F48) {
+							if (!Session.SendDelay) {
 								WWMessageBox().Process(StringTable::LoadString("TXT_FIREWALL_SETTINGS_WARNING1", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x42B), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x42B), NULL, NULL);
 							}
-							Session.unknown_2F48 = true;
+							Session.SendDelay = true;
 						} else {
-							Session.unknown_2F48 = false;
+							Session.SendDelay = false;
 						}
 
-						if (port > 0 && Session.unknown_301C == 0) {
+						if (port > 0 && Session.PortNumberOverride == 0) {
 							WWMessageBox().Process(StringTable::LoadString("TXT_FIREWALL_SETTINGS_WARNING2", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x436), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x436), NULL, NULL);
 						}
-						Session.unknown_301C = port;
+						Session.PortNumberOverride = port;
 						FirewallHelper.Clear();
 
 						RawFileClass file("RA2MD.INI");
-						INI_RA2MD.Put_Bool("MultiPlayer", "SendDelay", Session.unknown_2F48);
-						INI_RA2MD.Put_Int("MultiPlayer", "PortNumberOverride", Session.unknown_301C, 0);
+						INI_RA2MD.Put_Bool("MultiPlayer", "SendDelay", Session.SendDelay);
+						INI_RA2MD.Put_Int("MultiPlayer", "PortNumberOverride", Session.PortNumberOverride, 0);
 						INI_RA2MD.Save(file, false);
 						break;
 					}

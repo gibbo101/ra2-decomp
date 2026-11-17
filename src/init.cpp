@@ -1243,7 +1243,7 @@ restart:
 						case GAME_INTERNET: {
 							Cheat_Disable();
 							FUN_004068E0("Init.cpp - GAME_INTERNET\n");
-							memset(Session.unknown_29F4, 0, sizeof(Session.unknown_29F4));
+							memset(Session.PlayerFirewall, 0, sizeof(Session.PlayerFirewall));
 							Session.unknown_3070 = 0;
 							bool success = FUN_0052F3F0();
 							int res = FUN_0077B2A0(selection == 0x11);
@@ -1390,7 +1390,7 @@ restart:
 
 		if (Session.Type == GAME_INTERNET) {
 			for (int i = 0; i < MAX_PLAYERS; i++) {
-				Session.unknown_304C[i] = TickCount;
+				Session.LastPortProbeTime[i] = TickCount;
 			}
 		}
 
@@ -1734,16 +1734,16 @@ bool FUN_0052F3F0(void)
 	Session.PacketRouterPort = 0;
 	Session.unknown_306E = 0;
 	Session.unknown_308C = 0;
-	Session.unknown_3094 = -1;
-	Session.unknown_309C = 20;
+	Session.FallbackHost = -1;
+	Session.RouterResponseTime = 20;
 	Session.unknown_30A0 = 0;
 	Session.unknown_30A4 = 0;
 	Session.unknown_30A8 = -1;
-	memset(Session.unknown_2A14, 0, sizeof(Session.unknown_2A14));
+	memset(Session.ConnectionPairs, 0, sizeof(Session.ConnectionPairs));
 	memset(Session.ConnectionResults, -1, sizeof(Session.ConnectionResults));
 	memset(Session.unknown_2E18, 0, sizeof(Session.unknown_2E18));
-	memset(Session.unknown_2FF8, 0, sizeof(Session.unknown_2FF8));
-	Session.unknown_2E14 = 0;
+	memset(Session.PlayerPortBase, 0, sizeof(Session.PlayerPortBase));
+	Session.NumConnectionPairs = 0;
 
 	if (Session.ForcePortBase) {
 		Session.PortBase = Session.ForcePortBase;
@@ -1898,7 +1898,7 @@ bool Parse_Command_Line(int argc, char * argv[])
 			DAT_00B77E18 = 2;
 		}
 		if (strstr(string, "-NOROUTER")) {
-			Session.unknown_3090 = false;
+			Session.UsePacketRouter = false;
 		}
 
 		if (strstr(string, "-STEALTH")) {

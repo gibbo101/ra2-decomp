@@ -4224,7 +4224,7 @@ int __fastcall FUN_00788180(bool flag)
 		INIClass ini;
 		CCFileClass file("WDTMAPMD.INI");
 		ini.Load(file, false);
-		sprintf(entry, "Territory%02d", Session.unknown_08);
+		sprintf(entry, "Territory%02d", Session.WDTTerritory);
 		strcpy(def, entry);
 		if (((WDTState *)FUN_007B0210()->Ptr)->MapID == 0) {
 			ini.Get_String("NorthAmerica", entry, def, buf, sizeof(def));
@@ -6421,8 +6421,8 @@ int __fastcall FUN_007937B0(int (*pairs)[2])
 	}
 	for (int a = 0; a < Session.Players.Count(); a++) {
 		for (int b = 0; b < Session.Players.Count() - 1; b++) {
-			int cur_value = Session.unknown_29F4[order[b]];
-			int next_value = Session.unknown_29F4[order[b + 1]];
+			int cur_value = Session.PlayerFirewall[order[b]];
+			int next_value = Session.PlayerFirewall[order[b + 1]];
 			if (FirewallHelper.Rank_A(cur_value) < FirewallHelper.Rank_A(next_value)) {
 				int temp = order[b];
 				order[b] = order[b + 1];
@@ -6460,12 +6460,12 @@ void __fastcall FUN_00793930(char const * from, char const * to, int state)
 			to_slot = i;
 		}
 	}
-	for (int j = 0; j < Session.unknown_2E14; j++) {
-		if (Session.unknown_2A14[j][0] == from_slot && Session.unknown_2A14[j][1] == to_slot) {
+	for (int j = 0; j < Session.NumConnectionPairs; j++) {
+		if (Session.ConnectionPairs[j][0] == from_slot && Session.ConnectionPairs[j][1] == to_slot) {
 			Session.ConnectionResults[j * 2] = state;
 			return;
 		}
-		if (Session.unknown_2A14[j][0] == to_slot && Session.unknown_2A14[j][1] == from_slot) {
+		if (Session.ConnectionPairs[j][0] == to_slot && Session.ConnectionPairs[j][1] == from_slot) {
 			Session.ConnectionResults[j * 2 + 1] = state;
 			return;
 		}
@@ -6520,16 +6520,16 @@ void __fastcall FUN_00793B30(int mode, char const * options)
 // FUNCTION: GAMEMD 0x00793BB0
 void FUN_00793BB0(void)
 {
-	for (int i = 0; i < Session.unknown_2FEC; ++i) {
-		if (Session.unknown_2F8C[i] == 0) {
+	for (int i = 0; i < Session.KeepAliveCount; ++i) {
+		if (Session.KeepAliveTimers[i] == 0) {
 			GlobalPacketType packet;
 			memset(&packet, 0, sizeof(packet));
 			packet.Command = NET_PING;
 			strcpy(packet.Name, DAT_00B73E40.get());
-			char const *name = FUN_007350C0(Session.Slots[Session.unknown_2F6C[i]]->Name);
+			char const *name = FUN_007350C0(Session.Slots[Session.KeepAliveSlots[i]]->Name);
 			FUN_004068E0("Sending keepalive NET_PING packet to %s\n", name);
-			Ipx.Send_Global_Message_To_Name(&packet, 0x2F, 0, Session.Slots[Session.unknown_2F6C[i]]->Name);
-			Session.unknown_2F8C[i] = CDTimerClass<SystemTimerClass>(1200);
+			Ipx.Send_Global_Message_To_Name(&packet, 0x2F, 0, Session.Slots[Session.KeepAliveSlots[i]]->Name);
+			Session.KeepAliveTimers[i] = CDTimerClass<SystemTimerClass>(1200);
 		}
 	}
 }
@@ -6537,9 +6537,9 @@ void FUN_00793BB0(void)
 // FUNCTION: GAMEMD 0x00793CD0
 void __fastcall FUN_00793CD0(int slot)
 {
-	Session.unknown_2F6C[Session.unknown_2FEC] = slot;
-	Session.unknown_2F8C[Session.unknown_2FEC] = 1200;
-	Session.unknown_2FEC++;
+	Session.KeepAliveSlots[Session.KeepAliveCount] = slot;
+	Session.KeepAliveTimers[Session.KeepAliveCount] = 1200;
+	Session.KeepAliveCount++;
 }
 
 #include "wspudp.h"
@@ -6583,18 +6583,18 @@ bool FUN_007947B0(void)
 	CDTimerClass<SystemTimerClass> timer;
 	int tag = -1;
 	int partner;
-	Session.unknown_2FEC = 0;
+	Session.KeepAliveCount = 0;
 	memset(Session.unknown_2F4C, 0, sizeof(Session.unknown_2F4C));
 	DAT_00B77DCC = 0;
-	if (!Session.unknown_2E14) {
+	if (!Session.NumConnectionPairs) {
 		return false;
 	}
 	FUN_0069BD60(&Session);
 	FUN_007931F0(0);
-	FUN_004068E0("Session.NumConnectionPairs = %d\n", Session.unknown_2E14);
-	for (int i = 0; i < Session.unknown_2E14; i++) {
-		int first = Session.unknown_2A14[i][0];
-		int second = Session.unknown_2A14[i][1];
+	FUN_004068E0("Session.NumConnectionPairs = %d\n", Session.NumConnectionPairs);
+	for (int i = 0; i < Session.NumConnectionPairs; i++) {
+		int first = Session.ConnectionPairs[i][0];
+		int second = Session.ConnectionPairs[i][1];
 		partner = -1;
 		NodeNameType * one = Session.Slots[first];
 		NodeNameType * two = Session.Slots[second];
@@ -6614,10 +6614,10 @@ bool FUN_007947B0(void)
 		}
 		if (partner != -1) {
 			int retries;
-			if (FirewallHelper.Rank_B(Session.unknown_29F4[first]) > FirewallHelper.Rank_B(Session.unknown_29F4[second])) {
-				retries = FirewallHelper.Rank_B(Session.unknown_29F4[first]);
+			if (FirewallHelper.Rank_B(Session.PlayerFirewall[first]) > FirewallHelper.Rank_B(Session.PlayerFirewall[second])) {
+				retries = FirewallHelper.Rank_B(Session.PlayerFirewall[first]);
 			} else {
-				retries = FirewallHelper.Rank_B(Session.unknown_29F4[second]);
+				retries = FirewallHelper.Rank_B(Session.PlayerFirewall[second]);
 			}
 			FUN_004068E0("About to enter Start_Talking_To, retries = %d", retries);
 			if (!FUN_00793D20(partner, tag, retries)) {
@@ -6784,7 +6784,7 @@ void FUN_00794BA0(void)
 			Session.PrecalcDesiredFrameRate = 10;
 			break;
 	}
-	if (Session.unknown_3090) {
+	if (Session.UsePacketRouter) {
 		Session.MaxAhead += 20;
 	}
 	Session.PrecalcMaxAhead = 0;
@@ -6798,7 +6798,7 @@ void FUN_00794BA0(void)
 			worst = DAT_00B7790C[q];
 		}
 	}
-	if (Session.unknown_3090) {
+	if (Session.UsePacketRouter) {
 		worst *= 2;
 	}
 
@@ -6853,7 +6853,7 @@ void FUN_00794BA0(void)
 	DAT_00841F38 = 1236;
 	DAT_00841F3C = 1237;
 	Frame = 0;
-	if (Session.unknown_3090) {
+	if (Session.UsePacketRouter) {
 		OwnerTalk.Wait_For_Router_Shutdown(2000, true);
 	}
 	DAT_00B77A04[0] = 0;
@@ -10048,7 +10048,7 @@ bool FUN_007A0690(void)
 			}
 		}
 		wdt += ", WDT=";
-		wdt += Wstring_FromInt(Session.unknown_08);
+		wdt += Wstring_FromInt(Session.WDTTerritory);
 	}
 
 	FUN_005E2700(DAT_007EEF30, StringTable::LoadString("WOL:RequestingMatch", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6EEB));
@@ -10081,7 +10081,7 @@ bool FUN_007A0690(void)
 	NetNumType net;
 	NetNodeType node;
 	unsigned short port;
-	Session.unknown_2988.Get_Address(net, node, &port);
+	Session.LocalAddress.Get_Address(net, node, &port);
 	int address = *(int *)node;
 	request += ", ADR=";
 	request += Wstring_FromInt(address);
@@ -10492,9 +10492,9 @@ void __fastcall FUN_007A2230(char * name, char * ip, unsigned long second, unsig
 			unsigned char node[6];
 			memset(node, 0, 6);
 			*(unsigned long *)node = second;
-			Session.unknown_2994[i].Set_Address((unsigned char *)&net, node, 0);
-			Session.unknown_29F4[i] = third;
-			Session.unknown_2FF8[i] = third_value;
+			Session.PlayerLocalAddress[i].Set_Address((unsigned char *)&net, node, 0);
+			Session.PlayerFirewall[i] = third;
+			Session.PlayerPortBase[i] = third_value;
 			return;
 		}
 	}
@@ -11360,7 +11360,7 @@ long __stdcall FUN_007A5290(void * sink, long result, char const * motd)
 		memset(&DAT_00B76B10, 0, 0x10C);
 		memset(&DAT_00B73BE8, 0, 0x10C);
 		SetEvent(DAT_00B73684[2]);
-		FUN_00795650(&Session.unknown_2988);
+		FUN_00795650(&Session.LocalAddress);
 		break;
 	}
 	return 0;
@@ -11645,7 +11645,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 					NetNumType net;
 					NetNodeType node;
 					unsigned short port;
-					Session.unknown_2988.Get_Address(net, node, &port);
+					Session.LocalAddress.Get_Address(net, node, &port);
 					sprintf(buffer, "R%d,%d,%d,%d,%x,%x,%x", Session.FUN_0069B700(), Session.FUN_0069B720(), -2, -2, *(int *)node, (unsigned short)FirewallHelper.Detected, Session.PortBase);
 				}
 				FUN_004068E0("Sending private game options (%s)\n", buffer);
@@ -11739,7 +11739,7 @@ long __stdcall FUN_007A7B60(void *sink, long result, Channel *channel, User *use
 		if (host)
 			FUN_00735060(Session.MasterPlayerName, (char *)host->name, -1);
 		Session.MasterPlayerID = -1;
-		Session.unknown_2E14 = FUN_007937B0(Session.unknown_2A14);
+		Session.NumConnectionPairs = FUN_007937B0(Session.ConnectionPairs);
 	}
 	return S_OK;
 }
@@ -11924,17 +11924,17 @@ long __stdcall FUN_007A8260(void * sink, long result, User * user, char const * 
 				memset(node, 0, sizeof(node));
 				memcpy(node, &ip, sizeof(ip));
 				address.Set_Address(net, node, 0);
-				Session.unknown_2994[row] = address;
+				Session.PlayerLocalAddress[row] = address;
 			}
 			token = strtok(NULL, ",");
 			unsigned int port = 0;
 			if (token) sscanf(token, "%X", &port);
-			Session.unknown_29F4[row] = port;
+			Session.PlayerFirewall[row] = port;
 			token = strtok(NULL, ",");
 			unsigned int value = 0;
 			if (token) sscanf(token, "%X", &value);
-			Session.unknown_2FF8[row] = value;
-			FUN_004068E0(DAT_0084AED8, (char *)user->name, country, color, start, team, address.As_String(NULL), Session.unknown_29F4[row], value);
+			Session.PlayerPortBase[row] = value;
+			FUN_004068E0(DAT_0084AED8, (char *)user->name, country, color, start, team, address.As_String(NULL), Session.PlayerFirewall[row], value);
 			HWND window = FUN_00775940(0xC2);
 			if (!window) window = FUN_00775940(0xC9);
 			int old_country = Session.Slots[row]->Get_Country();
@@ -11964,9 +11964,9 @@ long __stdcall FUN_007A8260(void * sink, long result, User * user, char const * 
 						index = FUN_005E9240(player);
 						FUN_005EC9F0(window, FUN_005E98F0(index), player, 0);
 						FUN_0077DB90();
-						Session.unknown_29F4[index] = Session.unknown_29F4[row];
-						Session.unknown_2994[index] = Session.unknown_2994[row];
-						Session.unknown_2FF8[index] = Session.unknown_2FF8[row];
+						Session.PlayerFirewall[index] = Session.PlayerFirewall[row];
+						Session.PlayerLocalAddress[index] = Session.PlayerLocalAddress[row];
+						Session.PlayerPortBase[index] = Session.PlayerPortBase[row];
 					}
 				}
 			}
@@ -11991,9 +11991,9 @@ long __stdcall FUN_007A8260(void * sink, long result, User * user, char const * 
 						index = DAT_008316A4;
 						FUN_005E32D0(true, false);
 						FUN_00783C80(0, false);
-						Session.unknown_29F4[index] = Session.unknown_29F4[row];
-						Session.unknown_2994[index] = Session.unknown_2994[row];
-						Session.unknown_2FF8[index] = Session.unknown_2FF8[row];
+						Session.PlayerFirewall[index] = Session.PlayerFirewall[row];
+						Session.PlayerLocalAddress[index] = Session.PlayerLocalAddress[row];
+						Session.PlayerPortBase[index] = Session.PlayerPortBase[row];
 						goto request_done;
 					}
 					goto refresh_options;
@@ -14050,9 +14050,9 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 			Session.Options.AISlots.Starts[slot] = -2;
 			Session.Options.AISlots.Allies[slot] = -2;
 		}
-		FUN_004E3CE0(window, Session.unknown_2854);
-		FUN_004E48E0(window, Session.unknown_2854);
-		FUN_004E53D0(window, Session.unknown_2854);
+		FUN_004E3CE0(window, Session.LocalSlot);
+		FUN_004E48E0(window, Session.LocalSlot);
+		FUN_004E53D0(window, Session.LocalSlot);
 		FUN_005ED5A0(window, &Session.WOL);
 		FUN_0078F720(window);
 		if (Session.MPGameMode && !Session.MPGameMode->vt_entry_BC()) {
@@ -14487,7 +14487,7 @@ BOOL CALLBACK FUN_00791B10(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 				NetNumType net;
 				NetNodeType node;
 				unsigned short port;
-				Session.unknown_2988.Get_Address(net, node, &port);
+				Session.LocalAddress.Get_Address(net, node, &port);
 				char options[128];
 				sprintf(options, "R%d,%d,%d,%d,%X,%x,%x", country, color, start, team, *(int *)node,
 						(unsigned short)FirewallHelper.Detected, Session.PortBase);
@@ -14575,7 +14575,7 @@ BOOL CALLBACK FUN_00791B10(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 		FUN_005EE510(-1);
 		Set_Scenario_Info_From_Index(-1);
 		DAT_00AC11C2 = false;
-		Session.unknown_8D4 = 8;
+		Session.ScenarioMaxPlayers = 8;
 		FUN_005E2F60(window);
 		FUN_005E74E0(window);
 		if (Session.MPGameMode && Session.MPGameMode->vt_entry_04() &&
@@ -14769,7 +14769,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 		}
 		if (channel->type == 41) {
 			Session.MPGameMode = First_Game_Mode();
-			Session.unknown_8D4 = 8;
+			Session.ScenarioMaxPlayers = 8;
 			DAT_008316A4 = 7;
 			if (Session.MPGameMode) {
 				Session.MPGameMode->vt_entry_24();

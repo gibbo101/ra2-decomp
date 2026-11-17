@@ -284,7 +284,7 @@ class TechnoClass : public RadioClass
 		bool IsBeingManipulated;
 		TechnoClass * BeingManipulatedBy;
 		HouseClass * ChronoWarpedByHouse;
-		bool unknown_bool_430;
+		bool IsPatrolling;
 		bool IsMouseHovering;
 		bool ShouldBeReselectOnUnlimbo;
 		TeamClass * OldTeam;
@@ -308,7 +308,7 @@ class TechnoClass : public RadioClass
 		unsigned unknown_4D8;
 		AudioController QueuedVoiceSoundController;
 		unsigned QueuedVoiceIndex;
-		unsigned unknown_4F4;
+		unsigned PlayingVoiceIndex;
 		bool unknown_bool_4F8;
 		unsigned unknown_4FC;
 		TechnoClass * QueueUpToEnter;

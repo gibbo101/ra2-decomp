@@ -225,10 +225,10 @@ int FirewallHelperClass::Detect(bool * detected)
 	int delta;
 	bool looks_good;
 
-	if (Session.unknown_301C) {
+	if (Session.PortNumberOverride) {
 		behavior = 1;
-		FUN_004068E0("Source port %d specified by user\n", Session.unknown_301C);
-		if (Session.unknown_2F48) {
+		FUN_004068E0("Source port %d specified by user\n", Session.PortNumberOverride);
+		if (Session.SendDelay) {
 			behavior |= 8;
 			FUN_004068E0("Netgear bug specified by command line or SendDelay flag\n");
 		}
@@ -457,7 +457,7 @@ int FirewallHelperClass::Detect(bool * detected)
 	}
 
 	FUN_004068E0("Testing for Netgear bug\n");
-	if (DAT_00B77E18 == 2 || Session.unknown_2F48) {
+	if (DAT_00B77E18 == 2 || Session.SendDelay) {
 		behavior |= 8;
 		FUN_004068E0("Netgear bug specified by command line or SendDelay flag\n");
 	}

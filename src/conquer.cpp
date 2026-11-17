@@ -488,7 +488,7 @@ void IPX_Call_Back(void)
 
 						for (int index = 0; index < 8; index++) {
 							if (Same_Name(Session.Slots[index], Session.Players[i])) {
-								if (TickCount() - Session.unknown_304C[index] > 2400) {
+								if (TickCount() - Session.LastPortProbeTime[index] > 2400) {
 									DebugString("No PORT_PROBE from %s in the last 40 seconds\n", FUN_007350C0(Session.Players[i]->Name));
 									if (Session.Players[i]->Slot.Port != port && Session.Players[i]->Slot.Port >= 0x400) {
 										DebugString("Sending to %s on mangled port from pserver\n", FUN_007350C0(Session.Players[i]->Name));
@@ -548,7 +548,7 @@ void IPX_Call_Back(void)
 							if (Session.Players[i]->Address.FUN_0053EF30(Session.GAddress) && stricmp(FUN_007350C0(Session.Players[i]->Name), Session.GPacket.Name) == 0) {
 								for (int index = 0; index < 8; index++) {
 									if (Same_Name(Session.Slots[index], Session.Players[i])) {
-										Session.unknown_304C[index] = TickCount();
+										Session.LastPortProbeTime[index] = TickCount();
 										break;
 									}
 								}

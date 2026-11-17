@@ -1102,7 +1102,7 @@ void Multiplayer_Debug_Print(bool)
 		swprintf(buffer, L"Process : %d", Session.Players[0]->Player.ProcessTime);
 		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 352), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
-		swprintf(buffer, L"Rout resp: %d", (unsigned)(Session.unknown_309C * 1000) / TIMER_SECOND);
+		swprintf(buffer, L"Rout resp: %d", (unsigned)(Session.RouterResponseTime * 1000) / TIMER_SECOND);
 		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 362), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 		swprintf(buffer, L"NFT : %d", NetFrameTimer);

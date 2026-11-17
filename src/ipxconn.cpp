@@ -185,7 +185,7 @@ int IPXConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 
 		dest = Session.PacketRouterAddress;
 		dest_port = DAT_00841F3C;
-		if (Session.unknown_2978 == Session.Players[0]->Address && dest.FUN_0053EF30(Session.Players[0]->Address)) {
+		if (Session.PacketRouterAddressTranslate == Session.Players[0]->Address && dest.FUN_0053EF30(Session.Players[0]->Address)) {
 			((GlobalHeaderType *)buf)->FieldC = 0;
 			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
 		}

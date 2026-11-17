@@ -391,7 +391,7 @@ void __fastcall FUN_0046DCC0(HWND dialog, bool enable)
 {
 	HWND item;
 	for (int i = 0; i < 8; i++) {
-		if (FUN_005E93F0(Session.Slots[i]) && i != Session.unknown_2854) {
+		if (FUN_005E93F0(Session.Slots[i]) && i != Session.LocalSlot) {
 			item = GetDlgItem(dialog, FUN_0046F5E0(i));
 			EnableWindow(item, enable);
 			item = GetDlgItem(dialog, FUN_004E37D0(i));
@@ -408,13 +408,13 @@ void __fastcall FUN_0046DCC0(HWND dialog, bool enable)
 void __fastcall FUN_0046DD70(HWND dialog, bool enable)
 {
 	HWND item;
-	item = GetDlgItem(dialog, FUN_0046F5E0(Session.unknown_2854));
+	item = GetDlgItem(dialog, FUN_0046F5E0(Session.LocalSlot));
 	EnableWindow(item, enable);
-	item = GetDlgItem(dialog, FUN_004E37D0(Session.unknown_2854));
+	item = GetDlgItem(dialog, FUN_004E37D0(Session.LocalSlot));
 	EnableWindow(item, enable);
-	item = GetDlgItem(dialog, FUN_004E41D0(Session.unknown_2854));
+	item = GetDlgItem(dialog, FUN_004E41D0(Session.LocalSlot));
 	EnableWindow(item, enable);
-	item = GetDlgItem(dialog, FUN_004E4E60(Session.unknown_2854));
+	item = GetDlgItem(dialog, FUN_004E4E60(Session.LocalSlot));
 	EnableWindow(item, enable);
 	if (FUN_005E8760()) {
 		item = GetDlgItem(dialog, 0x732);
@@ -666,7 +666,7 @@ void Call_Back(void);
 // FUNCTION: GAMEMD 0x0046F8F0
 void __fastcall FUN_0046F8F0(HWND dialog)
 {
-	int own = Session.unknown_2854;
+	int own = Session.LocalSlot;
 	if (own != -1) {
 		int combo = FUN_004E41D0(own);
 		int color;
@@ -764,7 +764,7 @@ void __fastcall FUN_0046FB50(HWND dialog)
 			if (other != NULL) {
 				EnableWindow(other, 1);
 			}
-		} else if (DAT_0089E000[Session.unknown_2854]) {
+		} else if (DAT_0089E000[Session.LocalSlot]) {
 			EnableWindow(item, 0);
 		} else {
 			EnableWindow(item, 1);
@@ -877,7 +877,7 @@ void CampaignScoreClass::Show(DynamicVectorClass<MPlayerScoreType *> list, int a
 			Windows_Message_Handler();
 			if (result == 1) {
 				if (DAT_0089E05C) {
-					FUN_0046D480(Session.unknown_2854, true);
+					FUN_0046D480(Session.LocalSlot, true);
 					if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
 						if (FUN_005E8760() && a7) {
 							FUN_0046D4A0();
@@ -886,7 +886,7 @@ void CampaignScoreClass::Show(DynamicVectorClass<MPlayerScoreType *> list, int a
 					}
 					_Refresh_Dialog();
 				} else {
-					FUN_0046D480(Session.unknown_2854, false);
+					FUN_0046D480(Session.LocalSlot, false);
 					if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
 						_Send_To_Players((NetCommandType)0x25);
 					}

@@ -355,16 +355,16 @@ allied:
 			int start = FUN_004E5900(window, 0x6a3, -1);
 			int team = FUN_004E6030(window, 0x76d, -1);
 			Session.FUN_0069B7E0(color, true);
-			Session.unknown_164 = start;
-			Session.unknown_16C = team;
+			Session.Start = start;
+			Session.Team = team;
 
 			NodeNameType * who = new NodeNameType;
 			if (who) {
 				wcscpy(who->Name, FUN_00735120(Session.Handle));
 				who->Slot.Country = Session.House;
 				who->Slot.ColorIdx = Session.PrefColor;
-				who->Slot.Start = Session.unknown_164;
-				who->Slot.Team = Session.unknown_16C;
+				who->Slot.Start = Session.Start;
+				who->Slot.Team = Session.Team;
 				who->Slot.Time = -1;
 				Session.Players.Add(who);
 			}

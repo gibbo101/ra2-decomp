@@ -3015,7 +3015,7 @@ void __fastcall FUN_00652110(FrameSyncStruct *their, int index)
 	}
 	frame = their[index].frame;
 	if (Session.ViaPacketRouter) {
-		half_latency = Session.unknown_309C / 2;
+		half_latency = Session.RouterResponseTime / 2;
 		half_response = their[index].unknown2 / 2;
 		double ratio = (double)Session.DesiredFrameRate / Session.FrameSendRate;
 		float rate = (float)ratio;
@@ -3213,7 +3213,7 @@ int __fastcall FUN_0064A0C0(ConnManClass * net, char * multi_packet_buf, int id,
 				} else {
 					if (timing->ID == PlayerPtr->HeapID) {
 						unsigned long response = timing->ResponseTime;
-						Session.unknown_309C = response;
+						Session.RouterResponseTime = response;
 						DebugString("My router response time = %d ms\n", response * 1000 / 60);
 						continue;
 					}
@@ -3227,7 +3227,7 @@ int __fastcall FUN_0064A0C0(ConnManClass * net, char * multi_packet_buf, int id,
 					if (most <= response) {
 						most = response;
 					}
-					if (timing->Report && Session.Am_I_Master(NULL) && Session.unknown_3094 != timing->ID) {
+					if (timing->Report && Session.Am_I_Master(NULL) && Session.FallbackHost != timing->ID) {
 						OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::FALLBACK_HOST, timing->ID));
 					}
 				}

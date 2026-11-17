@@ -469,7 +469,7 @@ void __fastcall FUN_005DBB60(char *out)
 {
 	static char useroptions[512];
 	Wstring name = Session.Options.ScenarioDescription ? FUN_007B82E0(Session.Options.ScenarioDescription) : "";
-	int value = Session.unknown_8D4;
+	int value = Session.ScenarioMaxPlayers;
 	sprintf(out, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%d,%d,%d,%s,%s:", Seed, Options.GameSpeed,
 	        Session.Options.GameSpeed, Session.Options.Credits, Session.Options.UnitCount, Session.Options.ShortGame,
 	        Session.Options.SWAllowed, Session.Options.BuildOffAlly, Session.Options.MCVRedeploy, Session.Options.Goodies,
@@ -1869,8 +1869,8 @@ BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 		FUN_004E3B90(window);
 		FUN_004E43C0();
 		FUN_004E4820(window);
-		FUN_004E3CE0(window, Session.unknown_2854);
-		FUN_004E48E0(window, Session.unknown_2854);
+		FUN_004E3CE0(window, Session.LocalSlot);
+		FUN_004E48E0(window, Session.LocalSlot);
 		FUN_004E4F50();
 		for (int i = 0; i < 8; i++) {
 			Session.Options.AISlots.Starts[i] = -2;
@@ -2263,8 +2263,8 @@ bool Process_Global_Packet(GlobalPacketType * packet, IPXAddressClass * address)
 		mypacket.PlayerInfo.House = Session.FUN_0069B700();
 		mypacket.PlayerInfo.Color = Session.FUN_0069B720();
 		mypacket.PlayerInfo.NameCRC = FUN_005DAC00(Session.GameName);
-		mypacket.PlayerInfo.unknown_24 = Session.unknown_2854;
-		mypacket.PlayerInfo.Flag = Session.unknown_2854 == DAT_008316A4;
+		mypacket.PlayerInfo.Slot = Session.LocalSlot;
+		mypacket.PlayerInfo.Flag = Session.LocalSlot == DAT_008316A4;
 
 		if (Session.Players.Count() == 0) {
 			return true;
@@ -2432,7 +2432,7 @@ static void Get_Join_Responses(void)
 					who->Slot.SpectatorFlag = -1;
 				}
 				Session.Players.Add(who);
-				FUN_005E8D90(Session.GPacket.PlayerInfo.unknown_24, who);
+				FUN_005E8D90(Session.GPacket.PlayerInfo.Slot, who);
 
 				for (i = 1; i < Session.Chat.Count(); i++) {
 					if (Session.Chat[i]->Address == Session.GAddress) {
@@ -2488,7 +2488,7 @@ static void Get_Join_Responses(void)
 				who->Set_Start(-2);
 				who->Set_Team(-2);
 				DAT_008316A4 = Session.GPacket.PlayerInfo.Flag;
-				if (Session.GPacket.PlayerInfo.unknown_24 == DAT_008316A4 && Session.GPacket.PlayerInfo.House == -3) {
+				if (Session.GPacket.PlayerInfo.Slot == DAT_008316A4 && Session.GPacket.PlayerInfo.House == -3) {
 					who->Slot.SpectatorFlag = -1;
 				}
 				Session.Players.Add(who);
@@ -2498,7 +2498,7 @@ static void Get_Join_Responses(void)
 				_netresponse = 0;
 				FUN_005E8B40();
 				FUN_005E8B60();
-				FUN_005E8DA0(Session.GPacket.PlayerInfo.unknown_24);
+				FUN_005E8DA0(Session.GPacket.PlayerInfo.Slot);
 				FUN_0072CF40();
 				dialog = WS_Create_Dialog(ProgramInstance, IDD_MPLAYER_GUEST, MainWindow, MPlayer_Guest_Dialog_Proc, FALSE);
 				UI::RegisterWindow(dialog, IDD_MPLAYER_GUEST);
@@ -2968,7 +2968,7 @@ static void Get_Join_Responses(void)
 					packet.PlayerInfo.House = who->Get_Country();
 					packet.PlayerInfo.Color = who->Get_Color();
 					packet.PlayerInfo.Flag = DAT_008316A4;
-					packet.PlayerInfo.unknown_24 = slot;
+					packet.PlayerInfo.Slot = slot;
 
 					Ipx.Send_Global_Message(&packet, sizeof(GlobalPacketType), 1, &Session.GAddress);
 
@@ -2977,7 +2977,7 @@ static void Get_Join_Responses(void)
 					if (Session.MPGameMode) {
 						int value = Session.MPGameMode->vt_entry_98();
 						if (value != -1) {
-							Session.unknown_8D4 = value;
+							Session.ScenarioMaxPlayers = value;
 						}
 					}
 
@@ -3096,9 +3096,9 @@ BOOL CALLBACK MPlayer_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam
 		}
 		FUN_004E5D60(window);
 		FUN_005EE510(-1);
-		FUN_005EA180(window, Session.unknown_2854);
-		FUN_004E3CE0(window, Session.unknown_2854);
-		FUN_004E48E0(window, Session.unknown_2854);
+		FUN_005EA180(window, Session.LocalSlot);
+		FUN_004E3CE0(window, Session.LocalSlot);
+		FUN_004E48E0(window, Session.LocalSlot);
 		EnableWindow(GetDlgItem(window, 0x59f), FALSE);
 		DAT_00AC11C2 = false;
 		Net2SetAccept(NULL, 0);
@@ -3106,7 +3106,7 @@ BOOL CALLBACK MPlayer_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam
 		Net2DisplayGameList();
 		FUN_005E3010(window, 1);
 		FUN_005E7BF0(-1);
-		Session.unknown_8D4 = 8;
+		Session.ScenarioMaxPlayers = 8;
 		return(0);
 	}
 

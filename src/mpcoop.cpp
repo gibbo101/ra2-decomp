@@ -671,7 +671,7 @@ void MPCooperative::FUN_005C2500(HWND dialog)
 	if (dialog == NULL) {
 		return;
 	}
-	int count = Session.unknown_8D4;
+	int count = Session.ScenarioMaxPlayers;
 	CoopCampEntry * entry;
 	int index = 0;
 	DAT_0089F518.FUN_0049E3B0(CampaignIndex, &entry);
@@ -1210,9 +1210,9 @@ void MPCooperative::vt_entry_A0(bool playerWon)
 			Field54 = k;
 		}
 	}
-	memcpy(Addresses, Session.unknown_2994, sizeof(Addresses));
-	memcpy(Field124, Session.unknown_29F4, sizeof(Field124));
-	memcpy(Field144, Session.unknown_2FF8, sizeof(Field144));
+	memcpy(Addresses, Session.PlayerLocalAddress, sizeof(Addresses));
+	memcpy(Field124, Session.PlayerFirewall, sizeof(Field124));
+	memcpy(Field144, Session.PlayerPortBase, sizeof(Field144));
 	memcpy(Field194, Session.PlayerPorts, sizeof(Field194));
 	wcscpy(Field164, Session.MasterPlayerName);
 	Field190 = Session.MasterPlayerID;
@@ -1624,9 +1624,9 @@ void MPCooperative::vt_entry_AC(void)
 		Session.Players[i]->Address.Get_Address(net, node, (unsigned short *)&port);
 		PacketTransport->Set_Broadcast_Address(ip, port);
 	}
-	memcpy(Session.unknown_2994, Addresses, sizeof(Addresses));
-	memcpy(Session.unknown_29F4, Field124, sizeof(Field124));
-	memcpy(Session.unknown_2FF8, Field144, sizeof(Field144));
+	memcpy(Session.PlayerLocalAddress, Addresses, sizeof(Addresses));
+	memcpy(Session.PlayerFirewall, Field124, sizeof(Field124));
+	memcpy(Session.PlayerPortBase, Field144, sizeof(Field144));
 	memcpy(Session.PlayerPorts, Field194, sizeof(Field194));
 	wcscpy(Session.MasterPlayerName, Field164);
 	Session.MasterPlayerID = Field190;

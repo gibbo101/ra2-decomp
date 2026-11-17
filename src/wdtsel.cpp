@@ -501,7 +501,7 @@ bool __fastcall FUN_0076ED10(rc_ptr<Campaign> * campaign, int theater)
 	bool valid = selected.Get() != NULL;
 	if (valid) {
 		int index = selected->ID;
-		Session.unknown_08 = index;
+		Session.WDTTerritory = index;
 		rc_ptr<WDTTerritory> territory = FUN_007B0390(index);
 		if (territory.Get() != NULL) {
 			Session.Options.UnitCount = territory->UnitCount;

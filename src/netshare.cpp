@@ -543,7 +543,7 @@ void __fastcall DisplayGameopts(HWND window, BOOL initialize)
 	if (initialize) {
 		rc_ptr<WDTTerritory> handle;
 		if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
-			handle = FUN_007B0390(Session.unknown_08);
+			handle = FUN_007B0390(Session.WDTTerritory);
 		}
 		if (handle.Get() != NULL) {
 			EnableWindow(GetDlgItem(window, 0x544), FALSE);
@@ -1601,7 +1601,7 @@ bool Set_Scenario_Info_From_Index(int index)
 		Session.ScenarioDigest[0] = '\0';
 		Session.ScenarioFileLength = 0;
 		Session.ScenarioIsOfficial = 0;
-		Session.unknown_8D4 = 0;
+		Session.ScenarioMaxPlayers = 0;
 		Session.Options.ScenarioDescription[0] = L'\0';
 		return(false);
 	}
@@ -1625,7 +1625,7 @@ bool Set_Scenario_Info_From_Index(int index)
 	strcpy(Session.ScenarioFileName, Session.Scenarios[index]->Get_Filename());
 	strcpy(Scen->ScenarioName, Session.ScenarioFileName);
 	Session.ScenarioIsOfficial = Session.Scenarios[index]->Get_Official();
-	Session.unknown_8D4 = FUN_005E64C0(index);
+	Session.ScenarioMaxPlayers = FUN_005E64C0(index);
 	Session.ScenarioFileLength = CCFileClass(Session.ScenarioFileName).Size();
 	Session.ScenarioFileLength = CCFileClass(Session.ScenarioFileName).Size();
 	return(true);
@@ -1687,9 +1687,9 @@ void __fastcall FUN_005E7EB0(MapPreviewClass * preview)
 				do {
 					int slot = Session.FUN_0069BC60(peer);
 					if (slot >= 0 && slot < MAX_PLAYERS) {
-						int flags = Session.unknown_29F4[slot];
+						int flags = Session.PlayerFirewall[slot];
 						if (flags == 0 || (flags & 1)) {
-							if (Session.unknown_2994[slot].
+							if (Session.PlayerLocalAddress[slot].
 								FUN_0053EF30(
 									Session.Players[peer]->Address)) {
 								goto next_peer;
@@ -2014,7 +2014,7 @@ void FUN_005E8B60(void)
 	for (i = count; i < 8; i++) {
 		Session.Slots[i] = DAT_00AC11A0;
 	}
-	Session.unknown_2854 = -1;
+	Session.LocalSlot = -1;
 	FUN_0069B540(&Session.Options);
 	DAT_00AC0D44[0] = 0;
 	DAT_00AC0B94[0] = 0;
@@ -2083,7 +2083,7 @@ void __fastcall FUN_005E8D90(int slot, NodeNameType * name)
 // FUNCTION: GAMEMD 0x005E8DA0
 void __fastcall FUN_005E8DA0(int slot)
 {
-	Session.unknown_2854 = slot;
+	Session.LocalSlot = slot;
 	Session.Slots[slot] = Session.Players[0];
 }
 
@@ -2378,7 +2378,7 @@ int FUN_005E94D0(void)
 // FUNCTION: GAMEMD 0x005E9510
 bool FUN_005E9510(void)
 {
-	int count = (Session.MaxPlayers < Session.unknown_8D4) ? Session.MaxPlayers : Session.unknown_8D4;
+	int count = (Session.MaxPlayers < Session.ScenarioMaxPlayers) ? Session.MaxPlayers : Session.ScenarioMaxPlayers;
 	int i;
 
 	for (i = 0; i < count; i++) {
@@ -2422,12 +2422,12 @@ bool FUN_005E9580(void)
 // FUNCTION: GAMEMD 0x005E95E0
 bool FUN_005E95E0(void)
 {
-	int count = (Session.MaxPlayers < Session.unknown_8D4) ? Session.MaxPlayers : Session.unknown_8D4;
+	int count = (Session.MaxPlayers < Session.ScenarioMaxPlayers) ? Session.MaxPlayers : Session.ScenarioMaxPlayers;
 
 	int players = Session.Players.Count();
 
 	if (players - FUN_005E9580() > count) {
-		FUN_004068E0("Channel full - Session.ScenarioMaxPlayers = %d\n", Session.unknown_8D4);
+		FUN_004068E0("Channel full - Session.ScenarioMaxPlayers = %d\n", Session.ScenarioMaxPlayers);
 		return(true);
 	}
 	return(false);
@@ -2617,7 +2617,7 @@ void __fastcall FUN_005E9B60(HWND dialog, int combo)
 {
 	int country = FUN_004E4170(dialog, combo, -1);
 	int slot = FUN_004E3830(combo);
-	if (slot == Session.unknown_2854) {
+	if (slot == Session.LocalSlot) {
 		Session.FUN_0069B760(country, false);
 		if (Session.Players.Count()) {
 			Session.Players[0]->Set_Country(country);
@@ -2639,7 +2639,7 @@ void __fastcall FUN_005E9C00(HWND dialog, int combo)
 {
 	int color = FUN_004E4E20(dialog, combo, -1);
 	int slot = FUN_004E4230(combo);
-	if (slot == Session.unknown_2854) {
+	if (slot == Session.LocalSlot) {
 		FUN_004E4C20(dialog, combo);
 		if (FUN_005E96A0(color)) {
 			color = -2;
@@ -2658,7 +2658,7 @@ void __fastcall FUN_005E9CE0(HWND dialog, int combo)
 {
 	int start = FUN_004E5900(dialog, combo, -1);
 	int slot = FUN_004E4EC0(combo);
-	if (slot == Session.unknown_2854) {
+	if (slot == Session.LocalSlot) {
 		FUN_004E5700(dialog, combo);
 		if (FUN_005E9720(start)) {
 			start = -2;
@@ -2702,7 +2702,7 @@ void __fastcall FUN_005E9DB0(HWND dialog, int combo)
 {
 	int value = FUN_004E6030(dialog, combo, -1);
 	int slot = FUN_004E59A0(combo);
-	if (slot == Session.unknown_2854) {
+	if (slot == Session.LocalSlot) {
 		FUN_004E5ED0(dialog, combo, value);
 		if (Session.Players.Count()) {
 			Session.Players[0]->Set_Team(value);
@@ -2719,7 +2719,7 @@ void __fastcall FUN_005E9E00(HWND dialog)
 		int combo = FUN_004E5940(i);
 		int value = FUN_004E6030(dialog, combo, -1);
 		int slot = FUN_004E59A0(combo);
-		if (slot == Session.unknown_2854) {
+		if (slot == Session.LocalSlot) {
 			FUN_004E5ED0(dialog, combo, value);
 			if (Session.Players.Count()) {
 				Session.Players[0]->Set_Team(value);
@@ -3213,7 +3213,7 @@ void __fastcall FUN_005EBA00(HWND dialog)
 	int i = DAT_008316A4;
 	if (i >= 0) {
 		if (i == 0) {
-			i = Session.unknown_8D4;
+			i = Session.ScenarioMaxPlayers;
 		}
 		if (i < 8) {
 			int labelId;
@@ -4115,7 +4115,7 @@ void FUN_005EE3A0(void)
 				} else if (slot == DAT_00AC119C || slot == DAT_00AC11A0) {
 					EnableWindow(item, 0);
 				} else {
-					if (i == Session.unknown_2854) {
+					if (i == Session.LocalSlot) {
 						if (enabled) {
 							EnableWindow(item, 1);
 						} else {

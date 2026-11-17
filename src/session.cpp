@@ -248,8 +248,8 @@ SessionClass::SessionClass(void) :
 	PortBase = 1250;
 	ForcePortBase = 0;
 	unknown_3018 = true;
-	unknown_2F48 = false;
-	unknown_301C = 0;
+	SendDelay = false;
+	PortNumberOverride = 0;
 	memset(DAT_00B73E44, 0, sizeof(DAT_00B73E44));
 	memset(DAT_00B76338, 0, sizeof(DAT_00B76338));
 
@@ -261,10 +261,10 @@ SessionClass::SessionClass(void) :
 	MasterPlayerID = -1;
 	memset(MasterPlayerName, 0, sizeof(MasterPlayerName));
 	unknown_308C = 0;
-	unknown_3090 = true;
-	unknown_3094 = -1;
+	UsePacketRouter = true;
+	FallbackHost = -1;
 	unknown_3098 = false;
-	unknown_309C = 20;
+	RouterResponseTime = 20;
 	unknown_30A0 = 0;
 	unknown_30A4 = 0;
 	unknown_30A8 = -1;
@@ -337,7 +337,7 @@ SessionClass::SessionClass(void) :
 	ScenarioFileName[0] = 0;
 	ScenarioFileLength = 0;
 	ScenarioIsOfficial = false;
-	unknown_8D4 = 0;
+	ScenarioMaxPlayers = 0;
 }
 
 // FUNCTION: GAMEMD 0x006977C0
@@ -427,10 +427,10 @@ int SessionClass::Create_Connections(void)
 	}
 
 	for (i = 0; i < 8; i++) {
-		Session.unknown_304C[i] = TickCount;
+		Session.LastPortProbeTime[i] = TickCount;
 	}
 
-	if (Type == GAME_INTERNET && unknown_3090) {
+	if (Type == GAME_INTERNET && UsePacketRouter) {
 		NetNumType zero_net;
 		NetNodeType zero_node;
 		zero_net[0] = 0;
@@ -443,11 +443,11 @@ int SessionClass::Create_Connections(void)
 		zero_node[3] = 0;
 		zero_node[4] = 0;
 		zero_node[5] = 0;
-		Session.unknown_2978.Set_Address(zero_net, zero_node, 0);
+		Session.PacketRouterAddressTranslate.Set_Address(zero_net, zero_node, 0);
 		ViaPacketRouter = true;
 		unknown_308C = 0;
-		unknown_309C = 20;
-		unknown_3094 = -1;
+		RouterResponseTime = 20;
+		FallbackHost = -1;
 		Ipx.Create_Multicast_Connection();
 		OwnerTalk.Build_Connection_List();
 		if (Session.Am_I_Master(NULL)) {
@@ -1485,7 +1485,7 @@ int SessionClass::FUN_0069B720(void) const
 // FUNCTION: GAMEMD 0x0069B740
 int SessionClass::FUN_0069B740(void) const
 {
-	return (unknown_168 == -2) ? -2 : unknown_164;
+	return (InitialStart == -2) ? -2 : Start;
 }
 
 // FUNCTION: GAMEMD 0x0069B760
@@ -1722,7 +1722,7 @@ void SessionClass::FUN_0069BD60(void)
 	for (player = 0; player < Players.Count(); player++) {
 		int slot = FUN_0069BC60(player);
 		if (slot >= 0 && slot < MAX_PLAYERS) {
-			Players[player]->Address.Set_Port(unknown_2FF8[slot]);
+			Players[player]->Address.Set_Port(PlayerPortBase[slot]);
 			char * name = FUN_007350C0(Players[player]->Name);
 			char const * address = Players[player]->Address.As_String(NULL);
 			FUN_004068E0("Allocated port for player %s - %s\n", name, address);
@@ -1769,9 +1769,9 @@ void SessionClass::FUN_0069BD60(void)
 					int local_slot =
 						FUN_0069BCC0(FUN_007350C0(ordered[i]->Name));
 
-					if (unknown_2FF8[peer_slot] == unknown_2FF8[local_slot]) {
+					if (PlayerPortBase[peer_slot] == PlayerPortBase[local_slot]) {
 						ordered[j]->Address.Set_Port(
-							unknown_2FF8[peer_slot] + port_offset++);
+							PlayerPortBase[peer_slot] + port_offset++);
 						used[j] = true;
 						FUN_004068E0(
 							"Adjusted port number to %d for player %s\n",
@@ -1798,10 +1798,10 @@ void SessionClass::FUN_0069BD60(void)
 		}
 	}
 
-	if (unknown_301C) {
-		FUN_004068E0("Using %d for local port\n", unknown_301C);
-		Players[0]->Address.Set_Port(unknown_301C);
-		Slots[FUN_0069BC60(0)]->Address.Set_Port(unknown_301C);
+	if (PortNumberOverride) {
+		FUN_004068E0("Using %d for local port\n", PortNumberOverride);
+		Players[0]->Address.Set_Port(PortNumberOverride);
+		Slots[FUN_0069BC60(0)]->Address.Set_Port(PortNumberOverride);
 	}
 
 	for (i = 0; i < Players.Count(); i++) {
@@ -1828,7 +1828,7 @@ void SessionClass::FUN_0069BD60(void)
 
 				if (stricmp(name, peer_name) == 0) {
 					NetNodeType local_node;
-					unknown_2994[j].Get_Node(local_node);
+					PlayerLocalAddress[j].Get_Node(local_node);
 					Players[i]->Address.Set_Address(
 						NULL, local_node, Players[i]->Address.Get_Port());
 
@@ -2031,8 +2031,8 @@ void SessionClass::Read_MultiPlayer_Settings(void)
 		DAT_00B07788 = true;
 		FirewallHelper.Read_Settings();
 	}
-	Session.unknown_2F48 = INI_RA2MD.Get_Bool("MultiPlayer", "SendDelay", false);
-	Session.unknown_301C = INI_RA2MD.Get_Int("MultiPlayer", "PortNumberOverride", 0);
+	Session.SendDelay = INI_RA2MD.Get_Bool("MultiPlayer", "SendDelay", false);
+	Session.PortNumberOverride = INI_RA2MD.Get_Int("MultiPlayer", "PortNumberOverride", 0);
 
 	buf[0] = 0;
 	CurPhoneIdx = INI_RA2MD.Get_Int("MultiPlayer", "PhoneIndex", -1);

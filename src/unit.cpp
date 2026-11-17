@@ -1412,10 +1412,10 @@ bool UnitClass::Try_To_Deploy(void)
 
 						building->QueuedVoiceSoundController = QueuedVoiceSoundController;
 						building->QueuedVoiceIndex = QueuedVoiceIndex;
-						building->unknown_4F4 = unknown_4F4;
+						building->PlayingVoiceIndex = PlayingVoiceIndex;
 						QueuedVoiceSoundController.SetEvent(NULL, NULL);
 						QueuedVoiceIndex = -1;
-						unknown_4F4 = -1;
+						PlayingVoiceIndex = -1;
 
 						bool feedback = Unsorted::MoveFeedback;
 						Unsorted::MoveFeedback = false;
