@@ -62,13 +62,6 @@
 
 extern int DAT_008316A4;
 extern wchar_t DAT_00887734[];
-struct MPLobbyEntry
-{
-	char Pad0[0x1602a];
-	wchar_t Name[1];
-};
-extern MPLobbyEntry ** DAT_00A8022C;
-extern int DAT_00A80238;
 void __fastcall FUN_004E3B90(HWND dialog);
 void __fastcall FUN_005E74E0(HWND dialog);
 void __fastcall FUN_005E2EF0(HWND dialog, MultiplayerGameMode * mode);
@@ -98,13 +91,6 @@ void __cdecl PMessagePrintf(int color, const wchar_t * fmt, ...);
 int FUN_00775B20(void);
 extern char DAT_0082DC84[];
 extern char DAT_0081F1D4[];
-extern int DAT_00A83CA8;
-struct MPCountryEntry
-{
-	char Pad0[0x60];
-	wchar_t const * Name;
-};
-extern MPCountryEntry ** DAT_00A83C9C;
 char * __fastcall FUN_007350C0(wchar_t const * text);
 extern int DAT_00ABF460[8];
 void __fastcall FUN_005EBC00(HWND dialog, int count);
@@ -642,7 +628,7 @@ void MPCooperative::FUN_005C21D0(HWND dialog, bool show)
 // FUNCTION: GAMEMD 0x005C23B0
 void MPCooperative::FUN_005C23B0(HWND dialog, int control)
 {
-	int total = DAT_00A83CA8;
+	int total = HouseTypes.Count();
 	if (total == 0) {
 		return;
 	}
@@ -673,7 +659,7 @@ void MPCooperative::FUN_005C23B0(HWND dialog, int control)
 	for (int i = 0; i < group; i++) {
 		int value = FUN_0049D9F0((*entry->ListA[index])[i]);
 		if (value >= 0 && value < total) {
-			LPARAM name = (LPARAM)DAT_00A83C9C[value]->Name;
+			LPARAM name = (LPARAM)HouseTypes[value]->UIName;
 			LRESULT item = SendMessage(list, 0x4c2, 0, name);
 			SendMessage(list, 0x151, item, value);
 		}
@@ -1106,7 +1092,7 @@ bool MPCooperative::AllyTeams(void)
 // FUNCTION: GAMEMD 0x005C34F0
 int MPCooperative::FUN_005C34F0(void)
 {
-	int total = DAT_00A83CA8;
+	int total = HouseTypes.Count();
 	bool found = false;
 	int campaign = 0;
 	CoopCampEntry * entry;
@@ -1131,14 +1117,14 @@ int MPCooperative::FUN_005C34F0(void)
 			}
 		}
 	} while (!found);
-	FUN_004068E0("@@@@ Choosing a random player house: %d(%s)\n", pick, FUN_007350C0(DAT_00A83C9C[pick]->Name));
+	FUN_004068E0("@@@@ Choosing a random player house: %d(%s)\n", pick, FUN_007350C0(HouseTypes[pick]->UIName));
 	return(pick);
 }
 
 // FUNCTION: GAMEMD 0x005C35F0
 int MPCooperative::FUN_005C35F0(void)
 {
-	int total = DAT_00A83CA8;
+	int total = HouseTypes.Count();
 	bool found = false;
 	int campaign = 0;
 	CoopCampEntry * entry;
@@ -1163,7 +1149,7 @@ int MPCooperative::FUN_005C35F0(void)
 			}
 		}
 	} while (!found);
-	FUN_004068E0("@@@@ Choosing a random AI house: %d(%s)\n", pick, FUN_007350C0(DAT_00A83C9C[pick]->Name));
+	FUN_004068E0("@@@@ Choosing a random AI house: %d(%s)\n", pick, FUN_007350C0(HouseTypes[pick]->UIName));
 	return(pick);
 }
 
@@ -1779,8 +1765,8 @@ void MPCooperative::vt_entry_B0(void)
 	FUN_005C6120(&Session.Players);
 	Session.NumPlayers = 0;
 	for (int n = 0; n < Names.Count(); n++) {
-		for (int i = 0; i < DAT_00A80238; i++) {
-			if (wcsicmp(DAT_00A8022C[i]->Name, Names[n]->Name) == 0) {
+		for (int i = 0; i < Houses.Count(); i++) {
+			if (wcsicmp(Houses[i]->UIName, Names[n]->Name) == 0) {
 				Names[n]->Slot.HouseIndex = i;
 				NodeNameType * node = new NodeNameType;
 				wcscpy(node->Name, Names[n]->Name);
