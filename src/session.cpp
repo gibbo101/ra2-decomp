@@ -332,7 +332,7 @@ SessionClass::SessionClass(void) :
 		Options.AISlots.Countries[i] = -1;
 		Options.AISlots.Colors[i] = -1;
 	}
-	unknown_0C = 0;
+	WOLWelcomeChoice = 0;
 	unknown_10 = 0;
 	ScenarioFileName[0] = 0;
 	ScenarioFileLength = 0;

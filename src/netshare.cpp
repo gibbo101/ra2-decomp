@@ -542,7 +542,7 @@ void __fastcall DisplayGameopts(HWND window, BOOL initialize)
 
 	if (initialize) {
 		rc_ptr<WDTTerritory> handle;
-		if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 			handle = FUN_007B0390(Session.WDTTerritory);
 		}
 		if (handle.Get() != NULL) {

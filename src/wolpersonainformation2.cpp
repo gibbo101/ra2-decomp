@@ -53,7 +53,7 @@
 // FUNCTION: GAMEMD 0x0077B280
 int __fastcall FUN_0077B280(void)
 {
-	int state = Session.unknown_0C;
+	int state = Session.WOLWelcomeChoice;
 	if (state == 0 || state == 6) {
 		return 0;
 	}
@@ -114,14 +114,14 @@ int __fastcall FUN_0077B2A0(bool first_time)
 			result = Login_WOL();
 			switch (result) {
 			case 0:
-				if (Session.unknown_0C == 0) {
+				if (Session.WOLWelcomeChoice == 0) {
 					Session.Type = GAME_NORMAL;
 					FUN_00786080();
 					Theme.Set_Shuffle(shuffle);
 					FUN_00799D10();
 					return result;
 				}
-				Session.unknown_0C = 0;
+				Session.WOLWelcomeChoice = 0;
 				Session.unknown_10 = 0;
 				break;
 			case 1:
@@ -129,7 +129,7 @@ int __fastcall FUN_0077B2A0(bool first_time)
 				break;
 			default:
 				Session.Type = GAME_NORMAL;
-				Session.unknown_0C = 0;
+				Session.WOLWelcomeChoice = 0;
 				Session.unknown_10 = 0;
 				FUN_00786080();
 				Theme.Set_Shuffle(shuffle);
@@ -138,7 +138,7 @@ int __fastcall FUN_0077B2A0(bool first_time)
 			}
 		}
 		FUN_0077E110();
-		switch (Session.unknown_0C) {
+		switch (Session.WOLWelcomeChoice) {
 		case 0:
 			first_time = false;
 			result = FUN_00798DE0();
@@ -147,12 +147,12 @@ int __fastcall FUN_0077B2A0(bool first_time)
 		case 1:
 			if (first_time) {
 				FUN_007A2970();
-				Session.unknown_0C = 0;
+				Session.WOLWelcomeChoice = 0;
 			} else {
 				result = FUN_0079FC40();
 				first_time = false;
 				if (result == 0) {
-					Session.unknown_0C = 0;
+					Session.WOLWelcomeChoice = 0;
 				} else {
 					done = true;
 				}
@@ -161,12 +161,12 @@ int __fastcall FUN_0077B2A0(bool first_time)
 		case 2:
 			if (first_time) {
 				FUN_007A2970();
-				Session.unknown_0C = 0;
+				Session.WOLWelcomeChoice = 0;
 			} else {
 				result = FUN_0079FC40();
 				first_time = false;
 				if (result == 0) {
-					Session.unknown_0C = 0;
+					Session.WOLWelcomeChoice = 0;
 				} else {
 					done = true;
 				}
@@ -176,8 +176,8 @@ int __fastcall FUN_0077B2A0(bool first_time)
 			result = FUN_00787770(0, first_time);
 			first_time = false;
 			if (result == 0) {
-				if (Session.unknown_0C == 4) {
-					Session.unknown_0C = 0;
+				if (Session.WOLWelcomeChoice == 4) {
+					Session.WOLWelcomeChoice = 0;
 				}
 			} else {
 				done = true;
@@ -190,7 +190,7 @@ int __fastcall FUN_0077B2A0(bool first_time)
 			result = FUN_007AFB90(first_time);
 			first_time = false;
 			if (result == 0) {
-				Session.unknown_0C = 0;
+				Session.WOLWelcomeChoice = 0;
 			} else {
 				done = true;
 			}
@@ -199,8 +199,8 @@ int __fastcall FUN_0077B2A0(bool first_time)
 			result = FUN_0079F140(first_time);
 			first_time = false;
 			if (result == 0) {
-				if (Session.unknown_0C == 5) {
-					Session.unknown_0C = Session.unknown_10;
+				if (Session.WOLWelcomeChoice == 5) {
+					Session.WOLWelcomeChoice = Session.unknown_10;
 					Session.unknown_10 = 0;
 				}
 			} else {
@@ -212,7 +212,7 @@ int __fastcall FUN_0077B2A0(bool first_time)
 			first_time = false;
 			if (result == -2 || result == -1) {
 				Session.Type = GAME_NORMAL;
-				Session.unknown_0C = 0;
+				Session.WOLWelcomeChoice = 0;
 				Session.unknown_10 = 0;
 				FUN_00786080();
 				Theme.Set_Shuffle(shuffle);
@@ -220,7 +220,7 @@ int __fastcall FUN_0077B2A0(bool first_time)
 				return result;
 			}
 			if (result == 0) {
-				Session.unknown_0C = 0;
+				Session.WOLWelcomeChoice = 0;
 			}
 			break;
 		}
@@ -243,7 +243,7 @@ int __fastcall FUN_0077B2A0(bool first_time)
 			FUN_00786080();
 			Session.Type = GAME_NORMAL;
 			Theme.Set_Shuffle(shuffle);
-			Session.unknown_0C = 0;
+			Session.WOLWelcomeChoice = 0;
 			Session.unknown_10 = 0;
 			FUN_00799D10();
 			return 0;

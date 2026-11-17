@@ -242,14 +242,14 @@ Wstring DAT_00B76AC4;
 // FUNCTION: GAMEMD 0x0077CF40
 bool FUN_0077CF40(void)
 {
-	int t = Session.unknown_0C;
+	int t = Session.WOLWelcomeChoice;
 	return(t == 3 || t == 1 || t == 2);
 }
 
 // FUNCTION: GAMEMD 0x0077CF60
 int FUN_0077CF60(void)
 {
-	return Session.unknown_0C == 2;
+	return Session.WOLWelcomeChoice == 2;
 }
 
 // FUNCTION: GAMEMD 0x0077CF70
@@ -1033,7 +1033,7 @@ void __fastcall FUN_0077E900(Wstring const & who, int status)
 		return;
 	}
 	Session.Players[i]->Slot.Unknown77 = status;
-	if (pair && (Session.unknown_0C == 3 || Session.unknown_0C == 1 || Session.unknown_0C == 2) && !DAT_00B77DEC && i == 1 && DAT_00B77900.length() == 2) {
+	if (pair && (Session.WOLWelcomeChoice == 3 || Session.WOLWelcomeChoice == 1 || Session.WOLWelcomeChoice == 2) && !DAT_00B77DEC && i == 1 && DAT_00B77900.length() == 2) {
 		User *temp, *head = NULL;
 		User source;
 		memset(&source, 0, sizeof(source));
@@ -1433,7 +1433,7 @@ bool FUN_0077F900(void)
 		}
 		DAT_00B7617C = time(0);
 	}
-	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3 && time(0) > DAT_00B7646C) {
+	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3 && time(0) > DAT_00B7646C) {
 		DAT_00B7646C = time(0) + 30;
 		FUN_00786270();
 	}
@@ -1498,7 +1498,7 @@ void FUN_00780110(void)
 	DAT_00B73AA8.clear();
 	DAT_00B76980.clear();
 	DAT_00B76990.clear();
-	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 		int sku = 0x2300;
 		DAT_00B779C8 = sku;
 		DAT_00B736F0 = sku;
@@ -3416,7 +3416,7 @@ void __fastcall FUN_00785740(User *user)
 			FUN_0072CF90();
 			ShowWindow(guest, SW_HIDE);
 			OwnerDraw::SetNeedsControlImage(guest, 1);
-			if (Session.unknown_0C == 4) {
+			if (Session.WOLWelcomeChoice == 4) {
 				if (DAT_00B77DC1) {
 					if (main) {
 						ShowWindow(main, SW_HIDE);
@@ -3428,7 +3428,7 @@ void __fastcall FUN_00785740(User *user)
 						PostMessageA(main, 0x593, 0, 0);
 					}
 				}
-			} else if (Session.unknown_0C == 5) {
+			} else if (Session.WOLWelcomeChoice == 5) {
 				FUN_004068E0("Setting g_JoinLobbyNow, Guest\n");
 				DAT_00B77DD8 = 1;
 			}
@@ -3439,7 +3439,7 @@ void __fastcall FUN_00785740(User *user)
 			FUN_0072CF90();
 			ShowWindow(game, SW_HIDE);
 			OwnerDraw::SetNeedsControlImage(game, 1);
-			if (Session.unknown_0C == 4) {
+			if (Session.WOLWelcomeChoice == 4) {
 				if (DAT_00B77DC1) {
 					if (main) {
 						ShowWindow(main, SW_HIDE);
@@ -3451,7 +3451,7 @@ void __fastcall FUN_00785740(User *user)
 						PostMessageA(main, 0x593, 0, 0);
 					}
 				}
-			} else if (Session.unknown_0C == 5) {
+			} else if (Session.WOLWelcomeChoice == 5) {
 				FUN_004068E0("Setting g_JoinLobbyNow, Host\n");
 			}
 		}
@@ -3553,7 +3553,7 @@ void __fastcall FUN_00785740(User *user)
 void FUN_00785EA0(void)
 {
 	DAT_00B77DC0 = 1;
-	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 		DAT_00B76680.clear();
 	}
 	if (g_pChat) {
@@ -3844,7 +3844,7 @@ bool __fastcall FUN_007864C0(Server * server)
 	} else {
 		profile = DAT_00B75E48;
 	}
-	if (Session.unknown_0C == 4 || Session.unknown_0C == 5) {
+	if (Session.WOLWelcomeChoice == 4 || Session.WOLWelcomeChoice == 5) {
 		{
 			Wstring name = Strip_Server_Prefix(server);
 			profile.Get()->SetName(&name);
@@ -4019,7 +4019,7 @@ namespace UI { void __fastcall EndDialog(HWND window); }
 
 static inline bool Is_Internal_Session(void)
 {
-	return Session.unknown_0C == 3 || Session.unknown_0C == 1 || Session.unknown_0C == 2;
+	return Session.WOLWelcomeChoice == 3 || Session.WOLWelcomeChoice == 1 || Session.WOLWelcomeChoice == 2;
 }
 
 static void Focus_Dialog_Item(HWND window, int id)
@@ -4044,7 +4044,7 @@ static int Fetch_Server_List(void)
 		FUN_00792BE0(0x10, text, false);
 	}
 	int sku = 0x2300;
-	if (Session.unknown_0C != 3) {
+	if (Session.WOLWelcomeChoice != 3) {
 		sku = 0x2900;
 	}
 	return FUN_00797640(sku);
@@ -4213,7 +4213,7 @@ int __fastcall FUN_00788180(bool flag)
 	char entry[32];
 	int i;
 
-	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 		memset(buf, 0, sizeof(buf));
 		memset(wide_name, 0, sizeof(buf));
 		memset(entry, 0, sizeof(entry));
@@ -4241,7 +4241,7 @@ int __fastcall FUN_00788180(bool flag)
 
 	for (i = 0; i < count; i++) {
 		DAT_00B73E10.get(chan, i);
-		if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 			if (wcscmp(DAT_00B73E1C[i], wide_name) == 0) {
 				if (!flag || (int)chan.currentUsers <= user_cap) {
 					return i;
@@ -4262,7 +4262,7 @@ int __fastcall FUN_00788180(bool flag)
 	unsigned int fewest = 10000;
 	for (i = 0; i < count; i++) {
 		DAT_00B73E10.get(chan, i);
-		if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 			if (wcsncmp(DAT_00B73E1C[i], wide_name, wcslen(wide_name)) == 0) {
 				if (!flag || (int)chan.currentUsers <= user_cap) {
 					Set_Lobby_Number(chan);
@@ -5391,7 +5391,7 @@ BOOL CALLBACK FUN_0078DB70(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 				Focus_Dialog_Item(window, 0x72C);
 				CheckDlgButton(window, 0x629, control->Flag10 != 0);
 				CheckDlgButton(window, 0x66C, control->Flag11 != 0);
-				if (!(Session.Type == GAME_INTERNET && Session.unknown_0C == 3) && DAT_00B77DE4 < 1) {
+				if (!(Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) && DAT_00B77DE4 < 1) {
 					EnableWindow(GetDlgItem(window, 0x66C), FALSE);
 				}
 				HWND box = GetDlgItem(window, 0x71E);
@@ -6719,7 +6719,7 @@ void FUN_00794BA0(void)
 		SetEvent(DAT_00B73684[6]);
 		FUN_004068E0("Request channel leave in game start after scenario mismatch\n");
 		g_pChat->RequestChannelLeave();
-		if (Session.unknown_0C == 1 || Session.unknown_0C == 2 || Session.unknown_0C == 3) {
+		if (Session.WOLWelcomeChoice == 1 || Session.WOLWelcomeChoice == 2 || Session.WOLWelcomeChoice == 3) {
 			FUN_0078ABF0(true, StringTable::LoadString("TXT_AWAY_QUICKMATCH", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x4F69));
 		} else {
 			FUN_0078ABF0(false, DAT_00887734);
@@ -6747,7 +6747,7 @@ void FUN_00794BA0(void)
 	FUN_00793440();
 	FUN_004068E0("Closed Verify Connections Dialog\n");
 
-	if (!(Session.Type == GAME_INTERNET && Session.unknown_0C == 3)) {
+	if (!(Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3)) {
 		Session.House = 0;
 	}
 
@@ -6876,7 +6876,7 @@ void FUN_00794BA0(void)
 			}
 		}
 	}
-	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 		User * user = NULL;
 		for (int i = 0; i < DAT_00B77900.length(); i++) {
 			DAT_00B77900.getPointer(&user, i);
@@ -7279,7 +7279,7 @@ int __fastcall FUN_00795CD0(bool go)
 			}
 
 		} else {
-			if ((Session.unknown_0C != 3 && (Session.unknown_0C == 1 || Session.unknown_0C == 2)) || (Session.ScenarioIsOfficial && !Session.Is_Random_Map())) {
+			if ((Session.WOLWelcomeChoice != 3 && (Session.WOLWelcomeChoice == 1 || Session.WOLWelcomeChoice == 2)) || (Session.ScenarioIsOfficial && !Session.Is_Random_Map())) {
 				memset(&packet, 0, sizeof(packet));
 				packet.Command = NET_NO_SCENARIO;
 				User * host = FUN_007931A0();
@@ -7788,7 +7788,7 @@ void FUN_007975E0(void)
 		FUN_00792BE0(0x10, text, 0);
 	}
 	int sku = 0x2300;
-	if (Session.unknown_0C != 3) {
+	if (Session.WOLWelcomeChoice != 3) {
 		sku = 0x2900;
 	}
 	FUN_00797640(sku);
@@ -8125,12 +8125,12 @@ BOOL CALLBACK FUN_007983E0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 		case WM_COMMAND:
 			switch (LOWORD(wparam)) {
 				case 0x6E0:
-					Session.unknown_0C = 1;
+					Session.WOLWelcomeChoice = 1;
 					control->F1(window, 0x6E0);
 					return FALSE;
 
 				case 0x686:
-					Session.unknown_0C = 0;
+					Session.WOLWelcomeChoice = 0;
 					control->F1(window, 0x686);
 					return FALSE;
 
@@ -8153,23 +8153,23 @@ BOOL CALLBACK FUN_007983E0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					break;
 
 				case 0x6E1:
-					Session.unknown_0C = 4;
+					Session.WOLWelcomeChoice = 4;
 					control->F1(window, 0x6E1);
 					return FALSE;
 
 				case 0x6E2:
-					Session.unknown_0C = 5;
+					Session.WOLWelcomeChoice = 5;
 					Session.unknown_10 = 0;
 					control->F1(window, 0x6E2);
 					break;
 
 				case 0x6E3:
-					Session.unknown_0C = 3;
+					Session.WOLWelcomeChoice = 3;
 					control->F1(window, 0x6E3);
 					return FALSE;
 
 				case 0x771:
-					Session.unknown_0C = 2;
+					Session.WOLWelcomeChoice = 2;
 					control->F1(window, 0x771);
 					return FALSE;
 			}
@@ -8276,12 +8276,12 @@ BOOL CALLBACK FUN_007988C0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 		case WM_COMMAND:
 			switch (LOWORD(wparam)) {
 				case 0x6E0:
-					Session.unknown_0C = 1;
+					Session.WOLWelcomeChoice = 1;
 					control->F1(window, 0x6E0);
 					return FALSE;
 
 				case 0x686:
-					Session.unknown_0C = 0;
+					Session.WOLWelcomeChoice = 0;
 					control->F1(window, 0x686);
 					return FALSE;
 
@@ -8304,23 +8304,23 @@ BOOL CALLBACK FUN_007988C0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					break;
 
 				case 0x6E1:
-					Session.unknown_0C = 4;
+					Session.WOLWelcomeChoice = 4;
 					control->F1(window, 0x6E1);
 					return FALSE;
 
 				case 0x6E2:
-					Session.unknown_0C = 5;
+					Session.WOLWelcomeChoice = 5;
 					Session.unknown_10 = 0;
 					control->F1(window, 0x6E2);
 					break;
 
 				case 0x6E4:
-					Session.unknown_0C = 6;
+					Session.WOLWelcomeChoice = 6;
 					control->F1(window, 0x6E4);
 					return FALSE;
 
 				case 0x771:
-					Session.unknown_0C = 2;
+					Session.WOLWelcomeChoice = 2;
 					control->F1(window, 0x771);
 					return FALSE;
 			}
@@ -8422,13 +8422,13 @@ int FUN_00798DE0(void)
 		SimpleWonlineDialogControl dialog;
 		Run_Dialog_Control(0x10E, FUN_007988C0, &dialog);
 		FUN_0072C830();
-		int chosen = Session.unknown_0C;
+		int chosen = Session.WOLWelcomeChoice;
 		return chosen != 0;
 	}
 	SimpleWonlineDialogControl dialog;
 	Run_Dialog_Control(0x11C, FUN_007983E0, &dialog);
 	FUN_0072C830();
-	int chosen = Session.unknown_0C;
+	int chosen = Session.WOLWelcomeChoice;
 	return chosen != 0;
 }
 
@@ -8518,7 +8518,7 @@ int FUN_00799D30(void)
 		FUN_007F7624_Class control;
 		Run_Dialog_Control(0x114, FUN_00799080, (OwnerDraw::DialogControl *)&control);
 		FUN_0072CA10();
-		return Session.unknown_0C != 0;
+		return Session.WOLWelcomeChoice != 0;
 	}
 	return result;
 }
@@ -9464,7 +9464,7 @@ void FUN_0079D4E0(void)
 	DAT_00B76990.clear();
 	DAT_00B76608.clear();
 	g_pChat->RequestBuddyList();
-	if (Session.unknown_0C != 3 && Session.unknown_0C != 1 && Session.unknown_0C != 2) {
+	if (Session.WOLWelcomeChoice != 3 && Session.WOLWelcomeChoice != 1 && Session.WOLWelcomeChoice != 2) {
 		FUN_0079CE70();
 	}
 	FUN_0079D2F0();
@@ -9834,7 +9834,7 @@ int FUN_0079FC40(void)
 	Channel chan;
 	memset(&chan, 0, sizeof(chan));
 	char const * prefix = "Lob_39_";
-	if (Session.unknown_0C != 2) {
+	if (Session.WOLWelcomeChoice != 2) {
 		prefix = "Lob_40_";
 	}
 	int i;
@@ -9911,7 +9911,7 @@ cleanup:
 			continue;
 		}
 		if (index == 0x10) {
-			if (FUN_007A1BB0() && Session.unknown_0C == 3) {
+			if (FUN_007A1BB0() && Session.WOLWelcomeChoice == 3) {
 				HWND match = UI::BeginDialog(0x11F, FUN_007A2600, 0);
 				FUN_0079FC10(10, 180, 0);
 				SendMessage(match, 0x4A9, 0, 1);
@@ -10021,7 +10021,7 @@ bool FUN_007A0690(void)
 	Wstring game("Match ");
 	Wstring wdt;
 
-	if (Session.unknown_0C == 3) {
+	if (Session.WOLWelcomeChoice == 3) {
 		game = "MatchWDT ";
 		rc_ptr<WorldDominationTour::Campaign> campaign = *FUN_007B0370();
 		if (campaign.Get() == NULL) {
@@ -10958,13 +10958,13 @@ HRESULT CNetUtilEventSink::OnPing(HRESULT result, int time, unsigned long addres
 		}
 		return 0;
 	}
-	if (Session.unknown_0C == 3) {
+	if (Session.WOLWelcomeChoice == 3) {
 		goto counted;
 	}
-	if (Session.unknown_0C == 1) {
+	if (Session.WOLWelcomeChoice == 1) {
 		goto counted;
 	}
-	if (Session.unknown_0C == 2) {
+	if (Session.WOLWelcomeChoice == 2) {
 counted:
 		FUN_004068E0("Received Ping\n");
 		DAT_00B736F4++;
@@ -11540,7 +11540,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 		ladder_name.set((char *)users->name);
 		ladder_name.toLower();
 
-		if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 			if (!DAT_00B76680.contains(ladder_name)) {
 				DAT_00B777A0.addHead(ladder_name);
 			}
@@ -12597,7 +12597,7 @@ long __stdcall FUN_007AA870(void * sink, long result, Channel * channels)
 			name.set((char *)channels->name);
 			name.truncate('\'');
 			name.toLower();
-			if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+			if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 				Wstring temp;
 				bool found = false;
 				for (int m = 0; m < DAT_00B777A0.length(); m++) {
@@ -13809,7 +13809,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 															   "D:\\ra2mdpost\\wonline.cpp", 0x40bf));
 					return 0;
 				}
-			if (Session.Type == 4 && Session.unknown_0C == 3) {
+			if (Session.Type == 4 && Session.WOLWelcomeChoice == 3) {
 				if (DAT_00B77900.length() < (int)DAT_00B76B10.maxUsers) {
 					PMessagePrintf(
 						-1,
@@ -14823,7 +14823,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 			Wstring ladder_name;
 			ladder_name.set((char *)user->name);
 			ladder_name.toLower();
-			if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+			if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 				Wstring name;
 				bool found = false;
 				for (i = 0; i < DAT_00B777A0.length(); i++) {
@@ -14955,7 +14955,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 				Session.Players.Add(node);
 				FUN_005E9240(node);
 				if (Is_Internal_Session() && channel->type != 0) {
-					if (Session.unknown_0C != 3) {
+					if (Session.WOLWelcomeChoice != 3) {
 						DecodePubGameopt(DAT_00B73714, NULL);
 					} else {
 						FUN_007A2330(strchr(DAT_00B73714, ':'));

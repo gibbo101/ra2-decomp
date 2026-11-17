@@ -1822,7 +1822,7 @@ again:
 		Map.Set_Local_Dimensions(size);
 
 		Session.MPGameMode->StartingPositionsToHouseBaseCells(official);
-		if (Session.unknown_0C == 2) {
+		if (Session.WOLWelcomeChoice == 2) {
 			FUN_005EE9D0(official);
 		} else {
 			Session.MPGameMode->StartingPositionsToHouseBaseCells2(official);

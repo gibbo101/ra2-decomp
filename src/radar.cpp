@@ -2192,7 +2192,7 @@ LRESULT CALLBACK Diplomacy_Dialog_Proc(HWND dialog, UINT message, WPARAM wparam,
 			}
 			HouseClass * house;
 			if (houseIndex < count && (house = Houses[houseIndex]) != NULL && house->Class->IsMultiplay) {
-				if (!Rule->AlliesAllowed || DAT_00AC1198 == PlayerPtr || Session.unknown_0C == 2) {
+				if (!Rule->AlliesAllowed || DAT_00AC1198 == PlayerPtr || Session.WOLWelcomeChoice == 2) {
 					ShowWindow(allianceControl, SW_HIDE);
 				} else {
 					FUN_00603DB0(allianceControl, true);

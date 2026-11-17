@@ -2702,7 +2702,7 @@ char const * __fastcall OwnerDraw::GetTooltipStringLabel(HWND window, HWND contr
 			return "STT:WOLMatchOutput";
 		}
 		if (id == 0x5c0) {
-			return (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) ? "WOL:WDTMatchBack" : "STT:WOLMatchCancel";
+			return (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) ? "WOL:WDTMatchBack" : "STT:WOLMatchCancel";
 		}
 	}
 	else if (type == 0x114) {

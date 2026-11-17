@@ -2270,7 +2270,7 @@ void Clean_Up_RMCache(void)
 void Do_Random_Map(HWND dialog, bool (*callback)())
 {
 	rc_ptr<WDTTerritory> territory;
-	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 		territory = FUN_007B0390(Session.WDTTerritory);
 	}
 	if (territory.Get() != NULL) {
@@ -2308,7 +2308,7 @@ void Do_Random_Map(HWND dialog, bool (*callback)())
 	}
 	RandomMapGen.Generate_Random_Map(true, dialog);
 	RandomMapGen.MapPreview->Create_Preview();
-	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 		FUN_005E7EB0(RandomMapGen.MapPreview);
 	}
 
@@ -2813,7 +2813,7 @@ void MapSeedClass::Randomize(void)
 void MapSeedClass::Fixup_WDT_Settings(void)
 {
 	rc_ptr<WDTTerritory> territory;
-	if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
+	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
 		territory = FUN_007B0390(Session.WDTTerritory);
 	}
 

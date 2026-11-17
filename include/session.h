@@ -605,7 +605,7 @@ class SessionClass
 		GameType Type;
 		MultiplayerGameMode * MPGameMode;
 		int WDTTerritory;
-		int unknown_0C;
+		int WOLWelcomeChoice;
 		int unknown_10;
 
 		CommProtocolType CommProtocol;
