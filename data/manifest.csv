@@ -6244,7 +6244,7 @@ address,size,symbol,source,sha256
 0x0050E3A0,143,?Move_Coord@@YI?AVCoord@@ABV1@ABVDirType@@H@Z,src/house.cpp,fea71845d416e6e5d2d1023f821da3851a21ead6bc4fc6637f2cf54771775242
 0x0050E430,23,?FUN_0050E430@RGBClass@@QAEXEEE@Z,src/house.cpp,c068bd1ae9ec33fa6f21fd5c1f60a9f5a294b305e7a8d1a2caffafa420faedc2
 0x0050E450,28,??0BaseNodeClass@@QAE@W4StructType@@ABVCell@@@Z,src/house.cpp,c419ee6fcde31f07f7ced98a391741530805c09de54899ad439f1046a591f01c
-0x0050E470,35,??8Cell@@QBE_NABV0@@Z,src/house.cpp,94e3ef9ef2fee4d7cf1c8213fca072c5cdf1cfcb38980bfa7ca42ea9cc295335
+0x0050E470,35,??8?$TPoint2D@F@@QBE_NABV0@@Z,src/house.cpp,94e3ef9ef2fee4d7cf1c8213fca072c5cdf1cfcb38980bfa7ca42ea9cc295335
 0x0050E4A0,42,?Clear@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEXXZ,src/house.cpp,ed7ad195de368fbc8a68d7cebeb579408390ec1f9d67879b0586acbaa1086d5a
 0x0050E4D0,27,?ID@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEHPBQBVBuildingTypeClass@@@Z,src/house.cpp,eeb29d112613b0653ee85b4ff58bddb59157c8b4fc65a386db3052b948d71bbb
 0x0050E4F0,13,?GetItem@?$VectorClass@PBVBuildingTypeClass@@@@UBEPBVBuildingTypeClass@@H@Z,src/house.cpp,da1c0b5074b32d4e80b5f5f042a075a73f60de8e9432201ad45100959599be93

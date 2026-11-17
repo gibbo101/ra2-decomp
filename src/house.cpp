@@ -8106,7 +8106,7 @@ Coord HouseClass::FUN_0050DF30(void) const
 {
 	Cell base;
 	base = Get_Base_Center();
-	if (base == CELL_NONE) {
+	if ((TPoint2D<short> const &)base == CELL_NONE) {
 		return(COORD_NONE);
 	}
 	return(Map[base].Center_Coord());
@@ -8247,7 +8247,7 @@ int HouseClass::Fetch_Heap_ID(void) const
 // BaseNodeClass::BaseNodeClass
 
 // TEMPLATE: GAMEMD 0x0050E470
-// ??8Cell@@QBE_NABV0@@Z
+// ??8?$TPoint2D@F@@QBE_NABV0@@Z
 template<class T>
 bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
 {

@@ -5888,7 +5888,7 @@ address,name,result,size,source,symbol
 0x0050E3A0,?Move_Coord@@YI?AVCoord@@ABV1@ABVDirType@@H@Z,MATCH,143,src/house.cpp,?Move_Coord@@YI?AVCoord@@ABV1@ABVDirType@@H@Z
 0x0050E430,RGBClass::FUN_0050E430,MATCH,23,src/house.cpp,?FUN_0050E430@RGBClass@@QAEXEEE@Z
 0x0050E450,BaseNodeClass::BaseNodeClass,MATCH,28,src/house.cpp,??0BaseNodeClass@@QAE@W4StructType@@ABVCell@@@Z
-0x0050E470,??8Cell@@QBE_NABV0@@Z,MATCH,35,src/house.cpp,??8Cell@@QBE_NABV0@@Z
+0x0050E470,??8?$TPoint2D@F@@QBE_NABV0@@Z,MATCH,35,src/house.cpp,??8?$TPoint2D@F@@QBE_NABV0@@Z
 0x0050E4A0,?Clear@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEXXZ,MATCH,42,src/house.cpp,?Clear@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEXXZ
 0x0050E4D0,?ID@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEHPBQBVBuildingTypeClass@@@Z,MATCH,27,src/house.cpp,?ID@?$DynamicVectorClass@PBVBuildingTypeClass@@@@UAEHPBQBVBuildingTypeClass@@@Z
 0x0050E4F0,?GetItem@?$VectorClass@PBVBuildingTypeClass@@@@UBEPBVBuildingTypeClass@@H@Z,MATCH,13,src/house.cpp,?GetItem@?$VectorClass@PBVBuildingTypeClass@@@@UBEPBVBuildingTypeClass@@H@Z
