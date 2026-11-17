@@ -4072,8 +4072,8 @@ address,name,result,size,source,symbol
 0x004C3AD0,Make_Fading_Table,MATCH,129,src/effects.cpp,?Make_Fading_Table@@YIPAXABVPaletteClass@@PAXHH@Z
 0x004C3B60,Build_Fading_Table,MATCH,142,src/effects.cpp,?Build_Fading_Table@@YIPAXABVPaletteClass@@PAXHH@Z
 0x004C3BF0,_$E6,MATCH,23,src/egos.cpp,_$E6
-0x004C3C10,_$E40,MATCH,61,src/egos.cpp,_$E40
-0x004C3C50,_$E38,MATCH,59,src/egos.cpp,_$E38
+0x004C3C10,_$E38,MATCH,61,src/egos.cpp,_$E38
+0x004C3C50,_$E36,MATCH,59,src/egos.cpp,_$E36
 0x004C3C90,EgoClass::EgoClass,MATCH,64,src/egos.cpp,??0EgoClass@@QAE@HHPAGW4TextPrintType@@@Z
 0x004C3CD0,EgoClass::~EgoClass,MATCH,10,src/egos.cpp,??1EgoClass@@QAE@XZ
 0x004C3CE0,EgoClass::Scroll,MATCH,23,src/egos.cpp,?Scroll@EgoClass@@QAE_NH@Z
@@ -9401,7 +9401,7 @@ address,name,result,size,source,symbol
 0x005CD0E0,MSVQAnim::Redraw,MATCH,350,src/msanim.cpp,?Redraw@MSVQAnim@@UAEXPAVSurface@@PBV?$TRect@H@@@Z
 0x005CD240,MSVQAnim::Restore,MATCH,73,src/msanim.cpp,?Restore@MSVQAnim@@UAEXABV?$TRect@H@@@Z
 0x005CD290,MSVQAnim::Get_Rect,MATCH,113,src/msanim.cpp,?Get_Rect@MSVQAnim@@UBE?AV?$TRect@H@@XZ
-0x005CD310,_$E18,MATCH,1,src/msanim.cpp,_$E18
+0x005CD310,_$E16,MATCH,1,src/msanim.cpp,_$E16
 0x005CD320,MSVQAnim::Has_Finished,MATCH,4,src/msanim.cpp,?Has_Finished@MSVQAnim@@UBE_NXZ
 0x005CD330,MSBitPrintAnim::MSBitPrintAnim,MATCH,110,src/msanim.cpp,??0MSBitPrintAnim@@QAE@ABVWideWstring@@ABV?$TRect@H@@_N@Z
 0x005CD3A0,MSBitPrintAnim::~MSBitPrintAnim,MATCH,25,src/msanim.cpp,??1MSBitPrintAnim@@UAE@XZ
@@ -11394,8 +11394,8 @@ address,name,result,size,source,symbol
 0x00642930,_$E32,MATCH,15,src/progress.cpp,_$E32
 0x00642940,_$E35,MATCH,18,src/progress.cpp,_$E35
 0x00642960,_$E38,MATCH,26,src/progress.cpp,_$E38
-0x00642980,_$E105,MATCH,22,src/progress.cpp,_$E105
-0x006429A0,_$E103,MATCH,51,src/progress.cpp,_$E103
+0x00642980,_$E99,MATCH,22,src/progress.cpp,_$E99
+0x006429A0,_$E97,MATCH,51,src/progress.cpp,_$E97
 0x006429E0,ProgressScreenClass::ProgressScreenClass,MATCH,79,src/progress.cpp,??0ProgressScreenClass@@QAE@XZ
 0x00642A30,ProgressScreenClass::~ProgressScreenClass,MATCH,41,src/progress.cpp,??1ProgressScreenClass@@QAE@XZ
 0x00642A60,ProgressScreenClass::Initialize,MATCH,110,src/progress.cpp,?Initialize@ProgressScreenClass@@QAEXNDPAX@Z

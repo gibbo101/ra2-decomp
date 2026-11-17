@@ -30,10 +30,8 @@
 
 extern ShapeFlags_Type FadeStages[4];
 
-struct Drawing {
-	static int RenderWidth;
-	static int RenderHeight;
-};
+extern int VideoModeWidth;
+extern int VideoModeHeight;
 
 SHPStruct * __fastcall FUN_004A3970(Wstring const & name, bool * loaded);
 void __fastcall FUN_00406670(char const * name, int volume);
@@ -519,7 +517,7 @@ MSVQAnim::MSVQAnim(Wstring const & name, Surface * surface, MS_ANIM_LIST * vecto
 	if (name != (char const *)NULL && surface != NULL) {
 		Movie = Movie_Create(name.text(), surface, Rect(0, 0, 0, 0), Rect(0, 0, 0, 0), int(Options.SoundVolume * 255.0), false);
 		if (Movie != NULL) {
-			Movie->InitialRect = Rect((surface->Get_Width() - Drawing::RenderWidth) / 2, (surface->Get_Height() - Drawing::RenderHeight) / 2, Drawing::RenderWidth, Drawing::RenderHeight);
+			Movie->InitialRect = Rect((surface->Get_Width() - VideoModeWidth) / 2, (surface->Get_Height() - VideoModeHeight) / 2, VideoModeWidth, VideoModeHeight);
 			Movie->StretchRect = rect;
 		}
 		Wstring token;
@@ -655,7 +653,7 @@ Rect MSVQAnim::Get_Rect(void) const
 }
 
 // SYNTHETIC: GAMEMD 0x005CD310 SYMBOL
-// _$E18
+// _$E16
 
 // FUNCTION: GAMEMD 0x005CD320
 bool MSVQAnim::Has_Finished(void) const

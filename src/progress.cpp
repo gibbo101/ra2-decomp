@@ -38,21 +38,6 @@ void __fastcall FUN_004F4780(bool flag, Surface * surface, bool other);
 extern Surface * AlternateSurface;
 extern wchar_t DAT_00887734[];
 
-struct Drawing {
-	static int RedShiftLeft;
-	static int RedShiftRight;
-	static int GreenShiftLeft;
-	static int GreenShiftRight;
-	static int BlueShiftLeft;
-	static int BlueShiftRight;
-	static int RGB_To_Int(int red, int green, int blue)
-	{
-		return ((red >> RedShiftRight) << RedShiftLeft)
-			| ((green >> GreenShiftRight) << GreenShiftLeft)
-			| ((blue >> BlueShiftRight) << BlueShiftLeft);
-	}
-};
-
 #include "srfcache.h"
 
 // SYNTHETIC: GAMEMD 0x00642790 SYMBOL
@@ -85,9 +70,9 @@ ProgressScreenClass Progress;
 // SYNTHETIC: GAMEMD 0x00642960 SYMBOL
 // _$E38
 // SYNTHETIC: GAMEMD 0x00642980 SYMBOL
-// _$E105
+// _$E99
 // SYNTHETIC: GAMEMD 0x006429A0 SYMBOL
-// _$E103
+// _$E97
 // FUNCTION: GAMEMD 0x006429E0
 // ProgressScreenClass::ProgressScreenClass
 ProgressScreenClass::ProgressScreenClass(void) :
@@ -406,9 +391,9 @@ void ProgressScreenClass::Draw_Bar(Point2D pos, double ratio, Surface * surface,
 	}
 	if (Field71) {
 		RGBClass color = scheme->HSV;
-		surface->Draw_Rect(fill, ((color.Get_Red() >> (unsigned char)Drawing::RedShiftRight) << Drawing::RedShiftLeft)
-			| ((color.Get_Green() >> (unsigned char)Drawing::GreenShiftRight) << Drawing::GreenShiftLeft)
-			| ((color.Get_Blue() >> (unsigned char)Drawing::BlueShiftRight) << Drawing::BlueShiftLeft));
+		surface->Draw_Rect(fill, ((color.Get_Red() >> (unsigned char)DSurface::RedLeft) << DSurface::RedRight)
+			| ((color.Get_Green() >> (unsigned char)DSurface::GreenLeft) << DSurface::GreenRight)
+			| ((color.Get_Blue() >> (unsigned char)DSurface::BlueLeft) << DSurface::BlueRight));
 	}
 	Rect bar = shape;
 	bar.Width = (int)(shape.Width * ratio);
@@ -423,7 +408,7 @@ void ProgressScreenClass::Draw_Flag(int x, int y, Surface * flag)
 	int height = 0;
 	Dialog_Size(&width, &height);
 	Rect rect(x, y, width, height);
-	int color = Drawing::RGB_To_Int(255, 0, 255);
+	int color = DSurface::Build_Hicolor_Pixel(255, 0, 255);
 	if (HiddenSurface != 0 && !((DSurface *)HiddenSurface)->Is_Lost()) {
 		SurfaceCache.DrawTrans(rect, *HiddenSurface, *flag, color);
 	}

@@ -4427,8 +4427,8 @@ address,size,symbol,source,sha256
 0x004C3AD0,129,?Make_Fading_Table@@YIPAXABVPaletteClass@@PAXHH@Z,src/effects.cpp,e2f04cb900cde3d8c84ac289349361fcf7bed54f85e8e8dc053151eac498b05f
 0x004C3B60,142,?Build_Fading_Table@@YIPAXABVPaletteClass@@PAXHH@Z,src/effects.cpp,fcd645bac81108cc0f01e7a4162929f2bdf88018cb13a79ad44c2ec0cfc56c13
 0x004C3BF0,23,_$E6,src/egos.cpp,70e4ce35747c16b302013aac6e0328f9f9b32447d36e3a2d5c8d4701e5b77e3f
-0x004C3C10,61,_$E40,src/egos.cpp,4ed201b06edbbf11f0ff092f11041295e10524052436518fbcecc631817da0c5
-0x004C3C50,59,_$E38,src/egos.cpp,ceabfbc46987bc9790a0e25b8d5136af9b46be9ce106440910d230c17ec21b1b
+0x004C3C10,61,_$E38,src/egos.cpp,4ed201b06edbbf11f0ff092f11041295e10524052436518fbcecc631817da0c5
+0x004C3C50,59,_$E36,src/egos.cpp,ceabfbc46987bc9790a0e25b8d5136af9b46be9ce106440910d230c17ec21b1b
 0x004C3C90,64,??0EgoClass@@QAE@HHPAGW4TextPrintType@@@Z,src/egos.cpp,b8f417ae89868de83d006e0bc90b89405b679709668da178159a65b9e019ce57
 0x004C3CD0,10,??1EgoClass@@QAE@XZ,src/egos.cpp,0726d4142e8edd8bbe6df37ee363644d769c41495f8fc6c43aec833a6b0cd825
 0x004C3CE0,23,?Scroll@EgoClass@@QAE_NH@Z,src/egos.cpp,5dfa264746f03c0f13660da66f1bbd529081d2532ea0f4625792b3fc4a8e33e9
@@ -9756,7 +9756,7 @@ address,size,symbol,source,sha256
 0x005CD0E0,350,?Redraw@MSVQAnim@@UAEXPAVSurface@@PBV?$TRect@H@@@Z,src/msanim.cpp,2e75f222133d0500f542ae8760a1c3e9c205dda1ed10301071e1448caca56049
 0x005CD240,73,?Restore@MSVQAnim@@UAEXABV?$TRect@H@@@Z,src/msanim.cpp,5f6f0e9f5617b161a55ca6a57819e79f41763607a872e3e4f9ac4240ddc44704
 0x005CD290,113,?Get_Rect@MSVQAnim@@UBE?AV?$TRect@H@@XZ,src/msanim.cpp,5ff26ee156e233d51f6b99f9ce3d120f72c750300c44e934c7b1060c1172f781
-0x005CD310,1,_$E18,src/msanim.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x005CD310,1,_$E16,src/msanim.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x005CD320,4,?Has_Finished@MSVQAnim@@UBE_NXZ,src/msanim.cpp,fb032a665911b2f702c30ebf945fd7c2d480f11d25b44664a4e176009a4b2225
 0x005CD330,110,??0MSBitPrintAnim@@QAE@ABVWideWstring@@ABV?$TRect@H@@_N@Z,src/msanim.cpp,1adfa3882f2b18089db4cae58e668bea010ac7d8cee4fd729d87323bc7985010
 0x005CD3A0,25,??1MSBitPrintAnim@@UAE@XZ,src/msanim.cpp,5a09c5d13fdba49e3d2389ee44859d6dde795fdb56a16b8c50b8de9a511b95cb
@@ -11748,8 +11748,8 @@ address,size,symbol,source,sha256
 0x00642930,15,_$E32,src/progress.cpp,03e25ae3b7f720bbac2f0cf148bab7e039823938fb2ee54e7fb9b1b0a76e0c6e
 0x00642940,18,_$E35,src/progress.cpp,412d5aa3d3cd3b23214b46b6173a561b8dd4213119d851a677a2b7ac994da164
 0x00642960,26,_$E38,src/progress.cpp,c948059d60c6bd5787417247c68e96f609578fdb7a83cdf27a8a4fc962eb5b53
-0x00642980,22,_$E105,src/progress.cpp,d0b6357facde9c13d1bf4897dc931c18e16e1189b141797cf32eb69760874fed
-0x006429A0,51,_$E103,src/progress.cpp,dfce1e7e0ed3215bbe0bbf9bbdd23c0f1d93eb7bb6f0b1dfc7d39fa998819b48
+0x00642980,22,_$E99,src/progress.cpp,d0b6357facde9c13d1bf4897dc931c18e16e1189b141797cf32eb69760874fed
+0x006429A0,51,_$E97,src/progress.cpp,dfce1e7e0ed3215bbe0bbf9bbdd23c0f1d93eb7bb6f0b1dfc7d39fa998819b48
 0x006429E0,79,??0ProgressScreenClass@@QAE@XZ,src/progress.cpp,c1f5505c1040d0a23f6df1c647b7396dc5e64c1eb8b876f6ba1b046a5dffcf00
 0x00642A30,41,??1ProgressScreenClass@@QAE@XZ,src/progress.cpp,1af2a64c72c91d3d7999e42d4309e28b05d29862a23e1c4cebe385a9a66ffd4b
 0x00642A60,110,?Initialize@ProgressScreenClass@@QAEXNDPAX@Z,src/progress.cpp,ae36a8c7dd2c4cf80e1f6630093e74f99a35c7754652e6dc2a3c76059dc93ee8

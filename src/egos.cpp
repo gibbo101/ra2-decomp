@@ -39,14 +39,13 @@ namespace OwnerDraw {
 int __fastcall PrintTextFixedLength(unsigned color, BitFont * font, Rect const & rect, wchar_t const * text, int length, int x_alignment, int y_alignment, Surface * surface, int unknown);
 }
 
-struct Drawing { static int RenderWidth; static int RenderHeight; };
 namespace Game { extern bool IsFocused; }
 extern Surface * DAT_008A0F58;
 
 // SYNTHETIC: GAMEMD 0x004C3C10 SYMBOL
-// _$E40
-// SYNTHETIC: GAMEMD 0x004C3C50 SYMBOL
 // _$E38
+// SYNTHETIC: GAMEMD 0x004C3C50 SYMBOL
+// _$E36
 DynamicVectorClass<EgoClass *> EgoList;
 
 // FUNCTION: GAMEMD 0x004C3C90
@@ -81,10 +80,10 @@ void EgoClass::Render(bool fresh)
 {
 	if ((YPos < DSurface::Temp->Get_Height() && YPos > DSurface::Temp->Get_Height() - 52) || YPos >= -16 && YPos <= 32 || fresh) {
 		Rect textrect;
-		textrect.X = (Drawing::RenderWidth - 520) / 2;
+		textrect.X = (VideoModeWidth - 520) / 2;
 		textrect.Width = 520;
 		textrect.Y = YPos;
-		textrect.Height = Drawing::RenderHeight;
+		textrect.Height = VideoModeHeight;
 
 		int alignment = 0;
 		if (Flags & TPF_CENTER) {
@@ -107,7 +106,7 @@ void EgoClass::Wipe (Surface *background)
 	BitFont * font = Font_From_TPF(Flags);
 	font->FUN_00433ED0(Text, 0);
 
-	Rect r(0, YPos, Drawing::RenderWidth, 18);
+	Rect r(0, YPos, VideoModeWidth, 18);
 	DSurface::Temp->Blit_From(r, *background, r);
 }
 
