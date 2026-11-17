@@ -13144,7 +13144,7 @@ template class VectorClass<tConnInfoStruct *>;
 // ?get@?$ArrayList@VWstring@@@@QBEDAAVWstring@@H@Z
 
 // TEMPLATE: GAMEMD 0x007ACE60
-// ?clear@?$Dictionary@VWstring@@H@@QAEXXZ
+// ?clear@?$Dictionary@VWstring@@W4WolEntryState@@@@QAEXXZ
 
 // TEMPLATE: GAMEMD 0x007ACF70
 // ?clear@?$Dictionary@VWstring@@UChannel@@@@QAEXXZ

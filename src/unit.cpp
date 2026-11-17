@@ -1303,10 +1303,8 @@ bool UnitClass::Goto_Clear_Spot(void)
 	return(false);
 }
 
-// FUNCTION: GAMEMD 0x007393B0
-void FUN_007393B0(void)
-{
-}
+// SYNTHETIC: GAMEMD 0x007393B0 SYMBOL
+// _$E289
 
 // FUNCTION: GAMEMD 0x007393C0
 bool UnitClass::Try_To_Deploy(void)

@@ -478,7 +478,7 @@ void YRVoices::Anim::Restore(Rect const & rect)
 template class DynamicVectorClass<unsigned int>;
 
 // TEMPLATE: GAMEMD 0x00771A00
-// ??1?$VectorClass@I@@UAE@XZ
+// ??1?$DynamicVectorClass@I@@UAE@XZ
 template class VectorClass<unsigned int>;
 
 // SYNTHETIC: GAMEMD 0x00771A30

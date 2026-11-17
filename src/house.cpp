@@ -8247,7 +8247,7 @@ int HouseClass::Fetch_Heap_ID(void) const
 // BaseNodeClass::BaseNodeClass
 
 // TEMPLATE: GAMEMD 0x0050E470
-// ??8?$TPoint2D@F@@QBE_NABV0@@Z
+// ??8Cell@@QBE_NABV0@@Z
 template<class T>
 bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
 {

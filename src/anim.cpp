@@ -1406,7 +1406,7 @@ bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
 // ??0?$CDTimerClass@VFrameTimerClass@@@@QAE@ABVNoInitClass@@@Z
 
 // TEMPLATE: GAMEMD 0x00426630
-// ?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
+// ??B?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
 template class CDTimerClass<FrameTimerClass>;
 
 // FUNCTION: GAMEMD 0x00422CA0

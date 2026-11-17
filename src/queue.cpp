@@ -216,7 +216,7 @@ void Queue_Ipx_Clear(void)
 // SYNTHETIC: GAMEMD 0x00646D90 SYMBOL
 // _$E214
 // SYNTHETIC: GAMEMD 0x00646DB0 SYMBOL
-// _$E47
+// _$E212
 BasicTimerClass<SystemTimerClass> SentFrameSyncTimer;
 
 // SYNTHETIC: GAMEMD 0x00646DC0 SYMBOL
@@ -909,7 +909,9 @@ void __fastcall Queue_AI_Multiplayer(void)
 	}
 }
 
-// FUNCTION: GAMEMD 0x00648340
+// SYNTHETIC: GAMEMD 0x00648340 SYMBOL
+// _$E225
+
 void Check_Mirror(void)
 {
 }

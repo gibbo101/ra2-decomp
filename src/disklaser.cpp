@@ -342,7 +342,7 @@ template class VectorClass<DiskLaserClass *>;
 // ?ID@?$DynamicVectorClass@PAVDiskLaserClass@@@@UAEHABQAVDiskLaserClass@@@Z
 
 // TEMPLATE: GAMEMD 0x004A7FE0
-// ?Add@?$DynamicVectorClass@PAVDiskLaserClass@@@@QAE_NABQAVDiskLaserClass@@@Z
+// ?Add@?$DynamicVectorClass@PAVAbstractClass@@@@QAE_NABQAVAbstractClass@@@Z
 
 // TEMPLATE: GAMEMD 0x004A8030
 // ??_G?$VectorClass@PAVDiskLaserClass@@@@UAEPAXI@Z

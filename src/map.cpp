@@ -9410,7 +9410,7 @@ template class DynamicVectorClass<HashObject<unsigned int, SubzoneConnectionStru
 // ?ID@?$DynamicVectorClass@USubzoneTrackingStruct@@@@UAEHABUSubzoneTrackingStruct@@@Z
 
 // TEMPLATE: GAMEMD 0x00589C50
-// ?Add@?$DynamicVectorClass@W4PassabilityType@@@@QAE_NABW4PassabilityType@@@Z
+// ?Add@?$DynamicVectorClass@VCell@@@@QAE_NABVCell@@@Z
 
 // TEMPLATE: GAMEMD 0x00589CA0
 // ??8?$VectorClass@PAVCellClass@@@@UBE_NABV0@@Z

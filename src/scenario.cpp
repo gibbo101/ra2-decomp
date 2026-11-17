@@ -160,8 +160,10 @@ int __fastcall FUN_004072B0(void * p);
 void __fastcall FUN_00407150(void * p, int value);
 void __fastcall FUN_005BF500(bool pause);
 
-// FUNCTION: GAMEMD 0x00683280
-// FUNCTION: GAMEMD 0x006832B0
+// SYNTHETIC: GAMEMD 0x00683280 SYMBOL
+// _$E286
+// SYNTHETIC: GAMEMD 0x006832B0 SYMBOL
+// _$E284
 CDTimerClass<SystemTimerClass> ScenUnusedTimer;
 
 // FUNCTION: GAMEMD 0x006832C0

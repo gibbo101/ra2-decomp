@@ -712,7 +712,7 @@ done:
 // TEMPLATE: GAMEMD 0x006CE2C0
 // ?Start@?$CDTimerClass@VFrameTimerClass@@@@QAEXXZ
 // TEMPLATE: GAMEMD 0x006CE2D0
-// ?Delete@?$DynamicVectorClass@PAVSuperClass@@@@QAE_NABQAVSuperClass@@@Z
+// ?Delete@?$DynamicVectorClass@PAVAbstractClass@@@@QAE_NABQAVAbstractClass@@@Z
 // TEMPLATE: GAMEMD 0x006CE320
 // ?Delete_Index@?$DynamicVectorClass@PAVSuperClass@@@@QAE_NH@Z
 template class DynamicVectorClass<SuperClass *>;

@@ -1163,7 +1163,7 @@ bool FlyLocomotionClass::Is_Locked_To_Straight_Flight(void)
 // ??0?$VectorClass@PAVObjectClass@@@@QAE@HPBQAVObjectClass@@@Z
 
 // TEMPLATE: GAMEMD 0x004D0490
-// ?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@@@AAEJABQAUIDispatch@@@Z
+// ?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@@@AAEJABQAVFootClass@@@Z
 
 template class _com_ptr_t<_com_IIID<IFlyControl, &__uuidof(IFlyControl)> >;
 

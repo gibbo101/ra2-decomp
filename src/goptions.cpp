@@ -408,5 +408,5 @@ template class QueueClass<EventClass, 128>;
 // TEMPLATE: GAMEMD 0x004F1B00
 // ??0?$CDTimerClass@VSystemTimerClass@@@@QAE@H@Z
 // TEMPLATE: GAMEMD 0x004F1B20
-// ?Value@?$CDTimerClass@VSystemTimerClass@@@@QBEHXZ
+// ??B?$CDTimerClass@VSystemTimerClass@@@@QBEHXZ
 template class CDTimerClass<SystemTimerClass>;

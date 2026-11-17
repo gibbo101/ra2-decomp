@@ -1948,11 +1948,8 @@ Dir256 BuildingTypeClass::Deploy_Facing(void) const
 	return(Dir256(DeployFacing));
 }
 
-// FUNCTION: GAMEMD 0x00465D80
-BuildingTypeClass * BuildingTypeClass::FUN_00465D80(void)
-{
-	return(this);
-}
+// TEMPLATE: GAMEMD 0x00465D80
+// ??0Cell@@QAE@XZ
 
 // FUNCTION: GAMEMD 0x00465D90
 RTTIType BuildingTypeClass::Fetch_RTTI(void) const
