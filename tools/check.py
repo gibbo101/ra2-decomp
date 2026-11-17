@@ -778,8 +778,7 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     if target.name in local:
         want = local[target.name]
         return ("ok" if got == want else "mismatch"), want
-    other = bound_functions(obj, local).get(got)
-    if other is not None and target.section > 0 and target.type == 0x20:
+    if target.section > 0 and target.type == 0x20 and got in bound_functions(obj, local):
         # The original's target is bound to a different function this object compiles.
         return "mismatch", None
     if names or local:
