@@ -42,6 +42,7 @@
 #include "wonline.h"
 #include "wsproto.h"
 #include "wstring.h"
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x005DACD0 SYMBOL
 // _$E2
@@ -70,57 +71,32 @@ int ArtID;
 
 int AIID;
 
-namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EEF08;
-extern const double DAT_007EEF10;
-
 // SYNTHETIC: GAMEMD 0x005DACF0 SYMBOL
 // _$E86
-double DAT_00AC01C0 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x005DAD20 SYMBOL
 // _$E89
-double DAT_00AC0250 = DAT_00AC01C0 / DAT_007EEF08;
-
 // SYNTHETIC: GAMEMD 0x005DAD40 SYMBOL
 // _$E92
-double DAT_00AC0218 = DAT_007E1718 / DAT_00AC0250;
-
 // SYNTHETIC: GAMEMD 0x005DAD60 SYMBOL
 // _$E95
-double DAT_00AC0210 = DAT_007E1720 * DAT_007EEF10;
-
 // SYNTHETIC: GAMEMD 0x005DAD80 SYMBOL
 // _$E98
-double DAT_00AC01C8 = DAT_007E1728 * DAT_007EEF10;
-
 // SYNTHETIC: GAMEMD 0x005DADA0 SYMBOL
 // _$E101
-double DAT_00AC0198 = DAT_007E1730 * DAT_007EEF10;
-
 // SYNTHETIC: GAMEMD 0x005DADC0 SYMBOL
 // _$E104
-int DAT_00AC0258 = (int)(fastmath::tan(DAT_00AC0198 - DAT_00AC01C8) * DAT_007E1738 * DAT_00AC01C0);
-
 // SYNTHETIC: GAMEMD 0x005DAE00 SYMBOL
 // _$E107
-double DAT_00AC01D8 = fastmath::atan(DAT_00AC0258 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x005DAE30 SYMBOL
 // _$E110
-double DAT_00AC01F8 = fastmath::atan((DAT_00AC0258 * 2) / DAT_00AC01C0);
-
 // SYNTHETIC: GAMEMD 0x005DAE60 SYMBOL
 // _$E113
-int DAT_00AC024C = (int)(DAT_00AC0258 * 4 + DAT_007E1738);
+// SYNTHETIC: GAMEMD 0x005DAE90 SYMBOL
+// _$E116
+// SYNTHETIC: GAMEMD 0x005DAEA0 SYMBOL
+// _$E119
+// SYNTHETIC: GAMEMD 0x005DAEC0 SYMBOL
+// _$E122
 
 void __fastcall FUN_005E8DC0(wchar_t * buffer);
 void __fastcall FUN_005DAFE0(bool x);
@@ -171,22 +147,6 @@ extern wchar_t const * DAT_00AC1194;
 void FUN_005E8B40(void);
 void FUN_005E8B60(void);
 void FUN_005E8A20(void);
-
-struct Net2ShortPair { short a; short b; Net2ShortPair(void) { a = 0; b = 0; } };
-struct Net2IntTriple { int a; int b; int c; Net2IntTriple(void) { a = 0; b = 0; c = 0; } };
-struct Net2Center { int a; int b; int c; Net2Center(void) { c = 0; a = 128; b = 128; } };
-
-// SYNTHETIC: GAMEMD 0x005DAE90 SYMBOL
-// _$E116
-Net2ShortPair DAT_00AC01B8;
-
-// SYNTHETIC: GAMEMD 0x005DAEA0 SYMBOL
-// _$E119
-Net2IntTriple DAT_00AC01E8;
-
-// SYNTHETIC: GAMEMD 0x005DAEC0 SYMBOL
-// _$E122
-Net2Center DAT_00AC0240;
 
 // SYNTHETIC: GAMEMD 0x005DAEE0 SYMBOL
 // _$E127

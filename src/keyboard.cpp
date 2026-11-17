@@ -9,116 +9,38 @@
 #include "msgloop.h"
 #include "session.h"
 #include <cmath>
+#include "geometry.h"
 #define	ARRAY_SIZE(x)		int(sizeof(x)/sizeof(x[0]))
-
-namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007ECEB8;
-extern const double DAT_007ECEC0;
 
 
 // SYNTHETIC: GAMEMD 0x0054EC40 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x0054EC60 SYMBOL
 // _$E30
-
-
-
-double DAT_00ABC6B8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0054EC90 SYMBOL
 // _$E33
-
-
-
-double DAT_00ABC708 = DAT_00ABC6B8 / DAT_007ECEB8;
-
 // SYNTHETIC: GAMEMD 0x0054ECB0 SYMBOL
 // _$E36
-
-
-
-double DAT_00ABC6F0 = DAT_007E1718 / DAT_00ABC708;
-
 // SYNTHETIC: GAMEMD 0x0054ECD0 SYMBOL
 // _$E39
-
-
-
-double DAT_00ABC6E8 = DAT_007E1720 * DAT_007ECEC0;
-
 // SYNTHETIC: GAMEMD 0x0054ECF0 SYMBOL
 // _$E42
-
-
-
-double DAT_00ABC6C0 = DAT_007E1728 * DAT_007ECEC0;
-
 // SYNTHETIC: GAMEMD 0x0054ED10 SYMBOL
 // _$E45
-
-
-
-double DAT_00ABC698 = DAT_007E1730 * DAT_007ECEC0;
-
 // SYNTHETIC: GAMEMD 0x0054ED30 SYMBOL
 // _$E48
-
-
-
-int DAT_00ABC710 = (int)(DAT_007E1738 * (DAT_00ABC6B8 * fastmath::tan(DAT_00ABC698 - DAT_00ABC6C0)));
-
 // SYNTHETIC: GAMEMD 0x0054ED70 SYMBOL
 // _$E51
-
-
-
-double DAT_00ABC6C8 = fastmath::atan(DAT_00ABC710 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0054EDA0 SYMBOL
 // _$E54
-
-
-
-double DAT_00ABC6E0 = fastmath::atan((DAT_00ABC710 * 2) / DAT_00ABC6B8);
-
 // SYNTHETIC: GAMEMD 0x0054EDD0 SYMBOL
 // _$E57
-
-
-
-int DAT_00ABC704 = (int)((DAT_00ABC710 * 4) + DAT_007E1738);
-
-struct DatShorts { short X; short Y; DatShorts(short x, short y) : X(x), Y(y) {} };
-struct DatInts { int X; int Y; int Z; DatInts(int x, int y, int z) : X(x), Y(y), Z(z) {} };
-
 // SYNTHETIC: GAMEMD 0x0054EE00 SYMBOL
 // _$E60
-
-
-
-DatShorts DAT_00ABC6B0(0, 0);
-
 // SYNTHETIC: GAMEMD 0x0054EE10 SYMBOL
 // _$E63
-
-
-
-DatInts DAT_00ABC6D0(0, 0, 0);
-
 // SYNTHETIC: GAMEMD 0x0054EE30 SYMBOL
 // _$E66
-
-
-
-DatInts DAT_00ABC6F8(0x80, 0x80, 0);
 
 extern bool UserInputLocked;
 struct ChronoScreenEffect { static bool Active(void); };
