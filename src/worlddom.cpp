@@ -301,9 +301,9 @@ int __fastcall WDT_Theater_Choice_Menu(int side)
 
 namespace Drawing { extern int RenderWidth; }
 int ODMessageBox(const wchar_t * text, int type, bool (*callback)(void), bool large);
-bool FUN_0077F900(void);
+bool WOL_Wait_Callback(void);
 bool Test_Display_Mode_Dialog(int width, int height);
-bool FUN_00797800(void);
+bool Request_WDT_Cycle(void);
 int FUN_0079FC40(void);
 void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before, bool fullscreen);
 extern int DAT_00B77F94;
@@ -319,7 +319,7 @@ int __fastcall FUN_007AFB90(bool first_time)
 
 	if (Drawing::RenderWidth > 640) {
 		WideWstring query(StringTable::LoadString("WOL:WDTResolutionQuery", NULL, "D:\\ra2mdpost\\WorldDom.cpp", 0x181));
-		if (ODMessageBox(query.get(), 4, FUN_0077F900, true) != 6) {
+		if (ODMessageBox(query.get(), 4, WOL_Wait_Callback, true) != 6) {
 			return 0;
 		}
 		if (!Test_Display_Mode_Dialog(640, 480)) {
@@ -371,7 +371,7 @@ int __fastcall FUN_007AFB90(bool first_time)
 					break;
 
 				case 4:
-					if (!FUN_00797800()) {
+					if (!Request_WDT_Cycle()) {
 						state = 0;
 					} else {
 						rc_ptr<Campaign> campaign = *FUN_007B0370();

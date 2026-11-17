@@ -70,11 +70,11 @@ Wstring FUN_00779DD0(void);
 void FUN_00799CD0(void);
 void FUN_00799D10(void);
 int FUN_00799D30(void);
-void FUN_0077DED0(void);
-void FUN_0077E110(void);
+void Read_WOL_Settings(void);
+void Apply_WOL_Settings(void);
 int Login_WOL(void);
-void FUN_00785EA0(void);
-void FUN_00786080(void);
+void Logout_WOnline(void);
+void Shutdown_Chat(void);
 int FUN_00798DE0(void);
 int FUN_0079FC40(void);
 int FUN_0079F140(bool first_time);
@@ -93,10 +93,10 @@ int __fastcall FUN_0077B2A0(bool first_time)
 	if (theme == Theme.From_Name("INTRO")) {
 		Theme.Queue_Song(THEME_QUIET);
 	}
-	FUN_0077DED0();
+	Read_WOL_Settings();
 	bool shuffle = Theme.Is_Shuffle();
 	Theme.Set_Shuffle(true);
-	FUN_0077E110();
+	Apply_WOL_Settings();
 	if (DAT_00B73E40.length() == 0) {
 		DAT_00B73E40 = FUN_00779B50();
 		if (DAT_00B73E40.length() == 0) {
@@ -116,7 +116,7 @@ int __fastcall FUN_0077B2A0(bool first_time)
 			case 0:
 				if (Session.WOLWelcomeChoice == 0) {
 					Session.Type = GAME_NORMAL;
-					FUN_00786080();
+					Shutdown_Chat();
 					Theme.Set_Shuffle(shuffle);
 					FUN_00799D10();
 					return result;
@@ -131,13 +131,13 @@ int __fastcall FUN_0077B2A0(bool first_time)
 				Session.Type = GAME_NORMAL;
 				Session.WOLWelcomeChoice = 0;
 				Session.unknown_10 = 0;
-				FUN_00786080();
+				Shutdown_Chat();
 				Theme.Set_Shuffle(shuffle);
 				FUN_00799D10();
 				return result;
 			}
 		}
-		FUN_0077E110();
+		Apply_WOL_Settings();
 		switch (Session.WOLWelcomeChoice) {
 		case 0:
 			first_time = false;
@@ -214,7 +214,7 @@ int __fastcall FUN_0077B2A0(bool first_time)
 				Session.Type = GAME_NORMAL;
 				Session.WOLWelcomeChoice = 0;
 				Session.unknown_10 = 0;
-				FUN_00786080();
+				Shutdown_Chat();
 				Theme.Set_Shuffle(shuffle);
 				FUN_00799D10();
 				return result;
@@ -231,7 +231,7 @@ int __fastcall FUN_0077B2A0(bool first_time)
 			}
 			int kind = FUN_0077B280();
 			if (DAT_00B73678 != kind || force) {
-				FUN_00785EA0();
+				Logout_WOnline();
 				DAT_00B73678 = 0;
 			}
 		}
@@ -240,7 +240,7 @@ int __fastcall FUN_0077B2A0(bool first_time)
 				FUN_00799D10();
 				return result;
 			}
-			FUN_00786080();
+			Shutdown_Chat();
 			Session.Type = GAME_NORMAL;
 			Theme.Set_Shuffle(shuffle);
 			Session.WOLWelcomeChoice = 0;

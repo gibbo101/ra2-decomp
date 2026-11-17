@@ -994,7 +994,7 @@ extern wchar_t DAT_00AC0EC8[];
 void __fastcall FUN_005E7BF0(int slot);
 void __fastcall FUN_005E74E0(HWND dialog);
 void FUN_0058BB30(void);
-bool FUN_0077F900(void);
+bool WOL_Wait_Callback(void);
 int CALLBACK Scenario_DlgProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void FUN_0072D120(void);
@@ -1060,7 +1060,7 @@ bool FUN_005E66F0(void)
 		return(FUN_005DAF20());
 	}
 	if (Session.Type == GAME_INTERNET) {
-		return(FUN_0077F900());
+		return(WOL_Wait_Callback());
 	}
 	if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
 		return(FUN_005BB260());
@@ -1808,7 +1808,7 @@ int CreateRandomMap(void)
 	if (Session.Type == GAME_IPX) {
 		result = Do_Random_Map_Dialog(FUN_005DAF20);
 	} else if (Session.Type == GAME_INTERNET) {
-		result = Do_Random_Map_Dialog(FUN_0077F900);
+		result = Do_Random_Map_Dialog(WOL_Wait_Callback);
 	} else if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
 		result = Do_Random_Map_Dialog(FUN_005BB260);
 	} else {
@@ -3441,7 +3441,7 @@ void __fastcall FUN_005EC030(HWND dialog)
 	PumpGameopts(true, false);
 }
 
-void FUN_00785360(void);
+void Display_Users(void);
 
 // FUNCTION: GAMEMD 0x005EC290
 void __fastcall FUN_005EC290(HWND dialog, int start)
@@ -3459,7 +3459,7 @@ void __fastcall FUN_005EC290(HWND dialog, int start)
 	}
 	FUN_005EBC00(dialog, start);
 	if (g_pChat) {
-		FUN_00785360();
+		Display_Users();
 	} else {
 		FUN_005DAFD0();
 	}

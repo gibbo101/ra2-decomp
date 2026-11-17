@@ -773,7 +773,7 @@ void __fastcall FUN_0046FB50(HWND dialog)
 }
 
 bool FUN_005DAF20(void);
-bool FUN_0077F900(void);
+bool WOL_Wait_Callback(void);
 
 // FUNCTION: GAMEMD 0x0046FBD0
 bool FUN_0046FBD0(void)
@@ -782,7 +782,7 @@ bool FUN_0046FBD0(void)
 		return FUN_005DAF20();
 	}
 	if (Session.Type == GAME_INTERNET) {
-		return FUN_0077F900();
+		return WOL_Wait_Callback();
 	}
 	Call_Back();
 	return false;

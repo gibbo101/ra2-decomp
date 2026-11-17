@@ -332,7 +332,7 @@ FUN_007F7624_Class::~FUN_007F7624_Class(void)
 {
 }
 
-bool FUN_0077F900(void);
+bool WOL_Wait_Callback(void);
 
 // FUNCTION: GAMEMD 0x0077D210
 void __fastcall FUN_0077D210(char * text)
@@ -345,7 +345,7 @@ void __fastcall FUN_0077D210(char * text)
 }
 
 // FUNCTION: GAMEMD 0x0077D240
-int __fastcall FUN_0077D240(Wstring const & name)
+int __fastcall Player_Name_To_Index(Wstring const & name)
 {
 	User * user = NULL;
 	for (int i = 0; i < DAT_00B77900.length(); i++) {
@@ -444,7 +444,7 @@ bool __fastcall FUN_0077D4C0(User * user)
 {
 	if (DAT_00B76AF0 || DAT_00B73AD0) {
 		if (WS_Find_Dialog(0x113)) {
-			int index = FUN_0077D240(DAT_00B73E40);
+			int index = Player_Name_To_Index(DAT_00B73E40);
 			User * host = NULL;
 			int count = DAT_00B77900.length();
 			if (index >= 0) {
@@ -471,7 +471,7 @@ bool __fastcall FUN_0077D4C0(User * user)
 // FUNCTION: GAMEMD 0x0077D710
 bool FUN_0077D710(void)
 {
-	return FUN_0077F900();
+	return WOL_Wait_Callback();
 }
 
 
@@ -502,7 +502,7 @@ IPXAddressClass __fastcall FUN_0077D720(User * user)
 extern bool UserInputLocked;
 HWND FUN_005E26C0(void);
 int __fastcall FUN_007759E0(HWND window, bool (*callback)(void), int a, int b, int c);
-BOOL CALLBACK FUN_0078D120(HWND win, UINT msg, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK WOL_Find_Page_Dialog_Proc(HWND win, UINT msg, WPARAM wparam, LPARAM lparam);
 bool FUN_0077D820(void);
 
 namespace UI {
@@ -541,9 +541,9 @@ bool FUN_0077D820(void)
 }
 
 // FUNCTION: GAMEMD 0x0077D840
-void FUN_0077D840(void)
+void DoFindPage(void)
 {
-	HWND dialog = UI::BeginDialog(0xCF, (DLGPROC)FUN_0078D120, 0);
+	HWND dialog = UI::BeginDialog(0xCF, (DLGPROC)WOL_Find_Page_Dialog_Proc, 0);
 	UserInputLocked = true;
 	Keyboard->Clear();
 	ShowWindow(dialog, SW_SHOWNORMAL);
@@ -712,7 +712,7 @@ int ODMessageBox(const wchar_t * text, int type, bool (*callback)(void), bool la
 int __cdecl FUN_007CD455(const char * path);
 
 // FUNCTION: GAMEMD 0x0077DC90
-void __fastcall FUN_0077DC90(const char * name, int no_ask)
+void __fastcall ViewHTML(const char * name, int no_ask)
 {
 	char filename[160];
 	tmpnam(filename);
@@ -744,12 +744,12 @@ void __fastcall FUN_0077DC90(const char * name, int no_ask)
 			if (process) {
 				int done_waiting = FALSE;
 
-				FUN_0077F900();
+				WOL_Wait_Callback();
 
 				WaitForInputIdle(process, 5000);
 
 				while (!done_waiting) {
-					FUN_0077F900();
+					WOL_Wait_Callback();
 					Sleep(500);
 
 					DWORD exitCode;
@@ -761,22 +761,22 @@ void __fastcall FUN_0077DC90(const char * name, int no_ask)
 					if (GameInFocus || GetTopWindow(NULL) == MainWindow || GetForegroundWindow() == MainWindow) {
 						done_waiting = TRUE;
 					}
-					FUN_0077F900();
+					WOL_Wait_Callback();
 				}
 
-				FUN_0077F900();
+				WOL_Wait_Callback();
 
 				if (GetTopWindow(NULL) != MainWindow) {
-					FUN_0077F900();
+					WOL_Wait_Callback();
 					SetForegroundWindow(MainWindow);
 					ShowWindow(MainWindow, SW_RESTORE);
-					FUN_0077F900();
+					WOL_Wait_Callback();
 				}
 
 				int waits = 10;
 				while (waits) {
 					Sleep(100);
-					FUN_0077F900();
+					WOL_Wait_Callback();
 					waits--;
 				};
 			}
@@ -798,7 +798,7 @@ void FUN_005EE1B0(void);
 void __fastcall FUN_005EE350(HWND dialog);
 
 // FUNCTION: GAMEMD 0x0077DED0
-void FUN_0077DED0(void)
+void Read_WOL_Settings(void)
 {
 	DAT_00B76234 = INI_RA2MD.Get_Int("WOnline", "AllowPage", 1);
 	DAT_00B779F0 = INI_RA2MD.Get_Int("WOnline", "AllowFind", 1);
@@ -813,7 +813,7 @@ void FUN_0077DED0(void)
 }
 
 // FUNCTION: GAMEMD 0x0077DFD0
-void FUN_0077DFD0(void)
+void Write_WOL_Settings(void)
 {
 	RawFileClass file("RA2MD.INI");
 	INI_RA2MD.Put_Int("WOnline", "AllowPage", DAT_00B76234);
@@ -830,7 +830,7 @@ void FUN_0077DFD0(void)
 }
 
 // FUNCTION: GAMEMD 0x0077E110
-void FUN_0077E110(void)
+void Apply_WOL_Settings(void)
 {
 	if (g_pChat) {
 		g_pChat->SetLangFilter(DAT_00B779BC);
@@ -852,7 +852,7 @@ void FUN_0077E110(void)
 }
 
 // FUNCTION: GAMEMD 0x0077E1D0
-int __fastcall FUN_0077E1D0(WideWstring const & msg)
+int __fastcall Send_Chat_Message(WideWstring const & msg)
 {
 	static int sel_user_indexes[128];
 	HWND users = GetDlgItem(FUN_00775B10(), 0x53E);
@@ -886,7 +886,7 @@ int __fastcall FUN_0077E1D0(WideWstring const & msg)
 }
 
 // FUNCTION: GAMEMD 0x0077E300
-int __fastcall FUN_0077E300(WideWstring const & msg)
+int __fastcall Send_Chat_Action(WideWstring const & msg)
 {
 	static int sel_user_indexes[128];
 	HWND users = GetDlgItem(FUN_00775B10(), 0x53E);
@@ -928,7 +928,7 @@ extern int DAT_00B77E04;
 extern int DAT_00B77E08;
 
 // FUNCTION: GAMEMD 0x0077E780
-int FUN_0077E780(void)
+int GetINIHash(void)
 {
 	return DAT_00B77E00 ^ DAT_00B77E08 ^ DAT_00B77E04;
 }
@@ -950,7 +950,7 @@ bool FUN_005E9560(void);
 bool FUN_005E9580(void);
 
 // FUNCTION: GAMEMD 0x0077E7A0
-void __fastcall FUN_0077E7A0(char * out)
+void __fastcall Encode_Channel_ExInfo(char * out)
 {
 	int i = 0;
 	int house1_count = 0;
@@ -969,7 +969,7 @@ void __fastcall FUN_0077E7A0(char * out)
 	if (house0_count < DAT_00B76B14 / 2) {
 		i++;
 	}
-	sprintf(out, "%d,%d,%d,%d,%d,%s", FUN_00777B50(), FUN_0077E780(), FUN_005E94D0(), FUN_005E9580(), !FUN_005E9560(), Session.ScenarioFileName);
+	sprintf(out, "%d,%d,%d,%d,%d,%s", FUN_00777B50(), GetINIHash(), FUN_005E94D0(), FUN_005E9580(), !FUN_005E9560(), Session.ScenarioFileName);
 }
 
 // FUNCTION: GAMEMD 0x0077E820
@@ -1015,7 +1015,7 @@ void __fastcall FUN_0077E900(Wstring const & who, int status)
 		HWND w = FUN_00775940(0xC9);
 		FUN_005EDDE0(w, true);
 	}
-	int index = FUN_0077D240(name);
+	int index = Player_Name_To_Index(name);
 	if (index != -1) {
 		g_UserInfo[index].Accepted = status;
 		FUN_00783C80(0, false);
@@ -1098,7 +1098,7 @@ void __fastcall FUN_004E5B60(HWND dialog, int id);
 int __fastcall FUN_005E98F0(int kind);
 
 // FUNCTION: GAMEMD 0x0077ED00
-int __fastcall FUN_0077ED00(Wstring const & who, int country, int color, int start, int team)
+int __fastcall Assign_House_And_Color(Wstring const & who, int country, int color, int start, int team)
 {
 	int index = -1;
 	Wstring lower = who.toLower();
@@ -1183,7 +1183,7 @@ extern HANDLE DAT_00B73684[18];
 extern unsigned int DAT_00B77DC8;
 extern wchar_t DAT_00B77AD0[];
 extern char DAT_0084A584[];
-void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag);
+void __fastcall Show_Wait_Window(int id, WideWstring const & text, char flag);
 bool __fastcall FUN_007757E0(HWND window, int flag);
 
 static inline void Focus_Chat_Input(void)
@@ -1205,7 +1205,7 @@ static inline void Focus_Chat_Input(void)
 // FUNCTION: GAMEMD 0x0077F120
 bool FUN_0077F120(void)
 {
-	FUN_00792BE0(1, StringTable::LoadString("TXT_REQ_CHANLIST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x8FA), 0);
+	Show_Wait_Window(1, StringTable::LoadString("TXT_REQ_CHANLIST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x8FA), 0);
 	int timeout = 0;
 	DWORD index;
 	bool ok;
@@ -1217,7 +1217,7 @@ bool FUN_0077F120(void)
 				SetEvent(DAT_00B73684[0]);
 				return false;
 			}
-			FUN_0077F900();
+			WOL_Wait_Callback();
 		}
 		if (index == (DWORD)-1) {
 			Focus_Chat_Input();
@@ -1324,8 +1324,8 @@ extern int DAT_00B77E20;
 void __fastcall PumpGameopts(bool force, bool now);
 int FUN_00775B20(void);
 void Call_Back(void);
-bool FUN_00796710(void);
-bool FUN_00786270(void);
+bool Handle_Preview_Download(void);
+bool Get_WDT_State_Silent(void);
 
 int WS_Top_Window_ID(void);
 void Title_Screen_Restore(bool force);
@@ -1336,10 +1336,10 @@ extern int DAT_00B77E70;
 extern bool DAT_00B77E26;
 extern bool DAT_00B77E27;
 void __fastcall FUN_0079FC10(int state, int timeout, int result);
-void FUN_00794BA0(void);
+void Start_Game_Now(void);
 
 // FUNCTION: GAMEMD 0x0077F900
-bool FUN_0077F900(void)
+bool WOL_Wait_Callback(void)
 {
 	Title_Screen_Restore(false);
 	MSG msg;
@@ -1435,7 +1435,7 @@ bool FUN_0077F900(void)
 	}
 	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3 && time(0) > DAT_00B7646C) {
 		DAT_00B7646C = time(0) + 30;
-		FUN_00786270();
+		Get_WDT_State_Silent();
 	}
 	if (g_pChat && DAT_00B77DCC == 0) g_pChat->PumpMessages();
 	if (g_pNetUtil) g_pNetUtil->PumpMessages();
@@ -1446,7 +1446,7 @@ bool FUN_0077F900(void)
 		if (time(NULL) - DAT_00B77E6C > 10) {
 			char info[80];
 			memset(info, 0, sizeof(info));
-			FUN_0077E7A0(info);
+			Encode_Channel_ExInfo(info);
 			info[40] = 0;
 			g_pChat->SetChannelExInfo(info);
 			DAT_00B77E6C = time(NULL);
@@ -1473,8 +1473,8 @@ bool FUN_0077F900(void)
 			DAT_00B77E70 = time(NULL);
 		}
 	}
-	if (DAT_00B77E28 == 2 && DAT_00B77E27 && !DAT_00B77E26) FUN_00794BA0();
-	FUN_00796710();
+	if (DAT_00B77E28 == 2 && DAT_00B77E27 && !DAT_00B77E26) Start_Game_Now();
+	Handle_Preview_Download();
 	return false;
 }
 
@@ -2786,7 +2786,7 @@ Surface * __fastcall FUN_00783B80(RankedUser * user)
 }
 
 // FUNCTION: GAMEMD 0x00785360
-void FUN_00785360(void)
+void Display_Users(void)
 {
 	FUN_00783C80(0, false);
 }
@@ -3358,7 +3358,7 @@ static inline void Close_Logout_Wait(unsigned int event)
 namespace OwnerDraw {
 	BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam);
 }
-int __fastcall FUN_00788A30(bool flag);
+int __fastcall Join_Lobby(bool flag);
 bool FUN_0077CF40(void);
 void __fastcall FUN_007A0EA0(char const * name, int ping);
 #include "multiplayer.h"
@@ -3366,7 +3366,7 @@ void __fastcall FUN_007A0EA0(char const * name, int ping);
 static inline void Focus_Chat_Input_After(unsigned int event);
 
 // FUNCTION: GAMEMD 0x00785740
-void __fastcall FUN_00785740(User *user)
+void __fastcall Handle_User_Leave(User *user)
 {
 	stricmp(DAT_00B73E40.get(), (char *)user->name);
 	if (DAT_00B76B10.type != 0) {
@@ -3423,7 +3423,7 @@ void __fastcall FUN_00785740(User *user)
 						OwnerDraw::SetNeedsControlImage(main, 1);
 					}
 				} else {
-					FUN_00788A30(false);
+					Join_Lobby(false);
 					if (main) {
 						PostMessageA(main, 0x593, 0, 0);
 					}
@@ -3446,7 +3446,7 @@ void __fastcall FUN_00785740(User *user)
 						OwnerDraw::SetNeedsControlImage(main, 1);
 					}
 				} else {
-					FUN_00788A30(false);
+					Join_Lobby(false);
 					if (main) {
 						PostMessageA(main, 0x593, 0, 0);
 					}
@@ -3550,7 +3550,7 @@ void __fastcall FUN_00785740(User *user)
 }
 
 // FUNCTION: GAMEMD 0x00785EA0
-void FUN_00785EA0(void)
+void Logout_WOnline(void)
 {
 	DAT_00B77DC0 = 1;
 	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
@@ -3560,13 +3560,13 @@ void FUN_00785EA0(void)
 		for (int i = 0; i < 18; i++) {
 			ResetEvent(DAT_00B73684[i]);
 		}
-		FUN_0077F900();
+		WOL_Wait_Callback();
 		if (g_pChat->RequestLogout() == 0) {
-			FUN_00792BE0(0x20, StringTable::LoadString("TXT_WOL_LOGGING_OUT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2537), 0);
+			Show_Wait_Window(0x20, StringTable::LoadString("TXT_WOL_LOGGING_OUT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2537), 0);
 			for (int tries = 0; tries < 5; tries++) {
 				DWORD index;
 				while ((index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100)) == WAIT_TIMEOUT) {
-					FUN_0077F900();
+					WOL_Wait_Callback();
 				}
 				ResetEvent(DAT_00B73684[index]);
 				if (index == 0 || index == 9) {
@@ -3583,7 +3583,7 @@ extern char DAT_00B77E75;
 void FUN_005E8A20(void);
 
 // FUNCTION: GAMEMD 0x00786080
-void FUN_00786080(void)
+void Shutdown_Chat(void)
 {
 	if (MultiplayerMapPreview) {
 		delete MultiplayerMapPreview;
@@ -3623,7 +3623,7 @@ extern int DAT_00B76B0C;
 extern int DAT_00B77E50;
 
 // FUNCTION: GAMEMD 0x00786270
-bool FUN_00786270(void)
+bool Get_WDT_State_Silent(void)
 {
 	DWORD value = 0;
 	HKEY key;
@@ -3697,7 +3697,7 @@ class SimpleWonlineDialogControl : public OwnerDraw::SimpleDialogControl
 // FUNCTION: GAMEMD 0x0077D200
 bool SimpleWonlineDialogControl::F4(void)
 {
-	return FUN_0077F900();
+	return WOL_Wait_Callback();
 }
 
 static inline void Focus_Chat_Input_After(unsigned int event)
@@ -3717,7 +3717,7 @@ static inline void Focus_Chat_Input_After(unsigned int event)
 }
 
 int __fastcall Run_Dialog_Control(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
-BOOL CALLBACK FUN_00796B90(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK Select_WDT_Location_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 extern int DAT_00B77A90;
 extern char DAT_00B761A8[];
 #include "wolopt.h"
@@ -3738,7 +3738,7 @@ static inline Wstring Strip_Server_Prefix(Server * server)
 static inline int Pick_Locale(void)
 {
 	FUN_007F7624_Class dialog;
-	int result = Run_Dialog_Control(0xFE, FUN_00796B90, (OwnerDraw::DialogControl *)&dialog);
+	int result = Run_Dialog_Control(0xFE, Select_WDT_Location_Proc, (OwnerDraw::DialogControl *)&dialog);
 	if (result < 0) {
 		return 0;
 	}
@@ -3787,7 +3787,7 @@ static inline int Wait_For_Event(void)
 		if (timeout <= 0) {
 			return 0x12;
 		}
-		FUN_0077F900();
+		WOL_Wait_Callback();
 	}
 	ResetEvent(DAT_00B73684[wait]);
 	return wait;
@@ -3805,7 +3805,7 @@ bool __fastcall FUN_007864C0(Server * server)
 	}
 	{
 		WideWstring text(StringTable::LoadString("TXT_CONNECTING_SERVER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x25E6));
-		FUN_00792BE0(0x10, text, 0);
+		Show_Wait_Window(0x10, text, 0);
 	}
 	g_pChat->RequestConnection(server, 0x14, DAT_0084A238);
 	int tries = 0x14;
@@ -3991,7 +3991,7 @@ bool FUN_00786EF0(void)
 					sprintf(url, "http://apiregister.westwood.com/support/serialdup_%d.html", sku);
 					break;
 			}
-			FUN_0077DC90(url, 1);
+			ViewHTML(url, 1);
 		}
 	} else {
 		ODMessageBox(DAT_00B77AD0, 0, FUN_0077D710, 0);
@@ -4041,7 +4041,7 @@ static int Fetch_Server_List(void)
 {
 	{
 		WideWstring text(StringTable::LoadString("TXT_FETCHING_SERVLIST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5EEC));
-		FUN_00792BE0(0x10, text, false);
+		Show_Wait_Window(0x10, text, false);
 	}
 	int sku = 0x2300;
 	if (Session.WOLWelcomeChoice != 3) {
@@ -4129,7 +4129,7 @@ int Login_WOL(void)
 		} else {
 			Focus_Dialog_Item(window, 0x628);
 		}
-		while (!control.F2() && !FUN_0077F900() && !UI::Updated()) {
+		while (!control.F2() && !WOL_Wait_Callback() && !UI::Updated()) {
 			Title_Screen_Restore(false);
 		}
 		UI::EndDialog(window);
@@ -4137,7 +4137,7 @@ int Login_WOL(void)
 		if (control.F3() == 2) {
 			failed = true;
 		} else {
-			FUN_0077F900();
+			WOL_Wait_Callback();
 			DAT_00B77DC0 = false;
 			WOLOptionsClass saved;
 			rc_ptr<PlayerProfile> profile;
@@ -4200,7 +4200,7 @@ static inline void Set_Lobby_Number(Channel & chan)
 
 
 // FUNCTION: GAMEMD 0x00788180
-int __fastcall FUN_00788180(bool flag)
+int __fastcall Pick_Lobby(bool flag)
 {
 	int count = DAT_00B73E10.length();
 	int user_cap = 25;
@@ -4316,7 +4316,7 @@ BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 int __fastcall Run_Dialog_Control(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
-BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK WOL_Password_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 namespace Unsorted { extern int MuteSWLaunches; }
 extern int DAT_007EEF28;
 extern char DAT_00B77E30[];
@@ -4328,16 +4328,16 @@ extern int DAT_00B77E90;
 bool __fastcall FUN_0079BA60(Channel * chan, bool flag, bool extra);
 
 // FUNCTION: GAMEMD 0x00788710
-bool __fastcall FUN_00788710(int id, int flag)
+bool __fastcall Leave_Channel(int id, int flag)
 {
 	if (DAT_00B77DD0) {
 		FUN_004068E0("Leave_Channel, channel %s type %d\n", DAT_00B76B10.name, DAT_00B76B10.type);
 		g_pChat->RequestChannelLeave();
-		FUN_00792BE0(id, StringTable::LoadString("WOL:LeavingChannel", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x29D0), flag);
+		Show_Wait_Window(id, StringTable::LoadString("WOL:LeavingChannel", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x29D0), flag);
 		int tries = 0;
 		while (DAT_00B77DD0 && tries < 150) {
 			Sleep(100);
-			FUN_0077F900();
+			WOL_Wait_Callback();
 			tries++;
 		}
 		Focus_Chat_Input_After(0x40);
@@ -4352,21 +4352,21 @@ long __fastcall FUN_00788800(Channel * chan, Wstring & key, WideWstring text)
 	if (strcmp((char *)chan->name, (char *)DAT_00B76B10.name) == 0 || strcmp((char *)chan->name, (char *)DAT_00B73BE8.name) == 0) {
 		return 0;
 	}
-	if (!FUN_00788710(0x40, 1)) {
+	if (!Leave_Channel(0x40, 1)) {
 		return 1;
 	}
 	strcpy((char *)chan->key, key.text());
 	DAT_00B73BE8 = *chan;
-	FUN_00792BE0(2, text.text(), 0);
+	Show_Wait_Window(2, text.text(), 0);
 	FUN_004068E0("Requesting channel join %s\n", chan->name);
 	return g_pChat->RequestChannelJoin(chan);
 }
 
 
 // FUNCTION: GAMEMD 0x00788A30
-int __fastcall FUN_00788A30(bool flag)
+int __fastcall Join_Lobby(bool flag)
 {
-	int lobby = FUN_00788180(flag);
+	int lobby = Pick_Lobby(flag);
 	if (lobby != -1) {
 		Channel chan;
 		DAT_00B73E10.get(chan, lobby);
@@ -4397,8 +4397,8 @@ void FUN_0072C240(void);
 void FUN_0072C290(void);
 void FUN_0072C420(void);
 void FUN_0072C470(void);
-BOOL CALLBACK FUN_0078E230(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
-BOOL CALLBACK FUN_0078E950(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK WOL_Begin_Nick_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK WOL_New_Nick_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 extern int DAT_00B73A1C;
 extern int DAT_00B73AB8;
 extern int DAT_00B7782C;
@@ -4414,7 +4414,7 @@ static inline void Set_Item_Text(HWND dialog, int id, char const * text)
 }
 
 // FUNCTION: GAMEMD 0x00788B00
-void __fastcall FUN_00788B00(HWND win)
+void __fastcall NewLogin(HWND win)
 {
 	char nick[32];
 	char pass[32];
@@ -4444,13 +4444,13 @@ void __fastcall FUN_00788B00(HWND win)
 	memset(verify, 0, sizeof(verify));
 	memset(email, 0, sizeof(email));
 	memset(parent_email, 0, sizeof(parent_email));
-	FUN_00792BE0(0x80, StringTable::LoadString("WOL:NewAccountFetch", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2A4A), 0);
+	Show_Wait_Window(0x80, StringTable::LoadString("WOL:NewAccountFetch", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2A4A), 0);
 	FUN_004068E0("Newnick update check\n");
 	g_pChat->RequestServerList(DAT_0084A234, 0x10001, "TibSun", "TibPass99", 0x23);
 	do {
 		wait = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100);
 		while (wait == WAIT_TIMEOUT) {
-			FUN_0077F900();
+			WOL_Wait_Callback();
 			wait = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100);
 		}
 		ResetEvent(DAT_00B73684[wait]);
@@ -4471,7 +4471,7 @@ void __fastcall FUN_00788B00(HWND win)
 first_nick_retry:
 	FUN_0072C240();
 	FUN_0052FEC0(NULL, true);
-	dlg = WS_Create_Dialog(ProgramInstance, 0xE7, MainWindow, FUN_0078E230, FALSE);
+	dlg = WS_Create_Dialog(ProgramInstance, 0xE7, MainWindow, WOL_Begin_Nick_Dialog_Proc, FALSE);
 	UI::RegisterWindow(dlg, 0xE7);
 	SendDlgItemMessage(dlg, 0x62E, 0x14E, month - 1, 0);
 	if (day > 0) {
@@ -4509,7 +4509,7 @@ first_nick_retry:
 		ODMessageBox(StringTable::LoadString("TXT_CANT_CONNECT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2ABB), 0, FUN_0077D710, 0);
 		goto pick_dialog;
 	}
-	FUN_00792BE0(0x100, StringTable::LoadString("WOL:RequestingNickname", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2ABE), 1);
+	Show_Wait_Window(0x100, StringTable::LoadString("WOL:RequestingNickname", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2ABE), 1);
 	if (DAT_00B77E60 < 0) {
 		if (DAT_00B77DF4 == 0x80040100) {
 			ODMessageBox(StringTable::LoadString("TXT_REQUIRED_FIELD", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2AC2), 0, FUN_0077D710, 0);
@@ -4522,7 +4522,7 @@ first_nick_retry:
 		if (ODMessageBox(StringTable::LoadString("TXT_CONSENT_REQUIRED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2ACD), 4, FUN_0077D710, 0) == IDYES) {
 			char url[256];
 			sprintf(url, "http://apiregister.westwood.com/consent_form/index_%d.html", DAT_00B77E50);
-			FUN_0077DC90(url, 1);
+			ViewHTML(url, 1);
 		}
 		goto first_nick_retry;
 	}
@@ -4533,7 +4533,7 @@ pick_dialog:
 	} else {
 		dialog_id = (DAT_00B77E60 >= 18) + 0xF3;
 	}
-	dlg = WS_Create_Dialog(ProgramInstance, dialog_id, MainWindow, FUN_0078E950, FALSE);
+	dlg = WS_Create_Dialog(ProgramInstance, dialog_id, MainWindow, WOL_New_Nick_Dialog_Proc, FALSE);
 	UI::RegisterWindow(dlg, dialog_id);
 	if (DAT_00B77794.length() > 0) {
 		Set_Item_Text(dlg, 0x628, DAT_00B77794.get());
@@ -4585,7 +4585,7 @@ pick_dialog:
 	if (g_pNetUtil->RequestNewNick(nick, pass, email, parent_email, newsletter, shareinfo) != 0) {
 		goto cant_connect;
 	}
-	FUN_00792BE0(0x100, StringTable::LoadString("TXT_REQ_NICK", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2B4D), 1);
+	Show_Wait_Window(0x100, StringTable::LoadString("TXT_REQ_NICK", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2B4D), 1);
 	if (DAT_00B77DF0 >= 0) {
 		goto done;
 	}
@@ -4799,7 +4799,7 @@ bool __fastcall FUN_00789960(Channel * chan, bool extra)
 	if (chan->flags & 0x100) {
 		FUN_0052FEC0(NULL, true);
 		WonlineStringDialogControl dialog;
-		if (Run_Dialog_Control(0xE1, FUN_0078E030, &dialog) == IDCANCEL) {
+		if (Run_Dialog_Control(0xE1, WOL_Password_Dialog_Proc, &dialog) == IDCANCEL) {
 			return false;
 		}
 		name = dialog.Text;
@@ -5020,7 +5020,7 @@ extern wchar_t DAT_0084B94C[];
 extern char DAT_0082BFAC[];
 
 // FUNCTION: GAMEMD 0x0078D120
-BOOL CALLBACK FUN_0078D120(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK WOL_Find_Page_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	User user;
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
@@ -5220,7 +5220,7 @@ BOOL CALLBACK FUN_0078D120(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 // FUNCTION: GAMEMD 0x0078DA30
-BOOL CALLBACK FUN_0078DA30(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK WOL_Download_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
 		SetWindowLong(window, 8, ((int *)lparam)[1]);
@@ -5287,7 +5287,7 @@ class WonlineGameControl : public SimpleWonlineDialogControl
 };
 
 // FUNCTION: GAMEMD 0x0078DB70
-BOOL CALLBACK FUN_0078DB70(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK WOL_New_Game_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
 		SetWindowLong(window, 8, ((int *)lparam)[1]);
@@ -5411,7 +5411,7 @@ BOOL CALLBACK FUN_0078DB70(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 // FUNCTION: GAMEMD 0x0078E030
-BOOL CALLBACK FUN_0078E030(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK WOL_Password_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
 		SetWindowLong(window, 8, ((int *)lparam)[1]);
@@ -5483,7 +5483,7 @@ extern int DAT_00B7782C;
 extern int DAT_00B76228;
 
 // FUNCTION: GAMEMD 0x0078E230
-BOOL CALLBACK FUN_0078E230(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK WOL_Begin_Nick_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	switch (message) {
 		case WM_DRAWITEM:
@@ -5563,7 +5563,7 @@ BOOL CALLBACK FUN_0078E230(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					return FALSE;
 
 				case 0x576:
-					FUN_0077DC90("http://privacypolicy.westwood.com", 0);
+					ViewHTML("http://privacypolicy.westwood.com", 0);
 					return FALSE;
 			}
 			return FALSE;
@@ -5602,7 +5602,7 @@ BOOL CALLBACK FUN_0078E230(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 // FUNCTION: GAMEMD 0x0078E950
-BOOL CALLBACK FUN_0078E950(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK WOL_New_Nick_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	switch (message) {
 		case WM_DRAWITEM:
@@ -5704,7 +5704,7 @@ void FUN_0072B930(void);
 void __fastcall FUN_006B6230(void * unused);
 
 // FUNCTION: GAMEMD 0x0078EBC0
-BOOL CALLBACK FUN_0078EBC0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK WOL_Options_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	bool play;
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
@@ -5908,7 +5908,7 @@ void FUN_0078F000(void)
 		g_pChat->RequestRawMessage(message.get());
 		char info[80];
 		memset(info, 0, sizeof(info));
-		FUN_0077E7A0(info);
+		Encode_Channel_ExInfo(info);
 		info[40] = 0;
 		g_pChat->SetChannelExInfo(info);
 		g_pChat->RequestSetPlayerCount(1, total + extra);
@@ -5999,10 +5999,10 @@ void __fastcall FUN_00791AA0(HWND window)
 HWND WS_Create_Dialog(HINSTANCE instance, int id, HWND parent, DLGPROC proc, BOOL force_show);
 void FUN_0072CBA0(void);
 namespace UI { void __fastcall RegisterWindow(HWND window, int id); }
-BOOL CALLBACK FUN_00792CF0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK WOL_Waiting_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x00792BE0
-void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag)
+void __fastcall Show_Wait_Window(int id, WideWstring const & text, char flag)
 {
 	HWND dialog = FUN_00775940(0xC4);
 	if (dialog) {
@@ -6015,7 +6015,7 @@ void __fastcall FUN_00792BE0(int id, WideWstring const & text, char flag)
 		HWND top = FUN_00775B10();
 		HWND input = GetDlgItem(top, 0x540);
 		FUN_0072CBA0();
-		dialog = WS_Create_Dialog(ProgramInstance, 0xC4, MainWindow, FUN_00792CF0, FALSE);
+		dialog = WS_Create_Dialog(ProgramInstance, 0xC4, MainWindow, WOL_Waiting_Dialog_Proc, FALSE);
 		UI::RegisterWindow(dialog, 0xC4);
 		HWND list = GetDlgItem(dialog, 0x5B2);
 		SendMessage(list, 0x4B2, 0, (LPARAM)text.text());
@@ -6033,7 +6033,7 @@ extern int DAT_0084A248;
 void __fastcall FUN_00608440(HWND window);
 
 // FUNCTION: GAMEMD 0x00792CF0
-BOOL CALLBACK FUN_00792CF0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK WOL_Waiting_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	switch (message) {
 		case WM_INITDIALOG:
@@ -6090,7 +6090,7 @@ BOOL CALLBACK FUN_00792CF0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 }
 
 // FUNCTION: GAMEMD 0x00792E90
-void __fastcall FUN_00792E90(wchar_t const * text)
+void __fastcall Set_Wait_Dialog_Text(wchar_t const * text)
 {
 	HWND dialog = FUN_00775940(0xC4);
 	if (dialog) {
@@ -6124,7 +6124,7 @@ NodeNameType * __fastcall FUN_005E8BF0(wchar_t const * name);
 User * FUN_007931A0(void);
 
 // FUNCTION: GAMEMD 0x00792F10
-void __fastcall FUN_00792F10(User * unused)
+void __fastcall User_List_To_Session_Players(User * unused)
 {
 	Session.NumPlayers = 1;
 	for (int i = 0; i < DAT_00B77900.length(); i++) {
@@ -6160,7 +6160,7 @@ void __fastcall FUN_00792F10(User * unused)
 }
 
 // FUNCTION: GAMEMD 0x007930A0
-bool FUN_007930A0(void)
+bool Is_Channel_Owner(void)
 {
 	User * host = FUN_007931A0();
 	if (!host) {
@@ -6382,7 +6382,7 @@ void FUN_00793490(void)
 }
 
 // FUNCTION: GAMEMD 0x00793710
-unsigned short __fastcall FUN_00793710(int send_port, int mangled_port, int unused, int port_spread)
+unsigned short __fastcall Get_Port_Blitz_Port_Number(int send_port, int mangled_port, int unused, int port_spread)
 {
 	int port = send_port + mangled_port;
 	if (port_spread == 1) {
@@ -6546,7 +6546,7 @@ void __fastcall FUN_00793CD0(int slot)
 
 static inline bool Is_Local_Host(void)
 {
-	return FUN_007930A0();
+	return Is_Channel_Owner();
 }
 
 #include <snmp.h>
@@ -6572,7 +6572,7 @@ extern bool DAT_00B77E26;
 extern bool DAT_00B77E27;
 extern int Frame;
 bool FUN_007947B0(void);
-int __fastcall FUN_00795CD0(bool go);
+int __fastcall Negotiate_Scenario_Transfer(bool go);
 void __fastcall FUN_0069BD60(SessionClass * session);
 unsigned char __fastcall FUN_00793D20(int partner, int tag, int retries);
 void FUN_00793BB0(void);
@@ -6630,7 +6630,7 @@ bool FUN_007947B0(void)
 			int best = 0;
 			do {
 				Sleep(5);
-				FUN_0077F900();
+				WOL_Wait_Callback();
 				FUN_00793BB0();
 				int res1 = Session.ConnectionResults[i * 2];
 				int res2 = Session.ConnectionResults[i * 2 + 1];
@@ -6665,7 +6665,7 @@ bool FUN_007947B0(void)
 }
 
 // FUNCTION: GAMEMD 0x00794BA0
-void FUN_00794BA0(void)
+void Start_Game_Now(void)
 {
 	FUN_004068E0("Start_Game_Now\n");
 	DAT_00B77E26 = true;
@@ -6698,7 +6698,7 @@ void FUN_00794BA0(void)
 		}
 	}
 
-	int result = FUN_00795CD0(verified);
+	int result = Negotiate_Scenario_Transfer(verified);
 	if (result) {
 		FUN_004068E0("Negotiate_Scenario_Transfer failed\n");
 		if (result == 2) {
@@ -6788,7 +6788,7 @@ void FUN_00794BA0(void)
 		Session.MaxAhead += 20;
 	}
 	Session.PrecalcMaxAhead = 0;
-	if (!FUN_007930A0()) {
+	if (!Is_Channel_Owner()) {
 		Session.PrecalcDesiredFrameRate = 0;
 	}
 
@@ -6813,7 +6813,7 @@ void FUN_00794BA0(void)
 		int ticks = 60 * worst / 1000;
 		ticks += 120 * ticks / 100;
 		Ipx.Set_Timing(ticks, (unsigned int)-1, ticks * 8);
-		if (FUN_007930A0()) {
+		if (Is_Channel_Owner()) {
 			unsigned ahead;
 			switch (Session.LatencyFudge) {
 				case 0:
@@ -7142,7 +7142,7 @@ bool __fastcall FUN_00694760(char * name, int type, bool a, bool b);
 void FUN_0058BC20(void);
 
 // FUNCTION: GAMEMD 0x00795CD0
-int __fastcall FUN_00795CD0(bool go)
+int __fastcall Negotiate_Scenario_Transfer(bool go)
 {
 	GlobalPacketType packet;
 	int responses[MAX_PLAYERS];
@@ -7363,14 +7363,14 @@ done:
 }
 
 // FUNCTION: GAMEMD 0x00796710
-bool FUN_00796710(void)
+bool Handle_Preview_Download(void)
 {
 	GlobalPacketType packet;
 	int packet_len;
 	unsigned short product_id;
 	IPXAddressClass sender_address;
 
-	if (DAT_00B76B10.type != 0 && DAT_00B77900.length() >= 2 && !FUN_007930A0() && !DAT_00B77E28 && Ipx.Global_Num_Receive()) {
+	if (DAT_00B76B10.type != 0 && DAT_00B77900.length() >= 2 && !Is_Channel_Owner() && !DAT_00B77E28 && Ipx.Global_Num_Receive()) {
 		Call_Back();
 		packet_len = sizeof(packet);
 		if (Ipx.Global_Channel_Op(0, (int)&packet, (int)&packet_len, (int)&sender_address, (int)&product_id, 0) && packet.Command == NET_PREVIEW_MODE) {
@@ -7381,7 +7381,7 @@ bool FUN_00796710(void)
 			User user;
 			DAT_00B77900.get(user, 0);
 			user.next = NULL;
-			FUN_00792F10(&user);
+			User_List_To_Session_Players(&user);
 			if (Ipx.Get_Global_Message(&packet, &packet_len, &sender_address, &product_id) && packet.Command == NET_PREVIEW_MODE && sender_address.FUN_0053EF30(Session.HostAddress) && product_id == IPXGlobalConnClass::COMMAND_AND_CONQUER4) {
 				User * host = FUN_007931A0();
 				if (host && stricmp(packet.Name, (char *)host->name) == 0) {
@@ -7405,7 +7405,7 @@ static inline int Current_Channel_Type(void)
 }
 
 // FUNCTION: GAMEMD 0x00796960
-void FUN_00796960(void)
+void Poke_The_Host(void)
 {
 	if (Session.Type != GAME_INTERNET) {
 		IPXAddressClass address;
@@ -7413,7 +7413,7 @@ void FUN_00796960(void)
 			User user;
 			DAT_00B77900.get(user, 0);
 			user.next = NULL;
-			FUN_00792F10(&user);
+			User_List_To_Session_Players(&user);
 			Call_Back();
 			Ipx.Set_Timing(50, -1, 5000);
 			FUN_004068E0("Poke_The_Host - Host address is %s\n", Session.HostAddress.As_String(NULL));
@@ -7435,13 +7435,13 @@ void FUN_00796B20(void)
 {
 }
 
-BOOL CALLBACK FUN_00796B90(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK Select_WDT_Location_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x00796B30
-int FUN_00796B30(void)
+int Select_WDT_Location(void)
 {
 	SimpleWonlineDialogControl dialog;
-	int result = Run_Dialog_Control(0xFE, FUN_00796B90, &dialog);
+	int result = Run_Dialog_Control(0xFE, Select_WDT_Location_Proc, &dialog);
 	if (result < 0) {
 		return 0;
 	}
@@ -7451,7 +7451,7 @@ int FUN_00796B30(void)
 void __fastcall FUN_006223C0(HWND window);
 
 // FUNCTION: GAMEMD 0x00796B90
-BOOL CALLBACK FUN_00796B90(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK Select_WDT_Location_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
 		do SetWindowLong(window, 8, ((int *)lparam)[1]); while (0);
@@ -7785,7 +7785,7 @@ void FUN_007975E0(void)
 {
 	{
 		WideWstring text(StringTable::LoadString("TXT_FETCHING_SERVLIST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5EEC));
-		FUN_00792BE0(0x10, text, 0);
+		Show_Wait_Window(0x10, text, 0);
 	}
 	int sku = 0x2300;
 	if (Session.WOLWelcomeChoice != 3) {
@@ -7816,7 +7816,7 @@ int __fastcall FUN_00797640(int sku)
 	servers = false;
 	while (true) {
 		while ((index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 50)) == WAIT_TIMEOUT) {
-			FUN_0077F900();
+			WOL_Wait_Callback();
 		}
 		ResetEvent(DAT_00B73684[index]);
 		if (index == 0) {
@@ -7894,7 +7894,7 @@ static inline void Close_Wait_Dialog(void)
 }
 
 // FUNCTION: GAMEMD 0x00797800
-bool FUN_00797800(void)
+bool Request_WDT_Cycle(void)
 {
 	if (!DAT_00B76A2C) {
 		ODMessageBox(StringTable::LoadString("TXT_WDT_NET_ERR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5F73), 0, FUN_0077D710, 0);
@@ -7912,7 +7912,7 @@ bool FUN_00797800(void)
 	}
 	{
 		WideWstring text(StringTable::LoadString("TXT_FETCHING_WDT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x5F87));
-		FUN_00792BE0(0x10, text, 0);
+		Show_Wait_Window(0x10, text, 0);
 	}
 	DWORD index;
 	while (true) {
@@ -7923,7 +7923,7 @@ bool FUN_00797800(void)
 			if (timeout <= 0) {
 				goto failed;
 			}
-			FUN_0077F900();
+			WOL_Wait_Callback();
 			index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100);
 		}
 		ResetEvent(DAT_00B73684[index]);
@@ -7955,7 +7955,7 @@ failed:
 	while (true) {
 		index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100);
 		while (index == WAIT_TIMEOUT) {
-			FUN_0077F900();
+			WOL_Wait_Callback();
 			index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 100);
 		}
 		ResetEvent(DAT_00B73684[index]);
@@ -7979,7 +7979,7 @@ failed:
 extern char DAT_00B77E10;
 
 // FUNCTION: GAMEMD 0x00797C20
-void FUN_00797C20(void)
+void Init_WDT_Sounds(void)
 {
 	if (DAT_00B77E10) {
 		return;
@@ -8035,7 +8035,7 @@ void FUN_00797C20(void)
 // SYNTHETIC: GAMEMD 0x00798120 SYMBOL
 // _$E366
 // FUNCTION: GAMEMD 0x00798140
-void FUN_00798140(void)
+void Deinit_WDT_Sounds(void)
 {
 	DAT_00B73BD8.clear();
 	DAT_00B736F8.clear();
@@ -8049,7 +8049,7 @@ void FUN_00798140(void)
 }
 
 // FUNCTION: GAMEMD 0x007982A0
-void FUN_007982A0(ArrayList<Wstring> list)
+void Play_WDT_Sound(ArrayList<Wstring> list)
 {
 }
 
@@ -8063,7 +8063,7 @@ int __fastcall FUN_007982D0(int seconds, int count)
 		if (remaining <= 0) {
 			return 18;
 		}
-		FUN_0077F900();
+		WOL_Wait_Callback();
 	}
 	ResetEvent(DAT_00B73684[index]);
 	return index;
@@ -8090,7 +8090,7 @@ void FUN_00798360(void)
 		LONG status = RegQueryValueEx(key, "Community", NULL, &type, (LPBYTE)value, &size);
 		RegCloseKey(key);
 		if (status == ERROR_SUCCESS) {
-			FUN_0077DC90(value, 0);
+			ViewHTML(value, 0);
 		}
 	}
 }
@@ -8145,7 +8145,7 @@ BOOL CALLBACK FUN_007983E0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 							LONG status = RegQueryValueEx(key, "Community", NULL, &type, (LPBYTE)value, &size);
 							RegCloseKey(key);
 							if (status == ERROR_SUCCESS) {
-								FUN_0077DC90(value, 0);
+								ViewHTML(value, 0);
 								return FALSE;
 							}
 						}
@@ -8296,7 +8296,7 @@ BOOL CALLBACK FUN_007988C0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 							LONG status = RegQueryValueEx(key, "Community", NULL, &type, (LPBYTE)value, &size);
 							RegCloseKey(key);
 							if (status == ERROR_SUCCESS) {
-								FUN_0077DC90(value, 0);
+								ViewHTML(value, 0);
 								return FALSE;
 							}
 						}
@@ -8756,7 +8756,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					return FALSE;
 
 				case 0x6EA:
-					FUN_00788B00(window);
+					NewLogin(window);
 					return FALSE;
 
 				case 0x6EC:
@@ -9155,7 +9155,7 @@ bool __fastcall FUN_0079BA60(Channel * chan, bool flag, bool extra)
 	Wstring file;
 	FUN_0077E820(text, &first, &second, &third, &fourth, &fifth, &file);
 	int buildnum = FUN_00777B50();
-	int crc = FUN_0077E780();
+	int crc = GetINIHash();
 	if (buildnum == first && crc == second) {
 		if (!extra) {
 			int users = chan->currentUsers - fourth + third;
@@ -9215,7 +9215,7 @@ void FUN_0079BE70(void)
 	UI::RegisterWindow(dialog, 0x11E);
 	SendMessage(dialog, 0x4A9, 0, 1);
 	ShowWindow(dialog, SW_SHOWNORMAL);
-	FUN_007759E0(dialog, FUN_0077F900, 0, 1, 1);
+	FUN_007759E0(dialog, WOL_Wait_Callback, 0, 1, 1);
 }
 
 // FUNCTION: GAMEMD 0x0079BED0
@@ -9879,7 +9879,7 @@ int FUN_0079FC40(void)
 		}
 		DWORD index;
 		while ((index = WaitForMultipleObjects(18, DAT_00B73684, FALSE, 20)) == WAIT_TIMEOUT) {
-			FUN_0077F900();
+			WOL_Wait_Callback();
 		}
 		ResetEvent(DAT_00B73684[index]);
 		if (index == 0 || index == 6) {
@@ -9892,7 +9892,7 @@ int FUN_0079FC40(void)
 		}
 		if (index == 5) {
 			if (DAT_00B73A20 == 0) {
-				FUN_00788710(0x40, 0);
+				Leave_Channel(0x40, 0);
 				switch (DAT_00B77E14) {
 					case 1:
 						ODMessageBox(StringTable::LoadString("WOL:NoMatchingAgentFound", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x6E0E), 0, FUN_0077D710, 0);
@@ -9938,7 +9938,7 @@ done:
 	if (DAT_00B73A20 != 11) {
 		FUN_0079FC10(1, -1, 0);
 	}
-	FUN_00788710(0x40, 1);
+	Leave_Channel(0x40, 1);
 	if (MultiplayerMapPreview) {
 		delete MultiplayerMapPreview;
 		MultiplayerMapPreview = NULL;
@@ -10215,7 +10215,7 @@ void FUN_007A1060(void)
 					int index;
 					{
 						Wstring key(name.get());
-						index = FUN_0077D240(key);
+						index = Player_Name_To_Index(key);
 					}
 					if (index != -1) {
 						DAT_00B77900.get(user, index);
@@ -10270,7 +10270,7 @@ void FUN_007A1330(void)
 				int index;
 				{
 					Wstring key(name.get());
-					index = FUN_0077D240(key);
+					index = Player_Name_To_Index(key);
 				}
 				if (index == -1) {
 					FUN_004068E0("%s not found in info\n", name.get());
@@ -10389,7 +10389,7 @@ void FUN_007A19E0(void)
 	int index;
 	{
 		Wstring key(DAT_00B76AC4.get());
-		index = FUN_0077D240(key);
+		index = Player_Name_To_Index(key);
 	}
 	if (index == -1) {
 		FUN_005E2700(0xC0FFFF, StringTable::LoadString("WOL:MatchOpponentPingUnknown", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x7073));
@@ -11148,7 +11148,7 @@ long __stdcall FUN_007A41C0(void * sink, long result, Server * servers)
 	DAT_00B77E20 = (DAT_00B77E1C > 1) ? Sim_Random_Pick(0, DAT_00B77E1C - 1) : 0;
 	FUN_004068E0("CurrentManglerServer = %d\n", DAT_00B77E20);
 
-	FUN_00792E90(StringTable::LoadString("TXT_DETECTING_FIREWALL_SETTINGS", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1552));
+	Set_Wait_Dialog_Text(StringTable::LoadString("TXT_DETECTING_FIREWALL_SETTINGS", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1552));
 	FirewallHelper.Save_Detected();
 	SetEvent(DAT_00B73684[1]);
 	return 0;
@@ -11200,7 +11200,7 @@ long __stdcall FUN_007A4C10(void * sink, long result, Update * updates)
 		swprintf(status, StringTable::LoadString("TXT_DOWNLOADING_X_OF_Y", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1596), i, count);
 		WideWstring text(status);
 		FUN_007F7624_Class control;
-		HWND dialog = UI::BeginDialog(0xD3, FUN_0078DA30, 0);
+		HWND dialog = UI::BeginDialog(0xD3, WOL_Download_Dialog_Proc, 0);
 		HWND title = GetDlgItem(dialog, 0x5C7);
 		SendMessage(title, 0x4B2, 0, (LPARAM)text.text());
 		if (FUN_007759E0(dialog, (bool (*)(void))FUN_0077D710, 0, 1, 1) == IDCANCEL) {
@@ -11260,7 +11260,7 @@ long __stdcall FUN_007A4EC0(void * sink, long result, unsigned long id, Squad * 
 long __stdcall FUN_007A5220(void * sink, long result, User * user)
 {
 	if (result >= 0) {
-		FUN_00785740(user);
+		Handle_User_Leave(user);
 	}
 	return 0;
 }
@@ -11431,7 +11431,7 @@ long __stdcall FUN_007A5690(void * sink, long result, Channel * channel)
 	if (g_pChat && channel->type != 0) {
 		char info[80];
 		memset(info, 0, sizeof(info));
-		FUN_0077E7A0(info);
+		Encode_Channel_ExInfo(info);
 		info[40] = 0;
 		g_pChat->SetChannelExInfo(info);
 	}
@@ -11448,7 +11448,7 @@ long __stdcall FUN_007A70E0(void * sink, long result, void * unused, User * user
 		FUN_004068E0(DAT_0084AD84);
 		return 0;
 	}
-	FUN_00785740(user);
+	Handle_User_Leave(user);
 	return 0;
 }
 
@@ -11567,7 +11567,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 
 		if (DAT_00B76B10.type != 0 && !DAT_00B77E4C) {
 			Wstring nick((char *)users->name);
-			int index = FUN_0077D240(nick);
+			int index = Player_Name_To_Index(nick);
 			memset(&g_UserInfo[index], 0, sizeof(g_UserInfo[index]));
 			strcpy(g_UserInfo[index].Name, (char *)users->name);
 			if (stricmp((char *)users->name, DAT_00B73E40.get()) != 0) {
@@ -11597,7 +11597,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 			User user;
 			for (int i = 0; i < DAT_00B77900.length(); i++) {
 				if (DAT_00B77900.get(user, i) && stricmp((char *)user.name, DAT_00B73E40.get()) == 0) {
-					FUN_00785740(&user);
+					Handle_User_Leave(&user);
 					break;
 				}
 			}
@@ -11605,7 +11605,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 
 		if (DAT_00B76B10.type != 0) {
 			if (!DAT_00B77E4C && DAT_00B77900.length() == 1 && stricmp((char *)users->name, DAT_00B73E40.get()) == 0) {
-				FUN_00785740(users);
+				Handle_User_Leave(users);
 			}
 
 			if (DAT_00B76B10.type != 0) {
@@ -11732,7 +11732,7 @@ long __stdcall FUN_007A7B60(void *sink, long result, Channel *channel, User *use
 			DAT_00B77DD4 = channel->reserved & 0xFF;
 		DAT_00B77E26 = false;
 		DAT_00B77E27 = true;
-		FUN_00792F10(users);
+		User_List_To_Session_Players(users);
 		DAT_00B77E28 = 2;
 		FUN_004068E0("Starting a %d player game.\n", Session.NumPlayers);
 		User *host = FUN_007931A0();
@@ -11816,7 +11816,7 @@ update_dialog:
 		DAT_00B77900.getHead(host);
 		g_pChat->RequestPrivateGameOptions(&host, options_str);
 		FUN_004068E0(DAT_0084AE08);
-		FUN_00796960();
+		Poke_The_Host();
 		return S_OK;
 	}
 	return S_OK;
@@ -11875,7 +11875,7 @@ long __stdcall FUN_007A8260(void * sink, long result, User * user, char const * 
 	int existing_user;
 	{
 		Wstring name((char *)user->name);
-		existing_user = FUN_0077D240(name);
+		existing_user = Player_Name_To_Index(name);
 	}
 	if (existing_user == -1) return S_OK;
 	switch (options[0]) {
@@ -12044,11 +12044,11 @@ request_done:
 			User temp;
 			User * host = FUN_007931A0();
 			if (host && !stricmp((char *)host->name, DAT_00B73E40.text()) && !DAT_00B77E28 && DAT_00B76B10.type && MultiplayerMapPreview && MultiplayerMapPreview->Get_Preview_Surface() && DAT_008316D4) {
-				int found = FUN_0077D240((char *)user->name);
+				int found = Player_Name_To_Index((char *)user->name);
 				if (found != -1) {
 					DAT_00B77900.get(temp, found);
 					temp.next = NULL;
-					FUN_00792F10(&temp);
+					User_List_To_Session_Players(&temp);
 					int old = DAT_00B77DCC;
 					DAT_00B77DCC = 1;
 					FUN_005E7EB0(MultiplayerMapPreview);
@@ -12853,7 +12853,7 @@ long __stdcall FUN_007AB670(void * sink, long result, Channel * channel, User * 
 	} else if (!FUN_005E9510()) {
 		FUN_005E2700(DAT_007EEF28, StringTable::LoadString("TXT_USER_KICKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x22EC), FUN_00735120((char *)kicked->name), FUN_00735120((char *)channel->name), FUN_00735120((char *)kicker->name));
 	}
-	FUN_00785740(kicked);
+	Handle_User_Leave(kicked);
 	FUN_00783C80(0, false);
 	FUN_00781480();
 	return 0;
@@ -13613,7 +13613,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 				PMessagePrintf(
 					-1, StringTable::LoadString("TXT_NOT_IN_CHAN", 0, "D:\\ra2mdpost\\wonline.cpp", 0x41fe));
 			else if (text.length() > 0) {
-				if (FUN_0077E300(text))
+				if (Send_Chat_Action(text))
 					color = DAT_007EEF34;
 				wchar_t *message_text = text.get();
 				PMessagePrintf(color, DAT_0084B224, DAT_00B73E40.c_str(), message_text);
@@ -13691,7 +13691,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 						operator delete(copy);
 					} else if (!FUN_0078A470(text.get())) {
 						int color = DAT_007EEF44;
-						if (FUN_0077E1D0(text) == 1)
+						if (Send_Chat_Message(text) == 1)
 							color = DAT_007EEF30;
 						wchar_t *message_text = text.get();
 						PMessagePrintf(color, DAT_0084B94C, DAT_00B73E40.c_str(), message_text);
@@ -13921,7 +13921,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 			return 0;
 		}
 		case 0x5c2:
-			FUN_0077D840();
+			DoFindPage();
 			return 0;
 		case 0x6a3:
 		case 0x6a4:
@@ -14245,7 +14245,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 }
 
 // FUNCTION: GAMEMD 0x00791B10
-BOOL CALLBACK FUN_00791B10(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK WOL_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int result = UI::StandardWndProc(window, message, wparam, lparam);
 	if (result) return result;
@@ -14299,7 +14299,7 @@ BOOL CALLBACK FUN_00791B10(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 														   "D:\\ra2mdpost\\wonline.cpp", 17692));
 			} else {
 				if (text.length() > 0) {
-					if (FUN_0077E300(text)) color = DAT_007EEF34;
+					if (Send_Chat_Action(text)) color = DAT_007EEF34;
 					wchar_t *message_text = text.get();
 					PMessagePrintf(color, DAT_0084B224, DAT_00B73E40.c_str(), message_text);
 				} else {
@@ -14396,7 +14396,7 @@ BOOL CALLBACK FUN_00791B10(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 						}
 					} else if (!FUN_0078A470(text.get())) {
 						int color = DAT_007EEF44;
-						if (FUN_0077E1D0(text) == 1) color = DAT_007EEF30;
+						if (Send_Chat_Message(text) == 1) color = DAT_007EEF30;
 						wchar_t *message_text = text.get();
 						PMessagePrintf(color, DAT_0084B94C, DAT_00B73E40.c_str(), message_text);
 					}
@@ -14412,7 +14412,7 @@ BOOL CALLBACK FUN_00791B10(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 			}
 			return FALSE;
 		case 0x5C2:
-			FUN_0077D840();
+			DoFindPage();
 			return FALSE;
 		case 0x59F: {
 			char options[80];
@@ -14791,7 +14791,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 			if (!Is_Internal_Session()) {
 				FUN_0052FEC0(NULL, true);
 				FUN_0072CF40();
-				HWND dlg = WS_Create_Dialog(ProgramInstance, 0xC9, MainWindow, FUN_00791B10, FALSE);
+				HWND dlg = WS_Create_Dialog(ProgramInstance, 0xC9, MainWindow, WOL_Guest_Dialog_Proc, FALSE);
 				UI::RegisterWindow(dlg, 0xC9);
 				HWND main = FUN_00775940(0x113);
 				if (main) {
@@ -14901,7 +14901,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 	if (channel->type != 0) {
 		{
 			Wstring name((char *)user->name);
-			userinfoindex = FUN_0077D240(name);
+			userinfoindex = Player_Name_To_Index(name);
 		}
 		memmove(&g_UserInfo[userinfoindex + 1], g_UserInfo + userinfoindex,
 				sizeof(ChannelUserInfo) * (15 - userinfoindex));
