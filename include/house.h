@@ -289,9 +289,9 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		unsigned char unknown_53D6;
 		unsigned char unknown_53D7;
 		unsigned char DefenseType_53D8;
-		unsigned char unknown_53D9;
-		unsigned char unknown_53DA;
-		unsigned char unknown_53DB;
+		unsigned char : 8;
+		unsigned char : 8;
+		unsigned char : 8;
 
 		AbstractClass * FlagLocation;
 		Cell FlagHome;
@@ -756,7 +756,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		IConnectionPoint *PowerEvents;
 
 		int field_10E20;
-		unsigned unknown_16084;
+		unsigned : 32;
 
 		double field_10E28;
 
