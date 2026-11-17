@@ -33,22 +33,7 @@ extern const GUID DAT_007F80B0;
 extern const double DAT_007E3D90;
 extern double __cdecl FUN_004CAC40(double);
 
-class Texture3D {
-	public:
-		Texture3D(int width, int height, int flag);
-		int FUN_004A33A0(unsigned short * pixels);
-		void FUN_004A3370(void);
-	private:
-		char Data[0x78];
-};
-
-class Texture3DCache {
-	public:
-		Texture3DCache(void);
-		void FUN_004A3640(void);
-	private:
-		char Data[0x18004];
-};
+#include "texture3d.h"
 
 extern Texture3D * DAT_008A0E04;
 extern Texture3D * DAT_008A0E08;
@@ -354,7 +339,6 @@ int DSurface::ReleaseDC(HDC hdc)
 
 	return(1);
 }
-
 
 // FUNCTION: GAMEMD 0x004BAD60
 int DSurface::Bytes_Per_Pixel(void) const

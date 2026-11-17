@@ -79,21 +79,8 @@ SideType FUN_006A46D0(char const * name);
 
 namespace FPSCounter { extern unsigned CurrentFrameRate; }
 namespace Detail { unsigned GetMinFrameRate(void); }
-struct Triangle3D {
-	void Set_Color(int a, int b, int c);
-	void Set_Vertex(int index, float x, float y, float z, float u, float v);
-	D3DTLVERTEX Vertex[3];
-};
-class Texture3DCache {
-public:
-	Texture3DCache(void);
-	void FUN_004A3640(void);
-	void FUN_004A3650(void);
-	HRESULT Flush(LPDIRECTDRAWSURFACE target);
-	int Add(Triangle3D const & triangle);
-	Triangle3D List[1024];
-	int Count;
-};
+#include "texture3d.h"
+
 extern Texture3DCache * DAT_008A0E10;
 
 // SYNTHETIC: GAMEMD 0x00421CB0 SYMBOL

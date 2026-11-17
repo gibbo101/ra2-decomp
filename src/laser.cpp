@@ -250,17 +250,7 @@ namespace FPSCounter { extern unsigned CurrentFrameRate; }
 namespace Detail { unsigned GetMinFrameRate(void); }
 namespace Game { extern bool bDirect3DIsUseable; }
 
-struct Triangle3D {
-	void Set_Color(int a, int b, int c);
-	void Set_Vertex(int index, float x, float y, float z, float u, float v);
-
-	D3DTLVERTEX Vertex[3];
-};
-
-class Texture3DCache {
-	public:
-		int Add(Triangle3D const & triangle);
-};
+#include "texture3d.h"
 
 extern Texture3DCache * DAT_008A0E10;
 

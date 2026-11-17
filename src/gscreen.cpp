@@ -58,23 +58,7 @@
 
 GadgetClass * GScreenClass::Buttons = NULL;
 
-class Texture3D {
-	public:
-		int FUN_004A33A0(unsigned short * pixels);
-};
-
-struct Triangle3D {
-	void Set_Color(int a, int b, int c);
-	void Set_Vertex(int index, float x, float y, float z, float u, float v);
-
-	D3DTLVERTEX Vertex[3];
-};
-
-class Texture3DCache {
-	public:
-		HRESULT Flush(LPDIRECTDRAWSURFACE target);
-		int Add(Triangle3D const & triangle);
-};
+#include "texture3d.h"
 
 extern bool DAT_008A0DF0;
 extern LPDIRECT3DDEVICE2 DAT_008A0DF8;
@@ -82,7 +66,6 @@ extern Texture3D * DAT_008A0E08;
 extern Texture3D * DAT_008A0E0C;
 extern Texture3DCache * DAT_008A0E10;
 extern bool DAT_00A9FA94;
-
 
 // SYNTHETIC: GAMEMD 0x004F4200 SYMBOL
 // _$E38
@@ -216,7 +199,6 @@ bool GScreenClass::Remove_A_Button(GadgetClass & gadget)
 namespace Unsorted { extern bool ArmageddonMode; }
 extern bool FUN_0053BAE0(void);
 extern void FUN_0055F1E0(bool);
-
 
 // FUNCTION: GAMEMD 0x004F4480
 void GScreenClass::Render(void)
