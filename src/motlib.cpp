@@ -80,17 +80,15 @@ extern DebugPage * DAT_00ABF180;
 extern DebugPage * DAT_00ABF184;
 extern void __fastcall FUN_005BCC90(DebugPage * page);
 extern void __fastcall FUN_00752480(int index, int a, int b);
-struct AudioStream {
-	void FUN_00407A90(void);
-	void FUN_00407F40(void);
-};
-struct AudioSource {
-	AudioStream * FUN_00407860(void);
-};
-extern AudioSource * __stdcall AudioGetDevice(int a, int b);
-extern int __fastcall FUN_00407B60(AudioStream * stream, char const * name, int flag);
+struct AudioStreamer;
+struct AudioDevice;
+extern AudioDevice * AudioGetDevice(void);
+extern AudioStreamer * __fastcall AudioStreamerCreate(AudioDevice * dev, unsigned __int64 buffering);
+extern void __fastcall AudioStreamerDestroy(AudioStreamer * as);
+extern int __fastcall AudioStreamerPlayWAV(AudioStreamer * as, const char * filename, int flag);
+extern void __fastcall AudioStreamerStop(AudioStreamer * as);
 extern void Audio_Stop_All(void);
-extern AudioStream * DAT_00ABF114[5];
+extern AudioStreamer * DAT_00ABF114[5];
 
 // SYNTHETIC: GAMEMD 0x005BC140 SYMBOL
 // _$E35
@@ -337,23 +335,23 @@ BOOL CALLBACK FUN_005BC6E0(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			return FALSE;
 		case '[':
 			if (DAT_00ABF228 < 5) {
-				AudioStream * stream = AudioGetDevice(5000, 0)->FUN_00407860();
+				AudioStreamer * stream = AudioStreamerCreate(AudioGetDevice(), 5000);
 				DAT_00ABF114[DAT_00ABF228] = stream;
 				if (stream != NULL) {
-					if (FUN_00407B60(stream, "intro.wav", 1) != 0) {
+					if (AudioStreamerPlayWAV(stream, "intro.wav", 1) != 0) {
 						DAT_00ABF228++;
 						return FALSE;
 					}
-					DAT_00ABF114[DAT_00ABF228]->FUN_00407A90();
+					AudioStreamerDestroy(DAT_00ABF114[DAT_00ABF228]);
 				}
 			}
 			return FALSE;
 		case ']':
 			if (DAT_00ABF228 > 0) {
-				AudioStream * last = DAT_00ABF114[DAT_00ABF228 - 1];
+				AudioStreamer * last = DAT_00ABF114[DAT_00ABF228 - 1];
 				DAT_00ABF228--;
-				last->FUN_00407F40();
-				DAT_00ABF114[DAT_00ABF228]->FUN_00407A90();
+				AudioStreamerStop(last);
+				AudioStreamerDestroy(DAT_00ABF114[DAT_00ABF228]);
 			}
 			return FALSE;
 		case 'N':
