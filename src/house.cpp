@@ -6660,7 +6660,6 @@ void HouseClass::Update_Production_Mode(RTTIType type)
 	}
 }
 
-bool __fastcall FUN_0053A100(void);
 
 static inline void Fire_At_Preferred_Target(HouseClass * house, SuperClass * super)
 {
@@ -6812,7 +6811,7 @@ void HouseClass::Fire_ParaDrop(SuperClass * super)
 // FUNCTION: GAMEMD 0x00509E00
 void HouseClass::Fire_LightningStorm(SuperClass * super)
 {
-	if (!FUN_0053A100() && Enemy != HOUSE_NONE) {
+	if (!IonStormClass::Is_Ion_Storm_Active() && Enemy != HOUSE_NONE) {
 		Cell target = CELL_NONE;
 		if (PreferredTargetCell != CELL_NONE) {
 			target = PreferredTargetCell;

@@ -1115,8 +1115,6 @@ extern double Arguments[19];
 extern bool Naval[19];
 }
 extern int DAT_00B07784;
-HRESULT __fastcall FUN_00539890(IStream * stream);
-HRESULT __fastcall FUN_00539AE0(IStream * stream);
 
 // FUNCTION: GAMEMD 0x0067F7E0
 int Save_Misc_Values(IStream * stream)
@@ -1158,7 +1156,7 @@ int Save_Misc_Values(IStream * stream)
 		return(res);
 	}
 
-	FUN_00539890(stream);
+	IonStormClass::Save(stream);
 
 	count = LogicTags.Count();
 	res = stream->Write(&count, sizeof(count), NULL);
@@ -1266,7 +1264,7 @@ int Load_Misc_Values(IStream * stream)
 		return(res);
 	}
 
-	FUN_00539AE0(stream);
+	IonStormClass::Load(stream);
 
 	res = stream->Read(&count, sizeof(count), NULL);
 	if (FAILED(res)) {

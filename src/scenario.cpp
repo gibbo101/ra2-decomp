@@ -608,7 +608,6 @@ void Toggle_Display_Mode(bool ingame)
 void __fastcall FUN_0071DCA0(TheaterType theater);
 void __fastcall FUN_00660C50(void);
 void __fastcall FUN_00734210(void);
-void __fastcall FUN_0053AB50(void);
 void __fastcall FUN_0074D450(TheaterType theater);
 void __fastcall FUN_006B5490(TheaterType theater);
 
@@ -929,7 +928,7 @@ void Post_Load_Game(void)
 
 	Search.Update_Map_Dimensions(Map.PlayRect);
 
-	FUN_0053AB50();
+	IonStormClass::Apply_Secondary_Effect();
 	AnimClass::Post_Load_Game();
 	Map.Flag_To_Redraw(GS_REDRAW_ALL);
 	InvalidateRect(MainWindow, NULL, FALSE);
@@ -939,10 +938,8 @@ void Post_Load_Game(void)
 }
 
 void __fastcall FUN_00750FA0(void);
-void __fastcall FUN_00539760(void);
 void __fastcall FUN_006370B0(void);
 void __fastcall FUN_0052CB90(void);
-void __fastcall FUN_0053A090(void);
 
 // FUNCTION: GAMEMD 0x006851F0
 void Clear_Scenario(void)
@@ -959,7 +956,7 @@ void Clear_Scenario(void)
 
 	Scen->Reset();
 
-	FUN_0053A090();
+	IonStormClass::Ion_Storm_End();
 
 	for (index = AbstractTypes.Count() - 1; index >= 0; index--) {
 		AbstractTypeClass * abstype = AbstractTypes[index];
@@ -1013,7 +1010,7 @@ void Clear_Scenario(void)
 	Scen->OverParMessage[0] = '\0';
 
 	LightSourceClass::Reset();
-	FUN_00539760();
+	IonStormClass::Init();
 	EMPulseClass::Reset();
 	VeinholeMonsterClass::Reset();
 	TiberiumClass::Deinit_Tiberium_Spread_System();

@@ -73,11 +73,9 @@ void __fastcall FUN_0070F120(FootClass * unit, TalkType bubble);
 void __fastcall Hold_Scenario(int seconds);
 
 void __fastcall FUN_0053AD00(int, int, int, int);
-bool __fastcall FUN_0053A100(void);
 void __fastcall FUN_00588AC0(MapClass * map);
 extern int DAT_00842AFC[];
 bool __fastcall FUN_0065D8E0(TeamTypeClass * team, int waypoint);
-void __fastcall FUN_00539EB0(int duration, int deferment, Cell target, HouseClass * house);
 bool __fastcall FUN_0065EC30(TeamTypeClass * team, int waypoint);
 BulletClass * __fastcall FUN_0046B050(BulletTypeClass const * type, AbstractClass * target, TechnoClass * owner, int damage, WarheadTypeClass const * warhead, int speed, bool bright);
 HouseClass * __fastcall FUN_00726910(TriggerClass * trig);
@@ -1498,7 +1496,7 @@ bool TActionClass::TAction_ION_STORM_START(HouseClass * , ObjectClass * , Trigge
 	if (IonStormClass::Is_Ion_Storm_Active()) {
 		return(false);
 	}
-	FUN_00539EB0(Data.Value, Rule->LightningDeferment, DAT_00B0E680, NULL);
+	IonStormClass::Ion_Storm_Begin(Data.Value, Rule->LightningDeferment, DAT_00B0E680, NULL);
 	return(true);
 }
 
@@ -1798,7 +1796,7 @@ bool TActionClass::TAction_SET_TINT_BLUE(HouseClass * , ObjectClass * , TriggerC
 bool TActionClass::TAction_SET_AMBIENT_LIGHT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->AmbientLight = Data.Value;
-	if (!FUN_0053A100()) {
+	if (!IonStormClass::Is_Ion_Storm_Active()) {
 		Scen->DesiredAmbientLight = Scen->AmbientLight;
 	}
 	return(true);
@@ -1973,8 +1971,8 @@ bool TActionClass::TAction_LIGHTNING_STORM(HouseClass * house, ObjectClass * , T
 		coord.Z += BRIDGE_LEPTON_HEIGHT;
 	}
 	Cell cell = coord.As_Cell();
-	if (!FUN_0053A100()) {
-		FUN_00539EB0(Rule->LightningStormDuration, Rule->LightningDeferment, cell, house);
+	if (!IonStormClass::Is_Ion_Storm_Active()) {
+		IonStormClass::Ion_Storm_Begin(Rule->LightningStormDuration, Rule->LightningDeferment, cell, house);
 		return(true);
 	}
 	return(false);

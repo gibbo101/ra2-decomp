@@ -116,7 +116,6 @@ bool FUN_0053A110(void);
 bool FUN_0053A120(void);
 bool FUN_0053BAD0(void);
 bool FUN_0053B400(void);
-void FUN_0053A6C0(void);
 
 // FUNCTION: GAMEMD 0x0055AFB0
 void LogicClass::AI(void)
@@ -221,7 +220,7 @@ void LogicClass::AI(void)
 
 	SpotLightClass::Update_All();
 	LaserDrawClass::Update_All();
-	FUN_0053A6C0();
+	IonStormClass::AI();
 
 	for (index = RadSites.Count() - 1; index >= 0; index--) {
 		RadSites[index]->AI();
