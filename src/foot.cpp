@@ -809,11 +809,6 @@ void FootClass::Stun(void)
 	BASECLASS::Stun();
 }
 
-inline Cell Adjacent_Cell_By_Value(Cell cell, FacingType dir)
-{
-	return(cell + AdjacentCell[(int)dir & 0x07]);
-}
-
 inline Cell Adjacent_Cell_From_Offset(Cell const & cell, FacingType dir)
 {
 	Cell const & offset = AdjacentCell[(int)dir & 0x07];
@@ -1094,7 +1089,7 @@ AbstractClass * FootClass::Approach_Target(bool force)
 								Coord savecoord = trycoord;
 								Cell savecell = trycell;
 								for (FacingType face = FACING_N; face < FACING_COUNT; face++) {
-									trycell = Adjacent_Cell_By_Value(trycell, face);
+									trycell = ::Adjacent_Cell(trycell, face);
 									trycoord = Coord(trycell);
 
 									maxrange = Flat_Distance((Point2D)trycoord, (Point2D)TarCom->Center_Coord());
@@ -1309,7 +1304,7 @@ bool FootClass::Unlimbo(Coord const & coord, Dir256 dir)
 
 		Cell cell = Get_Cell();
 		for (int face = FACING_FIRST; face < FACING_COUNT; face++) {
-			Cell c = Adjacent_Cell_By_Value(cell, FacingType(face));
+			Cell c = ::Adjacent_Cell(cell, FacingType(face));
 			CellClass * cptr = &Map[c];
 			cptr->AdjacentObjectCount++;
 		}
@@ -2600,7 +2595,7 @@ bool FootClass::Limbo(void)
 	if (!IsInLimbo && Techno_Type_Class() != NULL) {
 		Cell cell = LastAdjacencyCell;
 		for (int face = FACING_FIRST; face < FACING_COUNT; face++) {
-			Cell c = Adjacent_Cell_By_Value(cell, FacingType(face));
+			Cell c = ::Adjacent_Cell(cell, FacingType(face));
 			CellClass * cptr = &Map[c];
 			cptr->AdjacentObjectCount--;
 		}

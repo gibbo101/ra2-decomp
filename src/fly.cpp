@@ -690,11 +690,6 @@ bool FlyLocomotionClass::Process_Take_Off(void)
 	return(true);
 }
 
-static inline Cell Adjacent_Cell_By_Value(Cell const & cell, FacingType dir)
-{
-	return(cell + AdjacentCell[(int)dir & 0x07]);
-}
-
 // FUNCTION: GAMEMD 0x004CE840
 bool FlyLocomotionClass::Process_Landing(void)
 {
@@ -790,20 +785,20 @@ bool FlyLocomotionClass::Process_Landing(void)
 
 			if (LinkedTo->LastAdjacencyCell != Cell(0, 0)) {
 				for (int fa = FACING_FIRST; fa < FACING_COUNT; fa++) {
-					Cell adjacent = Adjacent_Cell_By_Value(LinkedTo->LastAdjacencyCell, FacingType(fa));
+					Cell adjacent = ::Adjacent_Cell(LinkedTo->LastAdjacencyCell, FacingType(fa));
 					CellClass * cptr = &Map[adjacent];
 					cptr->AdjacentObjectCount--;
 				}
 				LinkedTo->LastAdjacencyCell = LinkedTo->Get_Cell();
 				for (int fb = FACING_FIRST; fb < FACING_COUNT; fb++) {
-					Cell adjacent = Adjacent_Cell_By_Value(LinkedTo->LastAdjacencyCell, FacingType(fb));
+					Cell adjacent = ::Adjacent_Cell(LinkedTo->LastAdjacencyCell, FacingType(fb));
 					CellClass * cptr = &Map[adjacent];
 					cptr->AdjacentObjectCount++;
 				}
 			} else {
 				LinkedTo->LastAdjacencyCell = LinkedTo->Get_Cell();
 				for (int fc = FACING_FIRST; fc < FACING_COUNT; fc++) {
-					Cell adjacent = Adjacent_Cell_By_Value(LinkedTo->LastAdjacencyCell, FacingType(fc));
+					Cell adjacent = ::Adjacent_Cell(LinkedTo->LastAdjacencyCell, FacingType(fc));
 					CellClass * cptr = &Map[adjacent];
 					cptr->AdjacentObjectCount++;
 				}

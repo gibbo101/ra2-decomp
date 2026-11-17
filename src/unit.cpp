@@ -519,11 +519,6 @@ bool UnitClass::Deploy_To_Fire(void) const
 	return(false);
 }
 
-inline Cell Adjacent_Cell_By_Value(Cell cell, FacingType dir)
-{
-	return(cell + AdjacentCell[(int)dir & 0x07]);
-}
-
 // FUNCTION: GAMEMD 0x00736DF0
 void UnitClass::Firing_AI(void)
 {
@@ -642,7 +637,7 @@ void UnitClass::Visceroid_AI(void)
 			for (int i = 0; i < FACING_COUNT; i++) {
 				facing = FacingType(unsigned(facing + FACING_45) % FACING_COUNT);
 				FacingType f2 = facing;
-				Cell adjacent = Adjacent_Cell_By_Value(cell, f2);
+				Cell adjacent = ::Adjacent_Cell(cell, f2);
 				CellClass * cellptr = &Map[adjacent];
 				ObjectClass * occupier = cellptr->Cell_Occupier();
 				if (occupier != NULL && occupier->Fetch_RTTI() == RTTI_UNIT && ((UnitClass *)occupier)->Class->SmallVisceroid) {
@@ -664,7 +659,7 @@ void UnitClass::Visceroid_AI(void)
 				dir = Random_Pick(FACING_FIRST, FacingType(FACING_COUNT - 1));
 				unknown_int_6D4 = dir;
 			}
-			Cell adjacent = Adjacent_Cell_By_Value(cell, dir);
+			Cell adjacent = ::Adjacent_Cell(cell, dir);
 			CellClass * cellptr = &Map[adjacent];
 			if (Can_Enter_Cell(cellptr, dir, Get_Cell_Height(), &Map[cell]) == MOVE_OK) {
 				Assign_Destination(cellptr);
@@ -4774,7 +4769,7 @@ void UnitClass::UpdateDisguise(void)
 		Cell cell = Get_Cell();
 		bool bridge = Get_Cell_Ptr()->Is_Tile_Bridge();
 		for (int face = FACING_FIRST; face < FACING_COUNT; face++) {
-			CellClass * adjacent = &Map[Adjacent_Cell_By_Value(cell, FacingType(face))];
+			CellClass * adjacent = &Map[::Adjacent_Cell(cell, FacingType(face))];
 			InfantryClass * infantry = adjacent->Cell_Infantry(bridge);
 			if (infantry != NULL && !House->Is_Ally(infantry)) {
 				InfantryBlinkTimer = Rule->InfantryBlinkDisguiseTime;
