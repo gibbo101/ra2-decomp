@@ -4775,7 +4775,7 @@ void BuildingClass::Read_INI(CCINIClass & ini)
 						b->Turn_Off();
 					}
 
-					b->unknown_bool_41D = false;
+					b->IsALemon = false;
 
 					if (b->Class->NeedsEngineer && !b->HasEngineer) {
 						b->DisableStuff();

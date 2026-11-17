@@ -2430,7 +2430,7 @@ void DisplayClass::Active_Click(ObjectClass * object, Cell cell, ActionType acti
 		selected->Set_Waypoint_Path(waypoint_path, waypoint_id);
 		if (CurrentObject[index] && CurrentObject[index]->Is_Foot()) {
 			selected = CurrentObject[index];
-			static_cast<TechnoClass *>(selected)->IsPatrolling = false;
+			static_cast<TechnoClass *>(selected)->IsOnPatrol = false;
 		}
 	}
 	if (object) {

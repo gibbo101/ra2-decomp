@@ -242,7 +242,7 @@ class TechnoClass : public RadioClass
 
 		bool IsSinking;
 		bool WasSinkingAlready;
-		bool unknown_bool_3CF;
+		bool IsNeedingRescue;
 
 		bool IsUseless;
 
@@ -267,9 +267,9 @@ class TechnoClass : public RadioClass
 		bool IsDiscoveredByPlayer;
 
 		bool IsDiscoveredByComputer;
-		bool unknown_bool_41D;
-		unsigned char unknown_41E;
-		bool unknown_bool_41F;
+		bool IsALemon;
+		unsigned char UnusedCooldown;
+		bool Unused1;
 
 		char SightIncrease;
 
@@ -284,13 +284,13 @@ class TechnoClass : public RadioClass
 		bool IsBeingManipulated;
 		TechnoClass * BeingManipulatedBy;
 		HouseClass * ChronoWarpedByHouse;
-		bool IsPatrolling;
+		bool IsOnPatrol;
 		bool IsMouseHovering;
 		bool ShouldBeReselectOnUnlimbo;
 		TeamClass * OldTeam;
 		bool CountedAsOwnedSpecial;
 		bool Absorbed;
-		bool unknown_bool_43A;
+		bool IsOnWaypointPatrol;
 		int unknown_43C;
 
 		mutable DynamicVectorClass<int> CurrentTargetThreatValues;

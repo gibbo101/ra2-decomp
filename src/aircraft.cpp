@@ -1175,7 +1175,7 @@ int AircraftClass::Do_MISSION_PATROL(void)
 		LAND,
 	};
 
-	IsPatrolling = true;
+	IsOnPatrol = true;
 
 	switch (Status) {
 		case VALIDATE_LZ:

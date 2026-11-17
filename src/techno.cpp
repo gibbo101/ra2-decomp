@@ -255,7 +255,7 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	CountedAsOwned(false),
 	IsSinking(false),
 	WasSinkingAlready(false),
-	unknown_bool_3CF(false),
+	IsNeedingRescue(false),
 	IsUseless(false),
 	IsTickedOff(false),
 	IsCloakable(false),
@@ -269,9 +269,9 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	IsOwnedByPlayer(false),
 	IsDiscoveredByPlayer(false),
 	IsDiscoveredByComputer(false),
-	unknown_bool_41D(false),
-	unknown_41E(0),
-	unknown_bool_41F(false),
+	IsALemon(false),
+	UnusedCooldown(0),
+	Unused1(false),
 	SightIncrease(0),
 	IsTeamRecruitable(true),
 	IsAutocreateRecruitable(true),
@@ -282,13 +282,13 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	IsBeingManipulated(false),
 	BeingManipulatedBy(NULL),
 	ChronoWarpedByHouse(NULL),
-	IsPatrolling(false),
+	IsOnPatrol(false),
 	IsMouseHovering(false),
 	ShouldBeReselectOnUnlimbo(false),
 	OldTeam(NULL),
 	CountedAsOwnedSpecial(false),
 	Absorbed(false),
-	unknown_bool_43A(false),
+	IsOnWaypointPatrol(false),
 	unknown_43C(0),
 	CurrentTargetThreatValues(0, 0),
 	CurrentTargets(0, 0),
@@ -2037,8 +2037,8 @@ void TechnoClass::AI(void)
 		CurrentTurretNumber = n;
 	}
 	Door.AI();
-	if (unknown_41E) {
-		--unknown_41E;
+	if (UnusedCooldown) {
+		--UnusedCooldown;
 	}
 	if (TarCom && ShouldLoseTargetNow && FUN_00709500()) {
 		Assign_Target(NULL);
@@ -3993,7 +3993,7 @@ ResultType TechnoClass::Take_Damage(int & damage, int distance, WarheadTypeClass
 			if (Techno_Type_Class()->DamageSound != -1) {
 				VocClass::PlayIndexAtPos(Techno_Type_Class()->DamageSound, PositionCoord, 0);
 			}
-			if ((Techno_Type_Class()->IsToProtect || unknown_bool_3CF) && !House->FUN_0050B730()) {
+			if ((Techno_Type_Class()->IsToProtect || IsNeedingRescue) && !House->FUN_0050B730()) {
 				if (source != NULL) {
 					Base_Is_Attacked(source);
 				}
@@ -4737,8 +4737,8 @@ ActionType TechnoClass::What_Action(Cell const & cell, bool check_fog, bool disa
 overlay_done:
 
 	bool renovator = Is_Renovator();
-	if (House->Is_Player_Control() && ((ctrldown && altdown) || unknown_bool_43A) && Can_Player_Move() && (Can_Player_Fire() || renovator)) {
-		if (PlayerPtr->Waypoint_At(cell) != NULL || unknown_bool_43A) {
+	if (House->Is_Player_Control() && ((ctrldown && altdown) || IsOnWaypointPatrol) && Can_Player_Move() && (Can_Player_Fire() || renovator)) {
+		if (PlayerPtr->Waypoint_At(cell) != NULL || IsOnWaypointPatrol) {
 			return(ACTION_PATROL_WAYPOINT);
 		}
 		return(ACTION_GUARD_AREA);
@@ -7038,7 +7038,7 @@ void TechnoClass::Compute_CRC(CRCEngine & crc) const
 	crc(RockingSidewaysPerFrame);
 	crc(RockingForwardsPerFrame);
 	crc(IsSinking);
-	crc(unknown_bool_3CF);
+	crc(IsNeedingRescue);
 	crc(IsUseless);
 	crc(IsTickedOff);
 	crc(IsCloakable);
@@ -7052,10 +7052,10 @@ void TechnoClass::Compute_CRC(CRCEngine & crc) const
 		crc(IsDiscoveredByPlayer);
 		crc(IsDiscoveredByComputer);
 	}
-	crc(unknown_bool_41D);
+	crc(IsALemon);
 	crc((int)EMPLockRemaining);
-	crc((int)unknown_41E);
-	crc((int)unknown_bool_41F);
+	crc((int)UnusedCooldown);
+	crc((int)Unused1);
 	crc(SightIncrease);
 	int count = CurrentTargets.Count();
 	crc(count);
