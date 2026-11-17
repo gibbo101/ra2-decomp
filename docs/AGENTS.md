@@ -436,7 +436,12 @@ Each entry: what the diff showed, then the source change that fixed it.
   is `include/geometry.h`'s per-file constants: include it where the exe's `_$E` numbers
   put it (usually right after `always.h`; after `wdtnet.h` in wdtconflict and wdtstate),
   before any `extern` of the same names, and mark them; never write `Init_` or
-  `ShortPair`/`IntTriple` stand-ins.
+  `ShortPair`/`IntTriple` stand-ins. Include it only where the exe's module has the run:
+  elsewhere it compiles 13 initialisers the exe lacks.
+- globals.h's later `extern` redeclarations of geometry.h's constants make VC6 emit two
+  empty `$E` initialisers per file that the exe lacks. They are accepted residue: putting
+  globals.h first makes the constants public in every object, which the link rejects, and
+  dropping its externs breaks every header that uses them as default arguments.
 - TibSun's `dynamic_cast<ObjectClass *>` is `AbstractFlags & 2` in YR.
 - An atexit stub with no `$S` guard byte destroys a plain global, not a static member
   (`Kamikaze KamikazeInstance;`, not `Kamikaze::Instance`).
