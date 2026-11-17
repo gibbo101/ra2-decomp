@@ -58,92 +58,40 @@
 #include "special.hh"
 
 #include <math.h>
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0055C9E0 SYMBOL
 // _$E2
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007ED3A0;
-extern const double DAT_007ED3A8;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x0055CA00 SYMBOL
 // _$E107
-double DAT_00ABCD80 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0055CA30 SYMBOL
 // _$E110
-double DAT_00ABCDF0 = DAT_00ABCD80 / DAT_007ED3A0;
-
 // SYNTHETIC: GAMEMD 0x0055CA50 SYMBOL
 // _$E113
-double DAT_00ABCDD0 = DAT_007E1718 / DAT_00ABCDF0;
-
 // SYNTHETIC: GAMEMD 0x0055CA70 SYMBOL
 // _$E116
-double DAT_00ABCDC8 = DAT_007E1720 * DAT_007ED3A8;
-
 // SYNTHETIC: GAMEMD 0x0055CA90 SYMBOL
 // _$E119
-double DAT_00ABCD98 = DAT_007E1728 * DAT_007ED3A8;
-
 // SYNTHETIC: GAMEMD 0x0055CAB0 SYMBOL
 // _$E122
-double DAT_00ABCD60 = DAT_007E1730 * DAT_007ED3A8;
-
 // SYNTHETIC: GAMEMD 0x0055CAD0 SYMBOL
 // _$E125
-int DAT_00ABCDF8 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABCD60 - DAT_00ABCD98) * DAT_00ABCD80));
-
 // SYNTHETIC: GAMEMD 0x0055CB10 SYMBOL
 // _$E128
-double DAT_00ABCDA0 = FUN_004CADE0(DAT_00ABCDF8 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0055CB40 SYMBOL
 // _$E131
-double DAT_00ABCDC0 = FUN_004CADE0((DAT_00ABCDF8 * 2) / DAT_00ABCD80);
-
 // SYNTHETIC: GAMEMD 0x0055CB70 SYMBOL
 // _$E134
-int DAT_00ABCDEC = (int)(DAT_00ABCDF8 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0055CBA0 SYMBOL
 // _$E137
-ShortPair DAT_00ABCD78;
-
 // SYNTHETIC: GAMEMD 0x0055CBB0 SYMBOL
 // _$E140
-IntTriple DAT_00ABCDB0;
 
-extern int DAT_00ABCDE0, DAT_00ABCDE4, DAT_00ABCDE8;
 extern bool DAT_00ABCD58;
 
-// FUNCTION: GAMEMD 0x0055CBD0
-void FUN_0055CBD0(void)
-{
-	DAT_00ABCDE8 = 0;
-	DAT_00ABCDE0 = 128;
-	DAT_00ABCDE4 = 128;
-}
+// SYNTHETIC: GAMEMD 0x0055CBD0 SYMBOL
+// _$E143
 
 // FUNCTION: GAMEMD 0x0055CBF0
 bool FUN_0055CBF0(void)
@@ -798,7 +746,7 @@ void Sync_Delay(void)
 }
 
 // SYNTHETIC: GAMEMD 0x0055E410 SYMBOL
-// _$E145
+// _$E148
 
 extern unsigned DAT_008373A0;
 

@@ -27,81 +27,35 @@
 #include "stringtable.h"
 
 #include <math.h>
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x005ADB00 SYMBOL
 // _$E10
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EDB38;
-extern const double DAT_007EDB40;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x005ADB20 SYMBOL
 // _$E16
-double DAT_00ABED78 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x005ADB50 SYMBOL
 // _$E19
-double DAT_00ABEDC8 = DAT_00ABED78 / DAT_007EDB38;
-
 // SYNTHETIC: GAMEMD 0x005ADB70 SYMBOL
 // _$E22
-double DAT_00ABEDB0 = DAT_007E1718 / DAT_00ABEDC8;
-
 // SYNTHETIC: GAMEMD 0x005ADB90 SYMBOL
 // _$E25
-double DAT_00ABEDA8 = DAT_007E1720 * DAT_007EDB40;
-
 // SYNTHETIC: GAMEMD 0x005ADBB0 SYMBOL
 // _$E28
-double DAT_00ABED80 = DAT_007E1728 * DAT_007EDB40;
-
 // SYNTHETIC: GAMEMD 0x005ADBD0 SYMBOL
 // _$E31
-double DAT_00ABED58 = DAT_007E1730 * DAT_007EDB40;
-
 // SYNTHETIC: GAMEMD 0x005ADBF0 SYMBOL
 // _$E34
-int DAT_00ABEDD0 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABED58 - DAT_00ABED80) * DAT_00ABED78));
-
 // SYNTHETIC: GAMEMD 0x005ADC30 SYMBOL
 // _$E37
-double DAT_00ABED88 = FUN_004CADE0(DAT_00ABEDD0 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x005ADC60 SYMBOL
 // _$E40
-double DAT_00ABEDA0 = FUN_004CADE0((DAT_00ABEDD0 * 2) / DAT_00ABED78);
-
 // SYNTHETIC: GAMEMD 0x005ADC90 SYMBOL
 // _$E43
-int DAT_00ABEDC4 = (int)(DAT_00ABEDD0 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x005ADCC0 SYMBOL
 // _$E46
-ShortPair DAT_00ABED70;
-
 // SYNTHETIC: GAMEMD 0x005ADCD0 SYMBOL
 // _$E49
-IntTriple DAT_00ABED90;
 
 class MapSelect : public MSEngine {
 	public:
@@ -142,16 +96,8 @@ class MapSelect : public MSEngine {
 
 void __cdecl FUN_004068E0(char const * format, ...);
 
-// FUNCTION: GAMEMD 0x005ADCF0
-void FUN_005ADCF0(void)
-{
-	extern int DAT_00ABEDC0;
-	extern int DAT_00ABEDB8;
-	extern int DAT_00ABEDBC;
-	DAT_00ABEDC0 = 0;
-	DAT_00ABEDB8 = 0x80;
-	DAT_00ABEDBC = 0x80;
-}
+// SYNTHETIC: GAMEMD 0x005ADCF0 SYMBOL
+// _$E52
 
 // FUNCTION: GAMEMD 0x005ADD10
 const char * Map_Selection(ScenarioClass * scen)

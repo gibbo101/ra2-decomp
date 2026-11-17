@@ -38,6 +38,7 @@
 #include "stringtable.h"
 
 #include <math.h>
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x005B47A0 SYMBOL
 // _$E9
@@ -46,93 +47,37 @@ namespace OwnerDraw {
 char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
 }
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EDF58;
-extern const double DAT_007EDF60;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x005B47C0 SYMBOL
 // _$E44
-double DAT_00ABF030 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x005B47F0 SYMBOL
 // _$E47
-double DAT_00ABF080 = DAT_00ABF030 / DAT_007EDF58;
-
 // SYNTHETIC: GAMEMD 0x005B4810 SYMBOL
 // _$E50
-double DAT_00ABF068 = DAT_007E1718 / DAT_00ABF080;
-
 // SYNTHETIC: GAMEMD 0x005B4830 SYMBOL
 // _$E53
-double DAT_00ABF060 = DAT_007E1720 * DAT_007EDF60;
-
 // SYNTHETIC: GAMEMD 0x005B4850 SYMBOL
 // _$E56
-double DAT_00ABF038 = DAT_007E1728 * DAT_007EDF60;
-
 // SYNTHETIC: GAMEMD 0x005B4870 SYMBOL
 // _$E59
-double DAT_00ABF010 = DAT_007E1730 * DAT_007EDF60;
-
 // SYNTHETIC: GAMEMD 0x005B4890 SYMBOL
 // _$E62
-int DAT_00ABF088 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABF010 - DAT_00ABF038) * DAT_00ABF030));
-
 // SYNTHETIC: GAMEMD 0x005B48D0 SYMBOL
 // _$E65
-double DAT_00ABF040 = FUN_004CADE0(DAT_00ABF088 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x005B4900 SYMBOL
 // _$E68
-double DAT_00ABF058 = FUN_004CADE0((DAT_00ABF088 * 2) / DAT_00ABF030);
-
 // SYNTHETIC: GAMEMD 0x005B4930 SYMBOL
 // _$E71
-int DAT_00ABF07C = (int)(DAT_00ABF088 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x005B4960 SYMBOL
 // _$E74
-ShortPair DAT_00ABF028;
-
 // SYNTHETIC: GAMEMD 0x005B4970 SYMBOL
 // _$E77
-IntTriple DAT_00ABF048;
 
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
 wchar_t * __fastcall FUN_00735120(char const * narrow);
 wchar_t * __fastcall wcstrim(wchar_t * buffer);
 
-int DAT_00ABF070;
-int DAT_00ABF074;
-int DAT_00ABF078;
-
-// FUNCTION: GAMEMD 0x005B4990
-void FUN_005B4990(void)
-{
-	DAT_00ABF078 = 0;
-	DAT_00ABF070 = 128;
-	DAT_00ABF074 = 128;
-}
+// SYNTHETIC: GAMEMD 0x005B4990 SYMBOL
+// _$E80
 
 BOOL CALLBACK Modem_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 

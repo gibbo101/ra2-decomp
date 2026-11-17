@@ -2717,7 +2717,7 @@ address,name,result,size,source,symbol
 0x0048C820,_$E115,MATCH,39,src/conquer.cpp,_$E115
 0x0048C850,_$E118,MATCH,15,src/conquer.cpp,_$E118
 0x0048C860,_$E121,MATCH,18,src/conquer.cpp,_$E121
-0x0048C880,Reset_Conquer_Globals,MATCH,26,src/conquer.cpp,?Reset_Conquer_Globals@@YIXXZ
+0x0048C880,_$E124,MATCH,26,src/conquer.cpp,_$E124
 0x0048C8A0,Conquer_Nop,MATCH,1,src/conquer.cpp,?Conquer_Nop@@YIXXZ
 0x0048C8B0,Ingame_Menu_Dialog,MATCH,1032,src/conquer.cpp,?Ingame_Menu_Dialog@@YIXXZ
 0x0048CCC0,Main_Game,MATCH,780,src/conquer.cpp,?Main_Game@@YIXHQAPAD@Z
@@ -2725,7 +2725,7 @@ address,name,result,size,source,symbol
 0x0048D080,Call_Back,MATCH,323,src/conquer.cpp,?Call_Back@@YIXXZ
 0x0048D1D0,MapGen_Call_Back,MATCH,8,src/conquer.cpp,?MapGen_Call_Back@@YI_NXZ
 0x0048D1E0,IPX_Call_Back,MATCH,2442,src/conquer.cpp,?IPX_Call_Back@@YIXXZ
-0x0048DB70,_$E126,MATCH,1,src/conquer.cpp,_$E126
+0x0048DB70,_$E129,MATCH,1,src/conquer.cpp,_$E129
 0x0048DB80,Source_From_Name,MATCH,57,src/conquer.cpp,?Source_From_Name@@YI?AW4SourceType@@PBD@Z
 0x0048DBC0,Name_From_Source,MATCH,19,src/conquer.cpp,?Name_From_Source@@YIPBDW4SourceType@@@Z
 0x0048DBE0,Theater_From_Name,MATCH,51,src/conquer.cpp,?Theater_From_Name@@YI?AW4TheaterType@@PBD@Z
@@ -7033,7 +7033,7 @@ address,name,result,size,source,symbol
 0x0053F3B0,_$E48,MATCH,39,src/ipxconn.cpp,_$E48
 0x0053F3E0,_$E51,MATCH,15,src/ipxconn.cpp,_$E51
 0x0053F3F0,_$E54,MATCH,18,src/ipxconn.cpp,_$E54
-0x0053F410,FUN_0053F410,MATCH,26,src/ipxconn.cpp,?FUN_0053F410@@YIXXZ
+0x0053F410,_$E57,MATCH,26,src/ipxconn.cpp,_$E57
 0x0053F430,IPXConnClass::IPXConnClass,MATCH,163,src/ipxconn.cpp,??0IPXConnClass@@QAE@HHHGPAVIPXAddressClass@@HPBGH@Z
 0x0053F4E0,IPXConnClass::Init,MATCH,5,src/ipxconn.cpp,?Init@IPXConnClass@@UAEXXZ
 0x0053F4F0,IPXConnClass::Configure,MATCH,74,src/ipxconn.cpp,?Configure@IPXConnClass@@SIXGHPAUIPXHeaderType@@0PAD1H@Z
@@ -7828,7 +7828,7 @@ address,name,result,size,source,symbol
 0x0055CB70,_$E134,MATCH,39,src/mainloop.cpp,_$E134
 0x0055CBA0,_$E137,MATCH,15,src/mainloop.cpp,_$E137
 0x0055CBB0,_$E140,MATCH,18,src/mainloop.cpp,_$E140
-0x0055CBD0,FUN_0055CBD0,MATCH,26,src/mainloop.cpp,?FUN_0055CBD0@@YIXXZ
+0x0055CBD0,_$E143,MATCH,26,src/mainloop.cpp,_$E143
 0x0055CBF0,FUN_0055CBF0,MATCH,6,src/mainloop.cpp,?FUN_0055CBF0@@YI_NXZ
 0x0055CC00,FUN_0055CC00,MATCH,8,src/mainloop.cpp,?FUN_0055CC00@@YIXXZ
 0x0055CC10,FUN_0055CC10,MATCH,8,src/mainloop.cpp,?FUN_0055CC10@@YIXXZ
@@ -7838,7 +7838,7 @@ address,name,result,size,source,symbol
 0x0055D360,Main_Loop,MATCH,2940,src/mainloop.cpp,?Main_Loop@@YI_NXZ
 0x0055DEE0,Keyboard_Process,MATCH,636,src/mainloop.cpp,?Keyboard_Process@@YIXAAW4KeyNumType@@@Z
 0x0055E160,Sync_Delay,MATCH,676,src/mainloop.cpp,?Sync_Delay@@YIXXZ
-0x0055E410,_$E145,MATCH,1,src/mainloop.cpp,_$E145
+0x0055E410,_$E148,MATCH,1,src/mainloop.cpp,_$E148
 0x0055E420,Message_Input,MATCH,3507,src/mainloop.cpp,?Message_Input@@YIXAAW4KeyNumType@@@Z
 0x0055F1E0,Multiplayer_Debug_Print,MATCH,1189,src/mainloop.cpp,?Multiplayer_Debug_Print@@YIX_N@Z
 0x0055F690,xTargetClass::Decode,MATCH,40,src/mainloop.cpp,?Decode@xTargetClass@@QAE?AV1@H@Z
@@ -8532,7 +8532,7 @@ address,name,result,size,source,symbol
 0x005ADC90,_$E43,MATCH,39,src/mapsel.cpp,_$E43
 0x005ADCC0,_$E46,MATCH,15,src/mapsel.cpp,_$E46
 0x005ADCD0,_$E49,MATCH,18,src/mapsel.cpp,_$E49
-0x005ADCF0,FUN_005ADCF0,MATCH,26,src/mapsel.cpp,?FUN_005ADCF0@@YIXXZ
+0x005ADCF0,_$E52,MATCH,26,src/mapsel.cpp,_$E52
 0x005ADD10,Map_Selection,MATCH,268,src/mapsel.cpp,?Map_Selection@@YIPBDPAVScenarioClass@@@Z
 0x005ADE20,Map_Select_Advance,MATCH,247,src/mapsel.cpp,?Map_Select_Advance@@YIPBDPAVScenarioClass@@PBD@Z
 0x005ADF20,MapSelect::Advance_Progression,MATCH,472,src/mapsel.cpp,?Advance_Progression@MapSelect@@QAE_NPAVScenarioClass@@ABVWstring@@@Z
@@ -8753,7 +8753,7 @@ address,name,result,size,source,symbol
 0x005B4930,_$E71,MATCH,39,src/modemgst.cpp,_$E71
 0x005B4960,_$E74,MATCH,15,src/modemgst.cpp,_$E74
 0x005B4970,_$E77,MATCH,18,src/modemgst.cpp,_$E77
-0x005B4990,FUN_005B4990,MATCH,26,src/modemgst.cpp,?FUN_005B4990@@YIXXZ
+0x005B4990,_$E80,MATCH,26,src/modemgst.cpp,_$E80
 0x005B49B0,ModemGuest::Dialog,MATCH,351,src/modemgst.cpp,?Dialog@ModemGuest@@QAE_NXZ
 0x005B4B10,Modem_Guest_Dialog_Proc,MATCH,976,src/modemgst.cpp,?Modem_Guest_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x005B4EE0,ModemGuest::InitDialog,MATCH,2058,src/modemgst.cpp,?InitDialog@ModemGuest@@AAEXXZ
@@ -8930,7 +8930,7 @@ address,name,result,size,source,symbol
 0x005BEC40,_$E115,MATCH,39,src/movie.cpp,_$E115
 0x005BEC70,_$E118,MATCH,15,src/movie.cpp,_$E118
 0x005BEC80,_$E121,MATCH,18,src/movie.cpp,_$E121
-0x005BECA0,Movie_Init_Tables,MATCH,26,src/movie.cpp,?Movie_Init_Tables@@YIXXZ
+0x005BECA0,_$E124,MATCH,26,src/movie.cpp,_$E124
 0x005BECC0,Rebuild_Interpolated_Palette,MATCH,84,src/movie.cpp,?Rebuild_Interpolated_Palette@@YIXPAE@Z
 0x005BED20,Play_Movie,MATCH,25,src/movie.cpp,?Play_Movie@@YIXPBDW4ThemeType@@_N22@Z
 0x005BED40,Play_Movie,MATCH,1083,src/movie.cpp,?Play_Movie@@YIXPBDW4ThemeType@@_N222@Z
@@ -9190,7 +9190,7 @@ address,name,result,size,source,symbol
 0x005C6000,_$E57,MATCH,39,src/mplayer.cpp,_$E57
 0x005C6030,_$E60,MATCH,15,src/mplayer.cpp,_$E60
 0x005C6040,_$E63,MATCH,18,src/mplayer.cpp,_$E63
-0x005C6060,Reset_Window_Size,MATCH,26,src/mplayer.cpp,?Reset_Window_Size@@YIXXZ
+0x005C6060,_$E66,MATCH,26,src/mplayer.cpp,_$E66
 0x005C6080,Surrender_Dialog_Proc,MATCH,67,src/mplayer.cpp,?Surrender_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x005C60D0,Surrender_Dialog,MATCH,74,src/mplayer.cpp,?Surrender_Dialog@@YIHPBG@Z
 0x005C6120,Clear_Vector,MATCH,46,src/mplayer.cpp,?Clear_Vector@@YIXPAV?$DynamicVectorClass@PAUNodeNameType@@@@@Z
@@ -9251,7 +9251,7 @@ address,name,result,size,source,symbol
 0x005C8DD0,XMP_Randomize,MATCH,103,src/mpmath.cpp,?XMP_Randomize@@YIXPAIAAVStraw@@HH@Z
 0x005C8E40,XMP_Randomize,MATCH,471,src/mpmath.cpp,?XMP_Randomize@@YIXPAIAAVStraw@@PBI2H@Z
 0x005C9020,XMP_Is_Prime,MATCH,427,src/mpmath.cpp,?XMP_Is_Prime@@YI_NPBIH@Z
-0x005C91D0,_$E38,MATCH,23,src/mpobserver.cpp,_$E38
+0x005C91D0,_$E41,MATCH,23,src/mpobserver.cpp,_$E41
 0x005C91F0,_$E2,MATCH,40,src/mpobserver.cpp,_$E2
 0x005C9220,_$E5,MATCH,19,src/mpobserver.cpp,_$E5
 0x005C9240,_$E8,MATCH,19,src/mpobserver.cpp,_$E8
@@ -9264,7 +9264,7 @@ address,name,result,size,source,symbol
 0x005C9360,_$E29,MATCH,39,src/mpobserver.cpp,_$E29
 0x005C9390,_$E32,MATCH,15,src/mpobserver.cpp,_$E32
 0x005C93A0,_$E35,MATCH,18,src/mpobserver.cpp,_$E35
-0x005C93C0,Reset_Observer_View,MATCH,26,src/mpobserver.cpp,?Reset_Observer_View@@YIXXZ
+0x005C93C0,_$E38,MATCH,26,src/mpobserver.cpp,_$E38
 0x005C93E0,Megawealth::Megawealth,MATCH,52,src/mpobserver.cpp,??0Megawealth@@QAE@ABVWideWstring@@0ABVWstring@@1_NH@Z
 0x005C9420,Megawealth::~Megawealth,MATCH,11,src/mpobserver.cpp,??1Megawealth@@UAE@XZ
 0x005C9430,Megawealth::vt_entry_8C,MATCH,15,src/mpobserver.cpp,?vt_entry_8C@Megawealth@@UAE_NXZ
@@ -9320,7 +9320,7 @@ address,name,result,size,source,symbol
 0x005CA9B0,MultiplayerSiege::CreateMPTeams,MATCH,269,src/mpsiege.cpp,?CreateMPTeams@MultiplayerSiege@@UAEXPAV?$DynamicVectorClass@PAVMultiplayerTeam@@@@@Z
 0x005CAAC0,MultiplayerSiege::SpawnBaseUnits,MATCH,260,src/mpsiege.cpp,?SpawnBaseUnits@MultiplayerSiege@@UAE_NPAVHouseClass@@I@Z
 0x005CABD0,??_GMultiplayerSiege@@UAEPAXI@Z,MATCH,36,src/mpsiege.cpp,??_GMultiplayerSiege@@UAEPAXI@Z
-0x005CAC00,_$E38,MATCH,23,src/mpsiegeteam.cpp,_$E38
+0x005CAC00,_$E41,MATCH,23,src/mpsiegeteam.cpp,_$E41
 0x005CAC20,_$E2,MATCH,40,src/mpsiegeteam.cpp,_$E2
 0x005CAC50,_$E5,MATCH,19,src/mpsiegeteam.cpp,_$E5
 0x005CAC70,_$E8,MATCH,19,src/mpsiegeteam.cpp,_$E8
@@ -9333,7 +9333,7 @@ address,name,result,size,source,symbol
 0x005CAD90,_$E29,MATCH,39,src/mpsiegeteam.cpp,_$E29
 0x005CADC0,_$E32,MATCH,15,src/mpsiegeteam.cpp,_$E32
 0x005CADD0,_$E35,MATCH,18,src/mpsiegeteam.cpp,_$E35
-0x005CADF0,Reset_Siege_Team_Stats,MATCH,26,src/mpsiegeteam.cpp,?Reset_Siege_Team_Stats@@YIXXZ
+0x005CADF0,_$E38,MATCH,26,src/mpsiegeteam.cpp,_$E38
 0x005CAE10,MultiplayerSiegeDefenderTeam::MultiplayerSiegeDefenderTeam,MATCH,67,src/mpsiegeteam.cpp,??0MultiplayerSiegeDefenderTeam@@QAE@XZ
 0x005CAE60,MultiplayerSiegeDefenderTeam::~MultiplayerSiegeDefenderTeam,MATCH,11,src/mpsiegeteam.cpp,??1MultiplayerSiegeDefenderTeam@@UAE@XZ
 0x005CAE70,Siege_Only_Spectators_Remain,MATCH,63,src/mpsiegeteam.cpp,?Siege_Only_Spectators_Remain@@YG_NH@Z
@@ -9833,7 +9833,7 @@ address,name,result,size,source,symbol
 0x005DA640,_$E107,MATCH,39,src/netdlg.cpp,_$E107
 0x005DA670,_$E110,MATCH,15,src/netdlg.cpp,_$E110
 0x005DA680,_$E113,MATCH,18,src/netdlg.cpp,_$E113
-0x005DA6A0,Init_Net_Pad,MATCH,26,src/netdlg.cpp,?Init_Net_Pad@@YIXXZ
+0x005DA6A0,_$E116,MATCH,26,src/netdlg.cpp,_$E116
 0x005DA6C0,Init_Network,MATCH,82,src/netdlg.cpp,?Init_Network@@YI_NXZ
 0x005DA720,Shutdown_Network,MATCH,34,src/netdlg.cpp,?Shutdown_Network@@YIXXZ
 0x005DA750,Destroy_Connection,MATCH,1062,src/netdlg.cpp,?Destroy_Connection@@YIXHH@Z
@@ -13035,7 +13035,7 @@ address,name,result,size,source,symbol
 0x006ACAE0,_$E97,MATCH,39,src/skirmish.cpp,_$E97
 0x006ACB10,_$E100,MATCH,15,src/skirmish.cpp,_$E100
 0x006ACB20,_$E103,MATCH,18,src/skirmish.cpp,_$E103
-0x006ACB40,FUN_006ACB40,MATCH,26,src/skirmish.cpp,?FUN_006ACB40@@YIXXZ
+0x006ACB40,_$E106,MATCH,26,src/skirmish.cpp,_$E106
 0x006ACB60,FUN_006ACB60,MATCH,85,src/skirmish.cpp,?FUN_006ACB60@@YIHH@Z
 0x006ACBC0,FUN_006ACBC0,MATCH,92,src/skirmish.cpp,?FUN_006ACBC0@@YIHH@Z
 0x006ACC20,FUN_006ACC20,MATCH,114,src/skirmish.cpp,?FUN_006ACC20@@YIPBGH@Z
@@ -17460,7 +17460,7 @@ address,name,result,size,source,symbol
 0x0076BBC0,??_G?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEPAXI@Z,MATCH,74,src/wdtnet.cpp,??_G?$VectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEPAXI@Z
 0x0076BC10,??_G?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEPAXI@Z,MATCH,74,src/wdtnet.cpp,??_G?$DynamicVectorClass@V?$rc_ptr@VWDTTerritory@@@@@@UAEPAXI@Z
 0x0076BC60,??0?$rc_ptr@VWDTTerritory@@@@QAE@XZ,MATCH,18,src/wdtnet.cpp,??0?$rc_ptr@VWDTTerritory@@@@QAE@XZ
-0x0076BC80,_$E38,MATCH,23,src/wdtprops.cpp,_$E38
+0x0076BC80,_$E41,MATCH,23,src/wdtprops.cpp,_$E41
 0x0076BCA0,_$E2,MATCH,40,src/wdtprops.cpp,_$E2
 0x0076BCD0,_$E5,MATCH,19,src/wdtprops.cpp,_$E5
 0x0076BCF0,_$E8,MATCH,19,src/wdtprops.cpp,_$E8
@@ -17473,7 +17473,7 @@ address,name,result,size,source,symbol
 0x0076BE10,_$E29,MATCH,39,src/wdtprops.cpp,_$E29
 0x0076BE40,_$E32,MATCH,15,src/wdtprops.cpp,_$E32
 0x0076BE50,_$E35,MATCH,18,src/wdtprops.cpp,_$E35
-0x0076BE70,FUN_0076BE70,MATCH,26,src/wdtprops.cpp,?FUN_0076BE70@@YIXXZ
+0x0076BE70,_$E38,MATCH,26,src/wdtprops.cpp,_$E38
 0x0076BE90,FUN_0076BE90,MATCH,60,src/wdtprops.cpp,?FUN_0076BE90@@YI?AV?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@ABV?$rc_ptr@VWDTState@@@@@Z
 0x0076BED0,WorldDominationTour::CampaignProperties::~CampaignProperties,MATCH,48,src/wdtprops.cpp,??1CampaignProperties@WorldDominationTour@@UAE@XZ
 0x0076BF00,WorldDominationTour::CampaignProperties::CampaignProperties,MATCH,147,src/wdtprops.cpp,??0CampaignProperties@WorldDominationTour@@QAE@ABV?$rc_ptr@VWDTState@@@@@Z
@@ -17823,7 +17823,7 @@ address,name,result,size,source,symbol
 0x00777340,_$E94,MATCH,39,src/winstub.cpp,_$E94
 0x00777370,_$E97,MATCH,15,src/winstub.cpp,_$E97
 0x00777380,_$E100,MATCH,18,src/winstub.cpp,_$E100
-0x007773A0,FUN_007773A0,MATCH,26,src/winstub.cpp,?FUN_007773A0@@YIXXZ
+0x007773A0,_$E103,MATCH,26,src/winstub.cpp,_$E103
 0x007773C0,Focus_Loss,MATCH,85,src/winstub.cpp,?Focus_Loss@@YIXXZ
 0x00777420,Focus_Restore,MATCH,412,src/winstub.cpp,?Focus_Restore@@YIXXZ
 0x007775C0,Windows_Procedure,MATCH,1260,src/winstub.cpp,?Windows_Procedure@@YGJPAUHWND__@@IIJ@Z
@@ -18836,9 +18836,9 @@ address,name,result,size,source,symbol
 0x007B18E0,_$E26,MATCH,33,src/wsproto.cpp,_$E26
 0x007B1910,_$E29,MATCH,44,src/wsproto.cpp,_$E29
 0x007B1940,_$E32,MATCH,39,src/wsproto.cpp,_$E32
-0x007B1970,_$E36,MATCH,15,src/wsproto.cpp,_$E36
-0x007B1980,_$E39,MATCH,18,src/wsproto.cpp,_$E39
-0x007B19A0,FUN_007B19A0,MATCH,26,src/wsproto.cpp,?FUN_007B19A0@@YIXXZ
+0x007B1970,_$E35,MATCH,15,src/wsproto.cpp,_$E35
+0x007B1980,_$E38,MATCH,18,src/wsproto.cpp,_$E38
+0x007B19A0,_$E41,MATCH,26,src/wsproto.cpp,_$E41
 0x007B19C0,WinsockInterfaceClass::WinsockInterfaceClass,MATCH,232,src/wsproto.cpp,??0WinsockInterfaceClass@@QAE@XZ
 0x007B1AB0,WinsockInterfaceClass::~WinsockInterfaceClass,MATCH,160,src/wsproto.cpp,??1WinsockInterfaceClass@@UAE@XZ
 0x007B1B50,WinsockInterfaceClass::Close,MATCH,39,src/wsproto.cpp,?Close@WinsockInterfaceClass@@QAEXXZ

@@ -36,74 +36,35 @@
 #include "bsurface.h"
 #include <commctrl.h>
 #include <math.h>
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x007771B0 SYMBOL
 // _$E2
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1718;
-extern const double DAT_007F74B0;
-extern const double DAT_007F74B8;
-
 // SYNTHETIC: GAMEMD 0x007771D0 SYMBOL
 // _$E67
-double DAT_00B730D0 = FUN_004CAC40(pow(256.0, 2.0) * 2);
-
 // SYNTHETIC: GAMEMD 0x00777200 SYMBOL
 // _$E70
-double DAT_00B73538 = DAT_00B730D0 / DAT_007F74B0;
-
 // SYNTHETIC: GAMEMD 0x00777220 SYMBOL
 // _$E73
-double DAT_00B73520 = DAT_007E1718 / DAT_00B73538;
-
 // SYNTHETIC: GAMEMD 0x00777240 SYMBOL
 // _$E76
-double DAT_00B73310 = DAT_007F74B8 * 45.0;
-
 // SYNTHETIC: GAMEMD 0x00777260 SYMBOL
 // _$E79
-double DAT_00B730D8 = DAT_007F74B8 * 60.0;
-
 // SYNTHETIC: GAMEMD 0x00777280 SYMBOL
 // _$E82
-double DAT_00B730B0 = DAT_007F74B8 * 90.0;
-
 // SYNTHETIC: GAMEMD 0x007772A0 SYMBOL
 // _$E85
-int DAT_00B73540 = (int)(FUN_004CAD50(DAT_00B730B0 - DAT_00B730D8) * DAT_00B730D0 * 0.5);
-
 // SYNTHETIC: GAMEMD 0x007772E0 SYMBOL
 // _$E88
-double DAT_00B730E0 = FUN_004CADE0(DAT_00B73540 * 0.00390625);
-
 // SYNTHETIC: GAMEMD 0x00777310 SYMBOL
 // _$E91
-double DAT_00B73308 = FUN_004CADE0((DAT_00B73540 * 2) / DAT_00B730D0);
-
 // SYNTHETIC: GAMEMD 0x00777340 SYMBOL
 // _$E94
-int DAT_00B73534 = (int)(DAT_00B73540 * 4 + 0.5);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x00777370 SYMBOL
 // _$E97
-ShortPair DAT_00B730C8;
-
 // SYNTHETIC: GAMEMD 0x00777380 SYMBOL
 // _$E100
-IntTriple DAT_00B732F8;
 
 namespace Game { extern HWND hWnd; extern HINSTANCE hInstance; extern void * hIMC; extern bool IsFocused; extern int SpecialDialog; }
 namespace Unsorted { extern bool ScenarioStarted; extern int CurrentFrame; extern bool ArmageddonMode; }
@@ -115,17 +76,9 @@ void Audio_Focus_Regain(void);
 
 extern WWMouseClass * DAT_00887640;
 extern bool DAT_00B73560;
-extern int DAT_00B73530;
-extern int DAT_00B73528;
-extern int DAT_00B7352C;
 
-// FUNCTION: GAMEMD 0x007773A0
-void FUN_007773A0(void)
-{
-	DAT_00B73530 = 0;
-	DAT_00B73528 = 0x80;
-	DAT_00B7352C = 0x80;
-}
+// SYNTHETIC: GAMEMD 0x007773A0 SYMBOL
+// _$E103
 
 // FUNCTION: GAMEMD 0x007773C0
 void Focus_Loss(void)

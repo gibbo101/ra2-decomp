@@ -69,23 +69,10 @@
 #include <fcntl.h>
 #include <io.h>
 #include <share.h>
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0048C690 SYMBOL
 // _$E2
-
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E51E0;
-extern const double DAT_007E51E8;
 
 void __fastcall SetNavCycleMode(int mode);
 extern BeaconManagerClass BeaconManager;
@@ -98,77 +85,32 @@ extern bool DAT_00B77DC2;
 extern int g_SuspendChatPump;
 extern time_t DAT_0089E9B0;
 
-
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x0048C6B0 SYMBOL
 // _$E88
-double DAT_0089E948 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
-
 // SYNTHETIC: GAMEMD 0x0048C6E0 SYMBOL
 // _$E91
-double DAT_0089E9A0 = DAT_0089E948 / DAT_007E51E0;
-
 // SYNTHETIC: GAMEMD 0x0048C700 SYMBOL
 // _$E94
-double DAT_0089E988 = DAT_007E1718 / DAT_0089E9A0;
-
 // SYNTHETIC: GAMEMD 0x0048C720 SYMBOL
 // _$E97
-double DAT_0089E980 = DAT_007E1720 * DAT_007E51E8;
-
 // SYNTHETIC: GAMEMD 0x0048C740 SYMBOL
 // _$E100
-double DAT_0089E958 = DAT_007E1728 * DAT_007E51E8;
-
 // SYNTHETIC: GAMEMD 0x0048C760 SYMBOL
 // _$E103
-double DAT_0089E918 = DAT_007E1730 * DAT_007E51E8;
-
 // SYNTHETIC: GAMEMD 0x0048C780 SYMBOL
 // _$E106
-int DAT_0089E9A8 = (int)(FUN_004CAD50(DAT_0089E918 - DAT_0089E958) * DAT_007E1738 * DAT_0089E948);
-
 // SYNTHETIC: GAMEMD 0x0048C7C0 SYMBOL
 // _$E109
-double DAT_0089E960 = FUN_004CADE0(DAT_0089E9A8 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0048C7F0 SYMBOL
 // _$E112
-double DAT_0089E978 = FUN_004CADE0((DAT_0089E9A8 * 2) / DAT_0089E948);
-
 // SYNTHETIC: GAMEMD 0x0048C820 SYMBOL
 // _$E115
-int DAT_0089E99C = (int)(DAT_0089E9A8 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0048C850 SYMBOL
 // _$E118
-ShortPair DAT_0089E940;
-
 // SYNTHETIC: GAMEMD 0x0048C860 SYMBOL
 // _$E121
-IntTriple DAT_0089E968;
-
-int DAT_0089E998;
-int DAT_0089E990;
-int DAT_0089E994;
-
-// FUNCTION: GAMEMD 0x0048C880
-void Reset_Conquer_Globals(void)
-{
-	DAT_0089E998 = 0;
-	DAT_0089E990 = 128;
-	DAT_0089E994 = 128;
-}
+// SYNTHETIC: GAMEMD 0x0048C880 SYMBOL
+// _$E124
 
 // FUNCTION: GAMEMD 0x0048C8A0
 void Conquer_Nop(void)
@@ -765,7 +707,7 @@ void IPX_Call_Back(void)
 }
 
 // SYNTHETIC: GAMEMD 0x0048DB70 SYMBOL
-// _$E126
+// _$E129
 
 // FUNCTION: GAMEMD 0x0048DB80
 SourceType Source_From_Name(char const * name)

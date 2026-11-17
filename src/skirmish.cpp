@@ -21,77 +21,36 @@
 #undef LoadString
 #include <stddef.h>
 #include "stringtable.h"
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x006AC950 SYMBOL
 // _$E5
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007F3138;
-extern const double DAT_007F3140;
-
 // SYNTHETIC: GAMEMD 0x006AC970 SYMBOL
 // _$E70
-double DAT_00B0B540 = FUN_004CAC40(pow(256.0, 2.0) * 2);
-
 // SYNTHETIC: GAMEMD 0x006AC9A0 SYMBOL
 // _$E73
-double DAT_00B0B590 = DAT_00B0B540 / DAT_007F3138;
-
 // SYNTHETIC: GAMEMD 0x006AC9C0 SYMBOL
 // _$E76
-double DAT_00B0B578 = 1.0 / DAT_00B0B590;
-
 // SYNTHETIC: GAMEMD 0x006AC9E0 SYMBOL
 // _$E79
-double DAT_00B0B570 = DAT_007F3140 * 45.0;
-
 // SYNTHETIC: GAMEMD 0x006ACA00 SYMBOL
 // _$E82
-double DAT_00B0B548 = DAT_007F3140 * 60.0;
-
 // SYNTHETIC: GAMEMD 0x006ACA20 SYMBOL
 // _$E85
-double DAT_00B0B520 = DAT_007F3140 * 90.0;
-
 // SYNTHETIC: GAMEMD 0x006ACA40 SYMBOL
 // _$E88
-int DAT_00B0B598 = (int)(FUN_004CAD50(DAT_00B0B520 - DAT_00B0B548) * DAT_00B0B540 * 0.5);
-
 // SYNTHETIC: GAMEMD 0x006ACA80 SYMBOL
 // _$E91
-double DAT_00B0B550 = FUN_004CADE0(DAT_00B0B598 * 0.00390625);
-
 // SYNTHETIC: GAMEMD 0x006ACAB0 SYMBOL
 // _$E94
-double DAT_00B0B568 = FUN_004CADE0((DAT_00B0B598 * 2) / DAT_00B0B540);
-
 // SYNTHETIC: GAMEMD 0x006ACAE0 SYMBOL
 // _$E97
-int DAT_00B0B58C = (int)(DAT_00B0B598 * 4 + 0.5);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x006ACB10 SYMBOL
 // _$E100
-ShortPair DAT_00B0B538;
-
 // SYNTHETIC: GAMEMD 0x006ACB20 SYMBOL
 // _$E103
-IntTriple DAT_00B0B558;
 
-extern int DAT_00B0B580;
-extern int DAT_00B0B584;
-extern int DAT_00B0B588;
 extern HWND DAT_00B0B59C;
 
 int __fastcall FUN_004E3320(int index);
@@ -106,13 +65,8 @@ void __fastcall FUN_004E5ED0(HWND dialog, int id, int value);
 void __fastcall FUN_006ADF00(HWND dialog, int first, int count);
 void __fastcall FUN_006AE080(HWND dialog, int first);
 
-// FUNCTION: GAMEMD 0x006ACB40
-void FUN_006ACB40(void)
-{
-	DAT_00B0B588 = 0;
-	DAT_00B0B580 = 0x80;
-	DAT_00B0B584 = 0x80;
-}
+// SYNTHETIC: GAMEMD 0x006ACB40 SYMBOL
+// _$E106
 
 // FUNCTION: GAMEMD 0x006ACB60
 int __fastcall FUN_006ACB60(int slot)

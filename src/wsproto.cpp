@@ -13,18 +13,13 @@
 #include "vector.h"
 #include <cstdio>
 #include <math.h>
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x007B17B0 SYMBOL
 // _$E2
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007F79A8;
-extern const double DAT_007F79B0;
 extern int DAT_00B780A0;
 extern bool DAT_00B7809C;
-extern int DAT_00B78088, DAT_00B78080, DAT_00B78084;
 namespace Game { extern HWND hWnd; }
 extern void Add_CRC(unsigned int *crc, unsigned int val);
 extern "C" int __stdcall EnumProtocolsA(int *protocols, void *buffer, unsigned long *len);
@@ -41,75 +36,36 @@ struct WinsockBufferType {
 
 // SYNTHETIC: GAMEMD 0x007B17D0 SYMBOL
 // _$E5
-double DAT_00B78040 = FUN_004CAC40(pow(256.0, 2.0) * 2);
-
 // SYNTHETIC: GAMEMD 0x007B1800 SYMBOL
 // _$E8
-double DAT_00B78090 = DAT_00B78040 / DAT_007F79A8;
-
 // SYNTHETIC: GAMEMD 0x007B1820 SYMBOL
 // _$E11
-double DAT_00B78078 = 1.0 / DAT_00B78090;
-
 // SYNTHETIC: GAMEMD 0x007B1840 SYMBOL
 // _$E14
-double DAT_00B78070 = DAT_007F79B0 * 45.0;
-
 // SYNTHETIC: GAMEMD 0x007B1860 SYMBOL
 // _$E17
-double DAT_00B78048 = DAT_007F79B0 * 60.0;
-
 // SYNTHETIC: GAMEMD 0x007B1880 SYMBOL
 // _$E20
-double DAT_00B78020 = DAT_007F79B0 * 90.0;
-
 // SYNTHETIC: GAMEMD 0x007B18A0 SYMBOL
 // _$E23
-int DAT_00B78098 = (int)(FUN_004CAD50(DAT_00B78020 - DAT_00B78048) * DAT_00B78040 * 0.5);
-
 // SYNTHETIC: GAMEMD 0x007B18E0 SYMBOL
 // _$E26
-double DAT_00B78050 = FUN_004CADE0(DAT_00B78098 * 0.00390625);
-
 // SYNTHETIC: GAMEMD 0x007B1910 SYMBOL
 // _$E29
-double DAT_00B78068 = FUN_004CADE0((DAT_00B78098 * 2) / DAT_00B78040);
-
 // SYNTHETIC: GAMEMD 0x007B1940 SYMBOL
 // _$E32
-int DAT_00B7808C = (int)(DAT_00B78098 * 4 + 0.5);
+// SYNTHETIC: GAMEMD 0x007B1970 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x007B1980 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x007B19A0 SYMBOL
+// _$E41
 
 class InputManagerClass {
 public:
 	static InputManagerClass *Instance;
 	void FUN_0054F000(void);
 };
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
-// SYNTHETIC: GAMEMD 0x007B1970 SYMBOL
-// _$E36
-ShortPair DAT_00B78038;
-
-// SYNTHETIC: GAMEMD 0x007B1980 SYMBOL
-// _$E39
-IntTriple DAT_00B78058;
-
-// FUNCTION: GAMEMD 0x007B19A0
-void FUN_007B19A0(void)
-{
-	DAT_00B78088 = 0;
-	DAT_00B78080 = 128;
-	DAT_00B78084 = 128;
-}
 
 // FUNCTION: GAMEMD 0x007B19C0
 WinsockInterfaceClass::WinsockInterfaceClass(void) :

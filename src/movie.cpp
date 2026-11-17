@@ -23,85 +23,36 @@
 #include "_xmouse.h"
 #include "msglist.h"
 #include <math.h>
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x005BEAB0 SYMBOL
 // _$E2
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EE090;
-extern const double DAT_007EE098;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x005BEAD0 SYMBOL
 // _$E88
-double DAT_00ABF300 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x005BEB00 SYMBOL
 // _$E91
-double DAT_00ABF350 = DAT_00ABF300 / DAT_007EE090;
-
 // SYNTHETIC: GAMEMD 0x005BEB20 SYMBOL
 // _$E94
-double DAT_00ABF338 = DAT_007E1718 / DAT_00ABF350;
-
 // SYNTHETIC: GAMEMD 0x005BEB40 SYMBOL
 // _$E97
-double DAT_00ABF330 = DAT_007E1720 * DAT_007EE098;
-
 // SYNTHETIC: GAMEMD 0x005BEB60 SYMBOL
 // _$E100
-double DAT_00ABF308 = DAT_007E1728 * DAT_007EE098;
-
 // SYNTHETIC: GAMEMD 0x005BEB80 SYMBOL
 // _$E103
-double DAT_00ABF2E0 = DAT_007E1730 * DAT_007EE098;
-
 // SYNTHETIC: GAMEMD 0x005BEBA0 SYMBOL
 // _$E106
-int DAT_00ABF358 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABF2E0 - DAT_00ABF308) * DAT_00ABF300));
-
 // SYNTHETIC: GAMEMD 0x005BEBE0 SYMBOL
 // _$E109
-double DAT_00ABF310 = FUN_004CADE0(DAT_00ABF358 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x005BEC10 SYMBOL
 // _$E112
-double DAT_00ABF328 = FUN_004CADE0((DAT_00ABF358 * 2) / DAT_00ABF300);
-
 // SYNTHETIC: GAMEMD 0x005BEC40 SYMBOL
 // _$E115
-int DAT_00ABF34C = (int)(DAT_00ABF358 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x005BEC70 SYMBOL
 // _$E118
-ShortPair DAT_00ABF2F8;
-
 // SYNTHETIC: GAMEMD 0x005BEC80 SYMBOL
 // _$E121
-IntTriple DAT_00ABF318;
 
-extern int DAT_00ABF340;
-extern int DAT_00ABF344;
-extern int DAT_00ABF348;
 extern bool DAT_00ABF35C;
 extern int DAT_008809D8;
 extern int DAT_008809DC;
@@ -130,13 +81,8 @@ bool __fastcall FUN_005C0640(char const * name, char * out, bool unused);
 MovieHandle * __fastcall OwnerDraw_InitMovieHandle(char const * name, Surface * surface, Rect * bounds);
 void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before, bool fullscreen);
 
-// FUNCTION: GAMEMD 0x005BECA0
-void Movie_Init_Tables(void)
-{
-	DAT_00ABF348 = 0;
-	DAT_00ABF340 = 0x80;
-	DAT_00ABF344 = 0x80;
-}
+// SYNTHETIC: GAMEMD 0x005BECA0 SYMBOL
+// _$E124
 
 // FUNCTION: GAMEMD 0x005BECC0
 void Rebuild_Interpolated_Palette(unsigned char * interpal)
