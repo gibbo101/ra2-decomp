@@ -231,7 +231,7 @@ void ScenarioClass::Reset(void)
 	ElapsedTimer.Stop();
 	PauseTimer = 0;
 	PauseTimer.Stop();
-	unknown_62C = 0;
+	HoldCount = 0;
 	IsGamePaused = false;
 	MissionTimer = 0;
 	MissionTimer.Stop();
@@ -509,7 +509,7 @@ void __fastcall Hold_Scenario(int seconds)
 		Scen->IsGamePaused = true;
 	}
 
-	if (Scen->unknown_62C == 0) {
+	if (Scen->HoldCount == 0) {
 		FUN_00406F00();
 
 		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) {
@@ -529,17 +529,17 @@ void __fastcall Hold_Scenario(int seconds)
 			DAT_00B07784 = 0;
 		}
 	}
-	Scen->unknown_62C++;
+	Scen->HoldCount++;
 }
 
 // FUNCTION: GAMEMD 0x00684180
 void Release_Scenario(void)
 {
-	if (Scen->unknown_62C == 0) {
+	if (Scen->HoldCount == 0) {
 		return;
 	}
-	Scen->unknown_62C--;
-	if (Scen->unknown_62C != 0) {
+	Scen->HoldCount--;
+	if (Scen->HoldCount != 0) {
 		return;
 	}
 

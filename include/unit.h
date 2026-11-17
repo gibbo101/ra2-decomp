@@ -22,7 +22,7 @@ class UnitClass : public FootClass
 		bool IsDumping;
 		bool IsHarvesting;
 		bool TerrainPalette;
-		int unknown_int_6D4;
+		int VisceroidFacing;
 		int DeathCounter;
 		EBolt * ElectricBolt;
 		bool Deployed;

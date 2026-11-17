@@ -1957,7 +1957,7 @@ AbstractClass * AircraftClass::New_LZ(AbstractClass * oldlz) const
 			return(oldlz);
 		}
 
-		for (int radius = 0; radius < Rule->unknown_int_1478 / CELL_LEPTON_W; radius++) {
+		for (int radius = 0; radius < Rule->LZScanRadius / CELL_LEPTON_W; radius++) {
 			FacingType modifier = Random_Pick(FACING_N, FACING_NW);
 			Cell lastcell(0, 0);
 

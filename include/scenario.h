@@ -111,7 +111,7 @@ class ScenarioClass {
 
 		mutable TTimerClass<SystemTimerClass> ElapsedTimer;
 		CDTimerClass<SystemTimerClass> PauseTimer;
-		int unknown_62C;
+		int HoldCount;
 		bool IsGamePaused;
 
 		Cell Waypoint[WAYPT_COUNT];

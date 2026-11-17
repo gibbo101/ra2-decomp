@@ -139,7 +139,7 @@ UnitClass::UnitClass(UnitTypeClass const * type, HouseClass * house) :
 	IsDumping(false),
 	IsHarvesting(false),
 	TerrainPalette(false),
-	unknown_int_6D4(-1),
+	VisceroidFacing(-1),
 	DeathCounter(-1),
 	ElectricBolt(NULL),
 	Deployed(false),
@@ -547,7 +547,7 @@ void UnitClass::Firing_AI(void)
 				break;
 
 			case FIRE_OK:
-				if (!Class->unknown_E10) {
+				if (!Class->IsFireAnim) {
 					IsFiring = false;
 				}
 
@@ -645,7 +645,7 @@ void UnitClass::Visceroid_AI(void)
 					UnitClass * visceroid = (UnitClass *)occupier;
 					if (visceroid->NavCom == NULL && visceroid->TarCom == NULL) {
 						visceroid->Assign_Destination(this);
-						unknown_int_6D4 = -1;
+						VisceroidFacing = -1;
 					}
 					return;
 				}
@@ -654,18 +654,18 @@ void UnitClass::Visceroid_AI(void)
 
 		if (NavCom == NULL && TarCom == NULL) {
 			FacingType dir;
-			if (unknown_int_6D4 != -1 && Random_Pick(0, 2) != 0) {
-				dir = (FacingType)unknown_int_6D4;
+			if (VisceroidFacing != -1 && Random_Pick(0, 2) != 0) {
+				dir = (FacingType)VisceroidFacing;
 			} else {
 				dir = Random_Pick(FACING_FIRST, FacingType(FACING_COUNT - 1));
-				unknown_int_6D4 = dir;
+				VisceroidFacing = dir;
 			}
 			Cell adjacent = ::Adjacent_Cell(cell, dir);
 			CellClass * cellptr = &Map[adjacent];
 			if (Can_Enter_Cell(cellptr, dir, Get_Cell_Height(), &Map[cell]) == MOVE_OK) {
 				Assign_Destination(cellptr);
 			} else {
-				unknown_int_6D4 = -1;
+				VisceroidFacing = -1;
 			}
 		}
 	}

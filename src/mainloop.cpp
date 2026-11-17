@@ -518,7 +518,7 @@ bool Main_Loop(void)
 			Scen->IsGamePaused = false;
 			Release_Scenario();
 		}
-		if (Scen->unknown_62C) {
+		if (Scen->HoldCount) {
 			Windows_Message_Handler();
 			Call_Back();
 			FUN_0053B560();

@@ -71,7 +71,7 @@ UnitTypeClass::UnitTypeClass(char const * ininame) :
 	CrateGoodie(false),
 	Harvester(false),
 	Weeder(false),
-	unknown_E10(false),
+	IsFireAnim(false),
 	HasTurret(false),
 	DeployToFire(false),
 	IsSimpleDeployer(false),
@@ -378,7 +378,7 @@ void UnitTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(CrateGoodie);
 	crc(Harvester);
 	crc(Weeder);
-	crc(unknown_E10);
+	crc(IsFireAnim);
 	crc(HasTurret);
 	crc(IsTilter);
 	crc(IsSimpleDeployer);
