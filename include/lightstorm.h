@@ -46,3 +46,9 @@ class NukeFlash
 		static int Duration;
 		static int Status;
 };
+
+class ChronoScreenEffect
+{
+	public:
+		static bool Active(void);
+};

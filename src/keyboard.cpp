@@ -10,6 +10,7 @@
 #include "session.h"
 #include <cmath>
 #include "geometry.h"
+#include "lightstorm.h"
 #define	ARRAY_SIZE(x)		int(sizeof(x)/sizeof(x[0]))
 
 
@@ -43,7 +44,6 @@
 // _$E66
 
 extern bool UserInputLocked;
-struct ChronoScreenEffect { static bool Active(void); };
 void __fastcall FUN_0053EC40(int key, bool release);
 short __fastcall FUN_0053EC70(int vk);
 
