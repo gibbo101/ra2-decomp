@@ -1422,14 +1422,13 @@ void PregameSetup(void)
 
 bool __fastcall FUN_006951F0(char const * name, unsigned int length, char const * digest, bool official, bool flag);
 void FUN_0058BB30(void);
-void * FUN_007931A0(void);
 
 static inline int Send_To_Host(void * packet, int size, int sent)
 {
 	if (Session.Type == GAME_IPX) {
 		sent = Ipx.Send_Global_Message(packet, size, 1, &Session.HostAddress);
 	} else {
-		void * owner = FUN_007931A0();
+		void * owner = Get_Channel_Host();
 		if (owner != NULL) {
 			sent = Ipx.Send_Global_Message_To_Name(packet, size, 1, FUN_00735120((char *)owner + 0x24));
 		}

@@ -1592,7 +1592,7 @@ extern int WestwoodOnline_GameSKU_TS;
 extern int DAT_00B779D4;
 extern int DAT_00B779C4;
 extern unsigned char DAT_00A8F900;
-extern Wstring DAT_00B73E40;
+extern Wstring g_NickName;
 extern char WestwoodOnline_LoginName[];
 extern int WestwoodOnline_PingTimes[];
 extern unsigned char WestwoodOnline_Clan1_Players;
@@ -1610,7 +1610,7 @@ void MPCooperative::vt_entry_AC(void)
 	WestwoodOnline_GameSKU_TS = g_GameSKU;
 	DAT_00B779C4 = 0;
 	DAT_00A8F900 = 0;
-	strcpy(WestwoodOnline_LoginName, DAT_00B73E40.get());
+	strcpy(WestwoodOnline_LoginName, g_NickName.get());
 	Session.HostAddress = Session.Players[HostIndex]->Address;
 	wcscpy(Session.MasterPlayerName, Session.Players[HostIndex]->Name);
 	Session.MasterPlayerID = -1;

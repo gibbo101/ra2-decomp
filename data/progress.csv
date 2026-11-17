@@ -18148,7 +18148,7 @@ address,name,result,size,source,symbol
 0x00792F10,User_List_To_Session_Players,MATCH,398,src/wonline.cpp,?User_List_To_Session_Players@@YIXPAUUser@@@Z
 0x007930A0,Is_Channel_Owner,MATCH,114,src/wonline.cpp,?Is_Channel_Owner@@YI_NXZ
 0x00793120,FUN_00793120,MATCH,117,src/wonline.cpp,?FUN_00793120@@YI_NAAVWstring@@@Z
-0x007931A0,FUN_007931A0,MATCH,75,src/wonline.cpp,?FUN_007931A0@@YIPAUUser@@XZ
+0x007931A0,Get_Channel_Host,MATCH,75,src/wonline.cpp,?Get_Channel_Host@@YIPAUUser@@XZ
 0x007931F0,FUN_007931F0,MATCH,86,src/wonline.cpp,?FUN_007931F0@@YIXH@Z
 0x00793250,FUN_00793250,MATCH,46,src/wonline.cpp,?FUN_00793250@@YIXXZ
 0x00793280,FUN_00793280,MATCH,445,src/wonline.cpp,?FUN_00793280@@YGHPAUHWND__@@IIJ@Z

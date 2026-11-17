@@ -437,14 +437,14 @@ bool __fastcall FUN_0077D490(User * a, User * b)
 
 extern bool DAT_00B76AF0;
 extern bool DAT_00B73AD0;
-extern Wstring DAT_00B73E40;
+extern Wstring g_NickName;
 
 // FUNCTION: GAMEMD 0x0077D4C0
 bool __fastcall FUN_0077D4C0(User * user)
 {
 	if (DAT_00B76AF0 || DAT_00B73AD0) {
 		if (WS_Find_Dialog(0x113)) {
-			int index = Player_Name_To_Index(DAT_00B73E40);
+			int index = Player_Name_To_Index(g_NickName);
 			User * host = NULL;
 			int count = g_UserList.length();
 			if (index >= 0) {
@@ -653,7 +653,7 @@ bool __fastcall FUN_0077D9D0(Channel * chan)
 
 // FUNCTION: GAMEMD 0x0077D9F0
 // FUNCTION: GAMEMD 0x0077DA10
-Wstring DAT_00B73E40;
+Wstring g_NickName;
 
 // FUNCTION: GAMEMD 0x0077DA20
 // FUNCTION: GAMEMD 0x0077DA40
@@ -1010,8 +1010,8 @@ void __fastcall FUN_005E9340(char const * name);
 // FUNCTION: GAMEMD 0x0077E900
 void __fastcall FUN_0077E900(Wstring const & who, int status)
 {
-	Wstring name(who.length() > 0 ? who : DAT_00B73E40);
-	if (name == DAT_00B73E40 && status == 0) {
+	Wstring name(who.length() > 0 ? who : g_NickName);
+	if (name == g_NickName && status == 0) {
 		HWND w = FUN_00775940(0xC9);
 		FUN_005EDDE0(w, true);
 	}
@@ -1063,7 +1063,7 @@ void __fastcall FUN_0077E900(Wstring const & who, int status)
 // FUNCTION: GAMEMD 0x0077EBA0
 int __fastcall FUN_0077EBA0(Wstring const & who)
 {
-	Wstring name(who.length() > 0 ? who : DAT_00B73E40);
+	Wstring name(who.length() > 0 ? who : g_NickName);
 	Wstring lower = ((Wstring const &)name).toLower();
 	if (FUN_007B7ED0(lower) == ((WideWstring const &)WideWstring(Session.GameName)).toLower()) {
 		return 1;
@@ -1454,7 +1454,7 @@ bool WOL_Wait_Callback(void)
 	}
 	if (g_GameStarted != 2) {
 		if (g_pChat && g_CurrentChannel.type != 0 && time(NULL) - DAT_00B77E70 > 10) {
-			Wstring self = ((Wstring const &)DAT_00B73E40).toLower();
+			Wstring self = ((Wstring const &)g_NickName).toLower();
 			if (!FUN_0077CF40()) {
 				User user;
 				int handle;
@@ -3064,7 +3064,7 @@ inline HRESULT CNetUtilEventSink::OnLadderList(HRESULT result, Ladder * list, in
 		g_LadderPos = list->rung;
 	}
 
-	Wstring my_name = ((Wstring const &)DAT_00B73E40).toLower();
+	Wstring my_name = ((Wstring const &)g_NickName).toLower();
 	int row = 0;
 	while (temp) {
 		if (temp->points == -1) {
@@ -3136,7 +3136,7 @@ inline HRESULT CNetUtilEventSink::OnLadderList(HRESULT result, Ladder * list, in
 		}
 
 		if (my_name == ladder_name) {
-			rc_ptr<PlayerProfile> profile = FUN_00778A20(&DAT_00B73E40);
+			rc_ptr<PlayerProfile> profile = FUN_00778A20(&g_NickName);
 			if (profile.Get() && profile.Get()->StatsDiffer(temp)) {
 				profile.Get()->UpdateStats(temp);
 				profile.Get()->Save(&ladder_name);
@@ -3145,7 +3145,7 @@ inline HRESULT CNetUtilEventSink::OnLadderList(HRESULT result, Ladder * list, in
 					dialog = FUN_00775940(0x114);
 				}
 				if (dialog) {
-					profile.Get()->FUN_0077A9F0(dialog, &DAT_00B73E40, false);
+					profile.Get()->FUN_0077A9F0(dialog, &g_NickName, false);
 				}
 			}
 		}
@@ -3368,7 +3368,7 @@ static inline void Focus_Chat_Input_After(unsigned int event);
 // FUNCTION: GAMEMD 0x00785740
 void __fastcall Handle_User_Leave(User *user)
 {
-	stricmp(DAT_00B73E40.get(), (char *)user->name);
+	stricmp(g_NickName.get(), (char *)user->name);
 	if (g_CurrentChannel.type != 0) {
 		VocClass::PlayGlobal(Rule->PlayerLeft, 1.0f, 0x2000, 0);
 	}
@@ -3765,7 +3765,7 @@ static inline void Check_Locale(Wstring & key, int & locale, rc_ptr<PlayerProfil
 	if (profile.Get() != NULL && profile.Get()->Locale != locale) {
 		if (profile.Get()->Locale == 0) {
 			profile.Get()->SetLocale(locale, 2);
-			profile.Get()->Save(&DAT_00B73E40);
+			profile.Get()->Save(&g_NickName);
 		}
 		int value = profile.Get()->Locale;
 		g_pChat->RequestSetLocale((Locale)value);
@@ -3798,7 +3798,7 @@ bool __fastcall FUN_007864C0(Server * server);
 // FUNCTION: GAMEMD 0x007864C0
 bool __fastcall FUN_007864C0(Server * server)
 {
-	strcpy((char *)server->login, DAT_00B73E40.get());
+	strcpy((char *)server->login, g_NickName.get());
 	strcpy((char *)server->password, g_LoginPassword.get());
 	for (int i = 0; i < 18; i++) {
 		ResetEvent(g_WaitEventHandles[i]);
@@ -3840,7 +3840,7 @@ bool __fastcall FUN_007864C0(Server * server)
 	WOLOptionsClass options;
 	rc_ptr<PlayerProfile> profile;
 	if (options.Is_Bit1_Clear()) {
-		profile = FUN_00778A20(&DAT_00B73E40);
+		profile = FUN_00778A20(&g_NickName);
 	} else {
 		profile = DAT_00B75E48;
 	}
@@ -3850,24 +3850,24 @@ bool __fastcall FUN_007864C0(Server * server)
 			profile.Get()->SetName(&name);
 		}
 		if (options.Is_Bit1_Clear()) {
-			profile.Get()->Save(&DAT_00B73E40);
+			profile.Get()->Save(&g_NickName);
 		}
 	}
-	strcpy(Session.Handle, DAT_00B73E40.get());
+	strcpy(Session.Handle, g_NickName.get());
 	Session.FUN_0069B760(profile.Get()->Country, false);
 	Session.FUN_0069B7E0(profile.Get()->Field20, false);
 	Session.Write_MultiPlayer_Settings();
-	FUN_00779F10(DAT_00B73E40);
+	FUN_00779F10(g_NickName);
 	if (g_pNetUtil != NULL && strlen(g_LadderServerHost) != 0) {
-		g_pNetUtil->RequestLadderList(g_LadderServerHost, g_LadderServerPort, DAT_00B73E40.get(), g_GameSKU & 0xFFFF00, -1, 0, 0);
-		g_pNetUtil->RequestHighscore(g_LadderServerHost, g_LadderServerPort, DAT_00B73E40.get(), g_GameSKU & 0xFFFF00);
+		g_pNetUtil->RequestLadderList(g_LadderServerHost, g_LadderServerPort, g_NickName.get(), g_GameSKU & 0xFFFF00, -1, 0, 0);
+		g_pNetUtil->RequestHighscore(g_LadderServerHost, g_LadderServerPort, g_NickName.get(), g_GameSKU & 0xFFFF00);
 	}
 	for (int j = 0; j < 18; j++) {
 		ResetEvent(g_WaitEventHandles[j]);
 	}
 	User user;
 	memset(&user, 0, sizeof(user));
-	strcpy((char *)user.name, DAT_00B73E40.get());
+	strcpy((char *)user.name, g_NickName.get());
 	g_pChat->RequestUserLocale(&user);
 	for (;;) {
 		int wait = Wait_For_Event();
@@ -3888,7 +3888,7 @@ bool __fastcall FUN_007864C0(Server * server)
 			break;
 		}
 	}
-	Wstring key = ((Wstring const &)DAT_00B73E40).toLower();
+	Wstring key = ((Wstring const &)g_NickName).toLower();
 	if (g_UserLocales.contains(key)) {
 		int locale = 0;
 		g_UserLocales.getValue(key, locale);
@@ -3905,7 +3905,7 @@ bool __fastcall FUN_007864C0(Server * server)
 		pick = Pick_Locale();
 		if (profile.Get() != NULL) {
 			profile.Get()->SetLocale(pick, 3);
-			profile.Get()->Save(&DAT_00B73E40);
+			profile.Get()->Save(&g_NickName);
 		}
 	}
 	if (pick != 0) {
@@ -3932,13 +3932,13 @@ bool __fastcall FUN_00786DC0(Wstring & name)
 		char const * nick;
 		char const * pass;
 		if (g_pChat->GetNick(i, &nick, &pass) == 0 && nick != NULL && strlen(nick) != 0 && strcmpi(name.text(), nick) == 0) {
-			DAT_00B73E40 = nick;
+			g_NickName = nick;
 			g_LoginPassword = pass;
 			g_PlaintextPassword = 0;
 			return true;
 		}
 	}
-	DAT_00B73E40.clear();
+	g_NickName.clear();
 	return false;
 }
 
@@ -4107,8 +4107,8 @@ int Login_WOL(void)
 				}
 			}
 		}
-		if (DAT_00B73E40.length() == 0 && options.Is_Bit1_Clear()) {
-			DAT_00B73E40 = FUN_00779DD0();
+		if (g_NickName.length() == 0 && options.Is_Bit1_Clear()) {
+			g_NickName = FUN_00779DD0();
 		}
 		{
 			Wstring empty(DAT_00889F64);
@@ -4124,7 +4124,7 @@ int Login_WOL(void)
 		FUN_0052FEC0(NULL, true);
 		HWND window = UI::BeginDialog(dialog_id, FUN_00799EA0, (int)&control);
 		OwnerDraw::Display_Dialog(window);
-		if (DAT_00B73E40.length() > 0 && g_LoginPassword.length() == 0) {
+		if (g_NickName.length() > 0 && g_LoginPassword.length() == 0) {
 			Focus_Dialog_Item(window, 0x72C);
 		} else {
 			Focus_Dialog_Item(window, 0x628);
@@ -4142,7 +4142,7 @@ int Login_WOL(void)
 			WOLOptionsClass saved;
 			rc_ptr<PlayerProfile> profile;
 			if (saved.Is_Bit1_Clear()) {
-				profile = FUN_00778A20(&DAT_00B73E40);
+				profile = FUN_00778A20(&g_NickName);
 			} else {
 				profile = DAT_00B75E48;
 			}
@@ -4159,7 +4159,7 @@ int Login_WOL(void)
 			if (FUN_00786D90()) {
 				if (DAT_00B77E68 && saved.Is_Bit1_Clear()) {
 					int locale = profile->Locale;
-					StoreLogin(DAT_00B73E40.get(), g_LoginPassword.get(), g_PlaintextPassword, locale);
+					StoreLogin(g_NickName.get(), g_LoginPassword.get(), g_PlaintextPassword, locale);
 					Session.Write_MultiPlayer_Settings();
 				}
 				if (!saved.Is_Bit0_Clear() || !FUN_00779730()) {
@@ -4710,7 +4710,7 @@ bool __fastcall FUN_007896A0(HWND win, bool combo)
 	WOLOptionsClass options;
 	rc_ptr<PlayerProfile> profile;
 	if (options.Is_Bit1_Clear()) {
-		profile = FUN_00778A20(&DAT_00B73E40);
+		profile = FUN_00778A20(&g_NickName);
 	} else {
 		profile = DAT_00B75E48;
 	}
@@ -5118,7 +5118,7 @@ BOOL CALLBACK WOL_Find_Page_Dialog_Proc(HWND window, UINT message, WPARAM wparam
 							} else {
 								g_pChat->RequestUnicodePage(&userL, text.get());
 								wchar_t * body = text.get();
-								FUN_005E2790(DAT_007EEF44, DAT_0084B94C, DAT_00B73E40.c_str(), body);
+								FUN_005E2790(DAT_007EEF44, DAT_0084B94C, g_NickName.c_str(), body);
 							}
 						} else if (strlen((char *)userL.name) == 0) {
 							FUN_005E2790(-1, StringTable::LoadString("TXT_NAME_ERROR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3752));
@@ -6121,7 +6121,7 @@ extern int WestwoodOnline_PingTimes[];
 extern WinsockInterfaceClass * PacketTransport;
 extern User DAT_00B777B0;
 NodeNameType * __fastcall FUN_005E8BF0(wchar_t const * name);
-User * FUN_007931A0(void);
+User * Get_Channel_Host(void);
 
 // FUNCTION: GAMEMD 0x00792F10
 void __fastcall User_List_To_Session_Players(User * unused)
@@ -6134,7 +6134,7 @@ void __fastcall User_List_To_Session_Players(User * unused)
 		if (node && FUN_005E93F0(node)) {
 			node->Player.SquadID = user.squadID;
 		}
-		if (strcmpi((char *)user.name, DAT_00B73E40.get()) != 0) {
+		if (strcmpi((char *)user.name, g_NickName.get()) != 0) {
 			if (user.flags & 1) {
 				NodeNameType * host = FUN_005E8BF0(FUN_00735120((char *)user.name));
 				NetNumType net;
@@ -6162,11 +6162,11 @@ void __fastcall User_List_To_Session_Players(User * unused)
 // FUNCTION: GAMEMD 0x007930A0
 bool Is_Channel_Owner(void)
 {
-	User * host = FUN_007931A0();
+	User * host = Get_Channel_Host();
 	if (!host) {
 		return false;
 	}
-	if (strcmpi((char *)host->name, DAT_00B73E40.text()) != 0) {
+	if (strcmpi((char *)host->name, g_NickName.text()) != 0) {
 		return false;
 	}
 	return true;
@@ -6175,7 +6175,7 @@ bool Is_Channel_Owner(void)
 // FUNCTION: GAMEMD 0x00793120
 bool __fastcall FUN_00793120(Wstring & name)
 {
-	User * host = FUN_007931A0();
+	User * host = Get_Channel_Host();
 	if (!host) {
 		return false;
 	}
@@ -6186,7 +6186,7 @@ bool __fastcall FUN_00793120(Wstring & name)
 }
 
 // FUNCTION: GAMEMD 0x007931A0
-User * FUN_007931A0(void)
+User * Get_Channel_Host(void)
 {
 	for (int i = 0; i < g_UserList.length(); i++) {
 		g_UserList.get(DAT_00B777B0, i);
@@ -6329,7 +6329,7 @@ void FUN_00793490(void)
 {
 	wchar_t message[256];
 
-	User * host = FUN_007931A0();
+	User * host = Get_Channel_Host();
 	if (!host) {
 		return;
 	}
@@ -6525,7 +6525,7 @@ void FUN_00793BB0(void)
 			GlobalPacketType packet;
 			memset(&packet, 0, sizeof(packet));
 			packet.Command = NET_PING;
-			strcpy(packet.Name, DAT_00B73E40.get());
+			strcpy(packet.Name, g_NickName.get());
 			char const *name = FUN_007350C0(Session.Slots[Session.KeepAliveSlots[i]]->Name);
 			FUN_004068E0("Sending keepalive NET_PING packet to %s\n", name);
 			Ipx.Send_Global_Message_To_Name(&packet, 0x2F, 0, Session.Slots[Session.KeepAliveSlots[i]]->Name);
@@ -6601,13 +6601,13 @@ bool FUN_007947B0(void)
 		char const * first_name = FUN_007350C0(one->Name);
 		FUN_004068E0("Connecting pair %d, %s and %s\n", i, first_name, FUN_007350C0(two->Name));
 		char const * name = FUN_007350C0(Session.Slots[first]->Name);
-		if (stricmp(name, DAT_00B73E40.get()) == 0) {
+		if (stricmp(name, g_NickName.get()) == 0) {
 			partner = second;
 			tag = i * 2 + 1;
 			Session.ConnectionResults[i * 2] = 11;
 		}
 		name = FUN_007350C0(Session.Slots[second]->Name);
-		if (stricmp(name, DAT_00B73E40.get()) == 0) {
+		if (stricmp(name, g_NickName.get()) == 0) {
 			partner = first;
 			tag = i * 2;
 			Session.ConnectionResults[i * 2 + 1] = 11;
@@ -6733,7 +6733,7 @@ void Start_Game_Now(void)
 			Session.PlayerPorts[p] = UDPInterfaceClass::UDPListenPort;
 		}
 	}
-	User * host = FUN_007931A0();
+	User * host = Get_Channel_Host();
 	if (host) {
 		for (int h = 0; h < Session.Players.Count(); h++) {
 			if (stricmp(FUN_007350C0(Session.Players[h]->Name), (char *)host->name) == 0) {
@@ -7264,7 +7264,7 @@ int __fastcall Negotiate_Scenario_Transfer(bool go)
 				packet.Command = (NetCommandType)42;
 			}
 			OwnerDraw::WideToCharString(packet.Name, Session.Players[0]->Name, -1);
-			User * host = FUN_007931A0();
+			User * host = Get_Channel_Host();
 			if (host) {
 				Ipx.Send_Global_Message_To_Name(&packet, 0x2f, 1, FUN_00735120((char *)host->name));
 			}
@@ -7282,7 +7282,7 @@ int __fastcall Negotiate_Scenario_Transfer(bool go)
 			if ((Session.WOLWelcomeChoice != 3 && (Session.WOLWelcomeChoice == 1 || Session.WOLWelcomeChoice == 2)) || (Session.ScenarioIsOfficial && !Session.Is_Random_Map())) {
 				memset(&packet, 0, sizeof(packet));
 				packet.Command = NET_NO_SCENARIO;
-				User * host = FUN_007931A0();
+				User * host = Get_Channel_Host();
 				if (host) {
 					Ipx.Send_Global_Message_To_Name(&packet, 0x2f, 1, FUN_00735120((char *)host->name));
 				}
@@ -7325,7 +7325,7 @@ int __fastcall Negotiate_Scenario_Transfer(bool go)
 			Call_Back();
 			if (Ipx.Get_Global_Message(&Session.GPacket, &Session.GPacketlen, &Session.GAddress, &Session.GProductID) && Session.GProductID == IPXGlobalConnClass::COMMAND_AND_CONQUER4) {
 				FUN_004068E0("Packet is YR packet\n");
-				User * host = FUN_007931A0();
+				User * host = Get_Channel_Host();
 				if (host && stricmp(Session.GPacket.Name, (char *)host->name) == 0) {
 					if (Session.GPacket.Command == NET_GO) {
 						FUN_004068E0("Got NET_GO from host\n");
@@ -7383,7 +7383,7 @@ bool Handle_Preview_Download(void)
 			user.next = NULL;
 			User_List_To_Session_Players(&user);
 			if (Ipx.Get_Global_Message(&packet, &packet_len, &sender_address, &product_id) && packet.Command == NET_PREVIEW_MODE && sender_address.FUN_0053EF30(Session.HostAddress) && product_id == IPXGlobalConnClass::COMMAND_AND_CONQUER4) {
-				User * host = FUN_007931A0();
+				User * host = Get_Channel_Host();
 				if (host && stricmp(packet.Name, (char *)host->name) == 0) {
 					FUN_004068E0("Received NET_PREVIEW_MODE packet from host\n");
 					Ipx.Set_Timing(50, -1, 5000);
@@ -7421,7 +7421,7 @@ void Poke_The_Host(void)
 			memset(&packet, 0, sizeof(packet));
 			packet.Command = NET_PING;
 			OwnerDraw::WideToCharString(packet.Name, Session.Players[0]->Name, -1);
-			User * host = FUN_007931A0();
+			User * host = Get_Channel_Host();
 			if (host) {
 				Ipx.Send_Global_Message_To_Name(&packet, sizeof(packet), 1, FUN_00735120((char *)host->name));
 			}
@@ -7624,7 +7624,7 @@ void FUN_007970D0(void)
 	Game::Network::WOLGameID = 0;
 	WestwoodOnline_GameSKU_TS = g_GameSKU;
 	Game::Network::Tournament = 0;
-	strcpy(WestwoodOnline_LoginName, DAT_00B73E40.get());
+	strcpy(WestwoodOnline_LoginName, g_NickName.get());
 	FUN_005C6120(&Session.Players);
 	size = 0x3F7;
 	GetComputerName(computer, &size);
@@ -8328,10 +8328,10 @@ BOOL CALLBACK FUN_007988C0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 
 		case 0x497:
 			{
-				if (DAT_00B73E40.length() > 0) {
-					rc_ptr<PlayerProfile> profile = FUN_00778A20(&DAT_00B73E40);
+				if (g_NickName.length() > 0) {
+					rc_ptr<PlayerProfile> profile = FUN_00778A20(&g_NickName);
 					if (profile.Get()) {
-						profile->FUN_0077A9F0(window, &DAT_00B73E40, true);
+						profile->FUN_0077A9F0(window, &g_NickName, true);
 					}
 				}
 				HWND item = GetDlgItem(window, 0x746);
@@ -8413,9 +8413,9 @@ int FUN_00798DE0(void)
 {
 	WOLOptionsClass options;
 	FUN_0052FEC0(NULL, true);
-	if (g_pNetUtil && strlen(g_LadderServerHost) != 0 && DAT_00B73E40.length() > 0) {
-		g_pNetUtil->RequestLadderList(g_LadderServerHost, g_LadderServerPort, DAT_00B73E40.get(), g_GameSKU & 0xFFFF00, -1, NULL, NULL);
-		g_pNetUtil->RequestHighscore(g_LadderServerHost, g_LadderServerPort, DAT_00B73E40.get(), g_GameSKU & 0xFFFF00);
+	if (g_pNetUtil && strlen(g_LadderServerHost) != 0 && g_NickName.length() > 0) {
+		g_pNetUtil->RequestLadderList(g_LadderServerHost, g_LadderServerPort, g_NickName.get(), g_GameSKU & 0xFFFF00, -1, NULL, NULL);
+		g_pNetUtil->RequestHighscore(g_LadderServerHost, g_LadderServerPort, g_NickName.get(), g_GameSKU & 0xFFFF00);
 	}
 	FUN_0072C7E0();
 	if (options.Is_Bit1_Clear()) {
@@ -8444,7 +8444,7 @@ void __fastcall FUN_00798F50(HWND combo)
 	WOLOptionsClass options;
 	rc_ptr<PlayerProfile> profile;
 	if (options.Is_Bit1_Clear()) {
-		profile = FUN_00778A20(&DAT_00B73E40);
+		profile = FUN_00778A20(&g_NickName);
 	} else {
 		profile = DAT_00B75E48;
 	}
@@ -8510,9 +8510,9 @@ int FUN_00799D30(void)
 			default:
 				return -2;
 		}
-		if (g_pNetUtil && strlen(g_LadderServerHost) && DAT_00B73E40.length() > 0) {
-			g_pNetUtil->RequestLadderList(g_LadderServerHost, g_LadderServerPort, DAT_00B73E40.get(), g_GameSKU & 0xFFFF00, -1, 0, 0);
-			g_pNetUtil->RequestHighscore(g_LadderServerHost, g_LadderServerPort, DAT_00B73E40.get(), g_GameSKU & 0xFFFF00);
+		if (g_pNetUtil && strlen(g_LadderServerHost) && g_NickName.length() > 0) {
+			g_pNetUtil->RequestLadderList(g_LadderServerHost, g_LadderServerPort, g_NickName.get(), g_GameSKU & 0xFFFF00, -1, 0, 0);
+			g_pNetUtil->RequestHighscore(g_LadderServerHost, g_LadderServerPort, g_NickName.get(), g_GameSKU & 0xFFFF00);
 		}
 		FUN_0072C9C0();
 		FUN_007F7624_Class control;
@@ -8587,14 +8587,14 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 									bool found = FUN_00786DC0(text);
 									bool enable = found || DAT_00B77E68;
 									if (!found) {
-										DAT_00B73E40 = text;
+										g_NickName = text;
 									}
 									DAT_00B77EA0 = true;
 									HWND edit = GetDlgItem(window, 0x72C);
 									SendMessage(edit, 0x4B4, 0, (LPARAM)g_LoginPassword.text());
 									InvalidateRect(edit, NULL, FALSE);
 									DAT_00B77EA0 = false;
-									bool ready = DAT_00B73E40.length() > 0 && g_LoginPassword.length() == 8;
+									bool ready = g_NickName.length() > 0 && g_LoginPassword.length() == 8;
 									HWND check = GetDlgItem(window, 0x72D);
 									ShowWindow(check, SW_HIDE);
 									SendMessage(check, 0x49D, 0, 1);
@@ -8603,7 +8603,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 									SendMessage(check, 0x49D, 0, 0);
 									ShowWindow(check, SW_SHOW);
 									InvalidateRect(check, NULL, FALSE);
-									EnableWindow(GetDlgItem(window, 0x6EB), DAT_00B73E40.length() > 0);
+									EnableWindow(GetDlgItem(window, 0x6EB), g_NickName.length() > 0);
 									EnableWindow(GetDlgItem(window, 0x539), ready);
 								}
 								return FALSE;
@@ -8614,7 +8614,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 								}
 								{
 									DAT_00B77EA0 = true;
-									DAT_00B73E40.clear();
+									g_NickName.clear();
 									g_LoginPassword.clear();
 									g_PlaintextPassword = true;
 									HWND edit = GetDlgItem(window, 0x72C);
@@ -8624,7 +8624,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 									if (item != -1) {
 										int slot = SendMessage((HWND)lparam, CB_GETITEMDATA, item, 0);
 										if (slot > 0 && slot <= 0x20) {
-											FUN_00623FC0((HWND)lparam, item, &DAT_00B73E40);
+											FUN_00623FC0((HWND)lparam, item, &g_NickName);
 											char const * nick;
 											char const * pass;
 											g_pChat->GetNick(slot, &nick, &pass);
@@ -8635,12 +8635,12 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 											enable = true;
 										}
 									}
-									bool ready = DAT_00B73E40.length() > 0 && g_LoginPassword.length() == 8;
+									bool ready = g_NickName.length() > 0 && g_LoginPassword.length() == 8;
 									HWND check = GetDlgItem(window, 0x72D);
 									SendMessage(check, BM_SETCHECK, enable, 0);
 									EnableWindow(check, FALSE);
 									InvalidateRect(check, NULL, FALSE);
-									EnableWindow(GetDlgItem(window, 0x6EB), DAT_00B73E40.length() > 0);
+									EnableWindow(GetDlgItem(window, 0x6EB), g_NickName.length() > 0);
 									EnableWindow(GetDlgItem(window, 0x539), ready);
 									DAT_00B77EA0 = false;
 								}
@@ -8722,7 +8722,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					{
 						DAT_00B77EA0 = true;
 						HWND combo = GetDlgItem(window, 0x628);
-						int item = SendMessage(combo, 0x4B9, -1, (LPARAM)DAT_00B73E40.text());
+						int item = SendMessage(combo, 0x4B9, -1, (LPARAM)g_NickName.text());
 						if (item != -1) {
 							Wstring name;
 							FUN_00623FC0(combo, item, &name);
@@ -8743,7 +8743,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 						InvalidateRect(combo, NULL, FALSE);
 						HWND edit = GetDlgItem(window, 0x72C);
 						SendMessage(edit, 0x4B4, 0, (LPARAM)DAT_00889F64);
-						DAT_00B73E40.clear();
+						g_NickName.clear();
 						g_LoginPassword.clear();
 						g_PlaintextPassword = true;
 						HWND check = GetDlgItem(window, 0x72D);
@@ -8784,24 +8784,24 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 						SendMessage(combo, CB_SETITEMDATA, added, i);
 					}
 				}
-				Wstring saved(DAT_00B73E40);
-				bool found = FUN_00786DC0(DAT_00B73E40);
+				Wstring saved(g_NickName);
+				bool found = FUN_00786DC0(g_NickName);
 				if (!found) {
-					DAT_00B73E40 = saved;
+					g_NickName = saved;
 				}
-				SendMessage(combo, 0x4B4, 0, (LPARAM)DAT_00B73E40.text());
-				if (DAT_00B73E40.length() > 0) {
+				SendMessage(combo, 0x4B4, 0, (LPARAM)g_NickName.text());
+				if (g_NickName.length() > 0) {
 					SendMessage(edit, 0x4B4, 0, (LPARAM)g_LoginPassword.text());
 					g_PlaintextPassword = false;
 				}
-				bool ready = DAT_00B73E40.length() > 0 && g_LoginPassword.length() == 8;
+				bool ready = g_NickName.length() > 0 && g_LoginPassword.length() == 8;
 				HWND check = GetDlgItem(window, 0x72D);
 				SendMessage(check, 0x49D, 0, 1);
 				SendMessage(check, BM_SETCHECK, found, 0);
 				EnableWindow(check, FALSE);
 				InvalidateRect(check, NULL, FALSE);
 				SendMessage(check, 0x49D, 0, 0);
-				EnableWindow(GetDlgItem(window, 0x6EB), DAT_00B73E40.length() > 0);
+				EnableWindow(GetDlgItem(window, 0x6EB), g_NickName.length() > 0);
 				EnableWindow(GetDlgItem(window, 0x539), ready);
 				WOLOptionsClass options;
 				if (!options.Is_Bit1_Clear()) {
@@ -8900,7 +8900,7 @@ BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 		case WM_COMMAND:
 			switch (LOWORD(wparam)) {
 				case IDOK:
-					FUN_00779C90(DAT_00B73E40);
+					FUN_00779C90(g_NickName);
 					control->F1(window, 1);
 					break;
 
@@ -9323,7 +9323,7 @@ bool __fastcall FUN_0079C520(Wstring * name)
 	if (name->length() == 0) {
 		return false;
 	}
-	if (((Wstring const &)lower).toLower() == ((Wstring const &)DAT_00B73E40).toLower()) {
+	if (((Wstring const &)lower).toLower() == ((Wstring const &)g_NickName).toLower()) {
 		return false;
 	}
 	if (name->containsAny(" ,;")) {
@@ -9654,7 +9654,7 @@ BOOL CALLBACK FUN_0079DB50(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 						strcpy((char *)user.name, name.get());
 						g_pChat->RequestUnicodePage(&user, text.get());
 						wchar_t * message = text.get();
-						FUN_005E2700(DAT_007EEF2C, L"[%hs] %s", DAT_00B73E40.c_str(), message);
+						FUN_005E2700(DAT_007EEF2C, L"[%hs] %s", g_NickName.c_str(), message);
 					}
 					EnableWindow((HWND)lparam, FALSE);
 					InvalidateRect(edit, NULL, FALSE);
@@ -9956,7 +9956,7 @@ void FUN_007A0430(void)
 		g_UserList.get(user, i);
 		if (user.flags & 1) {
 			FUN_004068E0("%s is channel operator, no ping request\n", user.name);
-		} else if (stricmp((char *)user.name, DAT_00B73E40.get()) == 0) {
+		} else if (stricmp((char *)user.name, g_NickName.get()) == 0) {
 			FUN_004068E0("%s is local user, no ping request\n", user.name);
 		} else {
 			Wstring name((char *)user.name);
@@ -10013,7 +10013,7 @@ bool FUN_007A0690(void)
 	WOLOptionsClass options;
 	rc_ptr<PlayerProfile> profile;
 	if (options.Is_Bit1_Clear()) {
-		profile = FUN_00778A20(&DAT_00B73E40);
+		profile = FUN_00778A20(&g_NickName);
 	} else {
 		profile = DAT_00B75E48;
 	}
@@ -10065,7 +10065,7 @@ bool FUN_007A0690(void)
 		request += "0";
 	}
 
-	Wstring nick(DAT_00B73E40);
+	Wstring nick(g_NickName);
 	nick.toLower();
 	if (g_UserLocales.contains(nick)) {
 		int locale = 0;
@@ -10295,7 +10295,7 @@ void FUN_007A1330(void)
 		}
 		DAT_00B736F4 = 0;
 		if (count > 0) {
-			User * host = FUN_007931A0();
+			User * host = Get_Channel_Host();
 			if (host) {
 				g_pChat->RequestPrivateMessage(host, pings.get());
 				FUN_004068E0("Sending ping list : %s\n", pings.get());
@@ -10882,7 +10882,7 @@ HRESULT CNetUtilEventSink::OnNewNick(HRESULT result, LPCSTR message, LPCSTR nick
 				SendMessage(item, 0x14E, index, 0);
 			}
 			if (login_mode) {
-				DAT_00B73E40 = nick;
+				g_NickName = nick;
 				g_LoginPassword = pass;
 				HWND password = GetDlgItem(dialog, 0x72C);
 				SendMessage(password, 0x4B4, 0, (LPARAM)g_LoginPassword.text());
@@ -11140,7 +11140,7 @@ long __stdcall FUN_007A41C0(void * sink, long result, Server * servers)
 	server = NULL;
 	for (int i = 0; i < g_Servers.length(); i++) {
 		g_Servers.getPointer(&server, i);
-		strcpy((char *)server->login, DAT_00B73E40.get());
+		strcpy((char *)server->login, g_NickName.get());
 		strcpy((char *)server->password, g_LoginPassword.get());
 	}
 
@@ -11418,7 +11418,7 @@ long __stdcall FUN_007A5690(void * sink, long result, Channel * channel)
 		memcpy(&g_CurrentChannel, channel, 0x10C);
 	} else {
 		memset(g_UserInfo, 0, sizeof(g_UserInfo));
-		strcpy(g_UserInfo[0].Name, DAT_00B73E40.get());
+		strcpy(g_UserInfo[0].Name, g_NickName.get());
 		g_UserInfo[0].House = Session.House;
 		g_UserInfo[0].Unknown = 0;
 		g_UserInfo[0].Color = Session.PrefColor;
@@ -11570,7 +11570,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 			int index = Player_Name_To_Index(nick);
 			memset(&g_UserInfo[index], 0, sizeof(g_UserInfo[index]));
 			strcpy(g_UserInfo[index].Name, (char *)users->name);
-			if (stricmp((char *)users->name, DAT_00B73E40.get()) != 0) {
+			if (stricmp((char *)users->name, g_NickName.get()) != 0) {
 				if (Session.Players.Count() == 1) {
 					wcscpy(Session.GameName, FUN_00735120((char *)users->name));
 				}
@@ -11596,7 +11596,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 		if (!saw_owner) {
 			User user;
 			for (int i = 0; i < g_UserList.length(); i++) {
-				if (g_UserList.get(user, i) && stricmp((char *)user.name, DAT_00B73E40.get()) == 0) {
+				if (g_UserList.get(user, i) && stricmp((char *)user.name, g_NickName.get()) == 0) {
 					Handle_User_Leave(&user);
 					break;
 				}
@@ -11604,7 +11604,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 		}
 
 		if (g_CurrentChannel.type != 0) {
-			if (!g_IsChannelCreator && g_UserList.length() == 1 && stricmp((char *)users->name, DAT_00B73E40.get()) == 0) {
+			if (!g_IsChannelCreator && g_UserList.length() == 1 && stricmp((char *)users->name, g_NickName.get()) == 0) {
 				Handle_User_Leave(users);
 			}
 
@@ -11619,7 +11619,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 				WOLOptionsClass options;
 				rc_ptr<PlayerProfile> profile;
 				if (options.Is_Bit1_Clear()) {
-					profile = FUN_00778A20(&DAT_00B73E40);
+					profile = FUN_00778A20(&g_NickName);
 				} else {
 					profile = DAT_00B75E48;
 				}
@@ -11721,7 +11721,7 @@ long __stdcall FUN_007A7B60(void *sink, long result, Channel *channel, User *use
 		Game::Network::Tournament = g_CurrentChannel.tournament;
 		if (FUN_0077D970())
 			Game::Network::Tournament = 2;
-		strcpy(WestwoodOnline_LoginName, DAT_00B73E40.get());
+		strcpy(WestwoodOnline_LoginName, g_NickName.get());
 		User *first = NULL;
 		g_UserList.getPointer(&first, 0);
 		if (first)
@@ -11735,7 +11735,7 @@ long __stdcall FUN_007A7B60(void *sink, long result, Channel *channel, User *use
 		User_List_To_Session_Players(users);
 		g_GameStarted = 2;
 		FUN_004068E0("Starting a %d player game.\n", Session.NumPlayers);
-		User *host = FUN_007931A0();
+		User *host = Get_Channel_Host();
 		if (host)
 			FUN_00735060(Session.MasterPlayerName, (char *)host->name, -1);
 		Session.MasterPlayerID = -1;
@@ -11761,7 +11761,7 @@ long __stdcall FUN_007A7EA0(void * sink, long result, Channel * channel, User * 
 	bool isnew = false;
 	if (Is_Local_Host()) return S_OK;
 	if (Is_Internal_Session()) {
-		WideWstring nickname = FUN_007B7ED0(DAT_00B73E40);
+		WideWstring nickname = FUN_007B7ED0(g_NickName);
 		NodeNameType * local = FUN_005E8BF0(nickname.get());
 		if (!local) return S_OK;
 		if (local->Get_Country() < 0 || local->Get_Color() < 0) return S_OK;
@@ -11943,14 +11943,14 @@ long __stdcall FUN_007A8260(void * sink, long result, User * user, char const * 
 			if (old_country == -3) {
 				if (country != old_country) become_player = true;
 			} else if (country == -3) become_observer = true;
-			User * host = FUN_007931A0();
-			if (host && !stricmp((char *)host->name, DAT_00B73E40.text()) && row == 0 && become_observer && Session.MPGameMode && !Session.MPGameMode->vt_entry_BC()) {
+			User * host = Get_Channel_Host();
+			if (host && !stricmp((char *)host->name, g_NickName.text()) && row == 0 && become_observer && Session.MPGameMode && !Session.MPGameMode->vt_entry_BC()) {
 				become_observer = false;
 				changed = true;
 			}
 			if (become_player) {
-				host = FUN_007931A0();
-				if (host && !stricmp((char *)host->name, DAT_00B73E40.text())) {
+				host = Get_Channel_Host();
+				if (host && !stricmp((char *)host->name, g_NickName.text())) {
 					if (FUN_005E9510()) {
 						FUN_005EC9F0(window, FUN_005E98F0(row), DAT_00AC11B4, 0);
 						changed = true;
@@ -11971,8 +11971,8 @@ long __stdcall FUN_007A8260(void * sink, long result, User * user, char const * 
 				}
 			}
 			if (become_observer) {
-				host = FUN_007931A0();
-				if (host && !stricmp((char *)host->name, DAT_00B73E40.text())) {
+				host = Get_Channel_Host();
+				if (host && !stricmp((char *)host->name, g_NickName.text())) {
 					if (FUN_005E9560()) {
 						FUN_005EC9F0(window, FUN_005E98F0(index), DAT_00AC119C, 0);
 						FUN_0077DB90();
@@ -12042,8 +12042,8 @@ request_done:
 		FUN_004068E0(DAT_0084AEA0);
 		if (g_UserList.length() >= 2) {
 			User temp;
-			User * host = FUN_007931A0();
-			if (host && !stricmp((char *)host->name, DAT_00B73E40.text()) && !g_GameStarted && g_CurrentChannel.type && MultiplayerMapPreview && MultiplayerMapPreview->Get_Preview_Surface() && DAT_008316D4) {
+			User * host = Get_Channel_Host();
+			if (host && !stricmp((char *)host->name, g_NickName.text()) && !g_GameStarted && g_CurrentChannel.type && MultiplayerMapPreview && MultiplayerMapPreview->Get_Preview_Surface() && DAT_008316D4) {
 				int found = Player_Name_To_Index((char *)user->name);
 				if (found != -1) {
 					g_UserList.get(temp, found);
@@ -12881,17 +12881,17 @@ long __stdcall FUN_007AB8E0(void * sink, long result, User * users)
 		Forget_Locale(name);
 		int locale = user->locale;
 		g_UserLocales.add(name, locale);
-		if (stricmp((char *)users->name, DAT_00B73E40.get()) == 0) {
+		if (stricmp((char *)users->name, g_NickName.get()) == 0) {
 			WOLOptionsClass options;
 			rc_ptr<PlayerProfile> profile;
 			if (options.Is_Bit1_Clear()) {
-				profile = FUN_00778A20(&DAT_00B73E40);
+				profile = FUN_00778A20(&g_NickName);
 			} else {
 				profile = DAT_00B75E48;
 			}
 			profile->SetLocale(users->locale, 2);
 			if (options.Is_Bit1_Clear()) {
-				profile->Save(&DAT_00B73E40);
+				profile->Save(&g_NickName);
 			}
 			FUN_004068E0("OnUserLocale callback - Locale is %d\n", users->locale);
 			found = true;
@@ -13616,7 +13616,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 				if (Send_Chat_Action(text))
 					color = DAT_007EEF34;
 				wchar_t *message_text = text.get();
-				PMessagePrintf(color, DAT_0084B224, DAT_00B73E40.c_str(), message_text);
+				PMessagePrintf(color, DAT_0084B224, g_NickName.c_str(), message_text);
 			} else
 				PMessagePrintf(
 					-1, StringTable::LoadString("TXT_ENTER_MESSAGE", 0, "D:\\ra2mdpost\\wonline.cpp", 0x4205));
@@ -13659,7 +13659,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 								PMessagePrintf(-1, StringTable::LoadString("TXT_NO_NAME_SPECIFIED", 0,
 																		   "D:\\ra2mdpost\\wonline.cpp", 0x41aa));
 							else if (wcslen(body) > 0)
-								PMessagePrintf(DAT_007EEF30, DAT_0084B9B0, DAT_00B73E40.c_str(), nickname, body);
+								PMessagePrintf(DAT_007EEF30, DAT_0084B9B0, g_NickName.c_str(), nickname, body);
 							else
 								PMessagePrintf(-1, StringTable::LoadString("TXT_CANT_SEND_BLANK_PAGE", 0,
 																		   "D:\\ra2mdpost\\wonline.cpp", 0x41b0));
@@ -13684,7 +13684,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 							++body;
 						wcscpy(nickname, FUN_00735120(DAT_00B77E30));
 						if (wcslen(body) > 0 && wcslen(nickname) > 0)
-							PMessagePrintf(DAT_007EEF30, DAT_0084B9B0, DAT_00B73E40.c_str(), nickname, body);
+							PMessagePrintf(DAT_007EEF30, DAT_0084B9B0, g_NickName.c_str(), nickname, body);
 						else if (wcslen(nickname) > 0)
 							PMessagePrintf(-1, StringTable::LoadString("TXT_CANT_SEND_BLANK_PAGE", 0,
 																	   "D:\\ra2mdpost\\wonline.cpp", 0x41e0));
@@ -13694,7 +13694,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 						if (Send_Chat_Message(text) == 1)
 							color = DAT_007EEF30;
 						wchar_t *message_text = text.get();
-						PMessagePrintf(color, DAT_0084B94C, DAT_00B73E40.c_str(), message_text);
+						PMessagePrintf(color, DAT_0084B94C, g_NickName.c_str(), message_text);
 					}
 				}
 			}
@@ -14301,7 +14301,7 @@ BOOL CALLBACK WOL_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 				if (text.length() > 0) {
 					if (Send_Chat_Action(text)) color = DAT_007EEF34;
 					wchar_t *message_text = text.get();
-					PMessagePrintf(color, DAT_0084B224, DAT_00B73E40.c_str(), message_text);
+					PMessagePrintf(color, DAT_0084B224, g_NickName.c_str(), message_text);
 				} else {
 					PMessagePrintf(-1, StringTable::LoadString("TXT_ENTER_MESSAGE", NULL,
 															   "D:\\ra2mdpost\\wonline.cpp", 17700));
@@ -14349,7 +14349,7 @@ BOOL CALLBACK WOL_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 											-1, StringTable::LoadString("TXT_NO_NAME_SPECIFIED", NULL,
 																		"D:\\ra2mdpost\\wonline.cpp", 17609));
 									} else if (wcslen(message_text) > 0) {
-										PMessagePrintf(DAT_007EEF30, DAT_0084B9B0, DAT_00B73E40.c_str(), name,
+										PMessagePrintf(DAT_007EEF30, DAT_0084B9B0, g_NickName.c_str(), name,
 													   message_text);
 									} else {
 										PMessagePrintf(
@@ -14384,7 +14384,7 @@ BOOL CALLBACK WOL_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 								wchar_t name[16];
 								wcscpy(name, FUN_00735120(DAT_00B77E30));
 								if (wcslen(name) > 0 && wcslen(message_text) > 0) {
-									PMessagePrintf(DAT_007EEF30, DAT_0084B9B0, DAT_00B73E40.c_str(), name,
+									PMessagePrintf(DAT_007EEF30, DAT_0084B9B0, g_NickName.c_str(), name,
 												   message_text);
 								} else if (wcslen(name) > 0) {
 									PMessagePrintf(
@@ -14398,7 +14398,7 @@ BOOL CALLBACK WOL_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 						int color = DAT_007EEF44;
 						if (Send_Chat_Message(text) == 1) color = DAT_007EEF30;
 						wchar_t *message_text = text.get();
-						PMessagePrintf(color, DAT_0084B94C, DAT_00B73E40.c_str(), message_text);
+						PMessagePrintf(color, DAT_0084B94C, g_NickName.c_str(), message_text);
 					}
 				}
 			}

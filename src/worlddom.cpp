@@ -456,7 +456,6 @@ rc_ptr<WorldDominationTour::Campaign> DAT_00B77F68;
 // _$E114
 rc_ptr<WorldDominationTour::Campaign> DAT_00B77F78;
 
-extern Wstring DAT_00B73E40;
 rc_ptr<WorldDominationTour::CampaignProperties> __fastcall FUN_0076BE90(rc_ptr<WDTState> const & state);
 rc_ptr<WorldDominationTour::Campaign> __fastcall FUN_00764B30(Wstring const & name, rc_ptr<WorldDominationTour::CampaignProperties> const & props);
 
@@ -470,7 +469,7 @@ rc_ptr<WDTState> * __cdecl FUN_007B0210(void)
 void __fastcall FUN_007B0220(rc_ptr<WDTState> const & state)
 {
 	DAT_00B77F58 = state;
-	DAT_00B77F68 = FUN_00764B30(DAT_00B73E40, FUN_0076BE90(state));
+	DAT_00B77F68 = FUN_00764B30(g_NickName, FUN_0076BE90(state));
 }
 
 // FUNCTION: GAMEMD 0x007B0290
@@ -483,7 +482,7 @@ rc_ptr<WDTState> * __cdecl FUN_007B0290(void)
 void __fastcall FUN_007B02A0(rc_ptr<WDTState> const & state)
 {
 	DAT_00B77F70 = state;
-	DAT_00B77F78 = FUN_00764B30(DAT_00B73E40, FUN_0076BE90(state));
+	DAT_00B77F78 = FUN_00764B30(g_NickName, FUN_0076BE90(state));
 }
 
 char * DAT_00B77F54;

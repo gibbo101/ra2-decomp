@@ -63,7 +63,7 @@ int __fastcall FUN_0077B280(void)
 #include "theme.h"
 #include "wolopt.h"
 #include "wstring.h"
-extern Wstring DAT_00B73E40;
+extern Wstring g_NickName;
 extern int DAT_00B73678;
 Wstring FUN_00779B50(void);
 Wstring FUN_00779DD0(void);
@@ -97,12 +97,12 @@ int __fastcall FUN_0077B2A0(bool first_time)
 	bool shuffle = Theme.Is_Shuffle();
 	Theme.Set_Shuffle(true);
 	Apply_WOL_Settings();
-	if (DAT_00B73E40.length() == 0) {
-		DAT_00B73E40 = FUN_00779B50();
-		if (DAT_00B73E40.length() == 0) {
+	if (g_NickName.length() == 0) {
+		g_NickName = FUN_00779B50();
+		if (g_NickName.length() == 0) {
 			WOLOptionsClass options;
 			if (options.Is_Bit1_Clear()) {
-				DAT_00B73E40 = FUN_00779DD0();
+				g_NickName = FUN_00779DD0();
 			}
 		}
 	}

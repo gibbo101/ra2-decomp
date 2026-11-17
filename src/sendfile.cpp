@@ -71,7 +71,7 @@ int Send_Timeout_For_Type(int type)
 }
 
 void __cdecl FUN_004068E0(char const * format, ...);
-User * FUN_007931A0(void);
+User * Get_Channel_Host(void);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 char * __fastcall FUN_007350C0(wchar_t const * text);
 wchar_t * __fastcall FUN_00735120(char const * text);
@@ -117,7 +117,7 @@ bool Get_File_From_Host(char * return_name, int gametype, bool show_progress)
 		if (Session.Type == GAME_IPX) {
 			Ipx.Send_Global_Message(&net_send_packet, sizeof(net_send_packet), 1, &Session.HostAddress);
 		} else {
-			User * owner = FUN_007931A0();
+			User * owner = Get_Channel_Host();
 			if (owner != NULL) {
 				Ipx.Send_Global_Message_To_Name(&net_send_packet, sizeof(net_send_packet), 1, FUN_00735120((char *)owner->name));
 			}
@@ -154,7 +154,7 @@ bool Get_File_From_Host(char * return_name, int gametype, bool show_progress)
 			if (Ipx.Get_Global_Message(&net_receive_packet, &receive_packet_length, &sender_address, &product_id)) {
 				bool from_host = sender_address.FUN_0053EF30(Session.HostAddress);
 				if (Session.Type == GAME_INTERNET) {
-					User * owner = FUN_007931A0();
+					User * owner = Get_Channel_Host();
 					if (owner != NULL && stricmp((char *)owner->name, net_receive_packet.Name) == 0) {
 						from_host = true;
 					} else {
@@ -192,7 +192,7 @@ bool Get_File_From_Host(char * return_name, int gametype, bool show_progress)
 		net_send_packet.Command = NET_FILE_INFO_ACK;
 		strcpy(net_send_packet.Name, FUN_007350C0(Session.Players[0]->Name));
 		if (Session.Type == GAME_INTERNET) {
-			User * owner = FUN_007931A0();
+			User * owner = Get_Channel_Host();
 			if (owner != NULL) {
 				Ipx.Send_Global_Message_To_Name(&net_send_packet, sizeof(net_send_packet), 1, FUN_00735120((char *)owner->name));
 			}
@@ -296,7 +296,7 @@ bool Receive_Remote_File(char * file_name, unsigned int file_length, int gametyp
 			if (Ipx.Get_Global_Message(receive_packet, &receive_packet_length, &sender_address, &product_id)) {
 				bool from_host = sender_address.FUN_0053EF30(Session.HostAddress);
 				if (Session.Type == GAME_INTERNET) {
-					User * owner = FUN_007931A0();
+					User * owner = Get_Channel_Host();
 					if (owner != NULL && stricmp((char *)owner->name, receive_packet->Name) == 0) {
 						from_host = true;
 					} else {

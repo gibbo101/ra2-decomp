@@ -1701,7 +1701,6 @@ int SessionClass::FUN_0069BD00(int slot)
 
 #include "wspudp.h"
 extern WinsockInterfaceClass * PacketTransport;
-extern Wstring DAT_00B73E40;
 
 // FUNCTION: GAMEMD 0x0069BD60
 void SessionClass::FUN_0069BD60(void)
@@ -1783,13 +1782,13 @@ void SessionClass::FUN_0069BD60(void)
 					}
 
 					char * name = FUN_007350C0(ordered[i]->Name);
-					if (stricmp(name, DAT_00B73E40.get()) == 0) {
+					if (stricmp(name, g_NickName.get()) == 0) {
 						Copy_Player_Name(
 							unknown_2E28[local_count++], ordered[j]->Name);
 					}
 
 					name = FUN_007350C0(ordered[j]->Name);
-					if (stricmp(name, DAT_00B73E40.get()) == 0) {
+					if (stricmp(name, g_NickName.get()) == 0) {
 						Copy_Player_Name(
 							unknown_2E28[local_count++], ordered[i]->Name);
 					}
