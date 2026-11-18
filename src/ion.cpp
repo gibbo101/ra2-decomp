@@ -792,7 +792,7 @@ void FUN_0053B080(void)
 				AnimClass * anim = new AnimClass(Rule->PermaControlledAnimationType, center, 0, 1, ShapeFlags_Type(0x600), 0, false);
 				techno->MindControlRingAnim = anim;
 				if (anim != NULL) {
-					anim->SetOwnerObject(techno);
+					anim->Attach_To(techno);
 				}
 				victims.Add(techno);
 			}

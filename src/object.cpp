@@ -1009,7 +1009,7 @@ bool ObjectClass::Paradrop(Coord const & coord)
 						Parachute = anim;
 					}
 					if (anim != NULL) {
-						anim->SetOwnerObject(this);
+						anim->Attach_To(this);
 						if (Fetch_RTTI() != RTTI_BULLET) {
 							anim->LightConvert = GetRemapColour();
 							anim->TintColor = Get_Cell_Ptr()->Brightness;

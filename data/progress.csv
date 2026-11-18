@@ -903,7 +903,7 @@ address,name,result,size,source,symbol
 0x00423920,_$E171,MATCH,1,src/anim.cpp,_$E171
 0x00423930,AnimClass::Bounce_AI,MATCH,392,src/anim.cpp,?Bounce_AI@AnimClass@@UAE?AW4BounceResultType@@XZ
 0x00423AC0,AnimClass::AI,MATCH,4234,src/anim.cpp,?AI@AnimClass@@UAEXXZ
-0x00424B50,AnimClass::SetOwnerObject,MATCH,315,src/anim.cpp,?SetOwnerObject@AnimClass@@QAEXPAVObjectClass@@@Z
+0x00424B50,AnimClass::Attach_To,MATCH,315,src/anim.cpp,?Attach_To@AnimClass@@QAEXPAVObjectClass@@@Z
 0x00424C90,AnimClass::FUN_00424C90,MATCH,13,src/anim.cpp,?FUN_00424C90@AnimClass@@QAEXPAVBulletClass@@@Z
 0x00424CA0,AnimClass::FUN_00424CA0,MATCH,13,src/anim.cpp,?FUN_00424CA0@AnimClass@@QAEXPAVHouseClass@@@Z
 0x00424CB0,AnimClass::In_Which_Layer,MATCH,39,src/anim.cpp,?In_Which_Layer@AnimClass@@UBE?AW4LayerType@@XZ
@@ -17520,7 +17520,7 @@ address,name,result,size,source,symbol
 0x0076EC80,WorldDominationTour::Selection::Set_Long_Description,MATCH,80,src/wdtsel.cpp,?Set_Long_Description@Selection@WorldDominationTour@@QAEXXZ
 0x0076ECD0,FUN_0076ECD0,MATCH,62,src/wdtsel.cpp,?FUN_0076ECD0@@YIXPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z
 0x0076ED10,FUN_0076ED10,MATCH,415,src/wdtsel.cpp,?FUN_0076ED10@@YI_NPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z
-0x0076EEB0,WorldDominationTour::Selection::FUN_0076EEB0,MATCH,195,src/wdtsel.cpp,?FUN_0076EEB0@Selection@WorldDominationTour@@QAEXXZ
+0x0076EEB0,WorldDominationTour::Selection::Start,MATCH,195,src/wdtsel.cpp,?Start@Selection@WorldDominationTour@@QAEXXZ
 0x0076EF80,WorldDominationTour::Selection::End,MATCH,91,src/wdtsel.cpp,?End@Selection@WorldDominationTour@@QAEXXZ
 0x0076EFE0,??_GSelection@WorldDominationTour@@UAEPAXI@Z,MATCH,30,src/wdtsel.cpp,??_GSelection@WorldDominationTour@@UAEPAXI@Z
 0x0076F000,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z,MATCH,26,src/wdtsel.cpp,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z
@@ -17827,7 +17827,7 @@ address,name,result,size,source,symbol
 0x007773C0,Focus_Loss,MATCH,85,src/winstub.cpp,?Focus_Loss@@YIXXZ
 0x00777420,Focus_Restore,MATCH,412,src/winstub.cpp,?Focus_Restore@@YIXXZ
 0x007775C0,Windows_Procedure,MATCH,1260,src/winstub.cpp,?Windows_Procedure@@YGJPAUHWND__@@IIJ@Z
-0x00777AB0,FUN_00777AB0,MATCH,1,src/winstub.cpp,?FUN_00777AB0@@YIXXZ
+0x00777AB0,Build_Info,MATCH,1,src/winstub.cpp,?Build_Info@@YIXXZ
 0x00777AC0,Build_Date_String,MATCH,109,src/winstub.cpp,?Build_Date_String@@YIXPADH@Z
 0x00777B30,Build_Number_String,MATCH,27,src/winstub.cpp,?Build_Number_String@@YIPADPADH@Z
 0x00777B50,FUN_00777B50,MATCH,6,src/winstub.cpp,?FUN_00777B50@@YIHXZ

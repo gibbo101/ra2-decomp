@@ -82,7 +82,7 @@ class AnimClass : public ObjectClass
 
 		static void Post_Load_Game(void);
 
-		void SetOwnerObject(ObjectClass * owner);
+		void Attach_To(ObjectClass * owner);
 		void Start(void);
 		void Middle(void);
 		void Make_Invisible(void) {Invisible = true;};

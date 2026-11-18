@@ -795,7 +795,7 @@ namespace WorldDominationTour
 			void Presentation(int index);
 			bool Present_History(int tick_from, int tick_to);
 			void FUN_0076EBE0(Wstring const & name);
-			void FUN_0076EEB0(void);
+			void Start(void);
 
 		public:
 			rc_ptr<Campaign> TourCampaign;

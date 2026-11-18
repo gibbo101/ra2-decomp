@@ -2410,7 +2410,7 @@ void TeamClass::TMission_PLAY_ANIM(TeamMissionClass * mission, bool first_time)
 		while (unit != NULL) {
 			AnimClass * anim = new AnimClass(atype, unit->Center_Coord(), 0, loops);
 			if (anim != NULL) {
-				anim->SetOwnerObject(unit);
+				anim->Attach_To(unit);
 			}
 			unit = unit->Member;
 		}

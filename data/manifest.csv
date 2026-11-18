@@ -1265,7 +1265,7 @@ address,size,symbol,source,sha256
 0x00423920,1,_$E171,src/anim.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x00423930,392,?Bounce_AI@AnimClass@@UAE?AW4BounceResultType@@XZ,src/anim.cpp,d383f7caee42a04b51f40c3c98216aba4ec3b2a34e6ceb7d14b6c37c5c492764
 0x00423AC0,4234,?AI@AnimClass@@UAEXXZ,src/anim.cpp,8247489612c284c6a30d9b31b273aab750b67e9e51901a598d37691e49418579
-0x00424B50,315,?SetOwnerObject@AnimClass@@QAEXPAVObjectClass@@@Z,src/anim.cpp,4c2749c70d74e17c3354879b022c88058a252d932838cbdf9f648c3a22ff7369
+0x00424B50,315,?Attach_To@AnimClass@@QAEXPAVObjectClass@@@Z,src/anim.cpp,4c2749c70d74e17c3354879b022c88058a252d932838cbdf9f648c3a22ff7369
 0x00424C90,13,?FUN_00424C90@AnimClass@@QAEXPAVBulletClass@@@Z,src/anim.cpp,20a444e79e403ab82ad6b675cd13953419787667f60f513427f679646f2ac8db
 0x00424CA0,13,?FUN_00424CA0@AnimClass@@QAEXPAVHouseClass@@@Z,src/anim.cpp,56d3e46bd91b9a6af1a703dd1d94cd054a1bd3dbe54d27351e70ea9fc6a31b5e
 0x00424CB0,39,?In_Which_Layer@AnimClass@@UBE?AW4LayerType@@XZ,src/anim.cpp,b2643cab14b027151bda3c7e96f9f573995e6a5a82459f88830a0cb5581555cd
@@ -17762,7 +17762,7 @@ address,size,symbol,source,sha256
 0x0076EC80,80,?Set_Long_Description@Selection@WorldDominationTour@@QAEXXZ,src/wdtsel.cpp,d880a8978b3c21aec77771a203dcd03ae2cf4919401fef32ef5bb78da143a120
 0x0076ECD0,62,?FUN_0076ECD0@@YIXPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z,src/wdtsel.cpp,a390e1125af728d5e846c5fcdfe55529a986ccf45f7b3f7c69fcffd069808a37
 0x0076ED10,415,?FUN_0076ED10@@YI_NPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z,src/wdtsel.cpp,ce4344481d5c653fc4cbf45716367cd70d88ad939c7f57027fa9d41b61d667b8
-0x0076EEB0,195,?FUN_0076EEB0@Selection@WorldDominationTour@@QAEXXZ,src/wdtsel.cpp,c861f3415a558df0c724c8b166e94fac81df1ab7813143bf9d4794c21178ee0b
+0x0076EEB0,195,?Start@Selection@WorldDominationTour@@QAEXXZ,src/wdtsel.cpp,c861f3415a558df0c724c8b166e94fac81df1ab7813143bf9d4794c21178ee0b
 0x0076EF80,91,?End@Selection@WorldDominationTour@@QAEXXZ,src/wdtsel.cpp,b4accd2121b698fa9d15eedca00d5eca7ee8932497a436f885c7daf59e177f6f
 0x0076EFE0,30,??_GSelection@WorldDominationTour@@UAEPAXI@Z,src/wdtsel.cpp,913d463765c446188fedb02f2743f0d72aea318e25f77268069292002f2a3a14
 0x0076F000,26,?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z,src/wdtsel.cpp,e4d7dab4ee7037d2743ae2d15ed5d0a8ac288cc4c0d1190da60c76b129dfbb87
@@ -18048,7 +18048,7 @@ address,size,symbol,source,sha256
 0x007773C0,85,?Focus_Loss@@YIXXZ,src/winstub.cpp,e8ea02dceb3b5cee7b93409d25a103361f56120b6294e8e5a4012c9af3bffbd9
 0x00777420,412,?Focus_Restore@@YIXXZ,src/winstub.cpp,6a0f75be7ca22021b928915abf0db367f725b5102e1ec1368a6e4cfcc837d566
 0x007775C0,1260,?Windows_Procedure@@YGJPAUHWND__@@IIJ@Z,src/winstub.cpp,cbbe342de176186ed733ed8311dbb2ca9c9cf9c01aae363236df9c9dca23d0de
-0x00777AB0,1,?FUN_00777AB0@@YIXXZ,src/winstub.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x00777AB0,1,?Build_Info@@YIXXZ,src/winstub.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x00777AC0,109,?Build_Date_String@@YIXPADH@Z,src/winstub.cpp,1e9d10c4c101205a15c020d4d81324a172279e5c87afd39ed5f0500bdbf53760
 0x00777B30,27,?Build_Number_String@@YIPADPADH@Z,src/winstub.cpp,9d835f439bcce20cf6555845597f5661f9562cf102fa7f4dcd4e0b493fb48822
 0x00777B50,6,?FUN_00777B50@@YIHXZ,src/winstub.cpp,36baae03291531c7b47574ed638c71ef9ce5686a4d73bd88e738192984d0cdfa

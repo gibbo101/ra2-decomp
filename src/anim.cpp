@@ -722,7 +722,7 @@ void AnimClass::AI(void)
 }
 
 // FUNCTION: GAMEMD 0x00424B50
-void AnimClass::SetOwnerObject(ObjectClass * owner)
+void AnimClass::Attach_To(ObjectClass * owner)
 {
 	if (OwnerObject != NULL) {
 		ObjectClass * to = OwnerObject;
@@ -1006,7 +1006,7 @@ void AnimClass::Delete_Me(void)
 	if (OwnerObject != NULL) {
 		OwnerObject->AnimPointerExpired(this);
 	}
-	SetOwnerObject(NULL);
+	Attach_To(NULL);
 	StartSoundAudioController.EndLooping();
 	if (!IsInert && Type != NULL && Type->StopSound != -1) {
 		VocClass::PlayAt(Type->StopSound, Center_Coord(), &StopSoundAudioController);

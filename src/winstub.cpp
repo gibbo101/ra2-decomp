@@ -318,7 +318,7 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 }
 
 // FUNCTION: GAMEMD 0x00777AB0
-void FUN_00777AB0(void)
+void Build_Info(void)
 {
 }
 

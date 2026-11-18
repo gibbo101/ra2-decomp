@@ -43,7 +43,6 @@ address,name,source
 0x004202F0,AlphaLightingRemapClass::AlphaLightingRemapClass,symbols.csv
 0x00420960,AlphaShapeClass::AlphaShapeClass,symbols.csv
 0x00421EA0,AnimClass::AnimClass,symbols.csv
-0x00424B50,AnimClass::SetOwnerObject,symbols.csv
 0x00427530,AnimTypeClass::AnimTypeClass,symbols.csv
 0x0042E6F0,BaseClass::BaseClass,symbols.csv
 0x0042F380,BaseClass::FailedToPlaceNode,symbols.csv

@@ -2180,7 +2180,7 @@ ResultType BuildingClass::Take_Damage(int & damage, int distance, WarheadTypeCla
 									break;
 							}
 							if (anim) {
-								anim->SetOwnerObject(this);
+								anim->Attach_To(this);
 							}
 						}
 					}

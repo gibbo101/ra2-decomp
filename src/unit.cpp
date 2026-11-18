@@ -1473,7 +1473,7 @@ void UnitClass::Deploy(void)
 			if (Class->DeployingAnim != NULL) {
 				if (DeployAnim == NULL) {
 					DeployAnim = new AnimClass(Class->DeployingAnim, PositionCoord, 0, 1, ShapeFlags_Type(0x600), 0, false);
-					DeployAnim->SetOwnerObject(this);
+					DeployAnim->Attach_To(this);
 					DeployAnim->LightConvert = GetRemapColour();
 				}
 				Animation.Set_Stage(DeployAnim->Type->Start);
@@ -1504,7 +1504,7 @@ void UnitClass::Undeploy(void)
 		} else if (Class->DeployingAnim != NULL) {
 			if (DeployAnim == NULL) {
 				DeployAnim = new AnimClass(Class->DeployingAnim, PositionCoord, 0, 1, ShapeFlags_Type(0x600), 0, true);
-				DeployAnim->SetOwnerObject(this);
+				DeployAnim->Attach_To(this);
 				DeployAnim->LightConvert = GetRemapColour();
 			}
 			Animation.Set_Stage(DeployAnim->Type->Start);

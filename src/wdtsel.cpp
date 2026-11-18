@@ -526,8 +526,8 @@ bool __fastcall FUN_0076ED10(rc_ptr<Campaign> * campaign, int theater)
 }
 
 // FUNCTION: GAMEMD 0x0076EEB0
-// WorldDominationTour::Selection::FUN_0076EEB0
-void Selection::FUN_0076EEB0(void)
+// WorldDominationTour::Selection::Start
+void Selection::Start(void)
 {
 	UserInputLocked = false;
 	if (ThemeName != (char const *)NULL) {

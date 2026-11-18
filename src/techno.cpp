@@ -8308,7 +8308,7 @@ void TechnoClass::FUN_0070F1D0(Point2D const &center, Rect const &rect)
 		if (Rule->Behind) {
 			BehindAnim = new AnimClass(Rule->Behind, Center_Coord(), 0, 1, ShapeFlags_Type(0x600), 0);
 			if (BehindAnim) {
-				BehindAnim->SetOwnerObject(this);
+				BehindAnim->Attach_To(this);
 				if (!Options.ShowHidden)
 					BehindAnim->Invisible = true;
 			}
@@ -8557,7 +8557,7 @@ void TechnoClass::FUN_0070FD70(BuildingClass * building)
 		AnimClass * anim = new AnimClass(Rule->DrainAnimationType, Center_Coord(), 0, 1, ShapeFlags_Type(0x600));
 		DrainAnim = anim;
 		if (anim != NULL) {
-			anim->SetOwnerObject(this);
+			anim->Attach_To(this);
 		}
 		if (this != NULL && (AbstractFlags & 4) && ((FootClass *)this)->Team != NULL) {
 			((FootClass *)this)->Team->Remove((FootClass *)this, -1, true);
