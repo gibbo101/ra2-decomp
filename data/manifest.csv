@@ -3846,7 +3846,7 @@ address,size,symbol,source,sha256
 0x004A3B80,39,?Load_Picture@@YIHAAVFileClass@@AAVBuffer@@1PAEW4PicturePlaneType@@@Z,src/data.cpp,454fa1b915e88eebb3fbd7fbd3c345198f19b4f7bc7293c7fe2e9c8dd52c84db
 0x004A3BB0,55,?Hires_Load@@YIPAXAAVFileClass@@@Z,src/data.cpp,c8292cf6b8e22d111271d129a6f6f576009ea126d37badb7650916820335c968
 0x004A3BF0,3,?Init_Language_Resources@@YI_N_N@Z,src/data.cpp,e18aacce29affcdddaa5f641ac1ec12552e0fe9d066e6408941b1792818b8619
-0x004A3C00,4,?FUN_004A3C00@Flag3D@@QAEXXZ,src/data.cpp,b94e046fece936e935e351224905ed63dac189ef389cafc1b55066ab821c62c7
+0x004A3C00,4,?Get_Language_Version@@YIXPAD@Z,src/data.cpp,b94e046fece936e935e351224905ed63dac189ef389cafc1b55066ab821c62c7
 0x004A3C10,23,_$E2,src/ddraw.cpp,17ae60149c7b3d7709d4bec33eb16082be403d830da478fe0276b1cc97399132
 0x004A3C30,401,?Set_Palette@@YIXABVPaletteClass@@HP6IXXZ@Z,src/ddraw.cpp,71c014c44dd1c703f8305e5789335f8af686722a70d2e866d6b35c2fde34f648
 0x004A3DD0,100,?Process_DD_Result@@YIXJH@Z,src/ddraw.cpp,d948f13f3317c23721c6739310566e07c065b0a48b16a2e55744ad48b8967ade

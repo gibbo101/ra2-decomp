@@ -402,12 +402,6 @@ void * Hires_Load(FileClass & file)
 	}
 }
 
-struct Flag3D {
-	void FUN_004A3C00(void);
-
-	char Value;
-};
-
 // FUNCTION: GAMEMD 0x004A3BF0
 bool Init_Language_Resources(bool show_error)
 {
@@ -415,7 +409,7 @@ bool Init_Language_Resources(bool show_error)
 }
 
 // FUNCTION: GAMEMD 0x004A3C00
-void Flag3D::FUN_004A3C00(void)
+void Get_Language_Version(char * version_string)
 {
-	Value = 0;
+	version_string[0] = '\0';
 }
