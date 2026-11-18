@@ -17868,8 +17868,8 @@ address,size,symbol,source,sha256
 0x007714B0,361,?Queue@YRVoices@WorldDominationTour@@QAEXH_NH@Z,src/wdtvoice.cpp,31030cd43cd5c23e3f667015726f8eb3da71cfac2c0bfa32c11bbd1e2c02d9c5
 0x00771620,229,?Advance@YRVoices@WorldDominationTour@@QAEXXZ,src/wdtvoice.cpp,614f2d615b6bfef3be87bf4b222b3d6b7d656202108e7ab56ad39f55d7c88297
 0x00771710,111,?Discard@YRVoices@WorldDominationTour@@QAEXXZ,src/wdtvoice.cpp,048f5a8a5862d8e11257f17b8b7e0fe9f653dc3e686ffc04662f9dc578a07d89
-0x00771780,1,?Voices_Noop1@@YIXXZ,src/wdtvoice.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
-0x00771790,1,?Voices_Noop2@@YIXXZ,src/wdtvoice.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x00771780,1,?FUN_00771780@@YIXXZ,src/wdtvoice.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x00771790,1,?FUN_00771790@@YIXXZ,src/wdtvoice.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x007717A0,72,?Cleanup@YRVoices@WorldDominationTour@@QAEXXZ,src/wdtvoice.cpp,8c1b6bb25fe0cfbc0351eea23af6ceb674095a8c81dde416ca3654e46534ed33
 0x007717F0,5,?Playing@YRVoices@WorldDominationTour@@QAE_NXZ,src/wdtvoice.cpp,509fb1021910ef5c29e31ae9eb6abb3a1dd3f9146a386502d4f70c5981293b6b
 0x00771800,67,?FUN_00771800@YRVoices@WorldDominationTour@@QAEPAVMSAnim@@XZ,src/wdtvoice.cpp,b4f71d063f9fcf87a83e89e6fe4ae4115c3abfa0a0dea03f4f64e7018db2c5b6

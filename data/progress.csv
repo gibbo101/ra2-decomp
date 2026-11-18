@@ -17626,8 +17626,8 @@ address,name,result,size,source,symbol
 0x007714B0,WorldDominationTour::YRVoices::Queue,MATCH,361,src/wdtvoice.cpp,?Queue@YRVoices@WorldDominationTour@@QAEXH_NH@Z
 0x00771620,WorldDominationTour::YRVoices::Advance,MATCH,229,src/wdtvoice.cpp,?Advance@YRVoices@WorldDominationTour@@QAEXXZ
 0x00771710,WorldDominationTour::YRVoices::Discard,MATCH,111,src/wdtvoice.cpp,?Discard@YRVoices@WorldDominationTour@@QAEXXZ
-0x00771780,Voices_Noop1,MATCH,1,src/wdtvoice.cpp,?Voices_Noop1@@YIXXZ
-0x00771790,Voices_Noop2,MATCH,1,src/wdtvoice.cpp,?Voices_Noop2@@YIXXZ
+0x00771780,FUN_00771780,MATCH,1,src/wdtvoice.cpp,?FUN_00771780@@YIXXZ
+0x00771790,FUN_00771790,MATCH,1,src/wdtvoice.cpp,?FUN_00771790@@YIXXZ
 0x007717A0,WorldDominationTour::YRVoices::Cleanup,MATCH,72,src/wdtvoice.cpp,?Cleanup@YRVoices@WorldDominationTour@@QAEXXZ
 0x007717F0,WorldDominationTour::YRVoices::Playing,MATCH,5,src/wdtvoice.cpp,?Playing@YRVoices@WorldDominationTour@@QAE_NXZ
 0x00771800,WorldDominationTour::YRVoices::FUN_00771800,MATCH,67,src/wdtvoice.cpp,?FUN_00771800@YRVoices@WorldDominationTour@@QAEPAVMSAnim@@XZ

@@ -365,12 +365,12 @@ void YRVoices::Discard(void)
 }
 
 // FUNCTION: GAMEMD 0x00771780
-void Voices_Noop1(void)
+void FUN_00771780(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x00771790
-void Voices_Noop2(void)
+void FUN_00771790(void)
 {
 }
 
