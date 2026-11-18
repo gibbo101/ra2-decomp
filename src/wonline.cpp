@@ -1479,7 +1479,7 @@ bool WOL_Wait_Callback(void)
 }
 
 // FUNCTION: GAMEMD 0x00780110
-void FUN_00780110(void)
+void Reset_WOL_Globals(void)
 {
 	DAT_00B75E48 = FUN_00778710();
 	g_UserChannels.clear();
@@ -4049,7 +4049,7 @@ int FUN_00786390(void)
 	value &= 0xFF;
 	g_LanguageCode = value;
 	g_GameSKU = value + 0x2900;
-	FUN_00780110();
+	Reset_WOL_Globals();
 	g_IgnoreNetStatus = 1;
 	for (int i = 0; i < 18; i++) {
 		g_WaitEventHandles[i] = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -4397,7 +4397,7 @@ static void Focus_Dialog_Item(HWND window, int id)
 	SetFocus(GetDlgItem(window, id));
 }
 
-static void Reset_WOL_Globals(void)
+static void Clear_Channel_Lists(void)
 {
 	memset(&g_CurrentChannel, 0, sizeof(g_CurrentChannel));
 	memset(&s_TempChannel, 0, sizeof(s_TempChannel));
@@ -4429,7 +4429,7 @@ int Login_WOL(void)
 	if (result != 1) {
 		return result;
 	}
-	Reset_WOL_Globals();
+	Clear_Channel_Lists();
 	result = 0;
 	int error = Fetch_Server_List();
 	switch (error) {

@@ -18072,7 +18072,7 @@ address,name,result,size,source,symbol
 0x0077F520,FUN_0077F520,MATCH,481,src/wonline.cpp,?FUN_0077F520@@YI_N_N@Z
 0x0077F710,FUN_0077F710,MATCH,492,src/wonline.cpp,?FUN_0077F710@@YI_NE_N@Z
 0x0077F900,WOL_Wait_Callback,MATCH,2051,src/wonline.cpp,?WOL_Wait_Callback@@YI_NXZ
-0x00780110,FUN_00780110,MATCH,1455,src/wonline.cpp,?FUN_00780110@@YIXXZ
+0x00780110,Reset_WOL_Globals,MATCH,1455,src/wonline.cpp,?Reset_WOL_Globals@@YIXXZ
 0x007806C0,FUN_007806C0,MATCH,832,src/wonline.cpp,?FUN_007806C0@@YIXXZ
 0x00780A00,FUN_00780A00,MATCH,132,src/wonline.cpp,?FUN_00780A00@@YI?AVWideWstring@@H@Z
 0x00780A90,FUN_00780A90,MATCH,758,src/wonline.cpp,?FUN_00780A90@@YI?AVWideWstring@@PAUUser@@@Z
