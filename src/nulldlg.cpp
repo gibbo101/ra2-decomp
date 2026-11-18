@@ -60,6 +60,7 @@
 // SYNTHETIC: GAMEMD 0x005EF4C0 SYMBOL
 // _$E105
 
+BOOL CALLBACK Select_Serial_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 void Select_Serial_On_INITDIALOG(HWND window);
 void Modem_Echo(char c);
 bool Reconnect_Null_Modem(void);
@@ -67,6 +68,186 @@ bool Dial_Modem(SerialSettingsType *settings, bool reconnect);
 bool Answer_Modem(SerialSettingsType *settings, bool reconnect);
 static char DialString[CWAITSTRBUF_MAX + PhoneEntryClass::PHONE_MAX_NUM - 1];
 SerialSettingsType *DialSettings;
+
+namespace OwnerDraw {
+char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
+}
+
+static int Test_Null_Modem(void);
+
+// FUNCTION: GAMEMD 0x005EF4E0
+GameType Select_Serial_Dialog(void)
+{
+	int rc = -1;
+	GameType retval = (GameType)-1;
+	SerialSettingsType *settings;
+
+	HWND dialog = OwnerDraw::Begin_Dialog(IDD_SELECT_SERIAL, Select_Serial_Dialog_Proc, 0);
+
+	if (dialog) {
+		SetWindowLong(dialog, DWL_USER, (LONG)&rc);
+		OwnerDraw::Move_Dialog(dialog, -1, ((HiddenSurface->Get_Height() - 400) / 2) + 147);
+		OwnerDraw::Display_Dialog(dialog);
+
+		if (Session.SerialDefaults.Port == 0 ||
+			Session.SerialDefaults.IRQ == -1 ||
+			Session.SerialDefaults.Baud == -1) {
+			rc = IDC_SERIAL_SETTINGS_BTN;
+
+		} else if (NullModem.Detect_Port(&Session.SerialDefaults) != PORT_VALID) {
+			rc = IDC_SERIAL_SETTINGS_BTN;
+		}
+
+		while (retval == -1) {
+			while (rc < 0) {
+				if (OwnerDraw::Dialog_Message_Handler() == true) {
+					break;
+				}
+				Title_Screen_Restore();
+			}
+
+			switch (rc) {
+
+				case IDC_SERIAL_DIAL:
+					ShowWindow(dialog, SW_HIDE);
+					UpdateWindow(MainWindow);
+					if (PhoneEdit().Dialog() == true) {
+						if (Session.PhoneBook[Session.CurPhoneIdx]->Settings.Port == 0) {
+							settings = &Session.SerialDefaults;
+						} else {
+							settings = &(Session.PhoneBook[Session.CurPhoneIdx]->Settings);
+						}
+
+						if (SerialPort) {
+							delete SerialPort;
+						}
+						SerialPort = new WinModemClass;
+
+						if (Init_Null_Modem(settings)) {
+
+							if (settings->CallWaitStringIndex == CALL_WAIT_CUSTOM) {
+								strcpy(DialString, settings->CallWaitString);
+							} else {
+								OwnerDraw::WideToCharString(DialString, Session.CallWaitStrings[settings->CallWaitStringIndex], -1);
+							}
+							strcat(DialString, Session.PhoneBook[Session.CurPhoneIdx]->Number);
+
+							if (Dial_Modem(settings, false)) {
+								Session.ModemType = MODEM_DIALER;
+								Session.Type = GAME_MODEM;
+								if (ModemHost().Dialog()) {
+									retval = GAME_MODEM;
+									break;
+								} else {
+									Session.Type = GAME_NORMAL;
+									retval = GAME_NORMAL;
+								}
+							}
+							NullModem.Change_IRQ_Priority(0);
+						} else {
+							WWMessageBox().Process(StringTable::LoadString("TXT_SELECT_SETTINGS", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 5798), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 5798), NULL, NULL);
+						}
+					}
+					ShowWindow(dialog, SW_SHOW);
+					break;
+
+				case IDC_SERIAL_ANSWER:
+					ShowWindow(dialog, SW_HIDE);
+					UpdateWindow(MainWindow);
+
+					settings = &Session.SerialDefaults;
+
+					if (SerialPort) {
+						delete SerialPort;
+					}
+					SerialPort = new WinModemClass;
+
+					if (Init_Null_Modem(settings)) {
+						if (Answer_Modem(settings, false)) {
+							Session.ModemType = MODEM_ANSWERER;
+							Session.Type = GAME_MODEM;
+							if (ModemGuest().Dialog()) {
+								retval = GAME_MODEM;
+								break;
+							} else {
+								Session.Type = GAME_NORMAL;
+								retval = GAME_NORMAL;
+							}
+						}
+						NullModem.Change_IRQ_Priority(0);
+					} else {
+						WWMessageBox().Process(StringTable::LoadString("TXT_SELECT_SETTINGS", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 5833), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 5833), NULL, NULL);
+					}
+
+					ShowWindow(dialog, SW_SHOW);
+					break;
+
+				case IDC_SERIAL_NULLMODEM:
+					ShowWindow(dialog, SW_HIDE);
+					UpdateWindow(MainWindow);
+
+					if (Init_Null_Modem(&Session.SerialDefaults)) {
+						switch (Test_Null_Modem()) {
+							case (1):
+								Session.ModemType = MODEM_NULL_HOST;
+								Session.Type = GAME_NULL_MODEM;
+								if (ModemHost().Dialog() == 1) {
+									retval = GAME_NULL_MODEM;
+									break;
+								} else {
+									Session.Type = GAME_NORMAL;
+								}
+								break;
+
+							case (2):
+								Session.ModemType = MODEM_NULL_JOIN;
+								Session.Type = GAME_NULL_MODEM;
+								if (ModemGuest().Dialog() == 1) {
+									retval = GAME_NULL_MODEM;
+									break;
+								} else {
+									Session.Type = GAME_NORMAL;
+								}
+								break;
+
+							case (3):
+								WWMessageBox().Process(StringTable::LoadString("TXT_MODEM_OR_LOOPBACK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 5868), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 5868), NULL, NULL);
+								break;
+						}
+						if (retval == -1) {
+							NullModem.Change_IRQ_Priority(0);
+							ShowWindow(dialog, SW_SHOW);
+						}
+					} else {
+						WWMessageBox().Process(StringTable::LoadString("TXT_SELECT_SETTINGS", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 5877), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 5877), NULL, NULL);
+						ShowWindow(dialog, SW_SHOW);
+					}
+					break;
+
+				case IDC_SERIAL_SETTINGS_BTN:
+					ShowWindow(dialog, SW_HIDE);
+					UpdateWindow(MainWindow);
+					if (SerialEdit().Dialog(&Session.SerialDefaults)) {
+						Session.Write_MultiPlayer_Settings();
+					}
+					Select_Serial_On_INITDIALOG(dialog);
+					ShowWindow(dialog, SW_SHOW);
+					break;
+
+				default:
+					retval = GAME_NORMAL;
+					break;
+			}
+
+			rc = -1;
+		}
+
+		OwnerDraw::End_Dialog(dialog);
+		return(retval);
+	}
+
+	return(GAME_NORMAL);
+}
 
 // FUNCTION: GAMEMD 0x005EFF00
 BOOL CALLBACK Select_Serial_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -162,6 +343,151 @@ void Modem_Signoff(void)
 			NullModem.Service();
 		}
 	}
+}
+
+static int Test_Null_Modem(void)
+{
+	bool process;
+
+	int retval = 0;
+	unsigned int starttime;
+	int packetlen;
+
+	char buffer[80*3];
+	SerialPacketType SendPacket;
+	SerialPacketType ReceivePacket;
+
+	process = true;
+
+	SetCommBreak(SerialPort->Get_Port_Handle());
+
+	SerialPort->Write_To_Serial_Port((unsigned char*)"ATH\r", strlen("ATH\r"));
+	CDTimerClass<SystemTimerClass> time;
+	time = (2*TIMER_SECOND);
+	while (time) {}
+
+	ClearCommBreak(SerialPort->Get_Port_Handle());
+
+	EscapeCommFunction(SerialPort->Get_Port_Handle(), CLRDTR);
+
+	starttime = TickCount;
+	while (TickCount - starttime < 80) {
+		NullModem.Service();
+		if (NullModem.Get_Message(&ReceivePacket, &packetlen) > 0) {
+			if (ReceivePacket.Command == SERIAL_CONNECT) {
+				starttime = TickCount;
+				while (TickCount - starttime < TIMER_SECOND / 2)
+					NullModem.Service();
+				process = false;
+				retval = 2;
+				break;
+			}
+		}
+	}
+
+	memset(&SendPacket, 0, sizeof(SerialPacketType));
+	if (process == true) {
+		SendPacket.Command = SERIAL_CONNECT;
+		SendPacket.ScenarioInfo.Seed = TickCount;
+		SendPacket.ID = (int) buffer;
+
+		NullModem.Send_Message(&SendPacket, sizeof(SendPacket), 1);
+
+		starttime = TickCount;
+		while (TickCount - starttime < 80) {
+			NullModem.Service();
+			if (NullModem.Get_Message(&ReceivePacket, &packetlen) > 0) {
+				if (ReceivePacket.Command == SERIAL_CONNECT) {
+					starttime = TickCount;
+					while (TickCount - starttime < TIMER_SECOND / 2)
+						NullModem.Service();
+
+					if (ReceivePacket.ScenarioInfo.Seed > SendPacket.ScenarioInfo.Seed) {
+						process = false;
+						retval = 2;
+					} else if (ReceivePacket.ScenarioInfo.Seed == SendPacket.ScenarioInfo.Seed) {
+						if (ReceivePacket.ID > SendPacket.ID) {
+							process = false;
+							retval = 2;
+						} else if (ReceivePacket.ID == SendPacket.ID) {
+							process = false;
+							retval = 3;
+						}
+					}
+
+					break;
+				}
+			}
+		}
+
+		if (process) {
+			ModemDialogIsOpen = false;
+			HWND dialog = OwnerDraw::Custom_Message_Box(StringTable::LoadString("TXT_WAITING_CONNECT", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6293), StringTable::LoadString("TXT_CANCEL", NULL, "D:\\ra2mdpost\\NullDlg.CPP", 6293), &ModemDialogIsOpen);
+
+			if (dialog) {
+
+				OwnerDraw::Display_Dialog(dialog);
+
+				starttime = TickCount;
+
+				while (true) {
+
+					if (OwnerDraw::Dialog_Message_Handler() == 1 || ModemDialogIsOpen) {
+						retval = 0;
+						break;
+					}
+
+					Title_Screen_Restore();
+
+					NullModem.Service();
+					if (NullModem.Num_Send() == 0) {
+						if (NullModem.Get_Message(&ReceivePacket, &packetlen) > 0) {
+							if (ReceivePacket.Command == SERIAL_CONNECT) {
+								starttime = TickCount;
+								while (TickCount - starttime < TIMER_SECOND / 2)
+									NullModem.Service();
+
+								if (ReceivePacket.ScenarioInfo.Seed > SendPacket.ScenarioInfo.Seed) {
+									process = false;
+									retval = 2;
+
+								} else if (ReceivePacket.ScenarioInfo.Seed == SendPacket.ScenarioInfo.Seed) {
+									if (ReceivePacket.ID > SendPacket.ID) {
+										process = false;
+										retval = 2;
+
+									} else if (ReceivePacket.ID == SendPacket.ID) {
+										process = false;
+										retval = 3;
+									}
+								}
+
+							} else {
+								retval = 0;
+								process = false;
+							}
+						} else {
+							retval = 1;
+							process = false;
+						}
+					}
+
+					if (TickCount - starttime > TIMER_MINUTE) {
+						retval = 0;
+						break;
+					}
+
+					if (process != true) {
+						break;
+					}
+				}
+
+				OwnerDraw::End_Dialog(dialog);
+			}
+		}
+	}
+
+	return(retval);
 }
 
 // FUNCTION: GAMEMD 0x005F0120
@@ -629,5 +955,5 @@ void Modem_Echo(char c)
 }
 
 // TEMPLATE: GAMEMD 0x005F1390
-// ?Value@?$TTimerClass@VSystemTimerClass@@@@QBEHXZ
+// ??B?$TTimerClass@VSystemTimerClass@@@@QBEHXZ
 template class TTimerClass<SystemTimerClass>;

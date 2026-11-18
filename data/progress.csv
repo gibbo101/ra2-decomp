@@ -10074,6 +10074,7 @@ address,name,result,size,source,symbol
 0x005EF490,_$E99,MATCH,15,src/nulldlg.cpp,_$E99
 0x005EF4A0,_$E102,MATCH,18,src/nulldlg.cpp,_$E102
 0x005EF4C0,_$E105,MATCH,26,src/nulldlg.cpp,_$E105
+0x005EF4E0,Select_Serial_Dialog,MATCH,2580,src/nulldlg.cpp,?Select_Serial_Dialog@@YI?AW4GameType@@XZ
 0x005EFF00,Select_Serial_Dialog_Proc,MATCH,105,src/nulldlg.cpp,?Select_Serial_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x005EFF70,Select_Serial_On_INITDIALOG,MATCH,158,src/nulldlg.cpp,?Select_Serial_On_INITDIALOG@@YIXPAUHWND__@@@Z
 0x005F0010,Init_Null_Modem,MATCH,37,src/nulldlg.cpp,?Init_Null_Modem@@YI_NPAUSerialSettingsType@@@Z
@@ -10085,7 +10086,7 @@ address,name,result,size,source,symbol
 0x005F0690,Dial_Modem,MATCH,1736,src/nulldlg.cpp,?Dial_Modem@@YI_NPAUSerialSettingsType@@_N@Z
 0x005F0D60,Answer_Modem,MATCH,1508,src/nulldlg.cpp,?Answer_Modem@@YI_NPAUSerialSettingsType@@_N@Z
 0x005F1350,Modem_Echo,MATCH,54,src/nulldlg.cpp,?Modem_Echo@@YIXD@Z
-0x005F1390,?Value@?$TTimerClass@VSystemTimerClass@@@@QBEHXZ,MATCH,31,src/nulldlg.cpp,?Value@?$TTimerClass@VSystemTimerClass@@@@QBEHXZ
+0x005F1390,??B?$TTimerClass@VSystemTimerClass@@@@QBEHXZ,MATCH,31,src/nulldlg.cpp,??B?$TTimerClass@VSystemTimerClass@@@@QBEHXZ
 0x005F13B0,_$E9,MATCH,23,src/nullmgr.cpp,_$E9
 0x005F13D0,_$E33,MATCH,40,src/nullmgr.cpp,_$E33
 0x005F1400,_$E36,MATCH,19,src/nullmgr.cpp,_$E36

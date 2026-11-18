@@ -12,7 +12,6 @@ class ModemHost
 		friend bool ModemHostCallback(void);
 
 	public:
-		ModemHost(void){}
 		bool Dialog(void);
 
 	private:

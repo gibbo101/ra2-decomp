@@ -10429,6 +10429,7 @@ address,size,symbol,source,sha256
 0x005EF490,15,_$E99,src/nulldlg.cpp,3291d6945a8ba209094321f0ca845cad640953bf6be2a16b7f69f2de8c00b3f5
 0x005EF4A0,18,_$E102,src/nulldlg.cpp,e540a80eb047204db6c83710920d6150645508036e66f5cb1d4117aa1e5f1afe
 0x005EF4C0,26,_$E105,src/nulldlg.cpp,97d9e455254580821b944e5066d53788fded78cadfd707f82ce091bd010fbddb
+0x005EF4E0,2580,?Select_Serial_Dialog@@YI?AW4GameType@@XZ,src/nulldlg.cpp,3e6074b128b2c97eac92cfe107df44f5ef1db8804c56bdafe11c3bb63035445e
 0x005EFF00,105,?Select_Serial_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z,src/nulldlg.cpp,9cf0fd1924ba3af07daa743f424d20220cecee1f49311f864a75aacd10e22399
 0x005EFF70,158,?Select_Serial_On_INITDIALOG@@YIXPAUHWND__@@@Z,src/nulldlg.cpp,fe86bb4a13d2aa93b0f96977c30387e2513e69340cc2e9085c52818bb19dfbc9
 0x005F0010,37,?Init_Null_Modem@@YI_NPAUSerialSettingsType@@@Z,src/nulldlg.cpp,1e9cf42b7a6c99112cdd9ef65cdc626e75b476fe9e32671d1d98629345de4215
@@ -10440,7 +10441,7 @@ address,size,symbol,source,sha256
 0x005F0690,1736,?Dial_Modem@@YI_NPAUSerialSettingsType@@_N@Z,src/nulldlg.cpp,adaa0363569926b5ea58819440f04726b73476e2f428917f1df5e6d4fb812e26
 0x005F0D60,1508,?Answer_Modem@@YI_NPAUSerialSettingsType@@_N@Z,src/nulldlg.cpp,84fc6e8ad5006b3b8877920c82572657f60cbffcedc2d1b894be476e2ee29a9b
 0x005F1350,54,?Modem_Echo@@YIXD@Z,src/nulldlg.cpp,5e22e47187d71cc85dc1133c915061572ea2d1c97fc535de5da8782154bf8ff6
-0x005F1390,31,?Value@?$TTimerClass@VSystemTimerClass@@@@QBEHXZ,src/nulldlg.cpp,7154891aff72958053c0c9455cbd18930cbb4fdb15a684fb27c00c5f02eb61f2
+0x005F1390,31,??B?$TTimerClass@VSystemTimerClass@@@@QBEHXZ,src/nulldlg.cpp,7154891aff72958053c0c9455cbd18930cbb4fdb15a684fb27c00c5f02eb61f2
 0x005F13B0,23,_$E9,src/nullmgr.cpp,456aeca4e04a5f6dd4a7a9f3237d63ffb615bd05326193d67de9ae02bf99a6f6
 0x005F13D0,40,_$E33,src/nullmgr.cpp,df9ca0c25634c7455b26bad03ab09371e76fc642339b5b358a88c663bdb6588d
 0x005F1400,19,_$E36,src/nullmgr.cpp,963f4a15a2fed418a481aca5533966f522287f7a56828204d2acafea404a22ac
