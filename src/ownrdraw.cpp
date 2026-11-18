@@ -41,6 +41,7 @@ namespace OwnerDraw {
 			} Wide;
 
 			struct {
+				unsigned char reserved28[0xC0];
 				ArrayList<int> *rowColors;
 				ArrayList<int> *selStates;
 				int topIndex;
@@ -151,7 +152,7 @@ namespace OwnerDraw {
 				int ExtraWidth;
 			} Dialog;
 
-			unsigned char _size[0x100];
+			unsigned char _size[0x1C0];
 		};
 
 		HFONT font;
@@ -160,7 +161,6 @@ namespace OwnerDraw {
 		COLORREF textColor;
 		int field_138;
 		int animState;
-		unsigned char reserved[0xC0];
 
 		WinData(void);
 		WinData(WinData const & that);
