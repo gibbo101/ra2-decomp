@@ -11542,6 +11542,8 @@ address,size,symbol,source,sha256
 0x00639040,229,?FUN_00639040@@YI_NXZ,src/planmgr.cpp,23f500e8ba7e9b0cc344e43e1edeed070cfb20f9ad863cad0d0e79ff2f5619c7
 0x00639130,215,?FUN_00639130@@YI_NXZ,src/planmgr.cpp,343b2d06a1ec13ca9e179eee7c269f88515294a965473b5a0151e6af829af2f4
 0x00639210,187,?FUN_00639210@@YIPAVPlanningNodeClass@@HHVCoord@@@Z,src/planmgr.cpp,39f1060926b6d57c406c4dff4eb21a49e85df22c112d8bc40d4c0c354bcc5b1d
+0x006392D0,207,?FUN_006392D0@@YIPAVPlanningNodeClass@@VPoint2D@@@Z,src/planmgr.cpp,5c4ebd5423036ca4923f446347c1c7e26b4df2a3e5533ea9d3c80946428db2f7
+0x006393A0,207,?FUN_006393A0@@YIPAVPlanningNodeClass@@VPoint2D@@@Z,src/planmgr.cpp,3446517fa0d98085a414d708c2bac613f0da0630b20ae3ab8f2f17d17ae9fb38
 0x00639470,105,?FUN_00639470@@YIPAVPlanningNodeClass@@VCoord@@@Z,src/planmgr.cpp,976fd23023b0f351feaa22e1b2a64fd40c788069bfc08f0d5d5397f7bdcd811e
 0x006394E0,193,?FUN_006394E0@@YIXPAVAbstractClass@@PAVPlanningNodeClass@@@Z,src/planmgr.cpp,1ed99877ae832e3c37cd10ca168951bf9c0c8e3dc990cf825227e1ad6b107bb8
 0x006395B0,388,?FUN_006395B0@@YIXPAVTechnoClass@@PAVPlanningNodeClass@@@Z,src/planmgr.cpp,b7da72981c305ecd71dfce76912ea315bd16be25999f1c47f993bb08606aac5c

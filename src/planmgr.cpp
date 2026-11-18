@@ -542,8 +542,7 @@ Rect __fastcall FUN_00634510(Point2D center, int size)
 	Point2D corner = center;
 	corner.X += offset;
 	corner.Y += offset;
-	Rect rect;
-	rect = Rect(corner, size, size);
+	Rect rect(corner.X, corner.Y, size, size);
 	return rect;
 }
 
@@ -1091,7 +1090,8 @@ void PlanningNodeClass::Reset_Colors(bool all)
 // FUNCTION: GAMEMD 0x00635DF0
 Rect PlanningNodeClass::Lead_Box_Rect(void)
 {
-	Rect rect = Lead_Rect();
+	Rect rect;
+	rect = Lead_Rect();
 	FUN_006357D0(&rect, 4);
 	return rect;
 }
@@ -2044,6 +2044,18 @@ PlanningNodeClass * __fastcall FUN_00639210(int house, int id, Coord coord)
 		}
 	}
 	return 0;
+}
+
+// FUNCTION: GAMEMD 0x006392D0
+PlanningNodeClass * __fastcall FUN_006392D0(Point2D point)
+{
+	return Find_Node_At(PlanningNodeClass::Unknown1, point);
+}
+
+// FUNCTION: GAMEMD 0x006393A0
+PlanningNodeClass * __fastcall FUN_006393A0(Point2D point)
+{
+	return Find_Node_At(PlanningNodeClass::Unknown2, point);
 }
 
 // FUNCTION: GAMEMD 0x00639470

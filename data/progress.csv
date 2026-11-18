@@ -11210,6 +11210,8 @@ address,name,result,size,source,symbol
 0x00639040,FUN_00639040,MATCH,229,src/planmgr.cpp,?FUN_00639040@@YI_NXZ
 0x00639130,FUN_00639130,MATCH,215,src/planmgr.cpp,?FUN_00639130@@YI_NXZ
 0x00639210,FUN_00639210,MATCH,187,src/planmgr.cpp,?FUN_00639210@@YIPAVPlanningNodeClass@@HHVCoord@@@Z
+0x006392D0,FUN_006392D0,MATCH,207,src/planmgr.cpp,?FUN_006392D0@@YIPAVPlanningNodeClass@@VPoint2D@@@Z
+0x006393A0,FUN_006393A0,MATCH,207,src/planmgr.cpp,?FUN_006393A0@@YIPAVPlanningNodeClass@@VPoint2D@@@Z
 0x00639470,FUN_00639470,MATCH,105,src/planmgr.cpp,?FUN_00639470@@YIPAVPlanningNodeClass@@VCoord@@@Z
 0x006394E0,FUN_006394E0,MATCH,193,src/planmgr.cpp,?FUN_006394E0@@YIXPAVAbstractClass@@PAVPlanningNodeClass@@@Z
 0x00639740,FUN_00639740,MATCH,185,src/planmgr.cpp,?FUN_00639740@@YIXPAVTechnoClass@@PAVPlanningNodeClass@@@Z
