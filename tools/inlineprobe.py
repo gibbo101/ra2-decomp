@@ -1,9 +1,11 @@
 """Locate where the original spent VC6's inline budget for one function, as a target for natural source.
 
-Usage: uv run tools/inlineprobe.py SRC ADDR [--n 1,2,4,8] [--only start,end,NAME...]
+Usage: uv run tools/inlineprobe.py SRC ADDR [--n 1,2,4,8] [--only start,end,NAME...] [--spend K]
 
 Copies SRC to build/inlineprobe/, adds N unused calls of a trivial inline at one place at a
 time, and prints the target's score and how many call lines still differ from the exe.
+The default probe body folds away, so each call adds a statement and raises the budget;
+--spend K gives the body K terms, so each call spends budget instead.
 Places: the start and end of the target's body (its own expansions) and the start and end
 of each function defined in SRC that the target calls (the next nesting level).
 A place and count where no call line differs is the original's spending pattern. The probe
@@ -18,7 +20,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "build/inlineprobe"
 MARKER = re.compile(r"^\s*//\s*(?:FUNCTION|TEMPLATE|SYNTHETIC|LIBRARY):\s*GAMEMD\s+(0x[0-9A-Fa-f]+)")
-HELPER = "static inline int Inline_Probe_(int a) { return a & 0; }\n"
+
+
+def helper(spend: int = 0) -> str:
+    """The probe inline: a body that folds away, or one of `spend` terms that VC6 must expand."""
+    body = "a & 0" if spend <= 0 else " + ".join(f"(a ^ {k + 1})" for k in range(spend))
+    return f"static inline int Inline_Probe_(int a) {{ return {body}; }}"
 KEYWORDS = {"if", "for", "while", "switch", "return", "sizeof", "catch", "delete", "new"}
 
 
@@ -94,12 +101,13 @@ def main():
     ap.add_argument("addr")
     ap.add_argument("--n", default="1,2,4,8")
     ap.add_argument("--only", default="")
+    ap.add_argument("--spend", type=int, default=0)
     a = ap.parse_args()
     src = (ROOT / a.src) if not Path(a.src).is_absolute() else Path(a.src)
     addr = int(a.addr, 16)
     lines = src.read_text(errors="replace").split("\n")
     first = next(i for i, l in enumerate(lines) if MARKER.match(l))
-    lines.insert(first, HELPER.rstrip("\n"))
+    lines.insert(first, helper(a.spend))
     tgt = target_span(lines, addr)
     places = {"start": (tgt, "start"), "end": (tgt, "end")}
     for name, span in callee_spans(lines, lines[tgt[0]:tgt[1] + 1], tgt).items():
