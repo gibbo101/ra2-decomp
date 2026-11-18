@@ -708,7 +708,7 @@ namespace WorldDominationTour
 				void Read(INIClass const & ini, Wstring const & section, int side);
 				bool Pick_Standard_Sound(int side, int outcome, Wstring & out);
 				bool Pick_Emphasis_Sound(int side, int outcome, Wstring & out);
-				void FUN_007710B0(INIClass const & ini, Wstring const & section, int side, int outcome, Wstring const & name);
+				void Read_Voiceover(INIClass const & ini, Wstring const & section, int side, int outcome, Wstring const & name);
 
 				Wstring Name;
 				VOICEINDEX_LIST VoiceIndexes[OUTCOME_COUNT][2];
@@ -716,15 +716,15 @@ namespace WorldDominationTour
 
 			YRVoices(int side);
 			~YRVoices(void);
-			void FUN_00770550(INIClass const & ini, Wstring const & section);
+			void Init(INIClass const & ini, Wstring const & section);
 			void Init_Standalone(INIClass const & ini, Wstring const & section, int voice, Wstring const & name);
 			bool Pick_Standard_Voice(int category, int outcome, Wstring & out);
 			bool Pick_Emphasis_Voice(int category, int outcome, Wstring & out);
 			bool Pick_Standalone_Voice(int voice, Wstring & out);
 			MSAnim * FUN_00771800(void);
-			void FUN_007714B0(int voice, bool count_queued, int delay);
-			void FUN_007712C0(int category, int outcome, bool emphasis, bool count_queued, int delay);
-			bool FUN_007717F0(void);
+			void Queue(int voice, bool count_queued, int delay);
+			void Queue(int category, int outcome, bool emphasis, bool count_queued, int delay);
+			bool Playing(void);
 			void Advance(void);
 			void Discard(void);
 			void Cleanup(void);

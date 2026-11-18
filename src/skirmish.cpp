@@ -229,7 +229,7 @@ inline int Skirmish_Spot_Limit(int count)
 }
 
 // FUNCTION: GAMEMD 0x006ACEE0
-void __fastcall FUN_006ACEE0(HWND window, int id, LPARAM lparam, int code)
+void __fastcall Skirmish_On_WM_COMMAND(HWND window, int id, LPARAM lparam, int code)
 {
 	int * rc = (int *)GetWindowLong(window, DWL_USER);
 	wchar_t buffer[256];
@@ -615,7 +615,7 @@ void __fastcall FUN_006AE080(HWND dialog, int first)
 
 class Surface;
 
-BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK Skirmish_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 void FUN_0072CF40(void);
 void FUN_0072CF90(void);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
@@ -628,7 +628,7 @@ namespace UI {
 }
 
 // FUNCTION: GAMEMD 0x006AE2C0
-bool FUN_006AE2C0(void)
+bool Skirmish_Mode_Dialog(void)
 {
 	int result = -1;
 
@@ -640,7 +640,7 @@ bool FUN_006AE2C0(void)
 
 	FUN_0072CF40();
 
-	HWND dialog = UI::BeginDialog(0x102, FUN_006AE3F0, 0);
+	HWND dialog = UI::BeginDialog(0x102, Skirmish_Dialog_Proc, 0);
 	if (dialog) {
 		DAT_00B0B59C = dialog;
 		SetWindowLong(dialog, DWL_USER, (LONG)&result);
@@ -675,8 +675,8 @@ namespace UI {
 	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 }
 
-void __fastcall FUN_006ACEE0(HWND window, int id, LPARAM lparam, int code);
-int __fastcall FUN_006AE6E0(HWND window, WPARAM wparam, LPARAM lparam);
+void __fastcall Skirmish_On_WM_COMMAND(HWND window, int id, LPARAM lparam, int code);
+int __fastcall Skirmish_On_WM_INITDIALOG(HWND window, WPARAM wparam, LPARAM lparam);
 char FUN_006067A0(HWND dialog);
 int __fastcall FUN_004E3830(int id);
 int __fastcall FUN_004E4230(int id);
@@ -689,7 +689,7 @@ wchar_t const * __fastcall FUN_004E38A0(int side);
 wchar_t const * __fastcall FUN_004E42A0(int color);
 
 // FUNCTION: GAMEMD 0x006AE3F0
-BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK Skirmish_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	BOOL result = UI::StandardWndProc(window, message, wparam, lparam);
 	if (result) {
@@ -698,7 +698,7 @@ BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 
 	switch (message) {
 		case WM_COMMAND:
-			FUN_006ACEE0(window, LOWORD(wparam), lparam, HIWORD(wparam));
+			Skirmish_On_WM_COMMAND(window, LOWORD(wparam), lparam, HIWORD(wparam));
 			return TRUE;
 
 		case WM_PAINT:
@@ -711,7 +711,7 @@ BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 			return FALSE;
 
 		case 0x497:
-			return FUN_006AE6E0(window, wparam, lparam);
+			return Skirmish_On_WM_INITDIALOG(window, wparam, lparam);
 
 		case 0x4e9: {
 			TooltipRequest *request = (TooltipRequest *)lparam;
@@ -789,7 +789,7 @@ inline int Skirmish_Slot_Level(int type)
 }
 
 // FUNCTION: GAMEMD 0x006AE6E0
-int __fastcall FUN_006AE6E0(HWND window, WPARAM wparam, LPARAM lparam)
+int __fastcall Skirmish_On_WM_INITDIALOG(HWND window, WPARAM wparam, LPARAM lparam)
 {
 	Session.Options.FUN_0069B540();
 

@@ -235,7 +235,7 @@ Map::AnimationPalette::~AnimationPalette(void)
 void Map::FUN_007692F0(Selection * selection, YRVoices * voices)
 {
 	if (IntroAnim) {
-		voices->FUN_007714B0(0, true, 0);
+		voices->Queue(0, true, 0);
 		selection->Wait_For_Anim(IntroAnim);
 	}
 	if (BackgroundAnim) {

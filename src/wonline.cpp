@@ -10337,7 +10337,7 @@ void FUN_007A0430(void)
 }
 
 int FUN_005355D0(void);
-rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0370(void);
+rc_ptr<WorldDominationTour::Campaign> * __cdecl WDT_Get_New_Campaign(void);
 extern int DAT_007EEF30;
 extern int DAT_00B736F4;
 
@@ -10393,7 +10393,7 @@ bool FUN_007A0690(void)
 
 	if (Session.WOLWelcomeChoice == 3) {
 		game = "MatchWDT ";
-		rc_ptr<WorldDominationTour::Campaign> campaign = *FUN_007B0370();
+		rc_ptr<WorldDominationTour::Campaign> campaign = *WDT_Get_New_Campaign();
 		if (campaign.Get() == NULL) {
 			wdt = ", WDS=0";
 		} else {
@@ -11101,7 +11101,7 @@ void __cdecl FUN_004068E0(char const * format, ...);
 void FUN_006C6D00(void);
 void FUN_006C6DE0(void);
 rc_ptr<WDTState> __fastcall FUN_0076ABA0(void * data);
-void __fastcall FUN_007B02A0(rc_ptr<WDTState> const & state);
+void __fastcall WDT_Resume_Campaign(rc_ptr<WDTState> const & state);
 void __fastcall FUN_007B0220(rc_ptr<WDTState> const & state);
 
 // FUNCTION: GAMEMD 0x007A2EA0
@@ -11160,7 +11160,7 @@ HRESULT CNetUtilEventSink::OnWDTState(HRESULT result, unsigned char * data, int 
 	if (state.Get() != NULL && state->Has_Owner_History()) {
 		if (state->Is_Previous_Cycle()) {
 			FUN_004068E0("OnWDTState: Previous cycle data received\n");
-			FUN_007B02A0(state);
+			WDT_Resume_Campaign(state);
 			SetEvent(g_WaitEventHandles[11]);
 		} else {
 			FUN_004068E0("OnWDTState: Current cycle data received\n");

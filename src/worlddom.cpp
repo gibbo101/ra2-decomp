@@ -266,7 +266,7 @@ static inline void Load_Image(WorldDominationTour::FactionImage *& image, char c
 }
 
 // FUNCTION: GAMEMD 0x007AF970
-int FUN_007AF970(void)
+int Do_WDT_Faction_Choice_Menu(void)
 {
 	FUN_0052FEC0(NULL, true);
 	WorldDominationTour::FactionSelectDialogControl control;
@@ -309,8 +309,8 @@ void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool str
 extern int DAT_00B77F94;
 extern int DAT_00B77F98;
 extern int g_MaxPlayers;
-rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0370(void);
-rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0380(void);
+rc_ptr<WorldDominationTour::Campaign> * __cdecl WDT_Get_New_Campaign(void);
+rc_ptr<WorldDominationTour::Campaign> * __cdecl WDT_Get_Resumed_Campaign(void);
 
 // FUNCTION: GAMEMD 0x007AFB90
 int __fastcall FUN_007AFB90(bool first_time)
@@ -349,7 +349,7 @@ int __fastcall FUN_007AFB90(bool first_time)
 		while (state != 0 && state != 6) {
 			switch (state) {
 				case 1: {
-					int side = FUN_007AF970();
+					int side = Do_WDT_Faction_Choice_Menu();
 					DAT_00B77F94 = side;
 					state = side ? 4 : 0;
 					break;
@@ -374,13 +374,13 @@ int __fastcall FUN_007AFB90(bool first_time)
 					if (!Request_WDT_Cycle()) {
 						state = 0;
 					} else {
-						rc_ptr<Campaign> campaign = *FUN_007B0370();
+						rc_ptr<Campaign> campaign = *WDT_Get_New_Campaign();
 						if (campaign.Get() == NULL) {
 							return 0;
 						}
 						campaign.Get()->Set_Faction(DAT_00B77F94);
 						if (campaign.Get()->Is_Different_Cycle()) {
-							rc_ptr<Campaign> rcampaign = *FUN_007B0380();
+							rc_ptr<Campaign> rcampaign = *WDT_Get_Resumed_Campaign();
 							if (rcampaign.Get() != NULL && !rcampaign.Get()->Is_Different_Cycle()) {
 								FUN_0076ECD0(&rcampaign, DAT_00B77F98);
 							}
@@ -473,13 +473,13 @@ void __fastcall FUN_007B0220(rc_ptr<WDTState> const & state)
 }
 
 // FUNCTION: GAMEMD 0x007B0290
-rc_ptr<WDTState> * __cdecl FUN_007B0290(void)
+rc_ptr<WDTState> * __cdecl WDT_Get_Resumed_State(void)
 {
 	return &DAT_00B77F70;
 }
 
 // FUNCTION: GAMEMD 0x007B02A0
-void __fastcall FUN_007B02A0(rc_ptr<WDTState> const & state)
+void __fastcall WDT_Resume_Campaign(rc_ptr<WDTState> const & state)
 {
 	DAT_00B77F70 = state;
 	DAT_00B77F78 = FUN_00764B30(g_NickName, FUN_0076BE90(state));
@@ -520,13 +520,13 @@ void __fastcall FUN_007B0350(char * state)
 }
 
 // FUNCTION: GAMEMD 0x007B0370
-rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0370(void)
+rc_ptr<WorldDominationTour::Campaign> * __cdecl WDT_Get_New_Campaign(void)
 {
 	return &DAT_00B77F68;
 }
 
 // FUNCTION: GAMEMD 0x007B0380
-rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0380(void)
+rc_ptr<WorldDominationTour::Campaign> * __cdecl WDT_Get_Resumed_Campaign(void)
 {
 	return &DAT_00B77F78;
 }
@@ -534,7 +534,7 @@ rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0380(void)
 // FUNCTION: GAMEMD 0x007B0390
 rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id)
 {
-	WorldDominationTour::CONFLICT_ITER it = (*FUN_007B0370())->Get_Conflict_Iterator(id);
+	WorldDominationTour::CONFLICT_ITER it = (*WDT_Get_New_Campaign())->Get_Conflict_Iterator(id);
 	return(it ? (*it)->Territory : rc_ptr<WDTTerritory>());
 }
 

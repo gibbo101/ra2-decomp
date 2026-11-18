@@ -68,7 +68,7 @@ HWND FUN_00775B10(void);
 int FUN_00775B20(void);
 
 void __fastcall FUN_0077E430(char * buffer);
-void __fastcall FUN_005DBB60(char * buffer);
+void __fastcall Net2EncodeGameopt(char * buffer);
 unsigned int __fastcall FUN_005DAC00(wchar_t const * name);
 int __fastcall FUN_0069B720(SessionClass * session);
 void FUN_007A2730(void);
@@ -678,7 +678,7 @@ void PumpGameopts(bool force, bool now)
 				FUN_0077E430(buffer);
 				SendPublicGameopts(buffer);
 			} else {
-				FUN_005DBB60(buffer);
+				Net2EncodeGameopt(buffer);
 				SendPublicGameopts(buffer);
 			}
 		}

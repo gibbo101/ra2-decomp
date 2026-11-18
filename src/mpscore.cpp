@@ -96,7 +96,7 @@ void MPScoreScreen::Present(void)
 }
 
 // FUNCTION: GAMEMD 0x005C97B0
-void __fastcall FUN_005C97B0(wchar_t * buffer, int seconds)
+void __fastcall Format_Time(wchar_t * buffer, int seconds)
 {
 	if (buffer != NULL) {
 		if (seconds / 3600 > 99) {
@@ -177,7 +177,7 @@ void FUN_005C98A0(void)
 	}
 }
 
-int __cdecl FUN_005C9AE0(void const * a, void const * b);
+int __cdecl Sort_Scores(void const * a, void const * b);
 
 // FUNCTION: GAMEMD 0x005C9AA0
 void FUN_005C9AA0(void)
@@ -187,12 +187,12 @@ void FUN_005C9AA0(void)
 		DAT_00ABF958[i] = &Session.Score[i];
 	}
 	if (count > 1) {
-		qsort(DAT_00ABF958, count, 4, FUN_005C9AE0);
+		qsort(DAT_00ABF958, count, 4, Sort_Scores);
 	}
 }
 
 // FUNCTION: GAMEMD 0x005C9AE0
-int __cdecl FUN_005C9AE0(void const * a, void const * b)
+int __cdecl Sort_Scores(void const * a, void const * b)
 {
 	MPlayerScoreType * first = *(MPlayerScoreType * const *)a;
 	MPlayerScoreType * second = *(MPlayerScoreType * const *)b;
@@ -264,7 +264,7 @@ int CALLBACK FUN_005C9B10(HWND window, UINT message, WPARAM wparam, LPARAM lpara
 			}
 			item = GetDlgItem(window, 0x6d2);
 			SendMessage(item, 0x4b2, 0, (LPARAM)text);
-			FUN_005C97B0(text, Scen->ElapsedTimer.Value() / 60);
+			Format_Time(text, Scen->ElapsedTimer.Value() / 60);
 			item = GetDlgItem(window, 0x3ea);
 			SendMessage(item, 0x4b2, 0, (LPARAM)text);
 			FUN_005C98A0();
@@ -272,7 +272,7 @@ int CALLBACK FUN_005C9B10(HWND window, UINT message, WPARAM wparam, LPARAM lpara
 				DAT_00ABF958[i] = &Session.Score[i];
 			}
 			if (Session.NumScores > 1) {
-				qsort(DAT_00ABF958, Session.NumScores, 4, FUN_005C9AE0);
+				qsort(DAT_00ABF958, Session.NumScores, 4, Sort_Scores);
 			}
 			for (i = 0; i < 2; i++) {
 				int header = DAT_0082FDFC[i];

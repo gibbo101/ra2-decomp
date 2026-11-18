@@ -871,7 +871,7 @@ void FUN_0072D9A0(void);
 void FUN_0072DAA0(void);
 int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus);
 void __fastcall FUN_0053F1F0(int value);
-bool FUN_006AE2C0(void);
+bool Skirmish_Mode_Dialog(void);
 void __fastcall FUN_0078ABF0(bool a, wchar_t const * text);
 void FUN_006370B0(void);
 void FUN_004C3E30(void);
@@ -1208,7 +1208,7 @@ restart:
 							continue;
 
 						case GAME_SKIRMISH:
-							if (!FUN_006AE2C0()) {
+							if (!Skirmish_Mode_Dialog()) {
 								Session.Type = GAME_NORMAL;
 								selection = 1;
 							}

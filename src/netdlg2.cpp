@@ -99,7 +99,7 @@ int AIID;
 // _$E122
 
 void __fastcall FUN_005E8DC0(wchar_t * buffer);
-void __fastcall FUN_005DAFE0(bool x);
+void __fastcall _Net2DisplayUsers(bool x);
 bool __fastcall FUN_005EC880(HWND dialog, int count, bool full, bool ai);
 void FUN_005E87A0(void);
 void FUN_005E8AE0(void);
@@ -184,7 +184,7 @@ extern int DAT_007EEF44;
 // FUNCTION: GAMEMD 0x005DAFD0
 void Net2DisplayUsers(void)
 {
-	FUN_005DAFE0(false);
+	_Net2DisplayUsers(false);
 }
 
 void __fastcall FUN_005EA3E0(HWND dialog, bool flag);
@@ -196,7 +196,7 @@ bool __fastcall FUN_005E8740(int index);
 int __fastcall FUN_0060D320(HWND dialog);
 
 // FUNCTION: GAMEMD 0x005DAFE0
-void __fastcall FUN_005DAFE0(bool x)
+void __fastcall _Net2DisplayUsers(bool x)
 {
 	int i;
 	HWND win = WS_Top_Window();
@@ -465,7 +465,7 @@ void Net2DisplayGameList(void)
 Wstring __fastcall FUN_007B82E0(WideWstring const &text);
 
 // FUNCTION: GAMEMD 0x005DBB60
-void __fastcall FUN_005DBB60(char *out)
+void __fastcall Net2EncodeGameopt(char *out)
 {
 	static char useroptions[512];
 	Wstring name = Session.Options.ScenarioDescription ? FUN_007B82E0(Session.Options.ScenarioDescription) : "";
@@ -524,7 +524,7 @@ void __fastcall Net2SetAccept(char * who, int status)
 	if (offset != -1) {
 		Session.Players[offset]->Player.Status = status;
 	}
-	FUN_005DAFE0(false);
+	_Net2DisplayUsers(false);
 }
 
 // FUNCTION: GAMEMD 0x005DBEC0
@@ -617,7 +617,7 @@ int __fastcall Net2SetHouseAndColor(char * who, int house, int color, int start,
 	if (Session.Slots[offset] == Session.Players[0]) {
 		Session.PrefColor = color;
 	}
-	FUN_005DAFE0(false);
+	_Net2DisplayUsers(false);
 	return(retval);
 }
 
@@ -700,7 +700,7 @@ extern bool DAT_00AC0269;
 extern int MessageLoopCount;
 int __fastcall Peek_Windows_Message(MSG * msg, HWND window, unsigned int filter_min, unsigned int filter_max, unsigned int remove);
 void __cdecl FUN_004068E0(char const * format, ...);
-int __fastcall FUN_005DF410(int index, char flag);
+int __fastcall Request_To_Join(int index, char flag);
 void __fastcall Unjoin_Game(int game_index);
 BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 void FUN_0072CF40(void);
@@ -932,7 +932,7 @@ bool Net2Remote_Connect(void)
 		if (_netresponse == 0x6cd) {
 			Session.NetStealth = false;
 			Session.Write_MultiPlayer_Settings();
-			if (FUN_005DF410(CurGame, Game::ObserverMode != 0)) {
+			if (Request_To_Join(CurGame, Game::ObserverMode != 0)) {
 				JoinState = JOIN_WAIT_CONFIRM;
 			} else {
 				HWND top = WS_Top_Window();
@@ -952,7 +952,7 @@ bool Net2Remote_Connect(void)
 		if (_netresponse == 0x6ce) {
 			Session.NetStealth = false;
 			Session.Write_MultiPlayer_Settings();
-			if (FUN_005DF410(CurGame, true)) {
+			if (Request_To_Join(CurGame, true)) {
 				JoinState = JOIN_WAIT_CONFIRM;
 			} else {
 				HWND top = WS_Top_Window();
@@ -1399,7 +1399,7 @@ BOOL CALLBACK MPlayer_Game_List_Dialog_Proc(HWND window, UINT message, WPARAM wp
 
 		Send_Join_Queries(1, 0, 1, 1);
 		Net2DisplayGameList();
-		FUN_005DAFE0(false);
+		_Net2DisplayUsers(false);
 		OwnerDraw::Paint(window);
 		SetFocus(GetDlgItem(window, 0x540));
 		return(0);
@@ -1434,7 +1434,7 @@ BOOL CALLBACK MPlayer_Game_List_Dialog_Proc(HWND window, UINT message, WPARAM wp
 			if (strcmp(FUN_007350C0(name), Session.Handle) != 0) {
 				strcpy(Session.Handle, FUN_007350C0(name));
 				Send_Join_Queries(0, 0, 1, 0);
-				FUN_005DAFE0(false);
+				_Net2DisplayUsers(false);
 			}
 			return(0);
 		}
@@ -1454,7 +1454,7 @@ BOOL CALLBACK MPlayer_Game_List_Dialog_Proc(HWND window, UINT message, WPARAM wp
 				if (old_game != CurGame) {
 					Send_Join_Queries(1, 1, 1, 0);
 				}
-				FUN_005DAFE0(false);
+				_Net2DisplayUsers(false);
 				return(0);
 			}
 			if (HIWORD(wparam) == LBN_DBLCLK) {
@@ -1775,7 +1775,7 @@ BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 			if (HIWORD(wparam) == 1 && !Net2GameStarted) {
 				FUN_005E9B60(window, LOWORD(wparam));
 				FUN_005E32D0(true, false);
-				FUN_005DAFE0(false);
+				_Net2DisplayUsers(false);
 			}
 			break;
 
@@ -1784,7 +1784,7 @@ BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 			if (HIWORD(wparam) == 1 && !Net2GameStarted) {
 				FUN_005E9C00(window, LOWORD(wparam));
 				FUN_005E32D0(true, false);
-				FUN_005DAFE0(false);
+				_Net2DisplayUsers(false);
 			}
 			break;
 
@@ -1834,11 +1834,11 @@ BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 			if (wasfirst && !isfirst && FUN_005EB660(window)) {
 				Session.Options.AIPlayers = 0;
 				FUN_005DAF30();
-				FUN_005DAFE0(false);
+				_Net2DisplayUsers(false);
 				FUN_005E32D0(true, false);
 				break;
 			}
-			FUN_005DAFE0(true);
+			_Net2DisplayUsers(true);
 			break;
 		}
 
@@ -1847,7 +1847,7 @@ BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 			if (HIWORD(wparam) == 1 && !Net2GameStarted) {
 				FUN_005E9CE0(window, LOWORD(wparam));
 				FUN_005E32D0(true, false);
-				FUN_005DAFE0(false);
+				_Net2DisplayUsers(false);
 			}
 			break;
 
@@ -1855,7 +1855,7 @@ BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 			if (HIWORD(wparam) == 1 && !Net2GameStarted) {
 				FUN_005E9DB0(window, LOWORD(wparam));
 				FUN_005E32D0(true, false);
-				FUN_005DAFE0(false);
+				_Net2DisplayUsers(false);
 			}
 			break;
 		}
@@ -1882,7 +1882,7 @@ BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 		FUN_005ED5A0(window, &Session.LAN);
 		FUN_004E5D60(window);
 		FUN_005EE510(-1);
-		FUN_005DAFE0(false);
+		_Net2DisplayUsers(false);
 		if (Session.MPGameMode && !Session.MPGameMode->vt_entry_BC()) {
 			DAT_008316A4 = -1;
 			Game::ObserverMode = 0;
@@ -2054,7 +2054,7 @@ static inline bool Net2_Name_Is_Reserved(char const * text)
 }
 
 // FUNCTION: GAMEMD 0x005DF410
-int __fastcall FUN_005DF410(int index, char flag)
+int __fastcall Request_To_Join(int index, char flag)
 {
 	if (index < 1) {
 		PMessagePrintf(ColorSystem, StringTable::LoadString("TXT_MUST_SELECT_GAME", NULL, "D:\\ra2mdpost\\netdlg2.cpp", 0xe80));
@@ -2991,7 +2991,7 @@ static void Get_Join_Responses(void)
 	}
 
 	if (display_users) {
-		FUN_005DAFE0(true);
+		_Net2DisplayUsers(true);
 	}
 	if (display_games) {
 		Net2DisplayGameList();
@@ -3102,7 +3102,7 @@ BOOL CALLBACK MPlayer_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam
 		EnableWindow(GetDlgItem(window, 0x59f), FALSE);
 		DAT_00AC11C2 = false;
 		Net2SetAccept(NULL, 0);
-		FUN_005DAFE0(false);
+		_Net2DisplayUsers(false);
 		Net2DisplayGameList();
 		FUN_005E3010(window, 1);
 		FUN_005E7BF0(-1);
@@ -3138,7 +3138,7 @@ BOOL CALLBACK MPlayer_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam
 			EnableWindow(accept, FALSE);
 			InvalidateRect(accept, NULL, FALSE);
 			SendMessage(accept, 0x4dc, 0, 0);
-			FUN_005DAFE0(false);
+			_Net2DisplayUsers(false);
 			return(0);
 		}
 
