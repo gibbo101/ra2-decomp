@@ -8842,6 +8842,291 @@ void FUN_0072C9C0(void);
 void FUN_0072CA10(void);
 BOOL CALLBACK FUN_00799080(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
+Wstring __fastcall FUN_00779B50(void);
+Wstring __fastcall FUN_00779DD0(void);
+void __fastcall FUN_0077A8D0(HWND dialog, bool flag);
+int __fastcall FUN_00624020(HWND combo, int index, WideWstring * out);
+void FUN_004E43C0(void);
+
+// FUNCTION: GAMEMD 0x00799080
+BOOL CALLBACK FUN_00799080(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	if (message == WM_INITDIALOG && lparam) {
+		do SetWindowLong(window, 8, ((int *)lparam)[1]); while (0);
+	}
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc) {
+		return rc;
+	}
+	SimpleWonlineDialogControl * control = (SimpleWonlineDialogControl *)GetWindowLong(window, 8);
+	switch (message) {
+		case WM_DRAWITEM:
+			OwnerDraw::DrawItem((LPDRAWITEMSTRUCT)lparam);
+			return TRUE;
+
+		case WM_PAINT:
+			OwnerDraw::Paint(window);
+			FUN_00607FD0(window);
+			ValidateRect(window, NULL);
+			return TRUE;
+
+		case WM_ERASEBKGND:
+			return TRUE;
+
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				case 0x687:
+					Session.WOLWelcomeChoice = 5;
+					Session.unknown_10 = 6;
+					control->F1(window, 0x687);
+					return FALSE;
+
+				case 0x688:
+					FUN_00773E90("Battleclans");
+					return FALSE;
+
+				case 0x686:
+					Session.WOLWelcomeChoice = 0;
+					control->F1(window, 0x686);
+					return FALSE;
+
+				case 0x628:
+					switch (HIWORD(wparam)) {
+						case CBN_SELCHANGE: {
+							HWND check = GetDlgItem(window, 0x6FF);
+							SendMessage(check, 0x49D, 0, 1);
+							ShowWindow(check, SW_HIDE);
+							int item = SendMessage((HWND)lparam, CB_GETCURSEL, 0, 0);
+							int index = -1;
+							if (item != -1) {
+								index = SendMessage((HWND)lparam, CB_GETITEMDATA, item, 0);
+							}
+							g_NickName.clear();
+							if (index != -1) {
+								char const * nick = NULL;
+								char const * pass = NULL;
+								if (g_pChat->GetNick(index, &nick, &pass) == 0) {
+									g_NickName = nick;
+								}
+							}
+							rc_ptr<PlayerProfile> profile = FUN_00778A20(&g_NickName);
+							Wstring autologin = FUN_00779B50();
+							EnableWindow(check, index != -1);
+							SendMessage(check, BM_SETCHECK, (autologin == g_NickName) ? BST_CHECKED : BST_UNCHECKED, 0);
+							SendMessage(check, 0x49D, 0, 0);
+							ShowWindow(check, SW_SHOW);
+							InvalidateRect(check, NULL, FALSE);
+							if (profile.Get()) {
+								profile->FUN_0077A9F0(window, &g_NickName, false);
+							}
+							EnableWindow(GetDlgItem(window, 0x6EB), index != -1 && g_NickName.length() > 0);
+							EnableWindow(GetDlgItem(window, 0x687), index != -1 && g_NickName.length() > 0);
+							return FALSE;
+						}
+					}
+					break;
+
+				case 0x629:
+					switch (HIWORD(wparam)) {
+						case CBN_SELCHANGE: {
+							Wstring text;
+							FUN_00623E40((HWND)lparam, text);
+							rc_ptr<PlayerProfile> profile = FUN_00778A20(&g_NickName);
+							if (profile.Get()) {
+								profile->SetName(&text);
+								profile->Save(&g_NickName);
+							}
+							return FALSE;
+						}
+					}
+					break;
+
+				case 0x62A:
+					switch (HIWORD(wparam)) {
+						case CBN_SELCHANGE: {
+							int locale = 0;
+							int item = SendMessage((HWND)lparam, CB_GETCURSEL, 0, 0);
+							if (item != -1) {
+								locale = SendMessage((HWND)lparam, CB_GETITEMDATA, item, 0);
+							}
+							rc_ptr<PlayerProfile> profile = FUN_00778A20(&g_NickName);
+							if (profile.Get()) {
+								profile->SetLocale(locale, 3);
+								profile->Save(&g_NickName);
+							}
+							return FALSE;
+						}
+					}
+					break;
+
+				case 0x6A1:
+					switch (HIWORD(wparam)) {
+						case CBN_SELCHANGE: {
+							int country = -2;
+							int item = SendMessage((HWND)lparam, CB_GETCURSEL, 0, 0);
+							if (item != -1) {
+								country = SendMessage((HWND)lparam, CB_GETITEMDATA, item, 0);
+							}
+							rc_ptr<PlayerProfile> profile = FUN_00778A20(&g_NickName);
+							if (profile.Get()) {
+								profile->SetCountry(country);
+								profile->Save(&g_NickName);
+							}
+							return FALSE;
+						}
+					}
+					break;
+
+				case 0x6A2:
+					switch (HIWORD(wparam)) {
+						case CBN_SELCHANGE: {
+							int value = -2;
+							int item = SendMessage((HWND)lparam, CB_GETCURSEL, 0, 0);
+							if (item != -1) {
+								value = SendMessage((HWND)lparam, CB_GETITEMDATA, item, 0);
+							}
+							rc_ptr<PlayerProfile> profile = FUN_00778A20(&g_NickName);
+							if (profile.Get()) {
+								profile->SetField20(value);
+								profile->Save(&g_NickName);
+							}
+							return FALSE;
+						}
+					}
+					break;
+
+				case 0x7A3:
+					FUN_00773E90("Ladder");
+					return FALSE;
+
+				case 0x6FF:
+					if (SendMessage((HWND)lparam, BM_GETCHECK, 0, 0) == BST_CHECKED) {
+						FUN_00779C90(g_NickName);
+						return FALSE;
+					} else {
+						Wstring const autologin = FUN_00779B50();
+						if (autologin.toLower() == ((Wstring const &)g_NickName).toLower()) {
+							FUN_00779C90(DAT_00889F64);
+						}
+						return FALSE;
+					}
+
+				case 0x773:
+					{
+						rc_ptr<PlayerProfile> profile = FUN_00778A20(&g_NickName);
+						if (profile.Get()) {
+							profile->SetMatchByRes(SendMessage((HWND)lparam, BM_GETCHECK, 0, 0) == BST_CHECKED);
+							profile->Save(&g_NickName);
+						}
+					}
+					return FALSE;
+
+				case 0x6EA:
+					NewLogin(window);
+					return FALSE;
+
+				case 0x6EB:
+					{
+						HWND combo = GetDlgItem(window, 0x628);
+						int item = SendMessage(combo, CB_GETCURSEL, 0, 0);
+						if (item != -1) {
+							WideWstring wide;
+							FUN_00624020(combo, item, &wide);
+							Wstring name = FUN_007B7F90(wide);
+							name.toLower();
+							Wstring const autologin = FUN_00779B50();
+							if (name == autologin.toLower()) {
+								FUN_00779C90(DAT_00889F64);
+							}
+							Wstring const lastvalid = FUN_00779DD0();
+							if (name == lastvalid.toLower()) {
+								FUN_00779F10(DAT_00889F64);
+							}
+							int slot = SendMessage(combo, CB_GETITEMDATA, item, 0);
+							if (slot != -1) {
+								g_pChat->SetNick(slot, DAT_00889F64, DAT_00889F64, 1);
+								SendMessage(combo, CB_DELETESTRING, item, 0);
+							}
+							SendMessage(combo, CB_SETCURSEL, -1, 0);
+						}
+						FUN_0077A8D0(window, true);
+						InvalidateRect(combo, NULL, FALSE);
+						EnableWindow(GetDlgItem(window, 0x6EB), FALSE);
+						SendMessage(combo, CB_SETCURSEL, 0, 0);
+						rc_ptr<PlayerProfile> profile = FUN_00778710();
+						if (profile.Get()) {
+							profile->FUN_0077A9F0(window, &(Wstring const &)DAT_00889F64, false);
+							HWND check = GetDlgItem(window, 0x6FF);
+							SendMessage(check, 0x49D, 0, 1);
+							EnableWindow(check, FALSE);
+							SendMessage(check, BM_SETCHECK, 0, 0);
+							SendMessage(check, 0x49D, 0, 0);
+							InvalidateRect(check, NULL, FALSE);
+						}
+					}
+					return FALSE;
+
+				case 0x6EC:
+					FUN_00773E90("Manage");
+					return FALSE;
+			}
+			break;
+
+		case 0x497:
+			{
+				HWND combo = GetDlgItem(window, 0x628);
+				FUN_00623840(combo);
+				SendMessage(combo, CB_LIMITTEXT, 9, 0);
+				WideWstring text(StringTable::LoadString("GUI:Default", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x629F));
+				int item = SendMessage(combo, 0x4C2, 0, (LPARAM)text.text());
+				SendMessage(combo, CB_SETITEMDATA, item, -1);
+				SendMessage(combo, CB_SETCURSEL, item, 0);
+				for (int i = 1; i <= 0x20; i++) {
+					char const * nick = NULL;
+					char const * pass = NULL;
+					if (g_pChat->GetNick(i, &nick, &pass) == 0) {
+						if (nick != NULL) {
+							if (strlen(nick) != 0) {
+								WideWstring wide = FUN_007B7ED0(nick);
+								int added = SendMessage(combo, 0x4C2, 0, (LPARAM)wide.text());
+								SendMessage(combo, CB_SETITEMDATA, added, i);
+							}
+						}
+					}
+				}
+				FUN_00798F50(GetDlgItem(window, 0x62A));
+				FUN_004E3A00(window, 0x6A1);
+				FUN_004E43C0();
+				FUN_004E45A0(window, 0x6A2);
+				FUN_007896A0(GetDlgItem(window, 0x629), true);
+				rc_ptr<PlayerProfile> profile = FUN_00778A20(&g_NickName);
+				if (profile.Get()) {
+					profile->FUN_0077A9F0(window, &g_NickName, true);
+				}
+				int index = -1;
+				int sel = SendMessage(combo, CB_GETCURSEL, 0, 0);
+				if (sel != -1) {
+					index = SendMessage(combo, CB_GETITEMDATA, sel, 0);
+				}
+				BOOL valid = index != -1;
+				EnableWindow(GetDlgItem(window, 0x6EB), valid);
+				EnableWindow(GetDlgItem(window, 0x687), valid);
+				HWND check = GetDlgItem(window, 0x6FF);
+				EnableWindow(check, valid);
+				Wstring autologin = FUN_00779B50();
+				SendMessage(GetDlgItem(window, 0x6FF), BM_SETCHECK, (autologin == g_NickName) ? BST_CHECKED : BST_UNCHECKED, 0);
+			}
+			break;
+
+		case 0x4ED:
+			ShowWindow(window, SW_HIDE);
+			OwnerDraw::SetUserData2(window, 1);
+			return FALSE;
+	}
+	return FALSE;
+}
+
+
 // FUNCTION: GAMEMD 0x00799CD0
 void FUN_00799CD0(void)
 {
