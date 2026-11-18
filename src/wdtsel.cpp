@@ -581,7 +581,7 @@ template class rc_ptr<CampaignProperties>;
 template class rc_ptr<Territory>;
 
 // TEMPLATE: GAMEMD 0x0076F080
-// ?Get@?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ
+// ??C?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ
 template class rc_ptr<Map>;
 
 // TEMPLATE: GAMEMD 0x0076F090

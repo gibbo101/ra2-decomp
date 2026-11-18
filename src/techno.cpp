@@ -6749,6 +6749,56 @@ void TechnoClass::vt_entry_48C(bool incremental, bool flag, bool use_house, Hous
 	}
 }
 
+// FUNCTION: GAMEMD 0x0070B280
+void TechnoClass::vt_entry_3D8(Coord const & coord, float force, bool flag)
+{
+	if (Techno_Type_Class()->Voxel.VoxLib != NULL && !Techno_Type_Class()->Voxel.VoxLib->Load_Failed()) {
+		Coord pos = PositionCoord;
+		Vector3 vec1;
+		vec1.X = pos.X - coord.X;
+		vec1.Y = coord.Y - pos.Y;
+		vec1.Z = pos.Z - coord.Z;
+		Vector3 vec2 = vec1;
+
+		double theta = PrimaryFacing.Current().As_Radian();
+		float sangle = fastmath::sin(theta);
+		Vector3 facing(fastmath::cos(theta), sangle, 0.0f);
+
+		float dist1 = (float)fastmath::sqrt((double)vec1.X * vec1.X + (double)vec1.Y * vec1.Y + (double)vec1.Z * vec1.Z);
+
+		float scale = (0.04f - dist1 * 0.000025f) * force / Techno_Type_Class()->Weight;
+
+		if (fabs(dist1) >= 0.00002 && scale >= 0.01f) {
+			if (scale > 0.05f) {
+				scale = 0.05f;
+			}
+
+			vec2.Z = 0.0;
+			double len = fastmath::sqrt(vec2.X * vec2.X + vec2.Y * vec2.Y);
+
+			Vector3 normal;
+			if (len != 0.0) {
+				normal = vec2 / len;
+			} else {
+				normal = vec2;
+			}
+
+			float forward = normal * facing;
+			Vector3 side = Vector3::Cross_Product(normal, facing);
+			float dist2 = (float)fastmath::sqrt((double)side.X * side.X + (double)side.Y * side.Y + (double)side.Z * side.Z);
+			float c2 = facing.X;
+			float s2 = sangle;
+			float c3 = facing.X;
+			float s3 = sangle;
+			if (fabs(c2 * forward - s2 * dist2 - normal.X) > 0.0002 || fabs(c3 * dist2 + s3 * forward - normal.Y) > 0.0002) {
+				dist2 = -dist2;
+			}
+			RockingForwardsPerFrame = flag ? forward * scale : forward * scale * 0.5f;
+			RockingSidewaysPerFrame = -(dist2 * scale);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0070B570
 void TechnoClass::Try_To_Cloak(void)
 {

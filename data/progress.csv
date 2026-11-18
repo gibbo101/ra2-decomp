@@ -15034,6 +15034,7 @@ address,name,result,size,source,symbol
 0x0070ADC0,TechnoClass::Look,MATCH,386,src/techno.cpp,?Look@TechnoClass@@UAEX_N0@Z
 0x0070AF50,TechnoClass::UpdateSight,MATCH,640,src/techno.cpp,?UpdateSight@TechnoClass@@UAEX_N00PAVHouseClass@@H@Z
 0x0070B1D0,TechnoClass::vt_entry_48C,MATCH,165,src/techno.cpp,?vt_entry_48C@TechnoClass@@UAEX_N00PAVHouseClass@@@Z
+0x0070B280,TechnoClass::vt_entry_3D8,MATCH,752,src/techno.cpp,?vt_entry_3D8@TechnoClass@@UAEXABVCoord@@M_N@Z
 0x0070B570,TechnoClass::Try_To_Cloak,MATCH,1850,src/techno.cpp,?Try_To_Cloak@TechnoClass@@UAEXXZ
 0x0070BE50,TechnoClass::Get_Predator_Offset,MATCH,42,src/techno.cpp,?Get_Predator_Offset@TechnoClass@@QBEHXZ
 0x0070BE80,TechnoClass::Should_Self_Heal_Now,MATCH,199,src/techno.cpp,?Should_Self_Heal_Now@TechnoClass@@UBE_NXZ
@@ -17531,7 +17532,7 @@ address,name,result,size,source,symbol
 0x0076F030,??0?$rc_ptr@VTerritory@WorldDominationTour@@@@QAE@ABV0@@Z,MATCH,35,src/wdtsel.cpp,??0?$rc_ptr@VTerritory@WorldDominationTour@@@@QAE@ABV0@@Z
 0x0076F060,??1?$rc_ptr@VTerritory@WorldDominationTour@@@@UAE@XZ,MATCH,11,src/wdtsel.cpp,??1?$rc_ptr@VTerritory@WorldDominationTour@@@@UAE@XZ
 0x0076F070,??C?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ,MATCH,4,src/wdtsel.cpp,??C?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ
-0x0076F080,?Get@?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ,MATCH,4,src/wdtsel.cpp,?Get@?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ
+0x0076F080,??C?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ,MATCH,4,src/wdtsel.cpp,??C?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ
 0x0076F090,??0?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@QAE@AAV?$DynamicVectorClass@PAVMSSfxEntry@@@@H@Z,MATCH,25,src/wdtsel.cpp,??0?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@QAE@AAV?$DynamicVectorClass@PAVMSSfxEntry@@@@H@Z
 0x0076F0B0,??B?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UBE_NXZ,MATCH,14,src/wdtsel.cpp,??B?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UBE_NXZ
 0x0076F0C0,??0?$VectorCursor@V?$rc_ptr@VTerritory@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@@@QAE@AAV?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@H@Z,MATCH,25,src/wdtsel.cpp,??0?$VectorCursor@V?$rc_ptr@VTerritory@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@@@QAE@AAV?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@H@Z

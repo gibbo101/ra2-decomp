@@ -15376,6 +15376,7 @@ address,size,symbol,source,sha256
 0x0070ADC0,386,?Look@TechnoClass@@UAEX_N0@Z,src/techno.cpp,c97327053198f4245751e1078c8e55b30604888bc67c5d1d5c1f9ead583ef7d9
 0x0070AF50,640,?UpdateSight@TechnoClass@@UAEX_N00PAVHouseClass@@H@Z,src/techno.cpp,ac5952fa83990a144af3d7b46f62cfa359f16a90eadd60ccbfaba84a9d4f91b4
 0x0070B1D0,165,?vt_entry_48C@TechnoClass@@UAEX_N00PAVHouseClass@@@Z,src/techno.cpp,c4164cbda6a8ce2aafae85d7118c2aa11cef611c293b7b890084be56f71707b2
+0x0070B280,752,?vt_entry_3D8@TechnoClass@@UAEXABVCoord@@M_N@Z,src/techno.cpp,a574fef19af24eadb1ed3724f867c8499839bda83664bc83aa1aed3a99ec8e90
 0x0070B570,1850,?Try_To_Cloak@TechnoClass@@UAEXXZ,src/techno.cpp,dfdbe5a812de8812968e078ace511482ded9fa730dbfa40700565c74c2e2154b
 0x0070BCB0,405,?Predict_Target_Coord@TechnoClass@@QBE?AVCoord@@XZ,src/techno.cpp,d2d181b4f9fc7d3b5a017d7fe61911f5fcb04818d6ae3ff0ce626b4c3debfa2c
 0x0070BE50,42,?Get_Predator_Offset@TechnoClass@@QBEHXZ,src/techno.cpp,d47ba405e88e1690e53a10f3cd7ccf145e652dc569966573b06c31dac20556d9
@@ -17773,7 +17774,7 @@ address,size,symbol,source,sha256
 0x0076F030,35,??0?$rc_ptr@VTerritory@WorldDominationTour@@@@QAE@ABV0@@Z,src/wdtsel.cpp,234e41dbf05983a6949d1295572bbf6739a7d75a53bc0c280d02bd97bd38b9db
 0x0076F060,11,??1?$rc_ptr@VTerritory@WorldDominationTour@@@@UAE@XZ,src/wdtsel.cpp,a56fa45703277983755dc313aa42c9494478f5591a88b9969f9a7d240c3cbb98
 0x0076F070,4,??C?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ,src/wdtsel.cpp,f7e0208f5e988ae39c7a45dfddbd12921d02f9c3deb5695d4c534c8ab0ccdb0f
-0x0076F080,4,?Get@?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ,src/wdtsel.cpp,f7e0208f5e988ae39c7a45dfddbd12921d02f9c3deb5695d4c534c8ab0ccdb0f
+0x0076F080,4,??C?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ,src/wdtsel.cpp,f7e0208f5e988ae39c7a45dfddbd12921d02f9c3deb5695d4c534c8ab0ccdb0f
 0x0076F090,25,??0?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@QAE@AAV?$DynamicVectorClass@PAVMSSfxEntry@@@@H@Z,src/wdtsel.cpp,32914b4b3ac92a50de3830efa5d9da1c69a3830e2c77c5dba6fa7f750f3b4b78
 0x0076F0B0,14,??B?$VectorCursor@PAVMSSfxEntry@@V?$DynamicVectorClass@PAVMSSfxEntry@@@@@@UBE_NXZ,src/wdtsel.cpp,65928e72743eaf9020009560cd7a304f982043da5d52b280521c28d758627639
 0x0076F0C0,25,??0?$VectorCursor@V?$rc_ptr@VTerritory@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@@@QAE@AAV?$DynamicVectorClass@V?$rc_ptr@VTerritory@WorldDominationTour@@@@@@H@Z,src/wdtsel.cpp,17d6f6f16b22140b42dd60366cd200e081210c9af4bf992505929741a9a1f16f
