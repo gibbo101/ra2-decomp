@@ -2135,7 +2135,7 @@ Cell MapClass::Nearby_Location(Cell const &cell, SpeedType speed, int zone, MZon
 					if (!checkheight || abs(height - 4 * cellptr->IsUnderBridge - cellptr->Height) < 2) {
 						if ((!checkburrow || cellptr->Can_Burrow_Here()) &&
 						    (allowunderbridge || !cellptr->IsUnderBridge)) {
-							if (!buildable || ((MapClass *)this)->IsAreaFree(area, -1)) {
+							if (!buildable || ((MapClass *)this)->Is_Area_Available(area, -1)) {
 								candidates[count++] = newcell;
 
 								if (checkbridge || newcell == TacticalMap->Coord_To_Cell(Coord(newcell, 0))) {
@@ -2164,7 +2164,7 @@ Cell MapClass::Nearby_Location(Cell const &cell, SpeedType speed, int zone, MZon
 					if (!checkheight || abs(height - 4 * cellptr->IsUnderBridge - cellptr->Height) < 2) {
 						if ((!checkburrow || cellptr->Can_Burrow_Here()) &&
 						    (allowunderbridge || !cellptr->IsUnderBridge)) {
-							if (!buildable || ((MapClass *)this)->IsAreaFree(area, -1)) {
+							if (!buildable || ((MapClass *)this)->Is_Area_Available(area, -1)) {
 								candidates[count++] = newcell;
 
 								if (checkbridge || newcell == TacticalMap->Coord_To_Cell(Coord(newcell, 0))) {
@@ -2200,7 +2200,7 @@ Cell MapClass::Nearby_Location(Cell const &cell, SpeedType speed, int zone, MZon
 					if (!checkheight || abs(height - 4 * cellptr->IsUnderBridge - cellptr->Height) < 2) {
 						if ((!checkburrow || cellptr->Can_Burrow_Here()) &&
 						    (allowunderbridge || !cellptr->IsUnderBridge)) {
-							if (!buildable || ((MapClass *)this)->IsAreaFree(area, -1)) {
+							if (!buildable || ((MapClass *)this)->Is_Area_Available(area, -1)) {
 								candidates[count++] = newcell;
 
 								if (checkbridge || newcell == TacticalMap->Coord_To_Cell(Coord(newcell, 0))) {
@@ -2225,7 +2225,7 @@ Cell MapClass::Nearby_Location(Cell const &cell, SpeedType speed, int zone, MZon
 			                                                            zone, check, -1, checkbridge, checkoverlay)) {
 				if (!checkheight || abs(height - 4 * cellptr->IsUnderBridge - cellptr->Height) < 2) {
 					if ((!checkburrow || cellptr->Can_Burrow_Here()) && (allowunderbridge || !cellptr->IsUnderBridge)) {
-						if (!buildable || ((MapClass *)this)->IsAreaFree(area, -1)) {
+						if (!buildable || ((MapClass *)this)->Is_Area_Available(area, -1)) {
 							candidates[count++] = newcell;
 
 							if (checkbridge || newcell == TacticalMap->Coord_To_Cell(Coord(newcell, 0))) {
@@ -5693,7 +5693,7 @@ int MapClass::Get_High_Ground_Mask(CellClass * cellptr)
 }
 
 // FUNCTION: GAMEMD 0x0057A0C0
-bool MapClass::FUN_0057A0C0(int region_id, bool flat_height)
+bool MapClass::Build_All_Shores(int region_id, bool flat_height)
 {
 	Map.Set_Cursor_Shape(NULL);
 
@@ -8709,7 +8709,7 @@ void MapClass::Deinit_Fog_System(void)
 }
 
 // FUNCTION: GAMEMD 0x00586780
-bool MapClass::IsAreaFree(Rect const & rect, int house)
+bool MapClass::Is_Area_Available(Rect const & rect, int house)
 {
 	int mask = (house != -1) ? (1 << house) : 0;
 	for (int x = rect.X; x < rect.X + rect.Width; x++) {

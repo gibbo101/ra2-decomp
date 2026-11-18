@@ -1965,7 +1965,7 @@ int SidebarClass::GetVisibleCameoCount(void)
 #include "bitfont.h"
 
 // FUNCTION: GAMEMD 0x006AC480
-void __fastcall FUN_006AC480(wchar_t const * text, Point2D const & point, Rect const & window, int width)
+void __fastcall Print_Cameo_Text(wchar_t const * text, Point2D const & point, Rect const & window, int width)
 {
 	if (DAT_00884B8C && text != NULL) {
 		Point2D xy = point;

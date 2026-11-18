@@ -227,7 +227,7 @@ CRCEngine Object_CRCs(void)
 extern bool UserInputLocked;
 extern int SidebarWidth;
 extern DynamicVectorClass<BuildingClass *> DAT_008B41E0;
-bool __fastcall FUN_00534FA0(int side);
+bool __fastcall Prep_For_Side(int side);
 Rect __fastcall Get_Title_Screen_Area(void);
 void __cdecl FUN_004068E0(char const * format, ...);
 HRESULT __fastcall FUN_00751710(IStream * stream);
@@ -738,7 +738,7 @@ bool Get_All(IStream * stream, bool save_net)
 	Scen->Load(stream);
 	UserInputLocked = Scen->IsInputLocked;
 
-	if (!FUN_00534FA0(Scen->PlayerSideIndex)) {
+	if (!Prep_For_Side(Scen->PlayerSideIndex)) {
 		return(false);
 	}
 

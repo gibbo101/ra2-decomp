@@ -248,9 +248,9 @@ static bool Init_CDROM_Access(void);
 void __cdecl FUN_004A4AC0(const char * text);
 bool Init_Secondary_Mixfiles(void);
 void FUN_005312A0(void);
-void FUN_0052CB90(void);
+void Init_Campaigns(void);
 bool Init_Bulk_Data(void);
-bool FUN_0052CD70(void);
+bool Init_Rules(void);
 extern unsigned __int64 DAT_00A8F788;
 void Init_Commands(void);
 
@@ -290,7 +290,7 @@ int Init_Game(void)
 	Play_Movie("EA_WWLOGO", THEME_NONE, 1, 1, 1, 0);
 	FUN_005312A0();
 	FUN_004068E0("Init Campaigns\n");
-	FUN_0052CB90();
+	Init_Campaigns();
 	FUN_004068E0("Init Heaps\n");
 	FUN_004068E0("Init Threads\n");
 	FUN_004068E0("Reading Game Settings\n");
@@ -357,7 +357,7 @@ int Init_Game(void)
 		return -1;
 	}
 	FUN_004068E0("Init Rules\n");
-	if (!FUN_0052CD70()) {
+	if (!Init_Rules()) {
 		FUN_004068E0("Failed to initialize Rules!\n");
 		return -1;
 	}
@@ -415,7 +415,7 @@ void FUN_0052CB80(void)
 }
 
 // FUNCTION: GAMEMD 0x0052CB90
-void FUN_0052CB90(void)
+void Init_Campaigns(void)
 {
 	bool found = false;
 	WIN32_FIND_DATA fd;
@@ -464,7 +464,7 @@ void FUN_0052CB90(void)
 BOOL CALLBACK Rules_Choice_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x0052CD70
-bool FUN_0052CD70(void)
+bool Init_Rules(void)
 {
 	DynamicVectorClass<CCINIClass *> Rules;
 
@@ -863,7 +863,7 @@ namespace UI {
 	bool __fastcall Updated(void);
 }
 
-BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK Campaign_Choice_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 int Main_Menu(unsigned int timeout);
 bool FUN_0052F3F0(void);
 int __fastcall FUN_0077B2A0(bool returning);
@@ -894,7 +894,7 @@ static CampaignType Choose_Campaign(void)
 	pick.Choice = -1;
 
 	if (Campaigns.Count() == 0) {
-		FUN_0052CB90();
+		Init_Campaigns();
 		if (Campaigns.Count() == 0) {
 			return(CAMPAIGN_NONE);
 		}
@@ -904,7 +904,7 @@ static CampaignType Choose_Campaign(void)
 	DAT_00A8F300.FUN_00405BE0();
 	DAT_00A8F7A0 = 0;
 	DAT_00A8F7A8 = 0;
-	HWND dialog = UI::BeginDialog(0x94, FUN_0052EC00, 0);
+	HWND dialog = UI::BeginDialog(0x94, Campaign_Choice_Dialog_Proc, 0);
 	if (dialog != NULL) {
 		SetWindowLong(dialog, DWL_USER, (LONG)&pick);
 		Center_Window_Within_Window(dialog, Game::hWnd);
@@ -1175,7 +1175,7 @@ restart:
 
 				case 9:
 					ScenarioInit++;
-					FUN_0052CB90();
+					Init_Campaigns();
 					ScenarioInit--;
 					if (LoadOptionsClass().Load()) {
 						process = false;
@@ -1480,7 +1480,7 @@ static inline HWND Child_At(HWND window, LPARAM lparam)
 }
 
 // FUNCTION: GAMEMD 0x0052EC00
-BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK Campaign_Choice_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
 	if (rc) {
@@ -4699,7 +4699,7 @@ void __fastcall FUN_006D02B0(void * map);
 int __fastcall FUN_004A80D0(int drive, int arg);
 
 // FUNCTION: GAMEMD 0x00534FA0
-bool __fastcall FUN_00534FA0(int side)
+bool __fastcall Prep_For_Side(int side)
 {
 	char name[64];
 

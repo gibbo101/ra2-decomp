@@ -1975,7 +1975,7 @@ address,size,symbol,source,sha256
 0x004517D0,179,?Set_Anim_Coords@BuildingClass@@QAEXXZ,src/building.cpp,036b2db66ad4640c79ae88444086eb390214627bea46ac3dbb181f42dff3a5e0
 0x00451890,678,?PlayAnim@BuildingClass@@QAEXPBDW4BAnimType@@_N2H@Z,src/building.cpp,34d2a50cc42ac9d5a6a9417c3f3c7408a1376200886ddaabbf048c9d89896791
 0x00451B40,760,?Detach_Anim@BuildingClass@@QAEXPAVAnimClass@@@Z,src/building.cpp,87a98338476cc6e87e71d1ffa549a50a926d07da1d94ebb3e3acf67c7da4c5e8
-0x00451E40,86,?DestroyNthAnim@BuildingClass@@QAEXW4BAnimType@@@Z,src/building.cpp,6a5ea590c4c2683cbb026fc9dc62c17b98d8a5b97fd4c1c19bbe50e4d8bd0508
+0x00451E40,86,?End_Anim@BuildingClass@@QAEXW4BAnimType@@@Z,src/building.cpp,6a5ea590c4c2683cbb026fc9dc62c17b98d8a5b97fd4c1c19bbe50e4d8bd0508
 0x00451EA0,63,?HideNthAnim@BuildingClass@@QAEXW4BAnimType@@@Z,src/building.cpp,24937268d35c9cbf4377f8557e2a4b3b39dc717311ec9324f1621029b666e460
 0x00451EE0,120,?Set_Anim_Damage_State@BuildingClass@@QAEX_N@Z,src/building.cpp,2c91b19be50d0e955ac957461c6f676e7902a1d8a9a43b97086f1f9ace11522f
 0x00451F60,152,?Set_Anim_Drawer@BuildingClass@@QAEXPAVConvertClass@@H@Z,src/building.cpp,2575878532ec5db1251b02d1ab2d73284a76b3ad06fc77212749f9180af3d611
@@ -2021,7 +2021,7 @@ address,size,symbol,source,sha256
 0x004547C0,355,?FUN_004547C0@BuildingClass@@QAEXXZ,src/building.cpp,7d2627ef7156ead840e2493a0d09ee603cdf8cd944199f71aced3985428c8b45
 0x00454930,128,?FUN_00454930@BuildingClass@@QAEXXZ,src/building.cpp,e43ef9b14e878a2414cda4a0831545ea1cb17fe37ea14d2e7be9344fc6f13500
 0x004549B0,807,?FUN_004549B0@BuildingClass@@QAEXXZ,src/building.cpp,cbaed68c633a346ad7f21969810109123f91c019e857cb0a7ffd14b4d7cfa063
-0x00454CE0,1,?FUN_00454CE0@@YIXPAVHouseClass@@@Z,src/building.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x00454CE0,1,?Adjust_House_Power@@YIXPAVHouseClass@@@Z,src/building.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x00454CF0,54,?Enable_Cloak_Generator@BuildingClass@@QAEXXZ,src/building.cpp,a6933f92de000bcecb772e2f54cf2f82d33fe906b4ddb485e6d533321ebf285d
 0x00454D30,53,?Disable_Cloak_Generator@BuildingClass@@QAEXXZ,src/building.cpp,e3c22899694877b205893aed22ad61ecb1f02376cf8ba0e6b5e337356829c9b4
 0x00454D70,52,?Cloak_Cell_Occupiers@@YIXPAVCellClass@@@Z,src/building.cpp,ff34b5415b2b40fae72a986e2acef59fe01510b73d2e45b2c1863d1a79d725bc
@@ -6839,8 +6839,8 @@ address,size,symbol,source,sha256
 0x0052BA60,4333,?Init_Game@@YIHXZ,src/init.cpp,aa68632e9aeaf6329ce8792100983868349a25ec89464e61c3e20fbc7e81ca9f
 0x0052CB50,44,?FUN_0052CB50@@YI_NXZ,src/init.cpp,2cbe3217c39b74e5d4c4aadf751039ab6badea6ee5d0b03cb50518f71503e697
 0x0052CB80,1,?FUN_0052CB80@@YIXXZ,src/init.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
-0x0052CB90,473,?FUN_0052CB90@@YIXXZ,src/init.cpp,455a811fd2da72eaf555eb9fc1b2b58ea81c74fe281405870743964ac4de73b1
-0x0052CD70,1728,?FUN_0052CD70@@YI_NXZ,src/init.cpp,8ebfdc31528b15711373264e58cce1feb6f236f505b3a2f28bc4bb2f32edfa0e
+0x0052CB90,473,?Init_Campaigns@@YIXXZ,src/init.cpp,455a811fd2da72eaf555eb9fc1b2b58ea81c74fe281405870743964ac4de73b1
+0x0052CD70,1728,?Init_Rules@@YI_NXZ,src/init.cpp,8ebfdc31528b15711373264e58cce1feb6f236f505b3a2f28bc4bb2f32edfa0e
 0x0052D430,374,?Rules_Choice_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z,src/init.cpp,3e1ced6bb079af8062fdbe3d26fc3a4e6efe40ed19c55873167e848442ab73ba
 0x0052D5B0,83,?Pick_Protocol_Dialog@@YGHPAUHWND__@@IIJ@Z,src/init.cpp,536ec9b9b654cbfa468740aa1c90d27338ae14099f73bdaa41d13060ccacf310
 0x0052D610,1,?FUN_0052D610@@YIXXZ,src/init.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
@@ -6850,7 +6850,7 @@ address,size,symbol,source,sha256
 0x0052D790,214,?FUN_0052D790@@YGHPAUHWND__@@IIJ@Z,src/init.cpp,fa3f1e91e8603138f175daaf3cc1a72dee003aaf089aa48e838ac893f2f465cf
 0x0052D870,297,?FUN_0052D870@@YGHPAUHWND__@@IIJ@Z,src/init.cpp,9170452ccc51eb94e3f56c029361bf9f2aebe86f3d09a7ea13eb7ca7d1668216
 0x0052D9A0,4696,?Select_Game@@YI_N_N@Z,src/init.cpp,7c1ee7210f3c9fb2342d0d3598ac304824e30ef3d24b590cb1042095fa850c4a
-0x0052EC00,2024,?FUN_0052EC00@@YGHPAUHWND__@@IIJ@Z,src/init.cpp,4e7e618ae152fec039bbf19e5c69c30506d922695d4b1edbef566aa18bcae435
+0x0052EC00,2024,?Campaign_Choice_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z,src/init.cpp,4e7e618ae152fec039bbf19e5c69c30506d922695d4b1edbef566aa18bcae435
 0x0052F3F0,539,?FUN_0052F3F0@@YI_NXZ,src/init.cpp,ac37c355985ffeb90dca87284a7bf37fe0cb473106ebd66e797c62016db84703
 0x0052F610,12,?Anim_Init@@YIXXZ,src/init.cpp,f621df55c6a471d0b407199e2077c59a435f923d5d290d38739bd2fc35f8f152
 0x0052F620,1531,?Parse_Command_Line@@YI_NHQAPAD@Z,src/init.cpp,1b1277f029415d05baa43762acf142b1f7c59dcdf60443e41014869a43870a6a
@@ -6878,7 +6878,7 @@ address,size,symbol,source,sha256
 0x00534450,1378,?Delete_All_Objects@@YIXXZ,src/init.cpp,7876a52ea08695cb56eca70d42e2a771987ef2565d14671adef33cdddad822ac
 0x005349C0,1042,?Init_Theater@@YIXW4TheaterType@@@Z,src/init.cpp,68de0c2b9de7bab294a8d5e2c533b81b570f201479aa08c50efefbd73d558d91
 0x00534DE0,107,?FUN_00534DE0@@YI_NXZ,src/init.cpp,f7038a8bf956bde8f15da472a95192d95cc032a9522afa2230e75532b0020809
-0x00534FA0,1069,?FUN_00534FA0@@YI_NH@Z,src/init.cpp,b3c3c5eb5bbd508a07350b6a3ffd396487b0a4701f17cbbd5167f3c61e265f6a
+0x00534FA0,1069,?Prep_For_Side@@YI_NH@Z,src/init.cpp,b3c3c5eb5bbd508a07350b6a3ffd396487b0a4701f17cbbd5167f3c61e265f6a
 0x005353D0,483,?Best_Selected_Object@@YIPAVObjectClass@@PBVCell@@PBV1@@Z,src/init.cpp,b023383e099d30cd6accc57bfbba810bb90a2ba4eefe202afe91cea013bd0be8
 0x005355C0,16,?FUN_005355C0@@YI?AW4ThemeType@@XZ,src/init.cpp,e7423642ced2d82987f993d72357d9e6e6ec8b335ccf2ac4fd2e703083d5e4dc
 0x005355D0,1168,?FUN_005355D0@@YIHXZ,src/init.cpp,d052bc3989651131548b43365c7e08b9cc6a7cde41ec174aa944fbab3b186257
@@ -8377,7 +8377,7 @@ address,size,symbol,source,sha256
 0x00579320,762,_$E243,src/map.cpp,aeabaab3da86b8420e61043e3fa0e16be8f372b57f16ec781ed8c22ec32935fc
 0x00579620,1352,?Place_Cliff@MapClass@@QAE_NPAVCellClass@@H@Z,src/map.cpp,06bde44f63447e80189e9452fbf0f6b32794ad50e9b7c6b700123cecad1bf676
 0x00579B70,1353,?Get_High_Ground_Mask@MapClass@@QAEHPAVCellClass@@@Z,src/map.cpp,eb4c372dea7a7d45b6c7cc3b507f8b12d1e12793c95a946aa4b8fb394a12370c
-0x0057A0C0,595,?FUN_0057A0C0@MapClass@@QAE_NH_N@Z,src/map.cpp,1f704ff3b26508fa6917e8ef7aa7c6a00ebc347a6789c54fcef7171bae1c84ae
+0x0057A0C0,595,?Build_All_Shores@MapClass@@QAE_NH_N@Z,src/map.cpp,1f704ff3b26508fa6917e8ef7aa7c6a00ebc347a6789c54fcef7171bae1c84ae
 0x0057A320,264,?Prune_Water@MapClass@@QAEXPAVCellClass@@H_N@Z,src/map.cpp,b52010a67be622bd10bbda415a91191dcf5ad687c8ceb31e4cccce72d8d9ab0f
 0x0057A430,1220,?Expand_Water@MapClass@@QAE_NPAVCellClass@@H_N@Z,src/map.cpp,a2ecd988707f204ea5ddb97cd0b047b3d638d4eb31bc28a08a38657543caa900
 0x0057A900,178,?Straight_Shore_Length@MapClass@@SIHPAVCellClass@@W4FacingType@@@Z,src/map.cpp,676275196495eb2583b792009b2eeb20887a291b7db3791df7c566ba5f027ae5
@@ -8438,7 +8438,7 @@ address,size,symbol,source,sha256
 0x005865F0,202,?Reveal_Nearby_Technos@MapClass@@QAEXPAVCellClass@@PAVHouseClass@@_N@Z,src/map.cpp,47edd2aed844c900f1246aaf142b833a6180e1fad9ececcd2707bbe5fb856a9a
 0x005866C0,93,?Init_Fog_System@MapClass@@QAEXXZ,src/map.cpp,68312c17434215906573efc40799b5af41f68b7dbc71e3135633746916e9ba72
 0x00586720,84,?Deinit_Fog_System@MapClass@@QAEXXZ,src/map.cpp,66e7047c9e62dc5f156e88f8edd31128da4ec30f85be880d3dcb2c374cbd88fd
-0x00586780,278,?IsAreaFree@MapClass@@QAE_NABV?$TRect@H@@H@Z,src/map.cpp,f5ac108c139e64cd39984d025c1e9e241f4c0a588b1eee9316401202777b723d
+0x00586780,278,?Is_Area_Available@MapClass@@QAE_NABV?$TRect@H@@H@Z,src/map.cpp,f5ac108c139e64cd39984d025c1e9e241f4c0a588b1eee9316401202777b723d
 0x005868A0,240,?Recalc_Cells_In_Rect@MapClass@@QAEXABV?$TRect@H@@@Z,src/map.cpp,d1caa080a68cdb2f25176ff9edf74eca1e6cb33d485c5bd282f879182e083d9a
 0x00586990,289,?Recalc_Cells_In_List@MapClass@@QAEXABV?$DynamicVectorClass@VCell@@@@@Z,src/map.cpp,46ad29dca1498f3fa1b666eb884b037b5adc317034559ffa09b89f233c6961cc
 0x00586AC0,292,?Closest_Edge_Cell@MapClass@@QAE?AVCell@@ABV2@_N@Z,src/map.cpp,76b1146e9ecce92d10eab5ad98ac149cf64ff744efc691f574b89152ccda9225
@@ -13359,7 +13359,7 @@ address,size,symbol,source,sha256
 0x006AC210,454,?Help_Text@SidebarClass@@UAEPBDH@Z,src/sidebar.cpp,da5c6d49ad74f4d8d598ea9a417ce16cddc5f773b3fafab7414e2d69c624912c
 0x006AC3E0,71,?Max_Visible@SidebarClass@@QAEHXZ,src/sidebar.cpp,a0af284b8ff1c1f04ee7846d1c55acde2d04dda0a7794236b02e81ab3e9b24be
 0x006AC430,73,?GetVisibleCameoCount@SidebarClass@@QAEHXZ,src/sidebar.cpp,365cdbea51f777adac4dc2995d32643137288afa49f45402767eb099df0def56
-0x006AC480,321,?FUN_006AC480@@YIXPBGABVPoint2D@@ABV?$TRect@H@@H@Z,src/sidebar.cpp,c63d4fce39aefe38a7c779f4b38651a21a5ff2b078d33739d03684c69a7dff5b
+0x006AC480,321,?Print_Cameo_Text@@YIXPBGABVPoint2D@@ABV?$TRect@H@@H@Z,src/sidebar.cpp,c63d4fce39aefe38a7c779f4b38651a21a5ff2b078d33739d03684c69a7dff5b
 0x006AC5D0,13,?Load@SidebarClass@@UAEJPAUIStream@@@Z,src/sidebar.cpp,6166fdf5f6ee940bc5ad567f3305c3328c18247585296f893655397ff20bc576
 0x006AC5E0,13,?Save@SidebarClass@@UAEJPAUIStream@@@Z,src/sidebar.cpp,3db23ec6eebd3c8815ac375903966f81ea9570167d45b6ce1ee809d29ce8e945
 0x006AC5F0,323,?FUN_006AC5F0@SidebarClass@@QAEXPBVTechnoTypeClass@@H@Z,src/sidebar.cpp,7d44037a536fc3260da1c23c82a65c03349a37a8f05c2ae7d80a69b299c0f698
@@ -17002,11 +17002,11 @@ address,size,symbol,source,sha256
 0x00752590,227,?FUN_00752590@@YIXPAVVoxClass@@HH@Z,src/vox.cpp,249646c50b13e64948d11b5d1b7ac0dcc34da974506fe7bbe74f2970358c419d
 0x00752680,126,?FUN_00752680@@YIPAUVoxNode@@PAVVoxClass@@@Z,src/vox.cpp,f4e4845f64e1055d77dd591043003a99f820a7494e923fe95408ac33a2b4d166
 0x00752700,95,?Play@VoxClass@@SIXPBDHH@Z,src/vox.cpp,f872ee19025a1d1aef29c826228987bad8b29a0eb2aebaa904239d9aaa00cd05
-0x00752760,572,?FUN_00752760@@YIXXZ,src/vox.cpp,a27a3e3273830fded5e880acc730c9c636fa114a6f405bb0240f0cef616d71c9
+0x00752760,572,?Speak_AI@@YIXXZ,src/vox.cpp,a27a3e3273830fded5e880acc730c9c636fa114a6f405bb0240f0cef616d71c9
 0x007529A0,55,?FUN_007529A0@@YIX_N@Z,src/vox.cpp,8ecf382da77f2b418d8f77680bdd89e320e69dd159857e8c62a0d2a44405e9ef
 0x007529E0,86,?FUN_007529E0@@YIHXZ,src/vox.cpp,ac6ee6eebcec7277749b12aeef1cf54f802019625469d7f849854eade67a5eb4
 0x00752A40,107,?SilenceIndex@VoxClass@@SIXH@Z,src/vox.cpp,a29c104d78c06e7daa38568c32f2e7fc587cbe0309c037fd420538a26f34498b
-0x00752AB0,25,?FUN_00752AB0@@YIXH@Z,src/vox.cpp,bd91b4533517afff3681bf697d6e74332e5ef1cc09a2a915690a932d36878a24
+0x00752AB0,25,?Set_Speech_Volume@@YIXH@Z,src/vox.cpp,bd91b4533517afff3681bf697d6e74332e5ef1cc09a2a915690a932d36878a24
 0x00752AD0,99,?FUN_00752AD0@@YIHXZ,src/vox.cpp,a9277f890529b93c80a8b155c4e166574a147affc7ad2a62f1828ec0d2ea034b
 0x00752B40,37,?Theme_Suspend@@YIXXZ,src/vox.cpp,79921debb95f965c4fedb0e4690c4e2da79bad40943f364c644312f17ac71aeb
 0x00752B70,292,?FUN_00752B70@@YIHH@Z,src/vox.cpp,e597bada12ebb4bae78fd403d1688918fce60c6116095567ffe125756efeff47

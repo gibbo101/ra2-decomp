@@ -939,7 +939,7 @@ void Post_Load_Game(void)
 
 void __fastcall FUN_00750FA0(void);
 void __fastcall FUN_006370B0(void);
-void __fastcall FUN_0052CB90(void);
+void __fastcall Init_Campaigns(void);
 
 // FUNCTION: GAMEMD 0x006851F0
 void Clear_Scenario(void)
@@ -1033,7 +1033,7 @@ void Clear_Scenario(void)
 	Scen->Clear_All_Waypoints();
 
 	DebugString("Init_Campaigns()\n");
-	FUN_0052CB90();
+	Init_Campaigns();
 
 	if (GasSystem) {
 		GasSystem->Clear_System();
@@ -1643,7 +1643,7 @@ void Multiplayer_Last_Minute_Fixups(bool official)
 #include "beacon.h"
 extern wchar_t DAT_00887734[];
 extern char DAT_00889F64[];
-bool __fastcall FUN_00534FA0(int side);
+bool __fastcall Prep_For_Side(int side);
 void __fastcall FUN_005EE9D0(bool official);
 void Clear_Radar_Events(void);
 extern BeaconManagerClass BeaconManager;
@@ -1873,13 +1873,13 @@ again:
 			side = 0;
 		}
 		Scen->PlayerSideIndex = side;
-		if (!FUN_00534FA0(side)) {
+		if (!Prep_For_Side(side)) {
 			ScenarioInit--;
 			return(false);
 		}
 	} else {
 		Scen->PlayerSideIndex = side;
-		if (!FUN_00534FA0(side)) {
+		if (!Prep_For_Side(side)) {
 			ScenarioInit--;
 			return(false);
 		}
@@ -1903,7 +1903,7 @@ again:
 		} else {
 			side = 0;
 		}
-		if (!FUN_00534FA0(side)) {
+		if (!Prep_For_Side(side)) {
 			ScenarioInit--;
 			return(false);
 		}

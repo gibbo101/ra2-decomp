@@ -294,7 +294,7 @@ BuildingClass::~BuildingClass(void)
 	Limbo();
 	Buildings.Delete(this);
 	DAT_008B41E0.Delete(this);
-	DestroyNthAnim(BANIM_ALL);
+	End_Anim(BANIM_ALL);
 	Class->Free_Buildup_Data();
 	FUN_0043C2A0();
 
@@ -558,8 +558,8 @@ RadioMessageType BuildingClass::Receive_Message(RadioClass * from, RadioMessageT
 			if (Mission != MISSION_DECONSTRUCTION) {
 				QueueMission(MISSION_GUARD, false);
 				if (Class->IsConstructionYard) {
-					DestroyNthAnim(BANIM_PRE_PRODUCTION);
-					DestroyNthAnim(BANIM_IDLE);
+					End_Anim(BANIM_PRE_PRODUCTION);
+					End_Anim(BANIM_IDLE);
 					PlayNthAnim(BANIM_PRODUCTION, HealthRatio <= Rule->ConditionYellow, false, 0);
 				}
 			}
@@ -1193,7 +1193,7 @@ void BuildingClass::Set_Turret_Index(int index)
 {
 	char buffer[64];
 	if (index != TurretIndex && !Class->IsTurretAnimAVoxel) {
-		DestroyNthAnim(BANIM_TURRET);
+		End_Anim(BANIM_TURRET);
 		if (index != -1) {
 			strcpy(buffer, Class->GraphicName);
 			strcat(buffer, "_");
@@ -3685,7 +3685,7 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 			case 2:
 				if (!HasAnyLink()) {
 					QueueMission(MISSION_GUARD, false);
-					DestroyNthAnim(BANIM_PRE_PRODUCTION);
+					End_Anim(BANIM_PRE_PRODUCTION);
 				}
 				break;
 
@@ -3779,8 +3779,8 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 			case 0:
 				{
 					if (!HasAnyLink()) {
-						DestroyNthAnim(BANIM_PRODUCTION);
-						DestroyNthAnim(BANIM_SPECIAL_TWO);
+						End_Anim(BANIM_PRODUCTION);
+						End_Anim(BANIM_SPECIAL_TWO);
 						PlayNthAnim(BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow, false);
 						PlayNthAnim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow, false);
 						QueueMission(MISSION_GUARD, true);
@@ -3814,8 +3814,8 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 						if (Anim_Active(BANIM_PRODUCTION) || Anim_Active(BANIM_SPECIAL_TWO)) {
 							PlayNthAnim(BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow, false);
 							PlayNthAnim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow, false);
-							DestroyNthAnim(BANIM_PRODUCTION);
-							DestroyNthAnim(BANIM_SPECIAL_TWO);
+							End_Anim(BANIM_PRODUCTION);
+							End_Anim(BANIM_SPECIAL_TWO);
 						}
 						if (!Anim_Active(BANIM_SPECIAL_THREE)) {
 							IsReadyToCommence = true;
@@ -3884,8 +3884,8 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 								if (IsOwnedByPlayer) VoxClass::Play("EVA_Repairing");
 								Status = 2;
 								PlayNthAnim(BANIM_SPECIAL_ONE, HealthRatio <= Rule->ConditionYellow, false);
-								DestroyNthAnim(BANIM_ACTIVE_ONE);
-								DestroyNthAnim(BANIM_IDLE);
+								End_Anim(BANIM_ACTIVE_ONE);
+								End_Anim(BANIM_IDLE);
 								IsReadyToCommence = false;
 								BuildingStage.Set_Stage(0);
 								BuildingStage.Set_Rate(1);
@@ -3899,8 +3899,8 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 
 			case 2:
 				if (!HasAnyLink()) {
-					DestroyNthAnim(BANIM_PRODUCTION);
-					DestroyNthAnim(BANIM_SPECIAL_TWO);
+					End_Anim(BANIM_PRODUCTION);
+					End_Anim(BANIM_SPECIAL_TWO);
 					PlayNthAnim(BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow, false);
 					PlayNthAnim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow, false);
 					Status = 1;
@@ -3924,8 +3924,8 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 							if (IsOwnedByPlayer && House->Available_Money() == 0) {
 								VoxClass::Play("EVA_InsufficientFunds");
 							}
-							DestroyNthAnim(BANIM_PRODUCTION);
-							DestroyNthAnim(BANIM_SPECIAL_TWO);
+							End_Anim(BANIM_PRODUCTION);
+							End_Anim(BANIM_SPECIAL_TWO);
 							PlayNthAnim(BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow, false);
 							PlayNthAnim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow, false);
 							Status = 1;
@@ -3939,8 +3939,8 @@ int BuildingClass::Do_MISSION_REPAIR(void)
 										VoxClass::Play("EVA_UnitRepaired");
 									}
 								}
-								DestroyNthAnim(BANIM_PRODUCTION);
-								DestroyNthAnim(BANIM_SPECIAL_TWO);
+								End_Anim(BANIM_PRODUCTION);
+								End_Anim(BANIM_SPECIAL_TWO);
 								PlayNthAnim(BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow, false);
 								PlayNthAnim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow, false);
 								Status = 1;
@@ -4977,7 +4977,7 @@ void BuildingClass::FUN_004504F0(int stage, CoordStruct const & coords)
 	DelayBeforeFiring = Class->DelayedFireDelay;
 	PrismStage = stage;
 	PrismTargetCoords = coords;
-	DestroyNthAnim(BANIM_ACTIVE_ONE);
+	End_Anim(BANIM_ACTIVE_ONE);
 	Replay_Anim(this, BANIM_SPECIAL_ONE, HealthRatio <= Rule->ConditionYellow);
 }
 
@@ -5064,21 +5064,21 @@ void BuildingClass::Animation_AI(void)
 
 	if (Class->IsCanUnitRepair && Get_Mission() != MISSION_REPAIR && (Anims[BANIM_PRODUCTION] != NULL || Anims[BANIM_SPECIAL_TWO] != NULL) && !Class->Naval) {
 		Replay_Anim(this, BANIM_SPECIAL_THREE, HealthRatio <= Rule->ConditionYellow);
-		DestroyNthAnim(BANIM_PRODUCTION);
-		DestroyNthAnim(BANIM_SPECIAL_TWO);
+		End_Anim(BANIM_PRODUCTION);
+		End_Anim(BANIM_SPECIAL_TWO);
 	}
 
 	if (Class->ExtraPower > 0 && Class->InfantryAbsorb && ActuallyPlacedOnMap && BState != BSTATE_CONSTRUCTION) {
 		if (Cargo.GetTotalSize() > 0) {
 			if (Anim_Active(BANIM_ACTIVE_ONE)) {
-				DestroyNthAnim(BANIM_ACTIVE_ONE);
+				End_Anim(BANIM_ACTIVE_ONE);
 			}
 			if (!Anim_Active(BANIM_ACTIVE_TWO)) {
 				Begin_Anim(BANIM_ACTIVE_TWO, HealthRatio <= Rule->ConditionYellow);
 			}
 		} else {
 			if (Anim_Active(BANIM_ACTIVE_TWO)) {
-				DestroyNthAnim(BANIM_ACTIVE_TWO);
+				End_Anim(BANIM_ACTIVE_TWO);
 			}
 			if (!Anim_Active(BANIM_ACTIVE_ONE)) {
 				Begin_Anim(BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow);
@@ -5100,7 +5100,7 @@ void BuildingClass::Animation_AI(void)
 			Anims[BANIM_SPECIAL_ONE]->Animation.Set_Stage(stage);
 		} else {
 			if (anim != NULL) {
-				DestroyNthAnim(BANIM_SPECIAL_ONE);
+				End_Anim(BANIM_SPECIAL_ONE);
 			}
 		}
 	}
@@ -5112,13 +5112,13 @@ void BuildingClass::Animation_AI(void)
 		}
 		if (StorageFilledSlots != level) {
 			if (StorageFilledSlots >= 3) {
-				DestroyNthAnim(BANIM_ACTIVE_FOUR);
+				End_Anim(BANIM_ACTIVE_FOUR);
 			} else if (StorageFilledSlots >= 2) {
-				DestroyNthAnim(BANIM_ACTIVE_THREE);
+				End_Anim(BANIM_ACTIVE_THREE);
 			} else if (StorageFilledSlots >= 1) {
-				DestroyNthAnim(BANIM_ACTIVE_TWO);
+				End_Anim(BANIM_ACTIVE_TWO);
 			} else if (StorageFilledSlots >= 0) {
-				DestroyNthAnim(BANIM_ACTIVE_ONE);
+				End_Anim(BANIM_ACTIVE_ONE);
 			}
 
 			level = (int)Storage.Get_Total_Amount();
@@ -5144,12 +5144,12 @@ void BuildingClass::Animation_AI(void)
 			if (super->Class->Type == Class->SuperWeapon) {
 				if (super->Control.Value() * (1.0f / 900.0f) <= Class->ChargedAnimTime) {
 					if (Anim_Active(BANIM_SUPER_ONE)) {
-						DestroyNthAnim(BANIM_SUPER_ONE);
+						End_Anim(BANIM_SUPER_ONE);
 						Replay_Anim(this, BANIM_SUPER_TWO, HealthRatio <= Rule->ConditionYellow);
 					}
 				} else {
 					if (Anim_Active(BANIM_SUPER_THREE)) {
-						DestroyNthAnim(BANIM_SUPER_THREE);
+						End_Anim(BANIM_SUPER_THREE);
 						Replay_Anim(this, BANIM_SUPER_FOUR, HealthRatio <= Rule->ConditionYellow);
 					}
 				}
@@ -5275,7 +5275,7 @@ bool BuildingClass::Remove_Upgrade(void)
 	}
 
 	if (Upgrades[UpgradeLevel-1] != NULL && Upgrades[UpgradeLevel-1]->IsTurretEquipped) {
-		DestroyNthAnim(BANIM_TURRET);
+		End_Anim(BANIM_TURRET);
 		Upgrades[UpgradeLevel-1] = NULL;
 		UpgradeLevel = 0;
 		TurretIndex = -1;
@@ -5283,7 +5283,7 @@ bool BuildingClass::Remove_Upgrade(void)
 		return(true);
 	}
 
-	DestroyNthAnim((BAnimType)(UpgradeLevel-1));
+	End_Anim((BAnimType)(UpgradeLevel-1));
 	Upgrades[--UpgradeLevel] = NULL;
 	if (super) House->Update_Present_Super_Weapons();
 	return(true);
@@ -5418,7 +5418,7 @@ void BuildingClass::Detach_Anim(AnimClass * anim)
 }
 
 // FUNCTION: GAMEMD 0x00451E40
-void BuildingClass::DestroyNthAnim(BAnimType anim)
+void BuildingClass::End_Anim(BAnimType anim)
 {
 	if (anim == BANIM_ALL) {
 		for (int i = 0; i < BANIM_COUNT; i++) {
@@ -6411,7 +6411,7 @@ VisualType BuildingClass::Visual_Character(bool raw, HouseClass const * house) c
 // FUNCTION: GAMEMD 0x004545D0
 void BuildingClass::FUN_004545D0(void)
 {
-	DestroyNthAnim(BANIM_SUPER_LOW_POWER);
+	End_Anim(BANIM_SUPER_LOW_POWER);
 	for (int i = 0; i < BANIM_COUNT; i++) {
 		if (Class->AnimData[i].Powered) {
 			if (Anims[i] != NULL) {
@@ -6435,7 +6435,7 @@ void BuildingClass::FUN_004545D0(void)
 // FUNCTION: GAMEMD 0x00454730
 void BuildingClass::FUN_00454730(void)
 {
-	DestroyNthAnim(BANIM_LOW_POWER);
+	End_Anim(BANIM_LOW_POWER);
 	for (int i = 0; i < BANIM_COUNT; i++) {
 		if (Class->AnimData[i].PoweredSpecial) {
 			Replay_Anim(this, (BAnimType)i, HealthRatio <= Rule->ConditionYellow);
@@ -6453,7 +6453,7 @@ void BuildingClass::FUN_004547C0(void)
 			}
 		} else if (Class->AnimData[i].PoweredLight) {
 			if (Anims[i] != NULL) {
-				DestroyNthAnim((BAnimType)i);
+				End_Anim((BAnimType)i);
 				if (i == BANIM_SPECIAL_ONE) {
 					if (Class->IsAnimDelayedFire && Class->AnimData[BANIM_ACTIVE_ONE].Powered) {
 						Replay_Anim(this, BANIM_ACTIVE_ONE, HealthRatio <= Rule->ConditionYellow);
@@ -6463,7 +6463,7 @@ void BuildingClass::FUN_004547C0(void)
 		} else if (Class->AnimData[i].PoweredEffect) {
 			if (Anims[i] != NULL) {
 				AnimStates[i] = true;
-				DestroyNthAnim((BAnimType)i);
+				End_Anim((BAnimType)i);
 				if (i == BANIM_SUPER_THREE) {
 					Replay_Anim(this, BANIM_SUPER_LOW_POWER, HealthRatio <= Rule->ConditionYellow);
 				}
@@ -6478,7 +6478,7 @@ void BuildingClass::FUN_00454930(void)
 	Replay_Anim(this, BANIM_LOW_POWER, HealthRatio <= Rule->ConditionYellow);
 	for (int i = 0; i < BANIM_COUNT; i++) {
 		if (Class->AnimData[i].PoweredSpecial) {
-			DestroyNthAnim((BAnimType)i);
+			End_Anim((BAnimType)i);
 		}
 	}
 }
@@ -6509,7 +6509,7 @@ void BuildingClass::FUN_004549B0(void)
 		}
 
 		if (Class->PoweredSpecial) {
-			DestroyNthAnim(BANIM_LOW_POWER);
+			End_Anim(BANIM_LOW_POWER);
 			for (int i = 0; i < BANIM_COUNT; i++) {
 				if (Class->AnimData[i].PoweredSpecial) {
 					Replay_Anim(this, (BAnimType)i, HealthRatio <= Rule->ConditionYellow);
@@ -6556,7 +6556,7 @@ void BuildingClass::FUN_004549B0(void)
 				Replay_Anim(this, BANIM_LOW_POWER, HealthRatio <= Rule->ConditionYellow);
 				for (int i = 0; i < BANIM_COUNT; i++) {
 					if (Class->AnimData[i].PoweredSpecial) {
-						DestroyNthAnim((BAnimType)i);
+						End_Anim((BAnimType)i);
 					}
 				}
 			}
@@ -6565,7 +6565,7 @@ void BuildingClass::FUN_004549B0(void)
 }
 
 // FUNCTION: GAMEMD 0x00454CE0
-void __fastcall FUN_00454CE0(HouseClass * house)
+void __fastcall Adjust_House_Power(HouseClass * house)
 {
 }
 
@@ -7917,8 +7917,8 @@ void BuildingClass::UnloadBunker(void)
 // FUNCTION: GAMEMD 0x00459470
 void BuildingClass::ClearBunker(void)
 {
-	DestroyNthAnim(BANIM_SPECIAL_ONE);
-	DestroyNthAnim(BANIM_SPECIAL_TWO);
+	End_Anim(BANIM_SPECIAL_ONE);
+	End_Anim(BANIM_SPECIAL_TWO);
 	if (BunkerLinkedItem != NULL) {
 		if (Rule->BunkerWallsDownSound != -1) {
 			VocClass::PlayAt(Rule->BunkerWallsDownSound, PositionCoord);
@@ -7936,8 +7936,8 @@ void BuildingClass::ClearBunker(void)
 // FUNCTION: GAMEMD 0x004595C0
 void BuildingClass::EmptyBunker(void)
 {
-	DestroyNthAnim(BANIM_SPECIAL_ONE);
-	DestroyNthAnim(BANIM_SPECIAL_TWO);
+	End_Anim(BANIM_SPECIAL_ONE);
+	End_Anim(BANIM_SPECIAL_TWO);
 	if (Rule->BunkerWallsDownSound != -1) {
 		VocClass::PlayAt(Rule->BunkerWallsDownSound, PositionCoord);
 	}

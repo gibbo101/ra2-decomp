@@ -376,7 +376,7 @@ class BuildingClass : public TechnoClass
 		void PlayAnim(char const * name, BAnimType anim, bool damaged, bool garrisoned, int delay);
 		void PlayNthAnim(BAnimType anim, bool damaged, bool garrisoned, int delay = 0);
 		void Detach_Anim(AnimClass * anim);
-		void DestroyNthAnim(BAnimType anim);
+		void End_Anim(BAnimType anim);
 		void HideNthAnim(BAnimType anim);
 		void DisableTemporal(void);
 		void EnableTemporal(void);

@@ -90,7 +90,7 @@ extern AudioAttribs * AudioGroupAttribs2;
 void FUN_00752370(void);
 VoxNode * __fastcall FUN_00752680(VoxClass * vox);
 void __fastcall FUN_00752590(VoxClass * vox, int type, int priority);
-void FUN_00752760(void);
+void Speak_AI(void);
 
 // FUNCTION: GAMEMD 0x00752290
 int FUN_00752290(void)
@@ -212,7 +212,7 @@ void VoxClass::PlayIndex(int index, int a, int b)
 			if (!found || found->Type != a) {
 				FUN_00752590(vox, a, b);
 			}
-			FUN_00752760();
+			Speak_AI();
 		}
 	}
 }
@@ -296,7 +296,7 @@ void VoxClass::Play(char const * name, int a, int b)
 }
 
 // FUNCTION: GAMEMD 0x00752760
-void FUN_00752760(void)
+void Speak_AI(void)
 {
 	if (DAT_00A8ED64 || !FUN_00407000() || !DAT_00B1D4CC || AudioStreamerIsPlaying(DAT_00B1D4CC)) {
 		return;
@@ -375,7 +375,7 @@ void __fastcall FUN_007529A0(bool clear)
 // FUNCTION: GAMEMD 0x007529E0
 int FUN_007529E0(void)
 {
-	FUN_00752760();
+	Speak_AI();
 	if (DAT_00B1D4CC) {
 		if (AudioStreamerIsPlaying(DAT_00B1D4CC)) {
 			goto busy;
@@ -417,7 +417,7 @@ extern int DAT_00B1D480;
 int DAT_00846614 = 255;
 
 // FUNCTION: GAMEMD 0x00752AB0
-void __fastcall FUN_00752AB0(int volume)
+void __fastcall Set_Speech_Volume(int volume)
 {
 	DAT_00846614 = volume;
 	if (volume >= 255) {

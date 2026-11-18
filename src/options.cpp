@@ -70,7 +70,7 @@ extern void * AudioVoiceAttribs;
 extern void * AudioScoreAttribs;
 extern void * AudioSoundAttribs;
 void __fastcall FUN_00407150(void * p, int value);
-void __fastcall FUN_00752AB0(int volume);
+void __fastcall Set_Speech_Volume(int volume);
 
 // FUNCTION: GAMEMD 0x005FA2E0
 int __fastcall Hotkey_To_Key(int hotkey)
@@ -199,7 +199,7 @@ void OptionsClass::Set_Sound_Volume(float volume, bool feedback)
 void OptionsClass::Set_Voice_Volume(float volume, bool feedback)
 {
 	VoiceVolume = MIN(volume, 1.0);
-	FUN_00752AB0(VoiceVolume * 255.0);
+	Set_Speech_Volume(VoiceVolume * 255.0);
 	FUN_00407150(AudioVoiceAttribs, VoiceVolume * 16384.0f);
 	if (feedback) {
 		VocClass::PlayGlobal(Rule->GenericBeep, VoiceVolume, 0x2000, NULL);

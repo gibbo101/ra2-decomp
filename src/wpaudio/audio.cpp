@@ -71,7 +71,7 @@ void FUN_00751040(void);
 void FUN_00751080(void);
 void FUN_00752290(void);
 void FUN_00752340(void);
-void FUN_00752760(void);
+void Speak_AI(void);
 void FUN_00752AD0(void);
 void Theme_Suspend(void);
 void Theme_Resume(void);
@@ -303,7 +303,7 @@ void FUN_00406F70(void)
 		if (now - AudioServiceLast > 33) {
 			AudioServiceAllEvents();
 			FUN_00750EC0();
-			FUN_00752760();
+			Speak_AI();
 			Theme.AI();
 			FUN_007B84D0();
 			AudioServiceLast = now;

@@ -83,7 +83,6 @@ address,name,source
 0x0044ABD0,BuildingClass::FireLaser,symbols.csv
 0x00451750,BuildingClass::PlayNthAnim,symbols.csv
 0x00451890,BuildingClass::PlayAnim,symbols.csv
-0x00451E40,BuildingClass::DestroyNthAnim,symbols.csv
 0x004521C0,BuildingClass::DisableTemporal,symbols.csv
 0x00452210,BuildingClass::EnableTemporal,symbols.csv
 0x00452410,BuildingClass::EnableStuff,symbols.csv
@@ -302,7 +301,6 @@ address,name,source
 0x00574C20,MapClass::DestroyWoodBridgeAt,symbols.csv
 0x00577AB0,MapClass::Reshroud,symbols.csv
 0x005865E0,MapClass::IsLocationFogged,symbols.csv
-0x00586780,MapClass::IsAreaFree,symbols.csv
 0x00595680,MapSeedClass::MapSeedClass,symbols.csv
 0x00597F80,MapSeedClass::GetUIString_Load,symbols.csv
 0x00597FA0,MapSeedClass::GetUIString_Save,symbols.csv

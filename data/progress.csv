@@ -1613,7 +1613,7 @@ address,name,result,size,source,symbol
 0x004517D0,BuildingClass::Set_Anim_Coords,MATCH,179,src/building.cpp,?Set_Anim_Coords@BuildingClass@@QAEXXZ
 0x00451890,BuildingClass::PlayAnim,MATCH,678,src/building.cpp,?PlayAnim@BuildingClass@@QAEXPBDW4BAnimType@@_N2H@Z
 0x00451B40,BuildingClass::Detach_Anim,MATCH,760,src/building.cpp,?Detach_Anim@BuildingClass@@QAEXPAVAnimClass@@@Z
-0x00451E40,BuildingClass::DestroyNthAnim,MATCH,86,src/building.cpp,?DestroyNthAnim@BuildingClass@@QAEXW4BAnimType@@@Z
+0x00451E40,BuildingClass::End_Anim,MATCH,86,src/building.cpp,?End_Anim@BuildingClass@@QAEXW4BAnimType@@@Z
 0x00451EA0,BuildingClass::HideNthAnim,MATCH,63,src/building.cpp,?HideNthAnim@BuildingClass@@QAEXW4BAnimType@@@Z
 0x00451EE0,BuildingClass::Set_Anim_Damage_State,MATCH,120,src/building.cpp,?Set_Anim_Damage_State@BuildingClass@@QAEX_N@Z
 0x00451F60,BuildingClass::Set_Anim_Drawer,MATCH,152,src/building.cpp,?Set_Anim_Drawer@BuildingClass@@QAEXPAVConvertClass@@H@Z
@@ -1658,7 +1658,7 @@ address,name,result,size,source,symbol
 0x004547C0,BuildingClass::FUN_004547C0,MATCH,355,src/building.cpp,?FUN_004547C0@BuildingClass@@QAEXXZ
 0x00454930,BuildingClass::FUN_00454930,MATCH,128,src/building.cpp,?FUN_00454930@BuildingClass@@QAEXXZ
 0x004549B0,BuildingClass::FUN_004549B0,MATCH,807,src/building.cpp,?FUN_004549B0@BuildingClass@@QAEXXZ
-0x00454CE0,FUN_00454CE0,MATCH,1,src/building.cpp,?FUN_00454CE0@@YIXPAVHouseClass@@@Z
+0x00454CE0,Adjust_House_Power,MATCH,1,src/building.cpp,?Adjust_House_Power@@YIXPAVHouseClass@@@Z
 0x00454CF0,BuildingClass::Enable_Cloak_Generator,MATCH,54,src/building.cpp,?Enable_Cloak_Generator@BuildingClass@@QAEXXZ
 0x00454D30,BuildingClass::Disable_Cloak_Generator,MATCH,53,src/building.cpp,?Disable_Cloak_Generator@BuildingClass@@QAEXXZ
 0x00454D70,Cloak_Cell_Occupiers,MATCH,52,src/building.cpp,?Cloak_Cell_Occupiers@@YIXPAVCellClass@@@Z
@@ -6485,8 +6485,8 @@ address,name,result,size,source,symbol
 0x0052BA60,Init_Game,MATCH,4333,src/init.cpp,?Init_Game@@YIHXZ
 0x0052CB50,FUN_0052CB50,MATCH,44,src/init.cpp,?FUN_0052CB50@@YI_NXZ
 0x0052CB80,FUN_0052CB80,MATCH,1,src/init.cpp,?FUN_0052CB80@@YIXXZ
-0x0052CB90,FUN_0052CB90,MATCH,473,src/init.cpp,?FUN_0052CB90@@YIXXZ
-0x0052CD70,FUN_0052CD70,MATCH,1728,src/init.cpp,?FUN_0052CD70@@YI_NXZ
+0x0052CB90,Init_Campaigns,MATCH,473,src/init.cpp,?Init_Campaigns@@YIXXZ
+0x0052CD70,Init_Rules,MATCH,1728,src/init.cpp,?Init_Rules@@YI_NXZ
 0x0052D430,Rules_Choice_Dialog_Proc,MATCH,374,src/init.cpp,?Rules_Choice_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x0052D5B0,Pick_Protocol_Dialog,MATCH,83,src/init.cpp,?Pick_Protocol_Dialog@@YGHPAUHWND__@@IIJ@Z
 0x0052D610,FUN_0052D610,MATCH,1,src/init.cpp,?FUN_0052D610@@YIXXZ
@@ -6496,7 +6496,7 @@ address,name,result,size,source,symbol
 0x0052D790,FUN_0052D790,MATCH,214,src/init.cpp,?FUN_0052D790@@YGHPAUHWND__@@IIJ@Z
 0x0052D870,FUN_0052D870,MATCH,297,src/init.cpp,?FUN_0052D870@@YGHPAUHWND__@@IIJ@Z
 0x0052D9A0,Select_Game,MATCH,4696,src/init.cpp,?Select_Game@@YI_N_N@Z
-0x0052EC00,FUN_0052EC00,MATCH,2024,src/init.cpp,?FUN_0052EC00@@YGHPAUHWND__@@IIJ@Z
+0x0052EC00,Campaign_Choice_Dialog_Proc,MATCH,2024,src/init.cpp,?Campaign_Choice_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x0052F3F0,FUN_0052F3F0,MATCH,539,src/init.cpp,?FUN_0052F3F0@@YI_NXZ
 0x0052F610,Anim_Init,MATCH,12,src/init.cpp,?Anim_Init@@YIXXZ
 0x0052F620,Parse_Command_Line,MATCH,1531,src/init.cpp,?Parse_Command_Line@@YI_NHQAPAD@Z
@@ -6524,7 +6524,7 @@ address,name,result,size,source,symbol
 0x00534450,Delete_All_Objects,MATCH,1378,src/init.cpp,?Delete_All_Objects@@YIXXZ
 0x005349C0,Init_Theater,MATCH,1042,src/init.cpp,?Init_Theater@@YIXW4TheaterType@@@Z
 0x00534DE0,FUN_00534DE0,MATCH,107,src/init.cpp,?FUN_00534DE0@@YI_NXZ
-0x00534FA0,FUN_00534FA0,MATCH,1069,src/init.cpp,?FUN_00534FA0@@YI_NH@Z
+0x00534FA0,Prep_For_Side,MATCH,1069,src/init.cpp,?Prep_For_Side@@YI_NH@Z
 0x005353D0,Best_Selected_Object,MATCH,483,src/init.cpp,?Best_Selected_Object@@YIPAVObjectClass@@PBVCell@@PBV1@@Z
 0x005355C0,FUN_005355C0,MATCH,16,src/init.cpp,?FUN_005355C0@@YI?AW4ThemeType@@XZ
 0x005355D0,FUN_005355D0,MATCH,1168,src/init.cpp,?FUN_005355D0@@YIHXZ
@@ -8022,7 +8022,7 @@ address,name,result,size,source,symbol
 0x00579320,_$E243,MATCH,762,src/map.cpp,_$E243
 0x00579620,MapClass::Place_Cliff,MATCH,1352,src/map.cpp,?Place_Cliff@MapClass@@QAE_NPAVCellClass@@H@Z
 0x00579B70,MapClass::Get_High_Ground_Mask,MATCH,1353,src/map.cpp,?Get_High_Ground_Mask@MapClass@@QAEHPAVCellClass@@@Z
-0x0057A0C0,MapClass::FUN_0057A0C0,MATCH,595,src/map.cpp,?FUN_0057A0C0@MapClass@@QAE_NH_N@Z
+0x0057A0C0,MapClass::Build_All_Shores,MATCH,595,src/map.cpp,?Build_All_Shores@MapClass@@QAE_NH_N@Z
 0x0057A320,MapClass::Prune_Water,MATCH,264,src/map.cpp,?Prune_Water@MapClass@@QAEXPAVCellClass@@H_N@Z
 0x0057A430,MapClass::Expand_Water,MATCH,1220,src/map.cpp,?Expand_Water@MapClass@@QAE_NPAVCellClass@@H_N@Z
 0x0057A900,MapClass::Straight_Shore_Length,MATCH,178,src/map.cpp,?Straight_Shore_Length@MapClass@@SIHPAVCellClass@@W4FacingType@@@Z
@@ -8083,7 +8083,7 @@ address,name,result,size,source,symbol
 0x005865F0,MapClass::Reveal_Nearby_Technos,MATCH,202,src/map.cpp,?Reveal_Nearby_Technos@MapClass@@QAEXPAVCellClass@@PAVHouseClass@@_N@Z
 0x005866C0,MapClass::Init_Fog_System,MATCH,93,src/map.cpp,?Init_Fog_System@MapClass@@QAEXXZ
 0x00586720,MapClass::Deinit_Fog_System,MATCH,84,src/map.cpp,?Deinit_Fog_System@MapClass@@QAEXXZ
-0x00586780,MapClass::IsAreaFree,MATCH,278,src/map.cpp,?IsAreaFree@MapClass@@QAE_NABV?$TRect@H@@H@Z
+0x00586780,MapClass::Is_Area_Available,MATCH,278,src/map.cpp,?Is_Area_Available@MapClass@@QAE_NABV?$TRect@H@@H@Z
 0x005868A0,MapClass::Recalc_Cells_In_Rect,MATCH,240,src/map.cpp,?Recalc_Cells_In_Rect@MapClass@@QAEXABV?$TRect@H@@@Z
 0x00586990,MapClass::Recalc_Cells_In_List,MATCH,289,src/map.cpp,?Recalc_Cells_In_List@MapClass@@QAEXABV?$DynamicVectorClass@VCell@@@@@Z
 0x00586AC0,MapClass::Closest_Edge_Cell,MATCH,292,src/map.cpp,?Closest_Edge_Cell@MapClass@@QAE?AVCell@@ABV2@_N@Z
@@ -13006,7 +13006,7 @@ address,name,result,size,source,symbol
 0x006ABD10,SidebarClass::FUN_006ABD10,MATCH,29,src/sidebar.cpp,?FUN_006ABD10@SidebarClass@@QAEHXZ
 0x006AC3E0,SidebarClass::Max_Visible,MATCH,71,src/sidebar.cpp,?Max_Visible@SidebarClass@@QAEHXZ
 0x006AC430,SidebarClass::GetVisibleCameoCount,MATCH,73,src/sidebar.cpp,?GetVisibleCameoCount@SidebarClass@@QAEHXZ
-0x006AC480,FUN_006AC480,MATCH,321,src/sidebar.cpp,?FUN_006AC480@@YIXPBGABVPoint2D@@ABV?$TRect@H@@H@Z
+0x006AC480,Print_Cameo_Text,MATCH,321,src/sidebar.cpp,?Print_Cameo_Text@@YIXPBGABVPoint2D@@ABV?$TRect@H@@H@Z
 0x006AC5D0,SidebarClass::Load,MATCH,13,src/sidebar.cpp,?Load@SidebarClass@@UAEJPAUIStream@@@Z
 0x006AC5E0,SidebarClass::Save,MATCH,13,src/sidebar.cpp,?Save@SidebarClass@@UAEJPAUIStream@@@Z
 0x006AC5F0,SidebarClass::FUN_006AC5F0,MATCH,323,src/sidebar.cpp,?FUN_006AC5F0@SidebarClass@@QAEXPBVTechnoTypeClass@@H@Z
@@ -16670,11 +16670,11 @@ address,name,result,size,source,symbol
 0x00752590,FUN_00752590,MATCH,227,src/vox.cpp,?FUN_00752590@@YIXPAVVoxClass@@HH@Z
 0x00752680,FUN_00752680,MATCH,126,src/vox.cpp,?FUN_00752680@@YIPAUVoxNode@@PAVVoxClass@@@Z
 0x00752700,VoxClass::Play,MATCH,95,src/vox.cpp,?Play@VoxClass@@SIXPBDHH@Z
-0x00752760,FUN_00752760,MATCH,572,src/vox.cpp,?FUN_00752760@@YIXXZ
+0x00752760,Speak_AI,MATCH,572,src/vox.cpp,?Speak_AI@@YIXXZ
 0x007529A0,FUN_007529A0,MATCH,55,src/vox.cpp,?FUN_007529A0@@YIX_N@Z
 0x007529E0,FUN_007529E0,MATCH,86,src/vox.cpp,?FUN_007529E0@@YIHXZ
 0x00752A40,VoxClass::SilenceIndex,MATCH,107,src/vox.cpp,?SilenceIndex@VoxClass@@SIXH@Z
-0x00752AB0,FUN_00752AB0,MATCH,25,src/vox.cpp,?FUN_00752AB0@@YIXH@Z
+0x00752AB0,Set_Speech_Volume,MATCH,25,src/vox.cpp,?Set_Speech_Volume@@YIXH@Z
 0x00752AD0,FUN_00752AD0,MATCH,99,src/vox.cpp,?FUN_00752AD0@@YIHXZ
 0x00752B40,Theme_Suspend,MATCH,37,src/vox.cpp,?Theme_Suspend@@YIXXZ
 0x00752B70,FUN_00752B70,MATCH,292,src/vox.cpp,?FUN_00752B70@@YIHH@Z

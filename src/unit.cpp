@@ -1594,7 +1594,7 @@ void UnitClass::Per_Cell_Process(PCPType why)
 			if (building->Class->Grinding) {
 				VocClass::PlayAt(Rule->EnterGrinderSound, Center_Coord(), NULL);
 				if (building->Anims[BANIM_ACTIVE_ONE] != NULL) {
-					building->DestroyNthAnim(BANIM_ACTIVE_ONE);
+					building->End_Anim(BANIM_ACTIVE_ONE);
 					building->PlayNthAnim(BANIM_SPECIAL_ONE, building->Get_Health_Ratio() <= Rule->ConditionYellow, false);
 				}
 			}
@@ -2664,13 +2664,13 @@ int UnitClass::Do_MISSION_UNLOAD(void)
 					} else {
 						if (building->Class->IsRefinery) building->PlayNthAnim(BANIM_PRODUCTION, building->HealthRatio <= Rule->ConditionYellow, false, 0);
 						Status = 4;
-						if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->DestroyNthAnim(BANIM_SPECIAL_ONE);
+						if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->End_Anim(BANIM_SPECIAL_ONE);
 					}
 				}
 				if (NavCom != NULL && MissionQueue != MISSION_NONE && MissionQueue != MISSION_HARVEST) {
 					if (building->Class->IsRefinery) building->PlayNthAnim(BANIM_PRODUCTION, building->HealthRatio <= Rule->ConditionYellow, false, 0);
 					Status = 4;
-					if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->DestroyNthAnim(BANIM_SPECIAL_ONE);
+					if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->End_Anim(BANIM_SPECIAL_ONE);
 				}
 				return(1);
 			}

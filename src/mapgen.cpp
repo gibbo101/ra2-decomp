@@ -3598,7 +3598,7 @@ void MapGeneratorClass::Seed_Land(void)
 		cptr = Map.Iterate();
 	}
 
-	Map.FUN_0057A0C0(0, 0);
+	Map.Build_All_Shores(0, 0);
 
 	if (RMGCellData != NULL) {
 		int grid_size = MapCellStride * MapCellStride;
@@ -4131,7 +4131,7 @@ bool MapGeneratorClass::Seed_River(const Cell & cell, double start_angle, bool i
 	}
 
 	if (!orig_subcall && success) {
-		success = Map.FUN_0057A0C0(WorkingRegionID, false);
+		success = Map.Build_All_Shores(WorkingRegionID, false);
 		if (success) {
 			success = Grow_Region(WorkingRegionID, 1, Rect(0, 0, MAP_CELL_W, MAP_CELL_H), 0, 0);
 			Green_Region_Tiles(WorkingRegionID);
@@ -4305,7 +4305,7 @@ bool MapGeneratorClass::Place_Waterfall(int region_id, Cell const & cell1, Cell 
 
 	bool success = Grow_Water_Region(WorkingRegionID, 0.003f, bounds_rect, center, false);
 	if (success) {
-		success = Map.FUN_0057A0C0(WorkingRegionID, 0);
+		success = Map.Build_All_Shores(WorkingRegionID, 0);
 		if (success) {
 			success = Grow_Region(WorkingRegionID, 2, bounds_rect, 0, 0);
 			if (success) {
@@ -8173,7 +8173,7 @@ bool MapGeneratorClass::Seed_Lake(Cell const & origin)
 		else {
 			success = 1;
 			if (origin == Cell(0, 0))
-				success = Map.FUN_0057A0C0(WorkingRegionID, false);
+				success = Map.Build_All_Shores(WorkingRegionID, false);
 		}
 	}
 	if (success && origin == Cell(0, 0)) {
@@ -8291,7 +8291,7 @@ int MapGeneratorClass::FUN_0059BBC0(int size, Rect const & bounds, Point2D const
 	}
 	delete[] nodes;
 	delete heap;
-	bool success = Map.FUN_0057A0C0(WorkingRegionID, true);
+	bool success = Map.Build_All_Shores(WorkingRegionID, true);
 	Clear_Shore_Tiles();
 	int result;
 	if (!success) {

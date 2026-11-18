@@ -3201,7 +3201,7 @@ bool HouseClass::AI_Fire_Sale(UrgencyType urgency)
 	return(false);
 }
 
-void __fastcall FUN_00454CE0(HouseClass * house);
+void __fastcall Adjust_House_Power(HouseClass * house);
 
 // FUNCTION: GAMEMD 0x004FDD10
 bool HouseClass::AI_Raise_Money(UrgencyType urgency)
@@ -3237,7 +3237,7 @@ bool HouseClass::AI_Raise_Money(UrgencyType urgency)
 				bptr->Remove_Upgrade();
 				RecalcPower = true;
 				RecalcRadar = true;
-				FUN_00454CE0(this);
+				Adjust_House_Power(this);
 			} else {
 				bptr->Sell_Back(1);
 				if (bptr->Class->IsGate) Base.Nodes.Delete_Index(i);
@@ -5982,7 +5982,7 @@ Cell HouseClass::Where_To_Place_Building(BuildingTypeClass *buildingtype, int (*
 					int x = pos.X - spacing;
 					Rect rect(x, y, w, h);
 
-					if (Map.IsAreaFree(rect, HeapID)) {
+					if (Map.Is_Area_Available(rect, HeapID)) {
 						if (buildingtype->Legal_Placement(pos, this)) {
 							if (abs(base_height - Map[pos].Height) < 3 && FUN_0050B760(buildingtype, pos)) {
 								return(pos);
@@ -6336,7 +6336,7 @@ void HouseClass::Recalc_Power_Drain(void)
 		Power = 0;
 	}
 
-	FUN_00454CE0(this);
+	Adjust_House_Power(this);
 	Recalc_House_Factories(this);
 
 	if (was_low_power != (Power_Fraction() < 1.0)) {
