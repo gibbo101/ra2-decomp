@@ -18101,6 +18101,7 @@ address,name,result,size,source,symbol
 0x00783800,FUN_00783800,MATCH,654,src/wonline.cpp,?FUN_00783800@@YIX_N@Z
 0x00783A90,FUN_00783A90,MATCH,240,src/wonline.cpp,?FUN_00783A90@@YIPAVSurface@@H@Z
 0x00783B80,FUN_00783B80,MATCH,245,src/wonline.cpp,?FUN_00783B80@@YIPAVSurface@@PAURankedUser@@@Z
+0x00783C80,Draw_Player_List,MATCH,5844,src/wonline.cpp,?Draw_Player_List@@YIXH_N@Z
 0x00785360,Display_Users,MATCH,9,src/wonline.cpp,?Display_Users@@YIXXZ
 0x007A3100,CNetUtilEventSink::OnLadderList,MATCH,2600,src/wonline.cpp,?OnLadderList@CNetUtilEventSink@@UAGJJPAULadder@@HJH@Z
 0x00785370,Startup_Chat,MATCH,976,src/wonline.cpp,?Startup_Chat@@YIHPAUHINSTANCE__@@@Z

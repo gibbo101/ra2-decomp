@@ -995,7 +995,7 @@ extern int DAT_00B73A20;
 extern int DAT_00B77D70;
 extern int DAT_00B77A88;
 HWND __fastcall FUN_00775940(int id);
-void __fastcall FUN_00783C80(int arg, bool flag);
+void __fastcall Draw_Player_List(int keep_selection, bool flag);
 
 WideWstring __fastcall FUN_007B7ED0(Wstring const & text);
 
@@ -1018,7 +1018,7 @@ void __fastcall SetPlayerAccepted(Wstring const & who, int status)
 	int index = Player_Name_To_Index(name);
 	if (index != -1) {
 		g_UserInfo[index].Accepted = status;
-		FUN_00783C80(0, false);
+		Draw_Player_List(0, false);
 	}
 	bool pair = g_IsChannelCreator == 1;
 	Wstring lower = ((Wstring const &)name).toLower();
@@ -1057,7 +1057,7 @@ void __fastcall SetPlayerAccepted(Wstring const & who, int status)
 			temp = head;
 		}
 	}
-	FUN_00783C80(0, false);
+	Draw_Player_List(0, false);
 }
 
 // FUNCTION: GAMEMD 0x0077EBA0
@@ -1162,7 +1162,7 @@ int __fastcall Assign_House_And_Color(Wstring const & who, int country, int colo
 	if (Session.Slots[index] == Session.Players[0]) {
 		Session.PrefColor = color;
 	}
-	FUN_00783C80(0, false);
+	Draw_Player_List(0, false);
 	return result;
 }
 
@@ -2785,10 +2785,382 @@ Surface * __fastcall FUN_00783B80(RankedUser * user)
 	return SurfaceCache.GetSurface("private.pcx", NULL);
 }
 
+#include "multiplayer.h"
+#include "coopcamp.h"
+
+void __fastcall FUN_005EA3E0(HWND dialog, bool flag);
+void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
+extern int DAT_00B779F4;
+extern int DAT_00B76604;
+extern int DAT_00B76438;
+extern int DAT_00B73704;
+extern int DAT_00B7619C;
+extern int DAT_00B76194;
+extern int DAT_00B76198;
+extern int DAT_00B766BC;
+extern int DAT_00B76AC8;
+extern int DAT_00B77D68;
+extern int DAT_00B76470;
+extern int DAT_00B768FC;
+extern int DAT_00B73AE4;
+
+// FUNCTION: GAMEMD 0x00783C80
+void __fastcall Draw_Player_List(int keep_selection, bool flag)
+{
+	int i;
+	int slot_index;
+	wchar_t info[80];
+	User user;
+	int house;
+	int star;
+
+	HWND win = NULL;
+	win = GameoptWindow();
+	if (win) {
+		FUN_005EA3E0(win, flag);
+		return;
+	}
+	if (WS_Find_Dialog(0x6B)) return;
+	win = WS_Find_Dialog(0x116);
+	if (win) {
+		FUN_0079AF10(win);
+	} else {
+		win = WS_Find_Dialog(0x113);
+	}
+
+	HWND userwin = GetDlgItem(win, 0x53E);
+
+	if ((win == NULL) || (userwin == NULL)) return;
+
+	Dictionary<WideWstring, bool> lbdict(Wstring_Hash);
+
+	LBSaveSelections(userwin, lbdict);
+
+	int topindex = SendDlgItemMessage(win, 0x53E, LB_GETTOPINDEX, 0, 0);
+
+	SendDlgItemMessage(win, 0x53E, 0x49D, 0, 1);
+
+	SendDlgItemMessage(win, 0x53E, LB_RESETCONTENT, 0, 0);
+
+	Wstring ladder_name;
+	Ladder ladder;
+	wchar_t rank_string[80];
+	static wchar_t localestring[64];
+	int average_ping;
+
+	memset(&ladder, 0, sizeof(ladder));
+	OwnerDraw::CellData thecell;
+	Wstring nick = ((Wstring const &)g_NickName).toLower();
+
+	int count = g_UserList.length();
+	for (i = 0; i < count; i++) {
+		g_UserList.get(user, i);
+		Wstring name((char *)user.name);
+
+		if (g_CurrentChannel.type == 0) {
+
+			swprintf(info, L"%hs", user.name);
+			int row = SendDlgItemMessage(win, 0x53E, 0x4CC, (WPARAM)-1, (LPARAM)info);
+
+			thecell.type = OwnerDraw::CellData::TEXT;
+			thecell.hint.set(StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x104A));
+			FUN_00735060(info, (char *)user.name, -1);
+			thecell.string.set(info);
+
+			if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
+				if ((user.flags & 1) == 0) {
+					int color;
+					Wstring team = FUN_007B7F90(thecell.string.get());
+					if (g_WDTTeams.contains(team)) {
+						g_WDTTeams.getValue(team, color);
+						WideWstring wide_team(FUN_00735120(team.get()));
+						thecell.string = wide_team;
+						thecell.color = PlayerColorTable[color];
+					} else {
+						thecell.color = DAT_007EEF28;
+					}
+				} else {
+					thecell.color = DAT_007EEF28;
+				}
+			} else {
+				thecell.color = DAT_007EEF28;
+			}
+
+			ladder_name.set((char *)user.name);
+			ladder_name.toLower();
+			int locale = 0;
+			memset(localestring, 0, sizeof(localestring));
+			if (g_UserLocales.contains(ladder_name) && (g_pChat)) {
+				g_UserLocales.getValue(ladder_name, locale);
+				if (locale) {
+					WideWstring locale_name = FUN_00780A00(locale);
+					swprintf(localestring, L"(%hs)", locale_name.get());
+				}
+			}
+			if (g_ActiveLadder->getValue(ladder_name, ladder)) {
+				swprintf(rank_string, L"%s %d", StringTable::LoadString("TXT_RANK", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1083), ladder.rung);
+				thecell.hint.set(rank_string);
+			}
+			if (g_UserLocales.contains(ladder_name)) {
+				if (locale) {
+					thecell.hint.insert(L" ", 0);
+				}
+				thecell.hint.insert(localestring, 0);
+			}
+			SendMessage(GetDlgItem(win, 0x53E), LB_SETITEMDATA, row, i);
+			SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B779F4, i), (LPARAM)&thecell);
+
+			thecell.type = OwnerDraw::CellData::TEXT;
+			ladder_name.set((char *)user.name);
+			ladder_name.toLower();
+			rank_string[0] = 0;
+
+			if (strlen((char *)user.squadabbrev)) {
+				wchar_t squadname[200];
+				swprintf(rank_string, L"[%hs]", user.squadabbrev);
+				FUN_00735060(squadname, (char *)user.squadname, -1);
+				thecell.hint.set(squadname);
+			}
+			thecell.string.set(rank_string);
+			SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B76604, i), (LPARAM)&thecell);
+
+			rank_string[0] = 0;
+			if (g_ActiveLadder->getValue(ladder_name, ladder)) {
+				swprintf(rank_string, L"%d", ladder.rung);
+				thecell.hint.set(DAT_00887734);
+			}
+			thecell.string.set(rank_string);
+			SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B76438, i), (LPARAM)&thecell);
+
+			thecell.type = OwnerDraw::CellData::TEXT;
+			if (user.flags & 1) {
+				thecell.type = OwnerDraw::CellData::SURFACE;
+				thecell.surf = SurfaceCache.GetSurface("woloper.pcx", NULL);
+				thecell.hint.set(StringTable::LoadString("TXT_OPER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x10B7));
+			} else if (user.flags & 2) {
+				thecell.type = OwnerDraw::CellData::SURFACE;
+				thecell.surf = SurfaceCache.GetSurface("wolvoice.pcx", NULL);
+				thecell.hint.set(StringTable::LoadString("TXT_VOICE", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x10BD));
+			} else {
+				thecell.string.set(DAT_00887734);
+				thecell.hint.set(DAT_00887734);
+			}
+			SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B73704, i), (LPARAM)&thecell);
+
+			Highscore score;
+			memset(&score, 0, sizeof(score));
+			if (DAT_00B76640.getValue(ladder_name, score)) {
+				thecell.type = OwnerDraw::CellData::TEXT;
+				if (score.rank <= 999 && score.rank >= 100) {
+					thecell.type = OwnerDraw::CellData::SURFACE;
+					thecell.surf = FUN_00783A90((score.rank % 1000) / 100);
+				} else {
+					thecell.string.set(DAT_00887734);
+				}
+				thecell.hint.set(StringTable::LoadString("TXT_OPER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x10D4));
+				SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B7619C, i), (LPARAM)&thecell);
+
+				thecell.type = OwnerDraw::CellData::TEXT;
+				if (score.rank <= 999 && score.rank >= 10) {
+					thecell.type = OwnerDraw::CellData::SURFACE;
+					thecell.surf = FUN_00783A90((score.rank % 100) / 10);
+				} else {
+					thecell.string.set(DAT_00887734);
+				}
+				thecell.hint.set(StringTable::LoadString("TXT_OPER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x10DF));
+				SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B76194, i), (LPARAM)&thecell);
+
+				thecell.type = OwnerDraw::CellData::TEXT;
+				if (score.rank <= 999 && score.rank >= 1) {
+					thecell.type = OwnerDraw::CellData::SURFACE;
+					thecell.surf = FUN_00783A90(score.rank % 10);
+				} else {
+					thecell.string.set(DAT_00887734);
+				}
+				thecell.hint.set(StringTable::LoadString("TXT_OPER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x10EA));
+				SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B76198, i), (LPARAM)&thecell);
+
+				thecell.surf = FUN_00783B80((RankedUser *)&score);
+				if (thecell.surf) {
+					thecell.type = OwnerDraw::CellData::SURFACE;
+				} else {
+					thecell.type = OwnerDraw::CellData::TEXT;
+					thecell.string.set(DAT_00887734);
+				}
+				thecell.hint.set(StringTable::LoadString("TXT_OPER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x10F5));
+				SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B766BC, i), (LPARAM)&thecell);
+
+				int campaigns = 0;
+				DAT_0089F518.FUN_0049E4F0(&campaigns);
+				int mask = (1 << campaigns) - 1;
+				if ((score.accomplishments & mask) == mask && campaigns > 0) {
+					thecell.type = OwnerDraw::CellData::SURFACE;
+					thecell.surf = SurfaceCache.GetSurface("cooperat.pcx", NULL);
+				} else {
+					thecell.type = OwnerDraw::CellData::TEXT;
+					thecell.string.set(DAT_00887734);
+				}
+				thecell.hint.set(StringTable::LoadString("TXT_OPER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1105));
+				SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B76AC8, i), (LPARAM)&thecell);
+			}
+		} else {
+			if (HouseTypes.Count() <= 1) return;
+
+			slot_index = Player_Name_To_Index((char *)user.name);
+
+			house = 0;
+			star = 0;
+			if (slot_index != -1) {
+				house = g_UserInfo[slot_index].House;
+				if (g_UserInfo[slot_index].Accepted) star = 1;
+
+				if (slot_index == 0) {
+					g_UserInfo[slot_index].Accepted = 1;
+					star = 2;
+				}
+			}
+
+			house = MAX(house, 0);
+
+			ladder_name.set((char *)user.name);
+			ladder_name.toLower();
+
+			swprintf(info, L"%hs", user.name);
+			for (int j = 0; j < (int)wcslen(info); j++) {
+				info[j] = tolower(info[j]);
+			}
+
+			SendDlgItemMessage(win, 0x53E, 0x4CC, (WPARAM)-1, (LPARAM)info);
+
+			thecell.type = OwnerDraw::CellData::PRIMARY;
+			thecell.color = PlayerColorTable[g_UserInfo[slot_index].Color];
+			thecell.hint.set(StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x114C));
+			if (g_ActiveLadder->getValue(ladder_name, ladder)) {
+				swprintf(rank_string, L"%s %d", StringTable::LoadString("TXT_RANK", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x114F), ladder.rung);
+				thecell.hint.set(rank_string);
+			}
+			SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B779F4, i), (LPARAM)&thecell);
+
+			thecell.type = OwnerDraw::CellData::TEXT;
+			if (strlen((char *)user.squadabbrev) != 0) {
+				FUN_00735060(info, (char *)user.squadname, -1);
+				thecell.hint.set(info);
+				FUN_00735060(info, (char *)user.squadabbrev, -1);
+			} else {
+				if (g_ActiveLadder->getValue(ladder_name, ladder)) {
+					swprintf(info, L"(%s %d)", StringTable::LoadString("TXT_RANK", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1162), ladder.rung);
+					thecell.hint.set(DAT_00887734);
+				} else {
+					swprintf(info, DAT_00887734);
+					thecell.hint.set(DAT_00887734);
+				}
+			}
+			thecell.string.set(info);
+			SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B77D68, i), (LPARAM)&thecell);
+
+			thecell.type = OwnerDraw::CellData::SURFACE;
+			switch (house) {
+				case 0:
+					thecell.surf = SurfaceCache.GetSurface("usai.pcx", NULL);
+					swprintf(info, L"%s", StringTable::LoadString("TXT_GDI", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1186));
+					break;
+				case 1:
+					thecell.surf = SurfaceCache.GetSurface("japi.pcx", NULL);
+					swprintf(info, L"%s", StringTable::LoadString("TXT_GDI", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x118A));
+					break;
+				case 2:
+					thecell.surf = SurfaceCache.GetSurface("frai.pcx", NULL);
+					swprintf(info, L"%s", StringTable::LoadString("TXT_GDI", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x118E));
+					break;
+				case 3:
+					thecell.surf = SurfaceCache.GetSurface("geri.pcx", NULL);
+					swprintf(info, L"%s", StringTable::LoadString("TXT_GDI", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1192));
+					break;
+				case 4:
+					thecell.surf = SurfaceCache.GetSurface("gbri.pcx", NULL);
+					swprintf(info, L"%s", StringTable::LoadString("TXT_GDI", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1196));
+					break;
+				case 5:
+					thecell.surf = SurfaceCache.GetSurface("djbi.pcx", NULL);
+					swprintf(info, L"%s", StringTable::LoadString("TXT_NOD", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x119A));
+					break;
+				case 6:
+					thecell.surf = SurfaceCache.GetSurface("arbi.pcx", NULL);
+					swprintf(info, L"%s", StringTable::LoadString("TXT_NOD", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x119E));
+					break;
+				case 7:
+					thecell.surf = SurfaceCache.GetSurface("lati.pcx", NULL);
+					swprintf(info, L"%s", StringTable::LoadString("TXT_NOD", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x11A2));
+					break;
+				case 8:
+					thecell.surf = SurfaceCache.GetSurface("rusi.pcx", NULL);
+					swprintf(info, L"%s", StringTable::LoadString("TXT_NOD", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x11A6));
+					break;
+			}
+			thecell.hint.set(info);
+			SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B76470, i), (LPARAM)&thecell);
+
+			thecell.type = OwnerDraw::CellData::SURFACE;
+			if (star) {
+				if (star == 2) {
+					thecell.surf = SurfaceCache.GetSurface("wolhost.pcx", NULL);
+				} else {
+					thecell.surf = SurfaceCache.GetSurface("wolacpt.pcx", NULL);
+				}
+				thecell.hint.set(StringTable::LoadString("TXT_ACCEPTED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x11B4));
+			} else {
+				thecell.type = OwnerDraw::CellData::INVALID;
+				thecell.hint.set(DAT_00887734);
+			}
+			SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B768FC, i), (LPARAM)&thecell);
+
+			if (Session.MPGameMode) {
+				Session.MPGameMode->vt_entry_78(win);
+			}
+
+			average_ping = 0;
+			g_pNetUtil->GetAvgPing(user.ipaddr, &average_ping);
+			if (average_ping < 0) average_ping = 0;
+			thecell.type = OwnerDraw::CellData::PING;
+			thecell.pingtime = average_ping;
+			wchar_t ping[200];
+			swprintf(ping, StringTable::LoadString("MSG:PingInfo", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x11C8), average_ping);
+			if (average_ping == 0) {
+				swprintf(ping, StringTable::LoadString("TXT_UNKNOWN_PING", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x11CA));
+			}
+			thecell.hint.set(ping);
+			Wstring lower((char *)user.name);
+			if (nick == ((Wstring const &)lower).toLower()) {
+				thecell.type = OwnerDraw::CellData::INVALID;
+			}
+			SendDlgItemMessage(win, 0x53E, 0x4A8, MAKEWPARAM(DAT_00B73AE4, i), (LPARAM)&thecell);
+		}
+	}
+
+	if (keep_selection == 0) LBRestoreSelections(userwin, lbdict);
+
+	int sel_count = SendDlgItemMessage(win, 0x53E, LB_GETSELCOUNT, 0, 0);
+	int user_count = g_UserList.length();
+	char str[20];
+	if (sel_count > 0) {
+		sprintf(str, "%d  (%d)", user_count, sel_count);
+	} else {
+		sprintf(str, "%d", user_count);
+	}
+
+	SendDlgItemMessage(win, 0x60B, 0x4B4, 0, (LPARAM)str);
+
+	SendDlgItemMessage(win, 0x53E, LB_SETTOPINDEX, (WPARAM)topindex, 0);
+
+	SendDlgItemMessage(win, 0x53E, 0x49D, 0, 0);
+
+	InvalidateRect(GetDlgItem(win, 0x53E), NULL, 0);
+}
+
 // FUNCTION: GAMEMD 0x00785360
 void Display_Users(void)
 {
-	FUN_00783C80(0, false);
+	Draw_Player_List(0, false);
 }
 
 struct AtlObjectEntry;
@@ -2998,7 +3370,6 @@ class CNetUtilEventSink : public AtlSinkRoot, public INetUtilEvent
 		long _InternalQueryInterface(IID const & iid, void ** object) { return InternalQueryInterface(this, _GetEntries(), iid, object); }
 };
 
-void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
 rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name);
 void __fastcall FUN_0079C040(HWND dialog);
 void FUN_0079D110(void);
@@ -3157,7 +3528,7 @@ inline HRESULT CNetUtilEventSink::OnLadderList(HRESULT result, Ladder * list, in
 		SendMessage(rung_list, LB_SETCURSEL, (WPARAM)key_rung - top_rung, 0);
 		InvalidateRect(rung_list, NULL, FALSE);
 	} else {
-		FUN_00783C80(0, false);
+		Draw_Player_List(0, false);
 	}
 	FUN_0079D110();
 	HWND dialog = FUN_00775940(0x116);
@@ -3361,7 +3732,6 @@ namespace OwnerDraw {
 int __fastcall Join_Lobby(bool flag);
 bool FUN_0077CF40(void);
 void __fastcall FUN_007A0EA0(char const * name, int ping);
-#include "multiplayer.h"
 
 static inline void Focus_Chat_Input_After(unsigned int event);
 
@@ -3537,7 +3907,7 @@ void __fastcall Handle_User_Leave(User *user)
 						(MultiplayerGameMode *)SendDlgItemMessageA(window, 0x6eb, 0x199, index, 0);
 					if (mode) {
 						mode->vt_entry_90();
-						FUN_00783C80(0, false);
+						Draw_Player_List(0, false);
 						return;
 					}
 				}
@@ -3546,7 +3916,7 @@ void __fastcall Handle_User_Leave(User *user)
 			}
 		}
 	}
-	FUN_00783C80(0, false);
+	Draw_Player_List(0, false);
 }
 
 // FUNCTION: GAMEMD 0x00785EA0
@@ -10977,7 +11347,7 @@ counted:
 		return 0;
 	}
 	if (g_CurrentChannel.type) {
-		FUN_00783C80(0, false);
+		Draw_Player_List(0, false);
 	}
 	return 0;
 }
@@ -11251,7 +11621,7 @@ long __stdcall FUN_007A4EC0(void * sink, long result, unsigned long id, Squad * 
 		g_pNetUtil->RequestLadderList(g_LadderServerHost, g_LadderServerPort, (char *)squad->abbreviation, 0x802100, -1, 0, 0);
 	}
 	if (g_SquadInfoRequests == 0) {
-		FUN_00783C80(0, false);
+		Draw_Player_List(0, false);
 	}
 	return 0;
 }
@@ -11660,7 +12030,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 	if (Is_Internal_Session() && g_CurrentChannel.type == 0 && !FUN_007A0690()) {
 		SetEvent(g_WaitEventHandles[5]);
 	}
-	FUN_00783C80(0, false);
+	Draw_Player_List(0, false);
 	return 0;
 }
 
@@ -11956,7 +12326,7 @@ long __stdcall FUN_007A8260(void * sink, long result, User * user, char const * 
 						changed = true;
 						FUN_0077DB90();
 						FUN_005E32D0(true, false);
-						FUN_00783C80(0, false);
+						Draw_Player_List(0, false);
 					} else {
 						player->Set_Country(-2);
 						player->Slot.SpectatorFlag = 0;
@@ -11990,7 +12360,7 @@ long __stdcall FUN_007A8260(void * sink, long result, User * user, char const * 
 						FUN_004E49A0(window, control, 8);
 						index = DAT_008316A4;
 						FUN_005E32D0(true, false);
-						FUN_00783C80(0, false);
+						Draw_Player_List(0, false);
 						Session.PlayerFirewall[index] = Session.PlayerFirewall[row];
 						Session.PlayerLocalAddress[index] = Session.PlayerLocalAddress[row];
 						Session.PlayerPortBase[index] = Session.PlayerPortBase[row];
@@ -12032,7 +12402,7 @@ long __stdcall FUN_007A8260(void * sink, long result, User * user, char const * 
 		} else goto request_done;
 refresh_options:
 		FUN_005E32D0(true, false);
-		FUN_00783C80(0, false);
+		Draw_Player_List(0, false);
 request_done:
 		free(buffer);
 		break;
@@ -12798,7 +13168,7 @@ long __stdcall FUN_007AB440(void * sink, long result, char const * name, unsigne
 				FUN_00783070(&copy);
 			}
 		}
-		FUN_00783C80(0, false);
+		Draw_Player_List(0, false);
 		return 0;
 	}
 	return 0;
@@ -12854,7 +13224,7 @@ long __stdcall FUN_007AB670(void * sink, long result, Channel * channel, User * 
 		FUN_005E2700(DAT_007EEF28, StringTable::LoadString("TXT_USER_KICKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x22EC), FUN_00735120((char *)kicked->name), FUN_00735120((char *)channel->name), FUN_00735120((char *)kicker->name));
 	}
 	Handle_User_Leave(kicked);
-	FUN_00783C80(0, false);
+	Draw_Player_List(0, false);
 	FUN_00781480();
 	return 0;
 }
@@ -12945,7 +13315,7 @@ long __stdcall FUN_007ABD40(void * sink, long result, User * users)
 			g_WDTTeams.add(name, team);
 			user = user->next;
 		}
-		FUN_00783C80(0, false);
+		Draw_Player_List(0, false);
 		return 0;
 	}
 	FUN_004068E0("OnUserTeam FAILED!\n");
@@ -13409,7 +13779,6 @@ bool __fastcall FUN_005E9470(NodeNameType *slot);
 void __fastcall FUN_005ED400(HWND dialog, SessionOptionsClass *options);
 void __fastcall FUN_005ED5A0(HWND dialog, SessionOptionsClass *options);
 void __fastcall FUN_005EC9F0(HWND dialog, int control, NodeNameType *slot, int flag);
-void __fastcall FUN_005EA3E0(HWND dialog, bool flag);
 void __fastcall FUN_005E9E00(HWND dialog);
 void FUN_005E3630(void);
 void __fastcall FUN_005EC030(HWND dialog);
@@ -13448,7 +13817,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 				for (int accepted = 1; accepted < 8; ++accepted)
 					g_UserInfo[accepted].Accepted = 0;
 				FUN_005E9850();
-				FUN_00783C80(0, false);
+				Draw_Player_List(0, false);
 			}
 			break;
 		case WM_COMMAND: {
@@ -13532,7 +13901,7 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 				for (int accepted = 1; accepted < 8; ++accepted)
 					g_UserInfo[accepted].Accepted = 0;
 				FUN_005E9850();
-				FUN_00783C80(0, false);
+				Draw_Player_List(0, false);
 			}
 			break;
 		}
@@ -13991,10 +14360,10 @@ BOOL CALLBACK WOL_Game_Options_Proc(HWND window, UINT message, WPARAM wparam, LP
 					if (FUN_005EB660(window)) {
 						Session.Options.AIPlayers = 0;
 						FUN_0077DB90();
-						FUN_00783C80(0, false);
+						Draw_Player_List(0, false);
 						PumpGameopts(true, false);
 					} else
-						FUN_00783C80(0, true);
+						Draw_Player_List(0, true);
 				}
 				FUN_005EE3A0();
 				FUN_005EC3A0(window, old, Session.Options.ScenarioIndex);
@@ -14424,7 +14793,7 @@ BOOL CALLBACK WOL_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 			EnableWindow(accept, FALSE);
 			InvalidateRect(accept, NULL, FALSE);
 			SendMessage(accept, 0x4DC, 0, 0);
-			FUN_00783C80(0, false);
+			Draw_Player_List(0, false);
 			SetFocus(GetDlgItem(window, 0x540));
 			return FALSE;
 		}
@@ -14587,7 +14956,7 @@ BOOL CALLBACK WOL_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 		FUN_004E5D60(window);
 		FUN_005EE510(-1);
 		DisplayGameopts(window, TRUE);
-		FUN_00783C80(0, false);
+		Draw_Player_List(0, false);
 		return FALSE;
 	}
 	}
@@ -14713,7 +15082,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 		Close_Wait_Window(2);
 		s_TempChannel.name[0] = 0;
 		FUN_00781480();
-		FUN_00783C80(0, false);
+		Draw_Player_List(0, false);
 		SetEvent(g_WaitEventHandles[10]);
 		HWND main = FUN_00775940(0x113);
 		if (main) {
@@ -14999,6 +15368,6 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 		}
 	}
 	SetEvent(g_WaitEventHandles[4]);
-	FUN_00783C80(0, false);
+	Draw_Player_List(0, false);
 	return 0;
 }
