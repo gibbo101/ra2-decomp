@@ -523,7 +523,6 @@ address,name,symbol,evidence
 0x007C89EC,GetFileVersionInfoSizeA,,"same function as Red Alert 2 1.006 0x00781BF0 (inferred: referenced by matched src/version.cpp (1 reference), which RedAlert2 rebuilds byte for byte"
 0x007C89E6,GetFileVersionInfoA,,"same function as Red Alert 2 1.006 0x00781BEA (inferred: referenced by matched src/version.cpp (1 reference), which RedAlert2 rebuilds byte for byte"
 0x007C89E0,VerQueryValueA,,"same function as Red Alert 2 1.006 0x00781BE4 (inferred: referenced by matched src/version.cpp (2 reference), which RedAlert2 rebuilds byte for byte"
-0x00608070,WS_Save_Dialog_Values,,"same function as Red Alert 2 1.006 0x005E5FC0 (inferred: referenced by matched src/windlg.cpp (1 reference)), which RedAlert2 rebuilds byte for byte"
 0x00433EF0,BitFont::Bold_String_Pixel_Width,,"same function as Red Alert 2 1.006 0x004316B0 (compiled from src/bitfont.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
 0x004340A0,BitFont::Bold_Text_Dimensions,,"same function as Red Alert 2 1.006 0x00431860 (compiled from src/bitfont.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
 0x00434100,BitFont::Set_Tab_Width,,"same function as Red Alert 2 1.006 0x004318C0 (compiled from src/bitfont.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"

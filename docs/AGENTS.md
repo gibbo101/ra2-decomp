@@ -223,6 +223,24 @@ Each entry: what the diff showed, then the source change that fixed it.
   inline helper the outer condition uses (0x0060B950 rose from 62% to 99.8%).
 - A search loop the original leaves unrotated: `while (!found) { if (out of range) break;
   step; if (ok) found = true; }` (0x00457DE0).
+- A `break` into code shared by several switch cases puts that code after the last case that
+  breaks into it; the earlier cases jump to it. Giving a case its own `return` changes which
+  case is last (0x0078AC10, case 0x688).
+- When a jump goes forward into shared code that ends in a `return`, VC6 copies that code
+  instead of jumping; a backward jump stays a jump.
+- VC6 writes `mov a; jcc; mov b` instead of the branch-free `neg`/`sbb` form only when
+  something blocks the conversion, such as a second path into the branch target or code
+  shared with another case.
+- Naming a call's result in its own statement (`HWND item = GetDlgItem(...);
+  EnableWindow(item, flag);`) moves that call ahead of the other argument's load, which can
+  fix argument order and register swaps.
+- Nested `if`s and `&&` chains compile the same in VC6. Only an inlined fixed-register call
+  such as `strlen` inside the chain can flip a register tie (0x00799080). Don't reshape
+  conditions without one.
+- Of identical return tails, VC6 keeps one reached by a taken jump (an else arm, the body of
+  `if (a || b)`, a case) over ones reached by falling through; among fall-through tails it
+  keeps the last in the source, among jump targets the first. The other returns then
+  cross-jump into the kept copy in source order (0x007A1BB0).
 
 ### Registers
 - ESI and EDI swapped with every other byte identical: add one real use of a variable
@@ -296,6 +314,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   function, and a named bool where the plain `if` does not match.
 - Before casting operands to steer a hand-written expression, try the header's own inline
   for it: RadBeam's tint matched as `DSurface::Build_Hicolor_Pixel(Tint)` with no casts.
+- A very small auto-inline (a null test plus an accessor) never fails the inline budget, at
+  any depth. If the exe calls one out of line, look for a cause other than budget
+  (0x0058D620's `Get_Region`).
 - A nested call left out of line under an inlined wrapper (`Cell_Terrain()` around
   `Cell_Find_Object`) is the inline budget: call the wrapper, as TibSun does.
 - A callee the original inlines that lives in the same module is defined in that file

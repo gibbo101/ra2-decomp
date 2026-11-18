@@ -209,7 +209,7 @@ void __fastcall FUN_004E5D60(HWND dialog);
 void __fastcall FUN_005E2EF0(HWND dialog, MultiplayerGameMode * mode);
 void __fastcall FUN_005E2F60(HWND dialog);
 void __fastcall FUN_005E74E0(HWND dialog);
-bool WS_Save_Dialog_Values(HWND dialog);
+bool FUN_00608070(HWND dialog);
 
 inline int Skirmish_Slot_Type(int level)
 {
@@ -416,7 +416,7 @@ allied:
 			int old_mode = Session.Options.MPModeIndex;
 			strcpy((char *)buffer, Session.ScenarioFileName);
 			wcscpy(buffer, Session.Options.ScenarioDescription);
-			WS_Save_Dialog_Values(window);
+			FUN_00608070(window);
 			ShowWindow(window, SW_HIDE);
 			if (Scenario_Dialog(MainWindow) == IDCANCEL) {
 				Session.Options.MPModeIndex = old_mode;

@@ -1654,7 +1654,7 @@ void __fastcall FUN_005EC030(HWND dialog);
 bool __fastcall FUN_005EB660(HWND dialog);
 int __fastcall FUN_005E68A0(HWND window);
 void __fastcall FUN_005E74E0(HWND dialog);
-bool WS_Save_Dialog_Values(HWND dialog);
+bool FUN_00608070(HWND dialog);
 void __fastcall FUN_005ED400(HWND dialog, SessionOptionsClass * out);
 void __fastcall FUN_005EC9F0(HWND dialog, int id, NodeNameType * node, int flag);
 bool FUN_005E8760(void);
@@ -1795,7 +1795,7 @@ BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 			int scenario = Session.Options.ScenarioIndex;
 			bool wasfirst = (Session.MPGameMode == NULL) || Session.MPGameMode->vt_entry_40();
 			bool wassecond = (Session.MPGameMode == NULL) || Session.MPGameMode->vt_entry_BC();
-			WS_Save_Dialog_Values(window);
+			FUN_00608070(window);
 			ShowWindow(window, SW_HIDE);
 			DAT_008316D4 = false;
 			if (FUN_005E68A0(MainWindow) == 2) {

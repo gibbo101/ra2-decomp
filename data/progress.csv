@@ -10531,7 +10531,7 @@ address,name,result,size,source,symbol
 0x006071D0,FUN_006071D0,MATCH,15,src/ownrdraw.cpp,?FUN_006071D0@@YIHPAUHWND__@@@Z
 0x006071E0,OwnerDraw::DrawCampaignMenuTransition,MATCH,3553,src/ownrdraw.cpp,?DrawCampaignMenuTransition@OwnerDraw@@YIXPAUHWND__@@_N@Z
 0x00607FD0,FUN_00607FD0,MATCH,155,src/ownrdraw.cpp,?FUN_00607FD0@@YIXPAUHWND__@@@Z
-0x00608070,WS_Save_Dialog_Values,MATCH,496,src/ownrdraw.cpp,?WS_Save_Dialog_Values@@YI_NPAUHWND__@@@Z
+0x00608070,FUN_00608070,MATCH,496,src/ownrdraw.cpp,?FUN_00608070@@YI_NPAUHWND__@@@Z
 0x00608260,RunOpenAnimationIfNeeded,MATCH,273,src/ownrdraw.cpp,?RunOpenAnimationIfNeeded@@YI_NPAUHWND__@@@Z
 0x00608380,FUN_00608380,MATCH,92,src/ownrdraw.cpp,?FUN_00608380@@YIXPAUHWND__@@@Z
 0x006083E0,FUN_006083E0,MATCH,92,src/ownrdraw.cpp,?FUN_006083E0@@YIXPAUHWND__@@@Z
@@ -11324,6 +11324,7 @@ address,name,result,size,source,symbol
 0x00634B20,FUN_00634B20,MATCH,407,src/planmgr.cpp,?FUN_00634B20@@YIXPAVPlanningNodeClass@@@Z
 0x006395B0,FUN_006395B0,MATCH,388,src/planmgr.cpp,?FUN_006395B0@@YIXPAVTechnoClass@@PAVPlanningNodeClass@@@Z
 0x00637270,FUN_00637270,MATCH,734,src/planmgr.cpp,?FUN_00637270@@YIXXZ
+0x0063AB60,FUN_0063AB60,MATCH,252,src/planmgr.cpp,?FUN_0063AB60@@YG_NHH@Z
 0x0063F080,Rasterize_Polygon,MATCH,602,src/polygon.cpp,?Rasterize_Polygon@@YIXABUPolygonShapeStruct@@AAUPolygonRasterStruct@@@Z
 0x0063F2E0,Rasterize_Line_Span,MATCH,439,src/polygon.cpp,?Rasterize_Line_Span@@YIXHHHHHHAAPAVPoint2D@@@Z
 0x0063F4A0,_$E41,MATCH,23,src/power.cpp,_$E41

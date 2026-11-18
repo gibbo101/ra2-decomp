@@ -1083,7 +1083,7 @@ int Scenario_Dialog(HWND top)
 extern bool DAT_00AC11C8;
 extern bool DAT_00AC11C9;
 extern int DAT_008316FC;
-bool WS_Save_Dialog_Values(HWND dialog);
+bool FUN_00608070(HWND dialog);
 namespace OwnerDraw { void __fastcall Paint(HWND window); }
 bool RunOpenAnimationIfNeeded(HWND dialog);
 void __fastcall FUN_0060AAA0(HWND dialog);
@@ -1182,7 +1182,7 @@ int CALLBACK Scenario_DlgProc(HWND window, UINT message, WPARAM wparam, LPARAM l
 			WS_Destroy_Dialog(window, 2);
 			break;
 		case 0x583: {
-			WS_Save_Dialog_Values(window);
+			FUN_00608070(window);
 			ShowWindow(window, SW_HIDE);
 			int scenario = CreateRandomMap();
 			if (scenario != -1) {

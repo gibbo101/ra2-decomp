@@ -3313,3 +3313,35 @@ void __fastcall FUN_00637270(void)
 	Reset_Planning_Command_Flags();
 	DAT_00AC4C08 = false;
 }
+
+PlanningNodeClass * __fastcall FUN_00638F90(Point2D point)
+{
+	if (DAT_00AC4CCC && DAT_00AC4CCC->Hit_Test(point.X, point.Y)) {
+		return DAT_00AC4CCC;
+	}
+	return NULL;
+}
+
+// FUNCTION: GAMEMD 0x0063AB60
+bool __stdcall FUN_0063AB60(int x, int y)
+{
+	if (!PlanningNodeClass::PlanningModeActive) {
+		return false;
+	}
+	if (DAT_00AC4CB0) {
+		return false;
+	}
+	PlanningNodeClass * sel = DAT_00AC4C38;
+	PlanningNodeClass * hit = FUN_00638F90(Point2D(x, y));
+	if (sel == NULL) {
+		if (hit == NULL) {
+			return false;
+		}
+		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
+	} else if (hit != sel) {
+		Map.Set_Default_Mouse(MOUSE_NORMAL, false);
+	} else {
+		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
+	}
+	return true;
+}
