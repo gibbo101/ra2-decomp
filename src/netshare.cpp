@@ -78,7 +78,6 @@ void FUN_005E2340(void);
 void FUN_005E23A0(void);
 void __cdecl FUN_004068E0(char const * format, ...);
 
-rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id);
 
 // SYNTHETIC: GAMEMD 0x005E2430 SYMBOL
 // _$E2
@@ -543,7 +542,7 @@ void __fastcall DisplayGameopts(HWND window, BOOL initialize)
 	if (initialize) {
 		rc_ptr<WDTTerritory> handle;
 		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
-			handle = FUN_007B0390(Session.WDTTerritory);
+			handle = WDT_Get_Territory(Session.WDTTerritory);
 		}
 		if (handle.Get() != NULL) {
 			EnableWindow(GetDlgItem(window, 0x544), FALSE);

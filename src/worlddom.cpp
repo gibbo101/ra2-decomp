@@ -313,7 +313,7 @@ rc_ptr<WorldDominationTour::Campaign> * __cdecl WDT_Get_New_Campaign(void);
 rc_ptr<WorldDominationTour::Campaign> * __cdecl WDT_Get_Resumed_Campaign(void);
 
 // FUNCTION: GAMEMD 0x007AFB90
-int __fastcall FUN_007AFB90(bool first_time)
+int __fastcall WDT_Setup_Game(bool first_time)
 {
 	using namespace WorldDominationTour;
 
@@ -460,13 +460,13 @@ rc_ptr<WorldDominationTour::CampaignProperties> __fastcall FUN_0076BE90(rc_ptr<W
 rc_ptr<WorldDominationTour::Campaign> __fastcall FUN_00764B30(Wstring const & name, rc_ptr<WorldDominationTour::CampaignProperties> const & props);
 
 // FUNCTION: GAMEMD 0x007B0210
-rc_ptr<WDTState> * __cdecl FUN_007B0210(void)
+rc_ptr<WDTState> * __cdecl WDT_Get_New_State(void)
 {
 	return &DAT_00B77F58;
 }
 
 // FUNCTION: GAMEMD 0x007B0220
-void __fastcall FUN_007B0220(rc_ptr<WDTState> const & state)
+void __fastcall WDT_Start_New_Campaign(rc_ptr<WDTState> const & state)
 {
 	DAT_00B77F58 = state;
 	DAT_00B77F68 = FUN_00764B30(g_NickName, FUN_0076BE90(state));
@@ -532,14 +532,14 @@ rc_ptr<WorldDominationTour::Campaign> * __cdecl WDT_Get_Resumed_Campaign(void)
 }
 
 // FUNCTION: GAMEMD 0x007B0390
-rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id)
+rc_ptr<WDTTerritory> __fastcall WDT_Get_Territory(int id)
 {
 	WorldDominationTour::CONFLICT_ITER it = (*WDT_Get_New_Campaign())->Get_Conflict_Iterator(id);
 	return(it ? (*it)->Territory : rc_ptr<WDTTerritory>());
 }
 
 // FUNCTION: GAMEMD 0x007B0430
-bool __cdecl FUN_007B0430(void)
+bool __cdecl WDT_Is_Allowed(void)
 {
 	return true;
 }

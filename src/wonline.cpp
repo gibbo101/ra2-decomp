@@ -4562,7 +4562,7 @@ int Login_WOL(void)
 
 extern wchar_t * _tername;
 extern int g_CurrentLobby;
-rc_ptr<WDTState> * __cdecl FUN_007B0210(void);
+rc_ptr<WDTState> * __cdecl WDT_Get_New_State(void);
 static inline void Set_Lobby_Number(Channel & chan)
 {
 	g_CurrentLobby = atol((char *)chan.name + strlen("Lob_41_"));
@@ -4596,7 +4596,7 @@ int __fastcall Pick_Lobby(bool flag)
 		ini.Load(file, false);
 		sprintf(entry, "Territory%02d", Session.WDTTerritory);
 		strcpy(def, entry);
-		if (((WDTState *)FUN_007B0210()->Ptr)->MapID == 0) {
+		if (((WDTState *)WDT_Get_New_State()->Ptr)->MapID == 0) {
 			ini.Get_String("NorthAmerica", entry, def, buf, sizeof(def));
 		} else {
 			ini.Get_String("Europe", entry, def, buf, sizeof(def));
@@ -11102,7 +11102,7 @@ void FUN_006C6D00(void);
 void FUN_006C6DE0(void);
 rc_ptr<WDTState> __fastcall FUN_0076ABA0(void * data);
 void __fastcall WDT_Resume_Campaign(rc_ptr<WDTState> const & state);
-void __fastcall FUN_007B0220(rc_ptr<WDTState> const & state);
+void __fastcall WDT_Start_New_Campaign(rc_ptr<WDTState> const & state);
 
 // FUNCTION: GAMEMD 0x007A2EA0
 // AtlAdvise
@@ -11165,7 +11165,7 @@ HRESULT CNetUtilEventSink::OnWDTState(HRESULT result, unsigned char * data, int 
 		} else {
 			FUN_004068E0("OnWDTState: Current cycle data received\n");
 			g_NextWDTStatePollTime = time(NULL) + state->TickTime;
-			FUN_007B0220(state);
+			WDT_Start_New_Campaign(state);
 			SetEvent(g_WaitEventHandles[11]);
 		}
 	} else {

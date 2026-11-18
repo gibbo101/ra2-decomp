@@ -133,7 +133,6 @@ namespace UI {
 }
 extern bool (*RMGCallback)();
 BOOL CALLBACK Map_Seed_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
-rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id);
 char * CalcRandomMapDigest(void);
 void __fastcall Send_Preview_To_Guests(MapPreviewClass * preview);
 extern int FUN_00734FD0(void);
@@ -2271,7 +2270,7 @@ void Do_Random_Map(HWND dialog, bool (*callback)())
 {
 	rc_ptr<WDTTerritory> territory;
 	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
-		territory = FUN_007B0390(Session.WDTTerritory);
+		territory = WDT_Get_Territory(Session.WDTTerritory);
 	}
 	if (territory.Get() != NULL) {
 		RandomMapGen.SeedData.NumPlayers = 4;
@@ -2814,7 +2813,7 @@ void MapSeedClass::Fixup_WDT_Settings(void)
 {
 	rc_ptr<WDTTerritory> territory;
 	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
-		territory = FUN_007B0390(Session.WDTTerritory);
+		territory = WDT_Get_Territory(Session.WDTTerritory);
 	}
 
 	if (territory.Get() != NULL) {

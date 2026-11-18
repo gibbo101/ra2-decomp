@@ -18410,7 +18410,7 @@ address,name,result,size,source,symbol
 0x007AF6C0,FUN_007AF6C0,MATCH,686,src/worlddom.cpp,?FUN_007AF6C0@@YGHPAUHWND__@@IIJ@Z
 0x007AF970,Do_WDT_Faction_Choice_Menu,MATCH,345,src/worlddom.cpp,?Do_WDT_Faction_Choice_Menu@@YIHXZ
 0x007AFAD0,WDT_Theater_Choice_Menu,MATCH,187,src/worlddom.cpp,?WDT_Theater_Choice_Menu@@YIHH@Z
-0x007AFB90,FUN_007AFB90,MATCH,1272,src/worlddom.cpp,?FUN_007AFB90@@YIH_N@Z
+0x007AFB90,WDT_Setup_Game,MATCH,1272,src/worlddom.cpp,?WDT_Setup_Game@@YIH_N@Z
 0x007B0090,_$E91,MATCH,22,src/worlddom.cpp,_$E91
 0x007B00B0,_$E89,MATCH,29,src/worlddom.cpp,_$E89
 0x007B00D0,_$E96,MATCH,22,src/worlddom.cpp,_$E96
@@ -18423,8 +18423,8 @@ address,name,result,size,source,symbol
 0x007B01B0,_$E109,MATCH,20,src/worlddom.cpp,_$E109
 0x007B01D0,_$E116,MATCH,32,src/worlddom.cpp,_$E116
 0x007B01F0,_$E114,MATCH,20,src/worlddom.cpp,_$E114
-0x007B0210,FUN_007B0210,MATCH,6,src/worlddom.cpp,?FUN_007B0210@@YAPAV?$rc_ptr@VWDTState@@@@XZ
-0x007B0220,FUN_007B0220,MATCH,99,src/worlddom.cpp,?FUN_007B0220@@YIXABV?$rc_ptr@VWDTState@@@@@Z
+0x007B0210,WDT_Get_New_State,MATCH,6,src/worlddom.cpp,?WDT_Get_New_State@@YAPAV?$rc_ptr@VWDTState@@@@XZ
+0x007B0220,WDT_Start_New_Campaign,MATCH,99,src/worlddom.cpp,?WDT_Start_New_Campaign@@YIXABV?$rc_ptr@VWDTState@@@@@Z
 0x007B0290,WDT_Get_Resumed_State,MATCH,6,src/worlddom.cpp,?WDT_Get_Resumed_State@@YAPAV?$rc_ptr@VWDTState@@@@XZ
 0x007B02A0,WDT_Resume_Campaign,MATCH,99,src/worlddom.cpp,?WDT_Resume_Campaign@@YIXABV?$rc_ptr@VWDTState@@@@@Z
 0x007B0310,FUN_007B0310,MATCH,6,src/worlddom.cpp,?FUN_007B0310@@YAPADXZ
@@ -18433,8 +18433,8 @@ address,name,result,size,source,symbol
 0x007B0350,FUN_007B0350,MATCH,29,src/worlddom.cpp,?FUN_007B0350@@YIXPAD@Z
 0x007B0370,WDT_Get_New_Campaign,MATCH,6,src/worlddom.cpp,?WDT_Get_New_Campaign@@YAPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@XZ
 0x007B0380,WDT_Get_Resumed_Campaign,MATCH,6,src/worlddom.cpp,?WDT_Get_Resumed_Campaign@@YAPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@XZ
-0x007B0390,FUN_007B0390,MATCH,150,src/worlddom.cpp,?FUN_007B0390@@YI?AV?$rc_ptr@VWDTTerritory@@@@H@Z
-0x007B0430,FUN_007B0430,MATCH,3,src/worlddom.cpp,?FUN_007B0430@@YA_NXZ
+0x007B0390,WDT_Get_Territory,MATCH,150,src/worlddom.cpp,?WDT_Get_Territory@@YI?AV?$rc_ptr@VWDTTerritory@@@@H@Z
+0x007B0430,WDT_Is_Allowed,MATCH,3,src/worlddom.cpp,?WDT_Is_Allowed@@YA_NXZ
 0x007B0440,??_GFactionSelectDialogControl@WorldDominationTour@@UAEPAXI@Z,MATCH,77,src/worlddom.cpp,??_GFactionSelectDialogControl@WorldDominationTour@@UAEPAXI@Z
 0x007B0490,WorldDominationTour::FactionSelectDialogControl::FactionSelectDialogControl,MATCH,260,src/worlddom.cpp,??0FactionSelectDialogControl@WorldDominationTour@@QAE@XZ
 0x00401000,AudioAttribsInit,MATCH,117,src/wpaudio/audattr.cpp,?AudioAttribsInit@@YIXPAUAudioAttribs@@@Z

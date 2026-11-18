@@ -89,7 +89,6 @@ Selection::~Selection(void)
 	BitFont::Instance->SetColor((unsigned short)TextColor);
 }
 
-rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id);
 
 // FUNCTION: GAMEMD 0x0076C970
 // WorldDominationTour::Selection::Init_Voices
@@ -502,7 +501,7 @@ bool __fastcall FUN_0076ED10(rc_ptr<Campaign> * campaign, int theater)
 	if (valid) {
 		int index = selected->ID;
 		Session.WDTTerritory = index;
-		rc_ptr<WDTTerritory> territory = FUN_007B0390(index);
+		rc_ptr<WDTTerritory> territory = WDT_Get_Territory(index);
 		if (territory.Get() != NULL) {
 			Session.Options.UnitCount = territory->UnitCount;
 			BuildLevel = territory->TechLevel;

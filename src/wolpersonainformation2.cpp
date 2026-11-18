@@ -78,7 +78,7 @@ void Shutdown_Chat(void);
 int FUN_00798DE0(void);
 int FUN_0079FC40(void);
 int FUN_0079F140(bool first_time);
-int FUN_007AFB90(bool first_time);
+int WDT_Setup_Game(bool first_time);
 void FUN_007A2970(void);
 int FUN_00787770(HWND window, bool first_time);
 
@@ -187,7 +187,7 @@ int __fastcall FUN_0077B2A0(bool first_time)
 			if (first_time) {
 				FUN_007A2970();
 			}
-			result = FUN_007AFB90(first_time);
+			result = WDT_Setup_Game(first_time);
 			first_time = false;
 			if (result == 0) {
 				Session.WOLWelcomeChoice = 0;

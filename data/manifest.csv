@@ -18629,7 +18629,7 @@ address,size,symbol,source,sha256
 0x007AF6C0,686,?FUN_007AF6C0@@YGHPAUHWND__@@IIJ@Z,src/worlddom.cpp,8bee105d4348071a7d5f033d2f66bbc0234c3d4c7a80f4adf0ab1aacc85e44e9
 0x007AF970,345,?Do_WDT_Faction_Choice_Menu@@YIHXZ,src/worlddom.cpp,21f0bd4801306f5c173ee127c8977f57926a79460d633e4737f751cdcd73baac
 0x007AFAD0,187,?WDT_Theater_Choice_Menu@@YIHH@Z,src/worlddom.cpp,32b5fb6141314c2ad7808cd8a28108e91e9868f78b9288cbf933eb134c5b8ca9
-0x007AFB90,1272,?FUN_007AFB90@@YIH_N@Z,src/worlddom.cpp,c1869a5e5b77d044297ac05557bd1a48a347c99464149dbe5836173329977672
+0x007AFB90,1272,?WDT_Setup_Game@@YIH_N@Z,src/worlddom.cpp,c1869a5e5b77d044297ac05557bd1a48a347c99464149dbe5836173329977672
 0x007B0090,22,_$E91,src/worlddom.cpp,d032ea8ef280f9511ec89d7d9ac2b84d4ac1509bed548d9eefb498863c67c9f6
 0x007B00B0,29,_$E89,src/worlddom.cpp,efd1a588b7973da210cc164342c4d3ffc69f88d4709b68f3ea83c50fc38523ab
 0x007B00D0,22,_$E96,src/worlddom.cpp,8264bd203b20ac8c047415890c2d95a038ab1ffba386475dfc5f35ac4d61d2ce
@@ -18642,8 +18642,8 @@ address,size,symbol,source,sha256
 0x007B01B0,20,_$E109,src/worlddom.cpp,e2dbc36a0c7ca14e1e6a693baf936c265ff083a4b7b8d1b5b1538c3c89b0dcb6
 0x007B01D0,32,_$E116,src/worlddom.cpp,b5adc53405aaaaa626a9ff13e927a5329fb75a494b45260f0985bd6bcec028e6
 0x007B01F0,20,_$E114,src/worlddom.cpp,7bb893bc228d35c69bd9c9cf4762dcad8b608d1d248cb35f001645a7ad494ef6
-0x007B0210,6,?FUN_007B0210@@YAPAV?$rc_ptr@VWDTState@@@@XZ,src/worlddom.cpp,f360ebfac7320fafe3cde4ce44036c622fc4b025ad0a58d82344082973c298cb
-0x007B0220,99,?FUN_007B0220@@YIXABV?$rc_ptr@VWDTState@@@@@Z,src/worlddom.cpp,50d39f533bac4c26a72c9f6cdb7473cf44eff4bea1367d5faa3a2eca4c54fbf9
+0x007B0210,6,?WDT_Get_New_State@@YAPAV?$rc_ptr@VWDTState@@@@XZ,src/worlddom.cpp,f360ebfac7320fafe3cde4ce44036c622fc4b025ad0a58d82344082973c298cb
+0x007B0220,99,?WDT_Start_New_Campaign@@YIXABV?$rc_ptr@VWDTState@@@@@Z,src/worlddom.cpp,50d39f533bac4c26a72c9f6cdb7473cf44eff4bea1367d5faa3a2eca4c54fbf9
 0x007B0290,6,?WDT_Get_Resumed_State@@YAPAV?$rc_ptr@VWDTState@@@@XZ,src/worlddom.cpp,8aec826b7e53153597c0646982fedadf5df96ab68144ce025aa26ef84adb65e0
 0x007B02A0,99,?WDT_Resume_Campaign@@YIXABV?$rc_ptr@VWDTState@@@@@Z,src/worlddom.cpp,985525344f66dfadc1a1fb8d0a3f5270a5c900e4a387844d6fb3a373a4aadd47
 0x007B0310,6,?FUN_007B0310@@YAPADXZ,src/worlddom.cpp,3d8eae0e3e6c2d7618f4e80b498200533b551f0d3932beaaaae27f3191b84c11
@@ -18652,8 +18652,8 @@ address,size,symbol,source,sha256
 0x007B0350,29,?FUN_007B0350@@YIXPAD@Z,src/worlddom.cpp,85523c1ebb730b1b5320c570d24c392c344b2bfd3c5f6a2ccb83cfb215f174df
 0x007B0370,6,?WDT_Get_New_Campaign@@YAPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@XZ,src/worlddom.cpp,ba835c6b5698111c4041d2d46cde9b833c6e975c243a0ea6671b109ebfc273ed
 0x007B0380,6,?WDT_Get_Resumed_Campaign@@YAPAV?$rc_ptr@VCampaign@WorldDominationTour@@@@XZ,src/worlddom.cpp,154ff88c4aeadaea061ec94b4c51768c71589836a037ae580ce272c911e9d751
-0x007B0390,150,?FUN_007B0390@@YI?AV?$rc_ptr@VWDTTerritory@@@@H@Z,src/worlddom.cpp,6ec287a28bc4b8fa6514ab994640368755e18537a7130583def3d09a366a835e
-0x007B0430,3,?FUN_007B0430@@YA_NXZ,src/worlddom.cpp,e18aacce29affcdddaa5f641ac1ec12552e0fe9d066e6408941b1792818b8619
+0x007B0390,150,?WDT_Get_Territory@@YI?AV?$rc_ptr@VWDTTerritory@@@@H@Z,src/worlddom.cpp,6ec287a28bc4b8fa6514ab994640368755e18537a7130583def3d09a366a835e
+0x007B0430,3,?WDT_Is_Allowed@@YA_NXZ,src/worlddom.cpp,e18aacce29affcdddaa5f641ac1ec12552e0fe9d066e6408941b1792818b8619
 0x007B0440,77,??_GFactionSelectDialogControl@WorldDominationTour@@UAEPAXI@Z,src/worlddom.cpp,dd395f545955c69ecba9f82f773db4f746a0ab3721cd965c6feed236c4e1e829
 0x007B0490,260,??0FactionSelectDialogControl@WorldDominationTour@@QAE@XZ,src/worlddom.cpp,afa7b682a805f124e031bb6de44891a7b2fc7628e860858e3d6a0a872fd92f6d
 0x007B05A0,23,_$E2,src/writepcx.cpp,7d10b092176b229eaeb6f5a5e12316a0c89db5f1b94b91f8964d30850cb9f3f5
