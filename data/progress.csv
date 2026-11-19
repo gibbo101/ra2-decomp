@@ -16297,6 +16297,7 @@ address,name,result,size,source,symbol
 0x0073CEC0,UnitClass::Draw_It,MATCH,1417,src/unit.cpp,?Draw_It@UnitClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x0073D450,UnitClass::Harvesting,MATCH,477,src/unit.cpp,?Harvesting@UnitClass@@QAE_NXZ
 0x0073D630,UnitClass::Do_MISSION_UNLOAD,MATCH,4004,src/unit.cpp,?Do_MISSION_UNLOAD@UnitClass@@UAEHXZ
+0x0073E5E0,UnitClass::Do_MISSION_HARVEST,MATCH,2528,src/unit.cpp,?Do_MISSION_HARVEST@UnitClass@@UAEHXZ
 0x0073EFC0,UnitClass::Do_MISSION_HUNT,MATCH,212,src/unit.cpp,?Do_MISSION_HUNT@UnitClass@@UAEHXZ
 0x0073F0A0,UnitClass::Can_Enter_Cell,MATCH,3238,src/unit.cpp,?Can_Enter_Cell@UnitClass@@UBE?AW4MoveType@@PBVCellClass@@W4FacingType@@H0_N@Z
 0x0073FD50,UnitClass::What_Action,MATCH,1882,src/unit.cpp,?What_Action@UnitClass@@UBE?AW4ActionType@@PBVObjectClass@@_N@Z
