@@ -5,6 +5,11 @@ set -euo pipefail
 git diff --cached --name-only --diff-filter=ACMRD -- 'tools/*.py' 'tools/**/*.py' | grep -q . || exit 0
 
 cd "$(git rev-parse --show-toplevel)"
+# Test fixtures must use their own repository and index.
+while IFS= read -r name; do
+  unset "$name"
+done < <(git rev-parse --local-env-vars)
+
 if command -v uv >/dev/null 2>&1; then
   run=(uv run python)
 else
