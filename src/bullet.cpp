@@ -313,6 +313,59 @@ void BulletClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
+bool BulletClass::Unlimbo(Coord const & coord, TVelocity3D<double> const & velocity)
+{
+	if (BASECLASS::Unlimbo(coord)) {
+		Velocity = velocity;
+		SourceCoords = coord;
+		LastMapCoords = SourceCoords.As_Cell();
+		Map.Remove(this);
+
+		Coord tcoord = TarCom->As_Coord();
+		TargetCoords = tcoord;
+
+		if (Class->FlakScatter && Class->IsInvisible) {
+			TPoint3D<float> delta(coord.X - tcoord.X, tcoord.Y - coord.Y, coord.Z - tcoord.Z);
+			float distance = delta.Length();
+			int scatter = Random_Pick(0, Rule->BallisticScatter * 2);
+			scatter *= (int)distance;
+			scatter /= WeaponType->Range;
+			double scatter_angle = Random_Double(0.0, M_PI * 2.0);
+			tcoord = Move_Coord(tcoord, DirType(scatter_angle), scatter);
+		}
+
+		if (Class->IsInvisible) {
+			HouseClass * house = Payback != NULL ? Payback->House : NULL;
+			Coord firestorm_coord = Map.Firestorm_On_Path(coord, tcoord, house);
+			if (firestorm_coord != COORD_NONE) {
+				firestorm_coord.Z = Map.Get_Height_GL(firestorm_coord);
+				PositionCoord = firestorm_coord;
+			} else {
+				CellClass * obstacle = TrajectoryHelper::FindFirstObstacle(coord, tcoord, Class, house);
+				if (obstacle != NULL) {
+					PositionCoord = obstacle->Center_Coord();
+				} else {
+					PositionCoord = tcoord;
+				}
+				// The target position replaces the obstacle position.
+				PositionCoord = tcoord;
+				MaxSpeed = 0;
+				Velocity.Set_Speed(0);
+			}
+		}
+
+		Fuse.Arm_Fuse(PositionCoord, tcoord, As_Aircraft(TarCom) != NULL ? 0 : Class->Arming);
+		if (Is_Homing()) {
+			Velocity.Set_Speed(1);
+		}
+		if (IsActive) {
+			Map.Submit(this);
+		}
+		return(true);
+	}
+	return(false);
+}
+
 // FUNCTION: GAMEMD 0x00468B90
 LayerType BulletClass::In_Which_Layer(void) const
 {

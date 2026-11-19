@@ -9010,6 +9010,11 @@ address,size,symbol,source,sha256
 0x005B20A0,15,_$E32,src/missile.cpp,414d0eae355ac2a01d7722da452fb83af2ba66d1c9fe88cf0fc07e2057594d1c
 0x005B20B0,18,_$E35,src/missile.cpp,7852b3801e3dfbe7c5c62d3b30971ac3f162b50b3eebc6c07cdfe66db4cd85ec
 0x005B20D0,26,_$E38,src/missile.cpp,e8b96b38c6a11c27d362f681f354580b540a8a96f8fcb8be01d92aea8f55f81b
+0x005B2930,28,??HDirType@@QBE?AV0@ABV0@@Z,src/missile.cpp,c1a4fd093b1806335a858af96a646502d7bce5d6c7c54b4e815f87274fb0bc62
+0x005B2950,28,??GDirType@@QBE?AV0@ABV0@@Z,src/missile.cpp,1d298be86314b120d0eccae79b431460abf62d4a3ad3ef1e11c7bf9f07764d7b
+0x005B2970,26,??KDirType@@QBE?AV0@H@Z,src/missile.cpp,7b7670ff5f6710bff787b714b9e32ac5f0ce95a866ec1ac120702a35728e934e
+0x005B2990,42,?Is_Complete_Turn@DirType@@QAE_NABV1@0@Z,src/missile.cpp,b26aa1a515e00244b16031d2edf4fc664e312041a2a94b2f452067782eb24d9b
+0x005B29C0,100,?Turn@DirType@@QAE_NABV1@0@Z,src/missile.cpp,9d7ae9fa6bb6a6062da69cec30282a243f79984775819ce64ea14256bcb87822
 0x005B2A30,342,?Set_Pitch@?$TVelocity3D@N@@QAEXABVDirType@@@Z,src/missile.cpp,18ae9efe054063bfa0d1aeea4c5843bc40ad89da193ee129473e9350f61942e9
 0x005B2B90,40,_$E2,src/mission.cpp,39593318b0771e8466c9a4e3b40ff76cd78395b90f61c32057b8fe6a4d8e36b6
 0x005B2BC0,19,_$E5,src/mission.cpp,d5514a7c5b8e169eca54e28ef3999f727e4e8c6a56a8099b5c31527d88a22ef8
@@ -15399,6 +15404,7 @@ address,size,symbol,source,sha256
 0x0070C5F0,26,?IsNotWarping@TechnoClass@@UBE_NXZ,src/techno.cpp,df3bfbd03abdf0e22291aed7d2b3a62759bb61233168c5b3e8b53abe19fbf24d
 0x0070C610,13,?Assign_Archive_Target@TechnoClass@@QAEXPAVAbstractClass@@@Z,src/techno.cpp,2911b6b4871cb2baa7666764129a6aababa6ba1b14041c2fde7fb65393315c1c
 0x0070C620,112,?Is_On_Elevation@TechnoClass@@UBE_NXZ,src/techno.cpp,96421c0869053ae58807161153a81b52d5ce09462838e33476b63ab725fdc8ef
+0x0070C690,1523,?Railgun_Beam_Damage@TechnoClass@@QAE?AVCoord@@AAV2@PAVAbstractClass@@PAVWeaponTypeClass@@@Z,src/techno.cpp,0ea26244e60274d291c102a5b85721802deafaa0fd087fa3d51e71d1473ba8ca
 0x0070CC90,37,?Radar_Track@TechnoClass@@UAEXXZ,src/techno.cpp,d7d603fe87a58a44b448eec1d8f96e26e45e362bab48ad214585d79414e109ca
 0x0070CCC0,37,?Radar_Untrack@TechnoClass@@UAEXXZ,src/techno.cpp,7ca3d3a77d1c280862cf554cade011ccd6b3928806ce05b72c85d3d7350aa998
 0x0070CCF0,18,?Plot_On_Radar@TechnoClass@@UBEXXZ,src/techno.cpp,018d9935ef22bfe0ef011fd534bd003528db876a24bfd73d7314951ba2e43a83

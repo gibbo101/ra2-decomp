@@ -8657,6 +8657,11 @@ address,name,result,size,source,symbol
 0x005B20B0,_$E35,MATCH,18,src/missile.cpp,_$E35
 0x005B20D0,_$E38,MATCH,26,src/missile.cpp,_$E38
 0x005B2A30,?Set_Pitch@?$TVelocity3D@N@@QAEXABVDirType@@@Z,MATCH,342,src/missile.cpp,?Set_Pitch@?$TVelocity3D@N@@QAEXABVDirType@@@Z
+0x005B2930,??HDirType@@QBE?AV0@ABV0@@Z,MATCH,28,src/missile.cpp,??HDirType@@QBE?AV0@ABV0@@Z
+0x005B2950,??GDirType@@QBE?AV0@ABV0@@Z,MATCH,28,src/missile.cpp,??GDirType@@QBE?AV0@ABV0@@Z
+0x005B2970,??KDirType@@QBE?AV0@H@Z,MATCH,26,src/missile.cpp,??KDirType@@QBE?AV0@H@Z
+0x005B2990,?Is_Complete_Turn@DirType@@QAE_NABV1@0@Z,MATCH,42,src/missile.cpp,?Is_Complete_Turn@DirType@@QAE_NABV1@0@Z
+0x005B29C0,?Turn@DirType@@QAE_NABV1@0@Z,MATCH,100,src/missile.cpp,?Turn@DirType@@QAE_NABV1@0@Z
 0x005B2B90,_$E2,MATCH,40,src/mission.cpp,_$E2
 0x005B2BC0,_$E5,MATCH,19,src/mission.cpp,_$E5
 0x005B2BE0,_$E8,MATCH,19,src/mission.cpp,_$E8
@@ -15057,6 +15062,7 @@ address,name,result,size,source,symbol
 0x0070C5F0,TechnoClass::IsNotWarping,MATCH,26,src/techno.cpp,?IsNotWarping@TechnoClass@@UBE_NXZ
 0x0070C610,TechnoClass::Assign_Archive_Target,MATCH,13,src/techno.cpp,?Assign_Archive_Target@TechnoClass@@QAEXPAVAbstractClass@@@Z
 0x0070C620,TechnoClass::Is_On_Elevation,MATCH,112,src/techno.cpp,?Is_On_Elevation@TechnoClass@@UBE_NXZ
+0x0070C690,TechnoClass::Railgun_Beam_Damage,MATCH,1523,src/techno.cpp,?Railgun_Beam_Damage@TechnoClass@@QAE?AVCoord@@AAV2@PAVAbstractClass@@PAVWeaponTypeClass@@@Z
 0x0070CC90,TechnoClass::Radar_Track,MATCH,37,src/techno.cpp,?Radar_Track@TechnoClass@@UAEXXZ
 0x0070CCC0,TechnoClass::Radar_Untrack,MATCH,37,src/techno.cpp,?Radar_Untrack@TechnoClass@@UAEXXZ
 0x0070CCF0,TechnoClass::Plot_On_Radar,MATCH,18,src/techno.cpp,?Plot_On_Radar@TechnoClass@@UBEXXZ
