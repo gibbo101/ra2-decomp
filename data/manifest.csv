@@ -15404,6 +15404,7 @@ address,size,symbol,source,sha256
 0x0070C5F0,26,?IsNotWarping@TechnoClass@@UBE_NXZ,src/techno.cpp,df3bfbd03abdf0e22291aed7d2b3a62759bb61233168c5b3e8b53abe19fbf24d
 0x0070C610,13,?Assign_Archive_Target@TechnoClass@@QAEXPAVAbstractClass@@@Z,src/techno.cpp,2911b6b4871cb2baa7666764129a6aababa6ba1b14041c2fde7fb65393315c1c
 0x0070C620,112,?Is_On_Elevation@TechnoClass@@UBE_NXZ,src/techno.cpp,96421c0869053ae58807161153a81b52d5ce09462838e33476b63ab725fdc8ef
+0x0070C690,1523,?Railgun_Beam_Damage@TechnoClass@@QAE?AVCoord@@AAV2@PAVAbstractClass@@PAVWeaponTypeClass@@@Z,src/techno.cpp,0ea26244e60274d291c102a5b85721802deafaa0fd087fa3d51e71d1473ba8ca
 0x0070CC90,37,?Radar_Track@TechnoClass@@UAEXXZ,src/techno.cpp,d7d603fe87a58a44b448eec1d8f96e26e45e362bab48ad214585d79414e109ca
 0x0070CCC0,37,?Radar_Untrack@TechnoClass@@UAEXXZ,src/techno.cpp,7ca3d3a77d1c280862cf554cade011ccd6b3928806ce05b72c85d3d7350aa998
 0x0070CCF0,18,?Plot_On_Radar@TechnoClass@@UBEXXZ,src/techno.cpp,018d9935ef22bfe0ef011fd534bd003528db876a24bfd73d7314951ba2e43a83
