@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "vectornorm.h"
 #include "quat.h"
 #include "fastmath.h"
 #include "matrix3d.h"
@@ -119,14 +120,6 @@ Quaternion Conjugate(const Quaternion & q)
 	return(Quaternion(-q.X,-q.Y,-q.Z,q.W));
 }
 
-inline float Trackball_Length(Vector3 const &vector)
-{
-	double y = vector.Y;
-	double z = vector.Z;
-	double x = vector.X;
-	return fastmath::sqrt(x * x + z * z + y * y);
-}
-
 static float project_to_sphere(float radius, float x, float y)
 {
 	const float sqrt_two = 1.41421356f;
@@ -161,7 +154,7 @@ Quaternion Trackball(float x0, float y0, float x1, float y1, float radius)
 	second.Z = project_to_sphere(radius, x1, y1);
 	axis = Vector3::Cross_Product(second, first);
 	delta = first - second;
-	distance = Trackball_Length(delta) / (2.0 * radius);
+	distance = Vector3_Length(delta) / (2.0 * radius);
 	if (distance > 1.0f) {
 		distance = 1.0f;
 	} else if (distance < -1.0f) {
