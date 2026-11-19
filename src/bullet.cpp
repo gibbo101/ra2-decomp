@@ -712,7 +712,7 @@ void BulletClass::Shrapnel(void)
 					velocity.Set_Speed(weapon->MaxSpeed);
 					bullet->Unlimbo(PositionCoord, velocity);
 					Coord source;
-			source = PositionCoord;
+					source = PositionCoord;
 					if (weapon->IsLaser && Payback != NULL) {
 						Payback->CreateLaser(object, 0, weapon, source);
 					}
@@ -752,7 +752,6 @@ void BulletClass::Shrapnel(void)
 		}
 	}
 }
-
 
 // FUNCTION: GAMEMD 0x0046ADE0
 void BulletClass::ApplyRadiationToCell(Cell cell, int radius, int amount)
