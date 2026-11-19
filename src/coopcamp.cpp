@@ -26,17 +26,6 @@ extern char DAT_0089F5D8[];
 char __fastcall FUN_0049B430(int nibble);
 void __fastcall FUN_0049B7E0(MPlayerScoreType * stats, bool second);
 
-static inline char HexDigit(int nibble)
-{
-	if (nibble < 0 || nibble > 0xf) {
-		return 0;
-	}
-	if (nibble < 10) {
-		return (char)('0' + nibble);
-	}
-	return (char)('7' + nibble);
-}
-
 static inline int HexValue(char c)
 {
 	if (c <= '9' && c >= '0') {
@@ -91,6 +80,18 @@ CoopCampSource_0049E4F0 DAT_0089F518;
 #include "ccrand.h"
 #include "session.h"
 
+// FUNCTION: GAMEMD 0x0049B430
+char __fastcall FUN_0049B430(int nibble)
+{
+	if (nibble < 0 || nibble > 0xf) {
+		return 0;
+	}
+	if (nibble < 10) {
+		return (char)('0' + nibble);
+	}
+	return (char)('7' + nibble);
+}
+
 // FUNCTION: GAMEMD 0x0049B450
 int __fastcall FUN_0049B450(char c)
 {
@@ -106,8 +107,8 @@ char * __fastcall FUN_0049B490(char const * text)
 		if (!isalnum(*p)) {
 			DAT_0089ED18[i++] = '=';
 			int hi = *p >> 4;
-			DAT_0089ED18[i++] = HexDigit(hi);
-			DAT_0089ED18[i] = HexDigit(*p & 0xf);
+			DAT_0089ED18[i++] = FUN_0049B430(hi);
+			DAT_0089ED18[i] = FUN_0049B430(*p & 0xf);
 		} else {
 			DAT_0089ED18[i] = *p;
 		}
@@ -400,45 +401,14 @@ bool CoopCampaignClass::FUN_0049BE40(void)
 	}
 	char section[100];
 	CCFileClass file("coopsave.ini");
-	struct Holder {
-		CCINIClass ini;
-	} h;
-	CCINIClass & ini = h.ini;
+	CCINIClass ini;
 	ini.ReadCCFile(file, false, false);
 	file.Close();
-
-	int i = 0;
-	char const * p;
-	for (p = Name; *p && i < 0x3fd; i++, p++) {
-		if (!isalnum(*p)) {
-			DAT_0089ED18[i++] = '=';
-			int hi = *p >> 4;
-			DAT_0089ED18[i++] = HexDigit(hi);
-			DAT_0089ED18[i] = FUN_0049B430(*p & 0xf);
-		} else {
-			DAT_0089ED18[i] = *p;
-		}
-	}
-	DAT_0089ED18[i] = 0;
-	strcpy(section, DAT_0089ED18);
-	i = 0;
-	for (p = Map; *p && i < 0x3fd; i++, p++) {
-		if (!isalnum(*p)) {
-			DAT_0089ED18[i++] = '=';
-			int hi = *p >> 4;
-			DAT_0089ED18[i++] = HexDigit(hi);
-			DAT_0089ED18[i] = FUN_0049B430(*p & 0xf);
-		} else {
-			DAT_0089ED18[i] = *p;
-		}
-	}
-	DAT_0089ED18[i] = 0;
-	strcat(section, DAT_0089ED18);
+	strcpy(section, FUN_0049B490(Name));
+	strcat(section, FUN_0049B490(Map));
 
 	CCFileClass out;
-	FileClass * pf = &out;
-	pf->Set_Name("coopsave.ini");
-	pf->Open(2);
+	out.Open("coopsave.ini", 2);
 	ini.Clear(section, NULL);
 	ini.Save(out, false);
 	out.Close();
@@ -451,42 +421,14 @@ bool CoopCampaignClass::FUN_0049C0D0(void)
 	if (!Name[0] || !Map[0]) {
 		return false;
 	}
-	int i = 0;
-	char const * p;
-	for (p = Name; *p && i < 0x3fd; i++, p++) {
-		if (!isalnum(*p)) {
-			DAT_0089ED18[i++] = '=';
-			int hi = *p >> 4;
-			DAT_0089ED18[i++] = HexDigit(hi);
-			DAT_0089ED18[i] = HexDigit(*p & 0xf);
-		} else {
-			DAT_0089ED18[i] = *p;
-		}
-	}
-	DAT_0089ED18[i] = 0;
 	char section[100];
 	char key[32];
 	int campaign;
-	strcpy(section, DAT_0089ED18);
-	i = 0;
-	for (p = Map; *p && i < 0x3fd; i++, p++) {
-		if (!isalnum(*p)) {
-			DAT_0089ED18[i++] = '=';
-			int hi = *p >> 4;
-			DAT_0089ED18[i++] = HexDigit(hi);
-			DAT_0089ED18[i] = HexDigit(*p & 0xf);
-		} else {
-			DAT_0089ED18[i] = *p;
-		}
-	}
-	DAT_0089ED18[i] = 0;
-	strcat(section, DAT_0089ED18);
+	strcpy(section, FUN_0049B490(Name));
+	strcat(section, FUN_0049B490(Map));
 
 	CCFileClass file("coopsave.ini");
-	struct Holder {
-		CCINIClass ini;
-	} h;
-	CCINIClass & ini = h.ini;
+	CCINIClass ini;
 	if (!ini.ReadCCFile(file, false, false)) {
 		return false;
 	}
@@ -532,54 +474,21 @@ bool CoopCampaignClass::FUN_0049C0D0(void)
 bool CoopCampaignClass::FUN_0049C5A0(void)
 {
 	if (!Field6C || !Name[0] || !Map[0]) return false;
-	int campaign = CampaignType;
-	if (!DAT_0089F518.Loaded) DAT_0089F518.FUN_0049DB00();
-	if (campaign < 0 || campaign >= DAT_0089F518.EntryCount) return false;
-	CoopCampEntry * entry = &DAT_0089F518.Entries[campaign];
+	CoopCampEntry * entry;
+	if (!DAT_0089F518.FUN_0049E3B0(CampaignType, &entry)) return false;
 	if (ItemCount == CurrentMap) return true;
 	{
 		char section[100];
 		char key[32];
 		CCFileClass file("coopsave.ini");
-		struct Holder {
-			CCINIClass ini;
-		} h;
-		CCINIClass & ini = h.ini;
+		CCINIClass ini;
 		ini.ReadCCFile(file, false, false);
 		file.Close();
-
-		int i = 0;
-		char const * p;
-		for (p = Name; *p && i < 0x3fd; i++, p++) {
-			if (!isalnum(*p)) {
-				DAT_0089ED18[i++] = '=';
-				int hi = *p >> 4;
-				DAT_0089ED18[i++] = HexDigit(hi);
-				DAT_0089ED18[i] = HexDigit(*p & 0xf);
-			} else {
-				DAT_0089ED18[i] = *p;
-			}
-		}
-		DAT_0089ED18[i] = 0;
-		strcpy(section, DAT_0089ED18);
-		i = 0;
-		for (p = Map; *p && i < 0x3fd; i++, p++) {
-			if (!isalnum(*p)) {
-				DAT_0089ED18[i++] = '=';
-				int hi = *p >> 4;
-				DAT_0089ED18[i++] = HexDigit(hi);
-				DAT_0089ED18[i] = FUN_0049B430(*p & 0xf);
-			} else {
-				DAT_0089ED18[i] = *p;
-			}
-		}
-		DAT_0089ED18[i] = 0;
-		strcat(section, DAT_0089ED18);
+		strcpy(section, FUN_0049B490(Name));
+		strcat(section, FUN_0049B490(Map));
 
 		CCFileClass out;
-		FileClass * pf = &out;
-		pf->Set_Name("coopsave.ini");
-		pf->Open(2);
+		out.Open("coopsave.ini", 2);
 		ini.Clear(section, NULL);
 
 		ini.Put_Int(section, "CurrentMap", CurrentMap);
@@ -794,48 +703,16 @@ bool CoopCampaignClass::FUN_0049D120(void)
 		return false;
 	}
 	char section[100];
-	char key[32];
-	struct Loaded {
-		CCFileClass file;
-		CCINIClass ini;
-		Loaded(void) : file("coopsave.ini") {}
-	} l;
-	CCFileClass & file = l.file;
-	CCINIClass & ini = l.ini;
+	CCFileClass file("coopsave.ini");
+	CCINIClass ini;
 	if (!ini.ReadCCFile(file, false, false)) {
-		l.file.Close();
+		file.Close();
 		return false;
 	}
-	l.file.Close();
-
-	int i = 0;
-	char const * p;
-	for (p = Name; *p && i < 0x3fd; i++, p++) {
-		if (!isalnum(*p)) {
-			DAT_0089ED18[i++] = '=';
-			int hi = *p >> 4;
-			DAT_0089ED18[i++] = HexDigit(hi);
-			DAT_0089ED18[i] = FUN_0049B430(*p & 0xf);
-		} else {
-			DAT_0089ED18[i] = *p;
-		}
-	}
-	DAT_0089ED18[i] = 0;
-	strcpy(section, DAT_0089ED18);
-	i = 0;
-	for (p = Map; *p && i < 0x3fd; i++, p++) {
-		if (!isalnum(*p)) {
-			DAT_0089ED18[i++] = '=';
-			int hi = *p >> 4;
-			DAT_0089ED18[i++] = HexDigit(hi);
-			DAT_0089ED18[i] = FUN_0049B430(*p & 0xf);
-		} else {
-			DAT_0089ED18[i] = *p;
-		}
-	}
-	DAT_0089ED18[i] = 0;
-	strcat(section, DAT_0089ED18);
-	return ini.GetSection(section) != NULL;
+	file.Close();
+	strcpy(section, FUN_0049B490(Name));
+	strcat(section, FUN_0049B490(Map));
+	return ini.Section_Present(section);
 }
 
 // FUNCTION: GAMEMD 0x0049D390
@@ -844,47 +721,18 @@ bool CoopCampaignClass::FUN_0049D390(char * out)
 	if (!Name[0] || !Map[0]) {
 		return false;
 	}
-	char section[100];
-	char key[32];
-	struct Loaded {
-		CCFileClass file;
+	{
+		char section[100];
+		char key[32];
+		CCFileClass file("coopsave.ini");
 		CCINIClass ini;
-		Loaded(void) : file("coopsave.ini") {}
-	} l;
-	CCFileClass & file = l.file;
-	CCINIClass & ini = l.ini;
-	if (!ini.ReadCCFile(file, false, false)) {
-		l.file.Close();
-	} else {
-		l.file.Close();
-
-		int i = 0;
-		char const * p;
-		for (p = Name; *p && i < 0x3fd; i++, p++) {
-			if (!isalnum(*p)) {
-				DAT_0089ED18[i++] = '=';
-				int hi = *p >> 4;
-				DAT_0089ED18[i++] = HexDigit(hi);
-				DAT_0089ED18[i] = FUN_0049B430(*p & 0xf);
-			} else {
-				DAT_0089ED18[i] = *p;
-			}
+		if (!ini.ReadCCFile(file, false, false)) {
+			file.Close();
+			goto failed;
 		}
-		DAT_0089ED18[i] = 0;
-		strcpy(section, DAT_0089ED18);
-		i = 0;
-		for (p = Map; *p && i < 0x3fd; i++, p++) {
-			if (!isalnum(*p)) {
-				DAT_0089ED18[i++] = '=';
-				int hi = *p >> 4;
-				DAT_0089ED18[i++] = HexDigit(hi);
-				DAT_0089ED18[i] = FUN_0049B430(*p & 0xf);
-			} else {
-				DAT_0089ED18[i] = *p;
-			}
-		}
-		DAT_0089ED18[i] = 0;
-		strcat(section, DAT_0089ED18);
+		file.Close();
+		strcpy(section, FUN_0049B490(Name));
+		strcat(section, FUN_0049B490(Map));
 		int current = ini.Get_Int(section, "CurrentMap", 0);
 		sprintf(key, "Map%d", current + 1);
 		ini.Get_String(section, key, "undefined", out, 0x104);
@@ -892,6 +740,8 @@ bool CoopCampaignClass::FUN_0049D390(char * out)
 			return true;
 		}
 	}
+
+failed:
 	return false;
 }
 
@@ -920,34 +770,9 @@ bool CoopCampaignClass::FUN_0049D680(void)
 		strcat(line, pick);
 	}
 	strcat(line, ",-1,");
-	char const * p;
-	int i = 0;
-	for (p = Name; *p && i < 0x3fd; i++, p++) {
-		if (!isalnum(*p)) {
-			DAT_0089ED18[i++] = '=';
-			int hi = *p >> 4;
-			DAT_0089ED18[i++] = HexDigit(hi);
-			DAT_0089ED18[i] = HexDigit(*p & 0xf);
-		} else {
-			DAT_0089ED18[i] = *p;
-		}
-	}
-	DAT_0089ED18[i] = 0;
-	strcat(line, DAT_0089ED18);
+	strcat(line, FUN_0049B490(Name));
 	strcat(line, ",");
-	i = 0;
-	for (p = Map; *p && i < 0x3fd; i++, p++) {
-		if (!isalnum(*p)) {
-			DAT_0089ED18[i++] = '=';
-			int hi = *p >> 4;
-			DAT_0089ED18[i++] = HexDigit(hi);
-			DAT_0089ED18[i] = HexDigit(*p & 0xf);
-		} else {
-			DAT_0089ED18[i] = *p;
-		}
-	}
-	DAT_0089ED18[i] = 0;
-	strcat(line, DAT_0089ED18);
+	strcat(line, FUN_0049B490(Map));
 	FUN_004068E0("@@@@ Sending campaign game option string: %s\n", line);
 	FUN_005E3720(line);
 	FUN_004068E0("@@@@ Sent\n");
