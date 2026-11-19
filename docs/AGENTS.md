@@ -447,9 +447,11 @@ Each entry: what the diff showed, then the source change that fixed it.
   costs the same: write the accessor calls the original made (planmgr's Get_Count, Set_Event).
 - VC6 gives its inline budget to the latest call in the source first. Code placed after a
   call reduces that call's budget; code before it doesn't, and plain statements cost
-  nothing. Case bodies in a switch keep the same layout whatever their source order, so
-  reordering cases is a free way to change which call sites get inlined (WOL_Main_Dialog_Proc's
-  growVector, inlined only at the last request site, 0x0078AC10).
+  nothing. Case bodies in a switch are laid out group by group (each run of case values VC6
+  dispatches together, in ascending value order) and in source order within a group. Moving
+  whole groups is a free way to change which call sites get inlined (WOL_Main_Dialog_Proc's
+  growVector, inlined only at the last request site, 0x0078AC10; ListBoxHandler 0x00618D40);
+  moving a case within its group moves its code.
 - An unnamed `seg_` range that opens with a header run is a module of its own: it lands in
   `src/<previous module>2.cpp` (3 for a second such range), a provisional name that keeps the
   linker's alphabetical order. One with no header run is the end of the module before it and

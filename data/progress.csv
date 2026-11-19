@@ -10647,6 +10647,8 @@ address,name,result,size,source,symbol
 0x00622650,UI::BeginDialog,MATCH,193,src/ownrdraw.cpp,?BeginDialog@UI@@YIPAUHWND__@@HP6GHPAU2@IIJ@ZH@Z
 0x00622720,UI::EndDialog,MATCH,224,src/ownrdraw.cpp,?EndDialog@UI@@YIXPAUHWND__@@@Z
 0x00622800,OwnerDraw::Display_Dialog,MATCH,32,src/ownrdraw.cpp,?Display_Dialog@OwnerDraw@@YIXPAUHWND__@@@Z
+0x00622820,UI::RegisterWindow,MATCH,810,src/ownrdraw.cpp,?RegisterWindow@UI@@YIXPAUHWND__@@H@Z
+0x00622B50,UI::StandardWndProc,MATCH,1482,src/ownrdraw.cpp,?StandardWndProc@UI@@YIHPAUHWND__@@IIJ@Z
 0x00623120,UI::Updated,MATCH,66,src/ownrdraw.cpp,?Updated@UI@@YI_NXZ
 0x00623170,OwnerDraw::Move_Dialog,MATCH,186,src/ownrdraw.cpp,?Move_Dialog@OwnerDraw@@YIHPAUHWND__@@HH@Z
 0x00623230,OwnerDraw::Custom_Message_Box,MATCH,128,src/ownrdraw.cpp,?Custom_Message_Box@OwnerDraw@@YIPAUHWND__@@PBG0PA_N@Z

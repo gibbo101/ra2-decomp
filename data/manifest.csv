@@ -11000,6 +11000,8 @@ address,size,symbol,source,sha256
 0x00622650,193,?BeginDialog@UI@@YIPAUHWND__@@HP6GHPAU2@IIJ@ZH@Z,src/ownrdraw.cpp,dfc4da2e295b02a32643289d93fb72a963af7d2dfbd46e7d2d2941bf5295ec64
 0x00622720,224,?EndDialog@UI@@YIXPAUHWND__@@@Z,src/ownrdraw.cpp,7a9ae6421e53adab5e3a769a84391296556da269d93b8b170209eea0d13033a7
 0x00622800,32,?Display_Dialog@OwnerDraw@@YIXPAUHWND__@@@Z,src/ownrdraw.cpp,12070f7cc78b4a9205efd1c689fe9ce42dc71c6842d3a12d2b38377513b52381
+0x00622820,810,?RegisterWindow@UI@@YIXPAUHWND__@@H@Z,src/ownrdraw.cpp,ba36dcd369b06e1add70e14f9e2043ab6b589ac2aa030b0e17d34b555548f743
+0x00622B50,1482,?StandardWndProc@UI@@YIHPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,4304c0238d85ab61242df055696556eae779b07e63c7706ab63bb08c5b205ed4
 0x00623120,66,?Updated@UI@@YI_NXZ,src/ownrdraw.cpp,e2d785673929037e5be333488891aa2289c108a4131650b0dd4f91bc8f81c3b0
 0x00623170,186,?Move_Dialog@OwnerDraw@@YIHPAUHWND__@@HH@Z,src/ownrdraw.cpp,cdeb72780c813a8bd63f5be9633a477faa8a063ba1c287fe8c71e0a40264ef8f
 0x00623230,128,?Custom_Message_Box@OwnerDraw@@YIPAUHWND__@@PBG0PA_N@Z,src/ownrdraw.cpp,fd14b3b3defb6ea102554a8814f7c8c73156be4976ceeb587745eab73959b0ba

@@ -3354,18 +3354,14 @@ void __fastcall OwnerDraw::DrawCampaignMenuTransition(HWND dialog, bool reverse)
 // FUNCTION: GAMEMD 0x00607FD0
 void FUN_00607FD0(HWND dialog)
 {
-	OwnerDraw::WinData *data = NULL;
-	HWND key = dialog;
-
-	if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL) {
-		if (*((char *)data + 0xbe)) {
-			HWND item = GetDlgItem(dialog, 0x71a);
-			if (item != NULL) {
-				SendMessage(item, 0x4e2, 0, 0);
-			}
-			OwnerDraw::DrawCampaignMenuTransition(dialog, false);
-			*((char *)data + 0xbe) = 0;
+	OwnerDraw::WinData *data = Find_Data(dialog);
+	if (data != NULL && *((char *)data + 0xbe)) {
+		HWND item = GetDlgItem(dialog, 0x71a);
+		if (item != NULL) {
+			SendMessage(item, 0x4e2, 0, 0);
 		}
+		OwnerDraw::DrawCampaignMenuTransition(dialog, false);
+		*((char *)data + 0xbe) = 0;
 	}
 }
 
@@ -4780,7 +4776,7 @@ unsigned char __fastcall FUN_0060C8D0(HWND dialog)
 // FUNCTION: GAMEMD 0x0060C930
 unsigned char __fastcall FUN_0060C930(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
@@ -4826,7 +4822,7 @@ unsigned char __fastcall FUN_0060CA90(HWND dialog)
 // FUNCTION: GAMEMD 0x0060CAF0
 unsigned char __fastcall FUN_0060CAF0(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
@@ -4872,7 +4868,7 @@ unsigned char __fastcall FUN_0060CC60(HWND dialog)
 // FUNCTION: GAMEMD 0x0060CCC0
 unsigned char __fastcall FUN_0060CCC0(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
@@ -4900,7 +4896,7 @@ unsigned char __fastcall FUN_0060CD50(HWND dialog)
 // FUNCTION: GAMEMD 0x0060CDB0
 unsigned char __fastcall FUN_0060CDB0(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
@@ -5060,7 +5056,7 @@ void __fastcall FUN_0060CF00(HWND dialog)
 // FUNCTION: GAMEMD 0x0060D2C0
 void __fastcall FUN_0060D2C0(HWND dialog, int id)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data != NULL) {
 		*(int *)((char *)data + 0x6c) = id;
 	}
@@ -5206,6 +5202,26 @@ BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam)
 	}
 	return TRUE;
 }
+
+namespace OwnerDraw {
+BOOL CALLBACK SetUserData2(HWND window, LPARAM lparam);
+BOOL CALLBACK InitializeCtrl(HWND window, LPARAM lparam);
+
+bool __fastcall PrepareDialogChildControls(HWND dialog, int mode)
+{
+	UI::RegisterComboDropAndNewEditClasses();
+	CurrentDialogHwnd = dialog;
+	EnumChildWindows(dialog, SetUserData2, 1);
+	SetUserData2(dialog, 1);
+	EnumChildWindows(dialog, FUN_0060F320, 1);
+	EnumChildWindows(dialog, InitializeCtrl, mode);
+	InitializeCtrl(dialog, mode);
+	EnumChildWindows(dialog, SetUserData2, 0);
+	SetUserData2(dialog, 0);
+	return true;
+}
+}
+
 
 void __fastcall FUN_0053E3C0(HWND window);
 void ODCacheImages(void);
@@ -8299,6 +8315,125 @@ void __fastcall FUN_0060CF00(HWND dialog);
 void __fastcall Resize_Dialogs(HWND window);
 void __fastcall Center_Window_Within_Window(HWND window);
 extern int DAT_007F5BE0;
+
+extern int DAT_007F5BEC;
+namespace UI { void __fastcall RegisterWindow(HWND window, int type); }
+
+// FUNCTION: GAMEMD 0x00622820
+// UI::RegisterWindow
+void __fastcall UI::RegisterWindow(HWND window, int type)
+{
+	OwnerDraw::PrepareDialogChildControls(window, 0);
+	Resize_Dialogs(window);
+	FUN_0060D2C0(window, type);
+	if (!Session.FUN_0069BBE0()) {
+		FUN_0060CF00(window);
+	}
+	FUN_0060CAF0(window);
+	FUN_0060C930(window);
+	FUN_0060CCC0(window);
+	FUN_0060CDB0(window);
+	FUN_0060AF40(window);
+	if (OwnerDraw::TrySetDialogLayoutBand1(window)) {
+		int layout[2] = { DAT_007F5BE0, DAT_007F5BEC };
+		OwnerDraw::UpdateControlPosition(window, (LPARAM)layout);
+	} else {
+		OwnerDraw::TrySetDialogLayoutBand2(window);
+	}
+	FUN_0060A5A0(window);
+	FUN_0060AA50(window);
+	Center_Window_Within_Window(window);
+}
+
+
+namespace UI { int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
+
+// FUNCTION: GAMEMD 0x00622B50
+int __fastcall UI::StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+		case WM_DESTROY:
+			Remove_Modeless_Dialog(window);
+			--_dialog_count;
+			SetFocus(MainWindow);
+			return 0;
+
+		case WM_DRAWITEM:
+			OwnerDraw::Draw_Item((LPDRAWITEMSTRUCT)lparam);
+			return 1;
+
+		case WM_PAINT: {
+			OwnerDraw::WinData *data = Get_Data(window);
+			if (data != NULL) {
+				if (*((char *)data + 0xbc)) {
+					ValidateRect(window, NULL);
+					return 1;
+				}
+				OwnerDraw::Paint(window);
+				FUN_00607FD0(window);
+				ValidateRect(window, NULL);
+			}
+			return 0;
+		}
+
+		case WM_ERASEBKGND:
+			return 1;
+
+		case WM_INITDIALOG:
+			++_dialog_count;
+			if (lparam != 0) {
+				UI::RegisterWindow(window, *(unsigned short *)lparam);
+			} else {
+				UI::RegisterWindow(window, 0);
+			}
+			SetFocus(window);
+			return 0;
+
+		case WM_CTLCOLORMSGBOX:
+		case WM_CTLCOLOREDIT:
+		case WM_CTLCOLORLISTBOX:
+		case WM_CTLCOLORBTN:
+		case WM_CTLCOLORDLG:
+		case WM_CTLCOLORSCROLLBAR:
+		case WM_CTLCOLORSTATIC:
+			return (int)GetStockObject(BLACK_BRUSH);
+
+		case WM_NCHITTEST: {
+			HWND tip = GetDlgItem(window, 0x695);
+			if (tip != NULL) {
+				int x = LOWORD(lparam);
+				int y = HIWORD(lparam);
+				RECT rect;
+				GetWindowRect(window, &rect);
+				POINT pt;
+				pt.x = x - rect.left;
+				pt.y = y - rect.top;
+				WideWstring text;
+				HWND child = ChildWindowFromPointEx(window, pt, CWP_SKIPINVISIBLE);
+				if (child != NULL) {
+					text = FUN_00603FC0(window, child, x, y);
+					if (wcscmp(text.get(), DAT_00887734) == 0) {
+						text = FUN_00603F60(window, child);
+						if (wcscmp(text.get(), DAT_00887734) == 0) {
+							text = FUN_00604060(window, child);
+						}
+					}
+				}
+				SendMessage(tip, 0x4b2, 0, (LPARAM)text.text());
+			}
+			return 0;
+		}
+
+		case 0x497:
+			SendMessage(window, 0x4a9, (WPARAM)window, 1);
+			return 0;
+
+		case 0x4ec:
+			FUN_0060AAA0(window);
+			return 0;
+	}
+	return 0;
+}
 
 namespace UI { bool Updated(void); }
 
