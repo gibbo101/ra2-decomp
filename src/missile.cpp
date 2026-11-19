@@ -9,7 +9,9 @@
 #include <math.h>
 #include "velocity.h"
 
-template class TVelocity3D<double>;
+#include "_map.h"
+#include "cell.h"
+#include "missile.h"
 
 // SYNTHETIC: GAMEMD 0x005B1EE0 SYMBOL
 // _$E41
@@ -43,3 +45,108 @@ template class TVelocity3D<double>;
 
 // TEMPLATE: GAMEMD 0x005B2A30
 // ?Set_Pitch@?$TVelocity3D@N@@QAEXABVDirType@@@Z
+
+static double Square(double value)
+{
+	return(value * value);
+}
+
+static Point3D Velocity_To_Point(TVelocity3D<double> const & velocity)
+{
+	Point3D result;
+	result.X = velocity.X;
+	result.Y = velocity.Y;
+	result.Z = velocity.Z;
+	return result;
+}
+
+// FUNCTION: GAMEMD 0x005B20F0
+int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const & target_coord, DirType const & rot, bool aircraft, bool airburst, bool veryhigh, bool level)
+{
+	DirType desired_pitch;
+	if (target_coord == COORD_NONE) {
+		desired_pitch = velocity.Get_Pitch();
+		desired_pitch.Turn(DirType(DIR_NE), rot);
+		velocity.Set_Pitch(desired_pitch);
+		TVelocity3D<double> frame_velocity(velocity);
+		coord = coord + Velocity_To_Point(frame_velocity);
+		return(fastmath::sqrt(Square(velocity.Z) + (Square(velocity.Y) + Square(velocity.X))));
+	} else {
+		TVelocity3D<double> frame_velocity(velocity);
+		coord = coord + Velocity_To_Point(frame_velocity);
+		int target_distance = coord.Distance_To(target_coord);
+		int horizontal_distance = Point2D(coord).Distance_To(Point2D(target_coord));
+
+		Coord delta = target_coord - coord;
+
+		TVelocity3D<double> target_direction;
+		target_direction = TVelocity3D<double>(delta);
+
+		DirType desired_yaw = velocity.Get_Yaw();
+		desired_yaw.Turn(target_direction.Get_Yaw(), rot);
+		velocity.Set_Yaw(desired_yaw);
+
+		desired_pitch = velocity.Get_Pitch();
+
+		if (!aircraft && (airburst || horizontal_distance > ((veryhigh ? 6 : 3) * CELL_LEPTON)) && rot.As_Dir256() > 1) {
+			TVelocity3D<double> lookahead_velocity(velocity);
+			Coord lookahead_coord = coord + Velocity_To_Point(lookahead_velocity) * 6;
+
+			int terrain_height = Map.Get_Height_GL(lookahead_coord);
+			if (Map[lookahead_coord].IsUnderBridge) {
+				terrain_height += BRIDGE_LEPTON_HEIGHT;
+			}
+
+			int cell_distance = target_distance / CELL_LEPTON;
+			if (airburst || veryhigh) {
+				cell_distance = 10;
+			} else if (cell_distance >= 5) {
+				cell_distance = 5;
+			}
+
+			if (!level) {
+				int height_delta = coord.Z - LEVEL_LEPTON_H * cell_distance - terrain_height;
+				if (height_delta < -20) {
+					coord.Z += 18;
+				} else if (height_delta > 20) {
+					coord.Z -= 18;
+				}
+
+				if (height_delta < -(LEVEL_LEPTON_H / 2)) {
+					desired_pitch.Turn(DirType(DIR_NE), rot / 2);
+				} else if (height_delta > LEVEL_LEPTON_H / 2) {
+					desired_pitch.Turn(DirType(Dir256(DIR_E + DIR_STEP_32)), rot / 2);
+				} else {
+					desired_pitch.Turn(DIR_E, rot / 2);
+				}
+			}
+		} else if (!level) {
+			desired_pitch.Turn(target_direction.Get_Pitch(), (rot + 256) / 2);
+		}
+
+		velocity.Set_Pitch(desired_pitch);
+
+		if (airburst) {
+			delta.Z = 0;
+		} else {
+			delta.Z /= 4;
+		}
+
+		return(delta.Length());
+	}
+}
+
+// FUNCTION: GAMEMD 0x005B2930
+// ??HDirType@@QBE?AV0@ABV0@@Z
+
+// FUNCTION: GAMEMD 0x005B2950
+// ??GDirType@@QBE?AV0@ABV0@@Z
+
+// FUNCTION: GAMEMD 0x005B2970
+// ??KDirType@@QBE?AV0@H@Z
+
+// FUNCTION: GAMEMD 0x005B2990
+// ?Is_Complete_Turn@DirType@@QAE_NABV1@0@Z
+
+// FUNCTION: GAMEMD 0x005B29C0
+// ?Turn@DirType@@QAE_NABV1@0@Z

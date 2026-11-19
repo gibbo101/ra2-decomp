@@ -147,7 +147,7 @@ class DirType
 		DirType operator + (DirType const & rvalue) const { return DirType(Facing + rvalue.Facing); }
 		DirType operator - (DirType const & rvalue) const { return DirType(Facing - rvalue.Facing); }
 		DirType operator * (int rvalue) const { return DirType(Facing * rvalue); }
-		DirType operator / (int rvalue) const { return DirType(Facing / rvalue); }
+		DirType operator / (int rvalue) const { DirType result(Facing); result /= rvalue; return result; }
 
 		const DirType & operator += (DirType const & rvalue) { Facing += rvalue.Facing; return *this; }
 		const DirType & operator -= (DirType const & rvalue) { Facing -= rvalue.Facing; return *this; }
