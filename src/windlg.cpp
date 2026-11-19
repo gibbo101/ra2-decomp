@@ -23,7 +23,7 @@ BOOL CALLBACK Resize_Dialog(HWND window, LPARAM lParam);
 extern bool g_PlayingNetGame;
 extern int MessageLoopCount;
 int __fastcall Peek_Windows_Message(MSG *msg, HWND wnd, UINT min, UINT max, UINT flags);
-bool WS_Save_Dialog_Values(HWND dialog);
+bool FUN_00608070(HWND dialog);
 
 BOOL CALLBACK Resize_Dialog_Proc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -126,7 +126,7 @@ bool WS_Destroy_Dialog(HWND window, int id)
 		return(false);
 	}
 
-	WS_Save_Dialog_Values(window);
+	FUN_00608070(window);
 
 	for (i = g_DialogCount - 1; i >= index; i--) {
 		Remove_Modeless_Dialog(g_Dialogs[i].handle);

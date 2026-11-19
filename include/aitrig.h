@@ -107,7 +107,10 @@ class AITriggerTypeClass : public AbstractTypeClass
 		int MultiSide;
 
 		int TechLevelNeeded;
-		int unknown_B4;
+		unsigned char : 8;
+		unsigned char : 8;
+		unsigned char : 8;
+		unsigned char : 8;
 
 		double CurWeight;
 
@@ -137,7 +140,10 @@ class AITriggerTypeClass : public AbstractTypeClass
 
 		int TimesSucceded;
 		int TimesExecuted;
-		int unknown_10C;
+		unsigned char : 8;
+		unsigned char : 8;
+		unsigned char : 8;
+		unsigned char : 8;
 
 		static char const * const INI_NAME;
 		static char const * const INI_NAME_ENABLE;

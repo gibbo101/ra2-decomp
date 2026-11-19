@@ -34,9 +34,7 @@
 #include <math.h>
 
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 // SYNTHETIC: GAMEMD 0x006B5050 SYMBOL
 // _$E2

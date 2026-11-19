@@ -192,9 +192,5 @@ int MapSizeGameOption::Get_Display_Priority(const rc_ptr<WDTTerritory> & territo
 // SYNTHETIC: GAMEMD 0x00767880
 // ??_GFlagGameOption@WorldDominationTour@@UAEPAXI@Z
 
-// SYNTHETIC: GAMEMD 0x007678F0 SYMBOL
-// _$E44
-const Rect RECT_NONE_2(0, 0, 0, 0);
-
 // SYNTHETIC: GAMEMD 0x007678C0
 // ??_GMapSizeGameOption@WorldDominationTour@@UAEPAXI@Z

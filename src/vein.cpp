@@ -50,9 +50,7 @@
 
 static bool * GlobalGrowthState = NULL;
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 void const * VeinholeMonsterClass::MonsterShape = NULL;
 
 inline VeinholeLogic::VeinholeLogic(bool) :
@@ -178,6 +176,7 @@ VeinholeMonsterClass::VeinholeMonsterClass(Cell const & cell) :
 	}
 }
 
+// FUNCTION: GAMEMD 0x0074E8A0
 static inline void Clear_Growth_Data(VeinholeMonsterClass * monster)
 {
 	if (monster->GrowthLogic.GrowthQueue) {
@@ -727,7 +726,6 @@ void VeinholeMonsterClass::Clear_Global_Data(void)
 	}
 }
 
-// FUNCTION: GAMEMD 0x0074E8A0
 void VeinholeMonsterClass::Clear_Growth(void)
 {
 	Clear_Growth_Data(this);

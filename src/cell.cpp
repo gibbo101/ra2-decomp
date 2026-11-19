@@ -1317,23 +1317,9 @@ InfantryClass * CellClass::Cell_Infantry(bool bridge) const
 	return((InfantryClass*)Cell_Find_Object(RTTI_INFANTRY, bridge));
 }
 
-struct FileSystem {
-	static ConvertClass * PALETTE_PAL;
-	static ConvertClass * x_PAL;
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
-class SHPStruct
-{
-	public:
-		short Type;
-		short Width;
-		short Height;
-		short Count;
-		void Load(void);
-		Rect GetFrameBounds(int frame) const;
-		unsigned char * GetPixels(int frame) const;
-};
+#include "msanim.h"
 
 // FUNCTION: GAMEMD 0x0047EC90
 bool CellClass::Draw_Placement_Cursor(Point2D const & xpoint, Rect const & cliprect, bool zeroalpha)
@@ -1388,13 +1374,13 @@ bool CellClass::Draw_Placement_Cursor(Point2D const & xpoint, Rect const & clipr
 		ShapeFlags_Type flags = ShapeFlags_Type(zeroalpha ? 0x10600 : 0x20600);
 
 		if (IsFoundationCopyHere) {
-			Draw_Shape(*DSurface::Temp, *FileSystem::PALETTE_PAL, (ShapeSet *)DisplayClass::PlacementShapes,
+			Draw_Shape(*DSurface::Temp, *NormalDrawer, (ShapeSet *)DisplayClass::PlacementShapes,
 				1, point + xpoint, cliprect, flags, 0, height_offset);
 		} else if (ok) {
-			Draw_Shape(*DSurface::Temp, *FileSystem::PALETTE_PAL, (ShapeSet *)DisplayClass::PlacementShapes,
+			Draw_Shape(*DSurface::Temp, *NormalDrawer, (ShapeSet *)DisplayClass::PlacementShapes,
 				0, point + xpoint, cliprect, flags, 0, height_offset);
 		} else {
-			Draw_Shape(*DSurface::Temp, *FileSystem::PALETTE_PAL, (ShapeSet *)DisplayClass::PlacementShapes,
+			Draw_Shape(*DSurface::Temp, *NormalDrawer, (ShapeSet *)DisplayClass::PlacementShapes,
 				Ramp + 2, point + xpoint, cliprect, flags, 0, height_offset);
 		}
 	}
@@ -1567,17 +1553,17 @@ void CellClass::Draw_Overlay(Point2D const & xpoint, Rect const & cliprect)
 		ShapeSet const * tibshape = (ShapeSet const *)overlaytodisplay->Get_Image_Data();
 
 		if (Ramp != RAMP_NONE) {
-			Draw_Shape(*DSurface::Temp, *FileSystem::x_PAL, tibshape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, NORMAL_LIGHT, 0, SlopeZShapes[Ramp - 1]);
+			Draw_Shape(*DSurface::Temp, *TerrainDrawer, tibshape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, NORMAL_LIGHT, 0, SlopeZShapes[Ramp - 1]);
 		} else {
-			Draw_Shape(*DSurface::Temp, *FileSystem::x_PAL, tibshape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, NORMAL_LIGHT);
+			Draw_Shape(*DSurface::Temp, *TerrainDrawer, tibshape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, NORMAL_LIGHT);
 		}
 	} else if (otype->IsWall) {
 		Draw_Shape(*DSurface::Temp, *ColorSchemes[PlayerPtr->Scheme]->Converter, shape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_90DEG, Brightness);
 	} else if (otype->HeapID == OVERLAY_VEINS) {
 		if (Ramp != RAMP_NONE) {
-			Draw_Shape(*DSurface::Temp, *FileSystem::x_PAL, shape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, TileBrightness, 0, SlopeZShapes[Ramp - 1], 0, Point2D(30, -2));
+			Draw_Shape(*DSurface::Temp, *TerrainDrawer, shape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, TileBrightness, 0, SlopeZShapes[Ramp - 1], 0, Point2D(30, -2));
 		} else {
-			Draw_Shape(*DSurface::Temp, *FileSystem::x_PAL, shape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, TileBrightness);
+			Draw_Shape(*DSurface::Temp, *TerrainDrawer, shape, OverlayData, point, cliprect, flags, 0, -2 - yoffset, ZGRAD_GROUND, TileBrightness);
 		}
 	} else {
 		bool flat = otype->IsDrawFlat;

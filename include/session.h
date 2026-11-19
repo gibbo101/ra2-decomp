@@ -332,7 +332,7 @@ struct GlobalPacketType {
 			int AICheatCheck;
 			int ArtCheatCheck;
 			unsigned int BuildNumber;
-			int unknown_24;
+			int Slot;
 			unsigned int Flag;
 		} PlayerInfo;
 		struct {
@@ -604,8 +604,8 @@ class SessionClass
 
 		GameType Type;
 		MultiplayerGameMode * MPGameMode;
-		int unknown_08;
-		int unknown_0C;
+		int WDTTerritory;
+		int WOLWelcomeChoice;
 		int unknown_10;
 
 		CommProtocolType CommProtocol;
@@ -617,9 +617,9 @@ class SessionClass
 		char Handle[MPLAYER_NAME_MAX];
 		int PrefColor;
 		int ColorIdx;
-		int unknown_164;
-		int unknown_168;
-		int unknown_16C;
+		int Start;
+		int InitialStart;
+		int Team;
 		int unknown_170;
 		int House;
 		int idxSide2;
@@ -675,7 +675,7 @@ class SessionClass
 		char ScenarioDigest [32+2];
 		unsigned int ScenarioFileLength;
 		bool ScenarioIsOfficial;
-		int unknown_8D4;
+		int ScenarioMaxPlayers;
 		char ScenarioRequests[MAX_PLAYERS];
 		int  RequestCount;
 
@@ -731,7 +731,7 @@ class SessionClass
 		DynamicVectorClass <NodeNameType *> Games;
 		DynamicVectorClass <NodeNameType *> Players;
 
-		int unknown_2854;
+		int LocalSlot;
 		NodeNameType * Slots[8];
 		bool unknown_2878;
 
@@ -753,29 +753,29 @@ class SessionClass
 		bool ViaPacketRouter;
 		unsigned char unknown_2969[3];
 		IPXAddressClass PacketRouterAddress;
-		IPXAddressClass unknown_2978;
+		IPXAddressClass PacketRouterAddressTranslate;
 		unsigned short PacketRouterPort;
 		unsigned short : 16;
-		IPXAddressClass unknown_2988;
-		IPXAddressClass unknown_2994[MAX_PLAYERS];
-		int unknown_29F4[MAX_PLAYERS];
-		int unknown_2A14[64][2];
+		IPXAddressClass LocalAddress;
+		IPXAddressClass PlayerLocalAddress[MAX_PLAYERS];
+		int PlayerFirewall[MAX_PLAYERS];
+		int ConnectionPairs[64][2];
 		int ConnectionResults[128];
-		int unknown_2E14;
+		int NumConnectionPairs;
 		unsigned short unknown_2E18[MAX_PLAYERS];
 		char unknown_2E28[MAX_PLAYERS][36];
-		bool unknown_2F48;
+		bool SendDelay;
 		int unknown_2F4C[MAX_PLAYERS];
-		int unknown_2F6C[MAX_PLAYERS];
-		CDTimerClass<SystemTimerClass> unknown_2F8C[MAX_PLAYERS];
-		int unknown_2FEC;
+		int KeepAliveSlots[MAX_PLAYERS];
+		CDTimerClass<SystemTimerClass> KeepAliveTimers[MAX_PLAYERS];
+		int KeepAliveCount;
 		int PortBase;
 		int ForcePortBase;
-		int unknown_2FF8[MAX_PLAYERS];
+		int PlayerPortBase[MAX_PLAYERS];
 		bool unknown_3018;
-		int unknown_301C;
+		int PortNumberOverride;
 		wchar_t MasterPlayerName[MPLAYER_NAME_MAX + 1];
-		int unknown_304C[8];
+		int LastPortProbeTime[8];
 		bool unknown_306C;
 		unsigned char : 8;
 		unsigned short unknown_306E;
@@ -786,10 +786,10 @@ class SessionClass
 		unsigned short PlayerPorts[MAX_PLAYERS];
 		unsigned char unknown_308A[2];
 		int unknown_308C;
-		bool unknown_3090;
-		int unknown_3094;
+		bool UsePacketRouter;
+		int FallbackHost;
 		bool unknown_3098;
-		unsigned int unknown_309C;
+		unsigned int RouterResponseTime;
 		int unknown_30A0;
 		int unknown_30A4;
 		int unknown_30A8;

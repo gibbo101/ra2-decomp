@@ -11,7 +11,6 @@
 #include "assert.h"
 #include "globals.h"
 #include "goptions.h"
-#include "geometry.h"
 #include "dbgprint.h"
 #include "gametime.h"
 #include "vqaplayp.h"

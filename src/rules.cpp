@@ -674,7 +674,7 @@ RulesClass::RulesClass(void) :
 	WaterCrate(CRATE_MONEY),
 	CrateMinimum(1),
 	CrateMaximum(255),
-	unknown_int_1478(8192),
+	LZScanRadius(8192),
 	FlareAnim(NULL),
 	MinMoney(2500),
 	MPMoney(10000),
@@ -730,9 +730,9 @@ RulesClass::RulesClass(void) :
 	AmbientLightChangeStep(0.1),
 	CrateTime(10.0),
 	TimerWarning(2.0),
-	unknown_double_1690(14.0),
-	unknown_double_1698(5.0),
-	unknown_double_16A0(10.0),
+	NukeTime(14.0),
+	EMPulseTime(5.0),
+	IonCannonTime(10.0),
 	SpeakDelay(2.0),
 	DamageDelay(1.0),
 	Gravity(3),
@@ -3221,7 +3221,7 @@ void RulesClass::Load_Art_INI(void)
 // INIClass::Is_Present
 
 // TEMPLATE: GAMEMD 0x00679F70
-// ??1?$VectorClass@H@@UAE@XZ
+// ??1?$TypeList@H@@UAE@XZ
 template class VectorClass<int>;
 
 class BuildingTypeClass;
@@ -3230,28 +3230,28 @@ class AircraftTypeClass;
 class InfantryTypeClass;
 
 // TEMPLATE: GAMEMD 0x00679FA0
-// ??1?$VectorClass@PBVBuildingTypeClass@@@@UAE@XZ
+// ??1?$TypeList@PBVBuildingTypeClass@@@@UAE@XZ
 // TEMPLATE: GAMEMD 0x0067B180
 // ??4?$VectorClass@PBVBuildingTypeClass@@@@QAEAAV0@ABV0@@Z
 template class VectorClass<BuildingTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x00679FD0
-// ??1?$VectorClass@PBVUnitTypeClass@@@@UAE@XZ
+// ??1?$TypeList@PBVUnitTypeClass@@@@UAE@XZ
 template class VectorClass<UnitTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x0067A000
-// ??1?$VectorClass@PBVAircraftTypeClass@@@@UAE@XZ
+// ??1?$TypeList@PBVAircraftTypeClass@@@@UAE@XZ
 template class VectorClass<AircraftTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x0067A030
-// ??1?$VectorClass@PBVInfantryTypeClass@@@@UAE@XZ
+// ??1?$TypeList@PBVInfantryTypeClass@@@@UAE@XZ
 template class VectorClass<InfantryTypeClass const *>;
 
 class TerrainTypeClass;
 class VoxelAnimTypeClass;
 
 // TEMPLATE: GAMEMD 0x0067A060
-// ??1?$VectorClass@PBVTerrainTypeClass@@@@UAE@XZ
+// ??1?$TypeList@PBVTerrainTypeClass@@@@UAE@XZ
 template class VectorClass<TerrainTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x0067A090
@@ -3400,7 +3400,7 @@ template class TypeList<TerrainTypeClass const *>;
 // TEMPLATE: GAMEMD 0x0067C1F0
 // ??0?$TypeList@PBVVoxelAnimTypeClass@@@@QAE@ABV0@@Z
 // TEMPLATE: GAMEMD 0x0067C360
-// ?Delete_Index@?$DynamicVectorClass@PBVVoxelAnimTypeClass@@@@QAE_NH@Z
+// ?Delete_Index@?$DynamicVectorClass@PBVAnimTypeClass@@@@QAE_NH@Z
 template class DynamicVectorClass<VoxelAnimTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x0067ADD0
@@ -3428,7 +3428,7 @@ template class DynamicVectorClass<VoxelAnimTypeClass const *>;
 // TEMPLATE: GAMEMD 0x0067C280
 // ??0?$TypeList@PBVSmudgeTypeClass@@@@QAE@ABV0@@Z
 // TEMPLATE: GAMEMD 0x0067C3F0
-// ?Delete_Index@?$DynamicVectorClass@PBVSmudgeTypeClass@@@@QAE_NH@Z
+// ?Delete_Index@?$DynamicVectorClass@PBVInfantryTypeClass@@@@QAE_NH@Z
 template class DynamicVectorClass<SmudgeTypeClass const *>;
 
 // TEMPLATE: GAMEMD 0x0067B1F0
@@ -3452,8 +3452,8 @@ template class DynamicVectorClass<SmudgeTypeClass const *>;
 template class DynamicVectorClass<TerrainTypeClass const *>;
 
 // FUNCTION: GAMEMD 0x0067B500
-// TGet_Class
-template WarheadTypeClass * TGet_Class<WarheadTypeClass>(CCINIClass const &, char const *, char const *, WarheadTypeClass *);
+// ?TGet_Class@@YIPBVWarheadTypeClass@@ABVCCINIClass@@PBD1PBV1@@Z
+template WarheadTypeClass const * TGet_Class<WarheadTypeClass const>(CCINIClass const &, char const *, char const *, WarheadTypeClass const *);
 
 // TEMPLATE: GAMEMD 0x0067B550
 // ?TGet_TypeList@@YI?AV?$TypeList@PBVBuildingTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
@@ -3465,23 +3465,23 @@ template WarheadTypeClass * TGet_Class<WarheadTypeClass>(CCINIClass const &, cha
 // ?TGet_TypeList@@YI?AV?$TypeList@PBVAircraftTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
 
 // FUNCTION: GAMEMD 0x0067BAC0
-// TGet_Class@@YIPAVInfantryTypeClass
-template InfantryTypeClass * TGet_Class<InfantryTypeClass>(CCINIClass const &, char const *, char const *, InfantryTypeClass *);
+// ?TGet_Class@@YIPBVInfantryTypeClass@@ABVCCINIClass@@PBD1PBV1@@Z
+template InfantryTypeClass const * TGet_Class<InfantryTypeClass const>(CCINIClass const &, char const *, char const *, InfantryTypeClass const *);
 
 // TEMPLATE: GAMEMD 0x0067BB10
 // ?TGet_TypeList@@YI?AV?$TypeList@PBVInfantryTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z
 
 // FUNCTION: GAMEMD 0x0067BCE0
-// TGet_Class@@YIPAVBuildingTypeClass
-template BuildingTypeClass * TGet_Class<BuildingTypeClass>(CCINIClass const &, char const *, char const *, BuildingTypeClass *);
+// ?TGet_Class@@YIPBVBuildingTypeClass@@ABVCCINIClass@@PBD1PBV1@@Z
+template BuildingTypeClass const * TGet_Class<BuildingTypeClass const>(CCINIClass const &, char const *, char const *, BuildingTypeClass const *);
 
 // FUNCTION: GAMEMD 0x0067BD30
-// TGet_Class@@YIPAVAircraftTypeClass
-template AircraftTypeClass * TGet_Class<AircraftTypeClass>(CCINIClass const &, char const *, char const *, AircraftTypeClass *);
+// ?TGet_Class@@YIPBVAircraftTypeClass@@ABVCCINIClass@@PBD1PBV1@@Z
+template AircraftTypeClass const * TGet_Class<AircraftTypeClass const>(CCINIClass const &, char const *, char const *, AircraftTypeClass const *);
 
 // FUNCTION: GAMEMD 0x0067BD80
-// TGet_Class@@YIPAVTerrainTypeClass
-template TerrainTypeClass * TGet_Class<TerrainTypeClass>(CCINIClass const &, char const *, char const *, TerrainTypeClass *);
+// ?TGet_Class@@YIPBVTerrainTypeClass@@ABVCCINIClass@@PBD1PBV1@@Z
+template TerrainTypeClass const * TGet_Class<TerrainTypeClass const>(CCINIClass const &, char const *, char const *, TerrainTypeClass const *);
 
 // TEMPLATE: GAMEMD 0x0067BDD0
 // ?TGet_TypeList@@YI?AV?$TypeList@PBVTerrainTypeClass@@@@ABVCCINIClass@@PBD1ABV1@@Z

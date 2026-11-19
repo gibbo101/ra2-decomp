@@ -44,15 +44,13 @@
 // SYNTHETIC: GAMEMD 0x006A4530 SYMBOL
 // _$E38
 
-DynamicVectorClass<SideClass *> SideClass::Array;
-
 // FUNCTION: GAMEMD 0x006A4550
 SideClass::SideClass(char const * ininame) :
 	BASECLASS(ininame),
 	Houses()
 {
 	Create_ID();
-	Array.Add(this);
+	Sides.Add(this);
 }
 
 // FUNCTION: GAMEMD 0x006A4610
@@ -60,14 +58,14 @@ SideClass::SideClass(char const * ininame) :
 SideClass::~SideClass(void)
 {
 	Detach_This_From_All(this);
-	Array.Delete(this);
+	Sides.Delete(this);
 }
 
 // FUNCTION: GAMEMD 0x006A46D0
 SideType SideClass::From_Name(char const * name)
 {
-	for (int classid = 0; classid < Array.Count(); classid++) {
-		if (stricmp(Array[classid]->Name(), name) == 0) {
+	for (int classid = 0; classid < Sides.Count(); classid++) {
+		if (stricmp(Sides[classid]->Name(), name) == 0) {
 			return((SideType)classid);
 		}
 	}

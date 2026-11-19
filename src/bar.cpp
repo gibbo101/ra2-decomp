@@ -12,7 +12,6 @@
 #include "dsurface.h"
 #include "xmouse.h"
 #include <math.h>
-#include "geometry.h"
 #include "rect.h"
 
 extern int DAT_0089C358;

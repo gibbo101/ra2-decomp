@@ -87,7 +87,7 @@ void Shutdown_Network(void)
 }
 
 namespace Unsorted { extern int CurrentFrame; }
-namespace Game { extern int PlayerCount; namespace Network { extern int Tournament; } }
+namespace Game { namespace Network { extern int Tournament; } }
 extern void __cdecl FUN_004068E0(char const *, ...);
 extern NodeNameType * DAT_00AC119C;
 
@@ -190,7 +190,7 @@ void __fastcall Destroy_Connection(int id, int error)
 			break;
 		}
 	}
-	Game::PlayerCount--;
+	Session.NumPlayers--;
 }
 
 

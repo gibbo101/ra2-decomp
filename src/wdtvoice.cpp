@@ -90,14 +90,14 @@ YRVoices::~YRVoices(void)
 }
 
 // FUNCTION: GAMEMD 0x00770550
-// WorldDominationTour::YRVoices::FUN_00770550
-void YRVoices::FUN_00770550(INIClass const & ini, Wstring const & section)
+// WorldDominationTour::YRVoices::Init
+void YRVoices::Init(INIClass const & ini, Wstring const & section)
 {
 	for (int i = 0; i < 6; i++) {
 		int side = Side;
-		{ Wstring name("Win"); Categories[i].FUN_007710B0(ini, section, side, OUTCOME_WIN, name); }
-		{ Wstring name("Lose"); Categories[i].FUN_007710B0(ini, section, side, OUTCOME_LOSE, name); }
-		{ Wstring name("Draw"); Categories[i].FUN_007710B0(ini, section, side, OUTCOME_DRAW, name); }
+		{ Wstring name("Win"); Categories[i].Read_Voiceover(ini, section, side, OUTCOME_WIN, name); }
+		{ Wstring name("Lose"); Categories[i].Read_Voiceover(ini, section, side, OUTCOME_LOSE, name); }
+		{ Wstring name("Draw"); Categories[i].Read_Voiceover(ini, section, side, OUTCOME_DRAW, name); }
 	}
 	{ Wstring name("Startup"); Init_Standalone(ini, section, 0, name); }
 	{ Wstring name("TerritorySelect"); Init_Standalone(ini, section, 1, name); }
@@ -191,9 +191,9 @@ void YRVoices::Category::Set_Name(Wstring const & name)
 // WorldDominationTour::YRVoices::Category::Read
 void YRVoices::Category::Read(INIClass const & ini, Wstring const & section, int side)
 {
-	{ Wstring name("Win"); FUN_007710B0(ini, section, side, OUTCOME_WIN, name); }
-	{ Wstring name("Lose"); FUN_007710B0(ini, section, side, OUTCOME_LOSE, name); }
-	{ Wstring name("Draw"); FUN_007710B0(ini, section, side, OUTCOME_DRAW, name); }
+	{ Wstring name("Win"); Read_Voiceover(ini, section, side, OUTCOME_WIN, name); }
+	{ Wstring name("Lose"); Read_Voiceover(ini, section, side, OUTCOME_LOSE, name); }
+	{ Wstring name("Draw"); Read_Voiceover(ini, section, side, OUTCOME_DRAW, name); }
 }
 
 static inline bool Make_Inline(int side, int index, Wstring & out)
@@ -248,8 +248,8 @@ static inline void Parse_Inline(Wstring const & text, VOICEINDEX_LIST & list)
 }
 
 // FUNCTION: GAMEMD 0x007710B0
-// WorldDominationTour::YRVoices::Category::FUN_007710B0
-void YRVoices::Category::FUN_007710B0(INIClass const & ini, Wstring const & section, int side, int outcome, Wstring const & name)
+// WorldDominationTour::YRVoices::Category::Read_Voiceover
+void YRVoices::Category::Read_Voiceover(INIClass const & ini, Wstring const & section, int side, int outcome, Wstring const & name)
 {
 	Wstring entry = operator+(*FUN_007AF2A0(side), Name).operator+(name);
 	Wstring result;
@@ -281,8 +281,8 @@ static inline bool Pick_Extern(int side, VOICEINDEX_LIST & list, Wstring & out)
 }
 
 // FUNCTION: GAMEMD 0x007712C0
-// WorldDominationTour::YRVoices::FUN_007712C0
-void YRVoices::FUN_007712C0(int category, int outcome, bool emphasis, bool count_queued, int delay)
+// WorldDominationTour::YRVoices::Queue
+void YRVoices::Queue(int category, int outcome, bool emphasis, bool count_queued, int delay)
 {
 	Discard();
 	Wstring name;
@@ -308,8 +308,8 @@ void YRVoices::FUN_007712C0(int category, int outcome, bool emphasis, bool count
 }
 
 // FUNCTION: GAMEMD 0x007714B0
-// WorldDominationTour::YRVoices::FUN_007714B0
-void YRVoices::FUN_007714B0(int voice, bool count_queued, int delay)
+// WorldDominationTour::YRVoices::Queue
+void YRVoices::Queue(int voice, bool count_queued, int delay)
 {
 	Discard();
 	Wstring name;
@@ -386,8 +386,8 @@ void YRVoices::Cleanup(void)
 }
 
 // FUNCTION: GAMEMD 0x007717F0
-// WorldDominationTour::YRVoices::FUN_007717F0
-bool YRVoices::FUN_007717F0(void)
+// WorldDominationTour::YRVoices::Playing
+bool YRVoices::Playing(void)
 {
 	return(FUN_007529E0());
 }
@@ -463,7 +463,7 @@ Rect YRVoices::Anim::Get_Rect(void) const
 // WorldDominationTour::YRVoices::Anim::Has_Finished
 bool YRVoices::Anim::Has_Finished(void) const
 {
-	return(VoicePlayer->FUN_007717F0() == false);
+	return(VoicePlayer->Playing() == false);
 }
 
 // TEMPLATE: GAMEMD 0x007719D0
@@ -478,7 +478,7 @@ void YRVoices::Anim::Restore(Rect const & rect)
 template class DynamicVectorClass<unsigned int>;
 
 // TEMPLATE: GAMEMD 0x00771A00
-// ??1?$VectorClass@I@@UAE@XZ
+// ??1?$DynamicVectorClass@I@@UAE@XZ
 template class VectorClass<unsigned int>;
 
 // SYNTHETIC: GAMEMD 0x00771A30

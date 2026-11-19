@@ -255,7 +255,7 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	CountedAsOwned(false),
 	IsSinking(false),
 	WasSinkingAlready(false),
-	unknown_bool_3CF(false),
+	IsNeedingRescue(false),
 	IsUseless(false),
 	IsTickedOff(false),
 	IsCloakable(false),
@@ -269,9 +269,9 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	IsOwnedByPlayer(false),
 	IsDiscoveredByPlayer(false),
 	IsDiscoveredByComputer(false),
-	unknown_bool_41D(false),
-	unknown_41E(0),
-	unknown_bool_41F(false),
+	IsALemon(false),
+	UnusedCooldown(0),
+	Unused1(false),
 	SightIncrease(0),
 	IsTeamRecruitable(true),
 	IsAutocreateRecruitable(true),
@@ -282,13 +282,13 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	IsBeingManipulated(false),
 	BeingManipulatedBy(NULL),
 	ChronoWarpedByHouse(NULL),
-	unknown_bool_430(false),
+	IsOnPatrol(false),
 	IsMouseHovering(false),
 	ShouldBeReselectOnUnlimbo(false),
 	OldTeam(NULL),
 	CountedAsOwnedSpecial(false),
 	Absorbed(false),
-	unknown_bool_43A(false),
+	IsOnWaypointPatrol(false),
 	unknown_43C(0),
 	CurrentTargetThreatValues(0, 0),
 	CurrentTargets(0, 0),
@@ -313,7 +313,7 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	UnusedGattlingSoundController.FUN_00405BE0();
 	QueuedVoiceSoundController.FUN_00405BE0();
 	QueuedVoiceIndex = -1;
-	unknown_4F4 = -1;
+	PlayingVoiceIndex = -1;
 	Technos.Add(this);
 	PointerExpiredNotification::NotifyInvalidHouse.Add(this);
 	AbstractFlags |= 1;
@@ -765,7 +765,7 @@ TechnoClass::TechnoClass(NoInitClass const & x) :
 	UnusedGattlingSoundController.FUN_00405BE0();
 	QueuedVoiceSoundController.FUN_00405BE0();
 	QueuedVoiceIndex = -1;
-	unknown_4F4 = -1;
+	PlayingVoiceIndex = -1;
 	if (!found) {
 		Array.Add(this);
 	}
@@ -1892,10 +1892,10 @@ void TechnoClass::AI(void)
 	FUN_0070E920();
 	if (QueuedVoiceIndex != -1) {
 		if (!QueuedVoiceSoundController.GetEvent()) {
-			unknown_4F4 = QueuedVoiceIndex;
-			VocClass::PlayGlobal(unknown_4F4, 1.0f, 0x2000, &QueuedVoiceSoundController);
+			PlayingVoiceIndex = QueuedVoiceIndex;
+			VocClass::PlayGlobal(PlayingVoiceIndex, 1.0f, 0x2000, &QueuedVoiceSoundController);
 			QueuedVoiceIndex = -1;
-		} else if (unknown_4F4 == QueuedVoiceIndex) {
+		} else if (PlayingVoiceIndex == QueuedVoiceIndex) {
 			QueuedVoiceIndex = -1;
 		}
 	}
@@ -2037,8 +2037,8 @@ void TechnoClass::AI(void)
 		CurrentTurretNumber = n;
 	}
 	Door.AI();
-	if (unknown_41E) {
-		--unknown_41E;
+	if (UnusedCooldown) {
+		--UnusedCooldown;
 	}
 	if (TarCom && ShouldLoseTargetNow && FUN_00709500()) {
 		Assign_Target(NULL);
@@ -2337,7 +2337,6 @@ void TechnoClass::DestroyGap(void)
 }
 
 extern bool DAT_00843128[];
-namespace FileSystem { extern ConvertClass * PALETTE_PAL; }
 
 static inline Rect Moved_Rect(Rect const & rect, Point2D const & point)
 {
@@ -2482,14 +2481,14 @@ void TechnoClass::FUN_007049C0(Coord start, Coord end, RGBClass color, unsigned 
 	shadow_end.Y += 1;
 	char shadow = b;
 	if (shadow) {
-		int black = FileSystem::PALETTE_PAL->Convert_Pixel(0);
+		int black = NormalDrawer->Convert_Pixel(0);
 		DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), shadow_start)), black);
-		black = FileSystem::PALETTE_PAL->Convert_Pixel(0);
+		black = NormalDrawer->Convert_Pixel(0);
 		DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), shadow_end)), black);
 	}
 	Rect clip = DSurface::ViewBounds;
 	if (shadow && Clip_Line_To_Rect(shadow_start, shadow_end, clip)) {
-		DSurface::Composite->Draw_Line(shadow_start, shadow_end, FileSystem::PALETTE_PAL->Convert_Pixel(0));
+		DSurface::Composite->Draw_Line(shadow_start, shadow_end, NormalDrawer->Convert_Pixel(0));
 	}
 	int pixel = ((color.Get_Red() >> DSurface::RedLeft) << DSurface::RedRight) | ((color.Get_Blue() >> DSurface::BlueLeft) << DSurface::BlueRight) | ((color.Get_Green() >> DSurface::GreenLeft) << DSurface::GreenRight);
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), start_point)), pixel);
@@ -2721,7 +2720,7 @@ FireErrorType TechnoClass::FUN_006FC090(AbstractClass * target, int which) const
 #include "temporal.h"
 
 // FUNCTION: GAMEMD 0x006FC0B0
-FireErrorType TechnoClass::Can_Fire(AbstractClass * target, int weaponIndex, bool ignoreRange) const
+FireErrorType TechnoClass::Can_Fire(AbstractClass * target, int weaponIndex, bool check_range) const
 {
 	if (!target) {
 		return FIRE_ILLEGAL;
@@ -2997,7 +2996,7 @@ FireErrorType TechnoClass::Can_Fire(AbstractClass * target, int weaponIndex, boo
 	if (Techno_Type_Class()->Organic && IsParalyzed()) {
 		return FIRE_ILLEGAL;
 	}
-	if (ignoreRange && !In_Range(target, weaponIndex)) {
+	if (check_range && !In_Range(target, weaponIndex)) {
 		return FIRE_RANGE;
 	}
 	return FIRE_OK;
@@ -3284,12 +3283,12 @@ none:
 			break;
 	}
 
-	beam->FUN_006594A0(source);
-	beam->FUN_006594C0(dest);
-	beam->FUN_006594E0(15);
-	beam->FUN_006594F0(40.0);
-	beam->FUN_00659470(color);
-	beam->FUN_00659490(zadjust);
+	beam->Set_Source(source);
+	beam->Set_Target(dest);
+	beam->Set_Period(15);
+	beam->Set_Amplitude(40.0);
+	beam->Set_Color(color);
+	beam->Set_Z_Adjust(zadjust);
 	if (type == 2) {
 		beam->FUN_00659540(1);
 		beam->FUN_00659550(true);
@@ -3321,14 +3320,14 @@ void TechnoClass::CreateRadBeams(int spread)
 			dest.X += dx;
 			dest.Y += dy;
 			RadBeam * beam = RadBeam::Allocate(2);
-			beam->FUN_00659470(color);
+			beam->Set_Color(color);
 			int period = NonCriticalRandomNumber(5, 20);
 			int amplitude = NonCriticalRandomNumber(100, 500);
 			int end = NonCriticalRandomNumber(0, 20);
-			beam->FUN_006594A0(source);
-			beam->FUN_006594C0(dest);
-			beam->FUN_006594E0(period);
-			beam->FUN_006594F0(amplitude);
+			beam->Set_Source(source);
+			beam->Set_Target(dest);
+			beam->Set_Period(period);
+			beam->Set_Amplitude(amplitude);
 			beam->FUN_00659510(0.0);
 			beam->FUN_00659530(end);
 			if (longest <= period) longest = period;
@@ -3994,7 +3993,7 @@ ResultType TechnoClass::Take_Damage(int & damage, int distance, WarheadTypeClass
 			if (Techno_Type_Class()->DamageSound != -1) {
 				VocClass::PlayIndexAtPos(Techno_Type_Class()->DamageSound, PositionCoord, 0);
 			}
-			if ((Techno_Type_Class()->IsToProtect || unknown_bool_3CF) && !House->FUN_0050B730()) {
+			if ((Techno_Type_Class()->IsToProtect || IsNeedingRescue) && !House->FUN_0050B730()) {
 				if (source != NULL) {
 					Base_Is_Attacked(source);
 				}
@@ -4030,7 +4029,7 @@ ResultType TechnoClass::Take_Damage(int & damage, int distance, WarheadTypeClass
 		}
 
 		if (!negative) {
-			if (CanRetaliateToAttacker(source, (WarheadTypeClass *)warhead)) {
+			if (Is_Allowed_To_Retaliate(source, (WarheadTypeClass *)warhead)) {
 				if (source != NULL) {
 					int which = What_Weapon_Should_I_Use(source);
 					if (In_Range(source, which) || !House->FUN_0050B730() || (double)Distance_To(source) <= ((double)Techno_Type_Class()->SightRange + 0.5) * CELL_LEPTON) {
@@ -4529,19 +4528,6 @@ AbstractClass * TechnoClass::Greatest_Threat(ThreatType method, Coord const & co
 	return((ObjectClass *)bestobject);
 }
 
-class InputManagerClass
-{
-	public:
-		static InputManagerClass * Instance;
-		bool IsKeyPressed(int key);
-};
-
-static inline bool Key_Down(int key)
-{
-	return InputManagerClass::Instance->IsKeyPressed(key);
-}
-
-
 // FUNCTION: GAMEMD 0x006FFEC0
 ActionType TechnoClass::What_Action(ObjectClass const * object, bool disallow_force) const
 {
@@ -4577,9 +4563,9 @@ ActionType TechnoClass::What_Action(ObjectClass const * object, bool disallow_fo
 		}
 	}
 
-	bool altdown = !disallow_force && (Key_Down(Options.KeyForceMove1) || Key_Down(Options.KeyForceMove2));
-	bool ctrldown = !disallow_force && (Key_Down(Options.KeyForceAttack1) || Key_Down(Options.KeyForceAttack2));
-	bool shiftdown = !disallow_force && (Key_Down(Options.KeySelect1) || Key_Down(Options.KeySelect2));
+	bool altdown = !disallow_force && (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
+	bool ctrldown = !disallow_force && (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+	bool shiftdown = !disallow_force && (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
 
 	if (shiftdown) {
 		if (ctrldown) {
@@ -4710,9 +4696,9 @@ ActionType TechnoClass::What_Action(Cell const & cell, bool check_fog, bool disa
 	CellClass const * cellptr = &Map[cell];
 	OverlayTypeClass const * optr = NULL;
 
-	bool ctrldown = !disallow_force && (Key_Down(Options.KeyForceAttack1) || Key_Down(Options.KeyForceAttack2));
-	bool shiftdown = !disallow_force && (Key_Down(Options.KeySelect1) || Key_Down(Options.KeySelect2));
-	bool altdown = !disallow_force && (Key_Down(Options.KeyForceMove1) || Key_Down(Options.KeyForceMove2));
+	bool ctrldown = !disallow_force && (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+	bool shiftdown = !disallow_force && (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+	bool altdown = !disallow_force && (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
 	if (shiftdown && ctrldown) {
 		shiftdown = false;
 		ctrldown = false;
@@ -4751,8 +4737,8 @@ ActionType TechnoClass::What_Action(Cell const & cell, bool check_fog, bool disa
 overlay_done:
 
 	bool renovator = Is_Renovator();
-	if (House->Is_Player_Control() && ((ctrldown && altdown) || unknown_bool_43A) && Can_Player_Move() && (Can_Player_Fire() || renovator)) {
-		if (PlayerPtr->Waypoint_At(cell) != NULL || unknown_bool_43A) {
+	if (House->Is_Player_Control() && ((ctrldown && altdown) || IsOnWaypointPatrol) && Can_Player_Move() && (Can_Player_Fire() || renovator)) {
+		if (PlayerPtr->Waypoint_At(cell) != NULL || IsOnWaypointPatrol) {
 			return(ACTION_PATROL_WAYPOINT);
 		}
 		return(ACTION_GUARD_AREA);
@@ -5153,7 +5139,7 @@ void TechnoClass::FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned ch
 	}
 	Rect clip = DSurface::ViewBounds;
 	if (shadow && Clip_Line_To_Rect(shadow_start, shadow_end, clip)) {
-		DSurface::Composite->Draw_Line(shadow_start, shadow_end, FileSystem::PALETTE_PAL->Convert_Pixel(0));
+		DSurface::Composite->Draw_Line(shadow_start, shadow_end, NormalDrawer->Convert_Pixel(0));
 	}
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Target_Laser_Rect(start_point)), black);
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Target_Laser_Rect(end_point)), pixel);
@@ -5930,7 +5916,7 @@ void TechnoClass::Base_Is_Attacked(TechnoClass const * enemy)
 
 
 // FUNCTION: GAMEMD 0x007087C0
-bool TechnoClass::CanRetaliateToAttacker(ObjectClass * attacker, WarheadTypeClass * warhead)
+bool TechnoClass::Is_Allowed_To_Retaliate(ObjectClass * attacker, WarheadTypeClass * warhead)
 {
 	if (attacker == NULL) return(false);
 
@@ -6411,15 +6397,12 @@ bool TechnoClass::Enter_Idle_Mode(bool, bool)
 	return(false);
 }
 
-namespace FileSystem { extern ShapeSet * PIPS_SHP; extern ConvertClass * PALETTE_PAL; }
-
 inline Rect Drawing_GetTextDimensions(wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY)
 {
 	Rect result;
 	return *Drawing_GetTextDimensions(&result, text, loc, flags, marginX, marginY);
 }
 
-namespace FileSystem { extern ShapeSet * PIPS2_SHP; }
 Point2D Plain_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flag, int scheme, int unused);
 
 // FUNCTION: GAMEMD 0x00709A90
@@ -6428,12 +6411,9 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 	int i;
 	Point2D offset(4, 2);
 	Point2D xy = point + Point2D(6, -1);
-	Class_Of();
-	ShapeSet const *pip_shapes = FileSystem::PIPS_SHP;
-	Class_Of();
-	ShapeSet const *pips1 = FileSystem::PIPS_SHP;
-	Class_Of();
-	ShapeSet const *pips2 = FileSystem::PIPS2_SHP;
+	ShapeSet const *pip_shapes = (ShapeSet const *)Class_Of()->PipShapes;
+	ShapeSet const *pips1 = (ShapeSet const *)Class_Of()->PipShapes;
+	ShapeSet const *pips2 = (ShapeSet const *)Class_Of()->Pip2Shapes;
 	bool building = Fetch_RTTI() == RTTI_BUILDING;
 	if (!building) {
 		xy = point + Point2D(-5, 0);
@@ -6448,7 +6428,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 		for (i = 0; i < spawns; i++) {
 			int full = 1;
 			int empty = 0;
-			Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, i < docked ? full : empty, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, i < docked ? full : empty, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 		}
 	}
 	if (building) {
@@ -6460,7 +6440,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 				int frame;
 				if (i < count && self->Occupants[i] != NULL) frame = self->Occupants[i]->Class->OccupyPip;
 				else frame = 6;
-				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			}
 		}
 	}
@@ -6501,12 +6481,12 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 		}
 		int start = 0;
 		if (Techno_Type_Class()->Gunner) {
-			Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, colors[0], xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, colors[0], xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			start = 1;
 			shift = offset * 2;
 		}
 		for (int j = start; j < pips; j++) {
-			Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, colors[j], xy + shift + offset * j, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, colors[j], xy + shift + offset * j, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 		}
 		delete colors;
 	} else {
@@ -6516,14 +6496,14 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 			for (i = 0; i < maximum; i++) {
 				int frame = 0;
 				if (i < pips) frame = 1;
-				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			}
 			bool flag = false;
 			if (CaptureManager && CaptureManager->IsOverloading(&flag)) {
 				int overload_frame = 3;
 				int ordinary_frame = 4;
 				int frame = flag ? overload_frame : ordinary_frame;
-				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			}
 		}
 		if (Techno_Type_Class()->PipScale == PIPSCALE_TIBERIUM) {
@@ -6542,7 +6522,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 					shape = 2;
 					greenpips--;
 				}
-				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, shape, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, shape, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			}
 		} else if (Techno_Type_Class()->PipScale == PIPSCALE_AMMO) {
 			int wrap = Techno_Type_Class()->PipWrap;
@@ -6551,7 +6531,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 				for (int i = 0; i < maximum; i++) {
 					if (left > 0) {
 						left--;
-						Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips2, 13, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+						Draw_Shape(*LogicalSurface, *NormalDrawer, pips2, 13, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 					}
 				}
 			} else {
@@ -6564,7 +6544,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 							break;
 						}
 					}
-					Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips2, frame, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+					Draw_Shape(*LogicalSurface, *NormalDrawer, pips2, frame, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 				}
 			}
 		}
@@ -6590,8 +6570,8 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 	if (Fetch_RTTI() == RTTI_UNIT) { heal_offset = Point2D(38, -32); }
 	else if (Fetch_RTTI() == RTTI_INFANTRY) { heal_offset = Point2D(19, -35); }
 	if (selfheal) {
-		if (flash) Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_DARKEN));
-		else Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+		if (flash) Draw_Shape(*LogicalSurface, *NormalDrawer, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_DARKEN));
+		else Draw_Shape(*LogicalSurface, *NormalDrawer, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 	}
 	if (Fetch_RTTI() != RTTI_BUILDING) Draw_Text_Overlay(point + Point2D(-10, 10), point, window);
 	if (Group >= 0 && Group < 10) {
@@ -6616,8 +6596,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 // FUNCTION: GAMEMD 0x0070A990
 void TechnoClass::DrawVeterancyPips(Point2D const & point, Rect const & rect) const
 {
-	Class_Of();
-	ShapeSet * shapes = FileSystem::PIPS_SHP;
+	ShapeSet const * shapes = (ShapeSet const *)Class_Of()->PipShapes;
 	int frame = -1;
 	if (Veterancy.Is_Veteran()) {
 		frame = 14;
@@ -6636,7 +6615,7 @@ void TechnoClass::DrawVeterancyPips(Point2D const & point, Rect const & rect) co
 		xy.X += 5;
 		xy.Y += 4;
 	}
-	Draw_Shape(*DSurface::Temp, *FileSystem::PALETTE_PAL, shapes, frame, xy, rect, ShapeFlags_Type(0xE00), NULL, -2, ZGRAD_GROUND, 1000);
+	Draw_Shape(*DSurface::Temp, *NormalDrawer, shapes, frame, xy, rect, ShapeFlags_Type(0xE00), NULL, -2, ZGRAD_GROUND, 1000);
 }
 
 Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, int unused);
@@ -6766,6 +6745,56 @@ void TechnoClass::vt_entry_48C(bool incremental, bool flag, bool use_house, Hous
 			}
 		} else if (use_house && LastSightRange != 0 && house != NULL) {
 			Map.RevealArea2(&LastSightCoords, LastSightRange, house, incremental, flag, false, true, true);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0070B280
+void TechnoClass::vt_entry_3D8(Coord const & coord, float force, bool flag)
+{
+	if (Techno_Type_Class()->Voxel.VoxLib != NULL && !Techno_Type_Class()->Voxel.VoxLib->Load_Failed()) {
+		Coord pos = PositionCoord;
+		Vector3 vec1;
+		vec1.X = pos.X - coord.X;
+		vec1.Y = coord.Y - pos.Y;
+		vec1.Z = pos.Z - coord.Z;
+		Vector3 vec2 = vec1;
+
+		double theta = PrimaryFacing.Current().As_Radian();
+		float sangle = fastmath::sin(theta);
+		Vector3 facing(fastmath::cos(theta), sangle, 0.0f);
+
+		float dist1 = (float)fastmath::sqrt((double)vec1.X * vec1.X + (double)vec1.Y * vec1.Y + (double)vec1.Z * vec1.Z);
+
+		float scale = (0.04f - dist1 * 0.000025f) * force / Techno_Type_Class()->Weight;
+
+		if (fabs(dist1) >= 0.00002 && scale >= 0.01f) {
+			if (scale > 0.05f) {
+				scale = 0.05f;
+			}
+
+			vec2.Z = 0.0;
+			double len = fastmath::sqrt(vec2.X * vec2.X + vec2.Y * vec2.Y);
+
+			Vector3 normal;
+			if (len != 0.0) {
+				normal = vec2 / len;
+			} else {
+				normal = vec2;
+			}
+
+			float forward = normal * facing;
+			Vector3 side = Vector3::Cross_Product(normal, facing);
+			float dist2 = (float)fastmath::sqrt((double)side.X * side.X + (double)side.Y * side.Y + (double)side.Z * side.Z);
+			float c2 = facing.X;
+			float s2 = sangle;
+			float c3 = facing.X;
+			float s3 = sangle;
+			if (fabs(c2 * forward - s2 * dist2 - normal.X) > 0.0002 || fabs(c3 * dist2 + s3 * forward - normal.Y) > 0.0002) {
+				dist2 = -dist2;
+			}
+			RockingForwardsPerFrame = flag ? forward * scale : forward * scale * 0.5f;
+			RockingSidewaysPerFrame = -(dist2 * scale);
 		}
 	}
 }
@@ -7022,7 +7051,7 @@ HRESULT STDMETHODCALLTYPE TechnoClass::Load(IStream * stream)
 		unknown_4D8 = 0;
 		QueuedVoiceSoundController.FUN_00405BE0();
 		QueuedVoiceIndex = -1;
-		unknown_4F4 = -1;
+		PlayingVoiceIndex = -1;
 		result = S_OK;
 	}
 	return(result);
@@ -7059,7 +7088,7 @@ void TechnoClass::Compute_CRC(CRCEngine & crc) const
 	crc(RockingSidewaysPerFrame);
 	crc(RockingForwardsPerFrame);
 	crc(IsSinking);
-	crc(unknown_bool_3CF);
+	crc(IsNeedingRescue);
 	crc(IsUseless);
 	crc(IsTickedOff);
 	crc(IsCloakable);
@@ -7073,10 +7102,10 @@ void TechnoClass::Compute_CRC(CRCEngine & crc) const
 		crc(IsDiscoveredByPlayer);
 		crc(IsDiscoveredByComputer);
 	}
-	crc(unknown_bool_41D);
+	crc(IsALemon);
 	crc((int)EMPLockRemaining);
-	crc((int)unknown_41E);
-	crc((int)unknown_bool_41F);
+	crc((int)UnusedCooldown);
+	crc((int)Unused1);
 	crc(SightIncrease);
 	int count = CurrentTargets.Count();
 	crc(count);
@@ -8329,12 +8358,12 @@ void TechnoClass::FUN_0070F1D0(Point2D const &center, Rect const &rect)
 		if (Rule->Behind) {
 			BehindAnim = new AnimClass(Rule->Behind, Center_Coord(), 0, 1, ShapeFlags_Type(0x600), 0);
 			if (BehindAnim) {
-				BehindAnim->SetOwnerObject(this);
+				BehindAnim->Attach_To(this);
 				if (!Options.ShowHidden)
 					BehindAnim->Invisible = true;
 			}
 		} else {
-			int color = FileSystem::PALETTE_PAL->Convert_Pixel(12);
+			int color = NormalDrawer->Convert_Pixel(12);
 			Point2D origin = center;
 			int outside, inside;
 			if (Frame & 8) {
@@ -8578,7 +8607,7 @@ void TechnoClass::FUN_0070FD70(BuildingClass * building)
 		AnimClass * anim = new AnimClass(Rule->DrainAnimationType, Center_Coord(), 0, 1, ShapeFlags_Type(0x600));
 		DrainAnim = anim;
 		if (anim != NULL) {
-			anim->SetOwnerObject(this);
+			anim->Attach_To(this);
 		}
 		if (this != NULL && (AbstractFlags & 4) && ((FootClass *)this)->Team != NULL) {
 			((FootClass *)this)->Team->Remove((FootClass *)this, -1, true);

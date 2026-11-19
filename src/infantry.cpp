@@ -466,10 +466,7 @@ int InfantryClass::Shape_Number(void) const
 	return(shapenum);
 }
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-	static ConvertClass * PALETTE_PAL;
-};
+#include "filesystem.h"
 
 extern ShapeSet const * DAT_00A8F244;
 
@@ -510,7 +507,7 @@ void InfantryClass::Draw_It(Point2D const & xpoint, Rect const & cliprect) const
 			Point2D spoint = xpoint + Point2D(Locomotion->Shadow_Point());
 			Draw_Shape(
 				*DSurface::Temp,
-				*FileSystem::PALETTE_PAL,
+				*NormalDrawer,
 				shapefile,
 				Locomotion->Drawing_Code(),
 				spoint,
@@ -573,7 +570,7 @@ void InfantryClass::Draw_It(Point2D const & xpoint, Rect const & cliprect) const
 				if (DAT_00A8F244 != NULL) {
 					Draw_Shape(
 						*DSurface::Temp,
-						*FileSystem::PALETTE_PAL,
+						*NormalDrawer,
 						DAT_00A8F244,
 						1,
 						point + Point2D(0, -IonBlastYDrawOffset) + Point2D(0, TacticalMap->Z_Lepton_To_Pixel(height)),
@@ -3600,7 +3597,7 @@ RTTIType InfantryClass::Fetch_RTTI(void) const
 // ?Binary_Search@@YIPAUNodeElement@?$IndexClass@HPAVAbstractClass@@@@PAU12@HABU12@@Z
 
 // FUNCTION: GAMEMD 0x0051C8B0
-FireErrorType InfantryClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
+FireErrorType InfantryClass::Can_Fire(AbstractClass * target, int which, bool check_range) const
 {
 	if (FUN_00522C60(Doing)) {
 		return FIRE_CANT;
@@ -3616,7 +3613,7 @@ FireErrorType InfantryClass::Can_Fire(AbstractClass * target, int which, bool ig
 		unit->DirectRockerLinkedUnit != As_Techno(this)) {
 		return FIRE_ILLEGAL;
 	}
-	FireErrorType result = TechnoClass::Can_Fire(target, which, ignoreRange);
+	FireErrorType result = TechnoClass::Can_Fire(target, which, check_range);
 	if (result == FIRE_OK) {
 		if (Speed > 0.1 || (NavCom != NULL && Doing != DO_NOTHING && !MasterDoControls[Doing].Interrupt)) {
 			return FIRE_MOVING;

@@ -30,7 +30,7 @@ class UnitTypeClass : public TechnoTypeClass
 		bool CrateGoodie;
 		bool Harvester;
 		bool Weeder;
-		bool unknown_E10;
+		bool IsFireAnim;
 		bool HasTurret;
 		bool DeployToFire;
 		bool IsSimpleDeployer;

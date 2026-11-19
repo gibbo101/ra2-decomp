@@ -223,6 +223,24 @@ Each entry: what the diff showed, then the source change that fixed it.
   inline helper the outer condition uses (0x0060B950 rose from 62% to 99.8%).
 - A search loop the original leaves unrotated: `while (!found) { if (out of range) break;
   step; if (ok) found = true; }` (0x00457DE0).
+- A `break` into code shared by several switch cases puts that code after the last case that
+  breaks into it; the earlier cases jump to it. Giving a case its own `return` changes which
+  case is last (0x0078AC10, case 0x688).
+- When a jump goes forward into shared code that ends in a `return`, VC6 copies that code
+  instead of jumping; a backward jump stays a jump.
+- VC6 writes `mov a; jcc; mov b` instead of the branch-free `neg`/`sbb` form only when
+  something blocks the conversion, such as a second path into the branch target or code
+  shared with another case.
+- Naming a call's result in its own statement (`HWND item = GetDlgItem(...);
+  EnableWindow(item, flag);`) moves that call ahead of the other argument's load, which can
+  fix argument order and register swaps.
+- Nested `if`s and `&&` chains compile the same in VC6. Only an inlined fixed-register call
+  such as `strlen` inside the chain can flip a register tie (0x00799080). Don't reshape
+  conditions without one.
+- Of identical return tails, VC6 keeps one reached by a taken jump (an else arm, the body of
+  `if (a || b)`, a case) over ones reached by falling through; among fall-through tails it
+  keeps the last in the source, among jump targets the first. The other returns then
+  cross-jump into the kept copy in source order (0x007A1BB0).
 
 ### Registers
 - ESI and EDI swapped with every other byte identical: add one real use of a variable
@@ -296,6 +314,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   function, and a named bool where the plain `if` does not match.
 - Before casting operands to steer a hand-written expression, try the header's own inline
   for it: RadBeam's tint matched as `DSurface::Build_Hicolor_Pixel(Tint)` with no casts.
+- A very small auto-inline (a null test plus an accessor) never fails the inline budget, at
+  any depth. If the exe calls one out of line, look for a cause other than budget
+  (0x0058D620's `Get_Region`).
 - A nested call left out of line under an inlined wrapper (`Cell_Terrain()` around
   `Cell_Find_Object`) is the inline budget: call the wrapper, as TibSun does.
 - A callee the original inlines that lives in the same module is defined in that file
@@ -424,6 +445,13 @@ Each entry: what the diff showed, then the source change that fixed it.
   own `return;`, which moves the shared copy to the last arm (ZBuffer::Pan).
 - VC6 spends the inline budget from the end of a function backwards, and every inlined call
   costs the same: write the accessor calls the original made (planmgr's Get_Count, Set_Event).
+- VC6 gives its inline budget to the latest call in the source first. Code placed after a
+  call reduces that call's budget; code before it doesn't, and plain statements cost
+  nothing. Case bodies in a switch are laid out group by group (each run of case values VC6
+  dispatches together, in ascending value order) and in source order within a group. Moving
+  whole groups is a free way to change which call sites get inlined (WOL_Main_Dialog_Proc's
+  growVector, inlined only at the last request site, 0x0078AC10; ListBoxHandler 0x00618D40);
+  moving a case within its group moves its code.
 - An unnamed `seg_` range that opens with a header run is a module of its own: it lands in
   `src/<previous module>2.cpp` (3 for a second such range), a provisional name that keeps the
   linker's alphabetical order. One with no header run is the end of the module before it and
@@ -436,7 +464,12 @@ Each entry: what the diff showed, then the source change that fixed it.
   is `include/geometry.h`'s per-file constants: include it where the exe's `_$E` numbers
   put it (usually right after `always.h`; after `wdtnet.h` in wdtconflict and wdtstate),
   before any `extern` of the same names, and mark them; never write `Init_` or
-  `ShortPair`/`IntTriple` stand-ins.
+  `ShortPair`/`IntTriple` stand-ins. Include it only where the exe's module has the run:
+  elsewhere it compiles 13 initialisers the exe lacks.
+- globals.h's later `extern` redeclarations of geometry.h's constants make VC6 emit two
+  empty `$E` initialisers per file that the exe lacks. They are accepted residue: putting
+  globals.h first makes the constants public in every object, which the link rejects, and
+  dropping its externs breaks every header that uses them as default arguments.
 - TibSun's `dynamic_cast<ObjectClass *>` is `AbstractFlags & 2` in YR.
 - An atexit stub with no `$S` guard byte destroys a plain global, not a static member
   (`Kamikaze KamikazeInstance;`, not `Kamikaze::Instance`).
@@ -487,10 +520,15 @@ Each entry: what the diff showed, then the source change that fixed it.
   cut them to the comment rules (two `//` lines of behaviour) before landing.
 - `#define NDEBUG` before the includes is how a file whose original has its asserts
   compiled out is built (ownrdraw.cpp, wonline.cpp).
-- A match that flips with unrelated header declarations is VC6 ordering spill reloads by
-  heap address: sweep dummy declarations and keep the form that fails at fewest offsets.
+- A heap-sensitive match flips with the weighted count of declarations before the
+  function, not their names: 1 per variable, typedef, forward declaration or data member
+  (named or unnamed), 2 per function declaration or `enum`, 3 per inline definition, 8
+  plus its members per class definition; redeclarations and `#define`s weigh nothing.
+  Keep a change's net weight zero before the function, or sweep it with
+  `tools/declprobe.py`.
 - When no body form helps, moving real declarations the file already uses to before or
-  after the function shifts its heap offsets too (wonline 0x00788180); never add unused ones.
+  after the function shifts its heap offsets too (wonline 0x00788180). Never invent
+  declarations; one TibSun's header has at that place may be restored to keep the count.
   One move may not be enough: move several together (six held it against a new inline).
   Removing declarations nothing uses works too (nine held it); results jump with set size.
   An unused `#include` is one too: dropping overtype.h restored DrawMap 0x00640A40.
@@ -566,6 +604,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   own .cpp uses stay out of the shared header: that file declares the full class itself.
   When one must land, shift each includer's markers by one from the first number the
   checker reports as 'no compiled function has this name'.
+- An `#include` can add static initialisers that the exe's module does not have (inline.h
+  pulls in sun.h's), and the checker never flags extra compiled code. Compare the file's
+  compiled `$E` count before and after adding a header.
 - An inline constructor or destructor in a shared header on a class with vector members
   shifts `$E` and `$S` numbers in every includer: declare it, define it inline in its file.
 - Two heap-sensitive functions in different files that want opposite states of a header's

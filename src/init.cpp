@@ -80,6 +80,7 @@
 #include "mixfile.h"
 #include "modemgst.h"
 #include "modemhst.h"
+#include "mono.h"
 #include "movie.h"
 #include "mplayer.h"
 #include "msgbox.h"
@@ -123,6 +124,7 @@
 #include "unittype.h"
 #include "vein.h"
 #include "voc.h"
+#include "volinfo.h"
 #include "vox.h"
 #include "vqoption.h"
 #include "wave.h"
@@ -166,33 +168,23 @@
 // SYNTHETIC: GAMEMD 0x0052B970 SYMBOL
 // _$E145
 
-extern int DAT_00A8F768;
-extern int DAT_00A8F76C;
-extern int DAT_00A8F770;
 
-// FUNCTION: GAMEMD 0x0052B990
-void FUN_0052B990(void)
-{
-	DAT_00A8F770 = 0;
-	DAT_00A8F768 = 128;
-	DAT_00A8F76C = 128;
-}
+// SYNTHETIC: GAMEMD 0x0052B990 SYMBOL
+// _$E148
 
-struct Drawing {
-	static int RenderWidth;
-	static int RenderHeight;
-};
+extern int VideoModeWidth;
+extern int VideoModeHeight;
 
 // FUNCTION: GAMEMD 0x0052B9B0
 void __fastcall FUN_0052B9B0(HWND dialog)
 {
 	HWND control = GetDlgItem(dialog, 0x71A);
 	if (control) {
-		int x = (Drawing::RenderWidth <= 800) ? 0 : (Drawing::RenderWidth - 800) / 2;
-		int y = (Drawing::RenderHeight <= 600) ? 0 : (Drawing::RenderHeight - 600) / 2;
+		int x = (VideoModeWidth <= 800) ? 0 : (VideoModeWidth - 800) / 2;
+		int y = (VideoModeHeight <= 600) ? 0 : (VideoModeHeight - 600) / 2;
 		SetWindowPos(control, NULL, x, y, -1, -1, SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW);
 		SendMessage(control, 0x4E3, 1, 0);
-		if (Drawing::RenderWidth == 640) {
+		if (VideoModeWidth == 640) {
 			SendMessage(control, 0x4E4, 0, (LPARAM)"Ra2ts_s");
 		} else {
 			SendMessage(control, 0x4E4, 0, (LPARAM)"Ra2ts_l");
@@ -204,20 +196,19 @@ void __cdecl FUN_004068E0(char const * format, ...);
 extern unsigned char DAT_00A8E960;
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void __fastcall FUN_0046CE10(CCINIClass * ini);
+void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before, bool fullscreen);
+#include "audtimer.h"
 struct Game {
-	static void __fastcall PlayMovie(const char * name, int theme, int a, int b, int c, int d);
 	static bool __cdecl CallBack(void);
-	static int TechLevel;
 	static int Seed;
 	static unsigned char RecordingFlag;
-	static void InitRandom(void);
 	static HWND hWnd;
 	static HINSTANCE hInstance;
-	static unsigned __int64 __fastcall AudioGetTime(void);
 	static int ObserverMode;
 };
 
 bool FUN_0052CB50(void);
+void Init_Random(void);
 
 #include "debugpage.h"
 #include "playcd.h"
@@ -251,7 +242,7 @@ static void Init_Mouse(void)
 		MouseCursor->Set_Cursor(point, (ShapeSet const *)DAT_00B0BCF0, 0);
 	}
 	Map.Set_Default_Mouse(MOUSE_NORMAL, false);
-	Game::CallBack();
+	Call_Back();
 }
 static bool Init_CDROM_Access(void);
 
@@ -259,9 +250,9 @@ static bool Init_CDROM_Access(void);
 void __cdecl FUN_004A4AC0(const char * text);
 bool Init_Secondary_Mixfiles(void);
 void FUN_005312A0(void);
-void FUN_0052CB90(void);
+void Init_Campaigns(void);
 bool Init_Bulk_Data(void);
-bool FUN_0052CD70(void);
+bool Init_Rules(void);
 extern unsigned __int64 DAT_00A8F788;
 void Init_Commands(void);
 
@@ -298,10 +289,10 @@ int Init_Game(void)
 		return -1;
 	}
 	FUN_004A4AC0(" ...OK\n");
-	Game::PlayMovie("EA_WWLOGO", -1, 1, 1, 1, 0);
+	Play_Movie("EA_WWLOGO", THEME_NONE, 1, 1, 1, 0);
 	FUN_005312A0();
 	FUN_004068E0("Init Campaigns\n");
-	FUN_0052CB90();
+	Init_Campaigns();
 	FUN_004068E0("Init Heaps\n");
 	FUN_004068E0("Init Threads\n");
 	FUN_004068E0("Reading Game Settings\n");
@@ -368,7 +359,7 @@ int Init_Game(void)
 		return -1;
 	}
 	FUN_004068E0("Init Rules\n");
-	if (!FUN_0052CD70()) {
+	if (!Init_Rules()) {
 		FUN_004068E0("Failed to initialize Rules!\n");
 		return -1;
 	}
@@ -382,7 +373,7 @@ int Init_Game(void)
 		BuildingTypeClass *type = BuildingTypes[building];
 		type->Read_INI(*RuleINI);
 	}
-	while (Game::AudioGetTime() < DAT_00A8F788) {
+	while (AudioGetTime() < DAT_00A8F788) {
 	}
 	FUN_0052CB50();
 	Session.MaxPlayers = Rule->MaxPlayers;
@@ -401,7 +392,7 @@ int Init_Game(void)
 		}
 	}
 	memset(Session.PlayerChatEnabled, true, sizeof(Session.PlayerChatEnabled));
-	Game::InitRandom();
+	Init_Random();
 	FUN_004068E0("Init Commands\n");
 	Init_Commands();
 	FUN_004068E0("Game Init Completed.\n");
@@ -414,7 +405,7 @@ int Init_Game(void)
 bool FUN_0052CB50(void)
 {
 	if (Special.IsFromInstall) {
-		Game::PlayMovie("A00_F00E", -1, 1, 1, 1, 0);
+		Play_Movie("A00_F00E", THEME_NONE, 1, 1, 1, 0);
 	}
 	FUN_0052FEC0(NULL, true);
 	return Game::CallBack();
@@ -426,7 +417,7 @@ void FUN_0052CB80(void)
 }
 
 // FUNCTION: GAMEMD 0x0052CB90
-void FUN_0052CB90(void)
+void Init_Campaigns(void)
 {
 	bool found = false;
 	WIN32_FIND_DATA fd;
@@ -475,7 +466,7 @@ void FUN_0052CB90(void)
 BOOL CALLBACK Rules_Choice_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x0052CD70
-bool FUN_0052CD70(void)
+bool Init_Rules(void)
 {
 	DynamicVectorClass<CCINIClass *> Rules;
 
@@ -874,7 +865,7 @@ namespace UI {
 	bool __fastcall Updated(void);
 }
 
-BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK Campaign_Choice_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 int Main_Menu(unsigned int timeout);
 bool FUN_0052F3F0(void);
 int __fastcall FUN_0077B2A0(bool returning);
@@ -882,7 +873,7 @@ void FUN_0072D9A0(void);
 void FUN_0072DAA0(void);
 int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus);
 void __fastcall FUN_0053F1F0(int value);
-bool FUN_006AE2C0(void);
+bool Skirmish_Mode_Dialog(void);
 void __fastcall FUN_0078ABF0(bool a, wchar_t const * text);
 void FUN_006370B0(void);
 void FUN_004C3E30(void);
@@ -905,7 +896,7 @@ static CampaignType Choose_Campaign(void)
 	pick.Choice = -1;
 
 	if (Campaigns.Count() == 0) {
-		FUN_0052CB90();
+		Init_Campaigns();
 		if (Campaigns.Count() == 0) {
 			return(CAMPAIGN_NONE);
 		}
@@ -915,13 +906,13 @@ static CampaignType Choose_Campaign(void)
 	DAT_00A8F300.FUN_00405BE0();
 	DAT_00A8F7A0 = 0;
 	DAT_00A8F7A8 = 0;
-	HWND dialog = UI::BeginDialog(0x94, FUN_0052EC00, 0);
+	HWND dialog = UI::BeginDialog(0x94, Campaign_Choice_Dialog_Proc, 0);
 	if (dialog != NULL) {
 		SetWindowLong(dialog, DWL_USER, (LONG)&pick);
 		Center_Window_Within_Window(dialog, Game::hWnd);
 		OwnerDraw::Display_Dialog(dialog);
 		while (!pick.Done && UI::Updated() != true) {
-			if (DAT_00825C20 != -1 && DAT_00A8F7A0 < Game::AudioGetTime()) {
+			if (DAT_00825C20 != -1 && DAT_00A8F7A0 < AudioGetTime()) {
 				DAT_00A8F300.Stop();
 				VocClass::PlayGlobal(DAT_00825C20, 1.0f, 0x2000, &DAT_00A8F300);
 				DAT_00825C20 = -1;
@@ -935,8 +926,8 @@ static CampaignType Choose_Campaign(void)
 		UI::EndDialog(dialog);
 	}
 
-	DAT_00A8F7A0 = Game::AudioGetTime() + 3000;
-	while (DAT_00A8F300.GetEvent() && DAT_00A8F7A0 > Game::AudioGetTime()) {
+	DAT_00A8F7A0 = AudioGetTime() + 3000;
+	while (DAT_00A8F300.GetEvent() && DAT_00A8F7A0 > AudioGetTime()) {
 		Call_Back();
 	}
 	FUN_0072DAA0();
@@ -1101,7 +1092,7 @@ restart:
 
 				case 13:
 					selection = 4;
-					Game::PlayMovie("RENEGADE.BIK", -1, 1, 1, 1, 0);
+					Play_Movie("RENEGADE.BIK", THEME_NONE, 1, 1, 1, 0);
 					FUN_0052FEC0(NULL, true);
 					break;
 
@@ -1109,7 +1100,7 @@ restart:
 					MovieUnlockableInfo * movie = (MovieUnlockableInfo *)FUN_0060D380(0x129, FUN_0052D870, true);
 					if (movie != (MovieUnlockableInfo *)-1 && movie != NULL) {
 						if (CD().Force_Available((DiskID)movie->DiskRequired)) {
-							Game::PlayMovie(movie->Filename, -1, 1, 1, 1, 0);
+							Play_Movie(movie->Filename, THEME_NONE, 1, 1, 1, 0);
 							FUN_0052FEC0(NULL, true);
 						}
 					} else {
@@ -1186,7 +1177,7 @@ restart:
 
 				case 9:
 					ScenarioInit++;
-					FUN_0052CB90();
+					Init_Campaigns();
 					ScenarioInit--;
 					if (LoadOptionsClass().Load()) {
 						process = false;
@@ -1219,7 +1210,7 @@ restart:
 							continue;
 
 						case GAME_SKIRMISH:
-							if (!FUN_006AE2C0()) {
+							if (!Skirmish_Mode_Dialog()) {
 								Session.Type = GAME_NORMAL;
 								selection = 1;
 							}
@@ -1254,7 +1245,7 @@ restart:
 						case GAME_INTERNET: {
 							Cheat_Disable();
 							FUN_004068E0("Init.cpp - GAME_INTERNET\n");
-							memset(Session.unknown_29F4, 0, sizeof(Session.unknown_29F4));
+							memset(Session.PlayerFirewall, 0, sizeof(Session.PlayerFirewall));
 							Session.unknown_3070 = 0;
 							bool success = FUN_0052F3F0();
 							int res = FUN_0077B2A0(selection == 0x11);
@@ -1380,7 +1371,7 @@ restart:
 
 	Keyboard->Clear();
 
-	Game::InitRandom();
+	Init_Random();
 	FUN_006370B0();
 
 	if (!gameloaded && !Session.LoadGame) {
@@ -1401,7 +1392,7 @@ restart:
 
 		if (Session.Type == GAME_INTERNET) {
 			for (int i = 0; i < MAX_PLAYERS; i++) {
-				Session.unknown_304C[i] = TickCount;
+				Session.LastPortProbeTime[i] = TickCount;
 			}
 		}
 
@@ -1491,7 +1482,7 @@ static inline HWND Child_At(HWND window, LPARAM lparam)
 }
 
 // FUNCTION: GAMEMD 0x0052EC00
-BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK Campaign_Choice_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
 	if (rc) {
@@ -1548,7 +1539,7 @@ BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					if (DAT_00A8F7A8 != id) {
 						SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D5, 0, 0);
 						SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D4, 0, 0);
-						DAT_00A8F7A0 = Game::AudioGetTime() + 500;
+						DAT_00A8F7A0 = AudioGetTime() + 500;
 						DAT_00825C20 = -1;
 						DAT_00A8F7A8 = 0;
 					}
@@ -1745,16 +1736,16 @@ bool FUN_0052F3F0(void)
 	Session.PacketRouterPort = 0;
 	Session.unknown_306E = 0;
 	Session.unknown_308C = 0;
-	Session.unknown_3094 = -1;
-	Session.unknown_309C = 20;
+	Session.FallbackHost = -1;
+	Session.RouterResponseTime = 20;
 	Session.unknown_30A0 = 0;
 	Session.unknown_30A4 = 0;
 	Session.unknown_30A8 = -1;
-	memset(Session.unknown_2A14, 0, sizeof(Session.unknown_2A14));
+	memset(Session.ConnectionPairs, 0, sizeof(Session.ConnectionPairs));
 	memset(Session.ConnectionResults, -1, sizeof(Session.ConnectionResults));
 	memset(Session.unknown_2E18, 0, sizeof(Session.unknown_2E18));
-	memset(Session.unknown_2FF8, 0, sizeof(Session.unknown_2FF8));
-	Session.unknown_2E14 = 0;
+	memset(Session.PlayerPortBase, 0, sizeof(Session.PlayerPortBase));
+	Session.NumConnectionPairs = 0;
 
 	if (Session.ForcePortBase) {
 		Session.PortBase = Session.ForcePortBase;
@@ -1909,7 +1900,7 @@ bool Parse_Command_Line(int argc, char * argv[])
 			DAT_00B77E18 = 2;
 		}
 		if (strstr(string, "-NOROUTER")) {
-			Session.unknown_3090 = false;
+			Session.UsePacketRouter = false;
 		}
 
 		if (strstr(string, "-STEALTH")) {
@@ -1963,15 +1954,15 @@ bool Parse_Command_Line(int argc, char * argv[])
 
 void __fastcall Fill_Surface_Rect(BSurface * image, Rect * rect, int flag);
 
-extern int DAT_00A8ED98;
 extern RandomStraw CryptRandom;
 int __cdecl FUN_0053E720(void);
 
+extern int DAT_00A8ED98;
 // FUNCTION: GAMEMD 0x0052FC20
-void Game::InitRandom(void)
+void Init_Random(void)
 {
 	FUN_004068E0("Init random number\n");
-	if (Session.LoadGame || (RecordingFlag & 2) || FUN_0053E720()) {
+	if (Session.LoadGame || Session.Play || FUN_0053E720()) {
 		Scen->RandomNumber = Seed;
 		NonCriticalRandomNumber = Seed;
 		FUN_004068E0("Seed is %08x\n", Seed);
@@ -1998,8 +1989,8 @@ void Game::InitRandom(void)
 		CryptRandom.Seed_Bit(t.wMonth);
 		CryptRandom.Seed_Bit(t.wYear);
 
-		if (DAT_00A8ED98 != 0) {
-			Seed = DAT_00A8ED98;
+		if (CustomSeed != 0) {
+			Seed = CustomSeed;
 		} else {
 			CryptRandom.Get(&Seed, sizeof(Seed));
 			Seed = GetTickCount();
@@ -2345,7 +2336,7 @@ extern DropPodVoxelStruct DAT_00A8ECD8;
 
 static bool Init_One_Time_Systems(void)
 {
-	Game::CallBack();
+	Call_Back();
 
 	Map.One_Time();
 	Options.One_Time();
@@ -2383,11 +2374,7 @@ static bool Init_One_Time_Systems(void)
 #include "bitfont.h"
 #include "draw.h"
 
-struct FileSystem
-{
-	static void const * LoadFile(char const * name, bool flag);
-	static char TEMPERAT_PAL[];
-};
+#include "filesystem.h"
 
 // FUNCTION: GAMEMD 0x005312A0
 void FUN_005312A0(void)
@@ -2407,9 +2394,9 @@ void FUN_005312A0(void)
 				(unsigned char)((*pal)[index].Get_Blue() << 2));
 		}
 		if (pal != NULL) {
-			convert = new ConvertClass(*pal, *(PaletteClass *)FileSystem::TEMPERAT_PAL, *VisibleSurface, 1, false);
+			convert = new ConvertClass(*pal, GamePalette, *VisibleSurface, 1, false);
 			if (convert != NULL) {
-				shp = (SHPStruct *)FileSystem::LoadFile(Drawing::RenderWidth == 640 ? "GLSSMD.SHP" : "GLSLMD.SHP", false);
+				shp = (SHPStruct *)FileSystem::LoadFile(VideoModeWidth == 640 ? "GLSSMD.SHP" : "GLSLMD.SHP", false);
 			}
 		}
 	}
@@ -2470,7 +2457,7 @@ void FUN_005312A0(void)
 	}
 
 	Update_Visible_Surface(true, HiddenSurface);
-	DAT_00A8F788 = Game::AudioGetTime() + 5000;
+	DAT_00A8F788 = AudioGetTime() + 5000;
 
 	if (pal != NULL) {
 		delete pal;
@@ -2499,7 +2486,7 @@ bool Init_Bulk_Data(void)
 		return(false);
 	}
 
-	Game::CallBack();
+	Call_Back();
 	return(Init_One_Time_Systems());
 }
 
@@ -2509,8 +2496,8 @@ extern int DAT_00A8EC90;
 bool Save_Recording_Values(CCFileClass & file)
 {
 	FUN_004068E0("Saving recording values for scenario : %s\n", Scen->ScenarioName);
-	file.Write(&Game::TechLevel, sizeof(Game::TechLevel));
-	file.Write(&Game::Seed, sizeof(Game::Seed));
+	file.Write(&BuildLevel, sizeof(BuildLevel));
+	file.Write(&Seed, sizeof(Seed));
 	file.Write(&Scen->Scenario, sizeof(Scen->Scenario));
 	file.Write(Scen->ScenarioName, sizeof(Scen->ScenarioName));
 	file.Write(&DAT_00A8EC90, sizeof(DAT_00A8EC90));
@@ -2522,8 +2509,8 @@ bool Save_Recording_Values(CCFileClass & file)
 // FUNCTION: GAMEMD 0x00531960
 bool Load_Recording_Values(CCFileClass & file)
 {
-	file.Read(&Game::TechLevel, sizeof(Game::TechLevel));
-	file.Read(&Game::Seed, sizeof(Game::Seed));
+	file.Read(&BuildLevel, sizeof(BuildLevel));
+	file.Read(&Seed, sizeof(Seed));
 	file.Read(&Scen->Scenario, sizeof(Scen->Scenario));
 	file.Read(Scen->ScenarioName, sizeof(Scen->ScenarioName));
 	file.Read(&DAT_00A8EC90, sizeof(DAT_00A8EC90));
@@ -4651,7 +4638,7 @@ void __fastcall Init_Theater(TheaterType theater)
 		wsprintf(n.fullname, "UNIT%s.PAL", Theaters[theater].Suffix);
 		PaletteClass * unitpal = (PaletteClass *)FUN_005B40B0(n.fullname, false);
 
-		Game::CallBack();
+		Call_Back();
 
 		if (unitpal != NULL) {
 			SchemePalette = *unitpal;
@@ -4673,7 +4660,7 @@ void __fastcall Init_Theater(TheaterType theater)
 				Session.Update_Progress(percent);
 				last_percent = percent;
 			}
-			Game::CallBack();
+			Call_Back();
 		}
 
 		FUN_006267A0(theater);
@@ -4714,7 +4701,7 @@ void __fastcall FUN_006D02B0(void * map);
 int __fastcall FUN_004A80D0(int drive, int arg);
 
 // FUNCTION: GAMEMD 0x00534FA0
-bool __fastcall FUN_00534FA0(int side)
+bool __fastcall Prep_For_Side(int side)
 {
 	char name[64];
 

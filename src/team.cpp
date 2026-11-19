@@ -89,9 +89,7 @@
 
 ThreatType __fastcall FUN_00645BB0(QuarryType quarry);
 bool __fastcall FUN_005224E0(FootClass * infantry);
-bool __fastcall FUN_0053A100(void);
 void __fastcall LightningStorm_Start(int duration, int deferment, int center, bool flag);
-void __cdecl LightningStorm_RequestStop(void);
 extern int DAT_00B0E948;
 void __fastcall FUN_005BF260(VQType movie, ThemeType theme, bool a, bool b, bool c);
 void __fastcall FUN_0070F120(FootClass * unit, TalkType bubble);
@@ -1928,7 +1926,7 @@ void TeamClass::TMission_DESTROY_MEMBERS(TeamMissionClass * mission, bool)
 // FUNCTION: GAMEMD 0x006EE0A0
 void TeamClass::TMission_ION_STORM_START(TeamMissionClass * mission, bool)
 {
-	if (!FUN_0053A100()) {
+	if (!IonStormClass::Is_Ion_Storm_Active()) {
 		LightningStorm_Start(mission->Data.Value, Rule->LightningDeferment, DAT_00B0E948, false);
 	}
 	IsNextMission = true;
@@ -1937,8 +1935,8 @@ void TeamClass::TMission_ION_STORM_START(TeamMissionClass * mission, bool)
 // FUNCTION: GAMEMD 0x006EE0E0
 void TeamClass::TMission_ION_STORM_END(TeamMissionClass * mission, bool)
 {
-	if (FUN_0053A100()) {
-		LightningStorm_RequestStop();
+	if (IonStormClass::Is_Ion_Storm_Active()) {
+		IonStormClass::Ion_Storm_End();
 	}
 	IsNextMission = true;
 }
@@ -2412,7 +2410,7 @@ void TeamClass::TMission_PLAY_ANIM(TeamMissionClass * mission, bool first_time)
 		while (unit != NULL) {
 			AnimClass * anim = new AnimClass(atype, unit->Center_Coord(), 0, loops);
 			if (anim != NULL) {
-				anim->SetOwnerObject(unit);
+				anim->Attach_To(unit);
 			}
 			unit = unit->Member;
 		}

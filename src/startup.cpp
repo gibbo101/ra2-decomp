@@ -145,11 +145,7 @@
 // SYNTHETIC: GAMEMD 0x006BB050 SYMBOL
 // _$E41
 
-struct SHPStruct
-{
-	char Data[0x24];
-	~SHPStruct();
-};
+#include "msanim.h"
 
 // SYNTHETIC: GAMEMD 0x006BB070 SYMBOL
 // _$E2
@@ -185,7 +181,7 @@ struct SHPStruct
 namespace DirectDrawWrap { extern bool DoSmth; void DisposeOfStuff(void); }
 void FUN_004C19B0(void);
 extern int ReadyToQuit;
-extern SHPStruct * DAT_00B0BCF0;
+extern SHPReference * DAT_00B0BCF0;
 extern bool DAT_00B0BCF4;
 
 DWORD dwRegisterMap = -1;

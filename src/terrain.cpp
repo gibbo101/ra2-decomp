@@ -360,7 +360,7 @@ bool TerrainClass::Catch_Fire(void)
 		int randomnum = Scen->RandomNumber();
 		AnimClass * anim = new AnimClass(Rule->TreeFire[randomnum & 1], Center_Coord() + Coord(0, 0, 80), 0, 255);
 		if (anim) {
-			anim->SetOwnerObject(this);
+			anim->Attach_To(this);
 		}
 		anim->ZAdjust -= 20;
 		IsOnFire = true;

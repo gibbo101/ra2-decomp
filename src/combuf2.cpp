@@ -14,6 +14,9 @@
 bool __fastcall FUN_0048BB40(CommandClass const * command, int key);
 bool __fastcall FUN_0048BB60(int key);
 
+// SYNTHETIC: GAMEMD 0x0048BB20 SYMBOL
+// _$E2
+
 // FUNCTION: GAMEMD 0x0048BB40
 bool __fastcall FUN_0048BB40(CommandClass const * command, int key)
 {

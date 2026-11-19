@@ -251,7 +251,7 @@ class BuildingClass : public TechnoClass
 		virtual void Clicked_As_Target(int = 7) override;
 
 		virtual void Death_Announcement(TechnoClass const * source=0) const override;
-		virtual FireErrorType Can_Fire(AbstractClass *, int which, bool ignoreRange) const override;
+		virtual FireErrorType Can_Fire(AbstractClass *, int which, bool check_range) const override;
 		virtual AbstractClass * Greatest_Threat(ThreatType threat, Coord const & coord, bool) const override;
 		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0) override;
 		virtual bool Captured(HouseClass * newowner, bool announce = true) override;
@@ -376,7 +376,7 @@ class BuildingClass : public TechnoClass
 		void PlayAnim(char const * name, BAnimType anim, bool damaged, bool garrisoned, int delay);
 		void PlayNthAnim(BAnimType anim, bool damaged, bool garrisoned, int delay = 0);
 		void Detach_Anim(AnimClass * anim);
-		void DestroyNthAnim(BAnimType anim);
+		void End_Anim(BAnimType anim);
 		void HideNthAnim(BAnimType anim);
 		void DisableTemporal(void);
 		void EnableTemporal(void);

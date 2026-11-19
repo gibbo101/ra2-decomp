@@ -82,6 +82,7 @@ namespace Unsorted { extern int CurrentFrame; extern bool MoveFeedback; }
 #include "bench.hh"
 #include "color.hh"
 #include "tube.hh"
+#include "lightstorm.h"
 
 template class IndexClass<int, StaticBufferClass::Entry *>;
 
@@ -138,7 +139,7 @@ UnitClass::UnitClass(UnitTypeClass const * type, HouseClass * house) :
 	IsDumping(false),
 	IsHarvesting(false),
 	TerrainPalette(false),
-	unknown_int_6D4(-1),
+	VisceroidFacing(-1),
 	DeathCounter(-1),
 	ElectricBolt(NULL),
 	Deployed(false),
@@ -519,11 +520,6 @@ bool UnitClass::Deploy_To_Fire(void) const
 	return(false);
 }
 
-inline Cell Adjacent_Cell_By_Value(Cell cell, FacingType dir)
-{
-	return(cell + AdjacentCell[(int)dir & 0x07]);
-}
-
 // FUNCTION: GAMEMD 0x00736DF0
 void UnitClass::Firing_AI(void)
 {
@@ -551,7 +547,7 @@ void UnitClass::Firing_AI(void)
 				break;
 
 			case FIRE_OK:
-				if (!Class->unknown_E10) {
+				if (!Class->IsFireAnim) {
 					IsFiring = false;
 				}
 
@@ -642,14 +638,14 @@ void UnitClass::Visceroid_AI(void)
 			for (int i = 0; i < FACING_COUNT; i++) {
 				facing = FacingType(unsigned(facing + FACING_45) % FACING_COUNT);
 				FacingType f2 = facing;
-				Cell adjacent = Adjacent_Cell_By_Value(cell, f2);
+				Cell adjacent = ::Adjacent_Cell(cell, f2);
 				CellClass * cellptr = &Map[adjacent];
 				ObjectClass * occupier = cellptr->Cell_Occupier();
 				if (occupier != NULL && occupier->Fetch_RTTI() == RTTI_UNIT && ((UnitClass *)occupier)->Class->SmallVisceroid) {
 					UnitClass * visceroid = (UnitClass *)occupier;
 					if (visceroid->NavCom == NULL && visceroid->TarCom == NULL) {
 						visceroid->Assign_Destination(this);
-						unknown_int_6D4 = -1;
+						VisceroidFacing = -1;
 					}
 					return;
 				}
@@ -658,18 +654,18 @@ void UnitClass::Visceroid_AI(void)
 
 		if (NavCom == NULL && TarCom == NULL) {
 			FacingType dir;
-			if (unknown_int_6D4 != -1 && Random_Pick(0, 2) != 0) {
-				dir = (FacingType)unknown_int_6D4;
+			if (VisceroidFacing != -1 && Random_Pick(0, 2) != 0) {
+				dir = (FacingType)VisceroidFacing;
 			} else {
 				dir = Random_Pick(FACING_FIRST, FacingType(FACING_COUNT - 1));
-				unknown_int_6D4 = dir;
+				VisceroidFacing = dir;
 			}
-			Cell adjacent = Adjacent_Cell_By_Value(cell, dir);
+			Cell adjacent = ::Adjacent_Cell(cell, dir);
 			CellClass * cellptr = &Map[adjacent];
 			if (Can_Enter_Cell(cellptr, dir, Get_Cell_Height(), &Map[cell]) == MOVE_OK) {
 				Assign_Destination(cellptr);
 			} else {
-				unknown_int_6D4 = -1;
+				VisceroidFacing = -1;
 			}
 		}
 	}
@@ -1307,10 +1303,8 @@ bool UnitClass::Goto_Clear_Spot(void)
 	return(false);
 }
 
-// FUNCTION: GAMEMD 0x007393B0
-void FUN_007393B0(void)
-{
-}
+// SYNTHETIC: GAMEMD 0x007393B0 SYMBOL
+// _$E289
 
 // FUNCTION: GAMEMD 0x007393C0
 bool UnitClass::Try_To_Deploy(void)
@@ -1418,10 +1412,10 @@ bool UnitClass::Try_To_Deploy(void)
 
 						building->QueuedVoiceSoundController = QueuedVoiceSoundController;
 						building->QueuedVoiceIndex = QueuedVoiceIndex;
-						building->unknown_4F4 = unknown_4F4;
+						building->PlayingVoiceIndex = PlayingVoiceIndex;
 						QueuedVoiceSoundController.SetEvent(NULL, NULL);
 						QueuedVoiceIndex = -1;
-						unknown_4F4 = -1;
+						PlayingVoiceIndex = -1;
 
 						bool feedback = Unsorted::MoveFeedback;
 						Unsorted::MoveFeedback = false;
@@ -1479,7 +1473,7 @@ void UnitClass::Deploy(void)
 			if (Class->DeployingAnim != NULL) {
 				if (DeployAnim == NULL) {
 					DeployAnim = new AnimClass(Class->DeployingAnim, PositionCoord, 0, 1, ShapeFlags_Type(0x600), 0, false);
-					DeployAnim->SetOwnerObject(this);
+					DeployAnim->Attach_To(this);
 					DeployAnim->LightConvert = GetRemapColour();
 				}
 				Animation.Set_Stage(DeployAnim->Type->Start);
@@ -1510,7 +1504,7 @@ void UnitClass::Undeploy(void)
 		} else if (Class->DeployingAnim != NULL) {
 			if (DeployAnim == NULL) {
 				DeployAnim = new AnimClass(Class->DeployingAnim, PositionCoord, 0, 1, ShapeFlags_Type(0x600), 0, true);
-				DeployAnim->SetOwnerObject(this);
+				DeployAnim->Attach_To(this);
 				DeployAnim->LightConvert = GetRemapColour();
 			}
 			Animation.Set_Stage(DeployAnim->Type->Start);
@@ -1600,7 +1594,7 @@ void UnitClass::Per_Cell_Process(PCPType why)
 			if (building->Class->Grinding) {
 				VocClass::PlayAt(Rule->EnterGrinderSound, Center_Coord(), NULL);
 				if (building->Anims[BANIM_ACTIVE_ONE] != NULL) {
-					building->DestroyNthAnim(BANIM_ACTIVE_ONE);
+					building->End_Anim(BANIM_ACTIVE_ONE);
 					building->PlayNthAnim(BANIM_SPECIAL_ONE, building->Get_Health_Ratio() <= Rule->ConditionYellow, false);
 				}
 			}
@@ -2185,19 +2179,7 @@ plain:
 	composite->Fill_Rect(dirty, 0);
 }
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-	static ConvertClass * ANIM_PAL;
-	static ConvertClass * PALETTE_PAL;
-};
-
-struct PsyDom {
-	static bool Active(void);
-};
-
-struct NukeFlash {
-	static bool IsFadingIn(void);
-};
+#include "filesystem.h"
 
 inline void Coord_Pixel(Coord coord, Point2D & pixel)
 {
@@ -2242,7 +2224,7 @@ void UnitClass::Unit_Draw_Shape(Point2D xdrawpoint, Rect xcliprect, int brightne
 			drawpoint.Y -= 14;
 		}
 
-		Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, shapefile, shapenum + shapefile->Get_Count() / 2, drawpoint, xcliprect, ShapeFlags_Type(SHAPE_DARKEN | SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_ALPHA | SHAPE_ZGRAD), NULL, Get_Z_Adjust() - 2);
+		Draw_Shape(*LogicalSurface, *NormalDrawer, shapefile, shapenum + shapefile->Get_Count() / 2, drawpoint, xcliprect, ShapeFlags_Type(SHAPE_DARKEN | SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_ALPHA | SHAPE_ZGRAD), NULL, Get_Z_Adjust() - 2);
 
 		Surface * old_surface = LogicalSurface;
 		LogicalSurface = EightBitSurface;
@@ -2375,7 +2357,7 @@ void UnitClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 			if (TemporalTargetingMe == NULL) {
 				if (!IsBeingWarpedOut()) {
 					if (!IsWarpingIn()) {
-						Draw_Shape(*DSurface::Temp, *FileSystem::ANIM_PAL, harvesting_shape, row * 15 + (Frame + TotalFramesWalked) % 15, pixel, cliprect, ShapeFlags_Type(0x2a00), NULL, Get_Z_Adjust() - 2, ZGRAD_GROUND, brightness);
+						Draw_Shape(*DSurface::Temp, *AnimDrawer, harvesting_shape, row * 15 + (Frame + TotalFramesWalked) % 15, pixel, cliprect, ShapeFlags_Type(0x2a00), NULL, Get_Z_Adjust() - 2, ZGRAD_GROUND, brightness);
 					}
 				}
 			}
@@ -2682,13 +2664,13 @@ int UnitClass::Do_MISSION_UNLOAD(void)
 					} else {
 						if (building->Class->IsRefinery) building->PlayNthAnim(BANIM_PRODUCTION, building->HealthRatio <= Rule->ConditionYellow, false, 0);
 						Status = 4;
-						if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->DestroyNthAnim(BANIM_SPECIAL_ONE);
+						if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->End_Anim(BANIM_SPECIAL_ONE);
 					}
 				}
 				if (NavCom != NULL && MissionQueue != MISSION_NONE && MissionQueue != MISSION_HARVEST) {
 					if (building->Class->IsRefinery) building->PlayNthAnim(BANIM_PRODUCTION, building->HealthRatio <= Rule->ConditionYellow, false, 0);
 					Status = 4;
-					if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->DestroyNthAnim(BANIM_SPECIAL_ONE);
+					if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->End_Anim(BANIM_SPECIAL_ONE);
 				}
 				return(1);
 			}
@@ -3484,7 +3466,7 @@ DirType UnitClass::Fire_Direction(void) const
 }
 
 // FUNCTION: GAMEMD 0x00740FD0
-FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
+FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool check_range) const
 {
 	if (DeathCounter >= 0) {
 		return(FIRE_CANT);
@@ -3498,7 +3480,7 @@ FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool ignore
 		return(FIRE_ILLEGAL);
 	}
 
-	FireErrorType fire = BASECLASS::Can_Fire(target, which, ignoreRange);
+	FireErrorType fire = BASECLASS::Can_Fire(target, which, check_range);
 
 	if (fire == FIRE_OK || fire == FIRE_FACING) {
 		bool buildable = Map[(Coord const &)PositionCoord].Can_Build_Here();
@@ -4774,7 +4756,7 @@ void UnitClass::UpdateDisguise(void)
 		Cell cell = Get_Cell();
 		bool bridge = Get_Cell_Ptr()->Is_Tile_Bridge();
 		for (int face = FACING_FIRST; face < FACING_COUNT; face++) {
-			CellClass * adjacent = &Map[Adjacent_Cell_By_Value(cell, FacingType(face))];
+			CellClass * adjacent = &Map[::Adjacent_Cell(cell, FacingType(face))];
 			InfantryClass * infantry = adjacent->Cell_Infantry(bridge);
 			if (infantry != NULL && !House->Is_Ally(infantry)) {
 				InfantryBlinkTimer = Rule->InfantryBlinkDisguiseTime;

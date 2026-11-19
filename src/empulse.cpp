@@ -170,7 +170,7 @@ void EMPulseClass::Create(TechnoClass * source)
 												foot->EMPLockRemaining = Duration;
 												AnimClass * sparks = new AnimClass(Rule->EMPulseSparkles, foot->Center_Coord(), Random_Pick(0, 25));
 												if (sparks != NULL) {
-													sparks->SetOwnerObject(foot);
+													sparks->Attach_To(foot);
 												}
 											}
 										}

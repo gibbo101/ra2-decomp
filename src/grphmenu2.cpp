@@ -4,7 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
 #include "rect.h"
 #include "grphmenu2.h"
 #include "ccfile.h"
@@ -13,7 +12,7 @@
 #include "msanim.h"
 
 // SYNTHETIC: GAMEMD 0x004F2C50 SYMBOL
-// _$E41
+// _$E2
 
 // FUNCTION: GAMEMD 0x004F2C70
 GraphicMenuItem * __fastcall GM_Read_Anim_Item(Wstring const & name, INIClass const & ini, MSEngine & engine, Point2D & image_size)

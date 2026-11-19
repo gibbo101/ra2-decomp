@@ -47,16 +47,8 @@
 #include "bsurface.h"
 #include "rgb.h"
 
-struct Drawing {
-	static int RenderWidth;
-	static int RenderHeight;
-	static int RedShiftLeft;
-	static int RedShiftRight;
-	static int GreenShiftLeft;
-	static int GreenShiftRight;
-	static int BlueShiftLeft;
-	static int BlueShiftRight;
-};
+extern int VideoModeWidth;
+extern int VideoModeHeight;
 
 extern int DAT_007F5BE0;
 extern int DAT_007F5BE4;
@@ -71,7 +63,7 @@ Point2D __fastcall FUN_0072A9C0(Rect const * rect);
 void __fastcall FUN_0072A9E0(Rect * rect, int amount);
 void __fastcall FUN_0072B3E0(int side);
 void __fastcall FUN_0072B530(int country);
-void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha);
+void __fastcall ODFillRectTrans(Rect * rect, Surface * surface, unsigned short color, int alpha);
 
 LoadProgressManager * LoadProgressManager::Instance;
 
@@ -118,13 +110,13 @@ LoadProgressManager::LoadProgressManager(void)
 // FUNCTION: GAMEMD 0x00552B10
 void LoadProgressManager::Compute_Rects(void)
 {
-	int render_width = Drawing::RenderWidth;
+	int render_width = VideoModeWidth;
 	bool low_res = render_width == 640;
 	int width = low_res ? DAT_007F5BE0 : DAT_007F5BE4;
 	if (Session.Type == GAME_NORMAL) {
 		int height = (low_res ? DAT_007F5BEC : DAT_007F5BF0) - 80;
 		int x = (render_width - width) / 2;
-		int y = (Drawing::RenderHeight - height - 80) / 2;
+		int y = (VideoModeHeight - height - 80) / 2;
 		LoadScreenSHPRect.Width = LoadBarSHPRect.Width = TitleBarRect.Width = width;
 		LoadBarSHPRect.X = TitleBarRect.X = x;
 		TitleBarRect.Y = y;
@@ -138,7 +130,7 @@ void LoadProgressManager::Compute_Rects(void)
 		LoadScreenSHPRect.Height = 40;
 	} else {
 		int height = low_res ? DAT_007F5BEC : DAT_007F5BF0;
-		LoadBarSHPRect.Set((render_width - width) / 2, (Drawing::RenderHeight - height) / 2, width, height);
+		LoadBarSHPRect.Set((render_width - width) / 2, (VideoModeHeight - height) / 2, width, height);
 	}
 }
 
@@ -148,7 +140,7 @@ Point2D LoadProgressManager::Text_Origin(void)
 	Point2D p;
 	if (Session.Type == GAME_NORMAL) {
 		p.X = LoadScreenSHPRect.X;
-		if (Drawing::RenderWidth == DAT_007F5BE0) {
+		if (VideoModeWidth == DAT_007F5BE0) {
 			p.X += 0x54;
 		} else {
 			p.X += 0xa4;
@@ -156,7 +148,7 @@ Point2D LoadProgressManager::Text_Origin(void)
 		p.Y = LoadScreenSHPRect.Y + 7;
 	} else {
 		p = FUN_0072A9C0(&LoadBarSHPRect);
-		if (Drawing::RenderWidth == DAT_007F5BE0) {
+		if (VideoModeWidth == DAT_007F5BE0) {
 			p.X += 0xc;
 			p.Y += 0x100;
 		} else {
@@ -172,7 +164,7 @@ int LoadProgressManager::FUN_00552C90(void)
 {
 	int result = -1;
 	if (Session.Type != GAME_NORMAL) {
-		result = 0x146 + ((Drawing::RenderWidth != DAT_007F5BE0) ? 0x50 : 0);
+		result = 0x146 + ((VideoModeWidth != DAT_007F5BE0) ? 0x50 : 0);
 	}
 	return result;
 }
@@ -203,10 +195,10 @@ void LoadProgressManager::Load_Mixes(void)
 // FUNCTION: GAMEMD 0x00554100
 void __fastcall FUN_00554100(Rect * rect)
 {
-	int width = Drawing::RenderWidth;
+	int width = VideoModeWidth;
 	int box_width = DAT_007F5BE4;
 	if (width >= box_width) {
-		int dy = (Drawing::RenderHeight - DAT_007F5BF0) / 2;
+		int dy = (VideoModeHeight - DAT_007F5BF0) / 2;
 		int dx = (width - box_width) / 2;
 		rect->X += dx;
 		rect->Y += dy;
@@ -217,7 +209,7 @@ void __fastcall FUN_00554100(Rect * rect)
 Rect __fastcall FUN_00554150(void)
 {
 	Rect rect;
-	if (Drawing::RenderWidth == DAT_007F5BE0) {
+	if (VideoModeWidth == DAT_007F5BE0) {
 		rect = Rect(0x10, 0xeb, 200, 20);
 	} else {
 		rect = Rect(0x14, 0x12c, 200, 20);
@@ -243,7 +235,7 @@ void __fastcall FUN_005541C0(wchar_t const * text, Surface * surface, Point2D po
 		rect.X = point.X - width + max_width;
 	}
 	FUN_0072A9E0(&rect, -4);
-	FUN_00621B80(&rect, surface, 0, 0x9f);
+	ODFillRectTrans(&rect, surface, 0, 0x9f);
 }
 
 namespace OwnerDraw {
@@ -252,7 +244,7 @@ void __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct
 
 inline RGBClass Int_To_RGB(unsigned short color)
 {
-	return RGBClass(color >> Drawing::RedShiftLeft << Drawing::RedShiftRight, color >> Drawing::GreenShiftLeft << Drawing::GreenShiftRight, color >> Drawing::BlueShiftLeft << Drawing::BlueShiftRight);
+	return RGBClass(color >> DSurface::RedRight << DSurface::RedLeft, color >> DSurface::GreenRight << DSurface::GreenLeft, color >> DSurface::BlueRight << DSurface::BlueLeft);
 }
 
 // FUNCTION: GAMEMD 0x00554280

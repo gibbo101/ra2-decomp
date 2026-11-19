@@ -216,7 +216,7 @@ void Queue_Ipx_Clear(void)
 // SYNTHETIC: GAMEMD 0x00646D90 SYMBOL
 // _$E214
 // SYNTHETIC: GAMEMD 0x00646DB0 SYMBOL
-// _$E47
+// _$E212
 BasicTimerClass<SystemTimerClass> SentFrameSyncTimer;
 
 // SYNTHETIC: GAMEMD 0x00646DC0 SYMBOL
@@ -306,7 +306,7 @@ bool Queue_Exit(void)
 extern unsigned int DAT_00AC51FC;
 extern unsigned int DAT_00B04474[256];
 
-int __fastcall FUN_0064C380(int max_houses, HousesType base_house, ConnManClass *net, CDTimerClass<FrameTimerClass> *skip_crc, FrameSyncStruct *their);
+int __fastcall Execute_DoList(int max_houses, HousesType base_house, ConnManClass *net, CDTimerClass<FrameTimerClass> *skip_crc, FrameSyncStruct *their);
 void __fastcall Clean_DoList(ConnManClass *net);
 
 static inline void _Clean_DoList1(ConnManClass *net)
@@ -436,7 +436,7 @@ void Queue_AI(void)
 			max_houses = Session.MaxPlayers;
 			base_house = HOUSE_FIRST;
 		}
-		if (!FUN_0064C380(max_houses, base_house, NULL, NULL, NULL)) {
+		if (!Execute_DoList(max_houses, base_house, NULL, NULL, NULL)) {
 			GameActive = 0;
 			return;
 		}
@@ -455,7 +455,7 @@ void Queue_AI(void)
 				if (Session.Record) {
 					Queue_Record();
 				}
-				if (!FUN_0064C380(1, PlayerPtr->Class->House, NULL, NULL, NULL)) {
+				if (!Execute_DoList(1, PlayerPtr->Class->House, NULL, NULL, NULL)) {
 					GameActive = 0;
 					return;
 				}
@@ -891,7 +891,7 @@ void __fastcall Queue_AI_Multiplayer(void)
 		Queue_Record();
 	}
 
-	if (!FUN_0064C380(Session.MaxPlayers, HOUSE_FIRST, net, &skip_crc, TheirFrameSync)) {
+	if (!Execute_DoList(Session.MaxPlayers, HOUSE_FIRST, net, &skip_crc, TheirFrameSync)) {
 		DebugString("Failure executing DoList\n");
 		if (Session.Type == GAME_INTERNET) {
 			Register_Game_End_Time();
@@ -909,7 +909,9 @@ void __fastcall Queue_AI_Multiplayer(void)
 	}
 }
 
-// FUNCTION: GAMEMD 0x00648340
+// SYNTHETIC: GAMEMD 0x00648340 SYMBOL
+// _$E225
+
 void Check_Mirror(void)
 {
 }
@@ -918,7 +920,7 @@ unsigned short SentCommandCount;
 extern int SentFrameSyncCount;
 
 int __fastcall Send_Packets(ConnManClass *net, char *multi_packet_buf, int multi_packet_max, int max_ahead, int my_sent);
-int __fastcall FUN_0064A0C0(ConnManClass *net, char *multi_packet_buf, int id, int packetlen, FrameSyncStruct *their, BasicTimerClass<SystemTimerClass> *timer);
+int __fastcall Process_Receive_Packet(ConnManClass *net, char *multi_packet_buf, int id, int packetlen, FrameSyncStruct *their, BasicTimerClass<SystemTimerClass> *timer);
 RetcodeType __fastcall Process_Serial_Packet(char *multi_packet_buf, int first_time);
 
 // FUNCTION: GAMEMD 0x00648350
@@ -1004,7 +1006,7 @@ void Wait_For_End_Of_Queue(void)
 						return;
 				}
 			} else {
-				rc = FUN_0064A0C0(net, multi_packet_buf, id, packetlen, TheirFrameSync, &timer3);
+				rc = Process_Receive_Packet(net, multi_packet_buf, id, packetlen, TheirFrameSync, &timer3);
 				if (rc == RC_DOLIST_FULL) {
 					DebugString("Dolist is full!\n");
 					return;
@@ -1049,7 +1051,7 @@ void Wait_For_End_Of_Queue(void)
 	Send_FrameSync(net, SentCommandCount);
 }
 
-int __fastcall FUN_0064B660(void *buf, int bufsize, int frame_delay, int size, int cap, int *processed);
+int __fastcall Add_Compressed_Events(void *buf, int bufsize, int frame_delay, int size, int cap, int *processed);
 
 static int Add_Uncompressed_Events(void *buf, int bufsize, int frame_delay, int size, int cap)
 {
@@ -1128,7 +1130,7 @@ static int Build_Send_Packet(void *buf, int bufsize, int frame_delay, int num_cm
 
 		case (COMM_PROTOCOL_SINGLE_E_COMP):
 		case (COMM_PROTOCOL_MULTI_E_COMP):
-			size = FUN_0064B660(buf, bufsize, frame_delay, size, cap, &processed);
+			size = Add_Compressed_Events(buf, bufsize, frame_delay, size, cap, &processed);
 			break;
 
 		default:
@@ -1414,10 +1416,10 @@ extern bool ConnectionLost;
 void __fastcall Send_Statistics_Packet(bool arg);
 void __fastcall FUN_005DA750(int id, int error);
 
-extern int DAT_00B77780;
-extern int DAT_00B77CE0;
+extern int g_PingsSent;
+extern int g_PingsReceived;
 extern int DAT_00B04890;
-extern char DAT_00B77930[];
+extern char g_GameServerHost[];
 
 // FUNCTION: GAMEMD 0x0064AE50
 BOOL CALLBACK Reconnect_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -1485,17 +1487,17 @@ BOOL CALLBACK Reconnect_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 		case WM_TIMER:
 			if (Session.Type == GAME_INTERNET && wparam == 1 && g_pNetUtil != NULL) {
 				int handle;
-				if (DAT_00B77780 < 5) {
-					g_pNetUtil->RequestPing(DAT_00B77930, 1000, &handle);
-					DAT_00B77780++;
+				if (g_PingsSent < 5) {
+					g_pNetUtil->RequestPing(g_GameServerHost, 1000, &handle);
+					g_PingsSent++;
 				}
 				DAT_00B04890++;
 				if (DAT_00B779C4) {
-					if (!DAT_00B0488C && DAT_00B04890 > 5 && !DAT_00B77CE0) {
+					if (!DAT_00B0488C && DAT_00B04890 > 5 && !g_PingsReceived) {
 						DAT_00B0488C = 1;
 						DAT_00B04884++;
 					}
-					else if (!DAT_00B0488D && DAT_00B04890 > 10 && !DAT_00B77CE0) {
+					else if (!DAT_00B0488D && DAT_00B04890 > 10 && !g_PingsReceived) {
 						DAT_00B0488D = 1;
 						DAT_00B04888++;
 					}
@@ -1543,8 +1545,8 @@ BOOL CALLBACK Reconnect_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 			}
 
 			if (Session.Type == GAME_INTERNET) {
-				DAT_00B77780 = 0;
-				DAT_00B77CE0 = 0;
+				g_PingsSent = 0;
+				g_PingsReceived = 0;
 				DAT_00B0488C = 0;
 				DAT_00B0488D = 0;
 				DAT_00B04890 = 0;
@@ -1707,7 +1709,7 @@ void __fastcall FUN_0064CDA0(int start, int count);
 void __fastcall Dump_Packet_Too_Late_Stuff(EventClass *event);
 
 // FUNCTION: GAMEMD 0x0064C380
-int __fastcall FUN_0064C380(int max_houses, HousesType base_house, ConnManClass *net, CDTimerClass<FrameTimerClass> *skip_crc, FrameSyncStruct *their)
+int __fastcall Execute_DoList(int max_houses, HousesType base_house, ConnManClass *net, CDTimerClass<FrameTimerClass> *skip_crc, FrameSyncStruct *their)
 {
 	HousesType house;
 	HouseClass *hptr;
@@ -3013,7 +3015,7 @@ void __fastcall FUN_00652110(FrameSyncStruct *their, int index)
 	}
 	frame = their[index].frame;
 	if (Session.ViaPacketRouter) {
-		half_latency = Session.unknown_309C / 2;
+		half_latency = Session.RouterResponseTime / 2;
 		half_response = their[index].unknown2 / 2;
 		double ratio = (double)Session.DesiredFrameRate / Session.FrameSendRate;
 		float rate = (float)ratio;
@@ -3158,7 +3160,7 @@ static int Extract_Uncompressed_Events(void * buf, int bufsize);
 static int Breakup_Receive_Packet(void * buf, int bufsize);
 
 // FUNCTION: GAMEMD 0x0064A0C0
-int __fastcall FUN_0064A0C0(ConnManClass * net, char * multi_packet_buf, int id, int packetlen,
+int __fastcall Process_Receive_Packet(ConnManClass * net, char * multi_packet_buf, int id, int packetlen,
 							FrameSyncStruct * their, BasicTimerClass<SystemTimerClass> * timer)
 {
 	EventClass * event = (EventClass *)multi_packet_buf;
@@ -3211,7 +3213,7 @@ int __fastcall FUN_0064A0C0(ConnManClass * net, char * multi_packet_buf, int id,
 				} else {
 					if (timing->ID == PlayerPtr->HeapID) {
 						unsigned long response = timing->ResponseTime;
-						Session.unknown_309C = response;
+						Session.RouterResponseTime = response;
 						DebugString("My router response time = %d ms\n", response * 1000 / 60);
 						continue;
 					}
@@ -3225,7 +3227,7 @@ int __fastcall FUN_0064A0C0(ConnManClass * net, char * multi_packet_buf, int id,
 					if (most <= response) {
 						most = response;
 					}
-					if (timing->Report && Session.Am_I_Master(NULL) && Session.unknown_3094 != timing->ID) {
+					if (timing->Report && Session.Am_I_Master(NULL) && Session.FallbackHost != timing->ID) {
 						OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::FALLBACK_HOST, timing->ID));
 					}
 				}
@@ -3320,7 +3322,7 @@ static int Extract_Uncompressed_Events(void * buf, int bufsize)
 char const * __fastcall FUN_005B3950(int mission);
 
 // FUNCTION: GAMEMD 0x0064B660
-int __fastcall FUN_0064B660(void * buf, int bufsize, int frame_delay, int size, int cap, int * added)
+int __fastcall Add_Compressed_Events(void * buf, int bufsize, int frame_delay, int size, int cap, int * added)
 {
 	int num = 0;
 	unsigned char eventtype;
@@ -3870,7 +3872,7 @@ RetcodeType __fastcall Wait_For_Players(int first_time, ConnManClass *net, int r
 					break;
 				}
 			}
-			rc = (RetcodeType)FUN_0064A0C0(net, multi_packet_buf, id, packetlen, their, &timer);
+			rc = (RetcodeType)Process_Receive_Packet(net, multi_packet_buf, id, packetlen, their, &timer);
 			if (rc == RC_PLAYER_READY) {
 				num_ready++;
 			} else if (rc == RC_SCENARIO_MISMATCH) {
@@ -3941,8 +3943,8 @@ RetcodeType __fastcall Wait_For_Players(int first_time, ConnManClass *net, int r
 	if (reconnect_dlg) {
 		Close_Reconnect_Dialog();
 		if (net->Num_Connections() > 0) {
-			DAT_00B77780 = 0;
-			DAT_00B77CE0 = 0;
+			g_PingsSent = 0;
+			g_PingsReceived = 0;
 		}
 	}
 	if (stall_drawn && Session.EnableMultiplayerDebug && Session.DrawMPDebugStats) {

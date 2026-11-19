@@ -18,9 +18,9 @@ class DiskLaserClass : public AbstractClass
 		TechnoClass * Owner;
 		TechnoClass * Target;
 		WeaponTypeClass * Weapon;
-		int unknown_30;
-		int unknown_34;
-		int unknown_38;
+		int Delay;
+		int Facing;
+		int Progress;
 		int Damage;
 
 		DiskLaserClass(void);

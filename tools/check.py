@@ -40,6 +40,7 @@ right target:
   - a string literal or constant the file defines: the original's target holds the
     same bytes;
   - a function annotated in the same file: its annotated address;
+  - any other function the file compiles: not an address the file ties to another one;
   - any other name: its address in data/symbols.csv, or in another annotated file.
 A name with no known address is reported as unverified, not as a mismatch.
 The target is retail 1.001: bytes a Steam or First Decade exe changed after linking are
@@ -777,6 +778,9 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     if target.name in local:
         want = local[target.name]
         return ("ok" if got == want else "mismatch"), want
+    if target.section > 0 and target.type == 0x20 and got in bound_functions(obj, local):
+        # The original's target is bound to a different function this object compiles.
+        return "mismatch", None
     if names or local:
         candidates = orig.decorated_addresses.get(target.name, ())
         if len(candidates) > 1:
@@ -805,6 +809,17 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
             want = names[name]
             return ("ok" if got == want else "mismatch"), want
     return "unverified", None
+
+
+def bound_functions(obj: CoffObject, local: dict[str, int]) -> dict[int, str]:
+    """Address -> symbol for each function `obj` defines that `local` binds to an address."""
+    cached = getattr(obj, "_bound_functions", None)
+    if cached is not None and cached[0] is local and cached[1] == len(local):
+        return cached[2]
+    defined = {s.name for s in obj.symbols if s.section > 0 and s.type == 0x20}
+    out = {address: name for name, address in local.items() if name in defined}
+    obj._bound_functions = (local, len(local), out)
+    return out
 
 
 def template_member(symbol: str) -> bool:

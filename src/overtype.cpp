@@ -138,10 +138,7 @@ Cell const * OverlayTypeClass::Occupy_List(bool) const
 
 extern char DAT_00889F64[];
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-	static ConvertClass * x_PAL;
-};
+#include "filesystem.h"
 
 void FUN_005F9710(char * name);
 void FUN_005F96B0(char * name, TheaterType theater);
@@ -164,7 +161,7 @@ ObjectClass * OverlayTypeClass::Create_One_Of(HouseClass *) const
 // FUNCTION: GAMEMD 0x005FE5A0
 void OverlayTypeClass::Draw_It(Point2D const & point, Rect const & cliprect, int data) const
 {
-	Draw_Shape(*DSurface::Temp, *FileSystem::x_PAL, (ShapeSet const *)Get_Image_Data(), data, DSurface::ViewBounds.Top_Left() + point + Point2D(ISO_TILE_PIXEL_W / 2, ISO_TILE_PIXEL_H / 2), cliprect, (ShapeFlags_Type)(SHAPE_CENTER|SHAPE_WIN_REL));
+	Draw_Shape(*DSurface::Temp, *TerrainDrawer, (ShapeSet const *)Get_Image_Data(), data, DSurface::ViewBounds.Top_Left() + point + Point2D(ISO_TILE_PIXEL_W / 2, ISO_TILE_PIXEL_H / 2), cliprect, (ShapeFlags_Type)(SHAPE_CENTER|SHAPE_WIN_REL));
 }
 
 // FUNCTION: GAMEMD 0x005FE620

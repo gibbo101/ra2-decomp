@@ -20,6 +20,7 @@
 #include "scenario.h"
 #include "vector.h"
 #include "audsrc.h"
+#include "audplay.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -53,31 +54,16 @@
 // _$E15
 
 
-struct AudioStream {
-	int FUN_004080D0(void);
-	void FUN_00407F40(void);
-	int FUN_00408070(void);
-	void FUN_004080C0(void);
-	void FUN_004080F0(void);
-	void FUN_00407A90(void);
-};
-struct AudioSource {
-	AudioStream * FUN_00407860(int a, int b);
-};
 extern int FUN_00407000(void);
-extern AudioSource * AudioGetDevice(void);
-extern void __fastcall FUN_00408080(AudioStream * stream, char const * name);
-extern void __fastcall FUN_00407B40(AudioStream * stream, int value);
-extern void __fastcall FUN_00407B50(AudioStream * stream, int value);
-extern int __fastcall FUN_00407B60(AudioStream * stream, char const * name, int flag);
+extern AudioDevice * AudioGetDevice(void);
 extern int __fastcall FUN_004790A0(int timeout);
 extern void __cdecl FUN_004068E0(char const * format, ...);
 extern char DAT_00889F64[];
 extern char DAT_00B0F1F8[];
 extern bool DAT_00A8ED64;
 extern bool DAT_0089E3A0;
-extern int AudioScoreAttribs;
-extern int AudioFadeAttribs;
+extern AudioAttribs * AudioScoreAttribs;
+extern AudioAttribs * AudioFadeAttribs;
 
 // FUNCTION: GAMEMD 0x00720440
 ThemeControl::ThemeControl(void) :
@@ -139,11 +125,11 @@ void ThemeClass::Init_Themes(CCINIClass & ini)
 	}
 
 	if (AudioGetDevice()) {
-		Stream = AudioGetDevice()->FUN_00407860(20000, 0);
+		Stream = AudioStreamerCreate(AudioGetDevice(), 20000);
 		if (Stream) {
-			FUN_00408080(Stream, "Music Stream");
-			FUN_00407B40(Stream, AudioScoreAttribs);
-			FUN_00407B50(Stream, AudioFadeAttribs);
+			AudioStreamerSetName(Stream, "Music Stream");
+			AudioStreamerSetAttribs(Stream, AudioScoreAttribs);
+			AudioStreamerSetFadeAttribs(Stream, AudioFadeAttribs);
 		}
 	}
 }
@@ -156,10 +142,10 @@ void ThemeClass::Free_Themes(void)
 		Themes.Delete_Index(0);
 	}
 	if (Stream) {
-		Stream->FUN_004080C0();
-		Stream->FUN_004080F0();
-		Stream->FUN_00407F40();
-		Stream->FUN_00407A90();
+		AudioStreamerFadeOut(Stream);
+		AudioStreamerWaitForFade(Stream);
+		AudioStreamerStop(Stream);
+		AudioStreamerDestroy(Stream);
 		Stream = NULL;
 	}
 }
@@ -282,7 +268,7 @@ void ThemeClass::Queue_Song(ThemeType theme)
 
 	FUN_004068E0("Theme::QueueSong(%d)\n", theme);
 	if (Still_Playing() == true) {
-		if (Stream) Stream->FUN_004080C0();
+		if (Stream) AudioStreamerFadeOut(Stream);
 		IsFading = true;
 	}
 }
@@ -299,7 +285,7 @@ int ThemeClass::Play_Song(ThemeType theme)
 				Score = theme;
 				int cd = DAT_0089E3A0 ? 0 : FUN_004790A0(0);
 				if (Stream && cd > -1) {
-					FUN_00407B60(Stream, Theme_File_Name(theme), 1);
+					AudioStreamerPlayWAV(Stream, Theme_File_Name(theme), 1);
 					Current = theme;
 				} else {
 					Current = -1;
@@ -341,7 +327,7 @@ int ThemeClass::Track_Length(ThemeType theme) const
 // FUNCTION: GAMEMD 0x00720E80
 void ThemeClass::Fade_Stream(void)
 {
-	if (Stream) Stream->FUN_004080C0();
+	if (Stream) AudioStreamerFadeOut(Stream);
 	IsFading = true;
 }
 
@@ -351,11 +337,11 @@ void ThemeClass::Stop(bool fade)
 	if (ScoresPresent && FUN_00407000() && !DAT_00A8ED64 && Current != -1) {
 		if (fade && Still_Playing() == true) {
 			FUN_004068E0("Theme::Stop(%d) - Fading\n", Score);
-			if (Stream) Stream->FUN_004080C0();
+			if (Stream) AudioStreamerFadeOut(Stream);
 			IsFading = true;
 		} else {
 			FUN_004068E0("Theme::Stop(%d)\n", Score);
-			if (Stream) Stream->FUN_00407F40();
+			if (Stream) AudioStreamerStop(Stream);
 		}
 		Current = -1;
 		Score = THEME_NONE;
@@ -368,7 +354,7 @@ void ThemeClass::Suspend(void)
 {
 	if (ScoresPresent && FUN_00407000() && !DAT_00A8ED64 && Current != -1) {
 		FUN_004068E0("Theme::Suspend(%d)\n", Score);
-		if (Stream) Stream->FUN_00407F40();
+		if (Stream) AudioStreamerStop(Stream);
 		Current = -1;
 		Pending = Score;
 		Score = THEME_NONE;
@@ -379,10 +365,10 @@ void ThemeClass::Suspend(void)
 bool ThemeClass::Still_Playing(void) const
 {
 	if (Stream) {
-		if (IsFading && !Stream->FUN_004080D0()) {
-			Stream->FUN_00407F40();
+		if (IsFading && !AudioStreamerIsFading(Stream)) {
+			AudioStreamerStop(Stream);
 		}
-		return(Stream->FUN_00408070() != 0);
+		return(AudioStreamerIsPlaying(Stream) != 0);
 	}
 	return(false);
 }

@@ -504,9 +504,7 @@ void BuildingTypeClass::Init_Anim(BStateType state, int start, int count, int ra
 	((int &)Anims[state].Rate) = rate;
 }
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 // FUNCTION: GAMEMD 0x0045E8F0
 void BuildingTypeClass::Fetch_Z_Data(void)
@@ -628,7 +626,7 @@ Cell const * BuildingTypeClass::Occupy_List(bool placement) const
 }
 
 // SYNTHETIC: GAMEMD 0x0045EC80 SYMBOL
-// _$E44
+// _$E251
 // FUNCTION: GAMEMD 0x0045EC90
 int BuildingTypeClass::Width(void) const
 {
@@ -1948,11 +1946,8 @@ Dir256 BuildingTypeClass::Deploy_Facing(void) const
 	return(Dir256(DeployFacing));
 }
 
-// FUNCTION: GAMEMD 0x00465D80
-BuildingTypeClass * BuildingTypeClass::FUN_00465D80(void)
-{
-	return(this);
-}
+// TEMPLATE: GAMEMD 0x00465D80
+// ??0Cell@@QAE@XZ
 
 // FUNCTION: GAMEMD 0x00465D90
 RTTIType BuildingTypeClass::Fetch_RTTI(void) const

@@ -62,13 +62,6 @@
 
 extern int DAT_008316A4;
 extern wchar_t DAT_00887734[];
-struct MPLobbyEntry
-{
-	char Pad0[0x1602a];
-	wchar_t Name[1];
-};
-extern MPLobbyEntry ** DAT_00A8022C;
-extern int DAT_00A80238;
 void __fastcall FUN_004E3B90(HWND dialog);
 void __fastcall FUN_005E74E0(HWND dialog);
 void __fastcall FUN_005E2EF0(HWND dialog, MultiplayerGameMode * mode);
@@ -86,11 +79,7 @@ extern int DAT_0088098C;
 extern int DAT_00880990;
 extern int DAT_00880994;
 void __fastcall FUN_0049B930(CoopCampaignClass * camp);
-struct Game {
-	static int TechLevel;
-	static int Seed;
-	static void InitRandom(void);
-};
+void Init_Random(void);
 
 HWND WS_Find_Dialog(int id);
 HWND GameoptWindow(void);
@@ -99,13 +88,6 @@ void __cdecl PMessagePrintf(int color, const wchar_t * fmt, ...);
 int FUN_00775B20(void);
 extern char DAT_0082DC84[];
 extern char DAT_0081F1D4[];
-extern int DAT_00A83CA8;
-struct MPCountryEntry
-{
-	char Pad0[0x60];
-	wchar_t const * Name;
-};
-extern MPCountryEntry ** DAT_00A83C9C;
 char * __fastcall FUN_007350C0(wchar_t const * text);
 extern int DAT_00ABF460[8];
 void __fastcall FUN_005EBC00(HWND dialog, int count);
@@ -643,7 +625,7 @@ void MPCooperative::FUN_005C21D0(HWND dialog, bool show)
 // FUNCTION: GAMEMD 0x005C23B0
 void MPCooperative::FUN_005C23B0(HWND dialog, int control)
 {
-	int total = DAT_00A83CA8;
+	int total = HouseTypes.Count();
 	if (total == 0) {
 		return;
 	}
@@ -674,7 +656,7 @@ void MPCooperative::FUN_005C23B0(HWND dialog, int control)
 	for (int i = 0; i < group; i++) {
 		int value = FUN_0049D9F0((*entry->ListA[index])[i]);
 		if (value >= 0 && value < total) {
-			LPARAM name = (LPARAM)DAT_00A83C9C[value]->Name;
+			LPARAM name = (LPARAM)HouseTypes[value]->UIName;
 			LRESULT item = SendMessage(list, 0x4c2, 0, name);
 			SendMessage(list, 0x151, item, value);
 		}
@@ -689,7 +671,7 @@ void MPCooperative::FUN_005C2500(HWND dialog)
 	if (dialog == NULL) {
 		return;
 	}
-	int count = Session.unknown_8D4;
+	int count = Session.ScenarioMaxPlayers;
 	CoopCampEntry * entry;
 	int index = 0;
 	DAT_0089F518.FUN_0049E3B0(CampaignIndex, &entry);
@@ -1107,7 +1089,7 @@ bool MPCooperative::AllyTeams(void)
 // FUNCTION: GAMEMD 0x005C34F0
 int MPCooperative::FUN_005C34F0(void)
 {
-	int total = DAT_00A83CA8;
+	int total = HouseTypes.Count();
 	bool found = false;
 	int campaign = 0;
 	CoopCampEntry * entry;
@@ -1132,14 +1114,14 @@ int MPCooperative::FUN_005C34F0(void)
 			}
 		}
 	} while (!found);
-	FUN_004068E0("@@@@ Choosing a random player house: %d(%s)\n", pick, FUN_007350C0(DAT_00A83C9C[pick]->Name));
+	FUN_004068E0("@@@@ Choosing a random player house: %d(%s)\n", pick, FUN_007350C0(HouseTypes[pick]->UIName));
 	return(pick);
 }
 
 // FUNCTION: GAMEMD 0x005C35F0
 int MPCooperative::FUN_005C35F0(void)
 {
-	int total = DAT_00A83CA8;
+	int total = HouseTypes.Count();
 	bool found = false;
 	int campaign = 0;
 	CoopCampEntry * entry;
@@ -1164,7 +1146,7 @@ int MPCooperative::FUN_005C35F0(void)
 			}
 		}
 	} while (!found);
-	FUN_004068E0("@@@@ Choosing a random AI house: %d(%s)\n", pick, FUN_007350C0(DAT_00A83C9C[pick]->Name));
+	FUN_004068E0("@@@@ Choosing a random AI house: %d(%s)\n", pick, FUN_007350C0(HouseTypes[pick]->UIName));
 	return(pick);
 }
 
@@ -1222,21 +1204,21 @@ void MPCooperative::vt_entry_A0(bool playerWon)
 	Scen->IsEndOfGame = false;
 	Scen->IsNoMapSel = true;
 	Scen->IsOneTimeOnly = false;
-	Field54 = 0;
+	HostIndex = 0;
 	for (int k = 0; k < Session.Players.Count(); k++) {
 		if (Session.HostAddress == Session.Players[k]->Address) {
-			Field54 = k;
+			HostIndex = k;
 		}
 	}
-	memcpy(Addresses, Session.unknown_2994, sizeof(Addresses));
-	memcpy(Field124, Session.unknown_29F4, sizeof(Field124));
-	memcpy(Field144, Session.unknown_2FF8, sizeof(Field144));
-	memcpy(Field194, Session.PlayerPorts, sizeof(Field194));
-	wcscpy(Field164, Session.MasterPlayerName);
-	Field190 = Session.MasterPlayerID;
-	Field70 = Session.House;
-	Seed = Game::Seed;
-	TechLevel = Game::TechLevel;
+	memcpy(Addresses, Session.PlayerLocalAddress, sizeof(Addresses));
+	memcpy(PlayerFirewall, Session.PlayerFirewall, sizeof(PlayerFirewall));
+	memcpy(PlayerPortBase, Session.PlayerPortBase, sizeof(PlayerPortBase));
+	memcpy(PlayerPorts, Session.PlayerPorts, sizeof(PlayerPorts));
+	wcscpy(MasterPlayerName, Session.MasterPlayerName);
+	MasterPlayerID = Session.MasterPlayerID;
+	House = Session.House;
+	Seed = ::Seed;
+	TechLevel = BuildLevel;
 	UnitCount = Session.Options.UnitCount;
 	Credits = Session.Options.Credits;
 	FogOfWar = Session.Options.FogOfWar;
@@ -1605,35 +1587,34 @@ int MPCooperative::vt_entry_B8(void)
 	return(result);
 }
 
-extern int DAT_0084A234;
-extern int DAT_00B77D6C;
+extern int g_GameSKU;
+extern int WestwoodOnline_GameSKU_TS;
 extern int DAT_00B779D4;
 extern int DAT_00B779C4;
 extern unsigned char DAT_00A8F900;
-extern Wstring DAT_00B73E40;
-extern char DAT_00B77830[];
-extern int DAT_00B7790C[];
-extern unsigned char DAT_00B77A04;
-extern unsigned char DAT_00B76568;
+extern Wstring g_NickName;
+extern char WestwoodOnline_LoginName[];
+extern int WestwoodOnline_PingTimes[];
+extern unsigned char WestwoodOnline_Clan1_Players;
+extern unsigned char WestwoodOnline_Clan2_Players;
 extern int DAT_00A8EA0C;
 #include "ownertalk.h"
 void __fastcall FUN_005E7460(void);
-struct CCToolTip {
-	static ToolTipManager * Instance;
-};
+#include "_tooltip.h"
+#include "cctooltip.h"
 
 // FUNCTION: GAMEMD 0x005C46E0
 void MPCooperative::vt_entry_AC(void)
 {
 	DAT_00B779D4 = 0;
-	DAT_00B77D6C = DAT_0084A234;
+	WestwoodOnline_GameSKU_TS = g_GameSKU;
 	DAT_00B779C4 = 0;
 	DAT_00A8F900 = 0;
-	strcpy(DAT_00B77830, DAT_00B73E40.get());
-	Session.HostAddress = Session.Players[Field54]->Address;
-	wcscpy(Session.MasterPlayerName, Session.Players[Field54]->Name);
+	strcpy(WestwoodOnline_LoginName, g_NickName.get());
+	Session.HostAddress = Session.Players[HostIndex]->Address;
+	wcscpy(Session.MasterPlayerName, Session.Players[HostIndex]->Name);
 	Session.MasterPlayerID = -1;
-	Session.House = Field70;
+	Session.House = House;
 	PacketTransport->Clear_Broadcast_Addresses();
 	char ip[32] = "xxx.xxx.xxx.xxx";
 	for (int i = 1; i < Session.Players.Count(); i++) {
@@ -1643,16 +1624,16 @@ void MPCooperative::vt_entry_AC(void)
 		Session.Players[i]->Address.Get_Address(net, node, (unsigned short *)&port);
 		PacketTransport->Set_Broadcast_Address(ip, port);
 	}
-	memcpy(Session.unknown_2994, Addresses, sizeof(Addresses));
-	memcpy(Session.unknown_29F4, Field124, sizeof(Field124));
-	memcpy(Session.unknown_2FF8, Field144, sizeof(Field144));
-	memcpy(Session.PlayerPorts, Field194, sizeof(Field194));
-	wcscpy(Session.MasterPlayerName, Field164);
-	Session.MasterPlayerID = Field190;
-	Game::Seed = Seed;
-	Game::InitRandom();
-	FUN_004068E0("Setup Rematch: Random Seed = %d\n", Game::Seed);
-	Game::TechLevel = TechLevel;
+	memcpy(Session.PlayerLocalAddress, Addresses, sizeof(Addresses));
+	memcpy(Session.PlayerFirewall, PlayerFirewall, sizeof(PlayerFirewall));
+	memcpy(Session.PlayerPortBase, PlayerPortBase, sizeof(PlayerPortBase));
+	memcpy(Session.PlayerPorts, PlayerPorts, sizeof(PlayerPorts));
+	wcscpy(Session.MasterPlayerName, MasterPlayerName);
+	Session.MasterPlayerID = MasterPlayerID;
+	::Seed = Seed;
+	Init_Random();
+	FUN_004068E0("Setup Rematch: Random Seed = %d\n", ::Seed);
+	BuildLevel = TechLevel;
 	Session.Options.UnitCount = UnitCount;
 	Session.Options.Credits = Credits;
 	Session.Options.FogOfWar = FogOfWar;
@@ -1710,8 +1691,8 @@ void MPCooperative::vt_entry_AC(void)
 	}
 	int worst = 0;
 	for (int p = 0; p < Session.Players.Count(); p++) {
-		if (DAT_00B7790C[p] > worst) {
-			worst = DAT_00B7790C[p];
+		if (WestwoodOnline_PingTimes[p] > worst) {
+			worst = WestwoodOnline_PingTimes[p];
 		}
 	}
 	Session.LatencyFudge = 1;
@@ -1754,13 +1735,13 @@ void MPCooperative::vt_entry_AC(void)
 	}
 	Session.MaxMaxAhead = Session.MaxAhead;
 	memset(Session.ConnectionStats, 0, sizeof(Session.ConnectionStats));
-	DAT_00B77A04 = 0;
+	WestwoodOnline_Clan1_Players = 0;
 	Options.GameSpeed = Session.Options.GameSpeed;
-	DAT_00B76568 = 0;
+	WestwoodOnline_Clan2_Players = 0;
 	FUN_005E7460();
 	DoList.Init();
 	OutList.Init();
-	CCToolTip::Instance->Activate(false);
+	ToolTips->Activate(false);
 	FUN_004068E0("@@@@ Before destroying connections players.count() = %d\n", Session.Players.Count());
 	while (Ipx.Num_Connections()) {
 		Ipx.Delete_Connection(Ipx.Connection_ID(0));
@@ -1780,8 +1761,8 @@ void MPCooperative::vt_entry_B0(void)
 	FUN_005C6120(&Session.Players);
 	Session.NumPlayers = 0;
 	for (int n = 0; n < Names.Count(); n++) {
-		for (int i = 0; i < DAT_00A80238; i++) {
-			if (wcsicmp(DAT_00A8022C[i]->Name, Names[n]->Name) == 0) {
+		for (int i = 0; i < Houses.Count(); i++) {
+			if (wcsicmp(Houses[i]->UIName, Names[n]->Name) == 0) {
 				Names[n]->Slot.HouseIndex = i;
 				NodeNameType * node = new NodeNameType;
 				wcscpy(node->Name, Names[n]->Name);

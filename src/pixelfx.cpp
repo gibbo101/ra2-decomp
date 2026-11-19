@@ -3,7 +3,6 @@
 
 #include <stdlib.h>
 #include "always.h"
-#include "geometry.h"
 #include "pixelfx.h"
 
 // FUNCTION: GAMEMD 0x00631D40

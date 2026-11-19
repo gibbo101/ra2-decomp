@@ -783,7 +783,7 @@ void EventClass::Execute(void)
 
 		case FALLBACK_HOST:
 			DebugString("Received FALLBACKHOST event\n");
-			Session.unknown_3094 = Data.General.Value;
+			Session.FallbackHost = Data.General.Value;
 			break;
 
 		case ADDRESS_CHANGE:
@@ -849,7 +849,7 @@ void EventClass::Execute(void)
 				}
 				Session.unknown_30A0 = ::Frame;
 				Session.unknown_30A8 = index;
-				Session.unknown_3094 = -1;
+				Session.FallbackHost = -1;
 				Session.unknown_30A4 = ((Session.MaxAhead + ::Frame + 10) / 10) * 10;
 			}
 			Session.unknown_3098 = false;

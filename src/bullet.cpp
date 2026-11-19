@@ -192,7 +192,7 @@ Cell const * BulletClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x004666B0 SYMBOL
-// _$E41
+// _$E171
 
 // FUNCTION: GAMEMD 0x004666C0
 bool BulletClass::Mark(MarkType mark)
@@ -313,15 +313,6 @@ void BulletClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
-static inline float Flak_Scatter_Distance(TPoint2D<int> const & source, TPoint2D<int> const & target, float height_difference)
-{
-	TPoint3D<float> delta;
-	delta.X = source.X - target.X;
-	delta.Y = target.Y - source.Y;
-	delta.Z = height_difference;
-	return delta.Length();
-}
-
 // FUNCTION: GAMEMD 0x00468670
 bool BulletClass::Unlimbo(Coord const & coord, TVelocity3D<double> const & velocity)
 {
@@ -335,11 +326,14 @@ bool BulletClass::Unlimbo(Coord const & coord, TVelocity3D<double> const & veloc
 		TargetCoords = tcoord;
 
 		if (Class->FlakScatter && Class->IsInvisible) {
-			float distance = Flak_Scatter_Distance(coord, tcoord, coord.Z - tcoord.Z);
+			TPoint3D<float> delta(coord.X - tcoord.X, tcoord.Y - coord.Y, coord.Z - tcoord.Z);
+			float distance = delta.Length();
 			int scatter = Random_Pick(0, Rule->BallisticScatter * 2);
 			scatter *= (int)distance;
 			scatter /= WeaponType->Range;
-			tcoord = Move_Coord(tcoord, DirType(Random_Double(0.0, M_PI * 2.0)), scatter);
+			DirType dir(Random_Double(0.0, M_PI * 2.0));
+			double radians = (dir.As_Int() - 16383) * -DEG_TO_RAD(360.0 / 65534.0);
+			tcoord = Coord((tcoord.X + fastmath::cos(radians) * scatter), (tcoord.Y - fastmath::sin(radians) * scatter), tcoord.Z);
 		}
 
 		if (Class->IsInvisible) {
@@ -355,7 +349,7 @@ bool BulletClass::Unlimbo(Coord const & coord, TVelocity3D<double> const & veloc
 				} else {
 					PositionCoord = tcoord;
 				}
-				// The original overwrites the obstacle position with the intended target.
+				// The target position replaces the obstacle position.
 				PositionCoord = tcoord;
 				MaxSpeed = 0;
 				Velocity.Set_Speed(0);

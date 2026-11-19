@@ -82,9 +82,7 @@ int score_font_count;
 
 int FUN_00407000(void);
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 void __cdecl FUN_004068E0(char const * format, ...);
 

@@ -19,13 +19,13 @@
 #include "dialog.h"
 #include "draw.h"
 #include "hsv.h"
+#include "_convert.h"
 
 // SYNTHETIC: GAMEMD 0x00642770 SYMBOL
 // _$E41
 
 struct FileSystem {
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
-	static ConvertClass * PALETTE_PAL;
 };
 void __fastcall Load_Title_Page(char const * name, bool visible);
 Surface * __fastcall FUN_004E3560(int index);
@@ -70,13 +70,13 @@ ProgressScreenClass Progress;
 // SYNTHETIC: GAMEMD 0x00642960 SYMBOL
 // _$E38
 // SYNTHETIC: GAMEMD 0x00642980 SYMBOL
-// _$E99
+// _$E98
 // SYNTHETIC: GAMEMD 0x006429A0 SYMBOL
-// _$E97
+// _$E96
 // FUNCTION: GAMEMD 0x006429E0
 // ProgressScreenClass::ProgressScreenClass
 ProgressScreenClass::ProgressScreenClass(void) :
-	MainProgress(0), Field50(0), Buffer(0), BufferOwned(false), Field5C(0), IsActive(false),
+	MainProgress(0), String(0), Buffer(0), BufferOwned(false), Background(0), IsActive(false),
 	PlayerCount(0), Field62(false), Dialog(0), Pos(0, 0), Field70(false),
 	Field78(-1), Percentage(0), Side(-1)
 {
@@ -112,7 +112,7 @@ void ProgressScreenClass::Initialize(double progress, char count, void * dialog)
 	} else {
 		HiddenSurface->Fill(0);
 	}
-	Field50 = 0;
+	String = 0;
 	Percentage = -1;
 }
 
@@ -215,7 +215,7 @@ void ProgressScreenClass::Set_Graphic_Data(char const * progbar, char const * ba
 		Buffer = FileSystem::LoadWholeFileEx(progbar, BufferOwned);
 		if (Buffer != 0) {
 			if (background != 0) {
-				Field5C = (int)background;
+				Background = (int)background;
 				Load_Title_Page(background, false);
 			}
 			Field74 = string;
@@ -236,7 +236,7 @@ void ProgressScreenClass::Set_Layout(Point2D pt, wchar_t const * title, bool use
 		Pos.X = pt.X;
 		Pos.Y = pt.Y;
 	}
-	Field50 = title;
+	String = title;
 	Field70 = usedialog;
 	Field71 = flag;
 }
@@ -382,7 +382,7 @@ void ProgressScreenClass::Draw_Bar(Point2D pos, double ratio, Surface * surface,
 	ConvertClass * drawer;
 	if (scheme == 0) {
 		scheme = Fetch_Scheme_By_Name("DarkRed");
-		drawer = FileSystem::PALETTE_PAL;
+		drawer = NormalDrawer;
 	} else {
 		drawer = (ConvertClass *)scheme->Converter;
 	}
@@ -499,7 +499,7 @@ void ProgressScreenClass::Display_Progress(Point2D xpt)
 		if (pt.X == -1 && pt.Y == -1) {
 			pt = Pos;
 		}
-		wchar_t const * name = Field50;
+		wchar_t const * name = String;
 		if (PlayerCount == 1) {
 			ColorScheme * scheme;
 			if (Session.Type == 0) {

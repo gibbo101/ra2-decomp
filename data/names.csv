@@ -523,7 +523,6 @@ address,name,symbol,evidence
 0x007C89EC,GetFileVersionInfoSizeA,,"same function as Red Alert 2 1.006 0x00781BF0 (inferred: referenced by matched src/version.cpp (1 reference), which RedAlert2 rebuilds byte for byte"
 0x007C89E6,GetFileVersionInfoA,,"same function as Red Alert 2 1.006 0x00781BEA (inferred: referenced by matched src/version.cpp (1 reference), which RedAlert2 rebuilds byte for byte"
 0x007C89E0,VerQueryValueA,,"same function as Red Alert 2 1.006 0x00781BE4 (inferred: referenced by matched src/version.cpp (2 reference), which RedAlert2 rebuilds byte for byte"
-0x00608070,WS_Save_Dialog_Values,,"same function as Red Alert 2 1.006 0x005E5FC0 (inferred: referenced by matched src/windlg.cpp (1 reference)), which RedAlert2 rebuilds byte for byte"
 0x00433EF0,BitFont::Bold_String_Pixel_Width,,"same function as Red Alert 2 1.006 0x004316B0 (compiled from src/bitfont.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
 0x004340A0,BitFont::Bold_Text_Dimensions,,"same function as Red Alert 2 1.006 0x00431860 (compiled from src/bitfont.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
 0x00434100,BitFont::Set_Tab_Width,,"same function as Red Alert 2 1.006 0x004318C0 (compiled from src/bitfont.cpp), which RedAlert2 rebuilds byte for byte; YR/RA2 instruction similarity 1.00"
@@ -817,3 +816,138 @@ address,name,symbol,evidence
 0x00B0BC88,RegisteredClasses,?RegisteredClasses@@3V?$DynamicVectorClass@K@@A,The DynamicVectorClass<DWORD> initialization at 0x006BB260 and cleanup at 0x006BB2A0 in src/startup.cpp operate on RegisteredClasses at this address; the cleanup stores its vector vtable at 0x006BB2A8. YRpp independently names the same object Game::COMClasses.
 0x00B730E8,MainThread,?MainThread@@3PAXA,Exception_Handler at 0x004C8FE0 (src/facing.cpp) compares GetCurrentThreadId() with MainThread; the native comparison at 0x004C90D6 reads this stored thread ID.
 0x00459F40,As_Building(AbstractClass *),?As_Building@@YIPAVBuildingClass@@PAVAbstractClass@@@Z,The mutable cast.h overload emits the unique 31-byte retail body at 0x00459F40 with no relocations. BuildingClass::Captured calls this overload at 0x00448DFD.
+0x0089DDBC,BuildingTypeClass::BuildingZShape,?BuildingZShape@BuildingTypeClass@@2PBXB,TibSun builtype.h names this static; matched builtype and building functions reference it at this address (unverified until now); YRpp FileSystem::BUILDINGZ_SHA agrees
+0x0089DDC4,BuildingTypeClass::PowerOffShapes,?PowerOffShapes@BuildingTypeClass@@2PBXB,TibSun builtype.h names this static; matched builtype functions reference it at this address; YRpp FileSystem::POWEROFF_SHP agrees
+0x0089DDC8,BuildingTypeClass::WrenchShapes,?WrenchShapes@BuildingTypeClass@@2PBXB,TibSun builtype.h names this static; matched builtype and building functions reference it at this address; YRpp FileSystem::WRENCH_SHP agrees
+0x00AC1484,ObjectTypeClass::TalkBubbleShapes,?TalkBubbleShapes@ObjectTypeClass@@2PBXB,TibSun objtype.h names this static; matched techno code references it at this address; YRpp FileSystem::TALKBUBL_SHP agrees
+0x00AC147C,ObjectTypeClass::PipShapes,?PipShapes@ObjectTypeClass@@2PBXB,TibSun objtype.h declares PipShapes then Pip2Shapes then TalkBubbleShapes; these sit at consecutive addresses ending at TalkBubbleShapes (0x00AC1484); YRpp FileSystem::PIPS_SHP agrees
+0x00AC1480,ObjectTypeClass::Pip2Shapes,?Pip2Shapes@ObjectTypeClass@@2PBXB,TibSun objtype.h order (PipShapes, Pip2Shapes, TalkBubbleShapes) at consecutive addresses ending at 0x00AC1484; YRpp FileSystem::PIPS2_SHP agrees
+0x0087F6CC,SidebarDrawer,?SidebarDrawer@@3PAVConvertClass@@A,"TibSun _convert.cpp defines CameoDrawer, VoxelDrawer, TerrainDrawer, TiberiumDrawer, AnimDrawer, NormalDrawer, MouseDrawer, SidebarDrawer in order; the first seven are proven at 0x0087F6B0..0x0087F6C8, so SidebarDrawer follows; matched sidebar code builds it from the sidebar palette; YRpp FileSystem::SIDEBAR_PAL agrees"
+0x00A8ED94,Seed,?Seed@@3HA,"TibSun globals.cpp Seed (YRpp Game::Seed); Init_Random 0x0052FC20 matched with TibSun source seeds Scen->RandomNumber and NonCriticalRandomNumber from it"
+0x00A8ED98,CustomSeed,?CustomSeed@@3HA,"TibSun globals.cpp CustomSeed, declared after Seed; Init_Random 0x0052FC20 copies it into Seed when nonzero, as TibSun source does"
+0x00B76488,_Module,,"TibSun wonline.cpp CComModule _Module; Startup_Chat 0x00785370 matched with TibSun source calls _Module.Init(NULL, hInstance), whose inlined body stores cbSize 0x84 and ATL build version 0x300"
+0x00A8F7F0,_pModule,,"ATL 3.0 CComModule::Init stores this into _pModule; inlined in Startup_Chat 0x00785370"
+0x00825CD0,GUID_ATLVer30,,"ATL 3.0 CComModule::Init stores &GUID_ATLVer30 into pguidVer; inlined in Startup_Chat 0x00785370"
+0x00B778F8,g_pChatSink,,"TibSun wonline.cpp Startup_Chat: CComObject<CChatEventSink>::CreateInstance(&g_pChatSink), matched at 0x00785370"
+0x00B736EC,g_pNetUtilSink,,"TibSun wonline.cpp Startup_Chat: CComObject<CNetUtilEventSink>::CreateInstance(&g_pNetUtilSink), matched at 0x00785370"
+0x00B75F68,g_pDownloadSink,,"TibSun wonline.cpp Startup_Chat: CComObject<CDownloadEventSink>::CreateInstance(&g_pDownloadSink), matched at 0x00785370"
+0x00B77E54,g_dwChatAdvise,,"TibSun wonline.cpp Startup_Chat: AtlAdvise(g_pChat, ..., IID_IChatEvent, &g_dwChatAdvise), matched at 0x00785370"
+0x00B77E58,g_dwNetUtilAdvise,,"TibSun wonline.cpp Startup_Chat: AtlAdvise(g_pNetUtil, ..., IID_INetUtilEvent, &g_dwNetUtilAdvise), matched at 0x00785370"
+0x00B77E5C,g_dwDownloadAdvise,,"TibSun wonline.cpp Startup_Chat: AtlAdvise(g_pDownload, ..., IID_IDownloadEvent, &g_dwDownloadAdvise), matched at 0x00785370"
+0x00B77900,g_UserList,,Player_Name_To_Index loop = TibSun L444; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) clear; WOL_Wait_Callback (L1343 vs TibSun L1087) ping loop; Handle_User_Leave; static-init order (4th list)
+0x00B73684,g_WaitEventHandles,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) memset; Request_WDT_Cycle WaitForMultipleObjects/ResetEvent = TibSun L10321+; RA2 has 18 events vs TibSun's 16
+0x00B76B10,g_CurrentChannel,,WOL_Wait_Callback (L1343 vs TibSun L1087) (name[0]/type/PumpGameopts) = TibSun L1248; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) memset; Handle_User_Leave strcpy name + memset = TibSun L4725/4741
+0x00B77E28,g_GameStarted,,"Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot; OnGameStart sets 2 where TibSun L3662 sets true; Handle_Preview_Download/Poke_The_Host '!DAT_00B77E28' = TibSun 'if (g_GameStarted)'; debug ""Local user leaving channel after game start""; RA2 widens it to an int with values 0..2"
+0x00B76AE0,g_GameChannelList,,"Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) 2nd clear; static-init order (3rd list, 2nd ArrayList<Channel>)"
+0x00B77E0C,g_ActiveLadder,,"Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291): '= &WDT dict' in the WDT branch, '= &General dict' otherwise = TibSun L1330/1336"
+0x0084A234,g_GameSKU,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) else-branch 'sku = DAT_0084A234' = TibSun 'sku = g_GameSKU'; OnGameStart 'SKU_TS = DAT_0084A234' = TibSun L3636; initialised .data (0x2900); DAT_ also referenced in src/mpcoop.cpp
+0x00B761A8,g_LadderServerHost,,"OnServerList FUN_007A41C0 'LAD' branch strcpy(X, host) = TS 2789; FUN_00799D30 RequestLadderList/RequestHighscore(X, DAT_00B77A90, ...) = TS 3376 RequestLadderList(g_LadderServerHost, g_LadderServerPort, ...)"
+0x00B73E1C,g_Lobbies,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) TXT_LOB_1.. loads = TibSun L1377; Handle_User_Leave lobby-name printf = TibSun L4731
+0x00B77DC8,g_ActiveWaitFlags,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot; Close_Wait_Window logic '&= ~mask; if (==0) close' (FUN_00792EC0) = TibSun L9512; Show_Wait_Window
+0x00B7778C,g_LoginPassword,,"Login_WOL 0x00787010 StoreLogin(DAT_00B73E40, DAT_00B7778C, DAT_0084A238, locale) = TS Login dialog 5954 StoreLogin(g_NickName, g_LoginPassword, g_PlaintextPassword, ...); login dlg proc FUN_00799EA0 sets it from GetNick pass (TS 5945 compares pass to g_LoginPassword); DAT_ also referenced in src/webbrowser.cpp"
+0x00B77A90,g_LadderServerPort,,OnServerList 'LAD' branch X = atol(port) = TS 2793; second arg of RequestLadderList in FUN_00799D30 = TS 3376
+0x00B73E10,g_UserChannels,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) 1st clear; static-init order (1st ArrayList<Channel>)
+0x00B76468,g_CurrentServerIndex,,"Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot after RA2 match-state block; confirmed: OnServerList = 0 / = chat_server_index = TibSun L2727/2752, FUN_00797640 (Request_WDT_Server_List) = 0 = TibSun L10260"
+0x00B76530,g_UserLocales,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) clear after locale queue; static-init order after g_WDTTeamLookupQueue
+0x00B77E4C,g_IsChannelCreator,,WOL_Wait_Callback (L1343 vs TibSun L1087) PumpGameopts/SetChannelExInfo gate = TibSun L1248/1251; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot; Handle_User_Leave '= 0' = TibSun L4740
+0x00B73BE8,s_TempChannel,,OnChannelJoin CHAT_E_CHANNELDOESNOTEXIST loops compare it against g_UserChannels/g_GameChannelList (src 14655/14662 = ts 3262/3269); FUN_00788800 assigns it before RequestChannelJoin (src 4359 = ts 5450 Join_Lobby); TibSun declares it non-static despite the s_ prefix
+0x00B778D8,g_Servers,,"static-init order (first list, ArrayList<Server>, the only one) = TibSun L150 order; confirmed: OnServerList IRC addTail = TibSun L2726, Request_WDT_Server_List setEmpty = TibSun L10259"
+0x00B777A0,g_WDTTeamLookupQueue,,WOL_Wait_Callback (L1343 vs TibSun L1087) >200 clear / removeTail / RequestUserTeam block = TibSun L1127; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) clear
+0x00B765F8,g_UserLocaleLookupQueue,,WOL_Wait_Callback (L1343 vs TibSun L1087) RequestUserLocale block = TibSun L1175; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) clear
+0x00B77AD0,g_LastErrorMessage,,"Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) '[0] = 0' = TibSun L1337; FUN_0077F120 swprintf(TXT_CANT_CONNECT) error text; RA2 widens to wchar_t; confirmed: OnServerList swprintf(TXT_NO_SERV_LIST) = TibSun L2730, OnConnection TXT_LOGIN_USED/BADPASS = TibSun L3076-3106"
+0x00B77DC0,g_IgnoreNetStatus,,"Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot between g_GameStartRequested and g_ShowMOTD; confirmed: FUN_00786390 (Login_WOL head) sets 1 = TibSun L4970, Logout_WOnline sets 1 = TibSun L4806, OnNetStatus gate = TibSun L4146"
+0x00B77DD0,g_ChannelCount,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot = TibSun L1405; Handle_User_Leave '= 0' = TibSun L4738; Leave_Channel / Join_Lobby wait loop
+0x00B77DEC,g_GameStartRequested,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot; SetPlayerAccepted (FUN_0077E900) '!DAT_00B77DEC ... RequestGameStart; = true' = TibSun L8982 pattern
+0x0084A238,g_PlaintextPassword,,Initial .data value 1 matches '= true'; StoreLogin 3rd arg in Login_WOL (TS 5954); login dlg sets true on edit/clear and false after GetNick pass (TS 5938/5946)
+0x00B77AC0,SnmpUtilMemFreePtr,,"FUN_00795650 GetProcAddress(snmpapi_dll,""SnmpUtilMemFree"") L6996; same Westwood routine as Renegade/Generals"
+0x00B768C0,g_BattleClansLadderDict,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) 1st ladder clear; static-init order (1st of 3 ladder dicts)
+0x00B77D80,g_GeneralLadderDict,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) 'g_ActiveLadder = &DAT_00B77D80' in else branch = TibSun L1336; static-init order 3rd
+0x00B76680,g_WDTTeams,,"Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) clear after team queue = TibSun L1302; static-init order (Dictionary<Wstring,int> before g_WDTTeamLookupQueue)"
+0x00B75E58,g_GameServer,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) 1st Server memset after the two Channel memsets = TibSun L1342; confirmed: OnServerList (FUN_007A41C0) GAM branch memcpy + conndata = TibSun L2803
+0x00B7790C,WestwoodOnline_PingTimes,,"User_List_To_Session_Players L6151 ""DAT_00B7790C[Session.NumPlayers] = ping"" after GetAvgPing = TibSun Fill_Session_Players L9594; Start_Game_Now worst-ping loop L6797 = TibSun OnGameStart L3732; DAT_ also referenced in src/mpcoop.cpp"
+0x00B77E60,g_UserAge,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot = TibSun L1420; OnAgeCheck stores age = TibSun L2476
+0x00B77DD4,g_CurrentLobby,,"Pick_Lobby: lobby name 'Lob_41_'+X = TS 5375 sprintf(""Lob_18_%d"", g_CurrentLobby); X = atol(chan.name+strlen(prefix)) = TS 5393/5402; OnChannelJoin 'X = channel->reserved & 0xFF' (src 11732) = TS 3658"
+0x00B77DC2,g_ConnectionLost,,"Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot after g_PlayingNetGame (TibSun L1365 order); OnNetStatus L12505 ""if (DAT_00B77DC1 && DAT_00B77DC2)"" and L12512 ""= 1"" = TibSun L4154/L4163 (g_PlayingNetGame && g_ConnectionLost); DAT_ also referenced in src/conquer.cpp"
+0x00B73AF8,g_WDTLadderDict,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) 2nd clear and 'g_ActiveLadder = &DAT_00B73AF8' in WDT branch = TibSun L1330; static-init order 2nd
+0x00B77DDC,g_SquadInfoRequests,,"Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) 1st of squad block = TibSun L1400; fork B may confirm in OnSquadInfo; OnSquadInfo L11222 ""X--"" then L11253 ""if (X == 0) redraw"" = TibSun L2957/L2980; ++ per squad request L11515/L14805"
+0x00B73B34,g_WDTHost,,"Westwood debug string ""WDTHost is %s, port is %d"" prints DAT_00B73B34 in Request_WDT_Cycle; RequestWDTState arg = TibSun L10334"
+0x00B76B0C,g_WDTPort,,"same ""WDTHost is %s, port is %d"" debug string, 2nd arg; RequestWDTState arg = TibSun L10334"
+0x00B769C8,g_WDTServer,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) 2nd Server memset; Request_WDT_Cycle tests 0x00B76A2C = DAT_00B769C8+0x64 = Server::conndata = TibSun L10323 'g_WDTServer.conndata == NULL'
+0x00B77DE4,g_OwnSquadID,,"Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) squad block = TibSun L1402; also read in WOL_Find_Page_Dialog_Proc and WOL_New_Game_Dialog_Proc where TibSun reads g_OwnSquadID (L7607, L8157)"
+0x00B77E64,g_UserConsent,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot = TibSun L1421; OnAgeCheck stores consent
+0x00B7617C,g_LastChannelLocaleRequestTime,,WOL_Wait_Callback (L1343 vs TibSun L1087) locale-queue throttle = TibSun L1175-1225; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291)
+0x00B76180,g_LastWDTUserTeamRequestTime,,WOL_Wait_Callback (L1343 vs TibSun L1087) team-queue throttle = TibSun L1127-1170; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291)
+0x00B73BD8,g_WDT_NodWinEmphasisSounds,,"Init_WDT_Sounds: 1st clear, takes _sound_names[0..2] = TibSun L10523/10533; Deinit 1st; static-init order 1st of 8"
+0x00B736F8,g_WDT_GDIWinEmphasisSounds,,"Init_WDT_Sounds 2nd clear, names[6..8]; Deinit 2nd; static-init 2nd"
+0x00B76B00,g_WDT_NodLoseEmphasisSounds,,"Init_WDT_Sounds 3rd clear, names[3..5]; Deinit 3rd; static-init 3rd"
+0x00B76510,g_WDT_GDILoseEmphasisSounds,,"Init_WDT_Sounds 4th clear, names[9..11]; Deinit 4th; static-init 4th"
+0x00B77E50,g_LanguageCode,,Get_WDT_State_Silent 0x00786270 'X = value & 0xFF' = TS 4904 g_LanguageCode = value & 0xFF; FUN_00786390 (Login_WOL head) same; FUN_00786EF0 ban-URL '_%d' arg = TS 5047 langcode; NewLogin consent URL = TS 5661; FUN_00797640 (Request_WDT_Server_List) RequestServerList(X | sku) = TS 10266
+0x00B785C0,_kickmessage,,OnUserKick memset + lobby-name sprintf (src 12821-12832 = ts 4436-4447); a function-local static in TibSun
+0x00B778F0,SnmpUtilMemAllocPtr,,"FUN_00795650 GetProcAddress(snmpapi_dll,""SnmpUtilMemAlloc"") L6995 = Westwood's own Renegade NAT.cpp / Generals GameSpyGameInfo.cpp routine (same 4 pointers, same NULL test)"
+0x00B779CC,g_TargetServerIndex,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot after g_CurrentServerIndex; confirmed: OnServerList X = CurrentServerIndex = TibSun L2754; Request_WDT_Server_List = 0 = TibSun L10261
+0x00B77DD8,g_JoinLobbyNow,,"Westwood debug string ""Setting g_JoinLobbyNow, Guest"" right before 'DAT_00B77DD8 = 1' in Handle_User_Leave; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot = TibSun L1414"
+0x00B76520,g_ChanListQueue,,FUN_0077EF90 RequestChannelList then addTail(type) = TibSun WOL_Wait_Callback (L1343 vs TibSun L1087) L1108; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291); static-init order
+0x00B7646C,g_NextWDTStatePollTime,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) 'time+86400' = TibSun L1310; WOL_Wait_Callback (L1343 vs TibSun L1087) 'time > X: X = time+30; Get_WDT_State_Silent()' = TibSun L1237
+0x00B76234,g_AllowPage,,Read/Write_WOL_Settings 'AllowPage' = TibSun L733/747; Apply_WOL_Settings SetFindPage 2nd arg = TibSun L764
+0x00B779F0,g_AllowFind,,Read/Write 'AllowFind'; SetFindPage 1st arg
+0x00B779BC,g_LangFilter,,Read/Write 'LangFilter'; SetLangFilter arg
+0x00B7690C,g_LobbyMusic,,Read/Write 'LobMusic'; Apply_WOL_Settings music test
+0x00B77DF8,g_OnConnectionResult,,OnConnection FUN_007A5290 'X = result' = TS 3022; Login_WOL sets 0 at entry = TS 4944; FUN_00786EF0 ban/disabled/serial URL switch on X = TS Login_WOL cleanup 5041-5048
+0x00B77DE0,g_RequestingOwnSquadInfo,,"Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) 2nd of squad block = TibSun L1401; OnSquadInfo L11223 ""if (X) { X = 0; own squad }"" = TibSun L2960-2962"
+0x00B77A94,g_OwnSquadName,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) memset in squad block = TibSun L1403; size 0x29 = 41 matches
+0x00B77784,g_ShowAllChannels,,Read/Write 'ShowAll' = TibSun L737/751
+0x00B73AE8,g_WDT_NodTerritoryWinSounds,,"Init_WDT_Sounds 5th clear, names[12]; static-init 5th"
+0x00B77820,g_WDT_GDITerritoryWinSounds,,"Init_WDT_Sounds 6th clear, names[14]; static-init 6th"
+0x00B73708,g_WDT_NodTerritoryLoseSounds,,"Init_WDT_Sounds 7th clear, names[13]; static-init 7th"
+0x00B76188,g_WDT_GDITerritoryLoseSounds,,"Init_WDT_Sounds 8th clear, names[15]; static-init 8th"
+0x00B77E10,g_WDTSoundsInited,,"Init_WDT_Sounds guard + '= 1' at end, Deinit '= 0' = TibSun L10409/10471/10488"
+0x00B77DF0,g_OnNewNickResult,,NewLogin after RequestNewNick + wait: 'if (X >= 0) done' = TS 5635 FAILED(g_OnNewNickResult); OnNewNick sets it (TS 2442)
+0x00B77DF4,g_AgeCheckResult,,NewLogin 'if (X == 0x80040100) TXT_REQUIRED_FIELD' = TS 5649 g_AgeCheckResult == NETUTIL_E_INVALIDFIELD; OnAgeCheck sets it (TS 2474). Type int vs HRESULT(long)
+0x00B73AE0,g_MessageOfTheDay,,OnConnection success: if (DAT_0084A1B8 /*g_ShowMOTD*/) DAT_00B73AE0 = motd (src 11353-11354) = ts 3063-3064 g_MessageOfTheDay = strdup(motd); type differs (Wstring vs char*)
+0x00B7792C,SnmpExtensionInitPtr,,"FUN_00795650 GetProcAddress(mib_ii_dll,""SnmpExtensionInit"") L6993; same Westwood routine as Renegade/Generals"
+0x00B76678,SnmpExtensionQueryPtr,,"FUN_00795650 GetProcAddress(mib_ii_dll,""SnmpExtensionQuery"") L6994; same Westwood routine as Renegade/Generals"
+0x00B77E2C,g_RecievingPreview,,Handle_Preview_Download L7390-7392 set true/false around Receive_Random_Map_Preview() = TibSun L9861-9863 g_RecievingPreview
+0x0084A1B8,g_ShowMOTD,,"Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) '= 1' slot = TibSun L1362; .data initialised 1 like TibSun; OnConnection ""if (X) MOTD"" = TibSun L3063"
+0x00B736CC,WDT_TERRITORY_LOBBY_INDEXES,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) memset(-1) right after the g_Lobbies loads = TibSun L1384
+0x00B76E38,g_LadderPos,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) '= 1' = TibSun L1412 (only reset-to-1 in the block); OnLadderList
+0x00B77E00,g_RuleCRC,,GetINIHash 1st operand = TibSun L920; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) '= Get_Rule_Unique_ID()' = TibSun L1428
+0x00B77E04,g_ArtCRC,,GetINIHash 3rd operand; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) '= Get_Art_Unique_ID()' = TibSun L1430
+0x00B77E08,g_AICRC,,GetINIHash 2nd operand; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) '= Get_AI_Unique_ID()' = TibSun L1431
+0x00B779C8,g_InstalledLadderSKU,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) 'X = sku' first store in both branches = TibSun L1328/1334
+0x00B736F0,g_SelectedLadderSKU,,Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) second store in both branches = TibSun L1329/1335
+0x00B77DE8,g_LastIgnoredStatus,,"OnNetStatus FUN_007AA6D0: 'if (DAT_00B77DC0) { SetEvent(handles[9]); X = result; }' = TS 4146-4148 (g_IgnoreNetStatus, EV_NETIGNORE=9, g_LastIgnoredStatus = status); FUN_00797640 switches on X after event 9 (cf. TS 650)"
+0x00B77EA8,prev_stat,,"OnProgressUpdate: 'if (time(NULL) - X != 0) { ...; X = time(NULL); }' = TS 2565-2567 prev_stat; a function-local static in TibSun, not a global"
+0x00B77EA4,icons_loaded,,OnConnection gametype-icon block guarded and set (src 11331/11351 = ts 3036/3059); a function-local static in TibSun
+0x00B75E50,_tername,,"Pick_Lobby: 'X = _wcsdup(wide_name)' after ini.Get_String(buf,""Name"",""A territory"",...) = TS 5371-5372 '_tername = strdup(name)'; a function-local static in TibSun, not a global"
+0x0084A1C0,g_ListIconHeight,,"CChatEventSink::OnConnection: GetGametypeInfo(type, DAT_0084A1C0, ...) (src 11344) = GetGametypeInfo(gtype, g_ListIconHeight, ...) (ts 3052); exe initial value 14 = TibSun initializer"
+0x00B77A8C,g_Col_ChanName,,"FUN_00781480 (game-list part of Draw_Channel_List): text cell ""name n/m"" with ColorSystem/ColorNoJoin when full (src 2023) = ts 1652 MAKEWPARAM(g_Col_ChanName,...); cell order name/icon/private/ping matches ts 1652-1685"
+0x00B778D0,g_Col_ChanIcon,,"FUN_00781480 icon cell woltrny/wolclan/gt18 (src 2039) = ts 1667 MAKEWPARAM(g_Col_ChanIcon,...) with the same three surfaces"
+0x00B778CC,g_Col_ChanPrivate,,"FUN_00781480 wolpriv.pcx / INVALID cell (src 2050) = ts 1676 MAKEWPARAM(g_Col_ChanPrivate,...)"
+0x00B7643C,g_Col_PingTime,,"FUN_00781480 PING cell with latency hint (src 2078) = ts 1685 MAKEWPARAM(g_Col_PingTime,...)"
+0x00B779D8,g_Col_Rung,,"OnLadderList rung cell (src 3079) = ts 2377; six ladder columns in identical order (rung,name,points,wins,losses,disconnects)"
+0x00B73E08,g_Col_Name,,OnLadderList login_name cell (src 3085) = ts 2381
+0x00B76904,g_Col_Points,,OnLadderList points cell (src 3089) = ts 2385
+0x00B77CE4,g_Col_Wins,,OnLadderList wins cell (src 3093) = ts 2389
+0x00B73AB4,g_Col_Losses,,OnLadderList losses cell (src 3097) = ts 2393
+0x00B76AEC,g_Col_Disconnects,,OnLadderList disconnects cell (src 3101) = ts 2397
+0x00B77DCC,g_SuspendChatPump,,WOL_Wait_Callback (L1343 vs TibSun L1087) 'if (g_pChat && DAT_00B77DCC == 0) PumpMessages' = TibSun L1243; Reset_WOL_Globals (FUN_00780110 L1482 vs TibSun L1291) slot; src/conquer.cpp already calls 0x00B77DCC g_SuspendChatPump (Main_Loop pump gate = TibSun conquer.cpp L590); declared so in TibSun wonline.h
+0x00B77A04,WestwoodOnline_Clan1_Players,,"Start_Game_Now L6845 clears [0], squad1 / house-0 strcat list = TibSun OnGameStart L3770+ (clan1 list); order Clan1 then Clan2; DAT_ also referenced in src/mpcoop.cpp src/session.cpp; declared so in TibSun wonline.h"
+0x00B76568,WestwoodOnline_Clan2_Players,,"Start_Game_Now L6846 clears [0], squad2 / house-1 strcat list = TibSun OnGameStart clan2 list; DAT_ also referenced in src/mpcoop.cpp src/session.cpp; declared so in TibSun wonline.h"
+0x00B77D6C,WestwoodOnline_GameSKU_TS,,"RA2 OnGameStart L11719 ""DAT_00B77D6C = DAT_0084A234(g_GameSKU)"" right after WOLGameID = TibSun OnGameStart L3636 ""WestwoodOnline_GameSKU_TS = g_GameSKU""; same stamp in FUN_007970D0 L7625; DAT_ also referenced in src/mpcoop.cpp; declared so in TibSun wonline.h"
+0x00B77830,WestwoodOnline_LoginName,,"RA2 OnGameStart L11724 strcpy(DAT_00B77830, g_NickName) = TibSun L3643 strcpy(WestwoodOnline_LoginName, g_NickName); also FUN_007970D0 L7627; DAT_ also referenced in src/mpcoop.cpp; declared so in TibSun wonline.h"
+0x00B77DC4,g_MaxPlayers,,WOL_New_Game_Dialog_Proc IDOK 'X = 7' = TS 8052/8054 g_MaxPlayers = ... in New_Game IDOK; src/worlddom.cpp 390 'X = 0' before Fixup_WDT_Settings = TS worlddom.cpp 164 'g_MaxPlayers = 0'. Also referenced as DAT_00B77DC4 in src/worlddom.cpp; DAT_ also referenced in src/worlddom.cpp; declared so in TibSun wonline.h
+0x00B77930,g_GameServerHost,,FUN_007A41C0 = CChatEventSink::OnServerList; GAM branch strcpy(host) after memcpy(&g_GameServer) (src 11075 = ts 2807); DAT_ also referenced in src/stats.cpp src/queue.cpp; declared so in TibSun wonline.h
+0x00B76184,g_GameServerPort,,OnServerList GAM branch atol(port) (src 11079 = ts 2811); DAT_ also referenced in src/stats.cpp; declared so in TibSun wonline.h
+0x00B77780,g_PingsSent,,"OnPing L10955 ""if (DAT_00B77DC1 && DAT_00B77780) {... DAT_00B77CE0++}"" = TibSun OnPing L2494 ""if (g_PlayingNetGame && g_PingsSent) {... g_PingsReceived++}""; DAT_ also referenced in src/queue.cpp; declared so in TibSun wonline.h"
+0x00B77CE0,g_PingsReceived,,OnPing L10957 = TibSun OnPing L2496 g_PingsReceived++ (same distinctive statement); DAT_ also referenced in src/queue.cpp; declared so in TibSun wonline.h
+0x00B779E0,WestwoodOnline_UserName,,"RA2 OnGameStart L11728 strcpy(DAT_00B779E0, first->name) from g_UserList.getPointer(&first,0) = TibSun L3646 strcpy(WestwoodOnline_UserName, user->name); declared so in TibSun wonline.h"
+0x00B73E40,g_NickName,,"Is_Channel_Owner, SetPlayerAccepted (FUN_0077E900 'who ? who : nick') = TibSun L966, User_List_To_Session_Players vs Fill_Session_Players, OnGameStart strcpy(LoginName, nick) = TibSun L3643; DAT_ also referenced in src/mpcoop.cpp src/session.cpp src/webbrowser.cpp src/wolpersonainformation2.cpp src/worlddom.cpp; RA2 made it a Wstring (TibSun char[])"
+0x00573540,MapClass::Repair_Bridge,?Repair_Bridge@MapClass@@QAEXABVCell@@@Z,"YRpp MapClass.h RepairConcreteBridgeAt JMP_THIS(0x573540); data/symbols.csv names it MapClass::RepairConcreteBridgeAt; include/map.h declares Repair_Bridge(Cell const &) as TibSun does"
+0x00B0CE90,Tactical::Draw_Radial_Indicators::initialization_flags,_?$S268@?P@??Draw_Radial_Indicators@Tactical@@QAEXXZ@4EA,Draw_Radial_Indicators shares this zero-initialized guard byte between the two local RGB constants
+0x00B0CE14,Tactical::Draw_Radial_Indicators::building_black,_?black@?P@??Draw_Radial_Indicators@Tactical@@QAEXXZ@4VRGBClass@@A,Draw_Radial_Indicators building animation; 4 DIR32 sites agree with this address; retail initial bytes 00000000
+0x00842950,Tactical::Draw_Radial_Indicators::building_direction,_?direction@?P@??Draw_Radial_Indicators@Tactical@@QAEXXZ@4HA,Draw_Radial_Indicators building animation; 3 DIR32 sites agree with this address; retail initial bytes 01000000
+0x00B0E648,Tactical::Draw_Radial_Indicators::building_pulse,_?pulse@?P@??Draw_Radial_Indicators@Tactical@@QAEXXZ@4HA,Draw_Radial_Indicators building animation; 2 DIR32 sites agree with this address; retail initial bytes 00000000
+0x008809A0,CurrentSWType,?CurrentSWType@@3HA,YRpp Unsorted::CurrentSWType; the current superweapon index read by Tactical::Draw_Radial_Indicators and reset by HouseClass
+0x00B0CD70,Tactical::Draw_Radial_Indicators::superweapon_black,_?black@?CJ@??Draw_Radial_Indicators@Tactical@@QAEXXZ@4VRGBClass@@A,Draw_Radial_Indicators superweapon animation; 5 DIR32 sites agree with this address; retail initial bytes 00000000
+0x00842954,Tactical::Draw_Radial_Indicators::superweapon_direction,_?direction@?CJ@??Draw_Radial_Indicators@Tactical@@QAEXXZ@4HA,Draw_Radial_Indicators superweapon animation; 2 DIR32 sites agree with this address; retail initial bytes 01000000
+0x00B0E64C,Tactical::Draw_Radial_Indicators::superweapon_pulse,_?pulse@?CJ@??Draw_Radial_Indicators@Tactical@@QAEXXZ@4HA,Draw_Radial_Indicators superweapon animation; 2 DIR32 sites agree with this address; retail initial bytes 00000000

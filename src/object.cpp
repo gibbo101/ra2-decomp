@@ -72,17 +72,9 @@
 // SYNTHETIC: GAMEMD 0x005F38E0 SYMBOL
 // _$E47
 namespace Unsorted { extern bool ArmageddonMode; }
-namespace Game { extern bool IsActive; }
 void __fastcall SetNavCycleMode(int mode);
-class SHPStruct
-{
-	public:
-		short Type;
-		short Width;
-		short Height;
-		short Count;
-		Rect GetFrameBounds(int frame) const;
-};
+#include "msanim.h"
+
 #define	GRAVITY	1.4
 
 // FUNCTION: GAMEMD 0x005F3900
@@ -593,7 +585,7 @@ void ObjectClass::Mark_For_Redraw(void)
 // FUNCTION: GAMEMD 0x005F4D30
 bool ObjectClass::Limbo(void)
 {
-	if (Game::IsActive && !IsInLimbo) {
+	if (GameActive && !IsInLimbo) {
 
 		Unselect();
 
@@ -1017,7 +1009,7 @@ bool ObjectClass::Paradrop(Coord const & coord)
 						Parachute = anim;
 					}
 					if (anim != NULL) {
-						anim->SetOwnerObject(this);
+						anim->Attach_To(this);
 						if (Fetch_RTTI() != RTTI_BULLET) {
 							anim->LightConvert = GetRemapColour();
 							anim->TintColor = Get_Cell_Ptr()->Brightness;

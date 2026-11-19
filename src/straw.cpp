@@ -96,13 +96,4 @@ void SubTitle::Set_Caption(wchar_t * string)
 	}
 }
 
-int DAT_00B0BFD8, DAT_00B0BFDC, DAT_00B0BFE0, DAT_00B0BFE4;
 
-// FUNCTION: GAMEMD 0x006C99B0
-void FUN_006C99B0(void)
-{
-	DAT_00B0BFD8 = 0;
-	DAT_00B0BFDC = 0;
-	DAT_00B0BFE0 = 0;
-	DAT_00B0BFE4 = 0;
-}

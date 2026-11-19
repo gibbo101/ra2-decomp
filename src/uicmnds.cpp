@@ -38,12 +38,14 @@
 // _$E41
 
 
+#include "_keyboar.h"
 #include "_rules.h"
 #include "building.h"
 #include "event.h"
 #include "goptions.h"
 #include "house.h"
 #include "infantry.h"
+#include "keyboard.h"
 #include "msglist.h"
 #include "object.h"
 #include "queue.h"
@@ -93,11 +95,7 @@ void __fastcall FUN_00637D00(PlanningNode * node);
 void FUN_006379C0(void);
 void FUN_00637A10(void);
 void __fastcall FUN_0063A120(bool a, bool b);
-class BeaconManagerClass
-{
-	public:
-		void Remove_Beacon(int x, int y);
-};
+#include "beacon.h"
 extern BeaconManagerClass BeaconManager;
 
 
@@ -521,7 +519,7 @@ void FUN_00731A10(void)
 	if (node) {
 		FUN_00637D00(node);
 	} else {
-		BeaconManager.Remove_Beacon(-1, -1);
+		BeaconManager.DeleteBeacon(-1, -1);
 	}
 }
 
@@ -551,12 +549,6 @@ void __fastcall FUN_00731A70(bool flag)
 	}
 }
 
-class InputManagerClass
-{
-	public:
-		static InputManagerClass * Instance;
-		bool IsKeyPressed(int key);
-};
 extern bool DAT_00B0FE58;
 extern bool DAT_00B0FE64;
 namespace Unsorted { extern int NavCycleMode; }
@@ -608,19 +600,14 @@ void FUN_00731BE0(void)
 	DAT_00B0FE58 = false;
 }
 
-static inline bool Key_Down(int key)
-{
-	return InputManagerClass::Instance->IsKeyPressed(key);
-}
-
 // FUNCTION: GAMEMD 0x00731BF0
 bool FUN_00731BF0(void)
 {
 	if (DAT_00B0FE58) {
 		return true;
 	}
-	bool a = Key_Down(Options.KeyForceAttack1) || Key_Down(Options.KeyForceAttack2);
-	bool b = Key_Down(Options.KeySelect1) || Key_Down(Options.KeySelect2);
+	bool a = Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2);
+	bool b = Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2);
 	if (a && b) {
 		int count = CurrentObject.Count();
 		for (int i = 0; i < count; i++) {

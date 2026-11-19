@@ -39,7 +39,6 @@ namespace OwnerDraw {
 int __fastcall PrintTextFixedLength(unsigned color, BitFont * font, Rect const & rect, wchar_t const * text, int length, int x_alignment, int y_alignment, Surface * surface, int unknown);
 }
 
-namespace Game { extern bool IsFocused; }
 extern Surface * DAT_008A0F58;
 
 // SYNTHETIC: GAMEMD 0x004C3C10 SYMBOL
@@ -94,7 +93,7 @@ void EgoClass::Render(bool fresh)
 			}
 		}
 
-		if (Game::IsFocused) {
+		if (GameInFocus) {
 			OwnerDraw::PrintTextFixedLength(0x80ffff, 0, textrect, Text, wcslen(Text), alignment, 0, DAT_008A0F58, 0);
 		}
 	}

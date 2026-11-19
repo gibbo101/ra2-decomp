@@ -99,8 +99,8 @@ void Queue_Pop(void)
 }
 
 extern struct INetUtil * g_pNetUtil;
-extern char DAT_00B77930[];
-extern int DAT_00B76184;
+extern char g_GameServerHost[];
+extern int g_GameServerPort;
 
 // FUNCTION: GAMEMD 0x006C6DE0
 void Queue_Send(void)
@@ -120,7 +120,7 @@ void Queue_Send(void)
 	if (g_pNetUtil == NULL) {
 		return;
 	}
-	g_pNetUtil->RequestGameresSend(DAT_00B77930, DAT_00B76184, (unsigned char *)entry.Data, entry.Size);
+	g_pNetUtil->RequestGameresSend(g_GameServerHost, g_GameServerPort, (unsigned char *)entry.Data, entry.Size);
 	entry.Kind++;
 	Queue.replace(entry, 0);
 }

@@ -185,9 +185,9 @@ RadarClass::RadarClass(void) :
 	RadarState(0),
 	RadarMode(0),
 	SuspendedRadarMode(0),
-	unknown_bool_14BC(false),
+	IsScenarioHeld(false),
 	unknown_bool_14BD(false),
-	unknown_int_14D4(-1),
+	TransmissionVox(-1),
 	DoesRadarExist(false),
 	IsToRedraw(0),
 	FullRedraw(0),
@@ -231,7 +231,6 @@ extern Rect OptionsButtonRect;
 extern int DAT_00B04A1C;
 extern int DAT_00B04A38;
 
-namespace Game { extern int SpecialDialog; }
 extern int DAT_00886FA8;
 extern int DAT_00B45B68;
 bool __fastcall FUN_0053BAE0(void);
@@ -248,20 +247,12 @@ struct ShpHeader {
 
 struct FileSystem {
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
-	static ConvertClass * SIDEBAR_PAL;
 };
 
-struct TextColor {
-	unsigned char R;
-	unsigned char G;
-	unsigned char B;
-	unsigned char A;
-};
+#include "_tooltip.h"
+#include "cctooltip.h"
 
-struct CCToolTip {
-	static TextColor ToolTipTextColor;
-	static ToolTipManager * Instance;
-};
+extern RGBClass DAT_00B0FA1C;
 
 // FUNCTION: GAMEMD 0x00652CF0
 void RadarClass::One_Time(void)
@@ -282,7 +273,7 @@ void RadarClass::One_Time(void)
 	DAT_00B04A20.Y = RadIHeight;
 	DAT_00B04A20.Width = RadPWidth;
 	DAT_00B04A30 = 223;
-	unknown_int_14D4 = FUN_00753250("EVA_IncomingTransmission");
+	TransmissionVox = FUN_00753250("EVA_IncomingTransmission");
 }
 
 // FUNCTION: GAMEMD 0x00652D90
@@ -309,7 +300,7 @@ void RadarClass::Init_Clear(void)
 	RadarState = RSTATE_INACTIVE;
 	RadarMode = RMODE_UNAVAILABLE;
 	unknown_bool_14BD = false;
-	unknown_bool_14BC = false;
+	IsScenarioHeld = false;
 	RadarAnimFrame = 0;
 	DoesRadarExist = false;
 	IsToRedraw = true;
@@ -328,13 +319,6 @@ void RadarClass::Set_Buttons(bool on)
 		Remove_A_Button(RadarStatics::DAT_00B04978);
 		Remove_A_Button(RadarStatics::DAT_00B04910);
 	}
-}
-
-inline int Pack_Color(TextColor const & c)
-{
-	return (c.R >> DSurface::RedLeft << DSurface::RedRight)
-		| (c.G >> DSurface::GreenLeft << DSurface::GreenRight)
-		| (c.B >> DSurface::BlueLeft << DSurface::BlueRight);
 }
 
 // FUNCTION: GAMEMD 0x00652E90
@@ -371,7 +355,7 @@ void RadarClass::Init_For_House(void)
 	OptionsButtonRect.Height = ((ShpHeader *)OptionsButtonShape)->Height;
 	DAT_00B04A38 = RadarAnimShape;
 
-	RadPHeight = Pack_Color(CCToolTip::ToolTipTextColor);
+	RadPHeight = DSurface::Build_Hicolor_Pixel(DAT_00B0FA1C.Get_Red(), DAT_00B0FA1C.Get_Green(), DAT_00B0FA1C.Get_Blue());
 }
 
 // FUNCTION: GAMEMD 0x00653010
@@ -382,7 +366,7 @@ void RadarClass::Init_IO(void)
 	if (!Debug_Map) {
 		RadarStatics::DAT_00B04978.ID = 242;
 		RadarStatics::DAT_00B04978.DrawOnSidebar = true;
-		RadarStatics::DAT_00B04978.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		RadarStatics::DAT_00B04978.ShapeDrawer = SidebarDrawer;
 		RadarStatics::DAT_00B04978.IsOn = false;
 		RadarStatics::DAT_00B04978.IsToggleType = 0;
 		RadarStatics::DAT_00B04978.Set_Flags(5);
@@ -390,7 +374,7 @@ void RadarClass::Init_IO(void)
 		RadarStatics::DAT_00B04978.Set_Shape((ShapeSet const *)BriefingButtonShape, 0, 0);
 		RadarStatics::DAT_00B04978.Flag_To_Redraw();
 
-		RadarStatics::DAT_00B04910.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		RadarStatics::DAT_00B04910.ShapeDrawer = SidebarDrawer;
 		RadarStatics::DAT_00B04910.ID = 243;
 		RadarStatics::DAT_00B04910.DrawOnSidebar = true;
 		RadarStatics::DAT_00B04910.IsOn = false;
@@ -424,7 +408,7 @@ void RadarClass::Draw_It(bool forced)
 
 	if (IsToRedraw) {
 		ShapeSet const * frame_shape = (ShapeSet const *)RadarFrameShape;
-		Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, frame_shape, 0, Point2D(RadX, RadY), SidebarSurface->Get_Rect());
+		Draw_Shape(*SidebarSurface, *SidebarDrawer, frame_shape, 0, Point2D(RadX, RadY), SidebarSurface->Get_Rect());
 		RadarStatics::DAT_00B04978.Draw_Me(true);
 		RadarStatics::DAT_00B04910.Draw_Me(true);
 	}
@@ -583,12 +567,12 @@ void RadarClass::AI(KeyNumType & input, Point2D const & xy)
 
 	if (input == 0x80F2) {
 		if (Session.Type != GAME_NORMAL && !((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode && Session.MPGameMode->vt_entry_08() && Session.MPGameMode->vt_entry_04())) {
-			Game::SpecialDialog = 8;
+			SpecialDialog = SDLG_SPECIAL;
 		} else {
-			Game::SpecialDialog = 9;
+			SpecialDialog = SpecialDialogType(9);
 		}
 	} else if (input == 0x80F3) {
-		Game::SpecialDialog = 1;
+		SpecialDialog = SDLG_OPTIONS;
 	}
 
 	if (DAT_00B45B68 > 0 && RadarMode != 3 && RadarMode != 4) {
@@ -803,7 +787,7 @@ void RadarClass::Draw_Names(void)
 	Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), StringTable::LoadString("TXT_KILLS_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1270), SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x219));
 
 	y += 7;
-	SidebarSurface->Draw_Line(Point2D(RadHeight, y), Point2D(RadOffY + RadHeight - 1, y), FileSystem::SIDEBAR_PAL->Convert_Pixel(14));
+	SidebarSurface->Draw_Line(Point2D(RadHeight, y), Point2D(RadOffY + RadHeight - 1, y), SidebarDrawer->Convert_Pixel(14));
 	y += 4;
 
 	for (house = 0; house < Houses.Count(); house++) {
@@ -874,8 +858,8 @@ void RadarClass::Reposition_Sidebar(void)
 	tip.Region.Y = RadarStatics::DAT_00B04978.Y;
 	tip.Region.Width = RadarStatics::DAT_00B04978.Width;
 	tip.Region.Height = RadarStatics::DAT_00B04978.Height;
-	CCToolTip::Instance->Remove(242);
-	CCToolTip::Instance->Add(&tip);
+	ToolTips->Remove(242);
+	ToolTips->Add(&tip);
 
 	tip.ID = 243;
 	tip.Text = (int)"Tip:OptionsButton";
@@ -883,8 +867,8 @@ void RadarClass::Reposition_Sidebar(void)
 	tip.Region.Y = RadarStatics::DAT_00B04910.Y;
 	tip.Region.Width = RadarStatics::DAT_00B04910.Width;
 	tip.Region.Height = RadarStatics::DAT_00B04910.Height;
-	CCToolTip::Instance->Remove(243);
-	CCToolTip::Instance->Add(&tip);
+	ToolTips->Remove(243);
+	ToolTips->Add(&tip);
 
 	FullRedraw = true;
 }
@@ -2000,12 +1984,12 @@ void RadarClass::Update_Transmission(void)
 	switch (unknown_14B8) {
 		case 0:
 			FUN_00752370();
-			FUN_00752480(unknown_int_14D4, 0, 3);
+			FUN_00752480(TransmissionVox, 0, 3);
 			Add_Speech_Hold();
 			unknown_14B8 = 1;
 			break;
 		case 1:
-			if (Is_Speech_Finished(unknown_int_14D4)) {
+			if (Is_Speech_Finished(TransmissionVox)) {
 				if (DAT_00B45B68) {
 					FUN_00408390();
 				}
@@ -2095,13 +2079,13 @@ void RadarClass::Play_Movie(void)
 	}
 
 	unknown_bool_14BD = !finished;
-	if (unknown_bool_14BC != hold) {
+	if (IsScenarioHeld != hold) {
 		if (hold) {
 			Hold_Scenario(0);
-			unknown_bool_14BC = true;
+			IsScenarioHeld = true;
 		} else {
 			Release_Scenario();
-			unknown_bool_14BC = false;
+			IsScenarioHeld = false;
 		}
 	}
 }
@@ -2194,7 +2178,7 @@ LRESULT CALLBACK Diplomacy_Dialog_Proc(HWND dialog, UINT message, WPARAM wparam,
 			}
 			HouseClass * house;
 			if (houseIndex < count && (house = Houses[houseIndex]) != NULL && house->Class->IsMultiplay) {
-				if (!Rule->AlliesAllowed || DAT_00AC1198 == PlayerPtr || Session.unknown_0C == 2) {
+				if (!Rule->AlliesAllowed || DAT_00AC1198 == PlayerPtr || Session.WOLWelcomeChoice == 2) {
 					ShowWindow(allianceControl, SW_HIDE);
 				} else {
 					FUN_00603DB0(allianceControl, true);
@@ -2418,11 +2402,6 @@ namespace UI {
 	void __fastcall EndDialog(HWND window);
 	bool Updated(void);
 }
-class InputManagerClass {
-	public:
-		void DoSomething(void);
-		static InputManagerClass * Instance;
-};
 extern bool UserInputLocked;
 #include "scenario.h"
 
@@ -2433,7 +2412,7 @@ void RadarClass::FUN_006586D0(void)
 
 	HWND dialog = UI::BeginDialog(0x73, Diplomacy_Dialog_Proc, 0);
 	UserInputLocked = true;
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	if (dialog) {
 		SetWindowLong(dialog, DWL_USER, (LONG)&result);
 		UI::FocusOnWindow(dialog);
@@ -2449,7 +2428,7 @@ void RadarClass::FUN_006586D0(void)
 		}
 		UI::EndDialog(dialog);
 	}
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	UserInputLocked = Scen->IsInputLocked;
 	Map.Flag_To_Redraw(GS_REDRAW_ALL);
 }

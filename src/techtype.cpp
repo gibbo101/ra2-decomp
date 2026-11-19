@@ -72,11 +72,7 @@
 
 extern char DAT_00889F64[];
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
-
-DynamicVectorClass<TechnoTypeClass *> TechnoTypeClass::Array;
+#include "filesystem.h"
 
 // FUNCTION: GAMEMD 0x00711840
 TechnoTypeClass::TechnoTypeClass(NoInitClass const & x) :
@@ -110,14 +106,14 @@ TechnoTypeClass::TechnoTypeClass(NoInitClass const & x) :
 	BarrelAnimData(2, 1, 1, 1)
 {
 	bool found = false;
-	for (int i = 0; i < Array.Count(); i++) {
-		if (Array[i] == this) {
+	for (int i = 0; i < TechnoTypes.Count(); i++) {
+		if (TechnoTypes[i] == this) {
 			found = true;
 			break;
 		}
 	}
 	if (!found) {
-		Array.Add(this);
+		TechnoTypes.Add(this);
 	}
 }
 
@@ -135,7 +131,7 @@ TechnoTypeClass::~TechnoTypeClass(void)
 		AltCameoAllocated = false;
 	}
 	PointerExpiredNotification::NotifyInvalidType.Delete(this);
-	Array.Delete(this);
+	TechnoTypes.Delete(this);
 }
 
 // FUNCTION: GAMEMD 0x00711E80
@@ -1121,8 +1117,8 @@ void TechnoTypeClass::FUN_00717820(void)
 // FUNCTION: GAMEMD 0x00717840
 void TechnoTypeClass::FUN_00717840(void)
 {
-	for (int index = 0; index < Array.Count(); index++) {
-		Array[index]->FUN_00717820();
+	for (int index = 0; index < TechnoTypes.Count(); index++) {
+		TechnoTypes[index]->FUN_00717820();
 	}
 }
 

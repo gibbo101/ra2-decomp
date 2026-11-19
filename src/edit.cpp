@@ -25,12 +25,6 @@
 // SYNTHETIC: GAMEMD 0x004C2FA0 SYMBOL
 // _$E2
 
-
-class InputManagerClass : public KeyboardClass {
-	public:
-		static InputManagerClass * Instance;
-};
-
 // FUNCTION: GAMEMD 0x004C2FC0
 EditClass::EditClass(int id, wchar_t * text, int max_len, TextPrintType flags, int x, int y, int w, int h, EditStyle style) :
 	BASECLASS(id, x, y, w, h, LEFTPRESS)
@@ -109,7 +103,7 @@ int EditClass::Action(unsigned flags, KeyNumType & key, int modifier)
 			Clear_Focus();
 			flags = 0;
 		} else {
-			KeyASCIIType ascii = (KeyASCIIType)(InputManagerClass::Instance->To_ASCII(key) & 0xff);
+			KeyASCIIType ascii = (KeyASCIIType)(Keyboard->To_ASCII(key) & 0xff);
 
 			if ((key & WWKEY_VK_BIT) && ascii >= '0' && ascii <= '9') {
 				key = (KeyNumType)(key & ~WWKEY_VK_BIT);
@@ -123,7 +117,7 @@ int EditClass::Action(unsigned flags, KeyNumType & key, int modifier)
 				if ((!(key & WWKEY_VK_BIT) && ascii >= ' ' && ascii <= 255)
 					|| key == KN_RETURN || key == KN_BACKSPACE) {
 					if ((!(flags & LEFTRELEASE)) && (!(flags & RIGHTRELEASE))) {
-						if (Handle_Key((KeyASCIIType)InputManagerClass::Instance->To_ASCII(key))) {
+						if (Handle_Key((KeyASCIIType)Keyboard->To_ASCII(key))) {
 							flags &= ~KEYBOARD;
 							key = KN_NONE;
 						}

@@ -148,7 +148,7 @@ SidebarClass::SidebarClass(void) :
 	IsSidebarActive(false),
 	IsToRedraw(true),
 	IsToRedrawCredits(false),
-	unknown_bool_5514(false),
+	IsRepairActive(false),
 	unknown_bool_5515(false)
 {
 	for (int index = 0; index < STRIPS; index++) {
@@ -171,7 +171,6 @@ void SidebarClass::Set_Cameo_Text(bool state)
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 	static void const * DARKEN_SHP;
-	static ConvertClass * SIDEBAR_PAL;
 	static void * GCLOCK2_SHP;
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
 };
@@ -193,7 +192,7 @@ void SidebarClass::Init_Clear(void)
 
 	IsToRedraw = true;
 	unknown_bool_5515 = false;
-	unknown_bool_5514 = false;
+	IsRepairActive = false;
 
 	for (int index = 0; index < STRIPS; index++) {
 		Column[index].Init_Clear();
@@ -330,7 +329,7 @@ void SidebarClass::Init_IO(void)
 		Repair.DrawOffset.X = -480;
 		Repair.DrawOffset.Y = 0;
 		Repair.DrawOnSidebar = 1;
-		Repair.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		Repair.ShapeDrawer = SidebarDrawer;
 		Repair.IsOn = false;
 		Repair.IsToggleType = 1;
 		Repair.ReflectButtonState = 1;
@@ -343,7 +342,7 @@ void SidebarClass::Init_IO(void)
 		Power.DrawOffset.X = -480;
 		Power.DrawOffset.Y = 0;
 		Power.DrawOnSidebar = 1;
-		Power.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		Power.ShapeDrawer = SidebarDrawer;
 		Power.IsOn = false;
 		Power.IsToggleType = 1;
 		Power.ReflectButtonState = 1;
@@ -357,7 +356,7 @@ void SidebarClass::Init_IO(void)
 			TabButtons[index].DrawOffset.X = -480;
 			TabButtons[index].DrawOffset.Y = 0;
 			TabButtons[index].DrawOnSidebar = 1;
-			TabButtons[index].ShapeDrawer = FileSystem::SIDEBAR_PAL;
+			TabButtons[index].ShapeDrawer = SidebarDrawer;
 			TabButtons[index].IsOn = false;
 			TabButtons[index].IsToggleType = 2;
 			TabButtons[index].ReflectButtonState = 1;
@@ -368,14 +367,14 @@ void SidebarClass::Init_IO(void)
 		Upgrade.IsSticky = 1;
 		Upgrade.ID = 201;
 		Upgrade.DrawOnSidebar = 1;
-		Upgrade.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		Upgrade.ShapeDrawer = SidebarDrawer;
 		Upgrade.Set_Flags(0x55);
 		Upgrade.StopFlashing();
 
 		Waypoint.IsSticky = 1;
 		Waypoint.ID = 200;
 		Waypoint.DrawOnSidebar = 1;
-		Waypoint.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		Waypoint.ShapeDrawer = SidebarDrawer;
 		Waypoint.Set_Flags(0x55);
 		Waypoint.StopFlashing();
 
@@ -403,25 +402,25 @@ void SidebarClass::Init_IO(void)
 
 				DiplomacyKills[DiplomacyNumHouses] = Kills_Of(house);
 				DiplomacyOwned[DiplomacyNumHouses] = Owned_Of(house);
-				DiplomacyPowerDrain[DiplomacyNumHouses] = Money_Of(house);
+				DiplomacyCredits[DiplomacyNumHouses] = Money_Of(house);
 				DiplomacyColors[DiplomacyNumHouses] = Color_Of(house);
 
-				unknown_544C[DiplomacyNumHouses] = 0;
-				unknown_546C[DiplomacyNumHouses] = 0;
-				unknown_548C[DiplomacyNumHouses] = 0;
-				unknown_54AC[DiplomacyNumHouses] = 0;
-				unknown_54CC[DiplomacyNumHouses] = 0;
-				unknown_54EC[DiplomacyNumHouses] = 0;
+				DiplomacyRung[DiplomacyNumHouses] = 0;
+				DiplomacyPoints[DiplomacyNumHouses] = 0;
+				DiplomacyWins[DiplomacyNumHouses] = 0;
+				DiplomacyLosses[DiplomacyNumHouses] = 0;
+				DiplomacyDisconnects[DiplomacyNumHouses] = 0;
+				DiplomacyWinStreak[DiplomacyNumHouses] = 0;
 
 				if (Session.Type == GAME_INTERNET) {
 					int * stats = FUN_0077DA50(house->UIName);
 					if (stats) {
-						unknown_544C[DiplomacyNumHouses] = stats[7];
-						unknown_546C[DiplomacyNumHouses] = stats[4];
-						unknown_548C[DiplomacyNumHouses] = stats[2];
-						unknown_54AC[DiplomacyNumHouses] = stats[3];
-						unknown_54CC[DiplomacyNumHouses] = stats[8];
-						unknown_54EC[DiplomacyNumHouses] = stats[12];
+						DiplomacyRung[DiplomacyNumHouses] = stats[7];
+						DiplomacyPoints[DiplomacyNumHouses] = stats[4];
+						DiplomacyWins[DiplomacyNumHouses] = stats[2];
+						DiplomacyLosses[DiplomacyNumHouses] = stats[3];
+						DiplomacyDisconnects[DiplomacyNumHouses] = stats[8];
+						DiplomacyWinStreak[DiplomacyNumHouses] = stats[12];
 						delete stats;
 					}
 				}
@@ -484,38 +483,38 @@ void SidebarClass::Init_For_House(void)
 	BASECLASS::Init_For_House();
 
 	PaletteClass palette = *FUN_0072F4A0();
-	if (FileSystem::SIDEBAR_PAL) {
-		delete FileSystem::SIDEBAR_PAL;
-		FileSystem::SIDEBAR_PAL = NULL;
+	if (SidebarDrawer) {
+		delete SidebarDrawer;
+		SidebarDrawer = NULL;
 	}
-	FileSystem::SIDEBAR_PAL = new ConvertClass(palette, palette, *VisibleSurface, 1, false);
+	SidebarDrawer = new ConvertClass(palette, palette, *VisibleSurface, 1, false);
 
 	FileSystem::GCLOCK2_SHP = FileSystem::LoadWholeFileEx("GCLOCK2.SHP", DAT_00B0B48F);
 
 	bool loaded = false;
 	Power.Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx("SELL.SHP", loaded), 0, 0);
 	Power.SetLoadedStatus(loaded);
-	Power.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	Power.ShapeDrawer = SidebarDrawer;
 
 	Repair.Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx("REPAIR.SHP", loaded), 0, 0);
 	Repair.SetLoadedStatus(loaded);
-	Repair.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	Repair.ShapeDrawer = SidebarDrawer;
 
 	for (int index = 0; index < STRIPS; index++) {
 		char name[256];
 		sprintf(name, "TAB%02d.SHP", index);
 		TabButtons[index].Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx(name, loaded), 0, 0);
 		TabButtons[index].SetLoadedStatus(loaded);
-		TabButtons[index].ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		TabButtons[index].ShapeDrawer = SidebarDrawer;
 	}
 
 	Upgrade.Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx("R-DN.SHP", loaded), 0, 0);
 	Upgrade.SetLoadedStatus(loaded);
-	Upgrade.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	Upgrade.ShapeDrawer = SidebarDrawer;
 
 	Waypoint.Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx("R-UP.SHP", loaded), 0, 0);
 	Waypoint.SetLoadedStatus(loaded);
-	Waypoint.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	Waypoint.ShapeDrawer = SidebarDrawer;
 
 	DAT_00B0B468 = FileSystem::LoadWholeFileEx("SIDE1.SHP", DAT_00B0B488);
 	DAT_00B0B46C = FileSystem::LoadWholeFileEx("SIDE2.SHP", DAT_00B0B489);
@@ -681,24 +680,24 @@ bool SidebarClass::FUN_006A6220(int control)
 // FUNCTION: GAMEMD 0x006A6290
 bool SidebarClass::FUN_006A6290(int control)
 {
-	bool old = unknown_bool_5514;
+	bool old = IsRepairActive;
 	if (control == -1) {
-		control = unknown_bool_5514 ? 0 : 1;
+		control = IsRepairActive ? 0 : 1;
 	}
 	switch (control) {
 		case 1:
-			unknown_bool_5514 = true;
+			IsRepairActive = true;
 			break;
 
 		default:
 		case 0:
-			unknown_bool_5514 = false;
+			IsRepairActive = false;
 			break;
 	}
-	if (old != unknown_bool_5514) {
+	if (old != IsRepairActive) {
 		Flag_To_Redraw();
 		IsToRedraw = true;
-		if (!unknown_bool_5514) {
+		if (!IsRepairActive) {
 			Set_Default_Mouse(MOUSE_NORMAL, false);
 		}
 	}
@@ -857,16 +856,16 @@ void SidebarClass::Draw_It(bool complete)
 		if (IsForceCompleteRedraw) {
 			redrawn = true;
 
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B468, 0, Point2D(0, SidebarRect.Y), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B468, 0, Point2D(0, SidebarRect.Y), window, SHAPE_WIN_REL);
 
 			int y = DAT_00B0B4F8;
 			for (int i = 0; i < Max_Visible_Cameos(); i++) {
-				Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B46C, 0, Point2D(0, y), window, SHAPE_WIN_REL);
+				Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B46C, 0, Point2D(0, y), window, SHAPE_WIN_REL);
 				y += ((ShapeSet const *)DAT_00B0B46C)->Get_Height();
 			}
 
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B470, 0, Point2D(0, y), window, SHAPE_WIN_REL);
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B474, 0, Point2D(0, y + ((ShapeSet const *)DAT_00B0B470)->Get_Height()), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B470, 0, Point2D(0, y), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B474, 0, Point2D(0, y + ((ShapeSet const *)DAT_00B0B470)->Get_Height()), window, SHAPE_WIN_REL);
 		}
 
 		Power.Draw_Me(redrawn);
@@ -878,9 +877,9 @@ void SidebarClass::Draw_It(bool complete)
 		Waypoint.Draw_Me(redrawn);
 
 		if (unknown_5398 != 0) {
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B478, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B47C, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B480, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B478, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B47C, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B480, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
 		}
 		IsToBlitSidebar = true;
 	}
@@ -920,22 +919,21 @@ void SidebarClass::Draw_It(bool complete)
 	DSurface::Temp = (DSurface *)old;
 }
 
-namespace Game { extern bool IsActive; extern HWND hWnd; }
 namespace Unsorted { extern bool ScenarioStarted; }
 extern bool DAT_00B0B519;
 
 // FUNCTION: GAMEMD 0x006A70E0
 void SidebarClass::Blit_Sidebar(bool complete)
 {
-	if (IsSidebarActive && Game::IsActive && Unsorted::ScenarioStarted) {
+	if (IsSidebarActive && GameActive && Unsorted::ScenarioStarted) {
 
 		RECT crect;
-		GetClientRect(Game::hWnd, &crect);
+		GetClientRect(MainWindow, &crect);
 
 		POINT scrnpt;
 		scrnpt.x = crect.left;
 		scrnpt.y = crect.top;
-		ClientToScreen(Game::hWnd, &scrnpt);
+		ClientToScreen(MainWindow, &scrnpt);
 
 		if (!IsToBlitSidebar && !complete) {
 			IsToBlitSidebar = false;
@@ -1038,7 +1036,6 @@ void SidebarClass::Recalc(void)
 	}
 }
 
-namespace Game { extern unsigned char RecordingFlag; }
 void FUN_005BF450(void);
 
 // FUNCTION: GAMEMD 0x006A7D70
@@ -1046,7 +1043,7 @@ bool SidebarClass::Activate(int control)
 {
 	bool old = IsSidebarActive;
 
-	if ((Game::RecordingFlag & 2) && Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+	if (Session.Play && Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
 		return(old);
 	}
 
@@ -1433,7 +1430,7 @@ extern unsigned short DAT_00B07BC4[];
 unsigned short const * SidebarClass::StripClass::Help_Text(int id)
 {
 	int i = id + TopIndex * 2;
-	if (Game::IsActive) {
+	if (GameActive) {
 		if (i < BuildableCount && BuildableCount < MAX_BUILDABLES) {
 			if (Buildables[i].BuildableType == RTTI_SPECIAL) {
 				return SuperWeaponTypes[Buildables[i].BuildableID]->UIName;
@@ -1789,7 +1786,7 @@ void SidebarClass::StripClass::SelectClass::OnMouseEnter(void)
 {
 	ToolTips->Save_Timer_Delay();
 	ToolTips->Set_Timer_Delay(0);
-	unknown_34 = true;
+	IsMouseOver = true;
 	Strip->IsToRedraw = true;
 	Map.Flag_To_Redraw();
 	Map.IsForceCompleteRedraw = true;
@@ -1800,7 +1797,7 @@ void SidebarClass::StripClass::SelectClass::OnMouseEnter(void)
 void SidebarClass::StripClass::SelectClass::OnMouseLeave(void)
 {
 	ToolTips->Restore_Timer_Delay();
-	unknown_34 = false;
+	IsMouseOver = false;
 	Strip->IsToRedraw = true;
 	Map.Flag_To_Redraw();
 	Map.IsForceCompleteRedraw = true;
@@ -1810,7 +1807,7 @@ void SidebarClass::StripClass::SelectClass::OnMouseLeave(void)
 // FUNCTION: GAMEMD 0x006ABA20
 bool SidebarClass::StripClass::SelectClass::FUN_006ABA20(void)
 {
-	return unknown_34 && !UserInputLocked;
+	return IsMouseOver && !UserInputLocked;
 }
 
 // FUNCTION: GAMEMD 0x006ABA40
@@ -1881,13 +1878,12 @@ bool SidebarClass::StripClass::Abandon_Production(FactoryClass const * factory)
 	return abandoned;
 }
 
-namespace Game { extern int SpecialDialog; }
 
 // FUNCTION: GAMEMD 0x006ABC40
 void FUN_006ABC40(void)
 {
 	if (Session.Type != GAME_NORMAL) {
-		Game::SpecialDialog = 8;
+		SpecialDialog = SDLG_SPECIAL;
 	}
 }
 
@@ -1969,7 +1965,7 @@ int SidebarClass::GetVisibleCameoCount(void)
 #include "bitfont.h"
 
 // FUNCTION: GAMEMD 0x006AC480
-void __fastcall FUN_006AC480(wchar_t const * text, Point2D const & point, Rect const & window, int width)
+void __fastcall Print_Cameo_Text(wchar_t const * text, Point2D const & point, Rect const & window, int width)
 {
 	if (DAT_00884B8C && text != NULL) {
 		Point2D xy = point;

@@ -29,19 +29,9 @@ static inline void Reset_Defaults(BitFont * font)
 	font->State_2C = 1;
 }
 
-extern int DAT_0089C4A8;
-extern int DAT_0089C4AC;
-extern int DAT_0089C4B0;
-extern int DAT_0089C4B4;
 
-// FUNCTION: GAMEMD 0x00433860
-void FUN_00433860(void)
-{
-	DAT_0089C4A8 = 0;
-	DAT_0089C4AC = 0;
-	DAT_0089C4B0 = 0;
-	DAT_0089C4B4 = 0;
-}
+// SYNTHETIC: GAMEMD 0x00433860 SYMBOL
+// _$E8
 
 // FUNCTION: GAMEMD 0x00433880
 BitFont::BitFont(char const * filename)

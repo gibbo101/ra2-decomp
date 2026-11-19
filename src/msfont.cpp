@@ -27,9 +27,7 @@
 // SYNTHETIC: GAMEMD 0x005D2DE0 SYMBOL
 // _$E2
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 void __cdecl FUN_004068E0(char const * format, ...);
 int FUN_00407000(void);

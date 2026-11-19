@@ -58,7 +58,6 @@ void FUN_00750FA0(void);
 void FUN_007535D0(void);
 void FUN_00752CA0(void);
 extern int DAT_00B07784;
-namespace Game { extern int PlayerColor; extern bool IsActive; }
 namespace Unsorted { extern int CurrentFrame; }
 
 // SYNTHETIC: GAMEMD 0x00696D00 SYMBOL
@@ -249,8 +248,8 @@ SessionClass::SessionClass(void) :
 	PortBase = 1250;
 	ForcePortBase = 0;
 	unknown_3018 = true;
-	unknown_2F48 = false;
-	unknown_301C = 0;
+	SendDelay = false;
+	PortNumberOverride = 0;
 	memset(DAT_00B73E44, 0, sizeof(DAT_00B73E44));
 	memset(DAT_00B76338, 0, sizeof(DAT_00B76338));
 
@@ -262,10 +261,10 @@ SessionClass::SessionClass(void) :
 	MasterPlayerID = -1;
 	memset(MasterPlayerName, 0, sizeof(MasterPlayerName));
 	unknown_308C = 0;
-	unknown_3090 = true;
-	unknown_3094 = -1;
+	UsePacketRouter = true;
+	FallbackHost = -1;
 	unknown_3098 = false;
-	unknown_309C = 20;
+	RouterResponseTime = 20;
 	unknown_30A0 = 0;
 	unknown_30A4 = 0;
 	unknown_30A8 = -1;
@@ -333,12 +332,12 @@ SessionClass::SessionClass(void) :
 		Options.AISlots.Countries[i] = -1;
 		Options.AISlots.Colors[i] = -1;
 	}
-	unknown_0C = 0;
+	WOLWelcomeChoice = 0;
 	unknown_10 = 0;
 	ScenarioFileName[0] = 0;
 	ScenarioFileLength = 0;
 	ScenarioIsOfficial = false;
-	unknown_8D4 = 0;
+	ScenarioMaxPlayers = 0;
 }
 
 // FUNCTION: GAMEMD 0x006977C0
@@ -428,10 +427,10 @@ int SessionClass::Create_Connections(void)
 	}
 
 	for (i = 0; i < 8; i++) {
-		Session.unknown_304C[i] = TickCount;
+		Session.LastPortProbeTime[i] = TickCount;
 	}
 
-	if (Type == GAME_INTERNET && unknown_3090) {
+	if (Type == GAME_INTERNET && UsePacketRouter) {
 		NetNumType zero_net;
 		NetNodeType zero_node;
 		zero_net[0] = 0;
@@ -444,11 +443,11 @@ int SessionClass::Create_Connections(void)
 		zero_node[3] = 0;
 		zero_node[4] = 0;
 		zero_node[5] = 0;
-		Session.unknown_2978.Set_Address(zero_net, zero_node, 0);
+		Session.PacketRouterAddressTranslate.Set_Address(zero_net, zero_node, 0);
 		ViaPacketRouter = true;
 		unknown_308C = 0;
-		unknown_309C = 20;
-		unknown_3094 = -1;
+		RouterResponseTime = 20;
+		FallbackHost = -1;
 		Ipx.Create_Multicast_Connection();
 		OwnerTalk.Build_Connection_List();
 		if (Session.Am_I_Master(NULL)) {
@@ -1220,8 +1219,8 @@ bool SessionClass::Is_Random_Map(void) const
 	return stricmp(ScenarioFileName, "RandMap.Sed") == 0;
 }
 
-extern char DAT_00B77A04[];
-extern char DAT_00B76568[];
+extern char WestwoodOnline_Clan1_Players[];
+extern char WestwoodOnline_Clan2_Players[];
 
 static inline void Copy_Player_Name(char * destination, wchar_t const * name)
 {
@@ -1322,8 +1321,8 @@ void SessionClass::Init_Fixed_Alliances(void)
 
 	Scen->Special.IsAllianceFixed = false;
 
-	char * names1 = DAT_00B77A04;
-	char * names2 = DAT_00B76568;
+	char * names1 = WestwoodOnline_Clan1_Players;
+	char * names2 = WestwoodOnline_Clan2_Players;
 
 	DebugString("Squad 1 = %s\n", names1);
 	DebugString("Squad 2 = %s\n", names2);
@@ -1486,7 +1485,7 @@ int SessionClass::FUN_0069B720(void) const
 // FUNCTION: GAMEMD 0x0069B740
 int SessionClass::FUN_0069B740(void) const
 {
-	return (unknown_168 == -2) ? -2 : unknown_164;
+	return (InitialStart == -2) ? -2 : Start;
 }
 
 // FUNCTION: GAMEMD 0x0069B760
@@ -1560,7 +1559,7 @@ void SessionClass::FUN_0069B8C0(void)
 			player->Set_Color(8);
 		}
 		if (i == 0) {
-			Game::PlayerColor = player->Slot.ColorIdx;
+			Session.PrefColor = player->Slot.ColorIdx;
 		}
 		FUN_004068E0("Player %i, %s: Side = %i, Color = %i\n", i, FUN_007350C0(player->Name), player->Get_Country(), player->Get_Color());
 	}
@@ -1582,7 +1581,7 @@ void SessionClass::FUN_0069B8C0(void)
 // FUNCTION: GAMEMD 0x0069BAB0
 void SessionClass::Resume(void)
 {
-	if (!CurrentlyInGame && Game::IsActive) {
+	if (!CurrentlyInGame && GameActive) {
 		CurrentlyInGame = true;
 		if (DAT_0083ED20 == -1) {
 			DAT_0083ED20 = ::Options.GameSpeed;
@@ -1702,7 +1701,6 @@ int SessionClass::FUN_0069BD00(int slot)
 
 #include "wspudp.h"
 extern WinsockInterfaceClass * PacketTransport;
-extern Wstring DAT_00B73E40;
 
 // FUNCTION: GAMEMD 0x0069BD60
 void SessionClass::FUN_0069BD60(void)
@@ -1723,7 +1721,7 @@ void SessionClass::FUN_0069BD60(void)
 	for (player = 0; player < Players.Count(); player++) {
 		int slot = FUN_0069BC60(player);
 		if (slot >= 0 && slot < MAX_PLAYERS) {
-			Players[player]->Address.Set_Port(unknown_2FF8[slot]);
+			Players[player]->Address.Set_Port(PlayerPortBase[slot]);
 			char * name = FUN_007350C0(Players[player]->Name);
 			char const * address = Players[player]->Address.As_String(NULL);
 			FUN_004068E0("Allocated port for player %s - %s\n", name, address);
@@ -1770,9 +1768,9 @@ void SessionClass::FUN_0069BD60(void)
 					int local_slot =
 						FUN_0069BCC0(FUN_007350C0(ordered[i]->Name));
 
-					if (unknown_2FF8[peer_slot] == unknown_2FF8[local_slot]) {
+					if (PlayerPortBase[peer_slot] == PlayerPortBase[local_slot]) {
 						ordered[j]->Address.Set_Port(
-							unknown_2FF8[peer_slot] + port_offset++);
+							PlayerPortBase[peer_slot] + port_offset++);
 						used[j] = true;
 						FUN_004068E0(
 							"Adjusted port number to %d for player %s\n",
@@ -1784,13 +1782,13 @@ void SessionClass::FUN_0069BD60(void)
 					}
 
 					char * name = FUN_007350C0(ordered[i]->Name);
-					if (stricmp(name, DAT_00B73E40.get()) == 0) {
+					if (stricmp(name, g_NickName.get()) == 0) {
 						Copy_Player_Name(
 							unknown_2E28[local_count++], ordered[j]->Name);
 					}
 
 					name = FUN_007350C0(ordered[j]->Name);
-					if (stricmp(name, DAT_00B73E40.get()) == 0) {
+					if (stricmp(name, g_NickName.get()) == 0) {
 						Copy_Player_Name(
 							unknown_2E28[local_count++], ordered[i]->Name);
 					}
@@ -1799,10 +1797,10 @@ void SessionClass::FUN_0069BD60(void)
 		}
 	}
 
-	if (unknown_301C) {
-		FUN_004068E0("Using %d for local port\n", unknown_301C);
-		Players[0]->Address.Set_Port(unknown_301C);
-		Slots[FUN_0069BC60(0)]->Address.Set_Port(unknown_301C);
+	if (PortNumberOverride) {
+		FUN_004068E0("Using %d for local port\n", PortNumberOverride);
+		Players[0]->Address.Set_Port(PortNumberOverride);
+		Slots[FUN_0069BC60(0)]->Address.Set_Port(PortNumberOverride);
 	}
 
 	for (i = 0; i < Players.Count(); i++) {
@@ -1829,7 +1827,7 @@ void SessionClass::FUN_0069BD60(void)
 
 				if (stricmp(name, peer_name) == 0) {
 					NetNodeType local_node;
-					unknown_2994[j].Get_Node(local_node);
+					PlayerLocalAddress[j].Get_Node(local_node);
 					Players[i]->Address.Set_Address(
 						NULL, local_node, Players[i]->Address.Get_Port());
 
@@ -2032,8 +2030,8 @@ void SessionClass::Read_MultiPlayer_Settings(void)
 		DAT_00B07788 = true;
 		FirewallHelper.Read_Settings();
 	}
-	Session.unknown_2F48 = INI_RA2MD.Get_Bool("MultiPlayer", "SendDelay", false);
-	Session.unknown_301C = INI_RA2MD.Get_Int("MultiPlayer", "PortNumberOverride", 0);
+	Session.SendDelay = INI_RA2MD.Get_Bool("MultiPlayer", "SendDelay", false);
+	Session.PortNumberOverride = INI_RA2MD.Get_Int("MultiPlayer", "PortNumberOverride", 0);
 
 	buf[0] = 0;
 	CurPhoneIdx = INI_RA2MD.Get_Int("MultiPlayer", "PhoneIndex", -1);

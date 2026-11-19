@@ -41,6 +41,7 @@ namespace OwnerDraw {
 			} Wide;
 
 			struct {
+				unsigned char reserved28[0xC0];
 				ArrayList<int> *rowColors;
 				ArrayList<int> *selStates;
 				int topIndex;
@@ -151,7 +152,7 @@ namespace OwnerDraw {
 				int ExtraWidth;
 			} Dialog;
 
-			unsigned char _size[0x100];
+			unsigned char _size[0x1C0];
 		};
 
 		HFONT font;
@@ -160,7 +161,6 @@ namespace OwnerDraw {
 		COLORREF textColor;
 		int field_138;
 		int animState;
-		unsigned char reserved[0xC0];
 
 		WinData(void);
 		WinData(WinData const & that);
@@ -1716,7 +1716,7 @@ inline int Get_Dialog_Type(HWND dialog)
 	return 0;
 }
 
-struct Game { static HINSTANCE hInstance; static bool __cdecl CallBack(void); static bool __fastcall MainLoop(void); static int ObserverMode; static int PCXInitialized; };
+struct Game { static int ObserverMode; static int PCXInitialized; };
 
 // FUNCTION: GAMEMD 0x006040B0
 char const * __fastcall OwnerDraw::GetTooltipStringLabel(HWND window, HWND control)
@@ -2702,7 +2702,7 @@ char const * __fastcall OwnerDraw::GetTooltipStringLabel(HWND window, HWND contr
 			return "STT:WOLMatchOutput";
 		}
 		if (id == 0x5c0) {
-			return (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) ? "WOL:WDTMatchBack" : "STT:WOLMatchCancel";
+			return (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) ? "WOL:WDTMatchBack" : "STT:WOLMatchCancel";
 		}
 	}
 	else if (type == 0x114) {
@@ -3354,18 +3354,14 @@ void __fastcall OwnerDraw::DrawCampaignMenuTransition(HWND dialog, bool reverse)
 // FUNCTION: GAMEMD 0x00607FD0
 void FUN_00607FD0(HWND dialog)
 {
-	OwnerDraw::WinData *data = NULL;
-	HWND key = dialog;
-
-	if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL) {
-		if (*((char *)data + 0xbe)) {
-			HWND item = GetDlgItem(dialog, 0x71a);
-			if (item != NULL) {
-				SendMessage(item, 0x4e2, 0, 0);
-			}
-			OwnerDraw::DrawCampaignMenuTransition(dialog, false);
-			*((char *)data + 0xbe) = 0;
+	OwnerDraw::WinData *data = Find_Data(dialog);
+	if (data != NULL && *((char *)data + 0xbe)) {
+		HWND item = GetDlgItem(dialog, 0x71a);
+		if (item != NULL) {
+			SendMessage(item, 0x4e2, 0, 0);
 		}
+		OwnerDraw::DrawCampaignMenuTransition(dialog, false);
+		*((char *)data + 0xbe) = 0;
 	}
 }
 
@@ -3379,7 +3375,7 @@ BOOL CALLBACK InitCompactDialogControlsProc(HWND window, LPARAM lparam);
 }
 
 // FUNCTION: GAMEMD 0x00608070
-bool WS_Save_Dialog_Values(HWND dialog)
+bool FUN_00608070(HWND dialog)
 {
 	if (FUN_0069BBE0(&Session)) {
 		return false;
@@ -3407,8 +3403,8 @@ bool WS_Save_Dialog_Values(HWND dialog)
 	do {
 		FUN_005D4D50();
 		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
-			Game::CallBack();
-		} else if (!FUN_0055CBF0() && Game::MainLoop()) {
+			Call_Back();
+		} else if (!FUN_0055CBF0() && Main_Loop()) {
 			break;
 		}
 		int done = *((char *)data + 0xbe) == 0;
@@ -4780,7 +4776,7 @@ unsigned char __fastcall FUN_0060C8D0(HWND dialog)
 // FUNCTION: GAMEMD 0x0060C930
 unsigned char __fastcall FUN_0060C930(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
@@ -4826,7 +4822,7 @@ unsigned char __fastcall FUN_0060CA90(HWND dialog)
 // FUNCTION: GAMEMD 0x0060CAF0
 unsigned char __fastcall FUN_0060CAF0(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
@@ -4872,7 +4868,7 @@ unsigned char __fastcall FUN_0060CC60(HWND dialog)
 // FUNCTION: GAMEMD 0x0060CCC0
 unsigned char __fastcall FUN_0060CCC0(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
@@ -4900,7 +4896,7 @@ unsigned char __fastcall FUN_0060CD50(HWND dialog)
 // FUNCTION: GAMEMD 0x0060CDB0
 unsigned char __fastcall FUN_0060CDB0(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
@@ -5060,7 +5056,7 @@ void __fastcall FUN_0060CF00(HWND dialog)
 // FUNCTION: GAMEMD 0x0060D2C0
 void __fastcall FUN_0060D2C0(HWND dialog, int id)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data != NULL) {
 		*(int *)((char *)data + 0x6c) = id;
 	}
@@ -5081,11 +5077,6 @@ namespace UI {
 	HWND __fastcall BeginDialog(int resource, DLGPROC proc, int param);
 	void __fastcall EndDialog(HWND window);
 }
-class InputManagerClass {
-	public:
-		void DoSomething(void);
-		static InputManagerClass * Instance;
-};
 
 // FUNCTION: GAMEMD 0x0060D380
 int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus)
@@ -5097,15 +5088,15 @@ int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus)
 		SetWindowLong(dialog, 8, (LONG)&result);
 		ShowWindow(dialog, 1);
 		SetForegroundWindow(dialog);
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 		if (focus) {
 			FUN_0052B9B0(dialog);
 		}
 		while (result == 0) {
 			FUN_005D4D50();
 			if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
-				Game::CallBack();
-			} else if (!FUN_0055CBF0() && Game::MainLoop()) {
+				Call_Back();
+			} else if (!FUN_0055CBF0() && Main_Loop()) {
 				break;
 			}
 		}
@@ -5143,7 +5134,7 @@ void UI::RegisterComboDropAndNewEditClasses(void)
 	wc.lpfnWndProc = FUN_0060D540;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hInstance = Game::hInstance;
+	wc.hInstance = ProgramInstance;
 	wc.hIcon = NULL;
 	wc.hCursor = NULL;
 	wc.hbrBackground = NULL;
@@ -5155,7 +5146,7 @@ void UI::RegisterComboDropAndNewEditClasses(void)
 	wc.lpfnWndProc = FUN_0060D520;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hInstance = Game::hInstance;
+	wc.hInstance = ProgramInstance;
 	wc.hIcon = NULL;
 	wc.hCursor = NULL;
 	wc.hbrBackground = NULL;
@@ -5195,7 +5186,7 @@ BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam)
 			if (style & WS_TABSTOP) {
 				flags = 0x40010110;
 			}
-			HWND list = CreateWindowEx(0, "ListBox", NULL, flags, x, y, rect.right - rect.left, rect.bottom - rect.top, parent, NULL, Game::hInstance, NULL);
+			HWND list = CreateWindowEx(0, "ListBox", NULL, flags, x, y, rect.right - rect.left, rect.bottom - rect.top, parent, NULL, ProgramInstance, NULL);
 			NewEditLink *link = new NewEditLink;
 			link->className = "NewEdit";
 			link->style = GetWindowLong(edit, GWL_STYLE);
@@ -5212,6 +5203,26 @@ BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam)
 	return TRUE;
 }
 
+namespace OwnerDraw {
+BOOL CALLBACK SetUserData2(HWND window, LPARAM lparam);
+BOOL CALLBACK InitializeCtrl(HWND window, LPARAM lparam);
+
+bool __fastcall PrepareDialogChildControls(HWND dialog, int mode)
+{
+	UI::RegisterComboDropAndNewEditClasses();
+	CurrentDialogHwnd = dialog;
+	EnumChildWindows(dialog, SetUserData2, 1);
+	SetUserData2(dialog, 1);
+	EnumChildWindows(dialog, FUN_0060F320, 1);
+	EnumChildWindows(dialog, InitializeCtrl, mode);
+	InitializeCtrl(dialog, mode);
+	EnumChildWindows(dialog, SetUserData2, 0);
+	SetUserData2(dialog, 0);
+	return true;
+}
+}
+
+
 void __fastcall FUN_0053E3C0(HWND window);
 void ODCacheImages(void);
 namespace OwnerDraw {
@@ -5226,8 +5237,8 @@ LRESULT CALLBACK AutoRadioButtonHandler(HWND window, UINT message, WPARAM wparam
 LRESULT CALLBACK DefaultHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x0060F760
-// OwnerDraw::SetNeedsControlImage
-BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam)
+// OwnerDraw::SetUserData2
+BOOL CALLBACK SetUserData2(HWND window, LPARAM lparam)
 {
 	WinData *data = NULL;
 	if (!Dialogs.getPointer(window, &data)) {
@@ -5241,8 +5252,8 @@ BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam)
 
 
 // FUNCTION: GAMEMD 0x0060F9A0
-// OwnerDraw::RegisterChildControlProc
-BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam)
+// OwnerDraw::InitializeCtrl
+BOOL CALLBACK InitializeCtrl(HWND window, LPARAM lparam)
 {
 	char class_name[128];
 	GetClassName(window, class_name, sizeof(class_name));
@@ -5348,14 +5359,14 @@ BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam)
 }
 
 extern int DAT_00AC48D8;
-void __fastcall FUN_006219D0(Rect const & rect, Surface & surface, int xpos, int ypos);
+void __fastcall ODDrawBevelDarken(Rect const & rect, Surface & surface, int xpos, int ypos);
 namespace OwnerDraw {
 int __fastcall PrintTextFixedLength(unsigned color, BitFont * font, Rect const & rect, wchar_t const * text, int length, int x_alignment, int y_alignment, Surface * surface, int unknown);
 void DrawBeveledBorder(Surface & surface, Rect const & rect, int offset, int color);
 }
 
 void __fastcall FUN_0053E420(HWND window);
-BOOL CALLBACK FUN_00610570(HWND window, LPARAM lparam);
+BOOL CALLBACK ODRemoveFromDict(HWND window, LPARAM lparam);
 
 static inline char Remove_Entry(Dictionary<HWND, WNDPROC> & dict, HWND & window)
 {
@@ -5370,15 +5381,15 @@ static inline char Remove_Entry(Dictionary<HWND, OwnerDraw::WinData> & dict, HWN
 }
 
 // FUNCTION: GAMEMD 0x00610360
-BOOL __fastcall FUN_00610360(HWND window)
+BOOL __fastcall ODCleanupDicts(HWND window)
 {
-	EnumChildWindows(window, FUN_00610570, 0);
-	FUN_00610570(window, 0);
+	EnumChildWindows(window, ODRemoveFromDict, 0);
+	ODRemoveFromDict(window, 0);
 	return TRUE;
 }
 
 // FUNCTION: GAMEMD 0x00610570
-BOOL CALLBACK FUN_00610570(HWND window, LPARAM lparam)
+BOOL CALLBACK ODRemoveFromDict(HWND window, LPARAM lparam)
 {
 	Remove_Entry(OwnerDraw::DialogProcs, window);
 	Remove_Entry(OwnerDraw::Dialogs, window);
@@ -5404,7 +5415,7 @@ union ODColorBits {
 };
 
 // SYNTHETIC: GAMEMD 0x006107A0 SYMBOL
-// _$E120
+// _$E118
 OwnerDraw::Tooltip ODTooltip;
 
 // FUNCTION: GAMEMD 0x006107E0
@@ -5475,7 +5486,7 @@ bool OwnerDraw::DrawTooltip(bool save_background)
 	VisibleSurface->Fill_Rect(rect, color);
 	VisibleSurface->Unlock();
 
-	FUN_006219D0(rect, *VisibleSurface, 8, 4);
+	ODDrawBevelDarken(rect, *VisibleSurface, 8, 4);
 
 	OwnerDraw::PrintTextFixedLength(OwnerDraw::PrimaryTextColor, 0, rect, ODTooltip.text, wcslen(ODTooltip.text), 1, 1, VisibleSurface, 0);
 	rect.X += 1;
@@ -5530,11 +5541,11 @@ bool OwnerDraw::End_Tooltip(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00612910 SYMBOL
-// _$E123
+// _$E121
 static ArrayList<HWND> ActiveWindows;
 
 // SYNTHETIC: GAMEMD 0x00612930 SYMBOL
-// _$E128
+// _$E126
 static Dictionary<OwnerDraw::CtrlMsgData, bool> ProcessedMessages(Hash_CtrlMsg);
 
 // FUNCTION: GAMEMD 0x00612A60
@@ -5568,7 +5579,7 @@ void __fastcall BlendGradientRect(Rect const & rect, Surface & surface, int colo
 void __fastcall CopyDimmedBackground(Rect const & rect, HWND hWnd, int alpha);
 }
 
-void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha);
+void __fastcall ODFillRectTrans(Rect * rect, Surface * surface, unsigned short color, int alpha);
 namespace OwnerDraw {
 int __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int style, int p5, int p6, int p7, int p8);
 }
@@ -5881,7 +5892,7 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 			Rect srect(0, 0, image->Get_Width(), image_height);
 			AlternateSurface->Blit_From(drect, *image, srect, false, true);
 			if (style & WS_DISABLED) {
-				FUN_00621B80(&drect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
+				ODFillRectTrans(&drect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
 			}
 			trect.Left += 26;
 			if (data->Wide.text) {
@@ -6109,7 +6120,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 		}
 
 		if (style & WS_DISABLED) {
-			FUN_00621B80(&rect, AlternateSurface, 0, 128);
+			ODFillRectTrans(&rect, AlternateSurface, 0, 128);
 		}
 		ValidateRect(window, NULL);
 		return 0;
@@ -6754,7 +6765,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 				Rect src_rect(0, 0, client_copy.right + 1, client_copy.bottom + 1);
 				Rect dst_rect(disp_copy.left, disp_copy.top, client_copy.right + 1, client_copy.bottom + 1);
 				surf->Blit_From(src_rect, *AlternateSurface, dst_rect);
-				FUN_00621B80(&src_rect, surf, 0, data->Edit.alpha);
+				ODFillRectTrans(&src_rect, surf, 0, data->Edit.alpha);
 			}
 
 			if (data->cachedSurface != NULL) {
@@ -6804,7 +6815,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 
 			int disabled = style & WS_DISABLED;
 			if (disabled) {
-				FUN_00621B80(&grip_rect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
+				ODFillRectTrans(&grip_rect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
 			}
 
 			int frame_color = ODColorToHiColor(OwnerDraw::DefaultBorderColor);
@@ -6968,8 +6979,8 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 namespace UI {
 void __fastcall GetKeyboardKeyString(unsigned short key, wchar_t *buffer);
 }
-int __fastcall FUN_00620F60(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags);
-inline int Draw_Hotkey_Text0(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return FUN_00620F60(surface, text, rect, font, color, flags); }
+int __fastcall ODDrawTextBG(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags);
+inline int Draw_Hotkey_Text0(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return ODDrawTextBG(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text1(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text0(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text2(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text1(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text3(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text2(surface, text, rect, font, color, flags); }
@@ -7678,7 +7689,7 @@ inline unsigned Color_To_Pixel(unsigned color)
 }
 
 // FUNCTION: GAMEMD 0x00620F60
-int __fastcall FUN_00620F60(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags)
+int __fastcall ODDrawTextBG(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags)
 {
 	unsigned pixel = Color_To_Pixel(color);
 	int x = rect->left;
@@ -7938,7 +7949,7 @@ void __fastcall OwnerDraw::BlendGradientRect(Rect const & rect, Surface & surfac
 }
 
 // FUNCTION: GAMEMD 0x006219D0
-void __fastcall FUN_006219D0(Rect const &rect, Surface &surface, int xpos, int ypos)
+void __fastcall ODDrawBevelDarken(Rect const &rect, Surface &surface, int xpos, int ypos)
 {
 	unsigned short *surfptr = (unsigned short *)surface.Lock();
 
@@ -7979,7 +7990,7 @@ void __fastcall FUN_006219D0(Rect const &rect, Surface &surface, int xpos, int y
 }
 
 // FUNCTION: GAMEMD 0x00621B80
-void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha)
+void __fastcall ODFillRectTrans(Rect * rect, Surface * surface, unsigned short color, int alpha)
 {
 	unsigned short * pixels = (unsigned short *)surface->Lock();
 	if (pixels) {
@@ -8256,8 +8267,8 @@ HWND __fastcall UI::BeginDialog(int resource, DLGPROC proc, int param)
 // FUNCTION: GAMEMD 0x00622720
 void __fastcall UI::EndDialog(HWND window)
 {
-	InputManagerClass::Instance->DoSomething();
-	WS_Save_Dialog_Values(window);
+	Keyboard->Clear();
+	FUN_00608070(window);
 	DestroyWindow(window);
 
 	for (int index = 0; index < DAT_00B72F50; index++) {
@@ -8296,14 +8307,133 @@ void OwnerDraw::Display_Dialog(HWND window)
 }
 
 namespace OwnerDraw {
-BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam);
-BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam);
+BOOL CALLBACK SetUserData2(HWND window, LPARAM lparam);
+BOOL CALLBACK InitializeCtrl(HWND window, LPARAM lparam);
 }
 BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam);
 void __fastcall FUN_0060CF00(HWND dialog);
 void __fastcall Resize_Dialogs(HWND window);
 void __fastcall Center_Window_Within_Window(HWND window);
 extern int DAT_007F5BE0;
+
+extern int DAT_007F5BEC;
+namespace UI { void __fastcall RegisterWindow(HWND window, int type); }
+
+// FUNCTION: GAMEMD 0x00622820
+// UI::RegisterWindow
+void __fastcall UI::RegisterWindow(HWND window, int type)
+{
+	OwnerDraw::PrepareDialogChildControls(window, 0);
+	Resize_Dialogs(window);
+	FUN_0060D2C0(window, type);
+	if (!Session.FUN_0069BBE0()) {
+		FUN_0060CF00(window);
+	}
+	FUN_0060CAF0(window);
+	FUN_0060C930(window);
+	FUN_0060CCC0(window);
+	FUN_0060CDB0(window);
+	FUN_0060AF40(window);
+	if (OwnerDraw::TrySetDialogLayoutBand1(window)) {
+		int layout[2] = { DAT_007F5BE0, DAT_007F5BEC };
+		OwnerDraw::UpdateControlPosition(window, (LPARAM)layout);
+	} else {
+		OwnerDraw::TrySetDialogLayoutBand2(window);
+	}
+	FUN_0060A5A0(window);
+	FUN_0060AA50(window);
+	Center_Window_Within_Window(window);
+}
+
+
+namespace UI { int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
+
+// FUNCTION: GAMEMD 0x00622B50
+int __fastcall UI::StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+		case WM_DESTROY:
+			Remove_Modeless_Dialog(window);
+			--_dialog_count;
+			SetFocus(MainWindow);
+			return 0;
+
+		case WM_DRAWITEM:
+			OwnerDraw::Draw_Item((LPDRAWITEMSTRUCT)lparam);
+			return 1;
+
+		case WM_PAINT: {
+			OwnerDraw::WinData *data = Get_Data(window);
+			if (data != NULL) {
+				if (*((char *)data + 0xbc)) {
+					ValidateRect(window, NULL);
+					return 1;
+				}
+				OwnerDraw::Paint(window);
+				FUN_00607FD0(window);
+				ValidateRect(window, NULL);
+			}
+			return 0;
+		}
+
+		case WM_ERASEBKGND:
+			return 1;
+
+		case WM_INITDIALOG:
+			++_dialog_count;
+			if (lparam != 0) {
+				UI::RegisterWindow(window, *(unsigned short *)lparam);
+			} else {
+				UI::RegisterWindow(window, 0);
+			}
+			SetFocus(window);
+			return 0;
+
+		case WM_CTLCOLORMSGBOX:
+		case WM_CTLCOLOREDIT:
+		case WM_CTLCOLORLISTBOX:
+		case WM_CTLCOLORBTN:
+		case WM_CTLCOLORDLG:
+		case WM_CTLCOLORSCROLLBAR:
+		case WM_CTLCOLORSTATIC:
+			return (int)GetStockObject(BLACK_BRUSH);
+
+		case WM_NCHITTEST: {
+			HWND tip = GetDlgItem(window, 0x695);
+			if (tip != NULL) {
+				int x = LOWORD(lparam);
+				int y = HIWORD(lparam);
+				RECT rect;
+				GetWindowRect(window, &rect);
+				POINT pt;
+				pt.x = x - rect.left;
+				pt.y = y - rect.top;
+				WideWstring text;
+				HWND child = ChildWindowFromPointEx(window, pt, CWP_SKIPINVISIBLE);
+				if (child != NULL) {
+					text = FUN_00603FC0(window, child, x, y);
+					if (wcscmp(text.get(), DAT_00887734) == 0) {
+						text = FUN_00603F60(window, child);
+						if (wcscmp(text.get(), DAT_00887734) == 0) {
+							text = FUN_00604060(window, child);
+						}
+					}
+				}
+				SendMessage(tip, 0x4b2, 0, (LPARAM)text.text());
+			}
+			return 0;
+		}
+
+		case 0x497:
+			SendMessage(window, 0x4a9, (WPARAM)window, 1);
+			return 0;
+
+		case 0x4ec:
+			FUN_0060AAA0(window);
+			return 0;
+	}
+	return 0;
+}
 
 namespace UI { bool Updated(void); }
 
@@ -8313,10 +8443,10 @@ bool UI::Updated(void)
 {
 	FUN_005D4D50();
 	if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
-		Game::CallBack();
+		Call_Back();
 		return false;
 	}
-	if (!FUN_0055CBF0() && Game::MainLoop()) {
+	if (!FUN_0055CBF0() && Main_Loop()) {
 		return true;
 	}
 	return false;
@@ -8715,11 +8845,11 @@ int __fastcall FUN_00623CD0(wchar_t const * text)
 		SetWindowLong(dialog, 8, (LONG)&result);
 		ShowWindow(dialog, 1);
 		SetForegroundWindow(dialog);
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 		while (result < 0) {
 			FUN_005D4D50();
 			if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && !Session.NetOpen && !Session.Suspended) {
-				if (!FUN_0055CBF0() && Game::MainLoop()) {
+				if (!FUN_0055CBF0() && Main_Loop()) {
 					break;
 				}
 			}
@@ -8913,12 +9043,12 @@ int __fastcall Run_Dialog_Control(int resource, DLGPROC proc, OwnerDraw::DialogC
 	}
 	ShowWindow(dialog, SW_SHOWNORMAL);
 	SetForegroundWindow(dialog);
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	while (!control->F2() && !control->F4()) {
 		FUN_005D4D50();
 		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
-			Game::CallBack();
-		} else if (!FUN_0055CBF0() && Game::MainLoop()) {
+			Call_Back();
+		} else if (!FUN_0055CBF0() && Main_Loop()) {
 			break;
 		}
 		Title_Screen_Restore(false);

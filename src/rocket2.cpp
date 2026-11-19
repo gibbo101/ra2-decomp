@@ -51,7 +51,6 @@
 
 
 char * __fastcall FUN_007350C0(wchar_t const * text);
-namespace Game { extern HWND hWnd; }
 
 #pragma pack(push, 1)
 struct TalkPacketType {
@@ -237,9 +236,9 @@ bool OwnerTalkClass::Start_Router(unsigned char * ip)
 				NetNodeType node;
 				player->Get_Address(net, node);
 				sprintf(command, "mphmd.exe %d.%d.%d.%d", node[0], node[1], node[2], node[3]);
-				Session.unknown_2978 = *player;
+				Session.PacketRouterAddressTranslate = *player;
 				Session.PacketRouterPort = 0;
-				DebugString("Session.PacketRouterAddressTranslate = %s\n", Session.unknown_2978.As_String(0));
+				DebugString("Session.PacketRouterAddressTranslate = %s\n", Session.PacketRouterAddressTranslate.As_String(0));
 			}
 		}
 	} else {
@@ -253,11 +252,11 @@ bool OwnerTalkClass::Start_Router(unsigned char * ip)
 			node[1] = ip[1];
 			node[2] = ip[2];
 			node[3] = ip[3];
-			Session.unknown_2978.Set_Address(net, node, 0);
-			Session.unknown_2978.Set_Port(Session.Players[0]->Address.Get_Port());
+			Session.PacketRouterAddressTranslate.Set_Address(net, node, 0);
+			Session.PacketRouterAddressTranslate.Set_Port(Session.Players[0]->Address.Get_Port());
 			Session.PacketRouterPort = Session.Players[0]->Address.Get_Port();
 			Session.PacketRouterAddress = Session.Players[0]->Address;
-			DebugString("Session.PacketRouterAddressTranslate = %s\n", Session.unknown_2978.As_String(0));
+			DebugString("Session.PacketRouterAddressTranslate = %s\n", Session.PacketRouterAddressTranslate.As_String(0));
 		}
 	}
 	int result = CreateProcess("mphmd.exe", command, NULL, NULL, FALSE, 0x200, NULL, NULL, &startup, &process);
@@ -266,7 +265,7 @@ bool OwnerTalkClass::Start_Router(unsigned char * ip)
 	} else {
 		RouterProcess = process.hProcess;
 		DebugString("hRouterProcess = %d\n", process.hProcess);
-		SetFocus(Game::hWnd);
+		SetFocus(MainWindow);
 		timer = 1800;
 		result = 0;
 		while (timer) {
@@ -383,7 +382,7 @@ void OwnerTalkClass::Set_Port(int id, unsigned short port)
 // FUNCTION: GAMEMD 0x00664440
 int OwnerTalkClass::Update_Master(void)
 {
-	int id = Session.unknown_3094;
+	int id = Session.FallbackHost;
 	int i;
 
 	if (id == -1) {

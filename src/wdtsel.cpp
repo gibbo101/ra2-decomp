@@ -89,13 +89,12 @@ Selection::~Selection(void)
 	BitFont::Instance->SetColor((unsigned short)TextColor);
 }
 
-rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id);
 
 // FUNCTION: GAMEMD 0x0076C970
 // WorldDominationTour::Selection::Init_Voices
 void Selection::Init_Voices(INIClass const & ini, Wstring const & section)
 {
-	VoicePlayer.FUN_00770550(ini, section);
+	VoicePlayer.Init(ini, section);
 	{ Wstring key("WinningThreshold"); WinningThreshold = ini.Get_Int(section, key, WinningThreshold); }
 	{ Wstring key("MegaWinningThreshold"); MegaWinningThreshold = ini.Get_Int(section, key, MegaWinningThreshold); }
 	{ Wstring key("LosingThreshold"); LosingThreshold = ini.Get_Int(section, key, LosingThreshold); }
@@ -266,7 +265,7 @@ void Selection::Do_Target_Selection(int index)
 	} else {
 		bool mega = false;
 		int outcome = Get_Outcome(current_tick, mega);
-		VoicePlayer.FUN_007712C0(2, outcome, mega, true, 0);
+		VoicePlayer.Queue(2, outcome, mega, true, 0);
 	}
 
 	{
@@ -358,15 +357,15 @@ void Selection::Presentation(int index)
 		int faction = TourCampaign->PlayerFaction;
 		int owned = previous_state->Count_Owned_Territories(faction);
 		if (owned >= MegaWinningThreshold) {
-			VoicePlayer.FUN_007712C0(0, OUTCOME_WIN, owned >= 30, true, 0);
+			VoicePlayer.Queue(0, OUTCOME_WIN, owned >= 30, true, 0);
 		} else if (owned <= MegaLosingThreshold) {
-			VoicePlayer.FUN_007712C0(0, OUTCOME_LOSE, owned <= 0, true, 0);
+			VoicePlayer.Queue(0, OUTCOME_LOSE, owned <= 0, true, 0);
 		} else {
-			VoicePlayer.FUN_007712C0(0, OUTCOME_DRAW, true, true, 0);
+			VoicePlayer.Queue(0, OUTCOME_DRAW, true, true, 0);
 		}
 
 		Present_Ticks(previous_tick, current_tick);
-		while (VoicePlayer.FUN_007717F0() && !Brokeout) {
+		while (VoicePlayer.Playing() && !Brokeout) {
 			Wait_Delay(5);
 			Check_For_Breakout();
 		}
@@ -399,7 +398,7 @@ bool Selection::Present_History(int tick_from, int tick_to)
 		emphasis = Get_Outcome(tick_to, mega) == OUTCOME_LOSE && mega;
 	}
 
-	VoicePlayer.FUN_007712C0(1, outcome, emphasis, true, 0);
+	VoicePlayer.Queue(1, outcome, emphasis, true, 0);
 	return(!Present_Ticks(tick_from, tick_to));
 }
 
@@ -501,8 +500,8 @@ bool __fastcall FUN_0076ED10(rc_ptr<Campaign> * campaign, int theater)
 	bool valid = selected.Get() != NULL;
 	if (valid) {
 		int index = selected->ID;
-		Session.unknown_08 = index;
-		rc_ptr<WDTTerritory> territory = FUN_007B0390(index);
+		Session.WDTTerritory = index;
+		rc_ptr<WDTTerritory> territory = WDT_Get_Territory(index);
 		if (territory.Get() != NULL) {
 			Session.Options.UnitCount = territory->UnitCount;
 			BuildLevel = territory->TechLevel;
@@ -527,8 +526,8 @@ bool __fastcall FUN_0076ED10(rc_ptr<Campaign> * campaign, int theater)
 }
 
 // FUNCTION: GAMEMD 0x0076EEB0
-// WorldDominationTour::Selection::FUN_0076EEB0
-void Selection::FUN_0076EEB0(void)
+// WorldDominationTour::Selection::Start
+void Selection::Start(void)
 {
 	UserInputLocked = false;
 	if (ThemeName != (char const *)NULL) {
@@ -582,7 +581,7 @@ template class rc_ptr<CampaignProperties>;
 template class rc_ptr<Territory>;
 
 // TEMPLATE: GAMEMD 0x0076F080
-// ?Get@?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ
+// ??C?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ
 template class rc_ptr<Map>;
 
 // TEMPLATE: GAMEMD 0x0076F090

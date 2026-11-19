@@ -14,6 +14,7 @@
 
 #include <windows.h>
 #include <stdio.h>
+#include "win.h"
 
 // SYNTHETIC: GAMEMD 0x0053DDE0 SYMBOL
 // _$E2
@@ -84,7 +85,6 @@ extern HANDLE DAT_00AA03F8;
 extern DWORD DAT_00AA03FC;
 extern int DAT_00AA0454;
 extern int DAT_00AA0458;
-namespace Game { extern HWND hWnd; }
 
 // FUNCTION: GAMEMD 0x0053DE00
 int __fastcall FUN_0053DE00(int count, int size)
@@ -124,7 +124,7 @@ int __fastcall FUN_0053DE00(int count, int size)
 							DAT_00AA0460 = STM_StreamAcquireAccess(DAT_00AA045C, 0);
 							DAT_00AA0464 = STM_StreamAcquireAccess(DAT_00AA045C, 1);
 							if (DAT_00AA0460 && DAT_00AA0464) {
-								HWND window = Game::hWnd;
+								HWND window = MainWindow;
 								DAT_00AA0448 = 1;
 								memset(DAT_00AA0168, 0, sizeof(DAT_00AA0168));
 								if (window) FUN_0053E3C0(window);

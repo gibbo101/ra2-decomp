@@ -239,9 +239,7 @@ bool BeaconClass::VisibleToPlayer(void) const
 }
 
 #include "rawfile.h"
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 void * Load_Alloc_Data(FileClass & file);
 extern double __cdecl FUN_004CAC40(double);
 void __cdecl FUN_004068E0(char const * format, ...);
@@ -381,16 +379,6 @@ Point2D __stdcall FUN_00430F60(void)
 	return Point2D(0, 0);
 }
 
-static inline int Coord_Dist(Coord const & a, Coord const & b)
-{
-	Coord c = a - b;
-	return c.Length();
-}
-static inline int Coord_Dist2(int x, int y, int z, Coord const & b)
-{
-	Coord c = Coord(x, y, z) - b;
-	return c.Length();
-}
 static inline int Coord_Dist3(Coord a, Coord b)
 {
 	return (a - b).Length();

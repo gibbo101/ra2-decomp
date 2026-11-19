@@ -1175,7 +1175,7 @@ int AircraftClass::Do_MISSION_PATROL(void)
 		LAND,
 	};
 
-	unknown_bool_430 = true;
+	IsOnPatrol = true;
 
 	switch (Status) {
 		case VALIDATE_LZ:
@@ -1957,7 +1957,7 @@ AbstractClass * AircraftClass::New_LZ(AbstractClass * oldlz) const
 			return(oldlz);
 		}
 
-		for (int radius = 0; radius < Rule->unknown_int_1478 / CELL_LEPTON_W; radius++) {
+		for (int radius = 0; radius < Rule->LZScanRadius / CELL_LEPTON_W; radius++) {
 			FacingType modifier = Random_Pick(FACING_N, FACING_NW);
 			Cell lastcell(0, 0);
 
@@ -3213,9 +3213,9 @@ int AircraftClass::Do_MISSION_GUARD_AREA(void)
 }
 
 // FUNCTION: GAMEMD 0x0041A9E0
-FireErrorType AircraftClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
+FireErrorType AircraftClass::Can_Fire(AbstractClass * target, int which, bool check_range) const
 {
-	FireErrorType fire = BASECLASS::Can_Fire(target, which, ignoreRange);
+	FireErrorType fire = BASECLASS::Can_Fire(target, which, check_range);
 	if (fire != FIRE_OK) {
 		return(fire);
 	}

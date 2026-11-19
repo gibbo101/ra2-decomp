@@ -14,6 +14,7 @@
 #include "palette.h"
 
 #include <math.h>
+#include "lightstorm.h"
 
 
 extern bool DAT_00829C20[256];
@@ -26,15 +27,7 @@ extern "C" {
 	void __cdecl FUN_007DEBBA(void * palette, void * translator, int red, int green, int blue, int intensity, bool * mask);
 }
 
-struct NukeFlash {
-	static bool IsFadingIn(void);
-};
-
 struct ChronoScreenEffect {
-	static bool Active(void);
-};
-
-struct PsyDom {
 	static bool Active(void);
 };
 

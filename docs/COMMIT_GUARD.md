@@ -44,3 +44,10 @@ before it leaves the machine.
 
 A blocked commit means removing the data, never `--no-verify`. A false positive gets the
 pattern fixed in `guard.sh`, in its own commit.
+
+## Tool tests
+
+After `guard.sh` passes, `pre-commit` runs `tool-tests.sh`: a commit that changes a Python
+file under `tools/` must pass the tool test suite (`python -m unittest discover -s tools`),
+the same suite the Tool tests workflow runs on every push. A failing suite blocks the commit
+until it is fixed, never `--no-verify`.

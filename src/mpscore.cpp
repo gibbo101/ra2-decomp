@@ -51,10 +51,9 @@
 // _$E38
 
 class Surface;
-struct Drawing {
-	static int RenderWidth;
-	static int RenderHeight;
-};
+extern int VideoModeWidth;
+extern int VideoModeHeight;
+
 extern Surface * HiddenSurface;
 void __fastcall FUN_0072D730(int side);
 void FUN_0072D780(void);
@@ -87,7 +86,7 @@ MPScoreScreen::MPScoreScreen(void)
 void MPScoreScreen::Present(void)
 {
 	FUN_0072D730(Scen->PlayerSideIndex);
-	Rect rect(0, 0, Drawing::RenderWidth, Drawing::RenderHeight);
+	Rect rect(0, 0, VideoModeWidth, VideoModeHeight);
 	FUN_0072EAD0(HiddenSurface, &rect);
 	FUN_004F4780(true, HiddenSurface, false);
 	FUN_0060D380(0x108, FUN_005C9B10, false);
@@ -97,7 +96,7 @@ void MPScoreScreen::Present(void)
 }
 
 // FUNCTION: GAMEMD 0x005C97B0
-void __fastcall FUN_005C97B0(wchar_t * buffer, int seconds)
+void __fastcall Format_Time(wchar_t * buffer, int seconds)
 {
 	if (buffer != NULL) {
 		if (seconds / 3600 > 99) {
@@ -178,7 +177,7 @@ void FUN_005C98A0(void)
 	}
 }
 
-int __cdecl FUN_005C9AE0(void const * a, void const * b);
+int __cdecl Sort_Scores(void const * a, void const * b);
 
 // FUNCTION: GAMEMD 0x005C9AA0
 void FUN_005C9AA0(void)
@@ -188,12 +187,12 @@ void FUN_005C9AA0(void)
 		DAT_00ABF958[i] = &Session.Score[i];
 	}
 	if (count > 1) {
-		qsort(DAT_00ABF958, count, 4, FUN_005C9AE0);
+		qsort(DAT_00ABF958, count, 4, Sort_Scores);
 	}
 }
 
 // FUNCTION: GAMEMD 0x005C9AE0
-int __cdecl FUN_005C9AE0(void const * a, void const * b)
+int __cdecl Sort_Scores(void const * a, void const * b)
 {
 	MPlayerScoreType * first = *(MPlayerScoreType * const *)a;
 	MPlayerScoreType * second = *(MPlayerScoreType * const *)b;
@@ -216,7 +215,7 @@ extern int DAT_00B779D4;
 extern Surface * AlternateSurface;
 void __fastcall FUN_00603D30(HWND item, Surface * surface);
 void __fastcall FUN_0072AA10(Rect * rect, int dx, int dy);
-void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha);
+void __fastcall ODFillRectTrans(Rect * rect, Surface * surface, unsigned short color, int alpha);
 Surface * __fastcall FUN_005CA110(int index);
 
 static const int DAT_0082FD5C[8][5] = {
@@ -265,7 +264,7 @@ int CALLBACK FUN_005C9B10(HWND window, UINT message, WPARAM wparam, LPARAM lpara
 			}
 			item = GetDlgItem(window, 0x6d2);
 			SendMessage(item, 0x4b2, 0, (LPARAM)text);
-			FUN_005C97B0(text, Scen->ElapsedTimer.Value() / 60);
+			Format_Time(text, Scen->ElapsedTimer.Value() / 60);
 			item = GetDlgItem(window, 0x3ea);
 			SendMessage(item, 0x4b2, 0, (LPARAM)text);
 			FUN_005C98A0();
@@ -273,7 +272,7 @@ int CALLBACK FUN_005C9B10(HWND window, UINT message, WPARAM wparam, LPARAM lpara
 				DAT_00ABF958[i] = &Session.Score[i];
 			}
 			if (Session.NumScores > 1) {
-				qsort(DAT_00ABF958, Session.NumScores, 4, FUN_005C9AE0);
+				qsort(DAT_00ABF958, Session.NumScores, 4, Sort_Scores);
 			}
 			for (i = 0; i < 2; i++) {
 				int header = DAT_0082FDFC[i];
@@ -332,7 +331,7 @@ int CALLBACK FUN_005C9B10(HWND window, UINT message, WPARAM wparam, LPARAM lpara
 			OwnerDraw::GetRectangle(item, &last);
 			Rect rect(first.left, first.top, last.right - first.left, last.bottom - first.top);
 			FUN_0072AA10(&rect, -4, -8);
-			FUN_00621B80(&rect, AlternateSurface, 0, 0x9f);
+			ODFillRectTrans(&rect, AlternateSurface, 0, 0x9f);
 			break;
 	}
 	return 0;
