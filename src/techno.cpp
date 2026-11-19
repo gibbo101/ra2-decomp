@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "vectornorm.h"
 #include "dialog.h"
 #include "geometry.h"
 #include "techno.h"
@@ -7173,6 +7174,101 @@ bool TechnoClass::Is_On_Elevation(void) const
 {
 	Cell cell = TacticalMap->Coord_To_Cell(Get_Coord());
 	return(cell != Get_Cell());
+}
+
+// FUNCTION: GAMEMD 0x0070C690
+Coord TechnoClass::Railgun_Beam_Damage(Coord & coord, AbstractClass *abstract, WeaponTypeClass *weapon)
+{
+	Coord center = abstract->Center_Coord();
+
+	bool target_found = false;
+
+	Cell final_cell = coord.As_Cell();
+	Vector3 start(coord.X, coord.Y, coord.Z);
+	Vector3 end(center.X, center.Y, center.Z);
+
+	Coord final_impact = coord;
+
+	Vector3 delta = end - start;
+	DynamicVectorClass<ObjectClass *> targets;
+
+	for (int i = 0; i < RAILGUN_STEPS; i++) {
+		final_impact = Lerp(coord, center, i * (1.0f / (RAILGUN_STEPS - 1)));
+
+		if (final_impact.As_Cell() != final_cell) {
+			final_cell = final_impact.As_Cell();
+			CellClass *cptr = &Map[final_cell];
+
+			ObjectClass *optr = cptr->Cell_Occupier(cptr->IsUnderBridge && final_impact.Z >= LEVEL_LEPTON_H * (cptr->Height + BRIDGE_CELL_HEIGHT));
+
+			while (optr != NULL) {
+				if (optr != this) {
+					if (optr == abstract) {
+						target_found = true;
+					}
+					if (optr->Is_Techno()) {
+						float distance = 0.0f;
+						if (optr->Fetch_RTTI() != RTTI_BUILDING) {
+							// Project the object offset onto the direction perpendicular to the beam.
+							// Normalize the projection to test the damage radius.
+							Coord obj_coord = optr->PositionCoord;
+							Vector3 obj(obj_coord.X, obj_coord.Y, obj_coord.Z);
+							Vector3 off = obj - start;
+							Vector3 cross;
+							Vector3::Cross_Product(off, delta, &cross);
+							Vector3 perp;
+							Vector3::Cross_Product(cross, delta, &perp);
+							distance = fabs((perp * off) / Vector3_Length(perp));
+						}
+
+						if (distance < Rule->RailgunDamageRadius || optr == abstract) {
+							if (targets.Count() == 0 || targets.ID(optr) == -1) {
+								targets.Add(optr);
+							}
+						}
+					}
+				}
+				optr = optr->Next;
+			}
+
+			// We hit a cell higher than the impact point, halt gathering targets.
+			if (Map.Get_Height_GL(final_impact) > final_impact.Z) {
+				// If the impact was a cell and contains a collapseable cliff, try to collapse it.
+				if (Map[final_impact].Is_Tile_Destroyable_Cliff()) {
+					if (Percent_Chance(Rule->CollapseChance)) {
+						Map.Collapse_Cliff(&Map[final_impact]);
+					}
+				}
+				return(final_impact);
+			}
+		}
+	}
+
+	CellClass *cptr = (CellClass *)abstract;
+
+	if (!target_found) {
+		ObjectClass *obj = abstract != NULL && (abstract->AbstractFlags & 2) ? static_cast<ObjectClass *>(abstract) : NULL;
+
+		if (obj != NULL) {
+			if (targets.Count() == 0 || targets.ID(obj) == -1) {
+				targets.Add(obj);
+			}
+		}
+	}
+
+	for (int j = 0; j < targets.Count(); j++) {
+		int damage = weapon->AmbientDamage;
+		targets[j]->Take_Damage(damage, 0, weapon->WarheadPtr, this);
+	}
+
+	// If the impact was a cell and contains a collapseable cliff, try to collapse it.
+	if (cptr->Fetch_RTTI() == RTTI_CELL && cptr->Is_Tile_Destroyable_Cliff()) {
+		if (Percent_Chance(Rule->CollapseChance)) {
+			Map.Collapse_Cliff(cptr);
+		}
+	}
+
+	return(center);
 }
 
 // FUNCTION: GAMEMD 0x0070CC90

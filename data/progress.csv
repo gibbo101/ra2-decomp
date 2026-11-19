@@ -15061,6 +15061,7 @@ address,name,result,size,source,symbol
 0x0070C5F0,TechnoClass::IsNotWarping,MATCH,26,src/techno.cpp,?IsNotWarping@TechnoClass@@UBE_NXZ
 0x0070C610,TechnoClass::Assign_Archive_Target,MATCH,13,src/techno.cpp,?Assign_Archive_Target@TechnoClass@@QAEXPAVAbstractClass@@@Z
 0x0070C620,TechnoClass::Is_On_Elevation,MATCH,112,src/techno.cpp,?Is_On_Elevation@TechnoClass@@UBE_NXZ
+0x0070C690,TechnoClass::Railgun_Beam_Damage,MATCH,1523,src/techno.cpp,?Railgun_Beam_Damage@TechnoClass@@QAE?AVCoord@@AAV2@PAVAbstractClass@@PAVWeaponTypeClass@@@Z
 0x0070CC90,TechnoClass::Radar_Track,MATCH,37,src/techno.cpp,?Radar_Track@TechnoClass@@UAEXXZ
 0x0070CCC0,TechnoClass::Radar_Untrack,MATCH,37,src/techno.cpp,?Radar_Untrack@TechnoClass@@UAEXXZ
 0x0070CCF0,TechnoClass::Plot_On_Radar,MATCH,18,src/techno.cpp,?Plot_On_Radar@TechnoClass@@UBEXXZ
