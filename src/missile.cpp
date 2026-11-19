@@ -13,6 +13,8 @@
 #include "cell.h"
 #include "missile.h"
 
+template class TVelocity3D<double>;
+
 // SYNTHETIC: GAMEMD 0x005B1EE0 SYMBOL
 // _$E41
 // SYNTHETIC: GAMEMD 0x005B1F00 SYMBOL
