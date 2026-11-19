@@ -2633,6 +2633,7 @@ address,name,result,size,source,symbol
 0x00489160,_$E38,MATCH,26,src/combat.cpp,_$E38
 0x00489180,Modify_Damage,MATCH,237,src/combat.cpp,?Modify_Damage@@YIHHPBVWarheadTypeClass@@W4ArmorType@@H@Z
 0x00489270,Chain_Reaction_Damage,MATCH,1,src/combat.cpp,?Chain_Reaction_Damage@@YIXABVCell@@@Z
+0x00489280,Explosion_Damage,MATCH,4710,src/combat.cpp,?Explosion_Damage@@YIHABVCoord@@HPAVTechnoClass@@PBVWarheadTypeClass@@_NPAVHouseClass@@@Z
 0x0048A4F0,Combat_Anim,MATCH,304,src/combat.cpp,?Combat_Anim@@YIPBVAnimTypeClass@@HPBVWarheadTypeClass@@W4LandType@@ABVCoord@@@Z
 0x0048A620,Combat_Lighting,MATCH,224,src/combat.cpp,?Combat_Lighting@@YIXVCoord@@HPBVWarheadTypeClass@@_NI@Z
 0x0048A700,Wide_Area_Damage,MATCH,461,src/combat.cpp,?Wide_Area_Damage@@YIXABVCoord@@HHPAVTechnoClass@@PBVWarheadTypeClass@@@Z
