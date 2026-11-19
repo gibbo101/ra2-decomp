@@ -33,6 +33,7 @@
 #include "notify.h"
 #include "overtype.h"
 #include "partsys.h"
+#include "coordmath.h"
 #include "radsite.h"
 #include "rules.h"
 #include "scheme.h"
@@ -326,14 +327,13 @@ bool BulletClass::Unlimbo(Coord const & coord, TVelocity3D<double> const & veloc
 		TargetCoords = tcoord;
 
 		if (Class->FlakScatter && Class->IsInvisible) {
-			TPoint3D<float> delta(coord.X - tcoord.X, tcoord.Y - coord.Y, coord.Z - tcoord.Z);
+			TPoint3D<float> delta = Coordinate_Displacement<float>(coord, tcoord, coord.Z - tcoord.Z);
 			float distance = delta.Length();
 			int scatter = Random_Pick(0, Rule->BallisticScatter * 2);
 			scatter *= (int)distance;
 			scatter /= WeaponType->Range;
-			DirType dir(Random_Double(0.0, M_PI * 2.0));
-			double radians = (dir.As_Int() - 16383) * -DEG_TO_RAD(360.0 / 65534.0);
-			tcoord = Coord((tcoord.X + fastmath::cos(radians) * scatter), (tcoord.Y - fastmath::sin(radians) * scatter), tcoord.Z);
+			double scatter_angle = Random_Double(0.0, M_PI * 2.0);
+			tcoord = Move_Coord(tcoord, DirType(scatter_angle), scatter);
 		}
 
 		if (Class->IsInvisible) {
