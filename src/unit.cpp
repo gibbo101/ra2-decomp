@@ -40,7 +40,6 @@
 #include "infantry.h"
 #include "infatype.h"
 #include "inline.h"
-#include "pointmath.h"
 #include "ion.h"
 #include "ipiggy.h"
 #include "isotype.h"
@@ -2682,12 +2681,6 @@ int UnitClass::Do_MISSION_UNLOAD(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
-static inline int Center_Distance(AbstractClass const & source, AbstractClass const & target)
-{
-	return int(fastmath::sqrt(fastmath::length_squared(source.Center_Coord() - target.Center_Coord())));
-}
-
-// FUNCTION: GAMEMD 0x0073E5E0
 int UnitClass::Do_MISSION_HARVEST(void)
 {
 	enum { LOOKING, HARVESTING, FINDHOME, HEADINGHOME, GOINGTOIDLE };
@@ -2817,7 +2810,7 @@ int UnitClass::Do_MISSION_HARVEST(void)
 				if (!teleporter) {
 					close = nearest != 0 && Distance_To(nearest) <= Rule->HarvesterTooFarDistance * 256;
 				} else {
-					close = nearest != 0 && Center_Distance(*this, *nearest) <= Rule->ChronoHarvTooFarDistance * 256;
+					close = nearest != 0 && Distance_To(nearest) <= Rule->ChronoHarvTooFarDistance * 256;
 				}
 				if (close && Transmit_Message(RADIO_HELLO, nearest) == 1) {
 					Status = HEADINGHOME;
@@ -2827,7 +2820,7 @@ int UnitClass::Do_MISSION_HARVEST(void)
 				nearest = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 1);
 				ScenarioInit--;
 				if (nearest != 0) {
-					if (Center_Distance(*this, *nearest) > 0x300 || teleporter) {
+					if (Distance_To(nearest) > 0x300 || teleporter) {
 						Cell cell(nearest->Get_Coord());
 						Cell here = cell;
 						here.X = nearest->Class->QueueingCell.X + cell.X;
@@ -4083,7 +4076,7 @@ bool UnitClass::Should_Crush_It(TechnoClass const * it) const
 {
 	if (!(Class->IsCrusher || Has_Ability(ABILITY_CRUSHER)) || it == NULL || !((ObjectClass const *)it)->IsCrushable((TechnoClass *)this)) return(false);
 
-	if (Center_Distance(*this, *it) > Rule->CrushDistance) return(false);
+	if ((Center_Coord() - it->Center_Coord()).Length() > Rule->CrushDistance) return(false);
 
 	if ((House->FUN_0050B730() && !Rule->IsAutoCrush && !Class->IsAutoCrush) || House->Difficulty == DIFF_HARD) return(false);
 
