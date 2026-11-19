@@ -13345,6 +13345,7 @@ address,name,result,size,source,symbol
 0x006BA140,SurfaceCacheClass::GetSurface,MATCH,213,src/srfcache.cpp,?GetSurface@SurfaceCacheClass@@QAEPAVSurface@@PBDPAX@Z
 0x006BA220,_$E27,MATCH,1,src/srfcache.cpp,_$E27
 0x006BA230,SurfaceCacheClass::Remove,MATCH,423,src/srfcache.cpp,?Remove@SurfaceCacheClass@@QAEXPBD@Z
+0x006BA3E0,SurfaceCacheClass::Draw,MATCH,408,src/srfcache.cpp,?Draw@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1HH@Z
 0x006BA580,SurfaceCacheClass::DrawTrans,MATCH,250,src/srfcache.cpp,?DrawTrans@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1F@Z
 0x006BA680,SurfaceCacheClass::DrawNullsub,MATCH,5,src/srfcache.cpp,?DrawNullsub@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1@Z
 0x006BAC40,?remove@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@QAEDAAVWstring@@AAUSurfaceCacheEntry@@@Z,MATCH,684,src/srfcache.cpp,?remove@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@QAEDAAVWstring@@AAUSurfaceCacheEntry@@@Z

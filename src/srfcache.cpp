@@ -181,6 +181,40 @@ void SurfaceCacheClass::Remove(char const *name)
 	getEntries();
 }
 
+// FUNCTION: GAMEMD 0x006BA3E0
+bool SurfaceCacheClass::Draw(Rect const & rect, Surface & tosurface, Surface & fromsurface, int x, int y)
+{
+	unsigned short * dest = (unsigned short *)tosurface.Lock();
+	if (dest == NULL) {
+		return(false);
+	}
+	unsigned short const * src = (unsigned short const *)fromsurface.Lock();
+	if (src == NULL) {
+		tosurface.Unlock();
+		return(false);
+	}
+
+	int dest_pitch = tosurface.Stride() / 2;
+	int src_pitch = fromsurface.Stride() / 2;
+	Rect image = fromsurface.Get_Rect();
+	tosurface.Get_Rect();
+
+	int row = rect.Height;
+	int x_margin = MAX((image.Width - rect.Width) / 2, 0);
+	int y_margin = MAX((image.Height - row) / 2, 0);
+	for (row = 0; row < rect.Height; ++row) {
+		int offset = (rect.Y + row) * dest_pitch + rect.X;
+		for (int column = 0; column < rect.Width; ++column) {
+			int src_row = (y_margin + y + row) % image.Height;
+			int src_column = (x_margin + x + column) % image.Width;
+			dest[offset + column] = src[src_row * src_pitch + src_column];
+		}
+	}
+	fromsurface.Unlock();
+	tosurface.Unlock();
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x006BA580
 bool SurfaceCacheClass::DrawTrans(Rect const & rect, Surface & tosurface, Surface & fromsurface, short trans)
 {
