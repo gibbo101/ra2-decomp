@@ -2517,12 +2517,8 @@ PlanningNodeClass * __fastcall FUN_0063AD40(void)
 
 void __fastcall FUN_0063AD50(void);
 
-// FUNCTION: GAMEMD 0x0063A8E0
-bool __stdcall FUN_0063A8E0(Point2D point)
+static inline PlanningNodeClass * Hover_Node_At(Point2D point)
 {
-	if (!FUN_00637AA0()) return false;
-
-	PlanningNodeClass * selected = FUN_0063AD40();
 	PlanningNodeClass * hover = DAT_00AC4CCC;
 	PlanningNodeClass * hit;
 	if (!hover) {
@@ -2534,6 +2530,17 @@ bool __stdcall FUN_0063A8E0(Point2D point)
 			hit = NULL;
 		}
 	}
+
+	return hit;
+}
+
+// FUNCTION: GAMEMD 0x0063A8E0
+bool __stdcall FUN_0063A8E0(Point2D point)
+{
+	if (!FUN_00637AA0()) return false;
+
+	PlanningNodeClass * selected = FUN_0063AD40();
+	PlanningNodeClass * hit = Hover_Node_At(point);
 
 	if (hit && hit == selected) {
 		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
@@ -3314,12 +3321,10 @@ void __fastcall FUN_00637270(void)
 	DAT_00AC4C08 = false;
 }
 
+// FUNCTION: GAMEMD 0x00638F90
 PlanningNodeClass * __fastcall FUN_00638F90(Point2D point)
 {
-	if (DAT_00AC4CCC && DAT_00AC4CCC->Hit_Test(point.X, point.Y)) {
-		return DAT_00AC4CCC;
-	}
-	return NULL;
+	return Hover_Node_At(point);
 }
 
 // FUNCTION: GAMEMD 0x0063AB60
