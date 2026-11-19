@@ -1903,6 +1903,7 @@ address,size,symbol,source,sha256
 0x00441F60,718,?AfterDestruction@BuildingClass@@QAEXXZ,src/building.cpp,12c196a5b75ec89e81ff5d0075c5d63277a4da6219e761394e599bdaab233c6e
 0x00442230,2573,?Take_Damage@BuildingClass@@UAE?AW4ResultType@@AAHHPBVWarheadTypeClass@@PAVTechnoClass@@_N3PAVHouseClass@@@Z,src/building.cpp,e7986f45ad8d8c39c7b74d846596dcc62c82aeb8c362b2338fd536011408d249
 0x00442C40,327,?Init@BuildingClass@@UAEXXZ,src/building.cpp,6f238d1c91013626def3a8d05e2682f4bf26841931e674648b45bda21f22d67e
+0x00442D90,1651,?Drop_Debris@BuildingClass@@AAEXPAVAbstractClass@@@Z,src/building.cpp,2a960225e59109370eff98ed10e34e4acef66621200d74d3da907ab15bbc54e1
 0x00443410,731,?Active_Click_With@BuildingClass@@UAE_NW4ActionType@@PAVObjectClass@@_N@Z,src/building.cpp,15fab51ea5d8b2b2be347916c5aecde59e224b8dabb4e6963c6470e5a1449073
 0x004436F0,361,?Active_Click_With@BuildingClass@@UAE_NW4ActionType@@ABVCell@@1_N@Z,src/building.cpp,69ce502e20d7c0b188f05ad397bd2d65f5fffe6cefb325e9b97c39bfd0b3fe16
 0x00443860,806,?Assign_Rally_Point@BuildingClass@@QAEXABVCell@@_N@Z,src/building.cpp,0d64cfa5eb40873ebe111c883100b8f84547bf7dd78d44ba802390e9f797abc9
@@ -2286,6 +2287,7 @@ address,size,symbol,source,sha256
 0x00468BB0,463,?Is_Forced_To_Explode@BulletClass@@QBE_NAAVCoord@@@Z,src/bullet.cpp,20c6c12d24a310a1b1b0d445306357d09f1d6e44d5d5223c56b46c28b7339f19
 0x00468D80,815,?Bullet_Explodes@BulletClass@@QAEX_N@Z,src/bullet.cpp,4b1b0b1fc189a9080c1ba599b3a119d193db34f4506148ac220edc3722e0d218
 0x004690B0,4692,?Detonate@BulletClass@@QAEXABVCoord@@@Z,src/bullet.cpp,07dd6320f38804b93fe1814a5a56292944b2ddb1ea9fe08763554a5172f67572
+0x0046A310,2757,?Shrapnel@BulletClass@@QAEXXZ,src/bullet.cpp,aa30feb99c5ab4bf501c7c69c9b3dbf70866fdf74ce4292246d327907fb47d38
 0x0046ADE0,129,?ApplyRadiationToCell@BulletClass@@QAEXVCell@@HH@Z,src/bullet.cpp,56bea9969fc6c009c865016a7bbc18a87551bbef11a333290a03e51f96c22a06
 0x0046AE70,309,?Load@BulletClass@@UAGJPAUIStream@@@Z,src/bullet.cpp,32136b197448631a2ffc89fd244c7fd7a263dea5f24a06f2b652cddeaaad3a08
 0x0046AFB0,23,?Save@BulletClass@@UAGJPAUIStream@@H@Z,src/bullet.cpp,61133e574788e08901b8a9dcdabc2db676cf0cf59198eefd38116216e7de0361

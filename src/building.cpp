@@ -2259,6 +2259,104 @@ void BuildingClass::Init(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00442D90
+void BuildingClass::Drop_Debris(AbstractClass * source)
+{
+	Cell const * offset;
+	Cell cell;
+
+	cell = Get_Cell();
+	offset = Occupy_List();
+	int odds = 2;
+	if (WhomToRepay != NULL) odds -= 1;
+	if (IsCaptured) odds += 6;
+	int count = How_Many_Survivors();
+
+	if ((Class->UnitAbsorb || Class->InfantryAbsorb) && Cargo.How_Many() > 0) {
+		FootClass * passenger = Cargo.Detach_Object();
+		do {
+			if (passenger != NULL) {
+				Cell const & off = *offset++;
+				Cell newcell = cell + off;
+				Coord newcoord = Coord(newcell) + Coord(0, 36, 0);
+				if (passenger->Fetch_RTTI() == RTTI_UNIT) {
+					newcoord = Map[newcoord].Center_Coord();
+				} else {
+					newcoord = Map[newcoord].Closest_Free_Spot(newcoord);
+				}
+				ScenarioInit++;
+				passenger->IsOnBridge = IsOnBridge;
+				Coord position = PositionCoord;
+				position.Z = Get_Cell_Ptr()->Center_Coord().Z;
+				if (!IsSurvivorless && passenger->Unlimbo(position, PrimaryFacing.Current().As_Dir256())) {
+					if (!passenger->CountedAsOwnedSpecial) {
+						passenger->House->CurInfantry++;
+						passenger->CountedAsOwnedSpecial = true;
+					}
+					passenger->Absorbed = false;
+					passenger->Scatter(COORD_NONE, true);
+					if (!House->FUN_0050B730()) passenger->QueueMission(MISSION_HUNT, false);
+				} else {
+					passenger->RegisterDestruction(As_Techno(source));
+					passenger->Delete_Me();
+				}
+				ScenarioInit--;
+				passenger = Cargo.Detach_Object();
+			}
+		} while (passenger != NULL);
+	}
+	if (count == 0) return;
+	while (*offset != REFRESH_EOL) {
+		Cell const & off = *offset++;
+		Cell newcell = cell + off;
+		CellClass const * cellptr = &Map[newcell];
+
+		if (!House->IsToDie && count > 0) {
+			if (Random_Pick(0, odds) == 1) {
+				InfantryClass * i = NULL;
+				const InfantryTypeClass * typ = Crew_Type();
+				if (typ != NULL) i = new InfantryClass(typ, House);
+				DebugString("Creating survivor type '%s' from building type '%s'\n", (char *)i->Class->GivenName, (char *)Class->GivenName);
+				if (i != NULL) {
+					if (HasBuildupData && i->Class->IsNominal) i->IsTechnician = true;
+					ScenarioInit++;
+					Coord newcoord = Coord(newcell) + Coord(0, 36, 0);
+					newcoord = Map[newcoord].Closest_Free_Spot(newcoord);
+
+					if (newcoord != COORD_NONE && i->Unlimbo(newcoord, DIR_N)) {
+						DebugString("Survivor unlimbo OK\n");
+						count--;
+						i->Strength = Random_Pick(5, i->Class->MaxStrength);
+						i->Scatter(COORD_NONE, true);
+						if (source != NULL && !House->CanOverpower(source)) {
+							i->QueueMission(MISSION_ATTACK, false);
+							i->Assign_Target(source);
+						} else {
+							if (House->FUN_0050B730()) {
+								i->QueueMission(MISSION_MOVE, false);
+							} else {
+								i->QueueMission(MISSION_HUNT, false);
+							}
+						}
+					} else {
+						delete i;
+					}
+					ScenarioInit--;
+				}
+			}
+		}
+
+		if (cellptr->Is_Clear_To_Move(SPEED_TRACK, true, true)) {
+
+			if (Percent_Chance(50)) {
+				SmudgeTypeClass::Scorch_The_Ground(Coord(Coord_Scatter(newcell, CELL_LEPTON / 2, false).As_Cell()));
+			} else {
+				SmudgeTypeClass::Crater_The_Ground(Coord(Coord_Scatter(newcell, CELL_LEPTON / 2, false).As_Cell()));
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00443410
 bool BuildingClass::Active_Click_With(ActionType action, ObjectClass * object, bool)
 {

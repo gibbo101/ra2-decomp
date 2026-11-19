@@ -1541,6 +1541,7 @@ address,name,result,size,source,symbol
 0x00441F60,BuildingClass::AfterDestruction,MATCH,718,src/building.cpp,?AfterDestruction@BuildingClass@@QAEXXZ
 0x00442230,BuildingClass::Take_Damage,MATCH,2573,src/building.cpp,?Take_Damage@BuildingClass@@UAE?AW4ResultType@@AAHHPBVWarheadTypeClass@@PAVTechnoClass@@_N3PAVHouseClass@@@Z
 0x00442C40,BuildingClass::Init,MATCH,327,src/building.cpp,?Init@BuildingClass@@UAEXXZ
+0x00442D90,BuildingClass::Drop_Debris,MATCH,1651,src/building.cpp,?Drop_Debris@BuildingClass@@AAEXPAVAbstractClass@@@Z
 0x00443410,BuildingClass::Active_Click_With,MATCH,731,src/building.cpp,?Active_Click_With@BuildingClass@@UAE_NW4ActionType@@PAVObjectClass@@_N@Z
 0x004436F0,BuildingClass::Active_Click_With,MATCH,361,src/building.cpp,?Active_Click_With@BuildingClass@@UAE_NW4ActionType@@ABVCell@@1_N@Z
 0x00443860,BuildingClass::Assign_Rally_Point,MATCH,806,src/building.cpp,?Assign_Rally_Point@BuildingClass@@QAEXABVCell@@_N@Z
@@ -1924,6 +1925,7 @@ address,name,result,size,source,symbol
 0x00468BB0,BulletClass::Is_Forced_To_Explode,MATCH,463,src/bullet.cpp,?Is_Forced_To_Explode@BulletClass@@QBE_NAAVCoord@@@Z
 0x00468D80,BulletClass::Bullet_Explodes,MATCH,815,src/bullet.cpp,?Bullet_Explodes@BulletClass@@QAEX_N@Z
 0x004690B0,BulletClass::Detonate,MATCH,4692,src/bullet.cpp,?Detonate@BulletClass@@QAEXABVCoord@@@Z
+0x0046A310,BulletClass::Shrapnel,MATCH,2757,src/bullet.cpp,?Shrapnel@BulletClass@@QAEXXZ
 0x0046ADE0,BulletClass::ApplyRadiationToCell,MATCH,129,src/bullet.cpp,?ApplyRadiationToCell@BulletClass@@QAEXVCell@@HH@Z
 0x0046AE70,BulletClass::Load,MATCH,309,src/bullet.cpp,?Load@BulletClass@@UAGJPAUIStream@@@Z
 0x0046AFB0,BulletClass::Save,MATCH,23,src/bullet.cpp,?Save@BulletClass@@UAGJPAUIStream@@H@Z

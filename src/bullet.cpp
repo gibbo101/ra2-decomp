@@ -719,6 +719,95 @@ void BulletClass::Detonate(Coord const & coord)
 	}
 }
 
+extern int DAT_007ED3D0[];
+namespace Unsorted { extern Cell CellSpreadTable[]; }
+
+// FUNCTION: GAMEMD 0x0046A310
+void BulletClass::Shrapnel(void)
+{
+	int configured = Class->ShrapnelCount;
+	int count;
+	if (configured < 0) {
+		if (Payback == NULL) {
+			count = 3;
+		} else {
+			count = -configured - ::Distance(Payback->Center_Coord(), PositionCoord) / CELL_LEPTON;
+			if (count <= 0) {
+				return;
+			}
+		}
+	} else {
+		count = configured;
+	}
+
+	if (Get_Cell_Ptr()->Cell_Occupier() == NULL ||
+		Get_Cell_Ptr()->Cell_Occupier()->Fetch_RTTI() == RTTI_BUILDING) {
+		return;
+	}
+
+	WeaponTypeClass * weapon = Class->ShrapnelWeapon;
+	BulletTypeClass const * type = weapon->Bullet;
+	Cell center = Get_Cell();
+	int range = weapon->Range / CELL_LEPTON;
+	int fired = 0;
+	TVelocity3D<double> velocity;
+	for (int radius = 1; radius <= range; radius++) {
+		int end = DAT_007ED3D0[radius];
+		for (int index = DAT_007ED3D0[radius - 1]; index < end; index++) {
+			CellClass * cellptr = &Map[center + Unsorted::CellSpreadTable[index]];
+			ObjectClass * object = cellptr->Cell_Occupier();
+			if (object != NULL && object != Payback && Payback != NULL &&
+				!Payback->House->Is_Ally(object)) {
+				BulletClass * bullet = Create_Bullet(type, object, Payback,
+					weapon->Attack, weapon->WarheadPtr, weapon->MaxSpeed, weapon->IsBright);
+				if (bullet != NULL) {
+					velocity.Set(0, 0, 0);
+					velocity.Set_Yaw(::Direction(PositionCoord, object->Center_Coord()));
+					velocity.Set_Pitch(DirType(DIR_NE));
+					velocity.Set_Speed(weapon->MaxSpeed);
+					bullet->Unlimbo(PositionCoord, velocity);
+					Coord source;
+					source = PositionCoord;
+					if (weapon->IsLaser && Payback != NULL) {
+						Payback->CreateLaser(object, 0, weapon, source);
+					}
+					if (weapon->IsElectricBolt && Payback != NULL) {
+						Payback->CreateEBolt(object, weapon, source);
+					}
+				}
+				fired++;
+				if (fired == count) {
+					return;
+				}
+			}
+		}
+	}
+
+	for (; fired < count; fired++) {
+		Cell cell = Get_Cell();
+		cell.X += Random_Pick(-2, 2);
+		cell.Y += Random_Pick(-2, 2);
+		BulletClass * bullet = Create_Bullet(type, &Map[cell], Payback,
+			weapon->Attack, weapon->WarheadPtr, weapon->MaxSpeed, weapon->IsBright);
+		if (bullet != NULL) {
+			velocity.Set(0, 0, 0);
+			CellClass & destination = Map[cell];
+			velocity.Set_Yaw(::Direction(PositionCoord, destination.Center_Coord()));
+			velocity.Set_Speed(weapon->MaxSpeed);
+			velocity.Set_Pitch(DirType(DIR_NE));
+			bullet->Unlimbo(PositionCoord, velocity);
+			Coord source;
+			source = PositionCoord;
+			if (weapon->IsLaser && Payback != NULL) {
+				Payback->CreateLaser(&Map[cell], 0, weapon, source);
+			}
+			if (weapon->IsElectricBolt && Payback != NULL) {
+				Payback->CreateEBolt(&Map[cell], weapon, source);
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0046ADE0
 void BulletClass::ApplyRadiationToCell(Cell cell, int radius, int amount)
 {
