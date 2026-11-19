@@ -1453,14 +1453,14 @@ unsigned short IsometricTileTypeClass::Preview_Tile_Color(int tile, int level, b
 // FUNCTION: GAMEMD 0x00549E50
 unsigned short * IsometricTileTypeClass::Preview_Tile(int tile, int level)
 {
-    unsigned short * preview;
-    if (ImageData != NULL) {
-        preview = PreviewTiles[tile];
-    } else {
-        Load_Tile_Image();
-        preview = PreviewTiles[tile];
-    }
-    return &preview[level * 2];
+	unsigned short * preview;
+	if (ImageData != NULL) {
+		preview = PreviewTiles[tile];
+	} else {
+		Load_Tile_Image();
+		preview = PreviewTiles[tile];
+	}
+	return &preview[level * 2];
 }
 
 // FUNCTION: GAMEMD 0x00549E90

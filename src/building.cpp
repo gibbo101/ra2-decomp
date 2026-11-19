@@ -4306,14 +4306,13 @@ void BuildingClass::Death_Announcement(TechnoClass const * source) const
 // FUNCTION: GAMEMD 0x0044D7D0
 DirType BuildingClass::Fire_Direction(void) const
 {
-    if (TarCom == NULL) {
-        DirType direction = PrimaryFacing.Current();
-        return((Dir256)direction.Round_To_256());
-    }
-    if (Is_Turret_Equipped() && !Class->IsTurretAnimAVoxel) {
-        return PrimaryFacing.Current().As_Dir32() * (0x10000 / 32);
-    }
-    return Aim_Direction(TarCom);
+	if (TarCom == NULL) {
+		return((Dir256)DirType(PrimaryFacing.Current()).Round_To_256());
+	}
+	if (Is_Turret_Equipped() && !Class->IsTurretAnimAVoxel) {
+		return(PrimaryFacing.Current().As_Dir32() * (0x10000 / 32));
+	}
+	return(Aim_Direction(TarCom));
 }
 
 // FUNCTION: GAMEMD 0x0044E3A0
