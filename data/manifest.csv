@@ -15333,6 +15333,7 @@ address,size,symbol,source,sha256
 0x00704350,1645,?Get_Z_Adjust@TechnoClass@@UBEHXZ,src/techno.cpp,7a41d36a76e68163c49649cc7af7fea89fbc8eee251ead67fbac0a3fc5c477f9
 0x007049C0,1151,?FUN_007049C0@TechnoClass@@QBEXVCoord@@0VRGBClass@@EE@Z,src/techno.cpp,86c4744d11233597f00bd980a8b8af4f9bbb8c7ba316c16be86b9464dfe56a4a
 0x00705270,1508,?FUN_00705270@TechnoClass@@QAEXVCoord@@0VRGBClass@@E@Z,src/techno.cpp,50692c168256ebc15548a3baae7369e51e4785faee85cf21fd81ed84dc4364fe
+0x00705860,1084,?FUN_00705860@TechnoClass@@QAEXVCoord@@0@Z,src/techno.cpp,dbf9027703a437264cd71b03c7acaa5775933074fd5010a527992f20e8e4fbe3
 0x00705CA0,105,?GetAttackCoordinates@TechnoClass@@UBE?AVCoord@@XZ,src/techno.cpp,2592b2a8b79bb8e48299ff61b1b1d3dab4aa136d7b40846a2b6ee436db5bf4ea
 0x00705D10,13,?FUN_00705D10@TechnoClass@@QAEXPAVPlanningTokenClass@@@Z,src/techno.cpp,45e47f23c3780090a7390545c090458164813a36b3eee9df72876eb60e90947e
 0x00705D20,7,?FUN_00705D20@TechnoClass@@QAEPAVPlanningTokenClass@@XZ,src/techno.cpp,41a377a590f2de75434f4665f85ba259f2c4f965dc7fba2fda43a7c18f95a507

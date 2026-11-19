@@ -5167,6 +5167,103 @@ void TechnoClass::FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned ch
 	}
 }
 
+// FUNCTION: GAMEMD 0x00705860
+void TechnoClass::FUN_00705860(Coord start, Coord end)
+{
+	Point2D start_point;
+	Point2D end_point;
+
+	TacticalMap->Coord_To_Pixel(start, start_point);
+	TacticalMap->Coord_To_Pixel(end, end_point);
+
+	int start_height = -32 - Tactical::Z_Lepton_To_Pixel(start.Z);
+	int end_height = -32 - Tactical::Z_Lepton_To_Pixel(end.Z);
+	int dx = abs(end_point.X - start_point.X);
+	int dy = abs(end_point.Y - start_point.Y);
+
+	if (!DSurface::Temp->Is_Direct_Draw()) {
+		return;
+	}
+
+	DSurface * surface = DSurface::Temp;
+	int r = NonCriticalRandomNumber(190, 270);
+	RGBClass color;
+	if (r > 255) {
+		color.Set_Red(255);
+		color.Set_Green((r - 256) * 110 / 14);
+		color.Set_Blue((r - 256) * 30 / 14);
+	} else {
+		color.Set_Red(r);
+	}
+
+	if (end_point.Y < start_point.Y) {
+		int pixel = DSurface::Build_Hicolor_Pixel(255, 0, 0);
+		Point2D start_cross;
+		Point2D end_cross;
+		start_cross.X = end_point.X - 2;
+		start_cross.Y = end_point.Y + 1;
+		end_cross.X = end_point.X + 1;
+		end_cross.Y = end_point.Y + 1;
+		surface->Draw_Line(start_cross, end_cross, pixel);
+		start_cross.X = end_point.X - 2;
+		start_cross.Y = end_point.Y;
+		end_cross.X = end_point.X + 1;
+		end_cross.Y = end_point.Y;
+		surface->Draw_Line(start_cross, end_cross, pixel);
+		start_cross.X = end_point.X - 1;
+		start_cross.Y = end_point.Y - 1;
+		end_cross.X = end_point.X - 1;
+		end_cross.Y = end_point.Y + 2;
+		surface->Draw_Line(start_cross, end_cross, pixel);
+		start_cross.X = end_point.X;
+		start_cross.Y = end_point.Y - 1;
+		end_cross.X = end_point.X;
+		end_cross.Y = end_point.Y + 2;
+		surface->Draw_Line(start_cross, end_cross, pixel);
+	}
+
+	Point2D delta(end_point.X - start_point.X, end_point.Y - start_point.Y);
+	int dH = end_height - start_height;
+	int weight = 100;
+	Point2D previous = start_point;
+	Point2D current;
+	Point2D a;
+	Point2D b;
+	for (int step = 1; step <= 4; weight -= 25, step++) {
+		current.X = start_point.X + (delta.X * step) / 4;
+		current.Y = start_point.Y + (delta.Y * step) / 4;
+		int height = start_height + (dH * step) / 4;
+
+		surface->FUN_004BEAC0(DSurface::ViewBounds, previous, current, color, 255 - ((step - 1) * 255) / 4, start_height, height);
+
+		if (dx > dy) {
+			a.X = previous.X;
+			a.Y = previous.Y + 1;
+			b.X = current.X;
+			b.Y = current.Y + 1;
+			surface->FUN_004BEAC0(DSurface::ViewBounds, a, b, color, weight, start_height, height);
+			a.X = previous.X;
+			a.Y = previous.Y - 1;
+			b.X = current.X;
+			b.Y = current.Y - 1;
+			surface->FUN_004BEAC0(DSurface::ViewBounds, a, b, color, weight, start_height, height);
+		} else {
+			a.X = previous.X + 1;
+			a.Y = previous.Y;
+			b.X = current.X + 1;
+			b.Y = current.Y;
+			surface->FUN_004BEAC0(DSurface::ViewBounds, a, b, color, weight, start_height, height);
+			a.X = previous.X - 1;
+			a.Y = previous.Y;
+			b.X = current.X - 1;
+			b.Y = current.Y;
+			surface->FUN_004BEAC0(DSurface::ViewBounds, a, b, color, weight, start_height, height);
+		}
+		previous = current;
+		start_height = height;
+	}
+}
+
 // FUNCTION: GAMEMD 0x00705D10
 void TechnoClass::FUN_00705D10(PlanningTokenClass * token)
 {
