@@ -62,6 +62,8 @@
 #include "ramp.hh"
 #include "scrspeed.hh"
 #include "fastmath.h"
+#include "goptions.h"
+#include "suprtype.h"
 #include <wchar.h>
 
 // FUNCTION: GAMEMD 0x0043A0B0
@@ -96,7 +98,7 @@
 // SYNTHETIC: GAMEMD 0x006D1A20 SYMBOL
 // _$E47
 // SYNTHETIC: GAMEMD 0x006D1A40 SYMBOL
-// _$E268
+// _$E272
 
 extern Rect TacticalDimensions;
 void __fastcall SetNavCycleMode(int mode);
@@ -132,25 +134,25 @@ static double ZPixelsPerLepton = fastmath::sin(RAD_60) * (PixelsPerLepton = 60.0
 static double ZLeptonsPerPixel = CELL_LEPTON_DIAG / (fastmath::sin(RAD_60) * 60.0);
 
 // SYNTHETIC: GAMEMD 0x006D1A60 SYMBOL
-// _$E246
+// _$E247
 
 // SYNTHETIC: GAMEMD 0x006D1AA0 SYMBOL
-// _$E243
+// _$E244
 
 // SYNTHETIC: GAMEMD 0x006D1B00 SYMBOL
 // _$E41
 
 // SYNTHETIC: GAMEMD 0x006D1B10 SYMBOL
-// _$E255
+// _$E256
 
 // SYNTHETIC: GAMEMD 0x006D1B50 SYMBOL
-// _$E252
+// _$E253
 
 // SYNTHETIC: GAMEMD 0x006D1BB0 SYMBOL
-// _$E258
+// _$E259
 
 // SYNTHETIC: GAMEMD 0x006D1BF0 SYMBOL
-// _$E261
+// _$E262
 
 // FUNCTION: GAMEMD 0x006D1C20
 Tactical::Tactical(void) :
@@ -1654,7 +1656,7 @@ void Tactical::Scroll_Map(FacingType facing, int distance)
 }
 
 // SYNTHETIC: GAMEMD 0x006D8630 SYMBOL
-// _$E264
+// _$E265
 
 // FUNCTION: GAMEMD 0x006D8640
 bool Tactical::Clamp_To_Tactical_Rect(Point2D & pixel)
@@ -2176,7 +2178,7 @@ FacingType Tactical::Scroll_Dir(FacingType dir)
 }
 
 // SYNTHETIC: GAMEMD 0x006DA350 SYMBOL
-// _$E266
+// _$E267
 
 // FUNCTION: GAMEMD 0x006DA360
 Cell Tactical::Clamp_Cursor_To_Tactical(Cell const & cell, Cell const * list)
@@ -2644,15 +2646,93 @@ HRESULT STDMETHODCALLTYPE Tactical::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: GAMEMD 0x006DC400
-void Tactical_noop2(void)
+extern int CurrentSWType;
+
+// FUNCTION: GAMEMD 0x006DBE20
+void Tactical::Draw_Radial_Indicators(void)
 {
+	int count = CurrentObject.Count();
+	for (int i = 0; i < count; ++i) {
+		ObjectClass * object = CurrentObject[i];
+		if (object->Class_Of() && object->Class_Of()->IsHasRadialIndicator) {
+			object->Draw_Radial_Indicator(1);
+		}
+	}
+	if (!Options.ActionLines) return;
+	BuildingClass * pending = (BuildingClass *)Map.PendingObjectPtr;
+	if (pending && pending->Fetch_RTTI() == RTTI_BUILDING) {
+		if (pending->GetRadialIndicatorRange() > 0) {
+			Cell zone = Map.ZoneCell;
+			Coord center = Map[zone].Cell_Coord();
+			static RGBClass black(0, 0, 0);
+			static int pulse = 0;
+			static int direction = 1;
+			pulse += direction * 10;
+			if (pulse >= 100) direction = -1;
+			else if (pulse <= 0) direction = 1;
+			RGBClass color = pending->House->RemapColorRGB;
+			color.Adjust(pulse, black);
+			int range = pending->GetRadialIndicatorRange();
+			DrawRadialIndicator(center, color, (float)range, false, true, false, true);
+			int nearest = INT_MAX;
+			int buildings = PlayerPtr->Buildings.Count();
+			for (int j = 0; j < buildings; ++j) {
+				BuildingClass * building = PlayerPtr->Buildings[j];
+				if (building && building->IsActive && building != pending && building->Class == pending->Class) {
+					Cell zone = Map.ZoneCell;
+					int distance = zone.Distance_To(building->Center_Coord().As_Cell());
+					if (distance <= range * 2 && distance < nearest) nearest = distance;
+				}
+			}
+			for (int k = 0; k < buildings; ++k) {
+				BuildingClass * building = PlayerPtr->Buildings[k];
+				if (building && building->IsActive && building != pending && building->Class == pending->Class) {
+					Cell zone = Map.ZoneCell;
+					int distance = zone.Distance_To(building->Center_Coord().As_Cell());
+					if (distance == nearest) building->Draw_Radial_Indicator(0);
+				}
+			}
+		}
+	} else if (CurrentSWType != -1) {
+		SuperWeaponTypeClass * type = SuperWeaponTypes[CurrentSWType];
+		float range = type->Range;
+		if (range > 0) {
+			Cell zone = Map.ZoneCell;
+			Coord position = Map[zone].Cell_Coord();
+			Coord center(position.X + (2 - CELL_LEPTON_W / 2), position.Y + (2 - CELL_LEPTON_H / 2), position.Z);
+			static RGBClass black(0, 0, 0);
+			static int pulse = 0;
+			static int direction = 1;
+			pulse += direction * 10;
+			if (pulse >= 100) direction = -1;
+			else if (pulse <= 0) direction = 1;
+			int shade = pulse;
+			int step = direction;
+			RGBClass color = Houses[PlayerPtr->HeapID]->RemapColorRGB;
+			RGBClass faded;
+			if (type->LineMultiplier > 0) {
+				for (int line = 0; line <= type->LineMultiplier * range; ++line) {
+					faded = color;
+					shade += step * 10;
+					if (shade >= 100) step = -1;
+					else if (shade <= 0) step = 1;
+					faded.Adjust(shade, black);
+					DrawRadialIndicator(center, faded, (float)line / type->LineMultiplier, false, true, false, false);
+				}
+			} else {
+				color.Adjust(shade, black);
+				DrawRadialIndicator(center, color, range, false, true, false, true);
+			}
+		}
+	}
 }
 
-// FUNCTION: GAMEMD 0x006DC410
-void Tactical_noop3(void)
-{
-}
+
+// SYNTHETIC: GAMEMD 0x006DC400 SYMBOL
+// _$E270
+
+// SYNTHETIC: GAMEMD 0x006DC410 SYMBOL
+// _$E269
 
 // FUNCTION: GAMEMD 0x006DC420
 int Tactical::Selectable_Count(void)
