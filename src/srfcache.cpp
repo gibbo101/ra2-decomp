@@ -197,7 +197,7 @@ bool SurfaceCacheClass::Draw(Rect const & rect, Surface & tosurface, Surface & f
 	int dest_pitch = tosurface.Stride() / 2;
 	int src_pitch = fromsurface.Stride() / 2;
 	Rect image = fromsurface.Get_Rect();
-	tosurface.Get_Rect();
+	Rect trect = tosurface.Get_Rect();
 
 	int row = rect.Height;
 	int x_margin = MAX((image.Width - rect.Width) / 2, 0);
