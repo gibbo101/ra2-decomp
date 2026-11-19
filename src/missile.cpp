@@ -46,21 +46,6 @@
 // TEMPLATE: GAMEMD 0x005B2A30
 // ?Set_Pitch@?$TVelocity3D@N@@QAEXABVDirType@@@Z
 
-static double Square(double value)
-{
-	return(value * value);
-}
-
-static Point3D Velocity_To_Point(TVelocity3D<double> const & velocity)
-{
-	Point3D result;
-	result.X = velocity.X;
-	result.Y = velocity.Y;
-	result.Z = velocity.Z;
-	return result;
-}
-
-// FUNCTION: GAMEMD 0x005B20F0
 int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const & target_coord, DirType const & rot, bool aircraft, bool airburst, bool veryhigh, bool level)
 {
 	DirType desired_pitch;
@@ -69,18 +54,18 @@ int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const
 		desired_pitch.Turn(DirType(DIR_NE), rot);
 		velocity.Set_Pitch(desired_pitch);
 		TVelocity3D<double> frame_velocity(velocity);
-		coord = coord + Velocity_To_Point(frame_velocity);
-		return(fastmath::sqrt(Square(velocity.Z) + (Square(velocity.Y) + Square(velocity.X))));
+		coord = coord + Point3D(frame_velocity.X, frame_velocity.Y, frame_velocity.Z);
+		return(velocity.Speed());
 	} else {
 		TVelocity3D<double> frame_velocity(velocity);
-		coord = coord + Velocity_To_Point(frame_velocity);
+		coord = coord + Point3D(frame_velocity.X, frame_velocity.Y, frame_velocity.Z);
 		int target_distance = coord.Distance_To(target_coord);
 		int horizontal_distance = Point2D(coord).Distance_To(Point2D(target_coord));
 
 		Coord delta = target_coord - coord;
 
 		TVelocity3D<double> target_direction;
-		target_direction = TVelocity3D<double>(delta);
+		target_direction = TVelocity3D<double>(delta.X, delta.Y, delta.Z);
 
 		DirType desired_yaw = velocity.Get_Yaw();
 		desired_yaw.Turn(target_direction.Get_Yaw(), rot);
@@ -90,7 +75,7 @@ int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const
 
 		if (!aircraft && (airburst || horizontal_distance > ((veryhigh ? 6 : 3) * CELL_LEPTON)) && rot.As_Dir256() > 1) {
 			TVelocity3D<double> lookahead_velocity(velocity);
-			Coord lookahead_coord = coord + Velocity_To_Point(lookahead_velocity) * 6;
+			Coord lookahead_coord = coord + Point3D(lookahead_velocity.X, lookahead_velocity.Y, lookahead_velocity.Z) * 6;
 
 			int terrain_height = Map.Get_Height_GL(lookahead_coord);
 			if (Map[lookahead_coord].IsUnderBridge) {

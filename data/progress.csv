@@ -8656,7 +8656,6 @@ address,name,result,size,source,symbol
 0x005B20B0,_$E35,MATCH,18,src/missile.cpp,_$E35
 0x005B20D0,_$E38,MATCH,26,src/missile.cpp,_$E38
 0x005B2A30,?Set_Pitch@?$TVelocity3D@N@@QAEXABVDirType@@@Z,MATCH,342,src/missile.cpp,?Set_Pitch@?$TVelocity3D@N@@QAEXABVDirType@@@Z
-0x005B20F0,Projectile_Motion,99.5%,2101,src/missile.cpp,?Projectile_Motion@@YIHAAVCoord@@AAV?$TVelocity3D@N@@ABV1@ABVDirType@@_N444@Z
 0x005B2930,??HDirType@@QBE?AV0@ABV0@@Z,MATCH,28,src/missile.cpp,??HDirType@@QBE?AV0@ABV0@@Z
 0x005B2950,??GDirType@@QBE?AV0@ABV0@@Z,MATCH,28,src/missile.cpp,??GDirType@@QBE?AV0@ABV0@@Z
 0x005B2970,??KDirType@@QBE?AV0@H@Z,MATCH,26,src/missile.cpp,??KDirType@@QBE?AV0@H@Z

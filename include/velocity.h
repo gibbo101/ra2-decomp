@@ -72,7 +72,6 @@ class TVelocity3D : public TVelocity2D<T>
 		TVelocity3D(DirType const & yaw, DirType const & pitch, T magnitude);
 		TVelocity3D(double angle, T magnitude);
 		TVelocity3D(T x, T y, T z) : BASECLASS(x, y), Z(z) {}
-		explicit TVelocity3D(Coord const & coord) : BASECLASS(TVelocity2D<T>(coord.X, coord.Y)), Z(coord.Z) {}
 
 		void Set(T x, T y, T z)
 		{
@@ -98,6 +97,12 @@ class TVelocity3D : public TVelocity2D<T>
 			Z = speed * fastmath::sin(pitch.As_Radian());
 		}
 
+		void Pitch(DirType const & towards, DirType const & rate)
+		{
+			DirType current_pitch = Get_Pitch();
+			current_pitch.Turn(towards, rate);
+			Set_Pitch(current_pitch);
+		}
 
 		void Set_Speed(T speed)
 		{
