@@ -400,7 +400,6 @@ bool HoverLocomotionClass::Reduce_Path_Length(void)
 	return(false);
 }
 
-// FUNCTION: GAMEMD 0x005164D0
 void HoverLocomotionClass::Start_Of_Move(int num)
 {
 	FacingType facing;
@@ -493,24 +492,13 @@ void HoverLocomotionClass::Start_Of_Move(int num)
 
 				if (ok == MOVE_TEMP) {
 					CellClass * cellptr = &Map[cell];
-					int distance;
+					ObjectClass * blockage = cellptr->Cell_Techno(
+						Point2D(0, 0),
+						LinkedTo->PositionCoord.Z > Map.Get_Height_GL(Coord(cell)) +
+							3 * LEVEL_LEPTON_H);
 
-					{
-						ObjectClass * blockage = cellptr->Cell_Techno(
-							Point2D(0, 0),
-							LinkedTo->PositionCoord.Z > Map.Get_Height_GL(Coord(cell)) +
-								3 * LEVEL_LEPTON_H);
-
-						if (!blockage ||
-							!LinkedTo->House->Is_Ally(blockage)) {
-							goto path_ready;
-						}
-
-						distance = LinkedTo->Distance(DestinationCoord);
-					}
-
-					{
-						if (distance < Rule->CloseEnoughDistance &&
+					if (blockage && LinkedTo->House->Is_Ally(blockage)) {
+						if (LinkedTo->Distance(DestinationCoord) < Rule->CloseEnoughDistance &&
 							!LinkedTo->HasAnyLink() &&
 							abs(DestinationCoord.Z -
 								LinkedTo->PositionCoord.Z) <
@@ -534,7 +522,6 @@ void HoverLocomotionClass::Start_Of_Move(int num)
 				}
 			}
 
-		path_ready:
 			LinkedTo->TryTryAgain = FootClass::PATH_RETRY;
 			facing = LinkedTo->Path[0];
 		}
