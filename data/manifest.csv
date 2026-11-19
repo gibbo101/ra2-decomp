@@ -1943,6 +1943,7 @@ address,size,symbol,source,sha256
 0x0044D6A0,93,?Enter_Idle_Mode@BuildingClass@@UAE_N_N0@Z,src/building.cpp,65f2aa08a3b083dab6f3ccf5c9ac3676cce962af5d64940b72a992695f7269a4
 0x0044D700,92,?Pip_Count@BuildingClass@@UBEHXZ,src/building.cpp,21799d344afdac0f9da0a0256be4811611230439ee5ee14123c8a8fb3c3c2822
 0x0044D760,108,?Death_Announcement@BuildingClass@@UBEXPBVTechnoClass@@@Z,src/building.cpp,c853e0835e3718a77346503f9b487072d4762b6cf6f2392aa2f55fe6b21d0f88
+0x0044D7D0,161,?Fire_Direction@BuildingClass@@UBE?AVDirType@@XZ,src/building.cpp,788346c35fe43386a6fb89e8921e7be1ab1170e93fd5671e7a2a2b29ec6c0b67
 0x0044E3A0,156,?Is_Blocked_By_Occupier@BuildingClass@@QAE_NXZ,src/building.cpp,be0acc8b4994692fd637eea9f96639739b2118735755b2d8ae47e50978ac716f
 0x0044E440,876,?Do_MISSION_OPEN@BuildingClass@@UAEHXZ,src/building.cpp,f452530c5e297d819d6c4a80b3a9aac87a4146c261b96f924e906d8b66f103d0
 0x0044E7B0,201,?Power_Output@BuildingClass@@QBEHXZ,src/building.cpp,27dcdb613375e03e843a4a45fbb844c09310c15d0600a0f249019d13d7a466e9
@@ -7591,6 +7592,7 @@ address,size,symbol,source,sha256
 0x00549D90,56,?GetClassID@IsometricTileTypeClass@@UAGJPAU_GUID@@@Z,src/isotype.cpp,74d31af8d4426d4a5b5096cdf99d11de4f0ea5c5d4fc87a914af8e065e539dff
 0x00549DD0,65,?Detach@IsometricTileTypeClass@@UAEXPBVAbstractClass@@_N@Z,src/isotype.cpp,66d36c060dd65ef9a055d97eb16cbfc9e7f3e517a16d359ca8aa9950eca786ba
 0x00549E20,38,?Preview_Tile_Color@IsometricTileTypeClass@@QAEGHH_N@Z,src/isotype.cpp,39060c1d34bb9ea23fcaf58fbd8281bdb19f0a9ea6a86c2664e4ee2d9c62836a
+0x00549E50,52,?Preview_Tile@IsometricTileTypeClass@@QAEPAGHH@Z,src/isotype.cpp,aadaa04faec680517b4085bc3988a050fcc7ce9d73d0559459aed2b44fa30115
 0x00549E90,644,?Build_Preview_Tiles@IsometricTileTypeClass@@QAEXXZ,src/isotype.cpp,04d34c30d4e2dbbc0057bb1fdf3257a18d3807c282d03e2d4cf0de3a7e3d0a4c
 0x0054A120,32,??0ShadowCasterInfo@@QAE@HHHH@Z,src/isotype.cpp,57f9adde7e32b480059e3fde6242f3705bd9070fa8c41d7ba5f9e6c9838e011d
 0x0054A140,6,?Fetch_RTTI@IsometricTileTypeClass@@UBE?AW4RTTIType@@XZ,src/isotype.cpp,8e3e785d41dddc521601c78e6b419295110be69e63907076843ba16e092e98c9

@@ -1581,6 +1581,7 @@ address,name,result,size,source,symbol
 0x0044D6A0,BuildingClass::Enter_Idle_Mode,MATCH,93,src/building.cpp,?Enter_Idle_Mode@BuildingClass@@UAE_N_N0@Z
 0x0044D700,BuildingClass::Pip_Count,MATCH,92,src/building.cpp,?Pip_Count@BuildingClass@@UBEHXZ
 0x0044D760,BuildingClass::Death_Announcement,MATCH,108,src/building.cpp,?Death_Announcement@BuildingClass@@UBEXPBVTechnoClass@@@Z
+0x0044D7D0,BuildingClass::Fire_Direction,MATCH,161,src/building.cpp,?Fire_Direction@BuildingClass@@UBE?AVDirType@@XZ
 0x0044E3A0,BuildingClass::Is_Blocked_By_Occupier,MATCH,156,src/building.cpp,?Is_Blocked_By_Occupier@BuildingClass@@QAE_NXZ
 0x0044E440,BuildingClass::Do_MISSION_OPEN,MATCH,876,src/building.cpp,?Do_MISSION_OPEN@BuildingClass@@UAEHXZ
 0x0044E7B0,BuildingClass::Power_Output,MATCH,201,src/building.cpp,?Power_Output@BuildingClass@@QBEHXZ
@@ -7235,6 +7236,7 @@ address,name,result,size,source,symbol
 0x00549D90,IsometricTileTypeClass::GetClassID,MATCH,56,src/isotype.cpp,?GetClassID@IsometricTileTypeClass@@UAGJPAU_GUID@@@Z
 0x00549DD0,IsometricTileTypeClass::Detach,MATCH,65,src/isotype.cpp,?Detach@IsometricTileTypeClass@@UAEXPBVAbstractClass@@_N@Z
 0x00549E20,IsometricTileTypeClass::Preview_Tile_Color,MATCH,38,src/isotype.cpp,?Preview_Tile_Color@IsometricTileTypeClass@@QAEGHH_N@Z
+0x00549E50,IsometricTileTypeClass::Preview_Tile,MATCH,52,src/isotype.cpp,?Preview_Tile@IsometricTileTypeClass@@QAEPAGHH@Z
 0x00549E90,IsometricTileTypeClass::Build_Preview_Tiles,MATCH,644,src/isotype.cpp,?Build_Preview_Tiles@IsometricTileTypeClass@@QAEXXZ
 0x0054A120,ShadowCasterInfo::ShadowCasterInfo,MATCH,32,src/isotype.cpp,??0ShadowCasterInfo@@QAE@HHHH@Z
 0x0054A140,IsometricTileTypeClass::Fetch_RTTI,MATCH,6,src/isotype.cpp,?Fetch_RTTI@IsometricTileTypeClass@@UBE?AW4RTTIType@@XZ
