@@ -7,7 +7,6 @@
 #include "always.h"
 #include "geometry.h"
 #include "building.h"
-#include "coordmath.h"
 #include "_convert.h"
 #include "_keyboar.h"
 #include "_map.h"
@@ -3707,7 +3706,7 @@ int BuildingClass::Do_MISSION_ATTACK(void)
 						if (building->Get_Mission() == MISSION_ATTACK) continue;
 						if (building == this) continue;
 						Coord coord = building->Render_Coord();
-						TPoint3D<float> delta = Coordinate_Displacement<float>(center, coord, center.Z - coord.Z);
+						TPoint3D<float> delta(center.X - coord.X, coord.Y - center.Y, center.Z - coord.Z);
 						int distance = (int)delta.Length();
 						if (distance <= Weapon_Range(1)) {
 							if (best == NULL) {
