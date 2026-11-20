@@ -164,6 +164,103 @@ void SlaveManagerClass::CreateSlave(SlaveControl * node)
 	}
 }
 
+// FUNCTION: GAMEMD 0x006AFD60
+void SlaveManagerClass::FUN_006AFD60(void)
+{
+	switch (State) {
+	case 0:
+		{
+			BuildingClass *building = As_Building(Owner);
+			if (building != NULL && building->CurrentMission != MISSION_DECONSTRUCTION && building->CurrentMission != MISSION_CONSTRUCTION) {
+				FUN_006B10D0(5);
+			}
+		}
+		break;
+	case 1:
+		{
+			UnitClass *unit = As_Unit(Owner);
+			if (unit != NULL && unit->NavCom != NULL) {
+				FUN_006B10D0(2);
+				break;
+			}
+			Cell target = FUN_006B02C0();
+			Cell cell = target;
+			if (cell == CELL_NONE) {
+				FUN_006B10D0(0);
+				break;
+			}
+			cell = FUN_006B0300(cell);
+			if (cell == CELL_NONE) {
+				FUN_006B10D0(0);
+			} else {
+				Owner->Assign_Destination(&Map[cell]);
+				Owner->QueueMission(MISSION_MOVE, false);
+				FUN_006B10D0(2);
+			}
+		}
+		break;
+	case 2:
+		{
+			UnitClass *unit = As_Unit(Owner);
+			if (unit == NULL) {
+				FUN_006B10D0(0);
+			} else if (unit->NavCom == NULL) {
+				if (unit->Try_To_Deploy()) {
+					FUN_006B10D0(4);
+				} else {
+					RespawnTimer = CDTimerClass<FrameTimerClass>(30);
+					FUN_006B10D0(3);
+				}
+			}
+		}
+		break;
+	case 3:
+		{
+			UnitClass *unit = As_Unit(Owner);
+			if (unit == NULL) {
+				FUN_006B10D0(0);
+			} else if (unit->Try_To_Deploy()) {
+				FUN_006B10D0(4);
+			} else {
+				FUN_006B10D0(1);
+			}
+		}
+		break;
+	case 4:
+		if (Owner->Fetch_RTTI() == RTTI_BUILDING && As_Building(Owner)->BState != 0) {
+			FUN_006B10D0(5);
+		} else if (As_Unit(Owner) && !As_Unit(Owner)->IsDeploying && Owner->CurrentMission == MISSION_GUARD) {
+			FUN_006B10D0(2);
+		}
+		break;
+	case 5:
+		if (As_Unit(Owner)) {
+			FUN_006B10D0(0);
+			break;
+		}
+		if (!FUN_006B0260()) {
+			Cell target = FUN_006B02C0();
+			Cell cell = FUN_006B0300(target);
+			short nearer = cell.Distance_To(target);
+			short farther = Owner->Get_Cell().Distance_To(target);
+			if (nearer + Rule->SlaveMinerScanCorrection / 256 < farther) {
+				Owner->unknown_bool_4F8 = true;
+				Owner->Assign_Archive_Target(Owner->Get_Cell_Ptr());
+				Owner->QueueMission(MISSION_DECONSTRUCTION, false);
+				FUN_006B10D0(6);
+			}
+		}
+		if (State != 6) FUN_006B04C0();
+		break;
+	case 6:
+		if (Owner->Fetch_RTTI() == RTTI_UNIT) {
+			FUN_006B0490();
+			FUN_006B10D0(1);
+		}
+		break;
+	}
+}
+
 // FUNCTION: GAMEMD 0x006B0260
 bool SlaveManagerClass::FUN_006B0260(void)
 {

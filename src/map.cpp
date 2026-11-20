@@ -8252,13 +8252,13 @@ void MapClass::Reset_Subzone(int subzone)
 	(*track)[0].ParentSubzoneID = 0;
 	(*track)[0].Passability = PASSABLE_OUTSIDE;
 
-    subptr = CellSubzones;
-    zoneptr = CellZones;
-    int regionmask = (1 << (subzone + 1)) - 1;
-    int rowwidth = Map.PlayRect.Width + Map.PlayRect.Height + 1;
-    Rect bounds(0, 0, 1 << (subzone + 1), 1 << (subzone + 1));
-    int X = 0;
-    int Y = 0;
+	subptr = CellSubzones;
+	zoneptr = CellZones;
+	int regionmask = (1 << (subzone + 1)) - 1;
+	int rowwidth = Map.PlayRect.Width + Map.PlayRect.Height + 1;
+	Rect bounds(0, 0, 1 << (subzone + 1), 1 << (subzone + 1));
+	int X = 0;
+	int Y = 0;
 	while (subptr < subend) {
 		int passability = zoneptr->Passability;
 		int parent;
@@ -8305,10 +8305,10 @@ void MapClass::Reset_Subzone(int subzone)
 	Register_Subzone_Zone_Connections(subzone);
 
 	for (int bucket_index = 0; bucket_index < 256; bucket_index++) {
-        SUBZONE_CONNECTION_HASH_SET::BucketType & bucket = set->Buckets[bucket_index];
-        if (bucket.Count() > 0) {
-            SUBZONE_CONNECTION_HASH_SET::ObjectType * object = &bucket[0];
-            for (int index = bucket.Count(); index > 0; index--) {
+		SUBZONE_CONNECTION_HASH_SET::BucketType & bucket = set->Buckets[bucket_index];
+		if (bucket.Count() > 0) {
+			SUBZONE_CONNECTION_HASH_SET::ObjectType * object = &bucket[0];
+			for (int index = bucket.Count(); index > 0; index--) {
 				unsigned packed = object->Value.SubzoneID;
 				WORD low = LOWORD(packed);
 				WORD high = HIWORD(packed);
@@ -8327,12 +8327,6 @@ void MapClass::Reset_Subzone(int subzone)
 		}
 	}
 }
-
-
-
-
-
-
 
 // FUNCTION: GAMEMD 0x00582D30
 void MapClass::Register_Subzone_Zone_Connections(int subzone)
