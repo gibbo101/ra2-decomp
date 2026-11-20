@@ -965,4 +965,3 @@ address,name,symbol,evidence
 0x0043A0D0,Vector3::operator*=,??XVector3@@QAEAAV0@M@Z,Stock VC6 SP3 byte match; 33-byte scalar multiply-assignment emitted by BounceClass::AI.
 0x0043A100,Vector3::operator+=,??YVector3@@QAEAAV0@ABV0@@Z,Stock VC6 SP3 byte match; 33-byte vector add-assignment emitted by BounceClass::AI.
 0x0043A130,Vector3::Length,?Length@Vector3@@QBEMXZ,Stock VC6 SP3 byte match; 45-byte length function emitted by BounceClass::AI.
-0x00645D60,Quaternion::Make_Closest,?Make_Closest@Quaternion@@QAEAAV1@ABV1@@Z,Matched quaternion representation selection.
