@@ -6531,6 +6531,7 @@ address,size,symbol,source,sha256
 0x00516370,34,?Do_Turn@HoverLocomotionClass@@UAGXUDirStruct@@@Z,src/hover.cpp,15fd4f66c359e5af860f1676b2404b0b5341199f2d2c99a18cc4592fac747e94
 0x005163A0,15,?Is_Moving1@HoverLocomotionClass@@AAE_NXZ,src/hover.cpp,40ba73a936ef9fd2d18aa382014832222b284d9edd8157fbf59b6f49983e51f3
 0x005163B0,283,?Reduce_Path_Length@HoverLocomotionClass@@AAE_NXZ,src/hover.cpp,6a20878d5cd29bf2da3343e6f3d9088bd39a6c566be8c4031ca06053e0eec452
+0x005164D0,1809,?Start_Of_Move@HoverLocomotionClass@@AAEXH@Z,src/hover.cpp,9cb9813d7659c25b761e100a1da703e209bb2a71b80a66f8881577f4470460b1
 0x00516BF0,120,?Power_Off@HoverLocomotionClass@@UAGEXZ,src/hover.cpp,9da8008866001794d877bf760381f140c6ca699d7abf7bbe758c644a650d0299
 0x00516C70,42,?Is_Powered@HoverLocomotionClass@@UAGEXZ,src/hover.cpp,b11e1c0d8c570eda4ecb2d618b499e8c2ba1887f18781d4b114ac7802ef29aa7
 0x00516CA0,360,?Is_Ion_Sensitive@HoverLocomotionClass@@UAGEXZ,src/hover.cpp,b253d001131b70e63f02b03d2d70d8f1eb989ad4803738364cb6dd81a73b82f4
@@ -8683,6 +8684,7 @@ address,size,symbol,source,sha256
 0x00591740,1598,?Build_East_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,cf6836996c6aaeec1a9184257c8229d9579ffb9dbc47022618ac8ccd058c0f9b
 0x00591D80,1724,?Build_North_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,5917f1b560dd6aeea9c7322938a19fa43aa340869196ac86a2814a312dad9a09
 0x00592440,1700,?Build_West_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,6515207bf127b7a26b367b229e3a3aa04d0072d5d64b80efef7e18091bc28a4c
+0x00592AF0,1342,?Build_Corner_Ramp_SE@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,be5c100e9f9ac660cb27e0ab7525f3b9a6e0702842cadf245739e7192cf4f480
 0x00593030,1303,?Build_Corner_Ramp_NE@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,aa8e75552bdb68169785fdd1ee0071add36e6c9946456f7ba3f14b83c758ebd5
 0x00593550,1426,?Build_Corner_Ramp_NW@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,45f18e9447b391ff000276e305d8625a3f914688adf546d78d6a13c046dcab4c
 0x00593AF0,1299,?Build_Corner_Ramp_SW@MapRegionClass@@QAE_NABVCell@@0H@Z,src/mapgen.cpp,5b3e5dc8c52f24f62eee1f7d21f7e55f13eabf3d8fdc37c426f000644546cd77
@@ -13471,6 +13473,7 @@ address,size,symbol,source,sha256
 0x006AF580,101,?SetOwner@SlaveManagerClass@@QAEXPAVTechnoClass@@@Z,src/slavemanager.cpp,bff87477cbb8059f3a98b8e906c81a2161b7cd7e01f6b2006a7d842a939ac03a
 0x006AF5F0,83,?AI@SlaveManagerClass@@UAEXXZ,src/slavemanager.cpp,a9be80ca8192cbf8a9add621ad0c0bd72efaa80d61d5ec6fb1cf801454a512cb
 0x006AF650,98,?CreateSlave@SlaveManagerClass@@QAEXPAUSlaveControl@1@@Z,src/slavemanager.cpp,3779ae76c5b7772cc907b9078a48559551b31f2e51f79ac00947cb20744d47af
+0x006AF6C0,1688,?FUN_006AF6C0@SlaveManagerClass@@QAEXXZ,src/slavemanager.cpp,8da492b7ff68f3f08ef44501d22ee36e518a812a3f3082b2bdb84acc56b085f1
 0x006AFD60,1268,?FUN_006AFD60@SlaveManagerClass@@QAEXXZ,src/slavemanager.cpp,89615de01e0d6bcb5a045352366941b7d8d252f86cfb697c57665681710c12c6
 0x006B0260,85,?FUN_006B0260@SlaveManagerClass@@QAE_NXZ,src/slavemanager.cpp,cf72567270ad84ba9d61ba00835c19230dd7d8943a3639110185f49c228a8bdb
 0x006B02C0,57,?FUN_006B02C0@SlaveManagerClass@@QAE?AVCell@@XZ,src/slavemanager.cpp,992d9003a288034d6388ce6519f1863e3b2ea2d6ac93dfe71723d0637cc23480
