@@ -1685,6 +1685,7 @@ void SidebarClass::StripClass::SelectClass::Set_Owner(StripClass & strip, int in
 
 extern bool UserInputLocked;
 
+// FUNCTION: GAMEMD 0x006AA600
 bool SidebarClass::StripClass::Recalc(void)
 {
 	int ok;
@@ -1719,8 +1720,10 @@ bool SidebarClass::StripClass::Recalc(void)
 
 		if (!ok) {
 			if (Buildables[index].Factory != NULL) {
+				RTTIType object_type = Buildables[index].BuildableType;
+				int object_id = Buildables[index].BuildableID;
 				OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::ABANDON,
-					Buildables[index].BuildableType, Buildables[index].BuildableID, tech->Naval));
+					object_type, object_id, tech->Naval));
 				if (Buildables[index].BuildableType == RTTI_BUILDINGTYPE ||
 					Buildables[index].BuildableType == RTTI_BUILDING) {
 					Map.PendingObjectPtr = NULL;
@@ -1745,14 +1748,15 @@ bool SidebarClass::StripClass::Recalc(void)
 			}
 			redraw = true;
 			scroll = true;
-			Buildables[BuildableCount-1].Factory = NULL;
-			Buildables[BuildableCount-1].BuildableID = 0;
-			Buildables[BuildableCount-1].BuildableType = RTTI_NONE;
-			Buildables[BuildableCount-1].IsAlt = 0;
-			Buildables[BuildableCount-1].unknown_10 = 0;
-			Buildables[BuildableCount-1].Progress.Set_Stage(0);
-			Buildables[BuildableCount-1].Progress.Set_Rate(0);
-			Buildables[BuildableCount-1].FlashEndFrame = 0;
+			int last = BuildableCount - 1;
+			Buildables[last].Factory = NULL;
+			Buildables[last].BuildableID = 0;
+			Buildables[last].BuildableType = RTTI_NONE;
+			Buildables[last].IsAlt = 0;
+			Buildables[last].unknown_10 = 0;
+			Buildables[last].Progress.Set_Stage(0);
+			Buildables[last].Progress.Set_Rate(0);
+			Buildables[last].FlashEndFrame = 0;
 			IsToRedraw = true;
 			BuildableCount--;
 			index--;
@@ -1762,12 +1766,13 @@ bool SidebarClass::StripClass::Recalc(void)
 	Map.FUN_006A6820(ID);
 
 	if (scroll) {
+		BuildType const * previous = unshifted;
 		bool got_old = false;
 		bool got_new = false;
 
 		int oldpos;
 		for (oldpos = 0; oldpos < max_visible; oldpos++) {
-			if (unshifted[oldpos] != BuildType(0, RTTI_NONE)) {
+			if (previous[oldpos] != BuildType(0, RTTI_NONE)) {
 				got_old = true;
 				break;
 			}
@@ -1776,7 +1781,7 @@ bool SidebarClass::StripClass::Recalc(void)
 		int newpos;
 		if (got_old && BuildableCount != 0) {
 			for (newpos = 0; newpos < BuildableCount; newpos++) {
-				if (Buildables[newpos] == unshifted[oldpos]) {
+				if (Buildables[newpos] == previous[oldpos]) {
 					got_new = true;
 					break;
 				}
