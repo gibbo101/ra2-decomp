@@ -15,26 +15,21 @@ public:
 	float Y;
 	float Z;
 
-	// Constructors
 	inline Vector3(void) {};
 	inline Vector3(float x, float y, float z) { X = x; Y = y; Z = z; }
 
-	// Assignment
 	inline void	Set(float x, float y, float z) { X = x; Y = y; Z = z; }
 	inline void	Set(const Vector3 & that) { X = that.X; Y = that.Y; Z = that.Z; }
 
 
 
-	// Array access
 	float & operator [](int i) { return((&X)[i]); }
 	const float operator [](int i) const { return((&X)[i]); }
 
-	// normalize, compute length
 	void Normalize(void);
 	inline float Length(void) const;
 	inline float Length2(void) const;
 
-	// unary operators
 	inline Vector3 operator-() const { return(Vector3(-X,-Y,-Z)); }
 	inline Vector3 operator+() const { return(*this); }
 
@@ -43,16 +38,13 @@ public:
 	inline Vector3 & operator *= (float k) { X=X*k; Y=Y*k; Z=Z*k; return(*this); }
 	inline Vector3 & operator /= (float k) { X=X/k; Y=Y/k; Z=Z/k; return(*this); }
 
-	// scalar multiplication, division
 	inline friend Vector3 operator * (const Vector3 &a,double k);
 	inline friend Vector3 operator * (float k,const Vector3 &a);
 	inline friend Vector3 operator / (const Vector3 &a,double k);
 
-	// vector addition,subtraction
 	inline friend Vector3 operator + (const Vector3 &a,const Vector3 &b);
 	inline friend Vector3 operator - (const Vector3 &a,const Vector3 &b);
 
-	// cross product / outer product
 	static inline Vector3 Cross_Product(const Vector3 &a,const Vector3 &b);
 	static inline void Cross_Product(const Vector3 &a,const Vector3 &b,Vector3 * result);
 	static inline float Cross_Product_X(const Vector3 &a,const Vector3 &b);
