@@ -419,3 +419,67 @@ void RadBeam::Update_All(void)
 		}
 	}
 }
+
+// FUNCTION: GAMEMD 0x00659AC0
+void RadBeam::FUN_00659AC0(void)
+{
+    double span = (Length < 360.0 ? 360.0 : Length) * 2.0;
+    double i = Segment;
+    double fraction = i / SegmentCount;
+    double angle = fraction * span;
+    double wave = fastmath::sin(angle * DAT_00839530) * CurrentAmplitude;
+    int first_segment = i;
+    Coord offset = AndAnotherLocation * first_segment;
+    PointA = SourceLocation + offset;
+    double first_z = PointA.Z;
+    first_z += wave;
+    PointA.Z = first_z;
+    double j = Segment + 1;
+    fraction = j / SegmentCount;
+    angle = fraction * span;
+    wave = fastmath::sin(angle * DAT_00839530) * CurrentAmplitude;
+    Coord next_offset = AndAnotherLocation * (int)j;
+    PointB = Coord(SourceLocation.X + next_offset.X, SourceLocation.Y + next_offset.Y, SourceLocation.Z + next_offset.Z);
+    double next_z = PointB.Z;
+    next_z += wave;
+    PointB.Z = next_z;
+    int height = (int)wave;
+    unknown_B8 = abs(height) * 0.5 / Amplitude + 0.5;
+    double red = Color.Get_Red() * unknown_B8;
+    double green = Color.Get_Green() * unknown_B8;
+    double blue = Color.Get_Blue() * unknown_B8;
+    Tint.Set_Red(red);
+    Tint.Set_Green(green);
+    Tint.Set_Blue(blue);
+}
+
+
+// FUNCTION: GAMEMD 0x00659FF0
+void RadBeam::FUN_00659FF0(void)
+{
+    double i = Segment;
+    double fraction = i / SegmentCount;
+    double angle = fraction * 180.0;
+    double wave = fastmath::sin(angle * DAT_00839530) * CurrentAmplitude;
+    Coord offset = AndAnotherLocation * (int)i;
+    PointA = SourceLocation + offset;
+    double first_z = PointA.Z;
+    first_z += wave;
+    PointA.Z = first_z;
+    double j = Segment + 1;
+    fraction = j / SegmentCount;
+    angle = fraction * 180.0;
+    wave = fastmath::sin(angle * DAT_00839530) * CurrentAmplitude;
+    PointB = SourceLocation + AndAnotherLocation * (int)j;
+    double next_z = PointB.Z;
+    next_z += wave;
+    PointB.Z = next_z;
+    int height = (int)wave;
+    unknown_B8 = abs(height) * 0.5 / Amplitude + 0.5;
+    double red = Color.Get_Red() * unknown_B8;
+    double green = Color.Get_Green() * unknown_B8;
+    double blue = Color.Get_Blue() * unknown_B8;
+    Tint.Set_Red(red);
+    Tint.Set_Green(green);
+    Tint.Set_Blue(blue);
+}
