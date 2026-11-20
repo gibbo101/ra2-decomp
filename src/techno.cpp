@@ -1238,6 +1238,29 @@ void TechnoClass::Draw_Health_Bar_Old(Point2D const &, Rect const &) const
 {
 }
 
+// FUNCTION: GAMEMD 0x006F60D0
+void TechnoClass::Draw_Pre_Render(Point2D const & point, Rect const & cliprect) const
+{
+	if (RTTI == RTTI_BUILDING && IsSelected) {
+		if (RTTI != RTTI_INFANTRY) {
+			int color = WHITE;
+			if (HeightAGL < -4) {
+				color = BLACK;
+			}
+			Point3D dim = TClass->Lepton_Dimensions();
+			dim.X /= 2;
+			dim.Y /= 2;
+			color = NormalDrawer->Convert_Pixel(color);
+			Coord center = Center_Coord();
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, 0), center + Coord(-dim.X, -dim.Y, dim.Z), color);
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, 0), center + Coord(dim.X, -dim.Y, 0), color);
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, 0), center + Coord(-dim.X, dim.Y, 0), color);
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, dim.Z), center + Coord(-dim.X, dim.Y, dim.Z), color);
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, dim.Z), center + Coord(dim.X, -dim.Y, dim.Z), color);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x006F6AC0
 bool TechnoClass::Limbo(void)
 {
