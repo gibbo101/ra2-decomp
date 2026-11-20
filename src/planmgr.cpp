@@ -925,20 +925,15 @@ static inline Rect Inflated(Rect const & r, int n)
 	return o;
 }
 
-static inline void Draw_Planning_Frame(Rect const & clip, Rect & rect, int color)
-{
-	for (int i = 0; i < 3; i++) {
-		DSurface::Composite->Draw_Rect(clip, rect, color);
-		Shrink_Rect(rect);
-	}
-}
-
 // FUNCTION: GAMEMD 0x00635560
 void PlanningNodeClass::Frame_Lead_Box(int color)
 {
 	Rect clip = Get_Title_Screen_Area();
 	Rect rect = Lead_Box_Rect();
-	Draw_Planning_Frame(clip, rect, color);
+	for (int i = 0; i < 3; i++) {
+		DSurface::Composite->Draw_Rect(clip, rect, color);
+		Shrink_Rect(rect);
+	}
 }
 
 // FUNCTION: GAMEMD 0x00635680
@@ -946,7 +941,10 @@ void PlanningNodeClass::FUN_00635680(int color)
 {
 	Rect clip = Get_Title_Screen_Area();
 	Rect rect = Lead_Box_Rect2();
-	Draw_Planning_Frame(clip, rect, color);
+	for (int i = 0; i < 3; i++) {
+		DSurface::Composite->Draw_Rect(clip, rect, color);
+		Shrink_Rect(rect);
+	}
 }
 
 // FUNCTION: GAMEMD 0x006357D0
@@ -2725,21 +2723,6 @@ void __fastcall FUN_0063B150(void)
 	}
 }
 
-int __fastcall FUN_0063DAD0(RGBClass const & color);
-
-// FUNCTION: GAMEMD 0x0063B2F0
-void __fastcall FUN_0063B2F0(void)
-{
-	int color = FUN_0063DAD0(DAT_00A80220);
-	PlanningNodeClass * hover = DAT_00AC4CCC;
-	if (hover != NULL) {
-		hover->Frame_Lead_Box(color);
-	}
-	if (DAT_00AC4BF0 != NULL) {
-		DAT_00AC4BF0->FUN_00635680(color);
-	}
-}
-
 // FUNCTION: GAMEMD 0x0063BE10
 bool __fastcall FUN_0063BE10(TechnoClass * techno)
 {
@@ -2755,6 +2738,7 @@ bool __fastcall FUN_0063BE10(TechnoClass * techno)
 	return false;
 }
 Coord __fastcall FUN_0063CA80(EventClass const & event, TechnoClass * owner);
+int __fastcall FUN_0063DAD0(RGBClass const & color);
 void __fastcall FUN_0063D480(Point2D p, int color);
 int __fastcall FUN_0063D520(TechnoClass * techno);
 int __fastcall FUN_0063D540(EventClass const & event);
