@@ -4533,6 +4533,7 @@ address,name,result,size,source,symbol
 0x004D6AA0,FootClass::Do_MISSION_GUARD_AREA,MATCH,1732,src/foot.cpp,?Do_MISSION_GUARD_AREA@FootClass@@UAEHXZ
 0x004D7170,FootClass::Unlimbo,MATCH,442,src/foot.cpp,?Unlimbo@FootClass@@UAE_NABVCoord@@W4Dir256@@@Z
 0x004D7330,FootClass::Take_Damage,MATCH,425,src/foot.cpp,?Take_Damage@FootClass@@UAE?AW4ResultType@@AAHHPBVWarheadTypeClass@@PAVTechnoClass@@_N3PAVHouseClass@@@Z
+0x004D74E0,FootClass::Active_Click_With,MATCH,2155,src/foot.cpp,?Active_Click_With@FootClass@@UAE_NW4ActionType@@PAVObjectClass@@_N@Z
 0x004D7D50,FootClass::Active_Click_With,MATCH,1375,src/foot.cpp,?Active_Click_With@FootClass@@UAE_NW4ActionType@@ABVCell@@1_N@Z
 0x004D82B0,FootClass::Enter_Idle_Mode,MATCH,679,src/foot.cpp,?Enter_Idle_Mode@FootClass@@UAE_N_N0@Z
 0x004D8560,FootClass::GetAttackCoordinates,MATCH,106,src/foot.cpp,?GetAttackCoordinates@FootClass@@UBE?AVCoord@@XZ

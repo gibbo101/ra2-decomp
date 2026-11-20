@@ -4887,6 +4887,7 @@ address,size,symbol,source,sha256
 0x004D6AA0,1732,?Do_MISSION_GUARD_AREA@FootClass@@UAEHXZ,src/foot.cpp,1f86e082eff03fa4f9a43289af55f36dad688e24606e84b4064c0cd28a519680
 0x004D7170,442,?Unlimbo@FootClass@@UAE_NABVCoord@@W4Dir256@@@Z,src/foot.cpp,3839541838d123e8eeaaaefeb5b0a778f38015d7f71627a386a8271cd5849272
 0x004D7330,425,?Take_Damage@FootClass@@UAE?AW4ResultType@@AAHHPBVWarheadTypeClass@@PAVTechnoClass@@_N3PAVHouseClass@@@Z,src/foot.cpp,4735a840d6bf0403637ebeda3479b457e489fd911140814d0941e0f40a616838
+0x004D74E0,2155,?Active_Click_With@FootClass@@UAE_NW4ActionType@@PAVObjectClass@@_N@Z,src/foot.cpp,3716085e5a6b341ce6defd4a54eb56b321f9c610927a2b96ed845e2744e811e8
 0x004D7D50,1375,?Active_Click_With@FootClass@@UAE_NW4ActionType@@ABVCell@@1_N@Z,src/foot.cpp,f99f07b4261fad1860de0b3324edd4f82440f3aeb1525dd92ce47eaed248ef9a
 0x004D82B0,679,?Enter_Idle_Mode@FootClass@@UAE_N_N0@Z,src/foot.cpp,e48bdf15f53560f221628aff1b6b55641804aa6d344686ca3cbe45b352f193a6
 0x004D8560,106,?GetAttackCoordinates@FootClass@@UBE?AVCoord@@XZ,src/foot.cpp,cc345669186294be37520d755b417ddd1645f65cf2f80c61aa6d311bc3f33318
