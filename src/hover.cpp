@@ -400,6 +400,7 @@ bool HoverLocomotionClass::Reduce_Path_Length(void)
 	return(false);
 }
 
+// FUNCTION: GAMEMD 0x005164D0
 void HoverLocomotionClass::Start_Of_Move(int num)
 {
 	FacingType facing;
@@ -498,7 +499,8 @@ void HoverLocomotionClass::Start_Of_Move(int num)
 							3 * LEVEL_LEPTON_H);
 
 					if (blockage && LinkedTo->House->Is_Ally(blockage)) {
-						if (LinkedTo->Distance(DestinationCoord) < Rule->CloseEnoughDistance &&
+						int distance = LinkedTo->Distance(DestinationCoord);
+						if (distance < Rule->CloseEnoughDistance &&
 							!LinkedTo->HasAnyLink() &&
 							abs(DestinationCoord.Z -
 								LinkedTo->PositionCoord.Z) <
