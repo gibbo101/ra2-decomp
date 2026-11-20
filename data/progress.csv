@@ -8075,6 +8075,7 @@ address,name,result,size,source,symbol
 0x00581090,MapClass::Shutdown,MATCH,166,src/map.cpp,?Shutdown@MapClass@@QAEXXZ
 0x00581140,MapClass::Collapse_Cliff,MATCH,3587,src/map.cpp,?Collapse_Cliff@MapClass@@QAEXPAVCellClass@@@Z
 0x00581F50,MapClass::Reset_All_Subzones,MATCH,53,src/map.cpp,?Reset_All_Subzones@MapClass@@QAEXXZ
+0x00581F90,MapClass::Reset_Subzone,MATCH,1290,src/map.cpp,?Reset_Subzone@MapClass@@QAEXH@Z
 0x00582D30,MapClass::Register_Subzone_Zone_Connections,MATCH,62,src/map.cpp,?Register_Subzone_Zone_Connections@MapClass@@QAEXH@Z
 0x00583180,MapClass::Get_Bridge_Zone_Connection_Cell,MATCH,620,src/map.cpp,?Get_Bridge_Zone_Connection_Cell@MapClass@@QAE?AVCell@@PAVCellClass@@_N@Z
 0x005833F0,MapClass::Get_Zone_Connection_Destination,MATCH,476,src/map.cpp,?Get_Zone_Connection_Destination@MapClass@@QAE?AVCell@@ABV2@0@Z
@@ -13113,6 +13114,7 @@ address,name,result,size,source,symbol
 0x006AF580,SlaveManagerClass::SetOwner,MATCH,101,src/slavemanager.cpp,?SetOwner@SlaveManagerClass@@QAEXPAVTechnoClass@@@Z
 0x006AF5F0,SlaveManagerClass::AI,MATCH,83,src/slavemanager.cpp,?AI@SlaveManagerClass@@UAEXXZ
 0x006AF650,SlaveManagerClass::CreateSlave,MATCH,98,src/slavemanager.cpp,?CreateSlave@SlaveManagerClass@@QAEXPAUSlaveControl@1@@Z
+0x006AFD60,SlaveManagerClass::FUN_006AFD60,MATCH,1268,src/slavemanager.cpp,?FUN_006AFD60@SlaveManagerClass@@QAEXXZ
 0x006B0260,SlaveManagerClass::FUN_006B0260,MATCH,85,src/slavemanager.cpp,?FUN_006B0260@SlaveManagerClass@@QAE_NXZ
 0x006B02C0,SlaveManagerClass::FUN_006B02C0,MATCH,57,src/slavemanager.cpp,?FUN_006B02C0@SlaveManagerClass@@QAE?AVCell@@XZ
 0x006B0300,SlaveManagerClass::FUN_006B0300,MATCH,394,src/slavemanager.cpp,?FUN_006B0300@SlaveManagerClass@@QAE?AVCell@@V2@@Z
@@ -17556,6 +17558,7 @@ address,name,result,size,source,symbol
 0x0076C970,WorldDominationTour::Selection::Init_Voices,MATCH,225,src/wdtsel.cpp,?Init_Voices@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
 0x0076CA60,WorldDominationTour::Selection::Init_Sounds,MATCH,400,src/wdtsel.cpp,?Init_Sounds@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
 0x0076CBF0,WorldDominationTour::Selection::Init_Target,MATCH,417,src/wdtsel.cpp,?Init_Target@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
+0x0076CDA0,WorldDominationTour::Selection::Pick_Territory,MATCH,991,src/wdtsel.cpp,?Pick_Territory@Selection@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@XZ
 0x0076D470,WorldDominationTour::Selection::Update_Hovered_Territory,MATCH,91,src/wdtsel.cpp,?Update_Hovered_Territory@Selection@WorldDominationTour@@QAEXABVPoint2D@@@Z
 0x0076DED0,WorldDominationTour::Selection::Remove_Target_Anims,MATCH,115,src/wdtsel.cpp,?Remove_Target_Anims@Selection@WorldDominationTour@@QAEXXZ
 0x0076DF50,WorldDominationTour::Selection::Remove_Target_Anims2,MATCH,115,src/wdtsel.cpp,?Remove_Target_Anims2@Selection@WorldDominationTour@@QAEXXZ
