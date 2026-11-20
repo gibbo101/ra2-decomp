@@ -231,7 +231,7 @@ WideWstring __fastcall FUN_007B8090(wchar_t const * prefix, WideWstring const & 
 
 static WideWstring Load_Selection_Text(char const * label, int source_line)
 {
-    return(WideWstring(StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\WDTSel.cpp", source_line)));
+	return(WideWstring(StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\WDTSel.cpp", source_line)));
 }
 
 // FUNCTION: GAMEMD 0x0076DAD0
