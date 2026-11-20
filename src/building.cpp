@@ -4315,6 +4315,208 @@ DirType BuildingClass::Fire_Direction(void) const
 	return(Aim_Direction(TarCom));
 }
 
+// FUNCTION: GAMEMD 0x0044D880
+int BuildingClass::Do_MISSION_UNLOAD(void)
+{
+	if (GetOccupantCount() > 0) {
+		FUN_00457DE0(false, false);
+	}
+
+	if ((Class->UnitAbsorb || Class->InfantryAbsorb) && Cargo.How_Many() > 0) {
+		FootClass * passenger = Cargo.Detach_Object();
+		if (passenger != NULL) {
+			DirType opposite = PrimaryFacing.Current().Right_180();
+			bool prefer_far = true;
+			int attempt = 0;
+			int toface = opposite.Round_To_8();
+
+			bool placed = false;
+			for (; attempt < FACING_COUNT; ++attempt) {
+				FacingType facing = (FacingType)((toface + attempt) & 7);
+				Cell near_cell = Adjacent_Cell(Get_Cell(), facing);
+				Cell far_cell = Adjacent_Cell(near_cell, facing);
+				bool far_allowed = passenger->Can_Enter_Cell(&Map[far_cell], facing, Get_Cell_Height(), NULL, true) == MOVE_OK;
+				bool near_allowed = passenger->Can_Enter_Cell(&Map[near_cell], facing, Get_Cell_Height(), NULL, true) == MOVE_OK;
+				if (!near_allowed || (!far_allowed && prefer_far)) {
+					if (prefer_far && attempt + 1 == FACING_COUNT) {
+						attempt = 0;
+						prefer_far = false;
+					}
+					continue;
+				}
+				if (Map[near_cell].IsUnderBridge) continue;
+				++ScenarioInit;
+				Coord position = Coord(near_cell);
+				if (passenger->Fetch_RTTI() == RTTI_INFANTRY) {
+					position = Map.Closest_Free_Spot(position);
+				} else {
+					near_cell = Map.Nearby_Location(near_cell, passenger->Techno_Type_Class()->Speed);
+					position = Coord(Cell(Map[near_cell].Center_Coord()));
+				}
+				placed = passenger->Unlimbo(position, DirType(facing).As_Dir256());
+				--ScenarioInit;
+				if (placed) {
+					if (Class->InfantryAbsorb) {
+						VocClass::PlayAt(Rule->LeaveBioReactorSound, Center_Coord(), NULL);
+						if (passenger->House->IsHuman) {
+							passenger->ShouldEnterAbsorber = false;
+						}
+						if (!passenger->CountedAsOwnedSpecial) {
+							passenger->House->CurInfantry++;
+							passenger->CountedAsOwnedSpecial = true;
+						}
+						passenger->Absorbed = false;
+					}
+					passenger->QueueMission(MISSION_MOVE, false);
+					if (prefer_far) {
+						passenger->Assign_Destination(&Map[far_cell], true);
+					} else {
+						passenger->Assign_Destination(&Map[near_cell], true);
+					}
+					if (Class->ExtraPower > 0) {
+						House->RecalcPower = true;
+					}
+				}
+				break;
+			}
+			if (!placed) {
+				Cargo.Attach(passenger);
+				passenger->Hidden();
+			}
+		}
+		return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+	}
+
+	if (Class->IsWeaponsFactory) {
+		Coord coord(0, 0, 0);
+		if (!Class->Naval) {
+			Cell exit = Class->ExitList[10];
+			Cell cell = exit + PositionCell;
+			Cell cell2 = Cell(cell.X - 1, cell.Y);
+			coord = Coord(cell2);
+		}
+		enum {
+			INITIAL,
+			CLEAR_BIB,
+			OPEN,
+			LEAVE,
+			CLOSE
+		};
+		switch (Status) {
+			case INITIAL: {
+				FootClass * unit = (FootClass *)Contact_With_Whom();
+				if (unit) {
+					unit->QueueMission(MISSION_GUARD, false);
+					unit->Commence();
+				}
+				Door.Open_Door(Class->DeployTime);
+				Status = Class->Naval ? CLOSE : CLEAR_BIB;
+				IsToDisplay = true;
+				End_Anim(BANIM_IDLE);
+				PlayNthAnim(BANIM_PRODUCTION, HealthRatio <= Rule->ConditionYellow, false);
+				break;
+			}
+
+			case CLEAR_BIB:
+				if (!Clear_Weapons_Factory_Bib()) {
+					DebugString("Weapons factory bib clear - kicking out unit\n");
+					Status = OPEN;
+				}
+				break;
+
+			case OPEN:
+				if (Door.Is_Door_Open()) {
+					FootClass * unit = (FootClass *)Contact_With_Whom();
+					if (unit) {
+						unit->QueueMission(MISSION_MOVE, false);
+
+						IPersistPtr persist(unit->Locomotion);
+						CLSID clsid;
+						persist->GetClassID(&clsid);
+
+						if (clsid == CLSID_TunnelLocomotion || clsid == CLSID_TeleportLocomotion) {
+							IPiggybackPtr piggy(unit->Locomotion);
+							if (piggy != NULL && piggy->Is_Piggybacking()) {
+								piggy->End_Piggyback(&unit->Locomotion);
+							}
+							ILocomotionPtr walk(CLSID_DriveLocomotion);
+							walk->Link_To_Object(unit);
+							piggy = IPiggybackPtr(walk);
+							if (piggy != NULL) {
+								piggy->Begin_Piggyback(unit->Locomotion);
+								unit->Locomotion = walk;
+								CoordStruct cs = coord;
+
+								unit->Locomotion->Force_Track(DriveLocomotionClass::OUT_OF_WEAPON_FACTORY, cs);
+							} else {
+								int damage = unit->Strength;
+								unit->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true);
+							}
+						} else if (clsid != CLSID_DriveLocomotion) {
+							unit->Assign_Destination(&Map[Get_Cell() + Cell(4, 1)]);
+						} else {
+							CoordStruct cs;
+							cs.X = coord.X;
+							cs.Y = coord.Y;
+							cs.Z = coord.Z;
+							unit->Locomotion->Force_Track(DriveLocomotionClass::OUT_OF_WEAPON_FACTORY, cs);
+						}
+						unit->Set_Speed(0.5);
+						Status = LEAVE;
+					} else {
+						Door.Close_Door(Class->DeployTime);
+						Status = CLOSE;
+					}
+				}
+				break;
+
+			case LEAVE:
+				if (!IsTethered) {
+					Door.Close_Door(Class->DeployTime);
+					Status = CLOSE;
+				}
+				break;
+
+			case CLOSE:
+				if (Door.Is_Door_Closed() || Class->Naval) {
+					Enter_Idle_Mode(false, true);
+					IsToDisplay = true;
+				}
+				break;
+
+			default:
+				break;
+		}
+		return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+	}
+
+	if (Class->GapGenerator && Class->SuperGapRadiusInCells) {
+		if (!GapSuperCharged) {
+			DestroyGap();
+			GapRadius = Class->SuperGapRadiusInCells;
+			if (IsPowerOnline()) {
+				CreateGap();
+				GapSuperCharged = true;
+				HasExtraPowerDrain = true;
+				House->RecalcPower = true;
+			} else {
+				GapRadius = Class->GapRadiusInCells;
+				CreateGap();
+			}
+		} else {
+			DestroyGap();
+			GapSuperCharged = false;
+			HasExtraPowerDrain = false;
+			GapRadius = Class->GapRadiusInCells;
+			CreateGap();
+			House->RecalcPower = true;
+		}
+	}
+
+	QueueMission(MISSION_GUARD, false);
+	return(1);
+}
+
 // FUNCTION: GAMEMD 0x0044E3A0
 bool BuildingClass::Is_Blocked_By_Occupier(void)
 {

@@ -516,6 +516,8 @@ Each entry: what the diff showed, then the source change that fixed it.
 - An unverified reference proves nothing: a wrong offset into a global object whose
   address check.py does not know passes. Give each object you reach into a names.csv
   row; `uv run tools/refaudit.py` lists symbols whose references imply different bases.
+- In a `__try` function the diff shows `fs:[0]` against `fs:[<addr>]`. That is the listing
+  only: check.py masks the field and counts `__except_list` as unverified, so it can match.
 - Code ported from TibSun brings Westwood's `/* ** */` comments and commented-out code:
   cut them to the comment rules (two `//` lines of behaviour) before landing.
 - `#define NDEBUG` before the includes is how a file whose original has its asserts

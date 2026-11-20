@@ -1582,6 +1582,7 @@ address,name,result,size,source,symbol
 0x0044D700,BuildingClass::Pip_Count,MATCH,92,src/building.cpp,?Pip_Count@BuildingClass@@UBEHXZ
 0x0044D760,BuildingClass::Death_Announcement,MATCH,108,src/building.cpp,?Death_Announcement@BuildingClass@@UBEXPBVTechnoClass@@@Z
 0x0044D7D0,BuildingClass::Fire_Direction,MATCH,161,src/building.cpp,?Fire_Direction@BuildingClass@@UBE?AVDirType@@XZ
+0x0044D880,BuildingClass::Do_MISSION_UNLOAD,MATCH,2848,src/building.cpp,?Do_MISSION_UNLOAD@BuildingClass@@UAEHXZ
 0x0044E3A0,BuildingClass::Is_Blocked_By_Occupier,MATCH,156,src/building.cpp,?Is_Blocked_By_Occupier@BuildingClass@@QAE_NXZ
 0x0044E440,BuildingClass::Do_MISSION_OPEN,MATCH,876,src/building.cpp,?Do_MISSION_OPEN@BuildingClass@@UAEHXZ
 0x0044E7B0,BuildingClass::Power_Output,MATCH,201,src/building.cpp,?Power_Output@BuildingClass@@QBEHXZ

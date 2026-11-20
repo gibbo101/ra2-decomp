@@ -1944,6 +1944,7 @@ address,size,symbol,source,sha256
 0x0044D700,92,?Pip_Count@BuildingClass@@UBEHXZ,src/building.cpp,21799d344afdac0f9da0a0256be4811611230439ee5ee14123c8a8fb3c3c2822
 0x0044D760,108,?Death_Announcement@BuildingClass@@UBEXPBVTechnoClass@@@Z,src/building.cpp,c853e0835e3718a77346503f9b487072d4762b6cf6f2392aa2f55fe6b21d0f88
 0x0044D7D0,161,?Fire_Direction@BuildingClass@@UBE?AVDirType@@XZ,src/building.cpp,788346c35fe43386a6fb89e8921e7be1ab1170e93fd5671e7a2a2b29ec6c0b67
+0x0044D880,2848,?Do_MISSION_UNLOAD@BuildingClass@@UAEHXZ,src/building.cpp,a499b02b947f64d9af9c18cdc5a7a58c54c0860d7c9e6103d8b1b3713eb0c942
 0x0044E3A0,156,?Is_Blocked_By_Occupier@BuildingClass@@QAE_NXZ,src/building.cpp,be0acc8b4994692fd637eea9f96639739b2118735755b2d8ae47e50978ac716f
 0x0044E440,876,?Do_MISSION_OPEN@BuildingClass@@UAEHXZ,src/building.cpp,f452530c5e297d819d6c4a80b3a9aac87a4146c261b96f924e906d8b66f103d0
 0x0044E7B0,201,?Power_Output@BuildingClass@@QBEHXZ,src/building.cpp,27dcdb613375e03e843a4a45fbb844c09310c15d0600a0f249019d13d7a466e9
