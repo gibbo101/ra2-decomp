@@ -965,4 +965,10 @@ address,name,symbol,evidence
 0x0043A0D0,Vector3::operator*=,??XVector3@@QAEAAV0@M@Z,Stock VC6 SP3 byte match; 33-byte scalar multiply-assignment emitted by BounceClass::AI.
 0x0043A100,Vector3::operator+=,??YVector3@@QAEAAV0@ABV0@@Z,Stock VC6 SP3 byte match; 33-byte vector add-assignment emitted by BounceClass::AI.
 0x0043A130,Vector3::Length,?Length@Vector3@@QBEMXZ,Stock VC6 SP3 byte match; 45-byte length function emitted by BounceClass::AI.
+0x00ABDE8C,LastAdjacentZone,?LastAdjacentZone@@3HA,"TibSun map.cpp defines LastAdjacentZone; native Zone_Span has four compare/store pairs at this address; Reset_Zones 0x0056C510 resets it at +0x132 and Reset_Subzone 0x00581F90 resets it at +0x1EA; initial four bytes are zero."
+0x00ABCF58,FUN_0055FDB0::_modes,_?_modes@?1??FUN_0055FDB0@@YGHPAUHWND__@@IIJ@Z@4PAHA,"Eight native code references all occur in 0x0055FDB0; assigned EnumDisplayModes results; indexed as width/height pairs; deleted and cleared on exit; native initial pointer is zero."
+0x00ABCF54,FUN_0055FDB0::_initialized,_?_initialized@?1??FUN_0055FDB0@@YGHPAUHWND__@@IIJ@Z@4_NA,"Five native code references all occur in 0x0055FDB0; three volume guards plus false/true control-initialization stores; native initial byte is zero."
+0x0082A27C,FUN_0055FDB0::_current_mode,_?_current_mode@?1??FUN_0055FDB0@@YGHPAUHWND__@@IIJ@Z@4HA,"Native selected-mode store in 0x0055FDB0; initial four bytes are FFFFFFFF matching -1."
+0x00ABCE70,TempOptions,?TempOptions@@3VGameOptionsClass@@A,"Matched initializer 0x0055F970 constructs this object through 0x005FA350; matched MainOptions driver 0x0055FC80 references the same object; target ScreenWidth/ScreenHeight accesses agree with offsets36/40."
+0x00732950,FUN_00732950,?FUN_00732950@@YIXXZ,Matched type-selection cycling and ownership filtering.
 0x006AF6C0,SlaveManagerClass::FUN_006AF6C0,?FUN_006AF6C0@SlaveManagerClass@@QAEXXZ,Matched per-slave state update; existing countdown APIs and native state transitions.
