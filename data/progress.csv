@@ -1927,6 +1927,7 @@ address,name,result,size,source,symbol
 0x00468090,BulletClass::Draw_It,MATCH,923,src/bullet.cpp,?Draw_It@BulletClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x00468430,BulletClass::LoseTarget,MATCH,164,src/bullet.cpp,?LoseTarget@BulletClass@@QAEXXZ
 0x004684E0,BulletClass::Detach,MATCH,392,src/bullet.cpp,?Detach@BulletClass@@UAEXPBVAbstractClass@@_N@Z
+0x00468670,BulletClass::Unlimbo,MATCH,1304,src/bullet.cpp,?Unlimbo@BulletClass@@UAE_NABVCoord@@ABV?$TVelocity3D@N@@@Z
 0x00468B90,BulletClass::In_Which_Layer,MATCH,22,src/bullet.cpp,?In_Which_Layer@BulletClass@@UBE?AW4LayerType@@XZ
 0x00468BB0,BulletClass::Is_Forced_To_Explode,MATCH,463,src/bullet.cpp,?Is_Forced_To_Explode@BulletClass@@QBE_NAAVCoord@@@Z
 0x00468D80,BulletClass::Bullet_Explodes,MATCH,815,src/bullet.cpp,?Bullet_Explodes@BulletClass@@QAEX_N@Z
@@ -15040,6 +15041,7 @@ address,name,result,size,source,symbol
 0x00704000,TechnoClass::Get_Z_Fudge_Tunnel,MATCH,575,src/techno.cpp,?Get_Z_Fudge_Tunnel@TechnoClass@@QBEHXZ
 0x00704240,TechnoClass::Get_Z_Fudge_Cliff,MATCH,259,src/techno.cpp,?Get_Z_Fudge_Cliff@TechnoClass@@QBEHXZ
 0x00705CA0,TechnoClass::GetAttackCoordinates,MATCH,105,src/techno.cpp,?GetAttackCoordinates@TechnoClass@@UBE?AVCoord@@XZ
+0x00704E40,TechnoClass::Draw_A_Link_To,MATCH,1059,src/techno.cpp,?Draw_A_Link_To@TechnoClass@@QAEXVCoord@@0VRGBClass@@@Z
 0x00705270,TechnoClass::FUN_00705270,MATCH,1508,src/techno.cpp,?FUN_00705270@TechnoClass@@QAEXVCoord@@0VRGBClass@@E@Z
 0x00705860,TechnoClass::FUN_00705860,MATCH,1084,src/techno.cpp,?FUN_00705860@TechnoClass@@QAEXVCoord@@0@Z
 0x00705D10,TechnoClass::FUN_00705D10,MATCH,13,src/techno.cpp,?FUN_00705D10@TechnoClass@@QAEXPAVPlanningTokenClass@@@Z
@@ -16482,6 +16484,7 @@ address,name,result,size,source,symbol
 0x00748360,Hicolor_Clear_Table,MATCH,29,src/unvqtblc.cpp,?Hicolor_Clear_Table@@YIXXZ
 0x00748380,Hicolor_Translate,MATCH,34,src/unvqtblc.cpp,?Hicolor_Translate@@YIXPAXH@Z
 0x007483B0,UnVQ2_4x4_Table,MATCH,916,src/unvqtblc.cpp,?UnVQ2_4x4_Table@@YAXPAE00KKK@Z
+0x00748750,UnVQ2_4x2_Table,MATCH,922,src/unvqtblc.cpp,?UnVQ2_4x2_Table@@YAXPAE00KKK@Z
 0x00748AF0,UnVQ1_4x4_Table,MATCH,312,src/unvqtblc.cpp,?UnVQ1_4x4_Table@@YAXPAE00KKK@Z
 0x00748FD0,UnitTrackerClass::UnitTrackerClass,MATCH,49,src/utracker.cpp,??0UnitTrackerClass@@QAE@XZ
 0x00749010,UnitTrackerClass::~UnitTrackerClass,MATCH,1,src/utracker.cpp,??1UnitTrackerClass@@QAE@XZ
