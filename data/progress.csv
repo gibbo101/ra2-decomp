@@ -4082,6 +4082,7 @@ address,name,result,size,source,symbol
 0x004C3CE0,EgoClass::Scroll,MATCH,23,src/egos.cpp,?Scroll@EgoClass@@QAE_NH@Z
 0x004C3D00,EgoClass::Render,MATCH,199,src/egos.cpp,?Render@EgoClass@@QAEX_N@Z
 0x004C3DD0,EgoClass::Wipe,MATCH,95,src/egos.cpp,?Wipe@EgoClass@@QAEXPAVSurface@@@Z
+0x004C3E30,Show_Who_Was_Responsible,MATCH,2924,src/egos.cpp,?Show_Who_Was_Responsible@@YIXXZ
 0x004C49A0,?Clear@?$DynamicVectorClass@PAVEgoClass@@@@UAEXXZ,MATCH,42,src/egos.cpp,?Clear@?$DynamicVectorClass@PAVEgoClass@@@@UAEXXZ
 0x004C49D0,?ID@?$DynamicVectorClass@PAVEgoClass@@@@UAEHPBQAVEgoClass@@@Z,MATCH,27,src/egos.cpp,?ID@?$DynamicVectorClass@PAVEgoClass@@@@UAEHPBQAVEgoClass@@@Z
 0x004C49F0,?GetItem@?$VectorClass@PAVEgoClass@@@@UBEPAVEgoClass@@H@Z,MATCH,13,src/egos.cpp,?GetItem@?$VectorClass@PAVEgoClass@@@@UBEPAVEgoClass@@H@Z
@@ -11229,6 +11230,7 @@ address,name,result,size,source,symbol
 0x00639800,FUN_00639800,MATCH,587,src/planmgr.cpp,?FUN_00639800@@YIXPAVTechnoClass@@PAVPlanningNodeClass@@@Z
 0x00639A50,FUN_00639A50,MATCH,354,src/planmgr.cpp,?FUN_00639A50@@YIXPAVPlanningNodeClass@@0VEventClass@@@Z
 0x00639BC0,FUN_00639BC0,MATCH,238,src/planmgr.cpp,?FUN_00639BC0@@YIXPAVPlanningNodeClass@@@Z
+0x00639CB0,FUN_00639CB0,MATCH,239,src/planmgr.cpp,?FUN_00639CB0@@YIXPAVTechnoClass@@@Z
 0x00639DA0,FUN_00639DA0,MATCH,131,src/planmgr.cpp,?FUN_00639DA0@@YIHXZ
 0x00639E30,FUN_00639E30,MATCH,291,src/planmgr.cpp,?FUN_00639E30@@YI_NPAVPlanningTokenClass@@0@Z
 0x00639F60,FUN_00639F60,MATCH,17,src/planmgr.cpp,?FUN_00639F60@@YIXH@Z
@@ -13095,6 +13097,7 @@ address,name,result,size,source,symbol
 0x006B0490,SlaveManagerClass::FUN_006B0490,MATCH,44,src/slavemanager.cpp,?FUN_006B0490@SlaveManagerClass@@QAEXXZ
 0x006B04C0,SlaveManagerClass::FUN_006B04C0,MATCH,459,src/slavemanager.cpp,?FUN_006B04C0@SlaveManagerClass@@QAEXXZ
 0x006B0690,SlaveManagerClass::FUN_006B0690,MATCH,180,src/slavemanager.cpp,?FUN_006B0690@SlaveManagerClass@@QAE?AVCell@@XZ
+0x006B0750,SlaveManagerClass::FUN_006B0750,MATCH,289,src/slavemanager.cpp,?FUN_006B0750@SlaveManagerClass@@QAE?AVCell@@XZ
 0x006B0A20,SlaveManagerClass::LostSlave,MATCH,110,src/slavemanager.cpp,?LostSlave@SlaveManagerClass@@QAEXPAVInfantryClass@@@Z
 0x006B0A90,SlaveManagerClass::FUN_006B0A90,MATCH,72,src/slavemanager.cpp,?FUN_006B0A90@SlaveManagerClass@@QAEXH@Z
 0x006B0AE0,SlaveManagerClass::Killed,MATCH,406,src/slavemanager.cpp,?Killed@SlaveManagerClass@@QAEXPAVTechnoClass@@PAVHouseClass@@@Z
@@ -16970,6 +16973,7 @@ address,name,result,size,source,symbol
 0x007C3430,VQA_SetLoop,MATCH,114,src/vqalib/task.cpp,?VQA_SetLoop@@YIJPAU_VQAHandle@@HHH@Z
 0x007C34B0,VQA_SetLoop_Internal,MATCH,255,src/vqalib/task.cpp,?VQA_SetLoop_Internal@@YIJPAU_VQAHandle@@HHHH@Z
 0x007C35B0,VQA_GetLoopCount,MATCH,10,src/vqalib/task.cpp,?VQA_GetLoopCount@@YIHPAU_VQAHandleP@@@Z
+0x007C35C0,VQA_Reset,MATCH,167,src/vqalib/task.cpp,?VQA_Reset@@YIXPAU_VQAHandle@@@Z
 0x007C3670,VQA_ResetCache,MATCH,22,src/vqalib/task.cpp,?VQA_ResetCache@@YIXPAU_VQAHandleP@@@Z
 0x007C3690,VQA_SetStop,MATCH,41,src/vqalib/task.cpp,?VQA_SetStop@@YIJPAU_VQAHandle@@J@Z
 0x007C36C0,VQA_Version,MATCH,6,src/vqalib/task.cpp,?VQA_Version@@YIPADXZ

@@ -4437,6 +4437,7 @@ address,size,symbol,source,sha256
 0x004C3CE0,23,?Scroll@EgoClass@@QAE_NH@Z,src/egos.cpp,5dfa264746f03c0f13660da66f1bbd529081d2532ea0f4625792b3fc4a8e33e9
 0x004C3D00,199,?Render@EgoClass@@QAEX_N@Z,src/egos.cpp,dedf581f850c3746b412b0502358391f86b756b444b31e914a6018296415ae52
 0x004C3DD0,95,?Wipe@EgoClass@@QAEXPAVSurface@@@Z,src/egos.cpp,01f65f76dee6904ebfa0747bbae65dbd081f582382ec7d53efdd484e964007a5
+0x004C3E30,2924,?Show_Who_Was_Responsible@@YIXXZ,src/egos.cpp,af5bfee3272ccbea4d76b0ce9448d9a67223e33ca109f9f3fc6824dcfd5bdc6d
 0x004C49A0,42,?Clear@?$DynamicVectorClass@PAVEgoClass@@@@UAEXXZ,src/egos.cpp,7ed0c884d18c4cc59c97bfbef3386c04fad0e65ffa276692aeaa104129cc4d5b
 0x004C49D0,27,?ID@?$DynamicVectorClass@PAVEgoClass@@@@UAEHPBQAVEgoClass@@@Z,src/egos.cpp,eeb29d112613b0653ee85b4ff58bddb59157c8b4fc65a386db3052b948d71bbb
 0x004C49F0,13,?GetItem@?$VectorClass@PAVEgoClass@@@@UBEPAVEgoClass@@H@Z,src/egos.cpp,da1c0b5074b32d4e80b5f5f042a075a73f60de8e9432201ad45100959599be93
@@ -11563,6 +11564,7 @@ address,size,symbol,source,sha256
 0x00639800,587,?FUN_00639800@@YIXPAVTechnoClass@@PAVPlanningNodeClass@@@Z,src/planmgr.cpp,6ea7bef6399f213e1736d2e7ecf682fe17ee4708536cbbc04fd4cd9657e44b11
 0x00639A50,354,?FUN_00639A50@@YIXPAVPlanningNodeClass@@0VEventClass@@@Z,src/planmgr.cpp,5a6a6b6162ed6b0d5c1523768849c4f0bb5b7ac5bcb4a2151c00ba2c23458428
 0x00639BC0,238,?FUN_00639BC0@@YIXPAVPlanningNodeClass@@@Z,src/planmgr.cpp,b3b2deb25e13a7ba31572ad4ae8d90fed45362f61642ee9998861b0a3a5c394f
+0x00639CB0,239,?FUN_00639CB0@@YIXPAVTechnoClass@@@Z,src/planmgr.cpp,78612ffe0006686dadd57ff1a394a9f686e38c9092eab331c68bcce4485462d7
 0x00639DA0,131,?FUN_00639DA0@@YIHXZ,src/planmgr.cpp,73aeb25ee8ff2d1c2511772a84f8a2cc9b48fab6a7cc7de4175102a07b610e59
 0x00639E30,291,?FUN_00639E30@@YI_NPAVPlanningTokenClass@@0@Z,src/planmgr.cpp,6d6b5c6b3dd7d30bac885586c53b97e78725a1f5d1f7eceee0515a7619e02419
 0x00639F60,17,?FUN_00639F60@@YIXH@Z,src/planmgr.cpp,91af02294cbac8d24ebeff59a2a648b9adfe2477cf8c6d0934ed1953d43116e6
@@ -13443,6 +13445,7 @@ address,size,symbol,source,sha256
 0x006B0490,44,?FUN_006B0490@SlaveManagerClass@@QAEXXZ,src/slavemanager.cpp,d3b537f5eef5a6dcc5a69d0c5a6ef098e625a74532bc3872fae0c97501695715
 0x006B04C0,459,?FUN_006B04C0@SlaveManagerClass@@QAEXXZ,src/slavemanager.cpp,3af255f774993027fd4c39690f04b94bc6cec0cfb63558125525040b463eef31
 0x006B0690,180,?FUN_006B0690@SlaveManagerClass@@QAE?AVCell@@XZ,src/slavemanager.cpp,68bab95afc7d4d1f178869ffd1749e4f0006265451a06d4a1fb720a9bf9398e6
+0x006B0750,289,?FUN_006B0750@SlaveManagerClass@@QAE?AVCell@@XZ,src/slavemanager.cpp,98ff347bde7d2eaaf1ee9eb13313c8924b63bb727e612254817eec0f1adfd08f
 0x006B0A20,110,?LostSlave@SlaveManagerClass@@QAEXPAVInfantryClass@@@Z,src/slavemanager.cpp,f6f51542469bff55a208e886caf5a2191aab666abd7f3e71119a9a044d5b7c8c
 0x006B0A90,72,?FUN_006B0A90@SlaveManagerClass@@QAEXH@Z,src/slavemanager.cpp,4cc2f3da0eced668e7d85edcf51b4f0002d932bdcfec0ebcf1b0e4b65c150e19
 0x006B0AE0,406,?Killed@SlaveManagerClass@@QAEXPAVTechnoClass@@PAVHouseClass@@@Z,src/slavemanager.cpp,b9422eacc8e37a7b82dcd2788fdc20fd9fa46932e619f95db212013cc1980ed9
@@ -19087,6 +19090,7 @@ address,size,symbol,source,sha256
 0x007C3430,114,?VQA_SetLoop@@YIJPAU_VQAHandle@@HHH@Z,src/vqalib/task.cpp,3fea0843d60da31fa0cc78b32db2ba60a08a7e1ca38cdf50b14b7494ac60e3c8
 0x007C34B0,255,?VQA_SetLoop_Internal@@YIJPAU_VQAHandle@@HHHH@Z,src/vqalib/task.cpp,e8c3e6559cdf636781abfbe6c8efffa38a1b98c01afdf12ca76824c171f09148
 0x007C35B0,10,?VQA_GetLoopCount@@YIHPAU_VQAHandleP@@@Z,src/vqalib/task.cpp,19e51bc97038863419ce89e3a990e12cf4319bb9e218f7bbaa3aeb90de0d5e0d
+0x007C35C0,167,?VQA_Reset@@YIXPAU_VQAHandle@@@Z,src/vqalib/task.cpp,472e048f4595f76ec72003aa5ddef8638c944f638e2dbfefcdb067e4ee68a3c7
 0x007C3670,22,?VQA_ResetCache@@YIXPAU_VQAHandleP@@@Z,src/vqalib/task.cpp,b7548c0f5672c8d20aafb5b002df6b8eff0dc3a77b89d0660d441d6fd02c2ce9
 0x007C3690,41,?VQA_SetStop@@YIJPAU_VQAHandle@@J@Z,src/vqalib/task.cpp,3c852a2f38b0e84bde69423f7b4088650aaed9ab3af24ff0ded29b3fb0ec501c
 0x007C36C0,6,?VQA_Version@@YIPADXZ,src/vqalib/task.cpp,1efa58c0dfae487980ad3b68324fa3a37965c2b862abc79081f5cbdedc23f882
