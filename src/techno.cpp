@@ -8637,7 +8637,7 @@ bool TechnoClass::RefreshMegaMission(void)
 }
 
 // FUNCTION: GAMEMD 0x0070F0B0
-int __fastcall FUN_0070F0B0(int action, int unused, int extra)
+int __fastcall FUN_0070F0B0(int action, Cell const & cell, ObjectClass * object)
 {
 	bool held = FUN_00731BF0();
 	if (action == 1) {

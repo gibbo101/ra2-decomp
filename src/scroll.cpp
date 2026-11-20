@@ -684,6 +684,16 @@ void ScrollClass::Scroll_Coast(Point2D const & point)
 				Map.Scroll_Map(FACING_N, disty, true);
 			}
 
+			MouseType const MOUSE_SCROLL_COASTING = (MouseType)61;
+			MouseType const MOUSE_SCROLL_COASTING_N = (MouseType)62;
+			MouseType const MOUSE_SCROLL_COASTING_NE = (MouseType)63;
+			MouseType const MOUSE_SCROLL_COASTING_E = (MouseType)64;
+			MouseType const MOUSE_SCROLL_COASTING_SE = (MouseType)65;
+			MouseType const MOUSE_SCROLL_COASTING_S = (MouseType)66;
+			MouseType const MOUSE_SCROLL_COASTING_SW = (MouseType)67;
+			MouseType const MOUSE_SCROLL_COASTING_W = (MouseType)68;
+			MouseType const MOUSE_SCROLL_COASTING_NW = (MouseType)69;
+
 			static MouseType _mouse[FACING_COUNT*2] = {
 				MOUSE_SCROLL_COASTING,
 				MOUSE_SCROLL_COASTING_N,

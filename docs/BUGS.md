@@ -107,3 +107,8 @@ effect, so it can be fixed in a separate build later.
   padding byte does not advance the scanline index, so decoding can consume
   subsequent data or stall. In the three-plane path, a zero-length RLE packet
   wraps the byte counter and writes 256 bytes. These original paths are preserved.
+
+- **DisplayClass::Mouse_Left_Up (0x004AAE90).** In the shadow branch,
+  `ACTION_ENTER_WAYPOINT` selects the disallowed cursor and then falls through
+  to the beacon case, which replaces it with the beacon cursor. The recovered
+  source preserves both calls and the fallthrough.
