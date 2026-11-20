@@ -135,3 +135,146 @@ double BounceClass::Get_Remaining_Motion(void) const
 	}
 	return(Point3D(Velocity.X, Velocity.Y, height * Gravity + Velocity.Z).Length());
 }
+
+inline bool Ballistic_Move(Vector3 & position, Vector3 & velocity, double gravity, double elasticity, double max_velocity)
+{
+	velocity.Z = velocity.Z - gravity;
+
+	if (max_velocity > 0.0) {
+		double speed = velocity.Length();
+		if (speed > max_velocity) {
+			velocity *= (float)(speed / speed);
+		}
+	}
+
+	Coord previous_coord(position[0], position[1], position[2]);
+	position += velocity;
+	Coord current_coord(position[0], position[1], position[2]);
+
+	int ground_height = Map.Get_Height_GL(current_coord);
+	int bridge_height = BRIDGE_LEPTON_HEIGHT + ground_height;
+	CellClass * cellptr = &Map[current_coord];
+
+	bool hit_bridge_top = false;
+	bool hit_bridge_bottom = false;
+	if (cellptr->IsUnderBridge || Map[previous_coord].IsUnderBridge) {
+		if (current_coord.Z >= bridge_height) {
+			if (previous_coord.Z < bridge_height) {
+				hit_bridge_bottom = true;
+			}
+		} else if (previous_coord.Z >= bridge_height) {
+			hit_bridge_top = true;
+		}
+	}
+
+	bool hit_obstacle = false;
+	if (!hit_bridge_top && !hit_bridge_bottom) {
+		if (ground_height <= position[2] && position[2] - 150.0f < ground_height) {
+			BuildingClass * building = cellptr->Cell_Building();
+			if (building == NULL && !cellptr->Has_Wall_Or_Gate(OVERLAY_NONE, FACING_NONE)) {
+				hit_obstacle = false;
+			} else {
+				hit_obstacle = true;
+				if (building != NULL) {
+					if (building->Class->IsLaserFence && building->LaserFenceFrame >= 8) {
+						hit_obstacle = false;
+					}
+					if (building->IsStrange()) {
+						hit_obstacle = false;
+					}
+				}
+			}
+
+		}
+	}
+
+	float ground_z = (float)ground_height;
+	bool has_impact = true;
+	if (position[2] >= ground_z) {
+		if (!hit_bridge_top && !hit_bridge_bottom && !hit_obstacle) {
+			has_impact = false;
+		}
+	}
+	if (has_impact) {
+		if (hit_bridge_top) {
+			position[2] = (float)bridge_height;
+		} else if (hit_bridge_bottom) {
+			position[2] = (float)(bridge_height - 20);
+		} else {
+			if ((ground_height - 100) < position[2]) {
+				position[2] = ground_z;
+			}
+		}
+
+		{
+			Matrix3D slope_matrix = Get_Slope_Matrix(TacticalMap->Get_Cell_Ramp(current_coord));
+			Matrix3D inverse_slope_matrix = Matrix3D::Orthogonal_Inverse(slope_matrix);
+			Vector3 bounce_velocity(velocity.X, -velocity.Y, velocity.Z);
+			bounce_velocity = inverse_slope_matrix.Rotate_Vector(bounce_velocity);
+			bounce_velocity *= (float)elasticity;
+			bounce_velocity.Z = -bounce_velocity.Z;
+			bounce_velocity = slope_matrix.Rotate_Vector(bounce_velocity);
+			velocity.X = bounce_velocity.X;
+			velocity.Y = -bounce_velocity.Y;
+			velocity.Z = bounce_velocity.Z;
+		}
+
+	}
+	return(has_impact);
+}
+
+// FUNCTION: GAMEMD 0x00439B00
+BounceResultType BounceClass::AI(void)
+{
+	BounceResultType bounce_result = BOUNCE_MOVING;
+
+	Vector3 & position = MyCoord;
+	Vector3 & velocity = Velocity;
+	Vector3 old_position = position;
+	Vector3 old_velocity = velocity;
+	if (Ballistic_Move(position, velocity, Gravity, Elasticity, MaxVelocity)) {
+		AngularVelocity[0] = -AngularVelocity[0];
+		AngularVelocity[1] = -AngularVelocity[1];
+		AngularVelocity[2] = -AngularVelocity[2];
+
+		{
+			Coord impact_coord(MyCoord.X, MyCoord.Y, MyCoord.Z);
+			Coord previous_impact_coord(old_position.X, old_position.Y, old_position.Z);
+			int previous_cell_height = Map[previous_impact_coord].Height;
+			if (Map[impact_coord].Height - previous_cell_height >= 2) {
+				if (old_velocity.Z < -0.0002 && MyCoord.Z > old_position.Z
+					|| old_velocity.Z >= -0.0003 && (old_velocity.Z + old_position.Z + 1.0f < MyCoord.Z)) {
+
+					position = old_position;
+					velocity = old_velocity;
+
+					FacingType bounce_facing = Map[impact_coord].Bounce_Direction(previous_impact_coord);
+					if (bounce_facing != FACING_NONE) {
+						Matrix3D bounce_matrix = Get_Bounce_Matrix(bounce_facing);
+						velocity = bounce_matrix * velocity;
+						velocity *= Elasticity;
+					}
+				}
+			}
+		}
+
+		bounce_result = BOUNCE_IMPACT;
+	}
+
+	Rotation = Rotation * AngularVelocity;
+
+	double remaining_motion = Get_Remaining_Motion();
+	if (remaining_motion < 2.5) {
+		bounce_result = BOUNCE_SETTLED;
+	}
+	return(bounce_result);
+}
+
+// FUNCTION: GAMEMD 0x0043A0D0
+// ??XVector3@@QAEAAV0@M@Z
+
+// FUNCTION: GAMEMD 0x0043A100
+// ??YVector3@@QAEAAV0@ABV0@@Z
+
+// FUNCTION: GAMEMD 0x0043A130
+// Vector3::Length

@@ -1453,6 +1453,10 @@ address,name,result,size,source,symbol
 0x004399A0,BounceClass::Get_Bounce_Coord,MATCH,55,src/bounce.cpp,?Get_Bounce_Coord@BounceClass@@QBE?AVCoord@@XZ
 0x004399E0,BounceClass::Get_Matrix,MATCH,40,src/bounce.cpp,?Get_Matrix@BounceClass@@QBE?AVMatrix3D@@XZ
 0x00439A10,BounceClass::Get_Remaining_Motion,MATCH,231,src/bounce.cpp,?Get_Remaining_Motion@BounceClass@@QBENXZ
+0x00439B00,BounceClass::AI,MATCH,1451,src/bounce.cpp,?AI@BounceClass@@QAE?AW4BounceResultType@@XZ
+0x0043A0D0,??XVector3@@QAEAAV0@M@Z,MATCH,33,src/bounce.cpp,??XVector3@@QAEAAV0@M@Z
+0x0043A100,??YVector3@@QAEAAV0@ABV0@@Z,MATCH,33,src/bounce.cpp,??YVector3@@QAEAAV0@ABV0@@Z
+0x0043A130,Vector3::Length,MATCH,45,src/bounce.cpp,?Length@Vector3@@QBEMXZ
 0x0043A160,_$E3,MATCH,40,src/brain.cpp,_$E3
 0x0043A190,_$E6,MATCH,19,src/brain.cpp,_$E6
 0x0043A1B0,_$E9,MATCH,19,src/brain.cpp,_$E9
