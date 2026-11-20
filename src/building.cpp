@@ -71,6 +71,7 @@
 #include "stimer.h"
 #include "sun.h"
 #include "super.h"
+#include "slavemgr.h"
 #include "suprtype.h"
 #include "swizzle.h"
 #include "tactical.h"
@@ -122,7 +123,7 @@ extern Cell DAT_0089C818;
 extern int __fastcall FUN_0050C170(char const * name);
 extern TPoint3D<int> DAT_0089C870;
 SideType FUN_006A46D0(char const * name);
-void __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
+AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 #include "temporal.h"
 
 
@@ -3515,7 +3516,7 @@ bool BuildingClass::Can_Be_Undeployed(void)
 		if (!Class->IsConstructionYard) {
 			return(true);
 		}
-		if (Session.Type && ArchiveTarget && House->Is_Human_Player()) {
+		if (Session.Type && ArchiveTarget && House->FUN_0050B730()) {
 			if (Session.Type && Session.Options.MCVRedeploy && MindControlledBy == NULL) {
 				return(true);
 			}
@@ -3523,6 +3524,236 @@ bool BuildingClass::Can_Be_Undeployed(void)
 	}
 	return(false);
 }
+
+namespace Unsorted { extern bool MoveFeedback; }
+
+// FUNCTION: GAMEMD 0x00449C30
+int BuildingClass::Do_MISSION_DECONSTRUCTION(void)
+{
+	int i;
+	Repair(0);
+	bool selected = IsSelected;
+	enum { INITIAL, HOLDING, DURING };
+	switch (Status) {
+	case INITIAL:
+		if (Can_Be_Undeployed() && (Class->IsArtillary || Class->IsTickTank)) {
+			Assign_Target(NULL);
+		}
+		if (Can_Be_Undeployed() && Class->UndeploysInto != NULL) {
+			VoiceDeploy();
+			if (Techno_Type_Class()->DeploySound != -1) {
+				VocClass::PlayAt(Techno_Type_Class()->DeploySound, PositionCoord);
+			}
+		}
+		if (SlaveManager != NULL && ArchiveTarget != Get_Cell_Ptr()
+			&& Is_Target_Cell(ArchiveTarget) && As_Cell(ArchiveTarget)->Land_Type() == LAND_TIBERIUM) {
+			SlaveManager->FUN_006B0DB0();
+		}
+		if (BunkerLinkedItem != NULL) UnloadBunker();
+		if (UpgradeLevel) {
+			TechnoClass * upgrade = (TechnoClass *)Upgrades[UpgradeLevel - 1]->Create_One_Of(House);
+			House->Refund_Money(upgrade->Refund_Amount());
+			delete upgrade;
+			Remove_Upgrade();
+			House->RecalcPower = true;
+			House->RecalcRadar = true;
+			if (IsOwnedByPlayer) VoxClass::Play("EVA_StructureSold");
+			QueueMission(MISSION_GUARD, false);
+			return(1);
+		}
+		IsReadyToCommence = false;
+		SendToEachLink(RADIO_RUN_AWAY);
+		if (Class->IsLaserFencePost) Toggle_Laser_Fence_Post(false);
+		FUN_0043C2A0();
+		Status = HOLDING;
+		break;
+
+	case HOLDING:
+		SendToEachLink(RADIO_OVER_OUT);
+		if (!IsTethered) {
+			if (ArchiveTarget == NULL || Class->UndeploysInto == NULL) {
+				int count = How_Many_Survivors();
+				bool engineer = false;
+				Cell const * list = Occupy_List();
+				int num_cells = 0;
+				while (list[num_cells] != REFRESH_EOL) {
+					++num_cells;
+				}
+				Cell origin = PositionCell;
+				if ((Class->UnitAbsorb || Class->InfantryAbsorb) && Cargo.How_Many() > 0) {
+					FootClass * passenger = Cargo.Detach_Object();
+					do {
+						if (passenger != NULL) {
+							Cell exit_cell = origin + *list++;
+							Coord exit = Coord(exit_cell) + Coord(0, 36, 0);
+							if (passenger->Fetch_RTTI() == RTTI_UNIT) {
+								exit = Map[exit].Center_Coord();
+							} else {
+								exit = Map[exit].Closest_Free_Spot(exit, false, false);
+							}
+							++ScenarioInit;
+							passenger->IsOnBridge = IsOnBridge;
+							Coord position = PositionCoord;
+							position.Z = Get_Cell_Ptr()->Center_Coord().Z;
+							if (!IsSurvivorless && passenger->Unlimbo(position, PrimaryFacing.Current().As_Dir256())) {
+								if (!passenger->CountedAsOwnedSpecial) {
+									++passenger->House->CurInfantry;
+									passenger->CountedAsOwnedSpecial = true;
+								}
+								passenger->Absorbed = false;
+								passenger->Scatter(COORD_NONE, true, false);
+								if (!House->FUN_0050B730()) passenger->QueueMission(MISSION_HUNT, false);
+							} else {
+								passenger->RegisterDestruction(NULL);
+								delete passenger;
+							}
+							--ScenarioInit;
+							passenger = Cargo.Detach_Object();
+						}
+					} while (passenger != NULL);
+				}
+				list = Occupy_List();
+				if (GetOccupantCount() > 0) FUN_00457DE0(false, true);
+				while (count) {
+					InfantryTypeClass const * crew = Crew_Type();
+					while (crew->IsEngineer && engineer) crew = Crew_Type();
+					if (crew->IsEngineer) engineer = true;
+					InfantryClass * infantry = NULL;
+					if (crew != NULL) infantry = new InfantryClass(crew, House);
+					if (infantry != NULL) {
+						++ScenarioInit;
+						Cell cell = PositionCell + list[Scen->RandomNumber(0, num_cells - 1)];
+						Coord position = Coord(cell) + Coord(0, 36, 0);
+						position = Map[position].Closest_Free_Spot(position, false, false);
+						if (position == COORD_NONE || !infantry->Unlimbo(position, DIR_N)) {
+							delete infantry;
+						} else {
+							if (infantry->Class->IsNominal) infantry->IsTechnician = true;
+							--ScenarioInit;
+							infantry->Scatter(COORD_NONE, true, false);
+							++ScenarioInit;
+							infantry->QueueMission(MISSION_MOVE, false);
+						}
+						--ScenarioInit;
+					}
+					count--;
+				}
+			}
+			if (House->Is_Player_Control() && !IsStrange()) {
+				if (!Can_Be_Undeployed()) VocClass::PlayAt(Rule->SellSound, PositionCoord);
+				if (Class->PackupSound != -1) VocClass::PlayAt(Class->PackupSound, PositionCoord, &Audio7);
+			}
+			Status = DURING;
+			Begin_Mode(BSTATE_CONSTRUCTION);
+			IsReadyToCommence = false;
+			if (selected) Select();
+		}
+		break;
+
+	case DURING:
+		FUN_00750D40(PositionCoord, &Audio7);
+		if (IsReadyToCommence) {
+			House->IsRecalcNeeded = true;
+			Assign_Target(NULL);
+			if (IsOwnedByPlayer && Class->UndeploysInto == NULL) VoxClass::Play("EVA_StructureSold");
+			if (Can_Be_Undeployed()) {
+				if (Class->IsArtillary && (BarrelPitch.Current() != Class->StartPitch || PrimaryFacing.Current() != Class->StartFace)) {
+					BarrelPitch.Set_Desired(Class->StartPitch);
+					PrimaryFacing.Set_Desired(Class->StartFace);
+					return(1);
+				}
+				++ScenarioInit;
+				UnitClass * unit = new UnitClass(Class->UndeploysInto, House);
+				--ScenarioInit;
+				if (unit != NULL) {
+					double ratio = HealthRatio;
+					int refund = Refund_Amount();
+					AbstractClass * archive = ArchiveTarget;
+					Coord place;
+					if (Class->Width() <= 2 && Class->Height(false) <= 2) {
+						place = PositionCoord;
+					} else {
+						Coord adjacent = Adjacent_Cell(PositionCoord, DIR_SE);
+						place = Coord(adjacent.X / CELL_LEPTON_W * CELL_LEPTON_W + CELL_LEPTON_W / 2,
+							adjacent.Y / CELL_LEPTON_H * CELL_LEPTON_H + CELL_LEPTON_H / 2, adjacent.Z);
+					}
+					if (LightSource != NULL) LightSource->Disable(false);
+					DynamicVectorClass<TechnoClass *> targetters;
+					for (i = 0; i < Technos.Count(); i++) {
+						TechnoClass * techno = Technos[i];
+						if (techno->TarCom != NULL && techno->TarCom->Fetch_RTTI() == RTTI_BUILDING
+							&& techno->TarCom == this && techno->IsActive && techno != this && techno != unit) {
+							targetters.Add(techno);
+						}
+					}
+					Limbo();
+					Dir256 facing = Class->Deploy_Facing();
+					if (unit->Unlimbo(place, facing)) {
+						unit->Strength = (int)(unit->Class_Of()->MaxStrength * ratio);
+						unit->Strength = unit->Strength > 1 ? unit->Strength : 1;
+						unit->EstimatedHealth = unit->Strength;
+						if (SlaveManager != NULL) SlaveManager->SetOwner(unit);
+						unit->Group = Group;
+						unit->Veterancy = Veterancy;
+						if (Class->IsArtillary) unit->BarrelPitch.Set(Class->StartPitch);
+						if (archive != NULL) {
+							unit->Assign_Destination(archive, true);
+							unit->QueueMission(MISSION_MOVE, false);
+						}
+						if (Tag != NULL) {
+							unit->Attach_Tag(Tag);
+							--Tag->AttachCount;
+							Tag = NULL;
+						}
+						unit->QueuedVoiceSoundController = QueuedVoiceSoundController;
+						unit->QueuedVoiceIndex = QueuedVoiceIndex;
+						unit->PlayingVoiceIndex = PlayingVoiceIndex;
+						QueuedVoiceSoundController.SetEvent(NULL, NULL);
+						QueuedVoiceIndex = -1;
+						PlayingVoiceIndex = -1;
+						if (selected) {
+							bool feedback = Unsorted::MoveFeedback;
+							Unsorted::MoveFeedback = false;
+							unit->Select();
+							Unsorted::MoveFeedback = feedback;
+						}
+						for (i = 0; i < targetters.Count(); i++) targetters[i]->Assign_Target(unit);
+					} else {
+						House->Refund_Money(refund);
+					}
+				} else {
+					House->Refund_Money(Refund_Amount());
+				}
+				Detach_All(true);
+				Audio7.EndLooping();
+				Delete_Me();
+			} else {
+				WhoLastHurtMe = HOUSE_NONE;
+				RegisterDestruction(NULL);
+				if (LightSource != NULL) LightSource->Disable(false);
+				House->Refund_Money(Refund_Amount());
+				Limbo();
+				StorageClass * storage = &Storage;
+				int slot = storage->First_Used_Slot();
+				while (slot != -1) {
+					int amount = (int)storage->Decrease_Amount(storage->Get_Amount(slot), slot);
+					House->Give_Tiberium(amount, slot);
+					slot = storage->First_Used_Slot();
+				}
+				Delete_Me();
+				if (Class->IsCloakGenerator) {
+					Disable_Cloak_Generator();
+					CurrentCloakRadius = 1;
+					Cloaking_AI(true);
+				}
+			}
+		}
+		break;
+	}
+	return(1);
+}
+
+
 
 // FUNCTION: GAMEMD 0x0044ABD0
 void BuildingClass::FireLaser(Coord coords)
