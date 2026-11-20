@@ -10297,8 +10297,8 @@ address,name,result,size,source,symbol
 0x005F6F90,_$E35,MATCH,18,src/objtype.cpp,_$E35
 0x005F6FB0,_$E38,MATCH,26,src/objtype.cpp,_$E38
 0x005F6FD0,_$E41,MATCH,23,src/objtype.cpp,_$E41
-0x005F6FF0,_$E98,MATCH,61,src/objtype.cpp,_$E98
-0x005F7030,_$E95,MATCH,88,src/objtype.cpp,_$E95
+0x005F6FF0,_$E97,MATCH,61,src/objtype.cpp,_$E97
+0x005F7030,_$E94,MATCH,88,src/objtype.cpp,_$E94
 0x005F7090,ObjectTypeClass::ObjectTypeClass,MATCH,647,src/objtype.cpp,??0ObjectTypeClass@@QAE@PBD@Z
 0x005F7320,ObjectTypeClass::ObjectTypeClass,MATCH,218,src/objtype.cpp,??0ObjectTypeClass@@QAE@ABVNoInitClass@@@Z
 0x005F7400,ObjectTypeClass::~ObjectTypeClass,MATCH,420,src/objtype.cpp,??1ObjectTypeClass@@UAE@XZ
@@ -10309,7 +10309,7 @@ address,name,result,size,source,symbol
 0x005F7620,ObjectTypeClass::Time_To_Build,MATCH,3,src/objtype.cpp,?Time_To_Build@ObjectTypeClass@@UBEHXZ
 0x005F7630,ObjectTypeClass::Get_Cameo_Data,MATCH,3,src/objtype.cpp,?Get_Cameo_Data@ObjectTypeClass@@UBEPBXXZ
 0x005F7640,ObjectTypeClass::Occupy_List,MATCH,91,src/objtype.cpp,?Occupy_List@ObjectTypeClass@@UBEPBVCell@@_N@Z
-0x005F76A0,_$E101,MATCH,1,src/objtype.cpp,_$E101
+0x005F76A0,_$E100,MATCH,1,src/objtype.cpp,_$E100
 0x005F76B0,FUN_005F76B0,MATCH,319,src/objtype.cpp,?FUN_005F76B0@@YIXXZ
 0x005F77F0,FUN_005F77F0,MATCH,268,src/objtype.cpp,?FUN_005F77F0@@YIXXZ
 0x005F7900,ObjectTypeClass::Who_Can_Build_Me,MATCH,396,src/objtype.cpp,?Who_Can_Build_Me@ObjectTypeClass@@UBEPAVBuildingClass@@_N00PAVHouseClass@@@Z
@@ -11260,6 +11260,7 @@ address,name,result,size,source,symbol
 0x0063A440,FUN_0063A440,MATCH,91,src/planmgr.cpp,?FUN_0063A440@@YIHPAVPlanningTokenClass@@ABVEventClass@@@Z
 0x0063A4A0,FUN_0063A4A0,MATCH,7,src/planmgr.cpp,?FUN_0063A4A0@@YIXH@Z
 0x0063A4B0,FUN_0063A4B0,MATCH,237,src/planmgr.cpp,?FUN_0063A4B0@@YIXH@Z
+0x0063A5A0,FUN_0063A5A0,MATCH,818,src/planmgr.cpp,?FUN_0063A5A0@@YI_NVPoint2D@@@Z
 0x0063AAC0,FUN_0063AAC0,MATCH,64,src/planmgr.cpp,?FUN_0063AAC0@@YGXVPoint2D@@@Z
 0x0063AB00,FUN_0063AB00,MATCH,86,src/planmgr.cpp,?FUN_0063AB00@@YGXVPoint2D@@@Z
 0x0063AC60,FUN_0063AC60,MATCH,6,src/planmgr.cpp,?FUN_0063AC60@@YIPAVPlanningNodeClass@@XZ
@@ -14987,6 +14988,7 @@ address,name,result,size,source,symbol
 0x006FFE00,TechnoClass::ClickedEvent,MATCH,183,src/techno.cpp,?ClickedEvent@TechnoClass@@UAE_NH@Z
 0x00700C40,TechnoClass::Can_Player_Move,MATCH,200,src/techno.cpp,?Can_Player_Move@TechnoClass@@UBE_NXZ
 0x00700D10,TechnoClass::Can_Attack_Now,MATCH,63,src/techno.cpp,?Can_Attack_Now@TechnoClass@@UBE_NXZ
+0x00700D50,TechnoClass::Can_Deploy_Now,MATCH,891,src/techno.cpp,?Can_Deploy_Now@TechnoClass@@UBE_NXZ
 0x007010D0,TechnoClass::Can_Player_Fire,MATCH,69,src/techno.cpp,?Can_Player_Fire@TechnoClass@@UBE_NXZ
 0x00701120,TechnoClass::Is_Weapon_Equipped,MATCH,26,src/techno.cpp,?Is_Weapon_Equipped@TechnoClass@@UBE_NXZ
 0x00701140,TechnoClass::Can_Repair,MATCH,71,src/techno.cpp,?Can_Repair@TechnoClass@@UBE_NXZ
@@ -18429,6 +18431,7 @@ address,name,result,size,source,symbol
 0x00791B10,WOL_Guest_Dialog_Proc,MATCH,4295,src/wonline.cpp,?WOL_Guest_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x007A5890,CChatEventSink::OnChannelJoin,MATCH,6216,src/wonline.cpp,?OnChannelJoin@CChatEventSink@@QAGJJPAUChannel@@PAUUser@@@Z
 0x007AC630,??_GCreateGameDialogControl@@UAEPAXI@Z,MATCH,52,src/wonline.cpp,??_GCreateGameDialogControl@@UAEPAXI@Z
+0x0077E430,Encode_Game_Options,MATCH,845,src/wonline.cpp,?Encode_Game_Options@@YIXPAD@Z
 0x00535A60,??1CDFileClass@@UAE@XZ,MATCH,11,src/worlddom.cpp,??1CDFileClass@@UAE@XZ
 0x00535A70,??1CCFileClass@@UAE@XZ,MATCH,39,src/worlddom.cpp,??1CCFileClass@@UAE@XZ
 0x007AF090,_$E2,MATCH,23,src/worlddom.cpp,_$E2
