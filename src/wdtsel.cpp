@@ -225,6 +225,99 @@ void Selection::Update_Hovered_Territory(Point2D const & point)
 	}
 }
 
+#undef LoadString
+#include "stringtable.h"
+WideWstring __fastcall FUN_007B8090(wchar_t const * prefix, WideWstring const & text);
+
+static WideWstring Load_Selection_Text(char const * label, int source_line)
+{
+    return(WideWstring(StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\WDTSel.cpp", source_line)));
+}
+
+// FUNCTION: GAMEMD 0x0076DAD0
+// WorldDominationTour::Selection::Select_Territory
+bool Selection::Select_Territory(rc_ptr<Territory> const & territory)
+{
+	bool was_set = SelectedConflict.Get() != NULL;
+	if (territory == MousedTerritory) {
+		return(was_set);
+	}
+	if (MousedTerritory.Get() != NULL) {
+		if (SelectedConflict.Get() != NULL) {
+			SelectedConflict = NULL;
+		}
+		MousedTerritory->Set_Highlight(false, this);
+		MSShapeAnim * anim = MousedTerritory->TargetAnim;
+		if (anim != NULL) {
+			anim->Set_Stop_Frame(ThrobbingTargetDividingFrame - 1);
+			anim->Set_Start_Frame(0);
+			anim->Set_Frame(0);
+		}
+	}
+	MousedTerritory = territory;
+	if (MousedTerritory.Get() == NULL) {
+		Set_Long_Description();
+		VoicePlayer.Queue(1, false, 30);
+		return(was_set);
+	}
+
+	bool found = false;
+	WideWstring buffer;
+	WideWstring description;
+	int id = MousedTerritory->ID;
+	int territory_state = CurrentState->Get_Territory_State(id);
+	int outcome = 2;
+	if (territory_state != 1 && territory_state != 0) {
+		outcome = TourCampaign->PlayerFaction != territory_state;
+	}
+	VoicePlayer.Queue(3, outcome, false, false, 30);
+	switch (territory_state) {
+	case 2:
+		Set_Tooltip(Load_Selection_Text("WDT:AlliedHeldTooltip", 0x2ad));
+		break;
+	case 3:
+		Set_Tooltip(Load_Selection_Text("WDT:SovietHeldTooltip", 0x2b1));
+		break;
+	case 1:
+		Set_Tooltip(Load_Selection_Text("WDT:TerritorySelDispToolTip", 0x2b5));
+		break;
+	default:
+		Set_Tooltip(Load_Selection_Text("WDT:TerritorySelectToolTip", 0x2b9));
+		break;
+	}
+	MousedTerritory->Set_Highlight(true, this);
+	if (TourCampaign->Properties->Get_Current_Tick() == StartTick) {
+		CONFLICT_ITER it(TourCampaign->Conflicts);
+		for (; it; it++) {
+			rc_ptr<Conflict> const & handle = it.Cur_Ref();
+			Conflict * conflict = handle.operator->();
+			int id = MousedTerritory->ID;
+			if (conflict->Get_Territory_Index() == id) {
+				break;
+			}
+		}
+		if (it) {
+			found = true;
+			SelectedConflict = it.Cur_Ref();
+			buffer = it.Cur_Ref()->Process_Game_Options();
+			description = buffer;
+			MSShapeAnim * anim = territory->TargetAnim;
+			if (anim != NULL) {
+				anim->Set_Stop_Frame(-1);
+				anim->Set_Start_Frame(ThrobbingTargetDividingFrame);
+				anim->Set_Frame(ThrobbingTargetDividingFrame);
+			}
+		}
+	}
+	WideWstring dest = FUN_007B8090(StringTable::LoadString("WDT:TerritoryPrefix", NULL, "D:\\ra2mdpost\\WDTSel.cpp", 0x2d7), MousedTerritory->Name)
+		+ StringTable::LoadString("WDT:TerritorySuffix", NULL, "D:\\ra2mdpost\\WDTSel.cpp", 0x2d7);
+	if (description.length() > 0) {
+		dest += buffer;
+	}
+	Set_Text(dest, 0);
+	return(found);
+}
+
 // FUNCTION: GAMEMD 0x0076DED0
 // WorldDominationTour::Selection::Remove_Target_Anims
 void Selection::Remove_Target_Anims(void)
@@ -279,7 +372,7 @@ void Selection::On_Cancel_Enter(void)
 	if (!WorldMap->CancelActive) {
 		WorldMap->FUN_007693F0(this, true);
 		Play_SFX("MouseCancel");
-		Set_Tooltip(StringTable::LoadString("WOL:WDTTerritoryBack", NULL, "D:\\ra2mdpost\\WDTSel.cpp", 0x37e));
+		Set_Tooltip(Load_Selection_Text("WOL:WDTTerritoryBack", 0x37e));
 	}
 }
 
