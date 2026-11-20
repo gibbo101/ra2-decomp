@@ -2047,7 +2047,7 @@ int CellClass::Reduce_Wall(int damage)
 // FUNCTION: GAMEMD 0x004810A0
 int CellClass::Spot_Index(Coord const & coord)
 {
-	Point2D rel = Coord_Fraction(coord);
+	Point2D rel(coord.X & (CELL_LEPTON_W-1), coord.Y & (CELL_LEPTON_H-1));
 
 	if (Distance(rel, Point2D(CELL_LEPTON/2,CELL_LEPTON/2)) < 60) {
 		return(0);
@@ -2073,6 +2073,81 @@ bool CellClass::Is_Spot_Free(int spot_index, bool bridge) const
 	else {
 		return(! (Flag.Composite & (1 << spot_index)) );
 	}
+}
+
+static inline Coord Cell_Origin(Coord const & coord)
+{
+	Coord result;
+	result.X = coord.X - (coord.X & (CELL_LEPTON_W-1));
+	result.Y = coord.Y - (coord.Y & (CELL_LEPTON_H-1));
+	result.Z = coord.Z;
+	return(result);
+}
+
+// FUNCTION: GAMEMD 0x00481180
+Coord CellClass::Closest_Free_Spot(Coord const & xcoord, bool any, bool bridge, bool use_cell_coord) const
+{
+	int spot_index = Spot_Index(xcoord);
+	static unsigned char _sequence[5][4] = {
+		{1,2,3,4},
+		{0,2,3,4},
+		{0,1,4,3},
+		{0,1,4,2},
+		{0,2,3,1}
+	};
+	static unsigned char _alternate[4][4] = {
+		{1,2,3,4},
+		{2,3,4,1},
+		{3,4,1,2},
+		{4,1,2,3}
+	};
+
+	Coord coord;
+	if (use_cell_coord) {
+		Coord center;
+		center = Center_Coord();
+		coord = Cell_Origin(center);
+	} else {
+		coord = Cell_Origin(xcoord);
+	}
+
+	bool is_vehicle_occupied = bridge ? BridgeFlag.Occupy.Vehicle : Flag.Occupy.Vehicle;
+
+	if (!any) {
+		if (is_vehicle_occupied || (Flag.Occupy.Monolith && (!Get_Gate() || !Get_Gate()->Is_Gate_Open()))) {
+			return(COORD_NONE);
+		}
+	}
+
+	if (any || Is_Spot_Free(spot_index, bridge)) {
+		Coord result;
+		result = coord + StoppingCoordAbs[spot_index];
+		result.Z = Map.Get_Height_GL(xcoord);
+		if (bridge) {
+			result.Z += BRIDGE_LEPTON_HEIGHT;
+		}
+		return(result);
+	}
+
+	unsigned char * sequence;
+	if (spot_index == 0) {
+		sequence = &_alternate[Random_Pick(0, 3)][0];
+	} else {
+		sequence = &_sequence[spot_index][0];
+	}
+	for (int index = 0; index < 4; index++) {
+		int pos = *sequence++;
+		if (Is_Spot_Free(pos, bridge)) {
+			Coord result;
+			result = coord + StoppingCoordAbs[pos];
+			result.Z = Map.Get_Height_GL(xcoord);
+			if (bridge) {
+				result.Z += BRIDGE_LEPTON_HEIGHT;
+			}
+			return(result);
+		}
+	}
+	return(COORD_NONE);
 }
 
 // FUNCTION: GAMEMD 0x004814A0
