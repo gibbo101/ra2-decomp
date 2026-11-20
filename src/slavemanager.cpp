@@ -220,29 +220,36 @@ void SlaveManagerClass::FUN_006AF6C0(void)
 						reset = true;
 					}
 				}
-				if (slave->Get_Cell() == FUN_006B0690() && slave->NavCom == NULL) {
+				if (!(slave->Get_Cell() == FUN_006B0690() && slave->NavCom == NULL)) {
+					if (slave->NavCom == NULL || reset) {
+						slave->Assign_Destination(&Map[FUN_006B0690()]);
+						slave->QueueMission(MISSION_MOVE, false);
+					}
+				} else {
 					slave->FUN_00522D50(Owner);
 					slave->Limbo();
-					node->RespawnTimer = CDTimerClass<FrameTimerClass>(ReloadRate);
+					int reload = ReloadRate;
+					node->RespawnTimer = CDTimerClass<FrameTimerClass>(reload);
 					node->State = 5;
-				} else if (slave->NavCom == NULL || reset) {
-					slave->Assign_Destination(&Map[FUN_006B0690()]);
-					slave->QueueMission(MISSION_MOVE, false);
 				}
 				break;
 			}
-			case 5:
-				if (node->RespawnTimer() == 0) {
+			case 5: {
+				int remaining = node->RespawnTimer();
+				if (remaining == 0) {
 					slave->Strength = slave->Class->MaxStrength;
 					slave->EstimatedHealth = slave->Class->MaxStrength;
 					node->State = 0;
 				}
 				break;
-			case 6:
-				if (node->RespawnTimer() == 0) {
+			}
+			case 6: {
+				int remaining = node->RespawnTimer();
+				if (remaining == 0) {
 					CreateSlave(node);
 				}
 				break;
+			}
 		}
 	}
 }
