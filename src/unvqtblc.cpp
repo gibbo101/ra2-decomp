@@ -307,21 +307,17 @@ void __cdecl UnVQ2_4x2_Table(unsigned char * codebook, unsigned char * pointers,
 				unsigned int lo = ((unsigned int)*(const unsigned short *)(cb + 2) << 16) | *(const unsigned short *)(cb + 0);
 				cb += 4;
 				unsigned int i;
-				{
-					unsigned char * p = dst;
-					for (i = 0; i < count; i++) {
-						*(unsigned int *)p = lo;
-						p += 8;
-					}
+				unsigned char * p1 = dst;
+				for (i = 0; i < count; i++) {
+					*(unsigned int *)p1 = lo;
+					p1 += 8;
 				}
 				unsigned int hi = ((unsigned int)*(const unsigned short *)(cb + 2) << 16) | *(const unsigned short *)(cb + 0);
 				cb += 12;
-				{
-					unsigned char * p = dst + 4;
-					for (i = 0; i < count; i++) {
-						*(unsigned int *)p = hi;
-						p += 8;
-					}
+				unsigned char * p2 = dst + 4;
+				for (i = 0; i < count; i++) {
+					*(unsigned int *)p2 = hi;
+					p2 += 8;
 				}
 				dst += 2u * bufwidth;
 			}
@@ -361,11 +357,9 @@ void __cdecl UnVQ2_4x2_Table(unsigned char * codebook, unsigned char * pointers,
 				unsigned int v;
 				unsigned int r = 2;
 				unsigned char * p;
-				{
-					unsigned short w = HicolorTable[*src];
-					v = (w << 16) | w;
-					src += 1;
-				}
+				unsigned short w = HicolorTable[*src];
+				v = (w << 16) | w;
+				src += 1;
 				p = dst;
 				for (j = 0; j < r; j++) {
 					*(unsigned int *)(p + 0) = v;
