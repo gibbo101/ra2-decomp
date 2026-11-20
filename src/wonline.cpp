@@ -15811,22 +15811,12 @@ bool __fastcall FUN_00789B60(void)
 
 Wstring __fastcall FUN_007B82E0(WideWstring const & text);
 
-static inline bool Same_Player_Name(wchar_t const * left, wchar_t const * right)
-{
-	char * name = FUN_007350C0(left);
-	return stricmp(name, FUN_007350C0(right)) == 0;
-}
-
-static inline Wstring Encode_Wide_Text(wchar_t const * text)
-{
-	return text ? FUN_007B82E0(text) : "";
-}
-
 // FUNCTION: GAMEMD 0x0077E430
 void Encode_Game_Options(char * out)
 {
 	static char player_options[512];
-	Wstring name = Encode_Wide_Text(Session.Options.ScenarioDescription);
+	wchar_t const * description = Session.Options.ScenarioDescription;
+	Wstring name = description ? FUN_007B82E0(description) : "";
 	int value = Session.ScenarioMaxPlayers;
 	sprintf(out, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%d,%d,%d,%s,%s:",
 		Game::Seed, Options.GameSpeed, Session.Options.GameSpeed, Session.Options.Credits,
@@ -15842,10 +15832,12 @@ void Encode_Game_Options(char * out)
 		int start = entry->Get_Start();
 		int team = entry->Get_Team();
 		int address = 0;
-		int port_base, firewall;
-		port_base = firewall = 0;
+		int firewall = 0;
+		int port_base = 0;
 		for (int j = 0; j < 8; j++) {
-			if (Same_Player_Name(Session.Players[i]->Name, Session.Slots[j]->Name)) {
+			const wchar_t * slot_name = Session.Slots[j]->Name;
+			char * player_name = FUN_007350C0(Session.Players[i]->Name);
+			if (stricmp(player_name, FUN_007350C0(slot_name)) == 0) {
 				NetNumType net;
 				NetNodeType node;
 				unsigned short socket;
