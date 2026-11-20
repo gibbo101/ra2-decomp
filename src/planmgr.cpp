@@ -2898,6 +2898,46 @@ void __fastcall Draw_Filled_Unit_Waypoints(TechnoClass * techno)
 	if (frame != -1) FUN_0063D630(source, target, path_color, fill, frame);
 }
 
+void __fastcall FUN_0063D560(Point2D a, Point2D b, int color);
+void __fastcall FUN_0063D910(Point2D p1, Point2D p2, int width, int color);
+
+// FUNCTION: GAMEMD 0x0063C690
+void __fastcall FUN_0063C690(PlanningNodeClass * node)
+{
+	Point2D pixel = node->Lead_Pixel();
+	int frame = -1;
+	if (node->Get_Count() > 0) {
+		EventClass event = node->Get_Event(0);
+		frame = FUN_0063D540(event);
+	}
+	int color = node->Lead_Color();
+	int count = node->Branch_Count();
+	for (int index = 0; index < count; index++) {
+		Coord coord = node->Branch_Coord(index);
+		Point2D start = FUN_006339E0(coord);
+		if (coord == Coord(-1, -1, -1)) {
+			PlanningBranchClass * branch = node->Get_Branch(index);
+			start = FUN_0063D210(&branch->Event, node->Owner_At_Branch(index));
+		}
+		FUN_0063D910(start, pixel, 4, color);
+		if (frame != -1) {
+			FUN_0063D560(start, pixel, color);
+		}
+	}
+	if (node->Is_Loop_Alone()) {
+		Coord coord = node->Loop_Coord();
+		Point2D start = FUN_006339E0(coord);
+		if (coord == Coord(-1, -1, -1)) {
+			start = FUN_0063D210(node->Loop_Event(), node->Active_Owner());
+		}
+		FUN_0063D910(start, pixel, 4, color);
+		if (frame != -1) {
+			FUN_0063D560(start, pixel, color);
+		}
+	}
+	node->Draw_Lead_Box(color);
+}
+
 // FUNCTION: GAMEMD 0x0063CA80
 Coord __fastcall FUN_0063CA80(EventClass const & event, TechnoClass * owner)
 {
