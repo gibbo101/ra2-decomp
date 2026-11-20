@@ -339,7 +339,15 @@ Each entry: what the diff showed, then the source change that fixed it.
   matches, so do nine and seventeen); others follow which run of eight it falls in.
 - `tools/localprobe.py` sweeps the count. A matching count is a target, not a fix: the
   original had that many more named locals, or 8 minus that many fewer (a one-use local it
-  wrote inline). Land only locals TibSun or a matched sibling has; padding is forcing.
+  wrote inline). Padding is forcing; real named values are not. Find the N the code
+  already computes: a local per call argument, a named element pointer in each loop body,
+  a fresh local where one is reused, an expression split into named steps, a local copy
+  of a global (`Rect bounds = TacticalRect;`). 11 of the outside contributor's 47 matches
+  that closed our near misses were this (0x00585F40, 0x006ABD30, 0x00659FF0).
+- Before writing a helper, grep src/ for its body already inlined in a matched sibling,
+  and factor it into a `static inline` both call (the sibling must still match): a helper
+  needs two real callers. A function "waiting on its caller" is not blocked: put the
+  caller in src without a marker so the helper is emitted.
 - In a very large function VC6 can stop scheduling the last switch cases fully: a tail
   that resists every rewrite may be fixed by a leaner form of an earlier case (0x004C6CB0).
 - A plain function defined above its callers is inlined and also emitted; at /Ob2 VC6
