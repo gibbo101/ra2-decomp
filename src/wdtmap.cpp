@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 
 #include "ini.h"
@@ -152,6 +153,137 @@ Map::~Map(void)
 	HiddenSurface->Fill(0);
 	VisibleSurface->Blit_From(*HiddenSurface);
 	delete CancelDrawer;
+}
+
+#include "pcx.h"
+
+extern int VideoModeWidth;
+
+// FUNCTION: GAMEMD 0x007681E0
+// WorldDominationTour::Map::FUN_007681E0
+void Map::FUN_007681E0(INIClass const & ini, Selection * selection, bool value)
+{
+	Wstring name;
+	ini.Get_String("MAPS", Wstring_FromInt(ID), "", name);
+
+	Wstring section;
+	ini.Get_String(name, *FUN_007AF2A0(Faction), "", section);
+
+	Wstring art;
+	bool found = ini.Get_String(section, "Art_" + Wstring_FromInt(VideoModeWidth), "", art) > 0;
+	if (VideoModeWidth > 800 && !found) {
+		ini.Get_String(section, "Art_800", "", art);
+	}
+
+	Point2D size(640, 400);
+	size = ini.Get_Point(art, "Size", size);
+	Point2D sidebar_size(0, 0);
+	sidebar_size = ini.Get_Point(art, "SideBarSize", sidebar_size);
+	Point2D helpbar_size(0, 0);
+	helpbar_size = ini.Get_Point(art, "HelpBarSize", helpbar_size);
+
+	Origin = Point2D((HiddenSurface->Get_Width() - sidebar_size.X - size.X) / 2, (HiddenSurface->Get_Height() - size.Y - helpbar_size.Y) / 2);
+	HelpBarOrigin = Point2D(Origin.X, Origin.Y + size.Y);
+
+	TextRect = ini.Get_Rect(art, "TextRect", TextRect);
+	TextRect += Origin;
+	TooltipRect = ini.Get_Rect(art, "TooltipRect", TooltipRect);
+	TooltipRect += Origin;
+	TitleRect = ini.Get_Rect(art, "TitleRect", TitleRect);
+	TitleRect += Origin;
+	BackTextRect = ini.Get_Rect(art, "BackTextRect", BackTextRect);
+	BackTextRect += Origin;
+
+	Wstring buffer;
+	ini.Get_String(art, "Opening", "", buffer);
+	if (buffer.length() > 0) {
+		Rect area(Origin, size.X, size.Y);
+		IntroAnim = new MSButtonAnim(buffer, (int)AlternateSurface, selection->Get_Anims(), area, false);
+		selection->Add_Animation(IntroAnim);
+	}
+
+	ini.Get_String(art, "Background", "", buffer);
+	BackgroundAnim = new MSPCXAnim(buffer, selection->Get_Anims(), Origin, true);
+	if (IntroAnim != NULL && BackgroundAnim != NULL) {
+		BackgroundAnim->Set_Active(false);
+	}
+	selection->Add_Animation(BackgroundAnim);
+
+	ini.Get_String(art, "ClickMap", (char const *)NULL, buffer);
+	CCFileClass file(buffer);
+	MaskSurface = Read_PCX_File(file);
+	file.Close();
+
+	MSAnim * sidebar = NULL;
+	ini.Get_String(art, "SideBar", "", buffer);
+	if (buffer.length() > 0) {
+		Point2D pos = Point2D(Origin.X + size.X, (HiddenSurface->Get_Height() - sidebar_size.Y) / 2);
+		sidebar = new MSPCXAnim(buffer, selection->Get_Anims(), pos, true);
+	}
+	selection->Add_Animation(sidebar);
+
+	ini.Get_String(art, "HelpBar", "", buffer);
+	if (buffer.length() > 0) {
+		HelpBarAnim = new MSPCXAnim(buffer, selection->Get_Anims(), HelpBarOrigin, true);
+	}
+	selection->Add_Animation(HelpBarAnim);
+
+	CancelRect = ini.Get_Rect(art, "BackButtonRectangle", CancelRect);
+	Point2D button = ini.Get_Point(art, "BackButtonOrigin", CancelRect.Top_Left());
+	CancelRect += Origin;
+	button += Origin;
+
+	ini.Get_String(art, "BackButtonPalette", "sdbtnanm.pal", buffer);
+	delete CancelDrawer;
+	CancelDrawer = Create_Drawer(buffer);
+	CancelFrame = ini.Get_Int(art, "BackButtonNormalFrame", CancelFrame);
+	CancelHoverFrame = ini.Get_Int(art, "BackButtonDepressedFrame", CancelHoverFrame);
+
+	ini.Get_String(art, "BackButton", "", buffer);
+	if (buffer.length() > 0) {
+		CancelAnim = new MSOverlayAnim(buffer, button.X, button.Y, CancelDrawer, 0, selection->Get_Anims(), true, CancelFrame, false);
+		selection->Add_Animation(CancelAnim);
+	}
+	ini.Get_String(art, "BackButtonHighlighted", "", buffer);
+
+	ini.Get_String(art, "OverlayPrefix", (char const *)NULL, Name);
+	ini.Get_String(art, "OverlayPalette", (char const *)NULL, buffer);
+	OverlayDrawer = Create_Drawer(buffer);
+
+	Wstring key = Wstring("WDT:") + name;
+	ini.Get_String(section, "NameKeyPrefix", key, key);
+
+	ConvertClass * palette = NULL;
+	if (ini.Get_String(art, "DefaultPalette", (char const *)NULL, buffer) > 0) {
+		palette = FUN_007691E0(buffer);
+	}
+
+	MSShapeAnim * logo = FUN_00768F50(ini, art, "Logo", palette);
+	if (logo != NULL) {
+		selection->Add_Animation(logo);
+	}
+
+	for (int index = 0; index < 10; index++) {
+		buffer = "Animation" + Wstring_FromInt(index);
+		MSShapeAnim * anim = FUN_00768F50(ini, art, buffer, palette);
+		if (anim != NULL) {
+			selection->Add_Animation(anim);
+		}
+	}
+
+	for (int id = 0; id < MAX_WDT_TERRITORIES; id++) {
+		if (ini.Get_String(section, "Territory" + Wstring_FromInt(id, 2), (char const *)NULL, buffer) > 0) {
+			rc_ptr<Territory> territory = FUN_0076F910(id, ini, buffer, Name, key);
+			Territories.Add(territory);
+		}
+	}
+
+	for (int owner = 0; owner < Territories.Count(); owner++) {
+		Territories[owner]->FUN_0076FB90(selection, OverlayDrawer, Origin);
+	}
+	for (int highlight = 0; highlight < Territories.Count(); highlight++) {
+		Territories[highlight]->FUN_0076FC50(selection, OverlayDrawer, Origin);
+	}
 }
 
 // FUNCTION: GAMEMD 0x00768F50
@@ -327,12 +459,9 @@ unsigned int __fastcall FUN_00769540(unsigned int value)
 }
 
 #include "cdfile.h"
-#include "pcx.h"
 #include "wstring.h"
 
 Wstring operator+(Wstring const & a, Wstring const & b);
-
-extern int VideoModeWidth;
 
 typedef VectorClass<Rect> RECT_LIST;
 typedef VectorCursor<Rect, RECT_LIST> RECT_ITER;

@@ -7948,7 +7948,7 @@ address,name,result,size,source,symbol
 0x0056C020,MapClass::Remove_Crate,MATCH,466,src/map.cpp,?Remove_Crate@MapClass@@QAE_NABVCell@@@Z
 0x0056C200,FUN_0056C200,MATCH,6,src/map.cpp,?FUN_0056C200@@YIHXZ
 0x0056C210,MapClass::Close_Object,MATCH,744,src/map.cpp,?Close_Object@MapClass@@QBEPAVObjectClass@@ABVCoord@@@Z
-0x0056C500,_$E238,MATCH,1,src/map.cpp,_$E238
+0x0056C500,_$E240,MATCH,1,src/map.cpp,_$E240
 0x0056CB80,SubzoneHash,MATCH,16,src/map.cpp,?SubzoneHash@@YIHABI@Z
 0x0056D230,MapClass::Get_Cell_Zone,MATCH,362,src/map.cpp,?Get_Cell_Zone@MapClass@@QAEHPBVCell@@W4MZoneType@@_N@Z
 0x0056D3A0,MapClass::Get_Cell_Zone_ID,MATCH,78,src/map.cpp,?Get_Cell_Zone_ID@MapClass@@QAEHABVCell@@@Z
@@ -8003,6 +8003,7 @@ address,name,result,size,source,symbol
 0x00577AB0,MapClass::Reshroud,MATCH,244,src/map.cpp,?Reshroud@MapClass@@QAEXPAVHouseClass@@@Z
 0x00577BB0,MapClass::Shroud_The_Map,MATCH,216,src/map.cpp,?Shroud_The_Map@MapClass@@QAEXPAVHouseClass@@@Z
 0x00577C90,MapClass::FUN_00577C90,MATCH,252,src/map.cpp,?FUN_00577C90@MapClass@@QAEXPAVHouseClass@@@Z
+0x00577D90,MapClass::Reveal,MATCH,404,src/map.cpp,?Reveal@MapClass@@QAEXPAVHouseClass@@@Z
 0x00577F30,MapClass::Reveal_The_Map,MATCH,335,src/map.cpp,?Reveal_The_Map@MapClass@@QAEXPAVHouseClass@@@Z
 0x00578080,MapClass::Get_Height_GL,MATCH,121,src/map.cpp,?Get_Height_GL@MapClass@@QAEHABVCoord@@@Z
 0x00578100,MapClass::FUN_00578100,MATCH,395,src/map.cpp,?FUN_00578100@MapClass@@QAEXXZ
@@ -8024,14 +8025,14 @@ address,name,result,size,source,symbol
 0x00578D80,MapClass::Is_Tile_Cliff,MATCH,219,src/map.cpp,?Is_Tile_Cliff@MapClass@@SI_NW4IsometricTileType@@H@Z
 0x00578E60,MapClass::Build_All_Cliffs,MATCH,428,src/map.cpp,?Build_All_Cliffs@MapClass@@QAE_NHH@Z
 0x00579010,MapClass::Expand_High_Ground,MATCH,771,src/map.cpp,?Expand_High_Ground@MapClass@@QAE_NPAVCellClass@@H@Z
-0x00579320,_$E243,MATCH,762,src/map.cpp,_$E243
+0x00579320,_$E245,MATCH,762,src/map.cpp,_$E245
 0x00579620,MapClass::Place_Cliff,MATCH,1352,src/map.cpp,?Place_Cliff@MapClass@@QAE_NPAVCellClass@@H@Z
 0x00579B70,MapClass::Get_High_Ground_Mask,MATCH,1353,src/map.cpp,?Get_High_Ground_Mask@MapClass@@QAEHPAVCellClass@@@Z
 0x0057A0C0,MapClass::Build_All_Shores,MATCH,595,src/map.cpp,?Build_All_Shores@MapClass@@QAE_NH_N@Z
 0x0057A320,MapClass::Prune_Water,MATCH,264,src/map.cpp,?Prune_Water@MapClass@@QAEXPAVCellClass@@H_N@Z
 0x0057A430,MapClass::Expand_Water,MATCH,1220,src/map.cpp,?Expand_Water@MapClass@@QAE_NPAVCellClass@@H_N@Z
 0x0057A900,MapClass::Straight_Shore_Length,MATCH,178,src/map.cpp,?Straight_Shore_Length@MapClass@@SIHPAVCellClass@@W4FacingType@@@Z
-0x0057A9C0,_$E247,MATCH,809,src/map.cpp,_$E247
+0x0057A9C0,_$E249,MATCH,809,src/map.cpp,_$E249
 0x0057ACF0,MapClass::Place_Shore,MATCH,1304,src/map.cpp,?Place_Shore@MapClass@@QAE_NPAVCellClass@@HH_N@Z
 0x0057B210,MapClass::Get_Water_Mask,MATCH,549,src/map.cpp,?Get_Water_Mask@MapClass@@QAEHPAVCellClass@@H@Z
 0x0057B790,MapClass::Area_Reduce_Tiberium,MATCH,211,src/map.cpp,?Area_Reduce_Tiberium@MapClass@@QAEXABVCell@@@Z
@@ -8080,7 +8081,7 @@ address,name,result,size,source,symbol
 0x005856B0,MapClass::Rebuild_Shores_At,MATCH,628,src/map.cpp,?Rebuild_Shores_At@MapClass@@QAE_NABVCell@@@Z
 0x00585930,MapClass::Mark_Fill_Area,MATCH,969,src/map.cpp,?Mark_Fill_Area@MapClass@@QAEXABVCell@@_N@Z
 0x00585D00,MapClass::Rebuild_Cliffs_At,MATCH,477,src/map.cpp,?Rebuild_Cliffs_At@MapClass@@QAE_NABVCell@@@Z
-0x00585EE0,_$E252,MATCH,89,src/map.cpp,_$E252
+0x00585EE0,_$E254,MATCH,89,src/map.cpp,_$E254
 0x005862C0,MapClass::Is_Something_Nearby,MATCH,145,src/map.cpp,?Is_Something_Nearby@MapClass@@QAE_NABVCell@@H@Z
 0x00586360,MapClass::Is_Shrouded,MATCH,309,src/map.cpp,?Is_Shrouded@MapClass@@QAE_NABVCoord@@@Z
 0x005864A0,MapClass::FUN_005864A0,MATCH,309,src/map.cpp,?FUN_005864A0@MapClass@@QAE_NABVCoord@@@Z
@@ -8194,6 +8195,7 @@ address,name,result,size,source,symbol
 0x0058AF80,?Add@?$DynamicVectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@@@QAE_NABU?$HashObject@IUSubzoneConnectionStruct@@@@@Z,MATCH,97,src/map.cpp,?Add@?$DynamicVectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@@@QAE_NABU?$HashObject@IUSubzoneConnectionStruct@@@@@Z
 0x0058AFF0,??0?$VectorClass@U?$HashObject@II@@@@QAE@HPBU?$HashObject@II@@@Z,MATCH,114,src/map.cpp,??0?$VectorClass@U?$HashObject@II@@@@QAE@HPBU?$HashObject@II@@@Z
 0x0058B070,??0?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@@@QAE@HPBU?$HashObject@IUSubzoneConnectionStruct@@@@@Z,MATCH,148,src/map.cpp,??0?$VectorClass@U?$HashObject@IUSubzoneConnectionStruct@@@@@@QAE@HPBU?$HashObject@IUSubzoneConnectionStruct@@@@@Z
+0x00588C10,??4AbstractClass@@QAEAAV0@ABV0@@Z,MATCH,39,src/map.cpp,??4AbstractClass@@QAEAAV0@ABV0@@Z
 0x0058B110,_$E2,MATCH,23,src/map2.cpp,_$E2
 0x0058B130,_$E5,MATCH,40,src/map2.cpp,_$E5
 0x0058B160,_$E8,MATCH,19,src/map2.cpp,_$E8
@@ -8524,6 +8526,7 @@ address,name,result,size,source,symbol
 0x0059C920,MapGeneratorClass::Seed_Lake,MATCH,2839,src/mapgen.cpp,?Seed_Lake@MapGeneratorClass@@QAE_NABVCell@@@Z
 0x0059BBC0,MapGeneratorClass::FUN_0059BBC0,MATCH,2415,src/mapgen.cpp,?FUN_0059BBC0@MapGeneratorClass@@QAEHHABV?$TRect@H@@ABVPoint2D@@_NABVCell@@N2@Z
 0x005A89D0,MapGeneratorClass::Generate_Rural_Roads,MATCH,1321,src/mapgen.cpp,?Generate_Rural_Roads@MapGeneratorClass@@QAE_NABVCell@@@Z
+0x005AC290,??_GMapRegionClass@@QAEPAXI@Z,MATCH,167,src/mapgen.cpp,??_GMapRegionClass@@QAEPAXI@Z
 0x005ADB00,_$E10,MATCH,23,src/mapsel.cpp,_$E10
 0x005ADB20,_$E16,MATCH,40,src/mapsel.cpp,_$E16
 0x005ADB50,_$E19,MATCH,19,src/mapsel.cpp,_$E19
@@ -13041,6 +13044,7 @@ address,name,result,size,source,symbol
 0x006AC210,SidebarClass::Help_Text,MATCH,454,src/sidebar.cpp,?Help_Text@SidebarClass@@UAEPBDH@Z
 0x006A8710,SidebarClass::StripClass::FUN_006A8710,MATCH,218,src/sidebar.cpp,?FUN_006A8710@StripClass@SidebarClass@@QAEXW4RTTIType@@H@Z
 0x006A5130,SidebarClass::FUN_006A5130,MATCH,472,src/sidebar.cpp,?FUN_006A5130@SidebarClass@@QAEX_N@Z
+0x006AC890,??_EBuildType@StripClass@SidebarClass@@QAEPAXI@Z,MATCH,59,src/sidebar.cpp,??_EBuildType@StripClass@SidebarClass@@QAEPAXI@Z
 0x006AC950,_$E5,MATCH,23,src/skirmish.cpp,_$E5
 0x006AC970,_$E70,MATCH,40,src/skirmish.cpp,_$E70
 0x006AC9A0,_$E73,MATCH,19,src/skirmish.cpp,_$E73
@@ -17388,6 +17392,7 @@ address,name,result,size,source,symbol
 0x00767FB0,?FUN_00767FB0@WorldDominationTour@@YI?AV?$rc_ptr@VMap@WorldDominationTour@@@@HHH@Z,MATCH,75,src/wdtmap.cpp,?FUN_00767FB0@WorldDominationTour@@YI?AV?$rc_ptr@VMap@WorldDominationTour@@@@HHH@Z
 0x00768000,WorldDominationTour::Map::Map,MATCH,179,src/wdtmap.cpp,??0Map@WorldDominationTour@@QAE@HHH@Z
 0x007680C0,WorldDominationTour::Map::~Map,MATCH,276,src/wdtmap.cpp,??1Map@WorldDominationTour@@UAE@XZ
+0x007681E0,WorldDominationTour::Map::FUN_007681E0,MATCH,3440,src/wdtmap.cpp,?FUN_007681E0@Map@WorldDominationTour@@QAEXABVINIClass@@PAVSelection@2@_N@Z
 0x00768F50,WorldDominationTour::Map::FUN_00768F50,MATCH,651,src/wdtmap.cpp,?FUN_00768F50@Map@WorldDominationTour@@QAEPAVMSShapeAnim@@ABVINIClass@@ABVWstring@@1PAVConvertClass@@@Z
 0x007691E0,WorldDominationTour::Map::FUN_007691E0,MATCH,196,src/wdtmap.cpp,?FUN_007691E0@Map@WorldDominationTour@@QAEPAVConvertClass@@ABVWstring@@@Z
 0x007692B0,WorldDominationTour::Map::AnimationPalette::AnimationPalette,MATCH,26,src/wdtmap.cpp,??0AnimationPalette@Map@WorldDominationTour@@QAE@ABVWstring@@PAVConvertClass@@@Z
@@ -18408,6 +18413,7 @@ address,name,result,size,source,symbol
 0x0078F7F0,WOL_Game_Options_Proc,MATCH,8874,src/wonline.cpp,?WOL_Game_Options_Proc@@YGHPAUHWND__@@IIJ@Z
 0x00791B10,WOL_Guest_Dialog_Proc,MATCH,4295,src/wonline.cpp,?WOL_Guest_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x007A5890,CChatEventSink::OnChannelJoin,MATCH,6216,src/wonline.cpp,?OnChannelJoin@CChatEventSink@@QAGJJPAUChannel@@PAUUser@@@Z
+0x007AC630,??_GCreateGameDialogControl@@UAEPAXI@Z,MATCH,52,src/wonline.cpp,??_GCreateGameDialogControl@@UAEPAXI@Z
 0x00535A60,??1CDFileClass@@UAE@XZ,MATCH,11,src/worlddom.cpp,??1CDFileClass@@UAE@XZ
 0x00535A70,??1CCFileClass@@UAE@XZ,MATCH,39,src/worlddom.cpp,??1CCFileClass@@UAE@XZ
 0x007AF090,_$E2,MATCH,23,src/worlddom.cpp,_$E2

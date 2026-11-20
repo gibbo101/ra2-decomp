@@ -8303,7 +8303,7 @@ address,size,symbol,source,sha256
 0x0056C020,466,?Remove_Crate@MapClass@@QAE_NABVCell@@@Z,src/map.cpp,9de8a9fe4d18b6df335e4b30eb1382e143559c8b8006860f562efeaf2dccd564
 0x0056C200,6,?FUN_0056C200@@YIHXZ,src/map.cpp,2db31f4e09597946e56e859813bfdad7046d457c32332c3a882654d1e3ffdf67
 0x0056C210,744,?Close_Object@MapClass@@QBEPAVObjectClass@@ABVCoord@@@Z,src/map.cpp,a3826d3c8a063a9bd8c28ac1c75152d2a42aedd04b068c5770ec3f0130e589a4
-0x0056C500,1,_$E238,src/map.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x0056C500,1,_$E240,src/map.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x0056CB80,16,?SubzoneHash@@YIHABI@Z,src/map.cpp,18b02aad31f39a6cf194711d4e12b0484db52581793d339009f1478ee6c8a186
 0x0056D230,362,?Get_Cell_Zone@MapClass@@QAEHPBVCell@@W4MZoneType@@_N@Z,src/map.cpp,290a0599c9cbe254645c1c3d734c69b1263cb81509c65a1424d59a1a18647f9d
 0x0056D3A0,78,?Get_Cell_Zone_ID@MapClass@@QAEHABVCell@@@Z,src/map.cpp,b466a9581603b924073634ef7da7b2caebcc18561c9c7a6db6d1f5a7dc29db0b
@@ -8358,6 +8358,7 @@ address,size,symbol,source,sha256
 0x00577AB0,244,?Reshroud@MapClass@@QAEXPAVHouseClass@@@Z,src/map.cpp,87922dfaefefc658137a15dd4c0ae28f55e4f7de39ed27380f8758b46c9bd0bb
 0x00577BB0,216,?Shroud_The_Map@MapClass@@QAEXPAVHouseClass@@@Z,src/map.cpp,1b69b2a390b93e32f8052f7e8dacee2b947d36f27f1563f16d37fb746c2acbc4
 0x00577C90,252,?FUN_00577C90@MapClass@@QAEXPAVHouseClass@@@Z,src/map.cpp,17c7e46bc530e91af653c35258456dd718146b4c47d3e3fa746dab0b460b8932
+0x00577D90,404,?Reveal@MapClass@@QAEXPAVHouseClass@@@Z,src/map.cpp,b1bb82ca4fad3d996bcb695ee4e56766e1db2951c9ec0acc517f9fcb93bbe582
 0x00577F30,335,?Reveal_The_Map@MapClass@@QAEXPAVHouseClass@@@Z,src/map.cpp,5e312e60a339edd2327e14341ac6e6e0fafcc47922bde5152fcc784c8abcc329
 0x00578080,121,?Get_Height_GL@MapClass@@QAEHABVCoord@@@Z,src/map.cpp,da9455b1bf1952e5e720859331297847db37f66c4c05fb3e735ccf5946169bc2
 0x00578100,395,?FUN_00578100@MapClass@@QAEXXZ,src/map.cpp,e09ab075d03e7e65870379136868d5d419e9fde0772767dbf8f28201ad635ca1
@@ -8379,14 +8380,14 @@ address,size,symbol,source,sha256
 0x00578D80,219,?Is_Tile_Cliff@MapClass@@SI_NW4IsometricTileType@@H@Z,src/map.cpp,ff0370da46f6578c3ecef8127735dd778ff9fb1f2ec2700c65f74ccfe3ffda65
 0x00578E60,428,?Build_All_Cliffs@MapClass@@QAE_NHH@Z,src/map.cpp,3bfd5b3aa26f42147ba9a79063b9205f00e695f1c69702730e5029fd3a70583f
 0x00579010,771,?Expand_High_Ground@MapClass@@QAE_NPAVCellClass@@H@Z,src/map.cpp,4df26a0b67444c538ca4eca08a9fb5834f6d2a84dc95524972bce1c51f71dc44
-0x00579320,762,_$E243,src/map.cpp,aeabaab3da86b8420e61043e3fa0e16be8f372b57f16ec781ed8c22ec32935fc
+0x00579320,762,_$E245,src/map.cpp,aeabaab3da86b8420e61043e3fa0e16be8f372b57f16ec781ed8c22ec32935fc
 0x00579620,1352,?Place_Cliff@MapClass@@QAE_NPAVCellClass@@H@Z,src/map.cpp,06bde44f63447e80189e9452fbf0f6b32794ad50e9b7c6b700123cecad1bf676
 0x00579B70,1353,?Get_High_Ground_Mask@MapClass@@QAEHPAVCellClass@@@Z,src/map.cpp,eb4c372dea7a7d45b6c7cc3b507f8b12d1e12793c95a946aa4b8fb394a12370c
 0x0057A0C0,595,?Build_All_Shores@MapClass@@QAE_NH_N@Z,src/map.cpp,1f704ff3b26508fa6917e8ef7aa7c6a00ebc347a6789c54fcef7171bae1c84ae
 0x0057A320,264,?Prune_Water@MapClass@@QAEXPAVCellClass@@H_N@Z,src/map.cpp,b52010a67be622bd10bbda415a91191dcf5ad687c8ceb31e4cccce72d8d9ab0f
 0x0057A430,1220,?Expand_Water@MapClass@@QAE_NPAVCellClass@@H_N@Z,src/map.cpp,a2ecd988707f204ea5ddb97cd0b047b3d638d4eb31bc28a08a38657543caa900
 0x0057A900,178,?Straight_Shore_Length@MapClass@@SIHPAVCellClass@@W4FacingType@@@Z,src/map.cpp,676275196495eb2583b792009b2eeb20887a291b7db3791df7c566ba5f027ae5
-0x0057A9C0,809,_$E247,src/map.cpp,445550ba38c676bb8e70afb83db1cc68c62dc1105a29d842e45a5abacbff72b0
+0x0057A9C0,809,_$E249,src/map.cpp,445550ba38c676bb8e70afb83db1cc68c62dc1105a29d842e45a5abacbff72b0
 0x0057ACF0,1304,?Place_Shore@MapClass@@QAE_NPAVCellClass@@HH_N@Z,src/map.cpp,0e35ef410cfa996ce9b3ba85749e8eb0f539592727e28fc61d3844cb9974152f
 0x0057B210,549,?Get_Water_Mask@MapClass@@QAEHPAVCellClass@@H@Z,src/map.cpp,20d804cabe274ffa7338e1726bd6a29fbced212095b02bfe9b130788db725bcb
 0x0057B790,211,?Area_Reduce_Tiberium@MapClass@@QAEXABVCell@@@Z,src/map.cpp,111c1f6c56bc95e03d3a011416775bc440e4d6189b893e9c01c5434b2214e225
@@ -8435,7 +8436,7 @@ address,size,symbol,source,sha256
 0x005856B0,628,?Rebuild_Shores_At@MapClass@@QAE_NABVCell@@@Z,src/map.cpp,4546884e57874a9fa3cd33da1d35183661eace12901cb2ad24b680d4ae142b05
 0x00585930,969,?Mark_Fill_Area@MapClass@@QAEXABVCell@@_N@Z,src/map.cpp,903b0d5d59aa1b8af926564b5fc69add2f8f89060737829182ca2196263b712c
 0x00585D00,477,?Rebuild_Cliffs_At@MapClass@@QAE_NABVCell@@@Z,src/map.cpp,acf7d4f20f5ceceb5fc9bfbc9fda5db507f0ca77ff8c5e9d30199e12c813aa58
-0x00585EE0,89,_$E252,src/map.cpp,9772e9c7f46b744710f8c1707142a556a4af11a574a4d36ebb7dd1609a57fc7b
+0x00585EE0,89,_$E254,src/map.cpp,9772e9c7f46b744710f8c1707142a556a4af11a574a4d36ebb7dd1609a57fc7b
 0x005862C0,145,?Is_Something_Nearby@MapClass@@QAE_NABVCell@@H@Z,src/map.cpp,4fb77cf58be380c9602ba81b8855f9500f61b448ac45f27d8f6377c07d8a9d7e
 0x00586360,309,?Is_Shrouded@MapClass@@QAE_NABVCoord@@@Z,src/map.cpp,d63093174075999e4457c40fe5c28121d3a33666a7edee5e0a42ad4e6f892001
 0x005864A0,309,?FUN_005864A0@MapClass@@QAE_NABVCoord@@@Z,src/map.cpp,afb6e61f39dc7666c163396829bc9193904672fb385cdfd48b32596b4d9ecc35
@@ -8460,6 +8461,7 @@ address,size,symbol,source,sha256
 0x005889F0,203,?FUN_005889F0@@YIHHH@Z,src/map.cpp,d6eb29eeb4c6e469963ed681c78fe9a345b26f31fa9709858e0565bf639660ee
 0x00588AC0,289,?FUN_00588AC0@@YIXPAVMapClass@@@Z,src/map.cpp,d55d7e3a7774ecc7aac7b0273a0299b0866d70dcff5f67ac24f13d6a82d2ecea
 0x00588BF0,30,??_GMapClass@@UAEPAXI@Z,src/map.cpp,7464d2787ca25535eb083b00d5421ebb4de1c7c456995fce2d296e94b2f5321a
+0x00588C10,39,??4AbstractClass@@QAEAAV0@ABV0@@Z,src/map.cpp,85ca4f25f227e8ca4d53a3cd011c9ddef0b4829d6a3bc6588bf4564755c1be4b
 0x00588C40,23,??Y?$TPoint2D@F@@QAEABV0@ABV0@@Z,src/map.cpp,5e79ead826bff369093a83af87833c74c1cf9d9512654e9976e30f4a45b4c37b
 0x00588C60,41,??G?$TPoint2D@F@@QBE?BV0@ABV0@@Z,src/map.cpp,b5b16596c3ac1e446d2be4770a6a2611e720fa6d68596f5721b99ad28d909f7a
 0x00588C90,42,?Clear@?$DynamicVectorClass@USubzoneConnectionStruct@@@@UAEXXZ,src/map.cpp,3e41061d15290b17536d5c9976a65c192dfd0a84e058a0fd365eb1523a582095
@@ -8807,6 +8809,7 @@ address,size,symbol,source,sha256
 0x005AC1F0,61,?Init_Dirt_Roads@@YIXXZ,src/mapgen.cpp,4fe916f4e36662f9e72e78fcb2546669479af04c73436cb8facbbaac648190f7
 0x005AC230,53,?My_In_Radar@@YI_NABVCell@@@Z,src/mapgen.cpp,ecd9ad50a9b339886e2473c980e07679670114f8992d443bc074e4ae45185a61
 0x005AC270,30,??_GMapSeedClass@@UAEPAXI@Z,src/mapgen.cpp,f867c6daa1c4667d32015013f9c7bebd856e7819b5b2403df606fc378b696e39
+0x005AC290,167,??_GMapRegionClass@@QAEPAXI@Z,src/mapgen.cpp,ed6093274d8e783162fdadefebb45e7cda8ce527a457760827be3a0c1e963cb9
 0x005AC340,38,??_G?$PriorityQueueClass@UCellNode@@@@QAEPAXI@Z,src/mapgen.cpp,61df6f737c171f988c74e250749be78fac9f58ae834d597cdc7459ab79ad6d6c
 0x005AC370,35,??9?$TPoint2D@F@@QBE_NABV0@@Z,src/mapgen.cpp,a29f5866e09a114abcb9106082eb956e99fb7570ff83d25b0178fe925cfa22bc
 0x005AC3A0,42,?Clear@?$DynamicVectorClass@PAVMapRegionClass@@@@UAEXXZ,src/mapgen.cpp,294c42f453a0faa8a9501ed4b9dcc360c71cf2203cb18f0b43577eb4cffd01ef
@@ -13388,6 +13391,7 @@ address,size,symbol,source,sha256
 0x006AC7C0,33,??0BuildType@StripClass@SidebarClass@@QAE@XZ,src/sidebar.cpp,91f19b0f8e59648615149651276a1a505e238fcff02919bafe4cff57d99697a3
 0x006AC7F0,71,??_GSidebarClass@@UAEPAXI@Z,src/sidebar.cpp,5df242235de5bd28896af530a3cf4288b3b006b565237bdaf85827ddbfbe787f
 0x006AC840,45,??0DisplayClass@@QAE@ABVNoInitClass@@@Z,src/sidebar.cpp,84ea83e23279d3643557d063554db05331a3ac795088e80d5b107f9761f07775
+0x006AC890,59,??_EBuildType@StripClass@SidebarClass@@QAEPAXI@Z,src/sidebar.cpp,7dd3d92aa3d7ae967a62117fe1931df0edbb38039a66432745ceda5552d4d77d
 0x006AC8D0,117,??0?$DynamicVectorClass@VPoint2D@@@@QAE@IPBVPoint2D@@@Z,src/sidebar.cpp,6df0991486b4c2ef578682b2cf1a94d72317d65bcbde9545fe96b20887e4bfe5
 0x006AC950,23,_$E5,src/skirmish.cpp,42fae23c554d945955a1733a4b807b06869b6e1a4bdd0c27bada68544ba9db5b
 0x006AC970,40,_$E70,src/skirmish.cpp,3567f89bee08fb9492eb7da24ca958556995ad02560a62df2858b119bd1afcf6
@@ -17629,6 +17633,7 @@ address,size,symbol,source,sha256
 0x00767FB0,75,?FUN_00767FB0@WorldDominationTour@@YI?AV?$rc_ptr@VMap@WorldDominationTour@@@@HHH@Z,src/wdtmap.cpp,7788c6f2a9a961b0acb656e27a3f595d26d89765eca24378cb4de41e885cd79f
 0x00768000,179,??0Map@WorldDominationTour@@QAE@HHH@Z,src/wdtmap.cpp,5caf86a3ab7116b0ebabda3af465aa7ce9d043761b5c699c46dd314b20dc2cb3
 0x007680C0,276,??1Map@WorldDominationTour@@UAE@XZ,src/wdtmap.cpp,57923574d81652e1b51adb7f9eaa14bd8ff82162fd705fd3d65088ee084b7f29
+0x007681E0,3440,?FUN_007681E0@Map@WorldDominationTour@@QAEXABVINIClass@@PAVSelection@2@_N@Z,src/wdtmap.cpp,e844601cb165cc0bb530ea4d3b0381075e5ea120781d97403544f3513e063166
 0x00768F50,651,?FUN_00768F50@Map@WorldDominationTour@@QAEPAVMSShapeAnim@@ABVINIClass@@ABVWstring@@1PAVConvertClass@@@Z,src/wdtmap.cpp,11a360ec446950fc48d67002aa98c5f32ecfa50ca4f34e79d3c8dc93dd603201
 0x007691E0,196,?FUN_007691E0@Map@WorldDominationTour@@QAEPAVConvertClass@@ABVWstring@@@Z,src/wdtmap.cpp,bb0878011666723bcdf917007252afdea7cb639b313ba36b0175861fb9c6a1d4
 0x007692B0,26,??0AnimationPalette@Map@WorldDominationTour@@QAE@ABVWstring@@PAVConvertClass@@@Z,src/wdtmap.cpp,05a35bc49555b75c6b9ac6513840ffed3c30566b04eb06ce8244149d465226a3
@@ -18553,6 +18558,7 @@ address,size,symbol,source,sha256
 0x007AC500,193,?AtlModuleTerm@@YGJPAUAtlModule@@@Z,src/wonline.cpp,500fe139425a96ecfece6a9c2ef0a7ef8f88c68aa16317e1d0c19036acba764b
 0x007AC5D0,52,??_GWonlineStringDialogControl@@UAEPAXI@Z,src/wonline.cpp,b227149173d05c6f45cfafd2d57352e85a518bc97dbc61e4c3bccef3ad88dce7
 0x007AC610,32,??0WonlineStringDialogControl@@QAE@XZ,src/wonline.cpp,276997b358b9a495b6b51268f57744c638490092e283ddc04d253c6aca584126
+0x007AC630,52,??_GCreateGameDialogControl@@UAEPAXI@Z,src/wonline.cpp,cd0a719f2908edf395025adbbbcad12b8290d8235a52d25e9e1d6168517b2ed4
 0x007AC670,13,??1?$CComPtr@UIConnectionPointContainer@@@ATL@@QAE@XZ,src/wonline.cpp,75d77bd0a3a4afb5d4a2bf6084d52171f3e5b72dcc4a78108c73cb70fde0c354
 0x007AC680,13,??1?$CComPtr@UIConnectionPoint@@@ATL@@QAE@XZ,src/wonline.cpp,75d77bd0a3a4afb5d4a2bf6084d52171f3e5b72dcc4a78108c73cb70fde0c354
 0x007AC690,17,?AddRef@?$CComObject@VCChatEventSink@@@ATL@@UAGKXZ,src/wonline.cpp,998d39e4762612934918f22404655843e46ffc9af4e771b61bb25ee55fcac83d
