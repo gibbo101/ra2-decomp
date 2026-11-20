@@ -972,3 +972,4 @@ address,name,symbol,evidence
 0x00ABCE70,TempOptions,?TempOptions@@3VGameOptionsClass@@A,"Matched initializer 0x0055F970 constructs this object through 0x005FA350; matched MainOptions driver 0x0055FC80 references the same object; target ScreenWidth/ScreenHeight accesses agree with offsets36/40."
 0x00732950,FUN_00732950,?FUN_00732950@@YIXXZ,Matched type-selection cycling and ownership filtering.
 0x00449C30,BuildingClass::Do_MISSION_DECONSTRUCTION,?Do_MISSION_DECONSTRUCTION@BuildingClass@@UAEHXZ,Matched building deconstruction state updates and undeployment.
+0x006AF6C0,SlaveManagerClass::FUN_006AF6C0,?FUN_006AF6C0@SlaveManagerClass@@QAEXXZ,Matched per-slave state update; existing countdown APIs and native state transitions.
