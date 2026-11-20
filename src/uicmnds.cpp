@@ -1384,3 +1384,134 @@ template class DynamicVectorClass<char const *>;
 // TEMPLATE: GAMEMD 0x007343E0
 // ??0?$VectorClass@PBD@@QAE@HPBQBD@Z
 template class VectorClass<char const *>;
+
+extern int DAT_00845560;
+extern int DAT_00845564;
+int __fastcall FUN_007336A0(int value);
+wchar_t const * __fastcall FUN_00733640(int status);
+int __fastcall FUN_00733990(int value);
+wchar_t const * __fastcall FUN_00733930(int level);
+
+// FUNCTION: GAMEMD 0x00733380
+void __fastcall FUN_00733380(bool redraw)
+{
+	wchar_t text[256];
+	if (Unsorted::MuteSWLaunches) return;
+	int status;
+	if (Unsorted::NavCycleMode != 3) {
+		FUN_007331B0();
+		FUN_006DA740(TacticalMap);
+		status = 0;
+	} else {
+		status = FUN_007336A0(DAT_00845560);
+		if (redraw) FUN_006DA740(TacticalMap);
+	}
+	TechnoList * list = DAT_00B0FE6C;
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * techno = (*list)[i];
+		if (techno->GetHealthStatus() == status) techno->Select();
+	}
+	wchar_t const * name = FUN_00733640(status);
+	SmartPtr<TechnoList> all(FUN_00732050());
+	int selected = all->Count();
+	for (int j = 0; j < selected; j++) {
+		TechnoClass * techno = (*all)[j];
+		if (techno->GetHealthStatus() != status) {
+			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x62f);
+			break;
+		}
+	}
+	delete all;
+	FUN_00731D90(text, name);
+	FUN_00730A90(text, 240);
+	DAT_00845560 = status;
+	int remaining = DAT_00B0FE6C->Count();
+	Unsorted::NavCycleMode = 0;
+	if (remaining) Unsorted::NavCycleMode = 3;
+	DAT_00B0FE58 = false;
+}
+
+// FUNCTION: GAMEMD 0x007336C0
+void __fastcall FUN_007336C0(bool redraw)
+{
+	wchar_t text[256];
+	if (Unsorted::MuteSWLaunches) return;
+	int status;
+	if (Unsorted::NavCycleMode != 4) {
+		FUN_007331B0();
+		FUN_006DA740(TacticalMap);
+		status = 0;
+	} else {
+		status = FUN_00733990(DAT_00845564);
+		if (redraw) FUN_006DA740(TacticalMap);
+	}
+	TechnoList * list = DAT_00B0FE6C;
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * techno = (*list)[i];
+		if (techno->Veterancy.Remaining_Levels() == status) techno->Select();
+	}
+	wchar_t const * name = FUN_00733930(status);
+	SmartPtr<TechnoList> all(FUN_00732050());
+	int selected = all->Count();
+	for (int j = 0; j < selected; j++) {
+		TechnoClass * techno = (*all)[j];
+		if (techno->Veterancy.Remaining_Levels() != status) {
+			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x67a);
+			break;
+		}
+	}
+	delete all;
+	FUN_00731D90(text, name);
+	FUN_00730A90(text, 240);
+	DAT_00845564 = status;
+	int remaining = DAT_00B0FE6C->Count();
+	Unsorted::NavCycleMode = 0;
+	if (remaining) Unsorted::NavCycleMode = 4;
+	DAT_00B0FE58 = false;
+}
+
+extern int DAT_00B0FE70;
+extern char DAT_00B0FD70[];
+
+// FUNCTION: GAMEMD 0x007339B0
+void __fastcall FUN_007339B0(bool redraw)
+{
+	wchar_t text[256];
+	if (Unsorted::MuteSWLaunches) return;
+	int cost;
+	char * type;
+	if (Unsorted::NavCycleMode != 5) {
+		FUN_007331B0();
+		FUN_006DA740(TacticalMap);
+		type = FUN_00733E10(DAT_00B0FE6C, NULL, INT_MAX, &cost);
+	} else {
+		type = FUN_00733E10(DAT_00B0FE6C, DAT_00B0FD70, DAT_00B0FE70, &cost);
+		if (redraw) FUN_006DA740(TacticalMap);
+	}
+	TechnoList * list = DAT_00B0FE6C;
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * techno = (*list)[i];
+		if (FUN_00733C60(techno, type)) techno->Select();
+	}
+	wchar_t const * name = NULL;
+	SmartPtr<TechnoList> all(FUN_00732050());
+	if (!FUN_00732190(all, (bool (__fastcall *)(TechnoClass *, int))FUN_00733C60, (int)type)) {
+		name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x6c3);
+	}
+	if (!name && CurrentObject.Count() > 0) {
+		name = CurrentObject[0]->Class_Of()->UIName;
+	}
+	FUN_00731D90(text, name);
+	FUN_00730A90(text, 240);
+	DAT_00B0FE70 = cost;
+	strcpy(DAT_00B0FD70, type);
+	if (type) delete [] type;
+	int remaining = all->Count();
+	Unsorted::NavCycleMode = 0;
+	if (remaining) Unsorted::NavCycleMode = 5;
+	DAT_00B0FE58 = false;
+	delete all;
+}

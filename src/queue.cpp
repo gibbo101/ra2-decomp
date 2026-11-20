@@ -3958,3 +3958,55 @@ RetcodeType __fastcall Wait_For_Players(int first_time, ConnManClass *net, int r
 }
 
 #undef WAIT_TEXT
+
+extern RGBClass DAT_00A8EAE4;
+
+static int Connection_Index(int player)
+{
+	if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
+		return 0;
+	}
+	return Ipx.Connection_Index(player);
+}
+
+// FUNCTION: GAMEMD 0x0064A7B0
+void __fastcall Draw_Sync_Bars(HWND window)
+{
+	for (int i = 0; i < Session.Players.Count(); i++) {
+		RECT bar_winrect;
+		Get_Display_Rect(GetDlgItem(window, SyncBarControlIDs[i]), &bar_winrect);
+		Rect bar_rect(bar_winrect.left, bar_winrect.top,
+			bar_winrect.right - bar_winrect.left, bar_winrect.bottom - bar_winrect.top);
+		Rect border = bar_rect;
+		int playerid = Connection_Index(Session.Players[i]->Player.ID);
+		unsigned progress;
+		if (i == 0) {
+			progress = 0;
+		} else {
+			progress = DAT_00AFA418 - SyncBarFrameSync[playerid].unknown1;
+		}
+		unsigned short color = DSurface::Build_Hicolor_Pixel(0, 200, 0);
+		if (progress > 240) {
+			color = DSurface::Build_Hicolor_Pixel(200, 200, 0);
+			if (progress > 480) {
+				color = DSurface::Build_Hicolor_Pixel(200, 0, 0);
+				unsigned elapsed = (timeGetTime() * 60 - SyncBarFrameSync[playerid].timing * 60) / 1000;
+				if (elapsed < 420) {
+					progress = elapsed;
+					color = DSurface::Build_Hicolor_Pixel(0, 0, 200);
+				}
+			}
+		}
+		int percent = MAX(100 - (int)(100 * progress / 1200), 0);
+		int w = percent * bar_rect.Width;
+		bar_rect.Width = MAX(6, w / 100);
+		int border_color = DSurface::Build_Hicolor_Pixel(DAT_00A8EAE4);
+		AlternateSurface->Draw_Rect(AlternateSurface->Get_Rect(), border, border_color);
+		Rect inside = bar_rect;
+		inside.X += 2;
+		inside.Y += 2;
+		inside.Width -= 4;
+		inside.Height -= 4;
+		AlternateSurface->Fill_Rect(AlternateSurface->Get_Rect(), inside, color);
+	}
+}

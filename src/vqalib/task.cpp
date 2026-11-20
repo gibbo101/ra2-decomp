@@ -1001,6 +1001,45 @@ int VQA_GetLoopCount(VQAHandleP *vqap)
 	return(vqap->LoopInfo.Header.Count);
 }
 
+// FUNCTION: GAMEMD 0x007C35C0
+void VQA_Reset(VQAHandle *vqa)
+{
+	VQAHandleP *vqap;
+	VQAHeader *header;
+	vqap = (VQAHandleP *)vqa;
+	header = &vqap->Header;
+
+	int stop;
+	int frames = header->Frames;
+	vqap->LoadedFrames = 0;
+	vqap->DrawnFrames = 0;
+	vqap->StartTime = 0;
+	vqap->EndTime = 0;
+	vqap->Flags = 0;
+	vqap->LoopIterations = 0;
+	stop = frames - 1;
+	vqap->LoopID = -1;
+	vqap->StopFrame = stop;
+	vqap->LoopEndFrameMode2 = stop;
+	vqap->LoopEndFrame2 = stop;
+
+	unsigned long audio_flags = vqap->Audio.Flags & ~(VQAAUDF_ISREPEATING | VQAAUDF_ISENDOFFILE | VQAAUDF_ISDONE | VQAAUDF_ISSTARVED);
+	vqap->Audio.Flags = audio_flags;
+	vqap->LoopStartFrame0 = -1;
+	vqap->LoopEndFrameJump = -1;
+	vqap->LoopIterationsJump = -1;
+	vqap->LoopStartFrame1 = -1;
+	vqap->LoopEndFrameNormal = -1;
+	vqap->LoopStartFrame2 = -1;
+	vqap->LastCallbackCount = -1;
+	vqap->MaxCallbackDelta = 0;
+	vqap->Audio.Block1 = 0;
+	vqap->Audio.Block2 = -1;
+	vqap->Audio.BufferPosition = 0;
+	vqap->RepeatedBuffers = 0;
+	VQA_ResetCache(vqap);
+}
+
 // FUNCTION: GAMEMD 0x007C3670
 void VQA_ResetCache(VQAHandleP *vqap)
 {

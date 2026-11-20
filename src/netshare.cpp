@@ -871,6 +871,44 @@ static inline void LBSelectText(HWND win, WideWstring & key, wchar_t * wide)
 
 
 
+// FUNCTION: GAMEMD 0x005E5F10
+void LBSaveSelections(HWND win, Dictionary<WideWstring,bool> & lbdict)
+{
+	int count = ListBox_GetCount(win);
+	WideWstring key;
+	wchar_t wide[0x400];
+	char narrow[0x400];
+
+	if (count == 0) {
+		return;
+	}
+	int style = GetWindowLong(win, GWL_STYLE);
+	if (style & LBS_MULTIPLESEL) {
+		for (int i = 0; i < count; i++) {
+			if (ListBox_GetSel(win, i) != 0) {
+				if (SendMessage(win, 0x4cf, i, 0) != 0) {
+					SendMessage(win, 0x4b6, i, (LPARAM)wide);
+				} else {
+					SendMessage(win, 0x4b7, i, (LPARAM)narrow);
+					FUN_00735060(wide, narrow, -1);
+				}
+				key = wide;
+				bool value = true;
+				lbdict.add(key, value);
+			}
+		}
+	} else if (!(style & LBS_NOSEL)) {
+		int index = ListBox_GetCurSel(win);
+		if (index >= 0) {
+			wide[0] = 0;
+			LBGetText(win, index, wide, narrow);
+			key = wide;
+			bool value = true;
+			lbdict.add(key, value);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x005E6230
 void LBRestoreSelections(HWND win, Dictionary<WideWstring,bool> & lbdict)
 {

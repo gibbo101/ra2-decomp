@@ -447,9 +447,11 @@ Each entry: what the diff showed, then the source change that fixed it.
   costs the same: write the accessor calls the original made (planmgr's Get_Count, Set_Event).
 - VC6 gives its inline budget to the latest call in the source first. Code placed after a
   call reduces that call's budget; code before it doesn't, and plain statements cost
-  nothing. Case bodies in a switch keep the same layout whatever their source order, so
-  reordering cases is a free way to change which call sites get inlined (WOL_Main_Dialog_Proc's
-  growVector, inlined only at the last request site, 0x0078AC10).
+  nothing. Case bodies in a switch are laid out group by group (each run of case values VC6
+  dispatches together, in ascending value order) and in source order within a group. Moving
+  whole groups is a free way to change which call sites get inlined (WOL_Main_Dialog_Proc's
+  growVector, inlined only at the last request site, 0x0078AC10; ListBoxHandler 0x00618D40);
+  moving a case within its group moves its code.
 - An unnamed `seg_` range that opens with a header run is a module of its own: it lands in
   `src/<previous module>2.cpp` (3 for a second such range), a provisional name that keeps the
   linker's alphabetical order. One with no header run is the end of the module before it and
@@ -514,14 +516,17 @@ Each entry: what the diff showed, then the source change that fixed it.
 - An unverified reference proves nothing: a wrong offset into a global object whose
   address check.py does not know passes. Give each object you reach into a names.csv
   row; `uv run tools/refaudit.py` lists symbols whose references imply different bases.
+- In a `__try` function the diff shows `fs:[0]` against `fs:[<addr>]`. That is the listing
+  only: check.py masks the field and counts `__except_list` as unverified, so it can match.
 - Code ported from TibSun brings Westwood's `/* ** */` comments and commented-out code:
   cut them to the comment rules (two `//` lines of behaviour) before landing.
 - `#define NDEBUG` before the includes is how a file whose original has its asserts
   compiled out is built (ownrdraw.cpp, wonline.cpp).
 - A heap-sensitive match flips with the weighted count of declarations before the
   function, not their names: 1 per variable, typedef, forward declaration or data member
-  (named or unnamed), 2 per function declaration or `enum`, 3 per inline definition, 8
-  plus its members per class definition; redeclarations and `#define`s weigh nothing.
+  (named or unnamed), 2 per `enum`, 1 plus its parameter count per function declaration
+  (2 with one parameter, 8 with seven), 3 per inline definition, 8 plus its members per
+  class definition; redeclarations and `#define`s weigh nothing.
   Keep a change's net weight zero before the function, or sweep it with
   `tools/declprobe.py`.
 - When no body form helps, moving real declarations the file already uses to before or

@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "vectornorm.h"
 #include "dialog.h"
 #include "geometry.h"
 #include "techno.h"
@@ -1235,6 +1236,29 @@ void TechnoClass::Draw_Single_Selection_Bracket(Coord const & coord1, Coord cons
 // FUNCTION: GAMEMD 0x006F60C0
 void TechnoClass::Draw_Health_Bar_Old(Point2D const &, Rect const &) const
 {
+}
+
+// FUNCTION: GAMEMD 0x006F60D0
+void TechnoClass::Draw_Pre_Render(Point2D const & point, Rect const & cliprect) const
+{
+	if (RTTI == RTTI_BUILDING && IsSelected) {
+		if (RTTI != RTTI_INFANTRY) {
+			int color = WHITE;
+			if (HeightAGL < -4) {
+				color = BLACK;
+			}
+			Point3D dim = TClass->Lepton_Dimensions();
+			dim.X /= 2;
+			dim.Y /= 2;
+			color = NormalDrawer->Convert_Pixel(color);
+			Coord center = Center_Coord();
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, 0), center + Coord(-dim.X, -dim.Y, dim.Z), color);
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, 0), center + Coord(dim.X, -dim.Y, 0), color);
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, 0), center + Coord(-dim.X, dim.Y, 0), color);
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, dim.Z), center + Coord(-dim.X, dim.Y, dim.Z), color);
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, dim.Z), center + Coord(dim.X, -dim.Y, dim.Z), color);
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x006F6AC0
@@ -5166,6 +5190,103 @@ void TechnoClass::FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned ch
 	}
 }
 
+// FUNCTION: GAMEMD 0x00705860
+void TechnoClass::FUN_00705860(Coord start, Coord end)
+{
+	Point2D start_point;
+	Point2D end_point;
+
+	TacticalMap->Coord_To_Pixel(start, start_point);
+	TacticalMap->Coord_To_Pixel(end, end_point);
+
+	int start_height = -32 - Tactical::Z_Lepton_To_Pixel(start.Z);
+	int end_height = -32 - Tactical::Z_Lepton_To_Pixel(end.Z);
+	int dx = abs(end_point.X - start_point.X);
+	int dy = abs(end_point.Y - start_point.Y);
+
+	if (!DSurface::Temp->Is_Direct_Draw()) {
+		return;
+	}
+
+	DSurface * surface = DSurface::Temp;
+	int r = NonCriticalRandomNumber(190, 270);
+	RGBClass color;
+	if (r > 255) {
+		color.Set_Red(255);
+		color.Set_Green((r - 256) * 110 / 14);
+		color.Set_Blue((r - 256) * 30 / 14);
+	} else {
+		color.Set_Red(r);
+	}
+
+	if (end_point.Y < start_point.Y) {
+		int pixel = DSurface::Build_Hicolor_Pixel(255, 0, 0);
+		Point2D start_cross;
+		Point2D end_cross;
+		start_cross.X = end_point.X - 2;
+		start_cross.Y = end_point.Y + 1;
+		end_cross.X = end_point.X + 1;
+		end_cross.Y = end_point.Y + 1;
+		surface->Draw_Line(start_cross, end_cross, pixel);
+		start_cross.X = end_point.X - 2;
+		start_cross.Y = end_point.Y;
+		end_cross.X = end_point.X + 1;
+		end_cross.Y = end_point.Y;
+		surface->Draw_Line(start_cross, end_cross, pixel);
+		start_cross.X = end_point.X - 1;
+		start_cross.Y = end_point.Y - 1;
+		end_cross.X = end_point.X - 1;
+		end_cross.Y = end_point.Y + 2;
+		surface->Draw_Line(start_cross, end_cross, pixel);
+		start_cross.X = end_point.X;
+		start_cross.Y = end_point.Y - 1;
+		end_cross.X = end_point.X;
+		end_cross.Y = end_point.Y + 2;
+		surface->Draw_Line(start_cross, end_cross, pixel);
+	}
+
+	Point2D delta(end_point.X - start_point.X, end_point.Y - start_point.Y);
+	int dH = end_height - start_height;
+	int weight = 100;
+	Point2D previous = start_point;
+	Point2D current;
+	Point2D a;
+	Point2D b;
+	for (int step = 1; step <= 4; weight -= 25, step++) {
+		current.X = start_point.X + (delta.X * step) / 4;
+		current.Y = start_point.Y + (delta.Y * step) / 4;
+		int height = start_height + (dH * step) / 4;
+
+		surface->FUN_004BEAC0(DSurface::ViewBounds, previous, current, color, 255 - ((step - 1) * 255) / 4, start_height, height);
+
+		if (dx > dy) {
+			a.X = previous.X;
+			a.Y = previous.Y + 1;
+			b.X = current.X;
+			b.Y = current.Y + 1;
+			surface->FUN_004BEAC0(DSurface::ViewBounds, a, b, color, weight, start_height, height);
+			a.X = previous.X;
+			a.Y = previous.Y - 1;
+			b.X = current.X;
+			b.Y = current.Y - 1;
+			surface->FUN_004BEAC0(DSurface::ViewBounds, a, b, color, weight, start_height, height);
+		} else {
+			a.X = previous.X + 1;
+			a.Y = previous.Y;
+			b.X = current.X + 1;
+			b.Y = current.Y;
+			surface->FUN_004BEAC0(DSurface::ViewBounds, a, b, color, weight, start_height, height);
+			a.X = previous.X - 1;
+			a.Y = previous.Y;
+			b.X = current.X - 1;
+			b.Y = current.Y;
+			surface->FUN_004BEAC0(DSurface::ViewBounds, a, b, color, weight, start_height, height);
+		}
+		previous = current;
+		start_height = height;
+	}
+}
+
 // FUNCTION: GAMEMD 0x00705D10
 void TechnoClass::FUN_00705D10(PlanningTokenClass * token)
 {
@@ -7173,6 +7294,101 @@ bool TechnoClass::Is_On_Elevation(void) const
 {
 	Cell cell = TacticalMap->Coord_To_Cell(Get_Coord());
 	return(cell != Get_Cell());
+}
+
+// FUNCTION: GAMEMD 0x0070C690
+Coord TechnoClass::Railgun_Beam_Damage(Coord & coord, AbstractClass *abstract, WeaponTypeClass *weapon)
+{
+	Coord center = abstract->Center_Coord();
+
+	bool target_found = false;
+
+	Cell final_cell = coord.As_Cell();
+	Vector3 start(coord.X, coord.Y, coord.Z);
+	Vector3 end(center.X, center.Y, center.Z);
+
+	Coord final_impact = coord;
+
+	Vector3 delta = end - start;
+	DynamicVectorClass<ObjectClass *> targets;
+
+	for (int i = 0; i < RAILGUN_STEPS; i++) {
+		final_impact = Lerp(coord, center, i * (1.0f / (RAILGUN_STEPS - 1)));
+
+		if (final_impact.As_Cell() != final_cell) {
+			final_cell = final_impact.As_Cell();
+			CellClass *cptr = &Map[final_cell];
+
+			ObjectClass *optr = cptr->Cell_Occupier(cptr->IsUnderBridge && final_impact.Z >= LEVEL_LEPTON_H * (cptr->Height + BRIDGE_CELL_HEIGHT));
+
+			while (optr != NULL) {
+				if (optr != this) {
+					if (optr == abstract) {
+						target_found = true;
+					}
+					if (optr->Is_Techno()) {
+						float distance = 0.0f;
+						if (optr->Fetch_RTTI() != RTTI_BUILDING) {
+							// Project the object offset onto the direction perpendicular to the beam.
+							// Normalize the projection to test the damage radius.
+							Coord obj_coord = optr->PositionCoord;
+							Vector3 obj(obj_coord.X, obj_coord.Y, obj_coord.Z);
+							Vector3 off = obj - start;
+							Vector3 cross;
+							Vector3::Cross_Product(off, delta, &cross);
+							Vector3 perp;
+							Vector3::Cross_Product(cross, delta, &perp);
+							distance = fabs((perp * off) / Vector3_Length(perp));
+						}
+
+						if (distance < Rule->RailgunDamageRadius || optr == abstract) {
+							if (targets.Count() == 0 || targets.ID(optr) == -1) {
+								targets.Add(optr);
+							}
+						}
+					}
+				}
+				optr = optr->Next;
+			}
+
+			// We hit a cell higher than the impact point, halt gathering targets.
+			if (Map.Get_Height_GL(final_impact) > final_impact.Z) {
+				// If the impact was a cell and contains a collapseable cliff, try to collapse it.
+				if (Map[final_impact].Is_Tile_Destroyable_Cliff()) {
+					if (Percent_Chance(Rule->CollapseChance)) {
+						Map.Collapse_Cliff(&Map[final_impact]);
+					}
+				}
+				return(final_impact);
+			}
+		}
+	}
+
+	CellClass *cptr = (CellClass *)abstract;
+
+	if (!target_found) {
+		ObjectClass *obj = abstract != NULL && (abstract->AbstractFlags & 2) ? static_cast<ObjectClass *>(abstract) : NULL;
+
+		if (obj != NULL) {
+			if (targets.Count() == 0 || targets.ID(obj) == -1) {
+				targets.Add(obj);
+			}
+		}
+	}
+
+	for (int j = 0; j < targets.Count(); j++) {
+		int damage = weapon->AmbientDamage;
+		targets[j]->Take_Damage(damage, 0, weapon->WarheadPtr, this);
+	}
+
+	// If the impact was a cell and contains a collapseable cliff, try to collapse it.
+	if (cptr->Fetch_RTTI() == RTTI_CELL && cptr->Is_Tile_Destroyable_Cliff()) {
+		if (Percent_Chance(Rule->CollapseChance)) {
+			Map.Collapse_Cliff(cptr);
+		}
+	}
+
+	return(center);
 }
 
 // FUNCTION: GAMEMD 0x0070CC90

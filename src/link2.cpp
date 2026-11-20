@@ -47,8 +47,22 @@
 // _$E78
 // SYNTHETIC: GAMEMD 0x005569E0 SYMBOL
 // _$E76
-DynamicVectorClass<LineTrail *> LineTrailArray(0);
+static DynamicVectorClass<LineTrail *> LineTrailArray(0);
 
+
+// FUNCTION: GAMEMD 0x00556A20
+LineTrail::LineTrail(void) :
+	Color(128, 128, 128),
+	Owner(NULL),
+	Decrement(16),
+	ActiveSlot(0)
+{
+	for (int index = 0; index < 32; index++) {
+		Trails[index].Position = COORD_NONE;
+		Trails[index].Value = 0;
+	}
+	LineTrailArray.Add(this);
+}
 
 // FUNCTION: GAMEMD 0x00556AD0
 LineTrail::~LineTrail(void)

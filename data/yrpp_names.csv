@@ -100,6 +100,7 @@ address,name,source
 0x00466380,BulletClass::BulletClass,symbols.csv
 0x004664C0,BulletClass::Construct,symbols.csv
 0x00468430,BulletClass::LoseTarget,symbols.csv
+0x0046A310,BulletClass::Shrapnel,symbols.csv
 0x0046ADE0,BulletClass::ApplyRadiationToCell,symbols.csv
 0x0046B280,BulletClass::InitScalable,symbols.csv
 0x0046B310,BulletClass::NukeMaker,symbols.csv
@@ -356,6 +357,8 @@ address,name,source
 0x00621E90,OwnerDraw::Paint,symbols.csv
 0x00622650,UI::BeginDialog,symbols.csv
 0x00622720,UI::EndDialog,symbols.csv
+0x00622820,UI::RegisterWindow,symbols.csv
+0x00622B50,UI::StandardWndProc,symbols.csv
 0x00623120,UI::Updated,symbols.csv
 0x006263D0,ColorScheme::GeneratePalette,symbols.csv
 0x006292B0,ParasiteClass::ParasiteClass,symbols.csv
@@ -608,6 +611,7 @@ address,name,source
 0x00819088,_GUID_92fea800_a184_11d1_b70a_00a024ddafd1,names.csv
 0x0087E294,AudioIDXData::Instance,names.csv
 0x0087F5D8,BombListInstance,names.csv
+0x008809A0,CurrentSWType,names.csv
 0x008870C0,INI_RA2MD,names.csv
 0x00887888,AircraftTracker,names.csv
 0x00889FB8,Airstrikes,names.csv
@@ -617,7 +621,6 @@ address,name,source
 0x00ABC5F8,KamikazeInstance,names.csv
 0x00ABCB78,LineTrailArray,names.csv
 0x00ABDC50,InvalidCell,names.csv
-0x00AC48B8,ODMasks,names.csv
 0x00AC4910,Parasites,names.csv
 0x00B04BD0,RadSites,names.csv
 0x00B0B5F0,SlaveManagers,names.csv

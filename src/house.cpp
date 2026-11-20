@@ -6897,6 +6897,50 @@ void HouseClass::Fire_GenMutator(SuperClass * super)
 	}
 }
 
+bool FUN_0053B400(void);
+
+// FUNCTION: GAMEMD 0x0050A150
+void HouseClass::Fire_PsyDom(SuperClass * super)
+{
+	if (FUN_0053B400() || Enemy == HOUSE_NONE) {
+		return;
+	}
+	Cell target = CELL_NONE;
+	int bestcount = 0;
+	if (PreferredTargetCell == CELL_NONE) {
+		for (int i = Foots.Count() - 1; i >= 0; i--) {
+			FootClass * foot = Foots[i];
+			int count = 0;
+			if (!foot->IsInLimbo) {
+				CellClass * cellptr = foot->Get_Cell_Ptr();
+				for (int j = 0; j <= DAT_007ED3D0[3]; j++) {
+					Cell cell = Unsorted::CellSpreadTable[j] + cellptr->CellID;
+					CellClass * cc = &Map[cell];
+					if (cc->Cell_Occupier() == NULL) {
+						continue;
+					}
+					FootClass * victim = As_Foot(cc->Cell_Occupier());
+					while (victim != NULL) {
+						if (!Is_Ally(victim) && !victim->In_Air() && victim->CanBePermaMindControlled()) {
+							count++;
+						}
+						victim = As_Foot(victim->Next);
+					}
+				}
+				if (count > bestcount) {
+					bestcount = count;
+					target = cellptr->CellID;
+				}
+			}
+		}
+		if (bestcount != 0) {
+			if (target != CELL_NONE && Map.In_Local_Radar(target, true)) {
+				Place_Special_Blast((SuperWeaponType)SuperWeapon.ID(super), target);
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0050A350
 void HouseClass::FUN_0050A350(SuperClass * super)
 {

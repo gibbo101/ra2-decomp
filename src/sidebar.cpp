@@ -1498,6 +1498,117 @@ void SidebarClass::StripClass::SelectClass::Set_Owner(StripClass & strip, int in
 
 extern bool UserInputLocked;
 
+bool SidebarClass::StripClass::Recalc(void)
+{
+	int ok;
+
+	if (Debug_Map || !BuildableCount) {
+		return(false);
+	}
+
+	bool scroll = false;
+	int max_visible = Map.GetVisibleCameoCount();
+	BuildType * unshifted = new BuildType[max_visible];
+
+	for (int i = 0; i < max_visible; i++) {
+		if (i + 2 * TopIndex < BuildableCount) {
+			unshifted[i] = Buildables[i + 2 * TopIndex];
+		}
+	}
+
+	bool redraw = false;
+	for (int index = 0; index < BuildableCount; index++) {
+		TechnoTypeClass const * tech = Fetch_Techno_Type(Buildables[index].BuildableType, Buildables[index].BuildableID);
+		if (tech != NULL) {
+			BuildingClass const * who = tech->Who_Can_Build_Me(true, false, false, PlayerPtr);
+			ok = who != NULL && who->House->Can_Build(tech, false, true);
+		} else {
+			if ((unsigned)Buildables[index].BuildableID < (unsigned)PlayerPtr->SuperWeapon.Count()) {
+				ok = PlayerPtr->SuperWeapon[Buildables[index].BuildableID]->Is_Present();
+			} else {
+				ok = false;
+			}
+		}
+
+		if (!ok) {
+			if (Buildables[index].Factory != NULL) {
+				OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::ABANDON,
+					Buildables[index].BuildableType, Buildables[index].BuildableID, tech->Naval));
+				if (Buildables[index].BuildableType == RTTI_BUILDINGTYPE ||
+					Buildables[index].BuildableType == RTTI_BUILDING) {
+					Map.PendingObjectPtr = NULL;
+					Map.PendingObject = NULL;
+					Map.PendingHouse = HOUSE_NONE;
+					Map.SetActiveFoundation(NULL);
+				}
+			}
+			if (tech != NULL && PlayerPtr->Fetch_Factory(tech->Fetch_RTTI(), tech->Naval, 0)) {
+				OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::ABANDON_ALL,
+					Buildables[index].BuildableType, Buildables[index].BuildableID, tech->Naval));
+			}
+
+			for (int i = 0; i < max_visible; i++) {
+				if (unshifted[i] == Buildables[index]) {
+					unshifted[i] = BuildType(0, RTTI_NONE);
+				}
+			}
+
+			if (BuildableCount > 1 && index < BuildableCount-1) {
+				memmove(&Buildables[index], &Buildables[index+1], sizeof(Buildables[0])*((BuildableCount-index)-1));
+			}
+			redraw = true;
+			scroll = true;
+			Buildables[BuildableCount-1].Factory = NULL;
+			Buildables[BuildableCount-1].BuildableID = 0;
+			Buildables[BuildableCount-1].BuildableType = RTTI_NONE;
+			Buildables[BuildableCount-1].IsAlt = 0;
+			Buildables[BuildableCount-1].unknown_10 = 0;
+			Buildables[BuildableCount-1].Progress.Set_Stage(0);
+			Buildables[BuildableCount-1].Progress.Set_Rate(0);
+			Buildables[BuildableCount-1].FlashEndFrame = 0;
+			IsToRedraw = true;
+			BuildableCount--;
+			index--;
+		}
+	}
+
+	Map.FUN_006A6820(ID);
+
+	if (scroll) {
+		bool got_old = false;
+		bool got_new = false;
+
+		int oldpos;
+		for (oldpos = 0; oldpos < max_visible; oldpos++) {
+			if (unshifted[oldpos] != BuildType(0, RTTI_NONE)) {
+				got_old = true;
+				break;
+			}
+		}
+
+		int newpos;
+		if (got_old && BuildableCount != 0) {
+			for (newpos = 0; newpos < BuildableCount; newpos++) {
+				if (Buildables[newpos] == unshifted[oldpos]) {
+					got_new = true;
+					break;
+				}
+			}
+		}
+
+		if (got_old && got_new) {
+			TopIndex -= (oldpos - newpos) / 2;
+			TopIndex = MAX(0, MIN(TopIndex, (BuildableCount - max_visible) / 2));
+		} else {
+			TopIndex = 0;
+		}
+		Map.IsForceCompleteRedraw = true;
+	}
+
+	delete[] unshifted;
+	return(redraw);
+}
+
 // FUNCTION: GAMEMD 0x006AAD00
 // SidebarClass::StripClass::SelectClass::Action
 int SidebarClass::StripClass::SelectClass::Action(
@@ -2213,3 +2324,6 @@ void SidebarClass::FUN_006A5130(bool full)
 		DAT_00B0B508 = SidebarRect.X + 39;
 	}
 }
+
+// SYNTHETIC: GAMEMD 0x006AC890
+// ??_EBuildType@StripClass@SidebarClass@@QAEPAXI@Z

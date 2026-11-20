@@ -2258,6 +2258,104 @@ void BuildingClass::Init(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00442D90
+void BuildingClass::Drop_Debris(AbstractClass * source)
+{
+	Cell const * offset;
+	Cell cell;
+
+	cell = Get_Cell();
+	offset = Occupy_List();
+	int odds = 2;
+	if (WhomToRepay != NULL) odds -= 1;
+	if (IsCaptured) odds += 6;
+	int count = How_Many_Survivors();
+
+	if ((Class->UnitAbsorb || Class->InfantryAbsorb) && Cargo.How_Many() > 0) {
+		FootClass * passenger = Cargo.Detach_Object();
+		do {
+			if (passenger != NULL) {
+				Cell const & off = *offset++;
+				Cell newcell = cell + off;
+				Coord newcoord = Coord(newcell) + Coord(0, 36, 0);
+				if (passenger->Fetch_RTTI() == RTTI_UNIT) {
+					newcoord = Map[newcoord].Center_Coord();
+				} else {
+					newcoord = Map[newcoord].Closest_Free_Spot(newcoord);
+				}
+				ScenarioInit++;
+				passenger->IsOnBridge = IsOnBridge;
+				Coord position = PositionCoord;
+				position.Z = Get_Cell_Ptr()->Center_Coord().Z;
+				if (!IsSurvivorless && passenger->Unlimbo(position, PrimaryFacing.Current().As_Dir256())) {
+					if (!passenger->CountedAsOwnedSpecial) {
+						passenger->House->CurInfantry++;
+						passenger->CountedAsOwnedSpecial = true;
+					}
+					passenger->Absorbed = false;
+					passenger->Scatter(COORD_NONE, true);
+					if (!House->FUN_0050B730()) passenger->QueueMission(MISSION_HUNT, false);
+				} else {
+					passenger->RegisterDestruction(As_Techno(source));
+					passenger->Delete_Me();
+				}
+				ScenarioInit--;
+				passenger = Cargo.Detach_Object();
+			}
+		} while (passenger != NULL);
+	}
+	if (count == 0) return;
+	while (*offset != REFRESH_EOL) {
+		Cell const & off = *offset++;
+		Cell newcell = cell + off;
+		CellClass const * cellptr = &Map[newcell];
+
+		if (!House->IsToDie && count > 0) {
+			if (Random_Pick(0, odds) == 1) {
+				InfantryClass * i = NULL;
+				const InfantryTypeClass * typ = Crew_Type();
+				if (typ != NULL) i = new InfantryClass(typ, House);
+				DebugString("Creating survivor type '%s' from building type '%s'\n", (char *)i->Class->GivenName, (char *)Class->GivenName);
+				if (i != NULL) {
+					if (HasBuildupData && i->Class->IsNominal) i->IsTechnician = true;
+					ScenarioInit++;
+					Coord newcoord = Coord(newcell) + Coord(0, 36, 0);
+					newcoord = Map[newcoord].Closest_Free_Spot(newcoord);
+
+					if (newcoord != COORD_NONE && i->Unlimbo(newcoord, DIR_N)) {
+						DebugString("Survivor unlimbo OK\n");
+						count--;
+						i->Strength = Random_Pick(5, i->Class->MaxStrength);
+						i->Scatter(COORD_NONE, true);
+						if (source != NULL && !House->CanOverpower(source)) {
+							i->QueueMission(MISSION_ATTACK, false);
+							i->Assign_Target(source);
+						} else {
+							if (House->FUN_0050B730()) {
+								i->QueueMission(MISSION_MOVE, false);
+							} else {
+								i->QueueMission(MISSION_HUNT, false);
+							}
+						}
+					} else {
+						delete i;
+					}
+					ScenarioInit--;
+				}
+			}
+		}
+
+		if (cellptr->Is_Clear_To_Move(SPEED_TRACK, true, true)) {
+
+			if (Percent_Chance(50)) {
+				SmudgeTypeClass::Scorch_The_Ground(Coord(Coord_Scatter(newcell, CELL_LEPTON / 2, false).As_Cell()));
+			} else {
+				SmudgeTypeClass::Crater_The_Ground(Coord(Coord_Scatter(newcell, CELL_LEPTON / 2, false).As_Cell()));
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00443410
 bool BuildingClass::Active_Click_With(ActionType action, ObjectClass * object, bool)
 {
@@ -4203,6 +4301,220 @@ void BuildingClass::Death_Announcement(TechnoClass const * source) const
 		Cell cell = Destination_Coord().As_Cell();
 		FUN_00660B80(cell);
 	}
+}
+
+// FUNCTION: GAMEMD 0x0044D7D0
+DirType BuildingClass::Fire_Direction(void) const
+{
+	if (TarCom == NULL) {
+		return((Dir256)DirType(PrimaryFacing.Current()).Round_To_256());
+	}
+	if (Is_Turret_Equipped() && !Class->IsTurretAnimAVoxel) {
+		return(PrimaryFacing.Current().As_Dir32() * (0x10000 / 32));
+	}
+	return(Aim_Direction(TarCom));
+}
+
+// FUNCTION: GAMEMD 0x0044D880
+int BuildingClass::Do_MISSION_UNLOAD(void)
+{
+	if (GetOccupantCount() > 0) {
+		FUN_00457DE0(false, false);
+	}
+
+	if ((Class->UnitAbsorb || Class->InfantryAbsorb) && Cargo.How_Many() > 0) {
+		FootClass * passenger = Cargo.Detach_Object();
+		if (passenger != NULL) {
+			DirType opposite = PrimaryFacing.Current().Right_180();
+			bool prefer_far = true;
+			int attempt = 0;
+			int toface = opposite.Round_To_8();
+
+			bool placed = false;
+			for (; attempt < FACING_COUNT; ++attempt) {
+				FacingType facing = (FacingType)((toface + attempt) & 7);
+				Cell near_cell = Adjacent_Cell(Get_Cell(), facing);
+				Cell far_cell = Adjacent_Cell(near_cell, facing);
+				bool far_allowed = passenger->Can_Enter_Cell(&Map[far_cell], facing, Get_Cell_Height(), NULL, true) == MOVE_OK;
+				bool near_allowed = passenger->Can_Enter_Cell(&Map[near_cell], facing, Get_Cell_Height(), NULL, true) == MOVE_OK;
+				if (!near_allowed || (!far_allowed && prefer_far)) {
+					if (prefer_far && attempt + 1 == FACING_COUNT) {
+						attempt = 0;
+						prefer_far = false;
+					}
+					continue;
+				}
+				if (Map[near_cell].IsUnderBridge) continue;
+				++ScenarioInit;
+				Coord position = Coord(near_cell);
+				if (passenger->Fetch_RTTI() == RTTI_INFANTRY) {
+					position = Map.Closest_Free_Spot(position);
+				} else {
+					near_cell = Map.Nearby_Location(near_cell, passenger->Techno_Type_Class()->Speed);
+					position = Coord(Cell(Map[near_cell].Center_Coord()));
+				}
+				placed = passenger->Unlimbo(position, DirType(facing).As_Dir256());
+				--ScenarioInit;
+				if (placed) {
+					if (Class->InfantryAbsorb) {
+						VocClass::PlayAt(Rule->LeaveBioReactorSound, Center_Coord(), NULL);
+						if (passenger->House->IsHuman) {
+							passenger->ShouldEnterAbsorber = false;
+						}
+						if (!passenger->CountedAsOwnedSpecial) {
+							passenger->House->CurInfantry++;
+							passenger->CountedAsOwnedSpecial = true;
+						}
+						passenger->Absorbed = false;
+					}
+					passenger->QueueMission(MISSION_MOVE, false);
+					if (prefer_far) {
+						passenger->Assign_Destination(&Map[far_cell], true);
+					} else {
+						passenger->Assign_Destination(&Map[near_cell], true);
+					}
+					if (Class->ExtraPower > 0) {
+						House->RecalcPower = true;
+					}
+				}
+				break;
+			}
+			if (!placed) {
+				Cargo.Attach(passenger);
+				passenger->Hidden();
+			}
+		}
+		return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+	}
+
+	if (Class->IsWeaponsFactory) {
+		Coord coord(0, 0, 0);
+		if (!Class->Naval) {
+			Cell exit = Class->ExitList[10];
+			Cell cell = exit + PositionCell;
+			Cell cell2 = Cell(cell.X - 1, cell.Y);
+			coord = Coord(cell2);
+		}
+		enum {
+			INITIAL,
+			CLEAR_BIB,
+			OPEN,
+			LEAVE,
+			CLOSE
+		};
+		switch (Status) {
+			case INITIAL: {
+				FootClass * unit = (FootClass *)Contact_With_Whom();
+				if (unit) {
+					unit->QueueMission(MISSION_GUARD, false);
+					unit->Commence();
+				}
+				Door.Open_Door(Class->DeployTime);
+				Status = Class->Naval ? CLOSE : CLEAR_BIB;
+				IsToDisplay = true;
+				End_Anim(BANIM_IDLE);
+				PlayNthAnim(BANIM_PRODUCTION, HealthRatio <= Rule->ConditionYellow, false);
+				break;
+			}
+
+			case CLEAR_BIB:
+				if (!Clear_Weapons_Factory_Bib()) {
+					DebugString("Weapons factory bib clear - kicking out unit\n");
+					Status = OPEN;
+				}
+				break;
+
+			case OPEN:
+				if (Door.Is_Door_Open()) {
+					FootClass * unit = (FootClass *)Contact_With_Whom();
+					if (unit) {
+						unit->QueueMission(MISSION_MOVE, false);
+
+						IPersistPtr persist(unit->Locomotion);
+						CLSID clsid;
+						persist->GetClassID(&clsid);
+
+						if (clsid == CLSID_TunnelLocomotion || clsid == CLSID_TeleportLocomotion) {
+							IPiggybackPtr piggy(unit->Locomotion);
+							if (piggy != NULL && piggy->Is_Piggybacking()) {
+								piggy->End_Piggyback(&unit->Locomotion);
+							}
+							ILocomotionPtr walk(CLSID_DriveLocomotion);
+							walk->Link_To_Object(unit);
+							piggy = IPiggybackPtr(walk);
+							if (piggy != NULL) {
+								piggy->Begin_Piggyback(unit->Locomotion);
+								unit->Locomotion = walk;
+								CoordStruct cs = coord;
+
+								unit->Locomotion->Force_Track(DriveLocomotionClass::OUT_OF_WEAPON_FACTORY, cs);
+							} else {
+								int damage = unit->Strength;
+								unit->Take_Damage(damage, 0, Rule->C4Warhead, NULL, true);
+							}
+						} else if (clsid != CLSID_DriveLocomotion) {
+							unit->Assign_Destination(&Map[Get_Cell() + Cell(4, 1)]);
+						} else {
+							CoordStruct cs;
+							cs.X = coord.X;
+							cs.Y = coord.Y;
+							cs.Z = coord.Z;
+							unit->Locomotion->Force_Track(DriveLocomotionClass::OUT_OF_WEAPON_FACTORY, cs);
+						}
+						unit->Set_Speed(0.5);
+						Status = LEAVE;
+					} else {
+						Door.Close_Door(Class->DeployTime);
+						Status = CLOSE;
+					}
+				}
+				break;
+
+			case LEAVE:
+				if (!IsTethered) {
+					Door.Close_Door(Class->DeployTime);
+					Status = CLOSE;
+				}
+				break;
+
+			case CLOSE:
+				if (Door.Is_Door_Closed() || Class->Naval) {
+					Enter_Idle_Mode(false, true);
+					IsToDisplay = true;
+				}
+				break;
+
+			default:
+				break;
+		}
+		return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+	}
+
+	if (Class->GapGenerator && Class->SuperGapRadiusInCells) {
+		if (!GapSuperCharged) {
+			DestroyGap();
+			GapRadius = Class->SuperGapRadiusInCells;
+			if (IsPowerOnline()) {
+				CreateGap();
+				GapSuperCharged = true;
+				HasExtraPowerDrain = true;
+				House->RecalcPower = true;
+			} else {
+				GapRadius = Class->GapRadiusInCells;
+				CreateGap();
+			}
+		} else {
+			DestroyGap();
+			GapSuperCharged = false;
+			HasExtraPowerDrain = false;
+			GapRadius = Class->GapRadiusInCells;
+			CreateGap();
+			House->RecalcPower = true;
+		}
+	}
+
+	QueueMission(MISSION_GUARD, false);
+	return(1);
 }
 
 // FUNCTION: GAMEMD 0x0044E3A0
@@ -8270,7 +8582,7 @@ template class TRect<int>;
 template class _com_ptr_t<_com_IIID<IPiggyback, &__uuidof(IPiggyback)> >;
 
 // TEMPLATE: GAMEMD 0x0045A170
-// ?_AddRef@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
+// ?_AddRef@?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
 template class _com_ptr_t<_com_IIID<ILocomotion, &__uuidof(ILocomotion)> >;
 
 // TEMPLATE: GAMEMD 0x0045A180
