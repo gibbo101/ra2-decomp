@@ -11082,6 +11082,87 @@ void FUN_007A19E0(void)
 	}
 }
 
+bool __fastcall FUN_00789B60(void);
+
+// FUNCTION: GAMEMD 0x007A1BB0
+bool FUN_007A1BB0(void)
+{
+	g_GameStarted = 0;
+	FUN_0052F3F0();
+	char buffer[256];
+	strncpy(buffer, DAT_00B73714, sizeof(buffer));
+	strtok(buffer, ":");
+	char * first = strtok(NULL, ",");
+	strtok(NULL, ",");
+	strtok(NULL, ",");
+	strtok(NULL, ",");
+	strtok(NULL, ",");
+	strtok(NULL, ",");
+	strtok(NULL, ",");
+	strtok(NULL, ",");
+	char * second = strtok(NULL, ",");
+	if (first && second) {
+		if (stricmp(first, g_NickName.get()) == 0 || stricmp(second, g_NickName.get()) == 0) {
+			if (stricmp(first, g_NickName.get()) == 0) {
+				DAT_00B76AC4 = second;
+				FUN_007A19E0();
+				PMessagePrintf(DAT_007EEF28, StringTable::LoadString("WOL:MatchCreatingGame", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x70C3));
+				g_GameStartRequested = false;
+				FUN_0079FC10(6, 30, 0);
+				if (FUN_00789B60()) {
+					PMessagePrintf(DAT_007EEF28, StringTable::LoadString("WOL:MatchWaitingForJoin", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x70C7), second);
+					return true;
+				}
+				PMessagePrintf(0x20C0FF, StringTable::LoadString("WOL:MatchErrorCreatingGame", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x70CE));
+				FUN_0079FC10(2, 30, 0);
+			} else {
+				DAT_00B76AC4 = first;
+				FUN_007A19E0();
+				Wstring game_name = Wstring(first) + Wstring("'s_game");
+				PMessagePrintf(DAT_007EEF28, StringTable::LoadString("WOL:MatchAttemptingToFindGame", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x70D5), first);
+				FUN_0079FC10(7, 30, 0);
+				int attempts = 1;
+				for (;;) {
+					if (!FUN_0077F710(0, false) || !FUN_0077F120()) {
+						PMessagePrintf(0x20C0FF, StringTable::LoadString("WOL:MatchGameChannelNotFound", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x70D9), first);
+						FUN_0079FC10(3, 20, 0);
+						return false;
+					}
+					Channel channel;
+					memset(&channel, 0, sizeof(channel));
+					for (int i = 0; i < g_GameChannelList.length(); i++) {
+						g_GameChannelList.get(channel, i);
+						if (stricmp((char *)channel.name, game_name.get()) == 0) {
+							if (FUN_00789960(&channel, false)) {
+								PMessagePrintf(DAT_007EEF28, StringTable::LoadString("WOL:MatchJoinedGame", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x70E3), first);
+								FUN_0079FC10(9, 90, 0);
+								return true;
+							}
+							PMessagePrintf(0x20C0FF, StringTable::LoadString("WOL:MatchErrorJoiningGame", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x70EB));
+							return false;
+						}
+					}
+					WOL_Wait_Callback();
+					Sleep(100);
+					if (attempts++ >= 30) {
+						PMessagePrintf(0x20C0FF, StringTable::LoadString("WOL:MatchGameChannelNotFound", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x70F3), first);
+						FUN_0079FC10(2, 30, 0);
+						break;
+					}
+				}
+			}
+		} else {
+			PMessagePrintf(0x20C0FF, StringTable::LoadString("WOL:MatchBadParameters", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x70B9));
+			FUN_0079FC10(3, 20, 0);
+		}
+	} else {
+		PMessagePrintf(0x20C0FF, StringTable::LoadString("WOL:MatchBadParameters", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x70AF));
+		FUN_0079FC10(3, 20, 0);
+	}
+	return false;
+}
+
+
 void __fastcall FUN_005EC880(HWND dialog, int count, bool full, bool ai);
 void FUN_005E2AC0(void);
 bool FUN_00779940(void);
