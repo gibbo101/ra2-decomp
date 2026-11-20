@@ -5187,6 +5187,56 @@ void MapClass::FUN_00577C90(HouseClass * house)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00577D90
+void MapClass::Reveal(HouseClass * house)
+{
+	if (house != NULL) {
+		Houses[house->HeapID]->MapIsClear = true;
+	}
+
+	if (house == PlayerPtr || house == NULL) {
+		if (house == NULL) {
+			FUN_004068E0("We tried to clear the shroud without an owner");
+		}
+		bool edge = (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode != NULL && !Session.MPGameMode->vt_entry_04();
+		if (!PlayerPtr->IsVisionary) {
+			Map.FUN_004ADEE0(false, false);
+			PlayerPtr->IsVisionary = true;
+			Map.Reset_Iterator();
+			for (CellClass * cellptr = Map.Iterate(); cellptr != NULL; cellptr = Map.Iterate()) {
+				if (edge) {
+					int x = cellptr->CellID.X;
+					int y = cellptr->CellID.Y;
+					if (x == 7) {
+						if (y == PlayRect.Width + 5) continue;
+					} else if (x == 13) {
+						if (y == PlayRect.Width + 11) continue;
+					}
+					if (x == PlayRect.Height + 13) {
+						if (y == PlayRect.Width + PlayRect.Height - 15) continue;
+					}
+					cellptr->ShroudCounter = 0;
+					cellptr->GapsCoveringThisCell = 0;
+					cellptr->IsMapped = true;
+					cellptr->IsVisible = true;
+					cellptr->IsFogMapped = true;
+					cellptr->IsFogVisible = true;
+				} else {
+					cellptr->ShroudCounter = 0;
+					cellptr->GapsCoveringThisCell = 0;
+					cellptr->IsMapped = true;
+					cellptr->IsVisible = true;
+					cellptr->IsFogMapped = true;
+					cellptr->IsFogVisible = true;
+				}
+			}
+			Map.FUN_004ADCD0(false, false);
+			Map.sub_657CE0();
+			Map.Flag_To_Redraw(GS_REDRAW_ALL);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00577F30
 void MapClass::Reveal_The_Map(HouseClass * house)
 {
