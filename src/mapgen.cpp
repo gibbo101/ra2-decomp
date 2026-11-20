@@ -2014,6 +2014,70 @@ void MapRegionClass::Pick_Start_Points(int first_waypoint)
 	Unknown0 = layout;
 }
 
+// FUNCTION: GAMEMD 0x00594B50
+bool Generate_Starting_Points(void)
+{
+	MZoneType map_zones[5] = {MZONE_AMPHIBIOUS, MZONE_AMPHIBIOUS, MZONE_AMPHIBIOUS, MZONE_NORMAL, MZONE_NORMAL};
+	int region_size_threshold = MAX(400.0, (double)RandomMapGen.LocalWidth * RandomMapGen.LocalHeight * 0.03);
+	int cell_index = Map.Zone_Reset();
+	MZoneType mzone = map_zones[RandomMapGen.SeedData.MapType];
+	int zone = Map.Zones[mzone][cell_index];
+	Create_Zone_Regions(mzone, zone);
+
+	int total = MapRegionClass::MapRegions.Count();
+	int i;
+	for (i = MapRegionClass::MapRegions.Count() - 1; i >= 0; i--) {
+		if (MapRegionClass::MapRegions[i]->CellCount < region_size_threshold) {
+			delete MapRegionClass::MapRegions[i];
+		}
+	}
+	DynamicVectorClass<MapRegionClass *> regions;
+	IndexClass<int, MapRegionClass *> ordered;
+	regions.Clear();
+	for (i = 0; i < MapRegionClass::MapRegions.Count(); i++) {
+		int score = 500000 - MapRegionClass::MapRegions[i]->CellCount;
+		score *= total;
+		score += MapRegionClass::MapRegions[i]->ID;
+		ordered.Add_Index(score, MapRegionClass::MapRegions[i]);
+	}
+	for (i = 0; i < ordered.Count(); i++) {
+		regions.Add(ordered.Fetch_By_Position(i));
+	}
+	int cells = 0;
+	for (i = 0; i < regions.Count(); i++) {
+		cells += regions[i]->CellCount;
+	}
+	int running = 0;
+	int assigned = 0;
+	int players = RandomMapGen.SeedData.NumPlayers;
+	for (i = 0; i < regions.Count(); i++) {
+		MapRegionClass *region = regions[i];
+		running += region->CellCount;
+		int count;
+		if (i == regions.Count() - 1) {
+			count = players - assigned;
+		} else {
+			count = (double)running / cells * players + 0.5 - assigned;
+		}
+		region->Unknown20 = count;
+		assigned += count;
+	}
+	int waypoint = 0;
+	for (i = 0; i < regions.Count(); i++) {
+		regions[i]->Pick_Start_Points(waypoint);
+		waypoint += regions[i]->Unknown20;
+	}
+	if (RandomMapGen.SeedData.MapType == 0) {
+		for (i = 0; i < regions.Count(); i++) {
+			if (regions[i]->Unknown20 == 0 && Random_Fraction() < 0.5) {
+				regions[i]->Place_Neutral_Building();
+			}
+		}
+	}
+	FUN_0058B820();
+	return true;
+}
+
 // FUNCTION: GAMEMD 0x00595400
 void MapRegionClass::Place_Neutral_Building(void)
 {
