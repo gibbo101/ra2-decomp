@@ -108,19 +108,6 @@ struct DamageGroup {
 	int Distance;
 };
 
-static inline bool Is_Bridge_Span(CellClass const * deck, int tile, OverlayType start, OverlayType end)
-{
-	return (deck != NULL && (deck->Overlay == start || deck->Overlay == end)) ||
-		tile == IsometricTileTypeClass::BridgeMiddle1 ||
-		tile == IsometricTileTypeClass::BridgeMiddle1 + 1 ||
-		tile == IsometricTileTypeClass::BridgeMiddle1 + 2 ||
-		tile == IsometricTileTypeClass::BridgeMiddle1 + 3 ||
-		tile == IsometricTileTypeClass::BridgeMiddle2 ||
-		tile == IsometricTileTypeClass::BridgeMiddle2 + 1 ||
-		tile == IsometricTileTypeClass::BridgeMiddle2 + 2 ||
-		tile == IsometricTileTypeClass::BridgeMiddle2 + 3;
-}
-
 // FUNCTION: GAMEMD 0x00489280
 int __fastcall Explosion_Damage(
 	Coord const &coord,
@@ -376,7 +363,15 @@ int __fastcall Explosion_Damage(
 			}
 		}
 
-		if (Is_Bridge_Span(bcptr, ittype, OVERLAY_BRIDGE1, OVERLAY_BRIDGE2)) {
+		if (bcptr && bcptr->Is_Overlay_Bridge() ||
+			ittype == IsometricTileTypeClass::BridgeMiddle1 + 0 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle1 + 1 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle1 + 2 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle1 + 3 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle2 + 0 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle2 + 1 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle2 + 2 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle2 + 3) {
 			if (!cptr->IsUnderBridge ||
 				(coord.Z <= BRIDGE_LEPTON_HEIGHT +
 					LEVEL_LEPTON_H * (cptr->Height + 1) &&
@@ -409,7 +404,15 @@ int __fastcall Explosion_Damage(
 		int ittype2 =
 			cptr->ITType - IsometricTileTypeClass::TrainBridgeSet + 1;
 
-		if (Is_Bridge_Span(bcptr, ittype2, OVERLAY_BRIDGEHEAD21, OVERLAY_BRIDGEHEAD22)) {
+		if (bcptr && bcptr->Is_Overlay_Rail_Bridge() ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle1 + 0 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle1 + 1 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle1 + 2 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle1 + 3 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle2 + 0 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle2 + 1 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle2 + 2 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle2 + 3) {
 			if (!cptr->IsUnderBridge ||
 				(coord.Z <= BRIDGE_LEPTON_HEIGHT +
 					LEVEL_LEPTON_H * (cptr->Height + 1) &&
