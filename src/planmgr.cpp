@@ -45,10 +45,7 @@ static inline void Shrink_Rect(Rect & r)
 	if (r.Width <= -2) goto none;
 	if (r.Height <= -2) {
 none:
-		r.X = 0;
-		r.Y = 0;
-		r.Width = 0;
-		r.Height = 0;
+		r.Set(0, 0, 0, 0);
 	} else {
 		r.X += 1;
 		r.Y += 1;
@@ -2748,6 +2745,16 @@ void __fastcall FUN_0063B150(void)
 			Draw_Filled_Unit_Waypoints(techno);
 		}
 	}
+}
+
+int __fastcall FUN_0063DAD0(RGBClass const & color);
+
+// FUNCTION: GAMEMD 0x0063B2F0
+void __fastcall FUN_0063B2F0(void)
+{
+	int color = FUN_0063DAD0(DAT_00A80220);
+	if (DAT_00AC4CCC) DAT_00AC4CCC->Frame_Lead_Box(color);
+	if (DAT_00AC4BF0) DAT_00AC4BF0->FUN_00635680(color);
 }
 
 // FUNCTION: GAMEMD 0x0063BE10
