@@ -17167,7 +17167,9 @@ address,name,result,size,source,symbol
 0x0075F8B0,WaveClass::Unlimbo,MATCH,194,src/wave.cpp,?Unlimbo@WaveClass@@UAE_NABVCoord@@W4Dir256@@@Z
 0x0075F980,WaveClass::Limbo,MATCH,98,src/wave.cpp,?Limbo@WaveClass@@UAE_NXZ
 0x0075F9F0,WaveClass::Draw_It,MATCH,156,src/wave.cpp,?Draw_It@WaveClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
+0x0075FA90,WaveClass::Draw_Sonic,MATCH,1777,src/wave.cpp,?Draw_Sonic@WaveClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x00760190,WaveClass::FUN_00760190,MATCH,332,src/wave.cpp,?FUN_00760190@WaveClass@@ABEXHHHPAG@Z
+0x007602E0,WaveClass::FUN_007602E0,MATCH,1777,src/wave.cpp,?FUN_007602E0@WaveClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x007609E0,WaveClass::Draw_Laser,MATCH,1382,src/wave.cpp,?Draw_Laser@WaveClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x00760F50,WaveClass::AI,MATCH,220,src/wave.cpp,?AI@WaveClass@@UAEXXZ
 0x00761030,WaveClass::Sonic_AI,MATCH,106,src/wave.cpp,?Sonic_AI@WaveClass@@AAEXXZ
