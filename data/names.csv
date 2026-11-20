@@ -957,3 +957,4 @@ address,name,symbol,evidence
 0x00480A80,CellClass::Reduce_Tiberium,?Reduce_Tiberium@CellClass@@QAEHH@Z,Six matched callers agree; UnitClass at 0x0073D450 calls this member at +0x152 and MapClass at 0x0057B790 at +0xB2
 0x007493B0,VoxelAnimClass::VoxelAnimClass,??0VoxelAnimClass@@QAE@PBVVoxelAnimTypeClass@@ABVCoord@@PAVHouseClass@@@Z,"Four matched callers agree on the type-coordinate-house constructor: 0x00701900 +0xA98, 0x004690B0 +0xD26, 0x00749F30 +0x3CC and 0x006E2520 +0xC9"
 0x00AC1478,ObjectTypeClass::SelectShapes,?SelectShapes@ObjectTypeClass@@2PBXB,"TibSun objtype.h declares SelectShapes before PipShapes, Pip2Shapes and TalkBubbleShapes, which sit at the next three addresses; matched FUN_005F76B0 0x005F76B0 loads PIPBRD.SHP into it; YRpp FileSystem::PIPBRD_SHP agrees"
+0x00581F90,MapClass::Reset_Subzone,?Reset_Subzone@MapClass@@QAEXH@Z,Stock VC6 SP3 byte match; 1290 bytes; recovered from the archived subzone algorithm and native control flow.
