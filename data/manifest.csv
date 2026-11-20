@@ -11593,6 +11593,7 @@ address,size,symbol,source,sha256
 0x0063A440,91,?FUN_0063A440@@YIHPAVPlanningTokenClass@@ABVEventClass@@@Z,src/planmgr.cpp,b528317d454989d3016764124988c991af2c6b2b2e52e956da6a46ed5e524f37
 0x0063A4A0,7,?FUN_0063A4A0@@YIXH@Z,src/planmgr.cpp,2da59cc5e8bf1fcf4728749ec6a35c85352bcacdf9a4fb9987072740cd3d16cb
 0x0063A4B0,237,?FUN_0063A4B0@@YIXH@Z,src/planmgr.cpp,4820ff3e731a0cacea032c934c5718544b665d92e7ce4702ac3cbafed9e1ad82
+0x0063A5A0,818,?FUN_0063A5A0@@YI_NVPoint2D@@@Z,src/planmgr.cpp,598ab0de742af45df20864c3a63dd640bc63fcf85eadc4b5450eae671bbac939
 0x0063A8E0,466,?FUN_0063A8E0@@YG_NVPoint2D@@@Z,src/planmgr.cpp,6e7e9eb522097c3759a9f2d18c76f750bd1d77004675bf95a44f98c5e1c80cf3
 0x0063AAC0,64,?FUN_0063AAC0@@YGXVPoint2D@@@Z,src/planmgr.cpp,751d4c6e0c0372736274121caef461300eb23866ce9db105236292e395536d70
 0x0063AB00,86,?FUN_0063AB00@@YGXVPoint2D@@@Z,src/planmgr.cpp,4c9288c4ab58d59234cbd14271778ed534693cd457166aa060f2db00fbd69ac0
@@ -15330,6 +15331,7 @@ address,size,symbol,source,sha256
 0x00700600,1586,?What_Action@TechnoClass@@UBE?AW4ActionType@@ABVCell@@_N1@Z,src/techno.cpp,72c994a65430562625ee29d773fe5b3f4564d73751fabbe0e327bc7f61fe306d
 0x00700C40,200,?Can_Player_Move@TechnoClass@@UBE_NXZ,src/techno.cpp,73dde80199b9f929a6d2fee3a059ad0309e2ab0a71943073abff46e19ecb04fd
 0x00700D10,63,?Can_Attack_Now@TechnoClass@@UBE_NXZ,src/techno.cpp,8bf160c92541ff57ce036c6aeda745b4a1cc1430e6feb9bb0bf730e053ede359
+0x00700D50,891,?Can_Deploy_Now@TechnoClass@@UBE_NXZ,src/techno.cpp,c625699c025cb707cbb7e69228cdd8cf72e05e7be14dbefe84a15f625a8429c5
 0x007010D0,69,?Can_Player_Fire@TechnoClass@@UBE_NXZ,src/techno.cpp,45b4b60da183730d6e01061a6821997d6d7a3dc4b432144953ada928cfe956ce
 0x00701120,26,?Is_Weapon_Equipped@TechnoClass@@UBE_NXZ,src/techno.cpp,85d0df3e9912566b4d894ca25c63e230405766a10fc4f900fef8f9881d5f1207
 0x00701140,71,?Can_Repair@TechnoClass@@UBE_NXZ,src/techno.cpp,958dcc3ca141723c954ad49bcc81255506f802c5b0bad315188442a87621207c
@@ -18329,6 +18331,7 @@ address,size,symbol,source,sha256
 0x0077E110,184,?Apply_WOL_Settings@@YIXXZ,src/wonline.cpp,1490529a7acd53c1ea1697c252f0a070efd00d6bc0ebdf8aee0efe7afde22a6c
 0x0077E1D0,296,?Send_Chat_Message@@YIHABVWideWstring@@@Z,src/wonline.cpp,d1885a71e0a2ae6a871170a0c25f246927e8a454a333bc481538878c2cd9dbef
 0x0077E300,296,?Send_Chat_Action@@YIHABVWideWstring@@@Z,src/wonline.cpp,c9065d55002202047a909565a1d7b947ef84c2cc161957456c6907bf944881da
+0x0077E430,845,?Encode_Game_Options@@YIXPAD@Z,src/wonline.cpp,1c011f46e49fbec7150318c3db9683508a17083d31a11bdd1d666219fd2deb33
 0x0077E780,22,?GetINIHash@@YIHXZ,src/wonline.cpp,6c7de4b62f14075abfbca2d506651533d21b52af75463c69d804b4c1ea1536db
 0x0077E7A0,114,?Encode_Channel_ExInfo@@YIXPAD@Z,src/wonline.cpp,246d107a2e59d5c89cea5cd2514aafce112a170518ff196bf52d4ecea9c0cfab
 0x0077E820,217,?FUN_0077E820@@YIXPADPAH1111PAVWstring@@@Z,src/wonline.cpp,13fc8dcf9bc8f9aeaad9e56c6903708b80945c1ce5cfe5395007d28c36d95c03

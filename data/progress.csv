@@ -11259,6 +11259,7 @@ address,name,result,size,source,symbol
 0x0063A440,FUN_0063A440,MATCH,91,src/planmgr.cpp,?FUN_0063A440@@YIHPAVPlanningTokenClass@@ABVEventClass@@@Z
 0x0063A4A0,FUN_0063A4A0,MATCH,7,src/planmgr.cpp,?FUN_0063A4A0@@YIXH@Z
 0x0063A4B0,FUN_0063A4B0,MATCH,237,src/planmgr.cpp,?FUN_0063A4B0@@YIXH@Z
+0x0063A5A0,FUN_0063A5A0,MATCH,818,src/planmgr.cpp,?FUN_0063A5A0@@YI_NVPoint2D@@@Z
 0x0063AAC0,FUN_0063AAC0,MATCH,64,src/planmgr.cpp,?FUN_0063AAC0@@YGXVPoint2D@@@Z
 0x0063AB00,FUN_0063AB00,MATCH,86,src/planmgr.cpp,?FUN_0063AB00@@YGXVPoint2D@@@Z
 0x0063AC60,FUN_0063AC60,MATCH,6,src/planmgr.cpp,?FUN_0063AC60@@YIPAVPlanningNodeClass@@XZ
@@ -14986,6 +14987,7 @@ address,name,result,size,source,symbol
 0x006FFE00,TechnoClass::ClickedEvent,MATCH,183,src/techno.cpp,?ClickedEvent@TechnoClass@@UAE_NH@Z
 0x00700C40,TechnoClass::Can_Player_Move,MATCH,200,src/techno.cpp,?Can_Player_Move@TechnoClass@@UBE_NXZ
 0x00700D10,TechnoClass::Can_Attack_Now,MATCH,63,src/techno.cpp,?Can_Attack_Now@TechnoClass@@UBE_NXZ
+0x00700D50,TechnoClass::Can_Deploy_Now,MATCH,891,src/techno.cpp,?Can_Deploy_Now@TechnoClass@@UBE_NXZ
 0x007010D0,TechnoClass::Can_Player_Fire,MATCH,69,src/techno.cpp,?Can_Player_Fire@TechnoClass@@UBE_NXZ
 0x00701120,TechnoClass::Is_Weapon_Equipped,MATCH,26,src/techno.cpp,?Is_Weapon_Equipped@TechnoClass@@UBE_NXZ
 0x00701140,TechnoClass::Can_Repair,MATCH,71,src/techno.cpp,?Can_Repair@TechnoClass@@UBE_NXZ
@@ -18428,6 +18430,7 @@ address,name,result,size,source,symbol
 0x00791B10,WOL_Guest_Dialog_Proc,MATCH,4295,src/wonline.cpp,?WOL_Guest_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x007A5890,CChatEventSink::OnChannelJoin,MATCH,6216,src/wonline.cpp,?OnChannelJoin@CChatEventSink@@QAGJJPAUChannel@@PAUUser@@@Z
 0x007AC630,??_GCreateGameDialogControl@@UAEPAXI@Z,MATCH,52,src/wonline.cpp,??_GCreateGameDialogControl@@UAEPAXI@Z
+0x0077E430,Encode_Game_Options,MATCH,845,src/wonline.cpp,?Encode_Game_Options@@YIXPAD@Z
 0x00535A60,??1CDFileClass@@UAE@XZ,MATCH,11,src/worlddom.cpp,??1CDFileClass@@UAE@XZ
 0x00535A70,??1CCFileClass@@UAE@XZ,MATCH,39,src/worlddom.cpp,??1CCFileClass@@UAE@XZ
 0x007AF090,_$E2,MATCH,23,src/worlddom.cpp,_$E2
