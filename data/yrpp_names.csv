@@ -236,6 +236,7 @@ address,name,source
 0x00509CD0,HouseClass::Fire_ParaDrop,symbols.csv
 0x00509E00,HouseClass::Fire_LightningStorm,symbols.csv
 0x00509F60,HouseClass::Fire_GenMutator,symbols.csv
+0x0050A150,HouseClass::Fire_PsyDom,symbols.csv
 0x0050B1D0,HouseClass::AISupers,symbols.csv
 0x0050BC90,HouseClass::CreatePowerOutage,symbols.csv
 0x0050BD10,HouseClass::ReshroudMap,symbols.csv
@@ -282,6 +283,7 @@ address,name,source
 0x00556550,LinkClass::LinkClass,symbols.csv
 0x005565A0,LinkClass::~LinkClass,symbols.csv
 0x00556600,LinkClass::operator=,symbols.csv
+0x00556A20,LineTrail::LineTrail,symbols.csv
 0x00557230,ListClass::ListClass,symbols.csv
 0x00558740,LoadOptionsClass::LoadOptionsClass,symbols.csv
 0x0055A050,LoadOptionsClass::GetUIString_Load,symbols.csv
@@ -300,6 +302,7 @@ address,name,source
 0x00574000,MapClass::DestroyConcreteBridgeAt,symbols.csv
 0x00574C20,MapClass::DestroyWoodBridgeAt,symbols.csv
 0x00577AB0,MapClass::Reshroud,symbols.csv
+0x00577D90,MapClass::Reveal,symbols.csv
 0x005865E0,MapClass::IsLocationFogged,symbols.csv
 0x00595680,MapSeedClass::MapSeedClass,symbols.csv
 0x00597F80,MapSeedClass::GetUIString_Load,symbols.csv
