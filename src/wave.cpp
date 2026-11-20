@@ -504,6 +504,183 @@ void WaveClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 	}
 }
 
+// FUNCTION: GAMEMD 0x0075FA90
+void WaveClass::Draw_Sonic(Point2D const & point, Rect const & cliprect)
+{
+	int y;
+	unsigned short zval;
+	int zpix = Tactical::Z_Lepton_To_Pixel(StartCoord.Z);
+
+	unsigned short * surfptr = (unsigned short *)LogicalSurface->Lock();
+	if (surfptr != NULL) {
+
+		int top = cliprect.Y + 3;
+		int bottom = cliprect.Y + cliprect.Height - 3;
+		int left = cliprect.X + 3;
+		int right = cliprect.X + cliprect.Width - 3;
+
+		int xoff = point.X - WaveStartMiddle.X;
+		int yoff = point.Y - WaveStartMiddle.Y;
+
+		Rasterize_Polygon(WaveShape, DrawData);
+
+		if (DrawData.Points != NULL) {
+
+			int starty = yoff + TacticalRect.Y + DrawData.BaseY;
+			int endy = MIN(DrawData.Count + starty - 1, cliprect.Height + cliprect.Y);
+
+			Init_Offset_Tables();
+
+			int xleft;
+			int zwidth;
+			unsigned short * dest;
+			int xstop;
+			int x;
+			int ypos;
+			int width;
+			int index;
+			unsigned short base_z;
+			unsigned int zoffset;
+			unsigned int depth_address;
+			Point2D * points;
+			Point2D depth_position;
+			if (Direction > FACING_NE && Direction < FACING_W) {
+				base_z = DepthBuffer->Get_Scroll_Delta(zpix);
+				zval = base_z - (unsigned short)starty - 2;
+				zoffset = DepthBuffer->Get_Buffer_Offset(Point2D(0, starty - TacticalRect.Y));
+				width = LogicalSurface->Get_Width();
+				zwidth = DepthBuffer->Get_Buffer_Width();
+
+				if (zoffset + 2 * (width + zwidth * (endy - starty + 1)) < DepthBuffer->Get_Buffer_End()) {
+
+					int stride = LogicalSurface->Stride() >> 1;
+					dest = surfptr + starty * stride;
+					points = DrawData.Points;
+
+					for (y = starty; y <= endy; y++) {
+						if (y >= top && y <= bottom) {
+							xstop = MIN(xoff + points->Y, right);
+							xleft = MAX(points->X + xoff, left);
+
+							zoffset += 2 * xleft;
+							dest += xleft;
+
+							ypos = abs(y - yoff - WaveStartMiddle.Y);
+							for (x = xleft; x <= xstop; x++) {
+								if (*(unsigned short *)zoffset > zval) {
+									Set_Sonic_Pixel(x, xoff, ypos, dest);
+								}
+								zoffset += 2;
+								dest++;
+							}
+							zoffset -= 2 * x;
+							dest -= x;
+						}
+						dest += stride;
+						zoffset += 2 * zwidth;
+						zval--;
+						points++;
+					}
+
+				} else {
+
+					index = 0;
+					for (y = starty; y <= endy; zval--, y++, index++) {
+						if (y >= cliprect.Y + 2 && y <= cliprect.Y + cliprect.Height - 2) {
+							points = &DrawData.Points[index];
+							xstop = MIN(xoff + points->Y, cliprect.X + cliprect.Width - 2);
+							xleft = MAX(points->X + xoff, cliprect.X + 2);
+
+							dest = surfptr + xleft + y * (LogicalSurface->Stride() >> 1);
+							depth_position.X = xleft;
+							depth_position.Y = y - TacticalRect.Y;
+							ypos = abs(y - yoff - WaveStartMiddle.Y);
+							for (x = xleft; x <= xstop; depth_position.X++, x++, dest++) {
+								depth_address = DepthBuffer->Get_Buffer_Offset(depth_position);
+								if (*(unsigned short *)depth_address > zval) {
+									Set_Sonic_Pixel(x, xoff, ypos, dest);
+								}
+							}
+						}
+					}
+				}
+
+			} else {
+
+				zoffset = DepthBuffer->Get_Buffer_Offset(Point2D(0, starty - TacticalRect.Y));
+				width = LogicalSurface->Get_Width();
+				ZBuffer * depth = DepthBuffer;
+				zwidth = depth->Get_Buffer_Width();
+				int rows = endy - starty;
+
+				if (zoffset + 2 * (width + zwidth * (rows + 1)) < depth->Get_Buffer_End()) {
+
+					int stride = LogicalSurface->Stride() >> 1;
+					dest = surfptr + endy * stride;
+					points = &DrawData.Points[rows];
+					base_z = DepthBuffer->Get_Scroll_Delta(endy);
+					zval = base_z - (unsigned short)zpix - 2;
+					zoffset = DepthBuffer->Get_Buffer_Offset(Point2D(0, endy - TacticalRect.Y));
+
+					for (y = endy; y >= starty; zval++, points--, y--) {
+						if (y >= top && y <= bottom) {
+							xstop = MIN(xoff + points->Y, right);
+							xleft = MAX(xoff + points->X, left);
+
+							dest += xstop;
+							zoffset += 2 * xstop;
+
+							ypos = abs(y - yoff - WaveStartMiddle.Y);
+							for (x = xstop; x >= xleft; x--) {
+								if (*(unsigned short *)zoffset > zval) {
+									Set_Sonic_Pixel(x, xoff, ypos, dest);
+								}
+								zoffset -= 2;
+								dest--;
+							}
+							zoffset -= 2 * x;
+							dest -= x;
+						}
+						zoffset -= 2 * zwidth;
+						dest -= stride;
+					}
+
+				} else {
+
+					base_z = depth->Get_Scroll_Delta(endy);
+					zval = base_z - (unsigned short)zpix - 2;
+					index = rows;
+					for (y = endy; y >= starty; zval++, y--, index--) {
+						if (y >= cliprect.Y + 2 && y <= cliprect.Y + cliprect.Height - 2) {
+							points = &DrawData.Points[index];
+							xstop = MIN(points->Y + xoff, cliprect.X + cliprect.Width - 2);
+							xleft = MAX(xoff + points->X, cliprect.X + 2);
+
+							dest = surfptr + xstop + y * (LogicalSurface->Stride() >> 1);
+							depth_position.X = xstop;
+							depth_position.Y = y - TacticalRect.Y;
+							ypos = abs(y - yoff - WaveStartMiddle.Y);
+							for (x = xstop; x >= xleft; depth_position.X--, x--, dest--) {
+								depth_address = DepthBuffer->Get_Buffer_Offset(depth_position);
+								if (*(unsigned short *)depth_address > zval) {
+									Set_Sonic_Pixel(x, xoff, ypos, dest);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		LogicalSurface->Unlock();
+
+		if (DrawData.Points != NULL) {
+			delete [] DrawData.Points;
+			DrawData.Points = NULL;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00760190
 void WaveClass::FUN_00760190(int x, int xoff, int y, unsigned short * buffer) const
 {
@@ -521,6 +698,183 @@ void WaveClass::FUN_00760190(int x, int xoff, int y, unsigned short * buffer) co
 	blue += ((blue * mult * 4) >> 8);
 
 	*buffer = DSurface::Build_Hicolor_Pixel(MIN(255, red), green, MIN(255, blue));
+}
+
+// FUNCTION: GAMEMD 0x007602E0
+void WaveClass::FUN_007602E0(Point2D const & point, Rect const & cliprect)
+{
+	int y;
+	unsigned short zval;
+	int zpix = Tactical::Z_Lepton_To_Pixel(StartCoord.Z);
+
+	unsigned short * surfptr = (unsigned short *)LogicalSurface->Lock();
+	if (surfptr != NULL) {
+
+		int top = cliprect.Y + 3;
+		int bottom = cliprect.Y + cliprect.Height - 3;
+		int left = cliprect.X + 3;
+		int right = cliprect.X + cliprect.Width - 3;
+
+		int xoff = point.X - WaveStartMiddle.X;
+		int yoff = point.Y - WaveStartMiddle.Y;
+
+		Rasterize_Polygon(WaveShape, DrawData);
+
+		if (DrawData.Points != NULL) {
+
+			int starty = yoff + TacticalRect.Y + DrawData.BaseY;
+			int endy = MIN(DrawData.Count + starty - 1, cliprect.Height + cliprect.Y);
+
+			Init_Offset_Tables();
+
+			int xleft;
+			int zwidth;
+			unsigned short * dest;
+			int xstop;
+			int x;
+			int ypos;
+			int width;
+			int index;
+			unsigned short base_z;
+			unsigned int zoffset;
+			unsigned int depth_address;
+			Point2D * points;
+			Point2D depth_position;
+			if (Direction > FACING_NE && Direction < FACING_W) {
+				base_z = DepthBuffer->Get_Scroll_Delta(zpix);
+				zval = base_z - (unsigned short)starty - 2;
+				zoffset = DepthBuffer->Get_Buffer_Offset(Point2D(0, starty - TacticalRect.Y));
+				width = LogicalSurface->Get_Width();
+				zwidth = DepthBuffer->Get_Buffer_Width();
+
+				if (zoffset + 2 * (width + zwidth * (endy - starty + 1)) < DepthBuffer->Get_Buffer_End()) {
+
+					int stride = LogicalSurface->Stride() >> 1;
+					dest = surfptr + starty * stride;
+					points = DrawData.Points;
+
+					for (y = starty; y <= endy; y++) {
+						if (y >= top && y <= bottom) {
+							xstop = MIN(xoff + points->Y, right);
+							xleft = MAX(points->X + xoff, left);
+
+							zoffset += 2 * xleft;
+							dest += xleft;
+
+							ypos = abs(y - yoff - WaveStartMiddle.Y);
+							for (x = xleft; x <= xstop; x++) {
+								if (*(unsigned short *)zoffset > zval) {
+									FUN_00760190(x, xoff, ypos, dest);
+								}
+								zoffset += 2;
+								dest++;
+							}
+							zoffset -= 2 * x;
+							dest -= x;
+						}
+						dest += stride;
+						zoffset += 2 * zwidth;
+						zval--;
+						points++;
+					}
+
+				} else {
+
+					index = 0;
+					for (y = starty; y <= endy; zval--, y++, index++) {
+						if (y >= cliprect.Y + 2 && y <= cliprect.Y + cliprect.Height - 2) {
+							points = &DrawData.Points[index];
+							xstop = MIN(xoff + points->Y, cliprect.X + cliprect.Width - 2);
+							xleft = MAX(points->X + xoff, cliprect.X + 2);
+
+							dest = surfptr + xleft + y * (LogicalSurface->Stride() >> 1);
+							depth_position.X = xleft;
+							depth_position.Y = y - TacticalRect.Y;
+							ypos = abs(y - yoff - WaveStartMiddle.Y);
+							for (x = xleft; x <= xstop; depth_position.X++, x++, dest++) {
+								depth_address = DepthBuffer->Get_Buffer_Offset(depth_position);
+								if (*(unsigned short *)depth_address > zval) {
+									FUN_00760190(x, xoff, ypos, dest);
+								}
+							}
+						}
+					}
+				}
+
+			} else {
+
+				zoffset = DepthBuffer->Get_Buffer_Offset(Point2D(0, starty - TacticalRect.Y));
+				width = LogicalSurface->Get_Width();
+				ZBuffer * depth = DepthBuffer;
+				zwidth = depth->Get_Buffer_Width();
+				int rows = endy - starty;
+
+				if (zoffset + 2 * (width + zwidth * (rows + 1)) < depth->Get_Buffer_End()) {
+
+					int stride = LogicalSurface->Stride() >> 1;
+					dest = surfptr + endy * stride;
+					points = &DrawData.Points[rows];
+					base_z = DepthBuffer->Get_Scroll_Delta(endy);
+					zval = base_z - (unsigned short)zpix - 2;
+					zoffset = DepthBuffer->Get_Buffer_Offset(Point2D(0, endy - TacticalRect.Y));
+
+					for (y = endy; y >= starty; zval++, points--, y--) {
+						if (y >= top && y <= bottom) {
+							xstop = MIN(xoff + points->Y, right);
+							xleft = MAX(xoff + points->X, left);
+
+							dest += xstop;
+							zoffset += 2 * xstop;
+
+							ypos = abs(y - yoff - WaveStartMiddle.Y);
+							for (x = xstop; x >= xleft; x--) {
+								if (*(unsigned short *)zoffset > zval) {
+									FUN_00760190(x, xoff, ypos, dest);
+								}
+								zoffset -= 2;
+								dest--;
+							}
+							zoffset -= 2 * x;
+							dest -= x;
+						}
+						zoffset -= 2 * zwidth;
+						dest -= stride;
+					}
+
+				} else {
+
+					base_z = depth->Get_Scroll_Delta(endy);
+					zval = base_z - (unsigned short)zpix - 2;
+					index = rows;
+					for (y = endy; y >= starty; zval++, y--, index--) {
+						if (y >= cliprect.Y + 2 && y <= cliprect.Y + cliprect.Height - 2) {
+							points = &DrawData.Points[index];
+							xstop = MIN(points->Y + xoff, cliprect.X + cliprect.Width - 2);
+							xleft = MAX(xoff + points->X, cliprect.X + 2);
+
+							dest = surfptr + xstop + y * (LogicalSurface->Stride() >> 1);
+							depth_position.X = xstop;
+							depth_position.Y = y - TacticalRect.Y;
+							ypos = abs(y - yoff - WaveStartMiddle.Y);
+							for (x = xstop; x >= xleft; depth_position.X--, x--, dest--) {
+								depth_address = DepthBuffer->Get_Buffer_Offset(depth_position);
+								if (*(unsigned short *)depth_address > zval) {
+									FUN_00760190(x, xoff, ypos, dest);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		LogicalSurface->Unlock();
+
+		if (DrawData.Points != NULL) {
+			delete [] DrawData.Points;
+			DrawData.Points = NULL;
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x007609E0
