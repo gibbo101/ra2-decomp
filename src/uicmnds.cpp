@@ -1471,3 +1471,47 @@ void __fastcall FUN_007336C0(bool redraw)
 	if (remaining) Unsorted::NavCycleMode = 4;
 	DAT_00B0FE58 = false;
 }
+
+extern int DAT_00B0FE70;
+extern char DAT_00B0FD70[];
+
+// FUNCTION: GAMEMD 0x007339B0
+void __fastcall FUN_007339B0(bool redraw)
+{
+	wchar_t text[256];
+	if (Unsorted::MuteSWLaunches) return;
+	int cost;
+	char * type;
+	if (Unsorted::NavCycleMode != 5) {
+		FUN_007331B0();
+		FUN_006DA740(TacticalMap);
+		type = FUN_00733E10(DAT_00B0FE6C, NULL, INT_MAX, &cost);
+	} else {
+		type = FUN_00733E10(DAT_00B0FE6C, DAT_00B0FD70, DAT_00B0FE70, &cost);
+		if (redraw) FUN_006DA740(TacticalMap);
+	}
+	TechnoList * list = DAT_00B0FE6C;
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * techno = (*list)[i];
+		if (FUN_00733C60(techno, type)) techno->Select();
+	}
+	wchar_t const * name = NULL;
+	SmartPtr<TechnoList> all(FUN_00732050());
+	if (!FUN_00732190(all, (bool (__fastcall *)(TechnoClass *, int))FUN_00733C60, (int)type)) {
+		name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x6c3);
+	}
+	if (!name && CurrentObject.Count() > 0) {
+		name = CurrentObject[0]->Class_Of()->UIName;
+	}
+	FUN_00731D90(text, name);
+	FUN_00730A90(text, 240);
+	DAT_00B0FE70 = cost;
+	strcpy(DAT_00B0FD70, type);
+	if (type) delete [] type;
+	int remaining = all->Count();
+	Unsorted::NavCycleMode = 0;
+	if (remaining) Unsorted::NavCycleMode = 5;
+	DAT_00B0FE58 = false;
+	delete all;
+}
