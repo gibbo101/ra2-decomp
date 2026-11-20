@@ -3231,6 +3231,7 @@ address,name,result,size,source,symbol
 0x0049B370,_$E60,MATCH,23,src/coopcamp.cpp,_$E60
 0x0049B390,_$E65,MATCH,143,src/coopcamp.cpp,_$E65
 0x0049B420,_$E63,MATCH,10,src/coopcamp.cpp,_$E63
+0x0049B430,FUN_0049B430,MATCH,25,src/coopcamp.cpp,?FUN_0049B430@@YIDH@Z
 0x0049B450,FUN_0049B450,MATCH,54,src/coopcamp.cpp,?FUN_0049B450@@YIHD@Z
 0x0049B490,FUN_0049B490,MATCH,165,src/coopcamp.cpp,?FUN_0049B490@@YIPADPBD@Z
 0x0049B540,FUN_0049B540,MATCH,206,src/coopcamp.cpp,?FUN_0049B540@@YIPADPBD@Z
@@ -3658,6 +3659,7 @@ address,name,result,size,source,symbol
 0x004A8EA0,_$E252,MATCH,1,src/display.cpp,_$E252
 0x004A8EB0,DisplayClass::Passes_Proximity_Check,MATCH,438,src/display.cpp,?Passes_Proximity_Check@DisplayClass@@QBE_NPBVObjectTypeClass@@W4HousesType@@PBVCell@@ABV4@@Z
 0x004A9070,DisplayClass::Passes_Shroud_Check,MATCH,312,src/display.cpp,?Passes_Shroud_Check@DisplayClass@@QBE_NPBVObjectTypeClass@@W4HousesType@@PBVCell@@ABV4@@Z
+0x004A91B0,DisplayClass::Set_Cursor_Pos,MATCH,832,src/display.cpp,?Set_Cursor_Pos@DisplayClass@@QAE?AVCell@@ABV2@@Z
 0x004A94F0,DisplayClass::Get_Occupy_Dimensions,MATCH,169,src/display.cpp,?Get_Occupy_Dimensions@DisplayClass@@QBE?AVCell@@PBV2@@Z
 0x004A95A0,DisplayClass::Cursor_Mark,MATCH,166,src/display.cpp,?Cursor_Mark@DisplayClass@@QAEXABVCell@@_N@Z
 0x004A9650,DisplayClass::Mark_Foundation_Copy,MATCH,166,src/display.cpp,?Mark_Foundation_Copy@DisplayClass@@QAEXABVCell@@_N@Z
@@ -8040,6 +8042,7 @@ address,name,result,size,source,symbol
 0x0057A9C0,_$E249,MATCH,809,src/map.cpp,_$E249
 0x0057ACF0,MapClass::Place_Shore,MATCH,1304,src/map.cpp,?Place_Shore@MapClass@@QAE_NPAVCellClass@@HH_N@Z
 0x0057B210,MapClass::Get_Water_Mask,MATCH,549,src/map.cpp,?Get_Water_Mask@MapClass@@QAEHPAVCellClass@@H@Z
+0x0057B440,MapClass::Pick_Random_Tile_Variant,MATCH,848,src/map.cpp,?Pick_Random_Tile_Variant@MapClass@@QAE_NW4IsometricTileType@@HHHAA_N_N@Z
 0x0057B790,MapClass::Area_Reduce_Tiberium,MATCH,211,src/map.cpp,?Area_Reduce_Tiberium@MapClass@@QAEXABVCell@@@Z
 0x0057B870,MapClass::Get_Low_Bridge_EW_Neighbor_Mask,MATCH,282,src/map.cpp,?Get_Low_Bridge_EW_Neighbor_Mask@MapClass@@CIHABVCell@@@Z
 0x0057B990,MapClass::Get_Low_Bridge_NS_Neighbor_Mask,MATCH,262,src/map.cpp,?Get_Low_Bridge_NS_Neighbor_Mask@MapClass@@CIHABVCell@@@Z
@@ -11769,6 +11772,8 @@ address,name,result,size,source,symbol
 0x0065A4A0,??_G?$VectorClass@PAVRadBeam@@@@UAEPAXI@Z,MATCH,73,src/radbeam.cpp,??_G?$VectorClass@PAVRadBeam@@@@UAEPAXI@Z
 0x0065A4F0,??_G?$DynamicVectorClass@PAVRadBeam@@@@UAEPAXI@Z,MATCH,73,src/radbeam.cpp,??_G?$DynamicVectorClass@PAVRadBeam@@@@UAEPAXI@Z
 0x006591B0,RadBeam::Update_All,MATCH,564,src/radbeam.cpp,?Update_All@RadBeam@@SIXXZ
+0x00659AC0,RadBeam::FUN_00659AC0,MATCH,474,src/radbeam.cpp,?FUN_00659AC0@RadBeam@@QAEXXZ
+0x00659FF0,RadBeam::FUN_00659FF0,MATCH,447,src/radbeam.cpp,?FUN_00659FF0@RadBeam@@QAEXXZ
 0x0065A540,_$E32,MATCH,40,src/radio.cpp,_$E32
 0x0065A570,_$E35,MATCH,19,src/radio.cpp,_$E35
 0x0065A590,_$E38,MATCH,19,src/radio.cpp,_$E38

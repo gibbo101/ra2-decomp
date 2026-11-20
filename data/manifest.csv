@@ -3589,6 +3589,7 @@ address,size,symbol,source,sha256
 0x0049B370,23,_$E60,src/coopcamp.cpp,7638116c9f2ceaef1cc597aca73cbbec51e7e92f7063972c5b17391236d29163
 0x0049B390,143,_$E65,src/coopcamp.cpp,0dc2da1a18dd45b9b82600fa3b75ac7f1757e8ee02c8dba519511a9dc5650121
 0x0049B420,10,_$E63,src/coopcamp.cpp,c4229c81b82174c9ecd7db3e91c9996f45af05836272550c5840e8843f3f5bdc
+0x0049B430,25,?FUN_0049B430@@YIDH@Z,src/coopcamp.cpp,0573aa5227e86fc8933b32597467db19f9a83346e524c84de8908c9dd5d2417b
 0x0049B450,54,?FUN_0049B450@@YIHD@Z,src/coopcamp.cpp,233bafa75c9fd316929398f8d746199c682b40be4db1666c0681e20befe3f45f
 0x0049B490,165,?FUN_0049B490@@YIPADPBD@Z,src/coopcamp.cpp,205ea7b1cdf2e38ce569b043ed4ae602b91d945ad89479e05988c3ec1ca14726
 0x0049B540,206,?FUN_0049B540@@YIPADPBD@Z,src/coopcamp.cpp,19913fe70aac4ae7f174f4425ec73b580fb2ced7cfbb1cecf9031511b96907ef
@@ -4013,6 +4014,7 @@ address,size,symbol,source,sha256
 0x004A8EA0,1,_$E252,src/display.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x004A8EB0,438,?Passes_Proximity_Check@DisplayClass@@QBE_NPBVObjectTypeClass@@W4HousesType@@PBVCell@@ABV4@@Z,src/display.cpp,b73bcf050e9c48bfc3a437374f707eaa77c00b13a0fe309a0f51836f871266da
 0x004A9070,312,?Passes_Shroud_Check@DisplayClass@@QBE_NPBVObjectTypeClass@@W4HousesType@@PBVCell@@ABV4@@Z,src/display.cpp,e19098bdd7fa9182c5cf7b69b65a383653393166648720f513b2770fe56fdbfb
+0x004A91B0,832,?Set_Cursor_Pos@DisplayClass@@QAE?AVCell@@ABV2@@Z,src/display.cpp,088d1fc97f6783b0dbed58bb93143319ab5770e5c5d578b4c9199cbb87cde9a7
 0x004A94F0,169,?Get_Occupy_Dimensions@DisplayClass@@QBE?AVCell@@PBV2@@Z,src/display.cpp,abdaa9b08178898f84b6e1fa24ed1bc533a3c2b3a247953e3b54c8807a6cc1bf
 0x004A95A0,166,?Cursor_Mark@DisplayClass@@QAEXABVCell@@_N@Z,src/display.cpp,a802e9f1100d24229d4086be5e4c754a25da606cc1c4012113cb2b9e3e02cc93
 0x004A9650,166,?Mark_Foundation_Copy@DisplayClass@@QAEXABVCell@@_N@Z,src/display.cpp,f0907e5360edad164a82b2e94fcf226251e8bbe8908bba282f977571348a46bf
@@ -8395,6 +8397,7 @@ address,size,symbol,source,sha256
 0x0057A9C0,809,_$E249,src/map.cpp,445550ba38c676bb8e70afb83db1cc68c62dc1105a29d842e45a5abacbff72b0
 0x0057ACF0,1304,?Place_Shore@MapClass@@QAE_NPAVCellClass@@HH_N@Z,src/map.cpp,0e35ef410cfa996ce9b3ba85749e8eb0f539592727e28fc61d3844cb9974152f
 0x0057B210,549,?Get_Water_Mask@MapClass@@QAEHPAVCellClass@@H@Z,src/map.cpp,20d804cabe274ffa7338e1726bd6a29fbced212095b02bfe9b130788db725bcb
+0x0057B440,848,?Pick_Random_Tile_Variant@MapClass@@QAE_NW4IsometricTileType@@HHHAA_N_N@Z,src/map.cpp,901bf8534f4df8ad175e147d69302f7ee0059b59f7e8587ece9373e429735165
 0x0057B790,211,?Area_Reduce_Tiberium@MapClass@@QAEXABVCell@@@Z,src/map.cpp,111c1f6c56bc95e03d3a011416775bc440e4d6189b893e9c01c5434b2214e225
 0x0057B870,282,?Get_Low_Bridge_EW_Neighbor_Mask@MapClass@@CIHABVCell@@@Z,src/map.cpp,0abf811f116ed4fd242da2d35a670712569fb3c7d11532dec8f13d287196d3f6
 0x0057B990,262,?Get_Low_Bridge_NS_Neighbor_Mask@MapClass@@CIHABVCell@@@Z,src/map.cpp,6567de0e6108ec4ad4384f0059fc175fbc22fbf120e34f97f7bef215bd250b83
@@ -12101,9 +12104,11 @@ address,size,symbol,source,sha256
 0x00659650,879,?FUN_00659650@RadBeam@@QAE_NXZ,src/radbeam.cpp,b82cfbe77d1090510d434ced7018274b004e972a20c91b989bcd69696b31a2ad
 0x006599C0,100,?FUN_006599C0@RadBeam@@QAEXXZ,src/radbeam.cpp,eed472013779d2b8cdaa762dd3effe3177525e44e223cb736d3c94f4f46ed8bd
 0x00659A30,136,?FUN_00659A30@RadBeam@@QAEXXZ,src/radbeam.cpp,58b9365a53b37d357ca96ada1dc95d5803eaabf244d33b7902f03af174382e5e
+0x00659AC0,474,?FUN_00659AC0@RadBeam@@QAEXXZ,src/radbeam.cpp,977f033d9add1279bbf182961a2e88b0eea550a146a9e164a11c20ea408d4549
 0x00659CA0,388,?FUN_00659CA0@RadBeam@@QAE_NXZ,src/radbeam.cpp,d8b15505e48e2796580e640a9809f93064f0e1474e92c2258fef592278e590e9
 0x00659E30,162,?FUN_00659E30@RadBeam@@QAEXXZ,src/radbeam.cpp,6065c31d71facf63b9a448c704ef48066c65f4e11b6199c10513fd43543daabf
 0x00659EE0,264,?FUN_00659EE0@RadBeam@@QAEXXZ,src/radbeam.cpp,0dd064e19c72fe8904ce3024903fa9c9507558201f9e9c1088cca3502633204b
+0x00659FF0,447,?FUN_00659FF0@RadBeam@@QAEXXZ,src/radbeam.cpp,792a1957e5ffb753bf249e1387ad7bd9e30b3ef48c1b0bec4fb1340b1a769091
 0x0065A1B0,40,??_0?$TPoint3D@H@@QAEABV0@H@Z,src/radbeam.cpp,be86bd5b18e1e0e711abab9e47bb7ca3902389b0bc8aa61b539cdbbb03df3855
 0x0065A1E0,42,?Clear@?$DynamicVectorClass@PAVRadBeam@@@@UAEXXZ,src/radbeam.cpp,aa4744f217e3ebd1a29db9a1c30b10a2a12ce3edc78f674bc546f69cecf8bede
 0x0065A210,27,?ID@?$DynamicVectorClass@PAVRadBeam@@@@UAEHPBQAVRadBeam@@@Z,src/radbeam.cpp,eeb29d112613b0653ee85b4ff58bddb59157c8b4fc65a386db3052b948d71bbb
