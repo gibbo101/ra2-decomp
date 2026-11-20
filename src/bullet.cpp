@@ -313,6 +313,7 @@ void BulletClass::Detach(AbstractClass const * target, bool all)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00468670
 bool BulletClass::Unlimbo(Coord const & coord, TVelocity3D<double> const & velocity)
 {
 	if (BASECLASS::Unlimbo(coord)) {
@@ -325,7 +326,11 @@ bool BulletClass::Unlimbo(Coord const & coord, TVelocity3D<double> const & veloc
 		TargetCoords = tcoord;
 
 		if (Class->FlakScatter && Class->IsInvisible) {
-			TPoint3D<float> delta(coord.X - tcoord.X, tcoord.Y - coord.Y, coord.Z - tcoord.Z);
+			TPoint3D<float> delta;
+			delta.X = coord.X - tcoord.X;
+			delta.Y = tcoord.Y - coord.Y;
+			float vertical = coord.Z - tcoord.Z;
+			delta.Z = vertical;
 			float distance = delta.Length();
 			int scatter = Random_Pick(0, Rule->BallisticScatter * 2);
 			scatter *= (int)distance;
