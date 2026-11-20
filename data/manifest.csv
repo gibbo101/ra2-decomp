@@ -8234,6 +8234,7 @@ address,size,symbol,source,sha256
 0x0055FA30,108,?Mode_Prompt_Dialog@@YI_NXZ,src/mainopt.cpp,01c771ed0d5378a63209b9dcd3973eb36b2f53aef73e9e48011da2489eae3e32
 0x0055FAA0,476,?Apply_Game_Settings@@YIXPAUHWND__@@@Z,src/mainopt.cpp,6c43c683ebeedfe40d4ee3a22556094616f7a88309aa3164c257947df650e035
 0x0055FC80,292,?Main_Options_Dialog@@YIXXZ,src/mainopt.cpp,eedfc57b41d392427ce13805763a5853fcbfca28696a4cba2f4b2ee6c149726c
+0x0055FDB0,1744,?FUN_0055FDB0@@YGHPAUHWND__@@IIJ@Z,src/mainopt.cpp,7bfac7ca839109db90c315d5ab1ffa7dea7c18897358459841135249df83a47d
 0x00560480,1897,?FUN_00560480@@YGHPAUHWND__@@IIJ@Z,src/mainopt.cpp,f3d0f8c08876b6dd7030afcf6e563f261a60bbdc51eba5b8241c0cf3929f8682
 0x00560BF0,1418,?Change_Display_Mode@@YI_NHH@Z,src/mainopt.cpp,1bad1be4670a239c3af7dc4fcb1e35272d810bda20c7574d0dd8910d5f09e3d3
 0x00561180,460,?Test_Display_Mode_Dialog@@YI_NHH@Z,src/mainopt.cpp,d4244434daccf20ae16986784945a79386a91ea969e42b9f4d3e2322c068517b
@@ -8317,6 +8318,7 @@ address,size,symbol,source,sha256
 0x0056C210,744,?Close_Object@MapClass@@QBEPAVObjectClass@@ABVCoord@@@Z,src/map.cpp,a3826d3c8a063a9bd8c28ac1c75152d2a42aedd04b068c5770ec3f0130e589a4
 0x0056C500,1,_$E240,src/map.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x0056CB80,16,?SubzoneHash@@YIHABI@Z,src/map.cpp,18b02aad31f39a6cf194711d4e12b0484db52581793d339009f1478ee6c8a186
+0x0056CB90,1386,?Zone_Span@MapClass@@QAEHPAUCellZoneStruct@@HAAH@Z,src/map.cpp,5597952eb138a262cc5363a0bd2a79395aefa4e4dbcfd2f080e8ca526d3ed99f
 0x0056D230,362,?Get_Cell_Zone@MapClass@@QAEHPBVCell@@W4MZoneType@@_N@Z,src/map.cpp,290a0599c9cbe254645c1c3d734c69b1263cb81509c65a1424d59a1a18647f9d
 0x0056D3A0,78,?Get_Cell_Zone_ID@MapClass@@QAEHABVCell@@@Z,src/map.cpp,b466a9581603b924073634ef7da7b2caebcc18561c9c7a6db6d1f5a7dc29db0b
 0x0056D3F0,54,?Get_Cell_Zone_Index@MapClass@@QAEHABVCell@@@Z,src/map.cpp,226651300930972ccc0ff20a26be3337e498166fb2d3b1b2443ccfcfe6214eab
@@ -13380,6 +13382,7 @@ address,size,symbol,source,sha256
 0x006A8920,179,?Scroll@StripClass@SidebarClass@@QAE_N_N@Z,src/sidebar.cpp,3e691104bdb04801b2309bb4b28b015a4d434c4c64360277e87d201084bd0b44
 0x006A89E0,296,?Page@StripClass@SidebarClass@@QAE_N_N@Z,src/sidebar.cpp,8de1c1003dfca9f98b33b218365b0a56bf05209b86f6de9ae8df9cd4dc5a9b74
 0x006A8B10,17,?Flag_To_Redraw@StripClass@SidebarClass@@QAEXXZ,src/sidebar.cpp,85ee6119fe6b7c87195730a7596372ad1363c48fae61953771218e9bfaa7b770
+0x006A8B30,1967,?AI@StripClass@SidebarClass@@QAE_NAAW4KeyNumType@@ABVPoint2D@@@Z,src/sidebar.cpp,7e210bf1818b733502df36989eed96185e05caf346db280d0ba2090000f3f5c4
 0x006A92E0,264,?Help_Text@StripClass@SidebarClass@@QAEPBGH@Z,src/sidebar.cpp,695046109c7f410210d4ee5cfddb3cda4edae17065e1a1beb004d82fac314a88
 0x006A93F0,177,?AddButtons@StripClass@SidebarClass@@QAEXXZ,src/sidebar.cpp,85603fd253c42e182744e38f766a6fcf5d518f4923e8f5a40e158a44dcbc4ed3
 0x006A94B0,58,?RemoveButtons@StripClass@SidebarClass@@QAEXXZ,src/sidebar.cpp,e2639b9c84b0d32493d1740f022da9e0fe67dd0a40eae516d6fb8d497d3b91af
@@ -16577,11 +16580,12 @@ address,size,symbol,source,sha256
 0x007321D0,56,?FUN_007321D0@@YI_NPAV?$DynamicVectorClass@PAVTechnoClass@@@@P6I_NPAVTechnoClass@@H@ZH@Z,src/uicmnds.cpp,88826cc733e76f49cb774771b3a5427c814e2d84100c2a4fa09b946ccc6ea667
 0x00732210,98,?FUN_00732210@@YIHPAV?$DynamicVectorClass@PBD@@PBD@Z,src/uicmnds.cpp,2e8e2040a6ececd04bc1b5ec49f15ae732c76ca41a88350481492b8a97ad155a
 0x00732280,766,?FUN_00732280@@YIX_N@Z,src/uicmnds.cpp,34f846a8324050edb25aa5adb3eed8b710cd6cb57d07f4072eef0a7f5888b79c
-0x00732580,61,?Is_Owned_Active@@YIHPAVTechnoClass@@H@Z,src/uicmnds.cpp,02f4330ac4f755569c1bce2a199cd2569769b913ad5dd02a115c574128dbad5d
+0x00732580,61,?Is_Owned_Active@@YI_NPAVTechnoClass@@H@Z,src/uicmnds.cpp,02f4330ac4f755569c1bce2a199cd2569769b913ad5dd02a115c574128dbad5d
 0x007325C0,58,?Is_Selectable_Combatant@@YIHPAVTechnoClass@@H@Z,src/uicmnds.cpp,d6084336631ad0a1d00ef74ec829d99702443ff0e09cbc0193656915b2d6d1e8
 0x00732600,353,?Unselect_Units_Of_Type@@YIXPBD@Z,src/uicmnds.cpp,06fea4a1a0e37ebbbb02b606c717cc51cb307be3a4ba011b2ac4a0b703d9636b
 0x00732770,83,?Is_Player_Alive_Unit_Of@@YIHPAVTechnoClass@@PBD@Z,src/uicmnds.cpp,3ee9825f91c75060713903ebc60853fa60de9aa6ec8a4fdc22775281a0f59532
 0x007327D0,371,?UICommands_TypeSelect_7327D0@Game@@YIXPBD@Z,src/uicmnds.cpp,0b8e0fd91b6813f28509b5fe6636c514d5ed31929b0313013a473edd8c92c853
+0x00732950,729,?FUN_00732950@@YIXXZ,src/uicmnds.cpp,59d3d11db454e734925c4616902c39fc66c4a04ee3b44ed194d67865fb49bea9
 0x00732C30,104,?Is_Named_Selectable@@YI_NPAVTechnoClass@@PAV?$DynamicVectorClass@PBD@@@Z,src/uicmnds.cpp,be9c9a7dcd6261fa9a5f903df9ec8b74c3f55c412d06fe1c4f83aaf62a2a7013
 0x00732CA0,28,?FUN_00732CA0@@YIXXZ,src/uicmnds.cpp,7a760c9778823b781d9d09916a628d77d0b1bd011610fe128813d2a805634929
 0x00732CC0,58,?FUN_00732CC0@@YIXXZ,src/uicmnds.cpp,e60ab242b94bafa05de2267267422c53bd2d1f283b12112326b325bd152d823e

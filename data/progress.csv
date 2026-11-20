@@ -7879,6 +7879,7 @@ address,name,result,size,source,symbol
 0x0055FA30,Mode_Prompt_Dialog,MATCH,108,src/mainopt.cpp,?Mode_Prompt_Dialog@@YI_NXZ
 0x0055FAA0,Apply_Game_Settings,MATCH,476,src/mainopt.cpp,?Apply_Game_Settings@@YIXPAUHWND__@@@Z
 0x0055FC80,Main_Options_Dialog,MATCH,292,src/mainopt.cpp,?Main_Options_Dialog@@YIXXZ
+0x0055FDB0,FUN_0055FDB0,MATCH,1744,src/mainopt.cpp,?FUN_0055FDB0@@YGHPAUHWND__@@IIJ@Z
 0x00560480,FUN_00560480,MATCH,1897,src/mainopt.cpp,?FUN_00560480@@YGHPAUHWND__@@IIJ@Z
 0x00560BF0,Change_Display_Mode,MATCH,1418,src/mainopt.cpp,?Change_Display_Mode@@YI_NHH@Z
 0x00561180,Test_Display_Mode_Dialog,MATCH,460,src/mainopt.cpp,?Test_Display_Mode_Dialog@@YI_NHH@Z
@@ -7963,6 +7964,7 @@ address,name,result,size,source,symbol
 0x0056C500,_$E240,MATCH,1,src/map.cpp,_$E240
 0x0056CB80,SubzoneHash,MATCH,16,src/map.cpp,?SubzoneHash@@YIHABI@Z
 0x0056D230,MapClass::Get_Cell_Zone,MATCH,362,src/map.cpp,?Get_Cell_Zone@MapClass@@QAEHPBVCell@@W4MZoneType@@_N@Z
+0x0056CB90,MapClass::Zone_Span,MATCH,1386,src/map.cpp,?Zone_Span@MapClass@@QAEHPAUCellZoneStruct@@HAAH@Z
 0x0056D3A0,MapClass::Get_Cell_Zone_ID,MATCH,78,src/map.cpp,?Get_Cell_Zone_ID@MapClass@@QAEHABVCell@@@Z
 0x0056D3F0,MapClass::Get_Cell_Zone_Index,MATCH,54,src/map.cpp,?Get_Cell_Zone_Index@MapClass@@QAEHABVCell@@@Z
 0x0056D430,MapClass::Get_Cell_Subzone_Index,MATCH,35,src/map.cpp,?Get_Cell_Subzone_Index@MapClass@@QAEHABVCell@@@Z
@@ -13029,6 +13031,7 @@ address,name,result,size,source,symbol
 0x006A8920,SidebarClass::StripClass::Scroll,MATCH,179,src/sidebar.cpp,?Scroll@StripClass@SidebarClass@@QAE_N_N@Z
 0x006A89E0,SidebarClass::StripClass::Page,MATCH,296,src/sidebar.cpp,?Page@StripClass@SidebarClass@@QAE_N_N@Z
 0x006A8B10,SidebarClass::StripClass::Flag_To_Redraw,MATCH,17,src/sidebar.cpp,?Flag_To_Redraw@StripClass@SidebarClass@@QAEXXZ
+0x006A8B30,SidebarClass::StripClass::AI,MATCH,1967,src/sidebar.cpp,?AI@StripClass@SidebarClass@@QAE_NAAW4KeyNumType@@ABVPoint2D@@@Z
 0x006A92E0,SidebarClass::StripClass::Help_Text,MATCH,264,src/sidebar.cpp,?Help_Text@StripClass@SidebarClass@@QAEPBGH@Z
 0x006A93F0,SidebarClass::StripClass::AddButtons,MATCH,177,src/sidebar.cpp,?AddButtons@StripClass@SidebarClass@@QAEXXZ
 0x006A94B0,SidebarClass::StripClass::RemoveButtons,MATCH,58,src/sidebar.cpp,?RemoveButtons@StripClass@SidebarClass@@QAEXXZ
@@ -16235,11 +16238,12 @@ address,name,result,size,source,symbol
 0x007321D0,FUN_007321D0,MATCH,56,src/uicmnds.cpp,?FUN_007321D0@@YI_NPAV?$DynamicVectorClass@PAVTechnoClass@@@@P6I_NPAVTechnoClass@@H@ZH@Z
 0x00732210,FUN_00732210,MATCH,98,src/uicmnds.cpp,?FUN_00732210@@YIHPAV?$DynamicVectorClass@PBD@@PBD@Z
 0x00732280,FUN_00732280,MATCH,766,src/uicmnds.cpp,?FUN_00732280@@YIX_N@Z
-0x00732580,Is_Owned_Active,MATCH,61,src/uicmnds.cpp,?Is_Owned_Active@@YIHPAVTechnoClass@@H@Z
+0x00732580,Is_Owned_Active,MATCH,61,src/uicmnds.cpp,?Is_Owned_Active@@YI_NPAVTechnoClass@@H@Z
 0x007325C0,Is_Selectable_Combatant,MATCH,58,src/uicmnds.cpp,?Is_Selectable_Combatant@@YIHPAVTechnoClass@@H@Z
 0x00732600,Unselect_Units_Of_Type,MATCH,353,src/uicmnds.cpp,?Unselect_Units_Of_Type@@YIXPBD@Z
 0x00732770,Is_Player_Alive_Unit_Of,MATCH,83,src/uicmnds.cpp,?Is_Player_Alive_Unit_Of@@YIHPAVTechnoClass@@PBD@Z
 0x007327D0,Game::UICommands_TypeSelect_7327D0,MATCH,371,src/uicmnds.cpp,?UICommands_TypeSelect_7327D0@Game@@YIXPBD@Z
+0x00732950,FUN_00732950,MATCH,729,src/uicmnds.cpp,?FUN_00732950@@YIXXZ
 0x00732C30,Is_Named_Selectable,MATCH,104,src/uicmnds.cpp,?Is_Named_Selectable@@YI_NPAVTechnoClass@@PAV?$DynamicVectorClass@PBD@@@Z
 0x00732CA0,FUN_00732CA0,MATCH,28,src/uicmnds.cpp,?FUN_00732CA0@@YIXXZ
 0x00732CC0,FUN_00732CC0,MATCH,58,src/uicmnds.cpp,?FUN_00732CC0@@YIXXZ
