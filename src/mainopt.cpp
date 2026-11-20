@@ -258,6 +258,179 @@ void Main_Options_Dialog(void)
 	}
 }
 
+namespace UI {
+	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+}
+extern char const * DAT_0082A248[];
+extern char const * DAT_0082A254[];
+extern char const * DAT_0082A260[];
+extern int FUN_00407000(void);
+
+// FUNCTION: GAMEMD 0x0055FDB0
+BOOL CALLBACK FUN_0055FDB0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	static int * _modes = NULL;
+	static int _current_mode = -1;
+	static bool _initialized = false;
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc == 0) {
+		int * result = (int *)GetWindowLong(window, DWL_USER);
+		switch (message) {
+			case WM_COMMAND:
+				switch (LOWORD(wparam)) {
+					case 0x5CD:
+					case 0x5CE:
+						delete [] _modes;
+						_modes = NULL;
+						*result = LOWORD(wparam);
+						break;
+					case 0x686:
+						if (HIWORD(wparam) == 0) {
+							delete [] _modes;
+							_modes = NULL;
+							*(int *)GetWindowLong(window, DWL_USER) = 0x5CB;
+						}
+						break;
+					case 0x6ED:
+						if (HIWORD(wparam) == 1) {
+							Center_Window_Within_Window(window, MainWindow);
+							HWND list = GetDlgItem(window, 0x6ED);
+							if (list) {
+								int selected = ComboBox_GetCurSel(list);
+								int index = ComboBox_GetItemData(list, selected);
+								TempOptions.ScreenWidth = _modes[2 * index];
+								TempOptions.ScreenHeight = _modes[2 * index + 1];
+								if (TempOptions.ScreenWidth != Options.ScreenWidth || TempOptions.ScreenHeight != Options.ScreenHeight) {
+									Options.ScreenWidth = TempOptions.ScreenWidth;
+									Options.ScreenHeight = TempOptions.ScreenHeight;
+								}
+							}
+						}
+						break;
+				}
+				break;
+			case WM_DESTROY:
+				if (_modes != NULL) {
+					delete [] _modes;
+					_modes = NULL;
+				}
+				break;
+			case WM_HSCROLL:
+				if (LOWORD(wparam) == SB_THUMBTRACK) {
+					int index = HIWORD(wparam);
+					char const * name;
+					HWND handle = NULL;
+					if ((HWND)lparam == GetDlgItem(window, 0x52B)) {
+						int detail = index;
+						if (index) detail = 2;
+						name = DAT_0082A248[detail];
+						handle = GetDlgItem(window, 0x673);
+					} else if ((HWND)lparam == GetDlgItem(window, 0x50F)) {
+						name = DAT_0082A254[index];
+						handle = GetDlgItem(window, 0x670);
+					} else if ((HWND)lparam == GetDlgItem(window, 0x52A)) {
+						name = DAT_0082A260[index];
+						handle = GetDlgItem(window, 0x672);
+					} else if ((HWND)lparam == GetDlgItem(window, 0x52F)) {
+						if (_initialized) Options.Set_Score_Volume(SendMessage((HWND)lparam, 0x400, 0, 0) * DAT_007E3860, true);
+					} else if ((HWND)lparam == GetDlgItem(window, 0x532)) {
+						if (_initialized) Options.Set_Sound_Volume(SendMessage((HWND)lparam, 0x400, 0, 0) * DAT_007E3860, true);
+					} else if ((HWND)lparam == GetDlgItem(window, 0x536)) {
+						if (_initialized) Options.Set_Voice_Volume(SendMessage((HWND)lparam, 0x400, 0, 0) * DAT_007E3860, true);
+					}
+					if (handle) {
+						wchar_t const * text = StringTable::LoadString(name, NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x229);
+						SendMessage(handle, 0x4B2, 0, (LPARAM)text);
+					}
+				}
+				break;
+			case 0x497: {
+				_initialized = false;
+				HWND handle = GetDlgItem(window, 0x52B);
+				if (handle) {
+					SendMessage(handle, 0x4AC, 0, 0);
+					Slider_SetRange(handle, 0, 1);
+					Slider_SetPos(handle, Options.DetailLevel != 0);
+				}
+				HWND list = GetDlgItem(window, 0x6ED);
+				if (Options.AllowHiResModes) {
+					_modes = EnumDisplayModes(640, 480, 4096, 4096, 16);
+				} else {
+					_modes = EnumDisplayModes(640, 480, 1024, 768, 16);
+				}
+				int * modes = _modes;
+				int initial_mode = -1;
+				int mode_index = 0;
+				int item_index = 0;
+				if (modes != NULL) {
+					while (*modes != 0) {
+						int width = *modes++;
+						int height = *modes++;
+						if (Options.AllowHiResModes || width == 640 || width == 800 || width == 1024) {
+							if (width == TempOptions.ScreenWidth && height == TempOptions.ScreenHeight) initial_mode = mode_index;
+							char buffer[64];
+							sprintf(buffer, "%d x %d x 16", width, height);
+							int index = SendMessage(list, 0x4BC, 0, (LPARAM)buffer);
+							ComboBox_SetItemData(list, index, item_index);
+							mode_index++;
+							item_index++;
+						} else {
+							item_index++;
+						}
+					}
+				}
+				ComboBox_SetCurSel(list, initial_mode);
+				_current_mode = initial_mode;
+				handle = GetDlgItem(window, 0x50F);
+				if (handle) {
+					SendMessage(handle, 0x4AC, 0, 0);
+					Slider_SetRange(handle, 0, 2);
+					Slider_SetPos(handle, Options.Difficulty);
+				}
+				handle = GetDlgItem(window, 0x601);
+				if (handle) Button_SetCheck(handle, Options.ActionLines != false);
+				handle = GetDlgItem(window, 0x604);
+				if (handle) Button_SetCheck(handle, Options.ShowHidden != false);
+				handle = GetDlgItem(window, 0x602);
+				if (handle) Button_SetCheck(handle, Options.ToolTips != false);
+				handle = GetDlgItem(window, 0x52A);
+				if (handle) {
+					SendMessage(handle, 0x4AC, 0, 0);
+					Slider_SetRange(handle, 0, 6);
+					Slider_SetPos(handle, 6 - Options.ScrollRate);
+				}
+				int available = FUN_00407000();
+				handle = GetDlgItem(window, 0x52F);
+				if (handle) {
+					SendMessage(handle, 0x4AE, 0, 0);
+					Slider_SetRange(handle, 0, 10);
+					Slider_SetPos(handle, (int)(Options.ScoreVolume * 10.0 + 0.5));
+					EnableWindow(handle, available);
+				}
+				handle = GetDlgItem(window, 0x532);
+				if (handle) {
+					SendMessage(handle, 0x4AE, 0, 0);
+					Slider_SetRange(handle, 0, 10);
+					Slider_SetPos(handle, (int)(Options.SoundVolume * 10.0 + 0.5));
+					EnableWindow(handle, available);
+				}
+				handle = GetDlgItem(window, 0x536);
+				if (handle) {
+					SendMessage(handle, 0x4AE, 0, 0);
+					Slider_SetRange(handle, 0, 10);
+					Slider_SetPos(handle, (int)(Options.VoiceVolume * 10.0 + 0.5));
+					EnableWindow(handle, available);
+				}
+				_initialized = true;
+				break;
+			}
+		}
+		return 0;
+	}
+	return rc;
+}
+
+
 #include "ccini.h"
 #include "rawfile.h"
 #include "firewall.h"
@@ -265,9 +438,6 @@ void Main_Options_Dialog(void)
 extern WinsockInterfaceClass * PacketTransport;
 extern CCINIClass INI_RA2MD;
 
-namespace UI {
-	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
-}
 bool __fastcall Focus_Next_Tab_Item(HWND window, bool previous);
 
 // FUNCTION: GAMEMD 0x00560480
