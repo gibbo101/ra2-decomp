@@ -13447,6 +13447,7 @@ address,size,symbol,source,sha256
 0x006B04C0,459,?FUN_006B04C0@SlaveManagerClass@@QAEXXZ,src/slavemanager.cpp,3af255f774993027fd4c39690f04b94bc6cec0cfb63558125525040b463eef31
 0x006B0690,180,?FUN_006B0690@SlaveManagerClass@@QAE?AVCell@@XZ,src/slavemanager.cpp,68bab95afc7d4d1f178869ffd1749e4f0006265451a06d4a1fb720a9bf9398e6
 0x006B0750,289,?FUN_006B0750@SlaveManagerClass@@QAE?AVCell@@XZ,src/slavemanager.cpp,98ff347bde7d2eaaf1ee9eb13313c8924b63bb727e612254817eec0f1adfd08f
+0x006B0880,416,?FUN_006B0880@SlaveManagerClass@@QAE_NPAVTechnoClass@@PAVCellClass@@@Z,src/slavemanager.cpp,0875800b3580fe6d940ac69dae27c18a5e860b1bd0862abbe8d233b7d101ff72
 0x006B0A20,110,?LostSlave@SlaveManagerClass@@QAEXPAVInfantryClass@@@Z,src/slavemanager.cpp,f6f51542469bff55a208e886caf5a2191aab666abd7f3e71119a9a044d5b7c8c
 0x006B0A90,72,?FUN_006B0A90@SlaveManagerClass@@QAEXH@Z,src/slavemanager.cpp,4cc2f3da0eced668e7d85edcf51b4f0002d932bdcfec0ebcf1b0e4b65c150e19
 0x006B0AE0,406,?Killed@SlaveManagerClass@@QAEXPAVTechnoClass@@PAVHouseClass@@@Z,src/slavemanager.cpp,b9422eacc8e37a7b82dcd2788fdc20fd9fa46932e619f95db212013cc1980ed9

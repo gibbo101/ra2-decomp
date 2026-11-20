@@ -13099,6 +13099,7 @@ address,name,result,size,source,symbol
 0x006B04C0,SlaveManagerClass::FUN_006B04C0,MATCH,459,src/slavemanager.cpp,?FUN_006B04C0@SlaveManagerClass@@QAEXXZ
 0x006B0690,SlaveManagerClass::FUN_006B0690,MATCH,180,src/slavemanager.cpp,?FUN_006B0690@SlaveManagerClass@@QAE?AVCell@@XZ
 0x006B0750,SlaveManagerClass::FUN_006B0750,MATCH,289,src/slavemanager.cpp,?FUN_006B0750@SlaveManagerClass@@QAE?AVCell@@XZ
+0x006B0880,SlaveManagerClass::FUN_006B0880,MATCH,416,src/slavemanager.cpp,?FUN_006B0880@SlaveManagerClass@@QAE_NPAVTechnoClass@@PAVCellClass@@@Z
 0x006B0A20,SlaveManagerClass::LostSlave,MATCH,110,src/slavemanager.cpp,?LostSlave@SlaveManagerClass@@QAEXPAVInfantryClass@@@Z
 0x006B0A90,SlaveManagerClass::FUN_006B0A90,MATCH,72,src/slavemanager.cpp,?FUN_006B0A90@SlaveManagerClass@@QAEXH@Z
 0x006B0AE0,SlaveManagerClass::Killed,MATCH,406,src/slavemanager.cpp,?Killed@SlaveManagerClass@@QAEXPAVTechnoClass@@PAVHouseClass@@@Z
