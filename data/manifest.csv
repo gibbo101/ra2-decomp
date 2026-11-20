@@ -13392,6 +13392,7 @@ address,size,symbol,source,sha256
 0x006A93F0,177,?AddButtons@StripClass@SidebarClass@@QAEXXZ,src/sidebar.cpp,85603fd253c42e182744e38f766a6fcf5d518f4923e8f5a40e158a44dcbc4ed3
 0x006A94B0,58,?RemoveButtons@StripClass@SidebarClass@@QAEXXZ,src/sidebar.cpp,e2639b9c84b0d32493d1740f022da9e0fe67dd0a40eae516d6fb8d497d3b91af
 0x006A94F0,67,?FUN_006A94F0@StripClass@SidebarClass@@QAEHH@Z,src/sidebar.cpp,1a3b456fb35a475caa1b034e11f08dd3c0174c109251112d152bae118d83287d
+0x006AA600,1711,?Recalc@StripClass@SidebarClass@@QAE_NXZ,src/sidebar.cpp,3899df5a5fadcfde47954009c9433ed66363f824cbc6dde4ed4c91d410794410
 0x006AACB0,46,??0SelectClass@StripClass@SidebarClass@@QAE@XZ,src/sidebar.cpp,abefda376ec63ad4d073d1afa6a9b3ebb56eb8b7736d7286d824a220d377dc6b
 0x006AACE0,17,?Set_Owner@SelectClass@StripClass@SidebarClass@@QAEXAAV23@H@Z,src/sidebar.cpp,550bceb2e65371c6e1be887eda84f377a281773a437674cc1daa42a99065922c
 0x006AAD00,3207,?Action@SelectClass@StripClass@SidebarClass@@MAEHIAAW4KeyNumType@@H@Z,src/sidebar.cpp,918e83998fcf9dda9678302106afc70d795ae8a93e37b1ab40de2b452b6ad615

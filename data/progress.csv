@@ -13042,6 +13042,7 @@ address,name,result,size,source,symbol
 0x006A94B0,SidebarClass::StripClass::RemoveButtons,MATCH,58,src/sidebar.cpp,?RemoveButtons@StripClass@SidebarClass@@QAEXXZ
 0x006A94F0,SidebarClass::StripClass::FUN_006A94F0,MATCH,67,src/sidebar.cpp,?FUN_006A94F0@StripClass@SidebarClass@@QAEHH@Z
 0x006AACE0,SidebarClass::StripClass::SelectClass::Set_Owner,MATCH,17,src/sidebar.cpp,?Set_Owner@SelectClass@StripClass@SidebarClass@@QAEXAAV23@H@Z
+0x006AA600,SidebarClass::StripClass::Recalc,MATCH,1711,src/sidebar.cpp,?Recalc@StripClass@SidebarClass@@QAE_NXZ
 0x006AAD00,SidebarClass::StripClass::SelectClass::Action,MATCH,3207,src/sidebar.cpp,?Action@SelectClass@StripClass@SidebarClass@@MAEHIAAW4KeyNumType@@H@Z
 0x006AB990,SidebarClass::StripClass::SelectClass::OnMouseEnter,MATCH,66,src/sidebar.cpp,?OnMouseEnter@SelectClass@StripClass@SidebarClass@@UAEXXZ
 0x006AB9E0,SidebarClass::StripClass::SelectClass::OnMouseLeave,MATCH,53,src/sidebar.cpp,?OnMouseLeave@SelectClass@StripClass@SidebarClass@@UAEXXZ
