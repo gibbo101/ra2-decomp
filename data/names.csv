@@ -976,3 +976,5 @@ address,name,symbol,evidence
 0x005164D0,HoverLocomotionClass::Start_Of_Move,?Start_Of_Move@HoverLocomotionClass@@AAEXH@Z,Matched hover movement initiation using nested temporary-obstruction handling.
 0x00592AF0,MapRegionClass::Build_Corner_Ramp_SE,?Build_Corner_Ramp_SE@MapRegionClass@@QAE_NABVCell@@0H@Z,Matched southeast corner-ramp construction.
 0x0076D4D0,WorldDominationTour::Selection::Do_Target_Anim,?Do_Target_Anim@Selection@WorldDominationTour@@QAEXABV?$rc_ptr@VState@WorldDominationTour@@@@_N1@Z,Matched Selection::Do_Target_Selection (0x0076E2F0) and Present_Ticks (0x0076E4F0) call this existing declared member at native operand offsets +0x118 and +0x17C; both REL32 destinations are 0x0076D4D0. Name binding only; the body is not claimed matched.
+0x007ED790,MapGeneratorClass::Get_Angle_Score::_random_weight,_?_random_weight@?1??Get_Angle_Score@MapGeneratorClass@@QAENABVCell@@0N@Z@4NB,Random-score weight read by Get_Angle_Score at 0x005A1190 + 0xBC.
+0x007ED798,MapGeneratorClass::Get_Angle_Score::_angle_weight,_?_angle_weight@?1??Get_Angle_Score@MapGeneratorClass@@QAENABVCell@@0N@Z@4NB,Angle-difference weight read by Get_Angle_Score at 0x005A1190 + 0xC2.

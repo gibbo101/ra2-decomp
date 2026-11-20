@@ -5000,6 +5000,108 @@ DynamicVectorClass<Cell> *MapGeneratorClass::Build_Region_Border_Cell_List(int i
 	return(cells);
 }
 
+static inline void Delete_Forest_Search(CellNode * nodes, PriorityQueueClass<CellNode> * queue);
+
+// FUNCTION: GAMEMD 0x005A08D0
+bool MapGeneratorClass::Grow_Water_Region(int region_id, float spread_scale, Rect const & bounds, Cell const & origin, bool claim_frontier)
+{
+	CellNode * nodes = new CellNode[max(2 * LocalHeight * LocalWidth, 100)];
+	PriorityQueueClass<CellNode> * queue = new PriorityQueueClass<CellNode>(max(2 * LocalHeight * LocalWidth, 100));
+
+	int marker_index = 0;
+	bool result_flag = true;
+
+	double angle = 0.0;
+	if (bounds.X != 0) {
+		angle = 0.0;
+	} else if (bounds.Width != MAP_CELL_W) {
+		angle = M_PI;
+	}
+	if (bounds.Y != 0) {
+		angle = 3 * M_PI_2;
+	} else if (bounds.Height != MAP_CELL_H) {
+		angle = M_PI_2;
+	}
+
+	Clear_Cell_Data_Spreads();
+
+	DynamicVectorClass<Cell> * seed_cells = Build_Region_Border_Cell_List(region_id);
+	int seed_count = seed_cells->Count();
+
+	for (int seed_index = 0; seed_index < seed_count; seed_index++) {
+		Cell seed = (*seed_cells)[seed_index];
+		if (bounds.Is_Point_Within(Point2D(seed.X, seed.Y))) {
+
+			nodes[marker_index].Element = seed;
+			nodes[marker_index].Score = Get_Angle_Score(origin, seed, angle);
+			queue->Insert(nodes[marker_index++]);
+		}
+	}
+
+	delete seed_cells;
+
+	double scale = log((double)seed_count);
+	scale = max(1.0, scale);
+
+	int spread_count = (int)(1.0f / ((float)(1.0 / scale) * spread_scale) * 0.5f);
+	spread_count += Pick_Random_UInt(0, spread_count / 2);
+
+	CellNode * node = queue->Extract_Min();
+
+	int spread_step = 0;
+	while (spread_step < spread_count && result_flag && node != NULL) {
+
+		MapRegionClass::CellData & ndata = MapRegionClass::Get_Cell_Data(node->Element);
+		if (!ndata.RegionID) {
+			if (Map[node->Element].Is_Tile_Clear()) {
+				ndata.CanExpand = true;
+				ndata.RegionID = region_id;
+			}
+		}
+
+		for (FacingType dir = FACING_FIRST; dir < FACING_COUNT; dir = FacingType(dir + FACING_90)) {
+			Cell newcell = Adjacent_Cell(node->Element, dir);
+			if (My_In_Radar(newcell)) {
+				if (MapRegionClass::CellData::Get_Region(newcell) == 0 &&
+					MapRegionClass::Get_Cell_Data(newcell).SpreadID != region_id &&
+					bounds.Is_Point_Within(Point2D(newcell.X, newcell.Y)) &&
+					Map[newcell].Is_Tile_Clear()) {
+					nodes[marker_index].Element = newcell;
+					nodes[marker_index].Score = Get_Angle_Score(origin, newcell, angle);
+					Set_Cell_Data_Spread(newcell, region_id);
+					queue->Insert(nodes[marker_index++]);
+				} else {
+					if (MapRegionClass::CellData::Get_Region(newcell) != 0 && MapRegionClass::CellData::Get_Region(newcell) != region_id) {
+						result_flag = false;
+					}
+				}
+			}
+		}
+
+		spread_step++;
+		angle += Sample_Normal(0, M_PI_4);
+		node = queue->Extract_Min();
+	}
+
+	if (claim_frontier) {
+		for (CellNode * remaining = queue->Extract_Min(); remaining != NULL && result_flag; remaining = queue->Extract_Min()) {
+
+			if (MapRegionClass::CellData::Get_Region(remaining->Element) == 0) {
+				MapRegionClass::Get_Cell_Data(remaining->Element).RegionID = region_id;
+			} else if (MapRegionClass::CellData::Get_Region(remaining->Element) != region_id) {
+				result_flag = false;
+			}
+
+		}
+	}
+
+	Delete_Forest_Search(nodes, queue);
+
+	return(result_flag);
+}
+
+
+
 // FUNCTION: GAMEMD 0x005A1190
 double MapGeneratorClass::Get_Angle_Score(const Cell & cell1, const Cell & cell2, double ref_angle)
 {
@@ -5014,15 +5116,18 @@ double MapGeneratorClass::Get_Angle_Score(const Cell & cell1, const Cell & cell2
 		angle += M_PI;
 	}
 
-	double angle_diff = fabs(angle - ref_angle);
-	while (angle_diff >= M_PI * 2) {
-		angle_diff -= M_PI * 2;
+	const double full_turn = M_PI * 2;
+	double difference = angle - ref_angle;
+	double angle_diff = fabs(difference);
+	while (angle_diff >= full_turn) {
+		angle_diff -= full_turn;
 	}
 	if (angle_diff > M_PI) {
-		angle_diff = M_PI * 2 - angle_diff;
+		angle_diff = full_turn - angle_diff;
 	}
 
-	return(RMG_RANDOM_DOUBLE2(_random_weight) + _angle_weight * angle_diff);
+	double score = Random_Fraction();
+	return(score * _random_weight + _angle_weight * angle_diff);
 }
 
 // FUNCTION: GAMEMD 0x005A1270
@@ -7177,11 +7282,11 @@ DirtRoadTile::~DirtRoadTile(void)
 }
 
 // SYNTHETIC: GAMEMD 0x005A9C20 SYMBOL
-// _$E208
+// _$E209
 // SYNTHETIC: GAMEMD 0x005A9C40 SYMBOL
-// _$E205
-// SYNTHETIC: GAMEMD 0x005AC190 SYMBOL
 // _$E206
+// SYNTHETIC: GAMEMD 0x005AC190 SYMBOL
+// _$E207
 DirtRoadTile DirtRoadTiles[] = {
 	/* 0 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(2, 0), FACING_NE)),
 	/* 1 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E)),
@@ -7520,33 +7625,33 @@ template class VectorClass<double>;
 #include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0058B530 SYMBOL
-// _$E211
+// _$E212
 // SYNTHETIC: GAMEMD 0x0058B560 SYMBOL
-// _$E214
+// _$E215
 // SYNTHETIC: GAMEMD 0x0058B580 SYMBOL
-// _$E217
+// _$E218
 // SYNTHETIC: GAMEMD 0x0058B5A0 SYMBOL
-// _$E220
+// _$E221
 // SYNTHETIC: GAMEMD 0x0058B5C0 SYMBOL
-// _$E223
+// _$E224
 // SYNTHETIC: GAMEMD 0x0058B5E0 SYMBOL
-// _$E226
+// _$E227
 // SYNTHETIC: GAMEMD 0x0058B600 SYMBOL
-// _$E229
+// _$E230
 // SYNTHETIC: GAMEMD 0x0058B640 SYMBOL
-// _$E232
+// _$E233
 // SYNTHETIC: GAMEMD 0x0058B670 SYMBOL
-// _$E235
+// _$E236
 // SYNTHETIC: GAMEMD 0x0058B6A0 SYMBOL
-// _$E238
+// _$E239
 // SYNTHETIC: GAMEMD 0x0058B6D0 SYMBOL
-// _$E241
+// _$E242
 // SYNTHETIC: GAMEMD 0x0058B6E0 SYMBOL
-// _$E244
+// _$E245
 // SYNTHETIC: GAMEMD 0x0058B700 SYMBOL
-// _$E247
+// _$E248
 // SYNTHETIC: GAMEMD 0x0058B720 SYMBOL
-// _$E250
+// _$E251
 const Rect RECT_NONE_2(0, 0, 0, 0);
 
 // FUNCTION: GAMEMD 0x005A78D0
