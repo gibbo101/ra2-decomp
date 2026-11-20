@@ -93,6 +93,10 @@ effect, so it can be fixed in a separate build later.
   address without checking its length. An invalid configuration can corrupt
   stack memory during startup.
 
+- **Wonline game-options encoding (0x0077E430).** With no players in the session,
+  replacing the final player separator writes one byte before the static options buffer:
+  the zeroed buffer has length zero, but the index is still `strlen(buffer) - 1`.
+
 - **WorldDominationTour::Selection::Play_SFX (0x0076EBE0).** The lookup loop stops at the
   first sound entry whose name differs from the one asked for, and plays that entry, so a
   named campaign-map sound plays only when it is not the first entry.

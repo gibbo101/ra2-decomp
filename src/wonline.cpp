@@ -15808,3 +15808,64 @@ bool __fastcall FUN_00789B60(void)
 	}
 	return true;
 }
+
+Wstring __fastcall FUN_007B82E0(WideWstring const & text);
+
+static inline bool Same_Player_Name(wchar_t const * left, wchar_t const * right)
+{
+	char * name = FUN_007350C0(left);
+	return stricmp(name, FUN_007350C0(right)) == 0;
+}
+
+static inline Wstring Encode_Wide_Text(wchar_t const * text)
+{
+	return text ? FUN_007B82E0(text) : "";
+}
+
+// FUNCTION: GAMEMD 0x0077E430
+void Encode_Game_Options(char * out)
+{
+	static char player_options[512];
+	Wstring name = Encode_Wide_Text(Session.Options.ScenarioDescription);
+	int value = Session.ScenarioMaxPlayers;
+	sprintf(out, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%d,%d,%d,%s,%s:",
+		Game::Seed, Options.GameSpeed, Session.Options.GameSpeed, Session.Options.Credits,
+		Session.Options.UnitCount, Session.Options.ShortGame, Session.Options.SWAllowed,
+		Session.Options.BuildOffAlly, Session.Options.MCVRedeploy, Session.Options.Goodies,
+		Session.Options.MPModeIndex, Options.CampDifficulty, name.get(), value,
+		Session.ScenarioIsOfficial, Session.ScenarioFileLength, Session.ScenarioFileName, Session.ScenarioDigest);
+	memset(player_options, 0, sizeof(player_options));
+	for (int i = 0, count = Session.Players.Count(); i < count; i++) {
+		NodeNameType * entry = Session.Players[i];
+		int country = entry->Get_Country();
+		int color = entry->Get_Color();
+		int start = entry->Get_Start();
+		int team = entry->Get_Team();
+		int address = 0;
+		int port_base, firewall;
+		port_base = firewall = 0;
+		for (int j = 0; j < 8; j++) {
+			if (Same_Player_Name(Session.Players[i]->Name, Session.Slots[j]->Name)) {
+				NetNumType net;
+				NetNodeType node;
+				unsigned short socket;
+				Session.PlayerLocalAddress[j].Get_Address(net, node, &socket);
+				memcpy(&address, node, sizeof(address));
+				firewall = Session.PlayerFirewall[j];
+				port_base = Session.PlayerPortBase[j];
+				break;
+			}
+		}
+		Wstring text(FUN_007B7F90(Session.Players[i]->Name));
+		sprintf(player_options + strlen(player_options), "%s,%d,%d,%d,%d,%x,%x,%x,",
+			text.get(), country, color, start, team, address, firewall, port_base);
+	}
+	player_options[strlen(player_options) - 1] = ':';
+	strcat(player_options, "@:");
+	for (int k = 0; k < 8; k++) {
+		sprintf(player_options + strlen(player_options), "%d,%d,%d,%d,%d,",
+			Session.Options.AISlots.Difficulties[k], Session.Options.AISlots.Countries[k],
+			Session.Options.AISlots.Colors[k], Session.Options.AISlots.Starts[k], Session.Options.AISlots.Allies[k]);
+	}
+	strcat(out, player_options);
+}
