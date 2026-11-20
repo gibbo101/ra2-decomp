@@ -34,5 +34,3 @@ class LineTrail
 		static void Process_All(void);
 		static void Delete_All(void);
 };
-
-extern DynamicVectorClass<LineTrail *> LineTrailArray;
