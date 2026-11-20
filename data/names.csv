@@ -961,4 +961,8 @@ address,name,symbol,evidence
 0x006AFD60,SlaveManagerClass::FUN_006AFD60,?FUN_006AFD60@SlaveManagerClass@@QAEXXZ,Stock VC6 SP3 byte match; 1268-byte owner-state update using the existing slave-manager APIs.
 0x0076D180,WorldDominationTour::Selection::Handle_Click,?Handle_Click@Selection@WorldDominationTour@@QAEXABVPoint2D@@AA_N@Z,"TibSun Selection::Handle_Click(Point2D const &, bool &); native 0x0076D2DA stores the selection result through the second argument, with ConflictSelected and MouseCancel branches."
 0x0076DAD0,WorldDominationTour::Selection::Select_Territory,?Select_Territory@Selection@WorldDominationTour@@QAE_NABV?$rc_ptr@VTerritory@WorldDominationTour@@@@@Z,Matched Update_Hovered_Territory 0x0076D470+0x3F and On_Map_Leave 0x0076E090+0xD3 call this member; include/wdtnet.h declares the rc_ptr<Territory> const & parameter.
+0x00439B00,BounceClass::AI,?AI@BounceClass@@QAE?AW4BounceResultType@@XZ,Matched BounceClass::AI at this start; 1451 bytes.
+0x0043A0D0,Vector3::operator*=,??XVector3@@QAEAAV0@M@Z,Stock VC6 SP3 byte match; 33-byte scalar multiply-assignment emitted by BounceClass::AI.
+0x0043A100,Vector3::operator+=,??YVector3@@QAEAAV0@ABV0@@Z,Stock VC6 SP3 byte match; 33-byte vector add-assignment emitted by BounceClass::AI.
+0x0043A130,Vector3::Length,?Length@Vector3@@QBEMXZ,Stock VC6 SP3 byte match; 45-byte length function emitted by BounceClass::AI.
 0x00ABDE8C,LastAdjacentZone,?LastAdjacentZone@@3HA,"TibSun map.cpp defines LastAdjacentZone; native Zone_Span has four compare/store pairs at this address; Reset_Zones 0x0056C510 resets it at +0x132 and Reset_Subzone 0x00581F90 resets it at +0x1EA; initial four bytes are zero."

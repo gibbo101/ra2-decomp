@@ -1814,7 +1814,11 @@ address,size,symbol,source,sha256
 0x004399A0,55,?Get_Bounce_Coord@BounceClass@@QBE?AVCoord@@XZ,src/bounce.cpp,53a7e98449947858f6e7dc872b22308480b6e8534cfa3c6a1afa4a24b9670fb7
 0x004399E0,40,?Get_Matrix@BounceClass@@QBE?AVMatrix3D@@XZ,src/bounce.cpp,98ed314e00bf825ea38f5eb4ad848098f9ed517397f0d12ef4769776f1608873
 0x00439A10,231,?Get_Remaining_Motion@BounceClass@@QBENXZ,src/bounce.cpp,14c94b7ffe8d22e360ebaec0f06fc5e145dd1179eb50778155521ec2c5b83fb1
+0x00439B00,1451,?AI@BounceClass@@QAE?AW4BounceResultType@@XZ,src/bounce.cpp,cedbf940239b97a791a370ac66f7d4b4665541315bb68941e1a38268355faeb0
 0x0043A0B0,25,??0Vector3@@QAE@MMM@Z,src/tactical.cpp,66f50239e7eca922033451ce5bfdf4e3e44cdc54514dbac3e5ad6a7f5d93a90d
+0x0043A0D0,33,??XVector3@@QAEAAV0@M@Z,src/bounce.cpp,affa30ead238d9aeeaf6e56791d713067d858e7043e2a70594ed33b0965e9452
+0x0043A100,33,??YVector3@@QAEAAV0@ABV0@@Z,src/bounce.cpp,7641277a462918509ace6c8d124dc2c3e0425de65ed70f997ee6a9c2dc662b66
+0x0043A130,45,?Length@Vector3@@QBEMXZ,src/bounce.cpp,7813acf646dcab6b233838c07d1248824ba61b20c8573a3e893a81aa48cc6c17
 0x0043A160,40,_$E3,src/brain.cpp,d2dbc36f1baa5cc347e902e6999f095e52b2917f16ee000e6b0e3b334954dc3b
 0x0043A190,19,_$E6,src/brain.cpp,d750318eea7457aa4496b4cc65924bf40323cd03d6a1e9bcd0d4d56402d7a970
 0x0043A1B0,19,_$E9,src/brain.cpp,b70dd3ef64c67c8512c0cf010da449a3666983d4e68bada307881d76548bcd2b
