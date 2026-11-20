@@ -974,3 +974,4 @@ address,name,symbol,evidence
 0x00449C30,BuildingClass::Do_MISSION_DECONSTRUCTION,?Do_MISSION_DECONSTRUCTION@BuildingClass@@UAEHXZ,Matched building deconstruction state updates and undeployment.
 0x006AF6C0,SlaveManagerClass::FUN_006AF6C0,?FUN_006AF6C0@SlaveManagerClass@@QAEXXZ,Matched per-slave state update; existing countdown APIs and native state transitions.
 0x005164D0,HoverLocomotionClass::Start_Of_Move,?Start_Of_Move@HoverLocomotionClass@@AAEXH@Z,Matched hover movement initiation using nested temporary-obstruction handling.
+0x00592AF0,MapRegionClass::Build_Corner_Ramp_SE,?Build_Corner_Ramp_SE@MapRegionClass@@QAE_NABVCell@@0H@Z,Matched southeast corner-ramp construction.
