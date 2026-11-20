@@ -54,6 +54,7 @@
 #include "surface.h"
 #include "voc.h"
 #include "vox.h"
+#include "wolapi/wolapi.h"
 #include "bench.hh"
 #include "color.hh"
 #include <cmath>
@@ -312,7 +313,7 @@ inline ColorScheme * Color_Of(HouseClass * house)
 	return(ColorSchemes[house->Scheme]);
 }
 
-int * __fastcall FUN_0077DA50(wchar_t * name);
+Ladder * __fastcall FUN_0077DA50(wchar_t const * name);
 
 // FUNCTION: GAMEMD 0x006A5310
 void SidebarClass::Init_IO(void)
@@ -413,14 +414,14 @@ void SidebarClass::Init_IO(void)
 				DiplomacyWinStreak[DiplomacyNumHouses] = 0;
 
 				if (Session.Type == GAME_INTERNET) {
-					int * stats = FUN_0077DA50(house->UIName);
+					Ladder * stats = FUN_0077DA50(house->UIName);
 					if (stats) {
-						DiplomacyRung[DiplomacyNumHouses] = stats[7];
-						DiplomacyPoints[DiplomacyNumHouses] = stats[4];
-						DiplomacyWins[DiplomacyNumHouses] = stats[2];
-						DiplomacyLosses[DiplomacyNumHouses] = stats[3];
-						DiplomacyDisconnects[DiplomacyNumHouses] = stats[8];
-						DiplomacyWinStreak[DiplomacyNumHouses] = stats[12];
+						DiplomacyRung[DiplomacyNumHouses] = stats->rung;
+						DiplomacyPoints[DiplomacyNumHouses] = stats->points;
+						DiplomacyWins[DiplomacyNumHouses] = stats->wins;
+						DiplomacyLosses[DiplomacyNumHouses] = stats->losses;
+						DiplomacyDisconnects[DiplomacyNumHouses] = stats->disconnects;
+						DiplomacyWinStreak[DiplomacyNumHouses] = stats->win_streak;
 						delete stats;
 					}
 				}
@@ -1425,6 +1426,191 @@ void SidebarClass::StripClass::Flag_To_Redraw(void)
 
 extern bool DAT_00884B8C;
 extern unsigned short DAT_00B07BC4[];
+
+extern int DAT_00B0B514;
+void __fastcall FUN_00734250(BuildingClass * building);
+
+// FUNCTION: GAMEMD 0x006A8B30
+bool SidebarClass::StripClass::AI(KeyNumType & input, Point2D const & xy)
+{
+	bool redraw = false;
+	if (!IsScrolling && Scroller) {
+		int rows = Map.Max_Visible();
+		int count = BuildableCount;
+		int columns = 2;
+		int visible = rows * 2;
+		if (PlayerPtr == DAT_00AC1198) {
+			count = Map.DiplomacyNumHouses;
+			rows /= 2;
+			columns = 1;
+			visible = rows;
+		}
+		if (count <= visible) {
+			Scroller = 0;
+		} else if (Scroller < 0) {
+			if (!TopIndex) {
+				Scroller = 0;
+			} else {
+				Scroller++;
+				IsScrollingDown = false;
+				IsScrolling = true;
+				TopIndex--;
+				Slid = 0;
+			}
+		} else if ((TopIndex + rows) * columns >= count) {
+			Scroller = 0;
+		} else {
+			Scroller--;
+			Slid = DAT_00B0B500;
+			IsScrollingDown = true;
+			IsScrolling = true;
+		}
+	}
+	if (IsScrolling) {
+		if (IsScrollingDown) {
+			Slid -= DAT_00B0B514;
+			if (Slid <= 0) {
+				IsScrolling = false;
+				Slid = 0;
+				TopIndex++;
+			}
+		} else {
+			Slid += DAT_00B0B514;
+			if (Slid >= DAT_00B0B500) {
+				IsScrolling = false;
+				Slid = 0;
+			}
+		}
+		redraw = true;
+	}
+	if (Flasher != -1) {
+		if (Graphic_Logic()) {
+			redraw = true;
+			if (Fetch_Stage() >= 7) {
+				Set_Rate(0);
+				Set_Stage(0);
+				Flasher = -1;
+			}
+		}
+	}
+	bool flash_active = Map.unknown_53A0 > Frame;
+	if (flash_active) {
+		redraw = true;
+	}
+	bool building_tab = ID == 0 || ID == 1;
+	if (building_tab) {
+		for (int index = 0; index < BuildableCount; index++) {
+			if (Buildables[index].BuildableType == RTTI_SPECIAL) {
+				SuperClass * super = PlayerPtr->SuperWeapon[Buildables[index].BuildableID];
+				if (super && super->ShouldFlashTab()) {
+					goto flash;
+				}
+			} else {
+				FactoryClass * factory = Buildables[index].Factory;
+				if (factory && factory->Has_Completed()) {
+					TechnoClass * object = factory->Get_Object();
+					if (object && object->Fetch_RTTI() == RTTI_BUILDING) {
+						goto flash;
+					}
+				}
+			}
+		}
+		TabButtons[ID].StopFlashing();
+	}
+	goto building;
+flash:
+	{
+		int frame = Frame;
+		int length = 10 - frame % 10;
+		TabButtons[ID].StartFlashing(10, length, ((frame + length) / 10) % 2 == 0);
+		Map.IsForceCompleteRedraw = true;
+		Map.Flag_To_Redraw();
+	}
+building:
+	if (IsBuilding) {
+		for (int index = 0; index < BuildableCount; index++) {
+			FactoryClass * factory = Buildables[index].Factory;
+			bool changed = factory && factory->Has_Changed();
+			if (changed) {
+				redraw = true;
+				bool completed = factory->Has_Completed();
+				if (completed) {
+					TechnoClass * pending = factory->Get_Object();
+					if (pending) {
+						switch (pending->Fetch_RTTI()) {
+						case RTTI_BUILDING: {
+							VoxClass::Play("EVA_ConstructionComplete");
+							FUN_00734250(As_Building(pending));
+							break;
+						}
+						case RTTI_UNIT:
+						case RTTI_AIRCRAFT:
+						case RTTI_INFANTRY:
+							OutList.Add(EventClass(pending->Owner(), EventClass::PLACE, pending->Fetch_RTTI(), -1,
+								pending->Techno_Type_Class()->Naval, CELL_NONE));
+							Buildables[index].unknown_10 = 0;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	for (int index = 0; index < BuildableCount; index++) {
+		if (Buildables[index].unknown_10 == 1) {
+			FactoryClass * factory = Buildables[index].Factory;
+			if (factory && (!factory->Is_Building() || factory->Is_On_Hold())) {
+				Buildables[index].Progress.Set_Rate(0);
+				Buildables[index].Progress.Set_Stage(0);
+			}
+			bool advanced = Buildables[index].Progress.Graphic_Logic();
+			if (advanced) {
+				redraw = true;
+				if (Buildables[index].Progress.Fetch_Stage() >= 53) {
+					Buildables[index].Progress.Set_Rate(0);
+				}
+			}
+		}
+	}
+	if (AllowedToDraw && PlayerPtr == DAT_00AC1198) {
+		for (int index = 0; index < Map.DiplomacyNumHouses; index++) {
+			HouseClass * house = Map.DiplomacyHouses[index];
+			if (house) {
+				if (Map.unknown_550C && Session.Type == GAME_INTERNET) {
+					Ladder * stats = FUN_0077DA50(house->UIName);
+					if (stats) {
+						Map.DiplomacyRung[index] = stats->rung;
+						Map.DiplomacyPoints[index] = stats->points;
+						Map.DiplomacyWins[index] = stats->wins;
+						Map.DiplomacyLosses[index] = stats->losses;
+						Map.DiplomacyDisconnects[index] = stats->disconnects;
+						Map.DiplomacyWinStreak[index] = stats->win_streak;
+						delete stats;
+						redraw = true;
+					}
+				}
+				if (Map.DiplomacyKills[index] != Kills_Of(house) ||
+					Map.DiplomacyOwned[index] != Owned_Of(house) ||
+					Map.DiplomacyCredits[index] != Money_Of(house) ||
+					Map.DiplomacyColors[index] != Color_Of(house)) {
+					redraw = true;
+					Map.DiplomacyKills[index] = Kills_Of(house);
+					Map.DiplomacyOwned[index] = Owned_Of(house);
+					Map.DiplomacyCredits[index] = Money_Of(house);
+					Map.DiplomacyColors[index] = Color_Of(house);
+				}
+			}
+		}
+		Map.unknown_550C = false;
+	}
+	if (redraw) {
+		Map.RepaintSidebar(Map.ActiveTabIndex);
+		Flag_To_Redraw();
+		Map.IsForceCompleteRedraw = true;
+		IsToBlitSidebar = true;
+	}
+	return redraw;
+}
 
 // FUNCTION: GAMEMD 0x006A92E0
 unsigned short const * SidebarClass::StripClass::Help_Text(int id)
