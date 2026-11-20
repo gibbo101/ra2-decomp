@@ -1563,8 +1563,8 @@ bool SidebarClass::StripClass::Recalc(void)
 			Buildables[BuildableCount-1].BuildableType = RTTI_NONE;
 			Buildables[BuildableCount-1].IsAlt = 0;
 			Buildables[BuildableCount-1].unknown_10 = 0;
-			Buildables[BuildableCount-1].Progress.Set_Rate(0);
 			Buildables[BuildableCount-1].Progress.Set_Stage(0);
+			Buildables[BuildableCount-1].Progress.Set_Rate(0);
 			Buildables[BuildableCount-1].FlashEndFrame = 0;
 			IsToRedraw = true;
 			BuildableCount--;
@@ -1602,7 +1602,7 @@ bool SidebarClass::StripClass::Recalc(void)
 		} else {
 			TopIndex = 0;
 		}
-		Map.SidebarClass::IsToRedraw = true;
+		Map.IsForceCompleteRedraw = true;
 	}
 
 	delete[] unshifted;
