@@ -2995,6 +2995,7 @@ address,size,symbol,source,sha256
 0x00489160,26,_$E38,src/combat.cpp,33b2d832cfceb187b73c0735942fac1ca47eb6e7986178df52d00b9efe7427e7
 0x00489180,237,?Modify_Damage@@YIHHPBVWarheadTypeClass@@W4ArmorType@@H@Z,src/combat.cpp,07254fca878b07c43de371ae141a28d08cec8666b0e90b58ac43a36c6832d047
 0x00489270,1,?Chain_Reaction_Damage@@YIXABVCell@@@Z,src/combat.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x00489280,4710,?Explosion_Damage@@YIHABVCoord@@HPAVTechnoClass@@PBVWarheadTypeClass@@_NPAVHouseClass@@@Z,src/combat.cpp,b9f092ab4f6fa8af0bdfea5b8809fbed2c43ade9bcb898cc2f3904ed773fb320
 0x0048A4F0,304,?Combat_Anim@@YIPBVAnimTypeClass@@HPBVWarheadTypeClass@@W4LandType@@ABVCoord@@@Z,src/combat.cpp,2ac89b89fbed44857dda371797d934f05ed7de3072bf056fec5aa68689c06d3e
 0x0048A620,224,?Combat_Lighting@@YIXVCoord@@HPBVWarheadTypeClass@@_NI@Z,src/combat.cpp,feac0d76a5cde0f2cd9a08e3d0492c360f98c127b3b5d62a19f7efc60af2d676
 0x0048A700,461,?Wide_Area_Damage@@YIXABVCoord@@HHPAVTechnoClass@@PBVWarheadTypeClass@@@Z,src/combat.cpp,eac625b1a98e62f611667e0ea0e2e182435ee9aecf43712830fc75d6357d3288
