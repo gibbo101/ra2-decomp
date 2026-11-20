@@ -241,6 +241,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   `if (a || b)`, a case) over ones reached by falling through; among fall-through tails it
   keeps the last in the source, among jump targets the first. The other returns then
   cross-jump into the kept copy in source order (0x007A1BB0).
+  To give early head returns the exe's shared block, make a case with the same return the
+  first jump target: `case X: return(false);` at the top of the switch (0x004D74E0).
 
 ### Registers
 - ESI and EDI swapped with every other byte identical: add one real use of a variable
