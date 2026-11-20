@@ -1575,6 +1575,7 @@ address,name,result,size,source,symbol
 0x00449A40,BuildingClass::Do_MISSION_GUARD_AREA,MATCH,8,src/building.cpp,?Do_MISSION_GUARD_AREA@BuildingClass@@UAEHXZ
 0x00449A50,BuildingClass::Do_MISSION_CONSTRUCTION,MATCH,355,src/building.cpp,?Do_MISSION_CONSTRUCTION@BuildingClass@@UAEHXZ
 0x00449BC0,BuildingClass::Can_Be_Undeployed,MATCH,103,src/building.cpp,?Can_Be_Undeployed@BuildingClass@@QAE_NXZ
+0x00449C30,BuildingClass::Do_MISSION_DECONSTRUCTION,MATCH,3990,src/building.cpp,?Do_MISSION_DECONSTRUCTION@BuildingClass@@UAEHXZ
 0x0044ABD0,BuildingClass::FireLaser,MATCH,277,src/building.cpp,?FireLaser@BuildingClass@@QAEXVCoord@@@Z
 0x0044ACF0,BuildingClass::Do_MISSION_ATTACK,MATCH,2660,src/building.cpp,?Do_MISSION_ATTACK@BuildingClass@@UAEHXZ
 0x0044B760,BuildingClass::Do_MISSION_CAPTURE,MATCH,5,src/building.cpp,?Do_MISSION_CAPTURE@BuildingClass@@UAEHXZ
@@ -5804,6 +5805,7 @@ address,name,result,size,source,symbol
 0x00506B90,HouseClass::Where_To_Place_Upgrade,MATCH,320,src/house.cpp,?Where_To_Place_Upgrade@HouseClass@@QBE?AVCell@@PBVBuildingTypeClass@@@Z
 0x00506CD0,Clamp_Cell,MATCH,124,src/house.cpp,?Clamp_Cell@@YI?AVCell@@ABV?$TRect@H@@ABV1@@Z
 0x00506D50,HouseClass::Calculate_Defense_Values,MATCH,406,src/house.cpp,?Calculate_Defense_Values@HouseClass@@QBEXPBVBuildingClass@@HPAHABV?$TRect@H@@@Z
+0x00506EF0,HouseClass::AI_Build_Defense,MATCH,3216,src/house.cpp,?AI_Build_Defense@HouseClass@@QAE_NHPAV?$DynamicVectorClass@VCell@@@@@Z
 0x00507B80,HouseClass::Get_Anti_Air_Defense_Buildings,MATCH,481,src/house.cpp,?Get_Anti_Air_Defense_Buildings@HouseClass@@QBE?AV?$DynamicVectorClass@PAVBuildingTypeClass@@@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z
 0x00507D70,HouseClass::Get_Anti_Armor_Defense_Buildings,MATCH,481,src/house.cpp,?Get_Anti_Armor_Defense_Buildings@HouseClass@@QBE?AV?$DynamicVectorClass@PAVBuildingTypeClass@@@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z
 0x00507F60,HouseClass::Get_Anti_Ground_Defense_Buildings,MATCH,481,src/house.cpp,?Get_Anti_Ground_Defense_Buildings@HouseClass@@QBE?AV?$DynamicVectorClass@PAVBuildingTypeClass@@@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z

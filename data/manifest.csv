@@ -1937,6 +1937,7 @@ address,size,symbol,source,sha256
 0x00449A40,8,?Do_MISSION_GUARD_AREA@BuildingClass@@UAEHXZ,src/building.cpp,eb07bd572e629dbada4ea2278c718bffc3c2b0074ff70ac81f6863494646cc5c
 0x00449A50,355,?Do_MISSION_CONSTRUCTION@BuildingClass@@UAEHXZ,src/building.cpp,02a3a094eb61c66c1d728b5a5bad757bc610b1693242c0d264c0d03c513824e1
 0x00449BC0,103,?Can_Be_Undeployed@BuildingClass@@QAE_NXZ,src/building.cpp,dc056aa4bf45f5addc3d2e228ff9c3071e5ba6f86f165309c63d1d45dfe1de15
+0x00449C30,3990,?Do_MISSION_DECONSTRUCTION@BuildingClass@@UAEHXZ,src/building.cpp,b020acc7c00af14492fb610f8dd08607fe421632b005dfba60c6b4b914959354
 0x0044ABD0,277,?FireLaser@BuildingClass@@QAEXVCoord@@@Z,src/building.cpp,881cf092de1a75b2e493f3b51855becbc9f16ef8cde27d4bdece56a6fa9fe581
 0x0044ACF0,2660,?Do_MISSION_ATTACK@BuildingClass@@UAEHXZ,src/building.cpp,6c7bbc0547b23763077599917672c3f7c1aa198ee6aaa2cd20e82d1025379fd5
 0x0044B760,5,?Do_MISSION_CAPTURE@BuildingClass@@UAEHXZ,src/building.cpp,8528a994e8c824ab8a467ae750364558845f76c31447c7b1a1ae47481efc0c9e
@@ -6160,6 +6161,7 @@ address,size,symbol,source,sha256
 0x00506B90,320,?Where_To_Place_Upgrade@HouseClass@@QBE?AVCell@@PBVBuildingTypeClass@@@Z,src/house.cpp,213e2ecb60fd33ac9aa2e4f4fc66e5d877aed6adc716eb990ac6849e1ba3883a
 0x00506CD0,124,?Clamp_Cell@@YI?AVCell@@ABV?$TRect@H@@ABV1@@Z,src/house.cpp,74a448249190047bc8ac6683a98985b94f1d90e1e980de3d2f125717b1f3c092
 0x00506D50,406,?Calculate_Defense_Values@HouseClass@@QBEXPBVBuildingClass@@HPAHABV?$TRect@H@@@Z,src/house.cpp,d098a9b0266a38cbd2b6f80a2d89e470f4f66cad7ca67c09fe1d450bcfeaf818
+0x00506EF0,3216,?AI_Build_Defense@HouseClass@@QAE_NHPAV?$DynamicVectorClass@VCell@@@@@Z,src/house.cpp,5d237f3acf87432e45daf501dcd7de051aafffa1f51f96836933aeeb24f8c604
 0x00507B80,481,?Get_Anti_Air_Defense_Buildings@HouseClass@@QBE?AV?$DynamicVectorClass@PAVBuildingTypeClass@@@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z,src/house.cpp,d5598940ddb65a813a32caffc658a728f6c0a46a1ddb6565af474b77af00e419
 0x00507D70,481,?Get_Anti_Armor_Defense_Buildings@HouseClass@@QBE?AV?$DynamicVectorClass@PAVBuildingTypeClass@@@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z,src/house.cpp,cf3ebf26da4e9017b6280f1fa37756f95685b36b2a9d24554088abf3ae0d2cc2
 0x00507F60,481,?Get_Anti_Ground_Defense_Buildings@HouseClass@@QBE?AV?$DynamicVectorClass@PAVBuildingTypeClass@@@@AAV?$DynamicVectorClass@PBVBuildingTypeClass@@@@@Z,src/house.cpp,4e2151106f42d6d7bf80f2c87b2c65fc48700b4e1d91643f5f5e82f4fe4a2f61
