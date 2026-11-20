@@ -676,7 +676,7 @@ wchar_t * __fastcall FUN_00731D10(wchar_t * buffer)
 extern bool DAT_00B0FE64;
 extern int DAT_00A8ECC8;
 unsigned char __fastcall FUN_007342C0(ObjectClass * object);
-bool __fastcall FUN_00732580(TechnoClass * techno, int unused);
+bool __fastcall Is_Owned_Active(TechnoClass * techno, int unused);
 int __fastcall FUN_007325C0(TechnoClass * techno, int unused);
 void __fastcall FUN_006DA770(Tactical * tactical);
 extern Tactical * TacticalMap;
@@ -813,7 +813,7 @@ static inline TechnoList * Collect_Owned_Visible(void)
 		ObjectClass * object = TacticalMap->Selectable_Object(i);
 		if (FUN_007342C0(object)) {
 			TechnoClass * item = (TechnoClass *)object;
-			if (FUN_00732580(item, 0)) {
+			if (Is_Owned_Active(item, 0)) {
 				list->Add(item);
 			}
 		}
@@ -848,7 +848,7 @@ void __fastcall FUN_00732280(bool clear)
 
 	TechnoList * list;
 	if (DAT_00B0FE64) {
-		list = FUN_00731EB0(FUN_00732580, 0);
+		list = FUN_00731EB0(Is_Owned_Active, 0);
 	} else {
 		list = Collect_Owned_Visible();
 		if (!Has_Unselected_Combatants(list)) {
@@ -856,7 +856,7 @@ void __fastcall FUN_00732280(bool clear)
 		}
 		if (DAT_00B0FE64) {
 			delete list;
-			list = FUN_00731EB0(FUN_00732580, 0);
+			list = FUN_00731EB0(Is_Owned_Active, 0);
 		}
 	}
 	if (clear) {
@@ -877,20 +877,18 @@ void __fastcall FUN_00732280(bool clear)
 }
 
 // FUNCTION: GAMEMD 0x00732580
-int __fastcall Is_Owned_Active(TechnoClass * techno, int unused)
+bool __fastcall Is_Owned_Active(TechnoClass * techno, int unused)
 {
-	if (techno && techno->IsActive) {
-		bool owned;
+	bool active = techno && techno->IsActive;
+	bool owned = false;
+	if (active) {
 		if (Session.Type == GAME_NORMAL) {
 			owned = techno->House->IsPlayerControl;
 		} else {
 			owned = techno->House->Is_Player_Control();
 		}
-		if (owned) {
-			return true;
-		}
 	}
-	return false;
+	return active && owned;
 }
 
 // FUNCTION: GAMEMD 0x007325C0
@@ -966,7 +964,7 @@ void __fastcall FUN_00732950(void);
 
 typedef DynamicVectorClass<char const *> NameList;
 NameList * FUN_00732D10(void);
-bool __fastcall FUN_00732C30(TechnoClass * techno, NameList * names);
+bool __fastcall Is_Named_Selectable(TechnoClass * techno, NameList * names);
 
 namespace Game { void __fastcall UICommands_TypeSelect_7327D0(char const * name); }
 
@@ -991,18 +989,71 @@ void __fastcall Game::UICommands_TypeSelect_7327D0(char const * name)
 	Unsorted::MoveFeedback = feedback;
 }
 
+static bool __fastcall Named_Selection_Test(TechnoClass * techno, int context)
+{
+	bool selectable = Is_Named_Selectable(techno, (NameList *)context);
+	bool selected = techno->IsSelected;
+	return selectable && !selected;
+}
+
+// FUNCTION: GAMEMD 0x00732950
+void __fastcall FUN_00732950(void)
+{
+	wchar_t text[256];
+	if (Unsorted::MuteSWLaunches) {
+		return;
+	}
+	FUN_006DA770(TacticalMap);
+	if (Unsorted::NavCycleMode != 2) {
+		DAT_00B0FE64 = false;
+	}
+	NameList * names = FUN_00732D10();
+	TechnoList * list;
+	if (DAT_00B0FE64) {
+		list = FUN_00731EB0(Is_Owned_Active, 0);
+	} else {
+		list = Collect_Owned_Visible();
+		if (!FUN_007321D0(list, Named_Selection_Test, (int)names)) {
+			DAT_00B0FE64 = true;
+		}
+		if (DAT_00B0FE64) {
+			delete list;
+			list = FUN_00731EB0(Is_Owned_Active, 0);
+		}
+	}
+	int count = list->Count();
+	for (int i = 0; i < count; ++i) {
+		TechnoClass * techno = (*list)[i];
+		if (Is_Named_Selectable(techno, names)) {
+			techno->Select();
+		}
+	}
+	FUN_00731D10(text);
+	FUN_00730A90(text, 240);
+	Unsorted::NavCycleMode = 2;
+	DAT_00B0FE58 = false;
+	delete names;
+	delete list;
+}
+
 // FUNCTION: GAMEMD 0x00732C30
 bool __fastcall Is_Named_Selectable(TechnoClass * techno, DynamicVectorClass<char const *> * names)
 {
 	int count = names->Count();
 	for (int i = 0; i < count; i++) {
 		char const * name = (*names)[i];
-		if (techno->Is_Type_Named(name)) {
-			if (techno->CanBeSelectedNow()) {
+		bool matches_name = techno->Is_Type_Named(name);
+		if (matches_name) {
+			bool selectable_now = techno->CanBeSelectedNow();
+			if (selectable_now) {
 				return true;
 			}
-			if (techno && techno->Fetch_RTTI() == RTTI_BUILDING && techno->Techno_Type_Class()->UndeploysInto) {
-				return true;
+			if (techno && techno->Fetch_RTTI() == RTTI_BUILDING) {
+				TechnoTypeClass const * type = techno->Techno_Type_Class();
+				bool can_undeploy = type->UndeploysInto != NULL;
+				if (can_undeploy) {
+					return true;
+				}
 			}
 		}
 	}
