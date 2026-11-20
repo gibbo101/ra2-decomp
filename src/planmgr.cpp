@@ -481,7 +481,8 @@ int PlanningNodeClass::Find_Member(TechnoClass * techno)
 // FUNCTION: GAMEMD 0x006342D0
 TechnoClass * PlanningNodeClass::Member_Owner(int index)
 {
-	return PlanningMembers[index]->Owner;
+	PlanningMemberClass * member = PlanningMembers[index];
+	return member->Get_Owner();
 }
 
 Rect __fastcall FUN_00634510(Point2D center, int size);
@@ -2193,13 +2194,7 @@ void __fastcall FUN_00639BC0(PlanningNodeClass * node)
 			token->FUN_00636B50(token->Node_Index(node));
 		}
 		if (next && next != node) {
-			next->Clear();
-			int count = next->PlanningMembers.Count();
-			for (int i = 0; i < count; i++) {
-				next->FUN_00634E10(next->PlanningMembers[i]);
-			}
-			next->Update_Active();
-			next->Queued = false;
+			next->Rebuild();
 		}
 	}
 }
@@ -2911,6 +2906,47 @@ Coord __fastcall FUN_0063CA80(EventClass const & event, TechnoClass * owner)
 		coord = owner->As_Coord();
 	}
 	return coord;
+}
+
+// FUNCTION: GAMEMD 0x0063CAE0
+void __fastcall FUN_0063CAE0(PlanningNodeClass * node)
+{
+	Point2D pixel = node->Lead_Pixel();
+	int frame = -1;
+	if (node->Get_Count() > 0) {
+		EventClass event = node->Get_Event(0);
+		frame = FUN_0063D540(event);
+	}
+	int fill = node->Lead_Color();
+	int count = node->Branch_Count();
+	for (int i = 0; i < count; i++) {
+		int color = node->Branch_Color(i);
+		Coord coord = node->Branch_Coord(i);
+		Point2D source = FUN_006339E0(coord);
+		if (coord == Coord(-1, -1, -1)) {
+			PlanningBranchClass * branch = node->Get_Branch(i);
+			TechnoClass * owner = node->Owner_At_Branch(i);
+			source = FUN_0063D210(&branch->Event, owner);
+		}
+		FUN_0063D960(source, pixel, 4, color);
+		if (frame != -1) {
+			FUN_0063D630(source, pixel, color, fill, frame);
+		}
+	}
+	if (node->Is_Loop_Alone()) {
+		int color = node->Loop_Color();
+		Coord coord = node->Loop_Coord();
+		Point2D source = FUN_006339E0(coord);
+		if (coord == Coord(-1, -1, -1)) {
+			TechnoClass * owner = node->Active_Owner();
+			source = FUN_0063D210(node->Loop_Event(), owner);
+		}
+		FUN_0063D960(source, pixel, 4, color);
+		if (frame != -1) {
+			FUN_0063D630(source, pixel, color, fill, frame);
+		}
+	}
+	node->Fill_Lead_Box(node->Node_Color());
 }
 
 // FUNCTION: GAMEMD 0x0063CE40
