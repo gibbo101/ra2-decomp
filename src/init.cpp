@@ -4688,6 +4688,21 @@ bool FUN_00534DE0(void)
 	return(true);
 }
 
+// FUNCTION: GAMEMD 0x00534E50
+bool FUN_00534E50(void)
+{
+	bool ready = DAT_00884E5C == NULL || FUN_00534DE0();
+	ready = ready && (DAT_00884E58 == NULL || FUN_00534DE0());
+	if (!ready) return(false);
+	DAT_00884E58 = new MFCD("NTRLMD.MIX", &FastKey);
+	if (DAT_00884E58 == NULL) return false;
+	DebugStringNoPrefix("LOADED NTRLMD.MIX");
+	DAT_00884E5C = new MFCD("NEUTRAL.MIX", &FastKey);
+	if (DAT_00884E5C == NULL) return false;
+	DebugStringNoPrefix("LOADED NEUTRAL.MIX");
+	return true;
+}
+
 extern MFCD * DAT_00884E68;
 extern MFCD * DAT_00884E70;
 extern MFCD * DAT_00884E74;
