@@ -10967,6 +10967,7 @@ address,name,result,size,source,symbol
 0x00630250,?Add@?$DynamicVectorClass@PAVParticleClass@@@@QAE_NABQAVParticleClass@@@Z,MATCH,80,src/partsys.cpp,?Add@?$DynamicVectorClass@PAVParticleClass@@@@QAE_NABQAVParticleClass@@@Z
 0x006302A0,??0?$VectorClass@PAVParticleClass@@@@QAE@HPBQAVParticleClass@@@Z,MATCH,74,src/partsys.cpp,??0?$VectorClass@PAVParticleClass@@@@QAE@HPBQAVParticleClass@@@Z
 0x006302F0,_$E2,MATCH,23,src/pcx.cpp,_$E2
+0x00630310,Read_PCX_File,MATCH,1635,src/pcx.cpp,?Read_PCX_File@@YIPAVSurface@@AAVFileClass@@PAVPaletteClass@@PAXH@Z
 0x00630980,_$E9,MATCH,23,src/phoneed.cpp,_$E9
 0x006309A0,_$E30,MATCH,40,src/phoneed.cpp,_$E30
 0x006309D0,_$E33,MATCH,19,src/phoneed.cpp,_$E33
@@ -13067,6 +13068,7 @@ address,name,result,size,source,symbol
 0x006AC7C0,SidebarClass::StripClass::BuildType::BuildType,MATCH,33,src/sidebar.cpp,??0BuildType@StripClass@SidebarClass@@QAE@XZ
 0x006AC7F0,??_GSidebarClass@@UAEPAXI@Z,MATCH,71,src/sidebar.cpp,??_GSidebarClass@@UAEPAXI@Z
 0x006AC840,DisplayClass::DisplayClass,MATCH,45,src/sidebar.cpp,??0DisplayClass@@QAE@ABVNoInitClass@@@Z
+0x006AC870,StageClass::StageClass,MATCH,32,src/sidebar.cpp,??0StageClass@@QAE@XZ
 0x006AC8D0,??0?$DynamicVectorClass@VPoint2D@@@@QAE@IPBVPoint2D@@@Z,MATCH,117,src/sidebar.cpp,??0?$DynamicVectorClass@VPoint2D@@@@QAE@IPBVPoint2D@@@Z
 0x006A6A00,SidebarClass::Scroll,MATCH,240,src/sidebar.cpp,?Scroll@SidebarClass@@QAE_N_NH@Z
 0x006A6AF0,SidebarClass::Page,MATCH,319,src/sidebar.cpp,?Page@SidebarClass@@QAE_N_NH@Z
@@ -17573,6 +17575,7 @@ address,name,result,size,source,symbol
 0x0076CBF0,WorldDominationTour::Selection::Init_Target,MATCH,417,src/wdtsel.cpp,?Init_Target@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
 0x0076CDA0,WorldDominationTour::Selection::Pick_Territory,MATCH,991,src/wdtsel.cpp,?Pick_Territory@Selection@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@XZ
 0x0076D470,WorldDominationTour::Selection::Update_Hovered_Territory,MATCH,91,src/wdtsel.cpp,?Update_Hovered_Territory@Selection@WorldDominationTour@@QAEXABVPoint2D@@@Z
+0x0076DAD0,WorldDominationTour::Selection::Select_Territory,MATCH,1012,src/wdtsel.cpp,?Select_Territory@Selection@WorldDominationTour@@QAE_NABV?$rc_ptr@VTerritory@WorldDominationTour@@@@@Z
 0x0076DED0,WorldDominationTour::Selection::Remove_Target_Anims,MATCH,115,src/wdtsel.cpp,?Remove_Target_Anims@Selection@WorldDominationTour@@QAEXXZ
 0x0076DF50,WorldDominationTour::Selection::Remove_Target_Anims2,MATCH,115,src/wdtsel.cpp,?Remove_Target_Anims2@Selection@WorldDominationTour@@QAEXXZ
 0x0076DFD0,WorldDominationTour::Selection::On_Map_Enter,MATCH,181,src/wdtsel.cpp,?On_Map_Enter@Selection@WorldDominationTour@@QAEXXZ
