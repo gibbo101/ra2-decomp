@@ -2121,6 +2121,123 @@ int MapClass::Get_Cell_Zone(Cell const * cell, MZoneType mzone, bool bridge)
 	return(Zones[mzone][Get_Cell_Zone_ID(*cell)]);
 }
 
+extern int LastAdjacentZone;
+
+// FUNCTION: GAMEMD 0x0056CB90
+int MapClass::Zone_Span(CellZoneStruct * data, int zone, int & skip)
+{
+	CellZoneStruct * begin = data;
+	CellZoneStruct * end = data;
+	int passability = data->Passability;
+	bool nopass = passability == PASSABLE_NO;
+	int cell_height = data->Height;
+	ZONE_PAIR_HASH_SET::ObjectType connection;
+
+	while (begin->Passability == passability) {
+		if (abs(begin->Height - cell_height) >= 2) {
+			break;
+		}
+		begin->ZoneID = zone;
+		cell_height = begin->Height;
+		begin--;
+	}
+
+	int begin_zone = begin->ZoneID;
+	if (begin_zone != 0 && (abs(begin->Height - cell_height) < 2 || nopass) && begin_zone != LastAdjacentZone && begin_zone != (unsigned short)zone) {
+		connection.Key = (unsigned short)zone | ((unsigned int)begin_zone << 16);
+		connection.Value = connection.Key;
+		ZoneAdjacency->Add_Object(((unsigned short)zone & 0xF) | ((begin_zone & 0xF) << 4), connection);
+		LastAdjacentZone = begin_zone;
+	}
+
+	while (end->Passability == passability) {
+		if (abs(end->Height - cell_height) >= 4) {
+			break;
+		}
+		end->ZoneID = zone;
+		cell_height = end->Height;
+		end++;
+	}
+
+	begin_zone = end->ZoneID;
+	if (begin_zone != 0 && (abs(end->Height - cell_height) < 2 || nopass) && begin_zone != LastAdjacentZone && begin_zone != (unsigned short)zone) {
+		connection.Key = (unsigned short)zone | ((unsigned int)begin_zone << 16);
+		connection.Value = connection.Key;
+		ZoneAdjacency->Add_Object(((unsigned short)zone & 0xF) | ((begin_zone & 0xF) << 4), connection);
+		LastAdjacentZone = begin_zone;
+	}
+
+	int filled = end - begin - 1;
+	skip = end - data - 1;
+	begin++;
+	int skip1 = 0;
+	int skip2 = 0;
+	end--;
+
+	int stride = PlayRect.Height + PlayRect.Width + 1;
+	int diag = stride + 1;
+
+	CellZoneStruct * fbegin = begin - diag;
+	CellZoneStruct * fbegin2 = begin + stride - 1;
+	CellZoneStruct * fend = end - stride + 1;
+	CellZoneStruct * fend2 = end + diag;
+
+	while (fbegin <= fend) {
+		int zzone = fbegin->ZoneID;
+		CellZoneStruct * adjacent;
+		if (fbegin < fend - 1) {
+			adjacent = fbegin + diag;
+		} else {
+			adjacent = fbegin == fend - 1 ? fbegin + stride : fbegin - 1 + stride;
+		}
+		if (zzone == 0) {
+			if (fbegin->Passability == passability && abs(fbegin->Height - adjacent->Height) < 2) {
+				filled += Zone_Span(fbegin, zone, skip1);
+				fbegin += skip1;
+			} else {
+				fbegin++;
+			}
+		} else {
+			if (zzone != (unsigned short)zone && zzone != LastAdjacentZone && (abs(fbegin->Height - adjacent->Height) < 2 || nopass)) {
+				connection.Key = (unsigned short)zone | ((unsigned int)zzone << 16);
+				connection.Value = connection.Key;
+				ZoneAdjacency->Add_Object(((unsigned short)zone & 0xF) | ((zzone & 0xF) << 4), connection);
+				LastAdjacentZone = zzone;
+			}
+			fbegin++;
+		}
+	}
+
+	while (fbegin2 <= fend2) {
+		int id = fbegin2->ZoneID;
+		CellZoneStruct * adjacent;
+		if (fbegin2 < fend2 - 1) {
+			adjacent = fbegin2 - stride + 1;
+		} else {
+			adjacent = fbegin2 == fend2 - 1 ? fbegin2 - stride : fbegin2 - diag;
+		}
+		if (id == 0) {
+			if (fbegin2->Passability == passability && abs(fbegin2->Height - adjacent->Height) < 2) {
+				filled += MapClass::Zone_Span(fbegin2, zone, skip2);
+				fbegin2 += skip2;
+			} else {
+				fbegin2++;
+			}
+		} else {
+			if (id != (unsigned short)zone && id != LastAdjacentZone && (abs(fbegin2->Height - adjacent->Height) < 2 || nopass)) {
+				connection.Key = (unsigned short)zone | ((unsigned int)id << 16);
+				connection.Value = connection.Key;
+				ZoneAdjacency->Add_Object(((unsigned short)zone & 0xF) | ((id & 0xF) << 4), connection);
+				LastAdjacentZone = id;
+			}
+			fbegin2++;
+		}
+	}
+
+	return(filled);
+}
+
+
 // FUNCTION: GAMEMD 0x0056D3A0
 int MapClass::Get_Cell_Zone_ID(Cell const & cell)
 {
@@ -8225,7 +8342,6 @@ void MapClass::Reset_All_Subzones(void)
 	Search.Reset();
 }
 
-extern int LastAdjacentZone;
 
 // FUNCTION: GAMEMD 0x00581F90
 void MapClass::Reset_Subzone(int subzone)
