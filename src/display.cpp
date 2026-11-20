@@ -435,6 +435,56 @@ done:
 	return(true);
 }
 
+// FUNCTION: GAMEMD 0x004A91B0
+Cell DisplayClass::Set_Cursor_Pos(Cell const & xpos)
+{
+	Cell result;
+	Cell pos = xpos;
+
+	if (pos == CELL_NONE) {
+		Point2D const & current = MouseCursor->Get_Mouse_Point();
+		Rect bounds = TacticalRect;
+		if (bounds.Is_Point_Within(current)) {
+			result = Map.Click_Cell_Calc(Get_Mouse_Point());
+			if (result != CELL_NONE) {
+				pos = result;
+			}
+		} else {
+			pos = TacticalMap->Pixel_To_Cell(Get_Mouse_Point() - bounds.TopLeft);
+		}
+	}
+
+	if (CursorSize == NULL) {
+		result = ZoneCell;
+		ZoneCell = pos;
+		return(result);
+	}
+
+	Cell cursor;
+	if (!Debug_Map) {
+		cursor = TacticalMap->Clamp_Cursor_To_Tactical(pos + ZoneOffset, CursorSize) - ZoneOffset;
+	} else {
+		cursor = pos;
+	}
+
+	if (cursor == ZoneCell) return(cursor);
+
+	result = ZoneCell;
+	if (CursorSize != NULL) {
+		if (cursor != ZoneCell && ZoneCell != CELL_NONE) {
+			Cursor_Mark(ZoneCell+ZoneOffset, false);
+		}
+		if (cursor != CELL_NONE) {
+			Cursor_Mark(cursor+ZoneOffset, true);
+		}
+	}
+	ZoneCell = cursor;
+	ProximityCheck = Passes_Proximity_Check(PendingObject, PendingHouse, CursorSize, ZoneCell+ZoneOffset);
+	ShroudCheck = Passes_Shroud_Check(PendingObject, PendingHouse, CursorSize, ZoneCell+ZoneOffset);
+
+	return(result);
+}
+
 // FUNCTION: GAMEMD 0x004A94F0
 Cell DisplayClass::Get_Occupy_Dimensions(Cell const * list) const
 {

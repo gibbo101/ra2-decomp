@@ -1099,7 +1099,9 @@ Rect PlanningNodeClass::Lead_Box_Rect(void)
 // FUNCTION: GAMEMD 0x00635E90
 Rect PlanningNodeClass::Lead_Box_Rect2(void)
 {
-	return Inflated(Lead_Box_Rect(), 4);
+	Rect rect = Lead_Box_Rect();
+	FUN_006357D0(&rect, 4);
+	return rect;
 }
 
 // FUNCTION: GAMEMD 0x00635F20

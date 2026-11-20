@@ -6171,6 +6171,22 @@ int MapClass::Straight_Shore_Length(CellClass * cellptr, FacingType direction)
 	return(count);
 }
 
+int ShorePieceGroups[] = {
+	0, 0, 0, 1, 2, 3, 4, 4, 5, 5,
+	5, 6, 7, 8, 9, 9, 10, 10, 10, 11,
+	12, 13, 14, 14, 15, 15, 15, 16, 17, 18,
+	19, 19, 20, 20, 21, 21, 22, 22, 23, 23,
+	24, 25
+};
+
+int ShorePieceFacings[] = {
+	4, 4, 4, 4, 4, 4, 3, 3, 2, 2,
+	2, 2, 2, 2, 1, 1, 0, 0, 0, 0,
+	0, 0, 7, 7, 6, 6, 6, 6, 6, 6,
+	5, 5, 3, 3, 1, 1, 7, 7, 5, 5,
+	4, 4
+};
+
 // SYNTHETIC: GAMEMD 0x0057A9C0 SYMBOL
 // _$E249
 Cell ShorePieceOffsets[] = {
@@ -6489,6 +6505,91 @@ int MapClass::Get_Water_Mask(CellClass * cellptr, int control)
 		mask |= MG_FACINGF_SE;
 	}
 	return(mask);
+}
+
+// FUNCTION: GAMEMD 0x0057B440
+bool MapClass::Pick_Random_Tile_Variant(IsometricTileType tile, int max_tile, int base_height, int seed, bool & success, bool flat_height)
+{
+	if (Map.PendingObject->RTTI == RTTI_ISOTILETYPE) {
+		if (flat_height) {
+			seed = 0;
+		}
+		IsometricTileTypeClass * ttype = (IsometricTileTypeClass *)Map.PendingObject;
+		IsoTileSet const * image = (IsoTileSet const *)ttype->Get_Image_Data();
+		if (image != NULL) {
+			for (int row = 0; row < ttype->Height; row++) {
+				for (int col = 0; col < ttype->Width; col++) {
+					Cell cell;
+					cell = Map.ZoneCell + Cell(col, row);
+					if (!Map.In_Radar(cell)) {
+						continue;
+					}
+					CellClass * cellptr = &Map[cell];
+					int subtile = col + ttype->Width * row;
+					IsoTileRecord const * record = image->Fetch_Record_Pointer_Unsafe(subtile);
+					if (record == NULL) {
+						continue;
+					}
+					int id = RandomMapGen.Get_Cell_Data_Region(cell);
+					if (flat_height) {
+						id = 0;
+					}
+					int existing;
+					int pending;
+					bool place = true;
+					if (id > 0 && id != seed && seed != -1) {
+						existing = cellptr->ITType - IsometricTileTypeClass::ShorePieces;
+						pending = ttype->HeapID - IsometricTileTypeClass::ShorePieces;
+						if (!cellptr->Is_Tile_Clear()) {
+							if (existing < 0 || pending < 0 || existing > 41 || pending > 41
+								|| ShorePieceGroups[existing] != ShorePieceGroups[pending]) {
+								success = false;
+								return(false);
+							}
+							return(true);
+						}
+						RandomMapGen.Set_Cell_Data_Region(cell, seed);
+					} else if (id == seed) {
+						existing = cellptr->ITType - IsometricTileTypeClass::ShorePieces;
+						pending = ttype->HeapID - IsometricTileTypeClass::ShorePieces;
+						if (existing >= 0 && pending >= 0 && existing <= 41 && pending <= 41) {
+							int diff = abs(ShorePieceFacings[existing] - ShorePieceFacings[pending]);
+							if (diff >= 3 && diff <= 5) {
+								success = false;
+								return(false);
+							}
+						}
+					} else {
+						place = cellptr->Is_Tile_Clear();
+						if (place) {
+							RandomMapGen.Set_Cell_Data_Region(cell, seed);
+						} else if (seed != -1) {
+							success = false;
+							return(false);
+						}
+					}
+					if (place) {
+						if (cellptr->Is_Tile_Clear()
+							|| (cellptr->ITType >= tile && cellptr->ITType <= max_tile)) {
+							cellptr->ITType = ttype->HeapID;
+							cellptr->SubTile = subtile;
+							cellptr->Height = base_height + record->Height;
+							continue;
+						}
+						if (cellptr->Is_Tile_Shore() && MapClass::Is_Tile_Cliff(ttype->HeapID, subtile)
+							|| (ttype->HeapID >= IsometricTileTypeClass::ShorePieces
+								&& ttype->HeapID < IsometricTileTypeClass::ShorePieces + SHORE_PIECES_COUNT
+								&& cellptr->Is_Tile_Cliff())) {
+							success = false;
+						}
+						return(false);
+					}
+				}
+			}
+			return(true);
+		}
+	}
+	return(false);
 }
 
 // FUNCTION: GAMEMD 0x0057B790
