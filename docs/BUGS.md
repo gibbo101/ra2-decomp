@@ -100,3 +100,10 @@ effect, so it can be fixed in a separate build later.
 - **WorldDominationTour::Selection::Play_SFX (0x0076EBE0).** The lookup loop stops at the
   first sound entry whose name differs from the one asked for, and plays that entry, so a
   named campaign-map sound plays only when it is not the first entry.
+
+- **Read_PCX_File (0x00630310).** Header validation rejects a file only when
+  its identifier, version and pixel size are all invalid; failure returns after
+  opening the file also omit `Close`. In the padded one-plane path, a literal
+  padding byte does not advance the scanline index, so decoding can consume
+  subsequent data or stall. In the three-plane path, a zero-length RLE packet
+  wraps the byte counter and writes 256 bytes. These original paths are preserved.
