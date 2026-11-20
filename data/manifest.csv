@@ -8430,6 +8430,7 @@ address,size,symbol,source,sha256
 0x00581090,166,?Shutdown@MapClass@@QAEXXZ,src/map.cpp,d0928de896e7bf9fe995b035bc1e2c51ff2753b163e31f62cc82dd869bba463e
 0x00581140,3587,?Collapse_Cliff@MapClass@@QAEXPAVCellClass@@@Z,src/map.cpp,46f5bab94527099ba3cf2e7e7e9ab7b3f9eaf1a61d057ee6e431d7a46feea2b9
 0x00581F50,53,?Reset_All_Subzones@MapClass@@QAEXXZ,src/map.cpp,111577fa64528c213620ba372ce681a4ce6f69aa1e7ab5cd92a080d057550a76
+0x00581F90,1290,?Reset_Subzone@MapClass@@QAEXH@Z,src/map.cpp,3ba405242cb4d6d49abe70dc2fee3193b39139e58542ab0f6c8645326784c9c4
 0x00582D30,62,?Register_Subzone_Zone_Connections@MapClass@@QAEXH@Z,src/map.cpp,65d4de7faf3c37b2d9d1a7e789f9f6cb3e899744c582f5f8990e8b73bf4ebaf8
 0x00583180,620,?Get_Bridge_Zone_Connection_Cell@MapClass@@QAE?AVCell@@PAVCellClass@@_N@Z,src/map.cpp,74ea11bbe2eae91befaec85f3e81fe3a20910f8292dab4e84d704619ed4c70a0
 0x005833F0,476,?Get_Zone_Connection_Destination@MapClass@@QAE?AVCell@@ABV2@0@Z,src/map.cpp,a1ebbf9e79732e5c8d4c66c5f90cb46a69e2567a7f8e83e42240d45c2d803470
@@ -13461,6 +13462,7 @@ address,size,symbol,source,sha256
 0x006AF580,101,?SetOwner@SlaveManagerClass@@QAEXPAVTechnoClass@@@Z,src/slavemanager.cpp,bff87477cbb8059f3a98b8e906c81a2161b7cd7e01f6b2006a7d842a939ac03a
 0x006AF5F0,83,?AI@SlaveManagerClass@@UAEXXZ,src/slavemanager.cpp,a9be80ca8192cbf8a9add621ad0c0bd72efaa80d61d5ec6fb1cf801454a512cb
 0x006AF650,98,?CreateSlave@SlaveManagerClass@@QAEXPAUSlaveControl@1@@Z,src/slavemanager.cpp,3779ae76c5b7772cc907b9078a48559551b31f2e51f79ac00947cb20744d47af
+0x006AFD60,1268,?FUN_006AFD60@SlaveManagerClass@@QAEXXZ,src/slavemanager.cpp,89615de01e0d6bcb5a045352366941b7d8d252f86cfb697c57665681710c12c6
 0x006B0260,85,?FUN_006B0260@SlaveManagerClass@@QAE_NXZ,src/slavemanager.cpp,cf72567270ad84ba9d61ba00835c19230dd7d8943a3639110185f49c228a8bdb
 0x006B02C0,57,?FUN_006B02C0@SlaveManagerClass@@QAE?AVCell@@XZ,src/slavemanager.cpp,992d9003a288034d6388ce6519f1863e3b2ea2d6ac93dfe71723d0637cc23480
 0x006B0300,394,?FUN_006B0300@SlaveManagerClass@@QAE?AVCell@@V2@@Z,src/slavemanager.cpp,20f9db1c3010a5a899e2b3733346dc06c3666a15706e7b0b040f326487a9cf60
@@ -17797,6 +17799,7 @@ address,size,symbol,source,sha256
 0x0076C970,225,?Init_Voices@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z,src/wdtsel.cpp,b638e1ea3dcfd6256040dbfea31397accda43a058d693bada3d7c170c6358d8d
 0x0076CA60,400,?Init_Sounds@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z,src/wdtsel.cpp,4c239a7a8cfb1eda44d002beb0c2701a7fc804f4d44d58363eed8c730ad8c1cf
 0x0076CBF0,417,?Init_Target@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z,src/wdtsel.cpp,7a3223a8d16dac5fa1347d26026a82800749f2b55e5686929965a6d0be3bc16c
+0x0076CDA0,991,?Pick_Territory@Selection@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@XZ,src/wdtsel.cpp,0143fda1cb79caba42161a2a92ebd3471d77261083e3b403259ecd232c2642cb
 0x0076D470,91,?Update_Hovered_Territory@Selection@WorldDominationTour@@QAEXABVPoint2D@@@Z,src/wdtsel.cpp,a1876d6c8a23b907c54f54e238d6115c7b5b453223fd101249bb855b953829be
 0x0076DED0,115,?Remove_Target_Anims@Selection@WorldDominationTour@@QAEXXZ,src/wdtsel.cpp,0931315fa02a336f10b466210d9c7dbfe0d197a49cc09b8b2e12712f88573c95
 0x0076DF50,115,?Remove_Target_Anims2@Selection@WorldDominationTour@@QAEXXZ,src/wdtsel.cpp,c149f50630636be05bb6e377554f0593d78beb084eef4323378e8f56401e9b20

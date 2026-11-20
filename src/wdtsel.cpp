@@ -164,6 +164,56 @@ void Selection::Init_Target(INIClass const & ini, Wstring const & section)
 	ThrobbingTargetDividingFrame = ini.Get_Int(section, faction_name + "TargetDividingFrame", 32);
 }
 
+bool WOL_Wait_Callback(void);
+
+// FUNCTION: GAMEMD 0x0076CDA0
+// WorldDominationTour::Selection::Pick_Territory
+rc_ptr<Territory> Selection::Pick_Territory(void)
+{
+	Set_Long_Description();
+	bool canceled = false;
+	bool selected = false;
+	Keyboard->Clear();
+	do {
+		WOL_Wait_Callback();
+		Wait_For_Focus();
+		Point2D point(MouseCursor->Get_Mouse_X(), MouseCursor->Get_Mouse_Y());
+		if (Keyboard->Check() != KN_NONE) {
+			int key = Keyboard->Get();
+			if (key == KN_LMOUSE) {
+				Handle_Click(point, selected);
+			} else if (key == (KN_LMOUSE | WWKEY_RLS_BIT)) {
+				WorldMap->FUN_007693A0(this, false);
+				if (WorldMap->FUN_00769440(point)) {
+					Play_SFX("Canceled");
+					canceled = true;
+				}
+			}
+		} else if (point != LastPoint) {
+			LastPoint = point;
+			int zone = WorldMap->FUN_00769440(point) ? 2 : 1;
+			if (LastHoverZone != zone) {
+				switch (LastHoverZone) {
+				case 1: On_Map_Leave(); break;
+				case 2: On_Cancel_Leave(); break;
+				}
+			}
+			switch (zone) {
+			case 1:
+				if (LastHoverZone != 1) On_Map_Enter();
+				Update_Hovered_Territory(point);
+				break;
+			case 2:
+				if (LastHoverZone != 2) On_Cancel_Enter();
+				break;
+			}
+			LastHoverZone = zone;
+		}
+		Wait_Delay(1);
+	} while (!canceled && !selected);
+	return(selected ? MousedTerritory : rc_ptr<Territory>());
+}
+
 // FUNCTION: GAMEMD 0x0076D470
 // WorldDominationTour::Selection::Update_Hovered_Territory
 void Selection::Update_Hovered_Territory(Point2D const & point)
@@ -214,7 +264,7 @@ void Selection::On_Map_Leave(void)
 {
 	Play_SFX("MapLeave");
 	HoveredTerritoryID = -1;
-	rc_ptr<Territory> none;
+	rc_ptr<Territory> const & none = rc_ptr<Territory>();
 	Select_Territory(none);
 }
 

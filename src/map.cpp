@@ -8225,6 +8225,109 @@ void MapClass::Reset_All_Subzones(void)
 	Search.Reset();
 }
 
+extern int LastAdjacentZone;
+
+// FUNCTION: GAMEMD 0x00581F90
+void MapClass::Reset_Subzone(int subzone)
+{
+	CellSubzoneStruct * subend = &CellSubzones[CellZoneCount];
+	SUBZONE_CONNECTION_HASH_SET * set = SubzoneConnectionHashTable[subzone];
+	DynamicVectorClass<SubzoneTrackingStruct> * track = &SubzoneTracking[subzone];
+	set->Clear();
+
+	CellSubzoneStruct * subptr = CellSubzones;
+	CellZoneStruct * zoneptr = CellZones;
+	if (subptr < subend) {
+		do {
+			subptr->SubzoneID[subzone] = 0;
+			subptr->ZoneID = zoneptr->ZoneID;
+			subptr->Height = zoneptr->Height;
+			subptr++;
+			zoneptr++;
+		} while (subptr < subend);
+	}
+
+	int entry_count = 1;
+	track->Add(SubzoneTrackingStruct());
+	(*track)[0].ParentSubzoneID = 0;
+	(*track)[0].Passability = PASSABLE_OUTSIDE;
+
+	subptr = CellSubzones;
+	zoneptr = CellZones;
+	int regionmask = (1 << (subzone + 1)) - 1;
+	int rowwidth = Map.PlayRect.Width + Map.PlayRect.Height + 1;
+	Rect bounds(0, 0, 1 << (subzone + 1), 1 << (subzone + 1));
+	int X = 0;
+	int Y = 0;
+	while (subptr < subend) {
+		int passability = zoneptr->Passability;
+		int parent;
+		if (subzone + 1 < SUBZONE_COUNT) {
+			parent = subptr->SubzoneID[subzone + 1];
+		} else {
+			parent = 0;
+		}
+
+		if (passability == PASSABLE_OUTSIDE || subptr->SubzoneID[subzone] != 0) {
+			subptr++;
+			zoneptr++;
+			X++;
+		} else {
+			LastAdjacentZone = 0;
+			int count = Subzone_Span(subptr, subzone, entry_count, bounds, Cell(X, Y));
+
+			track->Add(SubzoneTrackingStruct());
+
+			SubzoneTrackingStruct * added = &(*track)[(unsigned short)entry_count];
+			added->ParentSubzoneID = (unsigned short)parent;
+			added->Passability = (PassabilityType)passability;
+			added->Connections.Set_Growth_Step(16);
+			added->ThreatRegion = Cell_Region(Cell(X, Y));
+
+			entry_count++;
+			subptr = &subptr[count];
+			zoneptr = &zoneptr[count];
+			X += count;
+		}
+
+		if (X == rowwidth) {
+			Y++;
+			X = 0;
+			bounds.X = 0;
+			bounds.Y = Y - (regionmask & Y);
+		} else if ((X & regionmask) == 0) {
+			bounds.X = X;
+		}
+	}
+
+	SubzoneTrackingEntryCount[subzone] = (unsigned short)entry_count;
+
+	Register_Subzone_Zone_Connections(subzone);
+
+	for (int bucket_index = 0; bucket_index < 256; bucket_index++) {
+		SUBZONE_CONNECTION_HASH_SET::BucketType & bucket = set->Buckets[bucket_index];
+		if (bucket.Count() > 0) {
+			SUBZONE_CONNECTION_HASH_SET::ObjectType * object = &bucket[0];
+			for (int index = bucket.Count(); index > 0; index--) {
+				unsigned packed = object->Value.SubzoneID;
+				WORD low = LOWORD(packed);
+				WORD high = HIWORD(packed);
+				bool costly = object->Value.IsCrossBlock;
+
+				SubzoneConnectionStruct conn(high);
+				conn.IsCrossBlock = costly;
+				(*track)[low].Connections.Add(conn);
+
+				SubzoneConnectionStruct conn2(low);
+				conn2.IsCrossBlock = costly;
+				(*track)[high].Connections.Add(conn2);
+
+				object++;
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00582D30
 void MapClass::Register_Subzone_Zone_Connections(int subzone)
 {
