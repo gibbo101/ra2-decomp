@@ -5823,6 +5823,7 @@ address,name,result,size,source,symbol
 0x00509E00,HouseClass::Fire_LightningStorm,MATCH,180,src/house.cpp,?Fire_LightningStorm@HouseClass@@QAEXPAVSuperClass@@@Z
 0x00509EC0,HouseClass::FUN_00509EC0,MATCH,159,src/house.cpp,?FUN_00509EC0@HouseClass@@QAEXPAVSuperClass@@@Z
 0x00509F60,HouseClass::Fire_GenMutator,MATCH,491,src/house.cpp,?Fire_GenMutator@HouseClass@@QAEXPAVSuperClass@@@Z
+0x0050A150,HouseClass::Fire_PsyDom,MATCH,497,src/house.cpp,?Fire_PsyDom@HouseClass@@QAEXPAVSuperClass@@@Z
 0x0050A350,HouseClass::FUN_0050A350,MATCH,318,src/house.cpp,?FUN_0050A350@HouseClass@@QAEXPAVSuperClass@@@Z
 0x0050A490,HouseClass::Invalidate_Base_Node_Position,MATCH,290,src/house.cpp,?Invalidate_Base_Node_Position@HouseClass@@QAEXPAVBuildingClass@@@Z
 0x0050A5C0,HouseClass::AI_Takeover,MATCH,2375,src/house.cpp,?AI_Takeover@HouseClass@@QAEXXZ
@@ -7874,6 +7875,7 @@ address,name,result,size,source,symbol
 0x00560BF0,Change_Display_Mode,MATCH,1418,src/mainopt.cpp,?Change_Display_Mode@@YI_NHH@Z
 0x00561180,Test_Display_Mode_Dialog,MATCH,460,src/mainopt.cpp,?Test_Display_Mode_Dialog@@YI_NHH@Z
 0x00561350,Confirm_Mode_Dialog_Proc,MATCH,174,src/mainopt.cpp,?Confirm_Mode_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
+0x00561400,Display_Options_Dialog_Proc,MATCH,737,src/mainopt.cpp,?Display_Options_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x005616F0,_$E2,MATCH,23,src/map.cpp,_$E2
 0x00561710,_$E5,MATCH,40,src/map.cpp,_$E5
 0x00561740,_$E8,MATCH,19,src/map.cpp,_$E8
@@ -16247,6 +16249,7 @@ address,name,result,size,source,symbol
 0x007343E0,??0?$VectorClass@PBD@@QAE@HPBQBD@Z,MATCH,74,src/uicmnds.cpp,??0?$VectorClass@PBD@@QAE@HPBQBD@Z
 0x00733380,FUN_00733380,MATCH,614,src/uicmnds.cpp,?FUN_00733380@@YIX_N@Z
 0x007336C0,FUN_007336C0,MATCH,624,src/uicmnds.cpp,?FUN_007336C0@@YIX_N@Z
+0x007339B0,FUN_007339B0,MATCH,681,src/uicmnds.cpp,?FUN_007339B0@@YIX_N@Z
 0x00734430,_$E2,MATCH,40,src/uicmnds2.cpp,_$E2
 0x00734460,_$E5,MATCH,19,src/uicmnds2.cpp,_$E5
 0x00734480,_$E8,MATCH,19,src/uicmnds2.cpp,_$E8
