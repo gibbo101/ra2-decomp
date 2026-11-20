@@ -2043,6 +2043,109 @@ int SidebarClass::FUN_006ABD10(void)
 }
 
 
+extern int DAT_00B0B508;
+extern int DAT_00B0B50C;
+extern int DAT_00B0B510;
+
+// FUNCTION: GAMEMD 0x006ABD30
+void SidebarClass::Reposition_Sidebar(void)
+{
+	BASECLASS::Reposition_Sidebar();
+	FUN_006A5130(false);
+	if (!SidebarShape) {
+		SidebarShape = (ShapeSet const *)FileSystem::LoadFile("SIDEGDI1.SHP", false);
+		SidebarMiddleShape = (ShapeSet const *)FileSystem::LoadFile("SIDEGDI2.SHP", false);
+		SidebarBottomShape = (ShapeSet const *)FileSystem::LoadFile("SIDEGDI3.SHP", false);
+	}
+	Background.Set_Position(SidebarRect.X + 16, TacticalRect.Y);
+	Background.Flag_To_Redraw();
+	int x = 0;
+	int y = RadarButton.Y + RadarButton.Height;
+	if (Options.IsSidebarOnRight) {
+		Background.Set_Position(TacticalRect.X + TacticalRect.Width, y);
+	} else {
+		Background.Set_Position(x, y);
+	}
+	Background.Set_Size(SidebarSurface->Get_Width(), SidebarSurface->Get_Height() - y);
+	Repair.Set_Position(DAT_00B0B4DC, DAT_00B0B4E0);
+	Repair.Flag_To_Redraw();
+	Repair.DrawOffset.X = -SidebarRect.X;
+	int power_x = Repair.X + DAT_00B0B4E4;
+	Power.Set_Position(power_x, Repair.Y);
+	Power.Flag_To_Redraw();
+	Power.DrawOffset.X = -SidebarRect.X;
+	for (int index = 0; index < STRIPS; index++) {
+		int tab_x = DAT_00B0B4E8 + DAT_00B0B4F0 * index;
+		TabButtons[index].Set_Position(tab_x, DAT_00B0B4EC);
+		TabButtons[index].Flag_To_Redraw();
+		TabButtons[index].DrawOffset.X = -SidebarRect.X;
+	}
+	Upgrade.Set_Position(DAT_00B0B508, DAT_00B0B50C);
+	Upgrade.Flag_To_Redraw();
+	Upgrade.DrawOffset.X = -SidebarRect.X;
+	int waypoint_x = DAT_00B0B508 + DAT_00B0B510;
+	Waypoint.Set_Position(waypoint_x, DAT_00B0B50C);
+	Waypoint.Flag_To_Redraw();
+	Waypoint.DrawOffset.X = -SidebarRect.X;
+	int rows = Max_Visible();
+	int count = rows * COLUMNS;
+	for (int strip = 0; strip < STRIPS; strip++) {
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < COLUMNS; col++) {
+				int slot = strip * 60 + row * COLUMNS + col;
+				StripClass::SelectClass *button = &StripClass::SelectButton[slot];
+				int cameo_y = DAT_00B0B4F8 + DAT_00B0B500 * row + 1;
+				int cameo_x = DAT_00B0B4F4 + DAT_00B0B4FC * col;
+				button->Set_Position(cameo_x, cameo_y);
+				button->Flag_To_Redraw();
+			}
+		}
+	}
+	if (ToolTips) {
+		ToolTip tooltip;
+		for (int tab = 0; tab < STRIPS; tab++) {
+			tooltip.ID = 203 + tab;
+			tooltip.Text = 0;
+			ShapeButtonClass const &tab_button = TabButtons[tab];
+			tooltip.Region.Set(tab_button.X, tab_button.Y, tab_button.Width, tab_button.Height);
+			ToolTips->Remove(tooltip.ID);
+			ToolTips->Add(&tooltip);
+		}
+		for (int index = 0; index < 60; index++) {
+			ToolTips->Remove(GADGET_CAMEO + index);
+		}
+		for (int cameo = 0; cameo < count; cameo++) {
+			tooltip.ID = GADGET_CAMEO + cameo;
+			tooltip.Text = 0;
+			StripClass::SelectClass const &cameo_button = StripClass::SelectButton[cameo];
+			tooltip.Region.Set(cameo_button.X, cameo_button.Y, cameo_button.Width, cameo_button.Height);
+			tooltip.Flag = true;
+			ToolTips->Add(&tooltip);
+		}
+		tooltip.Flag = false;
+		tooltip.ID = 102;
+		tooltip.Text = (int)"TXT_SELL_MODE";
+		tooltip.Region.Set(Power.X, Power.Y, Power.Width, Power.Height);
+		ToolTips->Remove(tooltip.ID);
+		ToolTips->Add(&tooltip);
+		tooltip.ID = 101;
+		tooltip.Text = (int)"TXT_REPAIR_MODE";
+		tooltip.Region.Set(Repair.X, Repair.Y, Repair.Width, Repair.Height);
+		ToolTips->Remove(tooltip.ID);
+		ToolTips->Add(&tooltip);
+		tooltip.ID = 200;
+		tooltip.Text = 0;
+		tooltip.Region.Set(Waypoint.X, Waypoint.Y, Waypoint.Width, Waypoint.Height);
+		ToolTips->Remove(tooltip.ID);
+		ToolTips->Add(&tooltip);
+		tooltip.ID = 201;
+		tooltip.Text = 0;
+		tooltip.Region.Set(Upgrade.X, Upgrade.Y, Upgrade.Width, Upgrade.Height);
+		ToolTips->Remove(tooltip.ID);
+		ToolTips->Add(&tooltip);
+	}
+}
+
 // FUNCTION: GAMEMD 0x006AC3E0
 int SidebarClass::Max_Visible(void)
 {
