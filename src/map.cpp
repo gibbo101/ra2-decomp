@@ -1007,6 +1007,87 @@ bool MapClass::In_Radar(Coord const & coord) const
 
 #define Cell_In_Range(c, len) ((c).X + (c).Y * 512 >= 0 && (c).X + (c).Y * 512 < (len) && Array[(c).X + (c).Y * 512] != NULL)
 
+// FUNCTION: GAMEMD 0x005683C0
+void MapClass::AddContentAt(Cell const * coords, TechnoClass * content)
+{
+	if (!content) return;
+	Cell const * list;
+	int height;
+	int length = Array.Length();
+
+	if (content->Class_Of()->IsFootprint && content->In_Which_Layer() == LAYER_GROUND) {
+		Cell xlist[32];
+		List_Copy(content->Occupy_List(), ARRAY_SIZE(xlist), xlist);
+		for (list = xlist; *list != REFRESH_EOL; list++) {
+			Cell newcell = *coords + *list;
+			int cellnum = newcell.X + newcell.Y * MAP_CELL_H;
+			if (cellnum >= 0 && cellnum < length && Is_Valid(newcell)) {
+				(*this)[newcell].Occupy_Down(content, content->IsOnBridge);
+				(*this)[newcell].Recalc_Attributes();
+			}
+		}
+
+		if (content->RTTI == RTTI_BUILDING) {
+			BuildingClass * building = As_Building(content);
+			if (building->Class->CanHideThings) {
+				height = building->Class->OccupyHeight - 1;
+				if (height <= 0) height = 1;
+
+				char seen[2048];
+				memset(seen, 0, sizeof(seen));
+				for (list = xlist; *list != REFRESH_EOL; list++) {
+					Cell newcell = *coords + *list;
+					int rx = list->X;
+					int ry = list->Y;
+					for (int i = height; i > 0; i--) {
+						if (newcell.X < 0 || newcell.Y < 0) continue;
+						if (rx < 0) rx += 16;
+						if (ry < 0) ry += 16;
+						if (!seen[ry * 16 + rx]) {
+							seen[ry * 16 + rx] = 1;
+							int cellnum = newcell.X + newcell.Y * MAP_CELL_H;
+							if (cellnum >= 0 && cellnum < length && Is_Valid(newcell)) {
+								CellClass & cell = (*this)[newcell];
+								cell.OccupyHeightsCoveringMe++;
+							}
+						}
+						newcell.X--;
+						newcell.Y--;
+						rx--;
+						ry--;
+					}
+				}
+
+				for (int i = 0; i < 8; i++) {
+					if (building->Class->RemoveOccupy[i].X != 0xFFFF || building->Class->RemoveOccupy[i].Y != 0xFFFF) {
+						Point2D const & offset = building->Class->RemoveOccupy[i];
+						Cell newcell = *coords;
+						newcell.X += offset.X;
+						newcell.Y += offset.Y;
+						int cellnum = newcell.X + newcell.Y * MAP_CELL_H;
+						if (cellnum >= 0 && cellnum < length && Is_Valid(newcell)) {
+							CellClass & cell = (*this)[newcell];
+							cell.OccupyHeightsCoveringMe++;
+						}
+					}
+					if (building->Class->AddOccupy[i].X != 0xFFFF || building->Class->AddOccupy[i].Y != 0xFFFF) {
+						Point2D const & offset = building->Class->AddOccupy[i];
+						Cell newcell = *coords;
+						newcell.X += offset.X;
+						newcell.Y += offset.Y;
+						int cellnum = newcell.X + newcell.Y * MAP_CELL_H;
+						if (cellnum >= 0 && cellnum < length && Is_Valid(newcell)) {
+							CellClass & cell = (*this)[newcell];
+							if (cell.OccupyHeightsCoveringMe) cell.OccupyHeightsCoveringMe--;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
 // FUNCTION: GAMEMD 0x005687F0
 void MapClass::RemoveContentAt(Cell const * coords, TechnoClass * content)
 {
