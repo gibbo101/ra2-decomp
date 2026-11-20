@@ -707,7 +707,7 @@ BOOL CALLBACK Confirm_Mode_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 }
 
 
-static BOOL Display_Options_Dialog_Body(HWND window, UINT message, WPARAM wparam)
+static __forceinline BOOL Display_Options_Dialog_Body(HWND window, UINT message, WPARAM wparam)
 {
 	enum {
 		MIN_WIDTH = 640,
