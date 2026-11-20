@@ -8445,6 +8445,7 @@ address,size,symbol,source,sha256
 0x00585930,969,?Mark_Fill_Area@MapClass@@QAEXABVCell@@_N@Z,src/map.cpp,903b0d5d59aa1b8af926564b5fc69add2f8f89060737829182ca2196263b712c
 0x00585D00,477,?Rebuild_Cliffs_At@MapClass@@QAE_NABVCell@@@Z,src/map.cpp,acf7d4f20f5ceceb5fc9bfbc9fda5db507f0ca77ff8c5e9d30199e12c813aa58
 0x00585EE0,89,_$E254,src/map.cpp,9772e9c7f46b744710f8c1707142a556a4af11a574a4d36ebb7dd1609a57fc7b
+0x00585F40,885,?Region_Threat@MapClass@@QAEHPAVHouseClass@@HHH@Z,src/map.cpp,31bc8447c835c8bf5ecca49e4b3358e3497dbf351fff649b42fb97ddb633626d
 0x005862C0,145,?Is_Something_Nearby@MapClass@@QAE_NABVCell@@H@Z,src/map.cpp,4fb77cf58be380c9602ba81b8855f9500f61b448ac45f27d8f6377c07d8a9d7e
 0x00586360,309,?Is_Shrouded@MapClass@@QAE_NABVCoord@@@Z,src/map.cpp,d63093174075999e4457c40fe5c28121d3a33666a7edee5e0a42ad4e6f892001
 0x005864A0,309,?FUN_005864A0@MapClass@@QAE_NABVCoord@@@Z,src/map.cpp,afb6e61f39dc7666c163396829bc9193904672fb385cdfd48b32596b4d9ecc35
@@ -8682,6 +8683,7 @@ address,size,symbol,source,sha256
 0x00594420,726,?Create_Zone_Region@@YIXPAVCellClass@@W4MZoneType@@H@Z,src/mapgen.cpp,9171b9d5c6e95dcae2ca93fc40471a4d23a3cf606d79e0e9e5290f8c8e58198f
 0x00594700,367,?Create_Zone_Regions@@YIXW4MZoneType@@H@Z,src/mapgen.cpp,47eb7221acd703534558983980df44f40330aa028e5afe322e84221027b8c5d4
 0x00594870,736,?Pick_Start_Points@MapRegionClass@@QAEXH@Z,src/mapgen.cpp,ea0cc6dec42df17bce1ab5ac2515b263bd1204f94d3c2214aeb46c09d0bc12fd
+0x00594B50,998,?Generate_Starting_Points@@YI_NXZ,src/mapgen.cpp,cb2fa9b7d273a2027f27a1b9614768aaa656c2f1e3a7f23fe3134540c47ddce5
 0x00594F40,1204,?Pick_Spread_Cells@MapRegionClass@@QAEPAV?$DynamicVectorClass@VCell@@@@AAV2@@Z,src/mapgen.cpp,5282c93b06d70a286824693dc637e5387c3a7001b5e124b9335c0da3e1489476
 0x00595400,628,?Place_Neutral_Building@MapRegionClass@@QAEXXZ,src/mapgen.cpp,a13b10ca39a274990c4d1eae27efe827b4b899a6b9a2e865a8335f2f26ee411f
 0x00595680,140,??0MapSeedClass@@QAE@XZ,src/mapgen.cpp,b500aae2b143392ffa2673130f39e11b0da7525e466a991da12d9630e17a370d
@@ -13390,6 +13392,7 @@ address,size,symbol,source,sha256
 0x006ABC60,103,?GetObjectTabIdx@SidebarClass@@SIHW4RTTIType@@H_N@Z,src/sidebar.cpp,ad37a28add1859608fd924354759c628a8d11bc6b5f097d8870512cceabab312
 0x006ABCD0,53,?GetObjectTabIdxByCat@SidebarClass@@SIHW4RTTIType@@H_N@Z,src/sidebar.cpp,ecf99c7c60d292a84e8f7b0789fbdf83e190a80ff765dcf6d5544a8b5ca21ea6
 0x006ABD10,29,?FUN_006ABD10@SidebarClass@@QAEHXZ,src/sidebar.cpp,e24448f8e49ab329b21042b62a5463df1bd85c16843937c4ca3e0139981cf337
+0x006ABD30,1235,?Reposition_Sidebar@SidebarClass@@UAEXXZ,src/sidebar.cpp,fbb03b67ea72ab00ebc1c563ea8aba1ecc33b461094c4ce8de7be8c8f5050f7b
 0x006AC210,454,?Help_Text@SidebarClass@@UAEPBDH@Z,src/sidebar.cpp,da5c6d49ad74f4d8d598ea9a417ce16cddc5f773b3fafab7414e2d69c624912c
 0x006AC3E0,71,?Max_Visible@SidebarClass@@QAEHXZ,src/sidebar.cpp,a0af284b8ff1c1f04ee7846d1c55acde2d04dda0a7794236b02e81ab3e9b24be
 0x006AC430,73,?GetVisibleCameoCount@SidebarClass@@QAEHXZ,src/sidebar.cpp,365cdbea51f777adac4dc2995d32643137288afa49f45402767eb099df0def56

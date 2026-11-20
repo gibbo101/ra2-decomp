@@ -8090,6 +8090,7 @@ address,name,result,size,source,symbol
 0x00585930,MapClass::Mark_Fill_Area,MATCH,969,src/map.cpp,?Mark_Fill_Area@MapClass@@QAEXABVCell@@_N@Z
 0x00585D00,MapClass::Rebuild_Cliffs_At,MATCH,477,src/map.cpp,?Rebuild_Cliffs_At@MapClass@@QAE_NABVCell@@@Z
 0x00585EE0,_$E254,MATCH,89,src/map.cpp,_$E254
+0x00585F40,MapClass::Region_Threat,MATCH,885,src/map.cpp,?Region_Threat@MapClass@@QAEHPAVHouseClass@@HHH@Z
 0x005862C0,MapClass::Is_Something_Nearby,MATCH,145,src/map.cpp,?Is_Something_Nearby@MapClass@@QAE_NABVCell@@H@Z
 0x00586360,MapClass::Is_Shrouded,MATCH,309,src/map.cpp,?Is_Shrouded@MapClass@@QAE_NABVCoord@@@Z
 0x005864A0,MapClass::FUN_005864A0,MATCH,309,src/map.cpp,?FUN_005864A0@MapClass@@QAE_NABVCoord@@@Z
@@ -8309,6 +8310,7 @@ address,name,result,size,source,symbol
 0x00594420,Create_Zone_Region,MATCH,726,src/mapgen.cpp,?Create_Zone_Region@@YIXPAVCellClass@@W4MZoneType@@H@Z
 0x00594700,Create_Zone_Regions,MATCH,367,src/mapgen.cpp,?Create_Zone_Regions@@YIXW4MZoneType@@H@Z
 0x00594870,MapRegionClass::Pick_Start_Points,MATCH,736,src/mapgen.cpp,?Pick_Start_Points@MapRegionClass@@QAEXH@Z
+0x00594B50,Generate_Starting_Points,MATCH,998,src/mapgen.cpp,?Generate_Starting_Points@@YI_NXZ
 0x00595400,MapRegionClass::Place_Neutral_Building,MATCH,628,src/mapgen.cpp,?Place_Neutral_Building@MapRegionClass@@QAEXXZ
 0x00595680,MapSeedClass::MapSeedClass,MATCH,140,src/mapgen.cpp,??0MapSeedClass@@QAE@XZ
 0x00595710,MapSeedClass::Reload_Description,MATCH,40,src/mapgen.cpp,?Reload_Description@MapSeedClass@@QAEXXZ
@@ -13038,6 +13040,7 @@ address,name,result,size,source,symbol
 0x006ABC60,SidebarClass::GetObjectTabIdx,MATCH,103,src/sidebar.cpp,?GetObjectTabIdx@SidebarClass@@SIHW4RTTIType@@H_N@Z
 0x006ABCD0,SidebarClass::GetObjectTabIdxByCat,MATCH,53,src/sidebar.cpp,?GetObjectTabIdxByCat@SidebarClass@@SIHW4RTTIType@@H_N@Z
 0x006ABD10,SidebarClass::FUN_006ABD10,MATCH,29,src/sidebar.cpp,?FUN_006ABD10@SidebarClass@@QAEHXZ
+0x006ABD30,SidebarClass::Reposition_Sidebar,MATCH,1235,src/sidebar.cpp,?Reposition_Sidebar@SidebarClass@@UAEXXZ
 0x006AC3E0,SidebarClass::Max_Visible,MATCH,71,src/sidebar.cpp,?Max_Visible@SidebarClass@@QAEHXZ
 0x006AC430,SidebarClass::GetVisibleCameoCount,MATCH,73,src/sidebar.cpp,?GetVisibleCameoCount@SidebarClass@@QAEHXZ
 0x006AC480,Print_Cameo_Text,MATCH,321,src/sidebar.cpp,?Print_Cameo_Text@@YIXPBGABVPoint2D@@ABV?$TRect@H@@H@Z
