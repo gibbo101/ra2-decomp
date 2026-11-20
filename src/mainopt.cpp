@@ -33,6 +33,7 @@
 #include "theme.h"
 #include "stimer.h"
 #include "surface.h"
+#include "winfix.h"
 #include "wspipx.h"
 #include "wwmous.h"
 
@@ -703,4 +704,122 @@ BOOL CALLBACK Confirm_Mode_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 		return(0);
 	}
 	return(rc);
+}
+
+
+static BOOL Display_Options_Dialog_Body(HWND window, UINT message, WPARAM wparam)
+{
+	enum {
+		MIN_WIDTH = 640,
+		MIN_HEIGHT = 480,
+		MAX_WIDTH = 1024,
+		MAX_HEIGHT = 768,
+		MAX_HI_WIDTH = 4096,
+		MAX_HI_HEIGHT = 4096,
+	};
+
+	static int * _modes = NULL;
+	static int _current_mode = -1;
+	static int _previous_mode = -1;
+	static bool _initialized = true;
+
+	int * result = (int *)GetWindowLong(window, DWL_USER);
+	switch (message) {
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				default:
+					return(0);
+
+				case 0x5D9: {
+					HWND list = GetDlgItem(window, 0x5D9);
+					_current_mode = ListBox_GetCurSel(list);
+				}
+				return(0);
+
+				case 1:
+				case 0x6CB: {
+					if (_previous_mode != _current_mode) {
+						Center_Window_Within_Window(window, MainWindow);
+						HWND list = GetDlgItem(window, 0x5D9);
+						if (list) {
+							int index = ListBox_GetItemData(list, _current_mode);
+							int * modes = &_modes[2 * index];
+							TempOptions.ScreenWidth = modes[0];
+							TempOptions.ScreenHeight = modes[1];
+						}
+					}
+					HWND button = GetDlgItem(window, 0x674);
+					if (button) {
+						Options.StretchMovies = Button_GetCheck(button) == BST_CHECKED;
+					}
+				}
+				break;
+
+				case 0x686:
+					delete [] _modes;
+					_modes = NULL;
+					*result = 2;
+					return(0);
+			}
+			delete [] _modes;
+			_modes = NULL;
+			*result = 1;
+			break;
+
+		case 0x497: {
+			HWND list = GetDlgItem(window, 0x5D9);
+			if (Options.AllowHiResModes) {
+				_modes = EnumDisplayModes(MIN_WIDTH, MIN_HEIGHT, MAX_HI_WIDTH, MAX_HI_HEIGHT, 16);
+			} else {
+				_modes = EnumDisplayModes(MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT, 16);
+			}
+			int * modes = _modes;
+			int item_index = 0;
+			int initial_mode = -1;
+			int mode_index = 0;
+			if (modes != NULL) {
+				while (*modes != 0) {
+					int width = *modes++;
+					int height = *modes++;
+					if (Options.AllowHiResModes || width == MIN_WIDTH || width == 800 || width == MAX_WIDTH) {
+						if (width == TempOptions.ScreenWidth && height == TempOptions.ScreenHeight) {
+							initial_mode = mode_index;
+						}
+						char buffer[64];
+						sprintf(buffer, "%d x %d x 16", width, height);
+						int index = (int)SendMessage(list, 0x4C8, 0, (LPARAM)buffer);
+						ListBox_SetItemData(list, index, item_index);
+						mode_index++;
+						item_index++;
+					} else {
+						item_index++;
+					}
+				}
+			}
+			ListBox_SetCurSel(list, initial_mode);
+			_initialized = true;
+			_current_mode = initial_mode;
+			_previous_mode = initial_mode;
+
+			HWND button = GetDlgItem(window, 0x674);
+			if (button) {
+				bool stretch = Options.StretchMovies == true && DSurface::AllowStretchBlits == true;
+				Button_SetCheck(button, stretch != false);
+				EnableWindow(button, (BOOL)DSurface::AllowStretchBlits);
+			}
+		}
+		break;
+
+	}
+	return(0);
+}
+
+// FUNCTION: GAMEMD 0x00561400
+BOOL CALLBACK Display_Options_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc == 0) {
+		return Display_Options_Dialog_Body(window, message, wparam);
+	}
+	return rc;
 }
