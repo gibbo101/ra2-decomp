@@ -55,7 +55,7 @@ class MouseClass: public ScrollClass
 			int X,Y;
 		};
 
-		static MouseStruct MouseControl[MOUSE_COUNT];
+		static MouseStruct MouseControl[86];
 
 	public:
 

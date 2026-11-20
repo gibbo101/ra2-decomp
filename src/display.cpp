@@ -1275,20 +1275,25 @@ int FUN_00731CC0(void);
 // FUNCTION: GAMEMD 0x004AAE90
 void DisplayClass::Mouse_Left_Up(Cell const & cell, bool shadow, ObjectClass * object, ActionType action, bool wsmall)
 {
-	MouseType const MOUSE_IVAN_BOMB = (MouseType)0x26;
-	MouseType const MOUSE_PARA_DROP = (MouseType)0x2F;
-	MouseType const MOUSE_LIGHTNING_STORM = (MouseType)0x32;
-	MouseType const MOUSE_IRON_CURTAIN = (MouseType)0x39;
-	MouseType const MOUSE_CHRONOSPHERE = (MouseType)0x3A;
-	MouseType const MOUSE_DISARM = (MouseType)0x3B;
-	MouseType const MOUSE_DISALLOWED = (MouseType)0x3C;
-	MouseType const MOUSE_BEACON = (MouseType)0x4E;
-	MouseType const MOUSE_FORCE_SHIELD = (MouseType)0x4F;
-	MouseType const MOUSE_NO_FORCE_SHIELD = (MouseType)0x50;
-	MouseType const MOUSE_GENETIC_CONVERTER = (MouseType)0x51;
-	MouseType const MOUSE_PSYCHIC_DOMINATOR = (MouseType)0x53;
-	MouseType const MOUSE_PSYCHIC_REVEAL = (MouseType)0x54;
-	MouseType const MOUSE_SPY_PLANE = (MouseType)0x55;
+	enum {
+		MOUSE_IVAN_BOMB = 38,
+		MOUSE_PARA_DROP = 47,
+		MOUSE_LIGHTNING_STORM = 50,
+		MOUSE_DEMOLITIONS = 52,
+		MOUSE_NUCLEAR_BOMB = 53,
+		MOUSE_IRON_CURTAIN = 57,
+		MOUSE_CHRONOSPHERE = 58,
+		MOUSE_DISARM = 59,
+		MOUSE_DISALLOWED = 60,
+		MOUSE_BEACON = 78,
+		MOUSE_FORCE_SHIELD = 79,
+		MOUSE_NO_FORCE_SHIELD = 80,
+		MOUSE_GENETIC_CONVERTER = 81,
+		MOUSE_AIR_STRIKE = 82,
+		MOUSE_PSYCHIC_DOMINATOR = 83,
+		MOUSE_PSYCHIC_REVEAL = 84,
+		MOUSE_SPY_PLANE = 85,
+	};
 
 	IsTentative = false;
 
@@ -1370,7 +1375,7 @@ void DisplayClass::Mouse_Left_Up(Cell const & cell, bool shadow, ObjectClass * o
 			Set_Default_Mouse(MOUSE_NO_ENTER, wsmall);
 			break;
 		case ACTION_TOTE:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_DAMAGE:
 			Set_Default_Mouse(MOUSE_NORMAL, wsmall);
@@ -1393,41 +1398,41 @@ void DisplayClass::Mouse_Left_Up(Cell const & cell, bool shadow, ObjectClass * o
 			Set_Default_Mouse(MOUSE_NO_SELL_BACK, wsmall);
 			break;
 		case ACTION_NUKE_BOMB:
-			Set_Default_Mouse(MOUSE_NUCLEAR_BOMB, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_NUCLEAR_BOMB, wsmall);
 			break;
 		case ACTION_TOGGLE_POWER:
 		case ACTION_NO_TOGGLE_POWER:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_HEAL:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_PLACE_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_NO_PLACE_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_ENTER_WAYPOINT_MODE:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_SELECT_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_LOOP_WAYPOINT_PATH:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_ATTACK_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_PATROL_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_FOLLOW_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_DISARM_BOMB:
-			Set_Default_Mouse(MOUSE_DISARM, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISARM, wsmall);
 			break;
 		case ACTION_SELECT_BEACON:
 			Set_Default_Mouse(MOUSE_CAN_SELECT, wsmall);
@@ -1438,42 +1443,42 @@ void DisplayClass::Mouse_Left_Up(Cell const & cell, bool shadow, ObjectClass * o
 			Set_Default_Mouse(MOUSE_NO_REPAIR, wsmall);
 			break;
 		case ACTION_IRON_CURTAIN:
-			Set_Default_Mouse(MOUSE_IRON_CURTAIN, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_IRON_CURTAIN, wsmall);
 			break;
 		case ACTION_FORCE_SHIELD:
-			Set_Default_Mouse(MOUSE_FORCE_SHIELD, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_FORCE_SHIELD, wsmall);
 			break;
 		case ACTION_NO_FORCE_SHIELD:
-			Set_Default_Mouse(MOUSE_NO_FORCE_SHIELD, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_NO_FORCE_SHIELD, wsmall);
 			break;
 		case ACTION_LIGHTNING_STORM:
-			Set_Default_Mouse(MOUSE_LIGHTNING_STORM, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_LIGHTNING_STORM, wsmall);
 			break;
 		case ACTION_CHRONOSPHERE:
 		case ACTION_CHRONO_WARP:
-			Set_Default_Mouse(MOUSE_CHRONOSPHERE, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_CHRONOSPHERE, wsmall);
 			break;
 		case ACTION_PARA_DROP:
 		case ACTION_AMER_PARA_DROP:
-			Set_Default_Mouse(MOUSE_PARA_DROP, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_PARA_DROP, wsmall);
 			break;
 		case ACTION_PSYCHIC_DOMINATOR:
-			Set_Default_Mouse(MOUSE_PSYCHIC_DOMINATOR, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_PSYCHIC_DOMINATOR, wsmall);
 			break;
 		case ACTION_SPY_PLANE:
-			Set_Default_Mouse(MOUSE_SPY_PLANE, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_SPY_PLANE, wsmall);
 			break;
 		case ACTION_GENETIC_CONVERTER:
-			Set_Default_Mouse(MOUSE_GENETIC_CONVERTER, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_GENETIC_CONVERTER, wsmall);
 			break;
 		case ACTION_PSYCHIC_REVEAL:
-			Set_Default_Mouse(MOUSE_PSYCHIC_REVEAL, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_PSYCHIC_REVEAL, wsmall);
 			break;
 		case ACTION_ENTER_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			// Fall through to the beacon cursor.
 		case ACTION_PLACE_BEACON:
-			Set_Default_Mouse(MOUSE_BEACON, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_BEACON, wsmall);
 			break;
 		case ACTION_NOMOVE:
 			if (CurrentObject.Count() && CurrentObject[0]->Is_Techno() &&
@@ -1498,7 +1503,7 @@ void DisplayClass::Mouse_Left_Up(Cell const & cell, bool shadow, ObjectClass * o
 	} else {
 		switch (waypoint_action) {
 		case ACTION_TOTE:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_NO_ENTER:
 			Set_Default_Mouse(MOUSE_NO_ENTER, wsmall);
@@ -1508,43 +1513,43 @@ void DisplayClass::Mouse_Left_Up(Cell const & cell, bool shadow, ObjectClass * o
 			break;
 		case ACTION_NO_TOGGLE_POWER:
 		case ACTION_TOGGLE_POWER:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_HEAL:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_PLACE_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_NO_PLACE_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_ENTER_WAYPOINT_MODE:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_SELECT_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_LOOP_WAYPOINT_PATH:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_ATTACK_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_PATROL_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_FOLLOW_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_ENTER_WAYPOINT:
-			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISALLOWED, wsmall);
 			break;
 		case ACTION_NO_DEPLOY:
 			Set_Default_Mouse(MOUSE_NO_DEPLOY, wsmall);
 			break;
 		case ACTION_DISARM_BOMB:
-			Set_Default_Mouse(MOUSE_DISARM, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DISARM, wsmall);
 			break;
 		case ACTION_GREPAIR:
 			Set_Default_Mouse(MOUSE_GREPAIR, wsmall);
@@ -1585,7 +1590,7 @@ void DisplayClass::Mouse_Left_Up(Cell const & cell, bool shadow, ObjectClass * o
 			Set_Default_Mouse(MOUSE_DEPLOY, wsmall);
 			break;
 		case ACTION_IVAN_BOMB:
-			Set_Default_Mouse(MOUSE_IVAN_BOMB, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_IVAN_BOMB, wsmall);
 			break;
 		case ACTION_NOMOVE:
 		case ACTION_NO_IVAN_BOMB:
@@ -1595,10 +1600,10 @@ void DisplayClass::Mouse_Left_Up(Cell const & cell, bool shadow, ObjectClass * o
 		case ACTION_DETONATE:
 		case ACTION_DETONATE_ALL:
 		case ACTION_DEMOLISH:
-			Set_Default_Mouse(MOUSE_DEMOLITIONS, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_DEMOLITIONS, wsmall);
 			break;
 		case ACTION_AIRSTRIKE:
-			Set_Default_Mouse(MOUSE_AIR_STRIKE, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_AIR_STRIKE, wsmall);
 			break;
 		case ACTION_REPAIR:
 			Set_Default_Mouse(MOUSE_REPAIR, wsmall);
@@ -1610,42 +1615,42 @@ void DisplayClass::Mouse_Left_Up(Cell const & cell, bool shadow, ObjectClass * o
 			Set_Default_Mouse(MOUSE_SELL_BACK, wsmall);
 			break;
 		case ACTION_NUKE_BOMB:
-			Set_Default_Mouse(MOUSE_NUCLEAR_BOMB, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_NUCLEAR_BOMB, wsmall);
 			break;
 		case ACTION_IRON_CURTAIN:
-			Set_Default_Mouse(MOUSE_IRON_CURTAIN, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_IRON_CURTAIN, wsmall);
 			break;
 		case ACTION_FORCE_SHIELD:
-			Set_Default_Mouse(MOUSE_FORCE_SHIELD, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_FORCE_SHIELD, wsmall);
 			break;
 		case ACTION_NO_FORCE_SHIELD:
-			Set_Default_Mouse(MOUSE_NO_FORCE_SHIELD, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_NO_FORCE_SHIELD, wsmall);
 			break;
 		case ACTION_LIGHTNING_STORM:
-			Set_Default_Mouse(MOUSE_LIGHTNING_STORM, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_LIGHTNING_STORM, wsmall);
 			break;
 		case ACTION_CHRONOSPHERE:
 		case ACTION_CHRONO_WARP:
-			Set_Default_Mouse(MOUSE_CHRONOSPHERE, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_CHRONOSPHERE, wsmall);
 			break;
 		case ACTION_PARA_DROP:
 		case ACTION_AMER_PARA_DROP:
-			Set_Default_Mouse(MOUSE_PARA_DROP, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_PARA_DROP, wsmall);
 			break;
 		case ACTION_PSYCHIC_DOMINATOR:
-			Set_Default_Mouse(MOUSE_PSYCHIC_DOMINATOR, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_PSYCHIC_DOMINATOR, wsmall);
 			break;
 		case ACTION_SPY_PLANE:
-			Set_Default_Mouse(MOUSE_SPY_PLANE, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_SPY_PLANE, wsmall);
 			break;
 		case ACTION_GENETIC_CONVERTER:
-			Set_Default_Mouse(MOUSE_GENETIC_CONVERTER, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_GENETIC_CONVERTER, wsmall);
 			break;
 		case ACTION_PSYCHIC_REVEAL:
-			Set_Default_Mouse(MOUSE_PSYCHIC_REVEAL, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_PSYCHIC_REVEAL, wsmall);
 			break;
 		case ACTION_PLACE_BEACON:
-			Set_Default_Mouse(MOUSE_BEACON, wsmall);
+			Set_Default_Mouse((MouseType)MOUSE_BEACON, wsmall);
 			break;
 		case ACTION_ATTACK_MOVE_NAV:
 		case ACTION_ATTACK_MOVE_TAR:
