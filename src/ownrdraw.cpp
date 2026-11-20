@@ -7166,8 +7166,9 @@ void __fastcall UI::GetKeyboardKeyString(unsigned short key, wchar_t *buffer)
 	}
 }
 
-ODComponentMasks ODMasks;
-unsigned short ODBComponentMask;
+unsigned short ODRComponentMask = 0;
+unsigned short ODGComponentMask = 0;
+unsigned short ODBComponentMask = 0;
 
 // FUNCTION: GAMEMD 0x0061F190
 void ODInitMasks(void)

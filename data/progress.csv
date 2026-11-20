@@ -13360,6 +13360,7 @@ address,name,result,size,source,symbol
 0x006BA3E0,SurfaceCacheClass::Draw,MATCH,408,src/srfcache.cpp,?Draw@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1HH@Z
 0x006BA580,SurfaceCacheClass::DrawTrans,MATCH,250,src/srfcache.cpp,?DrawTrans@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1F@Z
 0x006BA680,SurfaceCacheClass::DrawNullsub,MATCH,5,src/srfcache.cpp,?DrawNullsub@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1@Z
+0x006BA690,SurfaceCacheClass::DrawMasked,MATCH,1441,src/srfcache.cpp,?DrawMasked@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@11PAXHHH@Z
 0x006BAC40,?remove@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@QAEDAAVWstring@@AAUSurfaceCacheEntry@@@Z,MATCH,684,src/srfcache.cpp,?remove@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@QAEDAAVWstring@@AAUSurfaceCacheEntry@@@Z
 0x006BAEF0,?shrink@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@AAEXXZ,MATCH,174,src/srfcache.cpp,?shrink@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@AAEXXZ
 0x006BAFA0,?expand@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@AAEXXZ,MATCH,162,src/srfcache.cpp,?expand@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@AAEXXZ

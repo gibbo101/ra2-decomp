@@ -13705,6 +13705,7 @@ address,size,symbol,source,sha256
 0x006BA3E0,408,?Draw@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1HH@Z,src/srfcache.cpp,201a39663a51bba1f143455c5b5afba0381e7cd22fa6ed86067c5e9712aabc0e
 0x006BA580,250,?DrawTrans@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1F@Z,src/srfcache.cpp,d9a453702df725a28dbb046c0f7c1ade0e9da0e5f2006675a137ea348544a571
 0x006BA680,5,?DrawNullsub@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@1@Z,src/srfcache.cpp,0c2c7a212db68f7b6d7634358b03dd94e2358f33eb8fae1ce475dab43e990c0f
+0x006BA690,1441,?DrawMasked@SurfaceCacheClass@@QAE_NABV?$TRect@H@@AAVSurface@@11PAXHHH@Z,src/srfcache.cpp,7ff033de5036aed82f53999b1d92a259616ebeee51214115ade7833f3ed08c3d
 0x006BAC40,684,?remove@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@QAEDAAVWstring@@AAUSurfaceCacheEntry@@@Z,src/srfcache.cpp,faffa2da5156416315034543cc03cc5378b292bd49cf511f50d2b28a3c58b0c8
 0x006BAEF0,174,?shrink@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@AAEXXZ,src/srfcache.cpp,b6c3580f51c743da0d33a8658ebeeca9df706a91127a76f4c572c0f1f7862fcf
 0x006BAFA0,162,?expand@?$Dictionary@VWstring@@USurfaceCacheEntry@@@@AAEXXZ,src/srfcache.cpp,35980f3e5506b1e8e4e5c41e343e6b61e5511a7c5b45b63b24596c8537c09f9f

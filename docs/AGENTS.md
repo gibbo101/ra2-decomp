@@ -522,8 +522,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   compiled out is built (ownrdraw.cpp, wonline.cpp).
 - A heap-sensitive match flips with the weighted count of declarations before the
   function, not their names: 1 per variable, typedef, forward declaration or data member
-  (named or unnamed), 2 per function declaration or `enum`, 3 per inline definition, 8
-  plus its members per class definition; redeclarations and `#define`s weigh nothing.
+  (named or unnamed), 2 per `enum`, 1 plus its parameter count per function declaration
+  (2 with one parameter, 8 with seven), 3 per inline definition, 8 plus its members per
+  class definition; redeclarations and `#define`s weigh nothing.
   Keep a change's net weight zero before the function, or sweep it with
   `tools/declprobe.py`.
 - When no body form helps, moving real declarations the file already uses to before or
