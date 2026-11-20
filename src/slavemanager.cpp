@@ -250,13 +250,11 @@ void SlaveManagerClass::FUN_006B04C0(void)
 // FUNCTION: GAMEMD 0x006B0690
 inline Cell SlaveManagerClass::FUN_006B0690(void)
 {
-	Cell cell;
-	if (Owner != NULL && Owner->Fetch_RTTI() == RTTI_BUILDING) {
+	if (As_Building(Owner)) {
 		BuildingClass * building = As_Building(Owner);
 		int width = building->Class->Width();
 		int height = building->Class->Height(false);
-		cell = Owner->Get_Cell() + Cell(width - 1, height / 2);
-		return cell;
+		return Owner->Get_Cell() + Cell(width - 1, height / 2);
 	}
 	return Owner->Get_Cell();
 }
@@ -265,9 +263,8 @@ inline Cell SlaveManagerClass::FUN_006B0690(void)
 Cell SlaveManagerClass::FUN_006B0750(void)
 {
 	if (As_Building(Owner)) {
-		Cell center = FUN_006B0690();
-		Cell above;
-		above = center + Cell(0, -1);
+		Cell above = FUN_006B0690();
+		above = above + Cell(0, -1);
 		if (Map[above].Cell_Building() == Owner) {
 			return above;
 		} else {
@@ -277,11 +274,11 @@ Cell SlaveManagerClass::FUN_006B0750(void)
 	return CELL_NONE;
 }
 
+// FUNCTION: GAMEMD 0x006B0880
 bool SlaveManagerClass::FUN_006B0880(TechnoClass * slave, CellClass * cell)
 {
 	Cell center = FUN_006B0690();
-	Cell above;
-	above = FUN_006B0750();
+	Cell above = FUN_006B0750();
 	if (cell != &Map[center] && (above == CELL_NONE || cell != &Map[above])) {
 		return false;
 	}
