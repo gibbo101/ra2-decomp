@@ -2047,7 +2047,7 @@ int CellClass::Reduce_Wall(int damage)
 // FUNCTION: GAMEMD 0x004810A0
 int CellClass::Spot_Index(Coord const & coord)
 {
-	Point2D rel(coord.X & (CELL_LEPTON_W-1), coord.Y & (CELL_LEPTON_H-1));
+	Point2D rel = Coord_Fraction(coord);
 
 	if (Distance(rel, Point2D(CELL_LEPTON/2,CELL_LEPTON/2)) < 60) {
 		return(0);
@@ -2075,16 +2075,6 @@ bool CellClass::Is_Spot_Free(int spot_index, bool bridge) const
 	}
 }
 
-static inline Coord Cell_Origin(Coord const & coord)
-{
-	Coord result;
-	result.X = coord.X - (coord.X & (CELL_LEPTON_W-1));
-	result.Y = coord.Y - (coord.Y & (CELL_LEPTON_H-1));
-	result.Z = coord.Z;
-	return(result);
-}
-
-// FUNCTION: GAMEMD 0x00481180
 Coord CellClass::Closest_Free_Spot(Coord const & xcoord, bool any, bool bridge, bool use_cell_coord) const
 {
 	int spot_index = Spot_Index(xcoord);
@@ -2106,9 +2096,9 @@ Coord CellClass::Closest_Free_Spot(Coord const & xcoord, bool any, bool bridge, 
 	if (use_cell_coord) {
 		Coord center;
 		center = Center_Coord();
-		coord = Cell_Origin(center);
+		coord = Coord_Whole(center);
 	} else {
-		coord = Cell_Origin(xcoord);
+		coord = Coord_Whole(xcoord);
 	}
 
 	bool is_vehicle_occupied = bridge ? BridgeFlag.Occupy.Vehicle : Flag.Occupy.Vehicle;
