@@ -3556,6 +3556,55 @@ bool TechnoClass::Can_Attack_Now(void) const
 	return(true);
 }
 
+// FUNCTION: GAMEMD 0x00700D50
+bool TechnoClass::Can_Deploy_Now(void) const
+{
+	Cell cell = PositionCell;
+	CellClass * cellptr = &Map[cell];
+	if (cellptr != NULL && cellptr->Is_Near_Tunnel_NW()) return(false);
+
+	switch (Fetch_RTTI()) {
+		case RTTI_BUILDING:
+			return(((BuildingClass const *)this)->Class->FUN_00465D30());
+		case RTTI_UNIT: {
+			UnitClass const * unit = (UnitClass const *)this;
+			if (IsUnderEMP() || unit->CurrentTube >= TUBE_FIRST) return(false);
+			if (unit->Class->DeploysInto == NULL && unit->Class->Max_Passengers() == 0 && !unit->Class->IsSimpleDeployer && BunkerLinkedItem == NULL && !unit->FUN_00746D00()) return(false);
+			if (unit->Class->DeploysInto != NULL && unit->ParasiteEatingMe != NULL) return(false);
+			if (unit->Class->DeploysInto != NULL && unit->Class->DeploysInto->IsConstructionYard && MindControlledBy != NULL) return(false);
+			if (unit->Class->Max_Passengers() > 0) {
+				if (IsOnBridge) return(false);
+				Cell here = PositionCell;
+				CellClass * hereptr = &Map[here];
+				if (hereptr != NULL) {
+					CellClass * south = &Map[Adjacent_Cell(here, FACING_S)];
+					CellClass * north = &Map[Adjacent_Cell(here, FACING_N)];
+					CellClass * east = &Map[Adjacent_Cell(here, FACING_E)];
+					CellClass * west = &Map[Adjacent_Cell(here, FACING_W)];
+					if (hereptr->IsUnderBridge ||
+						south != NULL && south->IsUnderBridge ||
+						west != NULL && west->IsUnderBridge ||
+						east != NULL && east->IsUnderBridge ||
+						north != NULL && north->IsUnderBridge) return(false);
+				}
+				if (House->IsHuman && hereptr->Land_Type() == LAND_WATER) return(false);
+				if (Get_Cell_Ptr()->Cell_Building() != NULL && !Get_Cell_Ptr()->Cell_Building()->Class->Bunker) return(false);
+			}
+			break;
+		}
+		case RTTI_INFANTRY: {
+			InfantryClass const * infantry = (InfantryClass const *)this;
+			if (infantry->FUN_005224F0() && (infantry->FUN_00522510() || infantry->Doing == 0x1f)) return(false);
+			if (infantry->FUN_005224F0() && infantry->Arm) return(false);
+			return(infantry->FUN_005224E0());
+		}
+		default:
+			if (IsUnderEMP() || TClass->Max_Passengers() == 0) return(false);
+			break;
+	}
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x007010D0
 bool TechnoClass::Can_Player_Fire(void) const
 {
