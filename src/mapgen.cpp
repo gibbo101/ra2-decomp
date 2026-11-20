@@ -3230,206 +3230,206 @@ bool Generate_Starting_Points(void);
 
 void MapGeneratorClass::Generate_Random_Map(bool full_init, HWND dialog)
 {
-    int index;
-    CellClass *cell;
+	int index;
+	CellClass *cell;
 
-    if (RMGCallback) RMGCallback();
-    RMGRandom = Random2Class(SeedData.Seed);
-    RMGGaussian = NormalDistribution(Random_Fraction);
-    if (RMGCallback) RMGCallback();
+	if (RMGCallback) RMGCallback();
+	RMGRandom = Random2Class(SeedData.Seed);
+	RMGGaussian = NormalDistribution(Random_Fraction);
+	if (RMGCallback) RMGCallback();
 
-    bool showProgress = !Scen->IsReadingScenario;
-    if (showProgress) {
-        Progress.Initialize(100.0, 1, dialog);
-        Progress.Set_Graphic_Data("PROGBAR2.SHP", NULL, 0);
-        Progress.Set_Layout(Point2D(-1, -1), NULL, false, true);
-        Progress.Display_Progress(Point2D(-1, -1));
-        HWND control = GetDlgItem(dialog, 0x638);
-        if (control) ShowWindow(control, SW_SHOW);
-    }
-    if (RMGCallback) RMGCallback();
-    DebugString("RMG: Init random map\n");
-    Init_Map(full_init);
-    if (RMGCallback) RMGCallback();
-    ScenarioInit++;
-    if (full_init) {
-        RandomMapGen.MapPreview->Create_Preview();
-        SendMessage(dialog, WM_PAINT, 0, 0);
-        if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
-            Send_Preview_To_Guests(RandomMapGen.MapPreview);
-        }
-    }
-    if (RMGCallback) RMGCallback();
-    Load_Settings();
-    DebugString("RMG: Seeding water\n");
-    if (SeedData.MapType == 3 || SeedData.MapType == 4) {
-        if (SeedData.WaterAmount) Seed_Water();
-    } else {
-        Seed_Land();
-    }
-    Vary_Water_Tiles();
-    Update_Progress(55);
-    if (RMGCallback) RMGCallback();
-    if (full_init) {
-        RandomMapGen.MapPreview->Create_Preview();
-        SendMessage(dialog, WM_PAINT, 0, 0);
-        if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
-            Send_Preview_To_Guests(RandomMapGen.MapPreview);
-        }
-    }
-    if (RMGCallback) RMGCallback();
-    Update_Progress(60);
-    if (RMGCallback) RMGCallback();
-    if (full_init) {
-        RandomMapGen.MapPreview->Create_Preview();
-        SendMessage(dialog, WM_PAINT, 0, 0);
-        if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
-            Send_Preview_To_Guests(RandomMapGen.MapPreview);
-        }
-    }
-    if (RMGCallback) RMGCallback();
-    DebugString("RMG: Init regions\n");
-    Init_Regions();
-    Update_Progress(65);
-    if (RMGCallback) RMGCallback();
-    DebugString("RMG: Making regions\n");
-    if (SeedData.MapType == 4 || SeedData.MapType == 3) {
-        MapRegionClass::Make_Ice_Regions();
-        MapRegionClass::Make_Regions();
-        Fixup_Cliff_Corners();
-        Map.Build_All_Cliffs(0, -1);
-        Fixup_Cliff_Edges();
-    }
-    Update_Progress(70);
-    if (RMGCallback) RMGCallback();
-    if (full_init) {
-        RandomMapGen.MapPreview->Create_Preview();
-        SendMessage(dialog, WM_PAINT, 0, 0);
-        if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
-            Send_Preview_To_Guests(RandomMapGen.MapPreview);
-        }
-    }
-    if (RMGCallback) RMGCallback();
-    Scatter_Green_Tiles();
-    DebugString("RMG: Recalculating cell attributes\n");
-    Map.Reset_Iterator();
-    for (cell = Map.Iterate(); cell; cell = Map.Iterate()) cell->Recalc_Attributes(-1);
-    if (RMGCallback) RMGCallback();
-    Update_Progress(75);
-    DebugString("RMG: Creating starting points\n");
-    bool starts = false;
-    while (!starts) {
-        starts = Generate_Starting_Points();
-        if (starts) starts = Init_Start_Points();
-    }
-    DebugString("RMG: Adding tech buildings\n");
-    if (SeedData.MapType != 0) Generate_Neutral_Buildings();
-    if (RMGCallback) RMGCallback();
-    DebugString("RMG: Creating tiberium\n");
-    Create_Tiberium();
-    if (RMGCallback) RMGCallback();
+	bool showProgress = !Scen->IsReadingScenario;
+	if (showProgress) {
+		Progress.Initialize(100.0, 1, dialog);
+		Progress.Set_Graphic_Data("PROGBAR2.SHP", NULL, 0);
+		Progress.Set_Layout(Point2D(-1, -1), NULL, false, true);
+		Progress.Display_Progress(Point2D(-1, -1));
+		HWND control = GetDlgItem(dialog, 0x638);
+		if (control) ShowWindow(control, SW_SHOW);
+	}
+	if (RMGCallback) RMGCallback();
+	DebugString("RMG: Init random map\n");
+	Init_Map(full_init);
+	if (RMGCallback) RMGCallback();
+	ScenarioInit++;
+	if (full_init) {
+		RandomMapGen.MapPreview->Create_Preview();
+		SendMessage(dialog, WM_PAINT, 0, 0);
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
+			Send_Preview_To_Guests(RandomMapGen.MapPreview);
+		}
+	}
+	if (RMGCallback) RMGCallback();
+	Load_Settings();
+	DebugString("RMG: Seeding water\n");
+	if (SeedData.MapType == 3 || SeedData.MapType == 4) {
+		if (SeedData.WaterAmount) Seed_Water();
+	} else {
+		Seed_Land();
+	}
+	Vary_Water_Tiles();
+	Update_Progress(55);
+	if (RMGCallback) RMGCallback();
+	if (full_init) {
+		RandomMapGen.MapPreview->Create_Preview();
+		SendMessage(dialog, WM_PAINT, 0, 0);
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
+			Send_Preview_To_Guests(RandomMapGen.MapPreview);
+		}
+	}
+	if (RMGCallback) RMGCallback();
+	Update_Progress(60);
+	if (RMGCallback) RMGCallback();
+	if (full_init) {
+		RandomMapGen.MapPreview->Create_Preview();
+		SendMessage(dialog, WM_PAINT, 0, 0);
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
+			Send_Preview_To_Guests(RandomMapGen.MapPreview);
+		}
+	}
+	if (RMGCallback) RMGCallback();
+	DebugString("RMG: Init regions\n");
+	Init_Regions();
+	Update_Progress(65);
+	if (RMGCallback) RMGCallback();
+	DebugString("RMG: Making regions\n");
+	if (SeedData.MapType == 4 || SeedData.MapType == 3) {
+		MapRegionClass::Make_Ice_Regions();
+		MapRegionClass::Make_Regions();
+		Fixup_Cliff_Corners();
+		Map.Build_All_Cliffs(0, -1);
+		Fixup_Cliff_Edges();
+	}
+	Update_Progress(70);
+	if (RMGCallback) RMGCallback();
+	if (full_init) {
+		RandomMapGen.MapPreview->Create_Preview();
+		SendMessage(dialog, WM_PAINT, 0, 0);
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
+			Send_Preview_To_Guests(RandomMapGen.MapPreview);
+		}
+	}
+	if (RMGCallback) RMGCallback();
+	Scatter_Green_Tiles();
+	DebugString("RMG: Recalculating cell attributes\n");
+	Map.Reset_Iterator();
+	for (cell = Map.Iterate(); cell; cell = Map.Iterate()) cell->Recalc_Attributes(-1);
+	if (RMGCallback) RMGCallback();
+	Update_Progress(75);
+	DebugString("RMG: Creating starting points\n");
+	bool starts = false;
+	while (!starts) {
+		starts = Generate_Starting_Points();
+		if (starts) starts = Init_Start_Points();
+	}
+	DebugString("RMG: Adding tech buildings\n");
+	if (SeedData.MapType != 0) Generate_Neutral_Buildings();
+	if (RMGCallback) RMGCallback();
+	DebugString("RMG: Creating tiberium\n");
+	Create_Tiberium();
+	if (RMGCallback) RMGCallback();
 
-    if (RMGCellData) {
-        int size = MapCellStride * MapCellStride;
-        for (index = 0; index < size; ++index) {
-            RMGCellData[index].RegionID = -1;
-            RMGCellData[index].SpreadID = -1;
-        }
-    }
-    for (index = MapRegionClass::MapRegions.Count() - 1; index >= 0; --index) {
-        MapRegionClass *region = MapRegionClass::MapRegions[index];
-        if (region) delete region;
-    }
-    MapRegionClass::TotalCount = 0;
-    DebugString("RMG: Recalculating cell attributes\n");
-    Map.Reset_Iterator();
-    for (cell = Map.Iterate(); cell; cell = Map.Iterate()) cell->Recalc_Attributes(-1);
-    Update_Progress(80);
-    if (RMGCallback) RMGCallback();
-    if (full_init) {
-        RandomMapGen.MapPreview->Create_Preview();
-        SendMessage(dialog, WM_PAINT, 0, 0);
-        if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
-            Send_Preview_To_Guests(RandomMapGen.MapPreview);
-        }
-    }
-    if (RMGCallback) RMGCallback();
-    Update_Progress(85);
-    if (RMGCallback) RMGCallback();
-    if (full_init) {
-        RandomMapGen.MapPreview->Create_Preview();
-        SendMessage(dialog, WM_PAINT, 0, 0);
-        if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
-            Send_Preview_To_Guests(RandomMapGen.MapPreview);
-        }
-    }
-    if (RMGCallback) RMGCallback();
-    DebugString("RMG: Recalculating cell attributes\n");
-    Map.Reset_Iterator();
-    for (cell = Map.Iterate(); cell; cell = Map.Iterate()) cell->Recalc_Attributes(-1);
-    if (RMGCallback) RMGCallback();
-    DebugString("RMG: Creating hills\n");
-    Generate_Hills();
-    Update_Progress(90);
-    if (RMGCallback) RMGCallback();
-    if (full_init) {
-        RandomMapGen.MapPreview->Create_Preview();
-        SendMessage(dialog, WM_PAINT, 0, 0);
-        if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
-            Send_Preview_To_Guests(RandomMapGen.MapPreview);
-        }
-    }
-    if (RMGCallback) RMGCallback();
-    DebugString("RMG: Creating LATs, rocks etc\n");
-    if (SeedData.Biome == 0) {
-        Seed_Vegetation();
-        Generate_Vegetation();
-    } else {
-        Seed_Arctic_Vegetation();
-        Generate_Arctic_Vegetation();
-    }
-    if (RMGCallback) RMGCallback();
-    Update_Progress(95);
-    if (RMGCallback) RMGCallback();
-    if (full_init) {
-        RandomMapGen.MapPreview->Create_Preview();
-        SendMessage(dialog, WM_PAINT, 0, 0);
-        if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
-            Send_Preview_To_Guests(RandomMapGen.MapPreview);
-        }
-    }
-    ScenarioInit--;
-    if (RMGCallback) RMGCallback();
-    DebugString("RMG: Recalculating cell attributes\n");
-    Map.Reset_Iterator();
-    for (cell = Map.Iterate(); cell; cell = Map.Iterate()) cell->Recalc_Attributes(-1);
-    if (RMGCallback) RMGCallback();
-    TiberiumClass::Init_Tiberium_Growth_System();
-    TiberiumClass::Init_Tiberium_Spread_System();
-    DebugString("RMG: Cleanup\n");
-    SeededWaterAmount = 0;
-    WorkingRegionID = 0;
-    if (RMGCellData != NULL) {
-        delete [] RMGCellData;
-        RMGCellData = NULL;
-    }
-    for (index = MapRegionClass::MapRegions.Count() - 1; index >= 0; --index) {
-        MapRegionClass *region = MapRegionClass::MapRegions[index];
-        if (region) delete region;
-    }
-    MapRegionClass::TotalCount = 0;
-    Map.Overpass(true);
-    DebugString("RMG: Compute Radar Image\n");
-    Map.Set_Local_Dimensions(Map.LocalRect);
-    Map.Compute_Radar_Image();
-    Update_Progress(100);
-    DebugString("RMG: Done\n");
-    if (showProgress) {
-        HWND control = GetDlgItem(dialog, 0x638);
-        if (control) ShowWindow(control, SW_HIDE);
-        Update_Progress(0);
-        Progress.Clear_Dialog();
-    }
+	if (RMGCellData) {
+		int size = MapCellStride * MapCellStride;
+		for (index = 0; index < size; ++index) {
+			RMGCellData[index].RegionID = -1;
+			RMGCellData[index].SpreadID = -1;
+		}
+	}
+	for (index = MapRegionClass::MapRegions.Count() - 1; index >= 0; --index) {
+		MapRegionClass *region = MapRegionClass::MapRegions[index];
+		if (region) delete region;
+	}
+	MapRegionClass::TotalCount = 0;
+	DebugString("RMG: Recalculating cell attributes\n");
+	Map.Reset_Iterator();
+	for (cell = Map.Iterate(); cell; cell = Map.Iterate()) cell->Recalc_Attributes(-1);
+	Update_Progress(80);
+	if (RMGCallback) RMGCallback();
+	if (full_init) {
+		RandomMapGen.MapPreview->Create_Preview();
+		SendMessage(dialog, WM_PAINT, 0, 0);
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
+			Send_Preview_To_Guests(RandomMapGen.MapPreview);
+		}
+	}
+	if (RMGCallback) RMGCallback();
+	Update_Progress(85);
+	if (RMGCallback) RMGCallback();
+	if (full_init) {
+		RandomMapGen.MapPreview->Create_Preview();
+		SendMessage(dialog, WM_PAINT, 0, 0);
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
+			Send_Preview_To_Guests(RandomMapGen.MapPreview);
+		}
+	}
+	if (RMGCallback) RMGCallback();
+	DebugString("RMG: Recalculating cell attributes\n");
+	Map.Reset_Iterator();
+	for (cell = Map.Iterate(); cell; cell = Map.Iterate()) cell->Recalc_Attributes(-1);
+	if (RMGCallback) RMGCallback();
+	DebugString("RMG: Creating hills\n");
+	Generate_Hills();
+	Update_Progress(90);
+	if (RMGCallback) RMGCallback();
+	if (full_init) {
+		RandomMapGen.MapPreview->Create_Preview();
+		SendMessage(dialog, WM_PAINT, 0, 0);
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
+			Send_Preview_To_Guests(RandomMapGen.MapPreview);
+		}
+	}
+	if (RMGCallback) RMGCallback();
+	DebugString("RMG: Creating LATs, rocks etc\n");
+	if (SeedData.Biome == 0) {
+		Seed_Vegetation();
+		Generate_Vegetation();
+	} else {
+		Seed_Arctic_Vegetation();
+		Generate_Arctic_Vegetation();
+	}
+	if (RMGCallback) RMGCallback();
+	Update_Progress(95);
+	if (RMGCallback) RMGCallback();
+	if (full_init) {
+		RandomMapGen.MapPreview->Create_Preview();
+		SendMessage(dialog, WM_PAINT, 0, 0);
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
+			Send_Preview_To_Guests(RandomMapGen.MapPreview);
+		}
+	}
+	ScenarioInit--;
+	if (RMGCallback) RMGCallback();
+	DebugString("RMG: Recalculating cell attributes\n");
+	Map.Reset_Iterator();
+	for (cell = Map.Iterate(); cell; cell = Map.Iterate()) cell->Recalc_Attributes(-1);
+	if (RMGCallback) RMGCallback();
+	TiberiumClass::Init_Tiberium_Growth_System();
+	TiberiumClass::Init_Tiberium_Spread_System();
+	DebugString("RMG: Cleanup\n");
+	SeededWaterAmount = 0;
+	WorkingRegionID = 0;
+	if (RMGCellData != NULL) {
+		delete [] RMGCellData;
+		RMGCellData = NULL;
+	}
+	for (index = MapRegionClass::MapRegions.Count() - 1; index >= 0; --index) {
+		MapRegionClass *region = MapRegionClass::MapRegions[index];
+		if (region) delete region;
+	}
+	MapRegionClass::TotalCount = 0;
+	Map.Overpass(true);
+	DebugString("RMG: Compute Radar Image\n");
+	Map.Set_Local_Dimensions(Map.LocalRect);
+	Map.Compute_Radar_Image();
+	Update_Progress(100);
+	DebugString("RMG: Done\n");
+	if (showProgress) {
+		HWND control = GetDlgItem(dialog, 0x638);
+		if (control) ShowWindow(control, SW_HIDE);
+		Update_Progress(0);
+		Progress.Clear_Dialog();
+	}
 }
 
 // FUNCTION: GAMEMD 0x00599530
