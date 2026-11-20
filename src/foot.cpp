@@ -21,6 +21,7 @@
 #include "anim.h"
 #include "astar.h"
 #include "bench.h"
+#include "bomb.h"
 #include "building.h"
 #include "builtype.h"
 #include "capmgr.h"
@@ -1371,6 +1372,158 @@ ResultType FootClass::Take_Damage(int & damage, int distance, WarheadTypeClass c
 		}
 	}
 	return(result);
+}
+
+// FUNCTION: GAMEMD 0x004D74E0
+bool FootClass::Active_Click_With(ActionType action, ObjectClass * object, bool is_waypoint)
+{
+	if (TechnoClass::Berzerk) {
+		return(false);
+	}
+	if (DirectRockerLinkedUnit != NULL && !Techno_Type_Class()->Pushy) {
+		return(false);
+	}
+
+	switch (action) {
+		case ACTION_PATROL_WAYPOINT:
+			return(false);
+
+		case ACTION_NO_IVAN_BOMB:
+			return(false);
+
+		case ACTION_GUARD_AREA:
+			if (Can_Player_Fire() && Can_Player_Move()) {
+				if (((RTTI == RTTI_INFANTRY && ((InfantryClass *)this)->Class->IsBomber) || Has_Ability(ABILITY_C4)) && object->RTTI == RTTI_BUILDING && !House->Is_Ally(object)) {
+					Player_Assign_Mission(MISSION_SABOTAGE, NULL, object);
+					break;
+				}
+				Player_Assign_Mission(MISSION_GUARD_AREA, object);
+				break;
+			}
+			return(false);
+
+		case ACTION_SELF:
+		case ACTION_AREA_ATTACK:
+		case ACTION_DETONATE_ALL:
+			Player_Assign_Mission(MISSION_UNLOAD);
+			break;
+
+		case ACTION_DETONATE:
+			OutList.Add(EventClass(AttachedBomb->OwnerHouse->HeapID, EventClass::DETONATE, TargetClass(this)));
+			break;
+
+		case ACTION_ATTACK:
+		case ACTION_IVAN_BOMB:
+		case ACTION_ATTACK_MOVE_TAR:
+		case ACTION_DEMOLISH:
+		case ACTION_AIRSTRIKE:
+			if (Can_Player_Fire()) {
+				Player_Assign_Mission(MISSION_ATTACK, object);
+				break;
+			}
+			return(false);
+
+		case ACTION_ENTER:
+			if (Can_Player_Move() && object && Dynamic_Cast<TechnoClass *>(object)) {
+				Player_Assign_Mission(MISSION_ENTER, NULL, object);
+				break;
+			}
+			return(false);
+
+		case ACTION_CAPTURE:
+			if (Can_Player_Move()) {
+				Player_Assign_Mission(MISSION_CAPTURE, NULL, object);
+				break;
+			}
+			return(false);
+
+		case ACTION_EATEN:
+			if (Can_Player_Move()) {
+				Player_Assign_Mission(MISSION_EATEN, NULL, object);
+				break;
+			}
+			return(false);
+
+		case ACTION_SABOTAGE:
+			if (Can_Player_Move()) {
+				Player_Assign_Mission(MISSION_SABOTAGE, NULL, object);
+				break;
+			}
+			return(false);
+
+		case ACTION_NOMOVE:
+			if (Map.Is_Shrouded(object->Center_Coord()) && !Techno_Type_Class()->IsMoveToShroud) {
+				return(false);
+			}
+		case ACTION_MOVE:
+		case ACTION_ATTACK_MOVE_NAV:
+			if (Can_Player_Move()) {
+				AbstractClass * targ = object;
+
+				Coord center = object->Center_Coord();
+				if (center.Z <= Map.Get_Height_GL(center)) {
+					center.Z = Map.Get_Height_GL(center);
+				}
+
+				if (((Techno_Type_Class()->IsSubterranean && !Rule->IsShroudedSubteranneanMovesAllowed) || RTTI == RTTI_AIRCRAFT) && Map.Is_Shrouded(center)) {
+					break;
+				}
+
+				MZoneType mzone = Techno_Type_Class()->MZone;
+				Cell cell = object->Destination_Coord().As_Cell();
+				bool in_radar = Map.In_Local_Radar(cell, true);
+				CellClass * cptr = &Map[Destination_Coord()];
+
+				if (mzone == MZONE_SUBTERANNEAN) {
+					mzone = MZONE_NORMAL;
+				} else if (mzone == MZONE_FLYER) {
+					mzone = MZONE_INFANTRY;
+				}
+
+				bool moveanywhere = In_Air() || Techno_Type_Class()->IsSubterranean || (RTTI == RTTI_INFANTRY && ((InfantryClass *)this)->Class->JumpJet) || RTTI == RTTI_AIRCRAFT;
+
+				bool ontobridge = Is_Moving_Onto_Bridge();
+				Coord coord = cell.As_Coord();
+				coord.Z = Map.Get_Height_GL(coord);
+				bool shrouded = Map.Is_Shrouded(coord);
+				bool forcemove = !is_waypoint && (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
+
+				if (moveanywhere && action == ACTION_NOMOVE) {
+					Cell nearby = Map.Nearby_Location(cell, Techno_Type_Class()->Speed, -1, mzone, Map[cell].IsUnderBridge, Point2D(1, 1), false, true, Techno_Type_Class()->IsSubterranean && HeightAGL < 0, true);
+					if (nearby != CELL_NONE) {
+						targ = &Map[nearby];
+					}
+				} else {
+					if (!in_radar || !moveanywhere && (shrouded || action == ACTION_NOMOVE || forcemove && RTTI == RTTI_INFANTRY || !Map.Is_Same_Cell_Zone(cptr->CellID, cell, mzone, ontobridge, Map[cell].IsUnderBridge, false))) {
+						Cell nearby = Map.Nearby_Location(cell, Techno_Type_Class()->Speed, Map.Get_Cell_Zone(&cptr->CellID, mzone, ontobridge), mzone, Map[cell].IsUnderBridge, Point2D(1, 1), false, true, false, true);
+						if (nearby != CELL_NONE) {
+							targ = &Map[nearby];
+						}
+					}
+				}
+
+				if (targ != NULL) {
+					AbstractClass * nearbycell = NULL;
+					if (targ != object && object != NULL) {
+						nearbycell = &Map[Cell(object->Center_Coord())];
+					}
+					Player_Assign_Mission(MISSION_MOVE, NULL, targ, nearbycell);
+				}
+				break;
+			}
+			return(false);
+
+		case ACTION_ATTACK_SUPPORT: {
+			WeaponDataStruct const * wdata = Get_Class_Weapon_Data(0);
+			bool heals = (wdata != 0 && wdata->Weapon != 0 && wdata->Weapon->Attack < 0);
+			Player_Assign_Mission(heals ? MISSION_GUARD_AREA : MISSION_GUARD, this, NULL);
+			break;
+		}
+
+		default:
+			break;
+	}
+	return(true);
 }
 
 extern bool MoveFeedback;
