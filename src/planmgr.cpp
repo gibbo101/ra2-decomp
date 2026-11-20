@@ -2213,22 +2213,22 @@ void __fastcall FUN_00639BC0(PlanningNodeClass * node)
 // FUNCTION: GAMEMD 0x00639CB0
 void __fastcall FUN_00639CB0(TechnoClass * techno)
 {
-    PlanningTokenClass * token = techno->FUN_00705D20();
-    int count = token->Node_Count();
-    int start = token->Get_Loop_Start();
-    PlanningNodeClass * first = token->Node_At(0);
-    int members = first->Get_Count();
-    bool attack_move = false;
-    for (int i = 0; i < members; ++i) {
-        TechnoClass * owner = first->Member_Owner(i);
-        if (owner->CanAttackOnTheMove()) {
-            attack_move = true;
-            break;
-        }
-    }
-    if (attack_move) {
-        for (int j = start; j < count; ++j) token->Node_At(j)->Promote_Events();
-    }
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	int count = token->Node_Count();
+	int start = token->Get_Loop_Start();
+	PlanningNodeClass * first = token->Node_At(0);
+	int members = first->Get_Count();
+	bool attack_move = false;
+	for (int i = 0; i < members; ++i) {
+		TechnoClass * owner = first->Member_Owner(i);
+		if (owner->CanAttackOnTheMove()) {
+			attack_move = true;
+			break;
+		}
+	}
+	if (attack_move) {
+		for (int j = start; j < count; ++j) token->Node_At(j)->Promote_Events();
+	}
 }
 
 // FUNCTION: GAMEMD 0x00639DA0
