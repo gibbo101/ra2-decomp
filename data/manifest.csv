@@ -2129,7 +2129,7 @@ address,size,symbol,source,sha256
 0x0045A120,13,?GetItem@?$VectorClass@PAVReestablish@@@@UBEPAVReestablish@@H@Z,src/building.cpp,da1c0b5074b32d4e80b5f5f042a075a73f60de8e9432201ad45100959599be93
 0x0045A130,33,??0?$TRect@H@@QAE@ABV?$TPoint2D@H@@HH@Z,src/building.cpp,66e0385ce100537a4bd270702e37a13128bc4545ffc20fb0b72b7086fbc8a1e2
 0x0045A160,13,?_Release@?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ,src/building.cpp,75d77bd0a3a4afb5d4a2bf6084d52171f3e5b72dcc4a78108c73cb70fde0c354
-0x0045A170,13,?_AddRef@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ,src/building.cpp,0310496e9b6d6517e26630c4417fbb7034f19d8d4ccaae6a45fa39a8ccbf41ae
+0x0045A170,13,?_AddRef@?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ,src/building.cpp,0310496e9b6d6517e26630c4417fbb7034f19d8d4ccaae6a45fa39a8ccbf41ae
 0x0045A180,62,??8?$VectorClass@PBVParticleSystemTypeClass@@@@UBE_NABV0@@Z,src/building.cpp,99fe6bd84f8a1f0d9572ae92ea81f06a015346609cbad0891ad8ecc2749ac66d
 0x0045A1C0,174,?Resize@?$VectorClass@PBVParticleSystemTypeClass@@@@UAE_NHPBQBVParticleSystemTypeClass@@@Z,src/building.cpp,c75a7ea67941e30f72043c4c8c39bca64ff79eca246e182dbb3dce950166691c
 0x0045A270,39,?Clear@?$VectorClass@PBVParticleSystemTypeClass@@@@UAEXXZ,src/building.cpp,3978798d7bd42b3a2366ddc49fe9a7f26247e0d926cf73c6c3462bd7e94661db
@@ -7968,6 +7968,7 @@ address,size,symbol,source,sha256
 0x00556980,23,_$E41,src/link2.cpp,c069ec64ac1b64743688fc04fd9936bdfa1aa9720c42d50e79a33e38f14a5ad3
 0x005569A0,61,_$E78,src/link2.cpp,3c9df6100c94304d7e5be6e21c48f396730f7befb3e46629bd89da833b58a5c9
 0x005569E0,59,_$E76,src/link2.cpp,286f068abfbebd1d8ac05520a2bc01f9172791aeb4f82217c12b405190545cb3
+0x00556A20,164,??0LineTrail@@QAE@XZ,src/link2.cpp,fd0e6f3f80bb3ac2444555d03759e37fd2bbd796ca2f2c209b5ca3711dc342e5
 0x00556AD0,94,??1LineTrail@@QAE@XZ,src/link2.cpp,c70255bc98e8a448289b6f9e5081e6dc1ce0b7b6ebf9bd8e6ce2b895fe71cb17
 0x00556B30,19,?Release_Owner@LineTrail@@QAEXXZ,src/link2.cpp,62b7a2c0bbfef8fdf74723e54e7c05bb97e5377f6888852da4bb7911fe5e0b1b
 0x00556B50,21,?Set_Decrement@LineTrail@@QAEXH@Z,src/link2.cpp,bcecb97264cdd5e618a9efc15f3f1a4cb31040a2a3fffbcf1119ae9a852ff413

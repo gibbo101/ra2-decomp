@@ -1766,7 +1766,7 @@ address,name,result,size,source,symbol
 0x0045A120,?GetItem@?$VectorClass@PAVReestablish@@@@UBEPAVReestablish@@H@Z,MATCH,13,src/building.cpp,?GetItem@?$VectorClass@PAVReestablish@@@@UBEPAVReestablish@@H@Z
 0x0045A130,??0?$TRect@H@@QAE@ABV?$TPoint2D@H@@HH@Z,MATCH,33,src/building.cpp,??0?$TRect@H@@QAE@ABV?$TPoint2D@H@@HH@Z
 0x0045A160,?_Release@?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ,MATCH,13,src/building.cpp,?_Release@?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
-0x0045A170,?_AddRef@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ,MATCH,13,src/building.cpp,?_AddRef@?$_com_ptr_t@V?$_com_IIID@UILocomotion@@$1?_GUID_070f3290_9841_11d1_b709_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
+0x0045A170,?_AddRef@?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ,MATCH,13,src/building.cpp,?_AddRef@?$_com_ptr_t@V?$_com_IIID@UIPiggyback@@$1?_GUID_92fea800_a184_11d1_b70a_00a024ddafd1@@3U__s_GUID@@A@@@@AAEXXZ
 0x0045A180,??8?$VectorClass@PBVParticleSystemTypeClass@@@@UBE_NABV0@@Z,MATCH,62,src/building.cpp,??8?$VectorClass@PBVParticleSystemTypeClass@@@@UBE_NABV0@@Z
 0x0045A1C0,?Resize@?$VectorClass@PBVParticleSystemTypeClass@@@@UAE_NHPBQBVParticleSystemTypeClass@@@Z,MATCH,174,src/building.cpp,?Resize@?$VectorClass@PBVParticleSystemTypeClass@@@@UAE_NHPBQBVParticleSystemTypeClass@@@Z
 0x0045A270,?Clear@?$VectorClass@PBVParticleSystemTypeClass@@@@UAEXXZ,MATCH,39,src/building.cpp,?Clear@?$VectorClass@PBVParticleSystemTypeClass@@@@UAEXXZ
@@ -7613,6 +7613,7 @@ address,name,result,size,source,symbol
 0x00556980,_$E41,MATCH,23,src/link2.cpp,_$E41
 0x005569A0,_$E78,MATCH,61,src/link2.cpp,_$E78
 0x005569E0,_$E76,MATCH,59,src/link2.cpp,_$E76
+0x00556A20,LineTrail::LineTrail,MATCH,164,src/link2.cpp,??0LineTrail@@QAE@XZ
 0x00556AD0,LineTrail::~LineTrail,MATCH,94,src/link2.cpp,??1LineTrail@@QAE@XZ
 0x00556B30,LineTrail::Release_Owner,MATCH,19,src/link2.cpp,?Release_Owner@LineTrail@@QAEXXZ
 0x00556B50,LineTrail::Set_Decrement,MATCH,21,src/link2.cpp,?Set_Decrement@LineTrail@@QAEXH@Z
