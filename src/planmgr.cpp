@@ -517,7 +517,7 @@ HouseClass * PlanningNodeClass::Lead_House(void)
 // FUNCTION: GAMEMD 0x006343C0
 Coord PlanningNodeClass::Lead_Coord(void)
 {
-	Coord coord = FUN_00633BC0(*PlanningMembers[0]->Packet);
+	Coord coord = FUN_00633BC0(*PlanningMembers[0]->Get_Packet());
 	return coord;
 }
 
@@ -539,7 +539,8 @@ bool PlanningNodeClass::Hit_Test(int x, int y)
 Rect __fastcall FUN_00634510(Point2D center, int size)
 {
 	int offset = -(size / 2);
-	Point2D corner = center;
+	Point2D corner;
+	corner = center;
 	corner.X += offset;
 	corner.Y += offset;
 	Rect rect(corner.X, corner.Y, size, size);
@@ -558,8 +559,7 @@ Rect PlanningNodeClass::Lead_Rect(void)
 {
 	Point2D pixel;
 	pixel = Lead_Pixel();
-	Rect rect = FUN_00634510(pixel, 8);
-	return rect;
+	return FUN_00634510(pixel, 8);
 }
 
 // FUNCTION: GAMEMD 0x00634630
@@ -1090,8 +1090,7 @@ void PlanningNodeClass::Reset_Colors(bool all)
 // FUNCTION: GAMEMD 0x00635DF0
 Rect PlanningNodeClass::Lead_Box_Rect(void)
 {
-	Rect rect;
-	rect = Lead_Rect();
+	Rect rect = Lead_Rect();
 	FUN_006357D0(&rect, 4);
 	return rect;
 }
@@ -1904,13 +1903,9 @@ void __fastcall FUN_00634B20(PlanningNodeClass * node);
 static inline PlanningNodeClass * Find_Node_At(DynamicVectorClass<PlanningNodeClass *> const & nodes, Point2D const & point)
 {
 	int count = nodes.Count();
-	int i = 0;
-	if (count > 0) {
-		do {
-			PlanningNodeClass * node = nodes[i];
-			if (node->Hit_Test(point.X, point.Y)) return node;
-			++i;
-		} while (i < count);
+	for (int i = 0; i < count; ++i) {
+		PlanningNodeClass * node = nodes[i];
+		if (node->Hit_Test(point.X, point.Y)) return node;
 	}
 	return NULL;
 }
@@ -2467,6 +2462,38 @@ void __fastcall FUN_0063A4B0(int kind)
 	} else if (kind == 2) {
 		FUN_0063A230("MSG:NodeMaximum");
 	}
+}
+
+static inline PlanningNodeClass * Hover_Node_At(Point2D point);
+PlanningNodeClass * __fastcall FUN_0063AD40(void);
+void __fastcall FUN_0063AD30(PlanningNodeClass * node);
+
+// FUNCTION: GAMEMD 0x0063A5A0
+bool __fastcall FUN_0063A5A0(Point2D xy)
+{
+	if (!FUN_00637AA0()) return false;
+
+	PlanningNodeClass * selected = FUN_0063AD40();
+	PlanningNodeClass * hit = Hover_Node_At(xy);
+	if (hit && hit != selected) {
+		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
+		FUN_0063AD30(hit);
+	} else {
+		PlanningNodeClass * node = Find_Node_At(PlanningNodeClass::Unknown1, xy);
+		if (node) {
+			if (FUN_0063AC70(node) != -1) {
+				FUN_0063A230("MSG:PlanningModeInvalidNodeX");
+				return true;
+			}
+		} else {
+			int kind = FUN_00639DA0();
+			if (kind != -1) {
+				FUN_0063A360(kind);
+				return true;
+			}
+		}
+	}
+	return selected || hit;
 }
 
 extern int DAT_00A8ECC8;
