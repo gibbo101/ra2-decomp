@@ -718,17 +718,14 @@ bool CoopCampaignClass::FUN_0049D120(void)
 // FUNCTION: GAMEMD 0x0049D390
 bool CoopCampaignClass::FUN_0049D390(char * out)
 {
-	if (!Name[0] || !Map[0]) {
-		return false;
-	}
-	{
+	if (Name[0] && Map[0]) {
 		char section[100];
 		char key[32];
 		CCFileClass file("coopsave.ini");
 		CCINIClass ini;
 		if (!ini.ReadCCFile(file, false, false)) {
 			file.Close();
-			goto failed;
+			return false;
 		}
 		file.Close();
 		strcpy(section, FUN_0049B490(Name));
@@ -740,8 +737,6 @@ bool CoopCampaignClass::FUN_0049D390(char * out)
 			return true;
 		}
 	}
-
-failed:
 	return false;
 }
 
