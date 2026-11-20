@@ -815,6 +815,122 @@ bool FlyLocomotionClass::Process_Landing(void)
 	return(has_landed);
 }
 
+int FlyLocomotionClass::Nearing_Target(bool stage_approach, CoordStruct coord)
+{
+	LinkedTo->Get_Cell();
+	IFlyControlPtr flyctrl(LinkedTo);
+
+	if (flyctrl != NULL && LinkedTo->TarCom != NULL && LinkedTo->Ammo && flyctrl->Is_Strafe()) {
+		stage_approach = false;
+	}
+	if (As_Aircraft(LinkedTo) != NULL && As_Aircraft(LinkedTo)->Class->IsFlyBy) {
+		stage_approach = false;
+	}
+
+	Coord aim = coord;
+	BuildingClass * building = Map[Coord(coord).As_Cell()].Cell_Building();
+	if (building != NULL && !LinkedTo->TClass->IsHunterSeeker) {
+		if (!LinkedTo->ContainsLink(building)) {
+			AircraftClass * aircraft = As_Aircraft(LinkedTo);
+			if (aircraft != NULL) {
+				AbstractClass * landing = aircraft->New_LZ(building);
+				if (landing == NULL) {
+					aim = COORD_NONE;
+				} else {
+					aim = landing->Center_Coord();
+				}
+			}
+		} else {
+			aim = building->Docking_Coord(LinkedTo);
+		}
+	}
+
+	LinkedTo->Get_Height();
+	int dist = Point2D(LinkedTo->Center_Coord()).Distance_To(Point2D(aim));
+
+	if (flyctrl == NULL || !flyctrl->Is_Locked()) {
+		DirType dir = DirType().Direction(LinkedTo->Center_Coord(), coord);
+		bool turn = true;
+		if (flyctrl != NULL && flyctrl->Is_Strafe()) {
+			Point2D here = LinkedTo->Center_Coord();
+			if (!(here.Distance_To(Coord(coord)) > CELL_LEPTON * 3 ||
+				dir.Is_Complete_Turn(LinkedTo->PrimaryFacing.Current(), DIR_STEP_8))) {
+				turn = false;
+			}
+		}
+		if (turn) {
+			LinkedTo->PrimaryFacing.Set_Desired(DirType().Direction(LinkedTo->Center_Coord(), coord));
+		}
+	}
+
+	if (dist < CELL_LEPTON && stage_approach && !LinkedTo->TClass->IsHunterSeeker) {
+		if (LinkedTo->TarCom != NULL && LinkedTo->Ammo &&
+			(flyctrl == NULL || !flyctrl->Is_Strafe())) {
+			if (flyctrl == NULL || !flyctrl->Is_Locked()) {
+				LinkedTo->SecondaryFacing.Set_Desired(LinkedTo->Direction(LinkedTo->TarCom));
+			}
+		} else {
+			DirType land(DIR_N);
+			if (flyctrl != NULL) {
+				land = DirType(FacingType(flyctrl->Landing_Direction()));
+			}
+			if (flyctrl == NULL || !flyctrl->Is_Locked()) {
+				LinkedTo->SecondaryFacing.Set_Desired(land);
+			}
+		}
+	} else {
+		if (flyctrl == NULL || !flyctrl->Is_Locked()) {
+			LinkedTo->SecondaryFacing.Set_Desired(Direction(LinkedTo->Center_Coord(), coord));
+		}
+	}
+
+	if (IsElevating && dist < 3 * CELL_LEPTON) {
+		FlightLevel = DestinationCoord.Z - Map.Get_Height_GL(DestinationCoord);
+	} else {
+		if (LinkedTo->TClass->IsDropship) {
+			if (dist >= LinkedTo->TClass->SlowdownDistance) {
+				FlightLevel = LinkedTo->TClass->GetFlightLevel();
+			} else {
+				float frac = (float)(dist / LinkedTo->TClass->SlowdownDistance);
+				TechnoTypeClass const * ttype = LinkedTo->TClass;
+				FlightLevel = (int)((LinkedTo->TClass->GetFlightLevel() / 3) * (1.0f - frac) +
+					ttype->GetFlightLevel() * frac);
+			}
+		} else {
+			FlightLevel = LinkedTo->TClass->GetFlightLevel();
+		}
+	}
+
+	if (!LinkedTo->TClass->IsHunterSeeker) {
+		if (Needs_To_Land()) {
+			if (dist < CELL_LEPTON / 2) {
+				if (stage_approach) {
+					TargetSpeed = 0.0;
+				}
+				if (!IsElevating && CurrentSpeed < 0.05) {
+					Land();
+				}
+			} else if (dist < CELL_LEPTON * 2) {
+				if (stage_approach) {
+					TargetSpeed = 0.5;
+				}
+			} else if (dist < CELL_LEPTON * 3) {
+				if (stage_approach) {
+					TargetSpeed = 0.75;
+				}
+			}
+		}
+	}
+
+	if (LinkedTo->IsSelected && !LinkedTo->House->Is_Player_Control()) {
+		if (Map.Is_Shrouded(LinkedTo->Get_Coord()) ||
+			(Scen->Special.IsFogOfWar && Map.Is_Fogged(LinkedTo->Get_Coord()))) {
+			LinkedTo->Unselect();
+		}
+	}
+	return(dist);
+}
+
 // FUNCTION: GAMEMD 0x004CF610
 Matrix3DStruct STDMETHODCALLTYPE FlyLocomotionClass::Draw_Matrix(int * key)
 {
@@ -1152,6 +1268,9 @@ bool FlyLocomotionClass::Is_Locked_To_Straight_Flight(void)
 
 // SYNTHETIC: GAMEMD 0x004D03A0
 // ??_GFlyLocomotionClass@@UAEPAXI@Z
+
+// FUNCTION: GAMEMD 0x004D03D0
+// DirType::operator>=
 
 // TEMPLATE: GAMEMD 0x004D0400
 // ??8?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@@@QAE_NH@Z
