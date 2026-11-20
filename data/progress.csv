@@ -3686,6 +3686,7 @@ address,name,result,size,source,symbol
 0x004AAC10,DisplayClass::TacticalClass::Action,MATCH,272,src/display.cpp,?Action@TacticalClass@DisplayClass@@MAEHIAAW4KeyNumType@@H@Z
 0x004AAD20,DisplayClass::Mouse_Right_Press,MATCH,3,src/display.cpp,?Mouse_Right_Press@DisplayClass@@MAEXABVPoint2D@@@Z
 0x004AAD30,DisplayClass::Mouse_Right_Release,MATCH,343,src/display.cpp,?Mouse_Right_Release@DisplayClass@@MAEXABVPoint2D@@@Z
+0x004AAE90,DisplayClass::Mouse_Left_Up,MATCH,2836,src/display.cpp,?Mouse_Left_Up@DisplayClass@@MAEXABVCell@@_NPAVObjectClass@@W4ActionType@@1@Z
 0x004AB9B0,DisplayClass::Mouse_Left_Release,MATCH,2298,src/display.cpp,?Mouse_Left_Release@DisplayClass@@MAEXABVCoord@@ABVCell@@PAVObjectClass@@W4ActionType@@_N@Z
 0x004AC2B0,Bandbox_Selection_Callback,MATCH,84,src/display.cpp,?Bandbox_Selection_Callback@@YIXPAVObjectClass@@@Z
 0x004AC310,DisplayClass::Mouse_Left_Press,MATCH,97,src/display.cpp,?Mouse_Left_Press@DisplayClass@@MAEXABVPoint2D@@@Z
@@ -15185,7 +15186,7 @@ address,name,result,size,source,symbol
 0x0070F0F0,TechnoClass::ContinueMegaMission,MATCH,3,src/techno.cpp,?ContinueMegaMission@TechnoClass@@UAE_NXZ
 0x0070F100,TechnoClass::UpdateAttackMove,MATCH,1,src/techno.cpp,?UpdateAttackMove@TechnoClass@@UAEXXZ
 0x0070F110,TechnoClass::RefreshMegaMission,MATCH,3,src/techno.cpp,?RefreshMegaMission@TechnoClass@@UAE_NXZ
-0x0070F0B0,FUN_0070F0B0,MATCH,46,src/techno.cpp,?FUN_0070F0B0@@YIHHHH@Z
+0x0070F0B0,FUN_0070F0B0,MATCH,46,src/techno.cpp,?FUN_0070F0B0@@YIHHABVCell@@PAVObjectClass@@@Z
 0x0070F120,TechnoClass::Set_Talker,MATCH,173,src/techno.cpp,?Set_Talker@TechnoClass@@SIXPAV1@W4TalkType@@@Z
 0x0070F1D0,TechnoClass::FUN_0070F1D0,MATCH,1172,src/techno.cpp,?FUN_0070F1D0@TechnoClass@@QAEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x0070F670,TechnoClass::FUN_0070F670,MATCH,47,src/techno.cpp,?FUN_0070F670@TechnoClass@@QAEXPAVCellClass@@@Z

@@ -4041,6 +4041,7 @@ address,size,symbol,source,sha256
 0x004AAC10,272,?Action@TacticalClass@DisplayClass@@MAEHIAAW4KeyNumType@@H@Z,src/display.cpp,c752d94a2bf888c0cd2612fb9697468bebffb26eeb83dd4f6f382f63a6148c2a
 0x004AAD20,3,?Mouse_Right_Press@DisplayClass@@MAEXABVPoint2D@@@Z,src/display.cpp,e598d0c3ba86d917b177d7adde0556aa99bc355543c57aee0a3e50b684dd7e99
 0x004AAD30,343,?Mouse_Right_Release@DisplayClass@@MAEXABVPoint2D@@@Z,src/display.cpp,0e807320236b8770a55c28747351bc647a28d0fa11656c945473ea778662520d
+0x004AAE90,2836,?Mouse_Left_Up@DisplayClass@@MAEXABVCell@@_NPAVObjectClass@@W4ActionType@@1@Z,src/display.cpp,73da67989377ff6e5fd65d8137d231e6a57e5136accd8d649fa1358a8bbf5467
 0x004AB9B0,2298,?Mouse_Left_Release@DisplayClass@@MAEXABVCoord@@ABVCell@@PAVObjectClass@@W4ActionType@@_N@Z,src/display.cpp,92383d1ec0408fd89ef06bd55702c97c051ff7ee8489d1e983e7adc1e6f8ff98
 0x004AC2B0,84,?Bandbox_Selection_Callback@@YIXPAVObjectClass@@@Z,src/display.cpp,4f5c534383ac2725588e1b4430b38eba382d8763f8eae731491e11f27116895d
 0x004AC310,97,?Mouse_Left_Press@DisplayClass@@MAEXABVPoint2D@@@Z,src/display.cpp,9bbd8b12bd83a981f1b44a9ae88aa5c5687abb61c135782ba11a3da445ff35e6
@@ -15525,7 +15526,7 @@ address,size,symbol,source,sha256
 0x0070F050,30,?GetAttackMoveCoords@TechnoClass@@UAE?AVCoord@@XZ,src/techno.cpp,0b241886e0121c3d6e367b55747ad0a22350ebe8976c1fd3aa28b3d9d83d9d50
 0x0070F070,18,?CanUseWaypoint@TechnoClass@@UBE_NXZ,src/techno.cpp,02aff64618d175c6eeec0206dd62cb3c5b16324f801d3a86e004fa352c179e6d
 0x0070F090,18,?CanAttackOnTheMove@TechnoClass@@UBE_NXZ,src/techno.cpp,8073aabff9c35dbbc25341bfe05254156d6e3b03d2626120e284448f06c7b838
-0x0070F0B0,46,?FUN_0070F0B0@@YIHHHH@Z,src/techno.cpp,c4cb44f78fa9af814005d2d1982b3b5be7d5c15b6d2b737f11c47a23177fbbcb
+0x0070F0B0,46,?FUN_0070F0B0@@YIHHABVCell@@PAVObjectClass@@@Z,src/techno.cpp,c4cb44f78fa9af814005d2d1982b3b5be7d5c15b6d2b737f11c47a23177fbbcb
 0x0070F0E0,3,?MegaMissionIsAttackMove@TechnoClass@@UBE_NXZ,src/techno.cpp,01cb47d078b4841b8408ec4fe278efa83115c6f6e101972987507d2b2b57dcf0
 0x0070F0F0,3,?ContinueMegaMission@TechnoClass@@UAE_NXZ,src/techno.cpp,01cb47d078b4841b8408ec4fe278efa83115c6f6e101972987507d2b2b57dcf0
 0x0070F100,1,?UpdateAttackMove@TechnoClass@@UAEXXZ,src/techno.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
