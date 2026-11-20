@@ -55,7 +55,6 @@
 #include "nullmgr.h"
 #include "overlay.h"
 #include "overtype.h"
-#include "ownertalk.h"
 #include "ownrdraw.h"
 #include "particle.h"
 #include "partsys.h"
@@ -2059,8 +2058,6 @@ const char * FUN_004E62B0(void);
 // FUNCTION: GAMEMD 0x0064DEA0
 void __fastcall Print_CRCs(EventClass *ev)
 {
-	char const * const _NO_NAME = "None";
-
 	int i, j;
 	ObjectClass *objp;
 	FILE *fp;
@@ -2171,7 +2168,7 @@ void __fastcall Print_CRCs(EventClass *ev)
 				AbstractClass *tarcom = infp->TarCom;
 				int tarcom_x = 0;
 				int tarcom_y = 0;
-				const char *tarcom_name = _NO_NAME;
+				const char *tarcom_name = "None";
 				if (tarcom != NULL) {
 					tarcom_x = tarcom->Center_Coord().X;
 					tarcom_y = tarcom->Center_Coord().Y;
@@ -2180,7 +2177,7 @@ void __fastcall Print_CRCs(EventClass *ev)
 
 				int navcom_x = 0;
 				int navcom_y = 0;
-				const char *navcom_name = _NO_NAME;
+				const char *navcom_name = "None";
 				AbstractClass *navcom = infp->NavCom;
 				if (navcom != NULL) {
 					navcom_x = navcom->Center_Coord().X;
@@ -2209,7 +2206,7 @@ void __fastcall Print_CRCs(EventClass *ev)
 				AbstractClass *tarcom = unitp->TarCom;
 				int tarcom_x = 0;
 				int tarcom_y = 0;
-				const char *tarcom_name = _NO_NAME;
+				const char *tarcom_name = "None";
 				if (tarcom != NULL) {
 					tarcom_x = tarcom->Center_Coord().X;
 					tarcom_y = tarcom->Center_Coord().Y;
@@ -2218,7 +2215,7 @@ void __fastcall Print_CRCs(EventClass *ev)
 
 				int navcom_x = 0;
 				int navcom_y = 0;
-				const char *navcom_name = _NO_NAME;
+				const char *navcom_name = "None";
 				AbstractClass *navcom = unitp->NavCom;
 				if (navcom != NULL) {
 					navcom_x = navcom->Center_Coord().X;
@@ -2247,7 +2244,7 @@ void __fastcall Print_CRCs(EventClass *ev)
 				AbstractClass *tarcom = bldgp->TarCom;
 				int tarcom_x = 0;
 				int tarcom_y = 0;
-				const char *tarcom_name = _NO_NAME;
+				const char *tarcom_name = "None";
 				if (tarcom != NULL) {
 					tarcom_x = tarcom->Center_Coord().X;
 					tarcom_y = tarcom->Center_Coord().Y;
@@ -2274,7 +2271,7 @@ void __fastcall Print_CRCs(EventClass *ev)
 				AbstractClass *tarcom = airp->TarCom;
 				int tarcom_x = 0;
 				int tarcom_y = 0;
-				const char *tarcom_name = _NO_NAME;
+				const char *tarcom_name = "None";
 				if (tarcom != NULL) {
 					tarcom_x = tarcom->Center_Coord().X;
 					tarcom_y = tarcom->Center_Coord().Y;
@@ -3091,6 +3088,7 @@ void __fastcall FUN_00652230(EventClass *event)
 	}
 }
 
+#include "ownertalk.h"
 int __fastcall FUN_005422D0(IPXManagerClass *ipx);
 
 // FUNCTION: GAMEMD 0x006523A0

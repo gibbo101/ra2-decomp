@@ -126,7 +126,7 @@ void __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 #include "temporal.h"
 
 
-// FUNCTION: GAMEMD 0x0043B150
+
 bool __fastcall FUN_0043B150(TechnoClass * techno)
 {
 	HouseClass * owner = techno->House;
@@ -6106,9 +6106,7 @@ bool BuildingClass::FUN_004528A0(AbstractClass const * target)
 {
 	Coord a = Center_Coord();
 	Coord b = target->Center_Coord();
-	int distance = a.Distance_To(b);
-	int range = Class->PsychicDetectionRadius << 8;
-	return(distance <= range);
+	return(a.Distance_To(b) <= Class->PsychicDetectionRadius << 8);
 }
 
 // FUNCTION: GAMEMD 0x00452940
@@ -6116,7 +6114,7 @@ bool BuildingClass::FUN_00452940(CellClass const * cell)
 {
 	Coord a = Center_Coord();
 	Coord b = cell->Cell_Coord();
-	return((a - b).Length() <= Class->PsychicDetectionRadius << 8);
+	return(a.Distance_To(b) <= Class->PsychicDetectionRadius << 8);
 }
 
 // FUNCTION: GAMEMD 0x004529E0
@@ -8428,7 +8426,7 @@ bool BuildingClass::CanBeSelectedNow(void) const
 // FUNCTION: GAMEMD 0x00459C20
 int BuildingClass::VoiceDeploy(void)
 {
-	if (ArchiveTarget != NULL && ArchiveTarget->RTTI == RTTI_CELL) {
+	if (Is_Target_Cell(ArchiveTarget)) {
 		if (As_Cell(ArchiveTarget)->Land_Type() == LAND_TIBERIUM && Class->ResourceDestination && Class->ResourceGatherer && Class->VoiceHarvest != -1) {
 			QueueVoice(Class->VoiceHarvest);
 		} else {

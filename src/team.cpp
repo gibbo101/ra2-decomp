@@ -316,7 +316,7 @@ void TeamClass::Assign_Mission_Target(AbstractClass * new_target)
 		MissionTarget = new_target;
 	}
 
-	if (MissionTarget != NULL && MissionTarget->RTTI == RTTI_CELL) {
+	if (Is_Target_Cell(MissionTarget)) {
 		if (!Map.In_Local_Radar((CellClass *)new_target)) {
 			FootClass * unit = Member;
 			IsLeaveMap = true;
@@ -848,7 +848,7 @@ void TeamClass::Coordinate_Attack(void)
 	}
 
 	FootClass * leader = Fetch_A_Leader();
-	if (Target != NULL && Target->RTTI == RTTI_CELL && Member != NULL && leader->RTTI != RTTI_AIRCRAFT) {
+	if (Is_Target_Cell(Target) && Member != NULL && leader->RTTI != RTTI_AIRCRAFT) {
 		CellClass * cellptr = As_Cell(Target);
 		if (cellptr->Cell_Object()) {
 			Target = cellptr->Cell_Object();
@@ -1298,7 +1298,7 @@ void TeamClass::TMission_ATT_WAYPT(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time) {
 		CellClass * trgt = (CellClass *)Scen->Get_Waypoint_Target(mission->Data.Value);
-		if (trgt != NULL && trgt->RTTI == RTTI_CELL) {
+		if (Is_Target_Cell(trgt)) {
 			ObjectClass * otrgt = trgt->Cell_Object(Point2D(0, 0), trgt->IsUnderBridge);
 			if (otrgt) {
 				trgt = (CellClass *)otrgt;
@@ -1320,7 +1320,7 @@ void TeamClass::TMission_ATT_WAYPT_BUILDING(TeamMissionClass * mission, bool fir
 {
 	if (first_time) {
 		AbstractClass * trgt = Scen->Get_Waypoint_Target(mission->Data.Value);
-		if (trgt != NULL && trgt->RTTI == RTTI_CELL) {
+		if (Is_Target_Cell(trgt)) {
 			CellClass * cell = (CellClass *)trgt;
 			trgt = cell->Cell_Object(Point2D(0, 0), cell->IsUnderBridge);
 			if (trgt == NULL || trgt->RTTI != RTTI_BUILDING) {
@@ -1457,7 +1457,7 @@ void TeamClass::TMission_SPY(TeamMissionClass * mission, bool first_time)
 		Assign_Mission_Target(Scen->Get_Waypoint_Target(mission->Data.Value));
 	}
 
-	if (MissionTarget != NULL && MissionTarget->RTTI == RTTI_CELL) {
+	if (Is_Target_Cell(MissionTarget)) {
 		CellClass * cellptr = As_Cell(MissionTarget);
 
 		ObjectClass * bldg = cellptr->Cell_Object();
