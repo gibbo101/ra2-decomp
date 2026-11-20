@@ -7917,6 +7917,62 @@ bool MapRegionClass::Build_West_Ramp(
 	return(true);
 }
 
+// FUNCTION: GAMEMD 0x00592AF0
+bool MapRegionClass::Build_Corner_Ramp_SE(Cell const & cell1, Cell const & cell2, int region_id)
+{
+	int dx = cell2.X - cell1.X;
+	if (dx >= 3) {
+		int dy = cell1.Y - cell2.Y;
+		if (dy >= 3) {
+			Rect rect(cell1.X - 2, cell2.Y - 2, dx + 10, dy + 10);
+			if (Is_Ramp_Area_Clear(rect, region_id)) {
+
+				Flatten_Area(Rect(rect.X, cell1.Y + 1, rect.Width, 7), region_id);
+				Flatten_Area(Rect(cell2.X + 1, rect.Y, 7, rect.Height), region_id);
+				Flatten_Area(Rect(cell1.X, cell1.Y - 1, 1, 2));
+				Flatten_Area(Rect(cell2.X - 1, cell2.X, 2, 1));
+				Flatten_Area(Rect(cell1.X + 1, cell2.Y + 1, cell2.X - cell1.X - 1, cell1.Y - cell2.Y - 1));
+
+				MapGeneratorClass::Place_Tile(IsometricTileTypeClass::SlopeSetPieces, cell1, region_id, CellHeight);
+				MapGeneratorClass::Place_Tile((IsometricTileType)(IsometricTileTypeClass::SlopeSetPieces + 3), cell2, region_id, CellHeight);
+
+				for (int i = 0; i < 4; ++i) {
+					Cell const & offset = Cell(i, i);
+					CellClass * cptr = &Map[Cell(cell2.X + offset.X, cell1.Y + offset.Y)];
+					cptr->Height = CellHeight - (char)i - 1;
+					cptr->Ramp = 7;
+					cptr->ITType = (IsometricTileType)(IsometricTileTypeClass::RampStart + 6);
+					cptr->SubTile = 0;
+				}
+
+				for (int j = 0; j < 4; ++j) {
+					for (int k = 0; k < cell2.X - cell1.X + j - 3; ++k) {
+						CellClass * cptr = &Map[Cell(cell1.X + k + 3, cell1.Y + j)];
+						cptr->Height = CellHeight - (char)j - 1;
+						cptr->Ramp = 4;
+						cptr->ITType = (IsometricTileType)(IsometricTileTypeClass::RampStart + 3);
+						cptr->SubTile = 0;
+					}
+				}
+
+				for (int m = 0; m < 4; ++m) {
+					for (int n = 0; n < cell1.Y - cell2.Y + m - 3; ++n) {
+						CellClass * cptr = &Map[Cell(cell2.X + m, cell2.Y + n + 3)];
+						cptr->Height = CellHeight - (char)m - 1;
+						cptr->Ramp = 3;
+						cptr->ITType = (IsometricTileType)(IsometricTileTypeClass::RampStart + 2);
+						cptr->SubTile = 0;
+					}
+				}
+
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+
 // FUNCTION: GAMEMD 0x00593030
 bool MapRegionClass::Build_Corner_Ramp_NE(
 	Cell const & cell1, Cell const & cell2, int region_id)
