@@ -1088,13 +1088,13 @@ int AircraftClass::Do_MISSION_MOVE_Carryall(void)
 			return(1);
 
 		case FLY_TO_LZ:
-			if (NavCom != NULL && !Is_Target_Cell(NavCom) && FUN_0065AD30(0) != NavCom) {
+			if (NavCom != NULL && NavCom->RTTI != RTTI_CELL && FUN_0065AD30(0) != NavCom) {
 				DebugString("Do_MISSION_MOVE_Carryall - FLY_TO_LZ - Lost contact\n");
 				Status = VALIDATE_LZ;
 				return(1);
 			}
 
-			if (Is_Target_Cell(NavCom) && !Is_LZ_Clear(NavCom)) {
+			if (NavCom != NULL && NavCom->RTTI == RTTI_CELL && !Is_LZ_Clear(NavCom)) {
 				Status = VALIDATE_LZ;
 				return(1);
 			}

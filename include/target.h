@@ -17,7 +17,12 @@ inline bool Is_Target_TriggerType(const AbstractClass * target) {return(target !
 inline bool Is_Target_Infantry(const AbstractClass * target) {return(target != NULL && target->RTTI == RTTI_INFANTRY);}
 inline bool Is_Target_Bullet(const AbstractClass * target) {return(target != NULL && target->RTTI == RTTI_BULLET);}
 inline bool Is_Target_Terrain(const AbstractClass * target) {return(target != NULL && target->RTTI == RTTI_TERRAIN);}
-inline bool Is_Target_Cell(const AbstractClass * target) {return(target != NULL && target->RTTI ==  RTTI_CELL);}
+inline bool Is_Target_Cell(const AbstractClass * target)
+{
+	if (target == NULL) return(false);
+	RTTIType type = target->Fetch_RTTI();
+	return(type == RTTI_CELL);
+}
 inline bool Is_Target_Unit(const AbstractClass * target) {return(target != NULL && target->RTTI == RTTI_UNIT);}
 inline bool Is_Target_Building(const AbstractClass * target) {return(target != NULL && target->RTTI == RTTI_BUILDING);}
 inline bool Is_Target_IsoTile(const AbstractClass * target) {return(target != NULL && target->RTTI == RTTI_ISOTILE);}

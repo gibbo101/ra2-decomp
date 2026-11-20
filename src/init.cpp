@@ -2173,8 +2173,9 @@ bool Init_Secondary_Mixfiles(void)
 	if (DAT_00884E18 != NULL) {
 		delete DAT_00884E18;
 	}
-	DAT_00884E18 = new MFCD("GENERMD.MIX", &FastKey);
-	DAT_00884E18->Cache();
+	MFCD * genermd = new MFCD("GENERMD.MIX", &FastKey);
+	DAT_00884E18 = genermd;
+	genermd->Cache();
 	if (DAT_00884E14 != NULL) {
 		delete DAT_00884E14;
 	}

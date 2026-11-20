@@ -126,6 +126,49 @@ void __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 #include "temporal.h"
 
 
+// FUNCTION: GAMEMD 0x0043B150
+bool __fastcall FUN_0043B150(TechnoClass * techno)
+{
+	HouseClass * owner = techno->House;
+	if (PlayerPtr->Is_Ally(owner)) return false;
+	int count = PlayerPtr->PsychicDetectionBuildings.Count();
+	for (int i = 0; i < count; i++) {
+		BuildingClass * building = PlayerPtr->PsychicDetectionBuildings[i];
+		if (building->IsPowerOnline()) {
+			AbstractClass * target = techno->TarCom;
+			if (target != NULL) {
+				if (As_Techno(target) != NULL) {
+					bool in_range = building->FUN_004528A0(target);
+					if (in_range) return in_range;
+				} else if (Is_Target_Cell(target)) {
+					bool in_range = building->FUN_00452940((CellClass *)target);
+					if (in_range) return in_range;
+				}
+			}
+			if (techno->Is_Foot()) {
+				FootClass * foot = (FootClass *)techno;
+				AbstractClass * destination;
+				if (foot->RouteQueue.Count() == 0) {
+					destination = foot->NavCom;
+				} else {
+					destination = foot->RouteQueue[foot->RouteQueue.Count() - 1];
+				}
+				if (destination != NULL) {
+					if (Is_Target_Cell(destination)) {
+						bool in_range = building->FUN_00452940((CellClass *)destination);
+						if (in_range) return in_range;
+					} else if (As_Techno(destination) != NULL) {
+						bool in_range = building->FUN_004528A0(destination);
+						if (in_range) return in_range;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
+
 // FUNCTION: GAMEMD 0x0043B4C0
 bool __fastcall FUN_0043B4C0(HouseClass * house, CellClass * cell)
 {
@@ -6063,7 +6106,9 @@ bool BuildingClass::FUN_004528A0(AbstractClass const * target)
 {
 	Coord a = Center_Coord();
 	Coord b = target->Center_Coord();
-	return(a.Distance_To(b) <= Class->PsychicDetectionRadius << 8);
+	int distance = a.Distance_To(b);
+	int range = Class->PsychicDetectionRadius << 8;
+	return(distance <= range);
 }
 
 // FUNCTION: GAMEMD 0x00452940
@@ -6071,7 +6116,7 @@ bool BuildingClass::FUN_00452940(CellClass const * cell)
 {
 	Coord a = Center_Coord();
 	Coord b = cell->Cell_Coord();
-	return(a.Distance_To(b) <= Class->PsychicDetectionRadius << 8);
+	return((a - b).Length() <= Class->PsychicDetectionRadius << 8);
 }
 
 // FUNCTION: GAMEMD 0x004529E0
@@ -8383,7 +8428,7 @@ bool BuildingClass::CanBeSelectedNow(void) const
 // FUNCTION: GAMEMD 0x00459C20
 int BuildingClass::VoiceDeploy(void)
 {
-	if (Is_Target_Cell(ArchiveTarget)) {
+	if (ArchiveTarget != NULL && ArchiveTarget->RTTI == RTTI_CELL) {
 		if (As_Cell(ArchiveTarget)->Land_Type() == LAND_TIBERIUM && Class->ResourceDestination && Class->ResourceGatherer && Class->VoiceHarvest != -1) {
 			QueueVoice(Class->VoiceHarvest);
 		} else {

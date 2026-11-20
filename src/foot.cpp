@@ -1192,7 +1192,7 @@ int FootClass::Do_MISSION_GUARD_AREA(void)
 			}
 		}
 
-		if (Is_Target_Cell(ArchiveTarget)) {
+		if (ArchiveTarget != NULL && ArchiveTarget->RTTI == RTTI_CELL) {
 			BuildingClass * building = Map[ArchiveTarget->Center_Coord()].Cell_Building();
 			if (building != NULL && House->Is_Ally(building->House) && !House->Is_Human_Player() && (RTTI != RTTI_UNIT || !static_cast<UnitClass *>(this)->Class->Harvester)) {
 				Cell nearby = Map.Nearby_Location((Cell)ArchiveTarget->Center_Coord(), SPEED_TRACK, Map.Get_Cell_Zone(&(Cell)PositionCoord));
