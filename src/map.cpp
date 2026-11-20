@@ -8969,6 +8969,97 @@ Cell RegionQuadrantOffsets[4] = {
 	Cell(0, 0), Cell(REGION_WIDTH, 0), Cell(0, REGION_HEIGHT), Cell(REGION_WIDTH, REGION_HEIGHT),
 };
 
+// GLOBAL: GAMEMD 0x0082A984
+int FromRegionQuadrants[FACING_COUNT][2] = {
+	{ 0, 1 }, { 1, 1 }, { 1, 3 }, { 3, 3 }, { 2, 3 }, { 2, 2 }, { 0, 2 }, { 0, 0 },
+};
+// GLOBAL: GAMEMD 0x0082A9C4
+int ToRegionQuadrants[FACING_COUNT][2] = {
+	{ 2, 3 }, { 2, 2 }, { 0, 2 }, { 0, 0 }, { 0, 1 }, { 1, 1 }, { 1, 3 }, { 3, 3 },
+};
+
+// FUNCTION: GAMEMD 0x00585F40
+int MapClass::Region_Threat(HouseClass * house, int level, int from_subzone, int to_subzone)
+{
+	switch (level) {
+		default:
+			break;
+
+		case 0:
+			return(0);
+
+		case 1:
+			return(house->Regions[Map.SubzoneTracking[level][to_subzone].ThreatRegion].Threat_Value());
+
+		case 2: {
+			int from_region = Map.SubzoneTracking[level][from_subzone].ThreatRegion;
+			int index = from_region - 1;
+			int col = index % MAP_REGION_WIDTH;
+			int row = (from_region - col) / MAP_REGION_HEIGHT;
+			int from_x = REGION_WIDTH * col;
+			int from_y = REGION_HEIGHT * (row - 1);
+
+			short from_block_x = from_x - (from_x / REGION_WIDTH % 2 != 0);
+			short from_block_y = from_y - (from_y / REGION_HEIGHT % 2 != 0);
+
+			int to_region = Map.SubzoneTracking[level][to_subzone].ThreatRegion;
+			index = to_region - 1;
+			col = index % MAP_REGION_WIDTH;
+			row = (to_region - col) / MAP_REGION_HEIGHT;
+			int to_x = REGION_WIDTH * col;
+			int to_y = REGION_HEIGHT * (row - 1);
+
+			short to_block_x = to_x - (to_x / REGION_WIDTH % 2 != 0);
+			short to_block_y = to_y - (to_y / REGION_HEIGHT % 2 != 0);
+
+			if (from_block_x == to_block_x && from_block_y == to_block_y) {
+				return((house->Regions[Cell_Region(Cell(from_x, from_y))].Threat_Value() + house->Regions[Cell_Region(Cell(to_x, to_y))].Threat_Value()) >> 1);
+			}
+
+			int facing;
+			if (to_block_x > from_block_x) {
+				if (to_block_y > from_block_y) {
+					facing = FACING_SE;
+				} else if (to_block_y >= from_block_y) {
+					facing = FACING_E;
+				} else {
+					facing = FACING_NE;
+				}
+			} else if (to_block_x < from_block_x) {
+				if (to_block_y > from_block_y) {
+					facing = FACING_SW;
+				} else if (to_block_y >= from_block_y) {
+					facing = FACING_W;
+				} else {
+					facing = FACING_NW;
+				}
+			} else if (to_block_y > from_block_y) {
+				facing = FACING_S;
+			} else {
+				facing = FACING_N;
+			}
+
+			Cell from_cell(from_block_x, from_block_y);
+			Cell to_cell(to_block_x, to_block_y);
+			int from_threat1 = house->Regions[Cell_Region(RegionQuadrantOffsets[FromRegionQuadrants[facing][0]] + from_cell)].Threat_Value();
+			int from_threat2 = house->Regions[Cell_Region(RegionQuadrantOffsets[FromRegionQuadrants[facing][1]] + from_cell)].Threat_Value();
+			int from_threat = from_threat1;
+			if (from_threat1 >= from_threat2) {
+				from_threat = from_threat2;
+			}
+
+			int to_threat1 = house->Regions[Cell_Region(RegionQuadrantOffsets[ToRegionQuadrants[facing][0]] + to_cell)].Threat_Value();
+			int to_threat2 = house->Regions[Cell_Region(RegionQuadrantOffsets[ToRegionQuadrants[facing][1]] + to_cell)].Threat_Value();
+			if (to_threat1 >= to_threat2) {
+				to_threat1 = to_threat2;
+			}
+
+			return((to_threat1 + from_threat) >> 1);
+		}
+	}
+	return(0);
+}
+
 // FUNCTION: GAMEMD 0x005862C0
 bool MapClass::Is_Something_Nearby(Cell const & cell, int radius)
 {
