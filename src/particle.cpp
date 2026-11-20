@@ -274,6 +274,31 @@ void ParticleClass::Smoke_Behavior_AI(void)
 	}
 }
 
+#include "ballistic.h"
+
+void ParticleClass::Spark_Behavior_AI(void)
+{
+	Coord coord = Position;
+	MovementDirection.Z -= Rule->Gravity;
+	Vector3 velocity(MovementDirection.X, MovementDirection.Y, MovementDirection.Z);
+	Vector3 position(coord.X, coord.Y, coord.Z);
+	if (Ballistic_Move(position, velocity, Rule->Gravity, 0.0, 1.0)) {
+		IsToDie = true;
+	}
+
+	Point3D new_position(position.X, position.Y, position.Z);
+	Set_Coord((Coord const &)new_position);
+	ColorAccum += Class->ColorSpeed + Random_Double(0.0, 0.05);
+	if (ColorAccum > 1.0) {
+		if (ColorIndex < Class->ColorList.Count() - 2) {
+			ColorIndex++;
+			ColorAccum = 0;
+		} else {
+			ColorAccum = 1.0;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0062CB10
 void ParticleClass::Fire_Behavior_AI(void)
 {

@@ -96,3 +96,7 @@ effect, so it can be fixed in a separate build later.
 - **WorldDominationTour::Selection::Play_SFX (0x0076EBE0).** The lookup loop stops at the
   first sound entry whose name differs from the one asked for, and plays that entry, so a
   named campaign-map sound plays only when it is not the first entry.
+
+- **BounceClass::AI (0x00439B00).** When velocity exceeds MaxVelocity, the
+  scale at 0x00439B85 divides the speed by itself instead of applying the limit.
+  For a finite nonzero speed, multiplying by that result leaves the speed unchanged.
