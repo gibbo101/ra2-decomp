@@ -100,6 +100,409 @@ void Chain_Reaction_Damage(Cell const & cell)
 {
 }
 
+extern int const DAT_007ED3D0[];
+namespace Unsorted { extern Cell CellSpreadTable[]; }
+
+struct DamageGroup {
+	ObjectClass *Target;
+	int Distance;
+};
+
+// FUNCTION: GAMEMD 0x00489280
+int __fastcall Explosion_Damage(
+	Coord const &coord,
+	int strength,
+	TechnoClass *source,
+	WarheadTypeClass const *warhead,
+	bool chain,
+	HouseClass *house)
+{
+	int distance;
+	ObjectClass *object;
+	DynamicVectorClass<DamageGroup *> groups;
+	int i;
+
+	if (!strength || Scen->Special.IsInert || warhead == 0) {
+		return 1;
+	}
+
+	int range = (int)(warhead->SpreadFactor * 256.0f);
+	bool crush = false;
+
+	if (warhead == Rule->CrushWarhead) {
+		crush = true;
+	}
+
+	Cell cell = Cell(coord);
+	CellClass *cptr = &Map[cell];
+	bool isbridge = false;
+	bool hit = false;
+	bool blocked = false;
+	bool close = true;
+
+	if (warhead->SpreadFactor > 0.5f) {
+		close = false;
+	}
+
+	int cell_height = Map.Get_Height_GL(
+		Coord(cell.X * 256 + 128, cell.Y * 256 + 128, 0));
+
+	if (cell_height < coord.Z) {
+		AircraftTracker.FillCurrentVector(
+			cptr, (int)warhead->SpreadFactor);
+
+		TechnoClass *techno;
+		while ((techno = AircraftTracker.Get()) != 0) {
+			if (techno->IsActive &&
+				techno->IsDown &&
+				techno->Strength > 0) {
+				distance = coord.Distance_To(techno->PositionCoord);
+
+				if (distance <= range) {
+					if (close &&
+						distance < 0x55 &&
+						techno->IsIronCurtained() &&
+						!techno->ForceShielded) {
+						blocked = true;
+					}
+
+					DamageGroup *group = new DamageGroup;
+					group->Target = techno;
+					group->Distance =
+						coord.Distance_To(techno->PositionCoord);
+					groups.Add(group);
+				}
+			}
+		}
+	}
+
+	if (cptr->IsUnderBridge &&
+		coord.Z > Map.Get_Height_GL(coord) +
+			BRIDGE_LEPTON_HEIGHT / 2) {
+		isbridge = true;
+	}
+
+	int rings = (int)(warhead->SpreadFactor + 0.99);
+
+	for (int m = 0; m < DAT_007ED3D0[rings]; m++) {
+		Cell tcell = cell + Unsorted::CellSpreadTable[m];
+		cptr = &Map[tcell];
+
+		if (cptr->Overlay != -1) {
+			OverlayTypeClass *overlay = OverlayTypes[cptr->Overlay];
+
+			if (overlay->IsChainReaction &&
+				(!overlay->IsTiberium ||
+				 warhead->IsTiberiumDestroyer) &&
+				chain) {
+				cptr->Reduce_Tiberium(strength / 10);
+			}
+
+			if (overlay->IsWall) {
+				if (warhead->WallAbsoluteDestroyer) {
+					cptr->Reduce_Wall(-1);
+				} else if (
+					warhead->IsWallDestroyer ||
+					(warhead->IsWoodDestroyer &&
+					 overlay->Armor == ARMOR_WOOD)) {
+					cptr->Reduce_Wall(strength);
+				}
+			}
+
+			if (cptr->Overlay == -1) {
+				cptr->BecomeUntargetable();
+			}
+		}
+
+		object = cptr->Cell_Occupier(isbridge);
+
+		for (; object; object = object->Next) {
+			if ((object != source ||
+				 source->Techno_Type_Class()->DamageSelf ||
+				 crush) &&
+				object->IsActive) {
+				if (object->Fetch_RTTI() == RTTI_UNIT &&
+					Scen->Special.IsHarvesterImmune) {
+					if (Rule->HarvesterUnit.Is_In_List(
+							(UnitTypeClass *)object->Class_Of())) {
+						continue;
+					}
+				}
+
+				DamageGroup *group = new DamageGroup;
+				group->Target = object;
+
+				if (object->Fetch_RTTI() == RTTI_BUILDING) {
+					if (m == 0) {
+						if (coord.Z - cptr->Center_Coord().Z >
+							LEVEL_LEPTON_H * 2) {
+							group->Distance =
+								Distance(coord, cptr->Center_Coord()) -
+								LEVEL_LEPTON_H * 2;
+						} else {
+							group->Distance = 0;
+						}
+					} else {
+						group->Distance =
+							Distance(coord, cptr->Center_Coord());
+					}
+				} else {
+					group->Distance =
+						Distance(coord, object->Target_Coord());
+				}
+
+				if (close && m == 0 && object) {
+					if (object->Is_Techno() &&
+						((TechnoClass *)object)->IsIronCurtained() &&
+						!((TechnoClass *)object)->ForceShielded &&
+						group->Distance < 0x55) {
+						blocked = true;
+					}
+				}
+
+				groups.Add(group);
+			}
+		}
+	}
+
+	for (int j = 0; j < groups.Count(); j++) {
+		object = groups[j]->Target;
+		distance = groups[j]->Distance;
+
+		if (object->IsActive &&
+			(object->Fetch_RTTI() != RTTI_BUILDING ||
+			 !((BuildingClass *)object)->Class->IsInvisibleInGame)) {
+			if (!blocked ||
+				(object &&
+				 object->Is_Techno() &&
+				 ((TechnoClass *)object)->IsIronCurtained())) {
+				if (object->Fetch_RTTI() == RTTI_AIRCRAFT && object->In_Air()) {
+					distance /= 2;
+				}
+
+				if (object->Strength > 0 &&
+					object->IsDown &&
+					!object->IsInLimbo &&
+					distance <= range) {
+					int damage = strength;
+					object->Take_Damage(
+						damage, distance, warhead,
+						source, false, false, house);
+					hit = true;
+				}
+			}
+		}
+	}
+
+	for (int k = 0; k < groups.Count(); k++) {
+		delete groups[k];
+	}
+
+	groups.Delete_All();
+
+	if (blocked) {
+		return 2;
+	}
+
+	double force =
+		strength * 0.01 < 4.0 ? strength * 0.01 : 4.0;
+
+	if (warhead->IsRocker && force > 0.3) {
+		for (int x = cell.X - 3; x <= cell.X + 3; x++) {
+			for (int y = cell.Y - 3; y <= cell.Y + 3; y++) {
+				object = isbridge
+					? Map[Cell(x, y)].Cell_Bridge_Occupier()
+					: Map[Cell(x, y)].Cell_Occupier(false);
+
+				for (; object; object = object->Next) {
+					TechnoClass *techno =
+						Dynamic_Cast<TechnoClass *>(object);
+
+					if (techno) {
+						if ((short)x == cell.X &&
+							(short)y == cell.Y &&
+							source) {
+							Coord tcoord = techno->PositionCoord;
+							Coord scoord = source->PositionCoord;
+
+							TPoint3D<float> dir(
+								(float)(scoord.X - tcoord.X),
+								(float)(scoord.Y - tcoord.Y),
+								(float)(scoord.Z - tcoord.Z));
+
+							dir = dir.Normalize() * 10.0f;
+							tcoord += Coord(
+								(int)dir.X, (int)dir.Y, (int)dir.Z);
+
+							techno->vt_entry_3D8(
+								tcoord, (float)force, false);
+						} else if (warhead->SpreadFactor > 0.0f) {
+							techno->vt_entry_3D8(
+								coord, (float)force, false);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	bool ion = warhead == Rule->IonCannonWarhead;
+	cptr = &Map[cell];
+
+	if (Scen->Special.IsDestroyBridges &&
+		warhead->IsWallDestroyer) {
+		int ittype =
+			cptr->ITType - IsometricTileTypeClass::BridgeSet + 1;
+
+		CellClass *bcptr = 0;
+		if (cptr->IsUnderBridge) {
+			if (cptr->IsBridgeDeck) {
+				bcptr = &Map[cptr->Fetch_CellID()];
+			} else {
+				bcptr = &Map[cptr->BridgeDeckCell->Fetch_CellID()];
+			}
+		}
+
+		if (bcptr && bcptr->Is_Overlay_Bridge() ||
+			ittype == IsometricTileTypeClass::BridgeMiddle1 + 0 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle1 + 1 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle1 + 2 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle1 + 3 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle2 + 0 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle2 + 1 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle2 + 2 ||
+			ittype == IsometricTileTypeClass::BridgeMiddle2 + 3) {
+			if (!cptr->IsUnderBridge ||
+				(coord.Z <= BRIDGE_LEPTON_HEIGHT +
+					LEVEL_LEPTON_H * (cptr->Height + 1) &&
+				 coord.Z > BRIDGE_LEPTON_HEIGHT +
+					LEVEL_LEPTON_H * (cptr->Height - 2))) {
+				if (warhead->IsWallDestroyer &&
+					(warhead == Rule->IonCannonWarhead ||
+					 Random_Pick(1, Rule->BridgeStrength) < strength)) {
+					bool damaged = Map.Damage_Bridge(cell);
+					int tries = 3;
+
+					while (!damaged && ion && tries > 0) {
+						damaged = Map.Damage_Bridge(cell);
+						tries--;
+					}
+
+					if (damaged) {
+						cptr->BecomeUntargetable();
+					}
+
+					Point2D point;
+					TacticalMap->Coord_To_Pixel(coord, point);
+					TacticalMap->Register_Dirty_Area(
+						Rect(point.X - 128, point.Y - 128, 256, 256),
+						false);
+				}
+			}
+		}
+
+		int ittype2 =
+			cptr->ITType - IsometricTileTypeClass::TrainBridgeSet + 1;
+
+		if (bcptr && bcptr->Is_Overlay_Rail_Bridge() ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle1 + 0 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle1 + 1 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle1 + 2 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle1 + 3 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle2 + 0 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle2 + 1 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle2 + 2 ||
+			ittype2 == IsometricTileTypeClass::BridgeMiddle2 + 3) {
+			if (!cptr->IsUnderBridge ||
+				(coord.Z <= BRIDGE_LEPTON_HEIGHT +
+					LEVEL_LEPTON_H * (cptr->Height + 1) &&
+				 coord.Z > BRIDGE_LEPTON_HEIGHT +
+					LEVEL_LEPTON_H * (cptr->Height - 2))) {
+				if (warhead->IsWallDestroyer &&
+					(warhead == Rule->IonCannonWarhead ||
+					 Random_Pick(1, Rule->BridgeStrength) < strength)) {
+					bool damaged = Map.Damage_Bridge(cell);
+					int tries = 3;
+
+					while (!damaged && ion && tries > 0) {
+						damaged = Map.Damage_Bridge(cell);
+						tries--;
+					}
+
+					if (damaged) {
+						cptr->BecomeUntargetable();
+					}
+
+					Point2D point;
+					TacticalMap->Coord_To_Pixel(coord, point);
+					TacticalMap->Register_Dirty_Area(
+						Rect(point.X - 96, point.Y - 96, 192, 192),
+						false);
+				}
+			}
+		}
+
+		if (cptr->Overlay >= OVERLAY_LOWBRIDGE_01 && cptr->Overlay <= OVERLAY_LOWBRIDGE_26) {
+			if (warhead == Rule->IonCannonWarhead ||
+				Random_Pick(1, Rule->BridgeStrength) < strength) {
+				if (Map.Damage_Low_Bridge(cell)) {
+					cptr->BecomeUntargetable();
+				}
+			}
+		}
+
+		if (cptr->Overlay >= 0xCD && cptr->Overlay <= 0xE6) {
+			if (warhead == Rule->IonCannonWarhead ||
+				Random_Pick(1, Rule->BridgeStrength) < strength) {
+				if (Map.FUN_0057CCF0(cell)) {
+					cptr->BecomeUntargetable();
+				}
+			}
+		}
+	}
+
+	if (cptr->Overlay != -1 &&
+		OverlayTypes[cptr->Overlay]->IsExplosive) {
+		cptr->Register_For_Redraw();
+		cptr->Overlay = OVERLAY_NONE;
+		cptr->Recalc_Attributes(-1);
+		Map.ResetZones(cptr->CellID);
+		Map.Update_Cell_Subzones(cptr->CellID);
+		cptr->BecomeUntargetable();
+
+		new AnimClass(
+			Rule->BarrelExplode, coord, 0, 1,
+			ShapeFlags_Type(SHAPE_WIN_REL | SHAPE_CENTER),
+			0, false);
+
+		Explosion_Damage(
+			coord, Rule->AmmoCrateDamage, (TechnoClass *)0,
+			Rule->C4Warhead, true, house);
+
+		for (i = 0; i < Rule->BarrelDebris.Count(); i++) {
+			if (Percent_Chance(15)) {
+				new VoxelAnimClass(Rule->BarrelDebris[i], coord, 0);
+				break;
+			}
+		}
+
+		if (Percent_Chance(25)) {
+			(new ParticleSystemClass(
+				Rule->BarrelParticle, coord, 0, 0, COORD_NONE))
+				->Spawn_Held_Particle(coord, coord);
+		}
+	}
+
+	if (warhead->Particle != 0) {
+		ParticleSystemClass *psys = new ParticleSystemClass(
+			warhead->Particle, coord, 0, 0, COORD_NONE, house);
+		psys->Spawn_Held_Particle(coord, coord);
+	}
+
+	return !hit;
+}
+
+
 // FUNCTION: GAMEMD 0x0048A4F0
 AnimTypeClass const * Combat_Anim(int damage, WarheadTypeClass const * warhead, LandType land, Coord const & coord)
 {
