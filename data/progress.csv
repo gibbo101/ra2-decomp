@@ -16245,6 +16245,8 @@ address,name,result,size,source,symbol
 0x00734330,??0?$DynamicVectorClass@PBD@@QAE@IPBQBD@Z,MATCH,93,src/uicmnds.cpp,??0?$DynamicVectorClass@PBD@@QAE@IPBQBD@Z
 0x00734390,?Add@?$DynamicVectorClass@PBD@@QAE_NABQBD@Z,MATCH,80,src/uicmnds.cpp,?Add@?$DynamicVectorClass@PBD@@QAE_NABQBD@Z
 0x007343E0,??0?$VectorClass@PBD@@QAE@HPBQBD@Z,MATCH,74,src/uicmnds.cpp,??0?$VectorClass@PBD@@QAE@HPBQBD@Z
+0x00733380,FUN_00733380,MATCH,614,src/uicmnds.cpp,?FUN_00733380@@YIX_N@Z
+0x007336C0,FUN_007336C0,MATCH,624,src/uicmnds.cpp,?FUN_007336C0@@YIX_N@Z
 0x00734430,_$E2,MATCH,40,src/uicmnds2.cpp,_$E2
 0x00734460,_$E5,MATCH,19,src/uicmnds2.cpp,_$E5
 0x00734480,_$E8,MATCH,19,src/uicmnds2.cpp,_$E8
