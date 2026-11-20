@@ -343,7 +343,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   already computes: a local per call argument, a named element pointer in each loop body,
   a fresh local where one is reused, an expression split into named steps, a local copy
   of a global (`Rect bounds = TacticalRect;`). 11 of the outside contributor's 47 matches
-  that closed our near misses were this (0x00585F40, 0x006ABD30, 0x00659FF0).
+  that closed our near misses were this (0x00585F40, 0x006ABD30, 0x00659FF0). Only locals
+  that could live in a register count: a named reference, or a local whose address is
+  taken (passed by `const &`), changes nothing (0x00506EF0).
 - Before writing a helper, grep src/ for its body already inlined in a matched sibling,
   and factor it into a `static inline` both call (the sibling must still match): a helper
   needs two real callers. A function "waiting on its caller" is not blocked: put the
