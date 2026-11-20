@@ -6178,6 +6178,7 @@ address,name,result,size,source,symbol
 0x00516370,HoverLocomotionClass::Do_Turn,MATCH,34,src/hover.cpp,?Do_Turn@HoverLocomotionClass@@UAGXUDirStruct@@@Z
 0x005163A0,HoverLocomotionClass::Is_Moving1,MATCH,15,src/hover.cpp,?Is_Moving1@HoverLocomotionClass@@AAE_NXZ
 0x005163B0,HoverLocomotionClass::Reduce_Path_Length,MATCH,283,src/hover.cpp,?Reduce_Path_Length@HoverLocomotionClass@@AAE_NXZ
+0x005164D0,HoverLocomotionClass::Start_Of_Move,MATCH,1809,src/hover.cpp,?Start_Of_Move@HoverLocomotionClass@@AAEXH@Z
 0x00516BF0,HoverLocomotionClass::Power_Off,MATCH,120,src/hover.cpp,?Power_Off@HoverLocomotionClass@@UAGEXZ
 0x00516C70,HoverLocomotionClass::Is_Powered,MATCH,42,src/hover.cpp,?Is_Powered@HoverLocomotionClass@@UAGEXZ
 0x00516CA0,HoverLocomotionClass::Is_Ion_Sensitive,MATCH,360,src/hover.cpp,?Is_Ion_Sensitive@HoverLocomotionClass@@UAGEXZ
@@ -8539,6 +8540,7 @@ address,name,result,size,source,symbol
 0x0059B200,MapGeneratorClass::Seed_Land_Type2,MATCH,1231,src/mapgen.cpp,?Seed_Land_Type2@MapGeneratorClass@@QAEXXZ
 0x00594F40,MapRegionClass::Pick_Spread_Cells,MATCH,1204,src/mapgen.cpp,?Pick_Spread_Cells@MapRegionClass@@QAEPAV?$DynamicVectorClass@VCell@@@@AAV2@@Z
 0x00592440,MapRegionClass::Build_West_Ramp,MATCH,1700,src/mapgen.cpp,?Build_West_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z
+0x00592AF0,MapRegionClass::Build_Corner_Ramp_SE,MATCH,1342,src/mapgen.cpp,?Build_Corner_Ramp_SE@MapRegionClass@@QAE_NABVCell@@0H@Z
 0x00593030,MapRegionClass::Build_Corner_Ramp_NE,MATCH,1303,src/mapgen.cpp,?Build_Corner_Ramp_NE@MapRegionClass@@QAE_NABVCell@@0H@Z
 0x00591740,MapRegionClass::Build_East_Ramp,MATCH,1598,src/mapgen.cpp,?Build_East_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z
 0x005910F0,MapRegionClass::Build_South_Ramp,MATCH,1616,src/mapgen.cpp,?Build_South_Ramp@MapRegionClass@@QAE_NABVCell@@0H@Z
@@ -13123,6 +13125,7 @@ address,name,result,size,source,symbol
 0x006AF580,SlaveManagerClass::SetOwner,MATCH,101,src/slavemanager.cpp,?SetOwner@SlaveManagerClass@@QAEXPAVTechnoClass@@@Z
 0x006AF5F0,SlaveManagerClass::AI,MATCH,83,src/slavemanager.cpp,?AI@SlaveManagerClass@@UAEXXZ
 0x006AF650,SlaveManagerClass::CreateSlave,MATCH,98,src/slavemanager.cpp,?CreateSlave@SlaveManagerClass@@QAEXPAUSlaveControl@1@@Z
+0x006AF6C0,SlaveManagerClass::FUN_006AF6C0,MATCH,1688,src/slavemanager.cpp,?FUN_006AF6C0@SlaveManagerClass@@QAEXXZ
 0x006AFD60,SlaveManagerClass::FUN_006AFD60,MATCH,1268,src/slavemanager.cpp,?FUN_006AFD60@SlaveManagerClass@@QAEXXZ
 0x006B0260,SlaveManagerClass::FUN_006B0260,MATCH,85,src/slavemanager.cpp,?FUN_006B0260@SlaveManagerClass@@QAE_NXZ
 0x006B02C0,SlaveManagerClass::FUN_006B02C0,MATCH,57,src/slavemanager.cpp,?FUN_006B02C0@SlaveManagerClass@@QAE?AVCell@@XZ
