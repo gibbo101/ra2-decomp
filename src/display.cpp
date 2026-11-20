@@ -1268,6 +1268,398 @@ static inline Cell Foundation_Cell(Cell const & cell, Cell const & offset)
 	return cell + offset;
 }
 
+int __fastcall FUN_0070F0B0(int action, Cell const & cell, ObjectClass * object);
+int FUN_00731CB0(void);
+int FUN_00731CC0(void);
+
+// FUNCTION: GAMEMD 0x004AAE90
+void DisplayClass::Mouse_Left_Up(Cell const & cell, bool shadow, ObjectClass * object, ActionType action, bool wsmall)
+{
+	MouseType const MOUSE_IVAN_BOMB = (MouseType)0x26;
+	MouseType const MOUSE_PARA_DROP = (MouseType)0x2F;
+	MouseType const MOUSE_LIGHTNING_STORM = (MouseType)0x32;
+	MouseType const MOUSE_IRON_CURTAIN = (MouseType)0x39;
+	MouseType const MOUSE_CHRONOSPHERE = (MouseType)0x3A;
+	MouseType const MOUSE_DISARM = (MouseType)0x3B;
+	MouseType const MOUSE_DISALLOWED = (MouseType)0x3C;
+	MouseType const MOUSE_BEACON = (MouseType)0x4E;
+	MouseType const MOUSE_FORCE_SHIELD = (MouseType)0x4F;
+	MouseType const MOUSE_NO_FORCE_SHIELD = (MouseType)0x50;
+	MouseType const MOUSE_GENETIC_CONVERTER = (MouseType)0x51;
+	MouseType const MOUSE_PSYCHIC_DOMINATOR = (MouseType)0x53;
+	MouseType const MOUSE_PSYCHIC_REVEAL = (MouseType)0x54;
+	MouseType const MOUSE_SPY_PLANE = (MouseType)0x55;
+
+	IsTentative = false;
+
+	AbstractClass * target = NULL;
+	if (object != NULL) {
+		target = object;
+	} else {
+		if (cell != CELL_NONE) {
+			target = &Map[cell];
+		}
+	}
+
+	if (object != NULL) {
+		TechnoClass * techno = Dynamic_Cast<TechnoClass *>(object);
+		if (techno && (techno->Fetch_RTTI() != RTTI_BUILDING ||
+			!((BuildingClass *)techno)->Class->IsInvisibleInGame) && !Debug_Map) {
+			techno->IsMouseHovering = true;
+		}
+	}
+
+	if (IsWaypointMode && DraggedWaypoint != NULL) {
+		if (PlayerPtr->Waypoint_At(cell) == NULL && Map.In_Local_Radar(cell)) {
+			DraggedWaypoint->Location = cell.As_Coord();
+			DraggedWaypoint->Location.Z = Map.Get_Height_GL(DraggedWaypoint->Location) + (Map[cell].IsUnderBridge ? BRIDGE_LEPTON_HEIGHT : 0);
+		}
+	}
+
+	ActionType waypoint_action = Action_To_Waypoint_Action(action, cell);
+
+	if (WaypointColor == RGBClass(0, 0, 0)) {
+		unsigned short color = ((unsigned short *)MouseDrawer->Get_Translate_Table())[1];
+		WaypointColor = RGBClass((color >> DSurface::RedRight) << DSurface::RedLeft,
+								(color >> DSurface::GreenRight) << DSurface::GreenLeft,
+								(color >> DSurface::BlueRight) << DSurface::BlueLeft
+								);
+	}
+
+	switch (waypoint_action) {
+		default: {
+			unsigned short * table = (unsigned short *)MouseDrawer->Get_Translate_Table();
+			table[1] = DSurface::Build_Hicolor_Pixel(WaypointColor.Get_Red(), WaypointColor.Get_Green(), WaypointColor.Get_Blue());
+			Update_Waypoint_Color(-1);
+			if (!IsWaypointMode) {
+				PlayerPtr->SelectedPath = PATH_NONE;
+			}
+			break;
+		}
+		case ACTION_PLACE_WAYPOINT:
+		case ACTION_NO_PLACE_WAYPOINT:
+		case ACTION_LOOP_WAYPOINT_PATH:
+			Update_Waypoint_Color(PlayerPtr->SelectedPath);
+			break;
+
+		case ACTION_ENTER_WAYPOINT_MODE:
+		case ACTION_FOLLOW_WAYPOINT:
+		case ACTION_SELECT_WAYPOINT:
+		case ACTION_ATTACK_WAYPOINT:
+		case ACTION_ENTER_WAYPOINT:
+		case ACTION_PATROL_WAYPOINT: {
+			PathType path = PATH_NONE;
+			char waypt_id;
+			WaypointClass * waypt = PlayerPtr->Waypoint_At(cell);
+			PlayerPtr->Fetch_Waypoint_Data(waypt, path, waypt_id);
+			if (!IsWaypointMode) {
+				PlayerPtr->SelectedPath = path;
+			}
+			Update_Waypoint_Color(path);
+			break;
+		}
+
+
+	}
+
+	waypoint_action = (ActionType)FUN_0070F0B0(waypoint_action, cell, object);
+	if (shadow) {
+		switch (waypoint_action) {
+		case ACTION_NO_ENTER:
+		case ACTION_NO_ENTER_TUNNEL:
+			Set_Default_Mouse(MOUSE_NO_ENTER, wsmall);
+			break;
+		case ACTION_TOTE:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_DAMAGE:
+			Set_Default_Mouse(MOUSE_NORMAL, wsmall);
+			break;
+		case ACTION_GREPAIR:
+			Set_Default_Mouse(MOUSE_NORMAL, wsmall);
+			break;
+		case ACTION_NO_DEPLOY:
+			Set_Default_Mouse(MOUSE_NO_DEPLOY, wsmall);
+			break;
+		case ACTION_GUARD_AREA:
+			Set_Default_Mouse((MouseType)FUN_00731CC0(), wsmall);
+			break;
+		case ACTION_NONE:
+			Set_Default_Mouse(MOUSE_NORMAL, wsmall);
+			break;
+		case ACTION_NO_SELL:
+		case ACTION_SELL:
+		case ACTION_SELL_UNIT:
+			Set_Default_Mouse(MOUSE_NO_SELL_BACK, wsmall);
+			break;
+		case ACTION_NUKE_BOMB:
+			Set_Default_Mouse(MOUSE_NUCLEAR_BOMB, wsmall);
+			break;
+		case ACTION_TOGGLE_POWER:
+		case ACTION_NO_TOGGLE_POWER:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_HEAL:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_PLACE_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_NO_PLACE_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_ENTER_WAYPOINT_MODE:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_SELECT_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_LOOP_WAYPOINT_PATH:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_ATTACK_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_PATROL_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_FOLLOW_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_DISARM_BOMB:
+			Set_Default_Mouse(MOUSE_DISARM, wsmall);
+			break;
+		case ACTION_SELECT_BEACON:
+			Set_Default_Mouse(MOUSE_CAN_SELECT, wsmall);
+			break;
+		case ACTION_NO_GREPAIR:
+		case ACTION_NO_REPAIR:
+		case ACTION_REPAIR:
+			Set_Default_Mouse(MOUSE_NO_REPAIR, wsmall);
+			break;
+		case ACTION_IRON_CURTAIN:
+			Set_Default_Mouse(MOUSE_IRON_CURTAIN, wsmall);
+			break;
+		case ACTION_FORCE_SHIELD:
+			Set_Default_Mouse(MOUSE_FORCE_SHIELD, wsmall);
+			break;
+		case ACTION_NO_FORCE_SHIELD:
+			Set_Default_Mouse(MOUSE_NO_FORCE_SHIELD, wsmall);
+			break;
+		case ACTION_LIGHTNING_STORM:
+			Set_Default_Mouse(MOUSE_LIGHTNING_STORM, wsmall);
+			break;
+		case ACTION_CHRONOSPHERE:
+		case ACTION_CHRONO_WARP:
+			Set_Default_Mouse(MOUSE_CHRONOSPHERE, wsmall);
+			break;
+		case ACTION_PARA_DROP:
+		case ACTION_AMER_PARA_DROP:
+			Set_Default_Mouse(MOUSE_PARA_DROP, wsmall);
+			break;
+		case ACTION_PSYCHIC_DOMINATOR:
+			Set_Default_Mouse(MOUSE_PSYCHIC_DOMINATOR, wsmall);
+			break;
+		case ACTION_SPY_PLANE:
+			Set_Default_Mouse(MOUSE_SPY_PLANE, wsmall);
+			break;
+		case ACTION_GENETIC_CONVERTER:
+			Set_Default_Mouse(MOUSE_GENETIC_CONVERTER, wsmall);
+			break;
+		case ACTION_PSYCHIC_REVEAL:
+			Set_Default_Mouse(MOUSE_PSYCHIC_REVEAL, wsmall);
+			break;
+		case ACTION_ENTER_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			// Fall through to the beacon cursor.
+		case ACTION_PLACE_BEACON:
+			Set_Default_Mouse(MOUSE_BEACON, wsmall);
+			break;
+		case ACTION_NOMOVE:
+			if (CurrentObject.Count() && CurrentObject[0]->Is_Techno() &&
+				((TechnoClass *)CurrentObject[0])->TClass->IsMoveToShroud) {
+				Set_Default_Mouse(MOUSE_CAN_MOVE, wsmall);
+				break;
+			}
+			Set_Default_Mouse(MOUSE_NO_MOVE, wsmall);
+			break;
+		case ACTION_MOVE:
+		case ACTION_ATTACK:
+			Set_Default_Mouse(MOUSE_CAN_MOVE, wsmall);
+			break;
+		default:
+			Set_Default_Mouse(MOUSE_NORMAL, wsmall);
+			break;
+		case ACTION_ATTACK_MOVE_NAV:
+		case ACTION_ATTACK_MOVE_TAR:
+			Set_Default_Mouse((MouseType)FUN_00731CB0(), wsmall);
+			break;
+		}
+	} else {
+		switch (waypoint_action) {
+		case ACTION_TOTE:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_NO_ENTER:
+			Set_Default_Mouse(MOUSE_NO_ENTER, wsmall);
+			break;
+		case ACTION_MOVE:
+			Set_Default_Mouse(MOUSE_CAN_MOVE, wsmall);
+			break;
+		case ACTION_NO_TOGGLE_POWER:
+		case ACTION_TOGGLE_POWER:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_HEAL:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_PLACE_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_NO_PLACE_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_ENTER_WAYPOINT_MODE:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_SELECT_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_LOOP_WAYPOINT_PATH:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_ATTACK_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_PATROL_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_FOLLOW_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_ENTER_WAYPOINT:
+			Set_Default_Mouse(MOUSE_DISALLOWED, wsmall);
+			break;
+		case ACTION_NO_DEPLOY:
+			Set_Default_Mouse(MOUSE_NO_DEPLOY, wsmall);
+			break;
+		case ACTION_DISARM_BOMB:
+			Set_Default_Mouse(MOUSE_DISARM, wsmall);
+			break;
+		case ACTION_GREPAIR:
+			Set_Default_Mouse(MOUSE_GREPAIR, wsmall);
+			break;
+		case ACTION_TOGGLE_SELECT:
+		case ACTION_SELECT:
+		case ACTION_SELECT_BEACON:
+			Set_Default_Mouse(MOUSE_CAN_SELECT, wsmall);
+			break;
+		case ACTION_NO_REPAIR:
+		case ACTION_NO_GREPAIR:
+			Set_Default_Mouse(MOUSE_NO_REPAIR, wsmall);
+			break;
+		case ACTION_GUARD_AREA:
+			Set_Default_Mouse((MouseType)FUN_00731CC0(), wsmall);
+			break;
+		case ACTION_ATTACK:
+			if (target != NULL && CurrentObject.Count() == 1 && CurrentObject[0]->Is_Techno() &&
+				((TechnoClass *)CurrentObject[0])->IsCloseEnoughToAttack(target)) {
+				Set_Default_Mouse(MOUSE_STAY_ATTACK, wsmall);
+				break;
+			}
+			// Fall through to the out-of-range attack cursor.
+		case ACTION_HARVEST:
+			Set_Default_Mouse(MOUSE_CAN_ATTACK, wsmall);
+			break;
+		case ACTION_ENTER:
+		case ACTION_CAPTURE:
+		case ACTION_EATEN:
+		case ACTION_ENTER_TUNNEL:
+			Set_Default_Mouse(MOUSE_ENTER, wsmall);
+			break;
+		case ACTION_NO_SELL:
+			Set_Default_Mouse(MOUSE_NO_SELL_BACK, wsmall);
+			break;
+		case ACTION_SELF:
+		case ACTION_AREA_ATTACK:
+			Set_Default_Mouse(MOUSE_DEPLOY, wsmall);
+			break;
+		case ACTION_IVAN_BOMB:
+			Set_Default_Mouse(MOUSE_IVAN_BOMB, wsmall);
+			break;
+		case ACTION_NOMOVE:
+		case ACTION_NO_IVAN_BOMB:
+			Set_Default_Mouse(MOUSE_NO_MOVE, wsmall);
+			break;
+		case ACTION_SABOTAGE:
+		case ACTION_DETONATE:
+		case ACTION_DETONATE_ALL:
+		case ACTION_DEMOLISH:
+			Set_Default_Mouse(MOUSE_DEMOLITIONS, wsmall);
+			break;
+		case ACTION_AIRSTRIKE:
+			Set_Default_Mouse(MOUSE_AIR_STRIKE, wsmall);
+			break;
+		case ACTION_REPAIR:
+			Set_Default_Mouse(MOUSE_REPAIR, wsmall);
+			break;
+		case ACTION_SELL_UNIT:
+			Set_Default_Mouse(MOUSE_SELL_UNIT, wsmall);
+			break;
+		case ACTION_SELL:
+			Set_Default_Mouse(MOUSE_SELL_BACK, wsmall);
+			break;
+		case ACTION_NUKE_BOMB:
+			Set_Default_Mouse(MOUSE_NUCLEAR_BOMB, wsmall);
+			break;
+		case ACTION_IRON_CURTAIN:
+			Set_Default_Mouse(MOUSE_IRON_CURTAIN, wsmall);
+			break;
+		case ACTION_FORCE_SHIELD:
+			Set_Default_Mouse(MOUSE_FORCE_SHIELD, wsmall);
+			break;
+		case ACTION_NO_FORCE_SHIELD:
+			Set_Default_Mouse(MOUSE_NO_FORCE_SHIELD, wsmall);
+			break;
+		case ACTION_LIGHTNING_STORM:
+			Set_Default_Mouse(MOUSE_LIGHTNING_STORM, wsmall);
+			break;
+		case ACTION_CHRONOSPHERE:
+		case ACTION_CHRONO_WARP:
+			Set_Default_Mouse(MOUSE_CHRONOSPHERE, wsmall);
+			break;
+		case ACTION_PARA_DROP:
+		case ACTION_AMER_PARA_DROP:
+			Set_Default_Mouse(MOUSE_PARA_DROP, wsmall);
+			break;
+		case ACTION_PSYCHIC_DOMINATOR:
+			Set_Default_Mouse(MOUSE_PSYCHIC_DOMINATOR, wsmall);
+			break;
+		case ACTION_SPY_PLANE:
+			Set_Default_Mouse(MOUSE_SPY_PLANE, wsmall);
+			break;
+		case ACTION_GENETIC_CONVERTER:
+			Set_Default_Mouse(MOUSE_GENETIC_CONVERTER, wsmall);
+			break;
+		case ACTION_PSYCHIC_REVEAL:
+			Set_Default_Mouse(MOUSE_PSYCHIC_REVEAL, wsmall);
+			break;
+		case ACTION_PLACE_BEACON:
+			Set_Default_Mouse(MOUSE_BEACON, wsmall);
+			break;
+		case ACTION_ATTACK_MOVE_NAV:
+		case ACTION_ATTACK_MOVE_TAR:
+			Set_Default_Mouse((MouseType)FUN_00731CB0(), wsmall);
+			break;
+		case ACTION_DAMAGE:
+			break;
+		default:
+			Set_Default_Mouse(MOUSE_NORMAL, wsmall);
+			break;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x004AB9B0
 void DisplayClass::Mouse_Left_Release(Coord const & coord, Cell const & cell, ObjectClass * object, ActionType action, bool wsmall)
 {
