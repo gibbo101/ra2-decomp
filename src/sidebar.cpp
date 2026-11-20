@@ -46,6 +46,7 @@
 #include "session.h"
 #include "scheme.h"
 #include "shapeset.h"
+#include "smartptr.h"
 #include "cast.h"
 #undef LoadString
 #include "stringtable.h"
@@ -1694,7 +1695,7 @@ bool SidebarClass::StripClass::Recalc(void)
 
 	bool scroll = false;
 	int max_visible = Map.GetVisibleCameoCount();
-	BuildType * unshifted = new BuildType[max_visible];
+	SmartPtr<BuildType> unshifted(new BuildType[max_visible]);
 
 	for (int i = 0; i < max_visible; i++) {
 		if (i + 2 * TopIndex < BuildableCount) {
@@ -2469,6 +2470,9 @@ void SidebarClass::StripClass::FUN_006AC740(int id, int frames)
 
 // FUNCTION: GAMEMD 0x006AC840
 // DisplayClass::DisplayClass
+
+// FUNCTION: GAMEMD 0x006AC870
+// StageClass::StageClass
 
 // TEMPLATE: GAMEMD 0x006AC8D0
 // ??0?$DynamicVectorClass@VPoint2D@@@@QAE@IPBVPoint2D@@@Z
