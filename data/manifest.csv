@@ -6882,6 +6882,7 @@ address,size,symbol,source,sha256
 0x00534450,1378,?Delete_All_Objects@@YIXXZ,src/init.cpp,7876a52ea08695cb56eca70d42e2a771987ef2565d14671adef33cdddad822ac
 0x005349C0,1042,?Init_Theater@@YIXW4TheaterType@@@Z,src/init.cpp,68de0c2b9de7bab294a8d5e2c533b81b570f201479aa08c50efefbd73d558d91
 0x00534DE0,107,?FUN_00534DE0@@YI_NXZ,src/init.cpp,f7038a8bf956bde8f15da472a95192d95cc032a9522afa2230e75532b0020809
+0x00534E50,330,?FUN_00534E50@@YI_NXZ,src/init.cpp,fb3216d57eb832e1a2dc988b1b5d5043ec8381ed1303b61481b8e23f8aedd85c
 0x00534FA0,1069,?Prep_For_Side@@YI_NH@Z,src/init.cpp,b3c3c5eb5bbd508a07350b6a3ffd396487b0a4701f17cbbd5167f3c61e265f6a
 0x005353D0,483,?Best_Selected_Object@@YIPAVObjectClass@@PBVCell@@PBV1@@Z,src/init.cpp,b023383e099d30cd6accc57bfbba810bb90a2ba4eefe202afe91cea013bd0be8
 0x005355C0,16,?FUN_005355C0@@YI?AW4ThemeType@@XZ,src/init.cpp,e7423642ced2d82987f993d72357d9e6e6ec8b335ccf2ac4fd2e703083d5e4dc

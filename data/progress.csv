@@ -6528,6 +6528,7 @@ address,name,result,size,source,symbol
 0x00534450,Delete_All_Objects,MATCH,1378,src/init.cpp,?Delete_All_Objects@@YIXXZ
 0x005349C0,Init_Theater,MATCH,1042,src/init.cpp,?Init_Theater@@YIXW4TheaterType@@@Z
 0x00534DE0,FUN_00534DE0,MATCH,107,src/init.cpp,?FUN_00534DE0@@YI_NXZ
+0x00534E50,FUN_00534E50,MATCH,330,src/init.cpp,?FUN_00534E50@@YI_NXZ
 0x00534FA0,Prep_For_Side,MATCH,1069,src/init.cpp,?Prep_For_Side@@YI_NH@Z
 0x005353D0,Best_Selected_Object,MATCH,483,src/init.cpp,?Best_Selected_Object@@YIPAVObjectClass@@PBVCell@@PBV1@@Z
 0x005355C0,FUN_005355C0,MATCH,16,src/init.cpp,?FUN_005355C0@@YI?AW4ThemeType@@XZ
