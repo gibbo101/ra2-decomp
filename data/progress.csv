@@ -10296,8 +10296,8 @@ address,name,result,size,source,symbol
 0x005F6F90,_$E35,MATCH,18,src/objtype.cpp,_$E35
 0x005F6FB0,_$E38,MATCH,26,src/objtype.cpp,_$E38
 0x005F6FD0,_$E41,MATCH,23,src/objtype.cpp,_$E41
-0x005F6FF0,_$E98,MATCH,61,src/objtype.cpp,_$E98
-0x005F7030,_$E95,MATCH,88,src/objtype.cpp,_$E95
+0x005F6FF0,_$E97,MATCH,61,src/objtype.cpp,_$E97
+0x005F7030,_$E94,MATCH,88,src/objtype.cpp,_$E94
 0x005F7090,ObjectTypeClass::ObjectTypeClass,MATCH,647,src/objtype.cpp,??0ObjectTypeClass@@QAE@PBD@Z
 0x005F7320,ObjectTypeClass::ObjectTypeClass,MATCH,218,src/objtype.cpp,??0ObjectTypeClass@@QAE@ABVNoInitClass@@@Z
 0x005F7400,ObjectTypeClass::~ObjectTypeClass,MATCH,420,src/objtype.cpp,??1ObjectTypeClass@@UAE@XZ
@@ -10308,7 +10308,7 @@ address,name,result,size,source,symbol
 0x005F7620,ObjectTypeClass::Time_To_Build,MATCH,3,src/objtype.cpp,?Time_To_Build@ObjectTypeClass@@UBEHXZ
 0x005F7630,ObjectTypeClass::Get_Cameo_Data,MATCH,3,src/objtype.cpp,?Get_Cameo_Data@ObjectTypeClass@@UBEPBXXZ
 0x005F7640,ObjectTypeClass::Occupy_List,MATCH,91,src/objtype.cpp,?Occupy_List@ObjectTypeClass@@UBEPBVCell@@_N@Z
-0x005F76A0,_$E101,MATCH,1,src/objtype.cpp,_$E101
+0x005F76A0,_$E100,MATCH,1,src/objtype.cpp,_$E100
 0x005F76B0,FUN_005F76B0,MATCH,319,src/objtype.cpp,?FUN_005F76B0@@YIXXZ
 0x005F77F0,FUN_005F77F0,MATCH,268,src/objtype.cpp,?FUN_005F77F0@@YIXXZ
 0x005F7900,ObjectTypeClass::Who_Can_Build_Me,MATCH,396,src/objtype.cpp,?Who_Can_Build_Me@ObjectTypeClass@@UBEPAVBuildingClass@@_N00PAVHouseClass@@@Z

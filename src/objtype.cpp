@@ -69,13 +69,12 @@ extern bool DAT_00AC148B;
 
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
-	static void const * PIPBRD_SHP;
 };
 
 // SYNTHETIC: GAMEMD 0x005F6FF0 SYMBOL
-// _$E98
+// _$E97
 // SYNTHETIC: GAMEMD 0x005F7030 SYMBOL
-// _$E95
+// _$E94
 DynamicVectorClass<ObjectTypeClass *> ObjectTypeClass::ObjectTypes;
 
 static inline bool _Add_Type(DynamicVectorClass<ObjectTypeClass *> & v, ObjectTypeClass * p) { return v.Add(p); }
@@ -190,17 +189,17 @@ Cell const * ObjectTypeClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x005F76A0 SYMBOL
-// _$E101
+// _$E100
 
 // FUNCTION: GAMEMD 0x005F76B0
 void FUN_005F76B0(void)
 {
-	if (FileSystem::PIPBRD_SHP == NULL) {
+	if (ObjectTypeClass::SelectShapes == NULL) {
 		RawFileClass file("PIPBRD.SHP");
-		FileSystem::PIPBRD_SHP = Load_Alloc_Data(file);
-		DAT_00AC1488 = FileSystem::PIPBRD_SHP != NULL;
-		if (FileSystem::PIPBRD_SHP == NULL) {
-			FileSystem::PIPBRD_SHP = FileSystem::LoadFile("PIPBRD.SHP", false);
+		ObjectTypeClass::SelectShapes = Load_Alloc_Data(file);
+		DAT_00AC1488 = ObjectTypeClass::SelectShapes != NULL;
+		if (ObjectTypeClass::SelectShapes == NULL) {
+			ObjectTypeClass::SelectShapes = FileSystem::LoadFile("PIPBRD.SHP", false);
 		}
 	}
 	if (ObjectTypeClass::PipShapes == NULL) {
@@ -233,7 +232,7 @@ void FUN_005F76B0(void)
 void FUN_005F77F0(void)
 {
 	if (DAT_00AC1488) {
-		delete [] (SHPReference *)FileSystem::PIPBRD_SHP;
+		delete [] (SHPReference *)ObjectTypeClass::SelectShapes;
 		DAT_00AC1488 = false;
 	}
 	if (DAT_00AC1489) {
