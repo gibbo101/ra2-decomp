@@ -1413,18 +1413,16 @@ void __fastcall FUN_00733380(bool redraw)
 		if (techno->GetHealthStatus() == status) techno->Select();
 	}
 	wchar_t const * name = FUN_00733640(status);
-	{
-		SmartPtr<TechnoList> all(FUN_00732050());
-		int selected = all->Count();
-		for (int i = 0; i < selected; i++) {
-			TechnoClass * techno = (*all)[i];
-			if (techno->GetHealthStatus() != status) {
-				name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x62f);
-				break;
-			}
+	SmartPtr<TechnoList> all(FUN_00732050());
+	int selected = all->Count();
+	for (int j = 0; j < selected; j++) {
+		TechnoClass * techno = (*all)[j];
+		if (techno->GetHealthStatus() != status) {
+			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x62f);
+			break;
 		}
-		delete all;
 	}
+	delete all;
 	FUN_00731D90(text, name);
 	FUN_00730A90(text, 240);
 	DAT_00845560 = status;
@@ -1455,18 +1453,16 @@ void __fastcall FUN_007336C0(bool redraw)
 		if (techno->Veterancy.Remaining_Levels() == status) techno->Select();
 	}
 	wchar_t const * name = FUN_00733930(status);
-	{
-		SmartPtr<TechnoList> all(FUN_00732050());
-		int selected = all->Count();
-		for (int i = 0; i < selected; i++) {
-			TechnoClass * techno = (*all)[i];
-			if (techno->Veterancy.Remaining_Levels() != status) {
-				name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x67a);
-				break;
-			}
+	SmartPtr<TechnoList> all(FUN_00732050());
+	int selected = all->Count();
+	for (int j = 0; j < selected; j++) {
+		TechnoClass * techno = (*all)[j];
+		if (techno->Veterancy.Remaining_Levels() != status) {
+			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x67a);
+			break;
 		}
-		delete all;
 	}
+	delete all;
 	FUN_00731D90(text, name);
 	FUN_00730A90(text, 240);
 	DAT_00845564 = status;
