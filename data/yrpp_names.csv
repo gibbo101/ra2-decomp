@@ -295,6 +295,7 @@ address,name,source
 0x005673A0,MapClass::RevealArea1,symbols.csv
 0x005678E0,MapClass::RevealArea2,symbols.csv
 0x00567DA0,MapClass::RevealArea3,symbols.csv
+0x005683C0,MapClass::AddContentAt,symbols.csv
 0x005687F0,MapClass::RemoveContentAt,symbols.csv
 0x0056BCD0,MapClass::GetThreatPosed,symbols.csv
 0x0056BEC0,MapClass::PlacePowerupCrate,symbols.csv
