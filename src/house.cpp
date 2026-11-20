@@ -6085,6 +6085,231 @@ void HouseClass::Calculate_Defense_Values(BuildingClass const * building, int va
 	}
 }
 
+// FUNCTION: GAMEMD 0x00506EF0
+bool HouseClass::AI_Build_Defense(int nodeindex, DynamicVectorClass<Cell> * cells)
+{
+	int i;
+
+	int bestidx = -1;
+	int bestval = 999999;
+
+	int aair_arr[4];
+	aair_arr[0] = 0;
+	aair_arr[1] = 0;
+	aair_arr[2] = 0;
+	aair_arr[3] = 0;
+
+	int aarr_arr[4];
+	aarr_arr[0] = 0;
+	aarr_arr[1] = 0;
+	aarr_arr[2] = 0;
+	aarr_arr[3] = 0;
+
+	int agrnd_arr[4];
+	agrnd_arr[0] = 0;
+	agrnd_arr[1] = 0;
+	agrnd_arr[2] = 0;
+	agrnd_arr[3] = 0;
+
+	int types[4];
+
+	DynamicVectorClass<Cell> cells2[4];
+
+	int size = Base.BaseAreaRect.Width * Base.BaseAreaRect.Height;
+	int *aair = new int[size];
+	int *aarmor = new int[size];
+	int *aground = new int[size];
+	memset(aair, 0, size * sizeof(int));
+	memset(aarmor, 0, size * sizeof(int));
+	memset(aground, 0, size * sizeof(int));
+
+	if (cells != NULL) {
+		for (i = 0; i < cells->Count(); i++) {
+			Cell offset = (*cells)[i] - Base.PlacementCenter;
+			Point2D delta(offset.X, offset.Y);
+			DirType dir = DirType(fastmath::atan2((double)-delta.Y, (double)delta.X));
+			int quadrant = dir.As_Dir4();
+			cells2[quadrant].Add((*cells)[i]);
+		}
+	}
+
+	int count = Buildings.Count();
+	for (i = 0; i < count; i++) {
+		BuildingClass * building = Buildings[i];
+		Cell offset = building->Get_Cell() - Base.PlacementCenter;
+		if (offset.X != 0 || offset.Y != 0) {
+			Point2D delta(offset.X, offset.Y);
+			DirType dir = DirType(fastmath::atan2((double)-delta.Y, (double)delta.X));
+			int quadrant = dir.As_Dir4();
+			int air = building->Anti_Air();
+			int armor = building->Anti_Armor();
+			int infantry = building->Anti_Infantry();
+			int total = air + armor + infantry;
+			if (total > 0) {
+				aair_arr[quadrant] += air;
+				aarr_arr[quadrant] += armor;
+				agrnd_arr[quadrant] += infantry;
+				Calculate_Defense_Values(building, air, aair, Base.BaseAreaRect);
+				Calculate_Defense_Values(building, armor, aarmor, Base.BaseAreaRect);
+				Calculate_Defense_Values(building, infantry, aground, Base.BaseAreaRect);
+			}
+		}
+	}
+
+	for (i = 0; i < 4; i++) {
+		types[i] = aair_arr[i] + aarr_arr[i] + agrnd_arr[i];
+		if (types[i] < bestval && (cells == NULL || cells2[i].Count() > 0)) {
+			bestval = types[i];
+			bestidx = i;
+		}
+	}
+
+	int air_value = aair_arr[bestidx];
+	int armor_value = aarr_arr[bestidx];
+	int ground_value = agrnd_arr[bestidx];
+
+	Calculate_Enemy_Predictions();
+
+	DynamicVectorClass<BuildingTypeClass const *> owned;
+	count = Buildings.Count();
+	for (i = 0; i < count; i++) {
+		BuildingClass * building = Buildings[i];
+		BuildingTypeClass * type = building->Class;
+		if (!type->IsBaseDefense && type != Rule->WallTower) {
+			owned.Add(building->Class);
+		}
+	}
+
+	StructType type_id = Base.Nodes[nodeindex].Type;
+	BuildingTypeClass * pending = NULL;
+
+	float air_ratio = bestval != 0 ? air_value / (float)bestval : 0.0f;
+	float armor_ratio = bestval != 0 ? armor_value / (float)bestval : 0.0f;
+	float ground_ratio = bestval != 0 ? ground_value / (float)bestval : 0.0f;
+	float air_deficit = EnemyAirForcePrediction - air_ratio;
+	float armor_deficit = EnemyArmorForcePrediction - armor_ratio;
+	float ground_deficit = EnemyInfantryForcePrediction - ground_ratio;
+
+	DynamicVectorClass<BuildingTypeClass *> air_defenses = Get_Anti_Air_Defense_Buildings(owned);
+	DynamicVectorClass<BuildingTypeClass *> armor_defenses = Get_Anti_Armor_Defense_Buildings(owned);
+	DynamicVectorClass<BuildingTypeClass *> ground_defenses = Get_Anti_Ground_Defense_Buildings(owned);
+
+	DynamicVectorClass<BuildingTypeClass *> * defenses;
+	int category;
+	if (air_deficit > armor_deficit && air_deficit > ground_deficit) {
+		defenses = &air_defenses;
+		BaseAreaMap = aair;
+		category = 0;
+	} else if (armor_deficit > ground_deficit) {
+		defenses = &armor_defenses;
+		BaseAreaMap = aarmor;
+		category = 1;
+	} else {
+		defenses = &ground_defenses;
+		BaseAreaMap = aground;
+		category = 2;
+	}
+
+	bool success = true;
+	if (defenses->Count() == 0) {
+		if (armor_defenses.Count() > 0) {
+			defenses = &armor_defenses;
+			category = 1;
+			BaseAreaMap = aarmor;
+		} else if (ground_defenses.Count() > 0) {
+			defenses = &ground_defenses;
+			category = 2;
+			BaseAreaMap = aground;
+		} else if (air_defenses.Count() > 0) {
+			defenses = &air_defenses;
+			category = 0;
+			BaseAreaMap = aair;
+		} else {
+			success = false;
+		}
+	}
+
+	if (success) {
+		BuildingTypeClass * choice;
+		if (defenses->Count() == 1) {
+			choice = (*defenses)[0];
+		} else {
+			DiscreteDistributionClass<BuildingTypeClass> distribution;
+			for (i = 0; i < defenses->Count(); i++) {
+				BuildingTypeClass * type = (*defenses)[i];
+				int weight;
+				if (category == 2) {
+					weight = type->AntiInfantryValue;
+				} else if (category == 1) {
+					weight = type->AntiArmorValue;
+				} else {
+					weight = type->AntiAirValue;
+				}
+				distribution.Add(type, weight);
+			}
+			choice = distribution.Sample();
+		}
+
+		BuildingTypeClass * build_type;
+		if (type_id >= 0) {
+			build_type = BuildingTypes[type_id];
+			pending = choice;
+		} else {
+			build_type = choice;
+		}
+
+		Cell cell(0, 0);
+		if (cells != NULL) {
+			IndexClass<int, Cell> cellidx;
+			DynamicVectorClass<Cell> cellvec;
+			cellvec.Clear();
+			for (i = 0; i < cells2[bestidx].Count(); i++) {
+				Cell threat_cell = cells2[bestidx][i];
+				cellidx.Add_Index(Base_Cell_Weight_By_Defense_Coverage(*this, threat_cell, i, -1), threat_cell);
+			}
+			for (i = 0; i < cellidx.Count(); i++) {
+				cellvec.Add(cellidx.Fetch_By_Position(i));
+			}
+			cell = cellvec[0];
+			int index = cells->ID(cell);
+			cells->Delete_Index(index);
+		} else {
+			int context = 2 * bestidx;
+			cell = Where_To_Place_Building(build_type, Base_Cell_Weight_By_Defense_Coverage, context);
+		}
+
+		if (cell == Cell(0, 0)) {
+			success = false;
+		} else if (pending != NULL) {
+			Base.Nodes[nodeindex].CellID = cell;
+			if (Base.Nodes[nodeindex + 1].Type == STRUCT_NONE) {
+				Base.Nodes[nodeindex + 1].Type = (StructType)pending->HeapID;
+				Base.Nodes[nodeindex + 1].CellID = cell;
+
+				if (cells != NULL) {
+					BuildingTypeClass const * wall = (BuildingTypeClass const *)FirstBuildableFromArray(Rule->ConcreteWalls);
+					for (i = Base.Nodes.Count() - 1; i >= 0; i--) {
+						if (Base.Nodes[i].CellID == cell && Base.Nodes[i].Type == wall->HeapID) {
+							Base.Nodes.Delete_Index(i);
+							break;
+						}
+					}
+				}
+			}
+		} else {
+			Base.Nodes[nodeindex].Type = (StructType)build_type->HeapID;
+			Base.Nodes[nodeindex].CellID = cell;
+		}
+	}
+
+	delete[] aair;
+	delete[] aarmor;
+	delete[] aground;
+	BaseAreaMap = NULL;
+
+	return(success);
+}
+
 // FUNCTION: GAMEMD 0x00507B80
 DynamicVectorClass<BuildingTypeClass *> HouseClass::Get_Anti_Air_Defense_Buildings(DynamicVectorClass<BuildingTypeClass const *> & owned) const
 {
