@@ -164,6 +164,89 @@ void SlaveManagerClass::CreateSlave(SlaveControl * node)
 	}
 }
 
+// FUNCTION: GAMEMD 0x006AF6C0
+void SlaveManagerClass::FUN_006AF6C0(void)
+{
+	for (int index = 0; index < SlaveNodes.Count(); index++) {
+		SlaveControl * node = SlaveNodes[index];
+		InfantryClass * slave = node->Slave;
+		if (slave == NULL && node->State != 6) {
+			FUN_006B0A90(index);
+		}
+		switch (node->State) {
+			case 1: {
+				Cell cell = slave->ScanForTiberium(Rule->SlaveMinerSlaveScan / CELL_LEPTON_W, false);
+				if (cell != CELL_NONE) {
+					slave->Assign_Destination(&Map[cell]);
+					slave->QueueMission(MISSION_MOVE, false);
+					node->State = 2;
+				} else {
+					slave->Assign_Archive_Target(NULL);
+					slave->Assign_Destination(&Map[FUN_006B0690()]);
+					slave->QueueMission(MISSION_MOVE, false);
+					node->State = 4;
+				}
+				break;
+			}
+			case 2:
+				if (slave->Get_Cell_Ptr()->FUN_00487DF0()) {
+					slave->FUN_00522D00();
+					node->State = 3;
+				} else if (slave->NavCom == NULL) {
+					node->State = 1;
+				}
+				break;
+			case 3:
+				if (slave->FUN_00522D30()) {
+					slave->Assign_Archive_Target(slave->Get_Cell_Ptr());
+					slave->Assign_Destination(&Map[FUN_006B0690()]);
+					slave->QueueMission(MISSION_MOVE, false);
+					node->State = 4;
+					break;
+				}
+				if (!slave->Get_Cell_Ptr()->FUN_00487DF0()) {
+					slave->FUN_00522D20();
+					node->State = 1;
+					break;
+				}
+				if (!slave->FUN_00522FC0()) {
+					node->State = 1;
+				}
+				break;
+			case 4: {
+				bool reset = false;
+				if (slave->NavCom != NULL) {
+					if (Cell(slave->NavCom->Center_Coord()).Distance_To(FUN_006B0690()) > Rule->ApproachTargetResetMultiplier) {
+						reset = true;
+					}
+				}
+				if (slave->Get_Cell() == FUN_006B0690() && slave->NavCom == NULL) {
+					slave->FUN_00522D50(Owner);
+					slave->Limbo();
+					node->RespawnTimer = CDTimerClass<FrameTimerClass>(ReloadRate);
+					node->State = 5;
+				} else if (slave->NavCom == NULL || reset) {
+					slave->Assign_Destination(&Map[FUN_006B0690()]);
+					slave->QueueMission(MISSION_MOVE, false);
+				}
+				break;
+			}
+			case 5:
+				if (node->RespawnTimer() == 0) {
+					slave->Strength = slave->Class->MaxStrength;
+					slave->EstimatedHealth = slave->Class->MaxStrength;
+					node->State = 0;
+				}
+				break;
+			case 6:
+				if (node->RespawnTimer() == 0) {
+					CreateSlave(node);
+				}
+				break;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x006AFD60
 void SlaveManagerClass::FUN_006AFD60(void)
 {
