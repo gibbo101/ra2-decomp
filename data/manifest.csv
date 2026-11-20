@@ -11931,6 +11931,7 @@ address,size,symbol,source,sha256
 0x0064A000,178,?Send_FrameSync@@YIXPAVConnManClass@@H@Z,src/queue.cpp,f8b545038efbdfba2c2f8d183ce94d583c5856e74c318e4cbe43335d0e4cddfb
 0x0064A0C0,1377,?Process_Receive_Packet@@YIHPAVConnManClass@@PADHHPAUFrameSyncStruct@@PAV?$BasicTimerClass@VSystemTimerClass@@@@@Z,src/queue.cpp,907a56f94af3a23596e76a0820dc0a383740ca9ea501b71cf7fcbd961678886d
 0x0064A630,381,?Process_Serial_Packet@@YI?AW4RetcodeType@@PADH@Z,src/queue.cpp,6b3f6d6aa955e86435244a593757fc05113c79040627c3d6b1414189414a7c78
+0x0064A7B0,741,?Draw_Sync_Bars@@YIXPAUHWND__@@@Z,src/queue.cpp,d9fa5f1fbbe0092ed215516a005fd210d7cfb421414ee1e7e61138dfe363329e
 0x0064AAA0,59,?ListBox_Trim@@YIXPAUHWND__@@@Z,src/queue.cpp,73cea30705b1ef5c653aba5aa673a2c248947c23cd0a55bae9a90ff913b705bb
 0x0064AAE0,422,?Propose_Kick_Player@@YIXPAUHWND__@@H@Z,src/queue.cpp,f9de13844f76d71d84a181ab033f5600f3230ba34ab15081405576f764fd9290
 0x0064AC90,121,?Kick_Packet_Received@@YIXAAUGlobalPacketType@@AAVIPXAddressClass@@@Z,src/queue.cpp,6f26162e0d7e4fcb07c9da9c8a4af959bb16f8621e0d50e98a3431c75440a9ad

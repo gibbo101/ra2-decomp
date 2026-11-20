@@ -11605,6 +11605,7 @@ address,name,result,size,source,symbol
 0x0064A0C0,Process_Receive_Packet,MATCH,1377,src/queue.cpp,?Process_Receive_Packet@@YIHPAVConnManClass@@PADHHPAUFrameSyncStruct@@PAV?$BasicTimerClass@VSystemTimerClass@@@@@Z
 0x0064B660,Add_Compressed_Events,MATCH,1896,src/queue.cpp,?Add_Compressed_Events@@YIHPAXHHHHPAH@Z
 0x00648710,Wait_For_Players,MATCH,5519,src/queue.cpp,?Wait_For_Players@@YI?AW4RetcodeType@@HPAVConnManClass@@HHHPADHPAUFrameSyncStruct@@@Z
+0x0064A7B0,Draw_Sync_Bars,MATCH,741,src/queue.cpp,?Draw_Sync_Bars@@YIXPAUHWND__@@@Z
 0x0047EFE0,?Draw_Shroud_Or_Fog_Shape@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@H@Z,RECONSTRUCTED,621,src/ra2asm/cell.asm,?Draw_Shroud_Or_Fog_Shape@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@H@Z
 0x00492830,?BlitForward@?$BlitTransLucent50@G@@UBEXPAXPBXHH00HH@Z,RECONSTRUCTED,90,src/ra2asm/convert.asm,?BlitForward@?$BlitTransLucent50@G@@UBEXPAXPBXHH00HH@Z
 0x007C5F3D,Detect_MMX_Availability,RECONSTRUCTED,194,src/ra2asm/detproc.asm,_Detect_MMX_Availability
