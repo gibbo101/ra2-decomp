@@ -69,7 +69,7 @@ int FUN_00775B20(void);
 
 void __fastcall FUN_0077E430(char * buffer);
 void __fastcall Net2EncodeGameopt(char * buffer);
-unsigned int __fastcall FUN_005DAC00(wchar_t const * name);
+unsigned int __fastcall Compute_Name_CRC_W(wchar_t * name);
 int __fastcall FUN_0069B720(SessionClass * session);
 void FUN_007A2730(void);
 void FUN_007A2750(void);
@@ -748,7 +748,7 @@ void SendPublicGameopts(char const * options)
 		strcpy(packet.Name, Session.Handle);
 		strcpy(packet.Options.Buf, options);
 		packet.Options.Color = Session.PrefColor;
-		packet.Options.NameCRC = FUN_005DAC00(Session.GameName);
+		packet.Options.NameCRC = Compute_Name_CRC_W(Session.GameName);
 		for (int i = 1; i < Session.Players.Count(); i++) {
 			NodeNameType * node = Session.Players[i];
 			FUN_004068E0("Sending public game options to %s\n", FUN_007350C0(node->Name));
@@ -773,7 +773,7 @@ void SendPrivateGameopts(char const * player, char const * options)
 		strcpy(packet.Name, Session.Handle);
 		strcpy(packet.Options.Buf, options);
 		Session.GPacket.Options.Color = FUN_0069B720(&Session);
-		Session.GPacket.Options.NameCRC = FUN_005DAC00(Session.GameName);
+		Session.GPacket.Options.NameCRC = Compute_Name_CRC_W(Session.GameName);
 		for (int i = 1; i < Session.Players.Count(); i++) {
 			if (stricmp(FUN_007350C0(Session.Players[i]->Name), player) == 0) {
 				FUN_004068E0("Sending private game options to %ls\n", Session.Players[i]);
