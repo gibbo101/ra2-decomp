@@ -4665,7 +4665,7 @@ int __fastcall Pick_Lobby(bool flag)
 	return best;
 }
 
-void FUN_0052F3F0(void);
+bool FUN_0052F3F0(void);
 void __fastcall FUN_0079FC10(int a, int b, int c);
 void __fastcall FUN_005E7460(void);
 extern char WestwoodOnline_Clan1_Players[];
@@ -10466,7 +10466,7 @@ void __fastcall FUN_0079FC10(int a, int b, int c)
 	DAT_00B77A88 = time(NULL);
 }
 
-void FUN_0052F3F0(void);
+bool FUN_0052F3F0(void);
 void FUN_0072BE80(void);
 void FUN_0072BED0(void);
 void FUN_0079CE70(void);
