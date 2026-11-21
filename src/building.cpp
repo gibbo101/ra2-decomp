@@ -8070,6 +8070,110 @@ bool BuildingClass::CanBeOccupiedBy(InfantryClass * infantry) const
 	return(true);
 }
 
+// FUNCTION: GAMEMD 0x00457DE0
+void BuildingClass::FUN_00457DE0(bool hunt, bool force)
+{
+	FiringOccupantIndex = 0;
+	int occupied = GetOccupantCount();
+	if (occupied == 0) return;
+
+	Coord coord = COORD_NONE;
+	Cell exit_cell = CELL_NONE;
+	int width = Class->Width();
+	int height = Class->Height(false);
+	bool found = false;
+
+	Cell cell = Get_Cell();
+	cell.X += width;
+	cell.Y += height;
+	InfantryClass * occupant = Occupants[0];
+	if (occupant->Can_Enter_Cell(&Map[cell], FACING_NONE, -1, NULL, true) == MOVE_OK) {
+		found = true;
+		exit_cell = cell;
+	}
+	while (!found) {
+		if (cell.Y <= Get_Cell().Y - 1) break;
+		cell.Y--;
+		if (occupant->Can_Enter_Cell(&Map[cell], FACING_NONE, -1, NULL, true) == MOVE_OK) {
+			found = true;
+			exit_cell = cell;
+		}
+	}
+
+	cell = Get_Cell();
+	cell.X += width;
+	cell.Y += height;
+	while (!found) {
+		if (cell.X <= Get_Cell().X - 1) break;
+		cell.X--;
+		if (occupant->Can_Enter_Cell(&Map[cell], FACING_NONE, -1, NULL, true) == MOVE_OK) {
+			found = true;
+			exit_cell = cell;
+		}
+	}
+
+	cell = Get_Cell();
+	cell.X--;
+	cell.Y--;
+	while (!found) {
+		if (cell.X >= Get_Cell().X + width) break;
+		cell.X++;
+		if (occupant->Can_Enter_Cell(&Map[cell], FACING_NONE, -1, NULL, true) == MOVE_OK) {
+			found = true;
+			exit_cell = cell;
+		}
+	}
+
+	cell = Get_Cell();
+	cell.X--;
+	cell.Y--;
+	while (!found) {
+		if (cell.Y >= Get_Cell().Y + height) {
+			if (force) {
+				exit_cell = Get_Cell() + Cell(width - 1, height - 1);
+				break;
+			}
+			KillOccupants(NULL);
+			return;
+		}
+		cell.Y++;
+		if (occupant->Can_Enter_Cell(&Map[cell], FACING_NONE, -1, NULL, true) == MOVE_OK) {
+			found = true;
+			exit_cell = cell;
+		}
+	}
+
+	CellClass * cellptr = &Map[exit_cell];
+	coord = cellptr->Center_Coord();
+	ScenarioInit++;
+	int count = Occupants.Count();
+	for (int index = count - 1; index >= 0; index--) {
+		InfantryClass * infantry = Occupants[index];
+		bool unlimboed = infantry->Unlimbo(coord, DIR_N);
+		if (unlimboed) {
+			HouseClass * house = infantry->House;
+			if (house->IsHuman) {
+				infantry->ShouldGarrisonStructure = false;
+				infantry->ShouldEnterOccupiable = false;
+			}
+			infantry->Assign_Target(NULL);
+			infantry->Scatter(Center_Coord(), true, true);
+			if (hunt) {
+				TeamClass * team = infantry->Team;
+				if (team != NULL) {
+					team->Remove(infantry, -1, false);
+				}
+				infantry->QueueMission(MISSION_HUNT, false);
+			}
+		} else {
+			infantry->Delete_Me();
+		}
+	}
+	ScenarioInit--;
+	Occupants.Delete_All();
+	UpdateThreatInCell(Get_Cell_Ptr());
+}
+
 // FUNCTION: GAMEMD 0x004581F0
 int BuildingClass::GetOccupantCount(void) const
 {
