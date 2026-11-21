@@ -6618,11 +6618,6 @@ bool TechnoClass::Enter_Idle_Mode(bool, bool)
 	return(false);
 }
 
-inline Rect Drawing_GetTextDimensions(wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY)
-{
-	Rect result;
-	return *Drawing_GetTextDimensions(&result, text, loc, flags, marginX, marginY);
-}
 
 Point2D Plain_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flag, int scheme, int unused);
 

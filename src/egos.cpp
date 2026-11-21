@@ -185,7 +185,7 @@ void Show_Who_Was_Responsible (void)
 	creditsfile.Read (credits, creditsfile.Size());
 
 	GadgetClass::Set_Color_Scheme("Green");
-	Fancy_Text_Print_Wide(&Point2D(), L" ", LogicalSurface, &LogicalSurface->Get_Rect(), &Point2D(0, 0), Fetch_Scheme_By_Name("LightGold"),
+	Fancy_Text_Print_Wide(L" ", LogicalSurface, &LogicalSurface->Get_Rect(), &Point2D(0, 0), Fetch_Scheme_By_Name("LightGold"),
 		0, TextPrintType(TPF_CENTER|TPF_METAL12|TPF_FULLSHADOW));
 
 	int 				length = creditsfile.Size();

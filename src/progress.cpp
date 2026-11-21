@@ -429,8 +429,8 @@ void ProgressScreenClass::Draw_Label(Point2D pt, wchar_t const * name, ColorSche
 	if (width != -1) {
 		w = width;
 	}
-	Point2D scratch;
-	Fancy_Text_Print_Wide(&scratch, name, HiddenSurface, &Rect(0, 0, pt.X + w, pt.Y + h), &pt, scheme, 0, TextPrintType(0x19));
+	Rect bounds(0, 0, pt.X + w, pt.Y + h);
+	Fancy_Text_Print_Wide(name, HiddenSurface, &bounds, &pt, scheme, 0, TextPrintType(0x19));
 }
 
 // FUNCTION: GAMEMD 0x00643720

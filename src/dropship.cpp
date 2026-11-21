@@ -1002,7 +1002,7 @@ void Draw_Cost(int cost, int maxcost, Surface & surface, Point2D const & drawpoi
 	clip.Y -= (HiddenSurface->Get_Height() - surface.Get_Height()) / 2;
 	Blit_Block(*HiddenSurface, drawer, surface, clip, Point2D(0, 0), source, NULL, blitter);
 
-	Fancy_Text_Print_Wide(Scratch(Point2D()), cost_text, HiddenSurface, &HiddenSurface->Get_Rect(), &drawpoint, Fetch_Scheme_By_Name("Yellow"), TBLACK, type);
+	Fancy_Text_Print_Wide(cost_text, HiddenSurface, &HiddenSurface->Get_Rect(), &drawpoint, Fetch_Scheme_By_Name("Yellow"), TBLACK, type);
 }
 
 // FUNCTION: GAMEMD 0x004B9890
@@ -1048,10 +1048,10 @@ void Draw_Unit_Info(Surface * surface, ConvertClass * drawer, TechnoTypeClass * 
 			scheme = Fetch_Scheme_By_Name("Red");
 		}
 
-		Fancy_Text_Print_Wide(Scratch(Point2D()), name, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
-		Fancy_Text_Print_Wide(Scratch(Point2D()), armament, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos + _offset) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
-		Fancy_Text_Print_Wide(Scratch(Point2D()), armor, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos + _offset * 2) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
-		Fancy_Text_Print_Wide(Scratch(Point2D()), cost, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos + _offset * 3) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
+		Fancy_Text_Print_Wide(name, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
+		Fancy_Text_Print_Wide(armament, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos + _offset) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
+		Fancy_Text_Print_Wide(armor, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos + _offset * 2) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
+		Fancy_Text_Print_Wide(cost, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos + _offset * 3) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
 	}
 }
 
