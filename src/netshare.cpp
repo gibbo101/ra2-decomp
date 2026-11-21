@@ -787,7 +787,7 @@ void SendPrivateGameopts(char const * player, char const * options)
 extern bool DAT_00AC11C2;
 int __fastcall FUN_005DBEC0(char * who);
 void __fastcall FUN_005DBE20(char * who, int status);
-HWND __fastcall FUN_00775940(int id);
+
 
 // FUNCTION: GAMEMD 0x005E39C0
 void FUN_005E39C0(char * name, int status)
@@ -1413,13 +1413,13 @@ apply:
 	mode->UnfixAlliances();
 
 	FUN_007757E0(dialog, 1);
-	HWND window = FUN_00775940(0xc2);
+	HWND window = WS_Find_Dialog(0xc2);
 	if (window == NULL) {
-		window = FUN_00775940(0xc9);
+		window = WS_Find_Dialog(0xc9);
 		if (window == NULL) {
-			window = FUN_00775940(0xbc);
+			window = WS_Find_Dialog(0xbc);
 			if (window == NULL) {
-				window = FUN_00775940(0xbd);
+				window = WS_Find_Dialog(0xbd);
 			}
 		}
 	}
@@ -2189,13 +2189,13 @@ void __fastcall FUN_005E8EA0(wchar_t * list)
 			}
 		}
 		if (node == DAT_00AC11B4 || (node != NULL && node != DAT_00AC119C && node != DAT_00AC11A0 && node != DAT_00AC11B0 && node != DAT_00AC11A4 && node != DAT_00AC11A8 && node != DAT_00AC11AC && node->Slot.SpectatorFlag == -1)) {
-			HWND dialog = FUN_00775940(0xc2);
+			HWND dialog = WS_Find_Dialog(0xc2);
 			if (dialog == NULL) {
-				dialog = FUN_00775940(0xc9);
+				dialog = WS_Find_Dialog(0xc9);
 				if (dialog == NULL) {
-					dialog = FUN_00775940(0xbc);
+					dialog = WS_Find_Dialog(0xbc);
 					if (dialog == NULL) {
-						dialog = FUN_00775940(0xbd);
+						dialog = WS_Find_Dialog(0xbd);
 					}
 				}
 			}
@@ -2228,13 +2228,13 @@ void __fastcall FUN_005E8EA0(wchar_t * list)
 				FUN_004E49A0(dialog, combo, 8);
 			}
 		} else {
-			HWND dialog = FUN_00775940(0xc2);
+			HWND dialog = WS_Find_Dialog(0xc2);
 			if (dialog == NULL) {
-				dialog = FUN_00775940(0xc9);
+				dialog = WS_Find_Dialog(0xc9);
 				if (dialog == NULL) {
-					dialog = FUN_00775940(0xbc);
+					dialog = WS_Find_Dialog(0xbc);
 					if (dialog == NULL) {
-						dialog = FUN_00775940(0xbd);
+						dialog = WS_Find_Dialog(0xbd);
 					}
 				}
 			}
@@ -2534,13 +2534,13 @@ NodeNameType * __fastcall FUN_005E9800(int kind)
 void FUN_005E9850(void)
 {
 	if (FUN_00775B20() != 0xbc) {
-		HWND window = FUN_00775940(0xc2);
+		HWND window = WS_Find_Dialog(0xc2);
 		if (!window) {
-			window = FUN_00775940(0xc9);
+			window = WS_Find_Dialog(0xc9);
 			if (!window) {
-				window = FUN_00775940(0xbc);
+				window = WS_Find_Dialog(0xbc);
 				if (!window) {
-					window = FUN_00775940(0xbd);
+					window = WS_Find_Dialog(0xbd);
 				}
 			}
 		}
@@ -4068,7 +4068,7 @@ void __fastcall FUN_005EE200(HWND dialog)
 			if (Game::ObserverMode) {
 #line 6762 "D:\\ra2mdpost\\netshare.cpp"
 				text = StringTable::LoadString("GUI:Observe", NULL, __FILE__, __LINE__);
-			} else if (FUN_00775940(0x113) == dialog) {
+			} else if (WS_Find_Dialog(0x113) == dialog) {
 #line 6766 "D:\\ra2mdpost\\netshare.cpp"
 				text = StringTable::LoadString("GUI:JoinGame", NULL, __FILE__, __LINE__);
 			} else {
@@ -4087,15 +4087,15 @@ void __fastcall FUN_005EE350(HWND dialog)
 	if (dialog) {
 		FUN_005EE200(dialog);
 	}
-	HWND window = FUN_00775940(0x116);
+	HWND window = WS_Find_Dialog(0x116);
 	if (window) {
 		FUN_005EE200(window);
 	}
-	window = FUN_00775940(0x113);
+	window = WS_Find_Dialog(0x113);
 	if (window) {
 		FUN_005EE200(window);
 	}
-	window = FUN_00775940(0xbb);
+	window = WS_Find_Dialog(0xbb);
 	if (window) {
 		FUN_005EE200(window);
 	}
@@ -4117,13 +4117,13 @@ static inline bool Handle_Is_Game_Name(void)
 void FUN_005EE3A0(void)
 {
 	bool enabled = true;
-	HWND dialog = FUN_00775940(0xc2);
+	HWND dialog = WS_Find_Dialog(0xc2);
 	if (!dialog) {
-		dialog = FUN_00775940(0xc9);
+		dialog = WS_Find_Dialog(0xc9);
 		if (!dialog) {
-			dialog = FUN_00775940(0xbc);
+			dialog = WS_Find_Dialog(0xbc);
 			if (!dialog) {
-				dialog = FUN_00775940(0xbd);
+				dialog = WS_Find_Dialog(0xbd);
 				if (!dialog) {
 					return;
 				}
@@ -4170,13 +4170,13 @@ void FUN_005EE3A0(void)
 // FUNCTION: GAMEMD 0x005EE510
 void __fastcall FUN_005EE510(int arg)
 {
-	HWND dialog = FUN_00775940(0xc2);
+	HWND dialog = WS_Find_Dialog(0xc2);
 	if (!dialog) {
-		dialog = FUN_00775940(0xc9);
+		dialog = WS_Find_Dialog(0xc9);
 		if (!dialog) {
-			dialog = FUN_00775940(0xbc);
+			dialog = WS_Find_Dialog(0xbc);
 			if (!dialog) {
-				dialog = FUN_00775940(0xbd);
+				dialog = WS_Find_Dialog(0xbd);
 			}
 		}
 	}
