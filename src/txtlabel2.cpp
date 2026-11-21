@@ -328,6 +328,25 @@ Rect __fastcall FUN_0072AD90(void)
 	return r;
 }
 
+extern Surface * AlternateSurface;
+
+// FUNCTION: GAMEMD 0x0072ADE0
+void __fastcall FUN_0072ADE0(char const * name, PaletteClass ** palette, ConvertClass ** convert)
+{
+	CCFileClass file(name);
+	unsigned char const * data = (unsigned char const *)Load_Alloc_Data(file);
+	if (data) {
+		*palette = new PaletteClass;
+		for (int index = 0; index < PaletteClass::COLOR_COUNT; index++) {
+			int offset = index * 3;
+			RGBClass color(data[offset] << 2, data[offset + 1] << 2, data[offset + 2] << 2);
+			(**palette)[index] = color;
+		}
+		delete (void *)data;
+		*convert = new ConvertClass(**palette, **palette, *AlternateSurface, 1, false);
+	}
+}
+
 // FUNCTION: GAMEMD 0x0072AF10
 void FUN_0072AF10(void)
 {
