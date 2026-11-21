@@ -396,7 +396,7 @@ int __fastcall FUN_0077D350(wchar_t const * text)
 {
 	wchar_t buffer[256];
 	swprintf(buffer, StringTable::LoadString("TXT_BUDDY_FILTER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x369));
-	return wcsnicmp(text, buffer, wcslen(buffer)) == 0;
+	return _wcsnicmp(text, buffer, wcslen(buffer)) == 0;
 }
 
 // FUNCTION: GAMEMD 0x0077D3A0
@@ -404,7 +404,7 @@ int __fastcall FUN_0077D3A0(wchar_t const * text)
 {
 	wchar_t buffer[256];
 	swprintf(buffer, StringTable::LoadString("TXT_CLAN_FILTER", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x36F));
-	return wcsnicmp(text, buffer, wcslen(buffer)) == 0;
+	return _wcsnicmp(text, buffer, wcslen(buffer)) == 0;
 }
 
 // FUNCTION: GAMEMD 0x0077D3F0
