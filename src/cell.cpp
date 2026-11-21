@@ -2075,6 +2075,71 @@ bool CellClass::Is_Spot_Free(int spot_index, bool bridge) const
 	}
 }
 
+Coord CellClass::Closest_Free_Spot(Coord const & xcoord, bool any, bool bridge, bool use_cell_coord) const
+{
+	int spot_index = Spot_Index(xcoord);
+	static unsigned char _sequence[5][4] = {
+		{1,2,3,4},
+		{0,2,3,4},
+		{0,1,4,3},
+		{0,1,4,2},
+		{0,2,3,1}
+	};
+	static unsigned char _alternate[4][4] = {
+		{1,2,3,4},
+		{2,3,4,1},
+		{3,4,1,2},
+		{4,1,2,3}
+	};
+
+	Coord coord;
+	if (use_cell_coord) {
+		Coord center;
+		center = Center_Coord();
+		coord = Coord_Whole(center);
+	} else {
+		coord = Coord_Whole(xcoord);
+	}
+
+	bool is_vehicle_occupied = bridge ? BridgeFlag.Occupy.Vehicle : Flag.Occupy.Vehicle;
+
+	if (!any) {
+		if (is_vehicle_occupied || (Flag.Occupy.Monolith && (!Get_Gate() || !Get_Gate()->Is_Gate_Open()))) {
+			return(COORD_NONE);
+		}
+	}
+
+	if (any || Is_Spot_Free(spot_index, bridge)) {
+		Coord result;
+		result = coord + StoppingCoordAbs[spot_index];
+		result.Z = Map.Get_Height_GL(xcoord);
+		if (bridge) {
+			result.Z += BRIDGE_LEPTON_HEIGHT;
+		}
+		return(result);
+	}
+
+	unsigned char * sequence;
+	if (spot_index == 0) {
+		sequence = &_alternate[Random_Pick(0, 3)][0];
+	} else {
+		sequence = &_sequence[spot_index][0];
+	}
+	for (int index = 0; index < 4; index++) {
+		int pos = *sequence++;
+		if (Is_Spot_Free(pos, bridge)) {
+			Coord result;
+			result = coord + StoppingCoordAbs[pos];
+			result.Z = Map.Get_Height_GL(xcoord);
+			if (bridge) {
+				result.Z += BRIDGE_LEPTON_HEIGHT;
+			}
+			return(result);
+		}
+	}
+	return(COORD_NONE);
+}
+
 // FUNCTION: GAMEMD 0x004814A0
 BuildingClass * CellClass::Get_Gate(void) const
 {
