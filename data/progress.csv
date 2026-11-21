@@ -3573,14 +3573,14 @@ address,name,result,size,source,symbol
 0x004A5960,Dial8Class::Set_Direction,MATCH,52,src/dial8.cpp,?Set_Direction@Dial8Class@@QAEXW4Dir256@@@Z
 0x004A59A0,??_GDial8Class@@UAEPAXI@Z,MATCH,30,src/dial8.cpp,??_GDial8Class@@UAEPAXI@Z
 0x004A59C0,_$E4,MATCH,23,src/dialog.cpp,_$E4
-0x004A59E0,Drawing_GetTextDimensions,MATCH,106,src/dialog.cpp,?Drawing_GetTextDimensions@@YIPAV?$TRect@H@@PAV1@PBGVPoint2D@@GHH@Z
+0x004A59E0,Drawing_GetTextDimensions,MATCH,106,src/dialog.cpp,?Drawing_GetTextDimensions@@YI?AV?$TRect@H@@PBGVPoint2D@@GHH@Z
 0x004A5A50,Draw_Box,MATCH,1011,src/dialog.cpp,?Draw_Box@@YIXABV?$TRect@H@@W4BoxStyleEnum@@_N@Z
 0x004A5E50,Count_Text_Lines,MATCH,88,src/dialog.cpp,?Count_Text_Lines@@YIHPBGHHPAH1@Z
 0x004A5EB0,Simple_Text_Print_Wide,MATCH,341,src/dialog.cpp,?Simple_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@H@Z
 0x004A6010,Simple_Text_Print_Wide,MATCH,187,src/dialog.cpp,?Simple_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@H@Z
 0x004A60D0,Font_From_TPF,MATCH,6,src/dialog.cpp,?Font_From_TPF@@YIPAVBitFont@@W4TextPrintType@@@Z
-0x004A60E0,Fancy_Text_Print_Wide,MATCH,212,src/dialog.cpp,?Fancy_Text_Print_Wide@@YAPAVPoint2D@@PAV1@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@ZZ
-0x004A61C0,Fancy_Text_Print_Wide,MATCH,416,src/dialog.cpp,?Fancy_Text_Print_Wide@@YAPAVPoint2D@@PAV1@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@ZZ
+0x004A60E0,Fancy_Text_Print_Wide,MATCH,212,src/dialog.cpp,?Fancy_Text_Print_Wide@@YA?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@ZZ
+0x004A61C0,Fancy_Text_Print_Wide,MATCH,416,src/dialog.cpp,?Fancy_Text_Print_Wide@@YA?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@ZZ
 0x004A6360,Conquer_Clip_Text_Print_Wide,MATCH,404,src/dialog.cpp,?Conquer_Clip_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@HPBH@Z
 0x004A6500,Conquer_Clip_Text_Print_Wide,MATCH,192,src/dialog.cpp,?Conquer_Clip_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@HPBH@Z
 0x004A65C0,Plain_Text_Print_Wide,MATCH,267,src/dialog.cpp,?Plain_Text_Print_Wide@@YI?AVPoint2D@@PBGAAVSurface@@ABV?$TRect@H@@ABV1@IIW4TextPrintType@@HH@Z
@@ -10930,6 +10930,7 @@ address,name,result,size,source,symbol
 0x0062D980,ParticleClass::Fetch_RTTI,MATCH,6,src/particle.cpp,?Fetch_RTTI@ParticleClass@@UBE?AW4RTTIType@@XZ
 0x0062D990,ParticleClass::Class_Of,MATCH,7,src/particle.cpp,?Class_Of@ParticleClass@@UBEPBVObjectTypeClass@@XZ
 0x0062D9A0,??_GParticleClass@@UAEPAXI@Z,MATCH,158,src/particle.cpp,??_GParticleClass@@UAEPAXI@Z
+0x0062BD50,ParticleClass::Gas_Behavior_AI,MATCH,1615,src/particle.cpp,?Gas_Behavior_AI@ParticleClass@@QAEXXZ
 0x0062DA40,_$E2,MATCH,40,src/partsys.cpp,_$E2
 0x0062DA70,_$E5,MATCH,19,src/partsys.cpp,_$E5
 0x0062DA90,_$E8,MATCH,19,src/partsys.cpp,_$E8
@@ -14266,7 +14267,7 @@ address,name,result,size,source,symbol
 0x006D3660,Tactical::Render_Shroud,MATCH,528,src/tactical.cpp,?Render_Shroud@Tactical@@QAEXABV?$TRect@H@@00_N@Z
 0x006D3870,Tactical::Render_Buildings,MATCH,582,src/tactical.cpp,?Render_Buildings@Tactical@@QAEXABV?$TRect@H@@0_N@Z
 0x006D3AC0,Tactical::Render_Terrain,MATCH,582,src/tactical.cpp,?Render_Terrain@Tactical@@QAEXABV?$TRect@H@@0_N@Z
-0x006D4B50,Tactical::DrawTimer,MATCH,607,src/tactical.cpp,?DrawTimer@Tactical@@SIHHPAVColorScheme@@HPBGPA_KPA_N@Z
+0x006D4B50,Tactical::DrawTimer,MATCH,607,src/tactical.cpp,?DrawTimer@Tactical@@SIXHPAVColorScheme@@HPBGPA_KPA_N@Z
 0x006D4DB0,Tactical::Set_Caption_Text,MATCH,66,src/tactical.cpp,?Set_Caption_Text@Tactical@@QAEXPBGH@Z
 0x006D4E00,Tactical::Clear_Caption_Text,MATCH,17,src/tactical.cpp,?Clear_Caption_Text@Tactical@@QAEXXZ
 0x006D4E20,Tactical::Draw_Screen_Text,MATCH,514,src/tactical.cpp,?Draw_Screen_Text@Tactical@@QAEXPBG@Z

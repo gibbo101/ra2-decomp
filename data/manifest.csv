@@ -3928,14 +3928,14 @@ address,size,symbol,source,sha256
 0x004A5960,52,?Set_Direction@Dial8Class@@QAEXW4Dir256@@@Z,src/dial8.cpp,5732295cf8d7d4904aa86deef0a2b1ddb509ac93832f46aa88a64bfe47bf0951
 0x004A59A0,30,??_GDial8Class@@UAEPAXI@Z,src/dial8.cpp,c145f8ec2e042b575e7986218d31d2f5927a9060d5b50a8320faa267fd3803b6
 0x004A59C0,23,_$E4,src/dialog.cpp,4a60b08f0a1f42908e91f754115821435d1b85b8aa5551ba223da5c2fa3d5962
-0x004A59E0,106,?Drawing_GetTextDimensions@@YIPAV?$TRect@H@@PAV1@PBGVPoint2D@@GHH@Z,src/dialog.cpp,2747f486a5afad6bae03a78067b471af8ffdbf0be0f8b5f3142e38119b7db90b
+0x004A59E0,106,?Drawing_GetTextDimensions@@YI?AV?$TRect@H@@PBGVPoint2D@@GHH@Z,src/dialog.cpp,2747f486a5afad6bae03a78067b471af8ffdbf0be0f8b5f3142e38119b7db90b
 0x004A5A50,1011,?Draw_Box@@YIXABV?$TRect@H@@W4BoxStyleEnum@@_N@Z,src/dialog.cpp,6a053a04849ee6d2d94ac3ad8d43c77f2fdb7d39e37f0a6d0a45a399baf60525
 0x004A5E50,88,?Count_Text_Lines@@YIHPBGHHPAH1@Z,src/dialog.cpp,9423594efb40203442ea53d435da431d384462afd64ff894bb3d01eaea971d5d
 0x004A5EB0,341,?Simple_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@H@Z,src/dialog.cpp,f8d24db614e96f7aec000304fe0844455e613eab13569b7ae0485c2f13d69533
 0x004A6010,187,?Simple_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@H@Z,src/dialog.cpp,ddab1695f9eb72f1d953ee21163b3de243b8f59d977a8ec7e51b663f41d8c1fa
 0x004A60D0,6,?Font_From_TPF@@YIPAVBitFont@@W4TextPrintType@@@Z,src/dialog.cpp,edd18593d65e23a3a3d1be3048d5d242842d09e3cdf7eb18d936d76605b97ca2
-0x004A60E0,212,?Fancy_Text_Print_Wide@@YAPAVPoint2D@@PAV1@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@ZZ,src/dialog.cpp,2208fdf2f0561be8ac98e77bc0f966a9c869353ceb06bc43f38bef1358be873a
-0x004A61C0,416,?Fancy_Text_Print_Wide@@YAPAVPoint2D@@PAV1@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@ZZ,src/dialog.cpp,43d15b98a81417962e8d13bd1052c6d9a4518cbfeabf169c2000065d96b6497d
+0x004A60E0,212,?Fancy_Text_Print_Wide@@YA?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@ZZ,src/dialog.cpp,2208fdf2f0561be8ac98e77bc0f966a9c869353ceb06bc43f38bef1358be873a
+0x004A61C0,416,?Fancy_Text_Print_Wide@@YA?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@ZZ,src/dialog.cpp,43d15b98a81417962e8d13bd1052c6d9a4518cbfeabf169c2000065d96b6497d
 0x004A6360,404,?Conquer_Clip_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@IIW4TextPrintType@@HPBH@Z,src/dialog.cpp,2e3e252051e8769dd0b02c87ed5c94fdc21a9109cc37f78a2204df82a9193459
 0x004A6500,192,?Conquer_Clip_Text_Print_Wide@@YI?AVPoint2D@@PBGPAVSurface@@PBV?$TRect@H@@PBV1@PAVColorScheme@@IW4TextPrintType@@HPBH@Z,src/dialog.cpp,4ab64e3a300f7fb3e6abb178e065cb2217b658ac45873e6cd3e6dce576986bd5
 0x004A65C0,267,?Plain_Text_Print_Wide@@YI?AVPoint2D@@PBGAAVSurface@@ABV?$TRect@H@@ABV1@IIW4TextPrintType@@HH@Z,src/dialog.cpp,1c9097ecdeb748e835c260c5fb445cc70476b9dfd93db1e882e13466a47c738a
@@ -11261,6 +11261,7 @@ address,size,symbol,source,sha256
 0x0062B5E0,1343,??0ParticleClass@@QAE@PBVParticleTypeClass@@ABVCoord@@1PAVParticleSystemClass@@@Z,src/particle.cpp,1332612f990c6af9905fe549e00f514046ade76254ac0a174cde62300b0cc2a7
 0x0062BB20,412,??0ParticleClass@@QAE@XZ,src/particle.cpp,59f9979de02647871d150e16afd06b1f8058e9c9532ef9df4f855cfc6aa1d33c
 0x0062BCC0,138,??1ParticleClass@@UAE@XZ,src/particle.cpp,864bbe6f29283ab98d672843aa5231bef0d6aea8b50b127175f2e3d24d60bd9b
+0x0062BD50,1615,?Gas_Behavior_AI@ParticleClass@@QAEXXZ,src/particle.cpp,0101e01b4da7a6836a23b4e4681219d5e2bf99ac6789a8ccafd27accf15d2d09
 0x0062C3A0,401,?Railgun_Behavior_AI@ParticleClass@@QAEXXZ,src/particle.cpp,43ab01ae8b257d2bee394a3e2ee815820279ecd398323401c9e8e021dafd98bf
 0x0062C540,405,?Smoke_Behavior_AI@ParticleClass@@QAEXXZ,src/particle.cpp,ad2110cfd5ac4ec92a4f4ab1fa8b258640efe1ac638834f29d7dcb5dad7651af
 0x0062CB10,805,?Fire_Behavior_AI@ParticleClass@@QAEXXZ,src/particle.cpp,69a720ebb0d95937a85d8be42f9ea0484a8c1b6a083592ecb797f4ab0ab5aa56
@@ -14611,7 +14612,7 @@ address,size,symbol,source,sha256
 0x006D3660,528,?Render_Shroud@Tactical@@QAEXABV?$TRect@H@@00_N@Z,src/tactical.cpp,ed58ad93a703a3c9569027c8b0dbef9af0f1f720a77cd6d5acc950d1b4cd4de3
 0x006D3870,582,?Render_Buildings@Tactical@@QAEXABV?$TRect@H@@0_N@Z,src/tactical.cpp,84706c5b8bd5d4902134df45cb6d6aa290e366566d49626f87eecf17817a378c
 0x006D3AC0,582,?Render_Terrain@Tactical@@QAEXABV?$TRect@H@@0_N@Z,src/tactical.cpp,3ded6f4c2d4c025b8f92eb34d582e67f730f486fc822f42e2d225a2437437030
-0x006D4B50,607,?DrawTimer@Tactical@@SIHHPAVColorScheme@@HPBGPA_KPA_N@Z,src/tactical.cpp,0ad9111c797791c0a3d7a4ce29bbf56060d08560b67fbc0daa2cfdc19b4769f5
+0x006D4B50,607,?DrawTimer@Tactical@@SIXHPAVColorScheme@@HPBGPA_KPA_N@Z,src/tactical.cpp,0ad9111c797791c0a3d7a4ce29bbf56060d08560b67fbc0daa2cfdc19b4769f5
 0x006D4DB0,66,?Set_Caption_Text@Tactical@@QAEXPBGH@Z,src/tactical.cpp,77e2f35a3d078ba5e2d4ce2ebee3ea6b389aca2ee0e7beb23ed3f20a81e342c0
 0x006D4E00,17,?Clear_Caption_Text@Tactical@@QAEXXZ,src/tactical.cpp,9b7beb7aef857cbc8671f3f1aba1cc64d3c2426958bec5d61b464edbca01ef7d
 0x006D4E20,514,?Draw_Screen_Text@Tactical@@QAEXPBG@Z,src/tactical.cpp,01cc22cb0ef9d24c55c85306f36ab48aafe18fd3503e0a633f0659d66039da5d
