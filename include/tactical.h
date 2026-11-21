@@ -187,7 +187,7 @@ class Tactical : public AbstractClass
 		void Draw_Rally_Points(bool inshroud);
 		void Draw_Waypoints(bool inshroud);
 		void Draw_Radial_Indicators(void);
-		static int DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const * text, unsigned __int64 * flashtime, bool * flashstate);
+		static void DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const * text, unsigned __int64 * flashtime, bool * flashstate);
 
 		void Debug_Draw_Occupier_Links(void);
 		void Debug_Draw_Occupation_Flags(void);

@@ -783,8 +783,8 @@ void RadarClass::Draw_Names(void)
 	Draw_Shape(*SidebarSurface, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), SidebarSurface->Get_Rect());
 
 	y = RadOffX + 2;
-	Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), StringTable::LoadString("TXT_NAME_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1268), SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x19));
-	Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), StringTable::LoadString("TXT_KILLS_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1270), SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x219));
+	Fancy_Text_Print_Wide(StringTable::LoadString("TXT_NAME_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1268), SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x19));
+	Fancy_Text_Print_Wide(StringTable::LoadString("TXT_KILLS_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1270), SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x219));
 
 	y += 7;
 	SidebarSurface->Draw_Line(Point2D(RadHeight, y), Point2D(RadOffY + RadHeight - 1, y), SidebarDrawer->Convert_Pixel(14));
@@ -816,7 +816,7 @@ void RadarClass::Draw_Names(void)
 			txt[18] = '.';
 			txt[19] = 0;
 		}
-		Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), txt, SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), color, 0, TextPrintType(style));
+		Fancy_Text_Print_Wide(txt, SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), color, 0, TextPrintType(style));
 
 		kills = 0;
 		for (h = 0; h < 20; h++) {
@@ -824,7 +824,7 @@ void RadarClass::Draw_Names(void)
 			kills += ptr->BuildingsKilled[h];
 		}
 		swprintf(txt, L"%2d", kills);
-		Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), txt, SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), color, 0, TextPrintType(style | 0x200));
+		Fancy_Text_Print_Wide(txt, SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), color, 0, TextPrintType(style | 0x200));
 
 		y += 9;
 	}

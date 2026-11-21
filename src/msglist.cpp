@@ -537,9 +537,8 @@ void MessageListClass::Draw(void)
 		int textwidth = font->FUN_00433ED0(EditLabel->Text, 0);
 		if (CursorChar && (EditCurPos - EditInitPos) < (MaxChars - 1) && EditLabel->Has_Focus()) {
 			txt[0] = CursorChar;
-			Point2D ret;
 			Point2D pt(EditLabel->X + textwidth, EditLabel->Y);
-			Fancy_Text_Print_Wide(&ret, txt, DSurface::Temp, &DSurface::Temp->Get_Rect(), &pt,
+			Fancy_Text_Print_Wide(txt, DSurface::Temp, &DSurface::Temp->Get_Rect(), &pt,
 				ColorSchemes[EditLabel->Color], 0, EditLabel->Style);
 		}
 		Show_Mouse();
