@@ -112,3 +112,8 @@ effect, so it can be fixed in a separate build later.
   `ACTION_ENTER_WAYPOINT` selects the disallowed cursor and then falls through
   to the beacon case, which replaces it with the beacon cursor. The recovered
   source preserves both calls and the fallthrough.
+
+- **BounceClass::AI (0x00439B00).** When speed exceeds a positive MaxVelocity,
+  the cap divides speed by itself at 0x00439B87 before scaling Velocity.
+  For finite speed the factor is 1, so this cap does not reduce velocity
+  to the configured maximum.
