@@ -726,11 +726,6 @@ void Tactical::Render_Terrain(Rect const & xpanrect, Rect const & ypanrect, bool
 	}
 }
 
-struct TimerFlashSource {
-	int Unused[5];
-	ColorScheme * Scheme;
-};
-extern TimerFlashSource * DAT_00B054D4;
 
 BitFont * __fastcall FUN_004A60D0(int flags);
 #include "audtimer.h"
@@ -774,7 +769,7 @@ int Tactical::DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const
 			*flashstate = !*flashstate;
 		}
 		if (*flashstate) {
-			flash = DAT_00B054D4->Scheme;
+			flash = ColorSchemes[5];
 		}
 	}
 
