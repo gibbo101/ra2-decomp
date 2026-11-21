@@ -730,14 +730,8 @@ void Tactical::Render_Terrain(Rect const & xpanrect, Rect const & ypanrect, bool
 BitFont * __fastcall FUN_004A60D0(int flags);
 #include "audtimer.h"
 
-static inline Point2D * Print_Timer(wchar_t const * text, Point2D const & pt, ColorScheme * scheme)
-{
-	Point2D ret;
-	return Fancy_Text_Print_Wide(&ret, text, DSurface::Composite, &DSurface::Composite->Get_Rect(), &pt, scheme, 0, TextPrintType(0x4618));
-}
-
 // FUNCTION: GAMEMD 0x006D4B50
-int Tactical::DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const * text, unsigned __int64 * flashtime, bool * flashstate)
+void Tactical::DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const * text, unsigned __int64 * flashtime, bool * flashstate)
 {
 	wchar_t buf1[256];
 	wchar_t buf2[256];
@@ -774,10 +768,10 @@ int Tactical::DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const
 	}
 
 	Point2D pt1(TacticalRect.Width - width - 3, TacticalRect.Height - (font->field_1C + 2) * (index + 1));
-	Print_Timer(buf2, pt1, scheme);
+	Fancy_Text_Print_Wide(buf2, DSurface::Composite, &DSurface::Composite->Get_Rect(), &pt1, scheme, 0, TextPrintType(0x4618));
 
 	Point2D pt2(TacticalRect.Width - 3, TacticalRect.Height - (font->field_1C + 2) * (index + 1));
-	return (int)Print_Timer(buf3, pt2, flash);
+	Fancy_Text_Print_Wide(buf3, DSurface::Composite, &DSurface::Composite->Get_Rect(), &pt2, flash, 0, TextPrintType(0x4618));
 }
 
 // FUNCTION: GAMEMD 0x006D4DB0

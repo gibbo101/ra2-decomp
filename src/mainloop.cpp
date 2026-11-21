@@ -1076,7 +1076,7 @@ void Multiplayer_Debug_Print(bool)
 
 	if (DAT_008373A0 != -1) {
 		double seconds = (double)DAT_008373A0 * 0.001;
-		Fancy_Text_Print_Wide(Scratch(Point2D()), L"%.2f", DSurface::Composite, &Rect(0, 0, 500, 15), &Point2D(100, 0), ColorSchemes[GadgetClass::Get_Color_Scheme()], 0x1F, TextPrintType(6), seconds, Scen->ScenarioName);
+		Fancy_Text_Print_Wide(L"%.2f", DSurface::Composite, &Rect(0, 0, 500, 15), &Point2D(100, 0), ColorSchemes[GadgetClass::Get_Color_Scheme()], 0x1F, TextPrintType(6), seconds, Scen->ScenarioName);
 	}
 
 	if (Session.DrawMPDebugStats && Session.Type != GAME_NORMAL && Session.Type != GAME_MODEM && Session.Type != GAME_NULL_MODEM) {
@@ -1085,31 +1085,31 @@ void Multiplayer_Debug_Print(bool)
 		surface->Fill_Rect(Rect(0, 300, 639, 230), 0);
 
 		swprintf(buffer, L"Frame : %d", Frame);
-		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 302), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+		Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 302), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 		swprintf(buffer, L"FPS : %d", FPSCounter::CurrentFrameRate);
-		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 312), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+		Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 312), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 		swprintf(buffer, L"MaxAhead : %d", Session.MaxAhead);
-		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 322), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+		Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 322), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 		swprintf(buffer, L"Resp Time : %d ms", (int)(Ipx.Response_Time() * 1000) / TIMER_SECOND);
-		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 332), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+		Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 332), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 		swprintf(buffer, L"Req fps : %d", Session.DesiredFrameRate);
-		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 342), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+		Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 342), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 		swprintf(buffer, L"Process : %d", Session.Players[0]->Player.ProcessTime);
-		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 352), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+		Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 352), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 		swprintf(buffer, L"Rout resp: %d", (unsigned)(Session.RouterResponseTime * 1000) / TIMER_SECOND);
-		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 362), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+		Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 362), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 		swprintf(buffer, L"NFT : %d", NetFrameTimer);
-		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 372), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+		Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 372), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 		swprintf(buffer, L"LNFT : %d", DAT_00ABCE04);
-		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 382), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+		Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 382), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 		Ipx.Multiplayer_Debug_Print();
 		MouseCursor->Show_Mouse();

@@ -2418,8 +2418,7 @@ void FUN_005312A0(void)
 		textpt.X = bounds.Width - font->FUN_00433ED0(text, 0) - 10;
 	}
 	{
-		Point2D ret;
-		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 	}
 
 	text = StringTable::LoadString("GUI:WWBrand", NULL, "D:\\ra2mdpost\\Init.CPP", 0x134D);
@@ -2428,32 +2427,28 @@ void FUN_005312A0(void)
 		textpt.Y = textpt.Y + font->field_1C + 3;
 	}
 	{
-		Point2D ret;
-		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 	}
 
 	text = StringTable::LoadString("GUI:LoadingEx", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1357);
 	textpt.X = 10;
 	textpt.Y = 10;
 	{
-		Point2D ret;
-		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 	}
 
 	text = StringTable::LoadString("GUI:TradeMarkTop", NULL, "D:\\ra2mdpost\\Init.CPP", 0x135E);
 	textpt.X = 10;
 	textpt.Y = bounds.Height - 40;
 	{
-		Point2D ret;
-		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 	}
 
 	text = StringTable::LoadString("GUI:TradeMarkBottom", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1365);
 	textpt.X = 10;
 	textpt.Y = textpt.Y + font->field_1C + 3;
 	{
-		Point2D ret;
-		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 	}
 
 	Update_Visible_Surface(true, HiddenSurface);
