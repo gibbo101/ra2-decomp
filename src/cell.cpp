@@ -3531,11 +3531,11 @@ int CellClass::Get_Vein_Frame(void) const
 	int frame = 0;
 	for (int i = 0; i < FACING_COUNT / 2; i++) {
 		CellClass const & adjacent = Adjacent_Cell(FacingType(i << FACING_45));
-		if (adjacent.Overlay != OVERLAY_NONE && (adjacent.Ramp <= RAMP_NONE || OverlayTypes[adjacent.Overlay]->IsVeins)) {
-			if ((adjacent.Overlay != OVERLAY_VEINS && OverlayTypes[adjacent.Overlay]->IsVeins) ||
-				(adjacent.Overlay == OVERLAY_VEINS && adjacent.OverlayData >= 0x30)) {
-				frame |= 1 << i;
-			}
+		if (adjacent.Overlay == OVERLAY_NONE) continue;
+		if (adjacent.Ramp > RAMP_NONE && !OverlayTypes[adjacent.Overlay]->IsVeins) continue;
+		if ((adjacent.Overlay != OVERLAY_VEINS && OverlayTypes[adjacent.Overlay]->IsVeins) ||
+			(adjacent.Overlay == OVERLAY_VEINS && adjacent.OverlayData >= 0x30)) {
+			frame |= 1 << i;
 		}
 	}
 	return(frame);
@@ -3568,9 +3568,6 @@ bool CellClass::Can_Place_Veins(void)
 	return(false);
 }
 
-static inline int _Vein_Frame_B(CellClass const * cell) { return cell->Get_Vein_Frame(); }
-static inline int _Vein_Frame_A(CellClass const * cell) { return _Vein_Frame_B(cell); }
-
 // FUNCTION: GAMEMD 0x00485590
 void CellClass::Redraw_Veins(void)
 {
@@ -3578,7 +3575,7 @@ void CellClass::Redraw_Veins(void)
 	dirty = Union(dirty, Union(Overlay_Render_Rect(), Overlay_Shadow_Render_Rect()));
 
 	OverlayData = 0;
-	int frame = _Vein_Frame_A(this);
+	int frame = Get_Vein_Frame();
 	if (frame == 0 || Ramp != 0) {
 		Overlay = OVERLAY_NONE;
 	} else {
@@ -3590,7 +3587,7 @@ void CellClass::Redraw_Veins(void)
 		CellClass & adjacent = Adjacent_Cell(dir);
 
 		if (adjacent.Ramp == 0 && adjacent.Overlay == OVERLAY_VEINS && adjacent.OverlayData < 0x30) {
-			int adjframe = _Vein_Frame_A(&adjacent);
+			int adjframe = adjacent.Get_Vein_Frame();
 
 			Rect rect(0, 0, 0, 0);
 			rect = Union(rect, Union(adjacent.Overlay_Render_Rect(), adjacent.Overlay_Shadow_Render_Rect()));
