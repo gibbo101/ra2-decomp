@@ -276,6 +276,10 @@ Each entry: what the diff showed, then the source change that fixed it.
 - In a frame over 128 bytes, VC6 orders slots by reference count per size, counting each
   exit's own cleanup before merging, never by declaration order. An early return or
   per-branch cleanup changes those counts (0x0077E900).
+- In a frame over 128 bytes, a named local held in a register still takes a slot, which the
+  `/FAcs` listing does not name. To see every local's offset, compile with `/Z7` added and
+  read the S_BPREL32 records (type 0x1006) in the function's `.debug$S` (WinMain: 33 there,
+  25 in the listing).
 - A permuter match through a no-op round-trip (`int same0 = x; x = same0;`) can work only
   by adding a local that changes the large-frame interleave (Init_Game). Look for the real
   local the original had before reworking the loop or expression it sits on.
