@@ -994,7 +994,7 @@ extern int DAT_00B77E14;
 extern int DAT_00B73A20;
 extern int DAT_00B77D70;
 extern int DAT_00B77A88;
-HWND __fastcall FUN_00775940(int id);
+
 void __fastcall Draw_Player_List(int keep_selection, bool flag);
 
 WideWstring __fastcall FUN_007B7ED0(Wstring const & text);
@@ -1012,7 +1012,7 @@ void __fastcall SetPlayerAccepted(Wstring const & who, int status)
 {
 	Wstring name(who.length() > 0 ? who : g_NickName);
 	if (name == g_NickName && status == 0) {
-		HWND w = FUN_00775940(0xC9);
+		HWND w = WS_Find_Dialog(0xC9);
 		FUN_005EDDE0(w, true);
 	}
 	int index = Player_Name_To_Index(name);
@@ -1113,9 +1113,9 @@ int __fastcall Assign_House_And_Color(Wstring const & who, int country, int colo
 	if (index == -1) {
 		return 0;
 	}
-	HWND dialog = FUN_00775940(0xC2);
+	HWND dialog = WS_Find_Dialog(0xC2);
 	if (dialog == NULL) {
-		dialog = FUN_00775940(0xC9);
+		dialog = WS_Find_Dialog(0xC9);
 	}
 	NodeNameType * slot = Session.Slots[index];
 	if (slot->Get_Start() != start) {
@@ -1188,7 +1188,7 @@ bool __fastcall FUN_007757E0(HWND window, int flag);
 
 static inline void Focus_Chat_Input(void)
 {
-	HWND dialog = FUN_00775940(0xC4);
+	HWND dialog = WS_Find_Dialog(0xC4);
 	if (dialog) {
 		g_ActiveWaitFlags &= ~1;
 		if (g_ActiveWaitFlags == 0) {
@@ -1574,7 +1574,7 @@ extern wchar_t DAT_00887734[];
 // FUNCTION: GAMEMD 0x007806C0
 void FUN_007806C0(void)
 {
-	HWND dialog = FUN_00775940(0x113);
+	HWND dialog = WS_Find_Dialog(0x113);
 	if (!dialog) {
 		return;
 	}
@@ -1904,7 +1904,7 @@ extern wchar_t DAT_0084A6E0[];
 // FUNCTION: GAMEMD 0x00781480
 void FUN_00781480(void)
 {
-	HWND dialog = FUN_00775940(0x113);
+	HWND dialog = WS_Find_Dialog(0x113);
 	if (dialog == NULL) {
 		return;
 	}
@@ -3397,7 +3397,7 @@ inline HRESULT CNetUtilEventSink::OnLadderList(HRESULT result, Ladder * list, in
 		DAT_00884CF4 = 1;
 		return 0;
 	}
-	HWND rung_list = GetDlgItem(FUN_00775940(0xC1), 0x57F);
+	HWND rung_list = GetDlgItem(WS_Find_Dialog(0xC1), 0x57F);
 	if (rung_list && key_rung == -1 && result == 0) {
 		rung_list = NULL;
 	}
@@ -3511,9 +3511,9 @@ inline HRESULT CNetUtilEventSink::OnLadderList(HRESULT result, Ladder * list, in
 			if (profile.Get() && profile.Get()->StatsDiffer(temp)) {
 				profile.Get()->UpdateStats(temp);
 				profile.Get()->Save(&ladder_name);
-				HWND dialog = FUN_00775940(0x10E);
+				HWND dialog = WS_Find_Dialog(0x10E);
 				if (dialog == NULL) {
-					dialog = FUN_00775940(0x114);
+					dialog = WS_Find_Dialog(0x114);
 				}
 				if (dialog) {
 					profile.Get()->FUN_0077A9F0(dialog, &g_NickName, false);
@@ -3531,7 +3531,7 @@ inline HRESULT CNetUtilEventSink::OnLadderList(HRESULT result, Ladder * list, in
 		Draw_Player_List(0, false);
 	}
 	FUN_0079D110();
-	HWND dialog = FUN_00775940(0x116);
+	HWND dialog = WS_Find_Dialog(0x116);
 	if (dialog) {
 		FUN_0079C040(dialog);
 	}
@@ -3708,11 +3708,11 @@ int __fastcall Startup_Chat(HINSTANCE instance)
 
 static inline void Close_Logout_Wait(unsigned int event)
 {
-	HWND window = FUN_00775940(0x11E);
+	HWND window = WS_Find_Dialog(0x11E);
 	if (window) {
 		FUN_007757E0(window, 0);
 	}
-	window = FUN_00775940(0xC4);
+	window = WS_Find_Dialog(0xC4);
 	if (window) {
 		g_ActiveWaitFlags &= ~event;
 		if (g_ActiveWaitFlags == 0) {
@@ -3775,12 +3775,12 @@ void __fastcall Handle_User_Leave(User *user)
 		++Session.Suspended;
 		Session.ScenarioFileLength = 0;
 		Session.ScenarioDigest[0] = 0;
-		HWND main = FUN_00775940(0x113);
+		HWND main = WS_Find_Dialog(0x113);
 		if (main && DAT_00B77DC1) {
 			ShowWindow(main, SW_HIDE);
 			OwnerDraw::SetUserData2(main, 1);
 		}
-		HWND guest = FUN_00775940(0xc9);
+		HWND guest = WS_Find_Dialog(0xc9);
 		if (guest) {
 			FUN_007757E0(guest, 2);
 			FUN_0072CF90();
@@ -3803,7 +3803,7 @@ void __fastcall Handle_User_Leave(User *user)
 				g_JoinLobbyNow = 1;
 			}
 		}
-		HWND game = FUN_00775940(0xc2);
+		HWND game = WS_Find_Dialog(0xc2);
 		if (game) {
 			FUN_007757E0(game, 2);
 			FUN_0072CF90();
@@ -3865,7 +3865,7 @@ void __fastcall Handle_User_Leave(User *user)
 						EnableWindow(GetDlgItem(FUN_005E26C0(), 0x59f), 1);
 					}
 					if (!g_IsChannelCreator) {
-						HWND dialog = FUN_00775940(0xc9);
+						HWND dialog = WS_Find_Dialog(0xc9);
 						FUN_005EDDE0(dialog, true);
 					}
 					FUN_005E9850();
@@ -3959,7 +3959,7 @@ void Shutdown_Chat(void)
 		delete MultiplayerMapPreview;
 		MultiplayerMapPreview = NULL;
 	}
-	HWND window = FUN_00775940(0x11E);
+	HWND window = WS_Find_Dialog(0x11E);
 	if (window) {
 		FUN_007757E0(window, 0);
 	}
@@ -4072,7 +4072,7 @@ bool SimpleWonlineDialogControl::F4(void)
 
 static inline void Focus_Chat_Input_After(unsigned int event)
 {
-	HWND dialog = FUN_00775940(0xC4);
+	HWND dialog = WS_Find_Dialog(0xC4);
 	if (dialog) {
 		g_ActiveWaitFlags &= ~event;
 		if (g_ActiveWaitFlags == 0) {
@@ -4746,7 +4746,7 @@ int __fastcall Join_Lobby(bool flag)
 			result = FUN_00788800(&chan, key, WideWstring(StringTable::LoadString("TXT_JOINLOB", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2A01)));
 		}
 		if (result == 0) {
-			HWND dialog = FUN_00775940(0x113);
+			HWND dialog = WS_Find_Dialog(0x113);
 			if (dialog) {
 				SetFocus(GetDlgItem(dialog, 0x540));
 			}
@@ -6390,7 +6390,7 @@ BOOL CALLBACK WOL_Waiting_Dialog_Proc(HWND window, UINT message, WPARAM wparam, 
 // FUNCTION: GAMEMD 0x00792BE0
 void __fastcall Show_Wait_Window(int id, WideWstring const & text, char flag)
 {
-	HWND dialog = FUN_00775940(0xC4);
+	HWND dialog = WS_Find_Dialog(0xC4);
 	if (dialog) {
 		g_ActiveWaitFlags |= id;
 		if (text.length() > 0) {
@@ -6478,7 +6478,7 @@ BOOL CALLBACK WOL_Waiting_Dialog_Proc(HWND window, UINT message, WPARAM wparam, 
 // FUNCTION: GAMEMD 0x00792E90
 void __fastcall Set_Wait_Dialog_Text(wchar_t const * text)
 {
-	HWND dialog = FUN_00775940(0xC4);
+	HWND dialog = WS_Find_Dialog(0xC4);
 	if (dialog) {
 		SendDlgItemMessage(dialog, 0x5B2, 0x4B2, 0, (LPARAM)text);
 	}
@@ -6487,7 +6487,7 @@ void __fastcall Set_Wait_Dialog_Text(wchar_t const * text)
 // FUNCTION: GAMEMD 0x00792EC0
 void __fastcall FUN_00792EC0(unsigned int mask)
 {
-	HWND dialog = FUN_00775940(0xC4);
+	HWND dialog = WS_Find_Dialog(0xC4);
 	if (dialog) {
 		g_ActiveWaitFlags &= ~mask;
 		if (g_ActiveWaitFlags == 0) {
@@ -6590,7 +6590,7 @@ extern char DAT_00B75F54[];
 void __fastcall FUN_007931F0(int index)
 {
 	if (index >= 0 && index < Session.Players.Count()) {
-		HWND dialog = FUN_00775940(0x130);
+		HWND dialog = WS_Find_Dialog(0x130);
 		if (dialog) {
 			HWND item = GetDlgItem(dialog, DAT_0084A1F0[index]);
 			DAT_00B75F54[index] = 1;
@@ -6691,7 +6691,7 @@ BOOL CALLBACK FUN_00793280(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 // FUNCTION: GAMEMD 0x00793440
 void FUN_00793440(void)
 {
-	HWND dialog = FUN_00775940(0x130);
+	HWND dialog = WS_Find_Dialog(0x130);
 	if (dialog) {
 		FUN_007757E0(dialog, 0);
 	}
@@ -7760,7 +7760,7 @@ bool Handle_Preview_Download(void)
 		Call_Back();
 		packet_len = sizeof(packet);
 		if (Ipx.Global_Channel_Op(0, (int)&packet, (int)&packet_len, (int)&sender_address, (int)&product_id, 0) && packet.Command == NET_PREVIEW_MODE) {
-			HWND dialog = FUN_00775940(0xC9);
+			HWND dialog = WS_Find_Dialog(0xC9);
 			if (dialog) {
 				ShowWindow(GetDlgItem(dialog, 0x468), SW_SHOWNORMAL);
 			}
@@ -8249,7 +8249,7 @@ int __fastcall FUN_00797640(int sku)
 			}
 		}
 	}
-	HWND dialog = FUN_00775940(0xC4);
+	HWND dialog = WS_Find_Dialog(0xC4);
 	if (dialog) {
 		g_ActiveWaitFlags = 0;
 		FUN_007757E0(dialog, 0);
@@ -8267,7 +8267,7 @@ extern char DAT_00B76A2C[];
 
 static inline void Close_Wait_Dialog(void)
 {
-	HWND dialog = FUN_00775940(0xC4);
+	HWND dialog = WS_Find_Dialog(0xC4);
 	if (dialog) {
 		g_ActiveWaitFlags = 0;
 		FUN_007757E0(dialog, 0);
@@ -9229,7 +9229,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 		case WM_COMMAND:
 			switch (LOWORD(wparam)) {
 				case 0x629:
-					if (FUN_00775940(0x11D) && DAT_00B75E48.Get()) {
+					if (WS_Find_Dialog(0x11D) && DAT_00B75E48.Get()) {
 						Wstring text;
 						FUN_00623E40(GetDlgItem(window, 0x629), text);
 						DAT_00B75E48.Get()->SetName(&text);
@@ -9239,7 +9239,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 
 				case 0x628:
 					{
-						bool open = FUN_00775940(0x11D) != NULL;
+						bool open = WS_Find_Dialog(0x11D) != NULL;
 						switch (HIWORD(wparam)) {
 							case CBN_EDITCHANGE:
 							case EN_CHANGE:
@@ -9325,7 +9325,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					return FALSE;
 
 				case 0x62A:
-					if (FUN_00775940(0x11D) && DAT_00B75E48.Get()) {
+					if (WS_Find_Dialog(0x11D) && DAT_00B75E48.Get()) {
 						HWND combo = GetDlgItem(window, 0x62A);
 						int item = SendMessage(combo, CB_GETCURSEL, 0, 0);
 						int locale = 0;
@@ -9338,7 +9338,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					break;
 
 				case 0x6A1:
-					if (FUN_00775940(0x11D) && DAT_00B75E48.Get()) {
+					if (WS_Find_Dialog(0x11D) && DAT_00B75E48.Get()) {
 						int country = -2;
 						HWND combo = GetDlgItem(window, 0x6A1);
 						int item = SendMessage(combo, CB_GETCURSEL, 0, 0);
@@ -9355,7 +9355,7 @@ BOOL CALLBACK FUN_00799EA0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					return FALSE;
 
 				case 0x6A2:
-					if (FUN_00775940(0x11D) && DAT_00B75E48.Get()) {
+					if (WS_Find_Dialog(0x11D) && DAT_00B75E48.Get()) {
 						int value = -2;
 						HWND combo = GetDlgItem(window, 0x6A2);
 						int item = SendMessage(combo, CB_GETCURSEL, 0, 0);
@@ -10602,7 +10602,7 @@ cleanup:
 done:
 	FUN_007757E0(dialog, 0);
 	FUN_0072BED0();
-	HWND match = FUN_00775940(0x11F);
+	HWND match = WS_Find_Dialog(0x11F);
 	if (match) {
 		FUN_007757E0(match, 0);
 	}
@@ -10646,7 +10646,7 @@ extern int DAT_00B736F4;
 bool FUN_007A0690(void)
 {
 	DAT_00B76AC4.clear();
-	HWND dialog = FUN_00775940(0x11F);
+	HWND dialog = WS_Find_Dialog(0x11F);
 	if (dialog) {
 		FUN_007757E0(dialog, 0);
 	}
@@ -11344,7 +11344,7 @@ void FUN_007A27D0(void)
 // FUNCTION: GAMEMD 0x007A2800
 void __fastcall FUN_007A2800(int count, bool full, bool ai)
 {
-	HWND dialog = FUN_00775940(0xC2);
+	HWND dialog = WS_Find_Dialog(0xC2);
 	FUN_005EC880(dialog, count, full, ai);
 }
 
@@ -11615,13 +11615,13 @@ HRESULT CNetUtilEventSink::OnNewNick(HRESULT result, LPCSTR message, LPCSTR nick
 		}
 		char login_mode = 1;
 		char combo_mode = 0;
-		HWND dialog = FUN_00775940(0x10F);
+		HWND dialog = WS_Find_Dialog(0x10F);
 		if (dialog == NULL) {
-			dialog = FUN_00775940(0x11D);
+			dialog = WS_Find_Dialog(0x11D);
 			combo_mode = dialog != NULL;
 			if (dialog == NULL) {
 				login_mode = 0;
-				dialog = FUN_00775940(0x114);
+				dialog = WS_Find_Dialog(0x114);
 			}
 		}
 		if (dialog != NULL) {
@@ -11662,7 +11662,7 @@ HRESULT CNetUtilEventSink::OnNewNick(HRESULT result, LPCSTR message, LPCSTR nick
 	} else {
 		ODMessageBox(L"Unknown Status", 0, FUN_0077D710, 0);
 	}
-	HWND chat = FUN_00775940(0xC4);
+	HWND chat = WS_Find_Dialog(0xC4);
 	if (chat) {
 		g_ActiveWaitFlags &= ~0x100;
 		if (g_ActiveWaitFlags == 0) {
@@ -11686,7 +11686,7 @@ HRESULT CNetUtilEventSink::OnAgeCheck(HRESULT result, int age, int consent)
 		g_UserAge = age;
 		g_UserConsent = consent;
 	}
-	HWND dialog = FUN_00775940(0xC4);
+	HWND dialog = WS_Find_Dialog(0xC4);
 	if (dialog) {
 		g_ActiveWaitFlags &= ~0x100;
 		if (g_ActiveWaitFlags == 0) {
@@ -11925,7 +11925,7 @@ long __stdcall FUN_007A4C10(void * sink, long result, Update * updates)
 		tmp = tmp->next;
 		count++;
 	}
-	HWND chat = FUN_00775940(0xC4);
+	HWND chat = WS_Find_Dialog(0xC4);
 	if (chat) {
 		g_ActiveWaitFlags &= ~0x10;
 		if (g_ActiveWaitFlags == 0) {
@@ -12141,7 +12141,7 @@ extern char DAT_0084ACA0[];
 
 static inline void Close_Wait_Window(unsigned int event)
 {
-	HWND dialog = FUN_00775940(0xC4);
+	HWND dialog = WS_Find_Dialog(0xC4);
 	if (dialog) {
 		g_ActiveWaitFlags &= ~event;
 		if (g_ActiveWaitFlags == 0) {
@@ -12363,7 +12363,7 @@ long __stdcall FUN_007A7110(void * sink, long result, void * channel, User * use
 			if (g_CurrentChannel.type != 0) {
 				DAT_00AC1178 = 1;
 				if (!g_IsChannelCreator) {
-					HWND dialog = FUN_00775940(0xC9);
+					HWND dialog = WS_Find_Dialog(0xC9);
 					FUN_005EDDE0(dialog, true);
 				}
 				FUN_005E9850();
@@ -12462,10 +12462,10 @@ long __stdcall FUN_007A7B60(void *sink, long result, Channel *channel, User *use
 		g_GameStarted = 0;
 	} else {
 		if (FUN_0077CF40()) {
-			HWND dialog = FUN_00775940(0x117);
+			HWND dialog = WS_Find_Dialog(0x117);
 			FUN_007757E0(dialog, 0);
 		}
-		HWND dialog = FUN_00775940(0xCF);
+		HWND dialog = WS_Find_Dialog(0xCF);
 		FUN_007757E0(dialog, 0);
 		Game::Network::WOLGameID = game_id;
 		WestwoodOnline_GameSKU_TS = g_GameSKU;
@@ -12687,8 +12687,8 @@ long __stdcall FUN_007A8260(void * sink, long result, User * user, char const * 
 			if (token) sscanf(token, "%X", &value);
 			Session.PlayerPortBase[row] = value;
 			FUN_004068E0(DAT_0084AED8, (char *)user->name, country, color, start, team, address.As_String(NULL), Session.PlayerFirewall[row], value);
-			HWND window = FUN_00775940(0xC2);
-			if (!window) window = FUN_00775940(0xC9);
+			HWND window = WS_Find_Dialog(0xC2);
+			if (!window) window = WS_Find_Dialog(0xC9);
 			int old_country = Session.Slots[row]->Get_Country();
 			NodeNameType * player = Session.Slots[row];
 			bool become_observer = false, become_player = false, changed = false;
@@ -13267,7 +13267,7 @@ long __stdcall FUN_007AA6D0(void * sink, long result)
 			Clear_Channel(s_TempChannel);
 			FUN_004068E0(DAT_0084B170);
 		} else {
-			if (FUN_00775940(0x113)) {
+			if (WS_Find_Dialog(0x113)) {
 				ODMessageBox(StringTable::LoadString("TXT_YOURE_DISCON", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x211E), 0, FUN_0077D710, 0);
 			}
 			g_IgnoreNetStatus = 1;
@@ -13406,13 +13406,13 @@ long __stdcall FUN_007AA870(void * sink, long result, Channel * channels)
 	if (FUN_0077CF40()) {
 		FUN_004068E0("Received channel list, user list is %d long\n", g_UserList.length());
 	} else {
-		HWND games = FUN_00775940(0x116);
+		HWND games = WS_Find_Dialog(0x116);
 		if (games) {
 			FUN_0079AF10(games);
 		}
 		if (type == 0) {
 			FUN_007806C0();
-			HWND lobby = FUN_00775940(0x113);
+			HWND lobby = WS_Find_Dialog(0x113);
 			if (lobby) {
 				KillTimer(lobby, 0x55D);
 				EnableWindow(GetDlgItem(lobby, 0x55D), TRUE);
@@ -13597,7 +13597,7 @@ long __stdcall FUN_007AB670(void * sink, long result, Channel * channel, User * 
 			ODMessageBox(wide.get(), 0, FUN_0077D710, 0);
 			g_CurrentLobby++;
 		} else {
-			HWND dialog = FUN_00775940(0x113);
+			HWND dialog = WS_Find_Dialog(0x113);
 			if (dialog) {
 				_DrawMessage(DAT_007EEF28, wide.get(), GetDlgItem(dialog, 0x53F));
 			}
@@ -13734,7 +13734,7 @@ long __stdcall FUN_007AC220(void * sink, long result, User * users)
 		}
 		FUN_0079D110();
 		Close_Wait_Window(0x200);
-		HWND list = FUN_00775940(0x116);
+		HWND list = WS_Find_Dialog(0x116);
 		if (list) {
 			FUN_0079AF10(list);
 			KillTimer(list, 0x704);
@@ -15466,7 +15466,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 		FUN_00781480();
 		Draw_Player_List(0, false);
 		SetEvent(g_WaitEventHandles[10]);
-		HWND main = FUN_00775940(0x113);
+		HWND main = WS_Find_Dialog(0x113);
 		if (main) {
 			ShowWindow(main, SW_SHOW);
 			OwnerDraw::SetUserData2(main, 0);
@@ -15488,7 +15488,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 		}
 		if (channel->type == 0) {
 			g_CurrentLobby = atol((char *)channel->name + strlen("Lob_41_"));
-			HWND main = FUN_00775940(0x113);
+			HWND main = WS_Find_Dialog(0x113);
 			if (main) {
 				EnableWindow(GetDlgItem(main, 0x53D), TRUE);
 				bool join = false;
@@ -15544,7 +15544,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 				FUN_0072CF40();
 				HWND dlg = WS_Create_Dialog(ProgramInstance, 0xC9, MainWindow, WOL_Guest_Dialog_Proc, FALSE);
 				UI::RegisterWindow(dlg, 0xC9);
-				HWND main = FUN_00775940(0x113);
+				HWND main = WS_Find_Dialog(0x113);
 				if (main) {
 					ShowWindow(main, SW_HIDE);
 					OwnerDraw::SetUserData2(main, 0);
@@ -15617,7 +15617,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 				EnableWindow(GetDlgItem(FUN_005E26C0(), 0x59F), TRUE);
 			}
 			if (!g_IsChannelCreator) {
-				HWND dialog = FUN_00775940(0xC9);
+				HWND dialog = WS_Find_Dialog(0xC9);
 				FUN_005EDDE0(dialog, true);
 			}
 			FUN_005E9850();
@@ -15744,7 +15744,7 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 			node->Address = FUN_0077D720(user);
 			Set_Initial_Player_Options(node);
 			Session.Players.Add(node);
-			HWND dialog = FUN_00775940(0xC9);
+			HWND dialog = WS_Find_Dialog(0xC9);
 			FUN_005EDDE0(dialog, true);
 			FUN_005E9850();
 		}
