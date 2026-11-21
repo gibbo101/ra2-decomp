@@ -28,7 +28,7 @@
 // _$E4
 
 // FUNCTION: GAMEMD 0x004A59E0
-Rect Drawing_GetTextDimensions( wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY)
+Rect Drawing_GetTextDimensions(wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY)
 {
 	BitFont * font = BitFont::Instance;
 	int width = font->FUN_00433ED0(text, 0);
@@ -143,7 +143,7 @@ BitFont * Font_From_TPF(TextPrintType flags)
 }
 
 // FUNCTION: GAMEMD 0x004A60E0
-Point2D __cdecl Fancy_Text_Print_Wide( wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, ...)
+Point2D __cdecl Fancy_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, ...)
 {
 	wchar_t buffer[512];
 
@@ -159,7 +159,7 @@ Point2D __cdecl Fancy_Text_Print_Wide( wchar_t const * text, Surface * surface, 
 }
 
 // FUNCTION: GAMEMD 0x004A61C0
-Point2D __cdecl Fancy_Text_Print_Wide( wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, ColorScheme * scheme, unsigned back, TextPrintType flags, ...)
+Point2D __cdecl Fancy_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, ColorScheme * scheme, unsigned back, TextPrintType flags, ...)
 {
 	wchar_t buffer[512];
 
