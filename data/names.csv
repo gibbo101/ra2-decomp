@@ -979,3 +979,12 @@ address,name,symbol,evidence
 0x007ED790,MapGeneratorClass::Get_Angle_Score::_random_weight,_?_random_weight@?1??Get_Angle_Score@MapGeneratorClass@@QAENABVCell@@0N@Z@4NB,Random-score weight read by Get_Angle_Score at 0x005A1190 + 0xBC.
 0x007ED798,MapGeneratorClass::Get_Angle_Score::_angle_weight,_?_angle_weight@?1??Get_Angle_Score@MapGeneratorClass@@QAENABVCell@@0N@Z@4NB,Angle-difference weight read by Get_Angle_Score at 0x005A1190 + 0xC2.
 0x00818858,_GUID_0000010c_0000_0000_c000_000000000046,,IPersist IID: native 16 bytes 0c01000000000000c000000000000046 agree with 24 annotated COFF references in 11 modules.
+0x0088746C,VoxelLightAngle,?VoxelLightAngle@@3MA,Set_Voxel_Light_Angle at 0x00754C00 + 0x13.
+0x00B43188,SlopeQuaternions,?SlopeQuaternions@@3PAVQuaternion@@A,Get_Slope_Transition_Matrix at 0x00755A40 + 0x20; Get_Slope_Transition_Matrix at 0x00755A40 + 0x2A.
+0x00B432D8,LightDirectionVectors,?LightDirectionVectors@@3PAVVector3@@A,Apply_Light_Transform at 0x00755B30 + 0x48; Apply_Light_Transform at 0x00755B30 + 0x58.
+0x00B43F10,ScreenSlopeMatrices,?ScreenSlopeMatrices@@3PAVMatrix3D@@A,Get_Screen_Slope_Matrix at 0x00755990 + 0xA; Get_Screen_Slope_Transition_Matrix at 0x007559D0 + 0x17.
+0x00B44318,IsometricViewMatrix,?IsometricViewMatrix@@3VMatrix3D@@A,Get_Isometric_View_Matrix at 0x00754BE0 + 0xA.
+0x00B44348,ScreenSlopeQuaternions,?ScreenSlopeQuaternions@@3PAVQuaternion@@A,Get_Screen_Slope_Transition_Matrix at 0x007559D0 + 0x38; Get_Screen_Slope_Transition_Matrix at 0x007559D0 + 0x46.
+0x00B444A0,LightTiltVectors,?LightTiltVectors@@3PAVVector3@@A,Apply_Light_Transform at 0x00755B30 + 0x21.
+0x00B450B8,BounceMatrices,?BounceMatrices@@3PAVMatrix3D@@A,Get_Bounce_Matrix at 0x00755C60 + 0x14.
+0x00B45188,SlopeMatrices,?SlopeMatrices@@3PAVMatrix3D@@A,Get_Slope_Matrix at 0x007559B0 + 0xC; Get_Slope_Transition_Matrix at 0x00755A40 + 0x61.
