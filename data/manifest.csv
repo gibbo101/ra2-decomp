@@ -2069,6 +2069,7 @@ address,size,symbol,source,sha256
 0x00457AA0,483,?Make_Fogged@BuildingClass@@QAEXPAV?$DynamicVectorClass@PAVFoggedObjectClass@@@@PAVCellClass@@_N@Z,src/building.cpp,4aeb57669be4de1383a7446ca5d991b5bc0ef96eac04685b1d03392b8ffd1242
 0x00457C90,78,?IronCurtain@BuildingClass@@UAEHHPAVHouseClass@@_N@Z,src/building.cpp,8670f1f0c64cf15e29d502a59180b8ba9c4191c24ae59474fb6a689b4c5d7f1c
 0x00457CE0,255,?CanBeOccupiedBy@BuildingClass@@QBE_NPAVInfantryClass@@@Z,src/building.cpp,2d3809be711a9943b2055b4b1a920051412504f60140f8af047826c383b940e2
+0x00457DE0,1029,?FUN_00457DE0@BuildingClass@@QAEX_N0@Z,src/building.cpp,a907abc4a0ed87926fdb84c1f506e3c6e1fc8b12b4abbc7097738b23f3216836
 0x004581F0,7,?GetOccupantCount@BuildingClass@@UBEHXZ,src/building.cpp,564ebb84ca6e79155f5bcbd5917cd3a80cf9908a34c6d218597ad274f50c971f
 0x00458200,301,?FUN_00458200@BuildingClass@@QAEXXZ,src/building.cpp,d4403ac6e8ca3e4258c809c5de3104b44311a525044b5476cac7bd950e2b19be
 0x00458330,656,?FUN_00458330@BuildingClass@@QAEXXZ,src/building.cpp,b3b6db8a21b652158ef4b4562ac88c7a59747246ef07fa5f0f211b1248ad2a64

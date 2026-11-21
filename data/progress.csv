@@ -1706,6 +1706,7 @@ address,name,result,size,source,symbol
 0x00457AA0,BuildingClass::Make_Fogged,MATCH,483,src/building.cpp,?Make_Fogged@BuildingClass@@QAEXPAV?$DynamicVectorClass@PAVFoggedObjectClass@@@@PAVCellClass@@_N@Z
 0x00457C90,BuildingClass::IronCurtain,MATCH,78,src/building.cpp,?IronCurtain@BuildingClass@@UAEHHPAVHouseClass@@_N@Z
 0x00457CE0,BuildingClass::CanBeOccupiedBy,MATCH,255,src/building.cpp,?CanBeOccupiedBy@BuildingClass@@QBE_NPAVInfantryClass@@@Z
+0x00457DE0,BuildingClass::FUN_00457DE0,MATCH,1029,src/building.cpp,?FUN_00457DE0@BuildingClass@@QAEX_N0@Z
 0x004581F0,BuildingClass::GetOccupantCount,MATCH,7,src/building.cpp,?GetOccupantCount@BuildingClass@@UBEHXZ
 0x00458200,BuildingClass::FUN_00458200,MATCH,301,src/building.cpp,?FUN_00458200@BuildingClass@@QAEXXZ
 0x00458330,BuildingClass::FUN_00458330,MATCH,656,src/building.cpp,?FUN_00458330@BuildingClass@@QAEXXZ
