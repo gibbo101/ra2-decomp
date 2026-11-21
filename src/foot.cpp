@@ -3436,6 +3436,87 @@ Cell FootClass::ScanForTiberium(int rad, bool allow_weighted)
 	return(bestcell);
 }
 
+// FUNCTION: GAMEMD 0x004DD2F0
+Cell FootClass::Search_For_Tiberium_Weighted(int rad)
+{
+	DiscreteDistributionClass<CellClass> celldist;
+
+	Cell center = Center_Coord().As_Cell();
+	if (Map[center].Land_Type() == LAND_TIBERIUM) {
+		return(center);
+	}
+
+	int numharv = House->CountResourceGatherers;
+	numharv = max(1, numharv);
+
+	for (int radius = 1; radius < rad; radius++) {
+		int share = radius * 3 / numharv;
+		bool northrun = false;
+		bool southrun = false;
+		bool westrun = false;
+		bool eastrun = false;
+		int divisor = max(1, share);
+		double scale = 1.0 / (double)divisor;
+		for (int x = -radius; x <= radius; x++) {
+			Cell cell;
+			cell = Cell(x, -radius) + center;
+			if (Tiberium_Check(cell)) {
+				if (!northrun) {
+					CellClass *cptr = &Map[cell];
+					int intweight = (int)MAX(1.0, cptr->Tiberium_Value() * scale);
+					northrun = true;
+					celldist.Add(cptr, intweight);
+				}
+			} else {
+				northrun = false;
+			}
+
+			cell = Cell(x, +radius) + center;
+			if (Tiberium_Check(cell)) {
+				if (!southrun) {
+					CellClass *cptr = &Map[cell];
+					int intweight = (int)MAX(1.0, cptr->Tiberium_Value() * scale);
+					southrun = true;
+					celldist.Add(cptr, intweight);
+				}
+			} else {
+				southrun = false;
+			}
+
+			cell = Cell(-radius, x) + center;
+			if (Tiberium_Check(cell)) {
+				if (!westrun) {
+					CellClass *cptr = &Map[cell];
+					int intweight = (int)MAX(1.0, cptr->Tiberium_Value() * scale);
+					westrun = true;
+					celldist.Add(cptr, intweight);
+				}
+			} else {
+				westrun = false;
+			}
+
+			cell = Cell(+radius, x) + center;
+			if (Tiberium_Check(cell)) {
+				if (!eastrun) {
+					CellClass *cptr = &Map[cell];
+					int intweight = (int)MAX(1.0, cptr->Tiberium_Value() * scale);
+					eastrun = true;
+					celldist.Add(cptr, intweight);
+				}
+			} else {
+				eastrun = false;
+			}
+		}
+	}
+
+	CellClass *cellptr = celldist.Sample();
+	if (cellptr != NULL) {
+		return(cellptr->CellID);
+	}
+	return(CELL_NONE);
+}
+
+
 // FUNCTION: GAMEMD 0x004DD890
 Cell FootClass::Search_For_Weed(int rad)
 {
