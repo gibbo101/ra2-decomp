@@ -75,6 +75,26 @@ Quaternion Quaternion::operator=(const Quaternion & q)
 	return(*this);
 }
 
+
+Quaternion & Quaternion::Make_Closest(const Quaternion & qto)
+{
+	Quaternion rel1 = Quaternion(*this) / qto;
+
+	Quaternion rel2 = -*this / qto;
+
+	float dot1 = rel1.Length2();
+	float dot2 = rel2.Length2();
+
+	if (dot2 < dot1) {
+		X = -X;
+		Y = -Y;
+		Z = -Z;
+		W = -W;
+	}
+
+	return(*this);
+}
+
 // FUNCTION: GAMEMD 0x00645ED0
 Quaternion operator * (const Quaternion & a,const Quaternion & b)
 {
