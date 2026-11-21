@@ -13946,6 +13946,7 @@ address,name,result,size,source,symbol
 0x006C6B80,Queue_Packet,MATCH,374,src/stats.cpp,?Queue_Packet@@YIXPAXH@Z
 0x006C6D00,Queue_Pop,MATCH,220,src/stats.cpp,?Queue_Pop@@YIXXZ
 0x006C6DE0,Queue_Send,MATCH,367,src/stats.cpp,?Queue_Send@@YIXXZ
+0x006C6F50,Send_Statistics_Packet,MATCH,6259,src/stats.cpp,?Send_Statistics_Packet@@YIX_N@Z
 0x006C87D0,Get_Unit_Count,MATCH,27,src/stats.cpp,?Get_Unit_Count@@YIHPAHH@Z
 0x006C87F0,Register_Game_Start_Time,MATCH,37,src/stats.cpp,?Register_Game_Start_Time@@YIXXZ
 0x006C8820,Register_Game_End_Time,MATCH,31,src/stats.cpp,?Register_Game_End_Time@@YIXXZ
