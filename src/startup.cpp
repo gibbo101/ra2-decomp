@@ -136,7 +136,7 @@
 #include "win.h"
 #include "winstub.h"
 #include "wwfont.h"
-#include "wwmouse.h"
+#include "wwmous.h"
 #include "zbuffer.h"
 #include <conio.h>
 #include <io.h>
@@ -371,8 +371,8 @@ extern VirtualObject * DAT_00884DD8;
 extern VirtualObject * DAT_00884DDC;
 extern VirtualObject * DAT_00884DF8;
 extern VirtualObject * DAT_00884DFC;
-extern VirtualObject * DAT_00884E00;
-extern VirtualObject * DAT_00884E04;
+extern MixFileClass * DAT_00884E00;
+extern MixFileClass * DAT_00884E04;
 extern VirtualObject * DAT_00884E08;
 extern VirtualObject * DAT_00884E0C;
 extern VirtualObject * DAT_00884E10;
@@ -430,6 +430,591 @@ void FUN_005DA720(void);
 void FUN_0053E1D0(void);
 void Audio_Shutdown(void);
 void FUN_007B86B0(void);
+
+#include "_pk.h"
+#include "ldprgmgr.h"
+#include "misc.h"
+#include "ramfile.h"
+#include "revent.h"
+#include "ship.h"
+#include "winfix.h"
+#include "wolopt.h"
+#include <wchar.h>
+
+extern int SidebarWidth;
+void __cdecl FUN_004068E0(char const *, ...);
+namespace Powerups { extern bool Naval[19]; }
+int FUN_005355D0(void);
+extern "C" void __cdecl set_control_word(void);
+extern TiberianSunClassFactory TibSunFactory;
+extern int DAT_00A8F784;
+namespace CopyProtection { bool IsLauncherRunning(void); bool NotifyLauncher(void); }
+namespace Game { extern bool bDirect3DIsUseable; extern bool bVideoBackBuffer; }
+int __fastcall FUN_00734FE0(HWND, wchar_t const *, wchar_t const *, UINT);
+void __cdecl FUN_007B84F0(void);
+void __fastcall FUN_005BC180(HINSTANCE, HWND, bool);
+void FUN_00637070(void);
+void FUN_0052CB80(void);
+int FUN_004C1600(void);
+int FUN_004C16A0(void);
+int __fastcall FUN_0053DE00(int, int);
+int __fastcall FUN_0053E4F0(char const *);
+int __fastcall FUN_0053E550(char const *);
+void Free_Game_Modes(void);
+void __cdecl Prog_End(void);
+void Emergency_Exit(void);
+#define START_TEXT(label, line) StringTable::LoadString(label, 0, "D:\\ra2mdpost\\Startup.CPP", line)
+const struct RegStruct {
+	const GUID *clsid;
+	const char *name;
+} RegisterTheseDLLs[] = {
+	{ &CLSID_BlowfishObject, "blowfish.dll" }
+};
+
+static void Init_Keys(void)
+{
+	FUN_004068E0("Init_Keys - declarations\n");
+	RAMFileClass file((void *)Keys, strlen(Keys));
+	INIClass ini;
+	FUN_004068E0("Init_Keys - Load\n");
+	ini.Load(file);
+	FUN_004068E0("Init_Keys - Init fast key\n");
+	FastKey = ini.Get_PKey(true);
+}
+
+extern "C" const CLSID CLSID_AirstrikeClass, CLSID_BombClass;
+extern const CLSID CLSID_DiskLaserClass;
+extern "C" const CLSID CLSID_SpawnManagerClass, CLSID_SlaveManagerClass, CLSID_CaptureManagerClass;
+void SchemeLibrary_Destroy(void);
+void Free_Mouse_Shapes(void);
+void Net2Shutdown_Network(void);
+
+static bool RegisterClasses(void)
+{
+	bool failed = false;
+#ifndef NO_BLOWFISH_DLL
+	for (int i = 0; i < ARRAY_SIZE(RegisterTheseDLLs); i++) {
+		IUnknownPtr ptr;
+		HRESULT result = ptr.CreateInstance(*RegisterTheseDLLs[i].clsid, NULL, CLSCTX_ALL);
+		failed = FAILED(result);
+		if (failed) {
+			failed = false;
+			HINSTANCE hModule = LoadLibrary(RegisterTheseDLLs[i].name);
+			if (hModule != NULL) {
+				FARPROC fprocDllReg = (FARPROC)GetProcAddress(hModule, "DllRegisterServer");
+				if (!fprocDllReg || (fprocDllReg(), FAILED(ptr.CreateInstance(*RegisterTheseDLLs[i].clsid, NULL, CLSCTX_ALL)))) {
+					failed = true;
+				}
+				FreeLibrary(hModule);
+			} else {
+				failed = true;
+			}
+		}
+		if (failed) {
+			break;
+		}
+		ptr.Release();
+	}
+#endif
+
+	RegisterServer();
+
+	DWORD dwRegister;
+	IClassFactory *factory;
+
+	#define REGISTER_CLASS(_class, _clsid) \
+		{ \
+			factory = new TClassFactory<_class>; \
+			CoRegisterClassObject(_clsid, factory, CLSCTX_INPROC_SERVER, REGCLS_MULTIPLEUSE, &dwRegister); \
+			RegisteredClasses.Add(dwRegister); \
+		}
+
+	#define REGISTER_FACT_CLASS(_class, _fact, _clsid) \
+		{ \
+			factory = _fact; \
+			CoRegisterClassObject(_clsid, factory, CLSCTX_INPROC_SERVER, REGCLS_MULTIPLEUSE, &dwRegister); \
+			RegisteredClasses.Add(dwRegister); \
+		}
+
+	REGISTER_FACT_CLASS(TiberianSunClassFactory, &TibSunFactory, CLSID_TiberianSun);
+
+	REGISTER_CLASS(CStreamClass, CLSID_CompressStream);
+	REGISTER_CLASS(WaveClass, CLSID_WaveClass);
+	REGISTER_CLASS(TerrainTypeClass, CLSID_TerrainTypeClass);
+	REGISTER_CLASS(TerrainClass, CLSID_TerrainClass);
+	REGISTER_CLASS(SuperWeaponTypeClass, CLSID_SuperWeaponTypeClass);
+	REGISTER_CLASS(SuperClass, CLSID_SuperWeaponClass);
+	REGISTER_CLASS(Tactical, CLSID_TacticalMapClass);
+	REGISTER_CLASS(CellClass, CLSID_CellClass);
+	REGISTER_CLASS(EMPulseClass, CLSID_EMPulseClass);
+	REGISTER_CLASS(LightSourceClass, CLSID_LightSource);
+	REGISTER_CLASS(SideClass, CLSID_SideClass);
+	REGISTER_CLASS(TiberiumClass, CLSID_TiberiumClass);
+	REGISTER_CLASS(TubeClass, CLSID_TubeClass);
+	REGISTER_CLASS(CampaignClass, CLSID_CampaignClass);
+	REGISTER_CLASS(BuildingLightClass, CLSID_BuildingLightClass);
+	REGISTER_CLASS(WaypointPathClass, CLSID_WaypointPath);
+	REGISTER_CLASS(TemporalClass, CLSID_TemporalClass);
+	REGISTER_CLASS(AirstrikeClass, CLSID_AirstrikeClass);
+	REGISTER_CLASS(SpawnManagerClass, CLSID_SpawnManagerClass);
+	REGISTER_CLASS(SlaveManagerClass, CLSID_SlaveManagerClass);
+	REGISTER_CLASS(CaptureManagerClass, CLSID_CaptureManagerClass);
+	REGISTER_CLASS(DiskLaserClass, CLSID_DiskLaserClass);
+	REGISTER_CLASS(ParasiteClass, CLSID_ParasiteClass);
+	REGISTER_CLASS(BombClass, CLSID_BombClass);
+	REGISTER_CLASS(RadSiteClass, CLSID_RadSiteClass);
+	REGISTER_CLASS(TEventClass, CLSID_EventClass);
+	REGISTER_CLASS(VoxelAnimTypeClass, CLSID_VoxelAnimTypeClass);
+	REGISTER_CLASS(VoxelAnimClass, CLSID_VoxelAnimClass);
+	REGISTER_CLASS(TActionClass, CLSID_ActionClass);
+	REGISTER_CLASS(TriggerClass, CLSID_TriggerClass);
+	REGISTER_CLASS(TriggerTypeClass, CLSID_TriggerTypeClass);
+	REGISTER_CLASS(ScriptClass, CLSID_ScriptClass);
+	REGISTER_CLASS(ScriptTypeClass, CLSID_ScriptTypeClass);
+	REGISTER_CLASS(TagClass, CLSID_TagClass);
+	REGISTER_CLASS(TagTypeClass, CLSID_TagTypeClass);
+	REGISTER_CLASS(TeamClass, CLSID_TeamClass);
+	REGISTER_CLASS(TeamTypeClass, CLSID_TeamTypeClass);
+	REGISTER_CLASS(TaskForceClass, CLSID_TaskForceClass);
+	REGISTER_CLASS(UnitTypeClass, CLSID_UnitTypeClass);
+	REGISTER_CLASS(BuildingTypeClass, CLSID_BuildingTypeClass);
+	REGISTER_CLASS(AircraftTypeClass, CLSID_AircraftTypeClass);
+	REGISTER_CLASS(InfantryTypeClass, CLSID_InfantryTypeClass);
+	REGISTER_CLASS(BulletTypeClass, CLSID_BulletTypeClass);
+	REGISTER_CLASS(IsometricTileTypeClass, CLSID_IsometricTileTypeClass);
+	REGISTER_CLASS(OverlayTypeClass, CLSID_OverlayTypeClass);
+	REGISTER_CLASS(SmudgeTypeClass, CLSID_SmudgeTypeClass);
+	REGISTER_CLASS(UnitClass, CLSID_UnitClass);
+	REGISTER_CLASS(BuildingClass, CLSID_BuildingClass);
+	REGISTER_CLASS(AircraftClass, CLSID_AircraftClass);
+	REGISTER_CLASS(InfantryClass, CLSID_InfantryClass);
+	REGISTER_CLASS(AnimClass, CLSID_AnimClass);
+	REGISTER_CLASS(AnimTypeClass, CLSID_AnimTypeClass);
+	REGISTER_CLASS(HouseTypeClass, CLSID_HouseTypeClass);
+	REGISTER_CLASS(HouseClass, CLSID_HouseClass);
+	REGISTER_CLASS(DriveLocomotionClass, CLSID_DriveLocomotion);
+	REGISTER_CLASS(JumpjetLocomotionClass, CLSID_JumpjetLocomotion);
+	REGISTER_CLASS(HoverLocomotionClass, CLSID_HoverLocomotion);
+	REGISTER_CLASS(RocketLocomotionClass, LocomotionClass::CLSIDs::Rocket);
+	REGISTER_CLASS(TunnelLocomotionClass, CLSID_TunnelLocomotion);
+	REGISTER_CLASS(WalkLocomotionClass, CLSID_WalkLocomotion);
+	REGISTER_CLASS(DropPodLocomotionClass, CLSID_BallisticLocomotion);
+	REGISTER_CLASS(FlyLocomotionClass, CLSID_FlyerLocomotion);
+	REGISTER_CLASS(TeleportLocomotionClass, CLSID_TeleportLocomotion);
+	REGISTER_CLASS(MechLocomotionClass, CLSID_MechLocomotion);
+	REGISTER_CLASS(ShipLocomotionClass, CLSID_ShipLocomotion);
+	REGISTER_CLASS(BulletClass, CLSID_BulletClass);
+	REGISTER_CLASS(FactoryClass, CLSID_FactoryClass);
+	REGISTER_CLASS(WarheadTypeClass, CLSID_WarheadTypeClass);
+	REGISTER_CLASS(WeaponTypeClass, CLSID_WeaponTypeClass);
+	REGISTER_CLASS(ParticleClass, CLSID_ParticleClass);
+	REGISTER_CLASS(ParticleTypeClass, CLSID_ParticleTypeClass);
+	REGISTER_CLASS(ParticleSystemClass, CLSID_ParticleSystemClass);
+	REGISTER_CLASS(ParticleSystemTypeClass, CLSID_ParticleSystemTypeClass);
+	REGISTER_CLASS(AITriggerTypeClass, CLSID_AITriggerTypeClass);
+	REGISTER_CLASS(NeuronClass, CLSID_NeuronClass);
+	REGISTER_CLASS(FoggedObjectClass, CLSID_FoggedObjectClass);
+	REGISTER_CLASS(AlphaShapeClass, CLSID_AlphaShapeClass);
+
+	RegisterActiveObject((IUnknown *)&ApplicationInstance, CLSID_TiberianSun, ACTIVEOBJECT_WEAK, &DAT_00B0BCEC);
+
+	if (failed) {
+		FUN_00734FE0(NULL, START_TEXT("TXT_PREPARECOM_FAILED", 0x652), START_TEXT("TXT_SHORT_TITLE", 0x652), MB_ICONEXCLAMATION);
+	}
+
+	return(failed);
+}
+
+static void Read_Setup_Options(RawFileClass *config_file)
+{
+	INI_RA2MD.ReadCCFile(*config_file, false, false);
+	Game::bVideoBackBuffer = INI_RA2MD.Get_Bool("Video", "VideoBackBuffer", true);
+	Debug_IngameModeChange = INI_RA2MD.Get_Bool("Video", "AllowModeToggle", false);
+	Options.ScreenWidth = INI_RA2MD.Get_Int("Video", "ScreenWidth", Options.ScreenWidth);
+	Options.ScreenHeight = INI_RA2MD.Get_Int("Video", "ScreenHeight", Options.ScreenHeight);
+	int socket = INI_RA2MD.Get_Int("Network", "Socket", 0);
+	if (socket > 0) {
+		socket += 0x4000;
+		if (socket >= 0x4000 && socket < 0x8000) {
+			Ipx.Set_Socket(socket);
+		}
+	}
+	char netbuf[INIClass::MAX_LINE_LENGTH];
+	memset(netbuf, 0, sizeof(netbuf));
+	char *netptr = netbuf;
+	bool found = INI_RA2MD.Get_String("Network", "DestNet", 0, netptr, sizeof(netbuf)) != 0;
+	if (found && netptr && strlen(netptr)) {
+		NetNumType net;
+		NetNodeType node;
+		int i = 0;
+		char *p = strtok(netptr, ".");
+		int x;
+		while (p) {
+			sscanf(p, "%x", &x);
+			if (i < 4) {
+				net[i] = (char)x;
+			} else {
+				node[i - 4] = (char)x;
+			}
+			i++;
+			p = strtok(NULL, ".");
+		}
+		if (i >= 4) {
+			Session.IsBridge = 1;
+			memset(node, 0xff, 6);
+			Session.BridgeNet = IPXAddressClass(net, node, 0);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006BB9A0
+int CALLBACK WinMain(HINSTANCE instance, HINSTANCE, char *command_line, int command_show)
+{
+	int argc;
+	char *argv[20];
+	char path_to_exe[132];
+	wchar_t buffer[512];
+	ProgramInstance = instance;
+	MainThread = (HANDLE)GetCurrentThreadId();
+	FUN_004068E0("%d-%d\n", 1660, sizeof(CrateData));
+	FUN_004068E0("%d-%d\n", 1661, sizeof(CrateShares));
+	FUN_004068E0("%d-%d\n", 1662, sizeof(CrateAnims));
+	FUN_004068E0("%d-%d\n", 1663, sizeof(Powerups::Naval));
+	FUN_004068E0("%d-%d\n", 1664, sizeof(Tactical));
+	FUN_004068E0("%d-%d\n", 1665, sizeof(AircraftClass));
+	FUN_004068E0("%d-%d\n", 1666, sizeof(AircraftTypeClass));
+	FUN_004068E0("%d-%d\n", 1667, sizeof(AITriggerTypeClass));
+	FUN_004068E0("%d-%d\n", 1668, sizeof(AnimClass));
+	FUN_004068E0("%d-%d\n", 1669, sizeof(AnimTypeClass));
+	FUN_004068E0("%d-%d\n", 1670, sizeof(BaseClass));
+	FUN_004068E0("%d-%d\n", 1671, sizeof(BuildingClass));
+	FUN_004068E0("%d-%d\n", 1672, sizeof(BuildingTypeClass));
+	FUN_004068E0("%d-%d\n", 1673, sizeof(BulletClass));
+	FUN_004068E0("%d-%d\n", 1674, sizeof(BulletTypeClass));
+	FUN_004068E0("%d-%d\n", 1675, sizeof(CellClass));
+	FUN_004068E0("%d-%d\n", 1676, sizeof(FactoryClass));
+	FUN_004068E0("%d-%d\n", 1677, sizeof(HouseClass));
+	FUN_004068E0("%d-%d\n", 1678, sizeof(HouseTypeClass));
+	FUN_004068E0("%d-%d\n", 1679, sizeof(InfantryClass));
+	FUN_004068E0("%d-%d\n", 1680, sizeof(InfantryTypeClass));
+	FUN_004068E0("%d-%d\n", 1681, sizeof(LayerClass));
+	FUN_004068E0("%d-%d\n", 1682, sizeof(MouseClass));
+	FUN_004068E0("%d-%d\n", 1683, sizeof(Tactical));
+	FUN_004068E0("%d-%d\n", 1684, sizeof(OverlayClass));
+	FUN_004068E0("%d-%d\n", 1685, sizeof(OverlayTypeClass));
+	FUN_004068E0("%d-%d\n", 1686, sizeof(SmudgeClass));
+	FUN_004068E0("%d-%d\n", 1687, sizeof(SmudgeTypeClass));
+	FUN_004068E0("%d-%d\n", 1688, sizeof(TaskForceClass));
+	FUN_004068E0("%d-%d\n", 1689, sizeof(TeamClass));
+	FUN_004068E0("%d-%d\n", 1690, sizeof(TeamTypeClass));
+	FUN_004068E0("%d-%d\n", 1691, sizeof(TerrainClass));
+	FUN_004068E0("%d-%d\n", 1692, sizeof(TerrainTypeClass));
+	FUN_004068E0("%d-%d\n", 1693, sizeof(TriggerClass));
+	FUN_004068E0("%d-%d\n", 1694, sizeof(TriggerTypeClass));
+	FUN_004068E0("%d-%d\n", 1695, sizeof(TagTypeClass));
+	FUN_004068E0("%d-%d\n", 1696, sizeof(TagClass));
+	FUN_004068E0("%d-%d\n", 1697, sizeof(UnitClass));
+	FUN_004068E0("%d-%d\n", 1698, sizeof(UnitTypeClass));
+	FUN_004068E0("%d-%d\n", 1699, sizeof(ScenarioClass));
+	FUN_004068E0("%d-%d\n", 1700, sizeof(SuperWeaponTypeClass));
+	FUN_004068E0("%d-%d\n", 1701, sizeof(SuperClass));
+	FUN_004068E0("%d-%d\n", 1702, sizeof(Ground));
+	FUN_004068E0("%d-%d\n", 1703, sizeof(RulesClass));
+	FUN_004068E0("%d-%d\n", 1704, sizeof(MissionControl));
+	FUN_004068E0("%d-%d\n", 1705, 1);
+	FUN_004068E0("%d-%d\n", 1706, sizeof(TechnoClass));
+	FUN_004068E0("%d-%d\n", 1707, sizeof(RadioClass));
+	FUN_004068E0("%d-%d\n", 1708, sizeof(MissionClass));
+	FUN_004068E0("%d-%d\n", 1709, 8);
+	FUN_004068E0("%d-%d\n", 1710, sizeof(StageClass));
+	FUN_004068E0("%d-%d\n", 1711, 4);
+	FUN_004068E0("%d-%d\n", 1712, 8);
+	FUN_004068E0("%d-%d\n", 1713, sizeof(StorageClass));
+	FUN_004068E0("%d-%d\n", 1714, sizeof(DelayTimerClass));
+	FUN_004068E0("%d-%d\n", 1715, sizeof(FacingClass));
+	if (!CopyProtection::IsLauncherRunning()) {
+		FUN_004068E0("Launcher not running....Bail!\n");
+		return(EXIT_SUCCESS);
+	}
+	Unsorted::AppMutex = ::CreateMutex(NULL, FALSE, "29e3bb2a-2f36-11d3-a72c-0090272fa661");
+	if (::GetLastError() == ERROR_ALREADY_EXISTS) {
+		HWND main_wnd = ::FindWindow("29e3bb2a-2f36-11d3-a72c-0090272fa661", NULL);
+		if (main_wnd != NULL) {
+			::SetForegroundWindow(main_wnd);
+			::ShowWindow(main_wnd, SW_RESTORE);
+		}
+		if (Unsorted::AppMutex != NULL) {
+			CloseHandle(Unsorted::AppMutex);
+			Unsorted::AppMutex = NULL;
+		}
+		FUN_004068E0("TibSun is already running...Bail!\n");
+		return(EXIT_SUCCESS);
+	} else {
+		FUN_004068E0("Create AppMutex okay.\n");
+		do {
+			DAT_00B0BCE8 = ::OpenMutex(MUTEX_ALL_ACCESS, FALSE, "01AF9993-3492-11d3-8F6F-0060089C05B1");
+			if (DAT_00B0BCE8 != NULL) {
+				FUN_004068E0("Waiting for Autoplay to quit!\n");
+				if (::WaitForSingleObject(DAT_00B0BCE8, 30000) == WAIT_FAILED) {
+					FUN_004068E0("Failed waiting for AutoPlayMutex\n");
+					::CloseHandle(DAT_00B0BCE8);
+					DAT_00B0BCE8 = NULL;
+				}
+			}
+			if (DAT_00B0BCE8 == NULL) {
+				DAT_00B0BCE8 = CreateMutex(NULL, FALSE, "01AF9993-3492-11d3-8F6F-0060089C05B1");
+				if (GetLastError() == ERROR_ALREADY_EXISTS) {
+					CloseHandle(DAT_00B0BCE8);
+					DAT_00B0BCE8 = NULL;
+					Sleep(2500);
+				} else {
+					FUN_004068E0("Create AutoPlayMutex.\n");
+				}
+			}
+		} while (DAT_00B0BCE8 == NULL);
+		FUN_004068E0("Got AutoPlayMutex okay.\n");
+	}
+	_controlfp(_RC_CHOP, MCW_RC);
+	set_control_word();
+	GetModuleFileName(instance, &path_to_exe[0], sizeof(path_to_exe));
+	argc = 1;
+	argv[0] = &path_to_exe[0];
+	char *token = strtok(command_line, " ");
+	while (argc < ARRAY_SIZE(argv) && token != NULL) {
+		argv[argc++] = strtrim(token);
+		token = strtok(NULL, " ");
+	}
+	char drive[_MAX_DRIVE];
+	char path[_MAX_PATH];
+	char dir[_MAX_DIR];
+	_splitpath(argv[0], drive, dir, NULL, NULL);
+	_makepath(path, drive, dir, NULL, NULL);
+	SetCurrentDirectory(path);
+	int retval = EXIT_FAILURE;
+	if (Parse_Command_Line(argc, argv)) {
+		HRESULT result;
+		RawFileClass *cfile = new RawFileClass("RA2MD.INI");
+		Read_Setup_Options(cfile);
+		Keyboard = new KeyboardClass();
+		if (Disk_Space_Available() < INIT_FREE_DISK_SPACE) {
+			swprintf(buffer, START_TEXT("TXT_CRITICALLY_LOW", 0x78b), INIT_FREE_DISK_SPACE / (1024 * 1024));
+			int reply = FUN_00734FE0(NULL, buffer, START_TEXT("TXT_SHORT_TITLE", 0x78c), MB_ICONQUESTION | MB_YESNO);
+			if (reply == IDNO) {
+				OleUninitialize();
+				return(EXIT_FAILURE);
+			}
+		}
+		OleInitialize(NULL);
+		if (RegisterClasses()) {
+			exit(EXIT_FAILURE);
+		}
+		FUN_004068E0("Init Encryption Keys.\n");
+		Init_Keys();
+		DiskID cur_cd = CD::Get_Required_Disk();
+		CD::Set_Required_Disk(DISK_LOCAL);
+		DAT_00884E04 = new MixFileClass("LANGMD.MIX", &FastKey);
+		DAT_00884E00 = new MixFileClass("LANGUAGE.MIX", &FastKey);
+		CD::Set_Required_Disk(cur_cd);
+		atexit(Prog_End);
+		FUN_007B84F0();
+		if (!StringTable::LoadFile("ra2md.str")) {
+			MessageBoxA(NULL, "Unable to initialize 'ra2.csf', please reinstall Red Alert.\nKeine Initialisierung von 'ra2.csf' m\xf6glich. Bitte installieren Sie Red Alert erneut.\nInitialisation de 'ra2.csf' impossible. Veuillez r\xe9installer Red Alert.", "Red Alert 2", MB_ICONERROR);
+			return(EXIT_SUCCESS);
+		}
+		if (!Init_Language_Resources(true)) {
+			return(EXIT_SUCCESS);
+		}
+		if (!GetSystemMetrics(SM_MOUSEPRESENT) || !GetSystemMetrics(SM_CMOUSEBUTTONS)) {
+			FUN_00734FE0(NULL, START_TEXT("TXT_MOUSE_REQUIRED", 0x7cf), START_TEXT("TXT_SHORT_TITLE", 0x7cf), MB_ICONERROR);
+			exit(EXIT_FAILURE);
+		}
+		if (GetDllVersion("comctl32.dll") < PACKVERSION(4, 70)) {
+			swprintf(buffer, START_TEXT("TXT_DLL_INVALID", 0x7d9), "comctl32.dll", 4, 70, "comctl32.dll");
+			FUN_00734FE0(NULL, buffer, START_TEXT("TXT_SHORT_TITLE", 0x7da), MB_ICONERROR);
+			exit(EXIT_FAILURE);
+		}
+		RegisterActiveObject((IUnknown *)&Map, CLSID_TiberianSun, ACTIVEOBJECT_WEAK, &dwRegisterMap);
+		if (Options.ScreenWidth == -1 || Options.ScreenHeight == -1) {
+			if (WinVersion.Is_WinNTx() || GetVideoMemory() > 0x200000) {
+				Options.ScreenWidth = 800;
+				Options.ScreenHeight = 600;
+			} else {
+				Options.ScreenWidth = 640;
+				Options.ScreenHeight = 480;
+			}
+		}
+		BOOL video_success = FALSE;
+		if (Debug_IngameModeChange) {
+			Create_Main_Window(instance, command_show, 640, 480);
+			Prep_Direct_Draw();
+			if (WindowedMode) {
+				Rect rect(0, 0, 640, 480);
+				VisibleRect = rect;
+				VideoModeWidth = VisibleRect.Width;
+				VideoModeHeight = VisibleRect.Height;
+				VideoModeBitsPerPixel = HicolorFlag ? 16 : 8;
+			} else {
+				video_success = Set_Video_Mode(MainWindow, 640, 480, HicolorFlag ? 16 : 8);
+				Rect rect(0, 0, 640, 480);
+				VisibleRect = rect;
+				if (!video_success) {
+					Destroy_Direct_Draw();
+					FUN_00734FE0(MainWindow, START_TEXT("TXT_VIDEO_ERROR", 0x86f), START_TEXT("TXT_SHORT_TITLE", 0x870), MB_ICONWARNING);
+					exit(EXIT_FAILURE);
+				}
+			}
+		} else {
+			Create_Main_Window(instance, command_show, Options.ShellWidth, Options.ShellHeight);
+			Prep_Direct_Draw();
+			if (WindowedMode) {
+				Rect rect(0, 0, Options.ShellWidth, Options.ShellHeight);
+				VisibleRect = rect;
+				VideoModeWidth = Options.ShellWidth;
+				VideoModeHeight = Options.ShellHeight;
+				VideoModeBitsPerPixel = HicolorFlag ? 16 : 8;
+			} else {
+				video_success = Set_Video_Mode(MainWindow, Options.ShellWidth, Options.ShellHeight, HicolorFlag ? 16 : 8);
+				Rect rect(0, 0, Options.ShellWidth, Options.ShellHeight);
+				VisibleRect = rect;
+				if (!video_success) {
+					if (Options.ScreenWidth != 640 || Options.ScreenHeight != 480) {
+						Options.ScreenWidth = 640;
+						Options.ScreenHeight = 480;
+						video_success = Set_Video_Mode(MainWindow, Options.ScreenWidth, Options.ScreenHeight, HicolorFlag ? 16 : 8);
+						Rect rect(0, 0, Options.ScreenWidth, Options.ScreenHeight);
+						VisibleRect = rect;
+					}
+					if (!video_success) {
+						Destroy_Direct_Draw();
+						FUN_00734FE0(MainWindow, START_TEXT("TXT_VIDEO_ERROR", 0x8a7), START_TEXT("TXT_SHORT_TITLE", 0x8a8), MB_ICONWARNING);
+						exit(EXIT_FAILURE);
+					}
+				}
+			}
+		}
+		if (DAT_00A8F784 && FUN_0053DE00(1000, 102400)) {
+			if (DAT_00A8F784 == 1) {
+				FUN_0053E4F0("session.ipb");
+			} else if (DAT_00A8F784 == 2) {
+				FUN_0053E550("session.ipb");
+			}
+		}
+		int bpp;
+		{
+			DSurface *primary_surface = DSurface::Create_Primary();
+			VisibleSurface = primary_surface;
+			bpp = primary_surface->Bytes_Per_Pixel();
+		}
+		HicolorFlag = bpp == 2;
+		if (!HicolorFlag) {
+			FUN_00734FE0(MainWindow, START_TEXT("TXT_INVALIDMODE", 0x8c5), START_TEXT("TXT_SHORT_TITLE", 0x8c5), MB_ICONEXCLAMATION);
+			Emergency_Exit();
+		}
+		for (;;) {
+			Windows_Message_Handler();
+			if (GameInFocus) {
+				break;
+			}
+		}
+		if (!CopyProtection::NotifyLauncher()) {
+			FUN_004068E0("Failed to notify launcher\n");
+			exit(EXIT_FAILURE);
+		}
+		for (;;) {
+			Windows_Message_Handler();
+			if (GameInFocus) {
+				break;
+			}
+		}
+		SurfacesRestored = false;
+		if (!WindowedMode) {
+			VisibleSurface->Fill(0);
+		}
+		FUN_005BC180(ProgramInstance, MainWindow, WindowedMode);
+		FUN_00637070();
+		FUN_0052CB80();
+		if (DirectDrawWrap::DoSmth) {
+			if ((result = FUN_004C1600()) != DD_OK) {
+				FUN_004C19B0();
+				DirectDrawWrap::DoSmth = false;
+				Game::bDirect3DIsUseable = false;
+			}
+		} else {
+			Game::bDirect3DIsUseable = false;
+		}
+		{
+			Allocate_Surfaces(VisibleRect,
+				Rect(0, 0, VisibleRect.Width - SidebarWidth, VisibleRect.Height),
+				Rect(0, 0, VisibleRect.Width - SidebarWidth, VisibleRect.Height),
+				Rect(0, 0, SidebarWidth, VisibleRect.Height), false);
+			if (DirectDrawWrap::DoSmth && (result = FUN_004C16A0()) != DD_OK) {
+				FUN_004C19B0();
+				DirectDrawWrap::DoSmth = false;
+				Game::bDirect3DIsUseable = false;
+			}
+			LogicalSurface = HiddenSurface;
+			Update_Visible_Surface(true, HiddenSurface);
+			ZBuffer *depth_buffer = DepthBuffer = new ZBuffer(Rect(TacticalRect.X, TacticalRect.Y, 480, 480 - TacticalRect.Y));
+			depth_buffer->Set_Scroll(ZBUFFER_MAX);
+		}
+		AlphaBuffer = new ABuffer(Rect(TacticalRect.X, TacticalRect.Y, 480, 480 - TacticalRect.Y));
+		MouseCursor = new WWMouseClass(static_cast<DSurface *>(VisibleSurface), MainWindow);
+		Hide_Mouse();
+		CDFileClass::Set_CD_Drive(CDList.Get_First_CD_Drive());
+		FUN_005355D0();
+		Special.IsFromInstall = INI_RA2MD.Get_Bool("Intro", "Play", true);
+		WOLOptionsClass wolopt;
+		if (!wolopt.Is_Bit0_Clear() && !wolopt.Is_Bit2_Clear() && !wolopt.Is_Bit1_Clear()) {
+			Special.Bit3 = true;
+		}
+		if (Special.IsFromInstall == true) {
+			INI_RA2MD.Put_Bool("Intro", "Play", false);
+			cfile->Close();
+			cfile->Open();
+			INI_RA2MD.Save(*cfile, false);
+		}
+		cfile->Close();
+		delete cfile;
+		if (NoExceptionHandler) {
+			Main_Game(argc, argv);
+		} else {
+			__try {
+				FUN_004068E0("Main_Game\n");
+				Main_Game(argc, argv);
+			} __except(Exception_Handler(GetExceptionCode(), GetExceptionInformation())) {}
+			SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&Top_Level_Exception_Filter);
+		}
+		Hide_Mouse();
+		HiddenSurface->Fill(0);
+		Update_Visible_Surface(true, HiddenSurface);
+		ReadyToQuit = 1;
+		Theme.Free_Themes();
+		Audio_Shutdown();
+		PostMessage(MainWindow, WM_DESTROY, 0, 0);
+		do { Windows_Message_Handler(); } while (ReadyToQuit == 1);
+		retval = EXIT_SUCCESS;
+	}
+	Free_Game_Modes();
+	RadarEventClass::Clear();
+	Map.TabClass::DisposeOfArt();
+	SchemeLibrary_Destroy();
+	FUN_005BC300();
+	FUN_005F77F0();
+	FUN_0060D440();
+	FUN_006370A0();
+	FUN_0072AC40();
+	FUN_00730970();
+	LoadProgressManager::Destroy();
+	Free_Mouse_Shapes();
+	Net2Shutdown_Network();
+	if (dwRegisterMap != -1) {
+		RevokeActiveObject(dwRegisterMap, NULL);
+		dwRegisterMap = -1;
+	}
+	CoDisconnectObject((LPUNKNOWN)&ApplicationInstance, 0);
+	OleUninitialize();
+	return(retval);
+}
 
 // FUNCTION: GAMEMD 0x006BE1C0
 void __cdecl Prog_End(void)
