@@ -806,7 +806,7 @@ void __fastcall FUN_00543080(IPXManagerClass * ipx);
 void __fastcall FUN_00543090(IPXManagerClass * ipx);
 void Windows_Message_Handler(void);
 bool __fastcall Process_Global_Packet(GlobalPacketType * packet, IPXAddressClass * address);
-unsigned int __fastcall FUN_005DAC00(wchar_t const * name);
+unsigned int __fastcall Compute_Name_CRC_W(wchar_t * name);
 void __cdecl PMessagePrintf(int color, wchar_t const * text, ...);
 
 namespace UI {
@@ -1002,7 +1002,7 @@ void CampaignScoreClass::Show(DynamicVectorClass<MPlayerScoreType *> list, int a
 				DAT_0089E04C = true;
 				break;
 			} else if (Session.GPacket.Command == NET_MESSAGE) {
-				if (Session.GPacket.Message.NameCRC == FUN_005DAC00(Session.GameName)) {
+				if (Session.GPacket.Message.NameCRC == Compute_Name_CRC_W(Session.GameName)) {
 					PMessagePrintf(Session.GPacket.Message.Color, L"[%s] %s", FUN_00735120(Session.GPacket.Name), Session.GPacket.Message.Buf);
 				}
 				continue;

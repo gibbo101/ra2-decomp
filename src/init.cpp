@@ -2782,7 +2782,7 @@ void FUN_00734120(void);
 BuildingClass * FUN_007342A0(void);
 BuildingClass * FUN_007342B0(void);
 void __fastcall FUN_00752B70(unsigned char code);
-unsigned int __fastcall FUN_005DAC00(wchar_t const * name);
+unsigned int __fastcall Compute_Name_CRC_W(wchar_t * name);
 extern int DAT_00825C88;
 namespace Unsorted { extern int MuteSWLaunches; }
 
@@ -3072,7 +3072,7 @@ class TauntCommandClass : public CommandClass
 							packet.Command = NetCommandType(0x1D);
 							strcpy(packet.Name, FUN_007350C0(Session.Players[0]->Name));
 							packet.Taunt.Color = Session.PrefColor;
-							packet.Taunt.NameCRC = FUN_005DAC00(Session.GameName);
+							packet.Taunt.NameCRC = Compute_Name_CRC_W(Session.GameName);
 							unsigned char house = Session.Players[0]->Player.House << 4;
 							packet.Taunt.ID = house ^ ((house ^ Team) & 0x0F);
 							FUN_00752B70(packet.Taunt.ID);

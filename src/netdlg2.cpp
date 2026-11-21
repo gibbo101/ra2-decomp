@@ -106,7 +106,7 @@ void FUN_005E8AE0(void);
 
 void __fastcall FUN_005E3010(HWND window, int init);
 
-unsigned int __fastcall FUN_005DAC00(wchar_t const * name);
+unsigned int __fastcall Compute_Name_CRC_W(wchar_t * name);
 extern wchar_t const DAT_00887734[];
 
 bool __fastcall FUN_006951F0(char const * name, unsigned int length, char const * digest, bool official, bool flag);
@@ -1587,7 +1587,7 @@ void __fastcall FUN_005DE360(HWND window, int printcolor, int color)
 		strcpy(gpacket.Name, Session.Handle);
 		wcscpy((wchar_t *)gpacket.Message.Buf, text);
 		gpacket.Message.Color = color;
-		gpacket.Message.NameCRC = FUN_005DAC00(Session.GameName);
+		gpacket.Message.NameCRC = Compute_Name_CRC_W(Session.GameName);
 
 		if (JoinState == JOIN_CONFIRMED) {
 			int count = Session.Players.Count();
@@ -2262,7 +2262,7 @@ bool Process_Global_Packet(GlobalPacketType * packet, IPXAddressClass * address)
 		strcpy(mypacket.Serial, DAT_00ABFF7C);
 		mypacket.PlayerInfo.House = Session.FUN_0069B700();
 		mypacket.PlayerInfo.Color = Session.FUN_0069B720();
-		mypacket.PlayerInfo.NameCRC = FUN_005DAC00(Session.GameName);
+		mypacket.PlayerInfo.NameCRC = Compute_Name_CRC_W(Session.GameName);
 		mypacket.PlayerInfo.Slot = Session.LocalSlot;
 		mypacket.PlayerInfo.Flag = Session.LocalSlot == DAT_008316A4;
 
@@ -2410,7 +2410,7 @@ static void Get_Join_Responses(void)
 				}
 			}
 
-			if (Session.Games.Count() && Session.GPacket.PlayerInfo.NameCRC != FUN_005DAC00(Session.GameName)) {
+			if (Session.Games.Count() && Session.GPacket.PlayerInfo.NameCRC != Compute_Name_CRC_W(Session.GameName)) {
 				found = 1;
 			}
 
@@ -2809,7 +2809,7 @@ static void Get_Join_Responses(void)
 		if (Session.GPacket.Command == NET_MESSAGE) {
 			int color = Session.GPacket.Message.Color;
 			if (JoinState == JOIN_CONFIRMED) {
-				if (Session.GPacket.Message.NameCRC == FUN_005DAC00(Session.GameName)) {
+				if (Session.GPacket.Message.NameCRC == Compute_Name_CRC_W(Session.GameName)) {
 					PMessagePrintf(color, L"[%s] %s", FUN_00735120(Session.GPacket.Name), Session.GPacket.Message.Buf);
 					VocClass::PlayGlobal(Rule->IncomingMessage, 1.0f, 0x2000);
 				}
