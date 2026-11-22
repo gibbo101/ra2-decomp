@@ -988,3 +988,5 @@ address,name,symbol,evidence
 0x00B444A0,LightTiltVectors,?LightTiltVectors@@3PAVVector3@@A,Apply_Light_Transform at 0x00755B30 + 0x21.
 0x00B450B8,BounceMatrices,?BounceMatrices@@3PAVMatrix3D@@A,Get_Bounce_Matrix at 0x00755C60 + 0x14.
 0x00B45188,SlopeMatrices,?SlopeMatrices@@3PAVMatrix3D@@A,Get_Slope_Matrix at 0x007559B0 + 0xC; Get_Slope_Transition_Matrix at 0x00755A40 + 0x61.
+0x004C5EC0,GDI_Ending,?GDI_Ending@@YIXXZ,"TibSun ending.cpp defines GDI_Ending then Nod_Ending with bodies disabled by NEVER; the two one-byte RETs follow the final EMPulse template at0x004C5E70 and precede Enviro at0x004C5EE0, preserving alphabetical translation-unit and archive definition order."
+0x004C5ED0,Nod_Ending,?Nod_Ending@@YIXXZ,"TibSun ending.cpp defines GDI_Ending then Nod_Ending with bodies disabled by NEVER; the two one-byte RETs follow the final EMPulse template at0x004C5E70 and precede Enviro at0x004C5EE0, preserving alphabetical translation-unit and archive definition order."
