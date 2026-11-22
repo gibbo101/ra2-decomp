@@ -7502,6 +7502,7 @@ address,size,symbol,source,sha256
 0x005414C0,293,?Send_Private_Message@IPXManagerClass@@UAEHPAXHHH@Z,src/ipxmgr.cpp,732070509bb18fd43f4246fba4e15574359bbf6c63105f8eaf9e89d33d672f6a
 0x005415F0,142,?Get_Private_Message@IPXManagerClass@@UAEHPAXPAH1@Z,src/ipxmgr.cpp,62886c8d4828a913d9e293a2fd2fc477e558b2491d8ef2c60b82e87667461556
 0x00541680,409,?FUN_00541680@IPXManagerClass@@QAE_NPAUCommHeaderType@@PAXHPADG@Z,src/ipxmgr.cpp,035ab4cabd4209f1bee604becdcfaca987ddb8255c622323640bda7d5df22a0e
+0x00541820,2655,?Service@IPXManagerClass@@UAEHXZ,src/ipxmgr.cpp,ad4d36e93d4b528b35eddbc533cd3478a00aa62a9f13de0c7bb3e1c5234e5dd0
 0x00542280,56,?Set_Connection_Address@IPXManagerClass@@QAEXHPAVIPXAddressClass@@@Z,src/ipxmgr.cpp,bb4565071ade8905b469d771bad43f6e19abd05b3e4ce16cac06e1b736967bf3
 0x005422C0,7,?Get_Bad_Connection@IPXManagerClass@@QAEHXZ,src/ipxmgr.cpp,f6b26cb443aaca248e1546e060cb09a24281ed129e2a12aa060e0f4d637f279e
 0x005422D0,27,?Global_Num_Send@IPXManagerClass@@UAEHXZ,src/ipxmgr.cpp,d6f638e84c8b8ea1401aa5e07c2dfdced3209a113b4fb2f1f524ed18390768b2

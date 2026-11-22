@@ -7146,6 +7146,7 @@ address,name,result,size,source,symbol
 0x005414C0,IPXManagerClass::Send_Private_Message,MATCH,293,src/ipxmgr.cpp,?Send_Private_Message@IPXManagerClass@@UAEHPAXHHH@Z
 0x005415F0,IPXManagerClass::Get_Private_Message,MATCH,142,src/ipxmgr.cpp,?Get_Private_Message@IPXManagerClass@@UAEHPAXPAH1@Z
 0x00541680,IPXManagerClass::FUN_00541680,MATCH,409,src/ipxmgr.cpp,?FUN_00541680@IPXManagerClass@@QAE_NPAUCommHeaderType@@PAXHPADG@Z
+0x00541820,IPXManagerClass::Service,MATCH,2655,src/ipxmgr.cpp,?Service@IPXManagerClass@@UAEHXZ
 0x00542280,IPXManagerClass::Set_Connection_Address,MATCH,56,src/ipxmgr.cpp,?Set_Connection_Address@IPXManagerClass@@QAEXHPAVIPXAddressClass@@@Z
 0x005422C0,IPXManagerClass::Get_Bad_Connection,MATCH,7,src/ipxmgr.cpp,?Get_Bad_Connection@IPXManagerClass@@QAEHXZ
 0x005422D0,IPXManagerClass::Global_Num_Send,MATCH,27,src/ipxmgr.cpp,?Global_Num_Send@IPXManagerClass@@UAEHXZ
