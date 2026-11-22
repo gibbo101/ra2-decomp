@@ -5833,6 +5833,216 @@ int __fastcall FUN_006149B0(HWND window, wchar_t *out, int size, int *cursor)
 	return wcslen(out);
 }
 
+extern int DAT_00AC48C8;
+namespace OwnerDraw { wchar_t ConvertIMECharToWide(WPARAM, LPARAM); }
+
+// FUNCTION: GAMEMD 0x00614B30
+LRESULT CALLBACK OwnerDraw::NewEditHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	WNDPROC proc = NULL;
+	int changed = 0;
+	int handled = 0;
+	if (message == WM_GETDLGCODE) {
+		return DLGC_WANTALLKEYS;
+	}
+	DialogProcs.getValue(window, proc);
+	WinData *data = NULL;
+	Dialogs.getPointer(window, &data);
+	HWND parent = GetParent(window);
+
+	if ((message == WM_KEYUP || message == WM_KEYDOWN) && wparam == VK_TAB) {
+		if (message == WM_KEYDOWN) {
+			bool shift = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+			SendMessage(parent, WM_USER + 219, shift, (LPARAM)window);
+		}
+		return 0;
+	}
+	if (message == OD_SUBCLASSED) {
+		RECT window_rect;
+		GetWindowRect(window, &window_rect);
+		RECT client_rect;
+		GetClientRect(window, &client_rect);
+		RECT parent_rect;
+		GetWindowRect(parent, &parent_rect);
+		SetWindowPos(window, NULL, window_rect.left - parent_rect.left + 1,
+		window_rect.top - parent_rect.top + 1, client_rect.right - 2,
+		client_rect.bottom - 2, SWP_SHOWWINDOW);
+		return 0;
+	} else if (message == EM_LIMITTEXT) {
+		data->Wide.textLimit = wparam;
+		if (wparam) {
+			data->Wide.editText->truncate(wparam);
+		}
+	} else if (message == WM_USER + 181 || message == WM_USER + 179 || message == WM_GETTEXTLENGTH) {
+		if (message == WM_GETTEXTLENGTH) {
+			return data->Wide.editText->length();
+		}
+		WideWstring *query_text = data->Wide.editText;
+		if (message == WM_USER + 179) {
+			wcsncpy((wchar_t *)lparam, query_text->get(), wparam);
+			((wchar_t *)lparam)[wparam - 1] = 0;
+			return wcslen((wchar_t *)lparam);
+		}
+		WideToCharString((char *)lparam, query_text->get(), wparam);
+		((char *)lparam)[wparam - 1] = 0;
+		return strlen((char *)lparam);
+	} else {
+		if (message == WM_USER + 180 || message == WM_USER + 178) {
+			data->Wide.editText->clear();
+			data->Wide.caretIndex = 0;
+			data->Wide.scrollStart = 0;
+			if (data->Wide.text != NULL) {
+				data->Wide.editText->set(data->Wide.text);
+			}
+			if (data->Wide.textLimit) {
+				data->Wide.editText->truncate((unsigned int)data->Wide.textLimit);
+			}
+			data->Wide.caretIndex = data->Wide.editText->length();
+		}
+		if (message == WM_KEYDOWN) {
+			if (wparam == VK_RETURN) {
+				SendMessage(parent, WM_USER + 218, 0, (LPARAM)window);
+				if (data->Wide.styleFlags & ES_MULTILINE) {
+					*data->Wide.editText += L"\r\n";
+					WPARAM command = (unsigned short)GetWindowLong(window, GWL_ID) | 0x5010000;
+					SendMessage(parent, WM_COMMAND, command, (LPARAM)window);
+				}
+				return 0;
+			}
+		} else if (message == WM_SETFOCUS) {
+			data->Wide.caretBlink = 0;
+			SetTimer(window, 0, 1000, NULL);
+		} else if (message == WM_KILLFOCUS) {
+			KillTimer(window, 0);
+		} else if (message == WM_TIMER) {
+			data->Wide.caretBlink ^= 1;
+			InvalidateRect(window, NULL, FALSE);
+		} else {
+			if (message == WM_PAINT || message == WM_ERASEBKGND) {
+				RECT display_rect;
+				Get_Display_Rect(window, &display_rect);
+				char paint_class[80];
+				GetClassName(parent, paint_class, sizeof(paint_class));
+				bool is_combo = strcmp(paint_class, "ComboBox") == 0;
+				RECT update_rect;
+				if (message == WM_PAINT && GetUpdateRect(window, &update_rect, FALSE)) {
+					update_rect.left += display_rect.left;
+					update_rect.right += display_rect.left;
+					update_rect.top += display_rect.top;
+					update_rect.bottom += display_rect.top;
+				}
+				Rect draw_rect;
+				draw_rect.X = display_rect.left;
+				draw_rect.Y = display_rect.top;
+				draw_rect.Width = display_rect.right - display_rect.left + 1;
+				draw_rect.Height = display_rect.bottom - display_rect.top + 1;
+				CopyDimmedBackground(draw_rect, window, data->Edit.alpha);
+				if (!is_combo) {
+					DrawBeveledBorder(*AlternateSurface, draw_rect, 2, -1);
+				}
+				display_rect.left += 2;
+				Rect text_rect;
+				text_rect.X = display_rect.left;
+				text_rect.Y = display_rect.top;
+				text_rect.Width = display_rect.right - display_rect.left + 1;
+				text_rect.Height = display_rect.bottom - display_rect.top + 1;
+				DAT_00AC48C8 = data->Wide.caretBlink;
+				FUN_00623880(AlternateSurface, &text_rect, data->Wide.editText->get(),
+				data->Wide.caretIndex, data->Wide.font, PrimaryTextColor,
+				&data->Wide.scrollStart, data->Wide.hasFocus,
+				(data->Wide.styleFlags & ES_PASSWORD) != 0, 0, 0);
+				ValidateRect(window, NULL);
+			}
+			if (message == WM_CONTEXTMENU) {
+				return 1;
+			}
+			if (message == WM_MOUSEMOVE) {
+				return 1;
+			}
+		}
+		if (message == WM_KEYDOWN || message == WM_SETFOCUS || message == WM_KILLFOCUS ||
+		message == WM_KEYUP || message == WM_SYSKEYDOWN || message == WM_SYSKEYUP ||
+		message == WM_SYSCHAR || message == WM_SYSDEADCHAR || message == WM_LBUTTONDOWN) {
+			char class_name[32];
+			GetClassName(parent, class_name, sizeof(class_name));
+			if (strcmp(class_name, "ComboBox") == 0) {
+				InvalidateRect(parent, NULL, FALSE);
+			}
+			InvalidateRect(window, NULL, FALSE);
+		}
+		wchar_t ch = 0;
+		if (message == WM_CHAR) {
+			if (wparam > 31) {
+				ch = (wchar_t)wparam;
+			}
+		} else if (message == WM_KEYDOWN) {
+			switch (wparam) {
+			case VK_DELETE:
+				if (data->Wide.caretIndex < (int)data->Wide.editText->length()) {
+					data->Wide.editText->remove(data->Wide.caretIndex, 1);
+					changed = 1;
+				}
+				handled = 1;
+				break;
+			case VK_BACK:
+				if (data->Wide.caretIndex > 0) {
+					data->Wide.editText->remove(--data->Wide.caretIndex, 1);
+					changed = 1;
+				}
+				handled = 1;
+				break;
+			case VK_LEFT:
+				if (data->Wide.caretIndex > 0) {
+					--data->Wide.caretIndex;
+					return 0;
+				}
+				handled = 1;
+				break;
+			case VK_RIGHT:
+				if (data->Wide.caretIndex < (int)data->Wide.editText->length()) {
+					++data->Wide.caretIndex;
+					return 0;
+				}
+				handled = 1;
+				break;
+			case VK_END:
+				data->Wide.caretIndex = data->Wide.editText->length();
+				return 0;
+			case VK_HOME:
+				data->Wide.caretIndex = 0;
+				return 0;
+			default:
+				break;
+			}
+		} else if (message == WM_IME_CHAR) {
+			ch = ConvertIMECharToWide(wparam, lparam);
+			handled = 1;
+		} else if (message == WM_USER + 217) {
+			ch = (wchar_t)wparam;
+			handled = 1;
+		}
+		if (ch) {
+			if ((!data->Wide.rejectChars || !wcschr(data->Wide.rejectChars, ch)) &&
+			(!data->Wide.textLimit || (int)data->Wide.editText->length() < data->Wide.textLimit) &&
+			ch > 31 && (!data->Wide.asciiOnly || ch < 256)) {
+				data->Wide.editText->insert(ch, data->Wide.caretIndex++);
+				changed = 1;
+			}
+			handled = 1;
+		}
+		if (changed) {
+			int id = (unsigned short)GetWindowLong(window, GWL_ID);
+			SendMessage(parent, WM_COMMAND, id | (EN_CHANGE << 16), (LPARAM)window);
+			SendMessage(parent, WM_COMMAND, id | (EN_UPDATE << 16), (LPARAM)window);
+		}
+		if (handled) {
+			return 0;
+		}
+	}
+	return CallWindowProc(proc, window, message, wparam, lparam);
+}
+
+
 // FUNCTION: GAMEMD 0x006163A0
 // OwnerDraw::CheckBoxButtonHandler
 LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
