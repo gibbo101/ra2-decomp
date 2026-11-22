@@ -355,6 +355,10 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A tie can also count inline getter reads: in 0x0073E5E0 the x87 load order followed named
   locals plus `__declspec` property reads together, so `localprobe` read flat until four
   property reads became direct field reads. Sweep both before calling a tie final.
+- A scheduling tie inside one block can follow how many instructions the block holds before
+  scheduling: k one-instruction stores at its start (diagnostic only) show the k the original
+  had. An explicit `(float)` cast of a double expression, or a float built in two named steps,
+  adds one that is gone after scheduling (0x007493B0).
 - Before writing a helper, grep src/ for its body already inlined in a matched sibling,
   and factor it into a `static inline` both call (the sibling must still match): a helper
   needs two real callers. A function "waiting on its caller" is not blocked: put the
