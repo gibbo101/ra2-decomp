@@ -70,6 +70,64 @@
 // SYNTHETIC: GAMEMD 0x00749390 SYMBOL
 // _$E47
 
+// FUNCTION: GAMEMD 0x007493B0
+VoxelAnimClass::VoxelAnimClass(VoxelAnimTypeClass const * type, Coord const & coord, HouseClass * house) :
+	BASECLASS(),
+	Class((VoxelAnimTypeClass *)type),
+	Unused1(-1),
+	AttachedParticleSys(NULL),
+	House(house),
+	IsToDie(false),
+	IsInvisible(false),
+	ECCounter(0)
+{
+	Create_ID();
+	Audio3.FUN_00405BE0();
+	Audio4.FUN_00405BE0();
+	ECCounter = Class->Duration;
+	VoxelAnims.Add(this);
+
+	Vector3 velocity;
+	if (!Class->IsMeteor) {
+		Unlimbo(coord);
+		Coord center = Center_Coord() + Coord(0, 0, 10);
+		int r1 = Scen->RandomNumber;
+		int r2 = Scen->RandomNumber;
+		int r3 = Scen->RandomNumber;
+		int r4 = Scen->RandomNumber;
+		float y = (abs(r3) % int(Class->MaxXYVel + Class->MaxXYVel)) - Class->MaxXYVel;
+
+		velocity.Set((float)((abs(r4) % int(Class->MaxXYVel + Class->MaxXYVel)) - Class->MaxXYVel),
+						 y, (float)((abs(r2) % int(Class->MaxZVel - Class->MinZVel + 1.0)) + Class->MinZVel));
+		BounceClass::Init(center, Class->Elasticity, 1.4f, 0.0, velocity, (abs(r1) % int(Class->MaxAngularVelocity - Class->MinAngularVelocity + 1.0)) + Class->MinAngularVelocity);
+
+	} else {
+		velocity.Set((abs(Scen->RandomNumber) % int(Class->MaxXYVel + Class->MaxXYVel)) - Class->MaxXYVel,
+						 (float)((abs(Scen->RandomNumber) % int(Class->MaxXYVel + Class->MaxXYVel)) - Class->MaxXYVel), Class->MinZVel);
+
+		if (velocity.X < -velocity.Y) {
+			velocity.X = -velocity.X;
+			velocity.Y = -velocity.Y;
+		}
+
+		ECCounter -= abs(Scen->RandomNumber % 20);
+		Unlimbo(Coord(coord.X - ECCounter * velocity.X, coord.Y - ECCounter * velocity.Y, coord.Z - ECCounter * velocity.Z));
+		int rnd = Scen->RandomNumber;
+		BounceClass::Init(Center_Coord(), Class->Elasticity, 1.4f, 0.0, velocity, (abs(rnd) % int(Class->MaxAngularVelocity - Class->MinAngularVelocity + 1.0)) + Class->MinAngularVelocity);
+	}
+
+	if (Class->StartSound != -1) {
+		VocClass::PlayAt(Class->StartSound, coord, &Audio3);
+	} else {
+		Audio3.EndLooping();
+	}
+	Audio4.End();
+
+	if (Class->AttachedSystem) {
+		AttachedParticleSys = new ParticleSystemClass(Class->AttachedSystem, coord, &Map[coord], this);
+	}
+}
+
 // FUNCTION: GAMEMD 0x007498D0
 VoxelAnimClass::VoxelAnimClass(void) :
 	BASECLASS(),
