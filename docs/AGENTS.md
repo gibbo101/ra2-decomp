@@ -352,6 +352,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   that closed our near misses were this (0x00585F40, 0x006ABD30, 0x00659FF0). Only locals
   that could live in a register count: a named reference, or a local whose address is
   taken (passed by `const &`), changes nothing (0x00506EF0).
+- A tie can also count inline getter reads: in 0x0073E5E0 the x87 load order followed named
+  locals plus `__declspec` property reads together, so `localprobe` read flat until four
+  property reads became direct field reads. Sweep both before calling a tie final.
 - Before writing a helper, grep src/ for its body already inlined in a matched sibling,
   and factor it into a `static inline` both call (the sibling must still match): a helper
   needs two real callers. A function "waiting on its caller" is not blocked: put the

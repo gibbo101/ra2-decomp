@@ -4167,6 +4167,8 @@ address,name,result,size,source,symbol
 0x004C5DF0,?ID@?$DynamicVectorClass@PAVEMPulseClass@@@@UAEHABQAVEMPulseClass@@@Z,MATCH,38,src/empulse.cpp,?ID@?$DynamicVectorClass@PAVEMPulseClass@@@@UAEHABQAVEMPulseClass@@@Z
 0x004C5E20,??_G?$VectorClass@PAVEMPulseClass@@@@UAEPAXI@Z,MATCH,73,src/empulse.cpp,??_G?$VectorClass@PAVEMPulseClass@@@@UAEPAXI@Z
 0x004C5E70,??_G?$DynamicVectorClass@PAVEMPulseClass@@@@UAEPAXI@Z,MATCH,73,src/empulse.cpp,??_G?$DynamicVectorClass@PAVEMPulseClass@@@@UAEPAXI@Z
+0x004C5EC0,GDI_Ending,MATCH,1,src/ending.cpp,?GDI_Ending@@YIXXZ
+0x004C5ED0,Nod_Ending,MATCH,1,src/ending.cpp,?Nod_Ending@@YIXXZ
 0x004C5EE0,_$E2,MATCH,40,src/enviro.cpp,_$E2
 0x004C5F10,_$E5,MATCH,19,src/enviro.cpp,_$E5
 0x004C5F30,_$E8,MATCH,19,src/enviro.cpp,_$E8
@@ -10653,6 +10655,7 @@ address,name,result,size,source,symbol
 0x00612910,_$E121,MATCH,23,src/ownrdraw.cpp,_$E121
 0x00612930,_$E126,MATCH,291,src/ownrdraw.cpp,_$E126
 0x00612A60,OwnerDraw::SysListViewHandler,MATCH,264,src/ownrdraw.cpp,?SysListViewHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
+0x006137D0,OwnerDraw::SysTabHandler,MATCH,2495,src/ownrdraw.cpp,?SysTabHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x00614190,OwnerDraw::EditHandler,MATCH,2075,src/ownrdraw.cpp,?EditHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x006149B0,FUN_006149B0,MATCH,373,src/ownrdraw.cpp,?FUN_006149B0@@YIHPAUHWND__@@PAGHPAH@Z
 0x00614B30,OwnerDraw::NewEditHandler,MATCH,2215,src/ownrdraw.cpp,?NewEditHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
