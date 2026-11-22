@@ -36,9 +36,15 @@ namespace OwnerDraw {
 				int caretBlink;
 				wchar_t *rejectChars;
 				int styleFlags;
-				unsigned char reserved58[0xC];
-				BitFont *font;
-			} Wide;
+				unsigned char reserved58[4];
+				int StaticLoopMovie;
+				unsigned char reserved60[4];
+				BitFont *Font;
+				int ControlType;
+				int DialogID;
+				unsigned char reserved70[0x20];
+				int StaticSoundIndex;
+			};
 
 			struct {
 				unsigned char reserved28[0xC0];
@@ -135,10 +141,7 @@ namespace OwnerDraw {
 			} ProgressBar;
 
 			struct {
-				unsigned char reserved28[0x40];
-				int ControlType;
-				int DialogID;
-				unsigned char reserved70[0x40];
+				unsigned char reserved28[0x88];
 				int LayoutBand;
 				unsigned char reservedB4[9];
 				bool HasOpenAnimation;
@@ -167,11 +170,11 @@ namespace OwnerDraw {
 		~WinData(void)
 		{
 			Set_Text((wchar_t const *)0);
-			while (Wide.nodes) {
-				WinNode *node = Wide.nodes;
+			while (nodes != NULL) {
+				WinNode *node = nodes;
 				Remove_Node(node);
 			}
-			delete Wide.editText;
+			delete editText;
 		}
 		WinData & operator=(WinData const & that);
 
@@ -182,8 +185,8 @@ namespace OwnerDraw {
 		void Remove_Node(WinNode *node);
 		void Remove_All_Nodes(void)
 		{
-			while (Wide.nodes) {
-				Remove_Node(Wide.nodes);
+			while (nodes != NULL) {
+				Remove_Node(nodes);
 			}
 		}
 	};
@@ -472,7 +475,7 @@ inline OwnerDraw::WinData *Get_Data(HWND window)
 int FUN_00600CA0(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *record = Get_Data(dialog);
-	int kind = record != 0 ? record->Dialog.DialogID : 0;
+	int kind = record != 0 ? record->DialogID : 0;
 	int id = GetDlgCtrlID(control);
 	bool general =
     (kind == 0x10c || kind == 0x94 || kind == 0xa3 || kind == 0x73 || kind == 0xd8 || kind == 0xbbb || kind == 0xf5 ||
@@ -1291,7 +1294,7 @@ inline OwnerDraw::WinData *Find_Data(HWND window)
 int Control_Sound_Slot(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = Find_Data(dialog);
-	int type = data ? data->Dialog.DialogID : 0;
+	int type = data ? data->DialogID : 0;
 	int id = GetDlgCtrlID(control);
 
 	if (Is_Sidebar_Button(type, id)) {
@@ -1711,7 +1714,7 @@ inline int Get_Dialog_Type(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		return data->Dialog.DialogID;
+		return data->DialogID;
 	}
 	return 0;
 }
@@ -3071,7 +3074,7 @@ inline bool Is_Plain_Control(HWND window)
 		HWND key = window;
 		OwnerDraw::WinData *data = NULL;
 		OwnerDraw::Dialogs.getPointer(key, &data);
-		if (data != NULL && data->Dialog.ControlType == 0) {
+		if (data != NULL && data->ControlType == 0) {
 			return true;
 		}
 	}
@@ -4000,7 +4003,7 @@ bool FUN_006096A0(HWND parent, HWND child)
 		HWND key = child;
 		OwnerDraw::WinData *data = NULL;
 		OwnerDraw::Dialogs.getPointer(key, &data);
-		if (data != NULL && data->Dialog.ControlType == 0) {
+		if (data != NULL && data->ControlType == 0) {
 			return FUN_00608CD0(parent, child);
 		}
 	}
@@ -4069,7 +4072,7 @@ bool FUN_00609AA0(HWND parent, HWND child)
 bool FUN_00609B30(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = Find_Data(dialog);
-	int type = data ? data->Dialog.DialogID : 0;
+	int type = data ? data->DialogID : 0;
 	int id = GetDlgCtrlID(control);
 	if (Is_Owner_Draw_Message(type) && id == 0x695) {
 		return true;
@@ -4192,7 +4195,7 @@ bool FUN_00609E20(HWND dialog, HWND control)
 bool FUN_0060A100(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = Find_Data(dialog);
-	int type = data ? data->Dialog.DialogID : 0;
+	int type = data ? data->DialogID : 0;
 	int id = GetDlgCtrlID(control);
 	if (type == 0xe2) {
 		return id == 0x71d;
@@ -4636,7 +4639,7 @@ void __fastcall FUN_0060B7A0(HWND window)
 bool __fastcall FUN_0060B880(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = Find_Data(dialog);
-	int type = data ? data->Dialog.DialogID : 0;
+	int type = data ? data->DialogID : 0;
 	GetDlgCtrlID(control);
 	if (type == 0xb7 || type == 0x2b4 || type == 0xbbb || type == 0xf5 || type == 0x2b5 || type == 0xb8 ||
 		type == 0xa3 || type == 0xb6 || type == 0x10c || type == 0x73 || type == 0xff || type == 0xea) {
@@ -4722,7 +4725,7 @@ bool __fastcall TrySetDialogLayoutBand1(HWND dialog)
 	if (data == NULL) {
 		return false;
 	}
-	int type = data->Dialog.DialogID;
+	int type = data->DialogID;
 	bool match = type == 0x10c || type == 0x94 || type == 0xb6 || type == 0xa3 || type == 0x73 ||
 		type == 0xd8 || type == 0xbbb || type == 0xf5 || type == 0x105 || type == 0xd5 ||
 		type == 0xe2 || type == 0x2b5 || type == 0xb7 || type == 0x2b4 || type == 0x101 ||
@@ -4751,7 +4754,7 @@ bool __fastcall TrySetDialogLayoutBand2(HWND dialog)
 	if (data == NULL) {
 		return false;
 	}
-	int type = data->Dialog.DialogID;
+	int type = data->DialogID;
 	bool match = type == 0x10d || type == 0xd9 || type == 0xf0 || type == 0xce || type == 0x120 || type == 0x121 ||
 		type == 0x115 || type == 0xd3 || type == 0xcf || type == 0x11f || type == 0xc3 || type == 0x11b ||
 		type == 0xe1 || type == 0x11e || type == 0xc4 || type == 0x130 || type == 0xd0 || type == 0xfc ||
@@ -5207,6 +5210,8 @@ namespace OwnerDraw {
 BOOL CALLBACK SetUserData2(HWND window, LPARAM lparam);
 BOOL CALLBACK InitializeCtrl(HWND window, LPARAM lparam);
 
+// FUNCTION: GAMEMD 0x0060F4B0
+// OwnerDraw::PrepareDialogChildControls
 bool __fastcall PrepareDialogChildControls(HWND dialog, int mode)
 {
 	UI::RegisterComboDropAndNewEditClasses();
@@ -5338,9 +5343,9 @@ BOOL CALLBACK InitializeCtrl(HWND window, LPARAM lparam)
 		Dialogs.getPointer(window, &data);
 	}
 	data->userData = lparam;
-	data->Dialog.ControlType = controlType;
+	data->ControlType = controlType;
 	if (link) {
-		data->Wide.styleFlags = link->style;
+		data->styleFlags = link->style;
 	}
 	WNDPROC proc = NULL;
 	DialogProcs.getValue(window, proc);
@@ -5352,7 +5357,7 @@ BOOL CALLBACK InitializeCtrl(HWND window, LPARAM lparam)
 	} else {
 		data->Set_Text((wchar_t const *)NULL);
 	}
-	data->Wide.hasText = 0;
+	data->hasText = 0;
 	SendMessage(window, OD_SUBCLASSED, 0, 0);
 	return TRUE;
 }
@@ -5787,7 +5792,7 @@ LRESULT CALLBACK OwnerDraw::SysTabHandler(HWND window, UINT message, WPARAM wpar
 					color = PrimaryTextColor;
 				}
 				swprintf(string2, L"%hs", string1);
-				DrawWideText(AlternateSurface, string2, &text_rect, data->Wide.font, color, 5, 0xc, 0, 0, 0);
+				DrawWideText(AlternateSurface, string2, &text_rect, data->Font, color, 5, 0xc, 0, 0, 0);
 
 				ValidateRect(window, &itemrect);
 				if (itab == current) {
@@ -5887,8 +5892,8 @@ LRESULT CALLBACK OwnerDraw::EditHandler(HWND window, UINT message, WPARAM wparam
 
 	else if (message == WM_USER + 180 || message == WM_USER + 178) {
 		narrow[0] = 0;
-		if (data->Wide.text != NULL) {
-			WideCharToMultiByte(CP_ACP, 0, data->Wide.text, -1, narrow, sizeof(narrow), NULL, NULL);
+		if (data->text != NULL) {
+			WideCharToMultiByte(CP_ACP, 0, data->text, -1, narrow, sizeof(narrow), NULL, NULL);
 		}
 		return(CallWindowProc(proc, window, WM_SETTEXT, 0, (LPARAM)narrow));
 	}
@@ -5973,7 +5978,7 @@ LRESULT CALLBACK OwnerDraw::EditHandler(HWND window, UINT message, WPARAM wparam
 			text_rect.Height = display_rect.bottom - display_rect.top + 1;
 
 			LONG text_style = GetWindowLong(window, GWL_STYLE);
-			FUN_00623880(AlternateSurface, &text_rect, _buffer, cursor, data->Wide.font, OwnerDraw::PrimaryTextColor, &data->Edit.scrollStart, data->Wide.hasFocus, (text_style & ES_PASSWORD) != 0, 0, 0);
+			FUN_00623880(AlternateSurface, &text_rect, _buffer, cursor, data->Font, OwnerDraw::PrimaryTextColor, &data->Edit.scrollStart, data->hasFocus, (text_style & ES_PASSWORD) != 0, 0, 0);
 
 			ValidateRect(window, NULL);
 		}
@@ -6080,15 +6085,15 @@ LRESULT CALLBACK OwnerDraw::NewEditHandler(HWND window, UINT message, WPARAM wpa
 		client_rect.bottom - 2, SWP_SHOWWINDOW);
 		return 0;
 	} else if (message == EM_LIMITTEXT) {
-		data->Wide.textLimit = wparam;
+		data->textLimit = wparam;
 		if (wparam) {
-			data->Wide.editText->truncate(wparam);
+			data->editText->truncate(wparam);
 		}
 	} else if (message == WM_USER + 181 || message == WM_USER + 179 || message == WM_GETTEXTLENGTH) {
 		if (message == WM_GETTEXTLENGTH) {
-			return data->Wide.editText->length();
+			return data->editText->length();
 		}
-		WideWstring *query_text = data->Wide.editText;
+		WideWstring *query_text = data->editText;
 		if (message == WM_USER + 179) {
 			wcsncpy((wchar_t *)lparam, query_text->get(), wparam);
 			((wchar_t *)lparam)[wparam - 1] = 0;
@@ -6099,34 +6104,34 @@ LRESULT CALLBACK OwnerDraw::NewEditHandler(HWND window, UINT message, WPARAM wpa
 		return strlen((char *)lparam);
 	} else {
 		if (message == WM_USER + 180 || message == WM_USER + 178) {
-			data->Wide.editText->clear();
-			data->Wide.caretIndex = 0;
-			data->Wide.scrollStart = 0;
-			if (data->Wide.text != NULL) {
-				data->Wide.editText->set(data->Wide.text);
+			data->editText->clear();
+			data->caretIndex = 0;
+			data->scrollStart = 0;
+			if (data->text != NULL) {
+				data->editText->set(data->text);
 			}
-			if (data->Wide.textLimit) {
-				data->Wide.editText->truncate((unsigned int)data->Wide.textLimit);
+			if (data->textLimit) {
+				data->editText->truncate((unsigned int)data->textLimit);
 			}
-			data->Wide.caretIndex = data->Wide.editText->length();
+			data->caretIndex = data->editText->length();
 		}
 		if (message == WM_KEYDOWN) {
 			if (wparam == VK_RETURN) {
 				SendMessage(parent, WM_USER + 218, 0, (LPARAM)window);
-				if (data->Wide.styleFlags & ES_MULTILINE) {
-					*data->Wide.editText += L"\r\n";
+				if (data->styleFlags & ES_MULTILINE) {
+					*data->editText += L"\r\n";
 					WPARAM command = (unsigned short)GetWindowLong(window, GWL_ID) | 0x5010000;
 					SendMessage(parent, WM_COMMAND, command, (LPARAM)window);
 				}
 				return 0;
 			}
 		} else if (message == WM_SETFOCUS) {
-			data->Wide.caretBlink = 0;
+			data->caretBlink = 0;
 			SetTimer(window, 0, 1000, NULL);
 		} else if (message == WM_KILLFOCUS) {
 			KillTimer(window, 0);
 		} else if (message == WM_TIMER) {
-			data->Wide.caretBlink ^= 1;
+			data->caretBlink ^= 1;
 			InvalidateRect(window, NULL, FALSE);
 		} else {
 			if (message == WM_PAINT || message == WM_ERASEBKGND) {
@@ -6157,11 +6162,11 @@ LRESULT CALLBACK OwnerDraw::NewEditHandler(HWND window, UINT message, WPARAM wpa
 				text_rect.Y = display_rect.top;
 				text_rect.Width = display_rect.right - display_rect.left + 1;
 				text_rect.Height = display_rect.bottom - display_rect.top + 1;
-				DAT_00AC48C8 = data->Wide.caretBlink;
-				FUN_00623880(AlternateSurface, &text_rect, data->Wide.editText->get(),
-				data->Wide.caretIndex, data->Wide.font, PrimaryTextColor,
-				&data->Wide.scrollStart, data->Wide.hasFocus,
-				(data->Wide.styleFlags & ES_PASSWORD) != 0, 0, 0);
+				DAT_00AC48C8 = data->caretBlink;
+				FUN_00623880(AlternateSurface, &text_rect, data->editText->get(),
+				data->caretIndex, data->Font, PrimaryTextColor,
+				&data->scrollStart, data->hasFocus,
+				(data->styleFlags & ES_PASSWORD) != 0, 0, 0);
 				ValidateRect(window, NULL);
 			}
 			if (message == WM_CONTEXTMENU) {
@@ -6189,38 +6194,38 @@ LRESULT CALLBACK OwnerDraw::NewEditHandler(HWND window, UINT message, WPARAM wpa
 		} else if (message == WM_KEYDOWN) {
 			switch (wparam) {
 			case VK_DELETE:
-				if (data->Wide.caretIndex < (int)data->Wide.editText->length()) {
-					data->Wide.editText->remove(data->Wide.caretIndex, 1);
+				if (data->caretIndex < (int)data->editText->length()) {
+					data->editText->remove(data->caretIndex, 1);
 					changed = 1;
 				}
 				handled = 1;
 				break;
 			case VK_BACK:
-				if (data->Wide.caretIndex > 0) {
-					data->Wide.editText->remove(--data->Wide.caretIndex, 1);
+				if (data->caretIndex > 0) {
+					data->editText->remove(--data->caretIndex, 1);
 					changed = 1;
 				}
 				handled = 1;
 				break;
 			case VK_LEFT:
-				if (data->Wide.caretIndex > 0) {
-					--data->Wide.caretIndex;
+				if (data->caretIndex > 0) {
+					--data->caretIndex;
 					return 0;
 				}
 				handled = 1;
 				break;
 			case VK_RIGHT:
-				if (data->Wide.caretIndex < (int)data->Wide.editText->length()) {
-					++data->Wide.caretIndex;
+				if (data->caretIndex < (int)data->editText->length()) {
+					++data->caretIndex;
 					return 0;
 				}
 				handled = 1;
 				break;
 			case VK_END:
-				data->Wide.caretIndex = data->Wide.editText->length();
+				data->caretIndex = data->editText->length();
 				return 0;
 			case VK_HOME:
-				data->Wide.caretIndex = 0;
+				data->caretIndex = 0;
 				return 0;
 			default:
 				break;
@@ -6233,10 +6238,10 @@ LRESULT CALLBACK OwnerDraw::NewEditHandler(HWND window, UINT message, WPARAM wpa
 			handled = 1;
 		}
 		if (ch) {
-			if ((!data->Wide.rejectChars || !wcschr(data->Wide.rejectChars, ch)) &&
-			(!data->Wide.textLimit || (int)data->Wide.editText->length() < data->Wide.textLimit) &&
-			ch > 31 && (!data->Wide.asciiOnly || ch < 256)) {
-				data->Wide.editText->insert(ch, data->Wide.caretIndex++);
+			if ((!data->rejectChars || !wcschr(data->rejectChars, ch)) &&
+			(!data->textLimit || (int)data->editText->length() < data->textLimit) &&
+			ch > 31 && (!data->asciiOnly || ch < 256)) {
+				data->editText->insert(ch, data->caretIndex++);
 				changed = 1;
 			}
 			handled = 1;
@@ -6316,12 +6321,12 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 				ODFillRectTrans(&drect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
 			}
 			trect.Left += 26;
-			if (data->Wide.text) {
+			if (data->text) {
 				int color = OwnerDraw::PrimaryTextColor;
 				if (style & WS_DISABLED) {
 					color = OwnerDraw::DisabledTextColor;
 				}
-				OwnerDraw::DrawWideText(AlternateSurface, data->Wide.text, (LTRBStruct *)&trect, data->Wide.font, color, 4, 0xc, 0, 0, 0);
+				OwnerDraw::DrawWideText(AlternateSurface, data->text, (LTRBStruct *)&trect, data->Font, color, 4, 0xc, 0, 0, 0);
 			}
 			ValidateRect(window, NULL);
 			return 0;
@@ -6524,7 +6529,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			AlternateSurface->Blit_From(destrect, *image, sourcerect);
 		}
 
-		if (data->image == NULL && data->Wide.text) {
+		if (data->image == NULL && data->text) {
 			RECT client;
 			GetClientRect(window, &client);
 
@@ -6537,7 +6542,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 				text_rect.X += 2;
 				text_rect.Y += 4;
 			}
-			OwnerDraw::DrawWideText(AlternateSurface, data->Wide.text, (LTRBStruct *)&text_rect, data->Wide.font, color, 5, 0xc, 0, 0, 0);
+			OwnerDraw::DrawWideText(AlternateSurface, data->text, (LTRBStruct *)&text_rect, data->Font, color, 5, 0xc, 0, 0, 0);
 		}
 
 		if (style & WS_DISABLED) {
@@ -7267,7 +7272,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 
 				RECT text_rect = paint_rect;
 				text_rect.left = paint_rect.right - 49;
-				OwnerDraw::DrawWideText(AlternateSurface, buffer, (LTRBStruct *)&text_rect, data->Wide.font, text_color, 5, 0xc, 0, 0, 0);
+				OwnerDraw::DrawWideText(AlternateSurface, buffer, (LTRBStruct *)&text_rect, data->Font, text_color, 5, 0xc, 0, 0, 0);
 			}
 
 			ValidateRect(window, NULL);
@@ -7421,17 +7426,17 @@ LRESULT CALLBACK OwnerDraw::GroupBoxButtonHandler(HWND window, UINT message, WPA
 		WinData *data = Find_Data(window);
 
 		if (data != NULL) {
-			wchar_t const *text = data->Wide.text ? data->Wide.text : L"";
+			wchar_t const *text = data->text ? data->text : L"";
 
 			RECT area;
 			Get_Display_Rect(window, &area);
 
 			int width = area.right - area.left;
-			int middle_y = data->Wide.font->field_1C / 2 + area.top;
+			int middle_y = data->Font->field_1C / 2 + area.top;
 			int text_width;
 			int text_height;
 
-			data->Wide.font->GetTextDimension(text, &text_width, &text_height, width);
+			data->Font->GetTextDimension(text, &text_width, &text_height, width);
 
 			Rect caption(area.left + 10, area.top, width, area.bottom - area.top);
 
@@ -7527,7 +7532,7 @@ LRESULT CALLBACK OwnerDraw::HotkeyHandler(HWND window, UINT message, WPARAM wpar
 				rect.top += 4;
 				rect.right -= 4;
 				rect.bottom -= 4;
-				Draw_Hotkey_Text7(AlternateSurface, text, &rect, data->Wide.font, OwnerDraw::PrimaryTextColor, DT_SINGLELINE | DT_VCENTER);
+				Draw_Hotkey_Text7(AlternateSurface, text, &rect, data->Font, OwnerDraw::PrimaryTextColor, DT_SINGLELINE | DT_VCENTER);
 			}
 			ValidateRect(window, NULL);
 		}
@@ -8962,12 +8967,12 @@ void OwnerDraw::Set_Custom_Message_Box_Text(HWND window, wchar_t const * text)
 OwnerDraw::WinData::WinData(void)
 {
 	memset(this, 0, sizeof(*this));
-	*(int *)((char *)this + 0x68) = 0xb;
-	*(BitFont **)((char *)this + 0x64) = BitFont::Instance;
-	Wide.editText = new WideWstring();
-	*(int *)((char *)this + 0x40) = 0;
-	*(int *)((char *)this + 0x5c) = 0;
-	*(int *)((char *)this + 0x90) = -1;
+	ControlType = 0xb;
+	Font = BitFont::Instance;
+	editText = new WideWstring();
+	caretIndex = 0;
+	StaticLoopMovie = 0;
+	StaticSoundIndex = -1;
 }
 
 // FUNCTION: GAMEMD 0x006233A0
@@ -8977,11 +8982,11 @@ OwnerDraw::WinData::WinData(void)
 OwnerDraw::WinNode * OwnerDraw::WinData::Add_Node(int length)
 {
 	WinNode * node = (WinNode *)operator new(length * 2 + 0x12);
-	if (node) {
+	if (node != NULL) {
 		node->text = (wchar_t *)(node + 1);
-		node->next = Wide.nodes;
+		node->next = nodes;
 		node->id = 0;
-		Wide.nodes = node;
+		nodes = node;
 	}
 	return node;
 }
@@ -8990,19 +8995,19 @@ OwnerDraw::WinNode * OwnerDraw::WinData::Add_Node(int length)
 void OwnerDraw::WinData::Remove_Node(WinNode * node)
 {
 	WinNode * prev = NULL;
-	WinNode * cur = Wide.nodes;
-	while (cur) {
+	WinNode * cur = nodes;
+	while (cur != NULL) {
 		if (node == cur) {
 			break;
 		}
 		prev = cur;
 		cur = cur->next;
 	}
-	if (cur) {
-		if (prev) {
+	if (cur != NULL) {
+		if (prev != NULL) {
 			prev->next = cur->next;
 		} else {
-			Wide.nodes = cur->next;
+			nodes = cur->next;
 		}
 		delete cur;
 	}
@@ -9011,10 +9016,10 @@ void OwnerDraw::WinData::Remove_Node(WinNode * node)
 // FUNCTION: GAMEMD 0x006234B0
 void OwnerDraw::WinData::Copy_Nodes(WinNode const * source)
 {
-	while (Wide.nodes) {
-		Remove_Node(Wide.nodes);
+	while (nodes != NULL) {
+		Remove_Node(nodes);
 	}
-	while (source) {
+	while (source != NULL) {
 		WinNode * node = Add_Node(wcslen(source->text));
 		node->data = source->data;
 		node->id = source->id;
@@ -9026,59 +9031,59 @@ void OwnerDraw::WinData::Copy_Nodes(WinNode const * source)
 // FUNCTION: GAMEMD 0x00623560
 void OwnerDraw::WinData::Set_Text(wchar_t const * str)
 {
-	if (Wide.text) {
-		operator delete(Wide.text);
-		Wide.text = NULL;
+	if (text != NULL) {
+		operator delete(text);
+		text = NULL;
 	}
-	if (str && *str) {
-		Wide.text = (wchar_t *)operator new(wcslen(str) * 2 + 2);
-		wcscpy(Wide.text, str);
+	if (str != NULL && *str != 0) {
+		text = (wchar_t *)operator new(wcslen(str) * 2 + 2);
+		wcscpy(text, str);
 	}
 }
 
 // FUNCTION: GAMEMD 0x006235B0
 void OwnerDraw::WinData::Set_Text(char const * str)
 {
-	if (Wide.text) {
-		operator delete(Wide.text);
-		Wide.text = NULL;
+	if (text != NULL) {
+		operator delete(text);
+		text = NULL;
 	}
-	if (str && *str) {
-		Wide.text = new wchar_t[strlen(str) + 1];
-		swprintf(Wide.text, L"%hs", str);
+	if (str != NULL && *str != 0) {
+		text = new wchar_t[strlen(str) + 1];
+		swprintf(text, L"%hs", str);
 	}
 }
 
 // FUNCTION: GAMEMD 0x00623610
 OwnerDraw::WinData & OwnerDraw::WinData::operator=(WinData const & that)
 {
-	WinNode * nodes = Wide.nodes;
-	wchar_t * text = Wide.text;
-	WideWstring * edit = Wide.editText;
+	WinNode * old_nodes = nodes;
+	wchar_t * old_text = text;
+	WideWstring * old_edit = editText;
 	if (this == &that) {
 		return *this;
 	}
 	memcpy(this, &that, sizeof(*this));
-	Wide.text = text;
-	Wide.editText = edit;
-	Wide.nodes = nodes;
-	Set_Text(that.Wide.text);
-	Copy_Nodes(that.Wide.nodes);
+	text = old_text;
+	editText = old_edit;
+	nodes = old_nodes;
+	Set_Text(that.text);
+	Copy_Nodes(that.nodes);
 	return *this;
 }
 
 // FUNCTION: GAMEMD 0x00623730
 OwnerDraw::WinData::WinData(WinData const & that)
 {
-	WinNode * nodes = Wide.nodes;
-	wchar_t * text = Wide.text;
-	WideWstring * edit = Wide.editText;
+	WinNode * old_nodes = nodes;
+	wchar_t * old_text = text;
+	WideWstring * old_edit = editText;
 	memcpy(this, &that, sizeof(*this));
-	Wide.editText = edit;
-	Wide.text = text;
-	Wide.nodes = nodes;
-	Set_Text(that.Wide.text);
-	Copy_Nodes(that.Wide.nodes);
+	editText = old_edit;
+	text = old_text;
+	nodes = old_nodes;
+	Set_Text(that.text);
+	Copy_Nodes(that.nodes);
 }
 
 // FUNCTION: GAMEMD 0x00623840
@@ -9494,7 +9499,7 @@ bool __fastcall FUN_006242B0(HWND control)
 	if (strcmp(name, "ListBox") == 0) {
 		OwnerDraw::WinData *data = NULL;
 		if (OwnerDraw::Dialogs.getPointer(key, &data)) {
-			return data->Dialog.ControlType == 1;
+			return data->ControlType == 1;
 		}
 	}
 	if (strcmp(name, "ComboBox") == 0) {
