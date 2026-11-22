@@ -16716,6 +16716,7 @@ address,size,symbol,source,sha256
 0x0073CEC0,1417,?Draw_It@UnitClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/unit.cpp,a46554b4faa000fd5934457d7073af3ec42e1722b7fb19624b90ccb92a4e80c8
 0x0073D450,477,?Harvesting@UnitClass@@QAE_NXZ,src/unit.cpp,a04a8ac64c21bbab76c84aa14923dd9afb42763a9238ebd6834f65a98bf654ef
 0x0073D630,4004,?Do_MISSION_UNLOAD@UnitClass@@UAEHXZ,src/unit.cpp,903f8854727159e62c7ae03ccf3d66be29e33e851da47afac2eb738f2004ffd1
+0x0073E5E0,2528,?Do_MISSION_HARVEST@UnitClass@@UAEHXZ,src/unit.cpp,bae14fd342bcabd585057b2115c6d9e83cef8f4825dbc06ebbd92dd14cda1b03
 0x0073EFC0,212,?Do_MISSION_HUNT@UnitClass@@UAEHXZ,src/unit.cpp,33988afa3a8a7bd932e59f6d079d464f80cb650f0b33143d4c0741394daa4e48
 0x0073F0A0,3238,?Can_Enter_Cell@UnitClass@@UBE?AW4MoveType@@PBVCellClass@@W4FacingType@@H0_N@Z,src/unit.cpp,78e23eb52df57362a626578bc6ca9c13a130351171011a9d73e8de4644747af2
 0x0073FD50,1882,?What_Action@UnitClass@@UBE?AW4ActionType@@PBVObjectClass@@_N@Z,src/unit.cpp,a41ebdb5bfb75e44459932c7cc7aef057803a53801286a298a38a90268ee66e9
