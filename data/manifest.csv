@@ -15320,6 +15320,7 @@ address,size,symbol,source,sha256
 0x006F6030,144,?Draw_Single_Selection_Bracket@TechnoClass@@SIXABVCoord@@0H@Z,src/techno.cpp,5a250c476d7ca06c1f55563a86eee0fe105c9a3fb7a2b039916b1bcf6747afde
 0x006F60C0,3,?Draw_Health_Bar_Old@TechnoClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/techno.cpp,1d10894625976bca9d8906f3ecf1e766b94e9219ec3bf1c30e02feea5e18e45a
 0x006F60D0,974,?Draw_Pre_Render@TechnoClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/techno.cpp,6b65e8257798f54d8467d7e083adfc6e6be2d4edf144f24780f6f3bb61d8c2d1
+0x006F64A0,1568,?Draw_Health_Bar@TechnoClass@@UBEXABVPoint2D@@ABV?$TRect@H@@_N@Z,src/techno.cpp,24187a3b9a6a22ecbe636ee7e5381f9c74ba33985805b8c8e58a4f1188e325c8
 0x006F6AC0,480,?Limbo@TechnoClass@@UAE_NXZ,src/techno.cpp,ff66cab02493a713ad6c32d12b1d8e45145689476c222716ea02f15aeea774f0
 0x006F6CA0,659,?Unlimbo@TechnoClass@@UAE_NABVCoord@@W4Dir256@@@Z,src/techno.cpp,23375296f960ad0063a0ff3b316069d6de194effcb6a1581fb990a66e0171249
 0x006F6F40,28,?Get_Sight_Bonus@TechnoClass@@QAEHABVCoord@@@Z,src/techno.cpp,b1611e89c7b2f7448a2a8445e5ade9174c0666f2b91434c8498bd1e761bb40b1

@@ -14978,6 +14978,7 @@ address,name,result,size,source,symbol
 0x006F6030,TechnoClass::Draw_Single_Selection_Bracket,MATCH,144,src/techno.cpp,?Draw_Single_Selection_Bracket@TechnoClass@@SIXABVCoord@@0H@Z
 0x006F60C0,TechnoClass::Draw_Health_Bar_Old,MATCH,3,src/techno.cpp,?Draw_Health_Bar_Old@TechnoClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x006F60D0,TechnoClass::Draw_Pre_Render,MATCH,974,src/techno.cpp,?Draw_Pre_Render@TechnoClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
+0x006F64A0,TechnoClass::Draw_Health_Bar,MATCH,1568,src/techno.cpp,?Draw_Health_Bar@TechnoClass@@UBEXABVPoint2D@@ABV?$TRect@H@@_N@Z
 0x006F6AC0,TechnoClass::Limbo,MATCH,480,src/techno.cpp,?Limbo@TechnoClass@@UAE_NXZ
 0x006F6CA0,TechnoClass::Unlimbo,MATCH,659,src/techno.cpp,?Unlimbo@TechnoClass@@UAE_NABVCoord@@W4Dir256@@@Z
 0x006F6F40,TechnoClass::Get_Sight_Bonus,MATCH,28,src/techno.cpp,?Get_Sight_Bonus@TechnoClass@@QAEHABVCoord@@@Z
