@@ -8,6 +8,8 @@
 #include "ownrdraw.h"
 #include "draw.h"
 
+class MovieHandle;
+
 namespace OwnerDraw {
 	struct WinData {
 
@@ -89,7 +91,34 @@ namespace OwnerDraw {
 			} ComboBox;
 
 			struct {
-				char *text;
+				unsigned char reserved28[0x30];
+				MovieHandle *movie;
+				int loopMovie;
+				MovieHandle *movieAux;
+				BitFont *font;
+				int controlType;
+				int dialogID;
+				int drawMode;
+				ConvertClass *drawer;
+				ShapeSet *shape;
+				bool ownsShape;
+				int revealCount;
+				int revealDelay;
+				int revealStep;
+				int colorAdjust;
+				int soundIndex;
+				int frameCount;
+				int frameIndex;
+				int startTime;
+				int startDelay;
+				HWND notifyWindow;
+				bool animationRunning;
+				int textFlags;
+				int layoutBand;
+				bool fillBackground;
+				COLORREF backgroundColor;
+				bool skipDraw;
+				unsigned char reservedBD[0x2F];
 				COLORREF textColor;
 			} Static;
 
@@ -211,6 +240,8 @@ namespace OwnerDraw {
 #include "mainloop.h"
 #include "misc.h"
 #include "mixfile.h"
+#include "movies.h"
+#include "shapeset.h"
 #include "msgloop.h"
 #include "rgb.h"
 #include "rules.h"
@@ -9165,3 +9196,433 @@ template class ArrayList<HWND>;
 // SYNTHETIC: GAMEMD 0x00625560
 // ??_G?$DNode@PAUHWND__@@UWinData@OwnerDraw@@@@QAEPAXI@Z
 template class DNode<HWND, OwnerDraw::WinData>;
+
+extern DynamicVectorClass<char const *> DAT_00ABF390;
+MovieHandle *__fastcall OwnerDraw_InitMovieHandle(char const *, Surface *, Rect *);
+void __cdecl FUN_004068E0(char const *, ...);
+
+// FUNCTION: GAMEMD 0x006153E0
+// OwnerDraw::StaticHandler
+LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	WinData *data = Find_Data(window);
+	HWND movieWindow;
+	RECT text_rect;
+	if (data == NULL) {
+		return 0;
+	}
+	switch (message) {
+	case WM_DESTROY:
+		if (data->cachedSurface != NULL) {
+			delete data->cachedSurface;
+			data->cachedSurface = NULL;
+		}
+		if (data->Static.ownsShape) {
+			delete data->Static.shape;
+			data->Static.shape = NULL;
+		}
+		if (data->Static.drawMode == 1) {
+			if (data->Static.animationRunning) {
+				KillTimer(window, 0);
+			}
+		} else if (data->Static.drawMode == 4) {
+			KillTimer(window, 0);
+		}
+		movieWindow = window;
+		if (data->Static.movie != NULL) {
+			delete data->Static.movie;
+			data->Static.movie = NULL;
+		}
+		KillTimer(movieWindow, 101);
+		if (data->Static.movieAux != NULL) {
+			delete data->Static.movieAux;
+			data->Static.movieAux = NULL;
+		}
+	default:
+		goto call_original;
+	case WM_PAINT: {
+		if (data->Static.skipDraw) {
+			ValidateRect(window, NULL);
+			break;
+		}
+		if (data->Static.movie != NULL) {
+			ValidateRect(window, NULL);
+			break;
+		}
+		if (data->cachedSurface == NULL) {
+			RECT drect;
+			Get_Display_Rect(window, &drect);
+			RECT crect;
+			GetClientRect(window, &crect);
+			BSurface *surf = new BSurface(crect.right + 1, crect.bottom + 1, 2);
+			data->cachedSurface = surf;
+			++CachedSurfaceCount;
+			Rect dst_rect;
+			dst_rect.X = 0;
+			dst_rect.Y = 0;
+			dst_rect.Width = crect.right + 1;
+			dst_rect.Height = crect.bottom + 1;
+			Rect src_rect;
+			src_rect.X = drect.left;
+			src_rect.Y = drect.top;
+			src_rect.Width = crect.right + 1;
+			src_rect.Height = crect.bottom + 1;
+			surf->Blit_From(dst_rect, *AlternateSurface, src_rect);
+		}
+		Get_Display_Rect(window, &text_rect);
+		if (data->Static.fillBackground) {
+			Rect rect(text_rect.left, text_rect.top, text_rect.right - text_rect.left, text_rect.bottom - text_rect.top);
+			AlternateSurface->Fill_Rect(rect, DSurface::Build_Hicolor_Pixel(GetRValue(data->Static.backgroundColor), (unsigned char)(data->Static.backgroundColor >> 8), GetBValue(data->Static.backgroundColor)));
+		}
+		bool text = data->Static.drawMode == 0;
+		bool typewriter = data->Static.drawMode == 1;
+		if (text || typewriter) {
+			if (data->Wide.text != NULL && (text || (typewriter && data->Static.animationRunning))) {
+				LONG style = GetWindowLong(window, GWL_STYLE);
+				int draw_flags = 16;
+				if (style & SS_CENTER) {
+					draw_flags = 17;
+				} else if (style & SS_RIGHT) {
+					draw_flags = 18;
+				}
+				COLORREF color = data->Static.textColor;
+				if (style & WS_DISABLED) {
+					color = DisabledTextColor;
+				}
+				DrawWideText(AlternateSurface, data->Wide.text, (LTRBStruct *)&text_rect, data->Wide.font, color, draw_flags, data->Static.textFlags, 0, data->Static.revealCount, data->Static.colorAdjust);
+				if (data->Static.soundIndex != -1) {
+					VocClass::PlayGlobal(data->Static.soundIndex, 1.0f, 0x2000, NULL);
+				}
+				if (typewriter) {
+					int length = wcslen(data->Wide.text) + data->Static.colorAdjust + 1;
+					if (data->Static.revealCount < length) {
+						data->Static.revealCount += data->Static.revealStep;
+						if (data->Static.revealCount >= length) {
+							KillTimer(window, 0);
+						}
+					}
+				}
+			}
+		} else {
+			bool pcx = data->Static.drawMode == 2;
+			bool shape = data->Static.drawMode == 3;
+			bool animated = data->Static.drawMode == 4;
+			if (pcx || shape || animated) {
+				int now = GetTickCount();
+				if (now - data->Static.startTime > data->Static.startDelay) {
+					Rect dst_rect(text_rect.left, text_rect.top, text_rect.right - text_rect.left, text_rect.bottom - text_rect.top);
+					RECT crect;
+					GetClientRect(window, &crect);
+					Rect src_rect(crect.left, crect.top, crect.right - crect.left, crect.bottom - crect.top);
+					AlternateSurface->Blit_From(dst_rect, *data->cachedSurface, src_rect);
+					if (pcx) {
+						Surface *image = data->image;
+						if (image != NULL) {
+							int width = image->Get_Width();
+							int height = image->Get_Height();
+							Rect rect = dst_rect;
+							if (rect.Width > width) {
+								rect.X += (rect.Width - width) / 2;
+								rect.Width = width;
+							}
+							if (rect.Height > height) {
+								rect.Y += (rect.Height - height) / 2;
+								rect.Height = height;
+							}
+							SurfaceCache.DrawTrans(rect, *AlternateSurface, *image, DSurface::Build_Hicolor_Pixel(255, 0, 255));
+						}
+					} else if (shape || animated) {
+						ShapeSet *shapes = data->Static.shape;
+						if (shapes != NULL) {
+							ConvertClass *drawer = data->Static.drawer;
+							int height = shapes->Get_Height();
+							int width = shapes->Get_Width();
+							Rect rect = dst_rect;
+							if (rect.Width > width) {
+								rect.X += (rect.Width - width) / 2;
+								rect.Width = width;
+							}
+							if (rect.Height > height) {
+								rect.Y += (rect.Height - height) / 2;
+								rect.Height = height;
+							}
+							Point2D point(rect.X, rect.Y);
+							Rect bounds = AlternateSurface->Get_Rect();
+							int frame = data->Static.frameIndex;
+							Draw_Shape(*AlternateSurface, *drawer, shapes, frame, point, bounds, SHAPE_WIN_REL);
+							if (animated && data->Static.animationRunning) {
+								if (++frame >= data->Static.frameCount) {
+									frame = 0;
+								}
+								data->Static.frameIndex = frame;
+								if (data->Static.notifyWindow != NULL) {
+									SendMessage(data->Static.notifyWindow, WM_USER + 216, frame, (LPARAM)window);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		ValidateRect(window, NULL);
+		break;
+	}
+
+	case WM_USER + 211:
+		if (data->Static.shape != NULL && data->Static.drawMode == 4 && !data->Static.animationRunning) {
+			data->Static.animationRunning = true;
+			HWND parent = GetParent(window);
+			int interval = Control_Volume(parent, window);
+			SetTimer(window, 0, interval, NULL);
+		}
+		break;
+
+	case OD_SETCOLOR:
+		if ((COLORREF)lparam != data->Static.textColor) {
+			InvalidateRect(window, NULL, FALSE);
+		}
+		if (lparam == -1) {
+			data->Static.textColor = PrimaryTextColor;
+		} else {
+			data->Static.textColor = lparam;
+		}
+		break;
+
+	case WM_USER + 177:
+		data->Static.fillBackground = true;
+		data->Static.backgroundColor = lparam;
+		break;
+
+	case WM_USER + 178:
+	case WM_USER + 180: {
+		Surface *cachedSurf = data->cachedSurface;
+		if (cachedSurf != NULL) {
+			Get_Display_Rect(window, &text_rect);
+			RECT crect;
+			GetClientRect(window, &crect);
+
+			Rect src_rect(0, 0, crect.right + 1, crect.bottom + 1);
+			Rect dst_rect(text_rect.left, text_rect.top, src_rect.Width, src_rect.Height);
+
+			AlternateSurface->Blit_From(dst_rect, *cachedSurf, src_rect);
+			InvalidateRect(window, NULL, FALSE);
+		}
+		return 1;
+	}
+
+	case WM_USER + 212:
+		if (data->Static.drawMode == 4 && data->Static.animationRunning) {
+			KillTimer(window, 0);
+			data->Static.animationRunning = false;
+		}
+		break;
+
+	case WM_USER + 238:
+		if (data->Static.drawMode == 1 && !data->Static.animationRunning) {
+			data->Static.animationRunning = true;
+			data->Static.revealCount = 1;
+			SetTimer(window, 0, data->Static.revealDelay, NULL);
+			InvalidateRect(window, NULL, FALSE);
+		}
+		break;
+
+	case WM_USER + 213:
+		if (data->Static.drawMode == 4) {
+			data->Static.frameIndex = lparam;
+			InvalidateRect(window, NULL, TRUE);
+		}
+		break;
+
+	case WM_USER + 214: {
+		int frame = -1;
+		if (data->Static.drawMode == 4) {
+			frame = data->Static.frameIndex;
+		}
+		return frame;
+	}
+
+	case WM_USER + 215:
+		if (data->Static.drawMode == 4) {
+			data->Static.notifyWindow = (HWND)lparam;
+		}
+		break;
+
+	case WM_USER + 223:
+		if ((int)wparam >= 0 && (int)wparam < DAT_00ABF390.Count()) {
+			char const *movieName = DAT_00ABF390[(int)wparam];
+			movieWindow = window;
+			if (data->Static.movie != NULL) {
+				delete data->Static.movie;
+				data->Static.movie = NULL;
+			}
+			KillTimer(movieWindow, 101);
+			if (data->Static.movieAux != NULL) {
+				delete data->Static.movieAux;
+				data->Static.movieAux = NULL;
+			}
+			RECT drect;
+			Get_Display_Rect(movieWindow, &drect);
+			data->Static.movie = OwnerDraw_InitMovieHandle(movieName, AlternateSurface, NULL);
+			if (data->Static.movie != NULL) {
+				data->Static.movie->SetPosition(drect.left, drect.top);
+				MovieHandle *movie = data->Static.movie;
+				MoveWindow(movieWindow, drect.left, drect.top, movie->Width, movie->Height, FALSE);
+				SetTimer(movieWindow, 101, 34, NULL);
+			} else {
+				KillTimer(movieWindow, 101);
+				if (data->Static.movieAux != NULL) {
+					delete data->Static.movieAux;
+					data->Static.movieAux = NULL;
+				}
+			}
+		}
+		break;
+
+	case WM_USER + 228: {
+		movieWindow = window;
+		if (data->Static.movie != NULL) {
+			delete data->Static.movie;
+			data->Static.movie = NULL;
+		}
+		KillTimer(movieWindow, 101);
+		if (data->Static.movieAux != NULL) {
+			delete data->Static.movieAux;
+			data->Static.movieAux = NULL;
+		}
+		RECT drect;
+		Get_Display_Rect(movieWindow, &drect);
+		data->Static.movie = OwnerDraw_InitMovieHandle((char const *)lparam, AlternateSurface, NULL);
+		if (data->Static.movie != NULL) {
+			data->Static.movie->SetPosition(drect.left, drect.top);
+			MovieHandle *movie = data->Static.movie;
+			MoveWindow(movieWindow, drect.left, drect.top, movie->Width, movie->Height, FALSE);
+			SetTimer(movieWindow, 101, 34, NULL);
+		} else {
+			KillTimer(movieWindow, 101);
+			if (data->Static.movieAux != NULL) {
+				delete data->Static.movieAux;
+				data->Static.movieAux = NULL;
+			}
+		}
+		break;
+	}
+
+	case WM_USER + 226:
+		movieWindow = window;
+		if (data->Static.movie != NULL) {
+			delete data->Static.movie;
+			data->Static.movie = NULL;
+		}
+		KillTimer(movieWindow, 101);
+		if (data->Static.movieAux != NULL) {
+			delete data->Static.movieAux;
+			data->Static.movieAux = NULL;
+		}
+		break;
+
+	case WM_USER + 240:
+		if (data->Static.movie != NULL) {
+			data->Static.movie->Blit();
+		}
+		break;
+
+	case WM_USER + 224:
+		if (data->Static.movie != NULL) {
+			data->Static.movie->Pause(true);
+		}
+		break;
+
+	case WM_USER + 225:
+		if (data->Static.movie != NULL) {
+			data->Static.movie->Pause(false);
+		}
+		break;
+
+	case WM_USER + 227:
+		data->Static.loopMovie = wparam;
+		break;
+
+	case WM_TIMER: {
+		if (wparam == 101) {
+			if (data->Static.movie != NULL) {
+				if (data->Static.movie->AdvanceFrame()) {
+					InvalidateRect(window, NULL, FALSE);
+				}
+				if (data->Static.movie->FramesLeft()) {
+					if (data->Static.loopMovie) {
+						data->Static.movie->SeekToFrame(1);
+						FUN_004068E0("Looping movie\n");
+					} else {
+						movieWindow = window;
+						if (data->Static.movie != NULL) {
+							delete data->Static.movie;
+							data->Static.movie = NULL;
+						}
+						KillTimer(movieWindow, 101);
+						if (data->Static.movieAux != NULL) {
+							delete data->Static.movieAux;
+							data->Static.movieAux = NULL;
+						}
+					}
+				}
+			}
+			break;
+		}
+		if (data->Static.drawMode == 1) {
+			InvalidateRect(window, NULL, TRUE);
+			break;
+		}
+		bool animated = data->Static.drawMode == 4;
+		bool still = data->Static.drawMode == 2 || data->Static.drawMode == 3;
+		if (still || animated) {
+			int now = GetTickCount();
+			if (now - data->Static.startTime > data->Static.startDelay) {
+				if (still || (animated && data->Static.animationRunning)) {
+					InvalidateRect(window, NULL, TRUE);
+					if (still) {
+						KillTimer(window, 0);
+						break;
+					}
+				}
+				if (data->Static.frameCount == 0) {
+					KillTimer(window, 0);
+					if (data->Static.shape != NULL) {
+						data->Static.frameCount = data->Static.shape->Get_Count();
+						SetTimer(window, 0, data->Static.frameCount, NULL);
+					}
+				}
+			}
+		}
+		break;
+	}
+
+	case WM_MOVE:
+	case WM_SIZE:
+	case WM_WINDOWPOSCHANGED:
+		delete data->cachedSurface;
+		data->cachedSurface = NULL;
+		InvalidateRect(window, NULL, FALSE);
+		break;
+
+	case OD_SUBCLASSED: {
+		WNDPROC proc = NULL;
+		DialogProcs.getValue(window, proc);
+		HWND parent = GetParent(window);
+		data->Static.drawMode = 0;
+		data->Static.textFlags = Control_Slot_Count(parent, window);
+		data->Static.textColor = PrimaryTextColor;
+		break;
+	}
+
+
+	}
+	return 0;
+
+call_original:
+	WNDPROC proc = NULL;
+	WNDPROC *found = NULL;
+	if (DialogProcs.getPointer(window, &found) && found) {
+		proc = *found;
+	}
+	return CallWindowProc(proc, window, message, wparam, lparam);
+}
