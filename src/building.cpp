@@ -120,9 +120,9 @@
 class Reestablish
 {
 public:
-    Reestablish(TechnoClass * contact, bool tethered) : Contact(contact), WasTethered(tethered) {}
-    TechnoClass * Contact;
-    bool WasTethered;
+	Reestablish(TechnoClass * contact, bool tethered) : Contact(contact), WasTethered(tethered) {}
+	TechnoClass * Contact;
+	bool WasTethered;
 };
 extern Point2D DAT_0089C848;
 extern Cell DAT_0089C818;
