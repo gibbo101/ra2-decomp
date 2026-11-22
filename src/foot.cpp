@@ -1627,8 +1627,8 @@ bool FootClass::Active_Click_With(ActionType action, Cell const & cell, Cell con
 
 		case ACTION_ENTER_TUNNEL: {
 			TubeClass * tunnel = Map[cell].Get_Tunnel();
-			TubeClass * exittunnel = Map[(Cell)tunnel->Exit].Get_Tunnel();
-			Cell exit = Adjacent_Cell((Cell)tunnel->Exit, Facing_Sub(exittunnel->EnterDir, FACING_180));
+			TubeClass * exittunnel = Map[tunnel->Get_Exit()].Get_Tunnel();
+			Cell exit = Adjacent_Cell(tunnel->Get_Exit(), Facing_Sub(exittunnel->EnterDir, FACING_180));
 			Player_Assign_Mission(MISSION_MOVE, NULL, &Map[exit], NULL);
 			break;
 		}

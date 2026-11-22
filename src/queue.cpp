@@ -124,7 +124,6 @@
 // SYNTHETIC: GAMEMD 0x00646C70 SYMBOL
 // _$E55
 
-extern unsigned long DAT_00AC5210[8];
 extern unsigned int DAT_00B04474[256];
 void Add_CRC(unsigned int *crc, unsigned int val);
 HWND FUN_00775B10(void);
@@ -3457,6 +3456,7 @@ struct PacketTiming {
 int __fastcall FUN_0064BDD0(void * buf, int bufsize);
 static int Extract_Uncompressed_Events(void * buf, int bufsize);
 static int Breakup_Receive_Packet(void * buf, int bufsize);
+extern unsigned long DAT_00AC5210[8];
 
 // FUNCTION: GAMEMD 0x0064A0C0
 int __fastcall Process_Receive_Packet(ConnManClass * net, char * multi_packet_buf, int id, int packetlen,
