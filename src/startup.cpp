@@ -625,49 +625,6 @@ static bool RegisterClasses(void)
 	return(failed);
 }
 
-static void Read_Setup_Options(RawFileClass *config_file)
-{
-	INI_RA2MD.ReadCCFile(*config_file, false, false);
-	Game::bVideoBackBuffer = INI_RA2MD.Get_Bool("Video", "VideoBackBuffer", true);
-	Debug_IngameModeChange = INI_RA2MD.Get_Bool("Video", "AllowModeToggle", false);
-	Options.ScreenWidth = INI_RA2MD.Get_Int("Video", "ScreenWidth", Options.ScreenWidth);
-	Options.ScreenHeight = INI_RA2MD.Get_Int("Video", "ScreenHeight", Options.ScreenHeight);
-	int socket = INI_RA2MD.Get_Int("Network", "Socket", 0);
-	if (socket > 0) {
-		socket += 0x4000;
-		if (socket >= 0x4000 && socket < 0x8000) {
-			Ipx.Set_Socket(socket);
-		}
-	}
-	char netbuf[INIClass::MAX_LINE_LENGTH];
-	memset(netbuf, 0, sizeof(netbuf));
-	char *netptr = netbuf;
-	bool found = INI_RA2MD.Get_String("Network", "DestNet", 0, netptr, sizeof(netbuf)) != 0;
-	if (found && netptr && strlen(netptr)) {
-		NetNumType net;
-		NetNodeType node;
-		int i = 0;
-		char *p = strtok(netptr, ".");
-		int x;
-		while (p) {
-			sscanf(p, "%x", &x);
-			if (i < 4) {
-				net[i] = (char)x;
-			} else {
-				node[i - 4] = (char)x;
-			}
-			i++;
-			p = strtok(NULL, ".");
-		}
-		if (i >= 4) {
-			Session.IsBridge = 1;
-			memset(node, 0xff, 6);
-			Session.BridgeNet = IPXAddressClass(net, node, 0);
-		}
-	}
-}
-
-// FUNCTION: GAMEMD 0x006BB9A0
 int CALLBACK WinMain(HINSTANCE instance, HINSTANCE, char *command_line, int command_show)
 {
 	int argc;
@@ -794,7 +751,44 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE, char *command_line, int comm
 	if (Parse_Command_Line(argc, argv)) {
 		HRESULT result;
 		RawFileClass *cfile = new RawFileClass("RA2MD.INI");
-		Read_Setup_Options(cfile);
+		INI_RA2MD.ReadCCFile(*cfile, false, false);
+		Game::bVideoBackBuffer = INI_RA2MD.Get_Bool("Video", "VideoBackBuffer", true);
+		Debug_IngameModeChange = INI_RA2MD.Get_Bool("Video", "AllowModeToggle", false);
+		Options.ScreenWidth = INI_RA2MD.Get_Int("Video", "ScreenWidth", Options.ScreenWidth);
+		Options.ScreenHeight = INI_RA2MD.Get_Int("Video", "ScreenHeight", Options.ScreenHeight);
+		int socket = INI_RA2MD.Get_Int("Network", "Socket", 0);
+		if (socket > 0) {
+			socket += 0x4000;
+			if (socket >= 0x4000 && socket < 0x8000) {
+				Ipx.Set_Socket(socket);
+			}
+		}
+		char netbuf[INIClass::MAX_LINE_LENGTH];
+		memset(netbuf, 0, sizeof(netbuf));
+		char *netptr = netbuf;
+		bool found = INI_RA2MD.Get_String("Network", "DestNet", 0, netptr, sizeof(netbuf)) != 0;
+		if (found && netptr && strlen(netptr)) {
+			NetNumType net;
+			NetNodeType node;
+			int i = 0;
+			char *p = strtok(netptr, ".");
+			int x;
+			while (p) {
+				sscanf(p, "%x", &x);
+				if (i < 4) {
+					net[i] = (char)x;
+				} else {
+					node[i - 4] = (char)x;
+				}
+				i++;
+				p = strtok(NULL, ".");
+			}
+			if (i >= 4) {
+				Session.IsBridge = 1;
+				memset(node, 0xff, 6);
+				Session.BridgeNet = IPXAddressClass(net, node, 0);
+			}
+		}
 		Keyboard = new KeyboardClass();
 		if (Disk_Space_Available() < INIT_FREE_DISK_SPACE) {
 			swprintf(buffer, START_TEXT("TXT_CRITICALLY_LOW", 0x78b), INIT_FREE_DISK_SPACE / (1024 * 1024));
