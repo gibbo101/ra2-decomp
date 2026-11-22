@@ -15942,3 +15942,62 @@ void Encode_Game_Options(char * out)
 	}
 	strcat(out, player_options);
 }
+
+// FUNCTION: GAMEMD 0x007A2330
+void __fastcall FUN_007A2330(char * options) {
+	char buffer[256];
+	strcpy(buffer, options);
+	struct Identity {
+		char * name;
+		int country;
+		int color;
+	};
+	{
+		Identity first_options;
+		first_options.name = strtok(buffer, ":,");
+		first_options.country = atol(strtok(NULL, ","));
+		first_options.color = atol(strtok(NULL, ","));
+		char * ip = strtok(NULL, ",");
+		char * second = strtok(NULL, ",");
+		char * third = strtok(NULL, ",");
+		FUN_007A2230(first_options.name, ip, (unsigned long)second, (unsigned long)third);
+		Assign_House_And_Color(first_options.name, first_options.country, first_options.color, -2, -2);
+	}
+	{
+		Identity second_options;
+		second_options.name = strtok(NULL, ",");
+		second_options.country = atol(strtok(NULL, ","));
+		second_options.color = atol(strtok(NULL, ","));
+		char * ip = strtok(NULL, ",");
+		char * second = strtok(NULL, ",");
+		char * third = strtok(NULL, ",");
+		FUN_007A2230(second_options.name, ip, (unsigned long)second, (unsigned long)third);
+		Assign_House_And_Color(second_options.name, second_options.country, second_options.color, -2, -2);
+	}
+	RandomMapGen.SeedData.NumPlayers = 4;
+	strcpy(Session.ScenarioFileName, "RandMap.Sed");
+	Session.Options.ScenarioIndex = -1;
+	HWND dialog = WS_Find_Dialog(0x11F);
+	Do_Random_Map(dialog, FUN_0077D710);
+	RandomMapGen.SeedData.Save("RandMap.Sed");
+	bool found = false;
+	int index;
+	for (index = 0; index < Session.Scenarios.Count(); index++) {
+		if (Session.Scenarios[index]->Is_Random_Map()) {
+			found = true;
+			break;
+		}
+	}
+	char * digest = CalcRandomMapDigest();
+	if (!found) {
+		MultiMission * map = new MultiMission("RandMap.Sed", RandomMapGen.SeedData.MapDescription, digest, true, NULL, 2, 4);
+		Session.Scenarios.Add(map);
+	} else {
+		Session.Scenarios[index]->Set_Digest(digest);
+		Session.Scenarios[index]->Set_Description(RandomMapGen.SeedData.MapDescription);
+	}
+	delete digest;
+	if (Set_Scenario_Info_From_Index(index) == true) {
+		Session.Options.ScenarioIndex = index;
+	}
+}
