@@ -345,6 +345,7 @@ address,name,source
 0x00610B50,OwnerDraw::RestoreTooltipBackground,symbols.csv
 0x00612A60,OwnerDraw::SysListViewHandler,symbols.csv
 0x00614190,OwnerDraw::EditHandler,symbols.csv
+0x00614B30,OwnerDraw::NewEditHandler,symbols.csv
 0x006163A0,OwnerDraw::CheckBoxButtonHandler,symbols.csv
 0x00616980,OwnerDraw::AutoRadioButtonHandler,symbols.csv
 0x0061C690,OwnerDraw::ScrollBarHandler,symbols.csv
