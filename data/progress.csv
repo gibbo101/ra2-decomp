@@ -3455,6 +3455,7 @@ address,name,result,size,source,symbol
 0x004A2310,_$E106,MATCH,18,src/credits.cpp,_$E106
 0x004A2330,_$E109,MATCH,26,src/credits.cpp,_$E109
 0x004A2350,CreditClass::CreditClass,MATCH,22,src/credits.cpp,??0CreditClass@@QAE@XZ
+0x004A2370,CreditClass::Graphic_Logic,MATCH,644,src/credits.cpp,?Graphic_Logic@CreditClass@@QAEX_N@Z
 0x004A2600,CreditClass::AI,MATCH,369,src/credits.cpp,?AI@CreditClass@@QAEX_N@Z
 0x004A2780,CacheStraw::Get,MATCH,147,src/cstraw.cpp,?Get@CacheStraw@@UAEHPAXH@Z
 0x004A2820,CStreamClass::CStreamClass,MATCH,86,src/cstream.cpp,??0CStreamClass@@QAE@XZ
@@ -6179,6 +6180,7 @@ address,name,result,size,source,symbol
 0x00514D10,HoverLocomotionClass::Head_To_Coord,MATCH,113,src/hover.cpp,?Head_To_Coord@HoverLocomotionClass@@UAG?AUCoordStruct@@XZ
 0x00517110,HoverLocomotionClass::Start,MATCH,169,src/hover.cpp,?Start@HoverLocomotionClass@@AAEXXZ
 0x00514D90,HoverLocomotionClass::Move_To,MATCH,474,src/hover.cpp,?Move_To@HoverLocomotionClass@@UAGXUCoordStruct@@@Z
+0x00514F70,HoverLocomotionClass::While_Moving,MATCH,3764,src/hover.cpp,?While_Moving@HoverLocomotionClass@@AAE?AW4MoveType@@_N@Z
 0x00515E30,HoverLocomotionClass::Stop,MATCH,48,src/hover.cpp,?Stop@HoverLocomotionClass@@AAEXXZ
 0x00515E60,HoverLocomotionClass::Stop_Driver,MATCH,111,src/hover.cpp,?Stop_Driver@HoverLocomotionClass@@AAEXXZ
 0x00515ED0,HoverLocomotionClass::Motion_AI,MATCH,1094,src/hover.cpp,?Motion_AI@HoverLocomotionClass@@AAEXXZ
@@ -10643,6 +10645,7 @@ address,name,result,size,source,symbol
 0x0060D450,UI::RegisterComboDropAndNewEditClasses,MATCH,201,src/ownrdraw.cpp,?RegisterComboDropAndNewEditClasses@UI@@YIXXZ
 0x0060D520,FUN_0060D520,MATCH,29,src/ownrdraw.cpp,?FUN_0060D520@@YGJPAUHWND__@@IIJ@Z
 0x0060F320,FUN_0060F320,MATCH,385,src/ownrdraw.cpp,?FUN_0060F320@@YGHPAUHWND__@@J@Z
+0x0060F4B0,OwnerDraw::PrepareDialogChildControls,MATCH,678,src/ownrdraw.cpp,?PrepareDialogChildControls@OwnerDraw@@YI_NPAUHWND__@@H@Z
 0x0060F760,OwnerDraw::SetUserData2,MATCH,566,src/ownrdraw.cpp,?SetUserData2@OwnerDraw@@YGHPAUHWND__@@J@Z
 0x0060F9A0,OwnerDraw::InitializeCtrl,MATCH,2481,src/ownrdraw.cpp,?InitializeCtrl@OwnerDraw@@YGHPAUHWND__@@J@Z
 0x00610360,ODCleanupDicts,MATCH,518,src/ownrdraw.cpp,?ODCleanupDicts@@YIHPAUHWND__@@@Z

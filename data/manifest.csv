@@ -3813,6 +3813,7 @@ address,size,symbol,source,sha256
 0x004A2310,18,_$E106,src/credits.cpp,bf9eb4f66070bd4e3ab924469a9b3ace7021eea303004049e910b3e014b4bdc4
 0x004A2330,26,_$E109,src/credits.cpp,c648a9a6cd2ae09fc5b72eb56394f24e7550349e0990eb73264f6822ab408cb4
 0x004A2350,22,??0CreditClass@@QAE@XZ,src/credits.cpp,6b882e79992ff7a9e9fd5cd2e1fbe2b0f57579a3bae90c1b5f24ff7604dd3eb8
+0x004A2370,644,?Graphic_Logic@CreditClass@@QAEX_N@Z,src/credits.cpp,48eaf07c808a04e98ec8432c56260034f80f48f5297bd267ee3eec7db18c4fc0
 0x004A2600,369,?AI@CreditClass@@QAEX_N@Z,src/credits.cpp,c1bf17b4bc7f930f02c93e0a9173d4957907fdc7aee4e260d21c2222643467ca
 0x004A2780,147,?Get@CacheStraw@@UAEHPAXH@Z,src/cstraw.cpp,c9b8e6488ac52d4bbc4bfe517f99253bc300947d8d1eecf0effabaabf26d58b6
 0x004A2820,86,??0CStreamClass@@QAE@XZ,src/cstream.cpp,acda0fda3a57f0547d335dd91075f4d7bc5ec8bde653396e12551200db7bfbc5
@@ -6532,6 +6533,7 @@ address,size,symbol,source,sha256
 0x00514CB0,92,?Destination@HoverLocomotionClass@@UAG?AUCoordStruct@@XZ,src/hover.cpp,575bdca95f6d209c08948611b12b53e2665392302a73589514a7df845a772203
 0x00514D10,113,?Head_To_Coord@HoverLocomotionClass@@UAG?AUCoordStruct@@XZ,src/hover.cpp,0739dd15b1d77f6182b66138032abb78c5a136421575f1d0b66d92cad349f059
 0x00514D90,474,?Move_To@HoverLocomotionClass@@UAGXUCoordStruct@@@Z,src/hover.cpp,761a81b52cb750b252b65b24ee3927c876efaf8756ad14f336476d5b68f8a675
+0x00514F70,3764,?While_Moving@HoverLocomotionClass@@AAE?AW4MoveType@@_N@Z,src/hover.cpp,15643e4f25efd6831c78de64fad970d71f9c21ad2db5a17bcdba4f8ea75bd4c9
 0x00515E30,48,?Stop@HoverLocomotionClass@@AAEXXZ,src/hover.cpp,b78bc7c1d68c3191851e8d121fedc271db91c3fb69bd94acb9f5d8255baf716f
 0x00515E60,111,?Stop_Driver@HoverLocomotionClass@@AAEXXZ,src/hover.cpp,74913643ae3beac64975032dd2348b5a231b20389777f958d929bd0241573935
 0x00515ED0,1094,?Motion_AI@HoverLocomotionClass@@AAEXXZ,src/hover.cpp,b523ea737bdb59ca300190848158fe07c7eca1cf9ca4950c5ab65a33695b39fd
@@ -10996,6 +10998,7 @@ address,size,symbol,source,sha256
 0x0060D450,201,?RegisterComboDropAndNewEditClasses@UI@@YIXXZ,src/ownrdraw.cpp,f1ba7ccbc3f51670105aacaf7eff87b6712aa49e53c245672a168f6155d029be
 0x0060D520,29,?FUN_0060D520@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,6c5b08bbf40a052ab5cac74895cc7cfbb9a06372bc0836e70753b3f01a269116
 0x0060F320,385,?FUN_0060F320@@YGHPAUHWND__@@J@Z,src/ownrdraw.cpp,a6dc3123487375659e8411b0c63652a8a9bd5c285ec9e6a6af46a2de6532cc97
+0x0060F4B0,678,?PrepareDialogChildControls@OwnerDraw@@YI_NPAUHWND__@@H@Z,src/ownrdraw.cpp,ac8570cd825383478bdc43a746438df7e69d0b48a9b6bba9c30bc97f88d2a79e
 0x0060F760,566,?SetUserData2@OwnerDraw@@YGHPAUHWND__@@J@Z,src/ownrdraw.cpp,cf8447032857469db88c24f34290ce671f77c229e066342acd36f8d07d788545
 0x0060F9A0,2481,?InitializeCtrl@OwnerDraw@@YGHPAUHWND__@@J@Z,src/ownrdraw.cpp,2d3f8c62b205a9cb524e8767a28ad3b00485fa7f078c6a35763683b87a767b89
 0x00610360,518,?ODCleanupDicts@@YIHPAUHWND__@@@Z,src/ownrdraw.cpp,bdb1318d13ad2ddf3949bdb2d4a17ded0335f55ff5d0265e80a3bcacd86fbb82
