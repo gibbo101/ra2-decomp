@@ -2681,6 +2681,7 @@ int UnitClass::Do_MISSION_UNLOAD(void)
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
 }
 
+// FUNCTION: GAMEMD 0x0073E5E0
 int UnitClass::Do_MISSION_HARVEST(void)
 {
 	enum { LOOKING, HARVESTING, FINDHOME, HEADINGHOME, GOINGTOIDLE };
@@ -2688,15 +2689,19 @@ int UnitClass::Do_MISSION_HARVEST(void)
 
 	if (Class->ResourceDestination && Class->ResourceGatherer && SlaveManager != NULL) {
 		SlaveManager->FUN_006B0DB0();
-		return Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2);
+		int delay = Current_Mission_Control().Normal_Delay();
+		return(delay + Random_Pick(0, 2));
 	}
-	if (!Class->Harvester && !Class->Weeder) {
-		return 450;
-	}
+
+	// A unit that harvests nothing just sits still.
+	if (!Class->Harvester && !Class->Weeder) return(TICKS_PER_SECOND * 30);
+
 	if (Class->Dock.Count() == 0 && !House->FUN_0050B730()) {
 		QueueMission(MISSION_GUARD, false);
-		return 1;
+		return(1);
 	}
+
+	// With no refinery left to unload at, drop into guard mode.
 	bool found = false;
 	for (index = 0; index < Class->Dock.Count(); index++) {
 		if (House->BQuantity.Value(Class->Dock[index]->HeapID) > 0) {
@@ -2706,159 +2711,166 @@ int UnitClass::Do_MISSION_HARVEST(void)
 	}
 	if (!found) {
 		QueueMission(MISSION_GUARD, false);
-		return 1;
+		return(1);
 	}
-	{
-		bool teleporter = Class->Teleporter;
-		switch (Status) {
+
+	bool teleporter = Class->Teleporter;
+	switch (Status) {
 		case LOOKING:
-			if (!Class->Weeder && Tiberium_Load() >= 1.0) {
+			if (!Class->Weeder && Tiberium_Load() >= 1) {
 				Status = FINDHOME;
-				return 1;
+				return(1);
 			}
+
 			{
+				// Head back to the patch that was mined last.
 				bool hastarget = true;
-				if (ArchiveTarget != 0) {
-					Assign_Destination(ArchiveTarget, 1);
-					Assign_Archive_Target(0);
+				if (ArchivedTarget != NULL) {
+					Assign_Destination(ArchivedTarget, true);
+					Assign_Archive_Target(NULL);
 					hastarget = false;
 				}
 				IsHarvesting = false;
 				bool ok;
 				if (Class->Weeder) {
-					ok = Goto_Weed(Rule->TiberiumLongScan / 256);
+					ok = Goto_Weed(Rule->TiberiumLongScan / CELL_LEPTON_W);
 				} else {
 					IPersistPtr persist(Locomotion);
 					CLSID clsid;
 					persist->GetClassID(&clsid);
-					if (clsid == LocomotionClass::CLSIDs::Teleport && NavCom != 0) {
-						Assign_Destination(0, 1);
+					if (clsid == LocomotionClass::CLSIDs::Teleport && NavCom != NULL) {
+						Assign_Destination(NULL, true);
 					}
-					ok = Goto_Tiberium(Rule->TiberiumLongScan / 256, hastarget);
+					ok = Goto_Tiberium(Rule->TiberiumLongScan / CELL_LEPTON_W, hastarget);
 				}
 				if (ok) {
 					IsHarvesting = true;
 					Animation.Set_Rate(2);
 					Animation.Set_Stage(0);
 					Status = HARVESTING;
-					return 1;
+					return(1);
 				}
-				if (NavCom == 0) {
-					if (ArchiveTarget != 0) {
-						Assign_Destination(ArchiveTarget, 1);
+
+				// With nothing to mine and nowhere to go, give up and go idle.
+				if (NavCom == NULL) {
+					if (ArchivedTarget != NULL) {
+						Assign_Destination(ArchivedTarget, true);
 					} else {
 						Status = GOINGTOIDLE;
 						IsUseless = true;
 						if (Class->Harvester) {
 							House->IsTiberiumShort = true;
 						}
-						return 105;
+						return(TICKS_PER_SECOND * 7);
 					}
 				} else {
 					IsUseless = false;
 				}
 			}
 			break;
+
 		case HARVESTING:
 			if (Animation.Fetch_Rate() == 0) {
 				Animation.Set_Stage(0);
 				Animation.Set_Rate(Rule->HarvesterLoadRate);
 			}
-			if (Animation.Fetch_Stage() < 9) {
-				return 1;
-			}
+
+			if (Animation.Fetch_Stage() < 9) return(1);
 			if (!Harvesting()) {
 				IsHarvesting = false;
-				if (Class->Harvester && Tiberium_Load() == 1.0) {
+				if (Class->Harvester && Tiberium_Load() == 1) {
 					Status = FINDHOME;
 					Cell cell;
 					if (Class->Harvester) {
-						cell = ScanForTiberium(Rule->TiberiumShortScan / 256, false);
+						cell = ScanForTiberium(Rule->TiberiumShortScan / CELL_LEPTON_W, false);
 					} else {
-						cell = Search_For_Weed(Rule->TiberiumShortScan / 256);
+						cell = Search_For_Weed(Rule->TiberiumShortScan / CELL_LEPTON_W);
 					}
 					if (cell != CELL_NONE) {
 						Assign_Archive_Target(&Map[cell]);
 					} else {
-						Assign_Archive_Target(0);
+						Assign_Archive_Target(NULL);
 					}
-					return 1;
+					return(1);
 				}
 				bool ok;
 				if (Class->Harvester) {
-					ok = Goto_Tiberium(Rule->TiberiumShortScan / 256, false);
+					ok = Goto_Tiberium(Rule->TiberiumShortScan / CELL_LEPTON_W, false);
 				} else {
-					ok = Goto_Weed(Rule->TiberiumShortScan / 256);
+					ok = Goto_Weed(Rule->TiberiumShortScan / CELL_LEPTON_W);
 				}
-				if (!ok && NavCom == 0) {
-					Assign_Archive_Target(0);
+				if (!ok && NavCom == NULL) {
+					Assign_Archive_Target(NULL);
 					Status = FINDHOME;
 				} else {
 					Status = HARVESTING;
 					IsHarvesting = true;
 				}
-				return 1;
+				return(1);
 			}
-			return 1;
+			return(1);
+
 		case FINDHOME:
-			if (NavCom != 0 && teleporter && TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0)) {
+			if (NavCom != NULL && teleporter && TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0) != NULL) {
 				AbortMotion();
 			}
-			if (NavCom == 0) {
-				BuildingClass *nearest = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0);
+			if (NavCom == NULL) {
+				BuildingClass * nearest = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0);
 				bool close;
 				if (!teleporter) {
-					close = nearest != 0 && Distance_To(nearest) <= Rule->HarvesterTooFarDistance * 256;
+					close = nearest != NULL && Distance_To(nearest) <= Rule->HarvesterTooFarDistance * CELL_LEPTON_W;
 				} else {
-					close = nearest != 0 && Distance_To(nearest) <= Rule->ChronoHarvTooFarDistance * 256;
+					close = nearest != NULL && Distance_To(nearest) <= Rule->ChronoHarvTooFarDistance * CELL_LEPTON_W;
 				}
-				if (close && Transmit_Message(RADIO_HELLO, nearest) == 1) {
+
+				// A refinery in range that answers takes over the docking.
+				if (close && Transmit_Message(RADIO_HELLO, nearest) == RADIO_ROGER) {
 					Status = HEADINGHOME;
 					break;
 				}
 				ScenarioInit++;
 				nearest = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 1);
 				ScenarioInit--;
-				if (nearest != 0) {
-					if (Distance_To(nearest) > 0x300 || teleporter) {
+				if (nearest != NULL) {
+					if (Distance_To(nearest) > 3 * CELL_LEPTON_W || teleporter) {
 						Cell cell(nearest->Get_Coord());
-						Cell here = cell;
-						here.X = nearest->Class->QueueingCell.X + cell.X;
-						here.Y += nearest->Class->QueueingCell.Y;
-						here = Map.Nearby_Location(here, SPEED_WHEEL, -1, MZONE_NORMAL, false, Point2D(1, 1), 0, 0, 0, 1, Cell(0, 0), 0);
-						if (!(here == CELL_NONE)) {
-							Assign_Destination(&Map[here], 1);
+						Cell nearby = cell;
+						nearby.X += nearest->Class->QueueingCell.X;
+						nearby.Y += nearest->Class->QueueingCell.Y;
+						nearby = Map.Nearby_Location(nearby, SPEED_WHEEL);
+						if (nearby != CELL_NONE) {
+							Assign_Destination(&Map[nearby], true);
 						} else {
-							Assign_Destination(0, 1);
+							Assign_Destination(NULL, true);
 						}
 					}
 				}
 			}
 			break;
+
 		case HEADINGHOME:
 			QueueMission(MISSION_ENTER, false);
-			return 1;
+			return(1);
+
 		case GOINGTOIDLE:
 			if (IsUseless) {
-				if (TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Rule->RepairBay, 0, 1)) {
+				if (TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Rule->RepairBay, 0, 1) != NULL) {
 					QueueMission(MISSION_REPAIR, false);
 				} else {
 					QueueMission(MISSION_HUNT, false);
 				}
 			}
-			{
-				BuildingClass *object = Map[Get_Coord()].Cell_Building();
-				if (object != 0) {
-					if (object->Class->IsRefinery || object->Class->IsWeeder) {
-						Assign_Destination(&Map[Nearby_Location(object)], 1);
-					}
+			BuildingClass * bptr = Map[Get_Coord()].Cell_Building();
+			if (bptr != NULL) {
+				if (bptr->Class->IsRefinery || bptr->Class->IsWeeder) {
+					Assign_Destination(&Map[Nearby_Location(bptr)], true);
 				}
 			}
 			QueueMission(MISSION_GUARD, false);
 			break;
-		}
-		return Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2);
 	}
+	int delay = Current_Mission_Control().Normal_Delay();
+	return(delay + Random_Pick(0, 2));
 }
 
 // FUNCTION: GAMEMD 0x0073EFC0
