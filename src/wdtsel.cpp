@@ -214,6 +214,36 @@ rc_ptr<Territory> Selection::Pick_Territory(void)
 	return(selected ? MousedTerritory : rc_ptr<Territory>());
 }
 
+// FUNCTION: GAMEMD 0x0076D180
+// WorldDominationTour::Selection::Handle_Click
+void Selection::Handle_Click(Point2D const & point, bool & selected)
+{
+	int zone = WorldMap->FUN_00769440(point) ? 2 : 1;
+	switch (zone) {
+		case 1:
+			WorldMap->FUN_007693A0(this, false);
+			selected = Select_Territory_At(point);
+			if (selected) {
+				Play_SFX("ConflictSelected");
+			}
+			break;
+
+		case 2:
+			WorldMap->FUN_007693A0(this, true);
+			On_Cancel_Enter();
+			break;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0076D3A0
+// WorldDominationTour::Selection::Select_Territory_At
+bool Selection::Select_Territory_At(Point2D const & point)
+{
+	Update_Hovered_Territory(point);
+	rc_ptr<Territory> territory = HoveredTerritoryID >= 0 ? WorldMap->FUN_0076F000(HoveredTerritoryID) : rc_ptr<Territory>();
+	return(Select_Territory(territory));
+}
+
 // FUNCTION: GAMEMD 0x0076D470
 // WorldDominationTour::Selection::Update_Hovered_Territory
 void Selection::Update_Hovered_Territory(Point2D const & point)

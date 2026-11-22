@@ -810,7 +810,7 @@ namespace WorldDominationTour
 			int StartTick;
 			int LastHoverZone;
 			rc_ptr<Map> WorldMap;
-			int HoveredTerritoryID;
+			unsigned int HoveredTerritoryID;
 			rc_ptr<Territory> MousedTerritory;
 			ConvertClass * TargetDrawer;
 			MSAnimEntry * ZoomingTarget;
