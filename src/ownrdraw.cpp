@@ -5596,6 +5596,217 @@ void __fastcall DrawBeveledBorder(Surface & surface, Rect const & rect, int offs
 char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
 }
 
+// FUNCTION: GAMEMD 0x006137D0
+// OwnerDraw::SysTabHandler
+LRESULT CALLBACK OwnerDraw::SysTabHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	static char string1[64];
+	static wchar_t string2[256];
+
+	LRESULT result = 0;
+	WNDPROC proc = NULL;
+	WinData * data = NULL;
+	Dialogs.getPointer(window, &data);
+	DialogProcs.getValue(window, proc);
+
+	if (message == WM_ERASEBKGND) {
+		return(1);
+	}
+
+	if (message == WM_NCPAINT) {
+		return(0);
+	}
+
+	if (message == OD_SUBCLASSED) {
+		RECT rect;
+		Get_Display_Rect(window, &rect);
+
+		Surface * surf = SurfaceCache.GetSurface("tab_tlu.pcx");
+		SendMessage(window, TCM_SETITEMSIZE, 0, MAKELPARAM(89, surf->Get_Height() - 1));
+
+	}
+
+	if (message == WM_PAINT) {
+		RECT winrect;
+		Get_Display_Rect(window, &winrect);
+
+		TabCtrl_GetItemCount(window);
+
+		RECT tabrect;
+		TabCtrl_GetItemRect(window, 0, &tabrect);
+		TabCtrl_GetItemRect(window, 0, &tabrect);
+
+		winrect.top += (tabrect.bottom - tabrect.top) + 3;
+		Rect dimrect;
+		dimrect.X = winrect.left;
+		dimrect.Y = winrect.top;
+		dimrect.Width = winrect.right - winrect.left;
+		dimrect.Height = winrect.bottom - winrect.top;
+
+		CopyDimmedBackground(dimrect, window, 0);
+		ValidateRect(window, NULL);
+
+		dimrect.X = winrect.left;
+		dimrect.Y = winrect.top;
+		dimrect.Width = winrect.right - winrect.left;
+		dimrect.Height = winrect.bottom - winrect.top;
+
+		Surface * image = SurfaceCache.GetSurface("tab_fml.pcx");
+		if (image) {
+			image->Get_Height();
+			int width = image->Get_Width();
+			SurfaceCache.Draw(Rect(Point2D(winrect.left, winrect.top), width, winrect.bottom - winrect.top), *AlternateSurface, *image, 0, 0);
+		}
+
+		image = SurfaceCache.GetSurface("tab_fmr.pcx");
+		if (image) {
+			image->Get_Height();
+			int width = image->Get_Width();
+			SurfaceCache.Draw(Rect(winrect.right - width, winrect.top, width, winrect.bottom - winrect.top), *AlternateSurface, *image, 0, 0);
+		}
+
+		image = SurfaceCache.GetSurface("tab_ftm.pcx");
+		if (image) {
+			int height = image->Get_Height();
+			image->Get_Width();
+			SurfaceCache.Draw(Rect(Point2D(winrect.left, winrect.top), winrect.right - winrect.left, height), *AlternateSurface, *image, 0, 0);
+		}
+
+		image = SurfaceCache.GetSurface("tab_fbm.pcx");
+		if (image) {
+			int height = image->Get_Height();
+			image->Get_Width();
+			SurfaceCache.Draw(Rect(winrect.left, winrect.bottom - height, winrect.right - winrect.left, height), *AlternateSurface, *image, 0, 0);
+		}
+
+		image = SurfaceCache.GetSurface("tab_ftl.pcx");
+		if (image) {
+			int height = image->Get_Height();
+			int width = image->Get_Width();
+			AlternateSurface->Blit_From(Rect(Point2D(winrect.left, winrect.top), width, height), *image, Rect(0, 0, width, height));
+		}
+
+		image = SurfaceCache.GetSurface("tab_ftr.pcx");
+		if (image) {
+			int height = image->Get_Height();
+			int width = image->Get_Width();
+			AlternateSurface->Blit_From(Rect(winrect.right - width, winrect.top, width, height), *image, Rect(0, 0, width, height));
+		}
+
+		image = SurfaceCache.GetSurface("tab_fbl.pcx");
+		if (image) {
+			int height = image->Get_Height();
+			int width = image->Get_Width();
+			AlternateSurface->Blit_From(Rect(winrect.left, winrect.bottom - height, width, height), *image, Rect(0, 0, width, height));
+		}
+
+		image = SurfaceCache.GetSurface("tab_fbr.pcx");
+		if (image) {
+			int height = image->Get_Height();
+			int width = image->Get_Width();
+			AlternateSurface->Blit_From(Rect(Point2D(winrect.right - width, winrect.bottom - height), width, height), *image, Rect(0, 0, width, height));
+		}
+
+		int current = TabCtrl_GetCurSel(window);
+		Get_Display_Rect(window, &winrect);
+		int itab = current + 1;
+
+		RECT itemrect;
+		while (true) {
+			int tab = itab;
+
+			if (TabCtrl_GetItemRect(window, tab, &itemrect)) {
+				TC_ITEM item;
+				memset(&item, 0, sizeof(item));
+				item.pszText = string1;
+				item.cchTextMax = sizeof(string1);
+				strcpy(string1, "Title");
+				item.mask = TCIF_TEXT;
+				TabCtrl_GetItem(window, tab, &item);
+
+				char state = 'd';
+				if (tab == current) {
+					state = 'u';
+				}
+
+				dimrect.X = winrect.left + (itemrect.left - MIN(itemrect.left, 6));
+				dimrect.Y = itemrect.top + winrect.top;
+				dimrect.Width = itemrect.right + (MIN(itemrect.left, 6) - itemrect.left);
+				dimrect.Height = itemrect.bottom - itemrect.top;
+
+				char fname[80];
+				Surface * tab_lu = SurfaceCache.GetSurface("tab_tlu.pcx");
+				sprintf(fname, "tab_tm%c.pcx", state);
+				image = SurfaceCache.GetSurface(fname);
+				if (image) {
+					int height = image->Get_Height();
+					image->Get_Width();
+					int width = dimrect.Width - 2 * tab_lu->Get_Width();
+					int draw_y = dimrect.Y;
+					int draw_x = dimrect.X + tab_lu->Get_Width();
+					SurfaceCache.Draw(Rect(draw_x, draw_y, width, height), *AlternateSurface, *image, 0, 0);
+				}
+
+				sprintf(fname, "tab_tl%c.pcx", state);
+				image = SurfaceCache.GetSurface(fname);
+				if (image) {
+					int height = image->Get_Height();
+					int width = image->Get_Width();
+					ODColorBits transparent;
+					transparent.v = RGB(255, 0, 255);
+					SurfaceCache.DrawTrans(Rect(Point2D(dimrect.X, dimrect.Y), width, height), *AlternateSurface, *image, DSurface::Build_Hicolor_Pixel(transparent.red, transparent.green, transparent.blue));
+				}
+
+				sprintf(fname, "tab_tr%c.pcx", state);
+				image = SurfaceCache.GetSurface(fname);
+				if (image) {
+					int height = image->Get_Height();
+					int width = image->Get_Width();
+					Rect trrect;
+					trrect.X = dimrect.X + dimrect.Width - width;
+					trrect.Y = dimrect.Y;
+					trrect.Width = width;
+					trrect.Height = height;
+					ODColorBits transparent;
+					transparent.v = RGB(255, 0, 255);
+					SurfaceCache.DrawTrans(trrect, *AlternateSurface, *image, DSurface::Build_Hicolor_Pixel(transparent.red, transparent.green, transparent.blue));
+				}
+
+				if (item.pszText) {
+					strcpy(string1, item.pszText);
+				}
+
+				LTRBStruct text_rect;
+				text_rect.Left = dimrect.X;
+				text_rect.Right = dimrect.X + dimrect.Width;
+				text_rect.Top = dimrect.Y + 6;
+				text_rect.Bottom = dimrect.Y + dimrect.Height;
+
+				COLORREF color = SelectedTabTextColor;
+				if (itab == current) {
+					color = PrimaryTextColor;
+				}
+				swprintf(string2, L"%hs", string1);
+				DrawWideText(AlternateSurface, string2, &text_rect, data->Wide.font, color, 5, 0xc, 0, 0, 0);
+
+				ValidateRect(window, &itemrect);
+				if (itab == current) {
+					break;
+				}
+
+				itab++;
+			} else {
+				itab = 0;
+			}
+		}
+
+		ValidateRect(window, NULL);
+	} else if (proc) {
+		result = CallWindowProc(proc, window, message, wparam, lparam);
+	}
+	return(result);
+}
+
 // FUNCTION: GAMEMD 0x00614190
 // OwnerDraw::EditHandler
 LRESULT CALLBACK OwnerDraw::EditHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
