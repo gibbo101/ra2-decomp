@@ -576,6 +576,7 @@ address,name,source
 0x007468C0,UnitClass::UpdateDisguise,symbols.csv
 0x007470D0,UnitTypeClass::UnitTypeClass,symbols.csv
 0x00748FD0,UnitTrackerClass::UnitTrackerClass,symbols.csv
+0x007493B0,VoxelAnimClass::VoxelAnimClass,symbols.csv
 0x0074AD80,VoxelAnimTypeClass::VoxelAnimTypeClass,symbols.csv
 0x0074C5B0,VeinholeMonsterClass::VeinholeMonsterClass,symbols.csv
 0x0074C9F0,VeinholeMonsterClass::~VeinholeMonsterClass,symbols.csv

@@ -16525,6 +16525,7 @@ address,name,result,size,source,symbol
 0x00749350,_$E35,MATCH,18,src/vanim.cpp,_$E35
 0x00749370,_$E38,MATCH,26,src/vanim.cpp,_$E38
 0x00749390,_$E47,MATCH,23,src/vanim.cpp,_$E47
+0x007493B0,VoxelAnimClass::VoxelAnimClass,MATCH,1310,src/vanim.cpp,??0VoxelAnimClass@@QAE@PBVVoxelAnimTypeClass@@ABVCoord@@PAVHouseClass@@@Z
 0x007498D0,VoxelAnimClass::VoxelAnimClass,MATCH,275,src/vanim.cpp,??0VoxelAnimClass@@QAE@XZ
 0x007499F0,VoxelAnimClass::~VoxelAnimClass,MATCH,292,src/vanim.cpp,??1VoxelAnimClass@@UAE@XZ
 0x00749B20,VoxelAnimClass::Render,MATCH,71,src/vanim.cpp,?Render@VoxelAnimClass@@UBE_NAAV?$TRect@H@@_N1@Z

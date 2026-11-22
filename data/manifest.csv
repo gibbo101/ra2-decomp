@@ -16857,6 +16857,7 @@ address,size,symbol,source,sha256
 0x00749350,18,_$E35,src/vanim.cpp,f26e6683b04190262f375767cff16c150a0d7dc490adb807ff162de34ce4afe3
 0x00749370,26,_$E38,src/vanim.cpp,d0aee38934a703f4866e6822bb94df1df391988f6d4a01a72e33bffa63139397
 0x00749390,23,_$E47,src/vanim.cpp,b21cec52587c59a8daa1ea74375ca628c26f5f374fca01ec5f3bc843c329a0a8
+0x007493B0,1310,??0VoxelAnimClass@@QAE@PBVVoxelAnimTypeClass@@ABVCoord@@PAVHouseClass@@@Z,src/vanim.cpp,d50ff858ef7200b50db27d1955b1ac762e420d9ffadfc198604d23ecab3cd163
 0x007498D0,275,??0VoxelAnimClass@@QAE@XZ,src/vanim.cpp,46cc2f6c2e385c6bae81a8556c3cf47cd1b8776e09dc5981399543e8a2e496ca
 0x007499F0,292,??1VoxelAnimClass@@UAE@XZ,src/vanim.cpp,40d93d3eff8f6e44d1212174664d069dba7d4f4ba10785ecba746445b5ed9e1c
 0x00749B20,71,?Render@VoxelAnimClass@@UBE_NAAV?$TRect@H@@_N1@Z,src/vanim.cpp,0bdca33eef37162f6fda0cbb92d94ffef21eddfa273c4c71197e01976d4a7682
