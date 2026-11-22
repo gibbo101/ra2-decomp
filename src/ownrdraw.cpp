@@ -8,6 +8,8 @@
 #include "ownrdraw.h"
 #include "draw.h"
 
+class SHPStruct;
+
 namespace OwnerDraw {
 	struct WinData {
 
@@ -22,32 +24,68 @@ namespace OwnerDraw {
 		int paintDisabled;
 		int toolTipsEnabled;
 
+		wchar_t *text;
+		int hasText;
+		int asciiOnly;
+		WinNode *nodes;
+		int hasFocus;
+		WideWstring *editText;
+		int caretIndex;
+		int scrollStart;
+		int textLimit;
+		int caretBlink;
+		wchar_t *rejectChars;
+		int styleFlags;
+		void *StaticMovieHandle;
+		int StaticLoopMovie;
+		void *StaticMovieAuxHandle;
+		BitFont *Font;
+		int ControlType;
+		int DialogID;
+		int StaticDrawMode;
+		ConvertClass *StaticShapeDrawer;
+		SHPStruct *StaticShape;
+		int StaticShapeFlags;
+		int StaticTextRevealCount;
+		int StaticTextRevealDelay;
+		int StaticTextRevealStep;
+		int StaticColorAdjust;
+		int StaticSoundIndex;
+		int StaticFrameCount;
+		int StaticCurrentFrame;
+		int StaticLastFrameTick;
+		int StaticFrameDelayMs;
+		HWND StaticFrameNotifyHwnd;
+		bool StaticAnimationRunning;
+		int StaticTextFlags;
+		int LayoutBand;
+		bool StaticFillBackground;
+		COLORREF StaticFillColor;
+		bool skipDraw;
+		bool HasOpenAnimation;
+		bool HasFadeAnimation;
+		bool Unknown_0BF;
+		int TooltipVariant;
+		bool ButtonTimerActive;
+		bool ButtonAlternateFrame;
+		int alpha;
+		bool UseItemColorOverrides;
+		bool disabled;
+		int ComboBoxMaxVisibleDropItems;
+		bool Unknown_0D4;
+		bool HasTopPanelAnimation;
+		bool HasButtonAnimation;
+		bool HasMainScreenAnimation;
+		bool FlagD8;
+		unsigned char skinned;
+		unsigned char variant;
+		bool Unknown_0DB;
+		int ExtraWidth;
+		SHPStruct *DialogBackground;
+		SHPStruct *DialogBackgroundEx;
+
 		union {
 			struct {
-				wchar_t *text;
-				int hasText;
-				int asciiOnly;
-				WinNode *nodes;
-				int hasFocus;
-				WideWstring *editText;
-				int caretIndex;
-				int scrollStart;
-				int textLimit;
-				int caretBlink;
-				wchar_t *rejectChars;
-				int styleFlags;
-				unsigned char reserved58[4];
-				int StaticLoopMovie;
-				unsigned char reserved60[4];
-				BitFont *Font;
-				int ControlType;
-				int DialogID;
-				unsigned char reserved70[0x20];
-				int StaticSoundIndex;
-			};
-
-			struct {
-				unsigned char reserved28[0xC0];
 				ArrayList<int> *rowColors;
 				ArrayList<int> *selStates;
 				int topIndex;
@@ -56,13 +94,6 @@ namespace OwnerDraw {
 			} ListBox;
 
 			struct {
-				unsigned char reserved28[0x94];
-				bool skipDraw;
-				unsigned char reservedBD[0xB];
-				unsigned char alpha;
-				unsigned char reservedC9[4];
-				bool disabled;
-				unsigned char reservedCE[0x1A];
 				int result;
 				int dragging;
 				int range;
@@ -73,7 +104,6 @@ namespace OwnerDraw {
 			} ScrollBar;
 
 			struct {
-				unsigned char reserved28[0xC0];
 				int result;
 				int dragging;
 				int range;
@@ -104,19 +134,12 @@ namespace OwnerDraw {
 			} Button;
 
 			struct {
-				unsigned char reserved28[0xB1];
-				unsigned char skinned;
-				unsigned char variant;
-				unsigned char reservedDB[13];
 				int checkState;
 			} CheckBox;
 
 			struct {
-				unsigned char reserved28[0x1C];
-				int scrollStart;
-				unsigned char reserved48[0x80];
-				int alpha;
-				unsigned char reservedCC[0x24];
+				int reserved28;
+				int reserved2C;
 				int focusPending;
 				int focusEnabled;
 				int hadTabStop;
@@ -129,33 +152,16 @@ namespace OwnerDraw {
 			} ComboDrop;
 
 			struct {
-				unsigned char reserved28[0xC0];
 				int itemState;
 			} DrawItem;
 
 			struct {
-				unsigned char reserved28[0xC0];
 				int minimum;
 				int maximum;
 				int position;
 			} ProgressBar;
 
-			struct {
-				unsigned char reserved28[0x88];
-				int LayoutBand;
-				unsigned char reservedB4[9];
-				bool HasOpenAnimation;
-				unsigned char reservedBE[0x16];
-				bool Unknown_0D4;
-				bool HasTopPanelAnimation;
-				bool HasButtonAnimation;
-				bool HasMainScreenAnimation;
-				bool FlagD8;
-				unsigned char reservedD9[3];
-				int ExtraWidth;
-			} Dialog;
-
-			unsigned char _size[0x1C0];
+			unsigned char _size[0x100];
 		};
 
 		HFONT font;
@@ -245,7 +251,6 @@ char const * __fastcall GetTooltipStringLabel(HWND dialog, HWND control);
 extern wchar_t const DAT_00887734[];
 
 bool Is_Owner_Draw_Message(unsigned int msg);
-bool __fastcall FUN_0069BBE0(SessionClass *session);
 bool __fastcall FUN_00602AE0(unsigned int msg);
 
 void ODInitMasks(void);
@@ -462,6 +467,21 @@ inline bool Is_Quick_Control_D(int id)
 		id == 0x711;
 }
 
+inline bool Has_Button_Animation(int type)
+{
+	return type == 0xbc || type == 0xbd || type == 0x102 || type == 0xc2 || type == 0xc9 || type == 0xbc6;
+}
+
+inline bool Has_Main_Screen_Animation(int type)
+{
+	return type == 0x103 || type == 0xbc7;
+}
+
+inline bool Has_Flag_D8(int type)
+{
+	return type == 0x108 || type == 0xbc6;
+}
+
 inline OwnerDraw::WinData *Get_Data(HWND window)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -606,7 +626,7 @@ int FUN_006015E0(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -783,7 +803,7 @@ int FUN_00601D20(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -915,7 +935,7 @@ int Typed_Char_Sound(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -964,18 +984,13 @@ inline bool Is_Flag_Control_A(int type, int id)
 
 inline bool Is_Flag_Control_B(int type, int id)
 {
-	return (type == 0xbc ||
-			type == 0xbd ||
-			type == 0x102 ||
-			type == 0xc2 ||
-			type == 0xc9 ||
-			type == 0xbc6) && (id == 0x6ec ||
+	return Has_Button_Animation(type) && (id == 0x6ec ||
 			id == 0x5a8);
 }
 
 inline bool Is_Flag_Control_C(int type, int id)
 {
-	return (type == 0x103 || type == 0xbc7) && (id == 0x6f3 ||
+	return Has_Main_Screen_Animation(type) && (id == 0x6f3 ||
 			id == 0x6f4 ||
 			id == 0x69f ||
 			id == 0x6f6 ||
@@ -1012,7 +1027,7 @@ inline bool Is_Flag_Control_C(int type, int id)
 
 inline bool Is_Flag_Control_D(int type, int id)
 {
-	return (type == 0x108 || type == 0xbc6) && (id == 0x6d2 ||
+	return Has_Flag_D8(type) && (id == 0x6d2 ||
 			id == 0x3ea ||
 			id == 0x69d ||
 			id == 0x69f ||
@@ -1076,7 +1091,7 @@ inline bool Is_Flag_Control_D(int type, int id)
 
 inline bool Is_Flag_Control_E(int type, int id)
 {
-	return Is_Owner_Draw_Message(type) && id == 0x695 && !FUN_0069BBE0(&Session);
+	return Is_Owner_Draw_Message(type) && id == 0x695 && !Session.FUN_0069BBE0();
 }
 
 // FUNCTION: GAMEMD 0x00602490
@@ -1142,7 +1157,7 @@ bool Is_Special_Control(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1243,7 +1258,7 @@ bool Is_Typed_Control(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1315,7 +1330,7 @@ int Is_Typed_Control_Int(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1365,7 +1380,7 @@ int Control_Volume(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1437,7 +1452,7 @@ ConvertClass *Get_Static_Drawer(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1518,7 +1533,7 @@ int FUN_00603810(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1533,7 +1548,7 @@ int FUN_00603870(HWND dialog, HWND control, int arg)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1619,7 +1634,7 @@ void FUN_00603D30(HWND dialog, Surface *surface)
 	HWND key = dialog;
 
 	if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL) {
-		*(int *)((char *)data + 0x70) = 2;
+		data->StaticDrawMode = 2;
 		data->image = surface;
 		InvalidateRect(dialog, NULL, TRUE);
 	}
@@ -1655,7 +1670,7 @@ void FUN_00603E40(HWND dialog, int value)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		*(int *)((char *)data + 0xc0) = value;
+		data->TooltipVariant = value;
 	}
 }
 
@@ -1665,7 +1680,7 @@ int FUN_00603EA0(HWND dialog)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		return *(int *)((char *)data + 0xc0);
+		return data->TooltipVariant;
 	}
 	return -1;
 }
@@ -3047,7 +3062,7 @@ void FUN_00606740(HWND dialog, bool value)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		*((char *)data + 0xbc) = value;
+		data->skipDraw = value;
 	}
 }
 
@@ -3057,7 +3072,7 @@ char FUN_006067A0(HWND dialog)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		return *((char *)data + 0xbc);
+		return data->skipDraw;
 	}
 	return false;
 }
@@ -3153,11 +3168,11 @@ static inline int Slide_Phase(int delta)
 void __fastcall OwnerDraw::DrawCampaignMenuTransition(HWND dialog, bool reverse)
 {
 	OwnerDraw::WinData *record = Get_Data(dialog);
-	bool animate_main_screen = record ? record->Dialog.HasMainScreenAnimation : false;
+	bool animate_main_screen = record ? record->HasMainScreenAnimation : false;
 	record = Get_Data(dialog);
-	bool animate_buttons = record ? record->Dialog.HasButtonAnimation : false;
+	bool animate_buttons = record ? record->HasButtonAnimation : false;
 	record = Get_Data(dialog);
-	bool animate_top_panel = record ? record->Dialog.HasTopPanelAnimation : false;
+	bool animate_top_panel = record ? record->HasTopPanelAnimation : false;
 
 	ConvertClass *drawer = FUN_0072E280();
 	ConvertClass *button_convert = OwnerDraw::GetSmallButtonAnimConvert();
@@ -3358,13 +3373,13 @@ void __fastcall OwnerDraw::DrawCampaignMenuTransition(HWND dialog, bool reverse)
 void FUN_00607FD0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Find_Data(dialog);
-	if (data != NULL && *((char *)data + 0xbe)) {
+	if (data != NULL && data->HasFadeAnimation) {
 		HWND item = GetDlgItem(dialog, 0x71a);
 		if (item != NULL) {
 			SendMessage(item, 0x4e2, 0, 0);
 		}
 		OwnerDraw::DrawCampaignMenuTransition(dialog, false);
-		*((char *)data + 0xbe) = 0;
+		data->HasFadeAnimation = 0;
 	}
 }
 
@@ -3380,14 +3395,14 @@ BOOL CALLBACK InitCompactDialogControlsProc(HWND window, LPARAM lparam);
 // FUNCTION: GAMEMD 0x00608070
 bool FUN_00608070(HWND dialog)
 {
-	if (FUN_0069BBE0(&Session)) {
+	if (Session.FUN_0069BBE0()) {
 		return false;
 	}
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
-	bool armed = *((char *)data + 0xbd) && *(int *)((char *)data + 0xb0) == 1;
+	bool armed = data->HasOpenAnimation && data->LayoutBand == 1;
 	bool visible = IsWindowVisible(dialog) != 0;
 	if (!armed || !visible) {
 		return false;
@@ -3400,7 +3415,7 @@ bool FUN_00608070(HWND dialog)
 	if (data == NULL) {
 		return false;
 	}
-	*((char *)data + 0xbe) = 1;
+	data->HasFadeAnimation = 1;
 	InvalidateRect(dialog, NULL, FALSE);
 	DWORD start = GetTickCount();
 	do {
@@ -3410,7 +3425,7 @@ bool FUN_00608070(HWND dialog)
 		} else if (!FUN_0055CBF0() && Main_Loop()) {
 			break;
 		}
-		int done = *((char *)data + 0xbe) == 0;
+		int done = data->HasFadeAnimation == 0;
 		if ((int)(GetTickCount() - start) > 5000 || done) {
 			break;
 		}
@@ -3425,7 +3440,7 @@ bool RunOpenAnimationIfNeeded(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
 
-	if (FUN_0069BBE0(&Session)) {
+	if (Session.FUN_0069BBE0()) {
 		return false;
 	}
 	bool armed;
@@ -3434,7 +3449,7 @@ bool RunOpenAnimationIfNeeded(HWND dialog)
 		if (!OwnerDraw::Dialogs.getPointer(key, &data) || data == NULL) {
 			return false;
 		}
-		armed = *((char *)data + 0xbd) && *(int *)((char *)data + 0xb0) == 1;
+		armed = data->HasOpenAnimation && data->LayoutBand == 1;
 	}
 	bool visible = IsWindowVisible(dialog) != 0;
 	if (!armed || !visible) {
@@ -3457,7 +3472,7 @@ void FUN_00608380(HWND dialog)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		*((char *)data + 0xbd) = 1;
+		data->HasOpenAnimation = 1;
 	}
 }
 
@@ -3467,7 +3482,7 @@ void FUN_006083E0(HWND dialog)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		*((char *)data + 0xbd) = 0;
+		data->HasOpenAnimation = 0;
 	}
 }
 
@@ -3477,7 +3492,7 @@ void FUN_00608440(HWND dialog)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		*((char *)data + 0xd4) = 1;
+		data->Unknown_0D4 = 1;
 	}
 }
 
@@ -3487,7 +3502,7 @@ void FUN_006084A0(HWND dialog)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		*((char *)data + 0xd4) = 0;
+		data->Unknown_0D4 = 0;
 	}
 }
 
@@ -3503,7 +3518,7 @@ inline int Get_Layout_Dialog_Type(HWND dialog)
 
 	OwnerDraw::Dialogs.getPointer(key, &data);
 	if (data != NULL) {
-		return *(int *)((char *)data + 0x6c);
+		return data->DialogID;
 	}
 	return 0;
 }
@@ -3721,7 +3736,7 @@ bool __fastcall FUN_00608CD0(HWND parent, HWND child)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(parent, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -4017,7 +4032,7 @@ bool FUN_00609730(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -4117,7 +4132,7 @@ bool FUN_00609E20(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -4214,7 +4229,7 @@ BOOL CALLBACK FUN_0060A180(HWND window, LPARAM lparam)
 
 	if ((GetWindowLong(window, GWL_STYLE) & 0xb) == 0xb) {
 		HWND key = window;
-		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
+		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && data->ControlType == 0) {
 			if (FUN_00608CD0(parent, window) && IsWindowVisible(window)) {
 				DAT_00AC1CAC++;
 			}
@@ -4239,7 +4254,7 @@ BOOL CALLBACK FUN_0060A250(HWND window, LPARAM lparam)
 
 	if ((GetWindowLong(window, GWL_STYLE) & 0xb) == 0xb) {
 		HWND key = window;
-		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
+		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && data->ControlType == 0) {
 			if (FUN_00609730(parent, window) && IsWindowVisible(window)) {
 				DAT_00AC4894++;
 			}
@@ -4265,15 +4280,15 @@ BOOL CALLBACK ClassifyLayoutBand(HWND window, LPARAM lparam)
 	if (data != NULL) {
 		HWND parent = GetParent(window);
 		if (FUN_00609BC0(parent, window)) {
-			data->Dialog.LayoutBand = 1;
+			data->LayoutBand = 1;
 			return TRUE;
 		}
 		if (FUN_00609CF0(parent, window)) {
-			data->Dialog.LayoutBand = 2;
+			data->LayoutBand = 2;
 			return TRUE;
 		}
 		if (FUN_00609E20(parent, window)) {
-			data->Dialog.LayoutBand = 3;
+			data->LayoutBand = 3;
 		}
 	}
 	return TRUE;
@@ -4319,8 +4334,8 @@ BOOL CALLBACK InitCompactDialogControlsProc(HWND window, LPARAM lparam)
 	HWND parent = GetParent(window);
 	WinData *data = Find_Data(window);
 	if (data != NULL) {
-		data->Dialog.ExtraWidth = Control_Sound_Slot(parent, window);
-		data->Edit.alpha = FUN_00603AA0(parent, window);
+		data->ExtraWidth = Control_Sound_Slot(parent, window);
+		data->alpha = FUN_00603AA0(parent, window);
 	}
 	return TRUE;
 }
@@ -4349,7 +4364,7 @@ inline int Centre_Y(int span, bool compact)
 void __fastcall FUN_0060AF50(HWND window, Rect *rect)
 {
 	HWND parent = GetParent(window);
-	bool compact = FUN_0069BBE0(&Session);
+	bool compact = Session.FUN_0069BBE0();
 	RECT frame;
 	GetWindowRect(parent, &frame);
 	int span = frame.right - frame.left;
@@ -4438,8 +4453,8 @@ void __fastcall FUN_0060B000(HWND window, Point2D const &size)
 static inline int Sidebar_Margin(HWND window, int width)
 {
 	OwnerDraw::WinData *data = Get_Data(window);
-	if (data && data->Dialog.ExtraWidth) {
-		return data->Dialog.ExtraWidth;
+	if (data && data->ExtraWidth) {
+		return data->ExtraWidth;
 	}
 	return (SidebarWidth - width) / 2;
 }
@@ -4515,7 +4530,7 @@ compact_button:
 void __fastcall FUN_0060B420(HWND window)
 {
 	HWND parent = GetParent(window);
-	bool compact = FUN_0069BBE0(&Session);
+	bool compact = Session.FUN_0069BBE0();
 	RECT client;
 	RECT own;
 	GetClientRect(parent, &client);
@@ -4537,7 +4552,7 @@ void __fastcall FUN_0060B420(HWND window)
 void __fastcall FUN_0060B550(HWND window)
 {
 	HWND parent = GetParent(window);
-	bool compact = FUN_0069BBE0(&Session);
+	bool compact = Session.FUN_0069BBE0();
 	RECT client;
 	RECT own;
 	GetClientRect(parent, &client);
@@ -4563,7 +4578,7 @@ void __fastcall FUN_0060B550(HWND window)
 void __fastcall FUN_0060B610(HWND window)
 {
 	HWND parent = GetParent(window);
-	bool compact = FUN_0069BBE0(&Session);
+	bool compact = Session.FUN_0069BBE0();
 	RECT client;
 	RECT own;
 	GetClientRect(parent, &client);
@@ -4600,7 +4615,7 @@ void __fastcall FUN_0060B740(HWND window)
 void __fastcall FUN_0060B7A0(HWND window)
 {
 	HWND parent = GetParent(window);
-	if (FUN_0069BBE0(&Session)) {
+	if (Session.FUN_0069BBE0()) {
 		RECT own;
 		RECT frame;
 		GetWindowRect(window, &own);
@@ -4707,11 +4722,11 @@ void __fastcall UpdateControlPosition(HWND dialog, LPARAM lparam)
 }
 
 // FUNCTION: GAMEMD 0x0060C4E0
-int __fastcall FUN_0060C4E0(HWND dialog)
+ConvertClass *__fastcall FUN_0060C4E0(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		return *(int *)((char *)data + 0x74);
+		return data->StaticShapeDrawer;
 	}
 	return 0;
 }
@@ -4738,8 +4753,8 @@ bool __fastcall TrySetDialogLayoutBand1(HWND dialog)
 		type == 0x11d || type == 0x11c || type == 0x117 || type == 0x114 || type == 0xe6 ||
 		type == 0xf3 || type == 0xf4 || type == 0x2bc || type == 0x10e || type == 0xfb;
 	if (match) {
-		data->Dialog.LayoutBand = 1;
-		data->Dialog.HasOpenAnimation = true;
+		data->LayoutBand = 1;
+		data->HasOpenAnimation = true;
 	}
 	return match;
 }
@@ -4760,7 +4775,7 @@ bool __fastcall TrySetDialogLayoutBand2(HWND dialog)
 		type == 0xe1 || type == 0x11e || type == 0xc4 || type == 0x130 || type == 0xd0 || type == 0xfc ||
 		type == 0x126;
 	if (match) {
-		data->Dialog.LayoutBand = 2;
+		data->LayoutBand = 2;
 	}
 	return match;
 }
@@ -4771,27 +4786,20 @@ unsigned char __fastcall FUN_0060C8D0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		return *((unsigned char *)data + 0xd6);
+		return data->HasButtonAnimation;
 	}
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x0060C930
-unsigned char __fastcall FUN_0060C930(HWND dialog)
+bool __fastcall FUN_0060C930(HWND dialog)
 {
 	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
-	int type = *(int *)((char *)data + 0x6c);
-	int v;
-	if (type == 0xbc || type == 0xbd || type == 0x102 || type == 0xc2 || type == 0xc9 || type == 0xbc6) {
-		v = 1;
-	} else {
-		v = 0;
-	}
-	*((unsigned char *)data + 214) = v;
-	return v;
+	data->HasButtonAnimation = Has_Button_Animation(data->DialogID);
+	return data->HasButtonAnimation;
 }
 
 // FUNCTION: GAMEMD 0x0060C9D0
@@ -4799,7 +4807,7 @@ void __fastcall FUN_0060C9D0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		*((unsigned char *)data + 0xd6) = 1;
+		data->HasButtonAnimation = 1;
 	}
 }
 
@@ -4808,7 +4816,7 @@ void __fastcall FUN_0060CA30(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		*((unsigned char *)data + 0xd6) = 0;
+		data->HasButtonAnimation = 0;
 	}
 }
 
@@ -4817,27 +4825,21 @@ unsigned char __fastcall FUN_0060CA90(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		return *((unsigned char *)data + 0xd5);
+		return data->HasTopPanelAnimation;
 	}
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x0060CAF0
-unsigned char __fastcall FUN_0060CAF0(HWND dialog)
+bool __fastcall FUN_0060CAF0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
-	int type = *(int *)((char *)data + 0x6c);
-	int v;
-	if (type == 0xbc || type == 0xbd || type == 0x102 || type == 0xc2 || type == 0xc9 || type == 0xbc6 || type == 0x105 || type == 0x6b || type == 0x113) {
-		v = 1;
-	} else {
-		v = 0;
-	}
-	*((unsigned char *)data + 213) = v;
-	return v;
+	int type = data->DialogID;
+	data->HasTopPanelAnimation = (type == 0xbc || type == 0xbd || type == 0x102 || type == 0xc2 || type == 0xc9 || type == 0xbc6 || type == 0x105 || type == 0x6b || type == 0x113);
+	return data->HasTopPanelAnimation;
 }
 
 // FUNCTION: GAMEMD 0x0060CBA0
@@ -4845,7 +4847,7 @@ void __fastcall FUN_0060CBA0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		*((unsigned char *)data + 0xd5) = 1;
+		data->HasTopPanelAnimation = 1;
 	}
 }
 
@@ -4854,7 +4856,7 @@ void __fastcall FUN_0060CC00(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		*((unsigned char *)data + 0xd5) = 0;
+		data->HasTopPanelAnimation = 0;
 	}
 }
 
@@ -4863,27 +4865,20 @@ unsigned char __fastcall FUN_0060CC60(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		return *((unsigned char *)data + 0xd7);
+		return data->HasMainScreenAnimation;
 	}
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x0060CCC0
-unsigned char __fastcall FUN_0060CCC0(HWND dialog)
+bool __fastcall FUN_0060CCC0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
-	int type = *(int *)((char *)data + 0x6c);
-	int v;
-	if (type == 0x103 || type == 0xbc7) {
-		v = 1;
-	} else {
-		v = 0;
-	}
-	*((unsigned char *)data + 215) = v;
-	return v;
+	data->HasMainScreenAnimation = Has_Main_Screen_Animation(data->DialogID);
+	return data->HasMainScreenAnimation;
 }
 
 // FUNCTION: GAMEMD 0x0060CD50
@@ -4891,45 +4886,38 @@ unsigned char __fastcall FUN_0060CD50(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		return *((unsigned char *)data + 0xd8);
+		return data->FlagD8;
 	}
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x0060CDB0
-unsigned char __fastcall FUN_0060CDB0(HWND dialog)
+bool __fastcall FUN_0060CDB0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
-	int type = *(int *)((char *)data + 0x6c);
-	int v;
-	if (type == 0x108 || type == 0xbc6) {
-		v = 1;
-	} else {
-		v = 0;
-	}
-	*((unsigned char *)data + 216) = v;
-	return v;
+	data->FlagD8 = Has_Flag_D8(data->DialogID);
+	return data->FlagD8;
 }
 
 // FUNCTION: GAMEMD 0x0060CE40
-int __fastcall FUN_0060CE40(HWND dialog)
+SHPStruct *__fastcall FUN_0060CE40(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		return *(int *)((char *)data + 0xe0);
+		return data->DialogBackground;
 	}
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x0060CEA0
-int __fastcall FUN_0060CEA0(HWND dialog)
+SHPStruct *__fastcall FUN_0060CEA0(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		return *(int *)((char *)data + 0xe4);
+		return data->DialogBackgroundEx;
 	}
 	return 0;
 }
@@ -5061,7 +5049,7 @@ void __fastcall FUN_0060D2C0(HWND dialog, int id)
 {
 	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data != NULL) {
-		*(int *)((char *)data + 0x6c) = id;
+		data->DialogID = id;
 	}
 }
 
@@ -5070,7 +5058,7 @@ int __fastcall FUN_0060D320(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		return *(int *)((char *)data + 0x6c);
+		return data->DialogID;
 	}
 	return 0;
 }
@@ -5962,7 +5950,7 @@ LRESULT CALLBACK OwnerDraw::EditHandler(HWND window, UINT message, WPARAM wparam
 			draw_rect.Width = display_rect.right - display_rect.left + 1;
 			draw_rect.Height = display_rect.bottom - display_rect.top + 1;
 
-			OwnerDraw::CopyDimmedBackground(draw_rect, window, data->Edit.alpha);
+			OwnerDraw::CopyDimmedBackground(draw_rect, window, data->alpha);
 			if (!is_combo) {
 				OwnerDraw::DrawBeveledBorder(*AlternateSurface, draw_rect, 2, -1);
 			}
@@ -5978,7 +5966,7 @@ LRESULT CALLBACK OwnerDraw::EditHandler(HWND window, UINT message, WPARAM wparam
 			text_rect.Height = display_rect.bottom - display_rect.top + 1;
 
 			LONG text_style = GetWindowLong(window, GWL_STYLE);
-			FUN_00623880(AlternateSurface, &text_rect, _buffer, cursor, data->Font, OwnerDraw::PrimaryTextColor, &data->Edit.scrollStart, data->hasFocus, (text_style & ES_PASSWORD) != 0, 0, 0);
+			FUN_00623880(AlternateSurface, &text_rect, _buffer, cursor, data->Font, OwnerDraw::PrimaryTextColor, &data->scrollStart, data->hasFocus, (text_style & ES_PASSWORD) != 0, 0, 0);
 
 			ValidateRect(window, NULL);
 		}
@@ -6152,7 +6140,7 @@ LRESULT CALLBACK OwnerDraw::NewEditHandler(HWND window, UINT message, WPARAM wpa
 				draw_rect.Y = display_rect.top;
 				draw_rect.Width = display_rect.right - display_rect.left + 1;
 				draw_rect.Height = display_rect.bottom - display_rect.top + 1;
-				CopyDimmedBackground(draw_rect, window, data->Edit.alpha);
+				CopyDimmedBackground(draw_rect, window, data->alpha);
 				if (!is_combo) {
 					DrawBeveledBorder(*AlternateSurface, draw_rect, 2, -1);
 				}
@@ -6288,8 +6276,8 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 			drect.Height = 18;
 			int style = GetWindowLong(window, GWL_STYLE);
 			int state = data->CheckBox.checkState;
-			unsigned char skinned = data->CheckBox.skinned;
-			unsigned char variant = data->CheckBox.variant;
+			unsigned char skinned = data->skinned;
+			unsigned char variant = data->variant;
 			bool checked = state == 1;
 			char name[64];
 			if (skinned) {
@@ -6363,8 +6351,8 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 
 	case WM_USER + 229: {
 		unsigned char value = lparam != 0;
-		unsigned char old = data->CheckBox.variant;
-		data->CheckBox.skinned = value;
+		unsigned char old = data->variant;
+		data->skinned = value;
 		if (old != value) {
 			InvalidateRect(window, NULL, FALSE);
 		}
@@ -6378,8 +6366,8 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 
 	case WM_USER + 230: {
 		unsigned char value = lparam != 0;
-		unsigned char old = data->CheckBox.variant;
-		data->CheckBox.variant = value;
+		unsigned char old = data->variant;
+		data->variant = value;
 		if (old != value) {
 			InvalidateRect(window, NULL, FALSE);
 		}
@@ -6387,7 +6375,7 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 	}
 
 	case WM_USER + 231:
-		return data->CheckBox.variant;
+		return data->variant;
 	}
 
 	WNDPROC proc = NULL;
@@ -6722,7 +6710,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			return 0;
 
 		case WM_PAINT: {
-			if (data->ScrollBar.skipDraw) {
+			if (data->skipDraw) {
 				ValidateRect(window, NULL);
 				break;
 			}
@@ -6767,7 +6755,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 				int pixel_count = client_rect.right * client_rect.bottom;
 				unsigned short * pixels = (unsigned short *)background->Lock();
 				for (int i = 0; i < pixel_count; i++) {
-					pixels[i] = OD_Blend_Color(pixels[i], 0xFFFF, data->ScrollBar.alpha);
+					pixels[i] = OD_Blend_Color(pixels[i], 0xFFFF, data->alpha);
 				}
 				if (pixels != NULL) {
 					background->Unlock();
@@ -6779,7 +6767,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			}
 
 			int color = ODColorToHiColor(OwnerDraw::DefaultBorderColor);
-			if (data->ScrollBar.disabled) {
+			if (data->disabled) {
 				color = ODColorToHiColor(OwnerDraw::AltBorderColor);
 			}
 			OwnerDraw::DrawBeveledBorder(*AlternateSurface, full_rect, 2, color);
@@ -6791,7 +6779,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			src_rect.Y = grip_top;
 
 			Surface * grip_center;
-			if (data->ScrollBar.disabled) {
+			if (data->disabled) {
 				grip_center = SurfaceCache.GetSurface("gsbgripm.pcx", NULL);
 			} else {
 				grip_center = SurfaceCache.GetSurface("sbgripm.pcx", NULL);
@@ -6804,7 +6792,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			Rect grip_src(0, 0, grip_center->Get_Height(), grip_center->Get_Width());
 
 			Surface * grip_top_surf;
-			if (data->ScrollBar.disabled) {
+			if (data->disabled) {
 				grip_top_surf = SurfaceCache.GetSurface("gsbgript.pcx", NULL);
 			} else {
 				grip_top_surf = SurfaceCache.GetSurface("sbgript.pcx", NULL);
@@ -6815,7 +6803,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			AlternateSurface->Blit_From(full_rect, *grip_top_surf, grip_src);
 
 			Surface * grip_bottom_surf;
-			if (data->ScrollBar.disabled) {
+			if (data->disabled) {
 				grip_bottom_surf = SurfaceCache.GetSurface("gsbgripb.pcx", NULL);
 			} else {
 				grip_bottom_surf = SurfaceCache.GetSurface("sbgripb.pcx", NULL);
@@ -6832,7 +6820,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			src_rect.Y = 0;
 			AlternateSurface->Blit_From(full_rect, *data->cachedSurface, src_rect);
 			ODDrawEdgeGlows(*AlternateSurface, up_rect, up_pressed == 0, 2, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha);
-			ODDrawArrowBitmap(AlternateSurface, up_rect, 1, up_pressed, data->ScrollBar.disabled);
+			ODDrawArrowBitmap(AlternateSurface, up_rect, 1, up_pressed, data->disabled);
 
 			Rect down_rect(display_rect.left, display_rect.bottom - 22, client_rect.right, 22);
 			full_rect = down_rect;
@@ -6841,7 +6829,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			src_rect.Y = client_rect.bottom - 22;
 			AlternateSurface->Blit_From(full_rect, *data->cachedSurface, src_rect);
 			ODDrawEdgeGlows(*AlternateSurface, down_rect, down_pressed == 0, 2, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha);
-			ODDrawArrowBitmap(AlternateSurface, down_rect, 0, down_pressed, data->ScrollBar.disabled);
+			ODDrawArrowBitmap(AlternateSurface, down_rect, 0, down_pressed, data->disabled);
 
 			ValidateRect(window, NULL);
 			break;
@@ -6980,7 +6968,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			break;
 
 		case WM_USER + 241:
-			data->ScrollBar.disabled = (lparam == 1);
+			data->disabled = (lparam == 1);
 			break;
 	}
 
@@ -7191,7 +7179,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 				Rect src_rect(0, 0, client_copy.right + 1, client_copy.bottom + 1);
 				Rect dst_rect(disp_copy.left, disp_copy.top, client_copy.right + 1, client_copy.bottom + 1);
 				surf->Blit_From(src_rect, *AlternateSurface, dst_rect);
-				ODFillRectTrans(&src_rect, surf, 0, data->Edit.alpha);
+				ODFillRectTrans(&src_rect, surf, 0, data->alpha);
 			}
 
 			if (data->cachedSurface != NULL) {
@@ -8470,7 +8458,7 @@ extern ShapeSet const * DAT_00B0FC8C;
 void __fastcall FUN_0072F540(Surface * surface, Rect * rect, int flag);
 bool FUN_0072E260(void);
 void __fastcall FUN_0072E450(Surface * surface, Rect * rect, bool flag);
-void __fastcall FUN_0072E730(Surface * surface, Rect * rect, int a, int b, int c);
+void __fastcall FUN_0072E730(Surface * surface, Rect const * area, ConvertClass * convert, SHPStruct * shape800, SHPStruct * shape);
 void __fastcall FUN_0072E8C0(Surface * surface, Rect * rect);
 void __fastcall FUN_0072E860(Surface * surface, Rect * rect);
 void __fastcall FUN_0072E920(Surface * surface, Rect * rect);
@@ -8508,22 +8496,22 @@ void __fastcall OwnerDraw::Paint(HWND window)
 			OwnerDraw::CachedSurfaceCount++;
 		}
 
-		int mode = entry->Dialog.LayoutBand;
+		int mode = entry->LayoutBand;
 		if (mode == 1) {
-			if (FUN_0069BBE0(&Session)) {
+			if (Session.FUN_0069BBE0()) {
 				FUN_0072F540(surf, &rFull, 0);
 			} else if (FUN_0072E260()) {
-				FUN_0072E450(surf, &rFull, !entry->Dialog.Unknown_0D4);
+				FUN_0072E450(surf, &rFull, !entry->Unknown_0D4);
 
-				int a = FUN_0060C4E0(window);
-				int b = FUN_0060CE40(window);
-				int c = FUN_0060CEA0(window);
+				ConvertClass *a = FUN_0060C4E0(window);
+				SHPStruct *b = FUN_0060CE40(window);
+				SHPStruct *c = FUN_0060CEA0(window);
 				FUN_0072E730(surf, &rFull, a, b, c);
 
-				if (entry->Dialog.HasTopPanelAnimation) {
+				if (entry->HasTopPanelAnimation) {
 					FUN_0072E8C0(surf, &rFull);
 				}
-				if (entry->Dialog.HasButtonAnimation) {
+				if (entry->HasButtonAnimation) {
 					FUN_0072E860(surf, &rFull);
 				}
 				if (FUN_0060CC60(window)) {
@@ -8538,7 +8526,7 @@ void __fastcall OwnerDraw::Paint(HWND window)
 
 			ShapeSet const * shape;
 			ConvertClass * palette;
-			if (FUN_0069BBE0(&Session)) {
+			if (Session.FUN_0069BBE0()) {
 				int theme = Scen->PlayerSideIndex;
 				if (theme == 0) {
 					shape = DAT_00B0FC84;
@@ -8792,7 +8780,7 @@ int __fastcall UI::StandardWndProc(HWND window, UINT message, WPARAM wparam, LPA
 		case WM_PAINT: {
 			OwnerDraw::WinData *data = Get_Data(window);
 			if (data != NULL) {
-				if (*((char *)data + 0xbc)) {
+				if (data->skipDraw) {
 					ValidateRect(window, NULL);
 					return 1;
 				}
@@ -9414,7 +9402,7 @@ void CALLBACK FUN_006240A0(HWND dialog, int unused)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		*((char *)data + 0xd4) = 1;
+		data->Unknown_0D4 = 1;
 	}
 }
 
@@ -9435,7 +9423,7 @@ void OwnerDraw::SimpleDialogControl::F1(HWND window, int value)
 	Field4 = value;
 	OwnerDraw::WinData *data = Get_Data(window);
 	if (data != NULL) {
-		*((char *)data + 0xd4) = 1;
+		data->Unknown_0D4 = 1;
 	}
 	Field8 = true;
 }
