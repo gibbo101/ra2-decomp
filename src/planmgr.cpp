@@ -548,8 +548,9 @@ Rect __fastcall FUN_00634510(Point2D center, int size)
 // FUNCTION: GAMEMD 0x00634550
 bool PlanningNodeClass::Lead_At(Coord coord)
 {
-	Coord c = FUN_00633BC0(*PlanningMembers[0]->Packet);
-	return c.X == coord.X && c.Y == coord.Y && c.Z == coord.Z;
+	Coord c;
+	c = Lead_Coord();
+	return c == coord;
 }
 
 // FUNCTION: GAMEMD 0x006345A0
@@ -1638,19 +1639,6 @@ bool __fastcall FUN_00637AA0(void)
 
 bool __fastcall FUN_00638C70(TechnoClass * techno);
 
-static inline void Commit_Unit_Orders(TechnoClass * techno)
-{
-	PlanningTokenClass * token = techno->FUN_00705D20();
-	if (token != NULL) {
-		bool started = token->Has_Started();
-		token->FUN_00636CE0();
-		bool permitted = FUN_00638C70(techno);
-		if (!started && permitted) {
-			techno->TryNextPlanningTokenNode();
-		}
-	}
-}
-
 // FUNCTION: GAMEMD 0x00637AB0
 void __fastcall Commit_Plans(int house)
 {
@@ -1658,7 +1646,15 @@ void __fastcall Commit_Plans(int house)
 	for (int i = 0; i < count; i++) {
 		TechnoClass * techno = Technos[i];
 		if (house == FUN_006339B0(techno)) {
-			Commit_Unit_Orders(techno);
+			PlanningTokenClass * token = techno->FUN_00705D20();
+			if (token != NULL) {
+				bool started = token->Has_Started();
+				token->FUN_00636CE0();
+				bool permitted = FUN_00638C70(techno);
+				if (!started && permitted) {
+					techno->TryNextPlanningTokenNode();
+				}
+			}
 		}
 	}
 }
@@ -1710,7 +1706,7 @@ bool TechnoClass::TryNextPlanningTokenNode(void)
 		QueueMission(MISSION_WAIT, true);
 		EventClass popped = token->Pop_Front();
 		FUN_006375B0(popped);
-		token->F1C = true;
+		token->Set_F1C();
 		return true;
 	}
 	return false;
@@ -2031,10 +2027,9 @@ PlanningNodeClass * __fastcall FUN_00639210(int house, int id, Coord coord)
 	int count = PlanningNodeClass::Unknown1.Count();
 	for (int i = 0; i < count; i++) {
 		PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
-		Coord at = FUN_00633BC0(*node->PlanningMembers[0]->Packet);
-		if (at.X == coord.X && at.Y == coord.Y && at.Z == coord.Z) {
-			if (id == -1 || id == node->Id) {
-				int owner = FUN_006339B0(node->PlanningMembers[0]->Owner);
+		if (node->Lead_At(coord)) {
+			if (id == -1 || id == node->Get_Id()) {
+				int owner = FUN_006339B0(node->Member_Owner(0));
 				if (house == -1 || house == owner) {
 					return node;
 				}
@@ -2099,7 +2094,8 @@ void __fastcall FUN_00639800(TechnoClass * techno, PlanningNodeClass * node);
 extern bool DAT_00AC4CD0;
 void __fastcall FUN_00639CB0(TechnoClass * techno);
 
-static inline void Close_Loop(TechnoClass * techno, PlanningNodeClass * node)
+// FUNCTION: GAMEMD 0x00639740
+inline void __fastcall FUN_00639740(TechnoClass * techno, PlanningNodeClass * node)
 {
 	PlanningTokenClass * token = techno->FUN_00705D20();
 	int index = token->Node_Index(node);
@@ -2120,12 +2116,6 @@ static inline void Close_Loop(TechnoClass * techno, PlanningNodeClass * node)
 		FUN_00639CB0(techno);
 	}
 	node->Update_Active();
-}
-
-// FUNCTION: GAMEMD 0x00639740
-void __fastcall FUN_00639740(TechnoClass * techno, PlanningNodeClass * node)
-{
-	Close_Loop(techno, node);
 }
 
 
@@ -3485,4 +3475,46 @@ bool __stdcall FUN_0063AB60(int x, int y)
 		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
 	}
 	return true;
+}
+
+void __fastcall FUN_00638120(TechnoClass * techno, EventClass * event);
+
+// FUNCTION: GAMEMD 0x00637E00
+void __fastcall FUN_00637E00(EventClass * event)
+{
+	if (event->Type == EventClass::PLAN_COMMIT) {
+		Commit_Plans(event->ID);
+	} else if (event->Type == EventClass::PLAN_CONNECT) {
+		TechnoClass * techno = event->Data.NavCom.Whom.As_Techno();
+		if (techno) {
+			AbstractClass * object = event->Data.NavCom.Where.As_Abstract();
+			if (object) {
+				Coord coord = object->As_Coord();
+				PlanningNodeClass * node = FUN_00639210(event->ID, -1, coord);
+				if (node) {
+					FUN_006395B0(techno, node);
+				}
+			}
+		}
+	} else if (event->Type == EventClass::PLAN_NODE_DELETE) {
+		AbstractClass * object = event->Data.Target.Whom.As_Abstract();
+		if (object) {
+			Coord coord = object->As_Coord();
+			int house = event->ID;
+			PlanningNodeClass * node = FUN_00639210(house, -1, coord);
+			if (node) {
+				TechnoClass * owner = node->Member_Owner(0);
+				int index = node->Index_In(owner);
+				PlanningTokenClass * token = owner->FUN_00705D20();
+				PlanningNodeClass * next = token->Node_At(index + 1);
+				FUN_00639BC0(node);
+				if (next && house == PlayerPtr->HeapID) {
+					FUN_0063B080(next);
+				}
+			}
+		}
+	} else {
+		TechnoClass * techno = event->Data.Target.Whom.As_Techno();
+		FUN_00638120(techno, event);
+	}
 }
