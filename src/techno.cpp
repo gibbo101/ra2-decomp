@@ -1265,7 +1265,7 @@ void TechnoClass::Draw_Pre_Render(Point2D const & point, Rect const & cliprect) 
 void TechnoClass::Draw_Health_Bar(Point2D const & xpoint, Rect const & cliprect, bool sensed_underground) const
 {
 	if (RTTI == RTTI_BUILDING) {
-		HeightAGL;
+		Get_Height_AGL();
 
 		Point3D dim = TClass->Lepton_Dimensions();
 		Coord coord = dim - dim / 2;

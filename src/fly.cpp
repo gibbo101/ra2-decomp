@@ -384,7 +384,7 @@ void FlyLocomotionClass::Movement_AI(void)
 		newcoord.Z -= Riser;
 
 		Map.Get_Height_GL(newcoord);
-		Map[newcoord];
+		Map.operator[](newcoord);
 
 		if (Map.In_Radar(newcoord.As_Cell())) {
 			Map.Remove(LinkedTo);

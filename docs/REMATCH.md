@@ -16,8 +16,6 @@ Verdicts:
 | 0x004144B0 | AircraftClass::Draw_It | src/aircraft.cpp | unread `Cell cell = Get_Cell();` | FORCING, 78.6% (1345/1361) |
 | 0x0041B110 | AircraftClass::Read_INI | src/aircraft.cpp | dead `double fs` used as a conversion vehicle | FORCING, 99.2% as `(double)strength * ...`, 57.4% as `strength * ...` |
 | 0x00442230 | BuildingClass::Take_Damage | src/building.cpp | unread `int remaining = contacts.Count();` | FORCING, 80.5% (2617/2573) |
-| 0x00486A70 | CellClass::Fog_Cell | src/cell.cpp | bare `building->PositionCell;` | FORCING, 81.3% (360/375) |
-| 0x004CD600 | FlyLocomotionClass::Movement_AI | src/fly.cpp | discarded `Map[newcoord];` | FORCING, 80.1% (3739/3754) |
 | 0x00511850 | HouseTypeClass::Read_INI | src/houstype.cpp | `char & p = Prefix; p = prefix[0];` alias for one store | FORCING, 99.7% (2325/2325) |
 | 0x00518F90 | InfantryClass::Draw_It | src/infantry.cpp | discarded `Map[cell]; Map[cell];` | FORCING, 64.9% (1650/1689) |
 | 0x00568E40 | MapClass::Repair_High_Bridge_Span | src/map.cpp | seven unread `n0..n6 = cells.Count()` | FORCING, 64.6% (2377/2322) |
@@ -30,7 +28,6 @@ Verdicts:
 | 0x00608500 | FUN_00608500 | src/ownrdraw.cpp | unused `OwnerDraw::WinData *data = NULL;` | SIDE-EFFECT: OwnerDraw::TrackBarHandler 99.2% |
 | 0x006CB920 | SuperClass::Discharged | src/super.cpp | unread `int chargeLeft = Control.Value();` | FORCING, 86.2% (915/895) |
 | 0x006D8B30 | Tactical::Update_Visible_Cells | src/tactical.cpp | trailing `do { } while (0);` | SIDE-EFFECT: Tactical::AI 67.9%, Set_View_Dimensions 27.1%, Set_Tactical_Position(Point2D) 41.1%, Set_Tactical_Position(Coord) 44.4%, Tactical::Load 49.0% |
-| 0x006F64A0 | TechnoClass::Draw_Health_Bar | src/techno.cpp | bare `HeightAGL;` | FORCING, 55.3% (1570/1568) |
 | 0x00743270 | UnitClass::Read_INI | src/unit.cpp | dead `double fs` used as a conversion vehicle | FORCING, 99.4% as `(double)strength * ...`, 77.3% as `strength * ...` |
 | 0x0077D4C0 | FUN_0077D4C0 | src/wonline.cpp | unread `int count = g_UserList.length();` | SIDE-EFFECT: 11 functions, from 13.6% to 76.1% (FUN_00781480, FUN_007A8DA0, FUN_007A8ED0, FUN_007A8FC0, FUN_007A9110, FUN_007A9200, FUN_007A9550, FUN_007AAFB0, FUN_007AB0A0, FUN_007AB170, FUN_007AB260) |
 | 0x00785EA0 | Logout_WOnline | src/wonline.cpp | unread `int budget = g_UserList.length();` | FORCING, 45.7% (620/471) |
@@ -39,4 +36,4 @@ Verdicts:
 | 0x00799080 | FUN_00799080 | src/wonline.cpp | `do SetWindowLong(...); while (0);` | FORCING, 97.7% (3142/3142) |
 | 0x007AF540 | FactionSelectDialogControl::Update_Hover | src/worlddom.cpp | `else if (false) { two: ... }` holding a goto label | FORCING, 62.7% (240/244) as a goto-free if/else |
 
-FORCING 21, SIDE-EFFECT 4.
+FORCING 18, SIDE-EFFECT 4.
