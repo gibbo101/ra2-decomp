@@ -2840,6 +2840,7 @@ address,size,symbol,source,sha256
 0x00480510,283,?Has_Wall_Or_Gate@CellClass@@QBE_NW4OverlayType@@W4FacingType@@@Z,src/cell.cpp,db862a7fe7551e0f56eaca485442946f13fc06e7e4ed91eea5dd1309226a478a
 0x00480630,1015,?Wall_Update@CellClass@@QAEX_N@Z,src/cell.cpp,5fa2c44e1e0ab219447fc718db9dca09cc89774c2745db7f0d4b3dce5188cc22
 0x00480A30,77,?Cell_Coord@CellClass@@QBE?AVCoord@@XZ,src/cell.cpp,fbaa65897ccc70fe7a2f5f30af1784bdada355aced79b71dc070bfa79365a388
+0x00480A80,556,?Reduce_Tiberium@CellClass@@QAEHH@Z,src/cell.cpp,f15c832887b2be767d236869b5e7475ff291f590d31fc99d4103e4f45c89f48f
 0x00480CB0,1007,?Reduce_Wall@CellClass@@QAEHH@Z,src/cell.cpp,1905caa5932ae850637a88a8beb09d3a081f6d883752187be68d31eacdc5ac7f
 0x004810A0,132,?Spot_Index@CellClass@@SIHABVCoord@@@Z,src/cell.cpp,57ddc90f33b4629adcebee20afcab0d53042c7912b74b008fb2bee65603ae5ae
 0x00481130,80,?Is_Spot_Free@CellClass@@QBE_NH_N@Z,src/cell.cpp,40cad694b9f418a9701a36837403c49adcd1d12f6b0abbb10688b98b42e1d6f1
@@ -6591,6 +6592,7 @@ address,size,symbol,source,sha256
 0x00517FA0,3552,?Take_Damage@InfantryClass@@UAE?AW4ResultType@@AAHHPBVWarheadTypeClass@@PAVTechnoClass@@_N3PAVHouseClass@@@Z,src/infantry.cpp,50e55f83decb97e52b2bfc141427d131777ac9c167f4ff3d1d8d5fed813ca702
 0x00518D80,521,?Shape_Number@InfantryClass@@QBEHXZ,src/infantry.cpp,60ee1cdafdd13ab060a3fc6fc80794476f42f943d933090b63d41ced74714608
 0x00518F90,1689,?Draw_It@InfantryClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/infantry.cpp,a351fb666202d5fa0915a33b9919ca2c8cc510dae021c3d379c68d6a62bdd707
+0x00519630,5083,?Per_Cell_Process@InfantryClass@@UAEXW4PCPType@@@Z,src/infantry.cpp,447926ecc898b5ef1df042cdd33a1633e932b81a66cdee0620640578ec4637ec
 0x0051AA10,42,?Detach@InfantryClass@@UAEXPBVAbstractClass@@_N@Z,src/infantry.cpp,212ba8dff57456ba69a2aba9c394779cd34c96a6d258607527da3f6a0fb659cc
 0x0051AA40,1953,?Assign_Destination@InfantryClass@@UAEXPAVAbstractClass@@_N@Z,src/infantry.cpp,96e71539cd6a3739cf5f527eab669412fcdc0382a643d4f5ef65cb5a638768ab
 0x0051B1F0,347,?Assign_Target@InfantryClass@@UAEXPAVAbstractClass@@@Z,src/infantry.cpp,29adabdcbb0fc67dd4f806d0d3d8ebf5ee825f27241eb5d20b91562e1fef84df
@@ -8368,6 +8370,7 @@ address,size,symbol,source,sha256
 0x00572C90,263,?Internal_Damage_High_Bridge_NS_TopRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z,src/map.cpp,06466129f57824dceeb09ad128cbcab92fe8ac757aca0afe51985bb18331bb33
 0x00572DA0,964,?Internal_Destroy_High_Bridge_NS_BottomLeft@MapClass@@AAEXABVCell@@W4FacingType@@@Z,src/map.cpp,149fecaa9bce3946525cba9a25cacda34ad247ba799e2812e51979321bceaa51
 0x00573170,964,?Internal_Destroy_High_Bridge_NS_TopRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z,src/map.cpp,145d144fe47f6115e0ad0cbd95ce8ac49a23c51c61092449c87c738c42f4ddd1
+0x00573540,2743,?Repair_Bridge@MapClass@@QAEXABVCell@@@Z,src/map.cpp,529becc9c764d9debdbff9800f83a5514c68c626a3079a5267576b4f5d637b80
 0x00574000,1532,?DestroyConcreteBridgeAt@MapClass@@QAEXABVCell@@@Z,src/map.cpp,47ec7a8f9a49440fdd256fc04988128bfb1939bc7efb4ccdde0f9269c89cfbbf
 0x00574600,187,?FUN_00574600@@YI_NHHPAVCellClass@@@Z,src/map.cpp,9289533ee6a88bfe88eb27fdf17b3d42eafe56fae390f3d91406212dabe2ec9d
 0x005746C0,179,?FUN_005746C0@@YI_NHPAVCellClass@@@Z,src/map.cpp,d88b87df32550bedb52c3e45e04e7e2d69e87eefc191f43c17b8e539df83c40c
@@ -15117,6 +15120,7 @@ address,size,symbol,source,sha256
 0x006E8A90,833,??0TeamClass@@QAE@PBVTeamTypeClass@@PAVHouseClass@@PAX@Z,src/team.cpp,b83d70f56df02811dd56e47e16a79230cac91845a68675279703fce1b021079c
 0x006E8DE0,616,??1TeamClass@@UAE@XZ,src/team.cpp,d2db9ae8537e9fbf349b7b61006ef46aeed63d98e064ed3ada8b8325f9b38aaf
 0x006E9050,239,?Assign_Mission_Target@TeamClass@@QAEXPAVAbstractClass@@@Z,src/team.cpp,47236fc9abff859e53977e4710a5c43febffbfce1d37fce58d8c1dd86e27cb86
+0x006E9140,3896,?AI@TeamClass@@UAEXXZ,src/team.cpp,64fdc05eeb9a17fdacbb4c872f3658a124c11f53f24c731eac3a4004cb2ef9e5
 0x006EA080,70,?Flag_Into_Action@TeamClass@@QAEXXZ,src/team.cpp,eaeb4b0ea32f2d781a5099241bb6abbcfe9113d2380a522dad1f8f47bd37a6e6
 0x006EA0D0,769,?Regroup@TeamClass@@QAEXXZ,src/team.cpp,50f4d7b4046e0b80cc36df967554e1823fd188b6020639d0753658a40293c0fa
 0x006EA3E0,264,?Recalc_Strength@TeamClass@@QAE_NXZ,src/team.cpp,3ec5e533976d86b8a578f960f7f721e190c4dd3c6b8d36bfdc3f0a624d4c85c6

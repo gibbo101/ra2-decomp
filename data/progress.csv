@@ -2477,6 +2477,7 @@ address,name,result,size,source,symbol
 0x00480510,CellClass::Has_Wall_Or_Gate,MATCH,283,src/cell.cpp,?Has_Wall_Or_Gate@CellClass@@QBE_NW4OverlayType@@W4FacingType@@@Z
 0x00480630,CellClass::Wall_Update,MATCH,1015,src/cell.cpp,?Wall_Update@CellClass@@QAEX_N@Z
 0x00480A30,CellClass::Cell_Coord,MATCH,77,src/cell.cpp,?Cell_Coord@CellClass@@QBE?AVCoord@@XZ
+0x00480A80,CellClass::Reduce_Tiberium,MATCH,556,src/cell.cpp,?Reduce_Tiberium@CellClass@@QAEHH@Z
 0x00480CB0,CellClass::Reduce_Wall,MATCH,1007,src/cell.cpp,?Reduce_Wall@CellClass@@QAEHH@Z
 0x004810A0,CellClass::Spot_Index,MATCH,132,src/cell.cpp,?Spot_Index@CellClass@@SIHABVCoord@@@Z
 0x00481130,CellClass::Is_Spot_Free,MATCH,80,src/cell.cpp,?Is_Spot_Free@CellClass@@QBE_NH_N@Z
@@ -6238,6 +6239,7 @@ address,name,result,size,source,symbol
 0x00522100,InfantryClass::Is_JumpJet,MATCH,194,src/infantry.cpp,?Is_JumpJet@InfantryClass@@QBE_NXZ
 0x00518D80,InfantryClass::Shape_Number,MATCH,521,src/infantry.cpp,?Shape_Number@InfantryClass@@QBEHXZ
 0x00518F90,InfantryClass::Draw_It,MATCH,1689,src/infantry.cpp,?Draw_It@InfantryClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
+0x00519630,InfantryClass::Per_Cell_Process,MATCH,5083,src/infantry.cpp,?Per_Cell_Process@InfantryClass@@UAEXW4PCPType@@@Z
 0x0051AA10,InfantryClass::Detach,MATCH,42,src/infantry.cpp,?Detach@InfantryClass@@UAEXPBVAbstractClass@@_N@Z
 0x0051AA40,InfantryClass::Assign_Destination,MATCH,1953,src/infantry.cpp,?Assign_Destination@InfantryClass@@UAEXPAVAbstractClass@@_N@Z
 0x0051B1F0,InfantryClass::Assign_Target,MATCH,347,src/infantry.cpp,?Assign_Target@InfantryClass@@UAEXPAVAbstractClass@@@Z
@@ -8013,6 +8015,7 @@ address,name,result,size,source,symbol
 0x00572C90,MapClass::Internal_Damage_High_Bridge_NS_TopRight,MATCH,263,src/map.cpp,?Internal_Damage_High_Bridge_NS_TopRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z
 0x00572DA0,MapClass::Internal_Destroy_High_Bridge_NS_BottomLeft,MATCH,964,src/map.cpp,?Internal_Destroy_High_Bridge_NS_BottomLeft@MapClass@@AAEXABVCell@@W4FacingType@@@Z
 0x00573170,MapClass::Internal_Destroy_High_Bridge_NS_TopRight,MATCH,964,src/map.cpp,?Internal_Destroy_High_Bridge_NS_TopRight@MapClass@@AAEXABVCell@@W4FacingType@@@Z
+0x00573540,MapClass::Repair_Bridge,MATCH,2743,src/map.cpp,?Repair_Bridge@MapClass@@QAEXABVCell@@@Z
 0x00574000,MapClass::DestroyConcreteBridgeAt,MATCH,1532,src/map.cpp,?DestroyConcreteBridgeAt@MapClass@@QAEXABVCell@@@Z
 0x00574600,FUN_00574600,MATCH,187,src/map.cpp,?FUN_00574600@@YI_NHHPAVCellClass@@@Z
 0x005746C0,FUN_005746C0,MATCH,179,src/map.cpp,?FUN_005746C0@@YI_NHPAVCellClass@@@Z
@@ -14776,6 +14779,7 @@ address,name,result,size,source,symbol
 0x006E8A90,TeamClass::TeamClass,MATCH,833,src/team.cpp,??0TeamClass@@QAE@PBVTeamTypeClass@@PAVHouseClass@@PAX@Z
 0x006E8DE0,TeamClass::~TeamClass,MATCH,616,src/team.cpp,??1TeamClass@@UAE@XZ
 0x006E9050,TeamClass::Assign_Mission_Target,MATCH,239,src/team.cpp,?Assign_Mission_Target@TeamClass@@QAEXPAVAbstractClass@@@Z
+0x006E9140,TeamClass::AI,MATCH,3896,src/team.cpp,?AI@TeamClass@@UAEXXZ
 0x006EA080,TeamClass::Flag_Into_Action,MATCH,70,src/team.cpp,?Flag_Into_Action@TeamClass@@QAEXXZ
 0x006EA0D0,TeamClass::Regroup,MATCH,769,src/team.cpp,?Regroup@TeamClass@@QAEXXZ
 0x006EA3E0,TeamClass::Recalc_Strength,MATCH,264,src/team.cpp,?Recalc_Strength@TeamClass@@QAE_NXZ
