@@ -263,6 +263,11 @@ void SuperClass::SetReadiness(bool ready)
 	IsReady = ready;
 }
 
+static inline int Charge_Time(SuperClass const * super)
+{
+	return((super->CustomChargeTime != -1) ? super->CustomChargeTime : super->Class->RechargeTime);
+}
+
 // FUNCTION: GAMEMD 0x006CB830
 char SuperClass::StopPreclickAnim(bool isPlayer)
 {
@@ -270,27 +275,11 @@ char SuperClass::StopPreclickAnim(bool isPlayer)
 	if (IsPresent && !IsReady && (!IsSuspended || Class->PreClick)) {
 		OldStage = -1;
 		Control.Start();
-		Control = (CustomChargeTime == -1) ? Class->RechargeTime : CustomChargeTime;
+		Control = Charge_Time(this);
 		if (Class->UseChargeDrain) ChargeDrainState = CHARGING;
 		return(1);
 	}
 	return(0);
-}
-
-static inline void Restart_Charge(SuperClass * super)
-{
-	Release_Animation(super);
-	if (super->IsPresent && !super->IsReady && (!super->IsSuspended || super->Class->PreClick)) {
-		super->OldStage = -1;
-		super->Control.Start();
-		super->Control = (super->CustomChargeTime == -1) ? super->Class->RechargeTime : super->CustomChargeTime;
-		if (super->Class->UseChargeDrain) super->ChargeDrainState = SuperClass::CHARGING;
-	}
-}
-
-static inline int Charge_Time(SuperClass const * super)
-{
-	return((super->CustomChargeTime != -1) ? super->CustomChargeTime : super->Class->RechargeTime);
 }
 
 // FUNCTION: GAMEMD 0x006CB920
@@ -328,7 +317,6 @@ bool SuperClass::Discharged(bool player, Cell const & cell)
 		if (player) PsyDom::PrintMessage();
 		return(false);
 	}
-	int chargeLeft = Control.Value();
 	Launch(cell, player);
 	if (!Class->PostClick) IsReady = false;
 	if (IsOneTime) {
@@ -336,13 +324,13 @@ bool SuperClass::Discharged(bool player, Cell const & cell)
 		return(Lose());
 	}
 	if (Class->IsManualControl) {
-		Control = (CustomChargeTime == -1) ? Class->RechargeTime : CustomChargeTime;
+		Control = Charge_Time(this);
 		OldStage = -1;
 		Control.Stop();
 		return(false);
 	}
 	if (!Class->PreClick && !Class->PostClick) {
-		Restart_Charge(this);
+		StopPreclickAnim(player);
 	}
 	return(false);
 }
