@@ -19658,9 +19658,7 @@ address,size,evidence,name
 0x007C8F5E,56,CGL,__cfltcvt_init
 0x007C8F96,16,L,?__set_inconsistency@@YAP6AXXZP6AXXZ@Z
 0x007C8FB0,25,CGL,__CIpow
-0x007C8FC9,9,L,_pow
-0x007C8FD2,467,CG,
-0x007C91A5,40,CG,
+0x007C8FC9,516,L,_pow
 0x007C91D0,254,CYGL,CRT::strncpy
 0x007C92D0,170,CGL,__alldiv
 0x007C9380,104,CGL,__aulldiv
@@ -19742,7 +19740,7 @@ address,size,evidence,name
 0x007CACC0,249,CGL,?FindMITargetTypeInstance@@YAPBU_s_RTTIBaseClassDescriptor@@PAXPBU_s_RTTICompleteObjectLocator@@PAUTypeDescriptor@@H2@Z
 0x007CADB9,312,CGL,?FindVITargetTypeInstance@@YAPBU_s_RTTIBaseClassDescriptor@@PAXPBU_s_RTTICompleteObjectLocator@@PAUTypeDescriptor@@H2@Z
 0x007CAEF1,63,CGL,?PMDtoOffset@@YAHPAXABUPMD@@@Z
-0x007CAF30,6,CYG,CRT::strchr
+0x007CAF30,6,CYGL,CRT::strchr
 0x007CAF36,182,L,___from_strstr_to_strchr
 0x007CAFEC,8,L,__tolower
 0x007CAFF4,111,CGL,_tolower
@@ -19892,8 +19890,7 @@ address,size,evidence,name
 0x007CEFDA,183,L,__fFLN
 0x007CF091,16,L,__rtinfnpop
 0x007CF0A1,13,L,_rtforexpinf
-0x007CF0AE,67,CL,__ffexpm1
-0x007CF0F1,102,C,
+0x007CF0AE,169,CL,__ffexpm1
 0x007CF160,103,L,__trandisp1
 0x007CF1C7,171,L,__trandisp2
 0x007CF272,85,L,__tosnan1
@@ -20202,8 +20199,7 @@ address,size,evidence,name
 0x007DA603,11,L,_getwc
 0x007DA60E,42,L,_ungetwc
 0x007DA638,237,CGL,__ungetwc_lk
-0x007DA725,443,CGL,___crtCompareStringA
-0x007DA8E0,194,V,
+0x007DA725,637,CGL,___crtCompareStringA
 0x007DA9A2,43,CGL,_strncnt
 0x007DA9CD,391,CGL,___crtsetenv
 0x007DAB54,88,CGL,_findenv
@@ -20252,11 +20248,9 @@ address,size,evidence,name
 0x007DC172,28,L,?_ValidateRead@@YAHPBXI@Z
 0x007DC18E,28,L,?_ValidateWrite@@YAHPAXI@Z
 0x007DC1AA,24,CGL,?_ValidateExecute@@YAHP6GHXZ@Z
-0x007DC1C2,92,GL,?terminate@@YAXXZ
-0x007DC21E,5,CV,
+0x007DC1C2,97,GL,?terminate@@YAXXZ
 0x007DC223,24,L,?unexpected@@YAXXZ
-0x007DC23B,81,GL,?_inconsistency@@YAXXZ
-0x007DC28C,5,CV,
+0x007DC23B,86,GL,?_inconsistency@@YAXXZ
 0x007DC291,231,CGL,__filwbuf
 0x007DC378,151,CGL,__mbschr
 0x007DC40F,89,GL,__setmode

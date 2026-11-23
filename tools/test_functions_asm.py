@@ -16,12 +16,14 @@ def archive(data, entries, relocs=()):
 
 
 class LibraryBoundsTest(unittest.TestCase):
-    def test_only_padding_and_flow_splits_can_be_removed(self):
-        evidence = {100: "CL", 104: "P", 108: "F", 112: "C"}
+    def test_interior_labels_of_a_library_body_are_removed(self):
+        evidence = {100: "CL", 104: "P", 106: "CG", 108: "F", 112: "C"}
         self.assertEqual(library_boundaries(evidence, {100: 12}), {100: 112})
         self.assertEqual(evidence, {100: "CL", 112: "C"})
-        evidence[104] = "PG"
-        self.assertEqual(library_boundaries(evidence, {100: 12}), {})
+
+    def test_library_entry_points_inside_a_body_are_kept(self):
+        evidence = {100: "CL", 104: "PL", 112: "C"}
+        self.assertEqual(library_boundaries(evidence, {100: 12, 104: 8}), {})
         self.assertIn(104, evidence)
 
 
