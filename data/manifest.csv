@@ -17845,6 +17845,8 @@ address,size,symbol,source,sha256
 0x0076CA60,400,?Init_Sounds@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z,src/wdtsel.cpp,4c239a7a8cfb1eda44d002beb0c2701a7fc804f4d44d58363eed8c730ad8c1cf
 0x0076CBF0,417,?Init_Target@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z,src/wdtsel.cpp,7a3223a8d16dac5fa1347d26026a82800749f2b55e5686929965a6d0be3bc16c
 0x0076CDA0,991,?Pick_Territory@Selection@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@XZ,src/wdtsel.cpp,0143fda1cb79caba42161a2a92ebd3471d77261083e3b403259ecd232c2642cb
+0x0076D180,532,?Handle_Click@Selection@WorldDominationTour@@QAEXABVPoint2D@@AA_N@Z,src/wdtsel.cpp,fc853121b84d1cec701e315c653f587e2a967c72e56db527edd1f96aea5125bb
+0x0076D3A0,193,?Select_Territory_At@Selection@WorldDominationTour@@QAE_NABVPoint2D@@@Z,src/wdtsel.cpp,a9831699d244e1f164e94f49d937ab86eb610015ab900978a5b8b8adc661e3d2
 0x0076D470,91,?Update_Hovered_Territory@Selection@WorldDominationTour@@QAEXABVPoint2D@@@Z,src/wdtsel.cpp,a1876d6c8a23b907c54f54e238d6115c7b5b453223fd101249bb855b953829be
 0x0076DAD0,1012,?Select_Territory@Selection@WorldDominationTour@@QAE_NABV?$rc_ptr@VTerritory@WorldDominationTour@@@@@Z,src/wdtsel.cpp,3b0a33ae6e6ac64bdce784f1c9701706e2b8d8307be4ea6cbf74020a36340408
 0x0076DED0,115,?Remove_Target_Anims@Selection@WorldDominationTour@@QAEXXZ,src/wdtsel.cpp,0931315fa02a336f10b466210d9c7dbfe0d197a49cc09b8b2e12712f88573c95
