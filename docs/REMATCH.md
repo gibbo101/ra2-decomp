@@ -32,7 +32,6 @@ Verdicts:
 | 0x00608500 | FUN_00608500 | src/ownrdraw.cpp | unused `OwnerDraw::WinData *data = NULL;` | SIDE-EFFECT: OwnerDraw::TrackBarHandler 99.2% |
 | 0x006316E0 | PhoneEntryEdit::Dialog | src/phoneed.cpp | unread `int unused = RC + 1;` | SIDE-EFFECT: PhoneEdit::Add 63.9%, PhoneEdit::Edit 46.4% |
 | 0x0063F850 | PowerClass::Desired_Power_Height | src/power.cpp | unread `int unused = Count() + Count();` | SIDE-EFFECT: PowerClass::Update_Delay 11.4%, PowerClass::Desired_Levels 43.8% |
-| 0x00644F50 | ParticleTypeClass::Read_INI | src/ptype.cpp | unread `int unused = ParticleTypes.Count();` | FORCING, 74.1% (1251/1235) |
 | 0x006A5090 | SidebarClass::FUN_006A5090 | src/sidebar.cpp | unread `int span = ...` | SIDE-EFFECT: SidebarClass::Init_IO 53.0% |
 | 0x006CB920 | SuperClass::Discharged | src/super.cpp | unread `int chargeLeft = Control.Value();` | FORCING, 86.2% (915/895) |
 | 0x006D8B30 | Tactical::Update_Visible_Cells | src/tactical.cpp | trailing `do { } while (0);` | SIDE-EFFECT: Tactical::AI 67.9%, Set_View_Dimensions 27.1%, Set_Tactical_Position(Point2D) 41.1%, Set_Tactical_Position(Coord) 44.4%, Tactical::Load 49.0% |
