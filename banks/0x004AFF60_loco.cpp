@@ -1,0 +1,1336 @@
+// DriveLocomotionClass::Draw_Matrix MATCH (1189/1189) only with overlay 0x004AFF60_loco_timer.h (timer.h with ProgressTimerClass::Progress as one statement: return(!TotalTime ? 1.0 : (double)Time_Spent() / (double)TotalTime)); full copy of src/drive.cpp, every other function still MATCH (81 of 81); the 0x004B4D70 marker is renamed from Value to operator() because Draw_Matrix now calls it. Not landed: that header form turns TunnelLocomotionClass::Process 0x00728E30 from MATCH to 80.5%. Same source changes as the ship twin (0x0069F670_loco.cpp)
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright 2026 ra2-decomp contributors
+// Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
+// Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
+
+#include "always.h"
+#include "geometry.h"
+#include "rect.h"
+#include "drive.h"
+#include "_map.h"
+#include "_rules.h"
+#include "anim.h"
+#include "assert.h"
+#include "cell.h"
+#include "foot.h"
+#include "globals.h"
+#include "house.h"
+#include "infantry.h"
+#include "inline.h"
+#include "noinit.h"
+#include "overtype.h"
+#include "rules.h"
+#include "spawnmgr.h"
+#include "team.h"
+#include "tube.h"
+#include "unit.h"
+#include "unittype.h"
+#include "voc.h"
+#include "wave.h"
+#include "layer.hh"
+#include "tube.hh"
+#include <new.h>
+
+// SYNTHETIC: GAMEMD 0x004AF330 SYMBOL
+// _$E2
+// SYNTHETIC: GAMEMD 0x004AF360 SYMBOL
+// _$E5
+// SYNTHETIC: GAMEMD 0x004AF380 SYMBOL
+// _$E8
+// SYNTHETIC: GAMEMD 0x004AF3A0 SYMBOL
+// _$E11
+// SYNTHETIC: GAMEMD 0x004AF3C0 SYMBOL
+// _$E14
+// SYNTHETIC: GAMEMD 0x004AF3E0 SYMBOL
+// _$E17
+// SYNTHETIC: GAMEMD 0x004AF400 SYMBOL
+// _$E20
+// SYNTHETIC: GAMEMD 0x004AF440 SYMBOL
+// _$E23
+// SYNTHETIC: GAMEMD 0x004AF470 SYMBOL
+// _$E26
+// SYNTHETIC: GAMEMD 0x004AF4A0 SYMBOL
+// _$E29
+// SYNTHETIC: GAMEMD 0x004AF4D0 SYMBOL
+// _$E32
+// SYNTHETIC: GAMEMD 0x004AF4E0 SYMBOL
+// _$E35
+// SYNTHETIC: GAMEMD 0x004AF500 SYMBOL
+// _$E38
+// SYNTHETIC: GAMEMD 0x004AF520 SYMBOL
+// _$E41
+
+static const double _deaccel = 0.3f;
+
+// FUNCTION: GAMEMD 0x004AF540
+DriveLocomotionClass::DriveLocomotionClass(void) :
+	BASECLASS(),
+	CurrentRamp(0),
+	PreviousRamp(0),
+	RampTimer(),
+	DestinationCoord(COORD_NONE),
+	HeadToCoord(COORD_NONE),
+	IsOnShortTrack(false),
+	IsTurretLockedDown(false),
+	IsRotating(false),
+	IsDriving(false),
+	IsRocking(false),
+	IsLocomotorUnlocked(true),
+	SpeedAccum(0),
+	TargetSpeed(0),
+	TrackNumber(-1),
+	TrackIndex(-1),
+	Piggybacker(NULL)
+{
+}
+
+// FUNCTION: GAMEMD 0x004AF5E0
+DriveLocomotionClass::~DriveLocomotionClass(void)
+{
+}
+
+// FUNCTION: GAMEMD 0x004AF610
+HRESULT DriveLocomotionClass::Piggyback_CLSID(CLSID * classid)
+{
+	if (classid == NULL) {
+		return(E_POINTER);
+	}
+
+	if (Piggybacker != NULL) {
+		IPersistPtr ptr(Piggybacker);
+		if (ptr == NULL) {
+			return(E_FAIL);
+		}
+		return(ptr->GetClassID(classid));
+	}
+
+	IPersistPtr ptr(this);
+	if (ptr == NULL) {
+		return(E_FAIL);
+	}
+	return(ptr->GetClassID(classid));
+}
+
+// FUNCTION: GAMEMD 0x004AF720
+HRESULT STDMETHODCALLTYPE DriveLocomotionClass::QueryInterface(REFIID riid, LPVOID * ppvObject)
+{
+	HRESULT result = BASECLASS::QueryInterface(riid, ppvObject);
+
+	if (result == E_NOINTERFACE) {
+		if (riid == IID_IPiggyback) {
+			*ppvObject = (IPiggyback*)this;
+		}
+		if (*ppvObject == NULL) {
+			result = E_NOINTERFACE;
+		} else {
+			AddRef();
+			result = S_OK;
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: GAMEMD 0x004AF780
+HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Load(IStream * stream)
+{
+	HRESULT result = BASECLASS::Load(stream);
+	if (SUCCEEDED(result)) {
+		new (this) DriveLocomotionClass(NoInitClass());
+
+		bool haspiggy;
+		stream->Read(&haspiggy, sizeof(haspiggy), NULL);
+
+		if (haspiggy) {
+			result = OleLoadFromStream(stream, IID_ILocomotion, (void**)&Piggybacker);
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: GAMEMD 0x004AF800
+HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Save(IStream * stream, BOOL cleardirty)
+{
+	HRESULT result = BASECLASS::Save(stream, cleardirty);
+	if (SUCCEEDED(result)) {
+		bool haspiggy;
+		if (Piggybacker != NULL) {
+			haspiggy = true;
+			stream->Write(&haspiggy, sizeof(haspiggy), NULL);
+			IPersistStreamPtr ptr(Piggybacker);
+			result = OleSaveToStream(ptr, stream);
+		} else {
+			haspiggy = false;
+			stream->Write(&haspiggy, sizeof(haspiggy), NULL);
+		}
+	}
+	return(result);
+}
+
+// FUNCTION: GAMEMD 0x004AF8E0
+HRESULT STDMETHODCALLTYPE DriveLocomotionClass::Begin_Piggyback(ILocomotion *pointer)
+{
+	if (pointer == NULL) {
+		return(E_POINTER);
+	}
+	if (Piggybacker == NULL) {
+		Piggybacker = pointer;
+		return(S_OK);
+	}
+	return(E_FAIL);
+}
+
+// FUNCTION: GAMEMD 0x004AF930
+HRESULT DriveLocomotionClass::End_Piggyback(ILocomotion **pointer)
+{
+	if (pointer == NULL) {
+		return(E_POINTER);
+	}
+	if (Piggybacker != NULL) {
+		*pointer = Piggybacker;
+		Piggybacker.Detach();
+		return(S_OK);
+	}
+	return(S_FALSE);
+}
+
+// FUNCTION: GAMEMD 0x004AF970
+boolean DriveLocomotionClass::Is_Ok_To_End(void)
+{
+	if (!Is_Moving() && (Piggybacker != NULL && IsLocomotorUnlocked && !LinkedTo->IsAttackedByLocomotor)) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: GAMEMD 0x004AF9B0
+Matrix3D DriveLocomotionClass::Get_Slope_Matrix(void) const
+{
+	Matrix3D mtx;
+	mtx.Make_Identity();
+
+	if (RampTimer.Progress() < 1.0) {
+		mtx = ::Get_Slope_Transition_Matrix(PreviousRamp, CurrentRamp, Get_Slope_Ratio());
+	} else if (CurrentRamp) {
+		mtx = ::Get_Slope_Matrix(CurrentRamp);
+	}
+
+	return(mtx);
+}
+
+// FUNCTION: GAMEMD 0x004AFAA0
+double DriveLocomotionClass::Get_Slope_Ratio(void) const
+{
+	return(RampTimer.Progress());
+}
+
+// FUNCTION: GAMEMD 0x004AFB00
+void DriveLocomotionClass::Set_Slope(int ramp)
+{
+	int cur = CurrentRamp;
+	if (ramp != cur) {
+		PreviousRamp = cur;
+		CurrentRamp = ramp;
+		RampTimer = 3;
+	}
+}
+
+// FUNCTION: GAMEMD 0x004AFB40
+void STDMETHODCALLTYPE DriveLocomotionClass::Force_New_Slope(int ramp)
+{
+	PreviousRamp = ramp;
+	CurrentRamp = ramp;
+	RampTimer = 0;
+}
+
+// FUNCTION: GAMEMD 0x004AFB80
+boolean STDMETHODCALLTYPE DriveLocomotionClass::Is_Moving(void)
+{
+	if (DestinationCoord != COORD_NONE) {
+		return(true);
+	}
+	if (HeadToCoord != COORD_NONE && (HeadToCoord.X != LinkedTo->PositionCoord.X || HeadToCoord.Y != LinkedTo->PositionCoord.Y)) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: GAMEMD 0x004AFC20
+boolean STDMETHODCALLTYPE DriveLocomotionClass::Is_Moving_Now(void)
+{
+	if (LinkedTo->PrimaryFacing.Is_Rotating()) {
+		return(true);
+	}
+	if (Is_Moving() && HeadToCoord != COORD_NONE && LinkedTo->Current_Speed() > 0) {
+		return(true);
+	}
+	return(false);
+}
+
+// FUNCTION: GAMEMD 0x004AFC90
+CoordStruct STDMETHODCALLTYPE DriveLocomotionClass::Destination(void)
+{
+	return(DestinationCoord);
+}
+
+// FUNCTION: GAMEMD 0x004AFCC0
+CoordStruct STDMETHODCALLTYPE DriveLocomotionClass::Head_To_Coord(void)
+{
+	if (HeadToCoord != COORD_NONE) {
+		return(HeadToCoord);
+	}
+	return(LinkedTo->PositionCoord);
+}
+
+// FUNCTION: GAMEMD 0x004AFD40
+void STDMETHODCALLTYPE DriveLocomotionClass::Move_To(CoordStruct to)
+{
+	if (!LinkedTo->IsUnderEMP() && !LinkedTo->IsParalyzed() && !LinkedTo->IsBeingWarpedOut() && !LinkedTo->IsWarpingIn()) {
+		DestinationCoord = to;
+		if (Coord(to) != COORD_NONE) {
+			if (Map[to].IsUnderBridge) {
+				DestinationCoord.Z += BRIDGE_LEPTON_HEIGHT;
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x004AFE00
+void STDMETHODCALLTYPE DriveLocomotionClass::Stop_Moving(void)
+{
+	if (HeadToCoord != COORD_NONE) {
+		if (LinkedTo->TClass->IsTrain) {
+			UnitClass *unit = (UnitClass *)LinkedTo;
+
+			if (!unit->IsFollowing) {
+				UnitClass *follower = unit->FollowingMe;
+				while (follower != NULL) {
+					follower->Locomotion->Stop_Moving();
+					follower = follower->FollowingMe;
+					if (follower == NULL || follower == follower->FollowingMe) {
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	TargetSpeed = TargetSpeed < _deaccel ? TargetSpeed : _deaccel;
+	DestinationCoord = COORD_NONE;
+}
+
+// FUNCTION: GAMEMD 0x004AFED0
+BOOL DriveLocomotionClass::Is_Angled(void) const
+{
+	if (Get_Slope_Ratio() == 1.0) {
+		if ((float)fabs(LinkedTo->AngleRotatedSideways) < 0.005 && (float)fabs(LinkedTo->AngleRotatedForwards) < 0.005) {
+			return(true);
+		}
+	}
+	return(false);
+}
+
+// FUNCTION: GAMEMD 0x004AFF60
+Matrix3DStruct STDMETHODCALLTYPE DriveLocomotionClass::Draw_Matrix(int *key)
+{
+	Matrix3DStruct m;
+
+	if (!Is_Angled()) {
+		Matrix3D m1, m2;
+		m1.Make_Identity();
+		m2.Make_Identity();
+
+		float val = LinkedTo->Techno_Type_Class()->VoxelCenterY;
+		float val2 = LinkedTo->Techno_Type_Class()->VoxelCenterX;
+
+		float fcos = fastmath::cos(LinkedTo->AngleRotatedForwards);
+		float fsin = fastmath::sin(LinkedTo->AngleRotatedForwards);
+
+		float scos = fastmath::cos(LinkedTo->AngleRotatedSideways);
+		float ssin = fastmath::sin(LinkedTo->AngleRotatedSideways);
+
+		int num = fabs(ssin) * val + fabs(fsin) * val2;
+
+		int x_shift = (int)(val2 - (float)(int)(fcos * val2));
+		int x_offset = x_shift;
+		int y_offset = (int)(val - (float)(int)(scos * val));
+		if (LinkedTo->AngleRotatedForwards < 0.0f) {
+			x_offset = -x_shift;
+		}
+		if (LinkedTo->AngleRotatedSideways > 0.0f) {
+			y_offset = -y_offset;
+		}
+
+		m1.Translate_Z(num);
+		m2.Translate_X(x_offset);
+		m2.Translate_Y(y_offset);
+		m2.Rotate_X(LinkedTo->AngleRotatedSideways);
+		m2.Rotate_Y(LinkedTo->AngleRotatedForwards);
+
+		if (key) {
+			*key = -1;
+		}
+
+		m = (Matrix3DStruct &)(((m1 * Get_Slope_Matrix()) * BASECLASS::Draw_Matrix(key)) * m2);
+	} else {
+		if (key != NULL && *key != -1) {
+			*key = *key << 6;
+			*key += CurrentRamp;
+		}
+
+		m = (Matrix3DStruct &)(Get_Slope_Matrix() * BASECLASS::Draw_Matrix(key));
+	}
+	return(m);
+}
+
+// FUNCTION: GAMEMD 0x004B0410
+Matrix3DStruct STDMETHODCALLTYPE DriveLocomotionClass::Shadow_Matrix(int *key)
+{
+	if (!Is_Angled()) {
+		if (key) {
+			*key = -1;
+		}
+	}
+	return(BASECLASS::Shadow_Matrix(key));
+}
+
+// FUNCTION: GAMEMD 0x004B04D0
+void STDMETHODCALLTYPE DriveLocomotionClass::Unlimbo(void)
+{
+	Force_New_Slope(LinkedTo->Get_Cell_Ptr()->Ramp);
+}
+
+// FUNCTION: GAMEMD 0x004B0DA0
+bool DriveLocomotionClass::Stop_Driver(void)
+{
+	if (HeadToCoord != COORD_NONE) {
+		HeadToCoord = COORD_NONE;
+		IsDriving = false;
+		return(true);
+	}
+	return(false);
+}
+
+
+// FUNCTION: GAMEMD 0x004B4890
+bool DriveLocomotionClass::Abandon_Navigation(void)
+{
+	if (LinkedTo->RouteQueue.Count() == 0) {
+		LinkedTo->Assign_Destination(NULL);
+		return(false);
+	}
+
+	LinkedTo->AbortMotion();
+	return(LinkedTo->Enter_Idle_Mode());
+}
+
+
+// FUNCTION: GAMEMD 0x004B0500
+boolean STDMETHODCALLTYPE DriveLocomotionClass::Process(void)
+{
+	Set_Slope(LinkedTo->Get_Cell_Ptr()->Ramp);
+
+	if (TrackNumber != -1 && IsDriving) {
+		if (While_Moving()) return(false);
+		if (!LinkedTo->IsActive) return(false);
+		if (TrackNumber == -1 && (Is_Moving() || LinkedTo->Path[0] != FACING_NONE) && (LinkedTo->Fetch_RTTI() != RTTI_UNIT || !((UnitClass*)LinkedTo)->IsDumping)) {
+			bool res = false;
+			if (LinkedTo->Fetch_RTTI() == RTTI_UNIT && LinkedTo->NavCom != NULL && LinkedTo->NavCom->Fetch_RTTI() == RTTI_INFANTRY) {
+				Coord dest = LinkedTo->NavCom->Destination_Coord(LinkedTo);
+				if (dest != DestinationCoord) {
+					Move_To(dest);
+				}
+			}
+			Start_Of_Move(res);
+			if (res) return(false);
+			if (!LinkedTo->IsActive) return(false);
+			While_Moving(true);
+			if (LinkedTo == NULL || !LinkedTo->IsActive) return(false);
+		}
+	} else {
+		if (LinkedTo->NavCom != NULL && LinkedTo->NavCom->Fetch_RTTI() == RTTI_CELL && LinkedTo->PositionCell == ((CellClass *)LinkedTo->NavCom)->CellID) {
+			Abandon_Navigation();
+			return(false);
+		} else {
+			if (LinkedTo->CurrentMission == MISSION_GUARD && !IsDriving && DestinationCoord != COORD_NONE && LinkedTo->PositionCoord == DestinationCoord) {
+				Abandon_Navigation();
+				return(false);
+			}
+
+			if (LinkedTo->PrimaryFacing.Is_Rotating()) {
+				IsRotating = true;
+			} else {
+				if (IsRotating) {
+					IsRotating = false;
+					LinkedTo->Per_Cell_Process(PCP_ROTATION);
+					if (!LinkedTo->IsActive || LinkedTo->IsInLimbo || LinkedTo->IsFalling) return(false);
+				}
+
+				if ((LinkedTo->Mission != MISSION_GUARD || Is_Moving()) && LinkedTo->Mission != MISSION_UNLOAD) {
+					if (Is_Moving() || LinkedTo->Path[0] != FACING_NONE) {
+						if (LinkedTo->IsInPlayfield && LinkedTo->Mission != MISSION_ENTER && Is_Moving() && !LinkedTo->Is_In_Same_Zone(DestinationCoord)) {
+							Stop_Driver();
+							if (Abandon_Navigation()) {
+								return(false);
+							}
+						} else {
+							bool res = false;
+							Start_Of_Move(res);
+							if (res) return(false);
+							if (!LinkedTo->IsActive) return(false);
+							While_Moving();
+							if (LinkedTo == NULL || !LinkedTo->IsActive) return(false);
+						}
+					} else if (LinkedTo->IsSinking) {
+						Stop_Driver();
+						TargetSpeed = 0;
+					} else {
+						if (LinkedTo->NavCom != NULL) {
+							Move_To(LinkedTo->NavCom->Destination_Coord(LinkedTo));
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (Is_Moving_Now() && (Frame % 10) == 0) {
+		if (!LinkedTo->IsOnBridge && LinkedTo->Get_Cell_Ptr()->Land_Type() == LAND_WATER) {
+			if (Rule->Wake != NULL) {
+				new AnimClass(Rule->Wake, LinkedTo->PositionCoord, 0, 1, ShapeFlags_Type(0x600), 0, false);
+			}
+		}
+	}
+
+	if (DestinationCoord == COORD_NONE && HeadToCoord == COORD_NONE) {
+		if (LinkedTo->Path[0] == FACING_NONE && LinkedTo->Speed > 0) {
+			LinkedTo->Set_Speed(0);
+		}
+	}
+
+	return(Is_Moving());
+}
+
+
+// FUNCTION: GAMEMD 0x004B0AD0
+void DriveLocomotionClass::Mark_Track(Coord const & headto, MarkType type)
+{
+	if (headto != COORD_NONE) {
+		if (!IsOnShortTrack && TrackNumber != -1) {
+			int tracknum = TrackControl[TrackNumber].Track;
+			if (tracknum) {
+				TrackType const * ptr = RawTracks[tracknum - 1].Track;
+				int cellidx = RawTracks[tracknum - 1].Cell;
+				if (cellidx > -1) {
+					Dir256 dir = ptr[cellidx].Facing;
+
+					if (TrackIndex < cellidx && cellidx != -1) {
+						Point2D offset = Smooth_Turn(ptr[cellidx].Offset, dir);
+						if (type == MARK_UP) {
+							Coord coord(offset.X, offset.Y, LinkedTo->Height);
+							LinkedTo->Clear_Occupy_Bit(coord);
+						} else {
+							if (type == MARK_DOWN || type == MARK_DOWN_FORCED) {
+								Coord coord(offset.X, offset.Y, LinkedTo->Height);
+								LinkedTo->Set_Occupy_Bit(coord);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (type == MARK_UP) {
+			LinkedTo->Clear_Occupy_Bit(headto);
+		} else {
+			if (type == MARK_DOWN || type == MARK_DOWN_FORCED) {
+				LinkedTo->Set_Occupy_Bit(headto);
+			}
+		}
+	}
+}
+
+
+// FUNCTION: GAMEMD 0x004B0C40
+void STDMETHODCALLTYPE DriveLocomotionClass::Force_Track(int track, CoordStruct coord)
+{
+	TrackNumber = track;
+	TrackIndex = 0;
+	if ((Coord)coord != COORD_NONE) {
+		if (Start_Driver(coord)) {
+			DestinationCoord = coord;
+			TargetSpeed = 1.0;
+		}
+	}
+}
+
+
+// FUNCTION: GAMEMD 0x004B0DF0
+bool DriveLocomotionClass::Start_Driver(Coord const & headto)
+{
+	Stop_Driver();
+	if (headto != COORD_NONE) {
+		HeadToCoord = headto;
+		IsDriving = true;
+
+		if (Map[headto].Goodie_Check(LinkedTo) && !LinkedTo->IsInLimbo) {
+			Mark_Track(headto, MARK_DOWN);
+			return(true);
+		}
+		if (!LinkedTo->IsActive) return(false);
+
+		HeadToCoord = COORD_NONE;
+		IsDriving = false;
+	}
+	return(false);
+}
+
+
+// FUNCTION: GAMEMD 0x004B0EF0
+void STDMETHODCALLTYPE DriveLocomotionClass::Do_Turn(DirStruct coord)
+{
+	DirType dir = (DirType &)coord;
+	LinkedTo->PrimaryFacing.Set_Desired(dir);
+}
+
+
+// FUNCTION: GAMEMD 0x004B2630
+bool DriveLocomotionClass::Start_Of_Move(bool &stop_processing, bool retry, bool force_straight)
+{
+	FacingType facing = LinkedTo->Path[0];
+
+	if (!Is_Moving() && facing == FACING_NONE) {
+		IsTurretLockedDown = false;
+		Stop_Driver();
+		if (LinkedTo->Get_Mission() == MISSION_MOVE) {
+			stop_processing = LinkedTo->Enter_Idle_Mode(false, true);
+		}
+		return false;
+	}
+
+	if (DestinationCoord == COORD_NONE)
+		return false;
+
+	if (LinkedTo->IsBeingWarpedOut() || LinkedTo->IsWarpingIn())
+		return false;
+	if (LinkedTo->SpawnManager != NULL && LinkedTo->SpawnManager->CountLaunchingSpawns() != 0)
+		return true;
+	if (LinkedTo->IsUnderEMP() || LinkedTo->IsParalyzed())
+		return true;
+
+	if (facing != FACING_NONE) {
+		if ((LinkedTo->NavCom != NULL && LinkedTo->NavCom->Fetch_RTTI() == RTTI_UNIT) ||
+			(LinkedTo->NavCom != NULL && LinkedTo->NavCom->Fetch_RTTI() == RTTI_INFANTRY)) {
+			int dist = LinkedTo->Distance(DestinationCoord) / CELL_LEPTON_W;
+			if (dist < CONQUER_PATH_MAX) {
+				LinkedTo->Path[dist] = FACING_NONE;
+				facing = LinkedTo->Path[0];
+			}
+		}
+	}
+
+	if (facing == FACING_NONE) {
+		if (LinkedTo->PathDelay != 0) {
+			return false;
+		}
+		LinkedTo->PathDelay = CDTimerClass<FrameTimerClass>((int)(Rule->PathDelay * TICKS_PER_MINUTE));
+
+		if (!LinkedTo->Basic_Path(DestinationCoord.As_Cell(), 0, 0)) {
+			if (LinkedTo == NULL) {
+				stop_processing = true;
+				return false;
+			}
+			if (!LinkedTo->Is_In_Same_Zone(DestinationCoord)) {
+				LinkedTo->Assign_Destination(NULL, true);
+				return false;
+			}
+
+			if (DestinationCoord == COORD_NONE)
+				return false;
+
+			if (!LinkedTo->Is_On_Priority_Mission() &&
+				LinkedTo->Distance(DestinationCoord) < Rule->CloseEnoughDistance &&
+				(LinkedTo->Get_Mission() == MISSION_MOVE || LinkedTo->Get_Mission() == MISSION_GUARD_AREA)) {
+				Stop_Driver();
+				if (Abandon_Navigation())
+					return true;
+				if (!LinkedTo->IsActive)
+					return false;
+			} else {
+				Cell cell =
+					Adjacent_Cell(LinkedTo->Center_Coord().As_Cell(), LinkedTo->PrimaryFacing.Current().As_Dir8());
+				if (Map.In_Local_Radar(cell, true)) {
+					MoveType ok = LinkedTo->Can_Enter_Cell(&Map[cell], LinkedTo->PrimaryFacing.Current().As_Dir8(),
+														   LinkedTo->Get_Cell_Height(), 0, true);
+					if (ok == MOVE_CLOSED_GATE) {
+						Incoming(cell);
+					} else if (ok == MOVE_TEMP) {
+						CellClass *cellptr = &Map[cell];
+						int altitude = LinkedTo->Get_Coord().Z;
+						TechnoClass *blockage = cellptr->Cell_Techno(
+							Point2D(0, 0), altitude > Map.Get_Height_GL(cell) + 2 * LEVEL_LEPTON_H);
+						if (blockage != NULL && LinkedTo->House->Is_Ally(blockage) &&
+							!LinkedTo->Techno_Type_Class()->IsTrain) {
+							if (LinkedTo->Distance(DestinationCoord) < Rule->CloseEnoughDistance &&
+								!LinkedTo->HasAnyLink()) {
+								if (abs(DestinationCoord.Z - LinkedTo->PositionCoord.Z) < 2 * LEVEL_LEPTON_H) {
+									if (Map[LinkedTo->Get_Coord()].Land_Type() != LAND_TUNNEL) {
+										Stop_Driver();
+										if (Abandon_Navigation())
+											return true;
+										return false;
+									}
+								}
+							}
+							bool is_bridge = cellptr->IsUnderBridge &&
+											 abs(LinkedTo->PositionCoord.Z / LEVEL_LEPTON_H - cellptr->Height) > 2;
+							cellptr->Incoming(COORD_NONE, true, true, is_bridge);
+						}
+					}
+				}
+
+				if (LinkedTo->TryTryAgain > 0) {
+					LinkedTo->TryTryAgain--;
+				} else {
+					Stop_Driver();
+					if (Abandon_Navigation())
+						return true;
+					if (!LinkedTo->IsActive)
+						return false;
+					if (LinkedTo->IsNewNavCom)
+						VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000, 0);
+					LinkedTo->IsNewNavCom = false;
+				}
+			}
+
+			if (!Is_Moving() && LinkedTo->TarCom != NULL && !LinkedTo->IsCloseEnoughToAttack(LinkedTo->TarCom)) {
+				LinkedTo->IsScanLimited = true;
+				if (LinkedTo->Team != NULL)
+					LinkedTo->Team->Scan_Limit();
+				LinkedTo->Assign_Target(NULL);
+			}
+
+			Stop_Driver();
+			TrackNumber = -1;
+			IsTurretLockedDown = false;
+			return false;
+		}
+
+		if (LinkedTo->Path[0] == FACING_COUNT) {
+			return false;
+		}
+
+		Cell cell = Adjacent_Cell(LinkedTo->Center_Coord().As_Cell(), LinkedTo->Path[0]);
+		if (Map.In_Local_Radar(cell, true)) {
+			MoveType ok =
+				LinkedTo->Can_Enter_Cell(&Map[cell], LinkedTo->Path[0], LinkedTo->Get_Cell_Height(), 0, true);
+			if (ok == MOVE_CLOSED_GATE) {
+				Incoming(cell);
+			} else if (ok == MOVE_TEMP) {
+				CellClass *cellptr = &Map[cell];
+				TechnoClass *blockage = cellptr->Cell_Techno(
+					Point2D(0, 0), LinkedTo->Get_Coord().Z > Map.Get_Height_GL(cell) + 2 * LEVEL_LEPTON_H);
+				if (blockage != NULL && LinkedTo->House->Is_Ally(blockage) &&
+					!LinkedTo->Techno_Type_Class()->IsTrain) {
+					if (LinkedTo->Distance(DestinationCoord) < Rule->CloseEnoughDistance &&
+						!LinkedTo->HasAnyLink()) {
+						if (abs(DestinationCoord.Z - LinkedTo->PositionCoord.Z) < 2 * LEVEL_LEPTON_H) {
+							if (Map[LinkedTo->Get_Coord()].Land_Type() != LAND_TUNNEL) {
+								Stop_Driver();
+								return Abandon_Navigation();
+							}
+						}
+					}
+					bool is_bridge = cellptr->IsUnderBridge &&
+									 abs(LinkedTo->PositionCoord.Z / LEVEL_LEPTON_H - cellptr->Height) > 2;
+					cellptr->Incoming(COORD_NONE, true, true, is_bridge);
+				}
+			}
+		}
+
+		LinkedTo->TryTryAgain = FootClass::PATH_RETRY;
+		facing = LinkedTo->Path[0];
+	}
+
+	if (facing == FACING_COUNT) {
+		return false;
+	}
+
+	Coord origin = LinkedTo->Get_Coord();
+	Coord dest = Adjacent_Cell(origin, facing);
+
+	CellClass const &here = Map[LinkedTo->Get_Coord()];
+	int cell_height = here.Height + (LinkedTo->IsOnBridge ? BRIDGE_CELL_HEIGHT : 0);
+
+	CellClass const &next = Map[Adjacent_Cell(LinkedTo->PositionCoord, facing)];
+	if (LinkedTo->IsOnBridge ^ next.IsUnderBridge) {
+		LinkedTo->IsPlanningToLook = true;
+	}
+	if (!LinkedTo->Is_Ready_To_Move()) {
+		return true;
+	}
+	if (!Incoming(dest.As_Cell())) {
+		return true;
+	}
+
+	if (DirType(DIR_MIN) < (LinkedTo->PrimaryFacing.Current() - DirType(facing))) {
+		Do_Turn((DirStruct &)DirType(facing));
+		return true;
+	} else {
+		Cell destcell = dest.As_Cell();
+		CellClass *destptr = &Map[destcell];
+		bool crushable_dest = false;
+		LinkedTo->Mark(MARK_UP);
+		MoveType cando = LinkedTo->Can_Enter_Cell(destptr, facing, cell_height, 0, true);
+		LinkedTo->Mark(MARK_DOWN);
+
+		if (cando < MOVE_NO && LinkedTo->Techno_Type_Class()->IsTrain) {
+			cando = MOVE_OK;
+		} else if ((cando == MOVE_DESTROYABLE || cando == MOVE_FRIENDLY_DESTROYABLE) &&
+				   LinkedTo->Techno_Type_Class()->IsCrusher && destptr->Overlay == OVERLAY_SANDBAG_WALL) {
+			cando = MOVE_OK;
+		}
+
+		if (destptr->Overlay != OVERLAY_NONE && cando == MOVE_OK && OverlayTypes[destptr->Overlay]->IsCrushable) {
+			crushable_dest = true;
+		} else if (destptr->Overlay != OVERLAY_NONE && cando == MOVE_OK &&
+				   OverlayTypes[destptr->Overlay]->IsWall &&
+				   LinkedTo->Techno_Type_Class()->MZone == MZONE_CRUSHER_ALL) {
+			crushable_dest = true;
+		}
+
+		if (cando != MOVE_OK) {
+			if (cando == MOVE_CLOSED_GATE) {
+				Incoming(destcell);
+			} else if (cando == MOVE_TEMP) {
+				if (!LinkedTo->Techno_Type_Class()->IsTrain) {
+					if (retry) {
+						LinkedTo->Path[0] = FACING_NONE;
+						LinkedTo->PathDelay = CDTimerClass<FrameTimerClass>(0);
+						return Start_Of_Move(stop_processing, false, false);
+					}
+					if (LinkedTo->Distance(DestinationCoord) >= Rule->CloseEnoughDistance ||
+						abs(DestinationCoord.Z - LinkedTo->PositionCoord.Z) >= 2 * LEVEL_LEPTON_H ||
+						Map[LinkedTo->Get_Coord()].Land_Type() == LAND_TUNNEL) {
+						bool is_bridge =
+							Map[destcell].IsUnderBridge &&
+							abs(LinkedTo->PositionCoord.Z / LEVEL_LEPTON_H - Map[destcell].Height) > 2;
+						Map[destcell].Incoming(COORD_NONE, true, true, is_bridge);
+					} else {
+						Stop_Driver();
+						if (Abandon_Navigation()) {
+							return true;
+						}
+					}
+				}
+			} else if (cando == MOVE_CLOAK) {
+				Map[destcell].Shimmer();
+				if (retry) {
+					LinkedTo->Path[0] = FACING_NONE;
+					return Start_Of_Move(stop_processing, false, false);
+				}
+				Stop_Driver();
+				return Abandon_Navigation();
+			}
+
+			Stop_Driver();
+			if (cando == MOVE_MOVING_BLOCK) {
+				if (!LinkedTo->IsToPathAroundBlockage) {
+					LinkedTo->IsToPathAroundBlockage = true;
+					LinkedTo->BlockagePathDelay = CDTimerClass<FrameTimerClass>(Rule->BlockagePathDelay);
+				}
+				if (LinkedTo->PathDelay == 0) {
+					bool around_blockage = LinkedTo->IsToPathAroundBlockage && LinkedTo->BlockagePathDelay == 0;
+					bool ok = LinkedTo->Basic_Path(DestinationCoord.As_Cell(), 0, (around_blockage != NULL) + 1);
+					if (LinkedTo == NULL) {
+						stop_processing = true;
+						return false;
+					}
+					if (ok || LinkedTo->Is_In_Same_Zone(DestinationCoord)) {
+						LinkedTo->PathDelay =
+							CDTimerClass<FrameTimerClass>((int)(Rule->PathDelay * TICKS_PER_MINUTE));
+						return true;
+					}
+					LinkedTo->Assign_Destination(NULL, true);
+					return false;
+				}
+			}
+
+			if (cando == MOVE_DESTROYABLE || cando == MOVE_FRIENDLY_DESTROYABLE) {
+				if (retry) {
+					LinkedTo->Path[0] = FACING_NONE;
+					LinkedTo->PathDelay = CDTimerClass<FrameTimerClass>(0);
+					return Start_Of_Move(stop_processing, false, false);
+				}
+				if (Map[destcell].Cell_Object(Point2D(0, 0), 0)) {
+					if (!LinkedTo->House->Is_Ally(Map[destcell].Cell_Object(Point2D(0, 0), 0))) {
+						LinkedTo->Override_Mission(MISSION_ATTACK, Map[destcell].Cell_Object(Point2D(0, 0), 0), 0);
+					}
+				} else {
+					if (Map[destcell].Overlay != OVERLAY_NONE && OverlayTypes[Map[destcell].Overlay]->IsWall) {
+						LinkedTo->Override_Mission(MISSION_ATTACK, &Map[destcell], 0);
+					}
+				}
+			} else {
+				if (LinkedTo->IsNewNavCom)
+					VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000, 0);
+			}
+
+			if (cando == MOVE_NO && retry) {
+				LinkedTo->Path[0] = FACING_NONE;
+				LinkedTo->PathDelay = CDTimerClass<FrameTimerClass>(0);
+				return Start_Of_Move(stop_processing, false, false);
+			} else if (cando == MOVE_NO && !retry) {
+				Stop_Driver();
+				return Abandon_Navigation();
+			}
+
+			LinkedTo->IsNewNavCom = false;
+			TrackNumber = -1;
+			return true;
+		}
+
+		int height;
+		LandType ground;
+		if (abs(cell_height - Map[destcell].Height) < 2) {
+			height = Map[destcell].Height;
+			ground = Map[destcell].Land_Type();
+		} else {
+			height = cell_height;
+			ground = LAND_ROAD;
+		}
+
+		TechnoTypeClass const *ttype = LinkedTo->Techno_Type_Class();
+		double speed = Ground[ground].Cost[ttype->Speed];
+		if (speed > 1.0)
+			speed = 1.0;
+
+		int destheight = Map.Get_Height_GL(Map[destcell].Cell_Coord());
+		int unitheight = Map.Get_Height_GL(LinkedTo->PositionCoord);
+		if (destheight > unitheight && LinkedTo->Fetch_RTTI() == RTTI_UNIT) {
+			if (LinkedTo->Techno_Type_Class()->Speed == SPEED_TRACK) {
+				speed *= Rule->TrackedUphill;
+			} else {
+				speed *= Rule->WheeledUphill;
+			}
+		} else if (destheight < unitheight && LinkedTo->Fetch_RTTI() == RTTI_UNIT) {
+			if (LinkedTo->Techno_Type_Class()->Speed == SPEED_TRACK) {
+				speed *= Rule->TrackedDownhill;
+			} else {
+				speed *= Rule->WheeledDownhill;
+			}
+		}
+		if (speed == 0.0)
+			speed = 0.5;
+
+		if (LinkedTo->Get_Health_Ratio() <= Rule->ConditionYellow) {
+			speed *= 0.75;
+		}
+		if (TrackNumber < FACING_COUNT * FACING_COUNT) {
+			TargetSpeed = speed;
+		} else {
+			if (speed != LinkedTo->Speed) {
+				LinkedTo->Set_Speed(speed);
+			}
+		}
+
+		LinkedTo->Overrun_Square(dest.As_Cell(), true);
+
+		FacingType nextface = LinkedTo->Path[1];
+		if (nextface == FACING_NONE) {
+			if (LinkedTo->Distance(DestinationCoord) > 2 * CELL_LEPTON_W) {
+				int patharg = LinkedTo->Techno_Type_Class()->IsTrain ? 1 : 0;
+				bool found = LinkedTo->Basic_Path(DestinationCoord.As_Cell(), patharg, 0);
+				if (!found) {
+					if (LinkedTo == NULL) {
+						stop_processing = true;
+						return found;
+					}
+					if (!LinkedTo->Is_In_Same_Zone(DestinationCoord)) {
+						LinkedTo->Assign_Destination(NULL, true);
+					}
+				}
+				nextface = LinkedTo->Path[1];
+			}
+		}
+		if (nextface == FACING_COUNT)
+			nextface = facing;
+		if (nextface == FACING_NONE || force_straight) {
+			nextface = facing;
+		}
+
+		CellClass const *adjcell;
+		if (nextface != FACING_NONE && (adjcell = &destptr->Adjacent_Cell(nextface)) != 0 &&
+				adjcell->Overlay != OVERLAY_NONE &&
+				(OverlayTypes[adjcell->Overlay]->IsCrushable ||
+				 OverlayTypes[adjcell->Overlay]->IsWall &&
+					 LinkedTo->Techno_Type_Class()->MZone == MZONE_CRUSHER_ALL ||
+				 LinkedTo->Techno_Type_Class()->MZone == MZONE_CRUSHER_ALL && adjcell->Cell_Unit() != 0) ||
+			crushable_dest) {
+			nextface = facing;
+			IsRocking = true;
+		} else {
+			IsRocking = false;
+		}
+
+		IsOnShortTrack = false;
+		TrackNumber = facing * FACING_COUNT + nextface;
+		if (TrackControl[TrackNumber].Track == 0) {
+			TrackNumber = facing * FACING_COUNT + facing;
+		}
+
+		if (TrackControl[TrackNumber].Flag & F_D) {
+			MoveType nextcando;
+			if (!Map[destcell].Goodie_Check(LinkedTo) && !LinkedTo->IsInLimbo) {
+				nextcando = MOVE_NO;
+				if (!LinkedTo->IsActive)
+					return false;
+			} else {
+				if (!LinkedTo->IsActive)
+					return false;
+				dest = Adjacent_Cell(dest, nextface);
+				destcell = dest.As_Cell();
+				nextcando = LinkedTo->Can_Enter_Cell(&Map[destcell], nextface, height, 0, true);
+				if (nextcando < MOVE_NO && LinkedTo->Techno_Type_Class()->IsTrain) {
+					nextcando = MOVE_OK;
+				} else if ((nextcando == MOVE_FRIENDLY_DESTROYABLE || nextcando == MOVE_DESTROYABLE) &&
+						   LinkedTo->Techno_Type_Class()->IsCrusher &&
+						   Map[destcell].Overlay == OVERLAY_SANDBAG_WALL) {
+					nextcando = MOVE_OK;
+				}
+			}
+			if (!LinkedTo->IsActive)
+				return false;
+
+			if (nextcando != MOVE_OK) {
+				if (nextcando == MOVE_CLOSED_GATE) {
+					Incoming(destcell);
+				} else if (nextcando == MOVE_MOVING_BLOCK) {
+					return Start_Of_Move(stop_processing, retry, true);
+				} else if (nextcando == MOVE_TEMP) {
+					if (!LinkedTo->Techno_Type_Class()->IsTrain) {
+						if (retry) {
+							LinkedTo->Path[0] = FACING_NONE;
+							LinkedTo->PathDelay = CDTimerClass<FrameTimerClass>(0);
+							return Start_Of_Move(stop_processing, false, false);
+						}
+						if (LinkedTo->Distance(DestinationCoord) >= Rule->CloseEnoughDistance ||
+							abs(DestinationCoord.Z - LinkedTo->PositionCoord.Z) >= 2 * LEVEL_LEPTON_H ||
+							Map[LinkedTo->Get_Coord()].Land_Type() == LAND_TUNNEL) {
+							CellClass *cellptr = &Map[destcell];
+							bool is_bridge = cellptr->IsUnderBridge &&
+											 abs(LinkedTo->PositionCoord.Z / LEVEL_LEPTON_H - cellptr->Height) > 2;
+							cellptr->Incoming(COORD_NONE, true, true, is_bridge);
+						} else {
+							Stop_Driver();
+							if (Abandon_Navigation()) {
+								return true;
+							}
+						}
+					}
+				} else if (nextcando == MOVE_CLOAK) {
+					Map[destcell].Shimmer();
+					if (retry) {
+						LinkedTo->Path[0] = FACING_NONE;
+						return Start_Of_Move(stop_processing, false, false);
+					}
+					Stop_Driver();
+					return Abandon_Navigation();
+				} else if (nextcando == MOVE_NO) {
+					if (retry) {
+						LinkedTo->Path[0] = FACING_NONE;
+						LinkedTo->PathDelay = CDTimerClass<FrameTimerClass>(0);
+						return Start_Of_Move(stop_processing, false, false);
+					}
+					Stop_Driver();
+					return Abandon_Navigation();
+				}
+
+				LinkedTo->Path[0] = FACING_NONE;
+				TrackNumber = -1;
+				dest = COORD_NONE;
+				if (nextcando == MOVE_DESTROYABLE || nextcando == MOVE_FRIENDLY_DESTROYABLE) {
+					return Start_Of_Move(stop_processing, retry, true);
+				}
+			} else {
+				memcpy(&LinkedTo->Path[0], &LinkedTo->Path[2], sizeof(LinkedTo->Path[0]) * (CONQUER_PATH_MAX - 2));
+				LinkedTo->Path[CONQUER_PATH_MAX - 2] = FACING_NONE;
+				LinkedTo->IsPlanningToLook = true;
+			}
+		} else {
+			memcpy(&LinkedTo->Path[0], &LinkedTo->Path[1], sizeof(LinkedTo->Path[0]) * (CONQUER_PATH_MAX - 1));
+		}
+
+		LinkedTo->Path[CONQUER_PATH_MAX - 1] = FACING_NONE;
+		LinkedTo->LastPathingCell = dest.As_Cell();
+		LinkedTo->IsNewNavCom = false;
+		TrackIndex = 0;
+		if (!Start_Driver(dest)) {
+			TrackNumber = -1;
+			LinkedTo->Path[0] = FACING_NONE;
+			LinkedTo->Set_Speed(0);
+		}
+	}
+	return false;
+}
+
+// FUNCTION: GAMEMD 0x004B4820
+LayerType STDMETHODCALLTYPE DriveLocomotionClass::In_Which_Layer(void)
+{
+	return(LAYER_GROUND);
+}
+
+// FUNCTION: GAMEMD 0x004B4830
+HRESULT STDMETHODCALLTYPE DriveLocomotionClass::GetClassID(CLSID * retval)
+{
+	if (retval == NULL) return(E_POINTER);
+	*retval = CLSID_DriveLocomotion;
+	return(S_OK);
+}
+
+// FUNCTION: GAMEMD 0x004B4770
+void DriveLocomotionClass::Lay_Track(void)
+{
+}
+
+
+// FUNCTION: GAMEMD 0x004B4780
+Point2D DriveLocomotionClass::Smooth_Turn(Point2D const & adj, Dir256 & dir)
+{
+	Dir256 workdir = dir;
+	int x,y;
+	int temp;
+	TrackControlType flags = TrackControl[TrackNumber].Flag;
+
+	x = adj.X;
+	y = adj.Y;
+
+	if (flags & F_T) {
+		temp	= x;
+		x		= y;
+		y 		= temp;
+		workdir = (Dir256)((DIR_W - workdir) & DIR_MAX);
+	}
+
+	if (flags & F_X) {
+		x 		 = -x;
+		workdir = (Dir256)(-workdir & DIR_MAX);
+	}
+
+	if (flags & F_Y) {
+		y = -y;
+		workdir = (Dir256)((DIR_S - workdir) & DIR_MAX);
+	}
+
+	dir = workdir;
+
+	return(Point2D(HeadToCoord.X + x, HeadToCoord.Y + y));
+}
+
+
+// FUNCTION: GAMEMD 0x004B4800
+bool DriveLocomotionClass::Incoming(Cell cell)
+{
+	return(Map.Try_Open_Gate(LinkedTo, cell));
+}
+
+
+// FUNCTION: GAMEMD 0x004B4880
+ZGradientType STDMETHODCALLTYPE DriveLocomotionClass::Z_Gradient(void)
+{
+	return(BASECLASS::Z_Gradient());
+}
+
+// FUNCTION: GAMEMD 0x004B4870
+int STDMETHODCALLTYPE DriveLocomotionClass::Z_Adjust(void)
+{
+	return(0);
+}
+
+
+// FUNCTION: GAMEMD 0x004B48D0
+void STDMETHODCALLTYPE DriveLocomotionClass::Mark_All_Occupation_Bits(int mark)
+{
+	if (HeadToCoord != COORD_NONE) {
+		Mark_Track(HeadToCoord, (MarkType)mark);
+	}
+}
+
+
+// FUNCTION: GAMEMD 0x004B4920
+boolean STDMETHODCALLTYPE DriveLocomotionClass::Is_Moving_Here(CoordStruct to)
+{
+	Coord coord = Head_To_Coord();
+
+	if (coord != COORD_NONE) {
+		if (!IsOnShortTrack && TrackNumber != -1) {
+			int tracknum = TrackControl[TrackNumber].Track;
+			if (tracknum) {
+				TrackType const * ptr = RawTracks[tracknum - 1].Track;
+				int cellidx = RawTracks[tracknum - 1].Cell;
+				if (cellidx > -1) {
+					Dir256 dir = ptr[cellidx].Facing;
+
+					if (TrackIndex < cellidx && cellidx != -1) {
+						Point2D pt = Smooth_Turn(ptr[cellidx].Offset, dir);
+						Coord coord = LinkedTo->PositionCoord;
+						coord.X = pt.X;
+						coord.Y = pt.Y;
+						if (coord.As_Cell() == ((Coord &)to).As_Cell() && abs(coord.Z - to.Z) <= LEVEL_LEPTON_H) {
+							return(true);
+						}
+					}
+				}
+			}
+		}
+
+		if (coord.As_Cell() == ((Coord &)to).As_Cell() && abs(coord.Z - to.Z) <= LEVEL_LEPTON_H) {
+			return(true);
+		}
+	}
+
+	return(false);
+}
+
+
+// FUNCTION: GAMEMD 0x004B4B00
+boolean STDMETHODCALLTYPE DriveLocomotionClass::Will_Jump_Tracks(void)
+{
+	TurnTrackType	const * track;
+	int				tracknum;
+	FacingType		nextface;
+	bool				adj;
+
+	nextface = LinkedTo->Path[0];
+
+	if (nextface >= FACING_NONE && nextface <= FACING_COUNT) {
+
+		track = &TrackControl[TrackNumber];
+		if (IsOnShortTrack) {
+			tracknum = track->StartTrack;
+		} else {
+			tracknum = track->Track;
+		}
+
+		adj = false;
+		if (nextface != FACING_COUNT && nextface != FACING_NONE && Dir_Facing(track->Facing) != nextface) {
+			adj = true;
+		}
+
+		if (nextface != FACING_COUNT && nextface != FACING_NONE && adj && RawTracks[tracknum-1].Jump == TrackIndex && TrackIndex) {
+			TurnTrackType const * newtrack;
+			int	tnum;
+
+			tnum = (int)(Dir_Facing(track->Facing) * FACING_COUNT) + (int)nextface;
+			newtrack = &TrackControl[tnum];
+			if (newtrack->Track && RawTracks[newtrack->Track-1].Entry) {
+				return(true);
+			}
+		}
+	}
+	return(false);
+}
+
+
+// FUNCTION: GAMEMD 0x004B4BE0
+void STDMETHODCALLTYPE DriveLocomotionClass::Lock(void)
+{
+	IsLocomotorUnlocked = false;
+}
+
+// FUNCTION: GAMEMD 0x004B4BF0
+void STDMETHODCALLTYPE DriveLocomotionClass::Unlock(void)
+{
+	IsLocomotorUnlocked = true;
+}
+
+// FUNCTION: GAMEMD 0x004B4C00
+int STDMETHODCALLTYPE DriveLocomotionClass::Get_Track_Number(void)
+{
+	return(TrackNumber);
+}
+
+// FUNCTION: GAMEMD 0x004B4C10
+int STDMETHODCALLTYPE DriveLocomotionClass::Get_Track_Index(void)
+{
+	return(TrackIndex);
+}
+
+// FUNCTION: GAMEMD 0x004B4C20
+int STDMETHODCALLTYPE DriveLocomotionClass::Get_Speed_Accum(void)
+{
+	return(SpeedAccum);
+}
+
+// FUNCTION: GAMEMD 0x004B4C30
+// LocomotionClass::IsDirty
+
+// FUNCTION: GAMEMD 0x004B4C50
+// LocomotionClass::Is_Really_Moving_Now
+
+// FUNCTION: GAMEMD 0x004B4C60
+// LocomotionClass::Get_Status
+
+// FUNCTION: GAMEMD 0x004B4C70
+// LocomotionClass::Acquire_Hunter_Seeker_Target
+
+// FUNCTION: GAMEMD 0x004B4C80
+// LocomotionClass::Is_Surfacing
+
+// FUNCTION: GAMEMD 0x004B4C90
+// LocomotionClass::Stop_Movement_Animation
+
+// FUNCTION: GAMEMD 0x004B4CA0
+// LocomotionClass::Limbo
+
+// FUNCTION: GAMEMD 0x004B4CB0
+ULONG STDMETHODCALLTYPE DriveLocomotionClass::AddRef(void)
+{
+	return(BASECLASS::AddRef());
+}
+
+// FUNCTION: GAMEMD 0x004B4CC0
+ULONG STDMETHODCALLTYPE DriveLocomotionClass::Release(void)
+{
+	return(BASECLASS::Release());
+}
+
+// FUNCTION: GAMEMD 0x004B4CD0
+// DriveLocomotionClass::Is_Piggybacking
+
+// FUNCTION: GAMEMD 0x004B4CF0
+// DriveLocomotionClass::Fetch_Object_Size
+
+// SYNTHETIC: GAMEMD 0x004B4D00
+// ??_GDriveLocomotionClass@@UAEPAXI@Z
+
+
+// TEMPLATE: GAMEMD 0x004B4D50
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
+template class _com_ptr_t<_com_IIID<IPersist, &__uuidof(IPersist)> >;
+
+// TEMPLATE: GAMEMD 0x004B4D60
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UIPersistStream@@$1?_GUID_00000109_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
+template class _com_ptr_t<_com_IIID<IPersistStream, &__uuidof(IPersistStream)> >;
+
+// TEMPLATE: GAMEMD 0x004B4D70
+// ??R?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
+template class CDTimerClass<FrameTimerClass>;
+
+// FUNCTION: GAMEMD 0x004B4D90
+// DriveLocomotionClass::QueryInterface
+
+// FUNCTION: GAMEMD 0x004B4DA0
+// DriveLocomotionClass::AddRef
+
+// FUNCTION: GAMEMD 0x004B4DB0
+// DriveLocomotionClass::Release
+
+// FUNCTION: GAMEMD 0x004B4DC0
+// DriveLocomotionClass::QueryInterface
+
+// FUNCTION: GAMEMD 0x004B4DD0
+// DriveLocomotionClass::AddRef
+
+// FUNCTION: GAMEMD 0x004B4DE0
+// DriveLocomotionClass::Release
