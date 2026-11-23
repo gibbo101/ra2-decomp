@@ -1423,6 +1423,7 @@ address,size,symbol,source,sha256
 0x00429760,26,_$E115,src/astar.cpp,d638ec68a676b17e7fdc9e75d0c223d55c74c013866089dd9ea2f7030dccb5e6
 0x00429780,167,?Follow_Path@@YI?AVCell@@ABV1@HPBW4FacingType@@@Z,src/astar.cpp,a0e65241a71616ac21623bd2f24acc38f41580c3b17429fe7af0c3d2d304fad7
 0x00429830,607,?Get_Movement_Cost@AStarClass@@AAENPAPAVCellClass@@0_NW4MoveType@@PAVFootClass@@@Z,src/astar.cpp,1592c5e4cf981078b70806d6175ba7ebb3be22bb6ac02c4098338c81105f300f
+0x00429A90,2509,?Find_Path_Regular@AStarClass@@AAEPAUPathStruct@@ABVCell@@0PAVFootClass@@PAW4FacingType@@H_N@Z,src/astar.cpp,d787a2641ce87cfecf9dcfbde313aeb5fb099b55596f7b985ee762e64801b033
 0x0042A460,327,?Create_Node@AStarClass@@AAEPAURegularOpenNode@1@PAU21@PAPAVCellClass@@ABVCell@@M@Z,src/astar.cpp,1ff0917eaac45604c831d0b67551ac9d075ef95312c566ac0c7462f27653f274
 0x0042A5B0,222,?Clear@AStarClass@@QAEXXZ,src/astar.cpp,6309c2d4defc0d20cc93ce3aeee079f32c18157efe86fba0f6cc08465c57e785
 0x0042A690,50,?Is_Visited@AStarClass@@AAE_NH_NH@Z,src/astar.cpp,38de9a9541852c46561742467499f6f3fa1597ebe7531e720850f1f73642096b

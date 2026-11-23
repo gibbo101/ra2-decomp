@@ -1061,6 +1061,7 @@ address,name,result,size,source,symbol
 0x00429760,_$E115,MATCH,26,src/astar.cpp,_$E115
 0x00429780,Follow_Path,MATCH,167,src/astar.cpp,?Follow_Path@@YI?AVCell@@ABV1@HPBW4FacingType@@@Z
 0x00429830,AStarClass::Get_Movement_Cost,MATCH,607,src/astar.cpp,?Get_Movement_Cost@AStarClass@@AAENPAPAVCellClass@@0_NW4MoveType@@PAVFootClass@@@Z
+0x00429A90,AStarClass::Find_Path_Regular,MATCH,2509,src/astar.cpp,?Find_Path_Regular@AStarClass@@AAEPAUPathStruct@@ABVCell@@0PAVFootClass@@PAW4FacingType@@H_N@Z
 0x0042A460,AStarClass::Create_Node,MATCH,327,src/astar.cpp,?Create_Node@AStarClass@@AAEPAURegularOpenNode@1@PAU21@PAPAVCellClass@@ABVCell@@M@Z
 0x0042A5B0,AStarClass::Clear,MATCH,222,src/astar.cpp,?Clear@AStarClass@@QAEXXZ
 0x0042A690,AStarClass::Is_Visited,MATCH,50,src/astar.cpp,?Is_Visited@AStarClass@@AAE_NH_NH@Z
