@@ -4419,6 +4419,7 @@ address,name,result,size,source,symbol
 0x004CE5A0,FlyLocomotionClass::Rotation_AI,MATCH,210,src/fly.cpp,?Rotation_AI@FlyLocomotionClass@@QAEXXZ
 0x004CE680,FlyLocomotionClass::Process_Take_Off,MATCH,438,src/fly.cpp,?Process_Take_Off@FlyLocomotionClass@@QAE_NXZ
 0x004CE840,FlyLocomotionClass::Process_Landing,MATCH,1898,src/fly.cpp,?Process_Landing@FlyLocomotionClass@@QAE_NXZ
+0x004CEFB0,FlyLocomotionClass::Nearing_Target,MATCH,1628,src/fly.cpp,?Nearing_Target@FlyLocomotionClass@@QAEH_NUCoordStruct@@@Z
 0x004CF610,FlyLocomotionClass::Draw_Matrix,MATCH,530,src/fly.cpp,?Draw_Matrix@FlyLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z
 0x004CF830,FlyLocomotionClass::Draw_Point,MATCH,262,src/fly.cpp,?Draw_Point@FlyLocomotionClass@@UAG?AUPoint2DStruct@@XZ
 0x004CF940,FlyLocomotionClass::Shadow_Point,MATCH,16,src/fly.cpp,?Shadow_Point@FlyLocomotionClass@@UAG?AUPoint2DStruct@@XZ
@@ -15277,6 +15278,7 @@ address,name,result,size,source,symbol
 0x00710A90,_$E35,MATCH,18,src/techtype.cpp,_$E35
 0x00710AB0,_$E38,MATCH,26,src/techtype.cpp,_$E38
 0x00710AD0,_$E41,MATCH,23,src/techtype.cpp,_$E41
+0x00710AF0,TechnoTypeClass::TechnoTypeClass,MATCH,3406,src/techtype.cpp,??0TechnoTypeClass@@QAE@PBDW4SpeedType@@@Z
 0x00711840,TechnoTypeClass::TechnoTypeClass,MATCH,663,src/techtype.cpp,??0TechnoTypeClass@@QAE@ABVNoInitClass@@@Z
 0x00711AE0,TechnoTypeClass::~TechnoTypeClass,MATCH,916,src/techtype.cpp,??1TechnoTypeClass@@UAE@XZ
 0x00711E80,TechnoTypeClass::CanUseWaypoint,MATCH,3,src/techtype.cpp,?CanUseWaypoint@TechnoTypeClass@@UBE_NXZ

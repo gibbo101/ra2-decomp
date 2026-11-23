@@ -4774,6 +4774,7 @@ address,size,symbol,source,sha256
 0x004CE5A0,210,?Rotation_AI@FlyLocomotionClass@@QAEXXZ,src/fly.cpp,e34a157c3a2bf9d8ac8989a10da45f81c7d9d48c3ac06537c7a155c13d7775a9
 0x004CE680,438,?Process_Take_Off@FlyLocomotionClass@@QAE_NXZ,src/fly.cpp,4528369ecebed143d97ad6c0fb35bea3a6b407e8cd3b5de76388713f5bedd204
 0x004CE840,1898,?Process_Landing@FlyLocomotionClass@@QAE_NXZ,src/fly.cpp,7548abf11ff1dbe2ec54bcb2a839cebc45902b181539ad2ca0b034db57df608e
+0x004CEFB0,1628,?Nearing_Target@FlyLocomotionClass@@QAEH_NUCoordStruct@@@Z,src/fly.cpp,e3906c2f3594297a1ca2fbb09de1dc5da110e38a346853446ec40c5a10153478
 0x004CF610,530,?Draw_Matrix@FlyLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z,src/fly.cpp,ee1b2e94bea743f9f68acce62f8caae0059a26ecefa68c41d5b033167700a23b
 0x004CF830,262,?Draw_Point@FlyLocomotionClass@@UAG?AUPoint2DStruct@@XZ,src/fly.cpp,a594228f5c67510d42d698385dee0368944fc3e320d15fad56fa84c960004706
 0x004CF940,16,?Shadow_Point@FlyLocomotionClass@@UAG?AUPoint2DStruct@@XZ,src/fly.cpp,16c8d9b9d3c8b3d7c5e4f6fbe7b680e9cffc4bbd38cb994cae828b734779f917
@@ -11147,9 +11148,9 @@ address,size,symbol,source,sha256
 0x006261B0,75,?Partial_Adjust@PaletteClass@@QAEXHABV1@PAD@Z,src/palette.cpp,128aca68f7851e1cc5960a9e125c4a9ca465334afaad807cb53ba42b90a9b4fa
 0x00626200,69,?Closest_Color@PaletteClass@@QBEHABVRGBClass@@@Z,src/palette.cpp,b5dd40e9224d17ee0f556a21172ca6d2286dbf03841f55c9ef5805d7ec3cc8a9
 0x00626250,54,??0SchemeNode@@QAE@PBDPAV?$DynamicVectorClass@PAVColorScheme@@@@@Z,src/palette.cpp,30d8a1f9cde653135bb7c85707fc591af5b26e0c16eb820d954df46902aea32f
-0x00626290,93,?Release@SchemeNode@@QAEXXZ,src/palette.cpp,27031e9b67baeafbd0b91dd557a524aaba8b30ac9faa936a9a6e96ea4f19b1e2
+0x00626290,93,??1SchemeNode@@QAE@XZ,src/palette.cpp,27031e9b67baeafbd0b91dd557a524aaba8b30ac9faa936a9a6e96ea4f19b1e2
 0x006262F0,119,?Replace@SchemeNode@@QAEXPAV?$DynamicVectorClass@PAVColorScheme@@@@@Z,src/palette.cpp,5b383815d82db450b424f297a70632bf400a12499b2672b669aed0b4649ac82d
-0x00626370,93,??1SchemeNode@@QAE@XZ,src/palette.cpp,f8ef67d0f85e6e19b5a4fdb04f20657a2cd6f5b60ff0ff024edb23dc27fab3cb
+0x00626370,93,?Release@SchemeNode@@QAEXXZ,src/palette.cpp,f8ef67d0f85e6e19b5a4fdb04f20657a2cd6f5b60ff0ff024edb23dc27fab3cb
 0x006263D0,650,?GeneratePalette@ColorScheme@@SIPAV?$DynamicVectorClass@PAVColorScheme@@@@PBD@Z,src/palette.cpp,b23055d2aae8a1d8d224e7139f971790bb941a2a7a26fa1b0730431fd5270314
 0x00626660,40,?SchemeHash@@YIHPBD@Z,src/palette.cpp,e3f4222ab51830f4074a6802f25daec54512ed13726e3acda400cef4c4e5ddb3
 0x00626690,257,?GetPaletteSchemesFromIterator@@YIPAV?$DynamicVectorClass@PAVColorScheme@@@@PAUHashIterator@@@Z,src/palette.cpp,ea4192c2cf82594c34e1af0143300a66d0d9395580fc5f2cee2a1962f65971f3
@@ -15620,6 +15621,7 @@ address,size,symbol,source,sha256
 0x00710A90,18,_$E35,src/techtype.cpp,84f7ebabeb277797ca587d106b6566034034d2c1b35e48c5fa57c62bef48abf8
 0x00710AB0,26,_$E38,src/techtype.cpp,e808e59a4d389e3690b98c6cba0b55722d79d166229075d1e71a7e1faed4c115
 0x00710AD0,23,_$E41,src/techtype.cpp,94710e1900c3c179fb1efce810c7462900a1ca950558d0d34f78048946ddca46
+0x00710AF0,3406,??0TechnoTypeClass@@QAE@PBDW4SpeedType@@@Z,src/techtype.cpp,1bccde9137869da10ebab29c36b9df58bb3803c223f6f083488ddb38aa4784ac
 0x00711840,663,??0TechnoTypeClass@@QAE@ABVNoInitClass@@@Z,src/techtype.cpp,7608b2e923e9ad2fc7f6c686da5387dcad3e37b505dd4c6eda07e3fe2d3e0737
 0x00711AE0,916,??1TechnoTypeClass@@UAE@XZ,src/techtype.cpp,77bb88844afafb615f00f470cbbf1ee978f863f7875c5a35f1bfa569230c4d38
 0x00711E80,3,?CanUseWaypoint@TechnoTypeClass@@UBE_NXZ,src/techtype.cpp,e18aacce29affcdddaa5f641ac1ec12552e0fe9d066e6408941b1792818b8619
