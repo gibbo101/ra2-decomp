@@ -504,6 +504,12 @@ Each entry: what the diff showed, then the source change that fixed it.
   CSV regenerated; never edit the CSV by hand.
   A score where every byte matches up to a `ret` and only a short tail after it differs is
   that case: the next function hides in this one's extent (saveload's Get_Player_Name).
+- `tools/functions.py` reads Ghidra's starts from build/ghidra/functions.csv, which is
+  gitignored; in a checkout without it, every row silently loses its G evidence. Copy it in
+  before regenerating.
+- A source file listed in data/assembly_anchors.csv is pinned by its sha256; when it changes,
+  refresh that row's source_sha256 or functions.py stops with "Assembly-anchor source or hash
+  differs".
 - A run of about 13 small initialisers per file (CELL_LEPTON_DIAG through COORD_NONE)
   is `include/geometry.h`'s per-file constants: include it where the exe's `_$E` numbers
   put it (usually right after `always.h`; after `wdtnet.h` in wdtconflict and wdtstate),
