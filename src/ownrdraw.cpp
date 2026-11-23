@@ -1528,14 +1528,8 @@ extern int DAT_00B0FAD0;
 int FUN_00603810(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
-	int type;
-
-	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = data->DialogID;
-	} else {
-		type = 0;
-	}
-	int id = GetDlgCtrlID(control);
+	OwnerDraw::Dialogs.getPointer(dialog, &data);
+	GetDlgCtrlID(control);
 	return 0;
 }
 
@@ -3524,7 +3518,6 @@ inline int Get_Layout_Dialog_Type(HWND dialog)
 // FUNCTION: GAMEMD 0x00608500
 bool __fastcall FUN_00608500(HWND parent, HWND child, Rect *out)
 {
-	OwnerDraw::WinData *data = NULL;
 	Rect *rect = NULL;
 	int type;
 

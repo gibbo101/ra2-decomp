@@ -278,7 +278,7 @@ void AircraftClass::Draw_It(Point2D const & xpoint, Rect const & cliprect) const
 		Cargo.Attached_Object()->Draw_It(point, cliprect);
 	}
 
-	Cell cell = Get_Cell();
+	Get_Cell();
 
 	if (Class->IsVoxel && Class->Voxel.VoxLib != NULL) {
 		Coord coord = Position;

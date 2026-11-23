@@ -1799,13 +1799,13 @@ void Tactical::Update_Visible_Cells(void)
 	TacPixelX -= TacticalDimensions.Width / 2;
 	TacPixelY -= TacticalDimensions.Height / 2;
 
-	Point2D lepton = Pixel_To_Lepton(Point2D(TacPixelX - 60, TacPixelY - 30));
+	Point2D lepton;
+	lepton = Pixel_To_Lepton(Point2D(TacPixelX - ISO_TILE_PIXEL_W, TacPixelY - ISO_TILE_PIXEL_H));
 
 	VisibleCellRect.X = lepton.X / CELL_LEPTON;
 	VisibleCellRect.Y = lepton.Y / CELL_LEPTON;
-	VisibleCellRect.Width = TacticalDimensions.Width / 60 + 2;
-	VisibleCellRect.Height = TacticalDimensions.Height / 15 + 4;
-	do { } while (0);
+	VisibleCellRect.Width = TacticalDimensions.Width / ISO_TILE_PIXEL_W + 2;
+	VisibleCellRect.Height = TacticalDimensions.Height / (ISO_TILE_PIXEL_H / 2) + 4;
 }
 
 // FUNCTION: GAMEMD 0x006D8C60

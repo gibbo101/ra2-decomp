@@ -147,17 +147,16 @@ void WorldDominationTour::FactionSelectDialogControl::Update_Hover(HWND window, 
 	Current = Image1;
 	int side = 0;
 	int x = point->x;
-	if ((x >= 16 && x < 364 && point->y >= 20 && point->y < 136) ||
+	bool side_two = (x >= 16 && x < 364 && point->y >= 20 && point->y < 136) ||
 		(x >= 130 && x < 300 && point->y >= 100 && point->y < 216) ||
-		(x >= 175 && x < 245 && point->y >= 216 && point->y < 262)) {
-		goto two;
-	}
-	if ((x >= 252 && x < 466 && point->y >= 180 && point->y < 382) ||
-		(x >= 212 && x < 496 && point->y >= 262 && point->y < 422)) {
-		side = 3;
-		Current = Image3;
-	} else if (false) {
-two:
+		(x >= 175 && x < 245 && point->y >= 216 && point->y < 262);
+	if (!side_two) {
+		if ((x >= 252 && x < 466 && point->y >= 180 && point->y < 382) ||
+			(x >= 212 && x < 496 && point->y >= 262 && point->y < 422)) {
+			side = 3;
+			Current = Image3;
+		}
+	} else {
 		side = 2;
 		Current = Image2;
 	}
