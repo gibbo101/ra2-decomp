@@ -36,7 +36,6 @@
 #include "weapon.h"
 #include "bitfont.h"
 #include <stdio.h>
-#include <wchar.h>
 #include "zbuffer.h"
 #include <climits>
 #include <cstring>
@@ -966,6 +965,8 @@ void __fastcall Dropship_Screen(void)
 
 	Show_Mouse();
 }
+
+#include <wchar.h>
 
 // FUNCTION: GAMEMD 0x004B96A0
 void Draw_Cost(int cost, int maxcost, Surface & surface, Point2D const & drawpoint, wchar_t const * title, bool center, ConvertClass & drawer, Blitter const * blitter)

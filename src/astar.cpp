@@ -48,6 +48,18 @@ inline Cell Next_Cell(Cell const & cell, FacingType facing)
 	}
 	return(cell + (AdjacentCell[facing]));
 }
+
+inline Cell Blocker_Path_Cell(Cell const & cell, FacingType facing)
+{
+	if (facing == TUNNEL) {
+		TubeType tube = (TubeType)Map[cell].Tube;
+		if (tube != TUBE_NONE) {
+			return(Cell(Tubes[tube]->Exit));
+		}
+		return(Cell(0,0));
+	}
+	return(AdjacentCell[facing] + cell);
+}
 // SYNTHETIC: GAMEMD 0x00429590 SYMBOL
 // _$E79
 // SYNTHETIC: GAMEMD 0x004295C0 SYMBOL
@@ -485,18 +497,6 @@ void AStarClass::Update_Map_Dimensions(Rect const & dimensions)
 	AStarFacingToOffset[FACING_SW]	= MapCellStride - 1;
 	AStarFacingToOffset[FACING_W]	= -1;
 	AStarFacingToOffset[FACING_NW]	= -1 - MapCellStride;
-}
-
-inline Cell Blocker_Path_Cell(Cell const & cell, FacingType facing)
-{
-	if (facing == TUNNEL) {
-		TubeType tube = (TubeType)Map[cell].Tube;
-		if (tube != TUBE_NONE) {
-			return(Cell(Tubes[tube]->Exit));
-		}
-		return(Cell(0,0));
-	}
-	return(AdjacentCell[facing] + cell);
 }
 
 static inline Cell Forward_Cell(Cell const & cell, DirType const & dir)

@@ -63,6 +63,9 @@ template<> void VectorClass<ColorScheme *>::Clear(void);
 void FUN_006269A0(void);
 void __fastcall FUN_00626AB0(char const * name, HSVClass & hsv);
 void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const * section);
+extern unsigned int DAT_00B053B4;
+extern bool DAT_00B053B8;
+int FUN_005D5ED0(void);
 
 // SYNTHETIC: GAMEMD 0x00664B10 SYMBOL
 // _$E35
@@ -3167,9 +3170,6 @@ bool RulesClass::Objects(CCINIClass & ini)
 	return(true);
 }
 
-extern unsigned int DAT_00B053B4;
-extern bool DAT_00B053B8;
-
 // FUNCTION: GAMEMD 0x00679CC0
 int FUN_00679CC0(void)
 {
@@ -3183,8 +3183,6 @@ int FUN_00679CC0(void)
 	}
 	return DAT_00B053B4;
 }
-
-int FUN_005D5ED0(void);
 
 // FUNCTION: GAMEMD 0x00679D90
 int RulesClass::Get_Rule_Unique_ID(void)

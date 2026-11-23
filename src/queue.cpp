@@ -921,6 +921,8 @@ extern int SentFrameSyncCount;
 
 int __fastcall Send_Packets(ConnManClass *net, char *multi_packet_buf, int multi_packet_max, int max_ahead, int my_sent);
 int __fastcall Process_Receive_Packet(ConnManClass *net, char *multi_packet_buf, int id, int packetlen, FrameSyncStruct *their, BasicTimerClass<SystemTimerClass> *timer);
+static int Breakup_Receive_Packet(void * buf, int bufsize);
+extern unsigned long DAT_00AC5210[8];
 RetcodeType __fastcall Process_Serial_Packet(char *multi_packet_buf, int first_time);
 
 // FUNCTION: GAMEMD 0x00648350
@@ -3456,8 +3458,6 @@ struct PacketTiming {
 
 int __fastcall FUN_0064BDD0(void * buf, int bufsize);
 static int Extract_Uncompressed_Events(void * buf, int bufsize);
-static int Breakup_Receive_Packet(void * buf, int bufsize);
-extern unsigned long DAT_00AC5210[8];
 
 // FUNCTION: GAMEMD 0x0064A0C0
 int __fastcall Process_Receive_Packet(ConnManClass * net, char * multi_packet_buf, int id, int packetlen,
