@@ -288,7 +288,8 @@ def landed_modules() -> dict[int, str]:
     if path.exists():
         with path.open() as f:
             for r in csv.DictReader(f):
-                if r["source"].startswith("src/"):
+                # A reconstruction's file under src/ra2asm/ is no evidence of the original's module.
+                if r["source"].startswith("src/") and not r["source"].startswith("src/ra2asm/"):
                     sources[int(r["address"], 16)].add(r["source"][4:].rsplit(".", 1)[0].lower())
     # Two source claims are not evidence for either module boundary.
     return {a: next(iter(stems)) for a, stems in sources.items() if len(stems) == 1}

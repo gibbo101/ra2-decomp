@@ -16,17 +16,6 @@
 // SYNTHETIC: GAMEMD 0x004E12B0 SYMBOL
 // _$E2
 
-class InputManagerClass
-{
-	public:
-		static InputManagerClass * Instance;
-		int MouseQX;
-		int MouseQY;
-		short Check(void);
-		short Get(void);
-		bool IsKeyPressed(int key);
-};
-
 extern int WideScreenThreshold;
 extern int DAT_007F5BF4;
 extern GadgetClass * DAT_008B3E94;
@@ -200,11 +189,6 @@ void GadgetClass::Draw_All(bool forced)
 	}
 }
 
-static inline bool Key_Down(int key)
-{
-	return InputManagerClass::Instance->IsKeyPressed(key);
-}
-
 // FUNCTION: GAMEMD 0x004E15A0
 GadgetClass *GadgetClass::Extract_Gadget_At(int x, int y)
 {
@@ -240,14 +224,14 @@ KeyNumType GadgetClass::Input(void)
 		Focused = NULL;
 	}
 
-	key = (KeyNumType)(unsigned short)InputManagerClass::Instance->Check();
+	key = Keyboard->Check();
 	if (key != 0) {
-		key = (KeyNumType)(unsigned short)InputManagerClass::Instance->Get();
+		key = Keyboard->Get();
 	}
 
 	if (((key&0xFF) == KN_LMOUSE) || ((key&0xFF) == KN_RMOUSE)) {
-		mousex = InputManagerClass::Instance->MouseQX;
-		mousey = InputManagerClass::Instance->MouseQY;
+		mousex = Keyboard->MouseQX;
+		mousey = Keyboard->MouseQY;
 	} else {
 		mousex = MouseCursor->Get_Mouse_X();
 		mousey = MouseCursor->Get_Mouse_Y();
@@ -278,13 +262,13 @@ KeyNumType GadgetClass::Input(void)
 	}
 
 	modifier = 0;
-	if (Key_Down(Options.KeySelect1) || Key_Down(Options.KeySelect2)) {
+	if (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2)) {
 		modifier |= 1;
 	}
-	if (Key_Down(Options.KeyForceAttack1) || Key_Down(Options.KeyForceAttack2)) {
+	if (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2)) {
 		modifier |= 2;
 	}
-	if (Key_Down(Options.KeyForceMove1) || Key_Down(Options.KeyForceMove2)) {
+	if (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2)) {
 		modifier |= 4;
 	}
 
@@ -293,12 +277,12 @@ KeyNumType GadgetClass::Input(void)
 			flags |= KEYBOARD;
 		}
 	} else {
-		if (Key_Down(KN_LMOUSE)) {
+		if (Keyboard->Down(KN_LMOUSE)) {
 			flags |= LEFTHELD;
 		} else {
 			flags |= LEFTUP;
 		}
-		if (Key_Down(KN_RMOUSE)) {
+		if (Keyboard->Down(KN_RMOUSE)) {
 			flags |= RIGHTHELD;
 		} else {
 			flags |= RIGHTUP;

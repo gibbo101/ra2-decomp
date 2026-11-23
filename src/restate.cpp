@@ -14,91 +14,37 @@
 #include "ccini.h"
 #include "scenario.h"
 #include "stringtable.h"
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0065F310 SYMBOL
 // _$E2
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007F0970;
-extern const double DAT_007F0978;
-
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x0065F330 SYMBOL
 // _$E18
-double DAT_00B04CC8 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x0065F360 SYMBOL
 // _$E21
-double DAT_00B04D18 = DAT_00B04CC8 / DAT_007F0970;
-
 // SYNTHETIC: GAMEMD 0x0065F380 SYMBOL
 // _$E24
-double DAT_00B04D00 = DAT_007E1718 / DAT_00B04D18;
-
 // SYNTHETIC: GAMEMD 0x0065F3A0 SYMBOL
 // _$E27
-double DAT_00B04CF8 = DAT_007E1720 * DAT_007F0978;
-
 // SYNTHETIC: GAMEMD 0x0065F3C0 SYMBOL
 // _$E30
-double DAT_00B04CD0 = DAT_007E1728 * DAT_007F0978;
-
 // SYNTHETIC: GAMEMD 0x0065F3E0 SYMBOL
 // _$E33
-double DAT_00B04CA8 = DAT_007E1730 * DAT_007F0978;
-
 // SYNTHETIC: GAMEMD 0x0065F400 SYMBOL
 // _$E36
-int DAT_00B04D20 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00B04CA8 - DAT_00B04CD0) * DAT_00B04CC8));
-
 // SYNTHETIC: GAMEMD 0x0065F440 SYMBOL
 // _$E39
-double DAT_00B04CD8 = FUN_004CADE0(DAT_00B04D20 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0065F470 SYMBOL
 // _$E42
-double DAT_00B04CF0 = FUN_004CADE0((DAT_00B04D20 * 2) / DAT_00B04CC8);
-
 // SYNTHETIC: GAMEMD 0x0065F4A0 SYMBOL
 // _$E45
-int DAT_00B04D14 = (int)(DAT_00B04D20 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0065F4D0 SYMBOL
 // _$E48
-ShortPair DAT_00B04CC0;
-
 // SYNTHETIC: GAMEMD 0x0065F4E0 SYMBOL
 // _$E51
-IntTriple DAT_00B04CE0;
-
-struct IntTriple2 {
-	int A, B, C;
-	IntTriple2() { A = 128; B = 128; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x0065F500 SYMBOL
 // _$E54
-IntTriple2 DAT_00B04D08;
 
 namespace Unsorted { extern bool ScenarioStarted; }
 extern bool UserInputLocked;

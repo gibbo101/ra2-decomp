@@ -123,7 +123,7 @@ class SidebarClass : public PowerClass
 
 					StripClass * Strip;
 					int Index;
-					bool unknown_34; unsigned char : 8; unsigned char : 8; unsigned char : 8;
+					bool IsMouseOver; unsigned char : 8; unsigned char : 8; unsigned char : 8;
 
 				protected:
 					virtual int Action(unsigned flags, KeyNumType & key, int modifier) override;
@@ -268,14 +268,14 @@ class SidebarClass : public PowerClass
 		HouseClass * DiplomacyHouses[8];
 		int DiplomacyKills[8];
 		int DiplomacyOwned[8];
-		int DiplomacyPowerDrain[8];
+		int DiplomacyCredits[8];
 		ColorScheme * DiplomacyColors[8];
-		int unknown_544C[8];
-		int unknown_546C[8];
-		int unknown_548C[8];
-		int unknown_54AC[8];
-		int unknown_54CC[8];
-		int unknown_54EC[8];
+		int DiplomacyRung[8];
+		int DiplomacyPoints[8];
+		int DiplomacyWins[8];
+		int DiplomacyLosses[8];
+		int DiplomacyDisconnects[8];
+		int DiplomacyWinStreak[8];
 		unsigned char unknown_550C;
 		int DiplomacyNumHouses;
 
@@ -311,6 +311,6 @@ class SidebarClass : public PowerClass
 		bool Activate_Demolish(int control);
 		int Which_Column(RTTIType type);
 
-		bool unknown_bool_5514;
+		bool IsRepairActive;
 		bool unknown_bool_5515;
 };

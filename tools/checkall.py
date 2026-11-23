@@ -4,12 +4,15 @@ Usage: uv run tools/checkall.py [--record] [--baseline COMMIT]
 
 Prints one line per function. Fails if a function data/progress.csv records as MATCH no
 longer matches or disappears, since a header edit can change the code of functions it never touches,
+or if one it records as RECONSTRUCTED (assembly rebuilt from the exe, src/ra2asm/) no longer is,
 if annotations claim the same retail address without an explicit exception,
 if two annotations in one file claim the same compiled function, or if a template
 instance's label names a class whose vtables in the exe do not hold the function
 (check.py's class check). The class check's warnings are counted.
 An incomplete checker run fails; a completed run containing new partials is allowed.
---record rewrites data/progress.csv with the results. For proven relocation sites, see
+--record rewrites data/progress.csv with the results, then re-checks every source whose object
+names a symbol the new table adds, drops or moves, since the checker binds names through it;
+a result that changes puts the old table back and fails. For proven relocation sites, see
 tools/REFERENCE_BASELINE.md.
 """
 
@@ -21,28 +24,32 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 from reference_baseline import ReferenceBaseline
 
 ROOT = Path(__file__).resolve().parent.parent
 PROGRESS = ROOT / "data/progress.csv"
-LINE = re.compile(r"^(0x[0-9A-F]{8}) (.+?): (MATCH|WRONG TARGETS|[\d.]+%) \((\d+)/(\d+) bytes[^)]*\) (\S+)")
+LINE = re.compile(r"^(0x[0-9A-F]{8}) (.+?): (MATCH|RECONSTRUCTED|WRONG TARGETS|[\d.]+%) "
+                  r"\((\d+)/(\d+) bytes[^)]*\) (\S+)")
 DUPLICATE = re.compile(r"^(0x[0-9A-F]{8}) .+: same compiled function as ")
 WRONG_CLASS = re.compile(r"^(0x[0-9A-F]{8}) .+: a slot of .+ in the exe, not of ")
 WARNING = re.compile(r"^(0x[0-9A-F]{8}) .+: warning: ")
 SUMMARY = re.compile(r"^CHECK-SUMMARY: checked=(\d+) failed=(\d+)$")
+# Results a later run must reproduce. RECONSTRUCTED is counted apart from MATCH, never as one.
+KEPT = ("MATCH", "RECONSTRUCTED")
 
 
-# Both objects emit this initializer: keep both records for symbol lookup but count
-# it once. Any other address claimed twice fails the gate.
-SHARED = {"0x004F2C50": {("src/grphmenu.cpp", "_$E12"), ("src/grphmenu2.cpp", "_$E41")}}
+# Addresses two objects may both claim, each with its exact owners: counted once, kept in
+# both records. Any other address claimed twice fails the gate.
+SHARED = {}
 
 
 def retail_totals(rows):
     by_address = defaultdict(list)
     for row in rows:
         by_address[row[0]].append(row)
-    matched = size = matched_size = 0
+    matched = size = matched_size = reconstructed = 0
     problems = []
     for addr, group in by_address.items():
         if len(group) > 1:
@@ -51,12 +58,16 @@ def retail_totals(rows):
                     or len({r[3] for r in group}) != 1):
                 problems.append(f"{addr}: duplicate retail address: " +
                                 ", ".join(f"{path} {sym}" for path, sym in owners))
+        if all(r[2] == "RECONSTRUCTED" for r in group):
+            reconstructed += 1
+            continue
         n = int(group[0][3])
         size += n
         if all(r[2] == "MATCH" for r in group):
             matched += 1
             matched_size += n
-    return (f"{matched} of {len(by_address)} functions match ({matched_size} of {size} bytes)", problems)
+    return (f"{matched} of {len(by_address) - reconstructed} functions match ({matched_size} of {size} bytes)"
+            + (f", {reconstructed} reconstructed" if reconstructed else ""), problems)
 
 
 def run_checker(src):
@@ -64,15 +75,8 @@ def run_checker(src):
                           capture_output=True, text=True, cwd=ROOT)
 
 
-def main(run_source=run_checker, validate=None) -> None:
-    record = "--record" in sys.argv[1:]
-    before = set()
-    if PROGRESS.exists():
-        with PROGRESS.open() as f:
-            before = {r["address"] for r in csv.DictReader(f) if r["result"] == "MATCH"}
-    before.update(baseline_matches(sys.argv[1:]))
-    sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext))
-    refs = ReferenceBaseline(ROOT, record)
+def check_sources(sources, before, refs, run_source):
+    """Run the checker on each source: its result rows, what broke, and the class warnings."""
     rows, broken, warnings = [], [], 0
     for src in sources:
         proc = run_source(src)
@@ -106,8 +110,8 @@ def main(run_source=run_checker, validate=None) -> None:
             addr, name, result, size, symbol = m.group(1), m.group(2), m.group(3), m.group(5), m.group(6)
             rows.append([addr, name, result, size, src.relative_to(ROOT).as_posix(), symbol])
             reported.append(addr)
-            partials += result != "MATCH"
-            if addr in before and result != "MATCH":
+            partials += result not in KEPT
+            if addr in before and result != before[addr]:
                 broken.append(f"{addr} {name}")
         if refs.enabled and reported != proofs:
             broken.append(f"{src.relative_to(ROOT)}: incomplete relocation report")
@@ -121,9 +125,45 @@ def main(run_source=run_checker, validate=None) -> None:
         if not found:
             print(f"{src.relative_to(ROOT)}: {(proc.stdout + proc.stderr).strip()}")
             broken.append(str(src.relative_to(ROOT)))
+    return rows, broken, warnings
+
+
+def changed_symbols(old_table: bytes | None, rows) -> set[str]:
+    """Symbols whose recorded address the new rows add, drop or move."""
+    old = set()
+    if old_table:
+        old = {(r["address"], r["symbol"]) for r in csv.DictReader(io.StringIO(old_table.decode()))}
+    new = {(r[0], r[5]) for r in rows}
+    return {symbol for _, symbol in old ^ new if symbol}
+
+
+def affected_sources(sources, symbols):
+    """Sources whose compiled object names any of `symbols`; one with no object counts."""
+    names = [s.encode() for s in symbols]
+    if not names:
+        return []
+    out = []
+    for src in sources:
+        obj = ROOT / "build/obj" / src.relative_to(ROOT).with_suffix(".obj")
+        data = obj.read_bytes() if obj.exists() else None
+        if data is None or any(n in data for n in names):
+            out.append(src)
+    return out
+
+
+def main(run_source=run_checker, validate=None) -> None:
+    record = "--record" in sys.argv[1:]
+    before = {}
+    if PROGRESS.exists():
+        with PROGRESS.open() as f:
+            before = {r["address"]: r["result"] for r in csv.DictReader(f) if r["result"] in KEPT}
+    before.update(baseline_matches(sys.argv[1:]))
+    sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext))
+    refs = ReferenceBaseline(ROOT, record)
+    rows, broken, warnings = check_sources(sources, before, refs, run_source)
     seen = {r[0] for r in rows}
-    for addr in sorted(before - seen):
-        problem = f"{addr}: previously matched function missing from results"
+    for addr in sorted(before.keys() - seen):
+        problem = f"{addr}: previously {'reconstructed' if before[addr] == 'RECONSTRUCTED' else 'matched'} function missing from results"
         print(problem)
         broken.append(problem)
     for lost in sorted(refs.expected - refs.sites):
@@ -138,10 +178,25 @@ def main(run_source=run_checker, validate=None) -> None:
     if validate is not None:
         validate()
     if record and not broken:
+        old_table = PROGRESS.read_bytes() if PROGRESS.exists() else None
         with PROGRESS.open("w", newline="") as f:
             w = csv.writer(f, lineterminator="\n")
             w.writerow(["address", "name", "result", "size", "source", "symbol"])
             w.writerows(rows)
+        # The checker binds names through progress.csv, so a recorded rename can change a result.
+        affected = affected_sources(sources, changed_symbols(old_table, rows))
+        if affected:
+            print(f"rechecking {len(affected)} sources against the recorded symbols")
+            recorded = {r[0]: r[2] for r in rows if r[2] in KEPT}
+            _, again, _ = check_sources(affected, recorded, SimpleNamespace(enabled=False), run_source)
+            if again:
+                if old_table is None:
+                    PROGRESS.unlink()
+                else:
+                    PROGRESS.write_bytes(old_table)
+                print("no longer matching once recorded: " + ", ".join(again))
+                print("data/progress.csv left as it was")
+                broken.extend(again)
     if not broken:
         refs.save()
     sys.exit(1 if broken else 0)
@@ -153,14 +208,14 @@ def baseline_matches(argv):
     parser.add_argument("--baseline", metavar="COMMIT", help="protect matches from this revision's progress table")
     args = parser.parse_args(argv)
     if not args.baseline:
-        return set()
+        return {}
     try:
         commit = subprocess.check_output(["git", "rev-parse", "--verify", "--end-of-options",
                                           args.baseline + "^{commit}"], cwd=ROOT, text=True).strip()
         table = subprocess.check_output(["git", "show", commit + ":data/progress.csv"], cwd=ROOT, text=True)
     except subprocess.CalledProcessError:
         parser.exit(1, "could not load the requested baseline progress table\n")
-    return {r["address"] for r in csv.DictReader(io.StringIO(table)) if r["result"] == "MATCH"}
+    return {r["address"]: r["result"] for r in csv.DictReader(io.StringIO(table)) if r["result"] in KEPT}
 
 
 if __name__ == "__main__":

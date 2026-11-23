@@ -40,24 +40,13 @@
 #include "vox.h"
 #include "weapon.h"
 #include "stringtable.h"
+#include "lightstorm.h"
 
 extern Cell DAT_00B0C038[9];
 extern wchar_t DAT_00887734[];
 extern int DAT_008809A0;
 
-class LightningStorm
-{
-	public:
-		static bool HasDeferment(void);
-		static void PrintMessage(void);
-};
 
-class PsyDom
-{
-	public:
-		static bool Active(void);
-		static void PrintMessage(void);
-};
 
 static inline void Release_Animation(SuperClass * super)
 {
@@ -463,7 +452,7 @@ int SuperClass::Anim_Stage(void) const
 }
 
 // FUNCTION: GAMEMD 0x006CC070
-void FUN_006CC070(void)
+void SuperClass::Impatient_Click(void) const
 {
 }
 
@@ -723,7 +712,7 @@ done:
 // TEMPLATE: GAMEMD 0x006CE2C0
 // ?Start@?$CDTimerClass@VFrameTimerClass@@@@QAEXXZ
 // TEMPLATE: GAMEMD 0x006CE2D0
-// ?Delete@?$DynamicVectorClass@PAVSuperClass@@@@QAE_NABQAVSuperClass@@@Z
+// ?Delete@?$DynamicVectorClass@PAVAbstractClass@@@@QAE_NABQAVAbstractClass@@@Z
 // TEMPLATE: GAMEMD 0x006CE320
 // ?Delete_Index@?$DynamicVectorClass@PAVSuperClass@@@@QAE_NH@Z
 template class DynamicVectorClass<SuperClass *>;

@@ -62,6 +62,8 @@
 #include "ramp.hh"
 #include "scrspeed.hh"
 #include "fastmath.h"
+#include "goptions.h"
+#include "suprtype.h"
 #include <wchar.h>
 
 // FUNCTION: GAMEMD 0x0043A0B0
@@ -96,7 +98,7 @@
 // SYNTHETIC: GAMEMD 0x006D1A20 SYMBOL
 // _$E47
 // SYNTHETIC: GAMEMD 0x006D1A40 SYMBOL
-// _$E269
+// _$E272
 
 extern Rect TacticalDimensions;
 void __fastcall SetNavCycleMode(int mode);
@@ -104,12 +106,10 @@ extern ObjectClass const * DAT_00880978;
 extern int DAT_0088097C;
 extern int DAT_00880980;
 namespace Unsorted { extern bool ArmageddonMode; }
-namespace Game { extern HWND hWnd; }
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool as_shape);
 	static ShapeSet * GRFXTXT_SHP;
 	static ConvertClass * GRFXTXT_Convert;
-	static ConvertClass * MOUSE_PAL;
 };
 Point2D Lerp(Point2D const & a, Point2D const & b, float t);
 
@@ -726,23 +726,12 @@ void Tactical::Render_Terrain(Rect const & xpanrect, Rect const & ypanrect, bool
 	}
 }
 
-struct TimerFlashSource {
-	int Unused[5];
-	ColorScheme * Scheme;
-};
-extern TimerFlashSource * DAT_00B054D4;
 
 BitFont * __fastcall FUN_004A60D0(int flags);
-namespace Game { unsigned __int64 __fastcall AudioGetTime(void); }
-
-static inline Point2D * Print_Timer(wchar_t const * text, Point2D const & pt, ColorScheme * scheme)
-{
-	Point2D ret;
-	return Fancy_Text_Print_Wide(&ret, text, DSurface::Composite, &DSurface::Composite->Get_Rect(), &pt, scheme, 0, TextPrintType(0x4618));
-}
+#include "audtimer.h"
 
 // FUNCTION: GAMEMD 0x006D4B50
-int Tactical::DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const * text, unsigned __int64 * flashtime, bool * flashstate)
+void Tactical::DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const * text, unsigned __int64 * flashtime, bool * flashstate)
 {
 	wchar_t buf1[256];
 	wchar_t buf2[256];
@@ -769,20 +758,20 @@ int Tactical::DrawTimer(int index, ColorScheme * scheme, int time, wchar_t const
 
 	ColorScheme * flash = scheme;
 	if (time == 0 && flashtime && flashstate) {
-		if (*flashtime <= Game::AudioGetTime()) {
-			*flashtime = Game::AudioGetTime() + 1000;
+		if (*flashtime <= AudioGetTime()) {
+			*flashtime = AudioGetTime() + 1000;
 			*flashstate = !*flashstate;
 		}
 		if (*flashstate) {
-			flash = DAT_00B054D4->Scheme;
+			flash = ColorSchemes[5];
 		}
 	}
 
 	Point2D pt1(TacticalRect.Width - width - 3, TacticalRect.Height - (font->field_1C + 2) * (index + 1));
-	Print_Timer(buf2, pt1, scheme);
+	Fancy_Text_Print_Wide(buf2, DSurface::Composite, &DSurface::Composite->Get_Rect(), &pt1, scheme, 0, TextPrintType(0x4618));
 
 	Point2D pt2(TacticalRect.Width - 3, TacticalRect.Height - (font->field_1C + 2) * (index + 1));
-	return (int)Print_Timer(buf3, pt2, flash);
+	Fancy_Text_Print_Wide(buf3, DSurface::Composite, &DSurface::Composite->Get_Rect(), &pt2, flash, 0, TextPrintType(0x4618));
 }
 
 // FUNCTION: GAMEMD 0x006D4DB0
@@ -922,6 +911,155 @@ void Tactical::Draw_Placement(bool drawtrans)
 					CellClass * cellptr = &Map[cell];
 					cellptr->Draw_Placement_Cursor(pixel, TacticalRect, drawtrans);
 				}
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006D5730
+void Tactical::Draw_Fence_Placement(bool drawtrans, Cell cell)
+{
+	for (int index = 0; index < FACING_COUNT; index += FACING_COUNT / 4) {
+		Cell scan = cell;
+		int count = 0;
+		int range = ((BuildingClass *)Map.PendingObjectPtr)->Class->ThreatRange >> 8;
+		if (range <= 0) {
+			continue;
+		}
+
+		FacingType facing = (FacingType)index;
+		BuildingClass * building;
+		bool found = false;
+		while (true) {
+			scan = Adjacent_Cell(scan, facing);
+			building = Map[scan].Cell_Building();
+			if (building) {
+				found = true;
+				break;
+			}
+			CellClass * nearby = &Map[scan];
+			if (nearby->Cell_Terrain(false) || nearby->Ramp > 0 || nearby->Passability != PASSABLE_LAND || ++count >= range) {
+				break;
+			}
+		}
+		if (found && building->Class->IsLaserFencePost && building->House->Is_Player_Control() && count > 0) {
+			int flags = drawtrans ? (SHAPE_ZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75)
+				: (SHAPE_NONZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75);
+			Cell drawcell = Adjacent_Cell(cell, facing);
+			for (int i = 0; i < count; ++i, drawcell = Adjacent_Cell(drawcell, facing)) {
+				int height = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				int zheight = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				Point2D cursor_offset(ISO_TILE_PIXEL_W / 2, -1 - height);
+				int zoff = -2 - zheight;
+				Coord coord = Coord_Whole(drawcell.As_Coord());
+				Point2D tile_origin;
+				Coord_To_Pixel(coord, tile_origin);
+				tile_origin.X -= ISO_TILE_PIXEL_W / 2;
+				int px = tile_origin.X + cursor_offset.X;
+				int py = cursor_offset.Y + tile_origin.Y;
+				Point2D point(px, py);
+				Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)DisplayClass::PlacementShapes, 0, point,
+					TacticalRect, (ShapeFlags_Type)flags, 0, zoff);
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006D59D0
+void Tactical::Draw_Firestorm_Wall_Placement(bool drawtrans, Cell cell)
+{
+	for (int index = 0; index < FACING_COUNT; index += FACING_COUNT / 4) {
+		Cell scan = cell;
+		int count = 0;
+		BuildingTypeClass * type = ((BuildingClass *)Map.PendingObjectPtr)->Class;
+		int range = type->ThreatRange >> 8;
+
+		FacingType facing = (FacingType)index;
+		bool found = false;
+		for (; count < range; count++) {
+			scan = Adjacent_Cell(scan, facing);
+			BuildingClass * building = Map[scan].Cell_Building();
+			if (building != NULL && building->Class->IsFirestormWall && building->House->Is_Player_Control()) {
+				found = true;
+				break;
+			}
+			if (!Map[scan].Is_Clear_To_Build(type->Speed, type, PlayerPtr)) {
+				break;
+			}
+		}
+
+		if (found && count > 0) {
+			int flags = drawtrans ? (SHAPE_ZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75)
+				: (SHAPE_NONZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75);
+			Cell drawcell = Adjacent_Cell(cell, facing);
+			for (int i = 0; i < count; ++i, drawcell = Adjacent_Cell(drawcell, facing)) {
+				int height = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				int zheight = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				Point2D cursor_offset(ISO_TILE_PIXEL_W / 2, -1 - height);
+				int zoff = -2 - zheight;
+				Coord coord = Coord_Whole(Coord(drawcell));
+				Point2D tile_origin;
+				Coord_To_Pixel(coord, tile_origin);
+				tile_origin.X -= ISO_TILE_PIXEL_W / 2;
+				int px = tile_origin.X + cursor_offset.X;
+				int py = cursor_offset.Y + tile_origin.Y;
+				Point2D point(px, py);
+				Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)DisplayClass::PlacementShapes, 0, point,
+					TacticalRect, (ShapeFlags_Type)flags, 0, zoff);
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006D5C50
+void Tactical::Draw_Wall_Placement(bool drawtrans, Cell cell)
+{
+	OverlayTypeClass const * to_overlay = ((BuildingClass *)Map.PendingObjectPtr)->Class->ToOverlay;
+	if (to_overlay == 0) {
+		return;
+	}
+
+	for (int index = 0; index < FACING_COUNT; index += FACING_COUNT / 4) {
+		FacingType facing = (FacingType)index;
+		Cell scan = cell;
+		int count = 0;
+		BuildingTypeClass * type = ((BuildingClass *)Map.PendingObjectPtr)->Class;
+		int range = type->ThreatRange >> 8;
+		if (range <= 0) {
+			continue;
+		}
+		bool found = false;
+		for (; count < range; count++) {
+			scan = Adjacent_Cell(scan, facing);
+			CellClass * cellptr = &Map[scan];
+			if (cellptr->Overlay != OVERLAY_NONE && to_overlay->HeapID == cellptr->Overlay && PlayerPtr->HeapID == Map[scan].Owner) {
+				found = true;
+				break;
+			}
+			if (!Map[scan].Is_Clear_To_Build(type->Speed, type, PlayerPtr)) {
+				break;
+			}
+		}
+
+		if (found && count > 0) {
+			int flags = drawtrans ? (SHAPE_ZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75)
+				: (SHAPE_NONZERO_ALPHA | SHAPE_WIN_REL | SHAPE_CENTER | SHAPE_TRANSLUCENT75);
+			Cell drawcell = cell;
+			drawcell = Adjacent_Cell(drawcell, facing);
+			for (int i = 0; i < count; i++, drawcell = Adjacent_Cell(drawcell, facing)) {
+				int height = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				int zoff = (ISO_TILE_PIXEL_H / 2) * Map[drawcell].Height;
+				Point2D cursor_offset(ISO_TILE_PIXEL_W / 2, -1 - height);
+				zoff = -2 - zoff;
+				Coord coord = Coord_Whole(Coord(drawcell));
+				Point2D tile_origin;
+				Coord_To_Pixel(coord, tile_origin);
+				tile_origin.X -= ISO_TILE_PIXEL_W / 2;
+				Point2D point;
+				point.X = tile_origin.X + cursor_offset.X;
+				point.Y = tile_origin.Y + cursor_offset.Y;
+				Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)DisplayClass::PlacementShapes, 0, point,
+					TacticalRect, (ShapeFlags_Type)flags, 0, zoff);
 			}
 		}
 	}
@@ -1293,7 +1431,7 @@ void Tactical::Draw_Shroud(Rect const & area)
 	base.X -= 2;
 	Cell cell = base;
 
-	if (Game::hWnd != NULL) {
+	if (MainWindow != NULL) {
 		int ix, iy;
 		for (iy = 0; iy < ycount; iy++) {
 			Cell step(iy / 2, (iy + 1) / 2);
@@ -1507,7 +1645,7 @@ void Tactical::Scroll_Map(FacingType facing, int distance)
 }
 
 // SYNTHETIC: GAMEMD 0x006D8630 SYMBOL
-// _$E44
+// _$E265
 
 // FUNCTION: GAMEMD 0x006D8640
 bool Tactical::Clamp_To_Tactical_Rect(Point2D & pixel)
@@ -1779,7 +1917,7 @@ void Tactical::Draw_Objects(bool forced)
 			if (obj2->IsVisible && obj2 != NULL && obj2->Is_Techno()) {
 				if (Is_Foot_Object(obj2)) {
 					obj2->Destination_Coord();
-					if (Game::hWnd && !Unsorted::ArmageddonMode && Scen->Special.IsFogOfWar && Map.IsLocationFogged(obj2->PositionCoord)) {
+					if (MainWindow && !Unsorted::ArmageddonMode && Scen->Special.IsFogOfWar && Map.IsLocationFogged(obj2->PositionCoord)) {
 						continue;
 					}
 				}
@@ -2029,7 +2167,7 @@ FacingType Tactical::Scroll_Dir(FacingType dir)
 }
 
 // SYNTHETIC: GAMEMD 0x006DA350 SYMBOL
-// _$E250
+// _$E267
 
 // FUNCTION: GAMEMD 0x006DA360
 Cell Tactical::Clamp_Cursor_To_Tactical(Cell const & cell, Cell const * list)
@@ -2216,7 +2354,6 @@ void Tactical::Reset_Dirty_Rectangles(void)
 	}
 }
 
-extern DynamicVectorClass<ObjectClass *> DAT_00A8E360;
 
 static bool WaypointLinePattern[16] = {
 	true, true, true, true, true, false, false, false,
@@ -2284,7 +2421,7 @@ void Tactical::Draw_Waypoints(bool inshroud)
 		return;
 	}
 
-	unsigned short * table = (unsigned short *)FileSystem::MOUSE_PAL->Get_Translate_Table();
+	unsigned short * table = (unsigned short *)MouseDrawer->Get_Translate_Table();
 	unsigned short saved_colors[8];
 	memcpy(saved_colors, table + 1, sizeof(saved_colors));
 
@@ -2315,7 +2452,7 @@ void Tactical::Draw_Waypoints(bool inshroud)
 			pixel.Y += TacticalRect.Y;
 
 			if (onscreen) {
-				Draw_Shape(*DSurface::Temp, *FileSystem::MOUSE_PAL, mouseshapes, frame, pixel - offset,
+				Draw_Shape(*DSurface::Temp, *MouseDrawer, mouseshapes, frame, pixel - offset,
 					TacticalRect, (ShapeFlags_Type)(SHAPE_CENTER | SHAPE_WIN_REL));
 
 				static wchar_t buffer[4];
@@ -2334,10 +2471,10 @@ void Tactical::Draw_Waypoints(bool inshroud)
 				if (Clip_Line_To_Rect(pixel, nextpixel, TacticalRect)) {
 					if (path == PlayerPtr->SelectedPath) {
 						phase = DSurface::Temp->Draw_Masked_Dashed_Line(pixel, nextpixel,
-							FileSystem::MOUSE_PAL->Convert_Pixel(3), WaypointLinePattern, phase, inshroud);
+							MouseDrawer->Convert_Pixel(3), WaypointLinePattern, phase, inshroud);
 					} else {
 						DSurface::Temp->Draw_Masked_Line(pixel, nextpixel,
-							FileSystem::MOUSE_PAL->Convert_Pixel(3), inshroud);
+							MouseDrawer->Convert_Pixel(3), inshroud);
 					}
 				}
 			}
@@ -2387,8 +2524,8 @@ void Tactical::Debug_Draw_Occupier_Links(void)
 		cellptr = Map.Iterate();
 	}
 
-	for (int i = DAT_00A8E360.Count() - 1; i >= 0; i--) {
-		ObjectClass * object = DAT_00A8E360[i];
+	for (int i = Objects.Count() - 1; i >= 0; i--) {
+		ObjectClass * object = Objects[i];
 		if (object->Next != NULL) {
 			Coord coord1 = object->Center_Coord();
 			Point2D start;
@@ -2498,15 +2635,93 @@ HRESULT STDMETHODCALLTYPE Tactical::Save(IStream * stream, BOOL cleardirty)
 	return(result);
 }
 
-// FUNCTION: GAMEMD 0x006DC400
-void Tactical_noop2(void)
+extern int CurrentSWType;
+
+// FUNCTION: GAMEMD 0x006DBE20
+void Tactical::Draw_Radial_Indicators(void)
 {
+	int count = CurrentObject.Count();
+	for (int i = 0; i < count; ++i) {
+		ObjectClass * object = CurrentObject[i];
+		if (object->Class_Of() && object->Class_Of()->IsHasRadialIndicator) {
+			object->Draw_Radial_Indicator(1);
+		}
+	}
+	if (!Options.ActionLines) return;
+	BuildingClass * pending = (BuildingClass *)Map.PendingObjectPtr;
+	if (pending && pending->Fetch_RTTI() == RTTI_BUILDING) {
+		if (pending->GetRadialIndicatorRange() > 0) {
+			Cell zone = Map.ZoneCell;
+			Coord center = Map[zone].Cell_Coord();
+			static RGBClass black(0, 0, 0);
+			static int pulse = 0;
+			static int direction = 1;
+			pulse += direction * 10;
+			if (pulse >= 100) direction = -1;
+			else if (pulse <= 0) direction = 1;
+			RGBClass color = pending->House->RemapColorRGB;
+			color.Adjust(pulse, black);
+			int range = pending->GetRadialIndicatorRange();
+			DrawRadialIndicator(center, color, (float)range, false, true, false, true);
+			int nearest = INT_MAX;
+			int buildings = PlayerPtr->Buildings.Count();
+			for (int j = 0; j < buildings; ++j) {
+				BuildingClass * building = PlayerPtr->Buildings[j];
+				if (building && building->IsActive && building != pending && building->Class == pending->Class) {
+					Cell zone = Map.ZoneCell;
+					int distance = zone.Distance_To(building->Center_Coord().As_Cell());
+					if (distance <= range * 2 && distance < nearest) nearest = distance;
+				}
+			}
+			for (int k = 0; k < buildings; ++k) {
+				BuildingClass * building = PlayerPtr->Buildings[k];
+				if (building && building->IsActive && building != pending && building->Class == pending->Class) {
+					Cell zone = Map.ZoneCell;
+					int distance = zone.Distance_To(building->Center_Coord().As_Cell());
+					if (distance == nearest) building->Draw_Radial_Indicator(0);
+				}
+			}
+		}
+	} else if (CurrentSWType != -1) {
+		SuperWeaponTypeClass * type = SuperWeaponTypes[CurrentSWType];
+		float range = type->Range;
+		if (range > 0) {
+			Cell zone = Map.ZoneCell;
+			Coord position = Map[zone].Cell_Coord();
+			Coord center(position.X + (2 - CELL_LEPTON_W / 2), position.Y + (2 - CELL_LEPTON_H / 2), position.Z);
+			static RGBClass black(0, 0, 0);
+			static int pulse = 0;
+			static int direction = 1;
+			pulse += direction * 10;
+			if (pulse >= 100) direction = -1;
+			else if (pulse <= 0) direction = 1;
+			int shade = pulse;
+			int step = direction;
+			RGBClass color = Houses[PlayerPtr->HeapID]->RemapColorRGB;
+			RGBClass faded;
+			if (type->LineMultiplier > 0) {
+				for (int line = 0; line <= type->LineMultiplier * range; ++line) {
+					faded = color;
+					shade += step * 10;
+					if (shade >= 100) step = -1;
+					else if (shade <= 0) step = 1;
+					faded.Adjust(shade, black);
+					DrawRadialIndicator(center, faded, (float)line / type->LineMultiplier, false, true, false, false);
+				}
+			} else {
+				color.Adjust(shade, black);
+				DrawRadialIndicator(center, color, range, false, true, false, true);
+			}
+		}
+	}
 }
 
-// FUNCTION: GAMEMD 0x006DC410
-void Tactical_noop3(void)
-{
-}
+
+// SYNTHETIC: GAMEMD 0x006DC400 SYMBOL
+// _$E270
+
+// SYNTHETIC: GAMEMD 0x006DC410 SYMBOL
+// _$E269
 
 // FUNCTION: GAMEMD 0x006DC420
 int Tactical::Selectable_Count(void)

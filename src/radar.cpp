@@ -68,8 +68,6 @@ extern const double DAT_00B048F0;
 extern const double DAT_00B04970;
 extern const int DAT_00B049F4;
 extern int DAT_00B04A30;
-extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
-#define Technos DAT_00A8EC78
 extern HouseClass * PlayerPtr;
 namespace Unsorted { extern int MuteSWLaunches; }
 inline bool RadarTrackingStruct::Use_Head(void) const { return(Object->House == PlayerPtr); }
@@ -187,9 +185,9 @@ RadarClass::RadarClass(void) :
 	RadarState(0),
 	RadarMode(0),
 	SuspendedRadarMode(0),
-	unknown_bool_14BC(false),
+	IsScenarioHeld(false),
 	unknown_bool_14BD(false),
-	unknown_int_14D4(-1),
+	TransmissionVox(-1),
 	DoesRadarExist(false),
 	IsToRedraw(0),
 	FullRedraw(0),
@@ -233,7 +231,6 @@ extern Rect OptionsButtonRect;
 extern int DAT_00B04A1C;
 extern int DAT_00B04A38;
 
-namespace Game { extern int SpecialDialog; }
 extern int DAT_00886FA8;
 extern int DAT_00B45B68;
 bool __fastcall FUN_0053BAE0(void);
@@ -250,29 +247,12 @@ struct ShpHeader {
 
 struct FileSystem {
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
-	static ConvertClass * SIDEBAR_PAL;
 };
 
-struct Drawing {
-	static unsigned char RedShiftRight;
-	static unsigned char GreenShiftRight;
-	static unsigned char BlueShiftRight;
-	static int RedShiftLeft;
-	static int GreenShiftLeft;
-	static int BlueShiftLeft;
-};
+#include "_tooltip.h"
+#include "cctooltip.h"
 
-struct TextColor {
-	unsigned char R;
-	unsigned char G;
-	unsigned char B;
-	unsigned char A;
-};
-
-struct CCToolTip {
-	static TextColor ToolTipTextColor;
-	static ToolTipManager * Instance;
-};
+extern RGBClass DAT_00B0FA1C;
 
 // FUNCTION: GAMEMD 0x00652CF0
 void RadarClass::One_Time(void)
@@ -293,7 +273,7 @@ void RadarClass::One_Time(void)
 	DAT_00B04A20.Y = RadIHeight;
 	DAT_00B04A20.Width = RadPWidth;
 	DAT_00B04A30 = 223;
-	unknown_int_14D4 = FUN_00753250("EVA_IncomingTransmission");
+	TransmissionVox = FUN_00753250("EVA_IncomingTransmission");
 }
 
 // FUNCTION: GAMEMD 0x00652D90
@@ -320,7 +300,7 @@ void RadarClass::Init_Clear(void)
 	RadarState = RSTATE_INACTIVE;
 	RadarMode = RMODE_UNAVAILABLE;
 	unknown_bool_14BD = false;
-	unknown_bool_14BC = false;
+	IsScenarioHeld = false;
 	RadarAnimFrame = 0;
 	DoesRadarExist = false;
 	IsToRedraw = true;
@@ -339,13 +319,6 @@ void RadarClass::Set_Buttons(bool on)
 		Remove_A_Button(RadarStatics::DAT_00B04978);
 		Remove_A_Button(RadarStatics::DAT_00B04910);
 	}
-}
-
-inline int Pack_Color(TextColor const & c)
-{
-	return (c.R >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
-		| (c.G >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
-		| (c.B >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
 }
 
 // FUNCTION: GAMEMD 0x00652E90
@@ -382,7 +355,7 @@ void RadarClass::Init_For_House(void)
 	OptionsButtonRect.Height = ((ShpHeader *)OptionsButtonShape)->Height;
 	DAT_00B04A38 = RadarAnimShape;
 
-	RadPHeight = Pack_Color(CCToolTip::ToolTipTextColor);
+	RadPHeight = DSurface::Build_Hicolor_Pixel(DAT_00B0FA1C.Get_Red(), DAT_00B0FA1C.Get_Green(), DAT_00B0FA1C.Get_Blue());
 }
 
 // FUNCTION: GAMEMD 0x00653010
@@ -393,7 +366,7 @@ void RadarClass::Init_IO(void)
 	if (!Debug_Map) {
 		RadarStatics::DAT_00B04978.ID = 242;
 		RadarStatics::DAT_00B04978.DrawOnSidebar = true;
-		RadarStatics::DAT_00B04978.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		RadarStatics::DAT_00B04978.ShapeDrawer = SidebarDrawer;
 		RadarStatics::DAT_00B04978.IsOn = false;
 		RadarStatics::DAT_00B04978.IsToggleType = 0;
 		RadarStatics::DAT_00B04978.Set_Flags(5);
@@ -401,7 +374,7 @@ void RadarClass::Init_IO(void)
 		RadarStatics::DAT_00B04978.Set_Shape((ShapeSet const *)BriefingButtonShape, 0, 0);
 		RadarStatics::DAT_00B04978.Flag_To_Redraw();
 
-		RadarStatics::DAT_00B04910.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		RadarStatics::DAT_00B04910.ShapeDrawer = SidebarDrawer;
 		RadarStatics::DAT_00B04910.ID = 243;
 		RadarStatics::DAT_00B04910.DrawOnSidebar = true;
 		RadarStatics::DAT_00B04910.IsOn = false;
@@ -416,7 +389,6 @@ void RadarClass::Init_IO(void)
 extern void * RadarFrameShape;
 extern bool DAT_00B04964;
 extern bool DAT_00B049CC;
-extern bool DAT_00B0B518;
 extern ShapeButtonClass DAT_00B0B3A0;
 extern ShapeButtonClass DAT_00B07DF8;
 
@@ -436,7 +408,7 @@ void RadarClass::Draw_It(bool forced)
 
 	if (IsToRedraw) {
 		ShapeSet const * frame_shape = (ShapeSet const *)RadarFrameShape;
-		Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, frame_shape, 0, Point2D(RadX, RadY), SidebarSurface->Get_Rect());
+		Draw_Shape(*SidebarSurface, *SidebarDrawer, frame_shape, 0, Point2D(RadX, RadY), SidebarSurface->Get_Rect());
 		RadarStatics::DAT_00B04978.Draw_Me(true);
 		RadarStatics::DAT_00B04910.Draw_Me(true);
 	}
@@ -525,12 +497,12 @@ void RadarClass::Draw_It(bool forced)
 
 	if (DAT_00B049CC) {
 		LastDrawRect = Union(LastDrawRect, BriefingButtonRect);
-		DAT_00B0B518 = true;
+		SidebarClass::IsToBlitSidebar = true;
 	}
 
 	if (DAT_00B04964) {
 		LastDrawRect = Union(LastDrawRect, OptionsButtonRect);
-		DAT_00B0B518 = true;
+		SidebarClass::IsToBlitSidebar = true;
 	}
 }
 
@@ -595,12 +567,12 @@ void RadarClass::AI(KeyNumType & input, Point2D const & xy)
 
 	if (input == 0x80F2) {
 		if (Session.Type != GAME_NORMAL && !((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && Session.MPGameMode && Session.MPGameMode->vt_entry_08() && Session.MPGameMode->vt_entry_04())) {
-			Game::SpecialDialog = 8;
+			SpecialDialog = SDLG_SPECIAL;
 		} else {
-			Game::SpecialDialog = 9;
+			SpecialDialog = SpecialDialogType(9);
 		}
 	} else if (input == 0x80F3) {
-		Game::SpecialDialog = 1;
+		SpecialDialog = SDLG_OPTIONS;
 	}
 
 	if (DAT_00B45B68 > 0 && RadarMode != 3 && RadarMode != 4) {
@@ -811,11 +783,11 @@ void RadarClass::Draw_Names(void)
 	Draw_Shape(*SidebarSurface, *drawer, (ShapeSet const *)DAT_00B04A38, 32, Point2D(RadX, RadWidth), SidebarSurface->Get_Rect());
 
 	y = RadOffX + 2;
-	Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), StringTable::LoadString("TXT_NAME_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1268), SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x19));
-	Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), StringTable::LoadString("TXT_KILLS_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1270), SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x219));
+	Fancy_Text_Print_Wide(StringTable::LoadString("TXT_NAME_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1268), SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x19));
+	Fancy_Text_Print_Wide(StringTable::LoadString("TXT_KILLS_COLON", NULL, "D:\\ra2mdpost\\Radar.CPP", 1270), SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), Fetch_Scheme_By_Name("Grey", 1), 0, TextPrintType(0x219));
 
 	y += 7;
-	SidebarSurface->Draw_Line(Point2D(RadHeight, y), Point2D(RadOffY + RadHeight - 1, y), FileSystem::SIDEBAR_PAL->Convert_Pixel(14));
+	SidebarSurface->Draw_Line(Point2D(RadHeight, y), Point2D(RadOffY + RadHeight - 1, y), SidebarDrawer->Convert_Pixel(14));
 	y += 4;
 
 	for (house = 0; house < Houses.Count(); house++) {
@@ -844,7 +816,7 @@ void RadarClass::Draw_Names(void)
 			txt[18] = '.';
 			txt[19] = 0;
 		}
-		Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), txt, SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), color, 0, TextPrintType(style));
+		Fancy_Text_Print_Wide(txt, SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadHeight, y), color, 0, TextPrintType(style));
 
 		kills = 0;
 		for (h = 0; h < 20; h++) {
@@ -852,7 +824,7 @@ void RadarClass::Draw_Names(void)
 			kills += ptr->BuildingsKilled[h];
 		}
 		swprintf(txt, L"%2d", kills);
-		Fancy_Text_Print_Wide((Point2D *)&(Point2D const &)Point2D(), txt, SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), color, 0, TextPrintType(style | 0x200));
+		Fancy_Text_Print_Wide(txt, SidebarSurface, &SidebarSurface->Get_Rect(), &(Point2D const &)Point2D(RadOffY + RadHeight - 2, y), color, 0, TextPrintType(style | 0x200));
 
 		y += 9;
 	}
@@ -886,8 +858,8 @@ void RadarClass::Reposition_Sidebar(void)
 	tip.Region.Y = RadarStatics::DAT_00B04978.Y;
 	tip.Region.Width = RadarStatics::DAT_00B04978.Width;
 	tip.Region.Height = RadarStatics::DAT_00B04978.Height;
-	CCToolTip::Instance->Remove(242);
-	CCToolTip::Instance->Add(&tip);
+	ToolTips->Remove(242);
+	ToolTips->Add(&tip);
 
 	tip.ID = 243;
 	tip.Text = (int)"Tip:OptionsButton";
@@ -895,8 +867,8 @@ void RadarClass::Reposition_Sidebar(void)
 	tip.Region.Y = RadarStatics::DAT_00B04910.Y;
 	tip.Region.Width = RadarStatics::DAT_00B04910.Width;
 	tip.Region.Height = RadarStatics::DAT_00B04910.Height;
-	CCToolTip::Instance->Remove(243);
-	CCToolTip::Instance->Add(&tip);
+	ToolTips->Remove(243);
+	ToolTips->Add(&tip);
 
 	FullRedraw = true;
 }
@@ -2012,12 +1984,12 @@ void RadarClass::Update_Transmission(void)
 	switch (unknown_14B8) {
 		case 0:
 			FUN_00752370();
-			FUN_00752480(unknown_int_14D4, 0, 3);
+			FUN_00752480(TransmissionVox, 0, 3);
 			Add_Speech_Hold();
 			unknown_14B8 = 1;
 			break;
 		case 1:
-			if (Is_Speech_Finished(unknown_int_14D4)) {
+			if (Is_Speech_Finished(TransmissionVox)) {
 				if (DAT_00B45B68) {
 					FUN_00408390();
 				}
@@ -2107,13 +2079,13 @@ void RadarClass::Play_Movie(void)
 	}
 
 	unknown_bool_14BD = !finished;
-	if (unknown_bool_14BC != hold) {
+	if (IsScenarioHeld != hold) {
 		if (hold) {
 			Hold_Scenario(0);
-			unknown_bool_14BC = true;
+			IsScenarioHeld = true;
 		} else {
 			Release_Scenario();
-			unknown_bool_14BC = false;
+			IsScenarioHeld = false;
 		}
 	}
 }
@@ -2206,7 +2178,7 @@ LRESULT CALLBACK Diplomacy_Dialog_Proc(HWND dialog, UINT message, WPARAM wparam,
 			}
 			HouseClass * house;
 			if (houseIndex < count && (house = Houses[houseIndex]) != NULL && house->Class->IsMultiplay) {
-				if (!Rule->AlliesAllowed || DAT_00AC1198 == PlayerPtr || Session.unknown_0C == 2) {
+				if (!Rule->AlliesAllowed || DAT_00AC1198 == PlayerPtr || Session.WOLWelcomeChoice == 2) {
 					ShowWindow(allianceControl, SW_HIDE);
 				} else {
 					FUN_00603DB0(allianceControl, true);
@@ -2322,6 +2294,86 @@ LRESULT CALLBACK Diplomacy_Dialog_Proc(HWND dialog, UINT message, WPARAM wparam,
 	return 0;
 }
 
+Surface * FUN_004E3560(int index);
+void FUN_00603D30(HWND window, Surface * surface);
+extern wchar_t const DAT_0081B3D0[];
+
+// FUNCTION: GAMEMD 0x00658330
+void RadarClass::FUN_00658330(HWND dialog, int index, HouseClass * house)
+{
+	int kills_id = DiplomacyKillsIDs[index];
+	int name_id = DiplomacyNameIDs[index];
+	wchar_t buffer[100];
+	buffer[0] = 0;
+
+	if (house && house->Class->IsMultiplay) {
+		wcscpy(buffer, house->UIName);
+
+		ColorScheme * scheme;
+		if (house == DAT_00AC1198) {
+			scheme = Fetch_Scheme_By_Name("LightGrey", 1);
+		} else if (house->IsDefeated) {
+			scheme = Fetch_Scheme_By_Name("Grey", 1);
+		} else {
+			scheme = ColorSchemes[house->Scheme];
+		}
+		RGBClass rgb = scheme->HSV;
+		COLORREF color = RGB(rgb.Get_Red(), rgb.Get_Green(), rgb.Get_Blue());
+
+		HWND name = GetDlgItem(dialog, name_id);
+		SendMessage(name, 0x498, 0, color);
+		SendMessage(name, 0x4B2, 0, (LPARAM)buffer);
+
+		HWND flag = GetDlgItem(dialog, FUN_004E3320(index));
+		Surface * surface = FUN_004E3560(house->Class->HeapID);
+		if (house == DAT_00AC1198) {
+			surface = FUN_004E3560(-3);
+		}
+		FUN_00603D30(flag, surface);
+
+		if (DiplomacyAllianceIDs[index] != -1) {
+			HWND alliance = GetDlgItem(dialog, DiplomacyAllianceIDs[index]);
+			if (Unsorted::MuteSWLaunches) {
+				EnableWindow(alliance, FALSE);
+			}
+			if (house->IsDefeated) {
+				ShowWindow(alliance, SW_HIDE);
+			} else {
+				bool ally = PlayerPtr->Is_Ally(house);
+				SendMessage(alliance, BM_SETCHECK, ally, 0);
+			}
+			bool allied = house->Is_Ally(PlayerPtr);
+			FUN_00603DD0(alliance, allied);
+		}
+
+		if (house->IsGiverUpper) {
+			int chat_id = DiplomacyChatIDs[index];
+			HWND chat = GetDlgItem(dialog, chat_id);
+			ShowWindow(chat, SW_HIDE);
+		} else if (Unsorted::MuteSWLaunches) {
+			int chat_id = DiplomacyChatIDs[index];
+			HWND chat = GetDlgItem(dialog, chat_id);
+			SendMessage(chat, BM_SETCHECK, 1, 0);
+			EnableWindow(chat, FALSE);
+		}
+
+		int total = 0;
+		for (int i = 0; i < 20; i++) {
+			total += house->UnitsKilled[i] + house->BuildingsKilled[i];
+		}
+		swprintf(buffer, DAT_0081B3D0, total);
+
+		HWND kills = GetDlgItem(dialog, kills_id);
+		SendMessage(kills, 0x498, 0, color);
+		SendMessage(kills, 0x4B2, 0, (LPARAM)buffer);
+	} else {
+		HWND name = GetDlgItem(dialog, name_id);
+		SendMessage(name, 0x4B2, 0, (LPARAM)buffer);
+		HWND kills = GetDlgItem(dialog, kills_id);
+		SendMessage(kills, 0x4B2, 0, (LPARAM)buffer);
+	}
+}
+
 // FUNCTION: GAMEMD 0x00658640
 void RadarClass::FUN_00658640(HWND dialog)
 {
@@ -2350,11 +2402,6 @@ namespace UI {
 	void __fastcall EndDialog(HWND window);
 	bool Updated(void);
 }
-class InputManagerClass {
-	public:
-		void DoSomething(void);
-		static InputManagerClass * Instance;
-};
 extern bool UserInputLocked;
 #include "scenario.h"
 
@@ -2365,7 +2412,7 @@ void RadarClass::FUN_006586D0(void)
 
 	HWND dialog = UI::BeginDialog(0x73, Diplomacy_Dialog_Proc, 0);
 	UserInputLocked = true;
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	if (dialog) {
 		SetWindowLong(dialog, DWL_USER, (LONG)&result);
 		UI::FocusOnWindow(dialog);
@@ -2381,7 +2428,7 @@ void RadarClass::FUN_006586D0(void)
 		}
 		UI::EndDialog(dialog);
 	}
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	UserInputLocked = Scen->IsInputLocked;
 	Map.Flag_To_Redraw(GS_REDRAW_ALL);
 }

@@ -123,7 +123,7 @@ void StaticButtonClass::Draw_Text(wchar_t const * text)
 			x += Width-1;
 		}
 
-		Fancy_Text_Print_Wide(Scratch(Point2D()), text, DSurface::Temp, &DSurface::Temp->Get_Rect(), &Point2D(x, Y), ColorSchemes[BASECLASS::Get_Color_Scheme()], TBLACK, PrintFlags);
+		Fancy_Text_Print_Wide(text, DSurface::Temp, &DSurface::Temp->Get_Rect(), &Point2D(x, Y), ColorSchemes[BASECLASS::Get_Color_Scheme()], TBLACK, PrintFlags);
 	}
 }
 

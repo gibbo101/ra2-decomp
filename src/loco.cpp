@@ -49,17 +49,9 @@
 // _$E35
 
 extern ULONG COMRefCount;
-extern int DAT_00ABCCA0;
-extern int DAT_00ABCCA4;
-extern int DAT_00ABCCA8;
 
-// FUNCTION: GAMEMD 0x0055A6A0
-void FUN_0055A6A0(void)
-{
-	DAT_00ABCCA8 = 0;
-	DAT_00ABCCA0 = 128;
-	DAT_00ABCCA4 = 128;
-}
+// SYNTHETIC: GAMEMD 0x0055A6A0 SYMBOL
+// _$E38
 
 // FUNCTION: GAMEMD 0x0055A6C0
 LocomotionClass::LocomotionClass(void) :

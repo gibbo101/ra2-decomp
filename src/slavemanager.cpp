@@ -47,7 +47,6 @@
 
 extern "C" const CLSID CLSID_SlaveManagerClass;
 namespace Unsorted { extern int CurrentFrame; }
-namespace Game { extern bool IsActive; }
 extern SideType FUN_006A46D0(char const * name);
 
 DynamicVectorClass<SlaveManagerClass *> SlaveManagers;
@@ -165,6 +164,193 @@ void SlaveManagerClass::CreateSlave(SlaveControl * node)
 	}
 }
 
+// FUNCTION: GAMEMD 0x006AF6C0
+void SlaveManagerClass::FUN_006AF6C0(void)
+{
+	for (int index = 0; index < SlaveNodes.Count(); index++) {
+		SlaveControl * node = SlaveNodes[index];
+		InfantryClass * slave = node->Slave;
+		if (slave == NULL && node->State != 6) {
+			FUN_006B0A90(index);
+		}
+		switch (node->State) {
+			case 1: {
+				Cell cell = slave->ScanForTiberium(Rule->SlaveMinerSlaveScan / CELL_LEPTON_W, false);
+				if (cell != CELL_NONE) {
+					slave->Assign_Destination(&Map[cell]);
+					slave->QueueMission(MISSION_MOVE, false);
+					node->State = 2;
+				} else {
+					slave->Assign_Archive_Target(NULL);
+					slave->Assign_Destination(&Map[FUN_006B0690()]);
+					slave->QueueMission(MISSION_MOVE, false);
+					node->State = 4;
+				}
+				break;
+			}
+			case 2:
+				if (slave->Get_Cell_Ptr()->FUN_00487DF0()) {
+					slave->FUN_00522D00();
+					node->State = 3;
+				} else if (slave->NavCom == NULL) {
+					node->State = 1;
+				}
+				break;
+			case 3:
+				if (slave->FUN_00522D30()) {
+					slave->Assign_Archive_Target(slave->Get_Cell_Ptr());
+					slave->Assign_Destination(&Map[FUN_006B0690()]);
+					slave->QueueMission(MISSION_MOVE, false);
+					node->State = 4;
+					break;
+				}
+				if (!slave->Get_Cell_Ptr()->FUN_00487DF0()) {
+					slave->FUN_00522D20();
+					node->State = 1;
+					break;
+				}
+				if (!slave->FUN_00522FC0()) {
+					node->State = 1;
+				}
+				break;
+			case 4: {
+				bool reset = false;
+				if (slave->NavCom != NULL) {
+					if (Cell(slave->NavCom->Center_Coord()).Distance_To(FUN_006B0690()) > Rule->ApproachTargetResetMultiplier) {
+						reset = true;
+					}
+				}
+				if (!(slave->Get_Cell() == FUN_006B0690() && slave->NavCom == NULL)) {
+					if (slave->NavCom == NULL || reset) {
+						slave->Assign_Destination(&Map[FUN_006B0690()]);
+						slave->QueueMission(MISSION_MOVE, false);
+					}
+				} else {
+					slave->FUN_00522D50(Owner);
+					slave->Limbo();
+					int reload = ReloadRate;
+					node->RespawnTimer = CDTimerClass<FrameTimerClass>(reload);
+					node->State = 5;
+				}
+				break;
+			}
+			case 5: {
+				int remaining = node->RespawnTimer();
+				if (remaining == 0) {
+					slave->Strength = slave->Class->MaxStrength;
+					slave->EstimatedHealth = slave->Class->MaxStrength;
+					node->State = 0;
+				}
+				break;
+			}
+			case 6: {
+				int remaining = node->RespawnTimer();
+				if (remaining == 0) {
+					CreateSlave(node);
+				}
+				break;
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006AFD60
+void SlaveManagerClass::FUN_006AFD60(void)
+{
+	switch (State) {
+	case 0:
+		{
+			BuildingClass *building = As_Building(Owner);
+			if (building != NULL && building->CurrentMission != MISSION_DECONSTRUCTION && building->CurrentMission != MISSION_CONSTRUCTION) {
+				FUN_006B10D0(5);
+			}
+		}
+		break;
+	case 1:
+		{
+			UnitClass *unit = As_Unit(Owner);
+			if (unit != NULL && unit->NavCom != NULL) {
+				FUN_006B10D0(2);
+				break;
+			}
+			Cell target = FUN_006B02C0();
+			Cell cell = target;
+			if (cell == CELL_NONE) {
+				FUN_006B10D0(0);
+				break;
+			}
+			cell = FUN_006B0300(cell);
+			if (cell == CELL_NONE) {
+				FUN_006B10D0(0);
+			} else {
+				Owner->Assign_Destination(&Map[cell]);
+				Owner->QueueMission(MISSION_MOVE, false);
+				FUN_006B10D0(2);
+			}
+		}
+		break;
+	case 2:
+		{
+			UnitClass *unit = As_Unit(Owner);
+			if (unit == NULL) {
+				FUN_006B10D0(0);
+			} else if (unit->NavCom == NULL) {
+				if (unit->Try_To_Deploy()) {
+					FUN_006B10D0(4);
+				} else {
+					RespawnTimer = CDTimerClass<FrameTimerClass>(30);
+					FUN_006B10D0(3);
+				}
+			}
+		}
+		break;
+	case 3:
+		{
+			UnitClass *unit = As_Unit(Owner);
+			if (unit == NULL) {
+				FUN_006B10D0(0);
+			} else if (unit->Try_To_Deploy()) {
+				FUN_006B10D0(4);
+			} else {
+				FUN_006B10D0(1);
+			}
+		}
+		break;
+	case 4:
+		if (Owner->Fetch_RTTI() == RTTI_BUILDING && As_Building(Owner)->BState != 0) {
+			FUN_006B10D0(5);
+		} else if (As_Unit(Owner) && !As_Unit(Owner)->IsDeploying && Owner->CurrentMission == MISSION_GUARD) {
+			FUN_006B10D0(2);
+		}
+		break;
+	case 5:
+		if (As_Unit(Owner)) {
+			FUN_006B10D0(0);
+			break;
+		}
+		if (!FUN_006B0260()) {
+			Cell target = FUN_006B02C0();
+			Cell cell = FUN_006B0300(target);
+			short nearer = cell.Distance_To(target);
+			short farther = Owner->Get_Cell().Distance_To(target);
+			if (nearer + Rule->SlaveMinerScanCorrection / 256 < farther) {
+				Owner->unknown_bool_4F8 = true;
+				Owner->Assign_Archive_Target(Owner->Get_Cell_Ptr());
+				Owner->QueueMission(MISSION_DECONSTRUCTION, false);
+				FUN_006B10D0(6);
+			}
+		}
+		if (State != 6) FUN_006B04C0();
+		break;
+	case 6:
+		if (Owner->Fetch_RTTI() == RTTI_UNIT) {
+			FUN_006B0490();
+			FUN_006B10D0(1);
+		}
+		break;
+	}
+}
+
 // FUNCTION: GAMEMD 0x006B0260
 bool SlaveManagerClass::FUN_006B0260(void)
 {
@@ -249,17 +435,52 @@ void SlaveManagerClass::FUN_006B04C0(void)
 }
 
 // FUNCTION: GAMEMD 0x006B0690
-Cell SlaveManagerClass::FUN_006B0690(void)
+inline Cell SlaveManagerClass::FUN_006B0690(void)
 {
-	Cell cell;
-	if (Owner != NULL && Owner->Fetch_RTTI() == RTTI_BUILDING) {
+	if (As_Building(Owner)) {
 		BuildingClass * building = As_Building(Owner);
 		int width = building->Class->Width();
 		int height = building->Class->Height(false);
-		cell = Owner->Get_Cell() + Cell(width - 1, height / 2);
-		return cell;
+		return Owner->Get_Cell() + Cell(width - 1, height / 2);
 	}
 	return Owner->Get_Cell();
+}
+
+// FUNCTION: GAMEMD 0x006B0750
+Cell SlaveManagerClass::FUN_006B0750(void)
+{
+	if (As_Building(Owner)) {
+		Cell above = FUN_006B0690();
+		above = above + Cell(0, -1);
+		if (Map[above].Cell_Building() == Owner) {
+			return above;
+		} else {
+			return CELL_NONE;
+		}
+	}
+	return CELL_NONE;
+}
+
+// FUNCTION: GAMEMD 0x006B0880
+bool SlaveManagerClass::FUN_006B0880(TechnoClass * slave, CellClass * cell)
+{
+	Cell center = FUN_006B0690();
+	Cell above = FUN_006B0750();
+	if (cell != &Map[center] && (above == CELL_NONE || cell != &Map[above])) {
+		return false;
+	}
+	SlaveControl * node = NULL;
+	for (int index = SlaveNodes.Count() - 1; index >= 0; index--) {
+		SlaveControl * candidate = SlaveNodes[index];
+		if (candidate->Slave == slave) {
+			node = candidate;
+			break;
+		}
+	}
+	if (node == NULL) {
+		return false;
+	}
+	return true;
 }
 
 // FUNCTION: GAMEMD 0x006B0A20
@@ -309,7 +530,7 @@ void SlaveManagerClass::Killed(TechnoClass * killer, HouseClass * owner)
 	TechnoClass * first = NULL;
 	for (int index = SlaveNodes.Count() - 1; index >= 0; index--) {
 		InfantryClass * slave = SlaveNodes[index]->Slave;
-		if (slave != NULL && Game::IsActive) {
+		if (slave != NULL && GameActive) {
 			bool limbo = slave->IsInLimbo;
 			slave->SlaveOwner = NULL;
 			if (limbo) {
@@ -337,7 +558,7 @@ void SlaveManagerClass::Killed(TechnoClass * killer, HouseClass * owner)
 			}
 		}
 	}
-	if (Game::IsActive && first != NULL && !ScenarioInit && Rule->SlavesFreeSound != -1) {
+	if (GameActive && first != NULL && !ScenarioInit && Rule->SlavesFreeSound != -1) {
 		VocClass::PlayAt(Rule->SlavesFreeSound, Coord(first->Position));
 	}
 	Owner = NULL;

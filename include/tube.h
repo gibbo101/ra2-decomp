@@ -38,6 +38,10 @@ class TubeClass : public AbstractClass
 		bool Not_In_Tube(Cell const & cell) const;
 		void Add_Direction(FacingType dir);
 
+		Cell Get_Exit(void) const;
+		int Get_Count(void) const;
+
+
 	public:
 
 		Cell Enter;
@@ -52,3 +56,13 @@ class TubeClass : public AbstractClass
 
 		static char const * INI_NAME;
 };
+
+inline Cell TubeClass::Get_Exit(void) const
+{
+	return(Exit);
+}
+
+inline int TubeClass::Get_Count(void) const
+{
+	return(Count);
+}

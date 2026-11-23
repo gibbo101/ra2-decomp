@@ -65,12 +65,12 @@
 
 #include "movieunlock.h"
 
-extern CCINIClass DAT_008870C0;
+extern CCINIClass INI_RA2MD;
 extern void * AudioVoiceAttribs;
 extern void * AudioScoreAttribs;
 extern void * AudioSoundAttribs;
 void __fastcall FUN_00407150(void * p, int value);
-void __fastcall FUN_00752AB0(int volume);
+void __fastcall Set_Speech_Volume(int volume);
 
 // FUNCTION: GAMEMD 0x005FA2E0
 int __fastcall Hotkey_To_Key(int hotkey)
@@ -199,7 +199,7 @@ void OptionsClass::Set_Sound_Volume(float volume, bool feedback)
 void OptionsClass::Set_Voice_Volume(float volume, bool feedback)
 {
 	VoiceVolume = MIN(volume, 1.0);
-	FUN_00752AB0(VoiceVolume * 255.0);
+	Set_Speech_Volume(VoiceVolume * 255.0);
 	FUN_00407150(AudioVoiceAttribs, VoiceVolume * 16384.0f);
 	if (feedback) {
 		VocClass::PlayGlobal(Rule->GenericBeep, VoiceVolume, 0x2000, NULL);
@@ -215,29 +215,29 @@ void OptionsClass::Load_Settings(void)
 {
 	DebugString("--------- Loading SUN.INI settings ---------------\n");
 
-	GameSpeed = DAT_008870C0.Get_Int("Options", "GameSpeed", GameSpeed);
+	GameSpeed = INI_RA2MD.Get_Int("Options", "GameSpeed", GameSpeed);
 	DebugString("GameSpeed = %d\n", GameSpeed);
 
-	Difficulty = DAT_008870C0.Get_Int("Options", "Difficulty", Difficulty);
+	Difficulty = INI_RA2MD.Get_Int("Options", "Difficulty", Difficulty);
 	Difficulty = MIN(Difficulty, 4);
 	Difficulty = MAX(Difficulty, 0);
 	DebugString("Difficulty = %d\n", Difficulty);
 
-	CampDifficulty = DAT_008870C0.Get_Int("Options", "CampDifficulty", CampDifficulty);
+	CampDifficulty = INI_RA2MD.Get_Int("Options", "CampDifficulty", CampDifficulty);
 	CampDifficulty = MIN(CampDifficulty, 2);
 	CampDifficulty = MAX(CampDifficulty, 0);
 	DebugString("CampDifficulty = %d\n", CampDifficulty);
 
-	ScrollMethod = DAT_008870C0.Get_Int("Options", "ScrollMethod", ScrollMethod);
+	ScrollMethod = INI_RA2MD.Get_Int("Options", "ScrollMethod", ScrollMethod);
 	DebugString("ScrollMethod = %d\n", ScrollMethod);
 
-	ScrollRate = DAT_008870C0.Get_Int("Options", "ScrollRate", ScrollRate);
+	ScrollRate = INI_RA2MD.Get_Int("Options", "ScrollRate", ScrollRate);
 	DebugString("ScrollRate = %d\n", ScrollRate);
 
-	AutoScroll = DAT_008870C0.Get_Bool("Options", "AutoScroll", AutoScroll);
+	AutoScroll = INI_RA2MD.Get_Bool("Options", "AutoScroll", AutoScroll);
 	DebugString("AutoScroll is %s\n", AutoScroll == true ? "ON" : "OFF");
 
-	DetailLevel = DAT_008870C0.Get_Int("Options", "DetailLevel", DetailLevel);
+	DetailLevel = INI_RA2MD.Get_Int("Options", "DetailLevel", DetailLevel);
 	DetailLevel = MIN(DetailLevel, 2);
 	DetailLevel = MAX(DetailLevel, 0);
 	DebugString("DetailLevel = %d\n", DetailLevel);
@@ -245,46 +245,46 @@ void OptionsClass::Load_Settings(void)
 	IsSidebarOnRight = true;
 	DebugString("SideBar on %s\n", IsSidebarOnRight == true ? "RIGHT" : "LEFT");
 
-	SidebarCameoText = DAT_008870C0.Get_Bool("Options", "SidebarCameoText", SidebarCameoText);
+	SidebarCameoText = INI_RA2MD.Get_Bool("Options", "SidebarCameoText", SidebarCameoText);
 	DebugString("Sidebar Text is %s\n", SidebarCameoText == true ? "ON" : "OFF");
 
-	ActionLines = DAT_008870C0.Get_Bool("Options", "UnitActionLines", ActionLines);
+	ActionLines = INI_RA2MD.Get_Bool("Options", "UnitActionLines", ActionLines);
 	DebugString("ActionLines are %s\n", ActionLines == true ? "ON" : "OFF");
 
-	ShowHidden = DAT_008870C0.Get_Bool("Options", "ShowHidden", ShowHidden);
+	ShowHidden = INI_RA2MD.Get_Bool("Options", "ShowHidden", ShowHidden);
 	DebugString("ShowHidden is %s\n", ShowHidden == true ? "ON" : "OFF");
 
-	ToolTips = DAT_008870C0.Get_Bool("Options", "ToolTips", ToolTips);
+	ToolTips = INI_RA2MD.Get_Bool("Options", "ToolTips", ToolTips);
 	DebugString("ToolTips are %s\n", ToolTips == true ? "ON" : "OFF");
 
-	ScreenWidth = DAT_008870C0.Get_Int("Video", "ScreenWidth", ScreenWidth);
-	ScreenHeight = DAT_008870C0.Get_Int("Video", "ScreenHeight", ScreenHeight);
+	ScreenWidth = INI_RA2MD.Get_Int("Video", "ScreenWidth", ScreenWidth);
+	ScreenHeight = INI_RA2MD.Get_Int("Video", "ScreenHeight", ScreenHeight);
 	DebugString("Resolution = %d X %d\n", ScreenWidth, ScreenHeight);
 
-	StretchMovies = DAT_008870C0.Get_Bool("Video", "StretchMovies", StretchMovies);
+	StretchMovies = INI_RA2MD.Get_Bool("Video", "StretchMovies", StretchMovies);
 	StretchMovies = StretchMovies == true && DSurface::AllowStretchBlits == true;
 	DebugString("StretchMovies is %s\n", StretchMovies == true ? "ON" : "OFF");
 
-	AllowHiResModes = DAT_008870C0.Get_Bool("Video", "AllowHiResModes", AllowHiResModes);
+	AllowHiResModes = INI_RA2MD.Get_Bool("Video", "AllowHiResModes", AllowHiResModes);
 	DebugString("AllowHiRes is %s\n", AllowHiResModes == true ? "ON" : "OFF");
 
-	Debug_IngameModeChange = DAT_008870C0.Get_Bool("Video", "AllowModeToggle", Debug_IngameModeChange);
+	Debug_IngameModeChange = INI_RA2MD.Get_Bool("Video", "AllowModeToggle", Debug_IngameModeChange);
 
-	AllowVRAMSidebar = DAT_008870C0.Get_Bool("Video", "AllowVRAMSidebar", AllowVRAMSidebar);
+	AllowVRAMSidebar = INI_RA2MD.Get_Bool("Video", "AllowVRAMSidebar", AllowVRAMSidebar);
 
-	Set_Sound_Volume(DAT_008870C0.Get_Float("Audio", "SoundVolume", SoundVolume), false);
-	Set_Voice_Volume(DAT_008870C0.Get_Float("Audio", "VoiceVolume", VoiceVolume), false);
-	Set_Score_Volume(DAT_008870C0.Get_Float("Audio", "ScoreVolume", ScoreVolume), false);
+	Set_Sound_Volume(INI_RA2MD.Get_Float("Audio", "SoundVolume", SoundVolume), false);
+	Set_Voice_Volume(INI_RA2MD.Get_Float("Audio", "VoiceVolume", VoiceVolume), false);
+	Set_Score_Volume(INI_RA2MD.Get_Float("Audio", "ScoreVolume", ScoreVolume), false);
 
-	Set_Repeat(DAT_008870C0.Get_Bool("Audio", "IsScoreRepeat", IsScoreRepeat));
-	Set_Shuffle(DAT_008870C0.Get_Bool("Audio", "IsScoreShuffle", IsScoreShuffle));
+	Set_Repeat(INI_RA2MD.Get_Bool("Audio", "IsScoreRepeat", IsScoreRepeat));
+	Set_Shuffle(INI_RA2MD.Get_Bool("Audio", "IsScoreShuffle", IsScoreShuffle));
 
-	InGameMusic = DAT_008870C0.Get_Bool("Audio", "InGameMusic", InGameMusic);
+	InGameMusic = INI_RA2MD.Get_Bool("Audio", "InGameMusic", InGameMusic);
 
 	LastUnlockedSovMovie = -1;
 	LastUnlockedAllMovie = -1;
 	wchar_t netid[200];
-	DAT_008870C0.Get_UnicodeString("Network", "NetID", DAT_00887734, netid, 200);
+	INI_RA2MD.Get_UnicodeString("Network", "NetID", DAT_00887734, netid, 200);
 	if (netid[0] != 0) {
 		for (wchar_t * c = netid; *c; c++) {
 			*c = ~*c;
@@ -308,12 +308,12 @@ void OptionsClass::Load_Settings(void)
 		LastUnlockedAllMovie = -1;
 	}
 
-	SoundLatency = DAT_008870C0.Get_Int("Audio", "SoundLatency", SoundLatency);
+	SoundLatency = INI_RA2MD.Get_Int("Audio", "SoundLatency", SoundLatency);
 	DebugString("Emulated sound card latency default = %d\n", SoundLatency);
 
-	Socket = DAT_008870C0.Get_Int("Network", "Socket", Socket);
-	NetCard = DAT_008870C0.Get_Int("Network", "NetCard", NetCard);
-	DAT_008870C0.Get_String("Network", "DestNet", DAT_00889F64, DestNet, sizeof(DestNet));
+	Socket = INI_RA2MD.Get_Int("Network", "Socket", Socket);
+	NetCard = INI_RA2MD.Get_Int("Network", "NetCard", NetCard);
+	INI_RA2MD.Get_String("Network", "DestNet", DAT_00889F64, DestNet, sizeof(DestNet));
 
 	DebugString("--------- Complete -------------------------------\n");
 
@@ -348,30 +348,30 @@ void OptionsClass::Save_Settings(void)
 
 	DebugString("Saving game settings\n");
 
-	DAT_008870C0.Put_Int("Options", "GameSpeed", GameSpeed);
-	DAT_008870C0.Put_Int("Options", "Difficulty", Difficulty);
-	DAT_008870C0.Put_Int("Options", "CampDifficulty", CampDifficulty);
-	DAT_008870C0.Put_Int("Options", "ScrollMethod", ScrollMethod);
-	DAT_008870C0.Put_Int("Options", "ScrollRate", ScrollRate);
-	DAT_008870C0.Put_Bool("Options", "AutoScroll", AutoScroll);
-	DAT_008870C0.Put_Int("Options", "DetailLevel", DetailLevel);
-	DAT_008870C0.Put_Bool("Options", "SidebarCameoText", SidebarCameoText);
-	DAT_008870C0.Put_Bool("Options", "UnitActionLines", ActionLines);
-	DAT_008870C0.Put_Bool("Options", "ShowHidden", ShowHidden);
-	DAT_008870C0.Put_Bool("Options", "ToolTips", ToolTips);
-	DAT_008870C0.Put_Int("Video", "ScreenWidth", ScreenWidth);
-	DAT_008870C0.Put_Int("Video", "ScreenHeight", ScreenHeight);
-	DAT_008870C0.Put_Bool("Video", "StretchMovies", StretchMovies);
-	DAT_008870C0.Put_Float("Audio", "SoundVolume", SoundVolume);
-	DAT_008870C0.Put_Float("Audio", "VoiceVolume", VoiceVolume);
-	DAT_008870C0.Put_Float("Audio", "ScoreVolume", ScoreVolume);
-	DAT_008870C0.Put_Bool("Audio", "IsScoreRepeat", IsScoreRepeat);
-	DAT_008870C0.Put_Bool("Audio", "IsScoreShuffle", IsScoreShuffle);
-	DAT_008870C0.Put_Int("Audio", "SoundLatency", SoundLatency);
-	DAT_008870C0.Put_Bool("Audio", "InGameMusic", InGameMusic);
-	DAT_008870C0.Put_Int("Network", "Socket", Socket);
-	DAT_008870C0.Put_Int("Network", "NetCard", NetCard);
-	DAT_008870C0.Put_String("Network", "DestNet", DestNet);
+	INI_RA2MD.Put_Int("Options", "GameSpeed", GameSpeed);
+	INI_RA2MD.Put_Int("Options", "Difficulty", Difficulty);
+	INI_RA2MD.Put_Int("Options", "CampDifficulty", CampDifficulty);
+	INI_RA2MD.Put_Int("Options", "ScrollMethod", ScrollMethod);
+	INI_RA2MD.Put_Int("Options", "ScrollRate", ScrollRate);
+	INI_RA2MD.Put_Bool("Options", "AutoScroll", AutoScroll);
+	INI_RA2MD.Put_Int("Options", "DetailLevel", DetailLevel);
+	INI_RA2MD.Put_Bool("Options", "SidebarCameoText", SidebarCameoText);
+	INI_RA2MD.Put_Bool("Options", "UnitActionLines", ActionLines);
+	INI_RA2MD.Put_Bool("Options", "ShowHidden", ShowHidden);
+	INI_RA2MD.Put_Bool("Options", "ToolTips", ToolTips);
+	INI_RA2MD.Put_Int("Video", "ScreenWidth", ScreenWidth);
+	INI_RA2MD.Put_Int("Video", "ScreenHeight", ScreenHeight);
+	INI_RA2MD.Put_Bool("Video", "StretchMovies", StretchMovies);
+	INI_RA2MD.Put_Float("Audio", "SoundVolume", SoundVolume);
+	INI_RA2MD.Put_Float("Audio", "VoiceVolume", VoiceVolume);
+	INI_RA2MD.Put_Float("Audio", "ScoreVolume", ScoreVolume);
+	INI_RA2MD.Put_Bool("Audio", "IsScoreRepeat", IsScoreRepeat);
+	INI_RA2MD.Put_Bool("Audio", "IsScoreShuffle", IsScoreShuffle);
+	INI_RA2MD.Put_Int("Audio", "SoundLatency", SoundLatency);
+	INI_RA2MD.Put_Bool("Audio", "InGameMusic", InGameMusic);
+	INI_RA2MD.Put_Int("Network", "Socket", Socket);
+	INI_RA2MD.Put_Int("Network", "NetCard", NetCard);
+	INI_RA2MD.Put_String("Network", "DestNet", DestNet);
 
 	wchar_t netid[200];
 	swprintf(netid, L"%d %d", LastUnlockedSovMovie + 1, LastUnlockedAllMovie + 1);
@@ -381,9 +381,9 @@ void OptionsClass::Save_Settings(void)
 			*c = 0xFFFF;
 		}
 	}
-	DAT_008870C0.Put_UnicodeString("Network", "NetID", netid);
+	INI_RA2MD.Put_UnicodeString("Network", "NetID", netid);
 
-	DAT_008870C0.Save(file, false);
+	INI_RA2MD.Save(file, false);
 
 	Setup_Dest_Net();
 }

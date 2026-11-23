@@ -4,7 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 #include "always.h"
 #include "geometry.h"
-#include "rect.h"
 #include "mixfile.h"
 #include "ccfile.h"
 #include "auddev.h"
@@ -46,7 +45,7 @@ extern void * DAT_00816514;
 
 struct AudioIDXData;
 struct ChronoScreenEffect { static bool Active(void); };
-struct Game { static bool __cdecl CallBack(void); };
+void Call_Back(void);
 
 void __fastcall FUN_00401580(AudioIDXData * idx);
 AudioIDXData * __fastcall FUN_004011C0(char const * name, int flags);
@@ -72,7 +71,7 @@ void FUN_00751040(void);
 void FUN_00751080(void);
 void FUN_00752290(void);
 void FUN_00752340(void);
-void FUN_00752760(void);
+void Speak_AI(void);
 void FUN_00752AD0(void);
 void Theme_Suspend(void);
 void Theme_Resume(void);
@@ -304,7 +303,7 @@ void FUN_00406F70(void)
 		if (now - AudioServiceLast > 33) {
 			AudioServiceAllEvents();
 			FUN_00750EC0();
-			FUN_00752760();
+			Speak_AI();
 			Theme.AI();
 			FUN_007B84D0();
 			AudioServiceLast = now;
@@ -375,6 +374,6 @@ void __fastcall AudioLevelWaitFade(AudioLevel * level)
 	TimeStamp end = AudioGetTime() + level->duration;
 
 	while (level->level != level->newLevel && AudioGetTime() < end) {
-		Game::CallBack();
+		Call_Back();
 	}
 }

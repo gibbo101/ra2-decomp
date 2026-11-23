@@ -49,7 +49,6 @@
 // SYNTHETIC: GAMEMD 0x007B2D90 SYMBOL
 // _$E41
 
-namespace Game { extern HWND hWnd; }
 namespace Randomizer { extern Random2Class Global; }
 extern int __cdecl FUN_007B2730(void);
 extern int DAT_00841F34;
@@ -355,7 +354,7 @@ void UDPInterfaceClass::Broadcast (void *buffer, int buffer_len, bool alternate)
 			send_socket = Socket;
 		}
 
-		SendMessage ( Game::hWnd, Protocol_Event_Message(send_socket), 0, (LONG)FD_WRITE );
+		SendMessage ( MainWindow, Protocol_Event_Message(send_socket), 0, (LONG)FD_WRITE );
 
 		Windows_Message_Handler();
 	}
@@ -366,7 +365,7 @@ bool UDPInterfaceClass::Start_Listening (void)
 {
 	if (BASECLASS::Start_Listening()) {
 		for (int i = 0; i < PortCount; i++) {
-			if (WSAAsyncSelect(PortSockets[i], Game::hWnd, Protocol_Event_Message(INVALID_SOCKET), FD_READ | FD_WRITE) == SOCKET_ERROR) {
+			if (WSAAsyncSelect(PortSockets[i], MainWindow, Protocol_Event_Message(INVALID_SOCKET), FD_READ | FD_WRITE) == SOCKET_ERROR) {
 				DebugString("Async select failed on spare socket.\n");
 				return(false);
 			}
@@ -415,7 +414,7 @@ void UDPInterfaceClass::Close_All_Port_Sockets (void)
 {
 	for (int i = 0; i < PortCount; i++) {
 		DebugString("Closing spare socket %d\n", PortSockets[i]);
-		WSAAsyncSelect(PortSockets[i], Game::hWnd, 0, 0);
+		WSAAsyncSelect(PortSockets[i], MainWindow, 0, 0);
 		closesocket(PortSockets[i]);
 	}
 	PortCount = 0;
@@ -505,7 +504,7 @@ int UDPInterfaceClass::Message_Handler(HWND, UINT message, UINT wParam, LONG lPa
 					memset(packet->Address, 0, sizeof(packet->Address));
 					if (addr.sin_addr.s_addr == htonl(INADDR_LOOPBACK)) {
 						packet->SrcPort = 0;
-						*(IPXAddressClass *)packet->Address = Session.unknown_2978;
+						*(IPXAddressClass *)packet->Address = Session.PacketRouterAddressTranslate;
 					} else {
 						packet->SrcPort = ntohs(addr.sin_port);
 						memcpy(packet->Address + 4, &addr.sin_addr.s_addr, 4);
@@ -561,8 +560,8 @@ int UDPInterfaceClass::Message_Handler(HWND, UINT message, UINT wParam, LONG lPa
 				} else {
 					addr.sin_port = htons((unsigned short)UDPListenPort);
 				}
-				if (!memcmp(packet->Address + 4, (unsigned char *)&Session.unknown_2978 + 4, 4)
-					&& (Session.Players.Count() == 0 || Session.unknown_2978 == Session.Players[0]->Address)) {
+				if (!memcmp(packet->Address + 4, (unsigned char *)&Session.PacketRouterAddressTranslate + 4, 4)
+					&& (Session.Players.Count() == 0 || Session.PacketRouterAddressTranslate == Session.Players[0]->Address)) {
 					addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 					addr.sin_port = htons((unsigned short)DAT_00841F3C);
 				}

@@ -6,7 +6,9 @@ Each .cpp is compiled as tools/check.py compiles it (the fixed flags, the header
 directory it prepares) plus /Gy, which puts every function in its own COMDAT so /ORDER can place it at its
 address; it changes how the code is packaged, not the code. Each archived .asm is assembled the
 same way as the checker does, split where data/asm_objects.csv says the original began a new object
-at one of its routines, and then comdatize.py marks its .text a COMDAT for the same reason. Writes
+at one of its routines, and then comdatize.py marks its .text a COMDAT for the same reason. An archive
+routine that src/ra2asm/ rebuilds as the original has it is retired from the archive's object, so the
+rebuilt one is the only definition. Writes
 build/exelink/obj/objects.json, the object index the link reads:
 {"objects": [{"source": "src/x.cpp", "object": "src/x.obj"}, ...]}.
 
@@ -24,11 +26,23 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent))
 import paths  # noqa: E402
 import check  # noqa: E402
+import coffgen  # noqa: E402
 import comdatize  # noqa: E402
 
 
 def sources():
     return sorted(p for ext in ("*.cpp", "*.asm") for p in (paths.ROOT / "src").rglob(ext))
+
+
+def reconstructed_routines(objdir):
+    """The routines the objects of src/ra2asm/ in `objdir` define."""
+    names = set()
+    for src in sources():
+        obj = objdir / src.relative_to(paths.ROOT).with_suffix(".obj")
+        if check.is_reconstructed(src) and obj.is_file():
+            names |= {name for _, name, _, section, scl, _ in coffgen.read_symbols(obj.read_bytes())
+                      if section > 0 and scl == coffgen.CLASS_EXTERNAL}
+    return names
 
 
 def main(argv=None):
@@ -41,7 +55,7 @@ def main(argv=None):
     todo = [p.resolve() for p in args.only] if args.only else sources()
     headers = check.prepare_headers(None)
     starts = check.asm_object_starts()
-    failed = []
+    failed, assembled = [], []
 
     def one(src):
         rel = src.relative_to(paths.ROOT)
@@ -49,11 +63,8 @@ def main(argv=None):
                                         extra=() if src.suffix == ".asm" else ("/Gy",))
         if obj is None:
             failed.append((rel.as_posix(), log.strip().splitlines()[-3:]))
-        elif src.suffix == ".asm":   # MASM writes one plain .text; make it a COMDAT /ORDER can place
-            data = obj.read_bytes()
-            for symbol in starts.get(rel.as_posix(), ()):
-                data = comdatize.split(data, symbol)
-            obj.write_bytes(comdatize.comdatize(data)[0])
+        elif src.suffix == ".asm":
+            assembled.append((src, obj))
         return rel
 
     try:
@@ -61,6 +72,14 @@ def main(argv=None):
             list(pool.map(one, todo))
     finally:
         shutil.rmtree(headers, ignore_errors=True)
+    rebuilt = reconstructed_routines(objdir)
+    for src, obj in assembled:   # MASM writes one plain .text; make it a COMDAT /ORDER can place
+        data = obj.read_bytes()
+        for symbol in starts.get(src.relative_to(paths.ROOT).as_posix(), ()):
+            data = comdatize.split(data, symbol)
+        if not check.is_reconstructed(src):
+            data = comdatize.retire(data, rebuilt)
+        obj.write_bytes(comdatize.ungroup_retired(comdatize.comdatize(data)[0]))
     objects = []
     for src in sources():
         rel = src.relative_to(paths.ROOT)

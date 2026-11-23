@@ -159,15 +159,11 @@ void __fastcall FUN_00406F40(void);
 int __fastcall FUN_004072B0(void * p);
 void __fastcall FUN_00407150(void * p, int value);
 void __fastcall FUN_005BF500(bool pause);
-class InputManagerClass {
-	public:
-		void DoSomething(void);
-		void FUN_0054F000(void);
-		static InputManagerClass * Instance;
-};
 
-// FUNCTION: GAMEMD 0x00683280
-// FUNCTION: GAMEMD 0x006832B0
+// SYNTHETIC: GAMEMD 0x00683280 SYMBOL
+// _$E286
+// SYNTHETIC: GAMEMD 0x006832B0 SYMBOL
+// _$E284
 CDTimerClass<SystemTimerClass> ScenUnusedTimer;
 
 // FUNCTION: GAMEMD 0x006832C0
@@ -235,7 +231,7 @@ void ScenarioClass::Reset(void)
 	ElapsedTimer.Stop();
 	PauseTimer = 0;
 	PauseTimer.Stop();
-	unknown_62C = 0;
+	HoldCount = 0;
 	IsGamePaused = false;
 	MissionTimer = 0;
 	MissionTimer.Stop();
@@ -513,7 +509,7 @@ void __fastcall Hold_Scenario(int seconds)
 		Scen->IsGamePaused = true;
 	}
 
-	if (Scen->unknown_62C == 0) {
+	if (Scen->HoldCount == 0) {
 		FUN_00406F00();
 
 		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) {
@@ -529,21 +525,21 @@ void __fastcall Hold_Scenario(int seconds)
 			}
 			Scen->IsInputLocked = true;
 			UserInputLocked = true;
-			InputManagerClass::Instance->DoSomething();
+			Keyboard->Clear();
 			DAT_00B07784 = 0;
 		}
 	}
-	Scen->unknown_62C++;
+	Scen->HoldCount++;
 }
 
 // FUNCTION: GAMEMD 0x00684180
 void Release_Scenario(void)
 {
-	if (Scen->unknown_62C == 0) {
+	if (Scen->HoldCount == 0) {
 		return;
 	}
-	Scen->unknown_62C--;
-	if (Scen->unknown_62C != 0) {
+	Scen->HoldCount--;
+	if (Scen->HoldCount != 0) {
 		return;
 	}
 
@@ -555,7 +551,7 @@ void Release_Scenario(void)
 		}
 		Scen->IsInputLocked = false;
 		UserInputLocked = false;
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 		DAT_00B07784 = 0;
 	}
 
@@ -574,7 +570,7 @@ void Lock_Scenario_Input(void)
 
 	Scen->IsInputLocked = true;
 	UserInputLocked = true;
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	DAT_00B07784 = 0;
 }
 
@@ -589,7 +585,7 @@ void Unlock_Scenario_Input(void)
 
 	Scen->IsInputLocked = false;
 	UserInputLocked = false;
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	DAT_00B07784 = 0;
 }
 
@@ -612,16 +608,13 @@ void Toggle_Display_Mode(bool ingame)
 void __fastcall FUN_0071DCA0(TheaterType theater);
 void __fastcall FUN_00660C50(void);
 void __fastcall FUN_00734210(void);
-void __fastcall FUN_0053AB50(void);
 void __fastcall FUN_0074D450(TheaterType theater);
 void __fastcall FUN_006B5490(TheaterType theater);
 
-namespace Game { extern bool IsActive; extern HWND hWnd; bool __cdecl CallBack(void); }
 void __fastcall Set_Frame_Rate_Limit(int value);
 void __fastcall FUN_0055AF50(int value);
 
-struct FileSystem { static char TEMPERAT_PAL[]; };
-void __fastcall FUN_004A3C30(void * palette, int rate, bool (__cdecl * callback)(void));
+void __fastcall FUN_004A3C30(void * palette, int rate, void (* callback)(void));
 bool Wait_For_Players_To_Load(void);
 namespace Game { namespace Network { extern int Tournament; extern int WOLGameID; } }
 #include "ownertalk.h"
@@ -736,7 +729,7 @@ bool Read_Scenario(char const * fname)
 
 	if (!read_ok) {
 		DebugString("Error - Unable to read scenario: %s\n", name);
-		FUN_004A3C30(&FileSystem::TEMPERAT_PAL, 7, Game::CallBack);
+		FUN_004A3C30(&GamePalette, 7, Call_Back);
 		WWMessageBox().Process(StringTable::LoadString("TXT_UNABLE_READ_SCENARIO", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0x50d), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\Scenario.CPP", 0x50d), NULL, NULL, false);
 
 		ScenarioInit--;
@@ -783,7 +776,7 @@ bool Read_Scenario(char const * fname)
 
 	if (!Debug_Map) {
 		if (all_loaded) {
-			Game::CallBack();
+			Call_Back();
 			double progress = Progress.Get_Current_Progress();
 
 			while (progress < 1.0) {
@@ -935,20 +928,18 @@ void Post_Load_Game(void)
 
 	Search.Update_Map_Dimensions(Map.PlayRect);
 
-	FUN_0053AB50();
+	IonStormClass::Apply_Secondary_Effect();
 	AnimClass::Post_Load_Game();
 	Map.Flag_To_Redraw(GS_REDRAW_ALL);
-	InvalidateRect(Game::hWnd, NULL, FALSE);
+	InvalidateRect(MainWindow, NULL, FALSE);
 	FUN_00734210();
 	((TechnoClass *)NULL)->ClearSidebarTabObject();
 	FUN_00660C50();
 }
 
 void __fastcall FUN_00750FA0(void);
-void __fastcall FUN_00539760(void);
 void __fastcall FUN_006370B0(void);
-void __fastcall FUN_0052CB90(void);
-void __fastcall FUN_0053A090(void);
+void __fastcall Init_Campaigns(void);
 
 // FUNCTION: GAMEMD 0x006851F0
 void Clear_Scenario(void)
@@ -965,7 +956,7 @@ void Clear_Scenario(void)
 
 	Scen->Reset();
 
-	FUN_0053A090();
+	IonStormClass::Ion_Storm_End();
 
 	for (index = AbstractTypes.Count() - 1; index >= 0; index--) {
 		AbstractTypeClass * abstype = AbstractTypes[index];
@@ -1019,7 +1010,7 @@ void Clear_Scenario(void)
 	Scen->OverParMessage[0] = '\0';
 
 	LightSourceClass::Reset();
-	FUN_00539760();
+	IonStormClass::Init();
 	EMPulseClass::Reset();
 	VeinholeMonsterClass::Reset();
 	TiberiumClass::Deinit_Tiberium_Spread_System();
@@ -1042,7 +1033,7 @@ void Clear_Scenario(void)
 	Scen->Clear_All_Waypoints();
 
 	DebugString("Init_Campaigns()\n");
-	FUN_0052CB90();
+	Init_Campaigns();
 
 	if (GasSystem) {
 		GasSystem->Clear_System();
@@ -1067,7 +1058,6 @@ void __fastcall AudioLevelWaitFade(void * p);
 bool __fastcall FUN_007529E0(void);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 bool Net2Init_Network(void);
-namespace Game { namespace Network { extern int PreCalcFrameRate; } }
 namespace CopyProtection { bool CheckProtectedData(void); }
 void Disconnect_Gracefully(void);
 class MPScoreScreen { public: MPScoreScreen(void); void Present(void); };
@@ -1100,7 +1090,7 @@ void Do_Win(void)
 	int timeout = TickCount + 300;
 
 	while (FUN_007529E0() && timeout > TickCount) {
-		Game::CallBack();
+		Call_Back();
 	}
 
 	FUN_007529A0(true);
@@ -1147,7 +1137,7 @@ void Do_Win(void)
 			if (Session.MPGameMode != NULL) {
 				Session.MPGameMode->vt_entry_A4(true);
 			}
-			Game::IsActive = false;
+			GameActive = false;
 			FUN_0078ABF0(false, L"");
 			return;
 		}
@@ -1159,7 +1149,7 @@ void Do_Win(void)
 	FUN_005BF260(Scen->WinMovie, -1, true, true, true);
 
 	if (!Session.Play) {
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 
 		if (!Scen->IsSkipScore) {
 			STLScoreScreen().Present();
@@ -1173,7 +1163,7 @@ void Do_Win(void)
 		}
 
 		if (!CopyProtection::CheckProtectedData() || Scen->IsOneTimeOnly) {
-			Game::IsActive = false;
+			GameActive = false;
 			MouseCursor->Show_Mouse();
 			return;
 		}
@@ -1183,7 +1173,7 @@ void Do_Win(void)
 				FUN_005BF260(Campaigns[Scen->Campaign]->FinalMovie, -1, true, true, true);
 			}
 			Show_Who_Was_Responsible();
-			Game::IsActive = false;
+			GameActive = false;
 			MouseCursor->Show_Mouse();
 			return;
 		}
@@ -1209,7 +1199,7 @@ void Do_Win(void)
 			}
 		}
 
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 	}
 
 	MouseCursor->Show_Mouse();
@@ -1247,7 +1237,7 @@ void Do_Win(void)
 				delete PacketTransport;
 				PacketTransport = NULL;
 			}
-			Game::IsActive = false;
+			GameActive = false;
 			return;
 		}
 
@@ -1258,11 +1248,11 @@ void Do_Win(void)
 			Session.Options.AISlots.Colors[i] = saved_colors[i];
 			Session.Slots[i] = saved_slots[i];
 		}
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 	}
 
-	Game::IsActive = CopyProtection::CheckProtectedData();
-	if (!Game::IsActive) {
+	GameActive = CopyProtection::CheckProtectedData();
+	if (!GameActive) {
 		MouseCursor->Show_Mouse();
 		return;
 	}
@@ -1276,7 +1266,7 @@ void Do_Win(void)
 		if (Session.Type == GAME_IPX) {
 			Ipx.Set_Timing((Ipx.Global_Response_Time() + 2 < 15 ? 15 : Ipx.Global_Response_Time() + 2), -1, 600, true);
 			Ipx.Set_External_Timing((Ipx.Global_Response_Time() + 2 < 60 ? 60 : Ipx.Global_Response_Time() + 2), -1, 600);
-		} else if (Session.Type == GAME_INTERNET && Game::Network::PreCalcFrameRate == 0) {
+		} else if (Session.Type == GAME_INTERNET && Session.PrecalcDesiredFrameRate == 0) {
 			Ipx.Set_Timing((Ipx.Global_Response_Time() + 2 < 60 ? 60 : Ipx.Global_Response_Time() + 2), -1, 600, true);
 		}
 	}
@@ -1288,7 +1278,7 @@ void Do_Win(void)
 	}
 
 	Map.Render();
-	FUN_004A3C30(&FileSystem::TEMPERAT_PAL, 7, Game::CallBack);
+	FUN_004A3C30(&GamePalette, 7, Call_Back);
 }
 
 // FUNCTION: GAMEMD 0x00685DC0
@@ -1319,7 +1309,7 @@ void Do_Lose(void)
 	int timeout = TickCount + 300;
 
 	while (FUN_007529E0() && timeout > TickCount) {
-		Game::CallBack();
+		Call_Back();
 	}
 
 	FUN_007529A0(true);
@@ -1365,7 +1355,7 @@ void Do_Lose(void)
 			if (Session.MPGameMode != NULL) {
 				Session.MPGameMode->vt_entry_A4(false);
 			}
-			Game::IsActive = false;
+			GameActive = false;
 			FUN_0078ABF0(false, L"");
 			return;
 		}
@@ -1411,7 +1401,7 @@ void Do_Lose(void)
 					delete PacketTransport;
 					PacketTransport = NULL;
 				}
-				Game::IsActive = false;
+				GameActive = false;
 				if (Session.Type == GAME_INTERNET) {
 					FUN_0078ABF0(false, L"");
 				}
@@ -1425,7 +1415,7 @@ void Do_Lose(void)
 				Session.Options.AISlots.Colors[i] = saved_colors[i];
 				Session.Slots[i] = saved_slots[i];
 			}
-			InputManagerClass::Instance->DoSomething();
+			Keyboard->Clear();
 		}
 
 		Start_Scenario(Scen->ScenarioName, false, Scen->Campaign);
@@ -1436,7 +1426,7 @@ void Do_Lose(void)
 			if (Session.Type == GAME_IPX) {
 				Ipx.Set_Timing(Ipx.Global_Response_Time() + 2 < 15 ? 15 : Ipx.Global_Response_Time() + 2, -1, 600, true);
 				Ipx.Set_External_Timing(Ipx.Global_Response_Time() + 2 < 60 ? 60 : Ipx.Global_Response_Time() + 2, -1, 600);
-			} else if (Session.Type == GAME_INTERNET && Game::Network::PreCalcFrameRate == 0) {
+			} else if (Session.Type == GAME_INTERNET && Session.PrecalcDesiredFrameRate == 0) {
 				Ipx.Set_Timing(Ipx.Global_Response_Time() + 2 < 60 ? 60 : Ipx.Global_Response_Time() + 2, -1, 600, true);
 			}
 		}
@@ -1453,7 +1443,7 @@ void Do_Lose(void)
 			FUN_0078ABF0(false, L"");
 		}
 	} else {
-		Game::IsActive = false;
+		GameActive = false;
 	}
 }
 
@@ -1481,15 +1471,15 @@ void Do_Restart(void)
 	FUN_007529A0(true);
 	FUN_00752CA0();
 	Map.Set_Default_Mouse(MOUSE_NORMAL, false);
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 
 	Start_Scenario(Scen->ScenarioName, false, Scen->Campaign);
 	Environment.Restore();
 
 	while (timer > 0) {
-		Game::CallBack();
+		Call_Back();
 	}
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 
 	if (ToolTips != NULL) {
 		ToolTips->Activate(Options.ToolTips);
@@ -1507,7 +1497,7 @@ void Do_Abort(void)
 	Scen->Scenario = 1;
 
 	FUN_005BF450();
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 
 	MouseCursor->Erase_Mouse(HiddenSurface);
 	MouseCursor->Release_Mouse();
@@ -1521,7 +1511,7 @@ void Do_Abort(void)
 	int timeout = TickCount + 300;
 
 	while (FUN_007529E0() && timeout > TickCount) {
-		Game::CallBack();
+		Call_Back();
 	}
 
 	FUN_007529A0(true);
@@ -1530,7 +1520,7 @@ void Do_Abort(void)
 	FUN_00750FA0();
 	FUN_00407150(AudioGroupAttribs1, 0x4000);
 	Toggle_Display_Mode(false);
-	Game::IsActive = false;
+	GameActive = false;
 }
 
 // FUNCTION: GAMEMD 0x00686700
@@ -1591,7 +1581,7 @@ void Multiplayer_Last_Minute_Fixups(bool official)
 	if ((Session.Options.AIPlayers + Session.Players.Count() < Rule->MaxPlayers) && !Debug_Map) {
 		Remove_AI_Players();
 	}
-	Game::CallBack();
+	Call_Back();
 
 	if (!Debug_Map) {
 		int save_init = ScenarioInit;
@@ -1605,7 +1595,7 @@ void Multiplayer_Last_Minute_Fixups(bool official)
 		ScenarioInit = save_init;
 	}
 	Session.Update_Progress(93);
-	Game::CallBack();
+	Call_Back();
 
 	if (Session.Options.Goodies) {
 		int count = MAX(Rule->CrateMinimum, Session.NumPlayers);
@@ -1614,7 +1604,7 @@ void Multiplayer_Last_Minute_Fixups(bool official)
 			Map.Place_Random_Crate();
 		}
 	}
-	Game::CallBack();
+	Call_Back();
 
 	Map.Compute_Start_Pos();
 
@@ -1653,7 +1643,7 @@ void Multiplayer_Last_Minute_Fixups(bool official)
 #include "beacon.h"
 extern wchar_t DAT_00887734[];
 extern char DAT_00889F64[];
-bool __fastcall FUN_00534FA0(int side);
+bool __fastcall Prep_For_Side(int side);
 void __fastcall FUN_005EE9D0(bool official);
 void Clear_Radar_Events(void);
 extern BeaconManagerClass BeaconManager;
@@ -1829,7 +1819,7 @@ again:
 		Map.Set_Local_Dimensions(size);
 
 		Session.MPGameMode->StartingPositionsToHouseBaseCells(official);
-		if (Session.unknown_0C == 2) {
+		if (Session.WOLWelcomeChoice == 2) {
 			FUN_005EE9D0(official);
 		} else {
 			Session.MPGameMode->StartingPositionsToHouseBaseCells2(official);
@@ -1883,13 +1873,13 @@ again:
 			side = 0;
 		}
 		Scen->PlayerSideIndex = side;
-		if (!FUN_00534FA0(side)) {
+		if (!Prep_For_Side(side)) {
 			ScenarioInit--;
 			return(false);
 		}
 	} else {
 		Scen->PlayerSideIndex = side;
-		if (!FUN_00534FA0(side)) {
+		if (!Prep_For_Side(side)) {
 			ScenarioInit--;
 			return(false);
 		}
@@ -1913,7 +1903,7 @@ again:
 		} else {
 			side = 0;
 		}
-		if (!FUN_00534FA0(side)) {
+		if (!Prep_For_Side(side)) {
 			ScenarioInit--;
 			return(false);
 		}
@@ -2978,7 +2968,7 @@ bool ScenarioClass::Read_INI(CCINIClass & ini)
 	}
 
 	Read_Local_INI(ini);
-	Game::CallBack();
+	Call_Back();
 
 	char const * const RANKING = "Ranking";
 	ParTimeEasy = ini.ReadTime(RANKING, "ParTimeEasy", ParTimeEasy);
@@ -3014,7 +3004,7 @@ bool ScenarioClass::Read_INI(CCINIClass & ini)
 	DominatorAmbientChangeRate = (int)(1000.0 * ini.Get_Float(LIGHTING, "DominatorAmbientChangeRate", DominatorAmbientChangeRate / 1000.0f) + 0.01);
 
 	Session.Update_Progress(55);
-	Game::CallBack();
+	Call_Back();
 
 	if (Session.Type == GAME_NORMAL) {
 		char player[20];
@@ -3034,14 +3024,14 @@ bool ScenarioClass::Read_INI(CCINIClass & ini)
 	PlayerPtr->CurrentDropship = 0;
 
 	Session.Update_Progress(58);
-	Game::CallBack();
+	Call_Back();
 
 	if (Debug_Map) {
 		IsometricTileTypeClass::Init_Drawers();
 	}
 
 	Session.Update_Progress(60);
-	Game::CallBack();
+	Call_Back();
 
 	return(true);
 }

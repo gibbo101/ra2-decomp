@@ -23,7 +23,6 @@
 
 void __cdecl FUN_004068E0(char const * format, ...);
 extern int DAT_00841F3C;
-extern WinsockInterfaceClass * DAT_00887628;
 #include "ownertalk.h"
 // SYNTHETIC: GAMEMD 0x0053F8A0 SYMBOL
 // _$E40
@@ -91,8 +90,8 @@ int IPXGlobalConnClass::Send_Packet (void * buf, int buflen,
 {
 	IPXAddressClass dest_addr;
 
-	((GlobalHeaderType *)PacketBuf)->Field8 = 0;
-	((GlobalHeaderType *)PacketBuf)->FieldC = 0;
+	((GlobalHeaderType *)PacketBuf)->ForwardAddress = 0;
+	((GlobalHeaderType *)PacketBuf)->ForwardPort = 0;
 	((GlobalHeaderType *)PacketBuf)->MagicNumber = MagicNum;
 
 	if (ack_req && address != NULL) {
@@ -433,24 +432,24 @@ int IPXGlobalConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 
 		dest = Session.PacketRouterAddress;
 		dest_port = DAT_00841F3C;
-		if (Session.unknown_2978 == Session.Players[0]->Address && dest.FUN_0053EF30(Session.Players[0]->Address)) {
-			((GlobalHeaderType *)buf)->FieldC = 0;
-			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+		if (Session.PacketRouterAddressTranslate == Session.Players[0]->Address && dest.FUN_0053EF30(Session.Players[0]->Address)) {
+			((GlobalHeaderType *)buf)->ForwardPort = 0;
+			memset(&((GlobalHeaderType *)buf)->ForwardAddress, 0, 4);
 		}
 		else {
 			dest_port = Session.PacketRouterPort;
-			((GlobalHeaderType *)buf)->FieldC = DAT_00841F3C;
-			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+			((GlobalHeaderType *)buf)->ForwardPort = DAT_00841F3C;
+			memset(&((GlobalHeaderType *)buf)->ForwardAddress, 0, 4);
 		}
 	}
 	else {
-		((GlobalHeaderType *)buf)->FieldC = 0;
-		memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+		((GlobalHeaderType *)buf)->ForwardPort = 0;
+		memset(&((GlobalHeaderType *)buf)->ForwardAddress, 0, 4);
 		dest_port = port;
 	}
 
-	if (DAT_00887628) {
-		DAT_00887628->WriteTo(buf, buflen, &dest, sizeof(dest), flag, FieldC8 == 0, dest_port);
+	if (PacketTransport) {
+		PacketTransport->WriteTo(buf, buflen, &dest, sizeof(dest), flag, FieldC8 == 0, dest_port);
 	}
 	return(1);
 }

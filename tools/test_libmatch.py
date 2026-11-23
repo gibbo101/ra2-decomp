@@ -6,7 +6,7 @@ import unittest
 from types import SimpleNamespace
 
 from coff import REL_DIR32, REL_REL32
-from libmatch import import_fields, imports_agree, short_imports
+from libmatch import import_fields, imports_agree, match_local_calls, short_imports
 
 
 def short(symbol, dll, hint, how):
@@ -20,6 +20,21 @@ def archive(bodies):
         head = f"M{k}/".ljust(16) + "0".ljust(12) + "".ljust(6) + "".ljust(6) + "0".ljust(8) + str(len(body)).ljust(10) + "`\n"
         out += head.encode() + body + (b"\n" if len(body) & 1 else b"")
     return out
+
+
+class LocalCallTests(unittest.TestCase):
+    def test_same_shape_calls_different_local_functions(self):
+        # Both relative calls have the same displacement at different image addresses.
+        code = b"\xe8" + struct.pack("<i", -5) + b"\xe8" + struct.pack("<i", -5)
+        calls = [(1, 7, 2)]
+        self.assertEqual(match_local_calls(code, 0x1000, [0, 5], calls, {7: 0x1003}), [5])
+        self.assertEqual(match_local_calls(code, 0x1000, [0, 5], calls, {7: 0x2000}), [])
+        self.assertEqual(match_local_calls(code, 0x1000, [0, 5], calls, {8: 0x1003}), [0, 5])
+
+    def test_multiple_calls_to_same_anchor_stay_ambiguous(self):
+        code = b"\xe8" + struct.pack("<i", 11) + b"\xe8" + struct.pack("<i", 6)
+        self.assertEqual(match_local_calls(code, 0x2000, [0, 5], [(1, 1, 0)], {1: 0x2010}),
+                         [0, 5])
 
 
 class ImportSlotTests(unittest.TestCase):

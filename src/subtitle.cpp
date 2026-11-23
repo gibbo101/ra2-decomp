@@ -18,6 +18,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// SYNTHETIC: GAMEMD 0x006C99B0 SYMBOL
+// _$E2
+
 // FUNCTION: GAMEMD 0x006C99D0
 MovieSubtitles * __fastcall Subtitles_Open(char const * name)
 {

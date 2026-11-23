@@ -1425,7 +1425,7 @@ INIClass::INISection::~INISection(void)
 // ?Search_For_Node@?$IndexClass@HPAUINIEntry@INIClass@@@@ABEPBUNodeElement@1@ABH@Z
 
 // TEMPLATE: GAMEMD 0x0052B570
-// ?Increase_Table_Size@?$IndexClass@HPAUINIEntry@INIClass@@@@AAE_NH@Z
+// ?Increase_Table_Size@?$IndexClass@HPAUINISection@INIClass@@@@AAE_NH@Z
 
 // TEMPLATE: GAMEMD 0x0052B600
 // ?Is_Archive_Same@?$IndexClass@HPAUINISection@INIClass@@@@ABE_NABH@Z

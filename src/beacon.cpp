@@ -239,9 +239,7 @@ bool BeaconClass::VisibleToPlayer(void) const
 }
 
 #include "rawfile.h"
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 void * Load_Alloc_Data(FileClass & file);
 extern double __cdecl FUN_004CAC40(double);
 void __cdecl FUN_004068E0(char const * format, ...);
@@ -293,6 +291,77 @@ void BeaconManagerClass::Draw(Surface * surface, Rect bounds)
 	}
 }
 
+#include "ipxmgr.h"
+#include "revent.h"
+#include "rules.h"
+#include "stringtable.h"
+#include "voc.h"
+#include "vox.h"
+char * __fastcall FUN_007350C0(wchar_t const * text);
+extern IPXManagerClass Ipx;
+
+// FUNCTION: GAMEMD 0x00430BA0
+void BeaconManagerClass::PlaceBeacon(int house, Coord coord, int id)
+{
+	if (!CanPlaceBeacon(house) && id == -1) {
+		return;
+	}
+	BeaconClass * beacon = new BeaconClass;
+	bool full = false;
+	if (id == -1) {
+		full = true;
+		int j;
+		for (j = 0; j < 3; j++) {
+			if (!Beacons[house][j]) {
+				full = false;
+				break;
+			}
+		}
+		if (!full) {
+			id = j;
+			Beacons[house][id] = beacon;
+		}
+	} else {
+		if (Beacons[house][id]) {
+			delete Beacons[house][id];
+			AllocatedCount--;
+		}
+		Beacons[house][id] = beacon;
+	}
+	if (full) {
+		delete beacon;
+		return;
+	}
+	beacon->SetCoordAndHouse(coord, house);
+	AllocatedCount++;
+
+	if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+		if (house == PlayerPtr->HeapID) {
+			Session.Messages.Add_Message(NULL, 0, StringTable::LoadString("TXT_BEACON_HELP1", NULL, "D:\\ra2mdpost\\Beacon.CPP", 0x32b), PlayerPtr->Scheme, TextPrintType(0x4046), 0xe1, false);
+			Session.Messages.Add_Message(NULL, 0, StringTable::LoadString("TXT_BEACON_HELP2", NULL, "D:\\ra2mdpost\\Beacon.CPP", 0x32c), PlayerPtr->Scheme, TextPrintType(0x4046), 0xe1, false);
+			VoxClass::Play("EVA_BeaconPlaced", -1, -1);
+			VocClass::PlayGlobal(Rule->PlaceBeaconSound, 1.0f, 0x2000);
+
+			GlobalPacketType packet;
+			packet.Command = (NetCommandType)0x20;
+			strcpy(packet.Name, FUN_007350C0(Session.Players[0]->Name));
+			packet.Beacon.X = coord.X;
+			packet.Beacon.Y = coord.Y;
+			packet.Beacon.Z = coord.Z;
+			packet.Beacon.ID = id;
+			packet.Beacon.House = house;
+			for (int p = 1; p < Session.Players.Count(); p++) {
+				FUN_004068E0("Sending beacon placement to %s\n", Session.Players[p]);
+				Ipx.Send_Global_Message(&packet, 0x3d, 1, &Session.Players[p]->Address, 0, 0);
+			}
+		} else if (beacon->VisibleToPlayer()) {
+			if (RadarEventClass::Create((RadarEventType)0xb, coord.As_Cell())) {
+				VoxClass::Play("EVA_BeaconDetected", -1, -1);
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00430F30
 bool BeaconManagerClass::CanPlaceBeacon(int house)
 {
@@ -310,16 +379,6 @@ Point2D __stdcall FUN_00430F60(void)
 	return Point2D(0, 0);
 }
 
-static inline int Coord_Dist(Coord const & a, Coord const & b)
-{
-	Coord c = a - b;
-	return c.Length();
-}
-static inline int Coord_Dist2(int x, int y, int z, Coord const & b)
-{
-	Coord c = Coord(x, y, z) - b;
-	return c.Length();
-}
 static inline int Coord_Dist3(Coord a, Coord b)
 {
 	return (a - b).Length();
@@ -397,13 +456,9 @@ BeaconClass * BeaconManagerClass::FindSelected(int house)
 	return 0;
 }
 
-#include "ipxmgr.h"
-#include "revent.h"
 extern Surface * DAT_00880A04;
-char * __fastcall FUN_007350C0(wchar_t const * text);
 wchar_t * __fastcall FUN_00735120(char const * text);
 extern char DAT_00889F64[];
-extern IPXManagerClass Ipx;
 
 #pragma pack(push, 1)
 struct BeaconPacket {

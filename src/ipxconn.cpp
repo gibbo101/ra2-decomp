@@ -14,86 +14,36 @@
 // SYNTHETIC: GAMEMD 0x0053F220 SYMBOL
 // _$E13
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern int DAT_00AA0590, DAT_00AA0588, DAT_00AA058C;
 extern int DAT_00AA05B8, DAT_00AA05BC, DAT_00AA05C0, DAT_00AA05C4;
-extern const double DAT_007EC0B8;
-extern int DAT_00AA0590, DAT_00AA0588, DAT_00AA058C;
 extern int DAT_00AA05B8, DAT_00AA05BC, DAT_00AA05C0, DAT_00AA05C4;
-extern const double DAT_007EC0B8;
 extern int DAT_00841F3C;
-extern WinsockInterfaceClass * DAT_00887628;
 #include "ownertalk.h"
-
-extern const double DAT_007EC0C0;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0053F240 SYMBOL
 // _$E21
-double DAT_00AA0528 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
-
 // SYNTHETIC: GAMEMD 0x0053F270 SYMBOL
 // _$E24
-double DAT_00AA0598 = DAT_00AA0528 / DAT_007EC0B8;
-
 // SYNTHETIC: GAMEMD 0x0053F290 SYMBOL
 // _$E27
-double DAT_00AA0580 = DAT_007E1718 / DAT_00AA0598;
-
 // SYNTHETIC: GAMEMD 0x0053F2B0 SYMBOL
 // _$E30
-double DAT_00AA0570 = DAT_007E1720 * DAT_007EC0C0;
-
 // SYNTHETIC: GAMEMD 0x0053F2D0 SYMBOL
 // _$E33
-double DAT_00AA0538 = DAT_007E1728 * DAT_007EC0C0;
-
 // SYNTHETIC: GAMEMD 0x0053F2F0 SYMBOL
 // _$E36
-double DAT_00AA0500 = DAT_007E1730 * DAT_007EC0C0;
-
 // SYNTHETIC: GAMEMD 0x0053F310 SYMBOL
 // _$E39
-int DAT_00AA05A0 = (int)(FUN_004CAD50(DAT_00AA0500 - DAT_00AA0538) * DAT_007E1738 * DAT_00AA0528);
-
 // SYNTHETIC: GAMEMD 0x0053F350 SYMBOL
 // _$E42
-double DAT_00AA0540 = FUN_004CADE0(DAT_00AA05A0 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0053F380 SYMBOL
 // _$E45
-double DAT_00AA0560 = FUN_004CADE0((DAT_00AA05A0 * 2) / DAT_00AA0528);
-
 // SYNTHETIC: GAMEMD 0x0053F3B0 SYMBOL
 // _$E48
-int DAT_00AA0594 = (int)(DAT_00AA05A0 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0053F3E0 SYMBOL
 // _$E51
-ShortPair DAT_00AA0520;
-
 // SYNTHETIC: GAMEMD 0x0053F3F0 SYMBOL
 // _$E54
-IntTriple DAT_00AA0550;
 
 unsigned short IPXConnClass::Socket;
 int IPXConnClass::ConnectionNum;
@@ -106,13 +56,8 @@ int IPXConnClass::SocketOpen = 0;
 int IPXConnClass::Listening = 0;
 int IPXConnClass::PacketLen;
 
-// FUNCTION: GAMEMD 0x0053F410
-void FUN_0053F410(void)
-{
-	DAT_00AA0590 = 0;
-	DAT_00AA0588 = 128;
-	DAT_00AA058C = 128;
-}
+// SYNTHETIC: GAMEMD 0x0053F410 SYMBOL
+// _$E57
 
 // FUNCTION: GAMEMD 0x0053F430
 IPXConnClass::IPXConnClass (int numsend, int numreceive, int maxlen,
@@ -240,19 +185,19 @@ int IPXConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 
 		dest = Session.PacketRouterAddress;
 		dest_port = DAT_00841F3C;
-		if (Session.unknown_2978 == Session.Players[0]->Address && dest.FUN_0053EF30(Session.Players[0]->Address)) {
-			((GlobalHeaderType *)buf)->FieldC = 0;
-			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+		if (Session.PacketRouterAddressTranslate == Session.Players[0]->Address && dest.FUN_0053EF30(Session.Players[0]->Address)) {
+			((GlobalHeaderType *)buf)->ForwardPort = 0;
+			memset(&((GlobalHeaderType *)buf)->ForwardAddress, 0, 4);
 		}
 		else {
 			dest_port = Session.PacketRouterPort;
-			((GlobalHeaderType *)buf)->FieldC = DAT_00841F3C;
-			memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+			((GlobalHeaderType *)buf)->ForwardPort = DAT_00841F3C;
+			memset(&((GlobalHeaderType *)buf)->ForwardAddress, 0, 4);
 		}
 	}
 	else {
-		((GlobalHeaderType *)buf)->FieldC = 0;
-		memset(&((GlobalHeaderType *)buf)->Field8, 0, 4);
+		((GlobalHeaderType *)buf)->ForwardPort = 0;
+		memset(&((GlobalHeaderType *)buf)->ForwardAddress, 0, 4);
 	}
 
 	if (Session.Type == GAME_INTERNET && !Session.ViaPacketRouter) {
@@ -281,8 +226,8 @@ int IPXConnClass::Send_To(char *buf, int buflen, IPXAddressClass *address,
 		none:;
 	}
 
-	if (DAT_00887628) {
-		DAT_00887628->WriteTo(buf, buflen, &dest, sizeof(dest), flag, false, dest_port);
+	if (PacketTransport) {
+		PacketTransport->WriteTo(buf, buflen, &dest, sizeof(dest), flag, false, dest_port);
 	}
 	return(1);
 }

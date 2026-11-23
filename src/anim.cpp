@@ -62,17 +62,11 @@
 // _$E2
 
 extern DynamicVectorClass<AnimClass *> DAT_00A83E00;
-struct FileSystem
-{
-	static char TEMPERAT_PAL[];
-	static ConvertClass * ANIM_PAL;
-};
-namespace Game { bool __cdecl CallBack(void); extern bool bDirect3DIsUseable; }
+namespace Game { extern bool bDirect3DIsUseable; }
 void __fastcall FUN_00489280(Coord const & coord, int damage, TechnoClass * source, WarheadTypeClass const * warhead, bool affect_tiberium, HouseClass * house);
-void __fastcall FUN_004A3C30(void * palette, int rate, bool (__cdecl * callback)(void));
+void __fastcall FUN_004A3C30(void * palette, int rate, void (* callback)(void));
 extern const double DAT_007E3570;
 
-extern ParticleSystemClass * DAT_00A8ED78;
 class AudioEvent;
 AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 bool __fastcall FUN_0043B4C0(HouseClass * house, CellClass * cell);
@@ -80,21 +74,8 @@ SideType FUN_006A46D0(char const * name);
 
 namespace FPSCounter { extern unsigned CurrentFrameRate; }
 namespace Detail { unsigned GetMinFrameRate(void); }
-struct Triangle3D {
-	void Set_Color(int a, int b, int c);
-	void Set_Vertex(int index, float x, float y, float z, float u, float v);
-	D3DTLVERTEX Vertex[3];
-};
-class Texture3DCache {
-public:
-	Texture3DCache(void);
-	void FUN_004A3640(void);
-	void FUN_004A3650(void);
-	HRESULT Flush(LPDIRECTDRAWSURFACE target);
-	int Add(Triangle3D const & triangle);
-	Triangle3D List[1024];
-	int Count;
-};
+#include "texture3d.h"
+
 extern Texture3DCache * DAT_008A0E10;
 
 // SYNTHETIC: GAMEMD 0x00421CB0 SYMBOL
@@ -437,7 +418,7 @@ Cell const * AnimClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x00423920 SYMBOL
-// _$E173
+// _$E171
 
 // FUNCTION: GAMEMD 0x00423930
 BounceResultType AnimClass::Bounce_AI(void)
@@ -741,7 +722,7 @@ void AnimClass::AI(void)
 }
 
 // FUNCTION: GAMEMD 0x00424B50
-void AnimClass::SetOwnerObject(ObjectClass * owner)
+void AnimClass::Attach_To(ObjectClass * owner)
 {
 	if (OwnerObject != NULL) {
 		ObjectClass * to = OwnerObject;
@@ -868,7 +849,7 @@ void AnimClass::Middle(void)
 	if (Type->SpawnsParticle != -1) {
 		for (int i = 0; i < Type->NumParticles; i++) {
 			Coord pos = PositionCoord;
-			DAT_00A8ED78->Spawn_Particle(ParticleTypes[Type->SpawnsParticle], pos);
+			GasSystem->Spawn_Particle(ParticleTypes[Type->SpawnsParticle], pos);
 		}
 	}
 
@@ -916,7 +897,7 @@ void AnimClass::Do_Atom_Damage(HousesType ownerhouse, Cell const & cell)
 	Coord coord(cell.X * 256 + 128, cell.Y * 256 + 128, 0);
 	FUN_00489280(coord, Rule->AtomDamage, NULL, Rule->NukeWarhead, false, NULL);
 	if (Session.Type == GAME_NORMAL) {
-		FUN_004A3C30(&FileSystem::TEMPERAT_PAL, 30, Game::CallBack);
+		FUN_004A3C30(&GamePalette, 30, Call_Back);
 	}
 }
 
@@ -1025,7 +1006,7 @@ void AnimClass::Delete_Me(void)
 	if (OwnerObject != NULL) {
 		OwnerObject->AnimPointerExpired(this);
 	}
-	SetOwnerObject(NULL);
+	Attach_To(NULL);
 	StartSoundAudioController.EndLooping();
 	if (!IsInert && Type != NULL && Type->StopSound != -1) {
 		VocClass::PlayAt(Type->StopSound, Center_Coord(), &StopSoundAudioController);
@@ -1425,7 +1406,7 @@ bool TPoint2D<T>::operator == (TPoint2D<T> const & rvalue) const
 // ??0?$CDTimerClass@VFrameTimerClass@@@@QAE@ABVNoInitClass@@@Z
 
 // TEMPLATE: GAMEMD 0x00426630
-// ?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
+// ??B?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
 template class CDTimerClass<FrameTimerClass>;
 
 // FUNCTION: GAMEMD 0x00422CA0
@@ -1548,7 +1529,7 @@ void AnimClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 					brightness = TintColor;
 				}
 			} else {
-				convert = FileSystem::ANIM_PAL;
+				convert = AnimDrawer;
 				if (Type->AltPalette) {
 					convert = ColorSchemes[0]->Converter;
 				}
@@ -1602,7 +1583,7 @@ void AnimClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 				bool done = false;
 				int height_offset = ZAdjust + Type->YDrawOffset - TacticalMap->Z_Lepton_To_Pixel(Height) - 50;
 				while (!done) {
-					Draw_Shape(*LogicalSurface, *FileSystem::ANIM_PAL, shapefile, shapenum, Point2D(origin.X, drawpoint.Y + Type->YDrawOffset), TacticalRect, ShapeFlags_Type(flags | SHAPE_ZGRAD), 0, height_offset, ZGRAD_90DEG, brightness, tint, 0, 0, Point2D(0, 0));
+					Draw_Shape(*LogicalSurface, *AnimDrawer, shapefile, shapenum, Point2D(origin.X, drawpoint.Y + Type->YDrawOffset), TacticalRect, ShapeFlags_Type(flags | SHAPE_ZGRAD), 0, height_offset, ZGRAD_90DEG, brightness, tint, 0, 0, Point2D(0, 0));
 					if (drawpoint.Y < 0) {
 						done = true;
 					}

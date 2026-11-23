@@ -46,10 +46,6 @@
 // SYNTHETIC: GAMEMD 0x0072A420 SYMBOL
 // _$E64
 
-// SYNTHETIC: GAMEMD 0x0072A690 SYMBOL
-// _$E82
-const Rect RECT_NONE_2(0, 0, 0, 0);
-
 // FUNCTION: GAMEMD 0x0072A440
 TextLabelClass::TextLabelClass(wchar_t * txt, int x, int y, int color, TextPrintType style) :
 	GadgetClass(x, y, 1, 1, 0, 0),

@@ -6,7 +6,6 @@
 #include "always.h"
 #include "fuse.h"
 #include "geometry.h"
-#include "rect.h"
 
 // SYNTHETIC: GAMEMD 0x004E0F10 SYMBOL
 // _$E2

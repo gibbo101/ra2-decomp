@@ -38,12 +38,14 @@
 // _$E41
 
 
+#include "_keyboar.h"
 #include "_rules.h"
 #include "building.h"
 #include "event.h"
 #include "goptions.h"
 #include "house.h"
 #include "infantry.h"
+#include "keyboard.h"
 #include "msglist.h"
 #include "object.h"
 #include "queue.h"
@@ -71,8 +73,6 @@
 
 typedef DynamicVectorClass<TechnoClass *> TechnoList;
 extern TechnoList * DAT_00B0FE6C;
-extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
-extern DynamicVectorClass<ObjectClass *> DAT_00A8ECB8;
 extern HouseClass * PlayerPtr;
 extern QueueClass<EventClass, 128> OutList;
 extern int DAT_0084555C;
@@ -89,18 +89,13 @@ extern Coord DAT_00B0FE10;
 extern Coord DAT_00B0FE38;
 extern Cell DAT_00B0FDF0;
 extern int DAT_00880990;
-extern DynamicVectorClass<UnitClass *> DAT_008B4108;
 class PlanningNode;
 PlanningNode * FUN_0063AC60(void);
 void __fastcall FUN_00637D00(PlanningNode * node);
 void FUN_006379C0(void);
 void FUN_00637A10(void);
 void __fastcall FUN_0063A120(bool a, bool b);
-class BeaconManagerClass
-{
-	public:
-		void Remove_Beacon(int x, int y);
-};
+#include "beacon.h"
 extern BeaconManagerClass BeaconManager;
 
 
@@ -124,9 +119,9 @@ static inline bool Player_Owned(TechnoClass * techno)
 // FUNCTION: GAMEMD 0x00730990
 bool __fastcall FUN_00730990(int group)
 {
-	int count = DAT_00A8EC78.Count();
+	int count = Technos.Count();
 	for (int i = 0; i < count; i++) {
-		TechnoClass * techno = DAT_00A8EC78[i];
+		TechnoClass * techno = Technos[i];
 		if (techno && !techno->IsInLimbo && Player_Owned(techno) && !techno->IsSelected && techno->Group == group - 1) {
 			return false;
 		}
@@ -138,9 +133,9 @@ bool __fastcall FUN_00730990(int group)
 int __fastcall FUN_00730A10(int group)
 {
 	int total = 0;
-	int count = DAT_00A8EC78.Count();
+	int count = Technos.Count();
 	for (int i = 0; i < count; i++) {
-		TechnoClass * techno = DAT_00A8EC78[i];
+		TechnoClass * techno = Technos[i];
 		if (techno && !techno->IsInLimbo && Player_Owned(techno) && techno->Group == group - 1) {
 			total++;
 		}
@@ -179,11 +174,11 @@ void FUN_00730AF0(void)
 {
 	ObjectClass * object;
 	bool played = false;
-	if (DAT_00A8ECB8.Count() <= 0) return;
-	if (DAT_00A8ECB8[0] != NULL) {
-		BuildingClass * first = (BuildingClass *)DAT_00A8ECB8[0];
+	if (CurrentObject.Count() <= 0) return;
+	if (CurrentObject[0] != NULL) {
+		BuildingClass * first = (BuildingClass *)CurrentObject[0];
 		if (Is_Target_Building(first) && first->GetOccupantCount() > 0 && first->House->Is_Player_Control()) {
-			object = DAT_00A8ECB8[0];
+			object = CurrentObject[0];
 			if (object && (object->AbstractFlags & 1) && ((TechnoClass *)object)->ClickedEvent(EventClass::DEPLOY)) {
 				VocClass::PlayGlobal(Rule->DeploySound, 1.0f, 0x2000);
 			}
@@ -192,9 +187,9 @@ void FUN_00730AF0(void)
 	}
 	bool deployed = false;
 	bool undeployed = false;
-	int count = DAT_00A8ECB8.Count();
+	int count = CurrentObject.Count();
 	for (int i = 0; i < count; i++) {
-		object = DAT_00A8ECB8[i];
+		object = CurrentObject[i];
 		if (object) {
 			if (object->RTTI == RTTI_INFANTRY && ((InfantryClass *)object)->FUN_005224E0()) {
 				if (((InfantryClass *)object)->FUN_00522510()) {
@@ -214,7 +209,7 @@ void FUN_00730AF0(void)
 		}
 	}
 	for (int j = 0; j < count; j++) {
-		object = DAT_00A8ECB8[j];
+		object = CurrentObject[j];
 		if (object && (object->Can_Player_Move() || object->Can_Player_Fire()) && (object->AbstractFlags & 1)) {
 			TechnoClass * techno = (TechnoClass *)object;
 			if (techno->Can_Attack_Now() && techno->Can_Deploy_Now() && !techno->Berzerk) {
@@ -244,11 +239,11 @@ void FUN_00730D60(void)
 		FUN_0063A0D0();
 		return;
 	}
-	if (DAT_00A8ECB8.Count() > 0) {
+	if (CurrentObject.Count() > 0) {
 		bool ok = true;
-		int count = DAT_00A8ECB8.Count();
+		int count = CurrentObject.Count();
 		for (int i = 0; i < count; i++) {
-			ObjectClass * object = DAT_00A8ECB8[i];
+			ObjectClass * object = CurrentObject[i];
 			if (object && (object->AbstractFlags & 1)) {
 				if (object->Can_Player_Move() && object->Can_Player_Fire() && object->RTTI != RTTI_BUILDING) {
 					ok = ((TechnoClass *)object)->Player_Assign_Mission(MISSION_GUARD_AREA, (AbstractClass *)object->Get_Target_Cell_Ptr(), NULL, NULL);
@@ -274,11 +269,11 @@ void FUN_00730D60(void)
 // FUNCTION: GAMEMD 0x00730EA0
 void FUN_00730EA0(void)
 {
-	if (DAT_00A8ECB8.Count() > 0) {
-		int count = DAT_00A8ECB8.Count();
+	if (CurrentObject.Count() > 0) {
+		int count = CurrentObject.Count();
 		bool ok = true;
 		for (int i = 0; i < count; i++) {
-			ObjectClass * object = DAT_00A8ECB8[i];
+			ObjectClass * object = CurrentObject[i];
 			if (object && (object->AbstractFlags & 1) && (object->Can_Player_Move() || object->Can_Player_Fire())) {
 				ok = ((TechnoClass *)object)->ClickedEvent(6);
 				if (!ok) {
@@ -304,11 +299,11 @@ void FUN_00730F30(void)
 // FUNCTION: GAMEMD 0x00730FE0
 void FUN_00730FE0(void)
 {
-	if (DAT_00A8ECB8.Count() > 0) {
-		int count = DAT_00A8ECB8.Count();
+	if (CurrentObject.Count() > 0) {
+		int count = CurrentObject.Count();
 		bool ok = true;
 		for (int i = 0; i < count; i++) {
-			ObjectClass * object = DAT_00A8ECB8[i];
+			ObjectClass * object = CurrentObject[i];
 			if (object && (object->AbstractFlags & 1) && object->Can_Player_Move()) {
 				ok = ((TechnoClass *)object)->ClickedEvent(7);
 				if (!ok) {
@@ -325,9 +320,9 @@ void FUN_00730FE0(void)
 // FUNCTION: GAMEMD 0x00731060
 void __fastcall FUN_00731060(int group)
 {
-	int count = DAT_00A8EC78.Count();
+	int count = Technos.Count();
 	for (int i = 0; i < count; i++) {
-		TechnoClass * techno = DAT_00A8EC78[i];
+		TechnoClass * techno = Technos[i];
 		if (techno && Player_Owned(techno)) {
 			if (techno->Group == group - 1) {
 				techno->Group = -1;
@@ -342,9 +337,9 @@ void __fastcall FUN_00731060(int group)
 // FUNCTION: GAMEMD 0x007310D0
 void __fastcall FUN_007310D0(int group)
 {
-	int count = DAT_00A8EC78.Count();
+	int count = Technos.Count();
 	for (int i = 0; i < count; i++) {
-		TechnoClass * techno = DAT_00A8EC78[i];
+		TechnoClass * techno = Technos[i];
 		if (techno && Player_Owned(techno) && techno->Group == group - 1) {
 			techno->Group = -1;
 		}
@@ -354,8 +349,8 @@ void __fastcall FUN_007310D0(int group)
 // FUNCTION: GAMEMD 0x00731130
 bool __fastcall FUN_00731130(int group)
 {
-	for (int i = DAT_00A8EC78.Count() - 1; i >= 0; i--) {
-		TechnoClass * techno = DAT_00A8EC78[i];
+	for (int i = Technos.Count() - 1; i >= 0; i--) {
+		TechnoClass * techno = Technos[i];
 		if (techno && !techno->IsInLimbo && Player_Owned(techno)) {
 			if (techno->Group == group - 1 && !techno->IsSelected) {
 				return false;
@@ -389,8 +384,8 @@ void __fastcall FUN_007311C0(int group)
 	DAT_00845554 = group;
 	FUN_006DA740(TacticalMap);
 	Unsorted::MoveFeedback = true;
-	for (int i = 0; i < DAT_00A8EC78.Count(); i++) {
-		TechnoClass * techno = DAT_00A8EC78[i];
+	for (int i = 0; i < Technos.Count(); i++) {
+		TechnoClass * techno = Technos[i];
 		if (techno && !techno->IsInLimbo && techno->Group == group - 1 && Player_Owned(techno) && !techno->IsSelected) {
 			techno->Select();
 			techno->RadarFlashTimer = Rule->RadarCombatFlashTime;
@@ -405,13 +400,13 @@ void __fastcall FUN_007311C0(int group)
 void __fastcall FUN_007313A0(int group)
 {
 	Cancel_Modes();
-	if (DAT_00A8ECB8.Count()) {
-		if (!DAT_00A8ECB8[0]->Is_Foot() || ((FootClass *)DAT_00A8ECB8[0])->Group != group - 1) {
+	if (CurrentObject.Count()) {
+		if (!CurrentObject[0]->Is_Foot() || ((FootClass *)CurrentObject[0])->Group != group - 1) {
 			FUN_006DA740(TacticalMap);
 		}
 	}
-	for (int i = 0; i < DAT_00A8EC78.Count(); i++) {
-		TechnoClass * techno = DAT_00A8EC78[i];
+	for (int i = 0; i < Technos.Count(); i++) {
+		TechnoClass * techno = Technos[i];
 		if (techno && !techno->IsInLimbo && techno->Group == group - 1 && Player_Owned(techno) && !techno->IsSelected) {
 			techno->Select();
 			Unsorted::MoveFeedback = false;
@@ -427,8 +422,8 @@ void __fastcall FUN_007314C0(int group)
 {
 	Cancel_Modes();
 	Unsorted::MoveFeedback = true;
-	for (int i = 0; i < DAT_00A8EC78.Count(); i++) {
-		TechnoClass * techno = DAT_00A8EC78[i];
+	for (int i = 0; i < Technos.Count(); i++) {
+		TechnoClass * techno = Technos[i];
 		if (techno && !techno->IsInLimbo && techno->Group == group - 1 && Player_Owned(techno) && !techno->IsSelected) {
 			techno->Select();
 			Unsorted::MoveFeedback = false;
@@ -472,8 +467,8 @@ void FUN_007315A0(void)
 		}
 	}
 	if (PlayerPtr->CurUnits) {
-		for (int j = DAT_008B4108.Count() - 1; j >= 0; j--) {
-			UnitClass * unit = DAT_008B4108[j];
+		for (int j = Units.Count() - 1; j >= 0; j--) {
+			UnitClass * unit = Units[j];
 			if (unit && !unit->IsInLimbo && unit->House->Is_Player_Control()) {
 				if (Is_Base_Unit(unit->Class)) {
 					yard = unit->Center_Coord();
@@ -510,9 +505,9 @@ void __fastcall FUN_00731840(int house)
 // FUNCTION: GAMEMD 0x007318F0
 void FUN_007318F0(void)
 {
-	if (DAT_00A8ECB8.Count()) {
-		if (!PlayerPtr->IsDefeated && DAT_00A8ECB8[0]->Owner_HouseClass() != PlayerPtr && DAT_00A8ECB8[0]->Owner_HouseClass()->IsHuman) {
-			FUN_00731840(DAT_00A8ECB8[0]->Owner());
+	if (CurrentObject.Count()) {
+		if (!PlayerPtr->IsDefeated && CurrentObject[0]->Owner_HouseClass() != PlayerPtr && CurrentObject[0]->Owner_HouseClass()->IsHuman) {
+			FUN_00731840(CurrentObject[0]->Owner());
 		}
 	}
 }
@@ -524,7 +519,7 @@ void FUN_00731A10(void)
 	if (node) {
 		FUN_00637D00(node);
 	} else {
-		BeaconManager.Remove_Beacon(-1, -1);
+		BeaconManager.DeleteBeacon(-1, -1);
 	}
 }
 
@@ -554,12 +549,6 @@ void __fastcall FUN_00731A70(bool flag)
 	}
 }
 
-class InputManagerClass
-{
-	public:
-		static InputManagerClass * Instance;
-		bool IsKeyPressed(int key);
-};
 extern bool DAT_00B0FE58;
 extern bool DAT_00B0FE64;
 namespace Unsorted { extern int NavCycleMode; }
@@ -572,9 +561,9 @@ bool FUN_00731A90(void)
 
 static inline bool All_Selected_Can_Attack_Move(void)
 {
-	int count = DAT_00A8ECB8.Count();
+	int count = CurrentObject.Count();
 	for (int i = 0; i < count; i++) {
-		ObjectClass * object = DAT_00A8ECB8[i];
+		ObjectClass * object = CurrentObject[i];
 		if (object && object->Is_Techno()) {
 			if (!((TechnoClass *)object)->CanAttackOnTheMove()) {
 				return false;
@@ -593,7 +582,7 @@ bool FUN_00731AA0(void)
 // FUNCTION: GAMEMD 0x00731AF0
 void FUN_00731AF0(void)
 {
-	if (DAT_00A8ECB8.Count() == 0) {
+	if (CurrentObject.Count() == 0) {
 		FUN_00730A90(StringTable::LoadString("MSG:NothingSelected", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x358), -1);
 		DAT_00B0FE58 = true;
 		return;
@@ -611,23 +600,18 @@ void FUN_00731BE0(void)
 	DAT_00B0FE58 = false;
 }
 
-static inline bool Key_Down(int key)
-{
-	return InputManagerClass::Instance->IsKeyPressed(key);
-}
-
 // FUNCTION: GAMEMD 0x00731BF0
 bool FUN_00731BF0(void)
 {
 	if (DAT_00B0FE58) {
 		return true;
 	}
-	bool a = Key_Down(Options.KeyForceAttack1) || Key_Down(Options.KeyForceAttack2);
-	bool b = Key_Down(Options.KeySelect1) || Key_Down(Options.KeySelect2);
+	bool a = Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2);
+	bool b = Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2);
 	if (a && b) {
-		int count = DAT_00A8ECB8.Count();
+		int count = CurrentObject.Count();
 		for (int i = 0; i < count; i++) {
-			ObjectClass * object = DAT_00A8ECB8[i];
+			ObjectClass * object = CurrentObject[i];
 			if (object && object->Is_Techno()) {
 				if (!((TechnoClass *)object)->CanAttackOnTheMove()) {
 					return false;
@@ -679,7 +663,7 @@ void __fastcall SetNavCycleMode(int mode)
 // FUNCTION: GAMEMD 0x00731D10
 wchar_t * __fastcall FUN_00731D10(wchar_t * buffer)
 {
-	if (DAT_00A8ECB8.Count() == 0) {
+	if (CurrentObject.Count() == 0) {
 		return wcscpy(buffer, StringTable::LoadString("MSG:NothingSelected", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x3f1));
 	}
 	if (DAT_00B0FE64) {
@@ -692,7 +676,7 @@ wchar_t * __fastcall FUN_00731D10(wchar_t * buffer)
 extern bool DAT_00B0FE64;
 extern int DAT_00A8ECC8;
 unsigned char __fastcall FUN_007342C0(ObjectClass * object);
-bool __fastcall FUN_00732580(TechnoClass * techno, int unused);
+bool __fastcall Is_Owned_Active(TechnoClass * techno, int unused);
 int __fastcall FUN_007325C0(TechnoClass * techno, int unused);
 void __fastcall FUN_006DA770(Tactical * tactical);
 extern Tactical * TacticalMap;
@@ -704,14 +688,14 @@ void __fastcall FUN_00731D90(wchar_t * buffer, wchar_t const * name)
 	if (DAT_00B0FE6C->Count() && name) {
 		wcscpy(upper, name);
 		_wcsupr(upper);
-		int count = DAT_00A8ECB8.Count();
+		int count = CurrentObject.Count();
 		if (count == 0) {
 			swprintf(buffer, StringTable::LoadString("MSG:NoUnitsSel", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x408), upper);
 			return;
 		}
 		int total = 0;
 		for (int i = 0; i < count; i++) {
-			ObjectClass * object = DAT_00A8ECB8[i];
+			ObjectClass * object = CurrentObject[i];
 			if (object && object->Is_Techno()) {
 				HouseClass * house = ((TechnoClass *)object)->House;
 				total += object->Class_Of()->Cost_Of(house);
@@ -727,9 +711,9 @@ void __fastcall FUN_00731D90(wchar_t * buffer, wchar_t const * name)
 TechnoList * __fastcall FUN_00731EB0(bool (__fastcall * test)(TechnoClass *, int), int arg)
 {
 	TechnoList * result = new TechnoList;
-	int count = DAT_00A8EC78.Count();
+	int count = Technos.Count();
 	for (int i = 0; i < count; i++) {
-		TechnoClass * techno = DAT_00A8EC78[i];
+		TechnoClass * techno = Technos[i];
 		if (test(techno, arg)) {
 			result->Add(techno);
 		}
@@ -757,7 +741,7 @@ TechnoList * FUN_00732050(void)
 	TechnoList * result = new TechnoList;
 	int count = DAT_00A8ECC8;
 	for (int i = 0; i < count; i++) {
-		ObjectClass * object = DAT_00A8ECB8[i];
+		ObjectClass * object = CurrentObject[i];
 		if (object && object->Is_Techno()) {
 			result->Add((TechnoClass *)object);
 		}
@@ -829,7 +813,7 @@ static inline TechnoList * Collect_Owned_Visible(void)
 		ObjectClass * object = TacticalMap->Selectable_Object(i);
 		if (FUN_007342C0(object)) {
 			TechnoClass * item = (TechnoClass *)object;
-			if (FUN_00732580(item, 0)) {
+			if (Is_Owned_Active(item, 0)) {
 				list->Add(item);
 			}
 		}
@@ -864,7 +848,7 @@ void __fastcall FUN_00732280(bool clear)
 
 	TechnoList * list;
 	if (DAT_00B0FE64) {
-		list = FUN_00731EB0(FUN_00732580, 0);
+		list = FUN_00731EB0(Is_Owned_Active, 0);
 	} else {
 		list = Collect_Owned_Visible();
 		if (!Has_Unselected_Combatants(list)) {
@@ -872,7 +856,7 @@ void __fastcall FUN_00732280(bool clear)
 		}
 		if (DAT_00B0FE64) {
 			delete list;
-			list = FUN_00731EB0(FUN_00732580, 0);
+			list = FUN_00731EB0(Is_Owned_Active, 0);
 		}
 	}
 	if (clear) {
@@ -893,20 +877,18 @@ void __fastcall FUN_00732280(bool clear)
 }
 
 // FUNCTION: GAMEMD 0x00732580
-int __fastcall Is_Owned_Active(TechnoClass * techno, int unused)
+bool __fastcall Is_Owned_Active(TechnoClass * techno, int unused)
 {
-	if (techno && techno->IsActive) {
-		bool owned;
+	bool active = techno && techno->IsActive;
+	bool owned = false;
+	if (active) {
 		if (Session.Type == GAME_NORMAL) {
 			owned = techno->House->IsPlayerControl;
 		} else {
 			owned = techno->House->Is_Player_Control();
 		}
-		if (owned) {
-			return true;
-		}
 	}
-	return false;
+	return active && owned;
 }
 
 // FUNCTION: GAMEMD 0x007325C0
@@ -939,9 +921,9 @@ static inline TechnoList * Visible_Of_Name(char const * name)
 static inline TechnoList * All_Of_Name(char const * name)
 {
 	TechnoList * list = new TechnoList(0, NULL);
-	int count = DAT_00A8EC78.Count();
+	int count = Technos.Count();
 	for (int i = 0; i < count; i++) {
-		TechnoClass * techno = DAT_00A8EC78[i];
+		TechnoClass * techno = Technos[i];
 		if (FUN_00732770(techno, name)) {
 			list->Add(techno);
 		}
@@ -982,7 +964,7 @@ void __fastcall FUN_00732950(void);
 
 typedef DynamicVectorClass<char const *> NameList;
 NameList * FUN_00732D10(void);
-bool __fastcall FUN_00732C30(TechnoClass * techno, NameList * names);
+bool __fastcall Is_Named_Selectable(TechnoClass * techno, NameList * names);
 
 namespace Game { void __fastcall UICommands_TypeSelect_7327D0(char const * name); }
 
@@ -1007,18 +989,71 @@ void __fastcall Game::UICommands_TypeSelect_7327D0(char const * name)
 	Unsorted::MoveFeedback = feedback;
 }
 
+static bool __fastcall Named_Selection_Test(TechnoClass * techno, int context)
+{
+	bool selectable = Is_Named_Selectable(techno, (NameList *)context);
+	bool selected = techno->IsSelected;
+	return selectable && !selected;
+}
+
+// FUNCTION: GAMEMD 0x00732950
+void __fastcall FUN_00732950(void)
+{
+	wchar_t text[256];
+	if (Unsorted::MuteSWLaunches) {
+		return;
+	}
+	FUN_006DA770(TacticalMap);
+	if (Unsorted::NavCycleMode != 2) {
+		DAT_00B0FE64 = false;
+	}
+	NameList * names = FUN_00732D10();
+	TechnoList * list;
+	if (DAT_00B0FE64) {
+		list = FUN_00731EB0(Is_Owned_Active, 0);
+	} else {
+		list = Collect_Owned_Visible();
+		if (!FUN_007321D0(list, Named_Selection_Test, (int)names)) {
+			DAT_00B0FE64 = true;
+		}
+		if (DAT_00B0FE64) {
+			delete list;
+			list = FUN_00731EB0(Is_Owned_Active, 0);
+		}
+	}
+	int count = list->Count();
+	for (int i = 0; i < count; ++i) {
+		TechnoClass * techno = (*list)[i];
+		if (Is_Named_Selectable(techno, names)) {
+			techno->Select();
+		}
+	}
+	FUN_00731D10(text);
+	FUN_00730A90(text, 240);
+	Unsorted::NavCycleMode = 2;
+	DAT_00B0FE58 = false;
+	delete names;
+	delete list;
+}
+
 // FUNCTION: GAMEMD 0x00732C30
 bool __fastcall Is_Named_Selectable(TechnoClass * techno, DynamicVectorClass<char const *> * names)
 {
 	int count = names->Count();
 	for (int i = 0; i < count; i++) {
 		char const * name = (*names)[i];
-		if (techno->Is_Type_Named(name)) {
-			if (techno->CanBeSelectedNow()) {
+		bool matches_name = techno->Is_Type_Named(name);
+		if (matches_name) {
+			bool selectable_now = techno->CanBeSelectedNow();
+			if (selectable_now) {
 				return true;
 			}
-			if (techno && techno->Fetch_RTTI() == RTTI_BUILDING && techno->Techno_Type_Class()->UndeploysInto) {
-				return true;
+			if (techno && techno->Fetch_RTTI() == RTTI_BUILDING) {
+				TechnoTypeClass const * type = techno->Techno_Type_Class();
+				bool can_undeploy = type->UndeploysInto != NULL;
+				if (can_undeploy) {
+					return true;
+				}
 			}
 		}
 	}
@@ -1076,7 +1111,7 @@ NameList * FUN_00732D10(void)
 	NameList * list = new NameList(0, NULL);
 	int count = DAT_00A8ECC8;
 	for (int i = 0; i < count; i++) {
-		ObjectClass * object = DAT_00A8ECB8[i];
+		ObjectClass * object = CurrentObject[i];
 		if (Add_Name(list, object->Class_Of()->IniName)) {
 			if (object->Techno_Type_Class()->DeploysInto) {
 				Add_Name(list, object->Techno_Type_Class()->DeploysInto->IniName);
@@ -1095,9 +1130,9 @@ void __fastcall FUN_00732FF0(char const * name, void (__fastcall * fn)(ObjectCla
 	TechnoList * list;
 	if (DAT_00B0FE64) {
 		list = new TechnoList(0, NULL);
-		int count = DAT_00A8EC78.Count();
+		int count = Technos.Count();
 		for (int i = 0; i < count; i++) {
-			TechnoClass * techno = DAT_00A8EC78[i];
+			TechnoClass * techno = Technos[i];
 			if (FUN_00732770(techno, name)) {
 				list->Add(techno);
 			}
@@ -1400,3 +1435,134 @@ template class DynamicVectorClass<char const *>;
 // TEMPLATE: GAMEMD 0x007343E0
 // ??0?$VectorClass@PBD@@QAE@HPBQBD@Z
 template class VectorClass<char const *>;
+
+extern int DAT_00845560;
+extern int DAT_00845564;
+int __fastcall FUN_007336A0(int value);
+wchar_t const * __fastcall FUN_00733640(int status);
+int __fastcall FUN_00733990(int value);
+wchar_t const * __fastcall FUN_00733930(int level);
+
+// FUNCTION: GAMEMD 0x00733380
+void __fastcall FUN_00733380(bool redraw)
+{
+	wchar_t text[256];
+	if (Unsorted::MuteSWLaunches) return;
+	int status;
+	if (Unsorted::NavCycleMode != 3) {
+		FUN_007331B0();
+		FUN_006DA740(TacticalMap);
+		status = 0;
+	} else {
+		status = FUN_007336A0(DAT_00845560);
+		if (redraw) FUN_006DA740(TacticalMap);
+	}
+	TechnoList * list = DAT_00B0FE6C;
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * techno = (*list)[i];
+		if (techno->GetHealthStatus() == status) techno->Select();
+	}
+	wchar_t const * name = FUN_00733640(status);
+	SmartPtr<TechnoList> all(FUN_00732050());
+	int selected = all->Count();
+	for (int j = 0; j < selected; j++) {
+		TechnoClass * techno = (*all)[j];
+		if (techno->GetHealthStatus() != status) {
+			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x62f);
+			break;
+		}
+	}
+	delete all;
+	FUN_00731D90(text, name);
+	FUN_00730A90(text, 240);
+	DAT_00845560 = status;
+	int remaining = DAT_00B0FE6C->Count();
+	Unsorted::NavCycleMode = 0;
+	if (remaining) Unsorted::NavCycleMode = 3;
+	DAT_00B0FE58 = false;
+}
+
+// FUNCTION: GAMEMD 0x007336C0
+void __fastcall FUN_007336C0(bool redraw)
+{
+	wchar_t text[256];
+	if (Unsorted::MuteSWLaunches) return;
+	int status;
+	if (Unsorted::NavCycleMode != 4) {
+		FUN_007331B0();
+		FUN_006DA740(TacticalMap);
+		status = 0;
+	} else {
+		status = FUN_00733990(DAT_00845564);
+		if (redraw) FUN_006DA740(TacticalMap);
+	}
+	TechnoList * list = DAT_00B0FE6C;
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * techno = (*list)[i];
+		if (techno->Veterancy.Remaining_Levels() == status) techno->Select();
+	}
+	wchar_t const * name = FUN_00733930(status);
+	SmartPtr<TechnoList> all(FUN_00732050());
+	int selected = all->Count();
+	for (int j = 0; j < selected; j++) {
+		TechnoClass * techno = (*all)[j];
+		if (techno->Veterancy.Remaining_Levels() != status) {
+			name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x67a);
+			break;
+		}
+	}
+	delete all;
+	FUN_00731D90(text, name);
+	FUN_00730A90(text, 240);
+	DAT_00845564 = status;
+	int remaining = DAT_00B0FE6C->Count();
+	Unsorted::NavCycleMode = 0;
+	if (remaining) Unsorted::NavCycleMode = 4;
+	DAT_00B0FE58 = false;
+}
+
+extern int DAT_00B0FE70;
+extern char DAT_00B0FD70[];
+
+// FUNCTION: GAMEMD 0x007339B0
+void __fastcall FUN_007339B0(bool redraw)
+{
+	wchar_t text[256];
+	if (Unsorted::MuteSWLaunches) return;
+	int cost;
+	char * type;
+	if (Unsorted::NavCycleMode != 5) {
+		FUN_007331B0();
+		FUN_006DA740(TacticalMap);
+		type = FUN_00733E10(DAT_00B0FE6C, NULL, INT_MAX, &cost);
+	} else {
+		type = FUN_00733E10(DAT_00B0FE6C, DAT_00B0FD70, DAT_00B0FE70, &cost);
+		if (redraw) FUN_006DA740(TacticalMap);
+	}
+	TechnoList * list = DAT_00B0FE6C;
+	int count = list->Count();
+	for (int i = 0; i < count; i++) {
+		TechnoClass * techno = (*list)[i];
+		if (FUN_00733C60(techno, type)) techno->Select();
+	}
+	wchar_t const * name = NULL;
+	SmartPtr<TechnoList> all(FUN_00732050());
+	if (!FUN_00732190(all, (bool (__fastcall *)(TechnoClass *, int))FUN_00733C60, (int)type)) {
+		name = StringTable::LoadString("MSG:Mixed", NULL, "D:\\ra2mdpost\\UICmnds.cpp", 0x6c3);
+	}
+	if (!name && CurrentObject.Count() > 0) {
+		name = CurrentObject[0]->Class_Of()->UIName;
+	}
+	FUN_00731D90(text, name);
+	FUN_00730A90(text, 240);
+	DAT_00B0FE70 = cost;
+	strcpy(DAT_00B0FD70, type);
+	if (type) delete [] type;
+	int remaining = all->Count();
+	Unsorted::NavCycleMode = 0;
+	if (remaining) Unsorted::NavCycleMode = 5;
+	DAT_00B0FE58 = false;
+	delete all;
+}

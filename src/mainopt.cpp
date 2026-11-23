@@ -33,6 +33,7 @@
 #include "theme.h"
 #include "stimer.h"
 #include "surface.h"
+#include "winfix.h"
 #include "wspipx.h"
 #include "wwmous.h"
 
@@ -257,16 +258,186 @@ void Main_Options_Dialog(void)
 	}
 }
 
+namespace UI {
+	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+}
+extern char const * DAT_0082A248[];
+extern char const * DAT_0082A254[];
+extern char const * DAT_0082A260[];
+extern int FUN_00407000(void);
+
+// FUNCTION: GAMEMD 0x0055FDB0
+BOOL CALLBACK FUN_0055FDB0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	static int * _modes = NULL;
+	static int _current_mode = -1;
+	static bool _initialized = false;
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc == 0) {
+		int * result = (int *)GetWindowLong(window, DWL_USER);
+		switch (message) {
+			case WM_COMMAND:
+				switch (LOWORD(wparam)) {
+					case 0x5CD:
+					case 0x5CE:
+						delete [] _modes;
+						_modes = NULL;
+						*result = LOWORD(wparam);
+						break;
+					case 0x686:
+						if (HIWORD(wparam) == 0) {
+							delete [] _modes;
+							_modes = NULL;
+							*(int *)GetWindowLong(window, DWL_USER) = 0x5CB;
+						}
+						break;
+					case 0x6ED:
+						if (HIWORD(wparam) == 1) {
+							Center_Window_Within_Window(window, MainWindow);
+							HWND list = GetDlgItem(window, 0x6ED);
+							if (list) {
+								int selected = ComboBox_GetCurSel(list);
+								int index = ComboBox_GetItemData(list, selected);
+								TempOptions.ScreenWidth = _modes[2 * index];
+								TempOptions.ScreenHeight = _modes[2 * index + 1];
+								if (TempOptions.ScreenWidth != Options.ScreenWidth || TempOptions.ScreenHeight != Options.ScreenHeight) {
+									Options.ScreenWidth = TempOptions.ScreenWidth;
+									Options.ScreenHeight = TempOptions.ScreenHeight;
+								}
+							}
+						}
+						break;
+				}
+				break;
+			case WM_DESTROY:
+				if (_modes != NULL) {
+					delete [] _modes;
+					_modes = NULL;
+				}
+				break;
+			case WM_HSCROLL:
+				if (LOWORD(wparam) == SB_THUMBTRACK) {
+					int index = HIWORD(wparam);
+					char const * name;
+					HWND handle = NULL;
+					if ((HWND)lparam == GetDlgItem(window, 0x52B)) {
+						int detail = index;
+						if (index) detail = 2;
+						name = DAT_0082A248[detail];
+						handle = GetDlgItem(window, 0x673);
+					} else if ((HWND)lparam == GetDlgItem(window, 0x50F)) {
+						name = DAT_0082A254[index];
+						handle = GetDlgItem(window, 0x670);
+					} else if ((HWND)lparam == GetDlgItem(window, 0x52A)) {
+						name = DAT_0082A260[index];
+						handle = GetDlgItem(window, 0x672);
+					} else if ((HWND)lparam == GetDlgItem(window, 0x52F)) {
+						if (_initialized) Options.Set_Score_Volume(SendMessage((HWND)lparam, 0x400, 0, 0) * DAT_007E3860, true);
+					} else if ((HWND)lparam == GetDlgItem(window, 0x532)) {
+						if (_initialized) Options.Set_Sound_Volume(SendMessage((HWND)lparam, 0x400, 0, 0) * DAT_007E3860, true);
+					} else if ((HWND)lparam == GetDlgItem(window, 0x536)) {
+						if (_initialized) Options.Set_Voice_Volume(SendMessage((HWND)lparam, 0x400, 0, 0) * DAT_007E3860, true);
+					}
+					if (handle) {
+						wchar_t const * text = StringTable::LoadString(name, NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x229);
+						SendMessage(handle, 0x4B2, 0, (LPARAM)text);
+					}
+				}
+				break;
+			case 0x497: {
+				_initialized = false;
+				HWND handle = GetDlgItem(window, 0x52B);
+				if (handle) {
+					SendMessage(handle, 0x4AC, 0, 0);
+					Slider_SetRange(handle, 0, 1);
+					Slider_SetPos(handle, Options.DetailLevel != 0);
+				}
+				HWND list = GetDlgItem(window, 0x6ED);
+				if (Options.AllowHiResModes) {
+					_modes = EnumDisplayModes(640, 480, 4096, 4096, 16);
+				} else {
+					_modes = EnumDisplayModes(640, 480, 1024, 768, 16);
+				}
+				int * modes = _modes;
+				int initial_mode = -1;
+				int mode_index = 0;
+				int item_index = 0;
+				if (modes != NULL) {
+					while (*modes != 0) {
+						int width = *modes++;
+						int height = *modes++;
+						if (Options.AllowHiResModes || width == 640 || width == 800 || width == 1024) {
+							if (width == TempOptions.ScreenWidth && height == TempOptions.ScreenHeight) initial_mode = mode_index;
+							char buffer[64];
+							sprintf(buffer, "%d x %d x 16", width, height);
+							int index = SendMessage(list, 0x4BC, 0, (LPARAM)buffer);
+							ComboBox_SetItemData(list, index, item_index);
+							mode_index++;
+							item_index++;
+						} else {
+							item_index++;
+						}
+					}
+				}
+				ComboBox_SetCurSel(list, initial_mode);
+				_current_mode = initial_mode;
+				handle = GetDlgItem(window, 0x50F);
+				if (handle) {
+					SendMessage(handle, 0x4AC, 0, 0);
+					Slider_SetRange(handle, 0, 2);
+					Slider_SetPos(handle, Options.Difficulty);
+				}
+				handle = GetDlgItem(window, 0x601);
+				if (handle) Button_SetCheck(handle, Options.ActionLines != false);
+				handle = GetDlgItem(window, 0x604);
+				if (handle) Button_SetCheck(handle, Options.ShowHidden != false);
+				handle = GetDlgItem(window, 0x602);
+				if (handle) Button_SetCheck(handle, Options.ToolTips != false);
+				handle = GetDlgItem(window, 0x52A);
+				if (handle) {
+					SendMessage(handle, 0x4AC, 0, 0);
+					Slider_SetRange(handle, 0, 6);
+					Slider_SetPos(handle, 6 - Options.ScrollRate);
+				}
+				int available = FUN_00407000();
+				handle = GetDlgItem(window, 0x52F);
+				if (handle) {
+					SendMessage(handle, 0x4AE, 0, 0);
+					Slider_SetRange(handle, 0, 10);
+					Slider_SetPos(handle, (int)(Options.ScoreVolume * 10.0 + 0.5));
+					EnableWindow(handle, available);
+				}
+				handle = GetDlgItem(window, 0x532);
+				if (handle) {
+					SendMessage(handle, 0x4AE, 0, 0);
+					Slider_SetRange(handle, 0, 10);
+					Slider_SetPos(handle, (int)(Options.SoundVolume * 10.0 + 0.5));
+					EnableWindow(handle, available);
+				}
+				handle = GetDlgItem(window, 0x536);
+				if (handle) {
+					SendMessage(handle, 0x4AE, 0, 0);
+					Slider_SetRange(handle, 0, 10);
+					Slider_SetPos(handle, (int)(Options.VoiceVolume * 10.0 + 0.5));
+					EnableWindow(handle, available);
+				}
+				_initialized = true;
+				break;
+			}
+		}
+		return 0;
+	}
+	return rc;
+}
+
+
 #include "ccini.h"
 #include "rawfile.h"
 #include "firewall.h"
 
 extern WinsockInterfaceClass * PacketTransport;
-extern CCINIClass DAT_008870C0;
+extern CCINIClass INI_RA2MD;
 
-namespace UI {
-	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
-}
 bool __fastcall Focus_Next_Tab_Item(HWND window, bool previous);
 
 // FUNCTION: GAMEMD 0x00560480
@@ -339,14 +510,14 @@ BOOL CALLBACK FUN_00560480(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					SendMessage(handle, 0x4B4, 0, (LPARAM)Options.DestNet);
 				}
 				SendMessage(handle, EM_LIMITTEXT, 11, 0);
-				if (Session.unknown_2F48) {
+				if (Session.SendDelay) {
 					SendDlgItemMessage(window, 0x762, BM_SETCHECK, 1, 0);
 				} else {
 					SendDlgItemMessage(window, 0x762, BM_SETCHECK, 0, 0);
 				}
 				handle = GetDlgItem(window, 0x5D7);
-				if (handle != (HWND)-1 && Session.unknown_301C) {
-					sprintf(socket_string, "%d", Session.unknown_301C);
+				if (handle != (HWND)-1 && Session.PortNumberOverride) {
+					sprintf(socket_string, "%d", Session.PortNumberOverride);
 					SendMessage(handle, 0x4B4, 0, (LPARAM)socket_string);
 				}
 				return(0);
@@ -415,24 +586,24 @@ BOOL CALLBACK FUN_00560480(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 						}
 
 						if (SendDlgItemMessage(window, 0x762, BM_GETCHECK, 0, 0) == 1) {
-							if (!Session.unknown_2F48) {
+							if (!Session.SendDelay) {
 								WWMessageBox().Process(StringTable::LoadString("TXT_FIREWALL_SETTINGS_WARNING1", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x42B), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x42B), NULL, NULL);
 							}
-							Session.unknown_2F48 = true;
+							Session.SendDelay = true;
 						} else {
-							Session.unknown_2F48 = false;
+							Session.SendDelay = false;
 						}
 
-						if (port > 0 && Session.unknown_301C == 0) {
+						if (port > 0 && Session.PortNumberOverride == 0) {
 							WWMessageBox().Process(StringTable::LoadString("TXT_FIREWALL_SETTINGS_WARNING2", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x436), StringTable::LoadString("TXT_OK", NULL, "D:\\ra2mdpost\\MainOpt.cpp", 0x436), NULL, NULL);
 						}
-						Session.unknown_301C = port;
-						DAT_00ABFEC8.Clear();
+						Session.PortNumberOverride = port;
+						FirewallHelper.Clear();
 
 						RawFileClass file("RA2MD.INI");
-						DAT_008870C0.Put_Bool("MultiPlayer", "SendDelay", Session.unknown_2F48);
-						DAT_008870C0.Put_Int("MultiPlayer", "PortNumberOverride", Session.unknown_301C, 0);
-						DAT_008870C0.Save(file, false);
+						INI_RA2MD.Put_Bool("MultiPlayer", "SendDelay", Session.SendDelay);
+						INI_RA2MD.Put_Int("MultiPlayer", "PortNumberOverride", Session.PortNumberOverride, 0);
+						INI_RA2MD.Save(file, false);
 						break;
 					}
 
@@ -456,14 +627,7 @@ BOOL CALLBACK FUN_00560480(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return(rc);
 }
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
-
-struct Drawing {
-	static int RenderWidth;
-	static int RenderHeight;
-};
+#include "filesystem.h"
 
 extern int SidebarWidth;
 Rect Get_Title_Screen_Area(void);
@@ -480,7 +644,7 @@ bool Change_Display_Mode(int width, int height)
 {
 	DebugString("About to set video mode\n");
 
-	Point2D oldsize(Drawing::RenderWidth, Drawing::RenderHeight);
+	Point2D oldsize(VideoModeWidth, VideoModeHeight);
 
 	int redleft = DSurface::Get_Red_Left();
 	int redright = DSurface::Get_Red_Right();
@@ -495,8 +659,8 @@ bool Change_Display_Mode(int width, int height)
 
 	if (WindowedMode == true) {
 		VisibleRect = Rect(0, 0, width, height);
-		Drawing::RenderWidth = width;
-		Drawing::RenderHeight = height;
+		VideoModeWidth = width;
+		VideoModeHeight = height;
 		DebugString("VisibleRect: %dx%d\n", width, height);
 	} else {
 		if (MouseCursor != NULL) {
@@ -608,7 +772,7 @@ bool Change_Display_Mode(int width, int height)
 	}
 
 	Map.Set_View_Dimensions(temp);
-	FUN_0072E1B0(Drawing::RenderWidth, Drawing::RenderHeight);
+	FUN_0072E1B0(VideoModeWidth, VideoModeHeight);
 	Map.Init_IO();
 	Map.Activate(1);
 	Map.Reposition_Sidebar();
@@ -710,4 +874,122 @@ BOOL CALLBACK Confirm_Mode_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 		return(0);
 	}
 	return(rc);
+}
+
+
+static __forceinline BOOL Display_Options_Dialog_Body(HWND window, UINT message, WPARAM wparam)
+{
+	enum {
+		MIN_WIDTH = 640,
+		MIN_HEIGHT = 480,
+		MAX_WIDTH = 1024,
+		MAX_HEIGHT = 768,
+		MAX_HI_WIDTH = 4096,
+		MAX_HI_HEIGHT = 4096,
+	};
+
+	static int * _modes = NULL;
+	static int _current_mode = -1;
+	static int _previous_mode = -1;
+	static bool _initialized = true;
+
+	int * result = (int *)GetWindowLong(window, DWL_USER);
+	switch (message) {
+		case WM_COMMAND:
+			switch (LOWORD(wparam)) {
+				default:
+					return(0);
+
+				case 0x5D9: {
+					HWND list = GetDlgItem(window, 0x5D9);
+					_current_mode = ListBox_GetCurSel(list);
+				}
+				return(0);
+
+				case 1:
+				case 0x6CB: {
+					if (_previous_mode != _current_mode) {
+						Center_Window_Within_Window(window, MainWindow);
+						HWND list = GetDlgItem(window, 0x5D9);
+						if (list) {
+							int index = ListBox_GetItemData(list, _current_mode);
+							int * modes = &_modes[2 * index];
+							TempOptions.ScreenWidth = modes[0];
+							TempOptions.ScreenHeight = modes[1];
+						}
+					}
+					HWND button = GetDlgItem(window, 0x674);
+					if (button) {
+						Options.StretchMovies = Button_GetCheck(button) == BST_CHECKED;
+					}
+				}
+				break;
+
+				case 0x686:
+					delete [] _modes;
+					_modes = NULL;
+					*result = 2;
+					return(0);
+			}
+			delete [] _modes;
+			_modes = NULL;
+			*result = 1;
+			break;
+
+		case 0x497: {
+			HWND list = GetDlgItem(window, 0x5D9);
+			if (Options.AllowHiResModes) {
+				_modes = EnumDisplayModes(MIN_WIDTH, MIN_HEIGHT, MAX_HI_WIDTH, MAX_HI_HEIGHT, 16);
+			} else {
+				_modes = EnumDisplayModes(MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT, 16);
+			}
+			int * modes = _modes;
+			int item_index = 0;
+			int initial_mode = -1;
+			int mode_index = 0;
+			if (modes != NULL) {
+				while (*modes != 0) {
+					int width = *modes++;
+					int height = *modes++;
+					if (Options.AllowHiResModes || width == MIN_WIDTH || width == 800 || width == MAX_WIDTH) {
+						if (width == TempOptions.ScreenWidth && height == TempOptions.ScreenHeight) {
+							initial_mode = mode_index;
+						}
+						char buffer[64];
+						sprintf(buffer, "%d x %d x 16", width, height);
+						int index = (int)SendMessage(list, 0x4C8, 0, (LPARAM)buffer);
+						ListBox_SetItemData(list, index, item_index);
+						mode_index++;
+						item_index++;
+					} else {
+						item_index++;
+					}
+				}
+			}
+			ListBox_SetCurSel(list, initial_mode);
+			_initialized = true;
+			_current_mode = initial_mode;
+			_previous_mode = initial_mode;
+
+			HWND button = GetDlgItem(window, 0x674);
+			if (button) {
+				bool stretch = Options.StretchMovies == true && DSurface::AllowStretchBlits == true;
+				Button_SetCheck(button, stretch != false);
+				EnableWindow(button, (BOOL)DSurface::AllowStretchBlits);
+			}
+		}
+		break;
+
+	}
+	return(0);
+}
+
+// FUNCTION: GAMEMD 0x00561400
+BOOL CALLBACK Display_Options_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	int rc = UI::StandardWndProc(window, message, wparam, lparam);
+	if (rc == 0) {
+		return Display_Options_Dialog_Body(window, message, wparam);
+	}
+	return rc;
 }

@@ -57,10 +57,7 @@
 // SYNTHETIC: GAMEMD 0x00747090 SYMBOL
 // _$E35
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-	static char TEMPERAT_PAL[];
-};
+#include "filesystem.h"
 
 // SYNTHETIC: GAMEMD 0x007470B0 SYMBOL
 // _$E38
@@ -74,7 +71,7 @@ UnitTypeClass::UnitTypeClass(char const * ininame) :
 	CrateGoodie(false),
 	Harvester(false),
 	Weeder(false),
-	unknown_E10(false),
+	IsFireAnim(false),
 	HasTurret(false),
 	DeployToFire(false),
 	IsSimpleDeployer(false),
@@ -162,7 +159,7 @@ void UnitTypeClass::One_Time(void)
 		EightBitSurface->Fill(0);
 	}
 	if (EightBitDrawer == NULL) {
-		EightBitDrawer = new ConvertClass(*(PaletteClass *)FileSystem::TEMPERAT_PAL, *(PaletteClass *)FileSystem::TEMPERAT_PAL, *EightBitSurface, 1, false);
+		EightBitDrawer = new ConvertClass(GamePalette, GamePalette, *EightBitSurface, 1, false);
 	}
 	SmallVisceroidShapes = FileSystem::LoadFile("VISC_SML.SHP", false);
 	LargeVisceroidShapes = FileSystem::LoadFile("VISC_LRG.SHP", false);
@@ -381,7 +378,7 @@ void UnitTypeClass::Compute_CRC(CRCEngine & crc) const
 	crc(CrateGoodie);
 	crc(Harvester);
 	crc(Weeder);
-	crc(unknown_E10);
+	crc(IsFireAnim);
 	crc(HasTurret);
 	crc(IsTilter);
 	crc(IsSimpleDeployer);

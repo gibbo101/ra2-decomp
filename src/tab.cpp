@@ -20,6 +20,7 @@
 #include "_rules.h"
 #include "rules.h"
 #include "voc.h"
+#include "_convert.h"
 
 #include <cmath>
 
@@ -140,7 +141,6 @@ extern int DAT_00B0CD28;
 
 struct FileSystem {
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
-	static ConvertClass * SIDEBAR_PAL;
 };
 
 namespace Unsorted { extern bool ArmageddonMode; }
@@ -277,7 +277,7 @@ void TabClass::Init_IO(void)
 		ShapeSet const * shape = DAT_00B0FA90;
 
 		CommandBarStatics::ButtonA.ID = 0xF0;
-		CommandBarStatics::ButtonA.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		CommandBarStatics::ButtonA.ShapeDrawer = SidebarDrawer;
 		CommandBarStatics::ButtonA.IsOn = false;
 		CommandBarStatics::ButtonA.IsToggleType = 0;
 		CommandBarStatics::ButtonA.Set_Flags(5);
@@ -286,7 +286,7 @@ void TabClass::Init_IO(void)
 		CommandBarStatics::ButtonA.Set_Shape(shape, 0, 0);
 
 		CommandBarStatics::ButtonB.ID = 0xF1;
-		CommandBarStatics::ButtonB.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		CommandBarStatics::ButtonB.ShapeDrawer = SidebarDrawer;
 		CommandBarStatics::ButtonB.IsOn = false;
 		CommandBarStatics::ButtonB.IsToggleType = 0;
 		CommandBarStatics::ButtonB.Set_Flags(5);
@@ -313,9 +313,8 @@ void TabClass::FUN_006D04D0(void)
 	}
 }
 
-struct CCToolTip {
-	static ToolTipManager * Instance;
-};
+#include "_tooltip.h"
+#include "cctooltip.h"
 
 void __fastcall FUN_006D09C0(ShapeButtonClass * button, char const * text);
 
@@ -337,13 +336,13 @@ bool TabClass::Activate(int control)
 			for (int i = 0; i < 25; i++) {
 				ShapeButtonClass * b = FUN_006CFD40(i);
 				if (b) {
-					CCToolTip::Instance->Remove(b->ID);
+					ToolTips->Remove(b->ID);
 				}
 			}
-			CCToolTip::Instance->Remove(0xF0);
+			ToolTips->Remove(0xF0);
 		} else {
 			Remove_A_Button(CommandBarStatics::ButtonB);
-			CCToolTip::Instance->Remove(0xF1);
+			ToolTips->Remove(0xF1);
 		}
 		Flag_To_Redraw(GS_REDRAW_ALL);
 	}
@@ -390,10 +389,10 @@ inline void TabClass::Hide_Buttons(void)
 	for (int i = 0; i < 25; i++) {
 		ShapeButtonClass * b = FUN_006CFD40(i);
 		if (b) {
-			CCToolTip::Instance->Remove(b->ID);
+			ToolTips->Remove(b->ID);
 		}
 	}
-	CCToolTip::Instance->Remove(0xF0);
+	ToolTips->Remove(0xF0);
 }
 
 inline void TabClass::Close_Thumb(void)
@@ -412,7 +411,7 @@ inline void TabClass::Open_Thumb(void)
 {
 	if (!ThumbActive) {
 		Remove_A_Button(CommandBarStatics::ButtonB);
-		CCToolTip::Instance->Remove(0xF1);
+		ToolTips->Remove(0xF1);
 		ThumbActive = true;
 		FUN_006D1200();
 		IsToRedraw = true;
@@ -496,13 +495,12 @@ void __fastcall FUN_006D09C0(ShapeButtonClass * button, char const * text)
 		tip.Region.Y = button->Y;
 		tip.Region.Width = button->Width;
 		tip.Region.Height = button->Height;
-		CCToolTip::Instance->Remove(tip.ID);
-		CCToolTip::Instance->Add(&tip);
+		ToolTips->Remove(tip.ID);
+		ToolTips->Add(&tip);
 	}
 }
 
 extern ShapeSet const * DAT_00B0FB08;
-extern bool DAT_00B0B518;
 
 extern ShapeSet const *DAT_00B0FA3C;
 extern ShapeSet const *DAT_00B0FAA8;
@@ -564,7 +562,7 @@ drawn:
 			Rect narrow = view;
 			narrow.Width = DAT_00B0FC58->Width;
 			Surface *surface = LogicalSurface;
-			Draw_Shape(*surface, *FileSystem::SIDEBAR_PAL, DAT_00B0FA3C, 0, where, narrow);
+			Draw_Shape(*surface, *SidebarDrawer, DAT_00B0FA3C, 0, where, narrow);
 			if (ThumbActive) {
 				where.X = DAT_00B0FC60->X;
 				where.Y = DAT_00B0FC60->Y;
@@ -572,12 +570,12 @@ drawn:
 				where.X = DAT_00B0FC64->X;
 				where.Y = DAT_00B0FC64->Y;
 			}
-			Draw_Shape(*surface, *FileSystem::SIDEBAR_PAL, DAT_00B0FA90, 0, where, view);
+			Draw_Shape(*surface, *SidebarDrawer, DAT_00B0FA90, 0, where, view);
 			if (ThumbActive) {
 				where.X = DAT_00B0FC68->X;
 				where.Y = DAT_00B0FC58->Y;
 				for (int tile = 0; tile < DAT_00B0F9E4; tile++) {
-					Draw_Shape(*surface, *FileSystem::SIDEBAR_PAL, DAT_00B0FAA8, 0, where, view);
+					Draw_Shape(*surface, *SidebarDrawer, DAT_00B0FAA8, 0, where, view);
 					where.X += DAT_00B0FC68->Width;
 				}
 				for (int slot = 0; slot < 25; slot++) {
@@ -589,7 +587,7 @@ drawn:
 				}
 			}
 			where.X = DAT_00B0FC6C->X;
-			Draw_Shape(*surface, *FileSystem::SIDEBAR_PAL, DAT_00B0FABC, 0, where, view);
+			Draw_Shape(*surface, *SidebarDrawer, DAT_00B0FABC, 0, where, view);
 			if (ThumbActive)
 				CommandBarStatics::ButtonA.Draw_Me(1);
 			else
@@ -609,14 +607,14 @@ drawn:
 }
 
 // SYNTHETIC: GAMEMD 0x006D0E50 SYMBOL
-// _$E137
+// _$E135
 
 // FUNCTION: GAMEMD 0x006D0E60
 void TabClass::Draw_Credits_Tab(void)
 {
 	ShapeSet const * shape = DAT_00B0FB08;
-	Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, shape, 0, Point2D(0, 0), SidebarSurface->Get_Rect());
-	DAT_00B0B518 = true;
+	Draw_Shape(*SidebarSurface, *SidebarDrawer, shape, 0, Point2D(0, 0), SidebarSurface->Get_Rect());
+	SidebarClass::IsToBlitSidebar = true;
 }
 
 // FUNCTION: GAMEMD 0x006D0EC0
@@ -662,7 +660,7 @@ void __cdecl FUN_006D0F70(void)
 void __fastcall FUN_006D0FB0(ShapeButtonClass * button, int id, int flags)
 {
 	button->ID = id;
-	button->ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	button->ShapeDrawer = SidebarDrawer;
 	button->Set_Flags(flags);
 	button->IsOn = false;
 	button->IsToggleType = 0;
@@ -683,7 +681,7 @@ void TabClass::FUN_006D0FD0(void)
 			r = FUN_006CFD60(i);
 			if (r.X + r.Width <= limit) {
 				button->ID = 0xD6 + i;
-				button->ShapeDrawer = FileSystem::SIDEBAR_PAL;
+				button->ShapeDrawer = SidebarDrawer;
 				button->IsOn = false;
 				button->IsToggleType = 0;
 				button->Set_Flags(5);
@@ -713,7 +711,7 @@ void __cdecl FUN_006D1130(void)
 	ShapeSet const * shape = DAT_00B0FA90;
 
 	CommandBarStatics::ButtonA.ID = 0xF0;
-	CommandBarStatics::ButtonA.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	CommandBarStatics::ButtonA.ShapeDrawer = SidebarDrawer;
 	CommandBarStatics::ButtonA.IsOn = false;
 	CommandBarStatics::ButtonA.IsToggleType = 0;
 	CommandBarStatics::ButtonA.Set_Flags(5);
@@ -722,7 +720,7 @@ void __cdecl FUN_006D1130(void)
 	CommandBarStatics::ButtonA.Set_Shape(shape, 0, 0);
 
 	CommandBarStatics::ButtonB.ID = 0xF1;
-	CommandBarStatics::ButtonB.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	CommandBarStatics::ButtonB.ShapeDrawer = SidebarDrawer;
 	CommandBarStatics::ButtonB.IsOn = false;
 	CommandBarStatics::ButtonB.IsToggleType = 0;
 	CommandBarStatics::ButtonB.Set_Flags(5);
@@ -772,10 +770,10 @@ void TabClass::FUN_006D14F0(void)
 	for (int i = 0; i < 25; i++) {
 		ShapeButtonClass * b = FUN_006CFD40(i);
 		if (b) {
-			CCToolTip::Instance->Remove(b->ID);
+			ToolTips->Remove(b->ID);
 		}
 	}
-	CCToolTip::Instance->Remove(0xF0);
+	ToolTips->Remove(0xF0);
 }
 
 // FUNCTION: GAMEMD 0x006D1570
@@ -789,7 +787,7 @@ void TabClass::FUN_006D1570(void)
 void TabClass::FUN_006D15F0(void)
 {
 	Remove_A_Button(CommandBarStatics::ButtonB);
-	CCToolTip::Instance->Remove(0xF1);
+	ToolTips->Remove(0xF1);
 }
 
 // FUNCTION: GAMEMD 0x006D1610
@@ -797,7 +795,7 @@ void TabClass::FUN_006D1610(void)
 {
 	if (!ThumbActive) {
 		Remove_A_Button(CommandBarStatics::ButtonB);
-		CCToolTip::Instance->Remove(0xF1);
+		ToolTips->Remove(0xF1);
 		ThumbActive = true;
 		FUN_006D1200();
 		IsToRedraw = true;

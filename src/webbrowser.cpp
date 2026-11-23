@@ -20,10 +20,10 @@
 
 bool __fastcall FUN_00551630(const char *url);
 rc_ptr<PlayerProfile> __fastcall FUN_00778A20(Wstring const * name);
-int __fastcall FUN_00789500(char const * login, char const * password, int plain, int locale);
+int __fastcall StoreLogin(char const * login, char const * password, bool plain, int locale);
 void __fastcall FUN_00606740(HWND dialog, bool value);
-extern Wstring DAT_00B73E40;
-extern Wstring DAT_00B7778C;
+extern Wstring g_NickName;
+extern Wstring g_LoginPassword;
 extern WebBrowser *DAT_00B72D0C;
 namespace UI {
 	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
@@ -61,17 +61,9 @@ namespace OwnerDraw { void __fastcall UpdateControlPosition(HWND dialog, LPARAM 
 // SYNTHETIC: GAMEMD 0x00773410 SYMBOL
 // _$E35
 
-extern int DAT_00B72CF0;
-extern int DAT_00B72CF4;
-extern int DAT_00B72CF8;
 
-// FUNCTION: GAMEMD 0x00773430
-void FUN_00773430(void)
-{
-	DAT_00B72CF8 = 0;
-	DAT_00B72CF0 = 128;
-	DAT_00B72CF4 = 128;
-}
+// SYNTHETIC: GAMEMD 0x00773430 SYMBOL
+// _$E38
 
 // FUNCTION: GAMEMD 0x00773450
 WebBrowser * __fastcall Create_Web_Browser(HWND window, RECT *rect)
@@ -355,11 +347,11 @@ HRESULT STDMETHODCALLTYPE WebBrowser::OnRegisterLogin(const wchar_t *nick, const
 
 	WOLOptionsClass options;
 	if (options.Is_Bit1_Clear()) {
-		int nicknum = FUN_00789500(nickName, password, 1, profile.Get()->Field10);
+		int nicknum = StoreLogin(nickName, password, true, profile.Get()->Locale);
 		Session.Write_MultiPlayer_Settings();
 	}
-	DAT_00B73E40 = nickName;
-	DAT_00B7778C = password;
+	g_NickName = nickName;
+	g_LoginPassword = password;
 	return S_OK;
 }
 

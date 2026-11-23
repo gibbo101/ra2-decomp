@@ -251,7 +251,7 @@ class BuildingClass : public TechnoClass
 		virtual void Clicked_As_Target(int = 7) override;
 
 		virtual void Death_Announcement(TechnoClass const * source=0) const override;
-		virtual FireErrorType Can_Fire(AbstractClass *, int which, bool ignoreRange) const override;
+		virtual FireErrorType Can_Fire(AbstractClass *, int which, bool check_range) const override;
 		virtual AbstractClass * Greatest_Threat(ThreatType threat, Coord const & coord, bool) const override;
 		virtual ResultType Take_Damage(int & damage, int distance, WarheadTypeClass const * warhead, TechnoClass * source=0, bool forced=false, bool=false, HouseClass * = 0) override;
 		virtual bool Captured(HouseClass * newowner, bool announce = true) override;
@@ -376,7 +376,7 @@ class BuildingClass : public TechnoClass
 		void PlayAnim(char const * name, BAnimType anim, bool damaged, bool garrisoned, int delay);
 		void PlayNthAnim(BAnimType anim, bool damaged, bool garrisoned, int delay = 0);
 		void Detach_Anim(AnimClass * anim);
-		void DestroyNthAnim(BAnimType anim);
+		void End_Anim(BAnimType anim);
 		void HideNthAnim(BAnimType anim);
 		void DisableTemporal(void);
 		void EnableTemporal(void);
@@ -400,7 +400,7 @@ class BuildingClass : public TechnoClass
 		static char const * const INI_NAME;
 };
 
-void __fastcall DrawRadialIndicator(bool draw_line, bool adjust_color, Coord center, RGBClass color, float radius, bool in_pixels, bool whole);
+void __fastcall DrawRadialIndicator(Coord center, RGBClass color, float radius, bool draw_line, bool adjust_color, bool in_pixels, bool whole);
 void Adjust_House_Power(HouseClass * house);
 BuildingClass * Find_Unit_Repair_Facility(HouseClass * house, TechnoClass * obj);
 

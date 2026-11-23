@@ -117,3 +117,14 @@ class JournalTests(unittest.TestCase):
             merge(table, "new", [journal], {"0x00000010"}, set())
             with table.open() as f:
                 self.assertEqual([len(r) for r in csv.reader(f)], [12, 12, 12])
+
+    def test_matched_and_reconstructed_functions_are_settled(self):
+        sys.path.insert(0, str(Path(__file__).parent / "coord"))
+        from attempts_rows import settled
+        with tempfile.TemporaryDirectory() as tmp:
+            progress = Path(tmp) / "progress.csv"
+            progress.write_text("address,name,result,size,source,symbol\n"
+                                "0x00000010,A,MATCH,1,src/a.cpp,_A\n"
+                                "0x00000020,B,RECONSTRUCTED,1,src/ra2asm/b.asm,_B\n"
+                                "0x00000030,C,82.1%,1,src/c.cpp,_C\n")
+            self.assertEqual(settled(progress), {"0x00000010", "0x00000020"})

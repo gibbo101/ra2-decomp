@@ -40,6 +40,8 @@
 #include "zbuffer.h"
 #include <climits>
 #include <cstring>
+#include "_convert.h"
+#include "_palette.h"
 
 void Draw_Cost(int cost, int maxcost, Surface & surface, Point2D const & drawpoint, wchar_t const * title, bool center, ConvertClass & drawer, Blitter const * blitter);
 void Draw_Unit_Info(Surface * surface, ConvertClass * drawer, TechnoTypeClass * techtype, bool allowed);
@@ -183,11 +185,7 @@ int DropshipLoadoutClass::Get_Allowable_Index(TechnoTypeClass *ttype)
 #undef LoadString
 #include "stringtable.h"
 
-struct FileSystem {
-	static void const * LoadFile(char const *name, bool as_shape);
-	static PaletteClass TEMPERAT_PAL;
-	static ConvertClass * CAMEO_PAL;
-};
+#include "filesystem.h"
 
 struct ButtonFadeEffect
 {
@@ -350,14 +348,14 @@ void __fastcall Dropship_Screen(void)
 		palette_data[i] = RGBClass(palette_data[i].Get_Red() * 4, palette_data[i].Get_Green() * 4, palette_data[i].Get_Blue() * 4);
 	}
 
-	ConvertClass *drawer_dropship = new ConvertClass(palette_data, FileSystem::TEMPERAT_PAL, *VisibleSurface, 53, false);
-	ConvertClass *drawer_dropship_alpha = new ConvertClass(palette_data, FileSystem::TEMPERAT_PAL, *VisibleSurface, 1, false);
+	ConvertClass *drawer_dropship = new ConvertClass(palette_data, GamePalette, *VisibleSurface, 53, false);
+	ConvertClass *drawer_dropship_alpha = new ConvertClass(palette_data, GamePalette, *VisibleSurface, 1, false);
 
 	memmove(&palette_data, FileSystem::LoadFile("CAMEO.PAL", false), sizeof(palette_data));
 	for (i = 0; i < 256; ++i) {
 		palette_data[i] = RGBClass(palette_data[i].Get_Red() * 4, palette_data[i].Get_Green() * 4, palette_data[i].Get_Blue() * 4);
 	}
-	ConvertClass *drawer_cameo = new ConvertClass(palette_data, FileSystem::TEMPERAT_PAL, *VisibleSurface, 1, false);
+	ConvertClass *drawer_cameo = new ConvertClass(palette_data, GamePalette, *VisibleSurface, 1, false);
 
 	Blitter const *plain_blitter = drawer_dropship->Blitter_From_Flags(SHAPE_NORMAL);
 	Blitter const *cameo_alpha_blitter = drawer_cameo->Blitter_From_Flags(SHAPE_ALPHA_BLEND);
@@ -416,7 +414,7 @@ void __fastcall Dropship_Screen(void)
 	int id = 1;
 	for (i = 0; i < _cameo_count; ++i) {
 		ShapeButtonClass *button = new ShapeButtonClass(id, i < candidates.Count() ? (ShapeSet const *)candidates[i]->Get_Cameo_Data() : (ShapeSet const *)no_cameo_shape, screen_origin.X + _cameo_x + (_cameo_width + _cameo_gap_x) * (i % 2), screen_origin.Y + _cameo_y + (_cameo_height + _cameo_gap_y) * (i / 2), 0, 0, true);
-		button->ShapeDrawer = FileSystem::CAMEO_PAL;
+		button->ShapeDrawer = CameoDrawer;
 		buttons[i] = button;
 		if (i == 0) {
 			button_list = buttons[0];
@@ -444,7 +442,7 @@ void __fastcall Dropship_Screen(void)
 		for (j = 0; j < DropshipLoadoutClass::MAX_ENTRIES; ++j) {
 			int xpos = j * (_slot_width + _slot_gap_x);
 			ShapeButtonClass *button = new ShapeButtonClass(id, 0, screen_origin.X + _slot_x + (xpos < 2 * (_slot_width + _slot_gap_x) ? xpos : xpos - 2 * (_slot_width + _slot_gap_x)), screen_origin.Y + _loadout_slot_ys[dropship_count - 1][i][j], 0, 0, false);
-			button->ShapeDrawer = FileSystem::CAMEO_PAL;
+			button->ShapeDrawer = CameoDrawer;
 			buttons[id - 1] = button;
 			button->Add(*button_list);
 			++id;
@@ -1004,7 +1002,7 @@ void Draw_Cost(int cost, int maxcost, Surface & surface, Point2D const & drawpoi
 	clip.Y -= (HiddenSurface->Get_Height() - surface.Get_Height()) / 2;
 	Blit_Block(*HiddenSurface, drawer, surface, clip, Point2D(0, 0), source, NULL, blitter);
 
-	Fancy_Text_Print_Wide(Scratch(Point2D()), cost_text, HiddenSurface, &HiddenSurface->Get_Rect(), &drawpoint, Fetch_Scheme_By_Name("Yellow"), TBLACK, type);
+	Fancy_Text_Print_Wide(cost_text, HiddenSurface, &HiddenSurface->Get_Rect(), &drawpoint, Fetch_Scheme_By_Name("Yellow"), TBLACK, type);
 }
 
 // FUNCTION: GAMEMD 0x004B9890
@@ -1050,10 +1048,10 @@ void Draw_Unit_Info(Surface * surface, ConvertClass * drawer, TechnoTypeClass * 
 			scheme = Fetch_Scheme_By_Name("Red");
 		}
 
-		Fancy_Text_Print_Wide(Scratch(Point2D()), name, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
-		Fancy_Text_Print_Wide(Scratch(Point2D()), armament, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos + _offset) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
-		Fancy_Text_Print_Wide(Scratch(Point2D()), armor, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos + _offset * 2) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
-		Fancy_Text_Print_Wide(Scratch(Point2D()), cost, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos + _offset * 3) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
+		Fancy_Text_Print_Wide(name, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
+		Fancy_Text_Print_Wide(armament, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos + _offset) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
+		Fancy_Text_Print_Wide(armor, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos + _offset * 2) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
+		Fancy_Text_Print_Wide(cost, HiddenSurface, &HiddenSurface->Get_Rect(), &(Point2D(_xpos, _ypos + _offset * 3) + point), scheme, TBLACK, TextPrintType(TPF_6PT_GRAD|TPF_FULLSHADOW));
 	}
 }
 

@@ -10,6 +10,7 @@
 #include "vector.h"
 #include "scheme.h"
 #include "_theater.h"
+#include "_palette.h"
 #include <cstring>
 
 // FUNCTION: GAMEMD 0x00626020
@@ -95,11 +96,7 @@ int PaletteClass::Closest_Color(RGBClass const & rgb) const
 	return(closest);
 }
 
-struct FileSystem
-{
-	static void const * LoadFile(char const * name, bool flag);
-	static char TEMPERAT_PAL[];
-};
+#include "filesystem.h"
 
 extern char * DAT_00836464;
 
@@ -438,10 +435,10 @@ DynamicVectorClass<ColorScheme *> * SchemeLibrary::Generate(char const * name)
 	for (int index = 0; index < count; index++) {
 		char * id = (*Names)[index];
 		HSVClass base = (*Colors)[index];
-		ColorScheme * scheme = new ColorScheme(id, base, pal, *(PaletteClass *)FileSystem::TEMPERAT_PAL, 1, false);
+		ColorScheme * scheme = new ColorScheme(id, base, pal, GamePalette, 1, false);
 		scheme->ID = index * 2;
 		schemes->Add(scheme);
-		scheme = new ColorScheme(id, base, pal, *(PaletteClass *)FileSystem::TEMPERAT_PAL, 53, false);
+		scheme = new ColorScheme(id, base, pal, GamePalette, 53, false);
 		scheme->ID = index * 2 + 1;
 		schemes->Add(scheme);
 	}

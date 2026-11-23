@@ -20,8 +20,6 @@
 #include "vector.h"
 #include <cmath>
 
-DynamicVectorClass<HouseTypeClass *> HouseTypeClass::Array;
-
 #include "airctype.h"
 #include "infatype.h"
 #include "unittype.h"
@@ -96,9 +94,9 @@ HouseTypeClass::HouseTypeClass(char const * ininame) :
 {
 	Create_ID();
 	Suffix[0] = '\0';
-	Array.Add(this);
-	House = (HousesType)Array.ID(this);
-	HeapID = (HousesType)Array.ID(this);
+	HouseTypes.Add(this);
+	House = (HousesType)HouseTypes.ID(this);
+	HeapID = (HousesType)HouseTypes.ID(this);
 }
 
 // FUNCTION: GAMEMD 0x00511650
@@ -115,7 +113,7 @@ HouseTypeClass::HouseTypeClass(NoInitClass const & x) :
 HouseTypeClass::~HouseTypeClass(void)
 {
 	Detach_This_From_All(this, true);
-	Array.Delete(this);
+	HouseTypes.Delete(this);
 }
 
 // FUNCTION: GAMEMD 0x005117D0
@@ -125,8 +123,8 @@ HousesType HouseTypeClass::From_Name(char const * name)
 		return((HousesType)-2);
 	}
 	if (name != NULL) {
-		for (int house = HOUSE_FIRST; house < Array.Count(); house++) {
-			HouseTypeClass *ptr = Array[house];
+		for (int house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
+			HouseTypeClass *ptr = HouseTypes[house];
 			if (stricmp(ptr->Full_Name(), name) == 0 || stricmp(ptr->Name(), name) == 0) {
 				return(ptr->House);
 			}
@@ -334,7 +332,7 @@ HRESULT STDMETHODCALLTYPE HouseTypeClass::GetClassID(CLSID * retval)
 // FUNCTION: GAMEMD 0x00512680
 HouseTypeClass * HouseTypeClass::Find_Or_Make(char const * ininame)
 {
-	return(TFind_Or_Make<HouseTypeClass>(ininame, Array));
+	return(TFind_Or_Make<HouseTypeClass>(ininame, HouseTypes));
 }
 
 // FUNCTION: GAMEMD 0x00512710

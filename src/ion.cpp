@@ -44,6 +44,7 @@
 #include <objidl.h>
 #include "msanim.h"
 #include "cast.h"
+#include "lightstorm.h"
 
 // SYNTHETIC: GAMEMD 0x00539350 SYMBOL
 // _$E2
@@ -87,7 +88,6 @@ void __fastcall FUN_0053AD00(int, int, int, bool);
 void __fastcall FUN_0053C280(void);
 void __fastcall FUN_0053AF40(void);
 void __fastcall FUN_0053B560(void);
-void __fastcall FUN_00539EB0(int, int, Cell, HouseClass *);
 void __fastcall FUN_0053A300(Coord);
 int __fastcall FUN_006D2120(int);
 void __fastcall FUN_0065FA70(int, Cell);
@@ -99,46 +99,10 @@ extern Coord DAT_00A9FA30;
 extern int DAT_007ED3D0[];
 namespace Unsorted { extern Cell CellSpreadTable[]; extern int CurrentFrame; extern int MuteSWLaunches; }
 
-class IonBlastClass
-{
-	public:
-		IonBlastClass(Coord coord);
+#include "ionblast.h"
 
-		unsigned char Before[0x10];
-		BOOL DisableIonBeam;
-};
 
-class LightningStorm
-{
-	public:
-		static Cell Coords;
-		static DynamicVectorClass<AnimClass const *> CloudsManifesting;
-		static DynamicVectorClass<AnimClass const *> CloudsPresent;
-		static DynamicVectorClass<AnimClass const *> BoltsPresent;
-		static bool Active;
-		static int StartTime;
-		static int Duration;
-		static int Deferment;
-		static bool TimeToEnd;
-		static HouseClass * Owner;
-};
 
-class PsyDom
-{
-	public:
-		static Cell Coords;
-		static int Status;
-		static AnimClass * Anim;
-		static HouseClass * Owner;
-};
-
-class NukeFlash
-{
-	public:
-		static int StartTime;
-		static int Duration;
-		static int Status;
-};
 
 Cell LightningStorm::Coords = DAT_00A9F9F8;
 Cell PsyDom::Coords = DAT_00A9F9F8;
@@ -148,24 +112,24 @@ DynamicVectorClass<AnimClass const *> LightningStorm::CloudsPresent;
 DynamicVectorClass<AnimClass const *> LightningStorm::BoltsPresent;
 
 // SYNTHETIC: GAMEMD 0x00539560 SYMBOL
-// _$E163
+// _$E164
 // SYNTHETIC: GAMEMD 0x00539570 SYMBOL
-// _$E166
+// _$E167
 // SYNTHETIC: GAMEMD 0x00539580 SYMBOL
-// _$E172
+// _$E173
 // SYNTHETIC: GAMEMD 0x005395C0 SYMBOL
-// _$E169
+// _$E170
 // SYNTHETIC: GAMEMD 0x00539620 SYMBOL
-// _$E178
+// _$E179
 // SYNTHETIC: GAMEMD 0x00539660 SYMBOL
-// _$E175
+// _$E176
 // SYNTHETIC: GAMEMD 0x005396C0 SYMBOL
-// _$E183
+// _$E184
 // SYNTHETIC: GAMEMD 0x00539700 SYMBOL
-// _$E181
+// _$E182
 
 // FUNCTION: GAMEMD 0x00539760
-void FUN_00539760(void)
+void IonStormClass::Init(void)
 {
 	PsyDom::Coords = DAT_00A9F9F8;
 	LightningStorm::Coords = DAT_00A9F9F8;
@@ -194,7 +158,7 @@ void FUN_00539760(void)
 }
 
 // FUNCTION: GAMEMD 0x00539890
-HRESULT __fastcall FUN_00539890(IStream * stream)
+HRESULT IonStormClass::Save(IStream * stream)
 {
 	int count;
 	AnimClass const * item;
@@ -270,7 +234,7 @@ HRESULT __fastcall FUN_00539890(IStream * stream)
 }
 
 // FUNCTION: GAMEMD 0x00539AE0
-HRESULT __fastcall FUN_00539AE0(IStream * stream)
+HRESULT IonStormClass::Load(IStream * stream)
 {
 	int count;
 	AnimClass const * item;
@@ -360,13 +324,13 @@ HRESULT __fastcall FUN_00539AE0(IStream * stream)
 }
 
 // FUNCTION: GAMEMD 0x00539EA0
-void __fastcall FUN_00539EA0(bool active)
+void IonStormClass::Set_Ion_Storm_Active(bool active)
 {
 	LightningStorm::Active = active;
 }
 
 // FUNCTION: GAMEMD 0x00539EB0
-void __fastcall FUN_00539EB0(int duration, int deferment, Cell cell, HouseClass * owner)
+void IonStormClass::Ion_Storm_Begin(int duration, int deferment, Cell cell, HouseClass * owner)
 {
 	if (cell == DAT_00A9F9F8) {
 		while (!Map.In_Radar(cell)) {
@@ -414,7 +378,7 @@ void __fastcall FUN_00539EB0(int duration, int deferment, Cell cell, HouseClass 
 }
 
 // FUNCTION: GAMEMD 0x0053A090
-void FUN_0053A090(void)
+void IonStormClass::Ion_Storm_End(void)
 {
 	if (LightningStorm::Active) {
 		LightningStorm::TimeToEnd = true;
@@ -439,7 +403,7 @@ bool FUN_0053A0E0(void)
 }
 
 // FUNCTION: GAMEMD 0x0053A100
-bool FUN_0053A100(void)
+bool IonStormClass::Is_Ion_Storm_Active(void)
 {
 	return LightningStorm::Active;
 }
@@ -463,7 +427,7 @@ bool FUN_0053A130(void)
 }
 
 // FUNCTION: GAMEMD 0x0053A140
-void __fastcall FUN_0053A140(Cell cell)
+void IonStormClass::Lightning_Bolt(Cell cell)
 {
 	CellClass * cellptr = &Map[cell];
 	int half = ((short const *)Rule->WeatherConBolts[0]->Get_Image_Data())[2] / 2;
@@ -534,7 +498,7 @@ void __fastcall FUN_0053A300(Coord coord)
 }
 
 // FUNCTION: GAMEMD 0x0053A6C0
-void FUN_0053A6C0(void)
+void IonStormClass::AI(void)
 {
 	int i;
 	if (NukeFlash::Status == 1) {
@@ -589,7 +553,7 @@ void FUN_0053A6C0(void)
 			return;
 		}
 		if (Unsorted::CurrentFrame % Rule->LightningHitDelay == 0) {
-			FUN_0053A140(LightningStorm::Coords);
+			IonStormClass::Lightning_Bolt(LightningStorm::Coords);
 		}
 		if (Unsorted::CurrentFrame % Rule->LightningScatterDelay == 0) {
 			int spread = Rule->LightningCellSpread >> 1;
@@ -618,13 +582,13 @@ void FUN_0053A6C0(void)
 				}
 			}
 			if (tries > 0) {
-				FUN_0053A140(target);
+				IonStormClass::Lightning_Bolt(target);
 			}
 		}
 	} else if (LightningStorm::Deferment > 0) {
 		LightningStorm::Deferment--;
 		if (LightningStorm::Deferment == 0) {
-			FUN_00539EB0(LightningStorm::Duration, 0, LightningStorm::Coords, LightningStorm::Owner);
+			IonStormClass::Ion_Storm_Begin(LightningStorm::Duration, 0, LightningStorm::Coords, LightningStorm::Owner);
 		} else if (LightningStorm::Deferment % 225 == 0 && Rule->LightningPrintText) {
 			int scheme = 3;
 			if (PlayerPtr) {
@@ -637,7 +601,7 @@ void FUN_0053A6C0(void)
 }
 
 // FUNCTION: GAMEMD 0x0053AB50
-void FUN_0053AB50(void)
+void IonStormClass::Apply_Secondary_Effect(void)
 {
 	FUN_0053C280();
 	PlayerPtr->RecalcRadar = true;
@@ -828,7 +792,7 @@ void FUN_0053B080(void)
 				AnimClass * anim = new AnimClass(Rule->PermaControlledAnimationType, center, 0, 1, ShapeFlags_Type(0x600), 0, false);
 				techno->MindControlRingAnim = anim;
 				if (anim != NULL) {
-					anim->SetOwnerObject(techno);
+					anim->Attach_To(techno);
 				}
 				victims.Add(techno);
 			}

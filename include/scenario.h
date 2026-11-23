@@ -111,7 +111,7 @@ class ScenarioClass {
 
 		mutable TTimerClass<SystemTimerClass> ElapsedTimer;
 		CDTimerClass<SystemTimerClass> PauseTimer;
-		int unknown_62C;
+		int HoldCount;
 		bool IsGamePaused;
 
 		Cell Waypoint[WAYPT_COUNT];
@@ -223,9 +223,9 @@ class ScenarioClass {
 		bool IsTiberiumDeathToVisceroid;
 
 		bool IsIgnoreGlobalAITriggers;
-		bool unknown_bool_34B5;
-		bool unknown_bool_34B6;
-		bool unknown_bool_34B7;
+		unsigned char : 8;
+		unsigned char : 8;
+		unsigned char : 8;
 
 		int PlayerSideIndex;
 
@@ -279,7 +279,7 @@ class ScenarioClass {
 		unsigned short Stage;
 
 		bool IsInputLocked;
-		bool unknown_35A3;
+		unsigned char : 8;
 
 		int ParTimeEasy;
 		int ParTimeMedium;

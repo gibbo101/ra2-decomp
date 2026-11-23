@@ -3,6 +3,8 @@
 set -eu
 cd "$(git rev-parse --show-toplevel)"
 uv run tools/coord/land.py "$@"
+echo "### YRpp-only names"
+uv run tools/yrppnames.py
 echo "### untracked files outside build/"
 git status --short --untracked-files=all | grep '^??' | grep -v '^?? build/' || true
 echo "### game totals"

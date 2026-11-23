@@ -4,6 +4,7 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
+#include "vectornorm.h"
 #include "dialog.h"
 #include "geometry.h"
 #include "techno.h"
@@ -255,7 +256,7 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	CountedAsOwned(false),
 	IsSinking(false),
 	WasSinkingAlready(false),
-	unknown_bool_3CF(false),
+	IsNeedingRescue(false),
 	IsUseless(false),
 	IsTickedOff(false),
 	IsCloakable(false),
@@ -269,9 +270,9 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	IsOwnedByPlayer(false),
 	IsDiscoveredByPlayer(false),
 	IsDiscoveredByComputer(false),
-	unknown_bool_41D(false),
-	unknown_41E(0),
-	unknown_bool_41F(false),
+	IsALemon(false),
+	UnusedCooldown(0),
+	Unused1(false),
 	SightIncrease(0),
 	IsTeamRecruitable(true),
 	IsAutocreateRecruitable(true),
@@ -282,13 +283,13 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	IsBeingManipulated(false),
 	BeingManipulatedBy(NULL),
 	ChronoWarpedByHouse(NULL),
-	unknown_bool_430(false),
+	IsOnPatrol(false),
 	IsMouseHovering(false),
 	ShouldBeReselectOnUnlimbo(false),
 	OldTeam(NULL),
 	CountedAsOwnedSpecial(false),
 	Absorbed(false),
-	unknown_bool_43A(false),
+	IsOnWaypointPatrol(false),
 	unknown_43C(0),
 	CurrentTargetThreatValues(0, 0),
 	CurrentTargets(0, 0),
@@ -313,7 +314,7 @@ TechnoClass::TechnoClass(HouseClass * house) :
 	UnusedGattlingSoundController.FUN_00405BE0();
 	QueuedVoiceSoundController.FUN_00405BE0();
 	QueuedVoiceIndex = -1;
-	unknown_4F4 = -1;
+	PlayingVoiceIndex = -1;
 	Technos.Add(this);
 	PointerExpiredNotification::NotifyInvalidHouse.Add(this);
 	AbstractFlags |= 1;
@@ -765,7 +766,7 @@ TechnoClass::TechnoClass(NoInitClass const & x) :
 	UnusedGattlingSoundController.FUN_00405BE0();
 	QueuedVoiceSoundController.FUN_00405BE0();
 	QueuedVoiceIndex = -1;
-	unknown_4F4 = -1;
+	PlayingVoiceIndex = -1;
 	if (!found) {
 		Array.Add(this);
 	}
@@ -1235,6 +1236,143 @@ void TechnoClass::Draw_Single_Selection_Bracket(Coord const & coord1, Coord cons
 // FUNCTION: GAMEMD 0x006F60C0
 void TechnoClass::Draw_Health_Bar_Old(Point2D const &, Rect const &) const
 {
+}
+
+// FUNCTION: GAMEMD 0x006F60D0
+void TechnoClass::Draw_Pre_Render(Point2D const & point, Rect const & cliprect) const
+{
+	if (RTTI == RTTI_BUILDING && IsSelected) {
+		if (RTTI != RTTI_INFANTRY) {
+			int color = WHITE;
+			if (HeightAGL < -4) {
+				color = BLACK;
+			}
+			Point3D dim = TClass->Lepton_Dimensions();
+			dim.X /= 2;
+			dim.Y /= 2;
+			color = NormalDrawer->Convert_Pixel(color);
+			Coord center = Center_Coord();
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, 0), center + Coord(-dim.X, -dim.Y, dim.Z), color);
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, 0), center + Coord(dim.X, -dim.Y, 0), color);
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, 0), center + Coord(-dim.X, dim.Y, 0), color);
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, dim.Z), center + Coord(-dim.X, dim.Y, dim.Z), color);
+			Draw_Double_Selection_Bracket(center + Coord(-dim.X, -dim.Y, dim.Z), center + Coord(dim.X, -dim.Y, dim.Z), color);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006F64A0
+void TechnoClass::Draw_Health_Bar(Point2D const & xpoint, Rect const & cliprect, bool sensed_underground) const
+{
+	if (RTTI == RTTI_BUILDING) {
+		HeightAGL;
+
+		Point3D dim = TClass->Lepton_Dimensions();
+		Coord coord = dim - dim / 2;
+		coord.Z = dim.Z;
+		coord.X = -coord.X;
+
+		Point2D p0 = TacticalMap->Coord_To_Pixel_Absolute(coord);
+		coord.X = -coord.X;
+		coord.Y = -coord.Y;
+		coord.X = -coord.X;
+		Point2D p1 = TacticalMap->Coord_To_Pixel_Absolute(coord);
+		coord.Z = 0;
+		coord.Y = -coord.Y;
+		Point2D p2 = TacticalMap->Coord_To_Pixel_Absolute(coord);
+		coord.X = -coord.X;
+		coord.Y = -coord.Y;
+		coord.X = -coord.X;
+
+		int barlen = (p0.Y - p1.Y) / 2;
+
+		int n = (int)(HealthRatio * barlen);
+		if (n <= 1) {
+			n = 1;
+		}
+		if (n >= barlen) {
+			n = barlen;
+		}
+
+		int condcolor = 1;
+		if (Is_Yellow_HP()) {
+			condcolor = 2;
+		} else if (Is_Red_HP()) {
+			condcolor = 4;
+		}
+
+		Point2D bar(4 * barlen, 2 - 2 * barlen);
+
+		int index;
+
+		for (index = 0; index < n; index++) {
+			Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)ObjectTypeClass::PipShapes, condcolor, xpoint + p0 + bar + Point2D(3, 2) - Point2D(4 * index, -2 * index), cliprect, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_CENTER));
+		}
+
+		for (index = n; index < barlen; index++) {
+			Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)ObjectTypeClass::PipShapes, 0, xpoint + p0 + bar + Point2D(3, 2) - Point2D(4 * index, -2 * index), cliprect, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_CENTER));
+		}
+
+		bool showpips = false;
+		if (House->Is_Ally(PlayerPtr) || (SpiedBy & (1 << PlayerPtr->Class->House))) {
+			showpips = true;
+		}
+		if (this != NULL && RTTI == RTTI_BUILDING) {
+			BuildingClass const * building = (RTTI == RTTI_BUILDING) ? (BuildingClass const *)this : NULL;
+			if (building->Class->CanBeOccupied) {
+				showpips = true;
+			}
+		}
+		if (TClass->PipsDrawForAll || showpips) {
+			Draw_Pips(xpoint + p2, xpoint, cliprect);
+		}
+
+	} else {
+		Point2D offset;
+		int health_bar_count;
+
+		if (RTTI == RTTI_INFANTRY) {
+			if (IsSelected) {
+				Point2D adjust(11, TClass->PixelSelectionBracketDelta - 25);
+				Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)ObjectTypeClass::SelectShapes, 1, xpoint + adjust, cliprect, ShapeFlags_Type(SHAPE_ALPHA|SHAPE_WIN_REL|SHAPE_CENTER));
+			}
+			offset = Point2D(-5, -24);
+			offset.Y += TClass->PixelSelectionBracketDelta;
+			health_bar_count = 8;
+		} else {
+			if (IsSelected) {
+				Point2D adjust(1, TClass->PixelSelectionBracketDelta - 26);
+				Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)ObjectTypeClass::SelectShapes, 0, xpoint + adjust, cliprect, ShapeFlags_Type(SHAPE_ALPHA|SHAPE_WIN_REL|SHAPE_CENTER));
+			}
+			offset = Point2D(-15, -25);
+			offset.Y += TClass->PixelSelectionBracketDelta;
+			health_bar_count = 17;
+		}
+
+		int n = (int)(HealthRatio * health_bar_count);
+		if (n <= 1) {
+			n = 1;
+		}
+		if (n >= health_bar_count) {
+			n = health_bar_count;
+		}
+
+		int shapenum = 16;
+		if (HealthRatio <= Rule->ConditionYellow) {
+			shapenum = 17;
+		}
+		if (HealthRatio <= Rule->ConditionRed) {
+			shapenum = 18;
+		}
+
+		for (int index = 0; index < n; index++) {
+			Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)ObjectTypeClass::PipShapes, shapenum, xpoint + offset + Point2D(2 * index, 0), cliprect, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_CENTER));
+		}
+
+		if (House->Is_Ally(PlayerPtr) || (SpiedBy & (1 << PlayerPtr->Class->House))) {
+			Draw_Pips(xpoint + Point2D(-10, 10), xpoint, cliprect);
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x006F6AC0
@@ -1892,10 +2030,10 @@ void TechnoClass::AI(void)
 	FUN_0070E920();
 	if (QueuedVoiceIndex != -1) {
 		if (!QueuedVoiceSoundController.GetEvent()) {
-			unknown_4F4 = QueuedVoiceIndex;
-			VocClass::PlayGlobal(unknown_4F4, 1.0f, 0x2000, &QueuedVoiceSoundController);
+			PlayingVoiceIndex = QueuedVoiceIndex;
+			VocClass::PlayGlobal(PlayingVoiceIndex, 1.0f, 0x2000, &QueuedVoiceSoundController);
 			QueuedVoiceIndex = -1;
-		} else if (unknown_4F4 == QueuedVoiceIndex) {
+		} else if (PlayingVoiceIndex == QueuedVoiceIndex) {
 			QueuedVoiceIndex = -1;
 		}
 	}
@@ -2037,8 +2175,8 @@ void TechnoClass::AI(void)
 		CurrentTurretNumber = n;
 	}
 	Door.AI();
-	if (unknown_41E) {
-		--unknown_41E;
+	if (UnusedCooldown) {
+		--UnusedCooldown;
 	}
 	if (TarCom && ShouldLoseTargetNow && FUN_00709500()) {
 		Assign_Target(NULL);
@@ -2337,11 +2475,133 @@ void TechnoClass::DestroyGap(void)
 }
 
 extern bool DAT_00843128[];
-namespace FileSystem { extern ConvertClass * PALETTE_PAL; }
 
 static inline Rect Moved_Rect(Rect const & rect, Point2D const & point)
 {
 	return(Rect(rect.Top_Left() + point, rect.Width, rect.Height));
+}
+
+static inline bool Overlay_Is_Rock(int overlay)
+{
+	OverlayTypeClass *otype = OverlayTypes[overlay];
+	return otype->IsARock;
+}
+
+// FUNCTION: GAMEMD 0x00704350
+int TechnoClass::Get_Z_Adjust(void) const
+{
+	CellClass *cptrs[3];
+	int width;
+	int height;
+	static int _techno_zadj_ramp1 = -1;
+	static int _techno_zadj_ramp2 = -1;
+	static int _techno_zadj_rock = 3;
+	int z = -TacticalMap->Z_Lepton_To_Pixel(Get_Height());
+	int zadjust2 = z;
+	int zadjust = z;
+	Cell cell = PositionCell;
+	CellClass *cptr = &Map[cell];
+	if (RTTI == RTTI_UNIT) {
+		UnitClass const *unit = static_cast<UnitClass const *>(this);
+		if (unit->IsTethered) {
+			BuildingClass *building = (BuildingClass *)unit->FUN_0065AD40(0);
+			if (building->RTTI == RTTI_BUILDING && building->Get_Mission() == MISSION_UNLOAD) {
+				return zadjust2 - 3;
+			}
+		}
+		if (unit->Class->Harvester) {
+			BuildingClass *building = Get_Cell_Ptr()->Cell_Building();
+			if (building != 0 && building->Class->IsRefinery) {
+				return zadjust2 - 14;
+			}
+		}
+	}
+	if (cptr->Ramp) {
+		CellClass *cell_s = &Map[Adjacent_Cell(cell, FACING_S)];
+		CellClass *cell_e = &Map[Adjacent_Cell(cell, FACING_E)];
+		CellClass *cell_se = &Map[Adjacent_Cell(cell, FACING_SE)];
+		if (cell_s != 0 && cell_e != 0 && cell_se != 0) {
+			bool rock = false;
+			if (cell_s->Overlay != -1) {
+				if (Overlay_Is_Rock(cell_s->Overlay)) {
+					rock = true;
+				}
+			} else if (cell_e->Overlay != -1) {
+				if (Overlay_Is_Rock(cell_e->Overlay)) {
+					rock = true;
+				}
+			} else if (cell_se->Overlay != -1) {
+				if (Overlay_Is_Rock(cell_se->Overlay)) {
+					rock = true;
+				}
+			}
+			if (rock) {
+				return _techno_zadj_rock + zadjust2 - 1;
+			}
+		}
+	}
+	CellClass *ahead_right = &Map[Adjacent_Cell(cell, Facing_Add(PrimaryFacing.Current().As_Dir8(), FACING_45))];
+	CellClass *ahead_left = &Map[Adjacent_Cell(cell, Facing_Sub(PrimaryFacing.Current().As_Dir8(), FACING_45))];
+	CellClass *ahead = &Map[Adjacent_Cell(cell, Facing_Add(PrimaryFacing.Current().As_Dir8(), FACING_0))];
+	CellClass *behind = &Map[Adjacent_Cell(cell, Facing_Sub(PrimaryFacing.Current().As_Dir8(), FACING_180))];
+	CellClass *behind_right = &Map[Adjacent_Cell(cell, Facing_Add(PrimaryFacing.Current().As_Dir8(), FACING_135))];
+	CellClass *behind_left = &Map[Adjacent_Cell(cell, Facing_Sub(PrimaryFacing.Current().As_Dir8(), FACING_135))];
+	bool ramp = false;
+	if (ahead_right != 0 && ahead_left != 0 && ahead != 0) {
+		if (ahead_right->Ramp == 0 && ahead_left->Ramp == 0 && ahead->Ramp == 0) {
+			if (behind != 0 && behind_right != 0 && behind_left != 0) {
+				if (behind->Ramp == 0 && behind_right->Ramp == 0 && behind_left->Ramp == 0) {
+					if (cptr->Ramp) {
+						return zadjust + _techno_zadj_ramp1;
+					}
+					if (PrimaryFacing.Current().As_Dir8() == FACING_W || PrimaryFacing.Current().As_Dir8() == FACING_N) {
+						cptrs[0] = behind;
+						cptrs[1] = behind_right;
+						cptrs[2] = behind_left;
+					} else if (PrimaryFacing.Current().As_Dir8() == FACING_S || PrimaryFacing.Current().As_Dir8() == FACING_E) {
+						cptrs[0] = ahead_right;
+						cptrs[1] = ahead_left;
+						cptrs[2] = ahead;
+					} else {
+						return zadjust - 1;
+					}
+					if (cptr->IsOvershadowed) {
+						return zadjust - 1;
+					}
+					for (int i = 0; i < 3; i++) {
+						if (cptrs[i]->IsOvershadowed) {
+							return zadjust - 1;
+						}
+					}
+					for (int j = 0; j < 3; j++) {
+						IsometricTileType ittype = cptrs[j]->ITType;
+						int subtile;
+						IsometricTileTypeClass *iptr;
+						if (ittype == ISOTILE_NONE || ittype == ISOTILE_NONE_LEGACY) {
+							iptr = IsometricTileTypes[TILE_CLEAR];
+							subtile = 0;
+						} else {
+							iptr = IsometricTileTypes[ittype];
+							subtile = cptrs[j]->SubTile;
+						}
+						iptr->Get_Tile_Pixel_Dimensions(subtile, width, height);
+						if (height > 36) {
+							return zadjust - 2;
+						}
+					}
+					return zadjust - 1;
+				} else {
+					ramp = true;
+				}
+			}
+		} else {
+			ramp = true;
+		}
+	}
+	if (ramp) {
+		return _techno_zadj_ramp2 + zadjust;
+	}
+	return zadjust - 1;
 }
 
 // FUNCTION: GAMEMD 0x007049C0
@@ -2359,14 +2619,14 @@ void TechnoClass::FUN_007049C0(Coord start, Coord end, RGBClass color, unsigned 
 	shadow_end.Y += 1;
 	char shadow = b;
 	if (shadow) {
-		int black = FileSystem::PALETTE_PAL->Convert_Pixel(0);
+		int black = NormalDrawer->Convert_Pixel(0);
 		DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), shadow_start)), black);
-		black = FileSystem::PALETTE_PAL->Convert_Pixel(0);
+		black = NormalDrawer->Convert_Pixel(0);
 		DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), shadow_end)), black);
 	}
 	Rect clip = DSurface::ViewBounds;
 	if (shadow && Clip_Line_To_Rect(shadow_start, shadow_end, clip)) {
-		DSurface::Composite->Draw_Line(shadow_start, shadow_end, FileSystem::PALETTE_PAL->Convert_Pixel(0));
+		DSurface::Composite->Draw_Line(shadow_start, shadow_end, NormalDrawer->Convert_Pixel(0));
 	}
 	int pixel = ((color.Get_Red() >> DSurface::RedLeft) << DSurface::RedRight) | ((color.Get_Blue() >> DSurface::BlueLeft) << DSurface::BlueRight) | ((color.Get_Green() >> DSurface::GreenLeft) << DSurface::GreenRight);
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), start_point)), pixel);
@@ -2598,7 +2858,7 @@ FireErrorType TechnoClass::FUN_006FC090(AbstractClass * target, int which) const
 #include "temporal.h"
 
 // FUNCTION: GAMEMD 0x006FC0B0
-FireErrorType TechnoClass::Can_Fire(AbstractClass * target, int weaponIndex, bool ignoreRange) const
+FireErrorType TechnoClass::Can_Fire(AbstractClass * target, int weaponIndex, bool check_range) const
 {
 	if (!target) {
 		return FIRE_ILLEGAL;
@@ -2874,7 +3134,7 @@ FireErrorType TechnoClass::Can_Fire(AbstractClass * target, int weaponIndex, boo
 	if (Techno_Type_Class()->Organic && IsParalyzed()) {
 		return FIRE_ILLEGAL;
 	}
-	if (ignoreRange && !In_Range(target, weaponIndex)) {
+	if (check_range && !In_Range(target, weaponIndex)) {
 		return FIRE_RANGE;
 	}
 	return FIRE_OK;
@@ -3161,12 +3421,12 @@ none:
 			break;
 	}
 
-	beam->FUN_006594A0(source);
-	beam->FUN_006594C0(dest);
-	beam->FUN_006594E0(15);
-	beam->FUN_006594F0(40.0);
-	beam->FUN_00659470(color);
-	beam->FUN_00659490(zadjust);
+	beam->Set_Source(source);
+	beam->Set_Target(dest);
+	beam->Set_Period(15);
+	beam->Set_Amplitude(40.0);
+	beam->Set_Color(color);
+	beam->Set_Z_Adjust(zadjust);
 	if (type == 2) {
 		beam->FUN_00659540(1);
 		beam->FUN_00659550(true);
@@ -3198,14 +3458,14 @@ void TechnoClass::CreateRadBeams(int spread)
 			dest.X += dx;
 			dest.Y += dy;
 			RadBeam * beam = RadBeam::Allocate(2);
-			beam->FUN_00659470(color);
+			beam->Set_Color(color);
 			int period = NonCriticalRandomNumber(5, 20);
 			int amplitude = NonCriticalRandomNumber(100, 500);
 			int end = NonCriticalRandomNumber(0, 20);
-			beam->FUN_006594A0(source);
-			beam->FUN_006594C0(dest);
-			beam->FUN_006594E0(period);
-			beam->FUN_006594F0(amplitude);
+			beam->Set_Source(source);
+			beam->Set_Target(dest);
+			beam->Set_Period(period);
+			beam->Set_Amplitude(amplitude);
 			beam->FUN_00659510(0.0);
 			beam->FUN_00659530(end);
 			if (longest <= period) longest = period;
@@ -3406,6 +3666,55 @@ bool TechnoClass::Can_Attack_Now(void) const
 		if ((foot->CurrentTube >= 0 && foot->Deploy_To_Fire()) || IsUnderEMP()) {
 			return(false);
 		}
+	}
+	return(true);
+}
+
+// FUNCTION: GAMEMD 0x00700D50
+bool TechnoClass::Can_Deploy_Now(void) const
+{
+	Cell cell = PositionCell;
+	CellClass * cellptr = &Map[cell];
+	if (cellptr != NULL && cellptr->Is_Near_Tunnel_NW()) return(false);
+
+	switch (Fetch_RTTI()) {
+		case RTTI_BUILDING:
+			return(((BuildingClass const *)this)->Class->FUN_00465D30());
+		case RTTI_UNIT: {
+			UnitClass const * unit = (UnitClass const *)this;
+			if (IsUnderEMP() || unit->CurrentTube >= TUBE_FIRST) return(false);
+			if (unit->Class->DeploysInto == NULL && unit->Class->Max_Passengers() == 0 && !unit->Class->IsSimpleDeployer && BunkerLinkedItem == NULL && !unit->FUN_00746D00()) return(false);
+			if (unit->Class->DeploysInto != NULL && unit->ParasiteEatingMe != NULL) return(false);
+			if (unit->Class->DeploysInto != NULL && unit->Class->DeploysInto->IsConstructionYard && MindControlledBy != NULL) return(false);
+			if (unit->Class->Max_Passengers() > 0) {
+				if (IsOnBridge) return(false);
+				Cell here = PositionCell;
+				CellClass * hereptr = &Map[here];
+				if (hereptr != NULL) {
+					CellClass * south = &Map[Adjacent_Cell(here, FACING_S)];
+					CellClass * north = &Map[Adjacent_Cell(here, FACING_N)];
+					CellClass * east = &Map[Adjacent_Cell(here, FACING_E)];
+					CellClass * west = &Map[Adjacent_Cell(here, FACING_W)];
+					if (hereptr->IsUnderBridge ||
+						south != NULL && south->IsUnderBridge ||
+						west != NULL && west->IsUnderBridge ||
+						east != NULL && east->IsUnderBridge ||
+						north != NULL && north->IsUnderBridge) return(false);
+				}
+				if (House->IsHuman && hereptr->Land_Type() == LAND_WATER) return(false);
+				if (Get_Cell_Ptr()->Cell_Building() != NULL && !Get_Cell_Ptr()->Cell_Building()->Class->Bunker) return(false);
+			}
+			break;
+		}
+		case RTTI_INFANTRY: {
+			InfantryClass const * infantry = (InfantryClass const *)this;
+			if (infantry->FUN_005224F0() && (infantry->FUN_00522510() || infantry->Doing == 0x1f)) return(false);
+			if (infantry->FUN_005224F0() && infantry->Arm) return(false);
+			return(infantry->FUN_005224E0());
+		}
+		default:
+			if (IsUnderEMP() || TClass->Max_Passengers() == 0) return(false);
+			break;
 	}
 	return(true);
 }
@@ -3871,7 +4180,7 @@ ResultType TechnoClass::Take_Damage(int & damage, int distance, WarheadTypeClass
 			if (Techno_Type_Class()->DamageSound != -1) {
 				VocClass::PlayIndexAtPos(Techno_Type_Class()->DamageSound, PositionCoord, 0);
 			}
-			if ((Techno_Type_Class()->IsToProtect || unknown_bool_3CF) && !House->FUN_0050B730()) {
+			if ((Techno_Type_Class()->IsToProtect || IsNeedingRescue) && !House->FUN_0050B730()) {
 				if (source != NULL) {
 					Base_Is_Attacked(source);
 				}
@@ -3907,7 +4216,7 @@ ResultType TechnoClass::Take_Damage(int & damage, int distance, WarheadTypeClass
 		}
 
 		if (!negative) {
-			if (CanRetaliateToAttacker(source, (WarheadTypeClass *)warhead)) {
+			if (Is_Allowed_To_Retaliate(source, (WarheadTypeClass *)warhead)) {
 				if (source != NULL) {
 					int which = What_Weapon_Should_I_Use(source);
 					if (In_Range(source, which) || !House->FUN_0050B730() || (double)Distance_To(source) <= ((double)Techno_Type_Class()->SightRange + 0.5) * CELL_LEPTON) {
@@ -4406,19 +4715,6 @@ AbstractClass * TechnoClass::Greatest_Threat(ThreatType method, Coord const & co
 	return((ObjectClass *)bestobject);
 }
 
-class InputManagerClass
-{
-	public:
-		static InputManagerClass * Instance;
-		bool IsKeyPressed(int key);
-};
-
-static inline bool Key_Down(int key)
-{
-	return InputManagerClass::Instance->IsKeyPressed(key);
-}
-
-
 // FUNCTION: GAMEMD 0x006FFEC0
 ActionType TechnoClass::What_Action(ObjectClass const * object, bool disallow_force) const
 {
@@ -4454,9 +4750,9 @@ ActionType TechnoClass::What_Action(ObjectClass const * object, bool disallow_fo
 		}
 	}
 
-	bool altdown = !disallow_force && (Key_Down(Options.KeyForceMove1) || Key_Down(Options.KeyForceMove2));
-	bool ctrldown = !disallow_force && (Key_Down(Options.KeyForceAttack1) || Key_Down(Options.KeyForceAttack2));
-	bool shiftdown = !disallow_force && (Key_Down(Options.KeySelect1) || Key_Down(Options.KeySelect2));
+	bool altdown = !disallow_force && (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
+	bool ctrldown = !disallow_force && (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+	bool shiftdown = !disallow_force && (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
 
 	if (shiftdown) {
 		if (ctrldown) {
@@ -4587,9 +4883,9 @@ ActionType TechnoClass::What_Action(Cell const & cell, bool check_fog, bool disa
 	CellClass const * cellptr = &Map[cell];
 	OverlayTypeClass const * optr = NULL;
 
-	bool ctrldown = !disallow_force && (Key_Down(Options.KeyForceAttack1) || Key_Down(Options.KeyForceAttack2));
-	bool shiftdown = !disallow_force && (Key_Down(Options.KeySelect1) || Key_Down(Options.KeySelect2));
-	bool altdown = !disallow_force && (Key_Down(Options.KeyForceMove1) || Key_Down(Options.KeyForceMove2));
+	bool ctrldown = !disallow_force && (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+	bool shiftdown = !disallow_force && (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+	bool altdown = !disallow_force && (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
 	if (shiftdown && ctrldown) {
 		shiftdown = false;
 		ctrldown = false;
@@ -4628,8 +4924,8 @@ ActionType TechnoClass::What_Action(Cell const & cell, bool check_fog, bool disa
 overlay_done:
 
 	bool renovator = Is_Renovator();
-	if (House->Is_Player_Control() && ((ctrldown && altdown) || unknown_bool_43A) && Can_Player_Move() && (Can_Player_Fire() || renovator)) {
-		if (PlayerPtr->Waypoint_At(cell) != NULL || unknown_bool_43A) {
+	if (House->Is_Player_Control() && ((ctrldown && altdown) || IsOnWaypointPatrol) && Can_Player_Move() && (Can_Player_Fire() || renovator)) {
+		if (PlayerPtr->Waypoint_At(cell) != NULL || IsOnWaypointPatrol) {
 			return(ACTION_PATROL_WAYPOINT);
 		}
 		return(ACTION_GUARD_AREA);
@@ -5008,6 +5304,57 @@ Coord TechnoClass::GetAttackCoordinates(void) const
 	return(Position);
 }
 
+// FUNCTION: GAMEMD 0x00704E40
+void TechnoClass::Draw_A_Link_To(Coord src, Coord dst, RGBClass color)
+{
+	RGBClass segment_color;
+	RGBClass white(255, 255, 255);
+	Point2D from;
+	Point2D to;
+	TacticalMap->Coord_To_Pixel(src, from);
+	TacticalMap->Coord_To_Pixel(dst, to);
+	from.Y += DSurface::ViewBounds.Y;
+	to.Y += DSurface::ViewBounds.Y;
+	int pixel = DSurface::Build_Hicolor_Pixel(color.Get_Red(), color.Get_Green(), color.Get_Blue());
+	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), from)), pixel);
+	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Moved_Rect(Rect(-2, -2, 3, 3), to)), pixel);
+	Rect clip = DSurface::ViewBounds;
+	unsigned time = timeGetTime() >> 4;
+	int i = 1;
+	int inverse = 31;
+	Coord previous = src;
+	Coord next;
+	while (i <= 32) {
+		int weighted_x = src.X * inverse + dst.X * i;
+		next.X = weighted_x / 32;
+		int weighted_y = src.Y * inverse + dst.Y * i;
+		next.Y = weighted_y / 32;
+		int weighted_z = src.Z * inverse + dst.Z * i;
+		next.Z = weighted_z / 32;
+		double t = i;
+		t -= 16.0;
+		t /= 16.0;
+		double height = -t * t;
+		height += 1.0;
+		next.Z += height * 512.0;
+		TacticalMap->Coord_To_Pixel(previous, from);
+		TacticalMap->Coord_To_Pixel(next, to);
+		from.Y += DSurface::ViewBounds.Y;
+		to.Y += DSurface::ViewBounds.Y;
+		if (Clip_Line_To_Rect(from, to, clip)) {
+			segment_color = color;
+			unsigned phase = ((i - time) * 8) & 0x1F8;
+			if (phase <= 248 && phase != 0) {
+				segment_color.Adjust(phase, white);
+			}
+			DSurface::Composite->Draw_Line(from, to, DSurface::Build_Hicolor_Pixel(segment_color));
+		}
+		i++;
+		inverse--;
+		previous = next;
+	}
+}
+
 // FUNCTION: GAMEMD 0x00705270
 void TechnoClass::FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned char shadow)
 {
@@ -5030,7 +5377,7 @@ void TechnoClass::FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned ch
 	}
 	Rect clip = DSurface::ViewBounds;
 	if (shadow && Clip_Line_To_Rect(shadow_start, shadow_end, clip)) {
-		DSurface::Composite->Draw_Line(shadow_start, shadow_end, FileSystem::PALETTE_PAL->Convert_Pixel(0));
+		DSurface::Composite->Draw_Line(shadow_start, shadow_end, NormalDrawer->Convert_Pixel(0));
 	}
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Target_Laser_Rect(start_point)), black);
 	DSurface::Composite->Fill_Rect(Intersect(DSurface::ViewBounds, Target_Laser_Rect(end_point)), pixel);
@@ -5054,6 +5401,103 @@ void TechnoClass::FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned ch
 		current = next;
 		step++;
 		inverse--;
+	}
+}
+
+// FUNCTION: GAMEMD 0x00705860
+void TechnoClass::FUN_00705860(Coord start, Coord end)
+{
+	Point2D start_point;
+	Point2D end_point;
+
+	TacticalMap->Coord_To_Pixel(start, start_point);
+	TacticalMap->Coord_To_Pixel(end, end_point);
+
+	int start_height = -32 - Tactical::Z_Lepton_To_Pixel(start.Z);
+	int end_height = -32 - Tactical::Z_Lepton_To_Pixel(end.Z);
+	int dx = abs(end_point.X - start_point.X);
+	int dy = abs(end_point.Y - start_point.Y);
+
+	if (!DSurface::Temp->Is_Direct_Draw()) {
+		return;
+	}
+
+	DSurface * surface = DSurface::Temp;
+	int r = NonCriticalRandomNumber(190, 270);
+	RGBClass color;
+	if (r > 255) {
+		color.Set_Red(255);
+		color.Set_Green((r - 256) * 110 / 14);
+		color.Set_Blue((r - 256) * 30 / 14);
+	} else {
+		color.Set_Red(r);
+	}
+
+	if (end_point.Y < start_point.Y) {
+		int pixel = DSurface::Build_Hicolor_Pixel(255, 0, 0);
+		Point2D start_cross;
+		Point2D end_cross;
+		start_cross.X = end_point.X - 2;
+		start_cross.Y = end_point.Y + 1;
+		end_cross.X = end_point.X + 1;
+		end_cross.Y = end_point.Y + 1;
+		surface->Draw_Line(start_cross, end_cross, pixel);
+		start_cross.X = end_point.X - 2;
+		start_cross.Y = end_point.Y;
+		end_cross.X = end_point.X + 1;
+		end_cross.Y = end_point.Y;
+		surface->Draw_Line(start_cross, end_cross, pixel);
+		start_cross.X = end_point.X - 1;
+		start_cross.Y = end_point.Y - 1;
+		end_cross.X = end_point.X - 1;
+		end_cross.Y = end_point.Y + 2;
+		surface->Draw_Line(start_cross, end_cross, pixel);
+		start_cross.X = end_point.X;
+		start_cross.Y = end_point.Y - 1;
+		end_cross.X = end_point.X;
+		end_cross.Y = end_point.Y + 2;
+		surface->Draw_Line(start_cross, end_cross, pixel);
+	}
+
+	Point2D delta(end_point.X - start_point.X, end_point.Y - start_point.Y);
+	int dH = end_height - start_height;
+	int weight = 100;
+	Point2D previous = start_point;
+	Point2D current;
+	Point2D a;
+	Point2D b;
+	for (int step = 1; step <= 4; weight -= 25, step++) {
+		current.X = start_point.X + (delta.X * step) / 4;
+		current.Y = start_point.Y + (delta.Y * step) / 4;
+		int height = start_height + (dH * step) / 4;
+
+		surface->FUN_004BEAC0(DSurface::ViewBounds, previous, current, color, 255 - ((step - 1) * 255) / 4, start_height, height);
+
+		if (dx > dy) {
+			a.X = previous.X;
+			a.Y = previous.Y + 1;
+			b.X = current.X;
+			b.Y = current.Y + 1;
+			surface->FUN_004BEAC0(DSurface::ViewBounds, a, b, color, weight, start_height, height);
+			a.X = previous.X;
+			a.Y = previous.Y - 1;
+			b.X = current.X;
+			b.Y = current.Y - 1;
+			surface->FUN_004BEAC0(DSurface::ViewBounds, a, b, color, weight, start_height, height);
+		} else {
+			a.X = previous.X + 1;
+			a.Y = previous.Y;
+			b.X = current.X + 1;
+			b.Y = current.Y;
+			surface->FUN_004BEAC0(DSurface::ViewBounds, a, b, color, weight, start_height, height);
+			a.X = previous.X - 1;
+			a.Y = previous.Y;
+			b.X = current.X - 1;
+			b.Y = current.Y;
+			surface->FUN_004BEAC0(DSurface::ViewBounds, a, b, color, weight, start_height, height);
+		}
+		previous = current;
+		start_height = height;
 	}
 }
 
@@ -5234,7 +5678,6 @@ void TechnoClass::Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, in
 	}
 }
 
-extern int DAT_00B43180;
 
 // FUNCTION: GAMEMD 0x00707280
 SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int layer_index, ShapeFlags_Type flags, bool cached, Surface * surface, int shadow_x, int shadow_y) const
@@ -5243,7 +5686,7 @@ SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & vo
 	Matrix3D mtx2 = matrix * Matrix3D(voxeldata.MotLib->Get_Layer_Matrix(layer_index, 0));
 
 	if (Techno_Type_Class()->UseBuffer) {
-		DAT_00B43180 = 1;
+		VoxelDrawSystem::EnableZBuffer = 1;
 	}
 
 	mtx3.Make_Identity();
@@ -5261,7 +5704,7 @@ SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & vo
 	}
 
 	if (Techno_Type_Class()->UseBuffer) {
-		DAT_00B43180 = 1;
+		VoxelDrawSystem::EnableZBuffer = 1;
 	}
 
 	return(region);
@@ -5808,7 +6251,7 @@ void TechnoClass::Base_Is_Attacked(TechnoClass const * enemy)
 
 
 // FUNCTION: GAMEMD 0x007087C0
-bool TechnoClass::CanRetaliateToAttacker(ObjectClass * attacker, WarheadTypeClass * warhead)
+bool TechnoClass::Is_Allowed_To_Retaliate(ObjectClass * attacker, WarheadTypeClass * warhead)
 {
 	if (attacker == NULL) return(false);
 
@@ -6289,15 +6732,7 @@ bool TechnoClass::Enter_Idle_Mode(bool, bool)
 	return(false);
 }
 
-namespace FileSystem { extern ShapeSet * PIPS_SHP; extern ConvertClass * PALETTE_PAL; }
 
-inline Rect Drawing_GetTextDimensions(wchar_t const * text, Point2D loc, unsigned short flags, int marginX, int marginY)
-{
-	Rect result;
-	return *Drawing_GetTextDimensions(&result, text, loc, flags, marginX, marginY);
-}
-
-namespace FileSystem { extern ShapeSet * PIPS2_SHP; }
 Point2D Plain_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * rect, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flag, int scheme, int unused);
 
 // FUNCTION: GAMEMD 0x00709A90
@@ -6306,12 +6741,9 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 	int i;
 	Point2D offset(4, 2);
 	Point2D xy = point + Point2D(6, -1);
-	Class_Of();
-	ShapeSet const *pip_shapes = FileSystem::PIPS_SHP;
-	Class_Of();
-	ShapeSet const *pips1 = FileSystem::PIPS_SHP;
-	Class_Of();
-	ShapeSet const *pips2 = FileSystem::PIPS2_SHP;
+	ShapeSet const *pip_shapes = (ShapeSet const *)Class_Of()->PipShapes;
+	ShapeSet const *pips1 = (ShapeSet const *)Class_Of()->PipShapes;
+	ShapeSet const *pips2 = (ShapeSet const *)Class_Of()->Pip2Shapes;
 	bool building = Fetch_RTTI() == RTTI_BUILDING;
 	if (!building) {
 		xy = point + Point2D(-5, 0);
@@ -6326,7 +6758,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 		for (i = 0; i < spawns; i++) {
 			int full = 1;
 			int empty = 0;
-			Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, i < docked ? full : empty, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, i < docked ? full : empty, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 		}
 	}
 	if (building) {
@@ -6338,7 +6770,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 				int frame;
 				if (i < count && self->Occupants[i] != NULL) frame = self->Occupants[i]->Class->OccupyPip;
 				else frame = 6;
-				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			}
 		}
 	}
@@ -6379,12 +6811,12 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 		}
 		int start = 0;
 		if (Techno_Type_Class()->Gunner) {
-			Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, colors[0], xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, colors[0], xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			start = 1;
 			shift = offset * 2;
 		}
 		for (int j = start; j < pips; j++) {
-			Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, colors[j], xy + shift + offset * j, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+			Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, colors[j], xy + shift + offset * j, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 		}
 		delete colors;
 	} else {
@@ -6394,14 +6826,14 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 			for (i = 0; i < maximum; i++) {
 				int frame = 0;
 				if (i < pips) frame = 1;
-				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			}
 			bool flag = false;
 			if (CaptureManager && CaptureManager->IsOverloading(&flag)) {
 				int overload_frame = 3;
 				int ordinary_frame = 4;
 				int frame = flag ? overload_frame : ordinary_frame;
-				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, frame, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			}
 		}
 		if (Techno_Type_Class()->PipScale == PIPSCALE_TIBERIUM) {
@@ -6420,7 +6852,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 					shape = 2;
 					greenpips--;
 				}
-				Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pip_shapes, shape, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+				Draw_Shape(*LogicalSurface, *NormalDrawer, pip_shapes, shape, xy + offset * i, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 			}
 		} else if (Techno_Type_Class()->PipScale == PIPSCALE_AMMO) {
 			int wrap = Techno_Type_Class()->PipWrap;
@@ -6429,7 +6861,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 				for (int i = 0; i < maximum; i++) {
 					if (left > 0) {
 						left--;
-						Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips2, 13, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+						Draw_Shape(*LogicalSurface, *NormalDrawer, pips2, 13, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 					}
 				}
 			} else {
@@ -6442,7 +6874,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 							break;
 						}
 					}
-					Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips2, frame, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+					Draw_Shape(*LogicalSurface, *NormalDrawer, pips2, frame, xy + offset * i - Point2D(0, 3), window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 				}
 			}
 		}
@@ -6468,8 +6900,8 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 	if (Fetch_RTTI() == RTTI_UNIT) { heal_offset = Point2D(38, -32); }
 	else if (Fetch_RTTI() == RTTI_INFANTRY) { heal_offset = Point2D(19, -35); }
 	if (selfheal) {
-		if (flash) Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_DARKEN));
-		else Draw_Shape(*LogicalSurface, *FileSystem::PALETTE_PAL, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
+		if (flash) Draw_Shape(*LogicalSurface, *NormalDrawer, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_DARKEN));
+		else Draw_Shape(*LogicalSurface, *NormalDrawer, pips1, healframe, heal_offset + xy, window, ShapeFlags_Type(SHAPE_CENTER | SHAPE_WIN_REL));
 	}
 	if (Fetch_RTTI() != RTTI_BUILDING) Draw_Text_Overlay(point + Point2D(-10, 10), point, window);
 	if (Group >= 0 && Group < 10) {
@@ -6494,8 +6926,7 @@ void TechnoClass::Draw_Pips(Point2D const &point, Point2D const &center, Rect co
 // FUNCTION: GAMEMD 0x0070A990
 void TechnoClass::DrawVeterancyPips(Point2D const & point, Rect const & rect) const
 {
-	Class_Of();
-	ShapeSet * shapes = FileSystem::PIPS_SHP;
+	ShapeSet const * shapes = (ShapeSet const *)Class_Of()->PipShapes;
 	int frame = -1;
 	if (Veterancy.Is_Veteran()) {
 		frame = 14;
@@ -6514,7 +6945,7 @@ void TechnoClass::DrawVeterancyPips(Point2D const & point, Rect const & rect) co
 		xy.X += 5;
 		xy.Y += 4;
 	}
-	Draw_Shape(*DSurface::Temp, *FileSystem::PALETTE_PAL, shapes, frame, xy, rect, ShapeFlags_Type(0xE00), NULL, -2, ZGRAD_GROUND, 1000);
+	Draw_Shape(*DSurface::Temp, *NormalDrawer, shapes, frame, xy, rect, ShapeFlags_Type(0xE00), NULL, -2, ZGRAD_GROUND, 1000);
 }
 
 Point2D Simple_Text_Print_Wide(wchar_t const * text, Surface * surface, Rect const * bounds, Point2D const * pt, unsigned fore, unsigned back, TextPrintType flags, int unused);
@@ -6644,6 +7075,56 @@ void TechnoClass::vt_entry_48C(bool incremental, bool flag, bool use_house, Hous
 			}
 		} else if (use_house && LastSightRange != 0 && house != NULL) {
 			Map.RevealArea2(&LastSightCoords, LastSightRange, house, incremental, flag, false, true, true);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0070B280
+void TechnoClass::vt_entry_3D8(Coord const & coord, float force, bool flag)
+{
+	if (Techno_Type_Class()->Voxel.VoxLib != NULL && !Techno_Type_Class()->Voxel.VoxLib->Load_Failed()) {
+		Coord pos = PositionCoord;
+		Vector3 vec1;
+		vec1.X = pos.X - coord.X;
+		vec1.Y = coord.Y - pos.Y;
+		vec1.Z = pos.Z - coord.Z;
+		Vector3 vec2 = vec1;
+
+		double theta = PrimaryFacing.Current().As_Radian();
+		float sangle = fastmath::sin(theta);
+		Vector3 facing(fastmath::cos(theta), sangle, 0.0f);
+
+		float dist1 = (float)fastmath::sqrt((double)vec1.X * vec1.X + (double)vec1.Y * vec1.Y + (double)vec1.Z * vec1.Z);
+
+		float scale = (0.04f - dist1 * 0.000025f) * force / Techno_Type_Class()->Weight;
+
+		if (fabs(dist1) >= 0.00002 && scale >= 0.01f) {
+			if (scale > 0.05f) {
+				scale = 0.05f;
+			}
+
+			vec2.Z = 0.0;
+			double len = fastmath::sqrt(vec2.X * vec2.X + vec2.Y * vec2.Y);
+
+			Vector3 normal;
+			if (len != 0.0) {
+				normal = vec2 / len;
+			} else {
+				normal = vec2;
+			}
+
+			float forward = normal * facing;
+			Vector3 side = Vector3::Cross_Product(normal, facing);
+			float dist2 = (float)fastmath::sqrt((double)side.X * side.X + (double)side.Y * side.Y + (double)side.Z * side.Z);
+			float c2 = facing.X;
+			float s2 = sangle;
+			float c3 = facing.X;
+			float s3 = sangle;
+			if (fabs(c2 * forward - s2 * dist2 - normal.X) > 0.0002 || fabs(c3 * dist2 + s3 * forward - normal.Y) > 0.0002) {
+				dist2 = -dist2;
+			}
+			RockingForwardsPerFrame = flag ? forward * scale : forward * scale * 0.5f;
+			RockingSidewaysPerFrame = -(dist2 * scale);
 		}
 	}
 }
@@ -6900,7 +7381,7 @@ HRESULT STDMETHODCALLTYPE TechnoClass::Load(IStream * stream)
 		unknown_4D8 = 0;
 		QueuedVoiceSoundController.FUN_00405BE0();
 		QueuedVoiceIndex = -1;
-		unknown_4F4 = -1;
+		PlayingVoiceIndex = -1;
 		result = S_OK;
 	}
 	return(result);
@@ -6937,7 +7418,7 @@ void TechnoClass::Compute_CRC(CRCEngine & crc) const
 	crc(RockingSidewaysPerFrame);
 	crc(RockingForwardsPerFrame);
 	crc(IsSinking);
-	crc(unknown_bool_3CF);
+	crc(IsNeedingRescue);
 	crc(IsUseless);
 	crc(IsTickedOff);
 	crc(IsCloakable);
@@ -6951,10 +7432,10 @@ void TechnoClass::Compute_CRC(CRCEngine & crc) const
 		crc(IsDiscoveredByPlayer);
 		crc(IsDiscoveredByComputer);
 	}
-	crc(unknown_bool_41D);
+	crc(IsALemon);
 	crc((int)EMPLockRemaining);
-	crc((int)unknown_41E);
-	crc((int)unknown_bool_41F);
+	crc((int)UnusedCooldown);
+	crc((int)Unused1);
 	crc(SightIncrease);
 	int count = CurrentTargets.Count();
 	crc(count);
@@ -7022,6 +7503,101 @@ bool TechnoClass::Is_On_Elevation(void) const
 {
 	Cell cell = TacticalMap->Coord_To_Cell(Get_Coord());
 	return(cell != Get_Cell());
+}
+
+// FUNCTION: GAMEMD 0x0070C690
+Coord TechnoClass::Railgun_Beam_Damage(Coord & coord, AbstractClass *abstract, WeaponTypeClass *weapon)
+{
+	Coord center = abstract->Center_Coord();
+
+	bool target_found = false;
+
+	Cell final_cell = coord.As_Cell();
+	Vector3 start(coord.X, coord.Y, coord.Z);
+	Vector3 end(center.X, center.Y, center.Z);
+
+	Coord final_impact = coord;
+
+	Vector3 delta = end - start;
+	DynamicVectorClass<ObjectClass *> targets;
+
+	for (int i = 0; i < RAILGUN_STEPS; i++) {
+		final_impact = Lerp(coord, center, i * (1.0f / (RAILGUN_STEPS - 1)));
+
+		if (final_impact.As_Cell() != final_cell) {
+			final_cell = final_impact.As_Cell();
+			CellClass *cptr = &Map[final_cell];
+
+			ObjectClass *optr = cptr->Cell_Occupier(cptr->IsUnderBridge && final_impact.Z >= LEVEL_LEPTON_H * (cptr->Height + BRIDGE_CELL_HEIGHT));
+
+			while (optr != NULL) {
+				if (optr != this) {
+					if (optr == abstract) {
+						target_found = true;
+					}
+					if (optr->Is_Techno()) {
+						float distance = 0.0f;
+						if (optr->Fetch_RTTI() != RTTI_BUILDING) {
+							// Project the object offset onto the direction perpendicular to the beam.
+							// Normalize the projection to test the damage radius.
+							Coord obj_coord = optr->PositionCoord;
+							Vector3 obj(obj_coord.X, obj_coord.Y, obj_coord.Z);
+							Vector3 off = obj - start;
+							Vector3 cross;
+							Vector3::Cross_Product(off, delta, &cross);
+							Vector3 perp;
+							Vector3::Cross_Product(cross, delta, &perp);
+							distance = fabs((perp * off) / Vector3_Length(perp));
+						}
+
+						if (distance < Rule->RailgunDamageRadius || optr == abstract) {
+							if (targets.Count() == 0 || targets.ID(optr) == -1) {
+								targets.Add(optr);
+							}
+						}
+					}
+				}
+				optr = optr->Next;
+			}
+
+			// We hit a cell higher than the impact point, halt gathering targets.
+			if (Map.Get_Height_GL(final_impact) > final_impact.Z) {
+				// If the impact was a cell and contains a collapseable cliff, try to collapse it.
+				if (Map[final_impact].Is_Tile_Destroyable_Cliff()) {
+					if (Percent_Chance(Rule->CollapseChance)) {
+						Map.Collapse_Cliff(&Map[final_impact]);
+					}
+				}
+				return(final_impact);
+			}
+		}
+	}
+
+	CellClass *cptr = (CellClass *)abstract;
+
+	if (!target_found) {
+		ObjectClass *obj = abstract != NULL && (abstract->AbstractFlags & 2) ? static_cast<ObjectClass *>(abstract) : NULL;
+
+		if (obj != NULL) {
+			if (targets.Count() == 0 || targets.ID(obj) == -1) {
+				targets.Add(obj);
+			}
+		}
+	}
+
+	for (int j = 0; j < targets.Count(); j++) {
+		int damage = weapon->AmbientDamage;
+		targets[j]->Take_Damage(damage, 0, weapon->WarheadPtr, this);
+	}
+
+	// If the impact was a cell and contains a collapseable cliff, try to collapse it.
+	if (cptr->Fetch_RTTI() == RTTI_CELL && cptr->Is_Tile_Destroyable_Cliff()) {
+		if (Percent_Chance(Rule->CollapseChance)) {
+			Map.Collapse_Cliff(cptr);
+		}
+	}
+
+	return(center);
 }
 
 // FUNCTION: GAMEMD 0x0070CC90
@@ -8170,7 +8746,7 @@ bool TechnoClass::RefreshMegaMission(void)
 }
 
 // FUNCTION: GAMEMD 0x0070F0B0
-int __fastcall FUN_0070F0B0(int action, int unused, int extra)
+int __fastcall FUN_0070F0B0(int action, Cell const & cell, ObjectClass * object)
 {
 	bool held = FUN_00731BF0();
 	if (action == 1) {
@@ -8207,12 +8783,12 @@ void TechnoClass::FUN_0070F1D0(Point2D const &center, Rect const &rect)
 		if (Rule->Behind) {
 			BehindAnim = new AnimClass(Rule->Behind, Center_Coord(), 0, 1, ShapeFlags_Type(0x600), 0);
 			if (BehindAnim) {
-				BehindAnim->SetOwnerObject(this);
+				BehindAnim->Attach_To(this);
 				if (!Options.ShowHidden)
 					BehindAnim->Invisible = true;
 			}
 		} else {
-			int color = FileSystem::PALETTE_PAL->Convert_Pixel(12);
+			int color = NormalDrawer->Convert_Pixel(12);
 			Point2D origin = center;
 			int outside, inside;
 			if (Frame & 8) {
@@ -8456,7 +9032,7 @@ void TechnoClass::FUN_0070FD70(BuildingClass * building)
 		AnimClass * anim = new AnimClass(Rule->DrainAnimationType, Center_Coord(), 0, 1, ShapeFlags_Type(0x600));
 		DrainAnim = anim;
 		if (anim != NULL) {
-			anim->SetOwnerObject(this);
+			anim->Attach_To(this);
 		}
 		if (this != NULL && (AbstractFlags & 4) && ((FootClass *)this)->Team != NULL) {
 			((FootClass *)this)->Team->Remove((FootClass *)this, -1, true);

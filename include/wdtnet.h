@@ -295,7 +295,6 @@ namespace WorldDominationTour
 		public:
 			Campaign(Wstring const & name, rc_ptr<CampaignProperties> const & props);
 			virtual ~Campaign(void);
-			int Get_Current_Tick(void) { return(Properties.Get()->Get_Current_Tick()); }
 			bool Is_Different_Cycle(void);
 			bool Is_Different(int index);
 			int Get_Previous_Tick(int index);
@@ -303,6 +302,7 @@ namespace WorldDominationTour
 			void Reset_INI(void);
 			CONFLICT_ITER Get_Conflict_Iterator(int index);
 			void Set_Faction(int faction);
+			int Get_Faction(void) const { return(PlayerFaction); }
 
 		public:
 			rc_ptr<CampaignProperties> Properties;
@@ -708,7 +708,7 @@ namespace WorldDominationTour
 				void Read(INIClass const & ini, Wstring const & section, int side);
 				bool Pick_Standard_Sound(int side, int outcome, Wstring & out);
 				bool Pick_Emphasis_Sound(int side, int outcome, Wstring & out);
-				void FUN_007710B0(INIClass const & ini, Wstring const & section, int side, int outcome, Wstring const & name);
+				void Read_Voiceover(INIClass const & ini, Wstring const & section, int side, int outcome, Wstring const & name);
 
 				Wstring Name;
 				VOICEINDEX_LIST VoiceIndexes[OUTCOME_COUNT][2];
@@ -716,15 +716,15 @@ namespace WorldDominationTour
 
 			YRVoices(int side);
 			~YRVoices(void);
-			void FUN_00770550(INIClass const & ini, Wstring const & section);
+			void Init(INIClass const & ini, Wstring const & section);
 			void Init_Standalone(INIClass const & ini, Wstring const & section, int voice, Wstring const & name);
 			bool Pick_Standard_Voice(int category, int outcome, Wstring & out);
 			bool Pick_Emphasis_Voice(int category, int outcome, Wstring & out);
 			bool Pick_Standalone_Voice(int voice, Wstring & out);
 			MSAnim * FUN_00771800(void);
-			void FUN_007714B0(int voice, bool count_queued, int delay);
-			void FUN_007712C0(int category, int outcome, bool emphasis, bool count_queued, int delay);
-			bool FUN_007717F0(void);
+			void Queue(int voice, bool count_queued, int delay);
+			void Queue(int category, int outcome, bool emphasis, bool count_queued, int delay);
+			bool Playing(void);
 			void Advance(void);
 			void Discard(void);
 			void Cleanup(void);
@@ -795,7 +795,7 @@ namespace WorldDominationTour
 			void Presentation(int index);
 			bool Present_History(int tick_from, int tick_to);
 			void FUN_0076EBE0(Wstring const & name);
-			void FUN_0076EEB0(void);
+			void Start(void);
 
 		public:
 			rc_ptr<Campaign> TourCampaign;
@@ -810,7 +810,7 @@ namespace WorldDominationTour
 			int StartTick;
 			int LastHoverZone;
 			rc_ptr<Map> WorldMap;
-			int HoveredTerritoryID;
+			unsigned int HoveredTerritoryID;
 			rc_ptr<Territory> MousedTerritory;
 			ConvertClass * TargetDrawer;
 			MSAnimEntry * ZoomingTarget;

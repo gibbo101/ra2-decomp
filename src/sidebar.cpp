@@ -46,6 +46,7 @@
 #include "session.h"
 #include "scheme.h"
 #include "shapeset.h"
+#include "smartptr.h"
 #include "cast.h"
 #undef LoadString
 #include "stringtable.h"
@@ -54,6 +55,7 @@
 #include "surface.h"
 #include "voc.h"
 #include "vox.h"
+#include "wolapi/wolapi.h"
 #include "bench.hh"
 #include "color.hh"
 #include <cmath>
@@ -148,7 +150,7 @@ SidebarClass::SidebarClass(void) :
 	IsSidebarActive(false),
 	IsToRedraw(true),
 	IsToRedrawCredits(false),
-	unknown_bool_5514(false),
+	IsRepairActive(false),
 	unknown_bool_5515(false)
 {
 	for (int index = 0; index < STRIPS; index++) {
@@ -171,7 +173,6 @@ void SidebarClass::Set_Cameo_Text(bool state)
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
 	static void const * DARKEN_SHP;
-	static ConvertClass * SIDEBAR_PAL;
 	static void * GCLOCK2_SHP;
 	static void * __fastcall LoadWholeFileEx(char const * name, bool & allocated);
 };
@@ -193,7 +194,7 @@ void SidebarClass::Init_Clear(void)
 
 	IsToRedraw = true;
 	unknown_bool_5515 = false;
-	unknown_bool_5514 = false;
+	IsRepairActive = false;
 
 	for (int index = 0; index < STRIPS; index++) {
 		Column[index].Init_Clear();
@@ -204,7 +205,6 @@ void SidebarClass::Init_Clear(void)
 	Activate(false);
 }
 
-extern int DAT_00886F94;
 extern int DAT_00B0B4E0;
 extern int DAT_00B0B4E4;
 extern int DAT_00B0B4EC;
@@ -217,10 +217,10 @@ extern int DAT_00B0B500;
 void SidebarClass::FUN_006A5090(void)
 {
 	int side = Scen->PlayerSideIndex;
-	int span = DAT_00886F94 * 3 + side * 5 + DAT_00886F94 * 7 + side * 9 + DAT_00886F94 * 11 + side * 13;
+	int span = SidebarRect.Y * 3 + side * 5 + SidebarRect.Y * 7 + side * 9 + SidebarRect.Y * 11 + side * 13;
 
 	if (side == 0) {
-		int y = DAT_00886F94;
+		int y = SidebarRect.Y;
 		DAT_00B0B4E4 = 0x40;
 		DAT_00B0B4F0 = 0x1d;
 		DAT_00B0B4FC = 0x3f;
@@ -230,9 +230,9 @@ void SidebarClass::FUN_006A5090(void)
 	} else {
 		int y;
 		if (side == 1) {
-			y = DAT_00886F94 + 7;
+			y = SidebarRect.Y + 7;
 		} else {
-			y = DAT_00886F94 + 7;
+			y = SidebarRect.Y + 7;
 		}
 		DAT_00B0B4E0 = y;
 		DAT_00B0B4EC = y + 0x20;
@@ -314,7 +314,7 @@ inline ColorScheme * Color_Of(HouseClass * house)
 	return(ColorSchemes[house->Scheme]);
 }
 
-int * __fastcall FUN_0077DA50(wchar_t * name);
+Ladder * __fastcall FUN_0077DA50(wchar_t const * name);
 
 // FUNCTION: GAMEMD 0x006A5310
 void SidebarClass::Init_IO(void)
@@ -331,7 +331,7 @@ void SidebarClass::Init_IO(void)
 		Repair.DrawOffset.X = -480;
 		Repair.DrawOffset.Y = 0;
 		Repair.DrawOnSidebar = 1;
-		Repair.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		Repair.ShapeDrawer = SidebarDrawer;
 		Repair.IsOn = false;
 		Repair.IsToggleType = 1;
 		Repair.ReflectButtonState = 1;
@@ -344,7 +344,7 @@ void SidebarClass::Init_IO(void)
 		Power.DrawOffset.X = -480;
 		Power.DrawOffset.Y = 0;
 		Power.DrawOnSidebar = 1;
-		Power.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		Power.ShapeDrawer = SidebarDrawer;
 		Power.IsOn = false;
 		Power.IsToggleType = 1;
 		Power.ReflectButtonState = 1;
@@ -358,7 +358,7 @@ void SidebarClass::Init_IO(void)
 			TabButtons[index].DrawOffset.X = -480;
 			TabButtons[index].DrawOffset.Y = 0;
 			TabButtons[index].DrawOnSidebar = 1;
-			TabButtons[index].ShapeDrawer = FileSystem::SIDEBAR_PAL;
+			TabButtons[index].ShapeDrawer = SidebarDrawer;
 			TabButtons[index].IsOn = false;
 			TabButtons[index].IsToggleType = 2;
 			TabButtons[index].ReflectButtonState = 1;
@@ -369,14 +369,14 @@ void SidebarClass::Init_IO(void)
 		Upgrade.IsSticky = 1;
 		Upgrade.ID = 201;
 		Upgrade.DrawOnSidebar = 1;
-		Upgrade.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		Upgrade.ShapeDrawer = SidebarDrawer;
 		Upgrade.Set_Flags(0x55);
 		Upgrade.StopFlashing();
 
 		Waypoint.IsSticky = 1;
 		Waypoint.ID = 200;
 		Waypoint.DrawOnSidebar = 1;
-		Waypoint.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		Waypoint.ShapeDrawer = SidebarDrawer;
 		Waypoint.Set_Flags(0x55);
 		Waypoint.StopFlashing();
 
@@ -404,25 +404,25 @@ void SidebarClass::Init_IO(void)
 
 				DiplomacyKills[DiplomacyNumHouses] = Kills_Of(house);
 				DiplomacyOwned[DiplomacyNumHouses] = Owned_Of(house);
-				DiplomacyPowerDrain[DiplomacyNumHouses] = Money_Of(house);
+				DiplomacyCredits[DiplomacyNumHouses] = Money_Of(house);
 				DiplomacyColors[DiplomacyNumHouses] = Color_Of(house);
 
-				unknown_544C[DiplomacyNumHouses] = 0;
-				unknown_546C[DiplomacyNumHouses] = 0;
-				unknown_548C[DiplomacyNumHouses] = 0;
-				unknown_54AC[DiplomacyNumHouses] = 0;
-				unknown_54CC[DiplomacyNumHouses] = 0;
-				unknown_54EC[DiplomacyNumHouses] = 0;
+				DiplomacyRung[DiplomacyNumHouses] = 0;
+				DiplomacyPoints[DiplomacyNumHouses] = 0;
+				DiplomacyWins[DiplomacyNumHouses] = 0;
+				DiplomacyLosses[DiplomacyNumHouses] = 0;
+				DiplomacyDisconnects[DiplomacyNumHouses] = 0;
+				DiplomacyWinStreak[DiplomacyNumHouses] = 0;
 
 				if (Session.Type == GAME_INTERNET) {
-					int * stats = FUN_0077DA50(house->UIName);
+					Ladder * stats = FUN_0077DA50(house->UIName);
 					if (stats) {
-						unknown_544C[DiplomacyNumHouses] = stats[7];
-						unknown_546C[DiplomacyNumHouses] = stats[4];
-						unknown_548C[DiplomacyNumHouses] = stats[2];
-						unknown_54AC[DiplomacyNumHouses] = stats[3];
-						unknown_54CC[DiplomacyNumHouses] = stats[8];
-						unknown_54EC[DiplomacyNumHouses] = stats[12];
+						DiplomacyRung[DiplomacyNumHouses] = stats->rung;
+						DiplomacyPoints[DiplomacyNumHouses] = stats->points;
+						DiplomacyWins[DiplomacyNumHouses] = stats->wins;
+						DiplomacyLosses[DiplomacyNumHouses] = stats->losses;
+						DiplomacyDisconnects[DiplomacyNumHouses] = stats->disconnects;
+						DiplomacyWinStreak[DiplomacyNumHouses] = stats->win_streak;
 						delete stats;
 					}
 				}
@@ -476,7 +476,6 @@ extern bool DAT_00B0B48B;
 extern bool DAT_00B0B48F;
 extern ConvertClass * DAT_0087F6D0;
 
-extern DSurface * DAT_00887308;
 PaletteClass * __fastcall FUN_0072F4A0(void);
 PaletteClass * __fastcall FUN_0072F4E0(void);
 
@@ -486,38 +485,38 @@ void SidebarClass::Init_For_House(void)
 	BASECLASS::Init_For_House();
 
 	PaletteClass palette = *FUN_0072F4A0();
-	if (FileSystem::SIDEBAR_PAL) {
-		delete FileSystem::SIDEBAR_PAL;
-		FileSystem::SIDEBAR_PAL = NULL;
+	if (SidebarDrawer) {
+		delete SidebarDrawer;
+		SidebarDrawer = NULL;
 	}
-	FileSystem::SIDEBAR_PAL = new ConvertClass(palette, palette, *DAT_00887308, 1, false);
+	SidebarDrawer = new ConvertClass(palette, palette, *VisibleSurface, 1, false);
 
 	FileSystem::GCLOCK2_SHP = FileSystem::LoadWholeFileEx("GCLOCK2.SHP", DAT_00B0B48F);
 
 	bool loaded = false;
 	Power.Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx("SELL.SHP", loaded), 0, 0);
 	Power.SetLoadedStatus(loaded);
-	Power.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	Power.ShapeDrawer = SidebarDrawer;
 
 	Repair.Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx("REPAIR.SHP", loaded), 0, 0);
 	Repair.SetLoadedStatus(loaded);
-	Repair.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	Repair.ShapeDrawer = SidebarDrawer;
 
 	for (int index = 0; index < STRIPS; index++) {
 		char name[256];
 		sprintf(name, "TAB%02d.SHP", index);
 		TabButtons[index].Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx(name, loaded), 0, 0);
 		TabButtons[index].SetLoadedStatus(loaded);
-		TabButtons[index].ShapeDrawer = FileSystem::SIDEBAR_PAL;
+		TabButtons[index].ShapeDrawer = SidebarDrawer;
 	}
 
 	Upgrade.Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx("R-DN.SHP", loaded), 0, 0);
 	Upgrade.SetLoadedStatus(loaded);
-	Upgrade.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	Upgrade.ShapeDrawer = SidebarDrawer;
 
 	Waypoint.Set_Shape((ShapeSet const *)FileSystem::LoadWholeFileEx("R-UP.SHP", loaded), 0, 0);
 	Waypoint.SetLoadedStatus(loaded);
-	Waypoint.ShapeDrawer = FileSystem::SIDEBAR_PAL;
+	Waypoint.ShapeDrawer = SidebarDrawer;
 
 	DAT_00B0B468 = FileSystem::LoadWholeFileEx("SIDE1.SHP", DAT_00B0B488);
 	DAT_00B0B46C = FileSystem::LoadWholeFileEx("SIDE2.SHP", DAT_00B0B489);
@@ -529,7 +528,7 @@ void SidebarClass::Init_For_House(void)
 		delete DAT_0087F6D0;
 		DAT_0087F6D0 = NULL;
 	}
-	DAT_0087F6D0 = new ConvertClass(observer, observer, *DAT_00887308, 1, false);
+	DAT_0087F6D0 = new ConvertClass(observer, observer, *VisibleSurface, 1, false);
 
 	DAT_00B0B490 = FileSystem::LoadWholeFileEx("OBSALLI.SHP", DAT_00B0B4CC);
 	DAT_00B0B494 = FileSystem::LoadWholeFileEx("OBSSOVI.SHP", DAT_00B0B4CD);
@@ -549,7 +548,6 @@ void SidebarClass::Init_For_House(void)
 }
 
 extern void * DAT_00B0B478;
-extern bool DAT_00B0B518;
 bool __fastcall FUN_004E1470(GadgetClass * gadget);
 
 extern void * DAT_00B0B47C;
@@ -684,24 +682,24 @@ bool SidebarClass::FUN_006A6220(int control)
 // FUNCTION: GAMEMD 0x006A6290
 bool SidebarClass::FUN_006A6290(int control)
 {
-	bool old = unknown_bool_5514;
+	bool old = IsRepairActive;
 	if (control == -1) {
-		control = unknown_bool_5514 ? 0 : 1;
+		control = IsRepairActive ? 0 : 1;
 	}
 	switch (control) {
 		case 1:
-			unknown_bool_5514 = true;
+			IsRepairActive = true;
 			break;
 
 		default:
 		case 0:
-			unknown_bool_5514 = false;
+			IsRepairActive = false;
 			break;
 	}
-	if (old != unknown_bool_5514) {
+	if (old != IsRepairActive) {
 		Flag_To_Redraw();
 		IsToRedraw = true;
-		if (!unknown_bool_5514) {
+		if (!IsRepairActive) {
 			Set_Default_Mouse(MOUSE_NORMAL, false);
 		}
 	}
@@ -725,7 +723,7 @@ bool SidebarClass::AddCameo(RTTIType type, int id)
 			IsToRedraw = true;
 			Flag_To_Redraw();
 			if (tab == ActiveTabIndex) {
-				DAT_00B0B518 = true;
+				IsToBlitSidebar = true;
 			}
 			return true;
 		}
@@ -733,7 +731,6 @@ bool SidebarClass::AddCameo(RTTIType type, int id)
 	return false;
 }
 
-extern int DAT_00886F9C;
 extern int DAT_00884CF8;
 
 static inline int Visible_Cameos(void)
@@ -747,7 +744,7 @@ static inline int Visible_Cameos(void)
 	} else {
 		reserved = 0x12;
 	}
-	return (DAT_00886F94 + DAT_00886F9C - DAT_00B0B4F8 - reserved - 7) / 50 * 2;
+	return (SidebarRect.Y + SidebarRect.Height - DAT_00B0B4F8 - reserved - 7) / 50 * 2;
 }
 
 // FUNCTION: GAMEMD 0x006A6610
@@ -837,7 +834,7 @@ static inline int Max_Visible_Cameos(void)
 	} else {
 		reserved = 0x12;
 	}
-	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
+	return (SidebarRect.Y - DAT_00B0B4F8 - reserved + SidebarRect.Height - 7) / 50;
 }
 
 extern Rect DAT_008809F4;
@@ -861,16 +858,16 @@ void SidebarClass::Draw_It(bool complete)
 		if (IsForceCompleteRedraw) {
 			redrawn = true;
 
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B468, 0, Point2D(0, DAT_00886F94), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B468, 0, Point2D(0, SidebarRect.Y), window, SHAPE_WIN_REL);
 
 			int y = DAT_00B0B4F8;
 			for (int i = 0; i < Max_Visible_Cameos(); i++) {
-				Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B46C, 0, Point2D(0, y), window, SHAPE_WIN_REL);
+				Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B46C, 0, Point2D(0, y), window, SHAPE_WIN_REL);
 				y += ((ShapeSet const *)DAT_00B0B46C)->Get_Height();
 			}
 
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B470, 0, Point2D(0, y), window, SHAPE_WIN_REL);
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B474, 0, Point2D(0, y + ((ShapeSet const *)DAT_00B0B470)->Get_Height()), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B470, 0, Point2D(0, y), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B474, 0, Point2D(0, y + ((ShapeSet const *)DAT_00B0B470)->Get_Height()), window, SHAPE_WIN_REL);
 		}
 
 		Power.Draw_Me(redrawn);
@@ -882,11 +879,11 @@ void SidebarClass::Draw_It(bool complete)
 		Waypoint.Draw_Me(redrawn);
 
 		if (unknown_5398 != 0) {
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B478, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B47C, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
-			Draw_Shape(*SidebarSurface, *FileSystem::SIDEBAR_PAL, (ShapeSet const *)DAT_00B0B480, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B478, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B47C, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
+			Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)DAT_00B0B480, unknown_5394, Point2D(0, DAT_00B0B4F8), window, SHAPE_WIN_REL);
 		}
-		DAT_00B0B518 = true;
+		IsToBlitSidebar = true;
 	}
 
 	Column[ActiveTabIndex].Draw_It(IsForceCompleteRedraw);
@@ -894,113 +891,90 @@ void SidebarClass::Draw_It(bool complete)
 
 	if (Power.IsDrawn) {
 		Power.IsDrawn = false;
-		DAT_00B0B518 = true;
+		IsToBlitSidebar = true;
 	}
 	if (Repair.IsDrawn) {
 		Repair.IsDrawn = false;
-		DAT_00B0B518 = true;
+		IsToBlitSidebar = true;
 	}
 	for (int index = 0; index < STRIPS; index++) {
 		if (TabButtons[index].IsDrawn) {
-			DAT_00B0B518 = true;
+			IsToBlitSidebar = true;
 			TabButtons[index].IsDrawn = false;
 		}
 	}
 	if (Upgrade.IsDrawn) {
 		Upgrade.IsDrawn = false;
-		DAT_00B0B518 = true;
+		IsToBlitSidebar = true;
 	}
 	if (Waypoint.IsDrawn) {
 		Waypoint.IsDrawn = false;
-		DAT_00B0B518 = true;
+		IsToBlitSidebar = true;
 	}
 	if (ToolTips != NULL) {
 		ToolTips->Draw_Current(true);
 	}
 
-	Blit_Sidebar(DAT_00B0B518 || IsForceCompleteRedraw);
+	Blit_Sidebar(IsToBlitSidebar || IsForceCompleteRedraw);
 	IsToRedraw = false;
 	IsForceCompleteRedraw = false;
 	DSurface::Temp = (DSurface *)old;
 }
 
-namespace Game { extern bool IsActive; extern HWND hWnd; }
 namespace Unsorted { extern bool ScenarioStarted; }
 extern bool DAT_00B0B519;
-extern int DAT_00886F98;
-
-class MouseSlots {
-	public:
-		virtual void Slot0(void);
-		virtual void Slot1(void);
-		virtual void Slot2(void);
-		virtual void Slot3(void);
-		virtual void Slot4(void);
-		virtual void Slot5(void);
-		virtual void Slot6(void);
-		virtual void Slot7(void);
-		virtual void Slot8(void);
-		virtual void Slot9(void);
-		virtual void Slot10(void);
-		virtual void Slot11(void);
-		virtual void Slot12(void);
-		virtual void Slot13(void);
-		virtual void Slot14(void);
-		virtual void Draw_Mouse(Surface * scr, bool issidebarsurface);
-};
-extern MouseSlots * DAT_00887640;
 
 // FUNCTION: GAMEMD 0x006A70E0
 void SidebarClass::Blit_Sidebar(bool complete)
 {
-	if (IsSidebarActive && Game::IsActive && Unsorted::ScenarioStarted) {
+	if (IsSidebarActive && GameActive && Unsorted::ScenarioStarted) {
 
 		RECT crect;
-		GetClientRect(Game::hWnd, &crect);
+		GetClientRect(MainWindow, &crect);
 
 		POINT scrnpt;
 		scrnpt.x = crect.left;
 		scrnpt.y = crect.top;
-		ClientToScreen(Game::hWnd, &scrnpt);
+		ClientToScreen(MainWindow, &scrnpt);
 
-		if (!DAT_00B0B518 && !complete) {
-			DAT_00B0B518 = false;
+		if (!IsToBlitSidebar && !complete) {
+			IsToBlitSidebar = false;
 			if (DAT_008809F4 == DAT_00B07DC8) {
 				if (IsToRedrawCredits) {
-					DAT_00887640->Draw_Mouse(SidebarSurface, true);
-					DAT_00887308->Blit_From(
-						Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, DAT_00886F98, 16),
+					MouseCursor->Draw_Mouse(SidebarSurface, true);
+					VisibleSurface->Blit_From(
+						Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, SidebarRect.Width, 16),
 						*SidebarSurface,
-						Rect(0, 0, DAT_00886F98, 16),
+						Rect(0, 0, SidebarRect.Width, 16),
 						false,
 						true
 					);
 					IsToRedrawCredits = false;
 					DAT_00B0B519 = true;
 				}
-				DAT_00B0B518 = false;
+				IsToBlitSidebar = false;
 				return;
 			}
 		} else {
-			DAT_00B0B518 = true;
+			IsToBlitSidebar = true;
 		}
 
-		DAT_00887640->Draw_Mouse(SidebarSurface, true);
+		MouseCursor->Draw_Mouse(SidebarSurface, true);
 		if (DAT_008809F4 == DAT_00B07DC8 && !complete) {
 			if (IsToRedrawCredits) {
-				DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, DAT_00886F98, 16), *SidebarSurface, Rect(0, 0, DAT_00886F98, 16), false, true);
+				VisibleSurface->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, SidebarRect.Width, 16), *SidebarSurface, Rect(0, 0, SidebarRect.Width, 16), false, true);
 				IsToRedrawCredits = false;
 			}
-			DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_00886F94, DAT_00886F98, SidebarSurface->Get_Height() - DAT_00886F94), *SidebarSurface, Rect(0, DAT_00886F94, DAT_00886F98, DAT_00886F9C), false, true);
-		} else if (DAT_00B0B518) {
+			VisibleSurface->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + SidebarRect.Y, SidebarRect.Width, SidebarSurface->Get_Height() - SidebarRect.Y), *SidebarSurface, Rect(0, SidebarRect.Y, SidebarRect.Width, SidebarRect.Height), false, true);
+		} else if (IsToBlitSidebar) {
 			Rect sb_rect = SidebarSurface->Get_Rect();
-			DAT_00887308->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, sb_rect.Width, sb_rect.Height), *SidebarSurface, Rect(0, 0, sb_rect.Width, sb_rect.Height), false, true);
+			VisibleSurface->Blit_From(Rect(scrnpt.x + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y, sb_rect.Width, sb_rect.Height), *SidebarSurface, Rect(0, 0, sb_rect.Width, sb_rect.Height), false, true);
 		} else {
-			DAT_00887308->Blit_From(Rect(scrnpt.x + DAT_008809F4.X + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_008809F4.Y, DAT_008809F4.Width, DAT_008809F4.Height), *SidebarSurface, DAT_008809F4, false, true);
+			VisibleSurface->Blit_From(Rect(scrnpt.x + DAT_008809F4.X + (Options.IsSidebarOnRight ? DSurface::ViewBounds.Width : 0), scrnpt.y + DAT_008809F4.Y, DAT_008809F4.Width, DAT_008809F4.Height), *SidebarSurface, DAT_008809F4, false, true);
 		}
 		DAT_00B0B519 = true;
 	}
-	DAT_00B0B518 = false;
+	IsToBlitSidebar = false;
 }
 
 // FUNCTION: GAMEMD 0x006A74A0
@@ -1064,7 +1038,6 @@ void SidebarClass::Recalc(void)
 	}
 }
 
-namespace Game { extern unsigned char RecordingFlag; }
 void FUN_005BF450(void);
 
 // FUNCTION: GAMEMD 0x006A7D70
@@ -1072,7 +1045,7 @@ bool SidebarClass::Activate(int control)
 {
 	bool old = IsSidebarActive;
 
-	if ((Game::RecordingFlag & 2) && Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
+	if (Session.Play && Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
 		return(old);
 	}
 
@@ -1237,7 +1210,7 @@ static inline int Strip_Rows(void)
 	} else {
 		reserved = 0x12;
 	}
-	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
+	return (SidebarRect.Y - DAT_00B0B4F8 - reserved + SidebarRect.Height - 7) / 50;
 }
 
 // FUNCTION: GAMEMD 0x006A8220
@@ -1455,11 +1428,196 @@ void SidebarClass::StripClass::Flag_To_Redraw(void)
 extern bool DAT_00884B8C;
 extern unsigned short DAT_00B07BC4[];
 
+extern int DAT_00B0B514;
+void __fastcall FUN_00734250(BuildingClass * building);
+
+// FUNCTION: GAMEMD 0x006A8B30
+bool SidebarClass::StripClass::AI(KeyNumType & input, Point2D const & xy)
+{
+	bool redraw = false;
+	if (!IsScrolling && Scroller) {
+		int rows = Map.Max_Visible();
+		int count = BuildableCount;
+		int columns = 2;
+		int visible = rows * 2;
+		if (PlayerPtr == DAT_00AC1198) {
+			count = Map.DiplomacyNumHouses;
+			rows /= 2;
+			columns = 1;
+			visible = rows;
+		}
+		if (count <= visible) {
+			Scroller = 0;
+		} else if (Scroller < 0) {
+			if (!TopIndex) {
+				Scroller = 0;
+			} else {
+				Scroller++;
+				IsScrollingDown = false;
+				IsScrolling = true;
+				TopIndex--;
+				Slid = 0;
+			}
+		} else if ((TopIndex + rows) * columns >= count) {
+			Scroller = 0;
+		} else {
+			Scroller--;
+			Slid = DAT_00B0B500;
+			IsScrollingDown = true;
+			IsScrolling = true;
+		}
+	}
+	if (IsScrolling) {
+		if (IsScrollingDown) {
+			Slid -= DAT_00B0B514;
+			if (Slid <= 0) {
+				IsScrolling = false;
+				Slid = 0;
+				TopIndex++;
+			}
+		} else {
+			Slid += DAT_00B0B514;
+			if (Slid >= DAT_00B0B500) {
+				IsScrolling = false;
+				Slid = 0;
+			}
+		}
+		redraw = true;
+	}
+	if (Flasher != -1) {
+		if (Graphic_Logic()) {
+			redraw = true;
+			if (Fetch_Stage() >= 7) {
+				Set_Rate(0);
+				Set_Stage(0);
+				Flasher = -1;
+			}
+		}
+	}
+	bool flash_active = Map.unknown_53A0 > Frame;
+	if (flash_active) {
+		redraw = true;
+	}
+	bool building_tab = ID == 0 || ID == 1;
+	if (building_tab) {
+		for (int index = 0; index < BuildableCount; index++) {
+			if (Buildables[index].BuildableType == RTTI_SPECIAL) {
+				SuperClass * super = PlayerPtr->SuperWeapon[Buildables[index].BuildableID];
+				if (super && super->ShouldFlashTab()) {
+					goto flash;
+				}
+			} else {
+				FactoryClass * factory = Buildables[index].Factory;
+				if (factory && factory->Has_Completed()) {
+					TechnoClass * object = factory->Get_Object();
+					if (object && object->Fetch_RTTI() == RTTI_BUILDING) {
+						goto flash;
+					}
+				}
+			}
+		}
+		TabButtons[ID].StopFlashing();
+	}
+	goto building;
+flash:
+	{
+		int frame = Frame;
+		int length = 10 - frame % 10;
+		TabButtons[ID].StartFlashing(10, length, ((frame + length) / 10) % 2 == 0);
+		Map.IsForceCompleteRedraw = true;
+		Map.Flag_To_Redraw();
+	}
+building:
+	if (IsBuilding) {
+		for (int index = 0; index < BuildableCount; index++) {
+			FactoryClass * factory = Buildables[index].Factory;
+			bool changed = factory && factory->Has_Changed();
+			if (changed) {
+				redraw = true;
+				bool completed = factory->Has_Completed();
+				if (completed) {
+					TechnoClass * pending = factory->Get_Object();
+					if (pending) {
+						switch (pending->Fetch_RTTI()) {
+						case RTTI_BUILDING: {
+							VoxClass::Play("EVA_ConstructionComplete");
+							FUN_00734250(As_Building(pending));
+							break;
+						}
+						case RTTI_UNIT:
+						case RTTI_AIRCRAFT:
+						case RTTI_INFANTRY:
+							OutList.Add(EventClass(pending->Owner(), EventClass::PLACE, pending->Fetch_RTTI(), -1,
+								pending->Techno_Type_Class()->Naval, CELL_NONE));
+							Buildables[index].unknown_10 = 0;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	for (int index = 0; index < BuildableCount; index++) {
+		if (Buildables[index].unknown_10 == 1) {
+			FactoryClass * factory = Buildables[index].Factory;
+			if (factory && (!factory->Is_Building() || factory->Is_On_Hold())) {
+				Buildables[index].Progress.Set_Rate(0);
+				Buildables[index].Progress.Set_Stage(0);
+			}
+			bool advanced = Buildables[index].Progress.Graphic_Logic();
+			if (advanced) {
+				redraw = true;
+				if (Buildables[index].Progress.Fetch_Stage() >= 53) {
+					Buildables[index].Progress.Set_Rate(0);
+				}
+			}
+		}
+	}
+	if (AllowedToDraw && PlayerPtr == DAT_00AC1198) {
+		for (int index = 0; index < Map.DiplomacyNumHouses; index++) {
+			HouseClass * house = Map.DiplomacyHouses[index];
+			if (house) {
+				if (Map.unknown_550C && Session.Type == GAME_INTERNET) {
+					Ladder * stats = FUN_0077DA50(house->UIName);
+					if (stats) {
+						Map.DiplomacyRung[index] = stats->rung;
+						Map.DiplomacyPoints[index] = stats->points;
+						Map.DiplomacyWins[index] = stats->wins;
+						Map.DiplomacyLosses[index] = stats->losses;
+						Map.DiplomacyDisconnects[index] = stats->disconnects;
+						Map.DiplomacyWinStreak[index] = stats->win_streak;
+						delete stats;
+						redraw = true;
+					}
+				}
+				if (Map.DiplomacyKills[index] != Kills_Of(house) ||
+					Map.DiplomacyOwned[index] != Owned_Of(house) ||
+					Map.DiplomacyCredits[index] != Money_Of(house) ||
+					Map.DiplomacyColors[index] != Color_Of(house)) {
+					redraw = true;
+					Map.DiplomacyKills[index] = Kills_Of(house);
+					Map.DiplomacyOwned[index] = Owned_Of(house);
+					Map.DiplomacyCredits[index] = Money_Of(house);
+					Map.DiplomacyColors[index] = Color_Of(house);
+				}
+			}
+		}
+		Map.unknown_550C = false;
+	}
+	if (redraw) {
+		Map.RepaintSidebar(Map.ActiveTabIndex);
+		Flag_To_Redraw();
+		Map.IsForceCompleteRedraw = true;
+		IsToBlitSidebar = true;
+	}
+	return redraw;
+}
+
 // FUNCTION: GAMEMD 0x006A92E0
 unsigned short const * SidebarClass::StripClass::Help_Text(int id)
 {
 	int i = id + TopIndex * 2;
-	if (Game::IsActive) {
+	if (GameActive) {
 		if (i < BuildableCount && BuildableCount < MAX_BUILDABLES) {
 			if (Buildables[i].BuildableType == RTTI_SPECIAL) {
 				return SuperWeaponTypes[Buildables[i].BuildableID]->UIName;
@@ -1527,33 +1685,432 @@ void SidebarClass::StripClass::SelectClass::Set_Owner(StripClass & strip, int in
 
 extern bool UserInputLocked;
 
+// FUNCTION: GAMEMD 0x006AA600
+bool SidebarClass::StripClass::Recalc(void)
+{
+	int ok;
+
+	if (Debug_Map || !BuildableCount) {
+		return(false);
+	}
+
+	bool scroll = false;
+	int max_visible = Map.GetVisibleCameoCount();
+	SmartPtr<BuildType> unshifted(new BuildType[max_visible]);
+
+	for (int i = 0; i < max_visible; i++) {
+		if (i + 2 * TopIndex < BuildableCount) {
+			unshifted[i] = Buildables[i + 2 * TopIndex];
+		}
+	}
+
+	bool redraw = false;
+	for (int index = 0; index < BuildableCount; index++) {
+		TechnoTypeClass const * tech = Fetch_Techno_Type(Buildables[index].BuildableType, Buildables[index].BuildableID);
+		if (tech != NULL) {
+			BuildingClass const * who = tech->Who_Can_Build_Me(true, false, false, PlayerPtr);
+			ok = who != NULL && who->House->Can_Build(tech, false, true);
+		} else {
+			if ((unsigned)Buildables[index].BuildableID < (unsigned)PlayerPtr->SuperWeapon.Count()) {
+				ok = PlayerPtr->SuperWeapon[Buildables[index].BuildableID]->Is_Present();
+			} else {
+				ok = false;
+			}
+		}
+
+		if (!ok) {
+			if (Buildables[index].Factory != NULL) {
+				RTTIType object_type = Buildables[index].BuildableType;
+				int object_id = Buildables[index].BuildableID;
+				OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::ABANDON,
+					object_type, object_id, tech->Naval));
+				if (Buildables[index].BuildableType == RTTI_BUILDINGTYPE ||
+					Buildables[index].BuildableType == RTTI_BUILDING) {
+					Map.PendingObjectPtr = NULL;
+					Map.PendingObject = NULL;
+					Map.PendingHouse = HOUSE_NONE;
+					Map.SetActiveFoundation(NULL);
+				}
+			}
+			if (tech != NULL && PlayerPtr->Fetch_Factory(tech->Fetch_RTTI(), tech->Naval, 0)) {
+				OutList.Add(EventClass(PlayerPtr->HeapID, EventClass::ABANDON_ALL,
+					Buildables[index].BuildableType, Buildables[index].BuildableID, tech->Naval));
+			}
+
+			for (int i = 0; i < max_visible; i++) {
+				if (unshifted[i] == Buildables[index]) {
+					unshifted[i] = BuildType(0, RTTI_NONE);
+				}
+			}
+
+			if (BuildableCount > 1 && index < BuildableCount-1) {
+				memmove(&Buildables[index], &Buildables[index+1], sizeof(Buildables[0])*((BuildableCount-index)-1));
+			}
+			redraw = true;
+			scroll = true;
+			int last = BuildableCount - 1;
+			Buildables[last].Factory = NULL;
+			Buildables[last].BuildableID = 0;
+			Buildables[last].BuildableType = RTTI_NONE;
+			Buildables[last].IsAlt = 0;
+			Buildables[last].unknown_10 = 0;
+			Buildables[last].Progress.Set_Stage(0);
+			Buildables[last].Progress.Set_Rate(0);
+			Buildables[last].FlashEndFrame = 0;
+			IsToRedraw = true;
+			BuildableCount--;
+			index--;
+		}
+	}
+
+	Map.FUN_006A6820(ID);
+
+	if (scroll) {
+		BuildType const * previous = unshifted;
+		bool got_old = false;
+		bool got_new = false;
+
+		int oldpos;
+		for (oldpos = 0; oldpos < max_visible; oldpos++) {
+			if (previous[oldpos] != BuildType(0, RTTI_NONE)) {
+				got_old = true;
+				break;
+			}
+		}
+
+		int newpos;
+		if (got_old && BuildableCount != 0) {
+			for (newpos = 0; newpos < BuildableCount; newpos++) {
+				if (Buildables[newpos] == previous[oldpos]) {
+					got_new = true;
+					break;
+				}
+			}
+		}
+
+		if (got_old && got_new) {
+			TopIndex -= (oldpos - newpos) / 2;
+			TopIndex = MAX(0, MIN(TopIndex, (BuildableCount - max_visible) / 2));
+		} else {
+			TopIndex = 0;
+		}
+		Map.IsForceCompleteRedraw = true;
+	}
+
+	delete[] unshifted;
+	return(redraw);
+}
+
+// FUNCTION: GAMEMD 0x006AAD00
+// SidebarClass::StripClass::SelectClass::Action
+int SidebarClass::StripClass::SelectClass::Action(
+	unsigned flags, KeyNumType &key, int modifier)
+{
+	if (Strip == 0) {
+		return 1;
+	}
+
+	TechnoTypeClass const *choice = 0;
+	int spc = -1;
+
+	int index = Strip->TopIndex * 2 + Index;
+	RTTIType kind = Strip->Buildables[index].BuildableType;
+	int id = Strip->Buildables[index].BuildableID;
+	int arg = Strip->Buildables[index].IsAlt;
+	FactoryClass *factory = Strip->Buildables[index].Factory;
+
+	Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
+	bool multiple = (modifier & 1) != 0;
+
+	if (index < Strip->BuildableCount) {
+		if (kind != RTTI_SPECIAL) {
+			choice = Fetch_Techno_Type(kind, id);
+		} else {
+			spc = id;
+		}
+	}
+
+	if (spc != -1) {
+		if (flags & LEFTUP) {
+			flags &= ~LEFTUP;
+		}
+		if (flags & RIGHTPRESS) {
+			Map.IsTargettingMode = SUPER_NONE;
+		}
+		if (flags & LEFTPRESS) {
+			if ((unsigned)spc < (unsigned)PlayerPtr->SuperWeapon.Count()) {
+				VocClass::PlayGlobal(Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+				SuperClass *super = PlayerPtr->SuperWeapon[spc];
+				if (super->CanFire()) {
+					if (PlayerPtr->SuperWeapon[spc]->Class->Action == ACTION_NONE) {
+						Cell cell;
+						cell.X = 0;
+						cell.Y = 0;
+						OutList.Add(EventClass(
+							PlayerPtr->HeapID, EventClass::SPECIAL_PLACE,
+							PlayerPtr->SuperWeapon[spc]->Class->HeapID, cell));
+					} else {
+						Map.PendingObjectPtr = 0;
+						Map.PendingObject = 0;
+						Map.PendingHouse = HOUSE_NONE;
+						Map.SetActiveFoundation(NULL);
+						Map.Repair_Mode_Control(0);
+						Map.Sell_Mode_Control(0);
+						Map.IsPowerMode = false;
+						Map.IsWaypointMode = false;
+						Map.PlaceBeaconMode = false;
+						Map.IsTargettingMode = SuperWeaponType(spc);
+						Unselect_All();
+						VoxClass::Play("EVA_SelectTarget", -1, -1);
+					}
+				} else {
+					super->Impatient_Click();
+				}
+			}
+		}
+	} else if (choice != 0) {
+		if (flags & LEFTUP) {
+			flags &= ~LEFTUP;
+		}
+
+		if (flags & RIGHTPRESS) {
+			if (factory != 0) {
+				if (Map.PendingObjectPtr
+					&& Dynamic_Cast<TechnoClass *>(Map.PendingObjectPtr)) {
+					Map.PendingObjectPtr = 0;
+					Map.PendingObject = 0;
+					Map.PendingHouse = HOUSE_NONE;
+					Map.SetActiveFoundation(NULL);
+				}
+				if (!factory->Is_Building()) {
+					VocClass::PlayGlobal(
+						Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+					VoxClass::Play("EVA_Canceled", -1, -1);
+					if (multiple) {
+						OutList.Add(EventClass(
+							PlayerPtr->HeapID, EventClass::ABANDON_ALL,
+							kind, id, choice->Naval));
+					} else {
+						OutList.Add(EventClass(
+							PlayerPtr->HeapID, EventClass::ABANDON,
+							kind, id, choice->Naval));
+					}
+				} else {
+					VocClass::PlayGlobal(
+						Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+					VoxClass::Play("EVA_OnHold", -1, -1);
+					OutList.Add(EventClass(
+						PlayerPtr->HeapID, EventClass::SUSPEND,
+						kind, id, choice->Naval));
+					Map.Column[Strip->ID].IsToRedraw = true;
+				}
+			} else {
+				if (Strip->Buildables[index].unknown_10 == 1) {
+					Strip->Buildables[index].unknown_10 = 2;
+					Strip->Flag_To_Redraw();
+					VocClass::PlayGlobal(
+						Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+					VoxClass::Play("EVA_OnHold", -1, -1);
+					OutList.Add(EventClass(
+						PlayerPtr->HeapID, EventClass::SUSPEND,
+						kind, id, choice->Naval));
+				}
+				FactoryClass *fptr =
+					PlayerPtr->Fetch_Factory(kind, choice->Naval, arg);
+				if (fptr != 0 && fptr->Is_Queued(choice)) {
+					VocClass::PlayGlobal(
+						Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+					if (multiple) {
+						OutList.Add(EventClass(
+							PlayerPtr->HeapID, EventClass::ABANDON_ALL,
+							kind, id, choice->Naval));
+					} else {
+						OutList.Add(EventClass(
+							PlayerPtr->HeapID, EventClass::ABANDON,
+							kind, id, choice->Naval));
+					}
+				}
+			}
+		}
+
+		if (flags & LEFTPRESS) {
+			if (factory != 0 && (!factory->Is_Building())) {
+				if (factory->Has_Completed()) {
+					TechnoClass *pending =
+						factory->Get_Object();
+					if (!pending) {
+						if (factory->Get_Special_Item() != -1) {
+							Map.IsTargettingMode = SUPER_ANY;
+						}
+					} else {
+						VocClass::PlayGlobal(
+							Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+						BuildingClass *builder =
+							pending->Who_Can_Build_Me(false, false);
+						if (!builder) {
+							OutList.Add(EventClass(
+								pending->Owner(), EventClass::ABANDON,
+								kind, id, choice->Naval));
+							VoxClass::Play("EVA_UnableToComply", -1, -1);
+						} else if (pending->Fetch_RTTI() == RTTI_BUILDING) {
+							PlayerPtr->Manual_Place(
+								builder, (BuildingClass *)pending);
+						} else {
+							OutList.Add(EventClass(
+								pending->Owner(), EventClass::PLACE,
+								kind, -1, choice->Naval, CELL_NONE));
+						}
+					}
+				} else {
+					VocClass::PlayGlobal(
+						Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+					if (kind == RTTI_INFANTRYTYPE) {
+						VoxClass::Play("EVA_Training", -1, -1);
+					} else {
+						VoxClass::Play("EVA_Building", -1, -1);
+					}
+					TechnoTypeClass const *type = Fetch_Techno_Type(
+						Strip->Buildables[index].BuildableType,
+						Strip->Buildables[index].BuildableID);
+					bool naval = type && type->Naval;
+					PlayerPtr->FUN_005005B0(kind, choice->Naval, arg);
+					OutList.Add(EventClass(
+						PlayerPtr->HeapID, EventClass::PRODUCE,
+						Strip->Buildables[index].BuildableType,
+						Strip->Buildables[index].BuildableID, naval));
+					Strip->Buildables[index].unknown_10 = 1;
+					Strip->Buildables[index].Progress.Set_Stage(
+						Strip->FUN_006A94F0(index));
+					int rate = factory->Build_Rate();
+					Strip->Buildables[index].Progress.Set_Rate(rate + 1);
+					Strip->Flag_To_Redraw();
+					Map.IsForceCompleteRedraw = true;
+				}
+			} else {
+				factory = PlayerPtr->Fetch_Factory(
+					kind, choice->Naval, arg);
+				TechnoTypeClass const *type = Fetch_Techno_Type(
+					Strip->Buildables[index].BuildableType,
+					Strip->Buildables[index].BuildableID);
+				bool naval = type && type->Naval;
+				bool limited = PlayerPtr->FUN_0050B370(type);
+				bool busy;
+				bool produce = false;
+				if (factory != 0
+					&& (factory->Is_Building()
+						|| factory->Has_Production_Target())) {
+					busy = true;
+					if (kind == RTTI_BUILDINGTYPE) {
+						VoxClass::Play("EVA_UnableToComply", -1, -1);
+					} else {
+						produce = true;
+					}
+				} else {
+					busy = false;
+					if (kind == RTTI_INFANTRYTYPE) {
+						if (!limited) {
+							VoxClass::Play("EVA_Training", -1, -1);
+						}
+					} else {
+						if (!limited) {
+							VoxClass::Play("EVA_Building", -1, -1);
+						}
+					}
+					produce = true;
+				}
+
+				if (produce) {
+					unsigned char queued =
+						PlayerPtr->FUN_00500700(kind, choice->Naval, arg);
+					bool started = false;
+					if (!limited) {
+						VocClass::PlayGlobal(
+							Rule->GUIBuildSound, 1.0f, 0x2000, NULL);
+						if (factory == 0 && !queued) {
+							PlayerPtr->FUN_005005B0(kind, choice->Naval, arg);
+							started = true;
+						}
+						OutList.Add(EventClass(
+							PlayerPtr->HeapID, EventClass::PRODUCE,
+							Strip->Buildables[index].BuildableType,
+							Strip->Buildables[index].BuildableID, naval));
+					}
+					if (started || !queued) {
+						if (!busy && !limited) {
+							Strip->Buildables[index].unknown_10 = 1;
+							Strip->Flag_To_Redraw();
+							TechnoTypeClass const *tech = Fetch_Techno_Type(
+								kind, Strip->Buildables[index].BuildableID);
+							if (tech) {
+								int ahead = Session.MaxAhead;
+								if (PlayerPtr->Available_Money()
+										>= tech->Cost_Of(PlayerPtr) * ahead / 54
+									&& tech->Who_Can_Build_Me(
+										true, false, false,
+										PlayerPtr)) {
+									int time = tech->Time_To_Build();
+									if (tech->Fetch_RTTI() == RTTI_BUILDINGTYPE
+										&& ((BuildingTypeClass const *)tech)->IsWall) {
+										time = time
+											* Rule->WallBuildSpeedCoefficient;
+									}
+									int least = ahead + 15;
+									if (time <= least) {
+										time = least;
+									}
+									int steps = time / 54;
+									if (steps * 54 < least) {
+										steps++;
+									}
+									if (steps < 1) {
+										steps = 1;
+									} else if (steps > 255) {
+										steps = 255;
+									}
+									Strip->Buildables[index].Progress.Set_Stage(0);
+									Strip->Buildables[index].Progress.Set_Rate(steps);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	} else {
+		flags = 0;
+	}
+
+	ControlClass::Action(flags, key, 0);
+	return 1;
+}
+
 // FUNCTION: GAMEMD 0x006AB990
 void SidebarClass::StripClass::SelectClass::OnMouseEnter(void)
 {
 	ToolTips->Save_Timer_Delay();
 	ToolTips->Set_Timer_Delay(0);
-	unknown_34 = true;
+	IsMouseOver = true;
 	Strip->IsToRedraw = true;
 	Map.Flag_To_Redraw();
 	Map.IsForceCompleteRedraw = true;
-	DAT_00B0B518 = true;
+	IsToBlitSidebar = true;
 }
 
 // FUNCTION: GAMEMD 0x006AB9E0
 void SidebarClass::StripClass::SelectClass::OnMouseLeave(void)
 {
 	ToolTips->Restore_Timer_Delay();
-	unknown_34 = false;
+	IsMouseOver = false;
 	Strip->IsToRedraw = true;
 	Map.Flag_To_Redraw();
 	Map.IsForceCompleteRedraw = true;
-	DAT_00B0B518 = true;
+	IsToBlitSidebar = true;
 }
 
 // FUNCTION: GAMEMD 0x006ABA20
 bool SidebarClass::StripClass::SelectClass::FUN_006ABA20(void)
 {
-	return unknown_34 && !UserInputLocked;
+	return IsMouseOver && !UserInputLocked;
 }
 
 // FUNCTION: GAMEMD 0x006ABA40
@@ -1624,13 +2181,12 @@ bool SidebarClass::StripClass::Abandon_Production(FactoryClass const * factory)
 	return abandoned;
 }
 
-namespace Game { extern int SpecialDialog; }
 
 // FUNCTION: GAMEMD 0x006ABC40
 void FUN_006ABC40(void)
 {
 	if (Session.Type != GAME_NORMAL) {
-		Game::SpecialDialog = 8;
+		SpecialDialog = SDLG_SPECIAL;
 	}
 }
 
@@ -1678,7 +2234,109 @@ int SidebarClass::FUN_006ABD10(void)
 	return -1;
 }
 
-extern int DAT_00886F9C;
+
+extern int DAT_00B0B508;
+extern int DAT_00B0B50C;
+extern int DAT_00B0B510;
+
+// FUNCTION: GAMEMD 0x006ABD30
+void SidebarClass::Reposition_Sidebar(void)
+{
+	BASECLASS::Reposition_Sidebar();
+	FUN_006A5130(false);
+	if (!SidebarShape) {
+		SidebarShape = (ShapeSet const *)FileSystem::LoadFile("SIDEGDI1.SHP", false);
+		SidebarMiddleShape = (ShapeSet const *)FileSystem::LoadFile("SIDEGDI2.SHP", false);
+		SidebarBottomShape = (ShapeSet const *)FileSystem::LoadFile("SIDEGDI3.SHP", false);
+	}
+	Background.Set_Position(SidebarRect.X + 16, TacticalRect.Y);
+	Background.Flag_To_Redraw();
+	int x = 0;
+	int y = RadarButton.Y + RadarButton.Height;
+	if (Options.IsSidebarOnRight) {
+		Background.Set_Position(TacticalRect.X + TacticalRect.Width, y);
+	} else {
+		Background.Set_Position(x, y);
+	}
+	Background.Set_Size(SidebarSurface->Get_Width(), SidebarSurface->Get_Height() - y);
+	Repair.Set_Position(DAT_00B0B4DC, DAT_00B0B4E0);
+	Repair.Flag_To_Redraw();
+	Repair.DrawOffset.X = -SidebarRect.X;
+	int power_x = Repair.X + DAT_00B0B4E4;
+	Power.Set_Position(power_x, Repair.Y);
+	Power.Flag_To_Redraw();
+	Power.DrawOffset.X = -SidebarRect.X;
+	for (int index = 0; index < STRIPS; index++) {
+		int tab_x = DAT_00B0B4E8 + DAT_00B0B4F0 * index;
+		TabButtons[index].Set_Position(tab_x, DAT_00B0B4EC);
+		TabButtons[index].Flag_To_Redraw();
+		TabButtons[index].DrawOffset.X = -SidebarRect.X;
+	}
+	Upgrade.Set_Position(DAT_00B0B508, DAT_00B0B50C);
+	Upgrade.Flag_To_Redraw();
+	Upgrade.DrawOffset.X = -SidebarRect.X;
+	int waypoint_x = DAT_00B0B508 + DAT_00B0B510;
+	Waypoint.Set_Position(waypoint_x, DAT_00B0B50C);
+	Waypoint.Flag_To_Redraw();
+	Waypoint.DrawOffset.X = -SidebarRect.X;
+	int rows = Max_Visible();
+	int count = rows * COLUMNS;
+	for (int strip = 0; strip < STRIPS; strip++) {
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < COLUMNS; col++) {
+				int slot = strip * 60 + row * COLUMNS + col;
+				StripClass::SelectClass *button = &StripClass::SelectButton[slot];
+				int cameo_y = DAT_00B0B4F8 + DAT_00B0B500 * row + 1;
+				int cameo_x = DAT_00B0B4F4 + DAT_00B0B4FC * col;
+				button->Set_Position(cameo_x, cameo_y);
+				button->Flag_To_Redraw();
+			}
+		}
+	}
+	if (ToolTips) {
+		ToolTip tooltip;
+		for (int tab = 0; tab < STRIPS; tab++) {
+			tooltip.ID = 203 + tab;
+			tooltip.Text = 0;
+			ShapeButtonClass const &tab_button = TabButtons[tab];
+			tooltip.Region.Set(tab_button.X, tab_button.Y, tab_button.Width, tab_button.Height);
+			ToolTips->Remove(tooltip.ID);
+			ToolTips->Add(&tooltip);
+		}
+		for (int index = 0; index < 60; index++) {
+			ToolTips->Remove(GADGET_CAMEO + index);
+		}
+		for (int cameo = 0; cameo < count; cameo++) {
+			tooltip.ID = GADGET_CAMEO + cameo;
+			tooltip.Text = 0;
+			StripClass::SelectClass const &cameo_button = StripClass::SelectButton[cameo];
+			tooltip.Region.Set(cameo_button.X, cameo_button.Y, cameo_button.Width, cameo_button.Height);
+			tooltip.Flag = true;
+			ToolTips->Add(&tooltip);
+		}
+		tooltip.Flag = false;
+		tooltip.ID = 102;
+		tooltip.Text = (int)"TXT_SELL_MODE";
+		tooltip.Region.Set(Power.X, Power.Y, Power.Width, Power.Height);
+		ToolTips->Remove(tooltip.ID);
+		ToolTips->Add(&tooltip);
+		tooltip.ID = 101;
+		tooltip.Text = (int)"TXT_REPAIR_MODE";
+		tooltip.Region.Set(Repair.X, Repair.Y, Repair.Width, Repair.Height);
+		ToolTips->Remove(tooltip.ID);
+		ToolTips->Add(&tooltip);
+		tooltip.ID = 200;
+		tooltip.Text = 0;
+		tooltip.Region.Set(Waypoint.X, Waypoint.Y, Waypoint.Width, Waypoint.Height);
+		ToolTips->Remove(tooltip.ID);
+		ToolTips->Add(&tooltip);
+		tooltip.ID = 201;
+		tooltip.Text = 0;
+		tooltip.Region.Set(Upgrade.X, Upgrade.Y, Upgrade.Width, Upgrade.Height);
+		ToolTips->Remove(tooltip.ID);
+		ToolTips->Add(&tooltip);
+	}
+}
 
 // FUNCTION: GAMEMD 0x006AC3E0
 int SidebarClass::Max_Visible(void)
@@ -1707,13 +2365,13 @@ int SidebarClass::GetVisibleCameoCount(void)
 	} else {
 		reserved = 0x12;
 	}
-	return (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50 * 2;
+	return (SidebarRect.Y - DAT_00B0B4F8 - reserved + SidebarRect.Height - 7) / 50 * 2;
 }
 
 #include "bitfont.h"
 
 // FUNCTION: GAMEMD 0x006AC480
-void __fastcall FUN_006AC480(wchar_t const * text, Point2D const & point, Rect const & window, int width)
+void __fastcall Print_Cameo_Text(wchar_t const * text, Point2D const & point, Rect const & window, int width)
 {
 	if (DAT_00884B8C && text != NULL) {
 		Point2D xy = point;
@@ -1818,6 +2476,9 @@ void SidebarClass::StripClass::FUN_006AC740(int id, int frames)
 // FUNCTION: GAMEMD 0x006AC840
 // DisplayClass::DisplayClass
 
+// FUNCTION: GAMEMD 0x006AC870
+// StageClass::StageClass
+
 // TEMPLATE: GAMEMD 0x006AC8D0
 // ??0?$DynamicVectorClass@VPoint2D@@@@QAE@IPBVPoint2D@@@Z
 template class DynamicVectorClass<Point2D>;
@@ -1872,7 +2533,7 @@ char const * SidebarClass::Help_Text(int id)
 		if (side == 0) reserved = 26;
 		else if (side == 1) reserved = 18;
 		else reserved = 18;
-		int rows = (DAT_00886F94 - DAT_00B0B4F8 - reserved + DAT_00886F9C - 7) / 50;
+		int rows = (SidebarRect.Y - DAT_00B0B4F8 - reserved + SidebarRect.Height - 7) / 50;
 		if (id >= 1000 && id < 1000 + rows * 2) return (char const *)Column[ActiveTabIndex].Help_Text(id - 1000);
 	}
 	if (disabled) {
@@ -1961,3 +2622,6 @@ void SidebarClass::FUN_006A5130(bool full)
 		DAT_00B0B508 = SidebarRect.X + 39;
 	}
 }
+
+// SYNTHETIC: GAMEMD 0x006AC890
+// ??_EBuildType@StripClass@SidebarClass@@QAEPAXI@Z

@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 
 #include <stddef.h>
@@ -45,9 +46,7 @@
 
 using namespace WorldDominationTour;
 
-struct Drawing {
-	static int RenderWidth;
-};
+extern int VideoModeWidth;
 
 Wstring operator+(Wstring const & a, Wstring const & b);
 
@@ -73,11 +72,11 @@ Territory::Territory(int id, INIClass const & ini, Wstring const & section, Wstr
 	Wstring label = operator+(labelprefix, Wstring_FromInt(id, 2));
 	Name = StringTable::LoadString(label.get(), NULL, "D:\\ra2mdpost\\WDTTerr.cpp", 0x27);
 
-	Wstring width = Wstring_FromInt(Drawing::RenderWidth);
+	Wstring width = Wstring_FromInt(VideoModeWidth);
 	Target = ini.Get_Point(section, "Target_" + width, Target);
 	Origin = ini.Get_Point(section, "Origin_" + width, Origin);
 
-	if (Drawing::RenderWidth > 800) {
+	if (VideoModeWidth > 800) {
 		if (Target.X == 0 && Target.Y == 0) {
 			Target = ini.Get_Point(section, "Target_800", Target);
 		}

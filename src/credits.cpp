@@ -25,6 +25,8 @@
 #include "bench.hh"
 #include "color.hh"
 #include <math.h>
+#include <stdio.h>
+#include "stringtable.h"
 
 
 // SYNTHETIC: GAMEMD 0x004A2140 SYMBOL
@@ -68,6 +70,71 @@ CreditClass::CreditClass(void) :
 }
 
 extern HouseClass * DAT_00AC1198;
+extern wchar_t DAT_0089F860[];
+namespace Drawing { extern RGBClass TooltipColor; }
+
+// Formats a duration as hours, minutes and seconds, capped at 99 hours.
+static inline wchar_t const * Format_Time(int seconds)
+{
+	if (seconds / 3600 > 99) {
+		seconds = 359999;
+	}
+	int hours = seconds / 3600;
+	seconds -= hours * 3600;
+	int minutes = seconds / 60;
+	seconds -= minutes * 60;
+	swprintf(DAT_0089F860, StringTable::LoadString("TXT_TIME_FORMAT_HOURS", NULL, "D:\\ra2mdpost\\Credits.CPP", 107), hours, minutes, seconds);
+	return(DAT_0089F860);
+}
+
+// FUNCTION: GAMEMD 0x004A2370
+void CreditClass::Graphic_Logic(bool forced)
+{
+	if (forced || IsToRedraw) {
+		int xx = SidebarSurface->Get_Width() / 2;
+
+		if (PlayerPtr == DAT_00AC1198) {
+			Map.Draw_Credits_Tab();
+
+			int side = Scen->PlayerSideIndex;
+			int flags;
+			if (side == 0) {
+				flags = 0x4108;
+			} else if (side == 1) {
+				flags = 0x4108;
+			} else {
+				flags = 0x4108;
+			}
+			int color = DSurface::Build_Hicolor_Pixel(Drawing::TooltipColor);
+			Fancy_Text_Print_Wide(Format_Time(Current), SidebarSurface, &SidebarSurface->Get_Rect(), &Point2D(xx, 2), color, TBLACK, TextPrintType(flags));
+		} else {
+			if (IsAudible && Rule->CreditTicks.Count() >= 2) {
+				if (IsUp) {
+					VocClass::PlayGlobal(Rule->CreditTicks[0], .5f, 0x2000);
+				} else {
+					VocClass::PlayGlobal(Rule->CreditTicks[1], .5f, 0x2000);
+				}
+			}
+
+			Map.Draw_Credits_Tab();
+
+			int side = Scen->PlayerSideIndex;
+			int flags;
+			if (side == 0) {
+				flags = 0x4108;
+			} else if (side == 1) {
+				flags = 0x4108;
+			} else {
+				flags = 0x4108;
+			}
+			int color = DSurface::Build_Hicolor_Pixel(Drawing::TooltipColor);
+			Fancy_Text_Print_Wide(L"%ld", SidebarSurface, &SidebarSurface->Get_Rect(), &Point2D(xx, 2), color, TBLACK, TextPrintType(flags), Current);
+		}
+
+		IsToRedraw = false;
+		IsAudible = false;
+	}
+}
 
 // FUNCTION: GAMEMD 0x004A2600
 void CreditClass::AI(bool forced)

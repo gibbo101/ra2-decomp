@@ -12,78 +12,40 @@
 #include "houstype.h"
 #include "multiplayer.h"
 #include "session.h"
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x004E3110 SYMBOL
 // _$E5
 
-namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E94E0;
-extern const double DAT_007E94E8;
-
 // SYNTHETIC: GAMEMD 0x004E3130 SYMBOL
 // _$E70
-double DAT_008B3FA8 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x004E3160 SYMBOL
 // _$E73
-double DAT_008B40B8 = DAT_008B3FA8 / DAT_007E94E0;
-
 // SYNTHETIC: GAMEMD 0x004E3180 SYMBOL
 // _$E76
-double DAT_008B40A0 = DAT_007E1718 / DAT_008B40B8;
-
 // SYNTHETIC: GAMEMD 0x004E31A0 SYMBOL
 // _$E79
-double DAT_008B4098 = DAT_007E1720 * DAT_007E94E8;
-
 // SYNTHETIC: GAMEMD 0x004E31C0 SYMBOL
 // _$E82
-double DAT_008B3FB0 = DAT_007E1728 * DAT_007E94E8;
-
 // SYNTHETIC: GAMEMD 0x004E31E0 SYMBOL
 // _$E85
-double DAT_008B3F28 = DAT_007E1730 * DAT_007E94E8;
-
 // SYNTHETIC: GAMEMD 0x004E3200 SYMBOL
 // _$E88
-int DAT_008B40C0 = (int)(fastmath::tan(DAT_008B3F28 - DAT_008B3FB0) * DAT_007E1738 * DAT_008B3FA8);
-
 // SYNTHETIC: GAMEMD 0x004E3240 SYMBOL
 // _$E91
-double DAT_008B3FB8 = fastmath::atan(DAT_008B40C0 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x004E3270 SYMBOL
 // _$E94
-double DAT_008B4030 = fastmath::atan((DAT_008B40C0 * 2) / DAT_008B3FA8);
-
 // SYNTHETIC: GAMEMD 0x004E32A0 SYMBOL
 // _$E97
-int DAT_008B40B4 = (int)(DAT_008B40C0 * 4 + DAT_007E1738);
-
-struct GDShortPair { short a; short b; GDShortPair(void) { a = 0; b = 0; } };
-struct GDIntTriple { int a; int b; int c; GDIntTriple(void) { a = 0; b = 0; c = 0; } };
-
 // SYNTHETIC: GAMEMD 0x004E32D0 SYMBOL
 // _$E100
-GDShortPair DAT_008B3FA0;
-
 // SYNTHETIC: GAMEMD 0x004E32E0 SYMBOL
 // _$E103
-GDIntTriple DAT_008B4020;
+// SYNTHETIC: GAMEMD 0x004E3300 SYMBOL
+// _$E106
 
 #include "srfcache.h"
 
-extern int DAT_008B40B0;
-extern int DAT_008B40A8;
-extern int DAT_008B40AC;
 extern char *DAT_00844AE8;
 extern char *DAT_00844AEC;
 extern char *DAT_00844AF0;
@@ -102,14 +64,6 @@ extern char *DAT_00844B20;
 
 void __fastcall FUN_00603D30(HWND dialog, Surface * surface);
 int __fastcall FUN_004E37D0(int side);
-
-// FUNCTION: GAMEMD 0x004E3300
-void FUN_004E3300(void)
-{
-	DAT_008B40B0 = 0;
-	DAT_008B40A8 = 0x80;
-	DAT_008B40AC = 0x80;
-}
 
 // FUNCTION: GAMEMD 0x004E3320
 int __fastcall FUN_004E3320(int side)
@@ -281,9 +235,9 @@ void __fastcall FUN_004E3A00(HWND dialog, int id)
 	SendMessage(item, 0x4de, 0, 7);
 	int index = SendMessage(item, 0x4c2, 0, (LPARAM)StringTable::LoadString("GUI:RandomEx", NULL, "D:\\ra2mdpost\\GDlgSupp.cpp", 0x114));
 	SendMessage(item, CB_SETITEMDATA, index, -2);
-	int count = HouseTypeClass::Array.Count();
+	int count = HouseTypes.Count();
 	for (int i = 0; i < count; i++) {
-		HouseTypeClass *type = HouseTypeClass::Array[i];
+		HouseTypeClass *type = HouseTypes[i];
 		if (type && type->IsMultiplay && type->House > -3 && type->House <= 9 && *type->UIName) {
 			index = SendMessage(item, 0x4c2, 0, (LPARAM)type->UIName);
 			SendMessage(item, CB_SETITEMDATA, index, type->House);

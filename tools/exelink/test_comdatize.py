@@ -60,10 +60,10 @@ def grouped_object(code=b"\x90\xc3"):
             + struct.pack("<I", 4 + len(strings)) + strings)
 
 
-def two_routine_object():
+def two_routine_object(second_at=0x10, align=4):
     """_first at 0 and _second at 0x10 in one .text, with a DIR32 at 0x14 against _first."""
     code = bytes(range(0x20))
-    text_flags = coffgen.SCN_CNT_CODE | coffgen.SCN_MEM_EXECUTE | coffgen.SCN_MEM_READ | coffgen.ALIGN[4]
+    text_flags = coffgen.SCN_CNT_CODE | coffgen.SCN_MEM_EXECUTE | coffgen.SCN_MEM_READ | coffgen.ALIGN[align]
     raw = 20 + 40
     relptr = raw + len(code)
     symptr = relptr + 10
@@ -73,7 +73,7 @@ def two_routine_object():
     sym_text = struct.pack("<8sIhHBB", b".text", 0, 1, 0, coffgen.CLASS_STATIC, 1)
     aux = struct.pack("<IHHIHBBBB", len(code), 1, 0, 0, 0, 0, 0, 0, 0)
     first = struct.pack("<8sIhHBB", b"_first", 0, 1, 0x20, coffgen.CLASS_EXTERNAL, 0)
-    second = struct.pack("<8sIhHBB", b"_second", 0x10, 1, 0x20, coffgen.CLASS_EXTERNAL, 0)
+    second = struct.pack("<8sIhHBB", b"_second", second_at, 1, 0x20, coffgen.CLASS_EXTERNAL, 0)
     return head + sect + code + reloc + sym_text + aux + first + second + struct.pack("<I", 4)
 
 
@@ -130,6 +130,26 @@ class ComdatizeTests(unittest.TestCase):
         twice, count = comdatize.comdatize(once)
         self.assertEqual(count, 0)
         self.assertEqual(once, twice)
+
+    def test_split_section_is_no_more_aligned_than_where_it_starts(self):
+        out = comdatize.split(two_routine_object(second_at=0x11, align=16), "_second")
+        self.assertEqual([coffgen.section_alignment(out, i) for i in (1, 2)], [16, 1])
+        out = comdatize.split(two_routine_object(align=16), "_second")
+        self.assertEqual([coffgen.section_alignment(out, i) for i in (1, 2)], [16, 16])
+
+    def test_retired_routine_gets_a_section_of_its_own_as_a_static(self):
+        out = comdatize.ungroup_retired(comdatize.comdatize(comdatize.retire(two_routine_object(), {"_second"}))[0])
+        symbols = {s[1]: s for s in coffgen.read_symbols(out)}
+        self.assertNotIn("_second", symbols)
+        self.assertEqual(symbols["$retired$_second"][2:5], (0, 2, coffgen.CLASS_STATIC))
+        self.assertEqual(symbols["_first"][2:5], (0, 1, coffgen.CLASS_EXTERNAL))
+
+    def test_retiring_a_routine_another_one_refers_to_is_refused(self):
+        with self.assertRaises(ValueError):
+            comdatize.retire(two_routine_object(), {"_first"})
+
+    def test_retiring_nothing_changes_nothing(self):
+        self.assertEqual(comdatize.retire(two_routine_object(), {"_other"}), two_routine_object())
 
     def test_rejects_non_i386(self):
         with self.assertRaises(ValueError):

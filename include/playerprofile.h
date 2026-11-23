@@ -25,18 +25,18 @@ class PlayerProfile : public ReferenceCounted
 		void SetField20(int value);
 		void UpdateStats(Ladder const * record);
 		bool StatsDiffer(Ladder const * record) const;
-		void AddField2C(int delta);
-		void AddField30(int delta);
-		void AddField34(int delta);
+		void AddWins(int delta);
+		void AddLosses(int delta);
+		void AddDisconnects(int delta);
 		void Save(Wstring const * name);
 		void FUN_0077A9F0(HWND window, Wstring const * name, bool flag);
 
-		char Field8;
+		char IsChanged;
 		Wstring Name;
-		int Field10;
+		int Locale;
 		bool Field14;
-		int Field18, Field1C, Field20, Field24, Field28, Field2C, Field30, Field34;
-		bool Field38;
-		WideWstring Wide3C;
-		WideWstring Wide40;
+		int Field18, Country, Field20, Rung, Points, Wins, Losses, Disconnects;
+		bool MatchByRes;
+		WideWstring UpdateTime;
+		WideWstring UpdateDate;
 };

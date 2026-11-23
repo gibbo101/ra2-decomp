@@ -69,23 +69,10 @@
 #include <fcntl.h>
 #include <io.h>
 #include <share.h>
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0048C690 SYMBOL
 // _$E2
-
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E51E0;
-extern const double DAT_007E51E8;
 
 void __fastcall SetNavCycleMode(int mode);
 extern BeaconManagerClass BeaconManager;
@@ -94,103 +81,52 @@ void __fastcall FUN_00406F70(void);
 struct CallBackObject { virtual void V0(); virtual void V1(); virtual void V2(); };
 extern CallBackObject ** DAT_00B45B5C;
 extern int DAT_00B45B68;
-extern bool DAT_00B77DC2;
+extern bool g_ConnectionLost;
 extern int g_SuspendChatPump;
 extern time_t DAT_0089E9B0;
 
-
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x0048C6B0 SYMBOL
 // _$E88
-double DAT_0089E948 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2.0);
-
 // SYNTHETIC: GAMEMD 0x0048C6E0 SYMBOL
 // _$E91
-double DAT_0089E9A0 = DAT_0089E948 / DAT_007E51E0;
-
 // SYNTHETIC: GAMEMD 0x0048C700 SYMBOL
 // _$E94
-double DAT_0089E988 = DAT_007E1718 / DAT_0089E9A0;
-
 // SYNTHETIC: GAMEMD 0x0048C720 SYMBOL
 // _$E97
-double DAT_0089E980 = DAT_007E1720 * DAT_007E51E8;
-
 // SYNTHETIC: GAMEMD 0x0048C740 SYMBOL
 // _$E100
-double DAT_0089E958 = DAT_007E1728 * DAT_007E51E8;
-
 // SYNTHETIC: GAMEMD 0x0048C760 SYMBOL
 // _$E103
-double DAT_0089E918 = DAT_007E1730 * DAT_007E51E8;
-
 // SYNTHETIC: GAMEMD 0x0048C780 SYMBOL
 // _$E106
-int DAT_0089E9A8 = (int)(FUN_004CAD50(DAT_0089E918 - DAT_0089E958) * DAT_007E1738 * DAT_0089E948);
-
 // SYNTHETIC: GAMEMD 0x0048C7C0 SYMBOL
 // _$E109
-double DAT_0089E960 = FUN_004CADE0(DAT_0089E9A8 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x0048C7F0 SYMBOL
 // _$E112
-double DAT_0089E978 = FUN_004CADE0((DAT_0089E9A8 * 2) / DAT_0089E948);
-
 // SYNTHETIC: GAMEMD 0x0048C820 SYMBOL
 // _$E115
-int DAT_0089E99C = (int)(DAT_0089E9A8 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x0048C850 SYMBOL
 // _$E118
-ShortPair DAT_0089E940;
-
 // SYNTHETIC: GAMEMD 0x0048C860 SYMBOL
 // _$E121
-IntTriple DAT_0089E968;
-
-int DAT_0089E998;
-int DAT_0089E990;
-int DAT_0089E994;
-
-// FUNCTION: GAMEMD 0x0048C880
-void Reset_Conquer_Globals(void)
-{
-	DAT_0089E998 = 0;
-	DAT_0089E990 = 128;
-	DAT_0089E994 = 128;
-}
+// SYNTHETIC: GAMEMD 0x0048C880 SYMBOL
+// _$E124
 
 // FUNCTION: GAMEMD 0x0048C8A0
 void Conquer_Nop(void)
 {
 }
 
-namespace Game { extern int SpecialDialog; extern int ObserverMode; extern HWND hWnd; extern HINSTANCE hInstance; }
+namespace Game { extern int ObserverMode; }
 void __fastcall FUN_0065F520(ScenarioClass * scen);
-struct FileSystem
-{
-	static char TEMPERAT_PAL[];
-};
 namespace Unsorted { extern int ScenarioInit; extern bool ScenarioStarted; extern bool TacticalActive; }
 namespace FPSCounter { extern unsigned TotalTimeElapsed; extern unsigned TotalFramesElapsed; }
 extern bool UserInputLocked;
-extern int DAT_00ABCDFC;
-extern int DAT_00ABCE00;
+extern int TeamEvent;
+extern int TeamNumber;
 extern unsigned char DAT_00A8F900;
 extern int DAT_00B0BDB8;
 extern bool ConnectionLost;
-extern unsigned char DAT_008175B0;
-extern PaletteClass DAT_00884E80;
 bool __fastcall FUN_0055CFD0(void);
 void __fastcall FUN_0072DFB0(void);
 void Print_MP_Stats(void);
@@ -198,17 +134,17 @@ void Print_MP_Stats(void);
 // FUNCTION: GAMEMD 0x0048C8B0
 void Ingame_Menu_Dialog(void)
 {
-	if (Game::SpecialDialog != SDLG_NONE) {
+	if (SpecialDialog != SDLG_NONE) {
 		if (Session.Type != GAME_NORMAL) {
 			if (PlayerPtr->IsToLose || PlayerPtr->IsToWin || PlayerPtr->IsToDie) {
-				Game::SpecialDialog = SDLG_NONE;
+				SpecialDialog = SDLG_NONE;
 				return;
 			}
 			if (!_special_dialog_flag) {
 				if (PlayerPtr->IsDefeated) {
 					_special_dialog_flag = true;
 				} else {
-					Game::SpecialDialog = SDLG_NONE;
+					SpecialDialog = SDLG_NONE;
 					return;
 				}
 			}
@@ -220,46 +156,46 @@ void Ingame_Menu_Dialog(void)
 			MouseCursor->Show_Mouse();
 		}
 
-		while (Game::SpecialDialog != SDLG_NONE) {
-			switch (Game::SpecialDialog) {
+		while (SpecialDialog != SDLG_NONE) {
+			switch (SpecialDialog) {
 				case 9:
 					FUN_0065F520(Scen);
-					if (Game::SpecialDialog == 9) {
-						Game::SpecialDialog = SDLG_NONE;
+					if (SpecialDialog == 9) {
+						SpecialDialog = SDLG_NONE;
 					}
 					break;
 
 				case 8:
 					Map.FUN_006586D0();
-					if (Game::SpecialDialog == 8) {
-						Game::SpecialDialog = SDLG_NONE;
+					if (SpecialDialog == 8) {
+						SpecialDialog = SDLG_NONE;
 					}
 					break;
 
 				case 1:
 					Game_Options_Dialog();
-					if (Game::SpecialDialog != 1) {
+					if (SpecialDialog != 1) {
 						break;
 					}
-					Game::SpecialDialog = SDLG_NONE;
+					SpecialDialog = SDLG_NONE;
 					break;
 
 				case 5:
 					GameControlsClass().Dialog();
-					if (Game::SpecialDialog != 5) {
+					if (SpecialDialog != 5) {
 						break;
 					}
-					Game::SpecialDialog = 1;
+					SpecialDialog = SDLG_OPTIONS;
 					break;
 
 				case 6:
 					SoundControlsClass().Dialog();
-					Game::SpecialDialog = 5;
+					SpecialDialog = SDLG_SETTINGS;
 					break;
 
 				case 4:
 					Options.Hotkey_Dialog();
-					Game::SpecialDialog = 5;
+					SpecialDialog = SDLG_SETTINGS;
 					break;
 
 				case 3:
@@ -283,7 +219,7 @@ void Ingame_Menu_Dialog(void)
 							PlayerRestarts = true;
 							break;
 					}
-					Game::SpecialDialog = SDLG_NONE;
+					SpecialDialog = SDLG_NONE;
 					break;
 
 				case 2:
@@ -294,12 +230,12 @@ void Ingame_Menu_Dialog(void)
 						Queue_Exit();
 						_special_dialog_flag = false;
 					}
-					Game::SpecialDialog = SDLG_NONE;
+					SpecialDialog = SDLG_NONE;
 					break;
 
 				case 7:
 					DoFindPage();
-					Game::SpecialDialog = SDLG_NONE;
+					SpecialDialog = SDLG_NONE;
 					break;
 
 				default:
@@ -307,7 +243,7 @@ void Ingame_Menu_Dialog(void)
 			}
 		}
 
-		UpdateWindow(Game::hWnd);
+		UpdateWindow(MainWindow);
 		if (Scen->IsInputLocked) {
 			MouseCursor->Hide_Mouse();
 		}
@@ -331,8 +267,8 @@ void Main_Game(int argc, char * argv[])
 			WideCharToMultiByte(0, 0, StringTable::LoadString("TXT_INITGAME_FAILED", NULL, "D:\\ra2mdpost\\Conquer.CPP", 0x236), -1, text, sizeof(text), 0, 0);
 			WideCharToMultiByte(0, 0, StringTable::LoadString("TXT_SHORT_TITLE", NULL, "D:\\ra2mdpost\\Conquer.CPP", 0x237), -1, caption, sizeof(caption), 0, 0);
 			params.cbSize = sizeof(MSGBOXPARAMS);
-			params.hwndOwner = Game::hWnd;
-			params.hInstance = Game::hInstance;
+			params.hwndOwner = MainWindow;
+			params.hInstance = ProgramInstance;
 			params.lpszText = text;
 			params.lpszCaption = caption;
 			params.dwStyle = (MB_OK | MB_ICONSTOP | MB_SETFOREGROUND | MB_TOPMOST);
@@ -360,12 +296,12 @@ ret_addr:
 		Unsorted::ScenarioInit = 0;
 		fade = true;
 
-		Set_Palette(*(PaletteClass const *)FileSystem::TEMPERAT_PAL, 15, NULL);
+		Set_Palette(GamePalette, 15, NULL);
 		Keyboard->Clear();
 		if (Session.Play) {
 			MouseCursor->Hide_Mouse();
-			DAT_00ABCDFC = 0;
-			DAT_00ABCE00 = 0;
+			TeamEvent = 0;
+			TeamNumber = 0;
 		}
 
 		if (Session.Type == GAME_INTERNET) {
@@ -380,7 +316,7 @@ ret_addr:
 		}
 
 		UserInputLocked = Scen->IsInputLocked;
-		Game::SpecialDialog = SDLG_NONE;
+		SpecialDialog = SDLG_NONE;
 		_special_dialog_flag = true;
 		Session.Resume();
 
@@ -404,8 +340,8 @@ ret_addr:
 
 		Print_MP_Stats();
 
-		if (!DAT_008175B0) {
-			Set_Palette(DAT_00884E80, 30, NULL);
+		if (!HicolorFlag) {
+			Set_Palette(BlackPalette, 30, NULL);
 		}
 		Title_Screen_Restore(true);
 
@@ -478,7 +414,7 @@ void Call_Back(void)
 	}
 
 	if (Session.Type == GAME_INTERNET) {
-		if (!DAT_00B77DC2 && time(0) != DAT_0089E9B0) {
+		if (!g_ConnectionLost && time(0) != DAT_0089E9B0) {
 			if (g_pChat != NULL && !g_SuspendChatPump) {
 				g_pChat->PumpMessages();
 			}
@@ -552,7 +488,7 @@ void IPX_Call_Back(void)
 
 						for (int index = 0; index < 8; index++) {
 							if (Same_Name(Session.Slots[index], Session.Players[i])) {
-								if (TickCount() - Session.unknown_304C[index] > 2400) {
+								if (TickCount() - Session.LastPortProbeTime[index] > 2400) {
 									DebugString("No PORT_PROBE from %s in the last 40 seconds\n", FUN_007350C0(Session.Players[i]->Name));
 									if (Session.Players[i]->Slot.Port != port && Session.Players[i]->Slot.Port >= 0x400) {
 										DebugString("Sending to %s on mangled port from pserver\n", FUN_007350C0(Session.Players[i]->Name));
@@ -612,7 +548,7 @@ void IPX_Call_Back(void)
 							if (Session.Players[i]->Address.FUN_0053EF30(Session.GAddress) && stricmp(FUN_007350C0(Session.Players[i]->Name), Session.GPacket.Name) == 0) {
 								for (int index = 0; index < 8; index++) {
 									if (Same_Name(Session.Slots[index], Session.Players[i])) {
-										Session.unknown_304C[index] = TickCount();
+										Session.LastPortProbeTime[index] = TickCount();
 										break;
 									}
 								}
@@ -767,7 +703,7 @@ void IPX_Call_Back(void)
 }
 
 // SYNTHETIC: GAMEMD 0x0048DB70 SYMBOL
-// _$E126
+// _$E128
 
 // FUNCTION: GAMEMD 0x0048DB80
 SourceType Source_From_Name(char const * name)

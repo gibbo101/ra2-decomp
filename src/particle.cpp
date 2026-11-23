@@ -234,19 +234,24 @@ void ParticleClass::Railgun_Behavior_AI(void)
 	}
 }
 
+static inline Point2D Particle_Drift_Displacement(void)
+{
+	int dx = 0;
+	int dy = 0;
+	if ((abs(Scen->RandomNumber()) & 1) == 0) {
+		dx = abs(Scen->RandomNumber()) % 3 - 1;
+	} else {
+		dy = abs(Scen->RandomNumber()) % 3 - 1;
+	}
+	return Point2D(dx, dy);
+}
+
 // FUNCTION: GAMEMD 0x0062C540
 void ParticleClass::Smoke_Behavior_AI(void)
 {
 	if (Unsorted::CurrentFrame & 1) {
 		if ((abs(Scen->RandomNumber()) & 3) == 0) {
-			int x = 0;
-			int y = 0;
-			if ((abs(Scen->RandomNumber()) & 1) == 0) {
-				x = (int)abs(Scen->RandomNumber()) % 3 - 1;
-			} else {
-				y = (int)abs(Scen->RandomNumber()) % 3 - 1;
-			}
-			GasDrift += Point2D(x,y);
+			GasDrift += Particle_Drift_Displacement();
 			if (GasDrift.X < -5) {
 				GasDrift.X = -5;
 			} else if (GasDrift.X > 5) {
@@ -629,3 +634,65 @@ ObjectTypeClass const * ParticleClass::Class_Of(void) const
 
 // SYNTHETIC: GAMEMD 0x0062D9A0
 // ??_GParticleClass@@UAEPAXI@Z
+
+#include "builtype.h"
+#include "_voxel.h"
+
+#include "ballistic.h"
+
+// FUNCTION: GAMEMD 0x0062BD50
+void ParticleClass::Gas_Behavior_AI(void)
+{
+	if ((Frame & 1) == 0) {
+		Coord coord = Get_Coord();
+		if ((abs(Scen->RandomNumber()) & 7) == 0) {
+			GasDrift += Particle_Drift_Displacement();
+			if (GasDrift.X < -2) GasDrift.X = -2;
+			else if (GasDrift.X > 2) GasDrift.X = 2;
+			if (GasDrift.Y < -2) GasDrift.Y = -2;
+			else if (GasDrift.Y > 2) GasDrift.Y = 2;
+		}
+
+		Vector3 position(coord.X, coord.Y, coord.Z);
+		Vector3 &velocity = GasVelocity;
+		velocity = Vector3(0, 0, -2);
+		Ballistic_Move(position, velocity, Rule->Gravity, 1.0, 0.0);
+
+		if (Get_Height_AGL() > 5 && (Frame % 2) == 0) {
+			GasDrift.Z = (-5 > GasDrift.Z - 1) ? -5 : GasDrift.Z - 1;
+		} else {
+			GasDrift.Z = (GasDrift.Z > 0) ? GasDrift.Z : 0;
+		}
+	}
+
+	RemainingDC--;
+
+	if (RemainingDC == 0 && Class->Damage) {
+		RemainingDC = Class->MaxDC;
+		ObjectClass *occupier = Map[Get_Coord()].Cell_Occupier();
+		while (occupier) {
+			Coord delta = Get_Coord() - occupier->Get_Coord();
+			ObjectClass *next = occupier->Next;
+			int distance = abs(delta.X) + abs(delta.Y);
+			if (occupier->IsActive) {
+				if (occupier->Strength > 0) {
+					HouseClass * owner_house = System ? System->OwnerHouse : NULL;
+					int damage = Class->Damage;
+					occupier->Take_Damage(damage, TacticalMap->Z_Lepton_To_Pixel(distance), Class->Warhead, NULL, false, false, owner_house);
+				}
+			}
+			occupier = next;
+		}
+	}
+
+	if ((Fetch_ID() + (Class->MaxEC - RemainingEC)) % ((Fetch_ID() & 1) + Class->StateAIAdvance) == 0) {
+		StateAI++;
+	}
+	if (StateAI == Class->EndStateAI) {
+		if (Class->DeleteOnStateLimit) {
+			IsToDie = true;
+			return;
+		}
+		StateAI = 0;
+	}
+}

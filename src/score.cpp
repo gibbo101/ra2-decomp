@@ -82,9 +82,7 @@ int score_font_count;
 
 int FUN_00407000(void);
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 void __cdecl FUN_004068E0(char const * format, ...);
 
@@ -974,6 +972,13 @@ int ScoreFontClass::String_Width(const wchar_t * string)
 	return(w);
 }
 
+static int Score_Glyph_Index(char ch)
+{
+	int index = MAX(ch - '!', 0U);
+	if (index >= 216) index = 216;
+	return index;
+}
+
 // FUNCTION: GAMEMD 0x006907E0
 int ScoreFontClass::Char_Width(wchar_t ch)
 {
@@ -986,9 +991,7 @@ int ScoreFontClass::Char_Width(wchar_t ch)
 
 	CharToOemBuff(&c, out, sizeof(out));
 
-	unsigned frame;
-	frame = MAX((unsigned)(out[0] - 33), 0u);
-	frame = 3 * MIN((int)frame, 216);
+	int frame = 3 * Score_Glyph_Index(out[0]);
 
 	return(((SHPStruct const *)ShapePtr)->GetFrameBounds(frame + 2).Width);
 }
@@ -1000,11 +1003,43 @@ void ScoreFontClass::Print_Char(Surface *surf, wchar_t ch, int x, int y, int v, 
 	CharToOemBuff(&c, &c, sizeof(c));
 
 	if (c != 32) {
-		unsigned frame;
-		frame = MAX((unsigned)(c - 33), 0u);
-		frame = 3 * MIN((int)frame, 216);
+		int frame = 3 * Score_Glyph_Index(c);
 
 		Draw_Shape(*surf, *Drawer, ShapePtr, frame + v, Point2D(x - ((SHPStruct const *)ShapePtr)->GetFrameBounds(frame + 2).X, y), surf->Get_Rect(), SHAPE_WIN_REL);
+	}
+}
+
+// FUNCTION: GAMEMD 0x00690910
+void ScoreFontClass::Print_String(
+	Surface *surf,
+	const wchar_t *string,
+	int x,
+	int y,
+	int brightness_frame)
+{
+	while (*string != 0) {
+		if (*string != ' ') {
+			char c = (char)*string;
+			char ch;
+			CharToOemBuffA(&c, &ch, 1);
+
+			int index = Score_Glyph_Index(ch);
+
+			Draw_Shape(
+				*surf,
+				*Drawer,
+				ShapePtr,
+				index * 3 + brightness_frame,
+				Point2D(
+					x - ((SHPStruct const *)ShapePtr)
+							->GetFrameBounds(index * 3 + 2).X,
+					y),
+				surf->Get_Rect(),
+				SHAPE_WIN_REL);
+		}
+
+		x += Char_Width(*string) + 1;
+		string++;
 	}
 }
 

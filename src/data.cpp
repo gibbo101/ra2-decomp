@@ -25,36 +25,7 @@ extern LPDIRECTDRAWSURFACE DAT_0089F970;
 
 const DWORD DAT_0081FC60[3] = {0x5000, 0x24000, 0x5000};
 
-class Texture3D {
-	public:
-		Texture3D(int width, int height, int type);
-		int FUN_004A33A0(unsigned short * pixels);
-		void FUN_004A3370(void);
-
-		int Type;
-		DDSURFACEDESC Desc;
-		LPDIRECTDRAWSURFACE Surface;
-		LPDIRECT3DTEXTURE2 Texture;
-};
-
-struct Triangle3D {
-	void Set_Color(int a, int b, int c);
-	void Set_Vertex(int index, float x, float y, float z, float u, float v);
-
-	D3DTLVERTEX Vertex[3];
-};
-
-class Texture3DCache {
-	public:
-		Texture3DCache(void);
-		void FUN_004A3640(void);
-		void FUN_004A3650(void);
-		HRESULT Flush(LPDIRECTDRAWSURFACE target);
-		int Add(Triangle3D const & triangle);
-
-		Triangle3D List[1024];
-		int Count;
-};
+#include "texture3d.h"
 
 extern Texture3D * DAT_008A0E04;
 extern Texture3D * DAT_008A0E08;
@@ -431,20 +402,14 @@ void * Hires_Load(FileClass & file)
 	}
 }
 
-struct Flag3D {
-	void FUN_004A3C00(void);
-
-	char Value;
-};
-
 // FUNCTION: GAMEMD 0x004A3BF0
-bool FUN_004A3BF0(void)
+bool Init_Language_Resources(bool show_error)
 {
 	return(true);
 }
 
 // FUNCTION: GAMEMD 0x004A3C00
-void Flag3D::FUN_004A3C00(void)
+void Get_Language_Version(char * version_string)
 {
-	Value = 0;
+	version_string[0] = '\0';
 }

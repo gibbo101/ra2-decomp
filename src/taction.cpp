@@ -73,11 +73,9 @@ void __fastcall FUN_0070F120(FootClass * unit, TalkType bubble);
 void __fastcall Hold_Scenario(int seconds);
 
 void __fastcall FUN_0053AD00(int, int, int, int);
-bool __fastcall FUN_0053A100(void);
 void __fastcall FUN_00588AC0(MapClass * map);
 extern int DAT_00842AFC[];
 bool __fastcall FUN_0065D8E0(TeamTypeClass * team, int waypoint);
-void __fastcall FUN_00539EB0(int duration, int deferment, Cell target, HouseClass * house);
 bool __fastcall FUN_0065EC30(TeamTypeClass * team, int waypoint);
 BulletClass * __fastcall FUN_0046B050(BulletTypeClass const * type, AbstractClass * target, TechnoClass * owner, int damage, WarheadTypeClass const * warhead, int speed, bool bright);
 HouseClass * __fastcall FUN_00726910(TriggerClass * trig);
@@ -87,10 +85,6 @@ HouseClass * __fastcall FUN_00510ED0(int index);
 HouseClass * __fastcall FUN_00502D30(int index);
 void __fastcall FUN_004549B0(BuildingClass * building);
 
-extern DynamicVectorClass<BuildingClass *> DAT_00A8EB40;
-#define Buildings DAT_00A8EB40
-extern DynamicVectorClass<InfantryClass *> DAT_00A83DE8;
-#define Infantry DAT_00A83DE8
 
 DynamicVectorClass<TActionClass *> Actions;
 
@@ -114,17 +108,10 @@ extern DynamicVectorClass<TriggerClass *> DAT_00A8EAE8;
 extern DynamicVectorClass<TagClass *> DAT_00B0E720;
 #define Tags DAT_00B0E720
 extern bool UserInputLocked;
-class InputManagerClass {
-	public:
-		void DoSomething(void);
-		static InputManagerClass * Instance;
-};
 void __fastcall FUN_007315A0(void);
 extern wchar_t DAT_00887734[];
 extern char DAT_00889F64[];
 
-extern DynamicVectorClass<TechnoClass *> DAT_00A8EC78;
-#define Technos DAT_00A8EC78
 
 // FUNCTION: GAMEMD 0x00413A30
 // ?As_Cell@Coord@@QBE?AVCell@@XZ
@@ -1509,7 +1496,7 @@ bool TActionClass::TAction_ION_STORM_START(HouseClass * , ObjectClass * , Trigge
 	if (IonStormClass::Is_Ion_Storm_Active()) {
 		return(false);
 	}
-	FUN_00539EB0(Data.Value, Rule->LightningDeferment, DAT_00B0E680, NULL);
+	IonStormClass::Ion_Storm_Begin(Data.Value, Rule->LightningDeferment, DAT_00B0E680, NULL);
 	return(true);
 }
 
@@ -1589,7 +1576,7 @@ bool TActionClass::TAction_ZOOM_IN(HouseClass * , ObjectClass * , TriggerClass *
 {
 	TacticalMap->ZoomFactor = Rule->ZoomInFactor;
 	UserInputLocked = true;
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 
 	Hide_Mouse();
 	Map.Abort_Drag_Select();
@@ -1604,7 +1591,7 @@ bool TActionClass::TAction_ZOOM_IN(HouseClass * , ObjectClass * , TriggerClass *
 bool TActionClass::TAction_ZOOM_OUT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	TacticalMap->ZoomFactor = 1;
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	UserInputLocked = Scen->IsInputLocked;
 
 	Show_Mouse();
@@ -1809,7 +1796,7 @@ bool TActionClass::TAction_SET_TINT_BLUE(HouseClass * , ObjectClass * , TriggerC
 bool TActionClass::TAction_SET_AMBIENT_LIGHT(HouseClass * , ObjectClass * , TriggerClass * , Cell const & )
 {
 	Scen->AmbientLight = Data.Value;
-	if (!FUN_0053A100()) {
+	if (!IonStormClass::Is_Ion_Storm_Active()) {
 		Scen->DesiredAmbientLight = Scen->AmbientLight;
 	}
 	return(true);
@@ -1872,7 +1859,7 @@ bool TActionClass::TAction_DESTROY_ALL_OBJECTS(HouseClass * , ObjectClass * , Tr
 {
 	HouseClass * hptr = FindHouseByIndex(trig, Data.Value);
 	if (hptr == NULL) return(false);
-	hptr->Destroy_All();
+	hptr->Blowup_All();
 	return(true);
 }
 
@@ -1984,11 +1971,34 @@ bool TActionClass::TAction_LIGHTNING_STORM(HouseClass * house, ObjectClass * , T
 		coord.Z += BRIDGE_LEPTON_HEIGHT;
 	}
 	Cell cell = coord.As_Cell();
-	if (!FUN_0053A100()) {
-		FUN_00539EB0(Rule->LightningStormDuration, Rule->LightningDeferment, cell, house);
+	if (!IonStormClass::Is_Ion_Storm_Active()) {
+		IonStormClass::Ion_Storm_Begin(Rule->LightningStormDuration, Rule->LightningDeferment, cell, house);
 		return(true);
 	}
 	return(false);
+}
+
+extern int DAT_007ED3D0[];
+namespace Unsorted { extern Cell CellSpreadTable[]; }
+
+// FUNCTION: GAMEMD 0x006E36E0
+bool TActionClass::TAction_IRON_CURTAIN(HouseClass *, ObjectClass *, TriggerClass *, Cell const &)
+{
+	Cell cell;
+	Cell center = Scen->Get_Waypoint_Cell(EffectLocation);
+	Coord coord = Map[center].Center_Coord();
+	new AnimClass(Rule->IronCurtainInvokeAnim, coord + Coord(0, 0, 5));
+	int count = DAT_007ED3D0[1];
+	for (int index = 0; index < count; index++) {
+		Cell const & offset = Unsorted::CellSpreadTable[index];
+		cell = TPoint2D<short>(center.X + offset.X, center.Y + offset.Y);
+		ObjectClass * object = Map[cell].Cell_Occupier();
+		while (object != NULL) {
+			object->IronCurtain(Rule->IronCurtainDuration, NULL, false);
+			object = object->Next;
+		}
+	}
+	return(true);
 }
 
 // FUNCTION: GAMEMD 0x006E37F0

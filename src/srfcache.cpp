@@ -181,10 +181,180 @@ void SurfaceCacheClass::Remove(char const *name)
 	getEntries();
 }
 
+// FUNCTION: GAMEMD 0x006BA3E0
+bool SurfaceCacheClass::Draw(Rect const & rect, Surface & tosurface, Surface & fromsurface, int x, int y)
+{
+	unsigned short * dest = (unsigned short *)tosurface.Lock();
+	if (dest == NULL) {
+		return(false);
+	}
+	unsigned short const * src = (unsigned short const *)fromsurface.Lock();
+	if (src == NULL) {
+		tosurface.Unlock();
+		return(false);
+	}
+
+	int dest_pitch = tosurface.Stride() / 2;
+	int src_pitch = fromsurface.Stride() / 2;
+	Rect image = fromsurface.Get_Rect();
+	Rect trect = tosurface.Get_Rect();
+
+	int row = rect.Height;
+	int x_margin = MAX((image.Width - rect.Width) / 2, 0);
+	int y_margin = MAX((image.Height - row) / 2, 0);
+	for (row = 0; row < rect.Height; ++row) {
+		int offset = (rect.Y + row) * dest_pitch + rect.X;
+		for (int column = 0; column < rect.Width; ++column) {
+			int src_row = (y_margin + y + row) % image.Height;
+			int src_column = (x_margin + x + column) % image.Width;
+			dest[offset + column] = src[src_row * src_pitch + src_column];
+		}
+	}
+	fromsurface.Unlock();
+	tosurface.Unlock();
+	return(true);
+}
+
+// FUNCTION: GAMEMD 0x006BA580
+bool SurfaceCacheClass::DrawTrans(Rect const & rect, Surface & tosurface, Surface & fromsurface, short trans)
+{
+	unsigned short * dest = (unsigned short *)tosurface.Lock();
+	if (dest == NULL) {
+		return(false);
+	}
+	unsigned short * src = (unsigned short *)fromsurface.Lock();
+	if (src == NULL) {
+		tosurface.Unlock();
+		return(false);
+	}
+	Rect area = rect;
+	area.Width = fromsurface.Get_Width();
+	area.Height = fromsurface.Get_Height();
+	int pitch = tosurface.Stride() / 2;
+	int index = 0;
+	for (int y = 0; y < area.Height; y++) {
+		int offset = (y + area.Y) * pitch + area.X;
+		for (int x = 0; x < area.Width; x++) {
+			unsigned short value = src[index];
+			if (value != (unsigned short)trans) {
+				dest[offset + x] = value;
+			}
+			index++;
+		}
+	}
+	tosurface.Unlock();
+	fromsurface.Unlock();
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x006BA680
 bool SurfaceCacheClass::DrawNullsub(Rect const & rect, Surface & tosurface, Surface & fromsurface)
 {
 	return(false);
+}
+
+// FUNCTION: GAMEMD 0x006BA690
+bool SurfaceCacheClass::DrawMasked(Rect const & rect, Surface & tosurface, Surface & fromsurface, Surface & masksurface, void * palette, int center, int x_offset, int y_offset)
+{
+	unsigned short pal16[256];
+
+	Rect image_rect = fromsurface.Get_Rect();
+	int src_x = 0;
+	int top_clip = 0;
+	int right_clip = 0;
+	int src_y = 0;
+	int dst_x_center = 0;
+	int dst_y_center = 0;
+
+	if (image_rect.Width > rect.Width) {
+		if (center) {
+			src_x = (image_rect.Width - rect.Width + 1) / 2;
+			right_clip = (image_rect.Width - rect.Width) / 2;
+		} else {
+			right_clip = image_rect.Width - rect.Width;
+		}
+	} else if (center) {
+		dst_x_center = (rect.Width - image_rect.Width) / 2;
+	}
+
+	if (image_rect.Height > rect.Height) {
+		if (center) {
+			top_clip = (image_rect.Height - rect.Height + 1) / 2;
+			src_y = (image_rect.Height - rect.Height) / 2;
+		} else {
+			src_y = image_rect.Height - rect.Height;
+		}
+	} else if (center) {
+		dst_y_center = (rect.Height - image_rect.Height) / 2;
+	}
+
+	if (x_offset > src_x) {
+		right_clip += src_x - x_offset;
+		src_x = x_offset;
+	}
+	if (y_offset > top_clip) {
+		src_y += top_clip - y_offset;
+		top_clip = y_offset;
+	}
+
+	unsigned short * dest = (unsigned short *)tosurface.Lock();
+	if (dest == NULL) {
+		return(false);
+	}
+
+	unsigned short * source = NULL;
+	unsigned char * palsource = NULL;
+	if (palette == NULL) {
+		source = (unsigned short *)fromsurface.Lock();
+	} else {
+		palsource = (unsigned char *)fromsurface.Lock();
+	}
+	if (source == NULL && palsource == NULL) {
+		tosurface.Unlock();
+		return(false);
+	}
+
+	unsigned char * mask = (unsigned char *)masksurface.Lock();
+
+	if (palette != NULL) {
+		unsigned char * pal = (unsigned char *)palette;
+		for (int i = 0; i < 256; i++) {
+			pal16[i] = DSurface::Build_Hicolor_Pixel(pal[i * 3], pal[i * 3 + 1], pal[i * 3 + 2]);
+		}
+	}
+
+	int dst_stride = tosurface.Stride() / 2;
+	unsigned int src_stride = fromsurface.Stride();
+	if (palette == NULL) {
+		src_stride >>= 1;
+	}
+
+	for (int y = top_clip; y < image_rect.Height - src_y; y++) {
+		int dst_index = dst_stride * (rect.Y - top_clip + y + dst_y_center) + rect.X + dst_x_center;
+		int src_index = y * src_stride + src_x;
+		if (palette == NULL) {
+			for (int x = src_x; x < image_rect.Width - right_clip; x++) {
+				if (mask[src_index] != 0) {
+					dest[dst_index] = OD_Blend_Color(dest[dst_index], source[src_index], mask[src_index]);
+				}
+				dst_index++;
+				src_index++;
+			}
+		} else {
+			for (int x = src_x; x < image_rect.Width - right_clip; x++) {
+				if (mask[src_index] != 0) {
+					dest[dst_index] = OD_Blend_Color(dest[dst_index], pal16[palsource[src_index]], mask[src_index]);
+				}
+				dst_index++;
+				src_index++;
+			}
+		}
+	}
+
+	tosurface.Unlock();
+	fromsurface.Unlock();
+	masksurface.Unlock();
+	return(true);
 }
 
 // TEMPLATE: GAMEMD 0x006BAC40

@@ -63,6 +63,7 @@
 #include "getcpu.h"
 #include "geometry.h"
 #include "globals.h"
+#include "goptions.h"
 #include "houstype.h"
 #include "incdec.h"
 #include "infatype.h"
@@ -107,6 +108,7 @@
 #include "skirmish.h"
 #include "smudtype.h"
 #include "stimer.h"
+#undef LoadString
 #include "stringtable.h"
 #include "tactical.h"
 #include "tag.h"
@@ -136,7 +138,6 @@
 #include "wwfont.h"
 #include "bench.hh"
 #include "scrnsel.hh"
-#include <conio.h>
 #include <ctime>
 #include <dos.h>
 
@@ -167,33 +168,23 @@
 // SYNTHETIC: GAMEMD 0x0052B970 SYMBOL
 // _$E145
 
-extern int DAT_00A8F768;
-extern int DAT_00A8F76C;
-extern int DAT_00A8F770;
 
-// FUNCTION: GAMEMD 0x0052B990
-void FUN_0052B990(void)
-{
-	DAT_00A8F770 = 0;
-	DAT_00A8F768 = 128;
-	DAT_00A8F76C = 128;
-}
+// SYNTHETIC: GAMEMD 0x0052B990 SYMBOL
+// _$E148
 
-struct Drawing {
-	static int RenderWidth;
-	static int RenderHeight;
-};
+extern int VideoModeWidth;
+extern int VideoModeHeight;
 
 // FUNCTION: GAMEMD 0x0052B9B0
 void __fastcall FUN_0052B9B0(HWND dialog)
 {
 	HWND control = GetDlgItem(dialog, 0x71A);
 	if (control) {
-		int x = (Drawing::RenderWidth <= 800) ? 0 : (Drawing::RenderWidth - 800) / 2;
-		int y = (Drawing::RenderHeight <= 600) ? 0 : (Drawing::RenderHeight - 600) / 2;
+		int x = (VideoModeWidth <= 800) ? 0 : (VideoModeWidth - 800) / 2;
+		int y = (VideoModeHeight <= 600) ? 0 : (VideoModeHeight - 600) / 2;
 		SetWindowPos(control, NULL, x, y, -1, -1, SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW);
 		SendMessage(control, 0x4E3, 1, 0);
-		if (Drawing::RenderWidth == 640) {
+		if (VideoModeWidth == 640) {
 			SendMessage(control, 0x4E4, 0, (LPARAM)"Ra2ts_s");
 		} else {
 			SendMessage(control, 0x4E4, 0, (LPARAM)"Ra2ts_l");
@@ -205,24 +196,216 @@ void __cdecl FUN_004068E0(char const * format, ...);
 extern unsigned char DAT_00A8E960;
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void __fastcall FUN_0046CE10(CCINIClass * ini);
+void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before, bool fullscreen);
+#include "audtimer.h"
 struct Game {
-	static void __fastcall PlayMovie(const char * name, int theme, int a, int b, int c, int d);
 	static bool __cdecl CallBack(void);
-	static int TechLevel;
 	static int Seed;
 	static unsigned char RecordingFlag;
-	static void InitRandom(void);
 	static HWND hWnd;
 	static HINSTANCE hInstance;
-	static unsigned __int64 __fastcall AudioGetTime(void);
 	static int ObserverMode;
 };
+
+bool FUN_0052CB50(void);
+void Init_Random(void);
+
+#include "debugpage.h"
+#include "playcd.h"
+#include "voxdrsys.h"
+#include "animtype.h"
+
+DebugPage * __fastcall FUN_005BC450(int page);
+void __fastcall FUN_0060D430(void);
+void __fastcall FUN_0072AA40(void);
+void __fastcall FUN_00406B10(int value);
+void * __fastcall FileSystem_LoadWholeFileEx(char const * filename, bool & allocated);
+void __fastcall FUN_007510D0(INIClass & ini);
+void __fastcall FUN_00753000(INIClass & ini);
+void __fastcall FUN_007531A0(void);
+void Init_Game_Modes(void);
+extern int DAT_00840A70;
+extern RGBStruct DAT_00B2FB78[256];
+extern void * DAT_00A8F790;
+extern void * DAT_00A8F794;
+extern ConvertClass * DAT_00A8F798;
+extern SHPStruct * DAT_00B0BCF0;
+extern bool DAT_00B0BCF4;
+
+static bool Bootstrap(void);
+static void Init_Mouse(void)
+{
+	DAT_00B0BCF0 = (SHPStruct *)FileSystem_LoadWholeFileEx("MOUSE.SHA", DAT_00B0BCF4);
+	if (DAT_00B0BCF0 != NULL) {
+		MouseCursor->Hide_Mouse();
+		Point2D point = Point2D(0, 0);
+		MouseCursor->Set_Cursor(point, (ShapeSet const *)DAT_00B0BCF0, 0);
+	}
+	Map.Set_Default_Mouse(MOUSE_NORMAL, false);
+	Call_Back();
+}
+static bool Init_CDROM_Access(void);
+
+
+void __cdecl FUN_004A4AC0(const char * text);
+bool Init_Secondary_Mixfiles(void);
+void FUN_005312A0(void);
+void Init_Campaigns(void);
+bool Init_Bulk_Data(void);
+bool Init_Rules(void);
+extern unsigned __int64 DAT_00A8F788;
+void Init_Commands(void);
+
+// FUNCTION: GAMEMD 0x0052BA60
+int Init_Game(void)
+{
+	FUN_004068E0("Init Game\n");
+	Scen = new ScenarioClass;
+	if (Scen == NULL) {
+		FUN_004068E0("Failed to instantiate Scenario!\n");
+		return -1;
+	}
+	Rule = new RulesClass;
+	if (Rule == NULL) {
+		FUN_004068E0("Failed to instantiate Rules!\n");
+		return -1;
+	}
+	FUN_004068E0("Bootstrap.....");
+	if (!Bootstrap()) {
+		FUN_004A4AC0(" ..Failed to bootstrap!\n");
+		return -1;
+	}
+	FUN_004A4AC0(" ...OK\n");
+	FUN_004068E0("Init Mouse\n");
+	Init_Mouse();
+	FUN_004068E0("Init CDROM\n");
+	if (!Init_CDROM_Access()) {
+		FUN_004068E0("Failed to initialize CDROM access!\n");
+		return 1;
+	}
+	FUN_004068E0("Init Secondary Mixfiles.....");
+	if (!Init_Secondary_Mixfiles()) {
+		FUN_004A4AC0(" ...Failed!!!\n");
+		return -1;
+	}
+	FUN_004A4AC0(" ...OK\n");
+	Play_Movie("EA_WWLOGO", THEME_NONE, 1, 1, 1, 0);
+	FUN_005312A0();
+	FUN_004068E0("Init Campaigns\n");
+	Init_Campaigns();
+	FUN_004068E0("Init Heaps\n");
+	FUN_004068E0("Init Threads\n");
+	FUN_004068E0("Reading Game Settings\n");
+	Options.Load_Settings();
+	FUN_004068E0("Init Anim System\n");
+	Initialize_Options();
+	Set_Option(0);
+	FUN_004068E0("Init Color Remap Tables\n");
+	GadgetClass::Set_Color_Scheme(DEFAULT_GADGET_SCHEME);
+	FUN_004068E0("Creating TacticalMap\n");
+	delete TacticalMap;
+	TacticalMap = new Tactical;
+	if (TacticalMap == NULL) {
+		FUN_004068E0("Failed to create TacticalMap!\n");
+		return -1;
+	}
+	LogicalSurface = HiddenSurface;
+
+	FUN_004068E0("Reading SOUNDMD.INI\n");
+	CCFileClass voc_file("SOUNDMD.INI");
+	if (!voc_file.Is_Available()) {
+		FUN_004068E0("Failed to find SOUNDMD.INI!\n");
+		return -1;
+	}
+	CCINIClass voc_ini;
+	if (!voc_ini.ReadCCFile(voc_file, false, false)) {
+		FUN_004068E0("Failed to load SOUNDMD.INI!\n");
+		return -1;
+	}
+	Free_Vocs();
+	FUN_007510D0(voc_ini);
+
+	FUN_004068E0("Reading EVAMD.INI\n");
+	CCFileClass eva_file("EVAMD.INI");
+	if (!eva_file.Is_Available()) {
+		FUN_004068E0("Failed to find EVAMD.INI!\n");
+		return -1;
+	}
+	CCINIClass eva_ini;
+	if (!eva_ini.ReadCCFile(eva_file, false, false)) {
+		FUN_004068E0("Failed to load EVAMD.INI!\n");
+		return -1;
+	}
+	FUN_007531A0();
+	FUN_00753000(eva_ini);
+
+	FUN_004068E0("Reading THEMEMD.INI\n");
+	CCFileClass theme_file("THEMEMD.INI");
+	if (!theme_file.Is_Available()) {
+		FUN_004068E0("Failed to find THEMEMD.INI!\n");
+		return -1;
+	}
+	CCINIClass theme_ini;
+	if (!theme_ini.ReadCCFile(theme_file, false, false)) {
+		FUN_004068E0("Failed to load THEMEMD.INI!\n");
+		return -1;
+	}
+	Theme.Free_Themes();
+	Theme.Init_Themes(theme_ini);
+	Theme.Scan();
+
+	FUN_004068E0("Init Bulk Data\n");
+	if (!Init_Bulk_Data()) {
+		return -1;
+	}
+	FUN_004068E0("Init Rules\n");
+	if (!Init_Rules()) {
+		FUN_004068E0("Failed to initialize Rules!\n");
+		return -1;
+	}
+	Rule->Do_AnimTypes(*RuleINI);
+	for (int anim = 0; anim < AnimTypes.Count(); ++anim) {
+		AnimTypeClass *type = AnimTypes[anim];
+		type->Read_INI(ArtINI);
+	}
+	Rule->Do_BuildingTypes(*RuleINI);
+	for (int building = 0; building < BuildingTypes.Count(); ++building) {
+		BuildingTypeClass *type = BuildingTypes[building];
+		type->Read_INI(*RuleINI);
+	}
+	while (AudioGetTime() < DAT_00A8F788) {
+	}
+	FUN_0052CB50();
+	Session.MaxPlayers = Rule->MaxPlayers;
+	GadgetClass::Set_Color_Scheme(DEFAULT_GADGET_SCHEME);
+	Session.GamesPlayed = 0;
+	Session.NumScores = 0;
+	Session.CurGame = 0;
+	for (int i = 0; i < MAX_MULTI_NAMES; ++i) {
+		Session.Score[i].Name[0] = 0;
+		Session.Score[i].Wins = 0;
+		for (int j = 0; j < MAX_MULTI_GAMES; ++j) {
+			Session.Score[i].Kills[j] = -1;
+			Session.Score[i].Lost[j] = -1;
+			Session.Score[i].Built[j] = -1;
+			Session.Score[i].Score[j] = -1;
+		}
+	}
+	memset(Session.PlayerChatEnabled, true, sizeof(Session.PlayerChatEnabled));
+	Init_Random();
+	FUN_004068E0("Init Commands\n");
+	Init_Commands();
+	FUN_004068E0("Game Init Completed.\n");
+	Init_Game_Modes();
+	return 0;
+}
+
 
 // FUNCTION: GAMEMD 0x0052CB50
 bool FUN_0052CB50(void)
 {
-	if (DAT_00A8E960 & 4) {
-		Game::PlayMovie("A00_F00E", -1, 1, 1, 1, 0);
+	if (Special.IsFromInstall) {
+		Play_Movie("A00_F00E", THEME_NONE, 1, 1, 1, 0);
 	}
 	FUN_0052FEC0(NULL, true);
 	return Game::CallBack();
@@ -234,7 +417,7 @@ void FUN_0052CB80(void)
 }
 
 // FUNCTION: GAMEMD 0x0052CB90
-void FUN_0052CB90(void)
+void Init_Campaigns(void)
 {
 	bool found = false;
 	WIN32_FIND_DATA fd;
@@ -283,7 +466,7 @@ void FUN_0052CB90(void)
 BOOL CALLBACK Rules_Choice_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x0052CD70
-bool FUN_0052CD70(void)
+bool Init_Rules(void)
 {
 	DynamicVectorClass<CCINIClass *> Rules;
 
@@ -682,7 +865,7 @@ namespace UI {
 	bool __fastcall Updated(void);
 }
 
-BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK Campaign_Choice_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 int Main_Menu(unsigned int timeout);
 bool FUN_0052F3F0(void);
 int __fastcall FUN_0077B2A0(bool returning);
@@ -690,7 +873,7 @@ void FUN_0072D9A0(void);
 void FUN_0072DAA0(void);
 int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus);
 void __fastcall FUN_0053F1F0(int value);
-bool FUN_006AE2C0(void);
+bool Skirmish_Mode_Dialog(void);
 void __fastcall FUN_0078ABF0(bool a, wchar_t const * text);
 void FUN_006370B0(void);
 void FUN_004C3E30(void);
@@ -713,7 +896,7 @@ static CampaignType Choose_Campaign(void)
 	pick.Choice = -1;
 
 	if (Campaigns.Count() == 0) {
-		FUN_0052CB90();
+		Init_Campaigns();
 		if (Campaigns.Count() == 0) {
 			return(CAMPAIGN_NONE);
 		}
@@ -723,19 +906,19 @@ static CampaignType Choose_Campaign(void)
 	DAT_00A8F300.FUN_00405BE0();
 	DAT_00A8F7A0 = 0;
 	DAT_00A8F7A8 = 0;
-	HWND dialog = UI::BeginDialog(0x94, FUN_0052EC00, 0);
+	HWND dialog = UI::BeginDialog(0x94, Campaign_Choice_Dialog_Proc, 0);
 	if (dialog != NULL) {
 		SetWindowLong(dialog, DWL_USER, (LONG)&pick);
 		Center_Window_Within_Window(dialog, Game::hWnd);
 		OwnerDraw::Display_Dialog(dialog);
 		while (!pick.Done && UI::Updated() != true) {
-			if (DAT_00825C20 != -1 && DAT_00A8F7A0 < Game::AudioGetTime()) {
+			if (DAT_00825C20 != -1 && DAT_00A8F7A0 < AudioGetTime()) {
 				DAT_00A8F300.Stop();
 				VocClass::PlayGlobal(DAT_00825C20, 1.0f, 0x2000, &DAT_00A8F300);
 				DAT_00825C20 = -1;
 			}
-			if (DAT_008A00A0) {
-				DAT_008A00A0 = 0;
+			if (SurfacesRestored) {
+				SurfacesRestored = 0;
 				FUN_0052FEC0(NULL, true);
 				Update_Visible_Surface(false, HiddenSurface);
 			}
@@ -743,8 +926,8 @@ static CampaignType Choose_Campaign(void)
 		UI::EndDialog(dialog);
 	}
 
-	DAT_00A8F7A0 = Game::AudioGetTime() + 3000;
-	while (DAT_00A8F300.GetEvent() && DAT_00A8F7A0 > Game::AudioGetTime()) {
+	DAT_00A8F7A0 = AudioGetTime() + 3000;
+	while (DAT_00A8F300.GetEvent() && DAT_00A8F7A0 > AudioGetTime()) {
 		Call_Back();
 	}
 	FUN_0072DAA0();
@@ -909,7 +1092,7 @@ restart:
 
 				case 13:
 					selection = 4;
-					Game::PlayMovie("RENEGADE.BIK", -1, 1, 1, 1, 0);
+					Play_Movie("RENEGADE.BIK", THEME_NONE, 1, 1, 1, 0);
 					FUN_0052FEC0(NULL, true);
 					break;
 
@@ -917,7 +1100,7 @@ restart:
 					MovieUnlockableInfo * movie = (MovieUnlockableInfo *)FUN_0060D380(0x129, FUN_0052D870, true);
 					if (movie != (MovieUnlockableInfo *)-1 && movie != NULL) {
 						if (CD().Force_Available((DiskID)movie->DiskRequired)) {
-							Game::PlayMovie(movie->Filename, -1, 1, 1, 1, 0);
+							Play_Movie(movie->Filename, THEME_NONE, 1, 1, 1, 0);
 							FUN_0052FEC0(NULL, true);
 						}
 					} else {
@@ -994,7 +1177,7 @@ restart:
 
 				case 9:
 					ScenarioInit++;
-					FUN_0052CB90();
+					Init_Campaigns();
 					ScenarioInit--;
 					if (LoadOptionsClass().Load()) {
 						process = false;
@@ -1027,7 +1210,7 @@ restart:
 							continue;
 
 						case GAME_SKIRMISH:
-							if (!FUN_006AE2C0()) {
+							if (!Skirmish_Mode_Dialog()) {
 								Session.Type = GAME_NORMAL;
 								selection = 1;
 							}
@@ -1062,7 +1245,7 @@ restart:
 						case GAME_INTERNET: {
 							Cheat_Disable();
 							FUN_004068E0("Init.cpp - GAME_INTERNET\n");
-							memset(Session.unknown_29F4, 0, sizeof(Session.unknown_29F4));
+							memset(Session.PlayerFirewall, 0, sizeof(Session.PlayerFirewall));
 							Session.unknown_3070 = 0;
 							bool success = FUN_0052F3F0();
 							int res = FUN_0077B2A0(selection == 0x11);
@@ -1188,7 +1371,7 @@ restart:
 
 	Keyboard->Clear();
 
-	Game::InitRandom();
+	Init_Random();
 	FUN_006370B0();
 
 	if (!gameloaded && !Session.LoadGame) {
@@ -1209,7 +1392,7 @@ restart:
 
 		if (Session.Type == GAME_INTERNET) {
 			for (int i = 0; i < MAX_PLAYERS; i++) {
-				Session.unknown_304C[i] = TickCount;
+				Session.LastPortProbeTime[i] = TickCount;
 			}
 		}
 
@@ -1299,7 +1482,7 @@ static inline HWND Child_At(HWND window, LPARAM lparam)
 }
 
 // FUNCTION: GAMEMD 0x0052EC00
-BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK Campaign_Choice_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
 	if (rc) {
@@ -1356,7 +1539,7 @@ BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 					if (DAT_00A8F7A8 != id) {
 						SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D5, 0, 0);
 						SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D4, 0, 0);
-						DAT_00A8F7A0 = Game::AudioGetTime() + 500;
+						DAT_00A8F7A0 = AudioGetTime() + 500;
 						DAT_00825C20 = -1;
 						DAT_00A8F7A8 = 0;
 					}
@@ -1417,7 +1600,7 @@ BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 							pick->Done = true;
 						}
 						if (pick->Done) {
-							DAT_00ABCE08 = 0;
+							ScenarioClass::WasGameSaved = false;
 							SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D5, 0, 0);
 							SendDlgItemMessage(window, DAT_00A8F7A8, 0x4D4, 0, 0);
 							HWND item = GetDlgItem(window, 0x50F);
@@ -1521,7 +1704,7 @@ BOOL CALLBACK FUN_0052EC00(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 	return(0);
 }
 
-extern CCINIClass DAT_008870C0;
+extern CCINIClass INI_RA2MD;
 extern int DAT_00ABFED8;
 
 // FUNCTION: GAMEMD 0x0052F3F0
@@ -1553,16 +1736,16 @@ bool FUN_0052F3F0(void)
 	Session.PacketRouterPort = 0;
 	Session.unknown_306E = 0;
 	Session.unknown_308C = 0;
-	Session.unknown_3094 = -1;
-	Session.unknown_309C = 20;
+	Session.FallbackHost = -1;
+	Session.RouterResponseTime = 20;
 	Session.unknown_30A0 = 0;
 	Session.unknown_30A4 = 0;
 	Session.unknown_30A8 = -1;
-	memset(Session.unknown_2A14, 0, sizeof(Session.unknown_2A14));
+	memset(Session.ConnectionPairs, 0, sizeof(Session.ConnectionPairs));
 	memset(Session.ConnectionResults, -1, sizeof(Session.ConnectionResults));
 	memset(Session.unknown_2E18, 0, sizeof(Session.unknown_2E18));
-	memset(Session.unknown_2FF8, 0, sizeof(Session.unknown_2FF8));
-	Session.unknown_2E14 = 0;
+	memset(Session.PlayerPortBase, 0, sizeof(Session.PlayerPortBase));
+	Session.NumConnectionPairs = 0;
 
 	if (Session.ForcePortBase) {
 		Session.PortBase = Session.ForcePortBase;
@@ -1575,9 +1758,9 @@ bool FUN_0052F3F0(void)
 	}
 
 	RawFileClass file("RA2MD.INI");
-	DAT_008870C0.Put_Int("MultiPlayer", "PortBase", Session.PortBase, 0);
-	DAT_008870C0.Put_Int("MultiPlayer", "PortPool", DAT_00ABFED8, 0);
-	DAT_008870C0.Save(file, false);
+	INI_RA2MD.Put_Int("MultiPlayer", "PortBase", Session.PortBase, 0);
+	INI_RA2MD.Put_Int("MultiPlayer", "PortPool", DAT_00ABFED8, 0);
+	INI_RA2MD.Save(file, false);
 	OwnerTalk.Reset();
 	Session.NetOpen = true;
 	return(success);
@@ -1608,7 +1791,7 @@ void __fastcall FUN_007B2720(int value);
 bool Parse_Command_Line(int argc, char * argv[])
 {
 	Special.Init();
-	DAT_00A8ED6B = false;
+	Debug_Map = false;
 
 	for (int index = 1; index < argc; index++) {
 		char * string = strupr(argv[index]);
@@ -1654,7 +1837,7 @@ bool Parse_Command_Line(int argc, char * argv[])
 		}
 
 		if (strstr(string, "-CD")) {
-			DAT_0089E3A0 = 1;
+			CD::Override_Swap(true);
 			CDFileClass::Set_Search_Drives(&string[3]);
 			continue;
 		}
@@ -1717,7 +1900,7 @@ bool Parse_Command_Line(int argc, char * argv[])
 			DAT_00B77E18 = 2;
 		}
 		if (strstr(string, "-NOROUTER")) {
-			Session.unknown_3090 = false;
+			Session.UsePacketRouter = false;
 		}
 
 		if (strstr(string, "-STEALTH")) {
@@ -1742,11 +1925,11 @@ bool Parse_Command_Line(int argc, char * argv[])
 			continue;
 		}
 		if (strcmp(string, "-16") == 0) {
-			DAT_008175B0 = true;
+			HicolorFlag = true;
 			continue;
 		}
 		if (stricmp(string, "-WIN") == 0) {
-			DAT_0089F978 = true;
+			WindowedMode = true;
 			continue;
 		}
 
@@ -1771,15 +1954,15 @@ bool Parse_Command_Line(int argc, char * argv[])
 
 void __fastcall Fill_Surface_Rect(BSurface * image, Rect * rect, int flag);
 
-extern int DAT_00A8ED98;
 extern RandomStraw CryptRandom;
 int __cdecl FUN_0053E720(void);
 
+extern int DAT_00A8ED98;
 // FUNCTION: GAMEMD 0x0052FC20
-void Game::InitRandom(void)
+void Init_Random(void)
 {
 	FUN_004068E0("Init random number\n");
-	if (Session.LoadGame || (RecordingFlag & 2) || FUN_0053E720()) {
+	if (Session.LoadGame || Session.Play || FUN_0053E720()) {
 		Scen->RandomNumber = Seed;
 		NonCriticalRandomNumber = Seed;
 		FUN_004068E0("Seed is %08x\n", Seed);
@@ -1806,8 +1989,8 @@ void Game::InitRandom(void)
 		CryptRandom.Seed_Bit(t.wMonth);
 		CryptRandom.Seed_Bit(t.wYear);
 
-		if (DAT_00A8ED98 != 0) {
-			Seed = DAT_00A8ED98;
+		if (CustomSeed != 0) {
+			Seed = CustomSeed;
 		} else {
 			CryptRandom.Get(&Seed, sizeof(Seed));
 			Seed = GetTickCount();
@@ -2024,7 +2207,7 @@ bool Init_Secondary_Mixfiles(void)
 
 	int cd = CD::Get_Current_Disk(60) + 1;
 	char name[260];
-	if (DAT_0089E3A0 == true) {
+	if (CD::Is_Override_Swap() == true) {
 		strcpy(name, "MAPSMD*.MIX");
 		if (CDFileClass::Find_First_File(name) == true) {
 			DebugStringNoPrefix(" %s", name);
@@ -2074,16 +2257,16 @@ bool Init_Secondary_Mixfiles(void)
 
 	if (CCFileClass("THEMEMD.MIX").Is_Available()) {
 		FUN_004068E0("     Initializing ThemesMD.MIX\n");
-		DAT_0087E738 = new MFCD("THEMEMD.MIX", &FastKey);
+		ScoresMix = new MFCD("THEMEMD.MIX", &FastKey);
 	} else if (CCFileClass("THEME.MIX").Is_Available()) {
 		FUN_004068E0("     Initializing Themes.MIX\n");
-		DAT_0087E738 = new MFCD("THEME.MIX", &FastKey);
+		ScoresMix = new MFCD("THEME.MIX", &FastKey);
 	}
 	DebugStringNoPrefix(" THEME.MIX");
 	ScoresPresent = true;
 	Theme.Scan();
 
-	if (DAT_0089E3A0 == true) {
+	if (CD::Is_Override_Swap() == true) {
 		strcpy(name, "MOVMD*.MIX");
 		if (RawFileClass("MOVIES01.MIX").Is_Available()) {
 			strcpy(name, "MOVIES*.MIX");
@@ -2153,7 +2336,7 @@ extern DropPodVoxelStruct DAT_00A8ECD8;
 
 static bool Init_One_Time_Systems(void)
 {
-	Game::CallBack();
+	Call_Back();
 
 	Map.One_Time();
 	Options.One_Time();
@@ -2191,12 +2374,7 @@ static bool Init_One_Time_Systems(void)
 #include "bitfont.h"
 #include "draw.h"
 
-struct FileSystem
-{
-	static void const * LoadFile(char const * name, bool flag);
-	static char TEMPERAT_PAL[];
-};
-extern unsigned __int64 DAT_00A8F788;
+#include "filesystem.h"
 
 // FUNCTION: GAMEMD 0x005312A0
 void FUN_005312A0(void)
@@ -2216,9 +2394,9 @@ void FUN_005312A0(void)
 				(unsigned char)((*pal)[index].Get_Blue() << 2));
 		}
 		if (pal != NULL) {
-			convert = new ConvertClass(*pal, *(PaletteClass *)FileSystem::TEMPERAT_PAL, *VisibleSurface, 1, false);
+			convert = new ConvertClass(*pal, GamePalette, *VisibleSurface, 1, false);
 			if (convert != NULL) {
-				shp = (SHPStruct *)FileSystem::LoadFile(Drawing::RenderWidth == 640 ? "GLSSMD.SHP" : "GLSLMD.SHP", false);
+				shp = (SHPStruct *)FileSystem::LoadFile(VideoModeWidth == 640 ? "GLSSMD.SHP" : "GLSLMD.SHP", false);
 			}
 		}
 	}
@@ -2240,8 +2418,7 @@ void FUN_005312A0(void)
 		textpt.X = bounds.Width - font->FUN_00433ED0(text, 0) - 10;
 	}
 	{
-		Point2D ret;
-		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 	}
 
 	text = StringTable::LoadString("GUI:WWBrand", NULL, "D:\\ra2mdpost\\Init.CPP", 0x134D);
@@ -2250,36 +2427,32 @@ void FUN_005312A0(void)
 		textpt.Y = textpt.Y + font->field_1C + 3;
 	}
 	{
-		Point2D ret;
-		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 	}
 
 	text = StringTable::LoadString("GUI:LoadingEx", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1357);
 	textpt.X = 10;
 	textpt.Y = 10;
 	{
-		Point2D ret;
-		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 	}
 
 	text = StringTable::LoadString("GUI:TradeMarkTop", NULL, "D:\\ra2mdpost\\Init.CPP", 0x135E);
 	textpt.X = 10;
 	textpt.Y = bounds.Height - 40;
 	{
-		Point2D ret;
-		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 	}
 
 	text = StringTable::LoadString("GUI:TradeMarkBottom", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1365);
 	textpt.X = 10;
 	textpt.Y = textpt.Y + font->field_1C + 3;
 	{
-		Point2D ret;
-		Fancy_Text_Print_Wide(&ret, text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
+		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 	}
 
 	Update_Visible_Surface(true, HiddenSurface);
-	DAT_00A8F788 = Game::AudioGetTime() + 5000;
+	DAT_00A8F788 = AudioGetTime() + 5000;
 
 	if (pal != NULL) {
 		delete pal;
@@ -2308,7 +2481,7 @@ bool Init_Bulk_Data(void)
 		return(false);
 	}
 
-	Game::CallBack();
+	Call_Back();
 	return(Init_One_Time_Systems());
 }
 
@@ -2318,12 +2491,12 @@ extern int DAT_00A8EC90;
 bool Save_Recording_Values(CCFileClass & file)
 {
 	FUN_004068E0("Saving recording values for scenario : %s\n", Scen->ScenarioName);
-	file.Write(&Game::TechLevel, sizeof(Game::TechLevel));
-	file.Write(&Game::Seed, sizeof(Game::Seed));
+	file.Write(&BuildLevel, sizeof(BuildLevel));
+	file.Write(&Seed, sizeof(Seed));
 	file.Write(&Scen->Scenario, sizeof(Scen->Scenario));
 	file.Write(Scen->ScenarioName, sizeof(Scen->ScenarioName));
 	file.Write(&DAT_00A8EC90, sizeof(DAT_00A8EC90));
-	file.Write(&DAT_00A8E960, 4);
+	file.Write(&Special, 4);
 	file.Write(&Options, sizeof(OptionsClass));
 	return(true);
 }
@@ -2331,12 +2504,12 @@ bool Save_Recording_Values(CCFileClass & file)
 // FUNCTION: GAMEMD 0x00531960
 bool Load_Recording_Values(CCFileClass & file)
 {
-	file.Read(&Game::TechLevel, sizeof(Game::TechLevel));
-	file.Read(&Game::Seed, sizeof(Game::Seed));
+	file.Read(&BuildLevel, sizeof(BuildLevel));
+	file.Read(&Seed, sizeof(Seed));
 	file.Read(&Scen->Scenario, sizeof(Scen->Scenario));
 	file.Read(Scen->ScenarioName, sizeof(Scen->ScenarioName));
 	file.Read(&DAT_00A8EC90, sizeof(DAT_00A8EC90));
-	file.Read(&DAT_00A8E960, 4);
+	file.Read(&Special, 4);
 	file.Read(&Options, sizeof(OptionsClass));
 	FUN_004068E0("Loaded recording values for scenario : %s\n", Scen->ScenarioName);
 	return(true);
@@ -2439,7 +2612,6 @@ void Version_Dialog(void)
 
 extern char DAT_00A8F7B8[32];
 void __fastcall FUN_004790B0(int disk);
-void __cdecl FUN_004A4AC0(const char * text);
 void __fastcall FUN_0052B9B0(HWND dialog);
 
 static bool Cheat_Key_Process(char chr)
@@ -2605,7 +2777,7 @@ void FUN_00734120(void);
 BuildingClass * FUN_007342A0(void);
 BuildingClass * FUN_007342B0(void);
 void __fastcall FUN_00752B70(unsigned char code);
-unsigned int __fastcall FUN_005DAC00(wchar_t const * name);
+unsigned int __fastcall Compute_Name_CRC_W(wchar_t * name);
 extern int DAT_00825C88;
 namespace Unsorted { extern int MuteSWLaunches; }
 
@@ -2895,7 +3067,7 @@ class TauntCommandClass : public CommandClass
 							packet.Command = NetCommandType(0x1D);
 							strcpy(packet.Name, FUN_007350C0(Session.Players[0]->Name));
 							packet.Taunt.Color = Session.PrefColor;
-							packet.Taunt.NameCRC = FUN_005DAC00(Session.GameName);
+							packet.Taunt.NameCRC = Compute_Name_CRC_W(Session.GameName);
 							unsigned char house = Session.Players[0]->Player.House << 4;
 							packet.Taunt.ID = house ^ ((house ^ Team) & 0x0F);
 							FUN_00752B70(packet.Taunt.ID);
@@ -4188,7 +4360,6 @@ void __fastcall FUN_00550000(void);
 void __fastcall FUN_00565B00(void * map);
 void __fastcall FUN_00430980(void * beacon);
 int __cdecl FUN_0041C610(const void * a, const void * b);
-extern int DAT_00A8E7AC;
 extern DynamicVectorClass<AbstractClass *> DAT_00B0F698;
 struct TargetEntryStruct {
 	int ID;
@@ -4198,18 +4369,13 @@ extern TargetEntryStruct * DAT_00B0E840;
 extern int DAT_00B0E844;
 extern bool DAT_00B0E84C;
 extern int DAT_00B0E850;
-extern char DAT_0089C3B0[];
+class BeaconManagerClass;
+extern BeaconManagerClass BeaconManager;
 void __fastcall FUN_00725C70(void);
 void __fastcall FUN_00556DF0(void);
-class SpotlightClass {
-	public:
-		~SpotlightClass(void);
-};
 extern DynamicVectorClass<AbstractClass *> DAT_00A8ED40;
-extern DynamicVectorClass<AbstractClass *> DAT_00A8E360;
 extern DynamicVectorClass<AbstractClass *> DAT_00B0E720;
 extern DynamicVectorClass<AbstractClass *> DAT_00A8EAE8;
-extern DynamicVectorClass<AbstractClass *> DAT_008B4138;
 extern DynamicVectorClass<AbstractClass *> DAT_008B4190;
 extern DynamicVectorClass<AbstractClass *> DAT_00A8EC50;
 extern DynamicVectorClass<AbstractClass *> DAT_00A80208;
@@ -4217,10 +4383,8 @@ extern DynamicVectorClass<AbstractClass *> DAT_00A8EC38;
 extern DynamicVectorClass<AbstractClass *> DAT_00A83E30;
 extern DynamicVectorClass<AbstractClass *> DAT_008B4120;
 extern DynamicVectorClass<AbstractClass *> DAT_008B40E8;
-extern DynamicVectorClass<AbstractClass *> DAT_00A80228;
 extern DynamicVectorClass<AbstractClass *> DAT_00A8E9A8;
 extern DynamicVectorClass<AbstractClass *> DAT_00B04BD0;
-extern DynamicVectorClass<AbstractClass *> DAT_00ABCA10;
 extern DynamicVectorClass<AbstractClass *> DAT_008A3870;
 extern DynamicVectorClass<AbstractClass *> DAT_0089E0F0;
 extern DynamicVectorClass<AbstractClass *> DAT_008A0208;
@@ -4233,12 +4397,11 @@ extern DynamicVectorClass<AbstractClass *> DAT_008B3D10;
 extern DynamicVectorClass<AbstractClass *> DAT_0088A0F0;
 extern DynamicVectorClass<AbstractClass *> DAT_00A8E988;
 extern DynamicVectorClass<AbstractClass *> DAT_00A8E968;
-extern DynamicVectorClass<SpotlightClass *> DAT_00AC1678;
 
 // FUNCTION: GAMEMD 0x00534450
 void Delete_All_Objects(void)
 {
-	DAT_00A8E7AC++;
+	ScenarioInit++;
 	DAT_00B0F698.Reset_Active();
 	DAT_00B0F698.Clear();
 	FUN_0069E210();
@@ -4255,8 +4418,8 @@ void Delete_All_Objects(void)
 		DAT_00A8ED40[0]->Release();
 	}
 	FUN_00725C70();
-	while (DAT_00A8E360.Count()) {
-		delete DAT_00A8E360[0];
+	while (Objects.Count()) {
+		delete Objects[0];
 	}
 	FUN_00725C70();
 	while (DAT_00B0E720.Count()) {
@@ -4267,8 +4430,8 @@ void Delete_All_Objects(void)
 		delete DAT_00A8EAE8[0];
 	}
 	FUN_00725C70();
-	while (DAT_008B4138.Count()) {
-		delete DAT_008B4138[0];
+	while (Tubes.Count()) {
+		delete Tubes[0];
 	}
 	FUN_00725C70();
 	while (DAT_008B4190.Count()) {
@@ -4299,8 +4462,8 @@ void Delete_All_Objects(void)
 		delete DAT_008B40E8[0];
 	}
 	FUN_00725C70();
-	while (DAT_00A80228.Count()) {
-		delete DAT_00A80228[0];
+	while (Houses.Count()) {
+		delete Houses[0];
 	}
 	FUN_00725C70();
 	while (DAT_00A8E9A8.Count()) {
@@ -4315,8 +4478,8 @@ void Delete_All_Objects(void)
 		delete DAT_00B04BD0[0];
 	}
 	FUN_00725C70();
-	while (DAT_00ABCA10.Count()) {
-		delete DAT_00ABCA10[0];
+	while (LightSources.Count()) {
+		delete LightSources[0];
 	}
 	FUN_00725C70();
 	while (DAT_008A3870.Count()) {
@@ -4351,8 +4514,8 @@ void Delete_All_Objects(void)
 		delete DAT_0089C668[0];
 	}
 	FUN_00725C70();
-	while (DAT_00AC1678.Count()) {
-		delete DAT_00AC1678[0];
+	while (SpotLights.Count()) {
+		delete SpotLights[0];
 	}
 	FUN_00725C70();
 	while (DAT_008B3D10.Count()) {
@@ -4378,8 +4541,8 @@ void Delete_All_Objects(void)
 	TacticalMap = NULL;
 	FUN_00565B00(&Map);
 	FUN_00725C70();
-	FUN_00430980(&DAT_0089C3B0);
-	DAT_00A8E7AC--;
+	FUN_00430980(&BeaconManager);
+	ScenarioInit--;
 }
 
 extern MFCD * DAT_00884E0C;
@@ -4387,8 +4550,6 @@ extern MFCD * DAT_00884E08;
 extern MFCD * DAT_00884E10;
 extern MFCD * DAT_00884E20;
 extern MFCD * DAT_00884E1C;
-extern PaletteClass DAT_00885A80;
-extern PaletteClass DAT_00886380;
 void const * __fastcall FUN_005B40B0(char const * name, bool flag);
 void __fastcall FUN_006267A0(TheaterType theater);
 void __fastcall FUN_00717840(void);
@@ -4467,34 +4628,34 @@ void __fastcall Init_Theater(TheaterType theater)
 			}
 		}
 
-		DAT_00885A80 = GamePalette;
+		OriginalPalette = GamePalette;
 
 		wsprintf(n.fullname, "UNIT%s.PAL", Theaters[theater].Suffix);
 		PaletteClass * unitpal = (PaletteClass *)FUN_005B40B0(n.fullname, false);
 
-		Game::CallBack();
+		Call_Back();
 
 		if (unitpal != NULL) {
-			DAT_00886380 = *unitpal;
+			SchemePalette = *unitpal;
 		}
 
 		for (int index = 0; index < 256; index++) {
-			DAT_00886380[index] = RGBClass(
-				(unsigned char)(DAT_00886380[index].Get_Red()<<2),
-				(unsigned char)(DAT_00886380[index].Get_Green()<<2),
-				(unsigned char)(DAT_00886380[index].Get_Blue()<<2));
+			SchemePalette[index] = RGBClass(
+				(unsigned char)(SchemePalette[index].Get_Red()<<2),
+				(unsigned char)(SchemePalette[index].Get_Green()<<2),
+				(unsigned char)(SchemePalette[index].Get_Blue()<<2));
 		}
 
 		int last_percent = 12;
 		int prog_step = ColorSchemes.Count() / (25 - 12);
 		for (int s = 0; s < ColorSchemes.Count(); s++) {
-			ColorSchemes[s]->Build_Light_Converters(DAT_00886380, GamePalette);
+			ColorSchemes[s]->Build_Light_Converters(SchemePalette, GamePalette);
 			int percent = (min(12 + (s / prog_step), 25));
 			if (percent != last_percent) {
 				Session.Update_Progress(percent);
 				last_percent = percent;
 			}
-			Game::CallBack();
+			Call_Back();
 		}
 
 		FUN_006267A0(theater);
@@ -4522,6 +4683,21 @@ bool FUN_00534DE0(void)
 	return(true);
 }
 
+// FUNCTION: GAMEMD 0x00534E50
+bool FUN_00534E50(void)
+{
+	bool ready = DAT_00884E5C == NULL || FUN_00534DE0();
+	ready = ready && (DAT_00884E58 == NULL || FUN_00534DE0());
+	if (!ready) return(false);
+	DAT_00884E58 = new MFCD("NTRLMD.MIX", &FastKey);
+	if (DAT_00884E58 == NULL) return false;
+	DebugStringNoPrefix("LOADED NTRLMD.MIX");
+	DAT_00884E5C = new MFCD("NEUTRAL.MIX", &FastKey);
+	if (DAT_00884E5C == NULL) return false;
+	DebugStringNoPrefix("LOADED NEUTRAL.MIX");
+	return true;
+}
+
 extern MFCD * DAT_00884E68;
 extern MFCD * DAT_00884E70;
 extern MFCD * DAT_00884E74;
@@ -4535,7 +4711,7 @@ void __fastcall FUN_006D02B0(void * map);
 int __fastcall FUN_004A80D0(int drive, int arg);
 
 // FUNCTION: GAMEMD 0x00534FA0
-bool __fastcall FUN_00534FA0(int side)
+bool __fastcall Prep_For_Side(int side)
 {
 	char name[64];
 
@@ -4829,6 +5005,9 @@ int FUN_005355D0(void)
 
 // FUNCTION: GAMEMD 0x00535AA0
 // INIClass::INIClass
+
+// FUNCTION: GAMEMD 0x00535B30
+// CCINIClass::CCINIClass
 
 // FUNCTION: GAMEMD 0x00535BD0
 // CommandClass::PreventCombinationOverride
@@ -5481,4 +5660,194 @@ void __fastcall XMP_Init(unsigned long * number, unsigned long value, int precis
 void FUN_00538C10(void)
 {
 	XMP_Init(DAT_00A8F7F8, 0, 64);
+}
+
+
+
+static bool Init_CDROM_Access(void)
+{
+	if (!CCFileClass::Is_There_Search_Drives()) {
+		FUN_004068E0("Calling Force_CD_Available\n");
+		if (!CD().Force_Available(DISK_ANY)) {
+			FUN_004068E0("Failed to find disk (user cancel)!\n");
+			return false;
+		}
+		int error;
+		do {
+			char path[10240];
+			char drive[200];
+			path[0] = 0;
+			for (int i = 0; i < CDList.CDCount; ) {
+				sprintf(drive, "%c:\\", CDList.CDDrives[i] + 'A');
+				strcat(path, drive);
+				++i;
+				if (i < CDList.CDCount) strcat(path, ";");
+			}
+			error = CCFileClass::Set_Search_Drives(path);
+			switch (error) {
+			case 1:
+				if (!CD::Force_Available()) {
+					FUN_004068E0("Failed to find disk (user cancel)!\n");
+					return false;
+				}
+			case 2:
+				Set_Palette(GamePalette, 0, 0);
+				if (WWMessageBox().Process(
+					StringTable::LoadString("TXT_CD_DIALOG_1", 0, "D:\\ra2mdpost\\Init.CPP", 0x10b4),
+					StringTable::LoadString("TXT_OK", 0, "D:\\ra2mdpost\\Init.CPP", 0x10b4),
+					StringTable::LoadString("TXT_CANCEL", 0, "D:\\ra2mdpost\\Init.CPP", 0x10b4), 0, false) == 1) {
+					FUN_004068E0("Failed to find disk (user cancel)!\n");
+					return false;
+				}
+				break;
+			default:
+				if (!CD::Force_Available()) {
+					FUN_004068E0("Failed to find disk (user cancel)!\n");
+					return false;
+				}
+				break;
+			}
+		} while (error);
+		CD::Set_Required_Disk(DISK_ANY);
+	} else {
+		FUN_004068E0("-CD parameter was specified. No CD init - all files must be local\n");
+		CD::Set_Required_Disk(DISK_LOCAL);
+	}
+	return true;
+}
+
+static bool Bootstrap(void)
+{
+	int index;
+
+	if (!HicolorFlag) {
+		Set_Palette(BlackPalette, 0, 0);
+	}
+
+	if (CD::Is_Override_Swap() == true) {
+		CD::Set_Required_Disk(DISK_LOCAL);
+	}
+
+	do {
+		Keyboard->Check();
+	} while (!GameInFocus);
+
+	SurfacesRestored = false;
+	FUN_005BC450(4)->Reset();
+
+	if (!Init_Bootstrap_Mixfiles()) {
+		FUN_004068E0("Failed to initialize bootstrap mixfiles!\n");
+		return false;
+	}
+
+	BitText::Instance = new BitText;
+	FUN_0060D430();
+	FUN_0072AA40();
+	FUN_00406B10(DAT_00840A70);
+	Keyboard->Clear();
+
+	memmove(&SchemePalette[0], FileSystem::LoadFile("UNITSNO.PAL", false), sizeof(SchemePalette));
+	for (index = 0; index < 256; index++) {
+		SchemePalette[index] = RGBClass(
+			(unsigned char)(SchemePalette[index].Get_Red() << 2),
+			(unsigned char)(SchemePalette[index].Get_Green() << 2),
+			(unsigned char)(SchemePalette[index].Get_Blue() << 2));
+	}
+
+	memmove(&GamePalette[0], FileSystem::LoadFile("TEMPERAT.PAL", false), sizeof(GamePalette));
+	for (index = 0; index < 256; index++) {
+		GamePalette[index] = RGBClass(
+			(unsigned char)(GamePalette[index].Get_Red() << 2),
+			(unsigned char)(GamePalette[index].Get_Green() << 2),
+			(unsigned char)(GamePalette[index].Get_Blue() << 2));
+	}
+	OriginalPalette = GamePalette;
+	CCPalette = GamePalette;
+	WhitePalette[0] = BlackPalette[0];
+
+	memmove(&WaypointPalette[0], FileSystem::LoadFile("WAYPOINT.PAL", false), sizeof(WaypointPalette));
+	for (index = 0; index < 256; index++) {
+		WaypointPalette[index] = RGBClass(
+			(unsigned char)(WaypointPalette[index].Get_Red() << 2),
+			(unsigned char)(WaypointPalette[index].Get_Green() << 2),
+			(unsigned char)(WaypointPalette[index].Get_Blue() << 2));
+	}
+
+	CCFileClass vplfile("voxels.vpl");
+	VoxelDrawSystem::Load_VPL_File(vplfile);
+	for (int i = 0; i < 256; i++) {
+		VoxelPalette[i] = RGBClass(DAT_00B2FB78[i].Red, DAT_00B2FB78[i].Green,
+			DAT_00B2FB78[i].Blue);
+	}
+	UseVoxelCache = true;
+	Set_Voxel_Camera_Angle(DefaultCameraAngle);
+	Set_Voxel_Light_Angle(DefaultLightAngle);
+	VoxelDrawSystem::EnableLighting = 1;
+	VoxelDrawSystem::EnableZBuffer = 0;
+	Init_Voxel_Matrices();
+
+	TerrainDrawer = new ConvertClass(GamePalette, GamePalette, *VisibleSurface, 0x35, false);
+
+	PaletteClass pal;
+	memmove(&pal[0], FileSystem::LoadFile("ANIM.PAL", false), sizeof(pal));
+	for (index = 0; index < 256; index++) {
+		pal[index] = RGBClass((unsigned char)(pal[index].Get_Red() << 2), (unsigned char)(pal[index].Get_Green() << 2),
+			(unsigned char)(pal[index].Get_Blue() << 2));
+	}
+	AnimDrawer = new ConvertClass(pal, GamePalette, *VisibleSurface, 0x35, false);
+
+	memmove(&pal[0], FileSystem::LoadFile("PALETTE.PAL", false), sizeof(pal));
+	for (index = 0; index < 256; index++) {
+		pal[index] = RGBClass((unsigned char)(pal[index].Get_Red() << 2), (unsigned char)(pal[index].Get_Green() << 2),
+			(unsigned char)(pal[index].Get_Blue() << 2));
+	}
+	NormalDrawer = new ConvertClass(pal, GamePalette, *VisibleSurface, 0x35, false);
+
+	memmove(&pal[0], FileSystem::LoadFile("UNITSNO.PAL", false), sizeof(pal));
+	for (index = 0; index < 256; index++) {
+		pal[index] = RGBClass((unsigned char)(pal[index].Get_Red() << 2), (unsigned char)(pal[index].Get_Green() << 2),
+			(unsigned char)(pal[index].Get_Blue() << 2));
+	}
+	VoxelDrawer = new ConvertClass(pal, GamePalette, *VisibleSurface, 0x35, false);
+
+	memmove(&pal[0], FileSystem::LoadFile("CAMEO.PAL", false), sizeof(pal));
+	for (index = 0; index < 256; index++) {
+		pal[index] = RGBClass((unsigned char)(pal[index].Get_Red() << 2), (unsigned char)(pal[index].Get_Green() << 2),
+			(unsigned char)(pal[index].Get_Blue() << 2));
+	}
+	CameoDrawer = new ConvertClass(pal, GamePalette, *VisibleSurface, 0x35, false);
+
+	memmove(&pal[0], FileSystem::LoadFile("MOUSEPAL.PAL", false), sizeof(pal));
+	for (index = 0; index < 256; index++) {
+		pal[index] = RGBClass((unsigned char)(pal[index].Get_Red() << 2), (unsigned char)(pal[index].Get_Green() << 2),
+			(unsigned char)(pal[index].Get_Blue() << 2));
+	}
+	MouseDrawer = new ConvertClass(pal, GamePalette, *VisibleSurface, 1, false);
+
+	TiberiumDrawer = VoxelDrawer;
+
+	CCFileClass palfile("GRFXTXT.PAL");
+	if (palfile.Is_Available()) {
+		DAT_00A8F790 = Load_Alloc_Data(palfile);
+		palfile.Close();
+		for (index = 0; index < 256; index++) {
+			(*(PaletteClass *)DAT_00A8F790)[index] = RGBClass(
+				(unsigned char)((*(PaletteClass *)DAT_00A8F790)[index].Get_Red() << 2),
+				(unsigned char)((*(PaletteClass *)DAT_00A8F790)[index].Get_Green() << 2),
+				(unsigned char)((*(PaletteClass *)DAT_00A8F790)[index].Get_Blue() << 2));
+		}
+	}
+	if (DAT_00A8F790 != 0) {
+		DAT_00A8F798 = new ConvertClass(*(PaletteClass *)DAT_00A8F790,
+			GamePalette, *VisibleSurface, 1, false);
+	}
+
+	CCFileClass shpfile("GRFXTXT.SHP");
+	if (shpfile.Is_Available()) {
+		DAT_00A8F794 = Load_Alloc_Data(shpfile);
+		shpfile.Close();
+	}
+
+	Init_Expansion_Files();
+	return true;
 }

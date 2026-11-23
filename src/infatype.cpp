@@ -183,10 +183,8 @@ Cell const * InfantryTypeClass::Occupy_List(bool) const
 	return(&_list[0]);
 }
 
-// FUNCTION: GAMEMD 0x00523C80
-void InfantryTypeClass::Init(TheaterType)
-{
-}
+// SYNTHETIC: GAMEMD 0x00523C80 SYMBOL
+// _$E117
 
 // FUNCTION: GAMEMD 0x00523C90
 InfantryType InfantryTypeClass::From_Name(char const * name)

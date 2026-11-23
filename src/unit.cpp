@@ -82,11 +82,11 @@ namespace Unsorted { extern int CurrentFrame; extern bool MoveFeedback; }
 #include "bench.hh"
 #include "color.hh"
 #include "tube.hh"
+#include "lightstorm.h"
 
 template class IndexClass<int, StaticBufferClass::Entry *>;
 
 extern int DAT_00B1CFA8, DAT_00B1CFAC, DAT_00B1CFB0, DAT_00B1CFB4;
-extern int DAT_00B1CFC0, DAT_00B1CFC4, DAT_00B1CFC8, DAT_00B1CFCC;
 extern int __fastcall FUN_0050C170(char const * name);
 extern const double DAT_007E3570;
 
@@ -122,10 +122,10 @@ extern const double DAT_007E3570;
 // FUNCTION: GAMEMD 0x00735390
 void FUN_00735390(void)
 {
-	DAT_00B1CFC0 = DAT_00B1CFA8;
-	DAT_00B1CFC4 = DAT_00B1CFAC;
-	DAT_00B1CFC8 = DAT_00B1CFB0;
-	DAT_00B1CFCC = DAT_00B1CFB4;
+	UnitCompositeDirtyRect.X = DAT_00B1CFA8;
+	UnitCompositeDirtyRect.Y = DAT_00B1CFAC;
+	UnitCompositeDirtyRect.Width = DAT_00B1CFB0;
+	UnitCompositeDirtyRect.Height = DAT_00B1CFB4;
 }
 
 // FUNCTION: GAMEMD 0x007353C0
@@ -139,7 +139,7 @@ UnitClass::UnitClass(UnitTypeClass const * type, HouseClass * house) :
 	IsDumping(false),
 	IsHarvesting(false),
 	TerrainPalette(false),
-	unknown_int_6D4(-1),
+	VisceroidFacing(-1),
 	DeathCounter(-1),
 	ElectricBolt(NULL),
 	Deployed(false),
@@ -520,11 +520,6 @@ bool UnitClass::Deploy_To_Fire(void) const
 	return(false);
 }
 
-inline Cell Adjacent_Cell_By_Value(Cell cell, FacingType dir)
-{
-	return(cell + AdjacentCell[(int)dir & 0x07]);
-}
-
 // FUNCTION: GAMEMD 0x00736DF0
 void UnitClass::Firing_AI(void)
 {
@@ -552,7 +547,7 @@ void UnitClass::Firing_AI(void)
 				break;
 
 			case FIRE_OK:
-				if (!Class->unknown_E10) {
+				if (!Class->IsFireAnim) {
 					IsFiring = false;
 				}
 
@@ -643,14 +638,14 @@ void UnitClass::Visceroid_AI(void)
 			for (int i = 0; i < FACING_COUNT; i++) {
 				facing = FacingType(unsigned(facing + FACING_45) % FACING_COUNT);
 				FacingType f2 = facing;
-				Cell adjacent = Adjacent_Cell_By_Value(cell, f2);
+				Cell adjacent = ::Adjacent_Cell(cell, f2);
 				CellClass * cellptr = &Map[adjacent];
 				ObjectClass * occupier = cellptr->Cell_Occupier();
 				if (occupier != NULL && occupier->Fetch_RTTI() == RTTI_UNIT && ((UnitClass *)occupier)->Class->SmallVisceroid) {
 					UnitClass * visceroid = (UnitClass *)occupier;
 					if (visceroid->NavCom == NULL && visceroid->TarCom == NULL) {
 						visceroid->Assign_Destination(this);
-						unknown_int_6D4 = -1;
+						VisceroidFacing = -1;
 					}
 					return;
 				}
@@ -659,18 +654,18 @@ void UnitClass::Visceroid_AI(void)
 
 		if (NavCom == NULL && TarCom == NULL) {
 			FacingType dir;
-			if (unknown_int_6D4 != -1 && Random_Pick(0, 2) != 0) {
-				dir = (FacingType)unknown_int_6D4;
+			if (VisceroidFacing != -1 && Random_Pick(0, 2) != 0) {
+				dir = (FacingType)VisceroidFacing;
 			} else {
 				dir = Random_Pick(FACING_FIRST, FacingType(FACING_COUNT - 1));
-				unknown_int_6D4 = dir;
+				VisceroidFacing = dir;
 			}
-			Cell adjacent = Adjacent_Cell_By_Value(cell, dir);
+			Cell adjacent = ::Adjacent_Cell(cell, dir);
 			CellClass * cellptr = &Map[adjacent];
 			if (Can_Enter_Cell(cellptr, dir, Get_Cell_Height(), &Map[cell]) == MOVE_OK) {
 				Assign_Destination(cellptr);
 			} else {
-				unknown_int_6D4 = -1;
+				VisceroidFacing = -1;
 			}
 		}
 	}
@@ -1308,10 +1303,8 @@ bool UnitClass::Goto_Clear_Spot(void)
 	return(false);
 }
 
-// FUNCTION: GAMEMD 0x007393B0
-void FUN_007393B0(void)
-{
-}
+// SYNTHETIC: GAMEMD 0x007393B0 SYMBOL
+// _$E289
 
 // FUNCTION: GAMEMD 0x007393C0
 bool UnitClass::Try_To_Deploy(void)
@@ -1419,10 +1412,10 @@ bool UnitClass::Try_To_Deploy(void)
 
 						building->QueuedVoiceSoundController = QueuedVoiceSoundController;
 						building->QueuedVoiceIndex = QueuedVoiceIndex;
-						building->unknown_4F4 = unknown_4F4;
+						building->PlayingVoiceIndex = PlayingVoiceIndex;
 						QueuedVoiceSoundController.SetEvent(NULL, NULL);
 						QueuedVoiceIndex = -1;
-						unknown_4F4 = -1;
+						PlayingVoiceIndex = -1;
 
 						bool feedback = Unsorted::MoveFeedback;
 						Unsorted::MoveFeedback = false;
@@ -1480,7 +1473,7 @@ void UnitClass::Deploy(void)
 			if (Class->DeployingAnim != NULL) {
 				if (DeployAnim == NULL) {
 					DeployAnim = new AnimClass(Class->DeployingAnim, PositionCoord, 0, 1, ShapeFlags_Type(0x600), 0, false);
-					DeployAnim->SetOwnerObject(this);
+					DeployAnim->Attach_To(this);
 					DeployAnim->LightConvert = GetRemapColour();
 				}
 				Animation.Set_Stage(DeployAnim->Type->Start);
@@ -1511,7 +1504,7 @@ void UnitClass::Undeploy(void)
 		} else if (Class->DeployingAnim != NULL) {
 			if (DeployAnim == NULL) {
 				DeployAnim = new AnimClass(Class->DeployingAnim, PositionCoord, 0, 1, ShapeFlags_Type(0x600), 0, true);
-				DeployAnim->SetOwnerObject(this);
+				DeployAnim->Attach_To(this);
 				DeployAnim->LightConvert = GetRemapColour();
 			}
 			Animation.Set_Stage(DeployAnim->Type->Start);
@@ -1601,7 +1594,7 @@ void UnitClass::Per_Cell_Process(PCPType why)
 			if (building->Class->Grinding) {
 				VocClass::PlayAt(Rule->EnterGrinderSound, Center_Coord(), NULL);
 				if (building->Anims[BANIM_ACTIVE_ONE] != NULL) {
-					building->DestroyNthAnim(BANIM_ACTIVE_ONE);
+					building->End_Anim(BANIM_ACTIVE_ONE);
 					building->PlayNthAnim(BANIM_SPECIAL_ONE, building->Get_Health_Ratio() <= Rule->ConditionYellow, false);
 				}
 			}
@@ -2186,22 +2179,126 @@ plain:
 	composite->Fill_Rect(dirty, 0);
 }
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-	static ConvertClass * ANIM_PAL;
-};
-
-struct PsyDom {
-	static bool Active(void);
-};
-
-struct NukeFlash {
-	static bool IsFadingIn(void);
-};
+#include "filesystem.h"
 
 inline void Coord_Pixel(Coord coord, Point2D & pixel)
 {
 	TacticalMap->Coord_To_Pixel(coord, pixel);
+}
+
+// FUNCTION: GAMEMD 0x0073C5F0
+void UnitClass::Unit_Draw_Shape(Point2D xdrawpoint, Rect xcliprect, int brightness, int tint)
+{
+	VoxelDataStruct * voxl;
+	ShapeSet const * shapefile = (ShapeSet const *)Get_Image_Data();
+	bool barrel_above_turret = true;
+	int shapenum;
+
+	if (Class->Facings == FACING_COUNT && !IsDisguised()) {
+		shapenum = Facing_Add(PrimaryFacing.Current().Round_To_8(), FACING_45);
+	} else {
+		shapenum = 0;
+	}
+
+	if (FiringSyncDelay >= 0) {
+		shapenum = Class->StartFiringFrame + Class->FiringFrames * shapenum + FiringSyncDelay / 2;
+	} else if (!Locomotion->Is_Moving() && Class->IdleRate == 0) {
+		if (DeathCounter >= 0) {
+			int deathframe = DeathCounter / Class->DeathFrameRate;
+			int startframe = Class->StartDeathFrame;
+			int lastframe = Class->DeathFrames - 1;
+			if (deathframe >= lastframe) deathframe = lastframe;
+			shapenum = startframe + deathframe;
+		} else if (IsOccupyingCell) {
+			if (Class->StandingFrames == 0) shapenum = Class->StartWalkFrame + shapenum * Class->WalkFrames;
+			else shapenum = Class->StartStandFrame + shapenum * Class->StandingFrames;
+		}
+	} else {
+		shapenum = Class->StartWalkFrame + shapenum * Class->WalkFrames + TotalFramesWalked % Class->WalkFrames;
+	}
+
+	if (Class->IsTurretEquipped) {
+
+		Point2D drawpoint = xdrawpoint;
+		if (IsInTransport) {
+			drawpoint.Y -= 14;
+		}
+
+		Draw_Shape(*LogicalSurface, *NormalDrawer, shapefile, shapenum + shapefile->Get_Count() / 2, drawpoint, xcliprect, ShapeFlags_Type(SHAPE_DARKEN | SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_ALPHA | SHAPE_ZGRAD), NULL, Get_Z_Adjust() - 2);
+
+		Surface * old_surface = LogicalSurface;
+		LogicalSurface = EightBitSurface;
+		Point2D pt = Point2D(128,128);
+
+		Matrix3D nmtx;
+		Rect srect = LogicalSurface->Get_Rect();
+		TerrainPalette = true;
+		UnitCompositeDirtyRect = RECT_NONE;
+
+		voxl = &Class->AuxVoxel2;
+		if (voxl->VoxLib != NULL && voxl->MotLib != NULL) {
+			int key = -1;
+			Matrix3D mtx = Locomotion->Draw_Matrix(&key);
+			mtx.Translate_X(Class->TurretOffset / 8);
+			mtx.Rotate_Z(SecondaryFacing.Current().As_Radian32() - PrimaryFacing.Current().As_Radian32());
+
+			nmtx = mtx;
+
+			Vector3 trans = mtx.Get_Translation();
+			nmtx.Translate(-trans);
+			if (TurretRecoil.State) mtx.Translate_X(-TurretRecoil.TravelSoFar);
+
+			Vector3 flh = Vector3(Get_Class_Weapon_Data()->FireFLH.X / -8, 0, Get_Class_Weapon_Data()->FireFLH.Z / -8);
+			nmtx.Translate(-flh);
+
+			FacingClass face = BarrelPitch;
+			BulletTypeClass const * bullet = Get_Class_Weapon_Data()->Weapon->Bullet;
+			if (bullet->IsInvisible) {
+				Dir256 dir256 = face.Current().As_Dir256();
+				if (dir256 > DIR_E && dir256 <= DIR_S) {
+					dir256 = (Dir256)((dir256 - DIR_E) / 3 + DIR_E);
+				} else {
+					dir256 = (Dir256)((DIR_E - dir256) / 3 + DIR_E);
+				}
+				face.Set(dir256);
+			}
+
+			if (BarrelRecoil.State) nmtx.Translate_X(-BarrelRecoil.TravelSoFar);
+			nmtx.Rotate_Y(-face.Current().As_Radian32());
+			nmtx.Translate(flh);
+			nmtx.Translate(trans);
+			barrel_above_turret = SecondaryFacing.Current().As_Dir4() > 0 && SecondaryFacing.Current().As_Dir4() < 3;
+		}
+
+		// Draw the main shape.
+		Draw_Object(shapefile, shapenum, pt, srect, DIR_N, 256, 0, ZGRAD_GROUND, 0, brightness, 0, NULL, 0, Point2D(0, 0), ShapeFlags_Type(SHAPE_ALPHA|SHAPE_ZGRAD));
+
+		voxl = &Class->AuxVoxel2;
+		if (voxl->VoxLib != NULL && voxl->MotLib != NULL && !barrel_above_turret) {
+			Draw_A_VXL(Class->AuxVoxel2, 0, -1, 0, srect, pt, Get_Isometric_View_Matrix() * nmtx, brightness, ShapeFlags_Type(SHAPE_ZGRAD|SHAPE_ALPHA), 0);
+		}
+
+		Dir32 d = SecondaryFacing.Current().As_Dir32();
+		Draw_Object(shapefile, ((d + 4) % 32U) + 8 * Class->WalkFrames, pt, srect, DIR_N, 256, 0, ZGRAD_GROUND, false, brightness, 0, NULL, 0, Point2D(0, 0), ShapeFlags_Type(SHAPE_NOTRANS|SHAPE_ALPHA|SHAPE_ZGRAD));
+
+		voxl = &Class->AuxVoxel2;
+		if (voxl->VoxLib != NULL && voxl->MotLib != NULL && barrel_above_turret) {
+			Draw_A_VXL(Class->AuxVoxel2, 0, -1, 0, srect, pt, Get_Isometric_View_Matrix() * nmtx, brightness, ShapeFlags_Type(SHAPE_NOTRANS|SHAPE_ZGRAD|SHAPE_ALPHA), 0);
+		}
+
+		int apparent_brightness = Apparent_Brightness(brightness);
+		Unit_Blit_Voxel(old_surface, xdrawpoint, xcliprect, apparent_brightness, tint);
+		LogicalSurface->Fill_Rect(UnitCompositeDirtyRect, 0);
+		LogicalSurface = old_surface;
+		TerrainPalette = false;
+
+	} else {
+		if (Class->TooBigToFitUnderBridge && Is_Z_Fudge_Bridge() && Get_Z_Fudge_Column() == 0) {
+			Draw_Object(shapefile, shapenum, xdrawpoint, xcliprect, DIR_N, 256, -16, ZGRAD_GROUND, false, brightness, 0, NULL, 0, Point2D(0, 0), SHAPE_NORMAL);
+			return;
+		}
+		Draw_Object(shapefile, shapenum, xdrawpoint, xcliprect, DIR_N, 256, 0, Get_Z_Gradient(), false, brightness, 0, NULL, 0, Point2D(0, 0), SHAPE_NORMAL);
+	}
 }
 
 // FUNCTION: GAMEMD 0x0073CEC0
@@ -2260,7 +2357,7 @@ void UnitClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 			if (TemporalTargetingMe == NULL) {
 				if (!IsBeingWarpedOut()) {
 					if (!IsWarpingIn()) {
-						Draw_Shape(*DSurface::Temp, *FileSystem::ANIM_PAL, harvesting_shape, row * 15 + (Frame + TotalFramesWalked) % 15, pixel, cliprect, ShapeFlags_Type(0x2a00), NULL, Get_Z_Adjust() - 2, ZGRAD_GROUND, brightness);
+						Draw_Shape(*DSurface::Temp, *AnimDrawer, harvesting_shape, row * 15 + (Frame + TotalFramesWalked) % 15, pixel, cliprect, ShapeFlags_Type(0x2a00), NULL, Get_Z_Adjust() - 2, ZGRAD_GROUND, brightness);
 					}
 				}
 			}
@@ -2567,13 +2664,13 @@ int UnitClass::Do_MISSION_UNLOAD(void)
 					} else {
 						if (building->Class->IsRefinery) building->PlayNthAnim(BANIM_PRODUCTION, building->HealthRatio <= Rule->ConditionYellow, false, 0);
 						Status = 4;
-						if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->DestroyNthAnim(BANIM_SPECIAL_ONE);
+						if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->End_Anim(BANIM_SPECIAL_ONE);
 					}
 				}
 				if (NavCom != NULL && MissionQueue != MISSION_NONE && MissionQueue != MISSION_HARVEST) {
 					if (building->Class->IsRefinery) building->PlayNthAnim(BANIM_PRODUCTION, building->HealthRatio <= Rule->ConditionYellow, false, 0);
 					Status = 4;
-					if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->DestroyNthAnim(BANIM_SPECIAL_ONE);
+					if (building->Anim_Active(BANIM_SPECIAL_ONE)) building->End_Anim(BANIM_SPECIAL_ONE);
 				}
 				return(1);
 			}
@@ -2582,6 +2679,198 @@ int UnitClass::Do_MISSION_UNLOAD(void)
 		}
 	}
 	return(Current_Mission_Control().Normal_Delay() + Random_Pick(0, 2));
+}
+
+// FUNCTION: GAMEMD 0x0073E5E0
+int UnitClass::Do_MISSION_HARVEST(void)
+{
+	enum { LOOKING, HARVESTING, FINDHOME, HEADINGHOME, GOINGTOIDLE };
+	int index;
+
+	if (Class->ResourceDestination && Class->ResourceGatherer && SlaveManager != NULL) {
+		SlaveManager->FUN_006B0DB0();
+		int delay = Current_Mission_Control().Normal_Delay();
+		return(delay + Random_Pick(0, 2));
+	}
+
+	// A unit that harvests nothing just sits still.
+	if (!Class->Harvester && !Class->Weeder) return(TICKS_PER_SECOND * 30);
+
+	if (Class->Dock.Count() == 0 && !House->FUN_0050B730()) {
+		QueueMission(MISSION_GUARD, false);
+		return(1);
+	}
+
+	// With no refinery left to unload at, drop into guard mode.
+	bool found = false;
+	for (index = 0; index < Class->Dock.Count(); index++) {
+		if (House->BQuantity.Value(Class->Dock[index]->HeapID) > 0) {
+			found = true;
+			break;
+		}
+	}
+	if (!found) {
+		QueueMission(MISSION_GUARD, false);
+		return(1);
+	}
+
+	bool teleporter = Class->Teleporter;
+	switch (Status) {
+		case LOOKING:
+			if (!Class->Weeder && Tiberium_Load() >= 1) {
+				Status = FINDHOME;
+				return(1);
+			}
+
+			{
+				// Head back to the patch that was mined last.
+				bool hastarget = true;
+				if (ArchivedTarget != NULL) {
+					Assign_Destination(ArchivedTarget, true);
+					Assign_Archive_Target(NULL);
+					hastarget = false;
+				}
+				IsHarvesting = false;
+				bool ok;
+				if (Class->Weeder) {
+					ok = Goto_Weed(Rule->TiberiumLongScan / CELL_LEPTON_W);
+				} else {
+					IPersistPtr persist(Locomotion);
+					CLSID clsid;
+					persist->GetClassID(&clsid);
+					if (clsid == LocomotionClass::CLSIDs::Teleport && NavCom != NULL) {
+						Assign_Destination(NULL, true);
+					}
+					ok = Goto_Tiberium(Rule->TiberiumLongScan / CELL_LEPTON_W, hastarget);
+				}
+				if (ok) {
+					IsHarvesting = true;
+					Animation.Set_Rate(2);
+					Animation.Set_Stage(0);
+					Status = HARVESTING;
+					return(1);
+				}
+
+				// With nothing to mine and nowhere to go, give up and go idle.
+				if (NavCom == NULL) {
+					if (ArchivedTarget != NULL) {
+						Assign_Destination(ArchivedTarget, true);
+					} else {
+						Status = GOINGTOIDLE;
+						IsUseless = true;
+						if (Class->Harvester) {
+							House->IsTiberiumShort = true;
+						}
+						return(TICKS_PER_SECOND * 7);
+					}
+				} else {
+					IsUseless = false;
+				}
+			}
+			break;
+
+		case HARVESTING:
+			if (Animation.Fetch_Rate() == 0) {
+				Animation.Set_Stage(0);
+				Animation.Set_Rate(Rule->HarvesterLoadRate);
+			}
+
+			if (Animation.Fetch_Stage() < 9) return(1);
+			if (!Harvesting()) {
+				IsHarvesting = false;
+				if (Class->Harvester && Tiberium_Load() == 1) {
+					Status = FINDHOME;
+					Cell cell;
+					if (Class->Harvester) {
+						cell = ScanForTiberium(Rule->TiberiumShortScan / CELL_LEPTON_W, false);
+					} else {
+						cell = Search_For_Weed(Rule->TiberiumShortScan / CELL_LEPTON_W);
+					}
+					if (cell != CELL_NONE) {
+						Assign_Archive_Target(&Map[cell]);
+					} else {
+						Assign_Archive_Target(NULL);
+					}
+					return(1);
+				}
+				bool ok;
+				if (Class->Harvester) {
+					ok = Goto_Tiberium(Rule->TiberiumShortScan / CELL_LEPTON_W, false);
+				} else {
+					ok = Goto_Weed(Rule->TiberiumShortScan / CELL_LEPTON_W);
+				}
+				if (!ok && NavCom == NULL) {
+					Assign_Archive_Target(NULL);
+					Status = FINDHOME;
+				} else {
+					Status = HARVESTING;
+					IsHarvesting = true;
+				}
+				return(1);
+			}
+			return(1);
+
+		case FINDHOME:
+			if (NavCom != NULL && teleporter && TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0) != NULL) {
+				AbortMotion();
+			}
+			if (NavCom == NULL) {
+				BuildingClass * nearest = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 0);
+				bool close;
+				if (!teleporter) {
+					close = nearest != NULL && Distance_To(nearest) <= Rule->HarvesterTooFarDistance * CELL_LEPTON_W;
+				} else {
+					close = nearest != NULL && Distance_To(nearest) <= Rule->ChronoHarvTooFarDistance * CELL_LEPTON_W;
+				}
+
+				// A refinery in range that answers takes over the docking.
+				if (close && Transmit_Message(RADIO_HELLO, nearest) == RADIO_ROGER) {
+					Status = HEADINGHOME;
+					break;
+				}
+				ScenarioInit++;
+				nearest = TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Class->Dock, 0, 1);
+				ScenarioInit--;
+				if (nearest != NULL) {
+					if (Distance_To(nearest) > 3 * CELL_LEPTON_W || teleporter) {
+						Cell cell(nearest->Get_Coord());
+						Cell nearby = cell;
+						nearby.X += nearest->Class->QueueingCell.X;
+						nearby.Y += nearest->Class->QueueingCell.Y;
+						nearby = Map.Nearby_Location(nearby, SPEED_WHEEL);
+						if (nearby != CELL_NONE) {
+							Assign_Destination(&Map[nearby], true);
+						} else {
+							Assign_Destination(NULL, true);
+						}
+					}
+				}
+			}
+			break;
+
+		case HEADINGHOME:
+			QueueMission(MISSION_ENTER, false);
+			return(1);
+
+		case GOINGTOIDLE:
+			if (IsUseless) {
+				if (TryNearestDockBuilding((TypeList<BuildingTypeClass *> *)&Rule->RepairBay, 0, 1) != NULL) {
+					QueueMission(MISSION_REPAIR, false);
+				} else {
+					QueueMission(MISSION_HUNT, false);
+				}
+			}
+			BuildingClass * bptr = Map[Get_Coord()].Cell_Building();
+			if (bptr != NULL) {
+				if (bptr->Class->IsRefinery || bptr->Class->IsWeeder) {
+					Assign_Destination(&Map[Nearby_Location(bptr)], true);
+				}
+			}
+			QueueMission(MISSION_GUARD, false);
+			break;
+	}
+	int delay = Current_Mission_Control().Normal_Delay();
+	return(delay + Random_Pick(0, 2));
 }
 
 // FUNCTION: GAMEMD 0x0073EFC0
@@ -3369,7 +3658,7 @@ DirType UnitClass::Fire_Direction(void) const
 }
 
 // FUNCTION: GAMEMD 0x00740FD0
-FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool ignoreRange) const
+FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool check_range) const
 {
 	if (DeathCounter >= 0) {
 		return(FIRE_CANT);
@@ -3383,7 +3672,7 @@ FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool ignore
 		return(FIRE_ILLEGAL);
 	}
 
-	FireErrorType fire = BASECLASS::Can_Fire(target, which, ignoreRange);
+	FireErrorType fire = BASECLASS::Can_Fire(target, which, check_range);
 
 	if (fire == FIRE_OK || fire == FIRE_FACING) {
 		bool buildable = Map[(Coord const &)PositionCoord].Can_Build_Here();
@@ -3613,6 +3902,357 @@ void UnitClass::Overrun_Square(Cell const & cell, bool threaten)
 		}
 	}
 }
+
+// FUNCTION: GAMEMD 0x00741970
+void UnitClass::Assign_Destination(AbstractClass * target, bool immediate)
+{
+	if (Class->BalloonHover && target == NULL && NavCom != NULL && TarCom != NULL) {
+		if (NavCom == TarCom
+			|| (Is_Target_Cell(NavCom) && As_Cell(NavCom)->Cell_Occupier() == TarCom)
+			|| GetTargetDirection(TarCom).Is_Complete_Turn(PrimaryFacing.Current(), DirType(0x4000))) {
+			if (Get_Mission() != MISSION_ATTACK) {
+				Set_Mission(MISSION_ATTACK);
+			}
+			return;
+		}
+	}
+
+	if (target == NavCom && !UnlimboingInfantry) return;
+	UnlimboingInfantry = false;
+
+	if (Deployed || Deploying || Undeploying) {
+		if (!Deployed || LocomotorSource == NULL) {
+			AbortMotion();
+			return;
+		}
+	}
+
+	if (HasAnyLink() && Class->Max_Passengers() > 0 && FUN_0065AD30(0)->RTTI == RTTI_INFANTRY && target != NULL && (target->AbstractFlags & 1) && !ContainsLink((TechnoClass *)target)) {
+		Transmit_Message(RADIO_OVER_OUT);
+	}
+
+	if (target != NULL && HasAnyLink() && Get_Mission() == MISSION_SLEEP && IsTethered && FUN_0065AD30(0)->RTTI == RTTI_AIRCRAFT) {
+		AircraftClass * a = (AircraftClass *)FUN_0065AD30(0);
+		if (a->Class->IsCarryall) {
+			a->Assign_Destination(NULL);
+			Transmit_Message(RADIO_UNTETHER);
+			Transmit_Message(RADIO_OVER_OUT);
+		}
+	}
+
+	BuildingClass * b = As_Building(target);
+
+	if (Get_Mission() == MISSION_UNLOAD || MissionQueue == MISSION_UNLOAD) {
+		BuildingClass * dock = Map[Get_Cell() + AdjacentCell[FACING_W]].Cell_Building();
+		if (dock != NULL && Class->Harvester && dock->Anim_Active(BANIM_SPECIAL_ONE)) {
+			dock->End_Anim(BANIM_SPECIAL_ONE);
+		}
+	}
+
+	if (Get_Mission() == MISSION_ENTER || MissionQueue == MISSION_ENTER) {
+		if (!HasAnyLink()) {
+			TechnoClass * techno = Dynamic_Cast<TechnoClass *>(target);
+			if (techno != NULL && techno->RTTI == RTTI_UNIT) {
+				QueueUpToEnter = As_Unit(target);
+				ArchiveTarget = NULL;
+				target = NULL;
+			} else if (b != NULL && b->RTTI == RTTI_BUILDING && b->Class->UnitAbsorb) {
+				QueueUpToEnter = b;
+				ArchiveTarget = NULL;
+				target = NULL;
+			} else if (b != NULL && b->RTTI == RTTI_BUILDING) {
+				if (b->HasAnyLink()) {
+					if (!b->Class->Bunker) {
+						ArchiveTarget = target;
+					}
+					if (b->Class->Bunker) {
+						Transmit_Message(RADIO_OVER_OUT);
+						target = NULL;
+					}
+					if (b->Class->IsCanUnitRepair) {
+						if (Get_Health_Ratio() < Rule->ConditionGreen) {
+							QueueUpToEnter = b;
+							target = NULL;
+						} else {
+							Transmit_Message(RADIO_OVER_OUT);
+							target = NULL;
+						}
+					}
+				} else {
+					AbstractClass * oldnav = NavCom;
+					if (Transmit_Message(RADIO_DOCKING, b) != RADIO_ROGER) {
+						Transmit_Message(RADIO_OVER_OUT);
+						if (b->Class->IsCanUnitRepair) {
+							ArchiveTarget = target;
+						}
+					} else {
+						if (b->Class->IsDockUnload && NavCom != oldnav) {
+							target = NavCom;
+						}
+					}
+				}
+			} else if (target != NULL && (target->AbstractFlags & 1)) {
+				TechnoClass * whom = (TechnoClass *)target;
+				if (whom->HasAnyLink()) {
+					ArchiveTarget = target;
+				} else {
+					if (Transmit_Message(RADIO_HELLO, whom) == RADIO_ROGER) {
+						if (Transmit_Message(RADIO_DOCKING) != RADIO_ROGER) {
+							Transmit_Message(RADIO_OVER_OUT);
+						}
+					}
+				}
+			}
+		} else {
+			Path[0] = FACING_NONE;
+		}
+	} else {
+		Path[0] = FACING_NONE;
+	}
+
+	bool useplan = false;
+
+	if (target != NULL && Class->IsSubterranean && Locomotion->Is_Moving()) {
+		IPersistPtr persist(Locomotion);
+		CLSID clsid;
+		persist->GetClassID(&clsid);
+		if (clsid == LocomotionClass::CLSIDs::Drive) {
+			NavQueue.Add_Head(target);
+			RouteQueue.Clear();
+			CellClass * tcell = Get_Target_Cell_Ptr();
+			target = tcell;
+			immediate = false;
+			if (tcell != NULL && tcell->IsUnderBridge && !Is_Moving_Onto_Bridge()) {
+				Cell nearby = Map.Nearby_Location(tcell->CellID, SPEED_TRACK, Map.Get_Cell_Zone(&tcell->CellID, Class->MZone, false), Class->MZone, false, Point2D(1, 1), false, true, false, false);
+				if (nearby != CELL_NONE) {
+					target = &Map[nearby];
+				}
+			}
+		}
+	}
+
+	bool needsswap = false;
+
+	if (target != NULL) {
+		bool surface = false;
+
+		if (Class->IsSubterranean && immediate) {
+			bool isbridge = Is_Moving_Onto_Bridge();
+
+			Cell from = Destination_Coord().As_Cell();
+			bool canburrowfrom = Map[from].Can_Burrow_Here();
+
+			Cell to = target->Center_Coord().As_Cell();
+			CellClass * tocell = &Map[to];
+			bool isunderbridgeto = tocell->IsUnderBridge;
+			bool canburrowto = tocell->Can_Burrow_Here();
+			int height = Get_Height_AGL();
+
+			if (isbridge && isunderbridgeto) {
+				int z1 = Map.Zone_Connection_Index(from, 3, 0);
+				if (z1 == Map.Zone_Connection_Index(to, 3, 0) && z1 != -1) {
+					if (!Map.ZoneConnections[z1].IsPassable) {
+						Cell d1 = Map.Get_Zone_Connection_Destination(from, from);
+						Cell d2 = Map.Get_Zone_Connection_Destination(to, to);
+						if ((d1 - d2).Length() <= 2) {
+							needsswap = true;
+						}
+					} else {
+						needsswap = true;
+					}
+				}
+			}
+			if ((isbridge || isunderbridgeto) && !needsswap) {
+				useplan = true;
+			}
+
+			if (((!canburrowfrom && height >= 0) || !canburrowto) && !needsswap) {
+				useplan = true;
+			}
+		}
+
+		if (useplan) {
+			target = Plan_Route(target);
+			surface = true;
+		} else if (immediate) {
+			RouteQueue.Clear();
+			surface = true;
+		}
+
+		if (surface) {
+			if (Locomotion->Is_Surfacing()) {
+				RouteQueue.Add_Head(target);
+				target = &Map[Get_Coord()];
+			}
+		}
+	} else {
+		RouteQueue.Clear();
+	}
+
+	if (Class->Teleporter && !IsImmobilized && LocomotorSource == NULL && !IsAttackedByLocomotor) {
+		TechnoClass * contact = FUN_0065AD30(0);
+		IPersistPtr persist(Locomotion);
+		CLSID clsid;
+		persist->GetClassID(&clsid);
+		bool swap = true;
+		if (contact != NULL) {
+			if (contact->RTTI == RTTI_BUILDING) {
+				BuildingClass * dock = As_Building(contact);
+				CellClass * cell = As_Cell(target);
+				if (dock->Class->IsDockUnload && cell != NULL && cell->Cell_Unit(false) == NULL) {
+					swap = false;
+					if (clsid != LocomotionClass::CLSIDs::Teleport) {
+						IPiggybackPtr piggy(Locomotion);
+						if (piggy != NULL && piggy->Is_Piggybacking() && piggy->Is_Ok_To_End()) {
+							piggy->End_Piggyback(&Locomotion);
+						} else {
+							Locomotion->Stop_Moving();
+							Set_Mission(MISSION_NONE);
+							QueueMission(MISSION_ENTER, false);
+							unknown_bool_6AC = true;
+							UnlimboingInfantry = true;
+						}
+					}
+				}
+			}
+		}
+		if ((contact == NULL || swap == true) && clsid != LocomotionClass::CLSIDs::Drive) {
+			IPiggybackPtr piggy(Locomotion);
+			if (piggy != NULL && piggy->Is_Piggybacking() && piggy->Is_Ok_To_End()) {
+				piggy->End_Piggyback(&Locomotion);
+			}
+			ILocomotionPtr walk(LocomotionClass::CLSIDs::Drive);
+			walk->Link_To_Object(this);
+			piggy = IPiggybackPtr(walk);
+			if (piggy != NULL) {
+				piggy->Begin_Piggyback(Locomotion);
+				Locomotion = walk;
+			}
+		}
+	}
+
+	if (target != NULL && !Locomotion->Is_Moving()) {
+		IPersistPtr persist(Locomotion);
+		CLSID clsid;
+		persist->GetClassID(&clsid);
+		if (clsid == LocomotionClass::CLSIDs::Tunnel && Get_Height_AGL() == 0) {
+			Coord tc = target->Center_Coord();
+			int gl = Map.Get_Height_GL(tc);
+			if (tc.Z < gl) tc.Z = gl;
+
+			bool doswap = needsswap;
+			if (!doswap) {
+				bool canburrow = !Is_Moving_Onto_Bridge()
+					&& !Map[target->Center_Coord()].IsUnderBridge
+					&& Map[Destination_Coord()].Can_Burrow_Here()
+					&& Map[target->Center_Coord()].Can_Burrow_Here();
+				if (canburrow) {
+					if (!AStarAttempt(&Get_Target_Cell(), &target->Center_Coord().As_Cell())) {
+						doswap = true;
+					}
+				} else {
+					doswap = true;
+				}
+			}
+
+			if (doswap) {
+				IPiggybackPtr piggy(Locomotion);
+				if (piggy != NULL && piggy->Is_Piggybacking()) {
+					piggy->End_Piggyback(&Locomotion);
+				}
+				ILocomotionPtr walk(LocomotionClass::CLSIDs::Drive);
+				walk->Link_To_Object(this);
+				piggy = IPiggybackPtr(walk);
+				if (piggy != NULL) {
+					piggy->Begin_Piggyback(Locomotion);
+					Locomotion = walk;
+					Locomotion->Force_New_Slope(Map[Get_Coord()].Ramp);
+				}
+			}
+		}
+	}
+
+	if (b != NULL) {
+		if (b->Class->IsCanUnitRepair) {
+			if (b->HasAnyLink() && b->FUN_0065AD30(0) != this) {
+				ArchiveTarget = target;
+			} else {
+				if (Transmit_Message(RADIO_HELLO, b) == RADIO_ROGER) {
+					if (Transmit_Message(RADIO_DOCKING) == RADIO_ROGER) {
+						BASECLASS::Assign_Destination(target, immediate);
+						Path[0] = FACING_NONE;
+						return;
+					}
+					Transmit_Message(RADIO_OVER_OUT);
+					target = NULL;
+				}
+			}
+		}
+		if (b->Class->Bunker) {
+			if (!b->HasAnyLink() || b->FUN_0065AD30(0) == this) {
+				if (Transmit_Message(RADIO_HELLO, b) == RADIO_ROGER) {
+					if (Transmit_Message(RADIO_DOCKING) == RADIO_ROGER) {
+						BASECLASS::Assign_Destination(target, immediate);
+						Path[0] = FACING_NONE;
+						return;
+					}
+					Transmit_Message(RADIO_OVER_OUT);
+					target = NULL;
+				}
+			}
+		}
+	}
+
+	BuildingClass * wf = (BuildingClass *)FUN_0065AD30(0);
+	if (Is_Target_Building(wf) && wf->Class->IsWeaponsFactory && CurrentMission != MISSION_ENTER) {
+		if (LocomotorSource == NULL) {
+			Cell exitcell = wf->Get_Coord().As_Cell() + Cell(4, 1);
+			if (target != &Map[exitcell]) {
+				NavQueue.Clear();
+				RouteQueue.Clear();
+				if (target != NULL) {
+					Queue_Navigation_List(target);
+				}
+				return;
+			}
+		} else {
+			Transmit_Message(RADIO_OVER_OUT);
+		}
+	}
+
+	if (b != NULL && Class->Dock.Count() > 0 && Class->Dock.Is_In_List(b->Class) && RTTI == RTTI_UNIT && (Class->Harvester || Class->Weeder) && Get_Mission() != MISSION_UNLOAD) {
+		if (FUN_0065AD30(0) != b && !b->HasAnyLink() && Transmit_Message(RADIO_HELLO, b) == RADIO_ROGER && Get_Mission() != MISSION_ENTER && Get_Mission() != MISSION_HARVEST) {
+			QueueMission(MISSION_ENTER, false);
+			target = NULL;
+		} else {
+			if (Is_Target_Building(target) && FUN_0065AD30(0) != target) {
+				Cell nearby = Map.Nearby_Location(b->Get_Coord().As_Cell(), SPEED_WHEEL, Map.Get_Cell_Zone(&b->Get_Coord().As_Cell(), Class->MZone, false), Class->MZone, false, Point2D(1, 1), false, true, false, false);
+				if (nearby != CELL_NONE) {
+					target = &Map[nearby];
+				} else {
+					target = NULL;
+				}
+			}
+		}
+	}
+
+	if (!Locomotion->Is_Powered() && !House->IonSensitivesShouldBeOffline()) {
+		CellClass * cellptr = Get_Cell_Ptr();
+		if (!cellptr->IsUnderBridge) {
+			ObjectClass * occupier = cellptr->Cell_Occupier();
+			while (occupier != NULL) {
+				if (occupier != this && occupier->RTTI == RTTI_BUILDING && (((BuildingClass *)occupier)->Class->IsCanUnitRepair || ((BuildingClass *)occupier)->Class->Bunker)) {
+					Locomotion->Power_On();
+					break;
+				}
+				occupier = occupier->Next;
+			}
+		}
+	}
+
+	BASECLASS::Assign_Destination(target, immediate);
+}
+
 
 // FUNCTION: GAMEMD 0x00743190
 AbstractClass * UnitClass::Greatest_Threat(ThreatType threat, Coord const & coord, bool onlyenemy) const
@@ -4659,7 +5299,7 @@ void UnitClass::UpdateDisguise(void)
 		Cell cell = Get_Cell();
 		bool bridge = Get_Cell_Ptr()->Is_Tile_Bridge();
 		for (int face = FACING_FIRST; face < FACING_COUNT; face++) {
-			CellClass * adjacent = &Map[Adjacent_Cell_By_Value(cell, FacingType(face))];
+			CellClass * adjacent = &Map[::Adjacent_Cell(cell, FacingType(face))];
 			InfantryClass * infantry = adjacent->Cell_Infantry(bridge);
 			if (infantry != NULL && !House->Is_Ally(infantry)) {
 				InfantryBlinkTimer = Rule->InfantryBlinkDisguiseTime;

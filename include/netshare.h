@@ -20,7 +20,7 @@ bool Set_Scenario_Info_From_Index(int index);
 void PregameSetup(void);
 void Update_Network_Dialog_Preview(HWND win);
 void Receive_Random_Map_Preview(void);
-void Send_Preview_To_Guests(void);
+void __fastcall Send_Preview_To_Guests(MapPreviewClass * preview);
 int CountAliveTeams(HouseClass * house);
 
 int RandomMapWaypointCount(int index);

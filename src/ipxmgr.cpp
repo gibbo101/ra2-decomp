@@ -663,29 +663,29 @@ bool IPXManagerClass::FUN_00541680(CommHeaderType *packet, void *buf, int buflen
 	static unsigned long loopback[2] = {0, htonl(0x7F000001)};
 
 	if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter && OwnerTalk.RouterProcess) {
-		if (packet->FieldC == DAT_00841F3C) {
-			packet->FieldC = port;
-			memcpy(&packet->Field8, from + 4, 4);
+		if (packet->ForwardPort == DAT_00841F3C) {
+			packet->ForwardPort = port;
+			memcpy(&packet->ForwardAddress, from + 4, 4);
 			FUN_004068E0("Forwarding packet from %s ; %d to forwarder\n", ((IPXAddressClass *)from)->As_String(0), port);
 			PacketTransport->WriteTo(buf, buflen, loopback, 12, false, true, DAT_00841F3C);
 			return true;
 		}
-		if (packet->FieldC) {
+		if (packet->ForwardPort) {
 			NetNodeType node;
 			Session.Players[0]->Address.Get_Node(node);
-			if (memcmp(node, &packet->Field8, 4) == 0 && Session.PlayerPorts[0] == packet->FieldC) {
+			if (memcmp(node, &packet->ForwardAddress, 4) == 0 && Session.PlayerPorts[0] == packet->ForwardPort) {
 				FUN_004068E0("Packet is supposed to be forwarded to us - just adding it to our queue\n");
 				return false;
 			}
-			if (packet->Field8) {
-				unsigned short oldport = packet->FieldC;
+			if (packet->ForwardAddress) {
+				unsigned short oldport = packet->ForwardPort;
 				IPXAddressClass address;
 				NetNodeType dest;
-				memcpy(dest, &packet->Field8, 4);
+				memcpy(dest, &packet->ForwardAddress, 4);
 				address.Set_Node(dest);
 				address.Set_Port(oldport);
-				packet->FieldC = 0;
-				memset(&packet->Field8, 0, 4);
+				packet->ForwardPort = 0;
+				memset(&packet->ForwardAddress, 0, 4);
 				FUN_004068E0("Forwarding packet from router to %s\n", address.As_String(0));
 				PacketTransport->WriteTo(buf, buflen, &address, 12, false, true, oldport);
 				return true;
@@ -693,6 +693,245 @@ bool IPXManagerClass::FUN_00541680(CommHeaderType *packet, void *buf, int buflen
 		}
 	}
 	return false;
+}
+
+// FUNCTION: GAMEMD 0x00541820
+int IPXManagerClass::Service(void)
+{
+	int rc = 1;
+	int i;
+	CommHeaderType *packet;
+	int packetlen;
+	IPXAddressClass address;
+	unsigned short port;
+
+	unsigned char temp_receive_buffer[1024];
+	int temp_receive_buffer_len;
+	int temp_address_len;
+	char temp_address[128];
+	char name[22];
+
+	if (PacketTransport) {
+
+		do {
+			temp_receive_buffer_len = sizeof(temp_receive_buffer);
+			temp_address_len = sizeof(temp_address);
+			port = 0;
+			packetlen = PacketTransport->Read(temp_receive_buffer, temp_receive_buffer_len, temp_address, temp_address_len, port);
+			if (packetlen) {
+				CurDataBuf = (char *)temp_receive_buffer;
+				address = *((IPXAddressClass *)temp_address);
+
+				packet = (CommHeaderType *)CurDataBuf;
+				if (packet->MagicNumber == GlobalChannel->Magic_Num()) {
+
+					if (FUN_00541680(packet, temp_receive_buffer, packetlen, temp_address, port)) {
+						continue;
+					}
+
+					if (!GlobalChannel->Receive_Packet(packet, packetlen, &address, port)) {
+						// A zero length ends the receive loop.
+						packetlen = 0;
+						ReceiveOverflows++;
+						DebugString("GlobalChannel recive buffer overflow %d\n", ReceiveOverflows);
+						continue;
+					}
+
+					if (Session.Type == GAME_INTERNET && Session.UsePacketRouter) {
+						bool known = false;
+						for (i = 0; i < Session.Players.Count(); i++) {
+							if (Session.Players[i]->Address.FUN_0053EF30(address) && Session.PlayerPorts[i] == port) {
+								known = true;
+								break;
+							}
+						}
+						if (!known && Session.Players.Count()) {
+							DebugString("NAT Alert - port number fiddling detected!\n");
+							if (packetlen >= sizeof(GlobalHeaderType) && packet->Code != ConnectionClass::PACKET_ACK && packetlen >= 0x3FU) {
+								GlobalPacketType *gpacket = (GlobalPacketType *)(CurDataBuf + sizeof(GlobalHeaderType));
+								if (gpacket->Command == NET_IM_STILL_HERE || gpacket->Command == NET_PORT_PROBE || gpacket->Command == NET_PING) {
+									memset(name, 0, sizeof(name));
+									strncpy(name, gpacket->Name, MPLAYER_NAME_MAX);
+									for (i = 0; i < Session.Players.Count(); i++) {
+										wchar_t const *player_name = Session.Players[i]->Name;
+										if (stricmp(FUN_007350C0(player_name), name) == 0) {
+											if (Session.Players[i]->Address.FUN_0053EF30(address) && Session.Players[i]->Address.Get_Port() == port) {
+												break;
+											}
+											DebugString("Player %s is having his port translated to %d\n", name, port);
+											unsigned short oldport = Session.PlayerPorts[i];
+											Session.PlayerPorts[i] = port;
+											OwnerTalk.Set_Port(Session.Players[i]->Player.ID, port);
+											GlobalChannel->vt_entry_40(&address, oldport);
+											GlobalChannel->vt_entry_40(&address, Session.Players[i]->Address.Get_Port());
+											Session.Players[i]->Address = address;
+											Session.Players[i]->Address.Set_Port(port);
+											OwnerTalk.Set_Address(Session.Players[i]->Player.ID, &Session.Players[i]->Address);
+											Session.Slots[Session.FUN_0069BC60(i)]->Address = address;
+											Session.Slots[Session.FUN_0069BC60(i)]->Address.Set_Port(port);
+
+											for (int j = 0; j < NumConnections; j++) {
+												wchar_t const *conn_name = Connection[j]->Name;
+												if (stricmp(FUN_007350C0(conn_name), name) == 0) {
+													Connection[j]->Address = address;
+													Connection[j]->Address.Set_Port(port);
+													DebugString("Set address for connection %d to %s\n", j, Connection[j]->Address.As_String(0));
+													break;
+												}
+											}
+
+											if (!Session.NetOpen && NumConnections) {
+												if (Houses.Count() > Session.Players[i]->Player.ID && Session.Am_I_Master(Houses[Session.Players[i]->Player.ID])) {
+													DebugString("Frame %d, Router apparently changed address from %s to %s\n", Frame, MulticastChannel->Address.As_String(0), address.As_String(0));
+													MulticastChannel->Address = address;
+													MulticastChannel->Address.Set_Port(port);
+													Session.HostAddress = address;
+													Session.HostAddress.Set_Port(port);
+													Session.PacketRouterAddress = address;
+													Session.PacketRouterAddress.Set_Port(port);
+													Session.PacketRouterPort = port;
+												}
+											}
+											break;
+										}
+									}
+								}
+							}
+						}
+					}
+				} else if (packet->MagicNumber == LobbyChannel->Magic_Num()) {
+					if (Session.ViaPacketRouter) {
+						if (!LobbyChannel->Receive_Packet(packet, packetlen, &address, 0)) {
+							packetlen = 0;
+							ReceiveOverflows++;
+							DebugString("RouterChannel recive buffer overflow %d\n", ReceiveOverflows);
+						}
+					}
+				} else if (packet->MagicNumber == ProductID) {
+
+					if (FUN_00541680(packet, temp_receive_buffer, packetlen, temp_address, port)) {
+						continue;
+					}
+
+					bool found_address = false;
+					if (Session.ViaPacketRouter && packet->Field3 == 0xFF) {
+						found_address = true;
+						if (packet->Code == ConnectionClass::PACKET_ACK) {
+							MulticastChannel->Receive_Packet(packet, packetlen);
+						} else if (NumConnections > 0) {
+							switch (packet->Code) {
+								case ConnectionClass::PACKET_DATA_ACK:
+									DebugString("Adding DATA_ACK packet %d from %s ; %d to multicast queue\n", packet->PacketID, address.As_String(0), port);
+									break;
+								case ConnectionClass::PACKET_DATA_NOACK:
+									DebugString("Adding DATA_NOACK packet %d from %s ; %d to multicast queue\n", packet->PacketID, address.As_String(0), port);
+									break;
+								case ConnectionClass::PACKET_ACK:
+									DebugString("Adding ACK packet %d from %s ; %d to multicast queue\n", packet->PacketID, address.As_String(0), port);
+									break;
+								default:
+									DebugString("Adding ??? packet %d from %s ; %d to multicast queue\n", packet->PacketID, address.As_String(0), port);
+									break;
+							}
+							if (!Connection[0]->Receive_Packet(packet, packetlen)) {
+								packetlen = 0;
+								ReceiveOverflows++;
+								DebugString("Receive buffer overflow %d\n", ReceiveOverflows);
+							}
+						}
+					} else {
+						for (i = 0; i < NumConnections; i++) {
+							if ((Session.ViaPacketRouter && OwnerTalk.Mask_From_ID(Connection[i]->ID) == packet->Field3) ||
+								(!Session.ViaPacketRouter && Connection[i]->Address == address)) {
+								found_address = true;
+								break;
+							}
+						}
+						if (found_address) {
+							if (!Connection[i]->Receive_Packet(packet, packetlen)) {
+								packetlen = 0;
+								ReceiveOverflows++;
+								DebugString("Reecive buffer overflow %d\n", ReceiveOverflows);
+							}
+						}
+					}
+
+					if (found_address && Session.Type == GAME_INTERNET && Session.ViaPacketRouter && address != MulticastChannel->Address) {
+						for (i = 1; i < Session.Players.Count(); i++) {
+							if (Session.Players[i]->Address.FUN_0053EF30(MulticastChannel->Address) &&
+								Session.Am_I_Master(Houses[Session.Players[i]->Player.ID])) {
+								DebugString("Frame %d, Router apparently changed address from %s to %s\n", Frame, MulticastChannel->Address.As_String(0), address.As_String(0));
+								Session.Players[i]->Address = address;
+								MulticastChannel->Address = address;
+								Session.HostAddress = address;
+								Session.PacketRouterAddress = address;
+								OwnerTalk.Set_Address(Session.Players[i]->Player.ID, &address);
+							}
+						}
+					}
+					if (!found_address) {
+						if (Session.Type == GAME_INTERNET && !ScenarioInit) {
+							if (Frame > 8 && !Session.ViaPacketRouter && packetlen > 15U) {
+								if (packet->Code == ConnectionClass::PACKET_DATA_NOACK) {
+									EventClass *event = (EventClass *)(((char *)packet) + sizeof(CommHeaderType));
+									if (event->Type == EventClass::FRAMESYNC) {
+										int id = event->ID;
+										for (int k = 1; k < Session.Players.Count(); k++) {
+											if (Session.Players[k]->Player.ID == id) {
+												Session.Players[k]->Address = address;
+												if (Connection_Index(id) != CONNECTION_NONE) {
+													Connection[Connection_Index(id)]->Address = address;
+												}
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} while (packetlen);
+
+	}
+
+	if (GlobalChannel && PacketTransport) {
+		if (!GlobalChannel->Service()) {
+			GlobalChannel->Discard_Undeliverable_Packets();
+			rc = 0;
+		}
+	}
+	if (Session.ViaPacketRouter && LobbyChannel) {
+		if (!LobbyChannel->Service()) {
+			LobbyChannel->Discard_Undeliverable_Packets();
+			rc = 0;
+		}
+		if (!Session.unknown_3098) {
+			OwnerTalk.Handle_Router_Messages();
+		}
+	}
+	if (Session.ViaPacketRouter && MulticastChannel) {
+		if (!MulticastChannel->Service()) {
+			DebugString("Multicast channel has gone bad\n");
+			rc = 0;
+		}
+	}
+	if (PacketTransport) {
+		for (i = 0; i < NumConnections; i++) {
+			if (!Connection[i]->Service()) {
+				rc = 0;
+				BadConnection = Connection[i]->ID;
+				DebugString("Error - Connection %d has gone bad\n", BadConnection);
+			}
+		}
+	}
+
+	if (rc) {
+		BadConnection = CONNECTION_NONE;
+	}
+
+	return(rc);
 }
 
 // FUNCTION: GAMEMD 0x00542280
@@ -912,17 +1151,17 @@ void IPXManagerClass::Multiplayer_Debug_Print(void)
 	Surface * surface = DSurface::Composite;
 
 	swprintf(buffer, L"Rtry delta: %d", 1000 * RetryDelta / TIMER_SECOND);
-	Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 402), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+	Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 402), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 	swprintf(buffer, L"Rtry timeout: %d", 1000 * Timeout / TIMER_SECOND);
-	Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 412), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+	Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 412), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 	swprintf(buffer, L"Lat Fudge : %d", Session.LatencyFudge);
-	Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 422), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+	Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 422), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 
 	if (SentFrameSyncTimer / TIMER_SECOND) {
 		swprintf(buffer, L"FSPS : %d", SentFrameSyncCount / (SentFrameSyncTimer / TIMER_SECOND));
-		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 432), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+		Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 432), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 		if ((Frame & 0x7F) == 0x7F) {
 			SentFrameSyncTimer = 0;
 			SentFrameSyncCount = 0;
@@ -931,7 +1170,7 @@ void IPXManagerClass::Multiplayer_Debug_Print(void)
 
 	if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
 		swprintf(buffer, L"MC resp: %d", 1000 * Ipx.Multicast_Response_Time() / TIMER_SECOND);
-		Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(0, 442), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
+		Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(0, 442), Fetch_Scheme_By_Name("Grey"), 0, TextPrintType(0x19));
 	}
 
 	for (int i = 0; i < NumConnections; i++) {
@@ -942,27 +1181,27 @@ void IPXManagerClass::Multiplayer_Debug_Print(void)
 			wchar_t name[200];
 
 			swprintf(name, L"%s", Connection[i]->Name);
-			Fancy_Text_Print_Wide(Scratch(Point2D()), name, surface, &surface->Get_Rect(), &Point2D(x, 302), ColorSchemes[scheme], 0, TextPrintType(0x19));
+			Fancy_Text_Print_Wide(name, surface, &surface->Get_Rect(), &Point2D(x, 302), ColorSchemes[scheme], 0, TextPrintType(0x19));
 
 			int avg = Connection[i]->Queue->Avg_Response_Time();
 			swprintf(buffer, L"Average  : %d", 1000 * avg / TIMER_SECOND);
-			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 311), ColorSchemes[scheme], 0, TextPrintType(0x19));
+			Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(x, 311), ColorSchemes[scheme], 0, TextPrintType(0x19));
 
 			int max = Connection[i]->Queue->Max_Response_Time();
 			swprintf(buffer, L"Max      : %d", 1000 * max / TIMER_SECOND);
-			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 319), ColorSchemes[scheme], 0, TextPrintType(0x19));
+			Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(x, 319), ColorSchemes[scheme], 0, TextPrintType(0x19));
 
 			int resends = Connection[i]->Num_Resends();
 			swprintf(buffer, L"Resends  : %d", resends);
-			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 327), ColorSchemes[scheme], 0, TextPrintType(0x19));
+			Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(x, 327), ColorSchemes[scheme], 0, TextPrintType(0x19));
 
 			int numlost = MAX(0, Connection[i]->Num_Lost());
 			swprintf(buffer, L"Num lost : %d", numlost);
-			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 335), ColorSchemes[scheme], 0, TextPrintType(0x19));
+			Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(x, 335), ColorSchemes[scheme], 0, TextPrintType(0x19));
 
 			int pcnt_lost = Connection[i]->Percent_Lost();
 			swprintf(buffer, L"Pcnt lost: %d", pcnt_lost);
-			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 343), ColorSchemes[scheme], 0, TextPrintType(0x19));
+			Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(x, 343), ColorSchemes[scheme], 0, TextPrintType(0x19));
 
 			int process_time = 0;
 			for (int j = 0; j < Session.Players.Count(); ++j) {
@@ -972,20 +1211,20 @@ void IPXManagerClass::Multiplayer_Debug_Print(void)
 				}
 			}
 			swprintf(buffer, L"Process : %d", process_time);
-			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 351), ColorSchemes[scheme], 0, TextPrintType(0x19));
+			Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(x, 351), ColorSchemes[scheme], 0, TextPrintType(0x19));
 
 			swprintf(buffer, L"Frame   : %d", -Session.PlayerLatency[i]);
-			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 359), ColorSchemes[scheme], 0, TextPrintType(0x19));
+			Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(x, 359), ColorSchemes[scheme], 0, TextPrintType(0x19));
 
 			swprintf(buffer, L"Queue s/r: %d/%d", Connection[i]->Queue->Num_Send(), Connection[i]->Queue->Num_Receive());
-			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 367), ColorSchemes[scheme], 0, TextPrintType(0x19));
+			Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(x, 367), ColorSchemes[scheme], 0, TextPrintType(0x19));
 
 			swprintf(buffer, L"Missed o/m: %d/%d", Connection[i]->Missed_Overall(), Connection[i]->Missed_Magic());
-			Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 375), ColorSchemes[scheme], 0, TextPrintType(0x19));
+			Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(x, 375), ColorSchemes[scheme], 0, TextPrintType(0x19));
 
 			if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
 				swprintf(buffer, L"Rout resp: %d", 1000 * DAT_00AC5210[i] / TIMER_SECOND);
-				Fancy_Text_Print_Wide(Scratch(Point2D()), buffer, surface, &surface->Get_Rect(), &Point2D(x, 383), ColorSchemes[scheme], 0, TextPrintType(0x19));
+				Fancy_Text_Print_Wide(buffer, surface, &surface->Get_Rect(), &Point2D(x, 383), ColorSchemes[scheme], 0, TextPrintType(0x19));
 			}
 		}
 	}

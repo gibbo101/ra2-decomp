@@ -13,19 +13,13 @@
 #include "vector.h"
 #include <cstdio>
 #include <math.h>
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x007B17B0 SYMBOL
 // _$E2
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007F79A8;
-extern const double DAT_007F79B0;
 extern int DAT_00B780A0;
 extern bool DAT_00B7809C;
-extern int DAT_00B78088, DAT_00B78080, DAT_00B78084;
-namespace Game { extern HWND hWnd; }
 extern void Add_CRC(unsigned int *crc, unsigned int val);
 extern "C" int __stdcall EnumProtocolsA(int *protocols, void *buffer, unsigned long *len);
 struct PROTOCOL_INFOA { DWORD dwServiceFlags; int iAddressFamily; int iMaxSockAddr; int iMinSockAddr; int iSocketType; int iProtocol; int dwMessageSize; char *lpProtocol; };
@@ -41,75 +35,30 @@ struct WinsockBufferType {
 
 // SYNTHETIC: GAMEMD 0x007B17D0 SYMBOL
 // _$E5
-double DAT_00B78040 = FUN_004CAC40(pow(256.0, 2.0) * 2);
-
 // SYNTHETIC: GAMEMD 0x007B1800 SYMBOL
 // _$E8
-double DAT_00B78090 = DAT_00B78040 / DAT_007F79A8;
-
 // SYNTHETIC: GAMEMD 0x007B1820 SYMBOL
 // _$E11
-double DAT_00B78078 = 1.0 / DAT_00B78090;
-
 // SYNTHETIC: GAMEMD 0x007B1840 SYMBOL
 // _$E14
-double DAT_00B78070 = DAT_007F79B0 * 45.0;
-
 // SYNTHETIC: GAMEMD 0x007B1860 SYMBOL
 // _$E17
-double DAT_00B78048 = DAT_007F79B0 * 60.0;
-
 // SYNTHETIC: GAMEMD 0x007B1880 SYMBOL
 // _$E20
-double DAT_00B78020 = DAT_007F79B0 * 90.0;
-
 // SYNTHETIC: GAMEMD 0x007B18A0 SYMBOL
 // _$E23
-int DAT_00B78098 = (int)(FUN_004CAD50(DAT_00B78020 - DAT_00B78048) * DAT_00B78040 * 0.5);
-
 // SYNTHETIC: GAMEMD 0x007B18E0 SYMBOL
 // _$E26
-double DAT_00B78050 = FUN_004CADE0(DAT_00B78098 * 0.00390625);
-
 // SYNTHETIC: GAMEMD 0x007B1910 SYMBOL
 // _$E29
-double DAT_00B78068 = FUN_004CADE0((DAT_00B78098 * 2) / DAT_00B78040);
-
 // SYNTHETIC: GAMEMD 0x007B1940 SYMBOL
 // _$E32
-int DAT_00B7808C = (int)(DAT_00B78098 * 4 + 0.5);
-
-class InputManagerClass {
-public:
-	static InputManagerClass *Instance;
-	void FUN_0054F000(void);
-};
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x007B1970 SYMBOL
-// _$E36
-ShortPair DAT_00B78038;
-
+// _$E35
 // SYNTHETIC: GAMEMD 0x007B1980 SYMBOL
-// _$E39
-IntTriple DAT_00B78058;
-
-// FUNCTION: GAMEMD 0x007B19A0
-void FUN_007B19A0(void)
-{
-	DAT_00B78088 = 0;
-	DAT_00B78080 = 128;
-	DAT_00B78084 = 128;
-}
+// _$E38
+// SYNTHETIC: GAMEMD 0x007B19A0 SYMBOL
+// _$E41
 
 // FUNCTION: GAMEMD 0x007B19C0
 WinsockInterfaceClass::WinsockInterfaceClass(void) :
@@ -179,13 +128,13 @@ void WinsockInterfaceClass::Close_Socket(void)
 // FUNCTION: GAMEMD 0x007B1BC0
 bool WinsockInterfaceClass::Start_Listening(void)
 {
-	if (WSAAsyncSelect(Socket, Game::hWnd, Protocol_Event_Message(INVALID_SOCKET), FD_READ | FD_WRITE) == SOCKET_ERROR) {
+	if (WSAAsyncSelect(Socket, MainWindow, Protocol_Event_Message(INVALID_SOCKET), FD_READ | FD_WRITE) == SOCKET_ERROR) {
 		DebugString("Async select failed on primary socket - error code %d.\n", LAST_ERROR);
 		return(false);
 	}
 
 	if (AlternateSocket != INVALID_SOCKET) {
-		if (WSAAsyncSelect(AlternateSocket, Game::hWnd, Protocol_Event_Message(AlternateSocket), FD_READ | FD_WRITE) == SOCKET_ERROR) {
+		if (WSAAsyncSelect(AlternateSocket, MainWindow, Protocol_Event_Message(AlternateSocket), FD_READ | FD_WRITE) == SOCKET_ERROR) {
 			DebugString("Async select failed on alternate socket - error code %d.\n", LAST_ERROR);
 			return(false);
 		}
@@ -196,11 +145,11 @@ bool WinsockInterfaceClass::Start_Listening(void)
 // FUNCTION: GAMEMD 0x007B1C50
 void WinsockInterfaceClass::Stop_Listening(void)
 {
-	if (Socket != INVALID_SOCKET && Game::hWnd) {
-		WSAAsyncSelect(Socket, Game::hWnd, 0, 0);
+	if (Socket != INVALID_SOCKET && MainWindow) {
+		WSAAsyncSelect(Socket, MainWindow, 0, 0);
 	}
-	if (AlternateSocket != INVALID_SOCKET && Game::hWnd) {
-		WSAAsyncSelect(AlternateSocket, Game::hWnd, 0, 0);
+	if (AlternateSocket != INVALID_SOCKET && MainWindow) {
+		WSAAsyncSelect(AlternateSocket, MainWindow, 0, 0);
 	}
 }
 
@@ -269,7 +218,7 @@ bool WinsockInterfaceClass::Init(void)
 
 	if (DAT_00B780A0 > 0 && !DAT_00B7809C) {
 		DAT_00B7809C = true;
-		MessageBox(Game::hWnd, "Warning - Packet Loss Simulation mode enabled", "Note", MB_OK);
+		MessageBox(MainWindow, "Warning - Packet Loss Simulation mode enabled", "Note", MB_OK);
 	}
 
 	char *buffer = new char [sizeof (WSADATA) + 1024];
@@ -466,7 +415,7 @@ void *WinsockInterfaceClass::Get_New_In_Buffer(void)
 // FUNCTION: GAMEMD 0x007B22E0
 int WinsockInterfaceClass::Read(void *buffer, int &buffer_len, void *address, int &address_len, unsigned short &port)
 {
-	InputManagerClass::Instance->FUN_0054F000();
+	Keyboard->Check();
 
 	if (InBuffers.Count() == 0) return(0);
 
@@ -517,9 +466,9 @@ void WinsockInterfaceClass::WriteTo(void *buffer, int buffer_len, void *address,
 		sock = Socket;
 	}
 
-	SendMessage(Game::hWnd, Protocol_Event_Message(sock), 0, (LONG)FD_WRITE);
+	SendMessage(MainWindow, Protocol_Event_Message(sock), 0, (LONG)FD_WRITE);
 
-	InputManagerClass::Instance->FUN_0054F000();
+	Keyboard->Check();
 }
 
 // FUNCTION: GAMEMD 0x007B24E0
@@ -543,9 +492,9 @@ void WinsockInterfaceClass::Broadcast(void *buffer, int buffer_len, bool alterna
 		sock = Socket;
 	}
 
-	SendMessage(Game::hWnd, Protocol_Event_Message(sock), 0, (LONG)FD_WRITE);
+	SendMessage(MainWindow, Protocol_Event_Message(sock), 0, (LONG)FD_WRITE);
 
-	InputManagerClass::Instance->FUN_0054F000();
+	Keyboard->Check();
 }
 
 // FUNCTION: GAMEMD 0x007B25E0

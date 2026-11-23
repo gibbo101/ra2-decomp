@@ -22,7 +22,7 @@ class UnitClass : public FootClass
 		bool IsDumping;
 		bool IsHarvesting;
 		bool TerrainPalette;
-		int unknown_int_6D4;
+		int VisceroidFacing;
 		int DeathCounter;
 		EBolt * ElectricBolt;
 		bool Deployed;
@@ -72,7 +72,7 @@ class UnitClass : public FootClass
 		virtual int Pip_Count(void) const override;
 		virtual InfantryTypeClass const * Crew_Type(void) const override;
 		virtual DirType Fire_Direction(void) const override;
-		virtual FireErrorType Can_Fire(AbstractClass * target, int which, bool ignoreRange) const override;
+		virtual FireErrorType Can_Fire(AbstractClass * target, int which, bool check_range) const override;
 		virtual double Tiberium_Load(void) const override;
 		virtual int What_Weapon_Should_I_Use(AbstractClass * target) const override;
 		virtual bool IsUnderEMP(void) const override;

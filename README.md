@@ -11,13 +11,14 @@ over real objects or hard-coded addresses are rejected however well they score.
 `docs/AGENTS.md` holds the rules the agents follow and every lesson learned. Pull requests
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
-**Status (15 November 2026):** 3.25 MB of the game's 3.82 MB of code matches byte for byte
-(85%), in 19,072 of its 19,353 functions (98%). Counting each unmatched function at its best
-attempt so far, the fuzzy match is 95%. Each function is checked on its own, and
-`tools/exelink/` links the whole executable with every matched function at its original
-address: with the original's bytes for what isn't matched yet, the image is identical to
-retail 1.001 in every section, and 81% of its code comes from source. `docs/PLAN.md` has
-the method, and `docs/rounds/` records every batch. Live progress, updated on every push:
+**Status (23 November 2026):** 3.55 MB of the game's 3.82 MB of code matches byte for byte
+(93%), in 19,261 of its 19,353 functions (99%) + 6 reconstructed. Counting each unmatched
+function at its best attempt so far, the fuzzy match is 98%. Each function is checked on
+its own, and `tools/exelink/` links the whole executable with every matched function at its
+original address: with the original's bytes for what isn't matched yet, the image is
+identical to retail 1.001 in every section, and 91% of its code comes from source.
+`docs/PLAN.md` has the method, and `docs/rounds/` records every batch. Live progress,
+updated on every push:
 https://bytematch.dev/gibbo101/ra2-decomp
 
 ## Getting started
@@ -44,12 +45,16 @@ https://bytematch.dev/gibbo101/ra2-decomp
    uv run tools/checkall.py                       # the whole tree
    ```
 
-   Each function prints MATCH, or how close it came and why.
+   Each function prints MATCH, or how close it came and why. A near miss prints a diff
+   with two lines of context; `CHECK_CTX=40` before the command widens it.
 
 ## Layout
 
 - `src/`, `include/`: the reconstructed source. A marker in reccmp's format
   (`// FUNCTION: GAMEMD 0x...`) ties each function to its address in the original.
+  `src/ra2asm/` holds the few routines the original wrote in assembly that no source
+  release contains, rebuilt from the executable; the checker prints `RECONSTRUCTED` for
+  them, never `MATCH`, and the counts list them apart.
 - `data/`: the map of the executable (`functions.csv`, `modules.csv`), what matches
   (`progress.csv`), proven names for globals (`names.csv`), and every attempt that fell
   short (`attempts.csv`).

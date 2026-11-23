@@ -192,7 +192,7 @@ Cell const * BulletClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x004666B0 SYMBOL
-// _$E41
+// _$E171
 
 // FUNCTION: GAMEMD 0x004666C0
 bool BulletClass::Mark(MarkType mark)
@@ -311,6 +311,64 @@ void BulletClass::Detach(AbstractClass const * target, bool all)
 			}
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x00468670
+bool BulletClass::Unlimbo(Coord const & coord, TVelocity3D<double> const & velocity)
+{
+	if (BASECLASS::Unlimbo(coord)) {
+		Velocity = velocity;
+		SourceCoords = coord;
+		LastMapCoords = SourceCoords.As_Cell();
+		Map.Remove(this);
+
+		Coord tcoord = TarCom->As_Coord();
+		TargetCoords = tcoord;
+
+		if (Class->FlakScatter && Class->IsInvisible) {
+			TPoint3D<float> delta;
+			delta.X = coord.X - tcoord.X;
+			delta.Y = tcoord.Y - coord.Y;
+			float vertical = coord.Z - tcoord.Z;
+			delta.Z = vertical;
+			float distance = delta.Length();
+			int scatter = Random_Pick(0, Rule->BallisticScatter * 2);
+			scatter *= (int)distance;
+			scatter /= WeaponType->Range;
+			double scatter_angle = Random_Double(0.0, M_PI * 2.0);
+			tcoord = Move_Coord(tcoord, DirType(scatter_angle), scatter);
+		}
+
+		if (Class->IsInvisible) {
+			HouseClass * house = Payback != NULL ? Payback->House : NULL;
+			Coord firestorm_coord = Map.Firestorm_On_Path(coord, tcoord, house);
+			if (firestorm_coord != COORD_NONE) {
+				firestorm_coord.Z = Map.Get_Height_GL(firestorm_coord);
+				PositionCoord = firestorm_coord;
+			} else {
+				CellClass * obstacle = TrajectoryHelper::FindFirstObstacle(coord, tcoord, Class, house);
+				if (obstacle != NULL) {
+					PositionCoord = obstacle->Center_Coord();
+				} else {
+					PositionCoord = tcoord;
+				}
+				// The target position replaces the obstacle position.
+				PositionCoord = tcoord;
+				MaxSpeed = 0;
+				Velocity.Set_Speed(0);
+			}
+		}
+
+		Fuse.Arm_Fuse(PositionCoord, tcoord, As_Aircraft(TarCom) != NULL ? 0 : Class->Arming);
+		if (Is_Homing()) {
+			Velocity.Set_Speed(1);
+		}
+		if (IsActive) {
+			Map.Submit(this);
+		}
+		return(true);
+	}
+	return(false);
 }
 
 // FUNCTION: GAMEMD 0x00468B90
@@ -660,6 +718,95 @@ void BulletClass::Detonate(Coord const & coord)
 		if (bullet != NULL) {
 			TVelocity3D<double> velocity(DirType((Dir256)Random_Pick(DIR_MIN, DIR_NE)), DirType(DIR_S), weapon->MaxSpeed / 10);
 			bullet->Unlimbo(PositionCoord, velocity);
+		}
+	}
+}
+
+extern int DAT_007ED3D0[];
+namespace Unsorted { extern Cell CellSpreadTable[]; }
+
+// FUNCTION: GAMEMD 0x0046A310
+void BulletClass::Shrapnel(void)
+{
+	int configured = Class->ShrapnelCount;
+	int count;
+	if (configured < 0) {
+		if (Payback == NULL) {
+			count = 3;
+		} else {
+			count = -configured - ::Distance(Payback->Center_Coord(), PositionCoord) / CELL_LEPTON;
+			if (count <= 0) {
+				return;
+			}
+		}
+	} else {
+		count = configured;
+	}
+
+	if (Get_Cell_Ptr()->Cell_Occupier() == NULL ||
+		Get_Cell_Ptr()->Cell_Occupier()->Fetch_RTTI() == RTTI_BUILDING) {
+		return;
+	}
+
+	WeaponTypeClass * weapon = Class->ShrapnelWeapon;
+	BulletTypeClass const * type = weapon->Bullet;
+	Cell center = Get_Cell();
+	int range = weapon->Range / CELL_LEPTON;
+	int fired = 0;
+	TVelocity3D<double> velocity;
+	for (int radius = 1; radius <= range; radius++) {
+		int end = DAT_007ED3D0[radius];
+		for (int index = DAT_007ED3D0[radius - 1]; index < end; index++) {
+			CellClass * cellptr = &Map[center + Unsorted::CellSpreadTable[index]];
+			ObjectClass * object = cellptr->Cell_Occupier();
+			if (object != NULL && object != Payback && Payback != NULL &&
+				!Payback->House->Is_Ally(object)) {
+				BulletClass * bullet = Create_Bullet(type, object, Payback,
+					weapon->Attack, weapon->WarheadPtr, weapon->MaxSpeed, weapon->IsBright);
+				if (bullet != NULL) {
+					velocity.Set(0, 0, 0);
+					velocity.Set_Yaw(::Direction(PositionCoord, object->Center_Coord()));
+					velocity.Set_Pitch(DirType(DIR_NE));
+					velocity.Set_Speed(weapon->MaxSpeed);
+					bullet->Unlimbo(PositionCoord, velocity);
+					Coord source;
+					source = PositionCoord;
+					if (weapon->IsLaser && Payback != NULL) {
+						Payback->CreateLaser(object, 0, weapon, source);
+					}
+					if (weapon->IsElectricBolt && Payback != NULL) {
+						Payback->CreateEBolt(object, weapon, source);
+					}
+				}
+				fired++;
+				if (fired == count) {
+					return;
+				}
+			}
+		}
+	}
+
+	for (; fired < count; fired++) {
+		Cell cell = Get_Cell();
+		cell.X += Random_Pick(-2, 2);
+		cell.Y += Random_Pick(-2, 2);
+		BulletClass * bullet = Create_Bullet(type, &Map[cell], Payback,
+			weapon->Attack, weapon->WarheadPtr, weapon->MaxSpeed, weapon->IsBright);
+		if (bullet != NULL) {
+			velocity.Set(0, 0, 0);
+			CellClass & destination = Map[cell];
+			velocity.Set_Yaw(::Direction(PositionCoord, destination.Center_Coord()));
+			velocity.Set_Speed(weapon->MaxSpeed);
+			velocity.Set_Pitch(DirType(DIR_NE));
+			bullet->Unlimbo(PositionCoord, velocity);
+			Coord source;
+			source = PositionCoord;
+			if (weapon->IsLaser && Payback != NULL) {
+				Payback->CreateLaser(&Map[cell], 0, weapon, source);
+			}
+			if (weapon->IsElectricBolt && Payback != NULL) {
+				Payback->CreateEBolt(&Map[cell], weapon, source);
+			}
 		}
 	}
 }

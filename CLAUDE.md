@@ -30,6 +30,11 @@ setup and the checker.
     way only `volatile` makes VC6 do, with every function touching it still matching;
   - Westwood's `div_zero` crash idiom as a local (`volatile int div_zero = 0;
     div_zero = 1 / div_zero;`), where the exe has that exact sequence.
+- A routine the original wrote in assembly that no source release contains (hand-written
+  inline asm, or an archive routine RA2 revised) may be reconstructed from the exe as an
+  `.asm` file in `src/ra2asm/`, marked `RECONSTRUCTED`, never `MATCH`. Each needs the
+  evidence that it is assembly, a search of the TibSun, Renegade and Generals releases, and
+  the maintainer's approval (a row in `data/reconstructed.csv`); the counts report it separately.
 - Running agents in parallel (a workflow) needs the maintainer's explicit opt-in each time.
 
 ## Comments

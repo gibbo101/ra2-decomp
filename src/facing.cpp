@@ -8,77 +8,34 @@
 #include <math.h>
 
 // SYNTHETIC: GAMEMD 0x004C81D0 SYMBOL
-// _$E45
-
-namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007E8828;
-extern const double DAT_007E8830;
+// _$E6
 
 // SYNTHETIC: GAMEMD 0x004C81F0 SYMBOL
-// _$E2
-double DAT_008B3A20 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
+// _$E27
 // SYNTHETIC: GAMEMD 0x004C8220 SYMBOL
-// _$E5
-double DAT_008B3A70 = DAT_008B3A20 / DAT_007E8828;
-
+// _$E30
 // SYNTHETIC: GAMEMD 0x004C8240 SYMBOL
-// _$E8
-double DAT_008B3A58 = DAT_007E1718 / DAT_008B3A70;
-
+// _$E33
 // SYNTHETIC: GAMEMD 0x004C8260 SYMBOL
-// _$E11
-double DAT_008B3A50 = DAT_007E1720 * DAT_007E8830;
-
+// _$E36
 // SYNTHETIC: GAMEMD 0x004C8280 SYMBOL
-// _$E14
-double DAT_008B3A28 = DAT_007E1728 * DAT_007E8830;
-
+// _$E39
 // SYNTHETIC: GAMEMD 0x004C82A0 SYMBOL
-// _$E17
-double DAT_008A3A00 = DAT_007E1730 * DAT_007E8830;
-
+// _$E42
 // SYNTHETIC: GAMEMD 0x004C82C0 SYMBOL
-// _$E20
-int DAT_008B3A78 = (int)(fastmath::tan(DAT_008A3A00 - DAT_008B3A28) * DAT_007E1738 * DAT_008B3A20);
-
+// _$E45
 // SYNTHETIC: GAMEMD 0x004C8300 SYMBOL
-// _$E23
-double DAT_008B3A30 = fastmath::atan(DAT_008B3A78 * DAT_007E1740);
-
+// _$E48
 // SYNTHETIC: GAMEMD 0x004C8330 SYMBOL
-// _$E26
-double DAT_008B3A48 = fastmath::atan((DAT_008B3A78 * 2) / DAT_008B3A20);
-
+// _$E51
 // SYNTHETIC: GAMEMD 0x004C8360 SYMBOL
-// _$E29
-int DAT_008B3A6C = (int)(DAT_008B3A78 * 4 + DAT_007E1738);
-
-struct FacingShortPair { short a; short b; FacingShortPair(void) { a = 0; b = 0; } };
-struct FacingIntTriple { int a; int b; int c; FacingIntTriple(void) { a = 0; b = 0; c = 0; } };
-
+// _$E54
 // SYNTHETIC: GAMEMD 0x004C8390 SYMBOL
-// _$E32
-FacingShortPair DAT_008B3A18;
-
+// _$E57
 // SYNTHETIC: GAMEMD 0x004C83A0 SYMBOL
-// _$E35
-FacingIntTriple DAT_008B3A38;
-
-
-struct FacingBias { int x; int y; int z; FacingBias(void) { z = 0; x = 0x80; y = 0x80; } };
-
+// _$E60
 // SYNTHETIC: GAMEMD 0x004C83C0 SYMBOL
-// _$E38
-FacingBias DAT_008B3A60;
+// _$E63
 
 
 #include "expand.h"
@@ -218,6 +175,7 @@ int Exception_Dialog(void)
 #include "getcpu.h"
 #include "winstub.h"
 #include "globals.h"
+#include "geometry.h"
 #include <imagehlp.h>
 
 const char * FUN_004E62B0(void);

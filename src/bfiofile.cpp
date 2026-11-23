@@ -554,14 +554,3 @@ void BufferIOFileClass::Close(void)
 // SYNTHETIC: GAMEMD 0x00432610
 // ??_GBufferIOFileClass@@UAEPAXI@Z
 
-struct Dat4 { int a, b, c, d; };
-extern Dat4 DAT_0089C498;
-
-// FUNCTION: GAMEMD 0x00432670
-void FUN_00432670(void)
-{
-	DAT_0089C498.a = 0;
-	DAT_0089C498.b = 0;
-	DAT_0089C498.c = 0;
-	DAT_0089C498.d = 0;
-}

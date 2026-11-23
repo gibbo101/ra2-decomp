@@ -64,10 +64,10 @@ class ProgressScreenClass : public ProgressNotifier
 	public:
 		double PlayerProgress[MAX_PLAYERS];
 		double MainProgress;
-		wchar_t const * Field50;
+		wchar_t const * String;
 		void * Buffer;
 		bool BufferOwned;
-		int Field5C;
+		int Background;
 		bool IsActive;
 		char PlayerCount;
 		bool Field62;

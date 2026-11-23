@@ -89,9 +89,7 @@
 
 ThreatType __fastcall FUN_00645BB0(QuarryType quarry);
 bool __fastcall FUN_005224E0(FootClass * infantry);
-bool __fastcall FUN_0053A100(void);
 void __fastcall LightningStorm_Start(int duration, int deferment, int center, bool flag);
-void __cdecl LightningStorm_RequestStop(void);
 extern int DAT_00B0E948;
 void __fastcall FUN_005BF260(VQType movie, ThemeType theme, bool a, bool b, bool c);
 void __fastcall FUN_0070F120(FootClass * unit, TalkType bubble);
@@ -328,6 +326,180 @@ void TeamClass::Assign_Mission_Target(AbstractClass * new_target)
 			}
 		} else {
 			IsLeaveMap = false;
+		}
+	}
+}
+
+void __cdecl FUN_004068E0(char const * text, ...);
+
+// FUNCTION: GAMEMD 0x006E9140
+void TeamClass::AI(void)
+{
+	if (Suspended) {
+		if (SuspendTimer != 0) {
+			return;
+		}
+		Suspended = false;
+	}
+
+	if (IsAltered) {
+		if (!Recalc_Strength()) {
+			return;
+		}
+	}
+
+	if (IsMoving && IsUnderStrength) {
+		Regroup();
+	}
+
+	if (!IsMoving && (IsFullStrength || IsForcedActive)) {
+		Flag_Into_Action();
+	}
+
+	if (IsReforming || IsMoving || Zone == NULL || ClosestMember == NULL) {
+		Calc_Center(Zone, ClosestMember);
+	}
+
+	if ((!IsMoving || (!IsFullStrength && Class->IsReinforcable)) && (!House->FUN_0050B730() || !IsHasBeen)) {
+		for (int index = 0; index < Class->TaskForce->ClassCount; index++) {
+			if (Quantity[index] < Class->TaskForce->Members[index].Quantity) {
+				Recruit(index);
+			}
+		}
+	}
+
+	if (Member == NULL && (IsHasBeen || Session.Type != GAME_NORMAL && Frame - CreationFrame > Rule->DissolveUnfilledTeamDelay)) {
+		if (IsLeaveMap) {
+			for (int index = 0; index < LogicTags.Count(); index++) {
+				TagClass * trig = LogicTags[index];
+				if (trig->Spring(TEVENT_LEAVES_MAP)) {
+					index--;
+					if (LogicTags.Count() == 0) break;
+				}
+			}
+		}
+		delete this;
+		return;
+	}
+
+	bool warping = Member != NULL && Member->IsWarpingIn();
+
+	if (IsMoving && !IsReforming && !IsUnderStrength && !warping) {
+		bool is_next = false;
+		if (IsNextMission) {
+			is_next = true;
+			IsNextMission = false;
+			Script->Next_Mission();
+			FootClass * techno = Member;
+			while (techno) {
+				if (Class->TransportsReturnOnUnload && techno->Techno_Type_Class()->MaxPassengers > 0) {
+					if (techno->ArchiveTarget != NULL) {
+						FUN_004068E0("A Transport just recieved orders to go home after unloading\n");
+					}
+				} else {
+					techno->ArchiveTarget = NULL;
+				}
+				techno = techno->Member;
+			}
+
+			if (Script->Has_Missions_Remaining()) {
+				Assign_Mission_Target(NULL);
+				Target = NULL;
+			} else {
+				delete this;
+				return;
+			}
+		} else {
+			if (Target == NULL) {
+				Target = MissionTarget;
+			}
+		}
+
+		if (TargetNotAssigned) {
+			is_next = true;
+			TargetNotAssigned = false;
+			Assign_Mission_Target(NULL);
+			Target = NULL;
+		}
+
+		TeamMissionClass mission = Script->Get_Current_Mission();
+
+		#define INVOKE(e) case TMISSION_ ## e: TMission_ ## e (&mission, is_next); break;
+		#define INVOKE_YR(n, e) case (TeamMissionType)n: TMission_ ## e (&mission, is_next); break;
+
+		switch (mission.Mission) {
+			INVOKE(UNLOAD_TRUCK);
+			INVOKE(LOAD_TRUCK);
+			INVOKE(CLEAR_GLOBAL);
+			INVOKE(DESTROY_MEMBERS);
+			INVOKE(GOTO_SHROUD);
+			INVOKE(MOVECELL);
+			INVOKE(MOVE);
+			INVOKE(ATT_WAYPT);
+			INVOKE(PATROL);
+			INVOKE(SPY);
+			INVOKE(SCATTER);
+			INVOKE(CHANGE_HOUSE);
+			INVOKE(TEAMCHANGE);
+			INVOKE(SCRIPT);
+			INVOKE(ATTACK);
+			INVOKE(LOAD);
+			INVOKE(DEPLOY);
+			INVOKE(GUARD);
+			INVOKE(DO);
+			INVOKE(SET_GLOBAL);
+			INVOKE(HOUND_DOG);
+			INVOKE(PANIC);
+			INVOKE(IDLE_ANIM);
+			INVOKE(LOOP);
+			INVOKE(WIN);
+			INVOKE(LOSE);
+			INVOKE(PLAY_SPEECH);
+			INVOKE(PLAY_SOUND);
+			INVOKE(PLAY_MOVIE);
+			INVOKE(PLAY_MUSIC);
+			INVOKE(REDUCE_TIBERIUM);
+			INVOKE(BEGIN_PRODUCTION);
+			INVOKE(FIRE_SALE);
+			INVOKE(SELF_DESTRUCT);
+			INVOKE(ION_STORM_START);
+			INVOKE(ION_STORM_END);
+			INVOKE(CENTER_VIEWPOINT);
+			INVOKE(RESHROUD);
+			INVOKE(REVEAL);
+			INVOKE(SET_LOCAL);
+			INVOKE(CLEAR_LOCAL);
+			INVOKE(UNPANIC);
+			INVOKE(FORCE_FACING);
+			INVOKE(FULLY_LOADED);
+			INVOKE(ATTACK_BUILDING_WITH_PROPERTY);
+			INVOKE(MOVETO_BUILDING_WITH_PROPERTY);
+			INVOKE_YR(0x3A, MOVETO_FRIENDLY_BUILDING_WITH_PROPERTY);
+			INVOKE(SCOUT);
+			INVOKE(UNLOAD);
+			INVOKE(SUCCESS);
+			INVOKE(FLASH);
+			INVOKE(PLAY_ANIM);
+			INVOKE(TALK_BUBBLE);
+			INVOKE_YR(0x35, MOVE_TO_ENEMY_APPROACH);
+			INVOKE_YR(0x36, MOVE_TO_BASE_FRONT);
+			INVOKE_YR(0x37, IRON_CURTAIN);
+			INVOKE_YR(0x38, CHRONO_BUILDING);
+			INVOKE_YR(0x39, CHRONO_ATTACK);
+			INVOKE_YR(0x3B, ATT_WAYPT_BUILDING);
+			INVOKE_YR(0x3C, ENTER_GRINDER);
+			INVOKE_YR(0x3D, ENTER_TANK_BUNKER);
+			INVOKE_YR(0x3E, ENTER_BIO_REACTOR);
+			INVOKE_YR(0x3F, ENTER_BATTLE_BUNKER);
+			INVOKE_YR(0x40, GARRISON_STRUCTURE);
+		}
+
+	} else {
+
+		if (IsMoving) {
+			IsReforming = !Coordinate_Regroup();
+		} else {
+			Coordinate_Move();
 		}
 	}
 }
@@ -1239,11 +1411,11 @@ void TeamClass::Compute_CRC(CRCEngine & crc) const
 void TeamClass::TMission_GOTO_SHROUD(TeamMissionClass * mission, bool first_time)
 {
 	if (first_time) {
-		FootClass *unit = (FootClass *)Zone;
-		if (unit == NULL) {
-			unit = Member;
+		if (Zone != NULL) {
+			Assign_Mission_Target(Map.Find_Nearby_Shroud((FootClass *)Zone));
+		} else {
+			Assign_Mission_Target(Map.Find_Nearby_Shroud(Member));
 		}
-		Assign_Mission_Target(Map.Find_Nearby_Shroud(unit));
 	}
 	Coordinate_Move();
 }
@@ -1928,7 +2100,7 @@ void TeamClass::TMission_DESTROY_MEMBERS(TeamMissionClass * mission, bool)
 // FUNCTION: GAMEMD 0x006EE0A0
 void TeamClass::TMission_ION_STORM_START(TeamMissionClass * mission, bool)
 {
-	if (!FUN_0053A100()) {
+	if (!IonStormClass::Is_Ion_Storm_Active()) {
 		LightningStorm_Start(mission->Data.Value, Rule->LightningDeferment, DAT_00B0E948, false);
 	}
 	IsNextMission = true;
@@ -1937,8 +2109,8 @@ void TeamClass::TMission_ION_STORM_START(TeamMissionClass * mission, bool)
 // FUNCTION: GAMEMD 0x006EE0E0
 void TeamClass::TMission_ION_STORM_END(TeamMissionClass * mission, bool)
 {
-	if (FUN_0053A100()) {
-		LightningStorm_RequestStop();
+	if (IonStormClass::Is_Ion_Storm_Active()) {
+		IonStormClass::Ion_Storm_End();
 	}
 	IsNextMission = true;
 }
@@ -2412,7 +2584,7 @@ void TeamClass::TMission_PLAY_ANIM(TeamMissionClass * mission, bool first_time)
 		while (unit != NULL) {
 			AnimClass * anim = new AnimClass(atype, unit->Center_Coord(), 0, loops);
 			if (anim != NULL) {
-				anim->SetOwnerObject(unit);
+				anim->Attach_To(unit);
 			}
 			unit = unit->Member;
 		}

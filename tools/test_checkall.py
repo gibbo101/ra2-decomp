@@ -6,6 +6,7 @@ import io
 import json
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -99,6 +100,7 @@ sys.exit(case['exit'])
         self.assertIn("duplicate retail address: src/example.cpp _First, src/other.cpp _Other", out)
         self.assertIn("2 of 2 functions match (2 of 2 bytes)", out)
 
+    @patch.object(checkall, "SHARED", {"0x004F2C50": {("src/grphmenu.cpp", "_$E12"), ("src/grphmenu2.cpp", "_$E41")}})
     def test_acknowledged_pair_counts_once_and_does_not_hide_a_third_owner(self):
         for module, symbol in checkall.SHARED["0x004F2C50"]:
             self.child(f"0x004F2C50 Init: MATCH (23/23 bytes) {symbol}\n" + self.complete(1),
@@ -190,6 +192,44 @@ sys.exit(case['exit'])
         self.assertEqual(self.run_gate(record=True)[0], 0)
         self.assertIn("WRONG TARGETS", self.progress.read_text())
 
+    def reconstructed(self, address="0x00401020", name="Third"):
+        return f"{address} {name}: RECONSTRUCTED (4/4 bytes) _{name}\n"
+
+    def test_reconstruction_is_recorded_and_counted_apart_from_matches(self):
+        self.child(self.baseline() + self.complete(2))
+        self.child(self.reconstructed() + self.complete(1), name="ra2asm.asm")
+        code, out = self.run_gate(record=True)
+        self.assertEqual(code, 0)
+        self.assertIn("2 of 2 functions match (2 of 2 bytes), 1 reconstructed", out)
+        with self.progress.open() as f:
+            rows = {r["address"]: r["result"] for r in csv.DictReader(f)}
+        self.assertEqual(rows["0x00401020"], "RECONSTRUCTED")
+
+    def recorded_reconstruction(self):
+        with self.progress.open("a") as f:
+            f.write("0x00401020,Third,RECONSTRUCTED,4,src/ra2asm.asm,_Third\n")
+
+    def test_recorded_reconstruction_regressing_fails(self):
+        self.recorded_reconstruction()
+        self.child(self.baseline() + self.complete(2))
+        self.child("0x00401020 Third: 82.1% (3/4 bytes) _Third\n" + self.complete(1, 1),
+                   exit_code=1, name="ra2asm.asm")
+        code, out = self.run_gate(record=True)
+        self.assertEqual(code, 1)
+        self.assertIn("no longer matching: 0x00401020 Third", out)
+
+    def test_recorded_reconstruction_disappearing_fails(self):
+        self.recorded_reconstruction()
+        self.child(self.baseline() + self.complete(2))
+        code, out = self.run_gate(record=True)
+        self.assertEqual(code, 1)
+        self.assertIn("0x00401020: previously reconstructed function missing", out)
+
+    def test_match_cannot_turn_into_a_reconstruction(self):
+        self.child(self.match() + self.complete(1))
+        self.child(self.reconstructed("0x00401010", "Second") + self.complete(1), name="ra2asm.asm")
+        self.assertEqual(self.run_gate(record=True)[0], 1)
+
 
     def test_lost_reference_cannot_be_offset_by_a_new_one(self):
         import os
@@ -215,6 +255,43 @@ sys.exit(case['exit'])
                 self.assertIn("lost proven reference 00401000 1/6/0/405000", log)
             exe.unlink()
             exe.parent.rmdir()
+
+
+    def record_with(self, outputs):
+        """Record with a checker returning `outputs` in turn; the call count and exit code."""
+        calls = []
+
+        def run(src):
+            calls.append(src)
+            out = outputs[min(len(calls), len(outputs)) - 1]
+            return SimpleNamespace(stdout=out, stderr="", returncode=0 if "%" not in out else 1)
+
+        self.child("")
+        argv = ["checkall.py", "--record"]
+        with patch.object(checkall, "ROOT", self.root), \
+             patch.object(checkall, "PROGRESS", self.progress), \
+             patch.object(checkall.sys, "argv", argv), contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaises(SystemExit) as result:
+                checkall.main(run_source=run)
+        return len(calls), result.exception.code
+
+    def test_recorded_rename_is_rechecked(self):
+        renamed = self.match() + "0x00401010 Second: MATCH (1/1 bytes) _Renamed\n" + self.complete(2)
+        calls, code = self.record_with([renamed])
+        self.assertEqual((calls, code), (2, 0))
+        self.assertIn("_Renamed", self.progress.read_text())
+
+    def test_rename_that_breaks_once_recorded_keeps_the_old_table(self):
+        original = self.progress.read_bytes()
+        renamed = self.match() + "0x00401010 Second: MATCH (1/1 bytes) _Renamed\n" + self.complete(2)
+        flipped = self.match() + "0x00401010 Second: WRONG TARGETS (1/1 bytes) _Renamed\n" + self.complete(2, 1)
+        calls, code = self.record_with([renamed, flipped.replace("WRONG TARGETS", "50.0%")])
+        self.assertEqual((calls, code), (2, 1))
+        self.assertEqual(original, self.progress.read_bytes())
+
+    def test_unchanged_symbols_are_not_rechecked(self):
+        calls, code = self.record_with([self.baseline() + self.complete(2)])
+        self.assertEqual((calls, code), (1, 0))
 
 
 if __name__ == "__main__":

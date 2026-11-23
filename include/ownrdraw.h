@@ -164,6 +164,7 @@ namespace OwnerDraw {
 #define OD_TEXT_ALIGN_CENTER 2
 #define OD_TEXT_ALIGN_MAX 3
 
+int OD_Draw_Text_Remap(Surface & surface, const char * string, Rect const & rect, char const * name, COLORREF color, int flags, int char_spacing);
 int OD_Draw_Text(COLORREF color, HFONT font, Rect const & rect, const char * text, int len, int x_alignment, int y_alignment, Surface * surface);
 void OD_Draw_Rect(Surface & surf, Rect const & rect, int offset, int color);
 
@@ -171,6 +172,7 @@ void On_WM_NCDESTROY(HWND window);
 
 int Build_Hotkey_String(KeyNumType key, char * buffer);
 
+extern COLORREF ODColorText;
 extern COLORREF ODColorDisabled;
 extern COLORREF ODColorFrame;
 extern COLORREF ODListBoxColor;
@@ -180,15 +182,9 @@ extern COLORREF ODColorUnused1;
 #define OD_DRAW_CHAR_ALIGN_FLAG_RIGHT 2
 #define OD_DRAW_CHAR_FLAG_VERTICAL_CENTER 4
 
-struct ODComponentMasks
-{
-	unsigned short R;
-	unsigned short G;
-};
-extern ODComponentMasks ODMasks;
+extern unsigned short ODRComponentMask;
+extern unsigned short ODGComponentMask;
 extern unsigned short ODBComponentMask;
-#define ODRComponentMask (ODMasks.R)
-#define ODGComponentMask (ODMasks.G)
 
 inline unsigned short OD_Blend_Color(unsigned short pixel, unsigned short color, unsigned char alpha)
 {

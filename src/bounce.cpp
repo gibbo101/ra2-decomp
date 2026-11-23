@@ -135,3 +135,61 @@ double BounceClass::Get_Remaining_Motion(void) const
 	}
 	return(Point3D(Velocity.X, Velocity.Y, height * Gravity + Velocity.Z).Length());
 }
+
+#include "ballistic.h"
+
+// FUNCTION: GAMEMD 0x00439B00
+BounceResultType BounceClass::AI(void)
+{
+	BounceResultType bounce_result = BOUNCE_MOVING;
+
+	Vector3 & position = MyCoord;
+	Vector3 & velocity = Velocity;
+	Vector3 old_position = position;
+	Vector3 old_velocity = velocity;
+	if (Ballistic_Move(position, velocity, Gravity, Elasticity, MaxVelocity)) {
+		AngularVelocity[0] = -AngularVelocity[0];
+		AngularVelocity[1] = -AngularVelocity[1];
+		AngularVelocity[2] = -AngularVelocity[2];
+
+		{
+			Coord impact_coord(MyCoord.X, MyCoord.Y, MyCoord.Z);
+			Coord previous_impact_coord(old_position.X, old_position.Y, old_position.Z);
+			int previous_cell_height = Map[previous_impact_coord].Height;
+			if (Map[impact_coord].Height - previous_cell_height >= 2) {
+				if (old_velocity.Z < -0.0002 && MyCoord.Z > old_position.Z
+					|| old_velocity.Z >= -0.0003 && (old_velocity.Z + old_position.Z + 1.0f < MyCoord.Z)) {
+
+					position = old_position;
+					velocity = old_velocity;
+
+					FacingType bounce_facing = Map[impact_coord].Bounce_Direction(previous_impact_coord);
+					if (bounce_facing != FACING_NONE) {
+						Matrix3D bounce_matrix = Get_Bounce_Matrix(bounce_facing);
+						velocity = bounce_matrix * velocity;
+						velocity *= Elasticity;
+					}
+				}
+			}
+		}
+
+		bounce_result = BOUNCE_IMPACT;
+	}
+
+	Rotation = Rotation * AngularVelocity;
+
+	double remaining_motion = Get_Remaining_Motion();
+	if (remaining_motion < 2.5) {
+		bounce_result = BOUNCE_SETTLED;
+	}
+	return(bounce_result);
+}
+
+// FUNCTION: GAMEMD 0x0043A0D0
+// ??XVector3@@QAEAAV0@M@Z
+
+// FUNCTION: GAMEMD 0x0043A100
+// ??YVector3@@QAEAAV0@ABV0@@Z
+
+// FUNCTION: GAMEMD 0x0043A130
+// Vector3::Length

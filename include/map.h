@@ -229,7 +229,7 @@ class MapClass: public GScreenClass
 		void Mark_Fill_Area(Cell const & origin, bool on_water);
 		bool Rebuild_Cliffs_At(Cell const & cell);
 		bool Build_All_Cliffs(int, int region_id);
-		bool FUN_0057A0C0(int region_id, bool flat_height);
+		bool Build_All_Shores(int region_id, bool flat_height);
 		bool Expand_High_Ground(CellClass * cellptr, int region_id);
 		bool Place_Cliff(CellClass * cellptr, int region_id);
 		int Get_High_Ground_Mask(CellClass * cellptr);
@@ -278,7 +278,7 @@ class MapClass: public GScreenClass
 		bool Try_Open_Gate(FootClass * foot, Cell const & cell);
 		bool Is_Something_Nearby(Cell const & cell, int radius);
 		int Region_Threat(HouseClass * house, int level, int from_subzone, int to_subzone);
-		bool IsAreaFree(Rect const & rect, int house);
+		bool Is_Area_Available(Rect const & rect, int house);
 		bool Is_Area_Shore_Or_Water(Rect const & rect);
 		int Find_Largest_Water_Zone(int * zone);
 		void Find_Water_Cells_Around(Cell const * center, int max_radius, int max_cells, MZoneType mzone, int zone, DynamicVectorClass<Cell> * found, int width, int height);

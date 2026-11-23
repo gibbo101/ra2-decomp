@@ -11,7 +11,6 @@ class ModemGuest
 	friend BOOL CALLBACK Modem_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 	public:
-		ModemGuest(void){}
 		bool Dialog(void);
 
 	private:

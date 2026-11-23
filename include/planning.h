@@ -100,7 +100,7 @@ class PlanningNodeClass
 		bool Get_Queued(void);
 		void Rebuild(void);
 		void Update_Active(void);
-		void FUN_00634E10(PlanningMemberClass * member);
+		int FUN_00634E10(PlanningMemberClass * member);
 		int Find_Branch(TechnoClass * techno);
 		void Detach(PlanningMemberClass * member);
 		void Clear(void);
@@ -118,8 +118,6 @@ class PlanningNodeClass
 		int Branch_Color(int index);
 		int Loop_Color(void);
 		void Reset_Colors(bool all);
-		void FUN_0063C690(void);
-		void FUN_0063CAE0(void);
 		static void FUN_00637640(PlanningNodeClass * node);
 
 		DynamicVectorClass<PlanningMemberClass *> PlanningMembers;

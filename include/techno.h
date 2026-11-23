@@ -242,7 +242,7 @@ class TechnoClass : public RadioClass
 
 		bool IsSinking;
 		bool WasSinkingAlready;
-		bool unknown_bool_3CF;
+		bool IsNeedingRescue;
 
 		bool IsUseless;
 
@@ -267,9 +267,9 @@ class TechnoClass : public RadioClass
 		bool IsDiscoveredByPlayer;
 
 		bool IsDiscoveredByComputer;
-		bool unknown_bool_41D;
-		unsigned char unknown_41E;
-		bool unknown_bool_41F;
+		bool IsALemon;
+		unsigned char UnusedCooldown;
+		bool Unused1;
 
 		char SightIncrease;
 
@@ -284,13 +284,13 @@ class TechnoClass : public RadioClass
 		bool IsBeingManipulated;
 		TechnoClass * BeingManipulatedBy;
 		HouseClass * ChronoWarpedByHouse;
-		bool unknown_bool_430;
+		bool IsOnPatrol;
 		bool IsMouseHovering;
 		bool ShouldBeReselectOnUnlimbo;
 		TeamClass * OldTeam;
 		bool CountedAsOwnedSpecial;
 		bool Absorbed;
-		bool unknown_bool_43A;
+		bool IsOnWaypointPatrol;
 		int unknown_43C;
 
 		mutable DynamicVectorClass<int> CurrentTargetThreatValues;
@@ -308,7 +308,7 @@ class TechnoClass : public RadioClass
 		unsigned unknown_4D8;
 		AudioController QueuedVoiceSoundController;
 		unsigned QueuedVoiceIndex;
-		unsigned unknown_4F4;
+		unsigned PlayingVoiceIndex;
 		bool unknown_bool_4F8;
 		unsigned unknown_4FC;
 		TechnoClass * QueueUpToEnter;
@@ -378,7 +378,7 @@ class TechnoClass : public RadioClass
 		virtual Cell Find_Exit_Cell(TechnoClass const * techno, unsigned) const;
 		virtual Coord Turret_Coord(int which=0) const;
 		void Create_Planning_Token(void);
-		static void __stdcall FUN_00705860(Coord start, Coord end);
+		void FUN_00705860(Coord start, Coord end);
 		void FUN_00705270(Coord src, Coord dst, RGBClass color, unsigned char shadow);
 		void Draw_A_Link_To(Coord src, Coord dst, RGBClass color);
 		void FUN_00705D10(PlanningTokenClass * token);
@@ -471,7 +471,7 @@ class TechnoClass : public RadioClass
 		virtual bool InAuxiliarySearchRange(AbstractClass * target) const;
 		virtual void Death_Announcement(TechnoClass const * source=0) const = 0;
 		virtual int GetFireErrorWithoutRange(AbstractClass * target, int which) const;
-		virtual FireErrorType Can_Fire(AbstractClass * target, int which=0, bool ignoreRange=false) const;
+		virtual FireErrorType Can_Fire(AbstractClass * target, int which=0, bool check_range=false) const;
 		virtual AbstractClass * Greatest_Threat(ThreatType threat, Coord const & coord, bool) const;
 		virtual void Assign_Target(AbstractClass * target);
 		virtual BulletClass * Fire_At(AbstractClass * target, int which=0);
@@ -593,7 +593,7 @@ class TechnoClass : public RadioClass
 
 
 
-		bool CanRetaliateToAttacker(ObjectClass * attacker, WarheadTypeClass * warhead);
+		bool Is_Allowed_To_Retaliate(ObjectClass * attacker, WarheadTypeClass * warhead);
 		virtual bool Is_Players_Army(void) const override;
 		int Combat_Damage(int which=-1) const;
 

@@ -25,7 +25,13 @@ or carries the SYMBOL modifier:
 
 An .asm file is assembled with MASM instead, and must be a file of Westwood's TibSun
 archive copied unchanged but for its markers, `; FUNCTION: GAMEMD 0x007C5DB0` on the line before
-a PROC (the PROC's name is the function's).
+a PROC (the PROC's name is the function's; a name starting with `?` is an exact symbol).
+
+An .asm file under src/ra2asm/ is the exception: a routine the original wrote in assembly
+that no source release contains, rebuilt from the exe. It is assembled as it is, carries
+`; RECONSTRUCTED: GAMEMD 0x...` markers instead, and never prints MATCH: where a function
+would match it prints RECONSTRUCTED. A PROC with no marker of its own (the original gives it
+no separate start) is checked as part of the marked routine before it.
 
 A function MATCHES when it is as long as the original (data/functions.csv), every byte
 the compiler emits is identical, and every field the linker fills in points at the
@@ -34,6 +40,7 @@ right target:
   - a string literal or constant the file defines: the original's target holds the
     same bytes;
   - a function annotated in the same file: its annotated address;
+  - any other function the file compiles: not an address the file ties to another one;
   - any other name: its address in data/symbols.csv, or in another annotated file.
 A name with no known address is reported as unverified, not as a mismatch.
 The target is retail 1.001: bytes a Steam or First Decade exe changed after linking are
@@ -78,6 +85,7 @@ FLAGS = ["/c", "/O2", "/Ob2", "/Gr", "/GR", "/MT", "/DWIN32"]
 ANNOTATION = re.compile(r"^\s*//\s*(?:FUNCTION|TEMPLATE|SYNTHETIC|LIBRARY):\s*GAMEMD\s+(0x[0-9A-Fa-f]+)"
                         r"((?:\s+(?:FOLDED|SYMBOL))*)\s*$")
 ASM_ANNOTATION = re.compile(r"^\s*;\s*FUNCTION:\s*GAMEMD\s+(0x[0-9A-Fa-f]+)\s*$")
+RECONSTRUCTED_ANNOTATION = re.compile(r"^\s*;\s*RECONSTRUCTED:\s*GAMEMD\s+(0x[0-9A-Fa-f]+)\s*$")
 # The name comment after a marker: one token, a qualified name or a decorated symbol.
 NAME_COMMENT = re.compile(r"^\s*//\s*([^\s:][^\s]*(?:::[^\s]+)*|(?:[\w?$@]+::)*operator\s*\S+)\s*$")
 PROC = re.compile(r"^\s*([\w?$@]+)\s+PROC\b", re.I | re.M)
@@ -88,6 +96,8 @@ PADDING = (0x90, 0xCC)
 MASM_FILL = (b"", b"\x90", b"\x8b\xff", b"\x8d\x49\x00", b"\x8d\x64\x24\x00",
              b"\x05\x00\x00\x00\x00", b"\x8d\x9b\x00\x00\x00\x00")
 TIBSUN = ROOT / "reference/tibsun/code"
+RA2ASM = ROOT / "src/ra2asm"
+APPROVED = ROOT / "data/reconstructed.csv"
 
 
 class Original:
@@ -209,6 +219,18 @@ def is_asm(src: Path) -> bool:
     return src.suffix.lower() == ".asm"
 
 
+def approved_reconstructions() -> set[int]:
+    """Addresses the maintainer approved for reconstruction (data/reconstructed.csv)."""
+    if not APPROVED.exists():
+        return set()
+    return {int(r["address"], 16) for r in csv.DictReader(APPROVED.open())}
+
+
+def is_reconstructed(src: Path) -> bool:
+    """Whether `src` is assembly rebuilt from the exe (src/ra2asm/), not an archive copy."""
+    return is_asm(src) and RA2ASM.resolve() in src.resolve().parents
+
+
 def winpath(p: Path) -> str:
     """The path as the compiler sees it: the checkout is drive Y: (tools/wineenv.sh)."""
     p = p.resolve()
@@ -221,9 +243,10 @@ def annotations(src: Path) -> list[tuple[int, str]]:
     """(address, qualified name) for each annotated definition in a source file."""
     lines = src.read_text(errors="replace").splitlines()
     asm = is_asm(src)
+    marker = RECONSTRUCTED_ANNOTATION if is_reconstructed(src) else ASM_ANNOTATION if asm else ANNOTATION
     out = []
     for i, line in enumerate(lines):
-        m = (ASM_ANNOTATION if asm else ANNOTATION).match(line)
+        m = marker.match(line)
         if not m:
             continue
         nxt = lines[i + 1] if i + 1 < len(lines) else ""
@@ -236,7 +259,8 @@ def annotations(src: Path) -> list[tuple[int, str]]:
             continue
         if asm:
             n = PROC.search("\n".join(lines[i + 1:i + 4]))
-            out.append((int(m.group(1), 16), n.group(1) if n else ""))
+            name = n.group(1) if n else ""
+            out.append((int(m.group(1), 16), "=" + name if name.startswith("?") else name))
             continue
         decl = " ".join(lines[i + 1:i + 4])
         n = re.search(r"((?:\w+::)*(?:operator\s*\S+?|~?\w+))\s*\(", decl)
@@ -343,15 +367,22 @@ def compile_source(src: Path, overlay: Path | None = None, headers: Path | None 
 
 
 def assemble_source(src: Path, out: Path) -> tuple[Path | None, str]:
-    """Assemble src to `out` with MASM, if it copies a file of the TibSun archive."""
-    archive = archived_asm(src)
-    if archive is None:
-        return None, f"{src}: not a copy of an .asm file in {TIBSUN.relative_to(ROOT)}"
+    """Assemble src to `out` with MASM: a reconstruction as it is, any other file only if it
+    copies a file of the TibSun archive."""
+    if is_reconstructed(src):
+        text = src.read_text(encoding="latin-1")
+        if any(ASM_ANNOTATION.match(line) for line in text.splitlines()):
+            return None, f"{src}: a reconstruction is marked RECONSTRUCTED, never FUNCTION"
+        source = src
+    else:
+        source = archived_asm(src)
+        if source is None:
+            return None, f"{src}: not a copy of an .asm file in {TIBSUN.relative_to(ROOT)}"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.unlink(missing_ok=True)
-    # Assemble beside the pinned archive's .inc files (including the SOS codec tables).
-    cmd = [str(ROOT / "tools/wml"), *ASM_FLAGS, f"/Fo{winpath(out)}", winpath(archive)]
-    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=archive.parent)
+    # Assemble an archive copy beside the pinned archive's .inc files (the SOS codec tables).
+    cmd = [str(ROOT / "tools/wml"), *ASM_FLAGS, f"/Fo{winpath(out)}", winpath(source)]
+    proc = subprocess.run(cmd, capture_output=True, text=True, cwd=source.parent)
     log = proc.stdout + proc.stderr
     return (out if proc.returncode == 0 and out.exists() else None), log
 
@@ -547,11 +578,7 @@ def compare(orig: Original, obj: CoffObject, raw: bytes, address: int, name: str
     `local` maps decorated symbols to addresses; `names` maps undecorated names. `score`
     fills in the normalised similarity too. Among equally good results, a symbol `prefer`
     ties to this address wins, then one not in `taken`: byte-identical overloads differ."""
-    prefixes = mangled(name)
-    if name.startswith("="):
-        picks = [f for f in obj.functions() if f[0].name == prefixes[0]]
-    else:
-        picks = [f for f in obj.functions() if f[0].name.startswith(prefixes)]
+    picks = candidates(obj, name)
     if not picks:
         cands = ", ".join(f[0].name for f in obj.functions())
         raise SystemExit(f"{name.lstrip('=')}: no compiled function has this name ({cands})")
@@ -559,6 +586,15 @@ def compare(orig: Original, obj: CoffObject, raw: bytes, address: int, name: str
     prefer = prefer or {}
     return max(results, key=lambda r: (r.matched, r.bytes_match, r.ratio,
                                        prefer.get(r.symbol) == address, r.symbol not in taken))
+
+
+def candidates(obj: CoffObject, name: str) -> list:
+    """The compiled functions an annotation's name can be: an exact symbol, or those its
+    decorations start."""
+    prefixes = mangled(name)
+    if name.startswith("="):
+        return [f for f in obj.functions() if f[0].name == prefixes[0]]
+    return [f for f in obj.functions() if f[0].name.startswith(prefixes)]
 
 
 def masm_fill(n: int) -> bytes:
@@ -635,7 +671,7 @@ def compare_one(orig, obj, raw, address, name, names, local, pick, score=False) 
             if score:
                 res.norm_ratio = similarity(mask_stack(left), mask_stack(right))
             a, b = left, right
-        for line in difflib.unified_diff(a, b, "original", "ours", n=2, lineterm=""):
+        for line in difflib.unified_diff(a, b, "original", "ours", n=int(os.environ.get("CHECK_CTX", "2")), lineterm=""):
             res.diff.append(line)
         if a == b:
             res.diff += encoding_diff(theirs, ours, address, masked)
@@ -742,6 +778,9 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
     if target.name in local:
         want = local[target.name]
         return ("ok" if got == want else "mismatch"), want
+    if target.section > 0 and target.type == 0x20 and got in bound_functions(obj, local):
+        # The original's target is bound to a different function this object compiles.
+        return "mismatch", None
     if names or local:
         candidates = orig.decorated_addresses.get(target.name, ())
         if len(candidates) > 1:
@@ -770,6 +809,17 @@ def check_ref(orig, obj, raw, target, sec, start, address, got, names, local):
             want = names[name]
             return ("ok" if got == want else "mismatch"), want
     return "unverified", None
+
+
+def bound_functions(obj: CoffObject, local: dict[str, int]) -> dict[int, str]:
+    """Address -> symbol for each function `obj` defines that `local` binds to an address."""
+    cached = getattr(obj, "_bound_functions", None)
+    if cached is not None and cached[0] is local and cached[1] == len(local):
+        return cached[2]
+    defined = {s.name for s in obj.symbols if s.section > 0 and s.type == 0x20}
+    out = {address: name for name, address in local.items() if name in defined}
+    obj._bound_functions = (local, len(local), out)
+    return out
 
 
 def template_member(symbol: str) -> bool:
@@ -878,13 +928,35 @@ def main() -> None:
     raise SystemExit(report(src, objpath.read_bytes(), Original(), known_names(), targets, score, summary))
 
 
-def report(src, raw, orig, names, targets, score=False, summary=False):
-    """Verify one compiled source object and print the normal checker result."""
-    obj = CoffObject(raw)
+def mark_asm_object_starts(src, obj):
+    """Mark where an assembled file's routines began a new object in the original (data/asm_objects.csv)."""
     if is_asm(src):
         for symbol in asm_object_starts().get(src.resolve().relative_to(ROOT).as_posix(), ()):
             at = next(s for s in obj.symbols if s.name == symbol and s.section > 0)
             obj.sections[at.section - 1].object_starts.add(at.value)
+
+
+def merge_unmarked(obj, targets):
+    """A reconstruction's PROCs with no marker of their own, as part of the marked routine
+    before them in the same section."""
+    marked = {pick[0].name for _, name in targets for pick in candidates(obj, name)}
+    merged = []
+    for pick in obj.functions():
+        sym, sec, start, end = pick
+        if merged and sym.name not in marked and merged[-1][1] is sec and merged[-1][3] == start:
+            merged[-1] = (merged[-1][0], sec, merged[-1][2], end)
+        else:
+            merged.append(pick)
+    obj.__dict__["_functions"] = tuple(merged)
+
+
+def report(src, raw, orig, names, targets, score=False, summary=False):
+    """Verify one compiled source object and print the normal checker result."""
+    obj = CoffObject(raw)
+    mark_asm_object_starts(src, obj)
+    reconstructed = is_reconstructed(src)
+    if reconstructed:
+        merge_unmarked(obj, annotations(src))
     # Which compiled function each annotation is decides what its own symbol resolves to,
     # so pick them first, by bytes alone.
     local, duplicates = bind_annotations(orig, obj, raw, src)
@@ -895,8 +967,12 @@ def report(src, raw, orig, names, targets, score=False, summary=False):
     held = vftable_holders(obj)
     for address, name in targets:
         res = compare(orig, obj, raw, address, name, names, local, score, prefer=local)
-        if res.matched:
-            verdict = "MATCH"
+        unapproved = reconstructed and address not in approved_reconstructions()
+        if res.matched and unapproved:
+            verdict = "0.0%"
+            print(f"0x{address:08X}: not in data/reconstructed.csv; a reconstruction needs the maintainer's approval")
+        elif res.matched:
+            verdict = "RECONSTRUCTED" if reconstructed else "MATCH"
         elif res.bytes_match:
             verdict = "WRONG TARGETS"
         else:
@@ -918,7 +994,7 @@ def report(src, raw, orig, names, targets, score=False, summary=False):
             failed += problem[1]
         for line in res.warnings:
             print(f"0x{address:08X} {name.lstrip('=') or res.symbol}: {line}")
-        if not res.matched:
+        if not res.matched or unapproved:
             failed += 1
             print("\n".join(res.diff[:400]))
     if summary:

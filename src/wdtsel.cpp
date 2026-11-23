@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 #include "language\language.h"
 
@@ -63,11 +64,102 @@ using namespace WorldDominationTour;
 // SYNTHETIC: GAMEMD 0x0076C270 SYMBOL
 // _$E67
 
+#include "bitfont.h"
+#include "dsurface.h"
+#undef LoadString
+#include "stringtable.h"
+
+namespace OwnerDraw { extern int PrimaryTextColor; }
+
+static WideWstring Load_Selection_Text(char const * label, int source_line)
+{
+	return(WideWstring(StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\WDTSel.cpp", source_line)));
+}
+
+// FUNCTION: GAMEMD 0x0076C290
+// WorldDominationTour::Selection::Selection
+Selection::Selection(rc_ptr<Campaign> const & campaign, int theater) :
+	MSEngine(),
+	TourCampaign(campaign),
+	SelectedConflict(),
+	VoicePlayer(campaign->Get_Faction()),
+	Brokeout(false),
+	LastPoint(-1, -1),
+	StartTick(campaign->Properties->Get_Current_Tick()),
+	LastHoverZone(-1),
+	WorldMap(FUN_00767FB0(campaign->Properties->Get_Map_ID(), theater, campaign->Get_Faction())),
+	HoveredTerritoryID(-1),
+	MousedTerritory(),
+	TargetDrawer(NULL),
+	ZoomingTarget(NULL),
+	ThrobbingTarget(NULL),
+	ThrobbingTargetDividingFrame(32),
+	TextAnim(NULL),
+	TooltipAnim(NULL),
+	Font(new MSFont(false)),
+	CurrentState(FUN_0076F500()),
+	ThemeName((char const *)NULL)
+{
+	int pixel = DSurface::Build_Hicolor_Pixel(GetRValue(OwnerDraw::PrimaryTextColor), GetGValue(OwnerDraw::PrimaryTextColor), GetBValue(OwnerDraw::PrimaryTextColor));
+	TextColor = BitFont::Instance->SetColor(pixel);
+
+	Add_Animation(VoicePlayer.FUN_00771800());
+
+	CCFileClass file("WDTMAPMD.INI");
+	INIClass ini;
+	ini.Load(file, false);
+
+	Init_Voices(ini, "VoiceOvers");
+	Init_Sounds(ini, "SOUNDS");
+
+	Wstring layout;
+	ini.Get_String("LAYOUTS", Wstring_FromInt(campaign->Properties->Get_Layout()), "", layout);
+	Init_Target(ini, layout);
+
+	WorldMap->FUN_007681E0(ini, this, campaign->Is_Different(theater));
+
+	WideWstring play_text = Load_Selection_Text("GUI:PlayWDT", 0x9d);
+	MSBitPrintAnim * play = new MSBitPrintAnim(play_text, WorldMap->TitleRect, true);
+	play->Set_Flag(true);
+	Add_Animation(play);
+
+	WideWstring back_text = Load_Selection_Text("TXT_BACK", 0xa4);
+	MSBitPrintAnim * back = new MSBitPrintAnim(back_text, WorldMap->BackTextRect, true);
+	back->Set_Flag(true);
+	Add_Animation(back);
+
+	Start();
+}
+
+// FUNCTION: GAMEMD 0x0076C6E0
+// WorldDominationTour::Selection::~Selection
+Selection::~Selection(void)
+{
+	End();
+
+	MousedTerritory = NULL;
+
+	Remove_Target_Anims();
+	Remove_Target_Anims2();
+
+	for (SFX_ITER sfx(SfxEntries); sfx; sfx++) {
+		delete *sfx;
+	}
+
+	delete TargetDrawer;
+	delete ZoomingTarget;
+	delete ThrobbingTarget;
+	delete Font;
+
+	BitFont::Instance->SetColor((unsigned short)TextColor);
+}
+
+
 // FUNCTION: GAMEMD 0x0076C970
 // WorldDominationTour::Selection::Init_Voices
 void Selection::Init_Voices(INIClass const & ini, Wstring const & section)
 {
-	VoicePlayer.FUN_00770550(ini, section);
+	VoicePlayer.Init(ini, section);
 	{ Wstring key("WinningThreshold"); WinningThreshold = ini.Get_Int(section, key, WinningThreshold); }
 	{ Wstring key("MegaWinningThreshold"); MegaWinningThreshold = ini.Get_Int(section, key, MegaWinningThreshold); }
 	{ Wstring key("LosingThreshold"); LosingThreshold = ini.Get_Int(section, key, LosingThreshold); }
@@ -110,8 +202,7 @@ void Selection::Init_Sounds(INIClass const & ini, Wstring const & section)
 void Selection::Init_Target(INIClass const & ini, Wstring const & section)
 {
 	Wstring buffer;
-	int faction = TourCampaign.Get()->PlayerFaction;
-	Wstring faction_name = *FUN_007AF2A0(faction);
+	Wstring faction_name = *FUN_007AF2A0(TourCampaign->Get_Faction());
 
 	bool found;
 	{
@@ -137,22 +228,188 @@ void Selection::Init_Target(INIClass const & ini, Wstring const & section)
 	ThrobbingTargetDividingFrame = ini.Get_Int(section, faction_name + "TargetDividingFrame", 32);
 }
 
+bool WOL_Wait_Callback(void);
+
+// FUNCTION: GAMEMD 0x0076CDA0
+// WorldDominationTour::Selection::Pick_Territory
+rc_ptr<Territory> Selection::Pick_Territory(void)
+{
+	Set_Long_Description();
+	bool canceled = false;
+	bool selected = false;
+	Keyboard->Clear();
+	do {
+		WOL_Wait_Callback();
+		Wait_For_Focus();
+		Point2D point(MouseCursor->Get_Mouse_X(), MouseCursor->Get_Mouse_Y());
+		if (Keyboard->Check() != KN_NONE) {
+			int key = Keyboard->Get();
+			if (key == KN_LMOUSE) {
+				Handle_Click(point, selected);
+			} else if (key == (KN_LMOUSE | WWKEY_RLS_BIT)) {
+				WorldMap->FUN_007693A0(this, false);
+				if (WorldMap->FUN_00769440(point)) {
+					Play_SFX("Canceled");
+					canceled = true;
+				}
+			}
+		} else if (point != LastPoint) {
+			LastPoint = point;
+			int zone = WorldMap->FUN_00769440(point) ? 2 : 1;
+			if (LastHoverZone != zone) {
+				switch (LastHoverZone) {
+				case 1: On_Map_Leave(); break;
+				case 2: On_Cancel_Leave(); break;
+				}
+			}
+			switch (zone) {
+			case 1:
+				if (LastHoverZone != 1) On_Map_Enter();
+				Update_Hovered_Territory(point);
+				break;
+			case 2:
+				if (LastHoverZone != 2) On_Cancel_Enter();
+				break;
+			}
+			LastHoverZone = zone;
+		}
+		Wait_Delay(1);
+	} while (!canceled && !selected);
+	return(selected ? MousedTerritory : rc_ptr<Territory>());
+}
+
+// FUNCTION: GAMEMD 0x0076D180
+// WorldDominationTour::Selection::Handle_Click
+void Selection::Handle_Click(Point2D const & point, bool & selected)
+{
+	int zone = WorldMap->FUN_00769440(point) ? 2 : 1;
+	switch (zone) {
+		case 1:
+			WorldMap->FUN_007693A0(this, false);
+			selected = Select_Territory_At(point);
+			if (selected) {
+				Play_SFX("ConflictSelected");
+			}
+			break;
+
+		case 2:
+			WorldMap->FUN_007693A0(this, true);
+			On_Cancel_Enter();
+			break;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0076D3A0
+// WorldDominationTour::Selection::Select_Territory_At
+bool Selection::Select_Territory_At(Point2D const & point)
+{
+	Update_Hovered_Territory(point);
+	rc_ptr<Territory> territory = HoveredTerritoryID >= 0 ? WorldMap->FUN_0076F000(HoveredTerritoryID) : rc_ptr<Territory>();
+	return(Select_Territory(territory));
+}
+
 // FUNCTION: GAMEMD 0x0076D470
 // WorldDominationTour::Selection::Update_Hovered_Territory
 void Selection::Update_Hovered_Territory(Point2D const & point)
 {
-	int id = WorldMap.Get()->FUN_00769330(point);
+	int id = WorldMap->FUN_00769330(point);
 	if (id != HoveredTerritoryID) {
 		HoveredTerritoryID = id;
-		Select_Territory(WorldMap.Get()->FUN_0076F000(id));
+		Select_Territory(WorldMap->FUN_0076F000(id));
 	}
+}
+
+WideWstring __fastcall FUN_007B8090(wchar_t const * prefix, WideWstring const & text);
+
+// FUNCTION: GAMEMD 0x0076DAD0
+// WorldDominationTour::Selection::Select_Territory
+bool Selection::Select_Territory(rc_ptr<Territory> const & territory)
+{
+	bool was_set = SelectedConflict.Get() != NULL;
+	if (territory == MousedTerritory) {
+		return(was_set);
+	}
+	if (MousedTerritory.Get() != NULL) {
+		if (SelectedConflict.Get() != NULL) {
+			SelectedConflict = NULL;
+		}
+		MousedTerritory->Set_Highlight(false, this);
+		MSShapeAnim * anim = MousedTerritory->TargetAnim;
+		if (anim != NULL) {
+			anim->Set_Stop_Frame(ThrobbingTargetDividingFrame - 1);
+			anim->Set_Start_Frame(0);
+			anim->Set_Frame(0);
+		}
+	}
+	MousedTerritory = territory;
+	if (MousedTerritory.Get() == NULL) {
+		Set_Long_Description();
+		VoicePlayer.Queue(1, false, 30);
+		return(was_set);
+	}
+
+	bool found = false;
+	WideWstring buffer;
+	WideWstring description;
+	int id = MousedTerritory->ID;
+	int territory_state = CurrentState->Get_Territory_State(id);
+	int outcome = 2;
+	if (territory_state != 1 && territory_state != 0) {
+		outcome = TourCampaign->PlayerFaction != territory_state;
+	}
+	VoicePlayer.Queue(3, outcome, false, false, 30);
+	switch (territory_state) {
+	case 2:
+		Set_Tooltip(Load_Selection_Text("WDT:AlliedHeldTooltip", 0x2ad));
+		break;
+	case 3:
+		Set_Tooltip(Load_Selection_Text("WDT:SovietHeldTooltip", 0x2b1));
+		break;
+	case 1:
+		Set_Tooltip(Load_Selection_Text("WDT:TerritorySelDispToolTip", 0x2b5));
+		break;
+	default:
+		Set_Tooltip(Load_Selection_Text("WDT:TerritorySelectToolTip", 0x2b9));
+		break;
+	}
+	MousedTerritory->Set_Highlight(true, this);
+	if (TourCampaign->Properties->Get_Current_Tick() == StartTick) {
+		CONFLICT_ITER it(TourCampaign->Conflicts);
+		for (; it; it++) {
+			rc_ptr<Conflict> const & handle = it.Cur_Ref();
+			Conflict * conflict = handle.operator->();
+			int id = MousedTerritory->ID;
+			if (conflict->Get_Territory_Index() == id) {
+				break;
+			}
+		}
+		if (it) {
+			found = true;
+			SelectedConflict = it.Cur_Ref();
+			buffer = it.Cur_Ref()->Process_Game_Options();
+			description = buffer;
+			MSShapeAnim * anim = territory->TargetAnim;
+			if (anim != NULL) {
+				anim->Set_Stop_Frame(-1);
+				anim->Set_Start_Frame(ThrobbingTargetDividingFrame);
+				anim->Set_Frame(ThrobbingTargetDividingFrame);
+			}
+		}
+	}
+	WideWstring dest = FUN_007B8090(StringTable::LoadString("WDT:TerritoryPrefix", NULL, "D:\\ra2mdpost\\WDTSel.cpp", 0x2d7), MousedTerritory->Name)
+		+ StringTable::LoadString("WDT:TerritorySuffix", NULL, "D:\\ra2mdpost\\WDTSel.cpp", 0x2d7);
+	if (description.length() > 0) {
+		dest += buffer;
+	}
+	Set_Text(dest, 0);
+	return(found);
 }
 
 // FUNCTION: GAMEMD 0x0076DED0
 // WorldDominationTour::Selection::Remove_Target_Anims
 void Selection::Remove_Target_Anims(void)
 {
-	for (TERR_ITER it(WorldMap.Get()->Territories, 0); it; it++) {
+	for (TERR_ITER it(WorldMap->Territories, 0); it; it++) {
 		MSShapeAnim * anim = it->Remove_Target_Anim();
 		if (anim != NULL) {
 			Remove_Anim(anim);
@@ -164,7 +421,7 @@ void Selection::Remove_Target_Anims(void)
 // WorldDominationTour::Selection::Remove_Target_Anims2
 void Selection::Remove_Target_Anims2(void)
 {
-	for (TERR_ITER it(WorldMap.Get()->Territories, 0); it; it++) {
+	for (TERR_ITER it(WorldMap->Territories, 0); it; it++) {
 		MSShapeAnim * anim = it->Remove_Target_Anim();
 		if (anim != NULL) {
 			Remove_Anim(anim);
@@ -174,46 +431,20 @@ void Selection::Remove_Target_Anims2(void)
 
 extern bool UserInputLocked;
 
-class InputManagerClass {
-public:
-	static InputManagerClass * Instance;
-	short FUN_0054F000(void);
-	short FUN_0054F050(void);
-	void FUN_0054F720(void);
-};
-
-typedef VectorCursor<MSSfxEntry *, DynamicVectorClass<MSSfxEntry *> > WDT_SFX_ITER;
-
-static inline void Play_Sfx_Named(Selection * sel, char const * text)
-{
-	Wstring name(text);
-	if (name != (char const *)NULL) {
-		WDT_SFX_ITER it(sel->SfxEntries, 0);
-		for (; it; it++) {
-			if (!(name == it->Get_Name())) {
-				break;
-			}
-		}
-		if (it) {
-			it->Play();
-		}
-	}
-}
-
 // FUNCTION: GAMEMD 0x0076DFD0
 // WorldDominationTour::Selection::On_Map_Enter
 void Selection::On_Map_Enter(void)
 {
-	Play_Sfx_Named(this, "MapEnter");
+	Play_SFX("MapEnter");
 }
 
 // FUNCTION: GAMEMD 0x0076E090
 // WorldDominationTour::Selection::On_Map_Leave
 void Selection::On_Map_Leave(void)
 {
-	Play_Sfx_Named(this, "MapLeave");
+	Play_SFX("MapLeave");
 	HoveredTerritoryID = -1;
-	rc_ptr<Territory> none;
+	rc_ptr<Territory> const & none = rc_ptr<Territory>();
 	Select_Territory(none);
 }
 
@@ -228,7 +459,7 @@ void Selection::On_Cancel_Enter(void)
 	if (!WorldMap->CancelActive) {
 		WorldMap->FUN_007693F0(this, true);
 		Play_SFX("MouseCancel");
-		Set_Tooltip(StringTable::LoadString("WOL:WDTTerritoryBack", NULL, "D:\\ra2mdpost\\WDTSel.cpp", 0x37e));
+		Set_Tooltip(Load_Selection_Text("WOL:WDTTerritoryBack", 0x37e));
 	}
 }
 
@@ -264,7 +495,7 @@ void Selection::Do_Target_Selection(int index)
 	} else {
 		bool mega = false;
 		int outcome = Get_Outcome(current_tick, mega);
-		VoicePlayer.FUN_007712C0(2, outcome, mega, true, 0);
+		VoicePlayer.Queue(2, outcome, mega, true, 0);
 	}
 
 	{
@@ -353,18 +584,17 @@ void Selection::Presentation(int index)
 
 	rc_ptr<State> previous_state = TourCampaign->CycleHistory->Get_State(previous_tick);
 	if (previous_state.Get() != NULL) {
-		int faction = TourCampaign->PlayerFaction;
-		int owned = previous_state->Count_Owned_Territories(faction);
+		int owned = previous_state->Count_Owned_Territories(TourCampaign->Get_Faction());
 		if (owned >= MegaWinningThreshold) {
-			VoicePlayer.FUN_007712C0(0, OUTCOME_WIN, owned >= 30, true, 0);
+			VoicePlayer.Queue(0, OUTCOME_WIN, owned >= 30, true, 0);
 		} else if (owned <= MegaLosingThreshold) {
-			VoicePlayer.FUN_007712C0(0, OUTCOME_LOSE, owned <= 0, true, 0);
+			VoicePlayer.Queue(0, OUTCOME_LOSE, owned <= 0, true, 0);
 		} else {
-			VoicePlayer.FUN_007712C0(0, OUTCOME_DRAW, true, true, 0);
+			VoicePlayer.Queue(0, OUTCOME_DRAW, true, true, 0);
 		}
 
 		Present_Ticks(previous_tick, current_tick);
-		while (VoicePlayer.FUN_007717F0() && !Brokeout) {
+		while (VoicePlayer.Playing() && !Brokeout) {
 			Wait_Delay(5);
 			Check_For_Breakout();
 		}
@@ -376,11 +606,9 @@ void Selection::Presentation(int index)
 bool Selection::Present_History(int tick_from, int tick_to)
 {
 	rc_ptr<State> before = TourCampaign->CycleHistory->Get_State(tick_from);
-	int faction = TourCampaign->PlayerFaction;
-	int old_count = before->Count_Owned_Territories(faction);
+	int old_count = before->Count_Owned_Territories(TourCampaign->Get_Faction());
 	rc_ptr<State> after = TourCampaign->CycleHistory->Get_State(tick_to);
-	faction = TourCampaign->PlayerFaction;
-	int new_count = after->Count_Owned_Territories(faction);
+	int new_count = after->Count_Owned_Territories(TourCampaign->Get_Faction());
 	int change = new_count - old_count;
 
 	int outcome;
@@ -397,7 +625,7 @@ bool Selection::Present_History(int tick_from, int tick_to)
 		emphasis = Get_Outcome(tick_to, mega) == OUTCOME_LOSE && mega;
 	}
 
-	VoicePlayer.FUN_007712C0(1, outcome, emphasis, true, 0);
+	VoicePlayer.Queue(1, outcome, emphasis, true, 0);
 	return(!Present_Ticks(tick_from, tick_to));
 }
 
@@ -406,8 +634,8 @@ bool Selection::Present_History(int tick_from, int tick_to)
 void Selection::Check_For_Breakout(void)
 {
 	Wait_For_Focus();
-	while (InputManagerClass::Instance->FUN_0054F000()) {
-		if (InputManagerClass::Instance->FUN_0054F050() == VK_ESCAPE) {
+	while (Keyboard->Check()) {
+		if (Keyboard->Get() == VK_ESCAPE) {
 			Brokeout = true;
 		}
 	}
@@ -480,14 +708,53 @@ void Selection::Set_Long_Description(void)
 // FUNCTION: GAMEMD 0x0076ECD0
 void __fastcall FUN_0076ECD0(rc_ptr<Campaign> * campaign, int theater)
 {
-	InputManagerClass::Instance->FUN_0054F720();
+	Keyboard->Clear();
 	Selection sel(*campaign, theater);
 	sel.Presentation(theater);
 }
 
+// FUNCTION: GAMEMD 0x0076ED10
+bool __fastcall FUN_0076ED10(rc_ptr<Campaign> * campaign, int theater)
+{
+	if (campaign->Get() == NULL) {
+		return(false);
+	}
+
+	Selection sel(*campaign, theater);
+	sel.Set_Long_Description();
+	sel.Do_Target_Selection(theater);
+	rc_ptr<Territory> selected = sel.Pick_Territory();
+	bool valid = selected.Get() != NULL;
+	if (valid) {
+		int index = selected->ID;
+		Session.WDTTerritory = index;
+		rc_ptr<WDTTerritory> territory = WDT_Get_Territory(index);
+		if (territory.Get() != NULL) {
+			Session.Options.UnitCount = territory->UnitCount;
+			BuildLevel = territory->TechLevel;
+			Session.Options.Credits = territory->StartingCredits;
+			Session.Options.AlliesAllowed = territory->AlliesAllowed;
+			Session.Options.HarvTruce = false;
+			Session.Options.Bases = territory->Bases;
+			Session.Options.MCVRedeploy = territory->MCVRedeploy;
+			Session.Options.FogOfWar = false;
+			Session.Options.BridgeDestruction = true;
+			Session.Options.Goodies = territory->Goodies;
+			Session.Options.ShortGame = territory->ShortGame;
+			Session.Options.SWAllowed = territory->BlueTiberium;
+			Session.Options.BuildOffAlly = false;
+			Session.Options.AIPlayers = 0;
+			Session.Options.AIDifficulty = DIFF_NORMAL;
+		} else {
+			valid = false;
+		}
+	}
+	return(valid);
+}
+
 // FUNCTION: GAMEMD 0x0076EEB0
-// WorldDominationTour::Selection::FUN_0076EEB0
-void Selection::FUN_0076EEB0(void)
+// WorldDominationTour::Selection::Start
+void Selection::Start(void)
 {
 	UserInputLocked = false;
 	if (ThemeName != (char const *)NULL) {
@@ -498,7 +765,7 @@ void Selection::FUN_0076EEB0(void)
 	AlternateSurface->Fill(0);
 	HiddenSurface->Fill(0);
 	VisibleSurface->Blit_From(*HiddenSurface);
-	InputManagerClass::Instance->FUN_0054F720();
+	Keyboard->Clear();
 	WorldMap.Get()->FUN_007692F0(this, &VoicePlayer);
 	while (MouseCursor->Get_Mouse_State() < 0) {
 		MouseCursor->Show_Mouse();
@@ -518,6 +785,9 @@ void Selection::End(void)
 	}
 }
 
+// SYNTHETIC: GAMEMD 0x0076EFE0
+// ??_GSelection@WorldDominationTour@@UAEPAXI@Z
+
 // TEMPLATE: GAMEMD 0x0076F000
 // ?FUN_0076F000@Map@WorldDominationTour@@QAE?AV?$rc_ptr@VTerritory@WorldDominationTour@@@@H@Z
 rc_ptr<Territory> Map::FUN_0076F000(int id)
@@ -534,11 +804,11 @@ template class rc_ptr<CampaignProperties>;
 // TEMPLATE: GAMEMD 0x0076F060
 // ??1?$rc_ptr@VTerritory@WorldDominationTour@@@@UAE@XZ
 // TEMPLATE: GAMEMD 0x0076F070
-// ?Get@?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ
+// ??C?$rc_ptr@VTerritory@WorldDominationTour@@@@QBEPAVTerritory@WorldDominationTour@@XZ
 template class rc_ptr<Territory>;
 
 // TEMPLATE: GAMEMD 0x0076F080
-// ?Get@?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ
+// ??C?$rc_ptr@VMap@WorldDominationTour@@@@QBEPAVMap@WorldDominationTour@@XZ
 template class rc_ptr<Map>;
 
 // TEMPLATE: GAMEMD 0x0076F090

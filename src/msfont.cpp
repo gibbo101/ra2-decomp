@@ -27,18 +27,7 @@
 // SYNTHETIC: GAMEMD 0x005D2DE0 SYMBOL
 // _$E2
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
-
-struct Drawing {
-	static int RedShiftRight;
-	static int RedShiftLeft;
-	static int GreenShiftRight;
-	static int GreenShiftLeft;
-	static int BlueShiftRight;
-	static int BlueShiftLeft;
-};
+#include "filesystem.h"
 
 void __cdecl FUN_004068E0(char const * format, ...);
 int FUN_00407000(void);
@@ -133,9 +122,9 @@ bool MSFont::Init(bool use_side_palette)
 		Blue = blue;
 		Green = green;
 
-		Color = ((((*palette)[68].Get_Green()<<2) >> Drawing::GreenShiftRight) << Drawing::GreenShiftLeft)
-			| ((((*palette)[68].Get_Blue()<<2) >> Drawing::BlueShiftRight) << Drawing::BlueShiftLeft)
-			| ((((*palette)[68].Get_Red()<<2) >> Drawing::RedShiftRight) << Drawing::RedShiftLeft);
+		Color = ((((*palette)[68].Get_Green()<<2) >> DSurface::GreenLeft) << DSurface::GreenRight)
+			| ((((*palette)[68].Get_Blue()<<2) >> DSurface::BlueLeft) << DSurface::BlueRight)
+			| ((((*palette)[68].Get_Red()<<2) >> DSurface::RedLeft) << DSurface::RedRight);
 
 		delete palette;
 

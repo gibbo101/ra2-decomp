@@ -69,16 +69,12 @@ extern bool DAT_00AC148B;
 
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool flag);
-	static void const * PIPBRD_SHP;
-	static void const * PIPS_SHP;
-	static void const * PIPS2_SHP;
-	static void const * TALKBUBL_SHP;
 };
 
 // SYNTHETIC: GAMEMD 0x005F6FF0 SYMBOL
-// _$E101
+// _$E97
 // SYNTHETIC: GAMEMD 0x005F7030 SYMBOL
-// _$E98
+// _$E94
 DynamicVectorClass<ObjectTypeClass *> ObjectTypeClass::ObjectTypes;
 
 static inline bool _Add_Type(DynamicVectorClass<ObjectTypeClass *> & v, ObjectTypeClass * p) { return v.Add(p); }
@@ -193,41 +189,41 @@ Cell const * ObjectTypeClass::Occupy_List(bool) const
 }
 
 // SYNTHETIC: GAMEMD 0x005F76A0 SYMBOL
-// _$E44
+// _$E100
 
 // FUNCTION: GAMEMD 0x005F76B0
 void FUN_005F76B0(void)
 {
-	if (FileSystem::PIPBRD_SHP == NULL) {
+	if (ObjectTypeClass::SelectShapes == NULL) {
 		RawFileClass file("PIPBRD.SHP");
-		FileSystem::PIPBRD_SHP = Load_Alloc_Data(file);
-		DAT_00AC1488 = FileSystem::PIPBRD_SHP != NULL;
-		if (FileSystem::PIPBRD_SHP == NULL) {
-			FileSystem::PIPBRD_SHP = FileSystem::LoadFile("PIPBRD.SHP", false);
+		ObjectTypeClass::SelectShapes = Load_Alloc_Data(file);
+		DAT_00AC1488 = ObjectTypeClass::SelectShapes != NULL;
+		if (ObjectTypeClass::SelectShapes == NULL) {
+			ObjectTypeClass::SelectShapes = FileSystem::LoadFile("PIPBRD.SHP", false);
 		}
 	}
-	if (FileSystem::PIPS_SHP == NULL) {
+	if (ObjectTypeClass::PipShapes == NULL) {
 		RawFileClass file("PIPS.SHP");
-		FileSystem::PIPS_SHP = Load_Alloc_Data(file);
-		DAT_00AC1489 = FileSystem::PIPS_SHP != NULL;
-		if (FileSystem::PIPS_SHP == NULL) {
-			FileSystem::PIPS_SHP = FileSystem::LoadFile("PIPS.SHP", false);
+		ObjectTypeClass::PipShapes = Load_Alloc_Data(file);
+		DAT_00AC1489 = ObjectTypeClass::PipShapes != NULL;
+		if (ObjectTypeClass::PipShapes == NULL) {
+			ObjectTypeClass::PipShapes = FileSystem::LoadFile("PIPS.SHP", false);
 		}
 	}
-	if (FileSystem::PIPS2_SHP == NULL) {
+	if (ObjectTypeClass::Pip2Shapes == NULL) {
 		RawFileClass file("PIPS2.SHP");
-		FileSystem::PIPS2_SHP = Load_Alloc_Data(file);
-		DAT_00AC148A = FileSystem::PIPS2_SHP != NULL;
-		if (FileSystem::PIPS2_SHP == NULL) {
-			FileSystem::PIPS2_SHP = FileSystem::LoadFile("PIPS2.SHP", false);
+		ObjectTypeClass::Pip2Shapes = Load_Alloc_Data(file);
+		DAT_00AC148A = ObjectTypeClass::Pip2Shapes != NULL;
+		if (ObjectTypeClass::Pip2Shapes == NULL) {
+			ObjectTypeClass::Pip2Shapes = FileSystem::LoadFile("PIPS2.SHP", false);
 		}
 	}
-	if (FileSystem::TALKBUBL_SHP == NULL) {
+	if (ObjectTypeClass::TalkBubbleShapes == NULL) {
 		RawFileClass file("TALKBUBL.SHP");
-		FileSystem::TALKBUBL_SHP = Load_Alloc_Data(file);
-		DAT_00AC148B = FileSystem::TALKBUBL_SHP != NULL;
-		if (FileSystem::TALKBUBL_SHP == NULL) {
-			FileSystem::TALKBUBL_SHP = FileSystem::LoadFile("TALKBUBL.SHP", false);
+		ObjectTypeClass::TalkBubbleShapes = Load_Alloc_Data(file);
+		DAT_00AC148B = ObjectTypeClass::TalkBubbleShapes != NULL;
+		if (ObjectTypeClass::TalkBubbleShapes == NULL) {
+			ObjectTypeClass::TalkBubbleShapes = FileSystem::LoadFile("TALKBUBL.SHP", false);
 		}
 	}
 }
@@ -236,19 +232,19 @@ void FUN_005F76B0(void)
 void FUN_005F77F0(void)
 {
 	if (DAT_00AC1488) {
-		delete [] (SHPReference *)FileSystem::PIPBRD_SHP;
+		delete [] (SHPReference *)ObjectTypeClass::SelectShapes;
 		DAT_00AC1488 = false;
 	}
 	if (DAT_00AC1489) {
-		delete [] (SHPReference *)FileSystem::PIPS_SHP;
+		delete [] (SHPReference *)ObjectTypeClass::PipShapes;
 		DAT_00AC1489 = false;
 	}
 	if (DAT_00AC148A) {
-		delete [] (SHPReference *)FileSystem::PIPS2_SHP;
+		delete [] (SHPReference *)ObjectTypeClass::Pip2Shapes;
 		DAT_00AC148A = false;
 	}
 	if (DAT_00AC148B) {
-		delete [] (SHPReference *)FileSystem::TALKBUBL_SHP;
+		delete [] (SHPReference *)ObjectTypeClass::TalkBubbleShapes;
 		DAT_00AC148B = false;
 	}
 }

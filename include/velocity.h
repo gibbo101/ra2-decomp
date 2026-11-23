@@ -107,7 +107,11 @@ class TVelocity3D : public TVelocity2D<T>
 		void Set_Speed(T speed)
 		{
 			Nonzero_Check();
-			*this *= speed / Speed();
+			T current = Speed();
+			T scale = speed / current;
+			X *= scale;
+			Y *= scale;
+			Z *= scale;
 		}
 
 		DirType Get_Pitch(void) const

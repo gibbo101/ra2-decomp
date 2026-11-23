@@ -421,6 +421,3 @@ void CommBufferClass::Configure_Debug(int type_offset, int type_size,
 // SYNTHETIC: GAMEMD 0x0048BB00
 // ??_GCommBufferClass@@UAEPAXI@Z
 
-// SYNTHETIC: GAMEMD 0x0048BB20 SYMBOL
-// _$E8
-const Rect RECT_NONE_2(0, 0, 0, 0);

@@ -48,16 +48,12 @@
 // SYNTHETIC: GAMEMD 0x006C8E30 SYMBOL
 // _$E35
 
-extern int DAT_00B0BF48;
-extern int DAT_00B0BF4C;
-extern int DAT_00B0BF50;
 
 class Surface;
-struct Drawing {
-	static int RenderWidth;
-	static int RenderHeight;
-};
-extern Surface * DAT_0088730C;
+extern int VideoModeWidth;
+extern int VideoModeHeight;
+
+extern Surface * HiddenSurface;
 void __fastcall FUN_004F4780(bool flag, Surface * surface, bool other);
 void __fastcall FUN_0072D300(int side);
 void FUN_0072D350(void);
@@ -66,13 +62,8 @@ int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus);
 int CALLBACK FUN_006C8FF0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 int __fastcall FUN_00622B50(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-// FUNCTION: GAMEMD 0x006C8E50
-void FUN_006C8E50(void)
-{
-	DAT_00B0BF50 = 0;
-	DAT_00B0BF48 = 128;
-	DAT_00B0BF4C = 128;
-}
+// SYNTHETIC: GAMEMD 0x006C8E50 SYMBOL
+// _$E38
 
 class STLScoreScreen
 {
@@ -90,12 +81,12 @@ STLScoreScreen::STLScoreScreen(void)
 void STLScoreScreen::Present(void)
 {
 	FUN_0072D300(Scen->PlayerSideIndex);
-	Rect rect(0, 0, Drawing::RenderWidth, Drawing::RenderHeight);
-	FUN_0072E9F0(DAT_0088730C, &rect);
-	FUN_004F4780(true, DAT_0088730C, false);
+	Rect rect(0, 0, VideoModeWidth, VideoModeHeight);
+	FUN_0072E9F0(HiddenSurface, &rect);
+	FUN_004F4780(true, HiddenSurface, false);
 	FUN_0060D380(0x103, FUN_006C8FF0, false);
-	FUN_0072E9F0(DAT_0088730C, &rect);
-	FUN_004F4780(true, DAT_0088730C, false);
+	FUN_0072E9F0(HiddenSurface, &rect);
+	FUN_004F4780(true, HiddenSurface, false);
 	FUN_0072D350();
 }
 

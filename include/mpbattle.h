@@ -14,10 +14,10 @@ class MultiplayerBattle : public MultiplayerGameMode
 		virtual bool vt_entry_04(void) override;
 		virtual bool vt_entry_40(void) override;
 		virtual bool vt_entry_08(void) override;
-		virtual bool vt_entry_0C(unsigned a) override;
+		virtual bool vt_entry_0C(WideWstring * error) override;
 		virtual void vt_entry_20(void) override;
 		virtual void vt_entry_24(void) override;
-		virtual void vt_entry_38(unsigned a) override;
+		virtual void vt_entry_38(HWND dialog) override;
 		virtual bool vt_entry_54(int index, DynamicVectorClass<int> picks) override;
 		virtual bool vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name) override;
 		virtual bool vt_entry_5C(unsigned a, unsigned b, unsigned c) override;

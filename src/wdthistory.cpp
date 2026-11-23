@@ -8,6 +8,9 @@
 #include "geometry.h"
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x007678F0 SYMBOL
+// _$E2
+
 // SYNTHETIC: GAMEMD 0x00767910 SYMBOL
 // _$E5
 // SYNTHETIC: GAMEMD 0x00767940 SYMBOL

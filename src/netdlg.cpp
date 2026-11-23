@@ -26,91 +26,37 @@
 #include "wsproto.h"
 #include <ctime>
 #include <math.h>
-
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EEEF8;
-extern const double DAT_007EEF00;
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x005DA4B0 SYMBOL
 // _$E2
 
 // SYNTHETIC: GAMEMD 0x005DA4D0 SYMBOL
 // _$E80
-double DAT_00ABFF10 = FUN_004CAC40(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x005DA500 SYMBOL
 // _$E83
-double DAT_00ABFF60 = DAT_00ABFF10 / DAT_007EEEF8;
-
 // SYNTHETIC: GAMEMD 0x005DA520 SYMBOL
 // _$E86
-double DAT_00ABFF48 = DAT_007E1718 / DAT_00ABFF60;
-
 // SYNTHETIC: GAMEMD 0x005DA540 SYMBOL
 // _$E89
-double DAT_00ABFF40 = DAT_007E1720 * DAT_007EEF00;
-
 // SYNTHETIC: GAMEMD 0x005DA560 SYMBOL
 // _$E92
-double DAT_00ABFF18 = DAT_007E1728 * DAT_007EEF00;
-
 // SYNTHETIC: GAMEMD 0x005DA580 SYMBOL
 // _$E95
-double DAT_00ABFEF0 = DAT_007E1730 * DAT_007EEF00;
-
 // SYNTHETIC: GAMEMD 0x005DA5A0 SYMBOL
 // _$E98
-int DAT_00ABFF68 = (int)(DAT_007E1738 * (FUN_004CAD50(DAT_00ABFEF0 - DAT_00ABFF18) * DAT_00ABFF10));
-
 // SYNTHETIC: GAMEMD 0x005DA5E0 SYMBOL
 // _$E101
-double DAT_00ABFF20 = FUN_004CADE0(DAT_00ABFF68 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x005DA610 SYMBOL
 // _$E104
-double DAT_00ABFF38 = FUN_004CADE0((DAT_00ABFF68 * 2) / DAT_00ABFF10);
-
 // SYNTHETIC: GAMEMD 0x005DA640 SYMBOL
 // _$E107
-int DAT_00ABFF5C = (int)(DAT_00ABFF68 * 4 + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x005DA670 SYMBOL
 // _$E110
-ShortPair DAT_00ABFF08;
-
 // SYNTHETIC: GAMEMD 0x005DA680 SYMBOL
 // _$E113
-IntTriple DAT_00ABFF28;
-
-extern int DAT_00ABFF50, DAT_00ABFF54, DAT_00ABFF58;
-
-// FUNCTION: GAMEMD 0x005DA6A0
-void Init_Net_Pad(void)
-{
-	DAT_00ABFF58 = 0;
-	DAT_00ABFF50 = 0x80;
-	DAT_00ABFF54 = 0x80;
-}
+// SYNTHETIC: GAMEMD 0x005DA6A0 SYMBOL
+// _$E116
 
 // FUNCTION: GAMEMD 0x005DA6C0
 bool Init_Network(void)
@@ -141,7 +87,7 @@ void Shutdown_Network(void)
 }
 
 namespace Unsorted { extern int CurrentFrame; }
-namespace Game { extern int PlayerCount; namespace Network { extern int Tournament; } }
+namespace Game { namespace Network { extern int Tournament; } }
 extern void __cdecl FUN_004068E0(char const *, ...);
 extern NodeNameType * DAT_00AC119C;
 
@@ -244,7 +190,7 @@ void __fastcall Destroy_Connection(int id, int error)
 			break;
 		}
 	}
-	Game::PlayerCount--;
+	Session.NumPlayers--;
 }
 
 

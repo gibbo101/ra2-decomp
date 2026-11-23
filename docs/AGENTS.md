@@ -15,6 +15,10 @@ original compiler turns into that function's exact bytes. MATCH means
 - Keep helper scripts and variant files in `build/spike/<ADDR>/` too: the scratchpad is
   shared. No two files may differ only in case: under Wine they write one `.obj`, and
   the compile fails with only the file name in the log.
+- To splice a banked attempt into today's source, insert it after the highest annotated
+  address below it, not before the first higher marker: src files are not always sorted
+  (sidebar.cpp), and a function in the wrong spot fails on undeclared names, which reads
+  as API drift.
 - The session scratchpad is shared with the coordinator and other agents: delete only
   files you created, one by name.
 - A scratch root copies the files it changes; never symlink `orig/`, `toolchain/`, `src/`,
@@ -99,6 +103,31 @@ Every compile counts as a check, including those your own scripts run.
 - A bug in the original is matched as it is; add it to `docs/BUGS.md` with its address
   and effect.
 
+## Reconstructed assembly
+
+A few routines the original wrote in assembly are in no source release: hand-written inline
+asm in a C function, or an archive routine RA2 revised. They cannot MATCH. With the
+maintainer's approval, one is rebuilt from the exe as MASM in `src/ra2asm/`:
+
+- It qualifies only with evidence that it is assembly (an `attempts.csv` row), a search
+  of the TibSun, Renegade and Generals releases that found no copy, and a row in
+  `data/reconstructed.csv`, which records the approval; check.py refuses any other. Never for code a
+  compiler could have emitted from C: keep matching that.
+- Its marker is `; RECONSTRUCTED: GAMEMD 0x...` before the PROC, never `; FUNCTION:`. A
+  decorated C++ name is the PROC's name as it is (`?BlitForward@?$...`). A PROC the exe gives
+  no start of its own in `data/functions.csv` is checked as part of the marked one before it.
+- A file starting from an archive routine names that archive file in its first comment
+  after the licence header and keeps its labels, structure and register use; only RA2's
+  changes differ. One from the exe alone writes its instructions as the exe has them.
+- Externals carry their real decorated names, as in C++, so references verify the same
+  way; data a C function kept file-local (string literals, static locals) is defined in the
+  file under the compiler's names.
+- The checker prints `RECONSTRUCTED` where it would print `MATCH`; `checkall.py` counts it
+  apart (`, N reconstructed`) and guards it like a match. It links from source in
+  `tools/exelink/`, which retires the archive's own copy of the routine.
+- MASM picks some encodings differently from the original's compiler: `[ecx+edx]` makes
+  `edx` the base, so the C part of a routine writes `[edx+ecx]` where the exe has base `ecx`.
+
 ## What has worked
 
 Each entry: what the diff showed, then the source change that fixed it.
@@ -110,10 +139,18 @@ Each entry: what the diff showed, then the source change that fixed it.
 - Write the whole body, every repeated block included, before tuning registers.
 - `FUN_`/`DAT_` names are not checked against their address, so a MATCH can still have
   two globals swapped. Read the reference lines (`+0x.. NAME: original 0x..`).
+- A partial score masks relocated addresses, so a near miss can hide wrong globals behind
+  identical bytes: compare relocation targets before trusting a high score (0x006A9540 had
+  eleven country-flag globals in the wrong cases at 97.6%).
 - Inlined code often has an out-of-line copy or a twin elsewhere; match that first.
 - check.py prints at most 400 diff lines: a variant whose later hunks vanish may only have
   hit the cap. Confirm a gain with the score, not the shorter diff.
   VoxelAnimClass::VoxelAnimClass (0x007493B0) has AnimClass's bounce code.
+- When a near miss's score stays flat, measure before rewriting: `tools/flipsweep.py SRC
+  ADDR --kind local|store|call|expr|stmt --at PLACE` adds 0..K copies of one diagnostic
+  statement and prints the count at which the differing lines change (`--kind2` sweeps two
+  counts as a grid); `tools/inlinebudget.py ADDR` lists each call the exe and ours inline
+  differently and how many inline sites or budget units flip it.
 
 ### Declarations
 - A callee returning a class by value takes a hidden buffer: a virtual pushes only the
@@ -166,6 +203,13 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A sum used once stays inline in its expression; a local for it reschedules the code.
 - A field stored twice, or stored through a register: VC6's aliasing of writes through
   casts, e.g. `(Point2D &)rect = ...; ((Point2D *)&rect)[1] = ...;` (0x006D2DE0).
+- VC6 will not move a store to an address-taken named local above an earlier pointer load,
+  but stores to a temporary built in a call's arguments move freely. A point stored earlier
+  than any named form allows is an argument temporary (`&Point2D(x, 2)`), and code between
+  those stores and the call's pushes is an inline call among its arguments (0x004A2370).
+- The line argument of a `LoadString` or other `__LINE__`-carrying call places its code: a
+  line before the function's start means a helper defined above it, which is evidence for
+  that helper (0x004A2370's Format_Time).
 
 ### Branches and returns
 - `return strcmp(a, b) == 0;` gives `sete`; the branching form is
@@ -194,6 +238,26 @@ Each entry: what the diff showed, then the source change that fixed it.
   inline helper the outer condition uses (0x0060B950 rose from 62% to 99.8%).
 - A search loop the original leaves unrotated: `while (!found) { if (out of range) break;
   step; if (ok) found = true; }` (0x00457DE0).
+- A `break` into code shared by several switch cases puts that code after the last case that
+  breaks into it; the earlier cases jump to it. Giving a case its own `return` changes which
+  case is last (0x0078AC10, case 0x688).
+- When a jump goes forward into shared code that ends in a `return`, VC6 copies that code
+  instead of jumping; a backward jump stays a jump.
+- VC6 writes `mov a; jcc; mov b` instead of the branch-free `neg`/`sbb` form only when
+  something blocks the conversion, such as a second path into the branch target or code
+  shared with another case.
+- Naming a call's result in its own statement (`HWND item = GetDlgItem(...);
+  EnableWindow(item, flag);`) moves that call ahead of the other argument's load, which can
+  fix argument order and register swaps.
+- Nested `if`s and `&&` chains compile the same in VC6. Only an inlined fixed-register call
+  such as `strlen` inside the chain can flip a register tie (0x00799080). Don't reshape
+  conditions without one.
+- Of identical return tails, VC6 keeps one reached by a taken jump (an else arm, the body of
+  `if (a || b)`, a case) over ones reached by falling through; among fall-through tails it
+  keeps the last in the source, among jump targets the first. The other returns then
+  cross-jump into the kept copy in source order (0x007A1BB0).
+  To give early head returns the exe's shared block, make a case with the same return the
+  first jump target: `case X: return(false);` at the top of the switch (0x004D74E0).
 
 ### Registers
 - ESI and EDI swapped with every other byte identical: add one real use of a variable
@@ -216,6 +280,10 @@ Each entry: what the diff showed, then the source change that fixed it.
 - Declare variables used across `case`s once at function scope, TibSun style.
 - A global the original loads before a branch: copy it to a local with two uses. One use,
   or the global read directly, leaves the load after the branch (0x005FF850).
+- A temporary of a global taking EDX where the original has ESI, pushing out a fastcall
+  parameter's live copy: write TibSun's named temporaries for the later calls before the
+  test (`int buildnum = Build_Number(); int crc = GetINIHash();`). Rewording the expression
+  that differed did not help (0x0079BA60).
 
 ### Stack frame
 - Locals are laid out by size, not declaration order. To fix two objects' order, make
@@ -223,6 +291,10 @@ Each entry: what the diff showed, then the source change that fixed it.
 - In a frame over 128 bytes, VC6 orders slots by reference count per size, counting each
   exit's own cleanup before merging, never by declaration order. An early return or
   per-branch cleanup changes those counts (0x0077E900).
+- In a frame over 128 bytes, a named local held in a register still takes a slot, which the
+  `/FAcs` listing does not name. To see every local's offset, compile with `/Z7` added and
+  read the S_BPREL32 records (type 0x1006) in the function's `.debug$S` (WinMain: 33 there,
+  25 in the listing).
 - A permuter match through a no-op round-trip (`int same0 = x; x = same0;`) can work only
   by adding a local that changes the large-frame interleave (Init_Game). Look for the real
   local the original had before reworking the loop or expression it sits on.
@@ -258,20 +330,57 @@ Each entry: what the diff showed, then the source change that fixed it.
   function, or mirrors a TibSun or YRpp helper. Single-use helpers, forwarders and dummy
   locals that exist to shift inlining or allocation are forcing: their match is banked, not
   landed.
+- Source forms, as ruled: a goto to an exit several paths share, a scoped block that sets
+  when a temporary's destructor runs, a helper that factors code repeated inside one
+  function, and a named bool where the plain `if` does not match.
 - Before casting operands to steer a hand-written expression, try the header's own inline
   for it: RadBeam's tint matched as `DSurface::Build_Hicolor_Pixel(Tint)` with no casts.
+- A very small auto-inline (a null test plus an accessor) never fails the inline budget, at
+  any depth. If the exe calls one out of line, look for a cause other than budget
+  (0x0058D620's `Get_Region`).
 - A nested call left out of line under an inlined wrapper (`Cell_Terrain()` around
   `Cell_Find_Object`) is the inline budget: call the wrapper, as TibSun does.
 - A callee the original inlines that lives in the same module is defined in that file
   (`Do_AnimTypes`, `Read_X`); define it there and VC6 inlines it.
-- Each function has an inline budget, spent from the end of the function backwards:
-  moving one member's cleanup into a file-local inline helper shifts which stay calls,
-  and a late expression's shape decides whether an earlier call inlines
-  (`Clear_Occupy_Bit(Coord(Position))`, not `PositionCoord`, in 0x0051DBD0).
+- VC6's inline budget, measured (0x00598960): size counts expression-tree nodes, so spelling
+  matters (`if (p) p();` costs more than `p && p();`). The pool is max(166, 2 x own size + 5)
+  units; an expansion costs its body plus 2, a one-statement body nothing. A plain function
+  auto-inlines only up to 27 units; one declared `inline` has no cap. Calls expand in source
+  order, depth first, and a call's nested expansions may spend at most (pool left - its cost)
+  / N, N being the inline-candidate sites from it to the end of its body. Inline getter reads
+  count as sites; extern, virtual and over-cap calls do not.
+- So code written out in the caller raises the budget, and code moved into an inline
+  helper lowers it and spends it. A nested call the exe keeps out of line while every
+  outer call inlines means the original spent more at that depth, later in the source
+  (`Clear_Occupy_Bit(Coord(Position))`, not `PositionCoord`, in 0x0051DBD0). Find where
+  with unused trivial inline calls (diagnostic only, never landed;
+  `tools/inlineprobe.py`), then look for the natural source that spends the same.
+- Register and slot ties can follow the count of named, initialised locals, measured:
+  VC6 numbers them ahead of its temporaries, so names, places and scopes do not matter and
+  uninitialised ones do not count. Some functions follow the count mod 8 (one extra local
+  matches, so do nine and seventeen); others follow which run of eight it falls in.
+- `tools/localprobe.py` sweeps the count. A matching count is a target, not a fix: the
+  original had that many more named locals, or 8 minus that many fewer (a one-use local it
+  wrote inline). Padding is forcing; real named values are not. Find the N the code
+  already computes: a local per call argument, a named element pointer in each loop body,
+  a fresh local where one is reused, an expression split into named steps, a local copy
+  of a global (`Rect bounds = TacticalRect;`). 11 of the outside contributor's 47 matches
+  that closed our near misses were this (0x00585F40, 0x006ABD30, 0x00659FF0). Only locals
+  that could live in a register count: a named reference, or a local whose address is
+  taken (passed by `const &`), changes nothing (0x00506EF0).
+- A tie can also count inline getter reads: in 0x0073E5E0 the x87 load order followed named
+  locals plus `__declspec` property reads together, so `localprobe` read flat until four
+  property reads became direct field reads. Sweep both before calling a tie final.
+- A scheduling tie inside one block can follow how many instructions the block holds before
+  scheduling: k one-instruction stores at its start (diagnostic only) show the k the original
+  had. An explicit `(float)` cast of a double expression, or a float built in two named steps,
+  adds one that is gone after scheduling (0x007493B0).
+- Before writing a helper, grep src/ for its body already inlined in a matched sibling,
+  and factor it into a `static inline` both call (the sibling must still match): a helper
+  needs two real callers. A function "waiting on its caller" is not blocked: put the
+  caller in src without a marker so the helper is emitted.
 - In a very large function VC6 can stop scheduling the last switch cases fully: a tail
   that resists every rewrite may be fixed by a leaner form of an earlier case (0x004C6CB0).
-- Nested inline decisions depend on how many expansions a function already holds; a
-  code-neutral inline helper can flip them.
 - A plain function defined above its callers is inlined and also emitted; at /Ob2 VC6
   can also inline a member defined later in the same file, so a newly landed neighbour
   can break a matched caller (0x006CB560). One too big
@@ -371,10 +480,22 @@ Each entry: what the diff showed, then the source change that fixed it.
   each branch and keep one `return(action);` after the if/else, as TibSun writes it.
 - Never chain inline wrappers to run out VC6's inline depth (Find_Data0..7): only helpers
   the original plausibly had are source, so such a match is banked, not landed.
+- A member reached through a named nested struct, or by cast and offset, costs the inliner
+  one node more than a direct member; members of an anonymous union or a nameless struct
+  cost the same as direct ones. When the exe inlines a callee that ours keeps out of line by
+  a few nodes, check the struct against YRpp's flat layout before respelling code (WinData,
+  0x0060F4B0). An NDEBUG `assert` costs one node, `!= NULL` one.
 - The reverse, when inlined tails merge into the wrong arm's copy: end each arm with its
   own `return;`, which moves the shared copy to the last arm (ZBuffer::Pan).
-- VC6 spends the inline budget from the end of a function backwards, and every inlined call
-  costs the same: write the accessor calls the original made (planmgr's Get_Count, Set_Event).
+- Every later inline site divides an earlier call's nested budget equally, whatever its size:
+  write the accessor calls the original made (planmgr's Get_Count, Set_Event).
+- VC6 gives its inline budget to the latest call in the source first. Code placed after a
+  call reduces that call's budget; code before it doesn't, and plain statements cost
+  nothing. Case bodies in a switch are laid out group by group (each run of case values VC6
+  dispatches together, in ascending value order) and in source order within a group. Moving
+  whole groups is a free way to change which call sites get inlined (WOL_Main_Dialog_Proc's
+  growVector, inlined only at the last request site, 0x0078AC10; ListBoxHandler 0x00618D40);
+  moving a case within its group moves its code.
 - An unnamed `seg_` range that opens with a header run is a module of its own: it lands in
   `src/<previous module>2.cpp` (3 for a second such range), a provisional name that keeps the
   linker's alphabetical order. One with no header run is the end of the module before it and
@@ -387,7 +508,12 @@ Each entry: what the diff showed, then the source change that fixed it.
   is `include/geometry.h`'s per-file constants: include it where the exe's `_$E` numbers
   put it (usually right after `always.h`; after `wdtnet.h` in wdtconflict and wdtstate),
   before any `extern` of the same names, and mark them; never write `Init_` or
-  `ShortPair`/`IntTriple` stand-ins.
+  `ShortPair`/`IntTriple` stand-ins. Include it only where the exe's module has the run:
+  elsewhere it compiles 13 initialisers the exe lacks.
+- globals.h's later `extern` redeclarations of geometry.h's constants make VC6 emit two
+  empty `$E` initialisers per file that the exe lacks. They are accepted residue: putting
+  globals.h first makes the constants public in every object, which the link rejects, and
+  dropping its externs breaks every header that uses them as default arguments.
 - TibSun's `dynamic_cast<ObjectClass *>` is `AbstractFlags & 2` in YR.
 - An atexit stub with no `$S` guard byte destroys a plain global, not a static member
   (`Kamikaze KamikazeInstance;`, not `Kamikaze::Instance`).
@@ -434,19 +560,37 @@ Each entry: what the diff showed, then the source change that fixed it.
 - An unverified reference proves nothing: a wrong offset into a global object whose
   address check.py does not know passes. Give each object you reach into a names.csv
   row; `uv run tools/refaudit.py` lists symbols whose references imply different bases.
+- In a `__try` function the diff shows `fs:[0]` against `fs:[<addr>]`. That is the listing
+  only: check.py masks the field and counts `__except_list` as unverified, so it can match.
 - Code ported from TibSun brings Westwood's `/* ** */` comments and commented-out code:
   cut them to the comment rules (two `//` lines of behaviour) before landing.
 - `#define NDEBUG` before the includes is how a file whose original has its asserts
   compiled out is built (ownrdraw.cpp, wonline.cpp).
-- A match that flips with unrelated header declarations is VC6 ordering spill reloads by
-  heap address: sweep dummy declarations and keep the form that fails at fewest offsets.
+- A heap-sensitive match flips with the weighted count of declarations before the
+  function, not their names: 1 per variable, typedef, forward declaration or data member
+  (named or unnamed), 2 per `enum`, 1 plus its parameter count per function declaration
+  (2 with one parameter, 8 with seven), 3 per inline definition, 8 plus its members per
+  class definition; redeclarations and `#define`s weigh nothing.
+  Keep a change's net weight zero before the function, or sweep it with
+  `tools/declprobe.py`.
 - When no body form helps, moving real declarations the file already uses to before or
-  after the function shifts its heap offsets too (wonline 0x00788180); never add unused ones.
+  after the function shifts its heap offsets too (wonline 0x00788180). Never invent
+  declarations; one TibSun's header has at that place may be restored to keep the count.
   One move may not be enough: move several together (six held it against a new inline).
   Removing declarations nothing uses works too (nine held it); results jump with set size.
   An unused `#include` is one too: dropping overtype.h restored DrawMap 0x00640A40.
   A user-declared destructor on a widely included struct (AbilityFlagsType) flipped three.
   Header fixes that each pass alone can clash: gate a round's header changes together.
+- Print_CRCs 0x0064DEA0 and RulesClass::General 0x0066D530 follow the number of
+  declarations in the file, not their names or positions. A new member in house.h goes in
+  one-for-one for an unused declaration of the same kind (a `void X(void)` for a
+  `void Y(void)`); seven unused TibSun members are left there as free slots.
+- A function that flips with code added above it, not with declarations, may be defined in
+  the wrong place. The line in its `LoadString`/assert file argument dates it: wonline's COM
+  sink methods carry lines 4785-8912 while their address neighbours carry ~29000, because
+  the original defined them early and VC6 emitted them at the object's end. Defined
+  `inline` right after its class, OnLadderList 0x007A3100 matched with or without new code
+  above it; at its address position it flipped with every function landed before it.
   To hold one, drop each unused include in turn, then move declarations to the file's top.
 - A short global is read as a dword only at offset 0 of an extern aggregate, or where its
   definition lands 4-aligned in .bss, which VC6 orders by a hash of the name.
@@ -507,6 +651,9 @@ Each entry: what the diff showed, then the source change that fixed it.
   own .cpp uses stay out of the shared header: that file declares the full class itself.
   When one must land, shift each includer's markers by one from the first number the
   checker reports as 'no compiled function has this name'.
+- An `#include` can add static initialisers that the exe's module does not have (inline.h
+  pulls in sun.h's), and the checker never flags extra compiled code. Compare the file's
+  compiled `$E` count before and after adding a header.
 - An inline constructor or destructor in a shared header on a class with vector members
   shifts `$E` and `$S` numbers in every includer: declare it, define it inline in its file.
 - Two heap-sensitive functions in different files that want opposite states of a header's

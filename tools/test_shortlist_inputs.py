@@ -12,8 +12,8 @@ class ShortlistTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             progress = root / "progress.csv"
-            progress.write_text("address,result\n0x10,MATCH\n0x20,99.5%\n0x30,WRONG TARGETS\n")
-            self.assertEqual(finished_addresses(progress), {16})
+            progress.write_text("address,result\n0x10,MATCH\n0x20,99.5%\n0x30,WRONG TARGETS\n0x40,RECONSTRUCTED\n")
+            self.assertEqual(finished_addresses(progress), {16, 64})
             loose = root / "build/batch/one/0X30.cpp"
             loose.parent.mkdir(parents=True)
             loose.touch()

@@ -4,7 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
 #include "rect.h"
 #include "gauge.h"
 #include "_convert.h"
@@ -20,7 +19,7 @@
 #include "color.hh"
 
 // SYNTHETIC: GAMEMD 0x004E24E0 SYMBOL
-// _$E41
+// _$E2
 
 // FUNCTION: GAMEMD 0x004E2500
 GaugeClass::GaugeClass(unsigned id, int x, int y, int w, int h)

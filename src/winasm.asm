@@ -2024,6 +2024,7 @@ Draw_Voxel_Reverse_UNUSED_ASM endp
 
 
 public _Int3
+; FUNCTION: GAMEMD 0x007E0000
 _Int3 proc near
 	;int	3
 	ret

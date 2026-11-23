@@ -11,7 +11,7 @@
 #include "theme.hh"
 
 class CCINIClass;
-class AudioStream;
+struct AudioStreamer;
 
 struct ThemeControl {
 	ThemeControl(void);
@@ -45,7 +45,7 @@ class ThemeClass
 		bool IsShuffle;
 
 		DynamicVectorClass<ThemeControl *> Themes;
-		AudioStream * Stream;
+		AudioStreamer * Stream;
 
 		enum {
 			THEME_DELAY=TIMER_SECOND

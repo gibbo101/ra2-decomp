@@ -289,9 +289,9 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		unsigned char unknown_53D6;
 		unsigned char unknown_53D7;
 		unsigned char DefenseType_53D8;
-		unsigned char unknown_53D9;
-		unsigned char unknown_53DA;
-		unsigned char unknown_53DB;
+		unsigned char : 8;
+		unsigned char : 8;
+		unsigned char : 8;
 
 		AbstractClass * FlagLocation;
 		Cell FlagHome;
@@ -465,7 +465,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		bool Flag_To_Win(bool silent = false);
 		bool Flag_To_Lose(bool silent = false);
 		void Flag_To_End(void);
-		void Destroy_All(void);
+		void Blowup_All(void);
 		void Destroy_All_Buildings(void);
 		void Destroy_All_Non_Buildings_Non_Naval(void);
 		void Destroy_All_Non_Buildings_Naval(void);
@@ -503,6 +503,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 
 		void Add_Anger(int level, HouseClass const * house);
 		void Mark_Scouted(HouseClass const * house);
+		void FUN_005048A0(int index);
 
 		void Begin_Construction(void);
 		BuildingTypeClass const * Get_First_Ownable(DynamicVectorClass<BuildingTypeClass const *> const & owned) const;
@@ -599,7 +600,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		bool AI_Fire_Sale(UrgencyType urgency);
 		bool AI_Raise_Money(UrgencyType urgency);
 
-		void AI_TryFireSW(void);
+		void AI_Super_Weapons(void);
 		void AI_Hunter_Seeker(SuperClass * super);
 		void AI_Multi_Missile(SuperClass * super);
 		void AI_Chem_Missile(SuperClass * super);
@@ -687,8 +688,6 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 
 		void Clobber_All(void);
 
-		void Blowup_All(void);
-
 		void MPlayer_Defeated(void);
 
 		friend class MapEditClass;
@@ -757,7 +756,7 @@ class HouseClass : public AbstractClass, public IHouse, public IPublicHouse, pub
 		IConnectionPoint *PowerEvents;
 
 		int field_10E20;
-		unsigned unknown_16084;
+		unsigned : 32;
 
 		double field_10E28;
 

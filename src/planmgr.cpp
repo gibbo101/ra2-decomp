@@ -31,6 +31,9 @@
 #include "queue.h"
 #include "mission.h"
 
+void __fastcall FUN_0063C690(PlanningNodeClass * node);
+void __fastcall FUN_0063CAE0(PlanningNodeClass * node);
+
 extern double __cdecl FUN_004CAC40(double);
 extern Rect __fastcall Get_Title_Screen_Area(void);
 Coord __fastcall FUN_00633BC0(EventClass const & event);
@@ -42,10 +45,7 @@ static inline void Shrink_Rect(Rect & r)
 	if (r.Width <= -2) goto none;
 	if (r.Height <= -2) {
 none:
-		r.X = 0;
-		r.Y = 0;
-		r.Width = 0;
-		r.Height = 0;
+		r.Set(0, 0, 0, 0);
 	} else {
 		r.X += 1;
 		r.Y += 1;
@@ -481,7 +481,8 @@ int PlanningNodeClass::Find_Member(TechnoClass * techno)
 // FUNCTION: GAMEMD 0x006342D0
 TechnoClass * PlanningNodeClass::Member_Owner(int index)
 {
-	return PlanningMembers[index]->Owner;
+	PlanningMemberClass * member = PlanningMembers[index];
+	return member->Get_Owner();
 }
 
 Rect __fastcall FUN_00634510(Point2D center, int size);
@@ -514,7 +515,7 @@ HouseClass * PlanningNodeClass::Lead_House(void)
 // FUNCTION: GAMEMD 0x006343C0
 Coord PlanningNodeClass::Lead_Coord(void)
 {
-	Coord coord = FUN_00633BC0(*PlanningMembers[0]->Packet);
+	Coord coord = FUN_00633BC0(*PlanningMembers[0]->Get_Packet());
 	return coord;
 }
 
@@ -536,19 +537,20 @@ bool PlanningNodeClass::Hit_Test(int x, int y)
 Rect __fastcall FUN_00634510(Point2D center, int size)
 {
 	int offset = -(size / 2);
-	Point2D corner = center;
+	Point2D corner;
+	corner = center;
 	corner.X += offset;
 	corner.Y += offset;
-	Rect rect;
-	rect = Rect(corner, size, size);
+	Rect rect(corner.X, corner.Y, size, size);
 	return rect;
 }
 
 // FUNCTION: GAMEMD 0x00634550
 bool PlanningNodeClass::Lead_At(Coord coord)
 {
-	Coord c = FUN_00633BC0(*PlanningMembers[0]->Packet);
-	return c.X == coord.X && c.Y == coord.Y && c.Z == coord.Z;
+	Coord c;
+	c = Lead_Coord();
+	return c == coord;
 }
 
 // FUNCTION: GAMEMD 0x006345A0
@@ -556,8 +558,7 @@ Rect PlanningNodeClass::Lead_Rect(void)
 {
 	Point2D pixel;
 	pixel = Lead_Pixel();
-	Rect rect = FUN_00634510(pixel, 8);
-	return rect;
+	return FUN_00634510(pixel, 8);
 }
 
 // FUNCTION: GAMEMD 0x00634630
@@ -656,14 +657,14 @@ EventClass * PlanningNodeClass::Loop_Event(void)
 // FUNCTION: GAMEMD 0x00634810
 Coord PlanningNodeClass::Branch_Coord(int index)
 {
-	Coord coord = FUN_00633BC0(PlanningBranches[index]->Event);
+	Coord coord = Get_Branch(index)->Get_Coord();
 	return coord;
 }
 
 // FUNCTION: GAMEMD 0x00634850
 Coord PlanningNodeClass::Loop_Coord(void)
 {
-	Coord coord = FUN_00633BC0(LoopBranch.Event);
+	Coord coord = LoopBranch.Get_Coord();
 	return coord;
 }
 
@@ -757,6 +758,58 @@ int PlanningNodeClass::Find_Branch(TechnoClass * techno)
 	return -1;
 }
 
+static inline void Find_Loop_Branch(PlanningNodeClass * node)
+{
+	node->LoopBranchIndex = -1;
+	if (node->LoopBranch.Get_Count()) {
+		EventClass self = node->LoopBranch.Get_Event();
+		int branches = node->PlanningBranches.Count();
+		for (int b = 0; b < branches; b++) {
+			EventClass other = node->PlanningBranches[b]->Get_Event();
+			Coord a = FUN_00633BC0(self);
+			Coord c = FUN_00633BC0(other);
+			if (a == c) {
+				node->LoopBranchIndex = b;
+				return;
+			}
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00634E10
+int PlanningNodeClass::FUN_00634E10(PlanningMemberClass * member)
+{
+	TechnoClass * owner = member->Get_Owner();
+	int index = Find_Branch(owner);
+	if (index == -1) {
+		PlanningNodeClass * previous = Prev_Node(owner);
+		PlanningNodeClass * last = owner->FUN_00705D20()->Last_Node();
+		if (previous == last) {
+			member->Set_Branch(-1);
+			return -1;
+		}
+		EventClass event = previous->Get_Event_For(owner);
+		PlanningBranchClass * branch = new PlanningBranchClass;
+		branch->Set_Event(event);
+		branch->Inc_Count();
+		PlanningBranches.Add(branch);
+		int count = PlanningBranches.Count() - 1;
+		if (Is_Loop_Alone()) {
+			Find_Loop_Branch(this);
+		}
+		Reset_Colors(false);
+		member->Set_Branch(count);
+		return count;
+	} else {
+		PlanningBranchClass * branch = PlanningBranches[index];
+		branch->Set_Color(-1);
+		Reset_Colors(false);
+		branch->Inc_Count();
+		member->Set_Branch(index);
+		return index;
+	}
+}
+
 // FUNCTION: GAMEMD 0x00635060
 void PlanningNodeClass::Detach(PlanningMemberClass * member)
 {
@@ -811,24 +864,7 @@ void PlanningNodeClass::Deactivate(PlanningMemberClass * member)
 // FUNCTION: GAMEMD 0x00635210
 void PlanningNodeClass::Locate_Loop_Branch(void)
 {
-	LoopBranchIndex = -1;
-	if (LoopBranch.Get_Count()) {
-		EventClass self = LoopBranch.Get_Event();
-		int branches = PlanningBranches.Count();
-		int b = 0;
-		if (branches > 0) {
-			do {
-				EventClass other = PlanningBranches[b]->Get_Event();
-				Coord a = FUN_00633BC0(self);
-				Coord c = FUN_00633BC0(other);
-				if (a == c) {
-					LoopBranchIndex = b;
-					return;
-				}
-				b++;
-			} while (b < branches);
-		}
-	}
+	Find_Loop_Branch(this);
 }
 
 // FUNCTION: GAMEMD 0x006352D0
@@ -927,7 +963,6 @@ void __fastcall FUN_006357D0(Rect * rect, int amount)
 	rect->Height += twice;
 }
 
-extern RGBClass DAT_00A83CD9;
 extern RGBClass DAT_00A80220;
 struct Drawing {
 	static int RGB_To_Int(int red, int green, int blue);
@@ -956,7 +991,7 @@ static inline int Unit_Path_Tint(TechnoClass * techno, WaypointTint tint)
 	int slot = FUN_006339B0(techno);
 	RGBClass color = Houses[slot]->RemapColorRGB;
 	if (tint == WAYPOINT_NORMAL) {
-		return FUN_0063D070(color, DAT_00A83CD9, 80);
+		return FUN_0063D070(color, BlackColor, 80);
 	}
 	return FUN_0063D070(color, DAT_00A80220, 100);
 }
@@ -1003,7 +1038,7 @@ int PlanningNodeClass::Branch_Color(int index)
 			PlanningTokenClass * token = owner->FUN_00705D20();
 			if (!token->Reached(token->Node_Index(this))) {
 				int slot = FUN_006339B0(owner);
-				return branch->Color = FUN_0063D070(Houses[slot]->RemapColorRGB, DAT_00A83CD9, 0x50);
+				return branch->Color = FUN_0063D070(Houses[slot]->RemapColorRGB, BlackColor, 0x50);
 			}
 			last_owner = owner;
 		}
@@ -1026,7 +1061,7 @@ int PlanningNodeClass::Loop_Color(void)
 			PlanningTokenClass * token = owner->FUN_00705D20();
 			if (!token->Get_F98()) {
 				int slot = FUN_006339B0(owner);
-				return LoopBranch.Color = FUN_0063D070(Houses[slot]->RemapColorRGB, DAT_00A83CD9, 0x50);
+				return LoopBranch.Color = FUN_0063D070(Houses[slot]->RemapColorRGB, BlackColor, 0x50);
 			}
 			last_owner = owner;
 		}
@@ -1062,7 +1097,9 @@ Rect PlanningNodeClass::Lead_Box_Rect(void)
 // FUNCTION: GAMEMD 0x00635E90
 Rect PlanningNodeClass::Lead_Box_Rect2(void)
 {
-	return Inflated(Lead_Box_Rect(), 4);
+	Rect rect = Lead_Box_Rect();
+	FUN_006357D0(&rect, 4);
+	return rect;
 }
 
 // FUNCTION: GAMEMD 0x00635F20
@@ -1286,8 +1323,11 @@ PlanningNodeClass * PlanningTokenClass::Node_At(int index)
 	if (count == 0) return 0;
 	if (index >= count) {
 		int start = StepsToClosedLoop;
-		if (!Loop_Start_Valid()) return 0;
-		index = (index - start) % ClosedLoopNodeCount + start;
+		if (Loop_Start_Valid()) {
+			index = (index - start) % ClosedLoopNodeCount + start;
+		} else {
+			return 0;
+		}
 	}
 	if (index < 0 || index >= count) return 0;
 	return PlanningNodes[index];
@@ -1429,6 +1469,12 @@ extern bool DAT_00AC4C08;
 void __fastcall FUN_006DA740(Tactical * tactical);
 extern int DAT_00AC4C90;
 
+static inline void Reset_Planning_Command_Flags(void)
+{
+	DAT_00AC4CD0 = false;
+	DAT_00AC4CC8 = false;
+}
+
 // FUNCTION: GAMEMD 0x006370B0
 void __fastcall FUN_006370B0(void)
 {
@@ -1446,8 +1492,7 @@ void __fastcall FUN_006370B0(void)
 	PlanningNodeClass::Unknown1.Clear();
 	PlanningNodeClass::Unknown2.Clear();
 	DAT_00AC4CCC = 0;
-	DAT_00AC4CD0 = false;
-	DAT_00AC4CC8 = false;
+	Reset_Planning_Command_Flags();
 	DAT_00AC4C3C = 0;
 	DAT_00AC4C08 = false;
 	DAT_00AC4CF5 = false;
@@ -1552,13 +1597,7 @@ void __fastcall FUN_00637920(void)
 	int count = PlanningNodeClass::Unknown3.Count();
 	for (int i = 0; i < count; i++) {
 		PlanningNodeClass * node = PlanningNodeClass::Unknown3[i];
-		node->Clear();
-		int members = node->PlanningMembers.Count();
-		for (int j = 0; j < members; j++) {
-			node->FUN_00634E10(node->PlanningMembers[j]);
-		}
-		node->Update_Active();
-		node->Queued = false;
+		node->Rebuild();
 	}
 	PlanningNodeClass::Unknown3.Clear();
 }
@@ -1600,19 +1639,6 @@ bool __fastcall FUN_00637AA0(void)
 
 bool __fastcall FUN_00638C70(TechnoClass * techno);
 
-static inline void Commit_Unit_Orders(TechnoClass * techno)
-{
-	PlanningTokenClass * token = techno->FUN_00705D20();
-	if (token != NULL) {
-		bool started = token->Has_Started();
-		token->FUN_00636CE0();
-		bool permitted = FUN_00638C70(techno);
-		if (!started && permitted) {
-			techno->TryNextPlanningTokenNode();
-		}
-	}
-}
-
 // FUNCTION: GAMEMD 0x00637AB0
 void __fastcall Commit_Plans(int house)
 {
@@ -1620,7 +1646,15 @@ void __fastcall Commit_Plans(int house)
 	for (int i = 0; i < count; i++) {
 		TechnoClass * techno = Technos[i];
 		if (house == FUN_006339B0(techno)) {
-			Commit_Unit_Orders(techno);
+			PlanningTokenClass * token = techno->FUN_00705D20();
+			if (token != NULL) {
+				bool started = token->Has_Started();
+				token->FUN_00636CE0();
+				bool permitted = FUN_00638C70(techno);
+				if (!started && permitted) {
+					techno->TryNextPlanningTokenNode();
+				}
+			}
 		}
 	}
 }
@@ -1672,7 +1706,7 @@ bool TechnoClass::TryNextPlanningTokenNode(void)
 		QueueMission(MISSION_WAIT, true);
 		EventClass popped = token->Pop_Front();
 		FUN_006375B0(popped);
-		token->F1C = true;
+		token->Set_F1C();
 		return true;
 	}
 	return false;
@@ -1761,7 +1795,7 @@ bool __fastcall FUN_00638C20(int mission)
 }
 
 // FUNCTION: GAMEMD 0x00638C40
-bool __fastcall FUN_00638C40(int mission, TargetClass target)
+bool __fastcall FUN_00638C40(int mission, xTargetClass target)
 {
 	if (mission == 1 || mission == 0xb) {
 		if ((RTTIType)target == RTTI_CELL) {
@@ -1811,19 +1845,6 @@ static inline EventClass Last_Planning_Event(PlanningTokenClass * token)
 	return token->Event_At(token->Node_Count() - 1);
 }
 
-static inline int Previous_Order_Status(PlanningTokenClass * token)
-{
-	EventClass previous = Last_Planning_Event(token);
-	int mission = previous.Data.MegaMission.Mission;
-	if (FUN_00638C20(mission)) {
-		return 1;
-	}
-	if (Mission_Fits(mission, Planning_Target(previous.Data.MegaMission.Target))) {
-		return 2;
-	}
-	return -1;
-}
-
 // FUNCTION: GAMEMD 0x00638CE0
 int __fastcall FUN_00638CE0(TechnoClass * techno, EventClass const & event)
 {
@@ -1837,7 +1858,14 @@ int __fastcall FUN_00638CE0(TechnoClass * techno, EventClass const & event)
 	}
 	PlanningTokenClass * token = techno->FUN_00705D20();
 	if (token != NULL && token->Node_Count() > 0) {
-		return Previous_Order_Status(token);
+		EventClass previous = Last_Planning_Event(token);
+		int last = previous.Data.MegaMission.Mission;
+		if (FUN_00638C20(last)) {
+			return 1;
+		}
+		if (Mission_Fits(last, Planning_Target(previous.Data.MegaMission.Target))) {
+			return 2;
+		}
 	}
 	return -1;
 }
@@ -1860,12 +1888,12 @@ extern bool DAT_00AC4C08;
 int __fastcall FUN_0063AC70(PlanningNodeClass * node);
 void __fastcall FUN_00634B20(PlanningNodeClass * node);
 
-static inline PlanningNodeClass * Find_Planning_Node(int x, int y)
+static inline PlanningNodeClass * Find_Node_At(DynamicVectorClass<PlanningNodeClass *> const & nodes, Point2D const & point)
 {
-	int count = PlanningNodeClass::Unknown2.Count();
-	for (int i = 0; i < count; i++) {
-		PlanningNodeClass * node = PlanningNodeClass::Unknown2[i];
-		if (node->Hit_Test(x, y)) return node;
+	int count = nodes.Count();
+	for (int i = 0; i < count; ++i) {
+		PlanningNodeClass * node = nodes[i];
+		if (node->Hit_Test(point.X, point.Y)) return node;
 	}
 	return NULL;
 }
@@ -1876,7 +1904,7 @@ void __fastcall FUN_00638E60(void)
 	if (!DAT_00AC4CB0) {
 		int x = MouseCursor->Get_Mouse_X();
 		int y = MouseCursor->Get_Mouse_Y();
-		PlanningNodeClass * node = Find_Planning_Node(x, y);
+		PlanningNodeClass * node = Find_Node_At(PlanningNodeClass::Unknown2, Point2D(x, y));
 		if (node != DAT_00AC4CCC) {
 			DAT_00AC4C3C = 0;
 			if (node) {
@@ -1988,15 +2016,14 @@ bool __fastcall FUN_00639130(void)
 }
 
 // FUNCTION: GAMEMD 0x00639210
-PlanningNodeClass * __fastcall FUN_00639210(int house, int id, Coord coord)
+PlanningNodeClass * __fastcall FUN_00639210(int house, Coord coord, int id)
 {
 	int count = PlanningNodeClass::Unknown1.Count();
 	for (int i = 0; i < count; i++) {
 		PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
-		Coord at = FUN_00633BC0(*node->PlanningMembers[0]->Packet);
-		if (at.X == coord.X && at.Y == coord.Y && at.Z == coord.Z) {
-			if (id == -1 || id == node->Id) {
-				int owner = FUN_006339B0(node->PlanningMembers[0]->Owner);
+		if (node->Lead_At(coord)) {
+			if (id == -1 || id == node->Get_Id()) {
+				int owner = FUN_006339B0(node->Member_Owner(0));
 				if (house == -1 || house == owner) {
 					return node;
 				}
@@ -2004,6 +2031,18 @@ PlanningNodeClass * __fastcall FUN_00639210(int house, int id, Coord coord)
 		}
 	}
 	return 0;
+}
+
+// FUNCTION: GAMEMD 0x006392D0
+PlanningNodeClass * __fastcall FUN_006392D0(Point2D point)
+{
+	return Find_Node_At(PlanningNodeClass::Unknown1, point);
+}
+
+// FUNCTION: GAMEMD 0x006393A0
+PlanningNodeClass * __fastcall FUN_006393A0(Point2D point)
+{
+	return Find_Node_At(PlanningNodeClass::Unknown2, point);
 }
 
 // FUNCTION: GAMEMD 0x00639470
@@ -2049,7 +2088,8 @@ void __fastcall FUN_00639800(TechnoClass * techno, PlanningNodeClass * node);
 extern bool DAT_00AC4CD0;
 void __fastcall FUN_00639CB0(TechnoClass * techno);
 
-static inline void Close_Loop(TechnoClass * techno, PlanningNodeClass * node)
+// FUNCTION: GAMEMD 0x00639740
+inline void __fastcall FUN_00639740(TechnoClass * techno, PlanningNodeClass * node)
 {
 	PlanningTokenClass * token = techno->FUN_00705D20();
 	int index = token->Node_Index(node);
@@ -2070,12 +2110,6 @@ static inline void Close_Loop(TechnoClass * techno, PlanningNodeClass * node)
 		FUN_00639CB0(techno);
 	}
 	node->Update_Active();
-}
-
-// FUNCTION: GAMEMD 0x00639740
-void __fastcall FUN_00639740(TechnoClass * techno, PlanningNodeClass * node)
-{
-	Close_Loop(techno, node);
 }
 
 
@@ -2144,14 +2178,29 @@ void __fastcall FUN_00639BC0(PlanningNodeClass * node)
 			token->FUN_00636B50(token->Node_Index(node));
 		}
 		if (next && next != node) {
-			next->Clear();
-			int count = next->PlanningMembers.Count();
-			for (int i = 0; i < count; i++) {
-				next->FUN_00634E10(next->PlanningMembers[i]);
-			}
-			next->Update_Active();
-			next->Queued = false;
+			next->Rebuild();
 		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x00639CB0
+void __fastcall FUN_00639CB0(TechnoClass * techno)
+{
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	int count = token->Node_Count();
+	int start = token->Get_Loop_Start();
+	PlanningNodeClass * first = token->Node_At(0);
+	int members = first->Get_Count();
+	bool attack_move = false;
+	for (int i = 0; i < members; ++i) {
+		TechnoClass * owner = first->Member_Owner(i);
+		if (owner->CanAttackOnTheMove()) {
+			attack_move = true;
+			break;
+		}
+	}
+	if (attack_move) {
+		for (int j = start; j < count; ++j) token->Node_At(j)->Promote_Events();
 	}
 }
 
@@ -2335,13 +2384,13 @@ void __fastcall FUN_0063A230(char const * name)
 }
 
 // FUNCTION: GAMEMD 0x0063A280
-void __fastcall FUN_0063A280(char const * type)
+void __fastcall FUN_0063A280(EventClass const & event)
 {
-	if (*type == 9) {
+	if (event.Type == EventClass::DEPLOY) {
 		FUN_0063A230("MSG:PlanningModeNoDeploy");
-	} else if (*type == 6) {
+	} else if (event.Type == EventClass::IDLE) {
 		FUN_0063A230("MSG:PlanningModeNoStop");
-	} else if (*type == 7) {
+	} else if (event.Type == EventClass::SCATTER) {
 		FUN_0063A230("MSG:PlanningModeNoScatter");
 	}
 }
@@ -2366,10 +2415,13 @@ int __fastcall FUN_0063A440(PlanningTokenClass * token, EventClass const & event
 	if (FUN_00638C20(mission)) {
 		return 0;
 	}
-	if (Mission_Fits(mission, target)) {
+	if (FUN_00638C40(mission, target)) {
 		return 0;
 	}
-	return token->Node_Count() == 15 ? 2 : -1;
+	if (token->Node_Count() == 15) {
+		return 2;
+	}
+	return -1;
 }
 
 // FUNCTION: GAMEMD 0x0063A4A0
@@ -2389,6 +2441,38 @@ void __fastcall FUN_0063A4B0(int kind)
 	} else if (kind == 2) {
 		FUN_0063A230("MSG:NodeMaximum");
 	}
+}
+
+static inline PlanningNodeClass * Hover_Node_At(Point2D point);
+PlanningNodeClass * __fastcall FUN_0063AD40(void);
+void __fastcall FUN_0063AD30(PlanningNodeClass * node);
+
+// FUNCTION: GAMEMD 0x0063A5A0
+bool __fastcall FUN_0063A5A0(Point2D xy)
+{
+	if (!FUN_00637AA0()) return false;
+
+	PlanningNodeClass * selected = FUN_0063AD40();
+	PlanningNodeClass * hit = Hover_Node_At(xy);
+	if (hit && hit != selected) {
+		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
+		FUN_0063AD30(hit);
+	} else {
+		PlanningNodeClass * node = Find_Node_At(PlanningNodeClass::Unknown1, xy);
+		if (node) {
+			if (FUN_0063AC70(node) != -1) {
+				FUN_0063A230("MSG:PlanningModeInvalidNodeX");
+				return true;
+			}
+		} else {
+			int kind = FUN_00639DA0();
+			if (kind != -1) {
+				FUN_0063A360(kind);
+				return true;
+			}
+		}
+	}
+	return selected || hit;
 }
 
 extern int DAT_00A8ECC8;
@@ -2419,14 +2503,13 @@ PlanningNodeClass * __fastcall FUN_0063AC60(void)
 	return DAT_00AC4BF0;
 }
 
-extern DynamicVectorClass<ObjectClass *> DAT_00A8ECB8;
 
 // FUNCTION: GAMEMD 0x0063AC70
 int __fastcall FUN_0063AC70(PlanningNodeClass * node)
 {
-	int count = DAT_00A8ECB8.Count();
+	int count = CurrentObject.Count();
 	for (int i = 0; i < count; i++) {
-		ObjectClass * object = DAT_00A8ECB8[i];
+		ObjectClass * object = CurrentObject[i];
 		if (object && object->Is_Techno()) {
 			TechnoClass * techno = (TechnoClass *)object;
 			PlanningTokenClass * token = techno->FUN_00705D20();
@@ -2466,26 +2549,8 @@ PlanningNodeClass * __fastcall FUN_0063AD40(void)
 
 void __fastcall FUN_0063AD50(void);
 
-static inline PlanningNodeClass * Find_Node_At(DynamicVectorClass<PlanningNodeClass *> const & nodes, Point2D const & point)
+static inline PlanningNodeClass * Hover_Node_At(Point2D point)
 {
-	int count = nodes.Count();
-	int i = 0;
-	if (count > 0) {
-		do {
-			PlanningNodeClass * node = nodes[i];
-			if (node->Hit_Test(point.X, point.Y)) return node;
-			++i;
-		} while (i < count);
-	}
-	return NULL;
-}
-
-// FUNCTION: GAMEMD 0x0063A8E0
-bool __stdcall FUN_0063A8E0(Point2D point)
-{
-	if (!FUN_00637AA0()) return false;
-
-	PlanningNodeClass * selected = FUN_0063AD40();
 	PlanningNodeClass * hover = DAT_00AC4CCC;
 	PlanningNodeClass * hit;
 	if (!hover) {
@@ -2497,6 +2562,17 @@ bool __stdcall FUN_0063A8E0(Point2D point)
 			hit = NULL;
 		}
 	}
+
+	return hit;
+}
+
+// FUNCTION: GAMEMD 0x0063A8E0
+bool __stdcall FUN_0063A8E0(Point2D point)
+{
+	if (!FUN_00637AA0()) return false;
+
+	PlanningNodeClass * selected = FUN_0063AD40();
+	PlanningNodeClass * hit = Hover_Node_At(point);
 
 	if (hit && hit == selected) {
 		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
@@ -2610,7 +2686,7 @@ void __fastcall FUN_0063B0A0(void)
 		PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
 		HouseClass * house = node->PlanningMembers[0]->Owner->House;
 		if (house->Is_Ally(PlayerPtr)) {
-			node->FUN_0063C690();
+			FUN_0063C690(node);
 		}
 	}
 	int count = Technos.Count();
@@ -2633,7 +2709,7 @@ void __fastcall FUN_0063B150(void)
 		PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
 		HouseClass * house = node->PlanningMembers[0]->Owner->House;
 		if (house->Is_Ally(PlayerPtr)) {
-			node->FUN_0063CAE0();
+			FUN_0063CAE0(node);
 		}
 	}
 	for (int j = 0; j < nodes; j++) {
@@ -2651,6 +2727,16 @@ void __fastcall FUN_0063B150(void)
 			Draw_Filled_Unit_Waypoints(techno);
 		}
 	}
+}
+
+int __fastcall FUN_0063DAD0(RGBClass const & color);
+
+// FUNCTION: GAMEMD 0x0063B2F0
+void __fastcall FUN_0063B2F0(void)
+{
+	int color = FUN_0063DAD0(DAT_00A80220);
+	if (DAT_00AC4CCC) DAT_00AC4CCC->Frame_Lead_Box(color);
+	if (DAT_00AC4BF0) DAT_00AC4BF0->FUN_00635680(color);
 }
 
 // FUNCTION: GAMEMD 0x0063BE10
@@ -2699,7 +2785,7 @@ static inline int RGB_Pixel(RGBClass const & color)
 
 static inline int Waypoint_Fill_Color(TechnoClass * techno)
 {
-	int normal = RGB_Pixel(DAT_00A83CD9);
+	int normal = RGB_Pixel(BlackColor);
 	int result;
 	if (techno) {
 		int highlight = FUN_0063DAD0(DAT_00A80220);
@@ -2799,6 +2885,115 @@ void __fastcall Draw_Filled_Unit_Waypoints(TechnoClass * techno)
 	if (frame != -1) FUN_0063D630(source, target, path_color, fill, frame);
 }
 
+int __fastcall FUN_0063D0F0(TechnoClass * techno);
+void __fastcall FUN_0063D400(Point2D p, int color);
+int __fastcall FUN_0063D500(TechnoClass * techno);
+void __fastcall FUN_0063D560(Point2D a, Point2D b, int color);
+void __fastcall FUN_0063D910(Point2D p1, Point2D p2, int width, int color);
+
+// FUNCTION: GAMEMD 0x0063B550
+void __fastcall FUN_0063B550(TechnoClass * techno)
+{
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	Coord origin = techno->As_Coord();
+	Point2D center = FUN_006339E0(origin);
+	Point2D source;
+	source.X = center.X;
+	source.Y = center.Y;
+	int color = FUN_0063D0F0(techno);
+	bool has_nodes = Has_Planned_Nodes(token);
+	bool draw_action = Should_Draw_Active_Action(techno, has_nodes);
+	int width = 4;
+	if (token && token->Owner_Is_Mission()) {
+		EventClass packet(token->Popped);
+		Coord coord = FUN_0063CA80(packet, techno);
+		Point2D target = FUN_006339E0(coord);
+		FUN_0063D400(center, color);
+		FUN_0063D910(center, target, 3, color);
+		int frame = FUN_0063D540(packet);
+		if (frame != -1) FUN_0063D560(center, target, color);
+		FUN_0063D400(target, color);
+		return;
+	}
+
+	if (draw_action) {
+		bool mega_mission = techno->HaveMegaMission();
+		bool attack_move = techno->HaveAttackMoveTarget();
+		Coord coord = techno->GetAttackCoordinates();
+		Point2D action = FUN_006339E0(coord);
+		if (techno->IsInLimbo) {
+			FUN_0063D400(action, color);
+			return;
+		}
+		FUN_0063D400(center, color);
+		FUN_0063D910(center, action, 3, color);
+		int frame = (mega_mission && !attack_move) ? FUN_0063D520(techno) : FUN_0063D500(techno);
+		if (frame != -1) FUN_0063D560(center, action, color);
+		FUN_0063D400(action, color);
+		if (attack_move) {
+			Coord attack_coord = techno->GetAttackMoveCoords();
+			Point2D dest = FUN_006339E0(attack_coord);
+			FUN_0063D910(action, dest, 3, color);
+			frame = FUN_0063D520(techno);
+			if (frame != -1) FUN_0063D560(action, dest, color);
+			FUN_0063D400(dest, color);
+			return;
+		}
+		if (!has_nodes) return;
+		source = action;
+		width = 3;
+	} else if (!has_nodes) {
+		return;
+	}
+
+	PlanningNodeClass * node = token->Node_At(0);
+	Point2D target = node->Lead_Pixel();
+	PlanningBranchClass * branch = node->Branch_Of(techno);
+	if (branch) target = FUN_0063D210(&branch->Event, techno);
+	FUN_0063D400(source, color);
+	FUN_0063D910(source, target, width, color);
+	if (branch) FUN_0063D400(target, color);
+	int frame = Planned_Waypoint_Frame(node->Get_Event_For(techno));
+	if (frame != -1) FUN_0063D560(source, target, color);
+}
+
+// FUNCTION: GAMEMD 0x0063C690
+void __fastcall FUN_0063C690(PlanningNodeClass * node)
+{
+	Point2D pixel = node->Lead_Pixel();
+	int frame = -1;
+	if (node->Get_Count() > 0) {
+		EventClass event = node->Get_Event(0);
+		frame = FUN_0063D540(event);
+	}
+	int color = node->Lead_Color();
+	int count = node->Branch_Count();
+	for (int index = 0; index < count; index++) {
+		Coord coord = node->Branch_Coord(index);
+		Point2D start = FUN_006339E0(coord);
+		if (coord == Coord(-1, -1, -1)) {
+			PlanningBranchClass * branch = node->Get_Branch(index);
+			start = FUN_0063D210(&branch->Event, node->Owner_At_Branch(index));
+		}
+		FUN_0063D910(start, pixel, 4, color);
+		if (frame != -1) {
+			FUN_0063D560(start, pixel, color);
+		}
+	}
+	if (node->Is_Loop_Alone()) {
+		Coord coord = node->Loop_Coord();
+		Point2D start = FUN_006339E0(coord);
+		if (coord == Coord(-1, -1, -1)) {
+			start = FUN_0063D210(node->Loop_Event(), node->Active_Owner());
+		}
+		FUN_0063D910(start, pixel, 4, color);
+		if (frame != -1) {
+			FUN_0063D560(start, pixel, color);
+		}
+	}
+	node->Draw_Lead_Box(color);
+}
+
 // FUNCTION: GAMEMD 0x0063CA80
 Coord __fastcall FUN_0063CA80(EventClass const & event, TechnoClass * owner)
 {
@@ -2807,6 +3002,47 @@ Coord __fastcall FUN_0063CA80(EventClass const & event, TechnoClass * owner)
 		coord = owner->As_Coord();
 	}
 	return coord;
+}
+
+// FUNCTION: GAMEMD 0x0063CAE0
+void __fastcall FUN_0063CAE0(PlanningNodeClass * node)
+{
+	Point2D pixel = node->Lead_Pixel();
+	int frame = -1;
+	if (node->Get_Count() > 0) {
+		EventClass event = node->Get_Event(0);
+		frame = FUN_0063D540(event);
+	}
+	int fill = node->Lead_Color();
+	int count = node->Branch_Count();
+	for (int i = 0; i < count; i++) {
+		int color = node->Branch_Color(i);
+		Coord coord = node->Branch_Coord(i);
+		Point2D source = FUN_006339E0(coord);
+		if (coord == Coord(-1, -1, -1)) {
+			PlanningBranchClass * branch = node->Get_Branch(i);
+			TechnoClass * owner = node->Owner_At_Branch(i);
+			source = FUN_0063D210(&branch->Event, owner);
+		}
+		FUN_0063D960(source, pixel, 4, color);
+		if (frame != -1) {
+			FUN_0063D630(source, pixel, color, fill, frame);
+		}
+	}
+	if (node->Is_Loop_Alone()) {
+		int color = node->Loop_Color();
+		Coord coord = node->Loop_Coord();
+		Point2D source = FUN_006339E0(coord);
+		if (coord == Coord(-1, -1, -1)) {
+			TechnoClass * owner = node->Active_Owner();
+			source = FUN_0063D210(node->Loop_Event(), owner);
+		}
+		FUN_0063D960(source, pixel, 4, color);
+		if (frame != -1) {
+			FUN_0063D630(source, pixel, color, fill, frame);
+		}
+	}
+	node->Fill_Lead_Box(node->Node_Color());
 }
 
 // FUNCTION: GAMEMD 0x0063CE40
@@ -2824,21 +3060,18 @@ int __fastcall FUN_0063CF10(TechnoClass * techno)
 {
 	int slot = FUN_006339B0(techno);
 	RGBClass mixed = Houses[slot]->RemapColorRGB;
-	mixed.Adjust(0x50, DAT_00A83CD9);
+	mixed.Adjust(0x50, BlackColor);
 	return (mixed.Get_Green() >> Drawing::GreenShiftRight << Drawing::GreenShiftLeft)
 		| (mixed.Get_Red() >> Drawing::RedShiftRight << Drawing::RedShiftLeft)
 		| (mixed.Get_Blue() >> Drawing::BlueShiftRight << Drawing::BlueShiftLeft);
 }
 
-extern int DAT_008A0DD4;
-extern int DAT_008A0DE4;
-extern int DAT_008A0DDC;
 
 static inline int Pack_Wide(RGBClass const & c)
 {
-	unsigned char rr = DAT_008A0DD4;
-	unsigned char gr = DAT_008A0DE4;
-	unsigned char br = DAT_008A0DDC;
+	unsigned char rr = DSurface::RedLeft;
+	unsigned char gr = DSurface::GreenLeft;
+	unsigned char br = DSurface::BlueLeft;
 	return (c.Get_Red() >> rr << Drawing::RedShiftLeft)
 		| (c.Get_Green() >> gr << Drawing::GreenShiftLeft)
 		| (c.Get_Blue() >> br << Drawing::BlueShiftLeft);
@@ -2867,7 +3100,7 @@ int __fastcall FUN_0063DAD0(RGBClass const & c);
 // FUNCTION: GAMEMD 0x0063D0F0
 int __fastcall FUN_0063D0F0(TechnoClass * techno)
 {
-	int normal = FUN_0063DAD0(DAT_00A83CD9);
+	int normal = FUN_0063DAD0(BlackColor);
 	int result;
 	if (techno) {
 		int highlight = FUN_0063DAD0(DAT_00A80220);
@@ -2900,19 +3133,7 @@ Point2D __fastcall FUN_0063D210(EventClass const * event, TechnoClass * owner)
 // FUNCTION: GAMEMD 0x0063D2D0
 int PlanningNodeClass::Lead_Color(void)
 {
-	TechnoClass * techno = PlanningMembers[0]->Owner;
-	int result = Pack_Wide(DAT_00A83CD9);
-	if (techno) {
-		int highlight = Pack_Wide(DAT_00A80220);
-		if (DAT_00AC4BF0) {
-			if (DAT_00AC4BF0->Has_Member(techno)) {
-				result = highlight;
-			}
-		} else if (techno->IsSelected) {
-			result = highlight;
-		}
-	}
-	return result;
+	return FUN_0063D0F0(Member_Owner(0));
 }
 
 // FUNCTION: GAMEMD 0x0063D400
@@ -2966,13 +3187,14 @@ int __fastcall FUN_0063D540(EventClass const & event)
 // FUNCTION: GAMEMD 0x0063D560
 void __fastcall FUN_0063D560(Point2D a, Point2D b, int color)
 {
-	if (Distance(a, b) >= 0x25) {
-		int x = (a.X + b.X) / 2 - 10;
-		int y = (a.Y + b.Y) / 2 - 10;
-		Rect clip = Get_Title_Screen_Area();
-		Rect rect(x, y, 0x15, 0x15);
-		DSurface::Composite->Draw_Rect(clip, rect, color);
+	if (Distance(a, b) < 0x25) {
+		return;
 	}
+	int x = (a.X + b.X) / 2 - 10;
+	int y = (a.Y + b.Y) / 2 - 10;
+	Rect clip = Get_Title_Screen_Area();
+	Rect rect(x, y, 0x15, 0x15);
+	DSurface::Composite->Draw_Rect(clip, rect, color);
 }
 
 // FUNCTION: GAMEMD 0x0063D810
@@ -3026,9 +3248,9 @@ void __fastcall FUN_0063D960(Point2D p1, Point2D p2, int width, int color)
 // FUNCTION: GAMEMD 0x0063DAD0
 int __fastcall FUN_0063DAD0(RGBClass const & c)
 {
-	unsigned char rr = DAT_008A0DD4;
-	unsigned char gr = DAT_008A0DE4;
-	unsigned char br = DAT_008A0DDC;
+	unsigned char rr = DSurface::RedLeft;
+	unsigned char gr = DSurface::GreenLeft;
+	unsigned char br = DSurface::BlueLeft;
 	return (c.Get_Red() >> rr << Drawing::RedShiftLeft)
 		| (c.Get_Green() >> gr << Drawing::GreenShiftLeft)
 		| (c.Get_Blue() >> br << Drawing::BlueShiftLeft);
@@ -3250,4 +3472,180 @@ void __fastcall FUN_006395B0(TechnoClass * techno, PlanningNodeClass * node)
 	} else {
 		FUN_00639800(techno, node);
 	}
+}
+
+// FUNCTION: GAMEMD 0x00637270
+void __fastcall FUN_00637270(void)
+{
+	FUN_00638E60();
+	if (DAT_00AC4BF0 && DAT_00A8ECC8 > 0) {
+		DAT_00AC4BF0 = 0;
+	}
+	int count = PlanningTokenClass::Array.Count();
+	for (int i = 0; i < count; ++i) {
+		PlanningTokenClass * token = PlanningTokenClass::Array[i];
+		TechnoClass * owner = token->OwnerUnit;
+		for (int j = token->PlanningNodes.Count() - 1; j >= 0; --j) {
+			EventClass event = token->Event_At(j);
+			bool remove = true;
+			if (event.Type == EventClass::MEGAMISSION) {
+				if (event.Data.MegaMission.Target.Is_Valid()) {
+					remove = event.Data.MegaMission.Target.As_Abstract() == 0;
+				} else if (event.Data.MegaMission.Destination.Is_Valid()) {
+					remove = event.Data.MegaMission.Destination.As_Abstract() == 0;
+				}
+			}
+			if (!remove) {
+				continue;
+			}
+			PlanningNodeClass * node = token->Node_At(j);
+			PlanningNodeClass * next = node->Next_Node(owner);
+			FUN_006378B0(next);
+			token->FUN_00636B50(j);
+		}
+	}
+	FUN_00637920();
+	int refusal = DAT_00AC4C90;
+	if (refusal != -1) {
+		FUN_0063A4B0(refusal);
+		DAT_00AC4C90 = -1;
+	}
+	Reset_Planning_Command_Flags();
+	DAT_00AC4C08 = false;
+}
+
+// FUNCTION: GAMEMD 0x00638F90
+PlanningNodeClass * __fastcall FUN_00638F90(Point2D point)
+{
+	return Hover_Node_At(point);
+}
+
+// FUNCTION: GAMEMD 0x0063AB60
+bool __stdcall FUN_0063AB60(int x, int y)
+{
+	if (!PlanningNodeClass::PlanningModeActive) {
+		return false;
+	}
+	if (DAT_00AC4CB0) {
+		return false;
+	}
+	PlanningNodeClass * sel = DAT_00AC4C38;
+	PlanningNodeClass * hit = FUN_00638F90(Point2D(x, y));
+	if (sel == NULL) {
+		if (hit == NULL) {
+			return false;
+		}
+		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
+	} else if (hit != sel) {
+		Map.Set_Default_Mouse(MOUSE_NORMAL, false);
+	} else {
+		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
+	}
+	return true;
+}
+
+bool __fastcall FUN_00638120(TechnoClass * techno, EventClass * event);
+
+// FUNCTION: GAMEMD 0x00637E00
+void __fastcall FUN_00637E00(EventClass * event)
+{
+	if (event->Type == EventClass::PLAN_COMMIT) {
+		Commit_Plans(event->ID);
+	} else if (event->Type == EventClass::PLAN_CONNECT) {
+		TechnoClass * techno = event->Data.NavCom.Whom.As_Techno();
+		if (techno) {
+			AbstractClass * object = event->Data.NavCom.Where.As_Abstract();
+			if (object) {
+				Coord coord = object->As_Coord();
+				PlanningNodeClass * node = FUN_00639210(event->ID, coord, -1);
+				if (node) {
+					FUN_006395B0(techno, node);
+				}
+			}
+		}
+	} else if (event->Type == EventClass::PLAN_NODE_DELETE) {
+		AbstractClass * object = event->Data.Target.Whom.As_Abstract();
+		if (object) {
+			Coord coord = object->As_Coord();
+			int house = event->ID;
+			PlanningNodeClass * node = FUN_00639210(house, coord, -1);
+			if (node) {
+				TechnoClass * owner = node->Member_Owner(0);
+				int index = node->Index_In(owner);
+				PlanningTokenClass * token = owner->FUN_00705D20();
+				PlanningNodeClass * next = token->Node_At(index + 1);
+				FUN_00639BC0(node);
+				if (next && house == PlayerPtr->HeapID) {
+					FUN_0063B080(next);
+				}
+			}
+		}
+	} else {
+		TechnoClass * techno = event->Data.Target.Whom.As_Techno();
+		FUN_00638120(techno, event);
+	}
+}
+
+// FUNCTION: GAMEMD 0x00638120
+bool __fastcall FUN_00638120(TechnoClass * techno, EventClass * event)
+{
+	if (techno == NULL) return false;
+	bool mine = event->ID == PlayerPtr->HeapID;
+	Coord where = FUN_00633BC0(*event);
+	if (where == Coord(-1, -1, -1)) return false;
+	PlanningNodeClass * node = FUN_00639210(event->ID, where, event->Frame);
+	if (node && node->Has_Member(techno)) return true;
+	int status = FUN_00638CE0(techno, *event);
+	if (status != -1) {
+		if (mine) {
+			if (status == 0) {
+				FUN_0063A280(*event);
+			} else if (status == 1) {
+				FUN_0063A230("MSG:PostTerminatingCommand");
+			} else if (status == 2) {
+				FUN_0063A230("MSG:PostContinualCommand");
+			}
+		}
+		return false;
+	}
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	if (!token) {
+		token = FUN_00638A80(techno);
+	}
+	if (mine) {
+		int refusal = FUN_0063A440(token, *event);
+		if (refusal != -1) {
+			FUN_0063A4A0(refusal);
+		}
+	}
+	if (token->Loop_Start_Valid()) {
+		if (mine) {
+			FUN_0063A230("MSG:PostLoop");
+		}
+		return false;
+	}
+	int count = token->Node_Count();
+	if (count == 0) {
+		PlanningTokenClass::Technos.Add(techno);
+		FUN_00639F60(event->ID);
+	} else if (count == 16) {
+		if (mine) {
+			FUN_0063A230("MSG:NodeMaximum");
+		}
+		return false;
+	}
+	if (!node) {
+		node = new PlanningNodeClass(event->Frame);
+		PlanningNodeClass::Unknown1.Add(node);
+	}
+	PlanningNodeClass * last = token->Last_Node();
+	if (last) {
+		FUN_00639A50(node, last, *event);
+	} else {
+		node->Add_Member(techno, event);
+	}
+	if (mine) {
+		VocClass::PlayGlobal(Rule->AddPlanningModeCommandSound, 1.0f, 0x2000);
+	}
+	return true;
 }

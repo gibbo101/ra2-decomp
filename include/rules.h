@@ -675,7 +675,7 @@ class RulesClass
 		CrateType WaterCrate;
 		int CrateMinimum;
 		int CrateMaximum;
-		int unknown_int_1478;
+		int LZScanRadius;
 		AnimTypeClass const * FlareAnim;
 		int MinMoney;
 		int MPMoney;
@@ -737,9 +737,9 @@ class RulesClass
 		double CrateTime;
 		double TimerWarning;
 		int TiberiumTransmogrify;
-		double unknown_double_1690;
-		double unknown_double_1698;
-		double unknown_double_16A0;
+		double NukeTime;
+		double EMPulseTime;
+		double IonCannonTime;
 		double SpeakDelay;
 		double DamageDelay;
 		int Gravity;

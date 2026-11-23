@@ -99,7 +99,7 @@ void Game_Options_On_INITDIALOG(HWND window);
 
 extern char const * DAT_00822730[];
 extern char const * DAT_00823FD4[];
-namespace Game { namespace Network { extern int Tournament; } extern int SpecialDialog; }
+namespace Game { namespace Network { extern int Tournament; } }
 
 static BOOL Game_Options_On_COMMAND(HWND window, WPARAM wparam)
 {
@@ -201,12 +201,12 @@ static BOOL Game_Options_On_COMMAND(HWND window, WPARAM wparam)
 		case IDC_ABORT_MISSION:
 			if (!code) {
 				if (Session.Type == GAME_INTERNET) {
-					Game::SpecialDialog = SDLG_SURRENDER;
+					SpecialDialog = SDLG_SURRENDER;
 					if (!Game::Network::Tournament) {
-						Game::SpecialDialog = SDLG_ABORT;
+						SpecialDialog = SDLG_ABORT;
 					}
 				} else {
-					Game::SpecialDialog = SDLG_ABORT;
+					SpecialDialog = SDLG_ABORT;
 				}
 				*retval = IDCANCEL;
 			}
@@ -214,7 +214,7 @@ static BOOL Game_Options_On_COMMAND(HWND window, WPARAM wparam)
 
 		case IDC_GAME_CONTROLS:
 			if (!code) {
-				Game::SpecialDialog = SDLG_SETTINGS;
+				SpecialDialog = SDLG_SETTINGS;
 				*retval = IDOK;
 			}
 			break;
@@ -408,5 +408,5 @@ template class QueueClass<EventClass, 128>;
 // TEMPLATE: GAMEMD 0x004F1B00
 // ??0?$CDTimerClass@VSystemTimerClass@@@@QAE@H@Z
 // TEMPLATE: GAMEMD 0x004F1B20
-// ?Value@?$CDTimerClass@VSystemTimerClass@@@@QBEHXZ
+// ??B?$CDTimerClass@VSystemTimerClass@@@@QBEHXZ
 template class CDTimerClass<SystemTimerClass>;

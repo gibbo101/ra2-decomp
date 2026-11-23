@@ -228,10 +228,10 @@ class RadarClass: public DisplayClass
 		int SuspendedRadarMode;
 
 		int unknown_14B8;
-		bool unknown_bool_14BC;
+		bool IsScenarioHeld;
 		bool unknown_bool_14BD;
 		AudioController unknown_14C0;
-		int unknown_int_14D4;
+		int TransmissionVox;
 
 		bool DoesRadarExist;
 

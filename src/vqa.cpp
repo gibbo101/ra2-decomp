@@ -32,19 +32,9 @@ long __cdecl VQACCFileHandler(VQAHandle * vqa, long action, void * buffer, long 
 long __cdecl VQAEventHandler(VQAHandle * vqa, long action, void * buffer, long nbytes);
 long __cdecl VQAMemoryHandler(VQAHandle * vqa, long action, void * buffer, long nbytes);
 
-extern int DAT_00B45B18;
-extern int DAT_00B45B1C;
-extern int DAT_00B45B20;
-extern int DAT_00B45B24;
 
-// FUNCTION: GAMEMD 0x00758F70
-void FUN_00758F70(void)
-{
-	DAT_00B45B18 = 0;
-	DAT_00B45B1C = 0;
-	DAT_00B45B20 = 0;
-	DAT_00B45B24 = 0;
-}
+// SYNTHETIC: GAMEMD 0x00758F70 SYMBOL
+// _$E6
 
 // SYNTHETIC: GAMEMD 0x00758F90 SYMBOL
 // _$E36

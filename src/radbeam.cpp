@@ -54,19 +54,19 @@ RadBeam * RadBeam::Allocate(int type)
 {
 	RadBeam * beam = new RadBeam(type);
 	RadBeamArray.Add(beam);
-	beam->unknown_18 = (type == 1) ? 10 : 20;
+	beam->SegmentLength = (type == 1) ? 10 : 20;
 	return(beam);
 }
 
 // FUNCTION: GAMEMD 0x006593F0
 RadBeam::RadBeam(int type) :
-	unknown_0(NULL),
+	Firer(NULL),
 	Owner(NULL),
-	unknown_8(0),
-	unknown_9(1),
+	IsInitialized(0),
+	IsVisible(1),
 	ZAdjust(0),
 	Type(type),
-	unknown_18(0),
+	SegmentLength(0),
 	Color(0, 0, 0),
 	SourceLocation(0, 0, 0),
 	TargetLocation(0, 0, 0),
@@ -74,45 +74,45 @@ RadBeam::RadBeam(int type) :
 	Amplitude(0),
 	unknown_48(0),
 	unknown_50(0),
-	unknown_54(1),
+	FrameStep(1),
 	unknown_58(false),
-	unknown_7C(0),
+	Frame(0),
 	Tint(0, 0, 0)
 {
 }
 
 // FUNCTION: GAMEMD 0x00659470
-void RadBeam::FUN_00659470(RGBClass const & color)
+void RadBeam::Set_Color(RGBClass const & color)
 {
 	Color = color;
 }
 
 // FUNCTION: GAMEMD 0x00659490
-void RadBeam::FUN_00659490(int zadjust)
+void RadBeam::Set_Z_Adjust(int zadjust)
 {
 	ZAdjust = zadjust;
 }
 
 // FUNCTION: GAMEMD 0x006594A0
-void RadBeam::FUN_006594A0(Coord const & coord)
+void RadBeam::Set_Source(Coord const & coord)
 {
 	SourceLocation = coord;
 }
 
 // FUNCTION: GAMEMD 0x006594C0
-void RadBeam::FUN_006594C0(Coord const & coord)
+void RadBeam::Set_Target(Coord const & coord)
 {
 	TargetLocation = coord;
 }
 
 // FUNCTION: GAMEMD 0x006594E0
-void RadBeam::FUN_006594E0(int period)
+void RadBeam::Set_Period(int period)
 {
 	Period = period;
 }
 
 // FUNCTION: GAMEMD 0x006594F0
-void RadBeam::FUN_006594F0(double amplitude)
+void RadBeam::Set_Amplitude(double amplitude)
 {
 	Amplitude = amplitude;
 }
@@ -132,7 +132,7 @@ void RadBeam::FUN_00659530(int value)
 // FUNCTION: GAMEMD 0x00659540
 void RadBeam::FUN_00659540(int value)
 {
-	unknown_54 = value;
+	FrameStep = value;
 }
 
 // FUNCTION: GAMEMD 0x00659550
@@ -142,21 +142,21 @@ void RadBeam::FUN_00659550(bool value)
 }
 
 // FUNCTION: GAMEMD 0x00659560
-void RadBeam::FUN_00659560(void)
+void RadBeam::Hide(void)
 {
-	unknown_9 = 0;
+	IsVisible = 0;
 }
 
 // FUNCTION: GAMEMD 0x00659570
-unsigned char RadBeam::FUN_00659570(void)
+unsigned char RadBeam::Is_Visible(void)
 {
-	return(unknown_9);
+	return(IsVisible);
 }
 
 // FUNCTION: GAMEMD 0x00659580
-void RadBeam::FUN_00659580(int value)
+void RadBeam::Set_Segment_Length(int value)
 {
-	unknown_18 = value;
+	SegmentLength = value;
 }
 
 #include "tactical.h"
@@ -186,8 +186,8 @@ void RadBeam::FUN_00659590(Coord const & from, Coord const & to, short color)
 // FUNCTION: GAMEMD 0x00659650
 bool RadBeam::FUN_00659650(void)
 {
-	if (!unknown_8) {
-		unknown_8 = 1;
+	if (!IsInitialized) {
+		IsInitialized = 1;
 		FUN_006599C0();
 	}
 	if (unknown_58 && Owner != NULL) {
@@ -200,9 +200,9 @@ bool RadBeam::FUN_00659650(void)
 		TargetLocation = target;
 		FUN_006599C0();
 	}
-	if (unknown_9) {
+	if (IsVisible) {
 		FUN_00659A30();
-		for (unknown_88 = 0; double(unknown_88) * unknown_18 < Length; unknown_88++) {
+		for (Segment = 0; double(Segment) * SegmentLength < Length; Segment++) {
 			FUN_00659AC0();
 			unsigned short green = Tint.Get_Green();
 			short color = DSurface::Build_Hicolor_Pixel(Tint.Get_Red(), green, Tint.Get_Blue());
@@ -210,16 +210,16 @@ bool RadBeam::FUN_00659650(void)
 		}
 	}
 	if (unknown_58) {
-		unknown_7C += unknown_54;
-		if (unknown_7C <= 0 || unknown_7C >= Period) {
-			unknown_54 = -unknown_54;
-			if (unknown_7C < 0) {
-				unknown_7C = 0;
+		Frame += FrameStep;
+		if (Frame <= 0 || Frame >= Period) {
+			FrameStep = -FrameStep;
+			if (Frame < 0) {
+				Frame = 0;
 			}
 		}
 		return(false);
 	}
-	return(++unknown_7C >= Period);
+	return(++Frame >= Period);
 }
 
 // FUNCTION: GAMEMD 0x006599C0
@@ -233,11 +233,11 @@ void RadBeam::FUN_006599C0(void)
 // FUNCTION: GAMEMD 0x00659A30
 void RadBeam::FUN_00659A30(void)
 {
-	unknown_8C = (int)(Length / unknown_18);
+	SegmentCount = (int)(Length / SegmentLength);
 	Point3D step(Delta.X, Delta.Y, Delta.Z);
-	step /= unknown_8C;
-	double phase = unknown_7C;
-	unknown_80 = phase / Period * Amplitude;
+	step /= SegmentCount;
+	double phase = Frame;
+	CurrentAmplitude = phase / Period * Amplitude;
 	AndAnotherLocation = step;
 	PointA = SourceLocation;
 	Tint = Color;
@@ -246,14 +246,14 @@ void RadBeam::FUN_00659A30(void)
 // FUNCTION: GAMEMD 0x00659CA0
 bool RadBeam::FUN_00659CA0(void)
 {
-	if (!unknown_8) {
-		unknown_8 = 1;
+	if (!IsInitialized) {
+		IsInitialized = 1;
 		FUN_00659E30();
 	}
-	if (unknown_9) {
+	if (IsVisible) {
 		FUN_00659EE0();
-		unknown_88 = 0;
-		if (unknown_8C > 0) {
+		Segment = 0;
+		if (SegmentCount > 0) {
 			do {
 				FUN_00659FF0();
 				short color = DSurface::Build_Hicolor_Pixel(Tint);
@@ -269,11 +269,11 @@ bool RadBeam::FUN_00659CA0(void)
 					int d2 = -2 - Tactical::Z_Lepton_To_Pixel(b->Z);
 					DSurface::Temp->Draw_Depth_Shaded_Line(DSurface::ViewBounds, p1, p2, color, d1, d2, false);
 				}
-				unknown_88++;
-			} while (unknown_88 < unknown_8C);
+				Segment++;
+			} while (Segment < SegmentCount);
 		}
 	}
-	return ++unknown_7C >= Period;
+	return ++Frame >= Period;
 }
 
 // FUNCTION: GAMEMD 0x00659E30
@@ -282,9 +282,9 @@ void RadBeam::FUN_00659E30(void)
 	Delta = TargetLocation - SourceLocation;
 	int squared_length = Delta.X * Delta.X + Delta.Y * Delta.Y + Delta.Z * Delta.Z;
 	Length = fastmath::sqrt(squared_length);
-	unknown_8C = (int)(Length / unknown_18);
+	SegmentCount = (int)(Length / SegmentLength);
 	Point3D step(Delta.X, Delta.Y, Delta.Z);
-	step /= unknown_8C;
+	step /= SegmentCount;
 	AnotherLocation = step;
 }
 
@@ -293,18 +293,18 @@ void RadBeam::FUN_00659EE0(void)
 {
 	int period = Period;
 	double phase;
-	if (unknown_7C < period / 2) {
-		phase = unknown_7C * 2;
+	if (Frame < period / 2) {
+		phase = Frame * 2;
 	} else {
-		phase = period - (unknown_7C * 2) % period;
+		phase = period - (Frame * 2) % period;
 	}
-	unknown_80 = phase / (double)period * Amplitude;
-	Delta = Delta + AnotherLocation * (int)(unknown_50 * unknown_7C * unknown_48);
+	CurrentAmplitude = phase / (double)period * Amplitude;
+	Delta = Delta + AnotherLocation * (int)(unknown_50 * Frame * unknown_48);
 	int squared_length = Delta.X * Delta.X + Delta.Y * Delta.Y + Delta.Z * Delta.Z;
 	Length = fastmath::sqrt(squared_length);
-	unknown_8C = (int)(Length / unknown_18);
+	SegmentCount = (int)(Length / SegmentLength);
 	Point3D step(Delta.X, Delta.Y, Delta.Z);
-	step /= unknown_8C;
+	step /= SegmentCount;
 	AndAnotherLocation = step;
 }
 
@@ -360,7 +360,7 @@ extern unsigned CurrentFrameRate;
 }
 
 // FUNCTION: GAMEMD 0x006591B0
-void RadBeam::FUN_006591B0(void)
+void RadBeam::Update_All(void)
 {
 	int total = RadBeamArray.Count();
 	int count = 0;
@@ -369,7 +369,7 @@ void RadBeam::FUN_006591B0(void)
 		RadBeam * beam = RadBeamArray[i];
 		if (beam->Type == 2) {
 			++count;
-			if (beam->unknown_9)
+			if (beam->IsVisible)
 				++active;
 		}
 	}
@@ -391,12 +391,12 @@ void RadBeam::FUN_006591B0(void)
 				step = 10;
 			else if (step > 100)
 				step = 100;
-			beam->FUN_00659580(step);
+			beam->Set_Segment_Length(step);
 			finished = beam->FUN_00659650();
 		} else if (beam->Type == 2) {
-			if (beam->unknown_9) {
+			if (beam->IsVisible) {
 				if (NonCriticalRandomNumber(0, 99) < int(drop * 100.0)) {
-					beam->FUN_00659560();
+					beam->Hide();
 				}
 			}
 			finished = beam->FUN_00659CA0();
@@ -404,9 +404,9 @@ void RadBeam::FUN_006591B0(void)
 			continue;
 		}
 		if (finished) {
-			if (beam->unknown_0 != NULL && beam->unknown_0->FiringRadBeam == beam) {
-				beam->unknown_0->FiringRadBeam = NULL;
-				beam->unknown_0 = NULL;
+			if (beam->Firer != NULL && beam->Firer->FiringRadBeam == beam) {
+				beam->Firer->FiringRadBeam = NULL;
+				beam->Firer = NULL;
 			}
 			if (beam->Owner != NULL && (beam->Owner->AbstractFlags & 1)) {
 				if (As_Techno(beam->Owner)->FiringRadBeam == beam) {
@@ -418,4 +418,66 @@ void RadBeam::FUN_006591B0(void)
 			delete beam;
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x00659AC0
+void RadBeam::FUN_00659AC0(void)
+{
+	double span = (Length < 360.0 ? 360.0 : Length) * 2.0;
+	double i = Segment;
+	double fraction = i / SegmentCount;
+	double angle = fraction * span;
+	double wave = fastmath::sin(angle * DAT_00839530) * CurrentAmplitude;
+	Point3D offset = AndAnotherLocation * (int)i;
+	PointA = SourceLocation + offset;
+	double first_z = PointA.Z;
+	first_z += wave;
+	PointA.Z = first_z;
+	double j = Segment + 1;
+	fraction = j / SegmentCount;
+	angle = fraction * span;
+	wave = fastmath::sin(angle * DAT_00839530) * CurrentAmplitude;
+	offset = AndAnotherLocation * (int)j;
+	PointB = SourceLocation + offset;
+	double next_z = PointB.Z;
+	next_z += wave;
+	PointB.Z = next_z;
+	int height = (int)wave;
+	unknown_B8 = abs(height) * 0.5 / Amplitude + 0.5;
+	double red = Color.Get_Red() * unknown_B8;
+	double green = Color.Get_Green() * unknown_B8;
+	double blue = Color.Get_Blue() * unknown_B8;
+	Tint.Set_Red(red);
+	Tint.Set_Green(green);
+	Tint.Set_Blue(blue);
+}
+
+// FUNCTION: GAMEMD 0x00659FF0
+void RadBeam::FUN_00659FF0(void)
+{
+	double i = Segment;
+	double fraction = i / SegmentCount;
+	double angle = fraction * 180.0;
+	double wave = fastmath::sin(angle * DAT_00839530) * CurrentAmplitude;
+	Coord offset = AndAnotherLocation * (int)i;
+	PointA = SourceLocation + offset;
+	double first_z = PointA.Z;
+	first_z += wave;
+	PointA.Z = first_z;
+	double j = Segment + 1;
+	fraction = j / SegmentCount;
+	angle = fraction * 180.0;
+	wave = fastmath::sin(angle * DAT_00839530) * CurrentAmplitude;
+	PointB = SourceLocation + AndAnotherLocation * (int)j;
+	double next_z = PointB.Z;
+	next_z += wave;
+	PointB.Z = next_z;
+	int height = (int)wave;
+	unknown_B8 = abs(height) * 0.5 / Amplitude + 0.5;
+	double red = Color.Get_Red() * unknown_B8;
+	double green = Color.Get_Green() * unknown_B8;
+	double blue = Color.Get_Blue() * unknown_B8;
+	Tint.Set_Red(red);
+	Tint.Set_Green(green);
+	Tint.Set_Blue(blue);
 }

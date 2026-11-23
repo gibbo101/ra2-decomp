@@ -21,77 +21,36 @@
 #undef LoadString
 #include <stddef.h>
 #include "stringtable.h"
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x006AC950 SYMBOL
 // _$E5
 
-extern double __cdecl FUN_004CAC40(double);
-extern double __cdecl FUN_004CAD50(double);
-extern double __cdecl FUN_004CADE0(double);
-extern const double DAT_007F3138;
-extern const double DAT_007F3140;
-
 // SYNTHETIC: GAMEMD 0x006AC970 SYMBOL
 // _$E70
-double DAT_00B0B540 = FUN_004CAC40(pow(256.0, 2.0) * 2);
-
 // SYNTHETIC: GAMEMD 0x006AC9A0 SYMBOL
 // _$E73
-double DAT_00B0B590 = DAT_00B0B540 / DAT_007F3138;
-
 // SYNTHETIC: GAMEMD 0x006AC9C0 SYMBOL
 // _$E76
-double DAT_00B0B578 = 1.0 / DAT_00B0B590;
-
 // SYNTHETIC: GAMEMD 0x006AC9E0 SYMBOL
 // _$E79
-double DAT_00B0B570 = DAT_007F3140 * 45.0;
-
 // SYNTHETIC: GAMEMD 0x006ACA00 SYMBOL
 // _$E82
-double DAT_00B0B548 = DAT_007F3140 * 60.0;
-
 // SYNTHETIC: GAMEMD 0x006ACA20 SYMBOL
 // _$E85
-double DAT_00B0B520 = DAT_007F3140 * 90.0;
-
 // SYNTHETIC: GAMEMD 0x006ACA40 SYMBOL
 // _$E88
-int DAT_00B0B598 = (int)(FUN_004CAD50(DAT_00B0B520 - DAT_00B0B548) * DAT_00B0B540 * 0.5);
-
 // SYNTHETIC: GAMEMD 0x006ACA80 SYMBOL
 // _$E91
-double DAT_00B0B550 = FUN_004CADE0(DAT_00B0B598 * 0.00390625);
-
 // SYNTHETIC: GAMEMD 0x006ACAB0 SYMBOL
 // _$E94
-double DAT_00B0B568 = FUN_004CADE0((DAT_00B0B598 * 2) / DAT_00B0B540);
-
 // SYNTHETIC: GAMEMD 0x006ACAE0 SYMBOL
 // _$E97
-int DAT_00B0B58C = (int)(DAT_00B0B598 * 4 + 0.5);
-
-struct ShortPair {
-	unsigned short A, B;
-	ShortPair() { A = 0; B = 0; }
-};
-
-struct IntTriple {
-	int A, B, C;
-	IntTriple() { A = 0; B = 0; C = 0; }
-};
-
 // SYNTHETIC: GAMEMD 0x006ACB10 SYMBOL
 // _$E100
-ShortPair DAT_00B0B538;
-
 // SYNTHETIC: GAMEMD 0x006ACB20 SYMBOL
 // _$E103
-IntTriple DAT_00B0B558;
 
-extern int DAT_00B0B580;
-extern int DAT_00B0B584;
-extern int DAT_00B0B588;
 extern HWND DAT_00B0B59C;
 
 int __fastcall FUN_004E3320(int index);
@@ -106,13 +65,8 @@ void __fastcall FUN_004E5ED0(HWND dialog, int id, int value);
 void __fastcall FUN_006ADF00(HWND dialog, int first, int count);
 void __fastcall FUN_006AE080(HWND dialog, int first);
 
-// FUNCTION: GAMEMD 0x006ACB40
-void FUN_006ACB40(void)
-{
-	DAT_00B0B588 = 0;
-	DAT_00B0B580 = 0x80;
-	DAT_00B0B584 = 0x80;
-}
+// SYNTHETIC: GAMEMD 0x006ACB40 SYMBOL
+// _$E106
 
 // FUNCTION: GAMEMD 0x006ACB60
 int __fastcall FUN_006ACB60(int slot)
@@ -237,7 +191,6 @@ void __fastcall FUN_006ACE80(HWND dialog, int first)
 namespace OwnerDraw {
 	char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
 }
-namespace Game { extern HWND hWnd; }
 
 MultiplayerGameMode * First_Game_Mode(void);
 void __fastcall FUN_006ADC20(HWND dialog, int id);
@@ -256,7 +209,7 @@ void __fastcall FUN_004E5D60(HWND dialog);
 void __fastcall FUN_005E2EF0(HWND dialog, MultiplayerGameMode * mode);
 void __fastcall FUN_005E2F60(HWND dialog);
 void __fastcall FUN_005E74E0(HWND dialog);
-bool WS_Save_Dialog_Values(HWND dialog);
+bool FUN_00608070(HWND dialog);
 
 inline int Skirmish_Slot_Type(int level)
 {
@@ -276,7 +229,7 @@ inline int Skirmish_Spot_Limit(int count)
 }
 
 // FUNCTION: GAMEMD 0x006ACEE0
-void __fastcall FUN_006ACEE0(HWND window, int id, LPARAM lparam, int code)
+void __fastcall Skirmish_On_WM_COMMAND(HWND window, int id, LPARAM lparam, int code)
 {
 	int * rc = (int *)GetWindowLong(window, DWL_USER);
 	wchar_t buffer[256];
@@ -402,16 +355,16 @@ allied:
 			int start = FUN_004E5900(window, 0x6a3, -1);
 			int team = FUN_004E6030(window, 0x76d, -1);
 			Session.FUN_0069B7E0(color, true);
-			Session.unknown_164 = start;
-			Session.unknown_16C = team;
+			Session.Start = start;
+			Session.Team = team;
 
 			NodeNameType * who = new NodeNameType;
 			if (who) {
 				wcscpy(who->Name, FUN_00735120(Session.Handle));
 				who->Slot.Country = Session.House;
 				who->Slot.ColorIdx = Session.PrefColor;
-				who->Slot.Start = Session.unknown_164;
-				who->Slot.Team = Session.unknown_16C;
+				who->Slot.Start = Session.Start;
+				who->Slot.Team = Session.Team;
 				who->Slot.Time = -1;
 				Session.Players.Add(who);
 			}
@@ -463,9 +416,9 @@ allied:
 			int old_mode = Session.Options.MPModeIndex;
 			strcpy((char *)buffer, Session.ScenarioFileName);
 			wcscpy(buffer, Session.Options.ScenarioDescription);
-			WS_Save_Dialog_Values(window);
+			FUN_00608070(window);
 			ShowWindow(window, SW_HIDE);
-			if (Scenario_Dialog(Game::hWnd) == IDCANCEL) {
+			if (Scenario_Dialog(MainWindow) == IDCANCEL) {
 				Session.Options.MPModeIndex = old_mode;
 				Session.Options.ScenarioIndex = old_scen;
 				Set_Scenario_Info_From_Index(old_scen);
@@ -662,7 +615,7 @@ void __fastcall FUN_006AE080(HWND dialog, int first)
 
 class Surface;
 
-BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+BOOL CALLBACK Skirmish_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 void FUN_0072CF40(void);
 void FUN_0072CF90(void);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
@@ -675,7 +628,7 @@ namespace UI {
 }
 
 // FUNCTION: GAMEMD 0x006AE2C0
-bool FUN_006AE2C0(void)
+bool Skirmish_Mode_Dialog(void)
 {
 	int result = -1;
 
@@ -687,7 +640,7 @@ bool FUN_006AE2C0(void)
 
 	FUN_0072CF40();
 
-	HWND dialog = UI::BeginDialog(0x102, FUN_006AE3F0, 0);
+	HWND dialog = UI::BeginDialog(0x102, Skirmish_Dialog_Proc, 0);
 	if (dialog) {
 		DAT_00B0B59C = dialog;
 		SetWindowLong(dialog, DWL_USER, (LONG)&result);
@@ -722,8 +675,8 @@ namespace UI {
 	int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 }
 
-void __fastcall FUN_006ACEE0(HWND window, int id, LPARAM lparam, int code);
-int __fastcall FUN_006AE6E0(HWND window, WPARAM wparam, LPARAM lparam);
+void __fastcall Skirmish_On_WM_COMMAND(HWND window, int id, LPARAM lparam, int code);
+int __fastcall Skirmish_On_WM_INITDIALOG(HWND window, WPARAM wparam, LPARAM lparam);
 char FUN_006067A0(HWND dialog);
 int __fastcall FUN_004E3830(int id);
 int __fastcall FUN_004E4230(int id);
@@ -736,7 +689,7 @@ wchar_t const * __fastcall FUN_004E38A0(int side);
 wchar_t const * __fastcall FUN_004E42A0(int color);
 
 // FUNCTION: GAMEMD 0x006AE3F0
-BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+BOOL CALLBACK Skirmish_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	BOOL result = UI::StandardWndProc(window, message, wparam, lparam);
 	if (result) {
@@ -745,7 +698,7 @@ BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 
 	switch (message) {
 		case WM_COMMAND:
-			FUN_006ACEE0(window, LOWORD(wparam), lparam, HIWORD(wparam));
+			Skirmish_On_WM_COMMAND(window, LOWORD(wparam), lparam, HIWORD(wparam));
 			return TRUE;
 
 		case WM_PAINT:
@@ -758,7 +711,7 @@ BOOL CALLBACK FUN_006AE3F0(HWND window, UINT message, WPARAM wparam, LPARAM lpar
 			return FALSE;
 
 		case 0x497:
-			return FUN_006AE6E0(window, wparam, lparam);
+			return Skirmish_On_WM_INITDIALOG(window, wparam, lparam);
 
 		case 0x4e9: {
 			TooltipRequest *request = (TooltipRequest *)lparam;
@@ -836,7 +789,7 @@ inline int Skirmish_Slot_Level(int type)
 }
 
 // FUNCTION: GAMEMD 0x006AE6E0
-int __fastcall FUN_006AE6E0(HWND window, WPARAM wparam, LPARAM lparam)
+int __fastcall Skirmish_On_WM_INITDIALOG(HWND window, WPARAM wparam, LPARAM lparam)
 {
 	Session.Options.FUN_0069B540();
 

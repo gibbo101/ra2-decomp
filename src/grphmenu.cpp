@@ -34,10 +34,8 @@ GraphicMenu * __fastcall Do_Graphic_Menu(Wstring const & ini, Wstring const & na
 	return(menu);
 }
 
-struct Drawing {
-	static int RenderWidth;
-	static int RenderHeight;
-};
+extern int VideoModeWidth;
+extern int VideoModeHeight;
 
 GraphicMenuItem * GM_Create_Item_From_INI(Wstring const & name, INIClass const & ini, MSEngine & engine, Point2D & image_size);
 
@@ -69,7 +67,7 @@ GraphicMenu * __fastcall _Graphic_Menu(INIClass & ini, Wstring const & name)
 		if (anim == NULL) {
 			Wstring bik = buffer + ".BIK";
 			if (CCFileClass(bik).Is_Available(false)) {
-				Rect rect(0, 0, Drawing::RenderWidth, Drawing::RenderHeight);
+				Rect rect(0, 0, VideoModeWidth, VideoModeHeight);
 				anim = new MSButtonAnim(bik, (int)AlternateSurface, menu->Engine.Get_Anims(), rect, true);
 			}
 		}
@@ -288,6 +286,3 @@ template class VectorClass<GraphicMenuItem *>;
 template class VectorCursor<GraphicMenuItem *, DynamicVectorClass<GraphicMenuItem *> >;
 template class DynamicVectorClass<GraphicMenuItem *>;
 
-// SYNTHETIC: GAMEMD 0x004F2C50 SYMBOL
-// _$E12
-Rect DAT_00A8EE98(0, 0, 0, 0);

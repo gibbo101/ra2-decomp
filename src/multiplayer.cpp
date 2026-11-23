@@ -61,7 +61,6 @@ bool __cdecl FUN_0077D940(void);
 int __fastcall FUN_00623840(HWND hwnd);
 int __fastcall FUN_0069B670(SessionClass * session);
 MultiplayerTeam * __fastcall FUN_005C1030(int index);
-extern int DAT_00822CF4;
 extern bool DAT_00ABFDD4;
 extern bool DAT_00ABFDD5;
 void __cdecl FUN_004068E0(char const * format, ...);
@@ -615,7 +614,7 @@ bool MultiplayerGameMode::FUN_005D6D80(void)
 		int count = 0;
 		for (int u = 0; u < UnitTypes.Count(); u++) {
 			UnitTypeClass * type = UnitTypes[u];
-			if (type->IsAllowedToStartInMultiplayer && (amount & type->Ownable) && type->Level <= DAT_00822CF4) {
+			if (type->IsAllowedToStartInMultiplayer && (amount & type->Ownable) && type->Level <= BuildLevel) {
 				bool excluded = false;
 				for (int j = 0; j < Rule->BaseUnit.Count(); j++) {
 					if (Rule->BaseUnit[j] == type) {
@@ -631,7 +630,7 @@ bool MultiplayerGameMode::FUN_005D6D80(void)
 		}
 		for (int n = 0; n < InfantryTypes.Count(); n++) {
 			InfantryTypeClass * type = InfantryTypes[n];
-			if (type->IsAllowedToStartInMultiplayer && (amount & type->Ownable) && type->Level <= DAT_00822CF4) {
+			if (type->IsAllowedToStartInMultiplayer && (amount & type->Ownable) && type->Level <= BuildLevel) {
 				count++;
 				total += type->Raw_Cost();
 			}

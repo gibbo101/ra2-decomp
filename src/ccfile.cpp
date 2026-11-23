@@ -4,7 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
 #include "rect.h"
 
 #include "ccfile.h"
@@ -19,7 +18,7 @@
 #include <math.h>
 
 // SYNTHETIC: GAMEMD 0x004739D0 SYMBOL
-// _$E41
+// _$E2
 
 // FUNCTION: GAMEMD 0x004739F0
 CCFileClass::CCFileClass(char const * filename) :

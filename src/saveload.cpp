@@ -130,17 +130,9 @@
 #define	SAVE_BLOCK_SIZE	4096
 #define	SAVEGAME_VERSION		(DESCRIP_MAX + 0x01000006)
 
-int DAT_00B05420;
-int DAT_00B05424;
-int DAT_00B05428;
 
-// FUNCTION: GAMEMD 0x0067C670
-void FUN_0067C670(void)
-{
-	DAT_00B05428 = 0;
-	DAT_00B05420 = 128;
-	DAT_00B05424 = 128;
-}
+// SYNTHETIC: GAMEMD 0x0067C670 SYMBOL
+// _$E191
 
 // FUNCTION: GAMEMD 0x0067C690
 HRESULT Load_Vector(IStream * stream)
@@ -235,7 +227,7 @@ CRCEngine Object_CRCs(void)
 extern bool UserInputLocked;
 extern int SidebarWidth;
 extern DynamicVectorClass<BuildingClass *> DAT_008B41E0;
-bool __fastcall FUN_00534FA0(int side);
+bool __fastcall Prep_For_Side(int side);
 Rect __fastcall Get_Title_Screen_Area(void);
 void __cdecl FUN_004068E0(char const * format, ...);
 HRESULT __fastcall FUN_00751710(IStream * stream);
@@ -264,6 +256,87 @@ extern DynamicVectorClass<AirstrikeClass *> Airstrikes;
 extern DynamicVectorClass<BombClass *> Bombs;
 HRESULT __fastcall FUN_00751620(IStream * stream);
 HRESULT __fastcall FUN_007533B0(IStream * stream);
+
+_COM_SMARTPTR_TYPEDEF(ILinkStream, __uuidof(ILinkStream));
+bool Put_All(IStream * stream, int save_net);
+
+// FUNCTION: GAMEMD 0x0067CEF0
+bool Save_Game(char const * file_name, wchar_t const * descr, bool bargraph)
+{
+	WCHAR name[64];
+
+	FUN_004068E0("\nSAVING GAME [%s - %s]\n", file_name, descr);
+
+	IStoragePtr storage;
+	MultiByteToWideChar(
+		0, 0, file_name, -1, name,
+		sizeof(name) / sizeof(WCHAR));
+
+	HRESULT error = StgCreateDocfile(
+		name,
+		STGM_CREATE | STGM_READWRITE | STGM_SHARE_EXCLUSIVE,
+		0, &storage);
+	if (SUCCEEDED(error) == false) {
+		return false;
+	}
+
+	SaveVersionInfo info;
+	info.Set_Internal_Version(ExpectedGameVersion);
+	info.Set_Scenario_Description(descr);
+	info.Set_Version(1);
+	info.Set_Player_House(PlayerPtr->Class->UIName);
+	info.Set_Campaign_Number(Scen->Campaign);
+	info.Set_Scenario_Number(Scen->Scenario);
+	info.Set_Executable_Name("SUN.EXE");
+	info.Set_Game_Type(Session.Type);
+
+	FILETIME time;
+	CoFileTimeNow(&time);
+	info.Set_Last_Time(time);
+	info.Set_Start_Time(time);
+	info.Set_Play_Time(time);
+	info.Save(storage);
+
+	IStreamPtr content;
+	error = storage->CreateStream(
+		L"CONTENTS",
+		STGM_CREATE | STGM_READWRITE | STGM_SHARE_EXCLUSIVE,
+		0, 0, &content);
+	if (SUCCEEDED(error) == false) {
+		return false;
+	}
+
+	ILinkStreamPtr link;
+	link.CreateInstance(
+		CLSID_CompressStream, NULL,
+		CLSCTX_INPROC | CLSCTX_LOCAL_SERVER);
+
+	error = link->Link_Stream(content);
+	if (SUCCEEDED(error) == false) {
+		FUN_004068E0("\t***** FAILED!\n");
+		return false;
+	}
+
+	IStreamPtr stream(link);
+	bool result = Put_All(stream, 0);
+
+	error = link->Unlink_Stream(NULL);
+	if (SUCCEEDED(error) == false) {
+		return false;
+	}
+
+	content.Release();
+
+	error = storage->Commit(0);
+	if (SUCCEEDED(error) == false) {
+		return false;
+	}
+
+	FUN_004068E0(
+		"SAVING GAME [%s] - Complete\n\n",
+		file_name, descr);
+	return result;
+}
 
 // FUNCTION: GAMEMD 0x0067D300
 bool Put_All(IStream * stream, int save_net)
@@ -596,7 +669,6 @@ bool Put_All(IStream * stream, int save_net)
 	return(true);
 }
 
-_COM_SMARTPTR_TYPEDEF(ILinkStream, __uuidof(ILinkStream));
 
 void __fastcall FUN_0072DEF0(void);
 bool Get_All(IStream * stream, bool save_net);
@@ -666,7 +738,7 @@ bool Get_All(IStream * stream, bool save_net)
 	Scen->Load(stream);
 	UserInputLocked = Scen->IsInputLocked;
 
-	if (!FUN_00534FA0(Scen->PlayerSideIndex)) {
+	if (!Prep_For_Side(Scen->PlayerSideIndex)) {
 		return(false);
 	}
 
@@ -1043,8 +1115,6 @@ extern double Arguments[19];
 extern bool Naval[19];
 }
 extern int DAT_00B07784;
-HRESULT __fastcall FUN_00539890(IStream * stream);
-HRESULT __fastcall FUN_00539AE0(IStream * stream);
 
 // FUNCTION: GAMEMD 0x0067F7E0
 int Save_Misc_Values(IStream * stream)
@@ -1086,7 +1156,7 @@ int Save_Misc_Values(IStream * stream)
 		return(res);
 	}
 
-	FUN_00539890(stream);
+	IonStormClass::Save(stream);
 
 	count = LogicTags.Count();
 	res = stream->Write(&count, sizeof(count), NULL);
@@ -1194,7 +1264,7 @@ int Load_Misc_Values(IStream * stream)
 		return(res);
 	}
 
-	FUN_00539AE0(stream);
+	IonStormClass::Load(stream);
 
 	res = stream->Read(&count, sizeof(count), NULL);
 	if (FAILED(res)) {
@@ -1294,7 +1364,8 @@ void FUN_0067FDC0(void)
 template class _com_ptr_t<_com_IIID<IStorage, &__uuidof(IStorage)> >;
 
 // TEMPLATE: GAMEMD 0x0067FDE0
-// ?_Release@?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
+// ?_Release@?$_com_ptr_t@V?$_com_IIID@UILinkStream@@$1?_GUID_0d5cd78e_6470_11d2_9b74_00104b972fe8@@3U__s_GUID@@A@@@@AAEXXZ
+template class _com_ptr_t<_com_IIID<ILinkStream, &__uuidof(ILinkStream)> >;
 template class _com_ptr_t<_com_IIID<IStream, &__uuidof(IStream)> >;
 
 // TEMPLATE: GAMEMD 0x0067FDF0
@@ -1438,4 +1509,4 @@ template HRESULT Save_Vector<BombClass *>(IStream *, const DynamicVectorClass<Bo
 template HRESULT Save_Vector<RadSiteClass *>(IStream *, const DynamicVectorClass<RadSiteClass *> &);
 
 // TEMPLATE: GAMEMD 0x00680F70
-// ?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIStorage@@$1?_GUID_0000000b_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABQAUIUnknown@@@Z
+// ?_QueryInterface@?$_com_ptr_t@V?$_com_IIID@UIStream@@$1?_GUID_0000000c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEJABV?$_com_ptr_t@V?$_com_IIID@UILinkStream@@$1?_GUID_0d5cd78e_6470_11d2_9b74_00104b972fe8@@3U__s_GUID@@A@@@@@Z

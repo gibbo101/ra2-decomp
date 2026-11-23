@@ -135,7 +135,6 @@ Matrix3DStruct STDMETHODCALLTYPE HoverLocomotionClass::Draw_Matrix(int *key)
 		}
 
 		Matrix3D m1(true), m2(true);
-		Matrix3D basemtx;
 
 		float val = LinkedTo->TClass->VoxelCenterY;
 		float val2 = LinkedTo->TClass->VoxelCenterX;
@@ -164,7 +163,7 @@ Matrix3DStruct STDMETHODCALLTYPE HoverLocomotionClass::Draw_Matrix(int *key)
 		m2.Rotate_X(LinkedTo->AngleRotatedSideways);
 		m2.Rotate_Y(LinkedTo->AngleRotatedForwards);
 
-		return(basemtx.Matrix3D::Matrix3D(BASECLASS::Draw_Matrix(key)), (Matrix3DStruct &)((m1 * basemtx) * m2));
+		return((Matrix3DStruct &)((m1 * BASECLASS::Draw_Matrix(key)) * m2));
 	}
 
 	if (!Is_Powered()) {
@@ -257,6 +256,183 @@ void STDMETHODCALLTYPE HoverLocomotionClass::Move_To(CoordStruct to)
 			Start();
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x00514F70
+MoveType HoverLocomotionClass::While_Moving(bool first_pass)
+{
+	if (HeadToCoord != COORD_NONE) {
+		LinkedTo->Clear_Occupy_Bit(HeadToCoord);
+		HeadToCoord = COORD_NONE;
+	}
+
+	if (LinkedTo->IsParalyzed()) {
+		return(MOVE_NO);
+	}
+
+	if (!Is_Moving() || DestinationCoord == COORD_NONE) {
+		return(MOVE_OK);
+	}
+
+	FacingType nextface;
+	nextface = LinkedTo->Path[0];
+
+	if (nextface == FACING_COUNT) {
+		TubeType tubenum = (TubeType)Map[LinkedTo->Get_Coord()].Tube;
+		if (tubenum >= 0 && tubenum < Tubes.Count()) {
+			LinkedTo->Mark(MARK_UP);
+			LinkedTo->Clear_Occupy_Bit(LinkedTo->PositionCoord);
+			TubeClass * tube = Tubes[tubenum];
+			Cell exit = tube->Get_Exit();
+			HeadToCoord = exit.As_Coord();
+			memcpy((char*)&LinkedTo->Path, (char*)&LinkedTo->Path[1], sizeof(LinkedTo->Path[0]) * (CONQUER_PATH_MAX-1));
+			LinkedTo->LastPathingCell = HeadToCoord.As_Cell();
+			LinkedTo->Path[CONQUER_PATH_MAX-1] = FACING_NONE;
+			LinkedTo->CurrentTube = tubenum;
+			LinkedTo->CurrentTubeDir = FACING_FIRST;
+			Coord enter = (Cell)tube->Enter;
+			Coord offset = Map[Adjacent_Cell((Cell)tube->Enter, tube->Dirs[0])].Cell_Coord() - enter;
+			LinkedTo->LastTubeCoord = LinkedTo->PositionCoord + offset;
+			int height = LinkedTo->Height;
+			int current_height = Map.Get_Height_GL(LinkedTo->PositionCoord);
+			LinkedTo->LastTubeCoord.Z = height + (Map.Get_Height_GL(tube->Get_Exit()) - current_height) / tube->Get_Count();
+		} else {
+			LinkedTo->Path[0] = FACING_NONE;
+			HeadToCoord = COORD_NONE;
+			Stop();
+			LinkedTo->Assign_Destination(NULL);
+		}
+		return(MOVE_NO);
+	}
+
+	if (nextface != FACING_NONE) {
+		HeadToCoord = Adjacent_Cell(LinkedTo->PositionCell, nextface).As_Coord();
+		HeadToCoord.Z = Map.Get_Height_GL(HeadToCoord);
+		if (LinkedTo->PositionCoord.Z >= HeadToCoord.Z + 2 * LEVEL_LEPTON_H + LEVEL_LEPTON_H) {
+			HeadToCoord.Z += BRIDGE_LEPTON_HEIGHT;
+		}
+
+		if (!Map[HeadToCoord].Goodie_Check(LinkedTo) && !LinkedTo->IsInLimbo) {
+			if (LinkedTo->IsActive && !LinkedTo->IsFalling) {
+				LinkedTo->Path[0] = FACING_NONE;
+				HeadToCoord = COORD_NONE;
+				Stop();
+				return(MOVE_NO);
+			}
+			return(MOVE_NO);
+		}
+
+		if (!LinkedTo->IsActive || LinkedTo->IsInLimbo || LinkedTo->IsFalling) return(MOVE_NO);
+
+		CellClass const & next = Map[Adjacent_Cell(LinkedTo->PositionCoord, nextface)];
+		if (LinkedTo->IsOnBridge ^ next.IsUnderBridge) {
+			LinkedTo->IsPlanningToLook = true;
+		}
+
+		Cell c = HeadToCoord;
+		MoveType ok = LinkedTo->Can_Enter_Cell(&Map[c], nextface, LinkedTo->Get_Cell_Height());
+
+		switch (ok) {
+		case MOVE_CLOAK:
+		case MOVE_NO:
+			Map[HeadToCoord].Shimmer();
+			if (first_pass) {
+				Stop_Driver();
+				LinkedTo->PathDelay = 0;
+				LinkedTo->Path[0] = FACING_NONE;
+				Start_Of_Move(0);
+				ok = While_Moving(false);
+			}
+			if (ok != MOVE_OK) {
+				HeadToCoord = COORD_NONE;
+				Stop_Driver();
+			}
+			return(ok);
+
+		case MOVE_CLOSED_GATE:
+			HeadToCoord = COORD_NONE;
+			Map.Try_Open_Gate(LinkedTo, c);
+			Stop_Driver();
+			break;
+
+		case MOVE_TEMP:
+			if (first_pass) {
+				HeadToCoord = COORD_NONE;
+				Stop_Driver();
+				LinkedTo->PathDelay = 0;
+				LinkedTo->Path[0] = FACING_NONE;
+				Start_Of_Move(0);
+				ok = While_Moving(false);
+			} else {
+				if (LinkedTo->Center_Coord().Distance_To(DestinationCoord) < Rule->CloseEnoughDistance && abs(DestinationCoord.Z - LinkedTo->PositionCoord.Z) < 2 * LEVEL_LEPTON_H && Map[LinkedTo->Get_Coord()].Land_Type() != LAND_TUNNEL) {
+					Stop_Moving();
+					LinkedTo->Assign_Destination(NULL);
+					return(MOVE_NO);
+				}
+				bool bridge;
+				if (!Map[HeadToCoord].IsUnderBridge || abs(LinkedTo->PositionCoord.Z / LEVEL_LEPTON_H - Map[HeadToCoord].Height) <= 2) {
+					bridge = false;
+				} else {
+					bridge = true;
+				}
+				Map[HeadToCoord].Incoming(COORD_NONE, true, true, bridge);
+				HeadToCoord = COORD_NONE;
+				Stop_Driver();
+			}
+			break;
+
+		case MOVE_OK:
+			LinkedTo->Per_Cell_Process(PCP_END);
+			if (!LinkedTo->IsActive || LinkedTo->IsInLimbo || LinkedTo->IsFalling) return(MOVE_NO);
+			if (LinkedTo->IsInPlayfield) {
+				LinkedTo->Set_Occupy_Bit(HeadToCoord);
+			}
+			memcpy((char *)&LinkedTo->Path, (char *)&LinkedTo->Path[1], sizeof(LinkedTo->Path[0]) * (CONQUER_PATH_MAX - 1));
+			LinkedTo->Path[CONQUER_PATH_MAX - 1] = FACING_NONE;
+			LinkedTo->LastPathingCell = HeadToCoord.As_Cell();
+			break;
+
+		case MOVE_FRIENDLY_DESTROYABLE:
+		case MOVE_DESTROYABLE:
+			HeadToCoord = COORD_NONE;
+			if (first_pass) {
+				Stop_Driver();
+				LinkedTo->PathDelay = 0;
+				LinkedTo->Path[0] = FACING_NONE;
+				Start_Of_Move(0);
+				ok = While_Moving(false);
+				break;
+			}
+			if (Map[c].Cell_Object() != NULL) {
+				if (!LinkedTo->House->Is_Ally(Map[c].Cell_Object())) {
+					LinkedTo->Override_Mission(MISSION_ATTACK, Map[c].Cell_Object(), NULL);
+				}
+			} else {
+				if (Map[c].Overlay != OVERLAY_NONE && OverlayTypes[Map[c].Overlay]->IsWall) {
+					LinkedTo->Override_Mission(MISSION_ATTACK, &Map[c], NULL);
+				}
+			}
+			break;
+
+		case MOVE_MOVING_BLOCK:
+			HeadToCoord = COORD_NONE;
+			Stop_Driver();
+			if (!LinkedTo->IsToPathAroundBlockage) {
+				LinkedTo->IsToPathAroundBlockage = true;
+				LinkedTo->BlockagePathDelay = Rule->BlockagePathDelay;
+			}
+			if (LinkedTo->PathDelay == 0) {
+				LinkedTo->Path[0] = FACING_NONE;
+			}
+			bool blocked = LinkedTo->IsToPathAroundBlockage && LinkedTo->BlockagePathDelay == 0;
+			Start_Of_Move((blocked != 0) + 1);
+			break;
+		}
+		return(ok);
+	}
+
+	Start_Of_Move(0);
+	return(MOVE_OK);
 }
 
 // FUNCTION: GAMEMD 0x00515E30
@@ -398,6 +574,136 @@ bool HoverLocomotionClass::Reduce_Path_Length(void)
 		}
 	}
 	return(false);
+}
+
+// FUNCTION: GAMEMD 0x005164D0
+void HoverLocomotionClass::Start_Of_Move(int num)
+{
+	FacingType facing;
+
+	Reduce_Path_Length();
+
+	facing = LinkedTo->Path[0];
+
+	if (DestinationCoord != COORD_NONE) {
+		if (LinkedTo->PositionCell == DestinationCoord.As_Cell() &&
+			abs(LinkedTo->Destination_Coord().Z - DestinationCoord.Z) <
+				2 * LEVEL_LEPTON_H) {
+			Stop_Moving();
+			LinkedTo->Assign_Destination(NULL);
+			return;
+		}
+	}
+
+	if (facing == FACING_NONE) {
+		if (DestinationCoord == COORD_NONE) {
+			return;
+		}
+
+		if (LinkedTo->PositionCell == DestinationCoord.As_Cell() &&
+			abs(LinkedTo->Destination_Coord().Z - DestinationCoord.Z) <=
+				2 * LEVEL_LEPTON_H) {
+			return;
+		}
+
+		if (LinkedTo->PathDelay != 0) {
+			return;
+		}
+
+		if (!LinkedTo->Basic_Path(DestinationCoord.As_Cell(), 0, num)) {
+			LinkedTo->PathDelay = Rule->PathDelay * TICKS_PER_MINUTE;
+
+			if (!LinkedTo->Is_In_Same_Zone(DestinationCoord)) {
+				LinkedTo->Assign_Destination(NULL);
+				return;
+			}
+
+			if (!LinkedTo->Is_On_Priority_Mission() &&
+				LinkedTo->Center_Coord().Distance_To(DestinationCoord) <
+					Rule->CloseEnoughDistance &&
+				(LinkedTo->Mission == MISSION_MOVE ||
+				 LinkedTo->Mission == MISSION_GUARD_AREA)) {
+				LinkedTo->Assign_Destination(NULL);
+				if (!LinkedTo->IsActive) return;
+			} else {
+				if (LinkedTo->TryTryAgain > 0) {
+					LinkedTo->TryTryAgain--;
+				} else {
+					LinkedTo->Assign_Destination(NULL);
+					if (!LinkedTo->IsActive) return;
+					if (LinkedTo->IsNewNavCom) {
+						VocClass::PlayGlobal(
+							Rule->ScoldSound, 1.0f, 0x2000);
+					}
+					LinkedTo->IsNewNavCom = false;
+				}
+			}
+
+			if (!Is_Moving() &&
+				LinkedTo->TarCom != NULL &&
+				!LinkedTo->IsCloseEnoughToAttack(LinkedTo->TarCom)) {
+				LinkedTo->IsScanLimited = true;
+				if (LinkedTo->Team != NULL) {
+					LinkedTo->Team->Scan_Limit();
+				}
+				LinkedTo->Assign_Target(NULL);
+			}
+
+			if (HeadToCoord != COORD_NONE) {
+				LinkedTo->Clear_Occupy_Bit(HeadToCoord);
+				HeadToCoord = COORD_NONE;
+			}
+			Stop_Moving();
+			return;
+		} else {
+			LinkedTo->PathDelay = Rule->PathDelay * TICKS_PER_MINUTE;
+
+			Cell cell =
+				Adjacent_Cell(LinkedTo->Center_Coord().As_Cell(), LinkedTo->Path[0]);
+
+			if (Map.In_Local_Radar(cell, true)) {
+				MoveType ok = LinkedTo->Can_Enter_Cell(
+					&Map[cell],
+					LinkedTo->Path[0],
+					LinkedTo->Get_Cell_Height());
+
+				if (ok == MOVE_TEMP) {
+					CellClass * cellptr = &Map[cell];
+					ObjectClass * blockage = cellptr->Cell_Techno(
+						Point2D(0, 0),
+						LinkedTo->PositionCoord.Z > Map.Get_Height_GL(Coord(cell)) +
+							3 * LEVEL_LEPTON_H);
+
+					if (blockage && LinkedTo->House->Is_Ally(blockage)) {
+						int distance = LinkedTo->Distance(DestinationCoord);
+						if (distance < Rule->CloseEnoughDistance &&
+							!LinkedTo->HasAnyLink() &&
+							abs(DestinationCoord.Z -
+								LinkedTo->PositionCoord.Z) <
+								2 * LEVEL_LEPTON_H &&
+							Map[LinkedTo->Get_Coord()].Land_Type() !=
+								LAND_TUNNEL) {
+							Stop_Moving();
+							LinkedTo->Assign_Destination(NULL);
+							return;
+						} else {
+							bool bridge =
+								cellptr->IsUnderBridge &&
+								abs(LinkedTo->PositionCoord.Z /
+										LEVEL_LEPTON_H -
+									cellptr->Height) > 2;
+
+							cellptr->Incoming(
+								COORD_NONE, true, true, bridge);
+						}
+					}
+				}
+			}
+
+			LinkedTo->TryTryAgain = FootClass::PATH_RETRY;
+			facing = LinkedTo->Path[0];
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x00516BF0

@@ -18,6 +18,7 @@
 #include "ini.h"
 #include "vector.h"
 #include "vox.h"
+#include "audplay.h"
 #include <objidl.h>
 #include <math.h>
 #include <string.h>
@@ -56,25 +57,8 @@
 // _$E67
 DynamicVectorClass<VoxClass *> VoxArray;
 
-struct AudioStream
-{
-	void FUN_00407F40(void);
-	void FUN_00407A90(void);
-	int FUN_00408070(void);
-	void FUN_00407FB0(void);
-	void FUN_00408000(void);
-	unsigned __int64 FUN_00408140(void);
-};
-struct AudioSource
-{
-	AudioStream * FUN_00407860(int a, int b);
-};
 extern int FUN_00407000(void);
-extern AudioSource * AudioGetDevice(void);
-extern void __fastcall FUN_00408080(AudioStream * stream, char const * name);
-extern void __fastcall FUN_00407B40(AudioStream * stream, int value);
-extern void __fastcall FUN_00407B50(AudioStream * stream, int value);
-extern int __fastcall FUN_00407B60(AudioStream * stream, char const * name, int flag);
+extern AudioDevice * AudioGetDevice(void);
 extern unsigned __int64 __fastcall FUN_004093B0(void);
 
 struct VoxNode : SoundLink
@@ -96,17 +80,17 @@ extern int DAT_00B1D4BC;
 extern int DAT_00B1D4C0;
 extern VoxClass * DAT_00B1D4C4;
 extern int DAT_00B1D4C8;
-extern AudioStream * DAT_00B1D4CC;
+extern AudioStreamer * DAT_00B1D4CC;
 extern unsigned __int64 DAT_00B1D4D0;
 extern int DAT_00B1D3B8;
 extern int DAT_00B1D3E0;
 extern char DAT_00A8ED64;
-extern int AudioVoiceAttribs;
-extern int AudioGroupAttribs2;
+extern AudioAttribs * AudioVoiceAttribs;
+extern AudioAttribs * AudioGroupAttribs2;
 void FUN_00752370(void);
 VoxNode * __fastcall FUN_00752680(VoxClass * vox);
 void __fastcall FUN_00752590(VoxClass * vox, int type, int priority);
-void FUN_00752760(void);
+void Speak_AI(void);
 
 // FUNCTION: GAMEMD 0x00752290
 int FUN_00752290(void)
@@ -121,14 +105,14 @@ int FUN_00752290(void)
 	DAT_00B1D4B8 = NULL;
 	DAT_00B1D4BC = 1;
 	if (!DAT_00B1D4CC) {
-		DAT_00B1D4CC = AudioGetDevice()->FUN_00407860(3000, 0);
+		DAT_00B1D4CC = AudioStreamerCreate(AudioGetDevice(), 3000);
 		if (!DAT_00B1D4CC) {
 			return 0;
 		}
 	}
-	FUN_00408080(DAT_00B1D4CC, "EVA Stream");
-	FUN_00407B40(DAT_00B1D4CC, AudioVoiceAttribs);
-	FUN_00407B50(DAT_00B1D4CC, AudioGroupAttribs2);
+	AudioStreamerSetName(DAT_00B1D4CC, "EVA Stream");
+	AudioStreamerSetAttribs(DAT_00B1D4CC, AudioVoiceAttribs);
+	AudioStreamerSetFadeAttribs(DAT_00B1D4CC, AudioGroupAttribs2);
 	return 1;
 }
 
@@ -137,10 +121,26 @@ void FUN_00752340(void)
 {
 	FUN_00752370();
 	if (DAT_00B1D4CC) {
-		DAT_00B1D4CC->FUN_00407F40();
-		DAT_00B1D4CC->FUN_00407A90();
+		AudioStreamerStop(DAT_00B1D4CC);
+		AudioStreamerDestroy(DAT_00B1D4CC);
 		DAT_00B1D4CC = NULL;
 	}
+}
+
+static inline VoxClass * Release_Vox_Node(VoxNode * node, bool cancel, int * type = NULL, int * priority = NULL)
+{
+	VoxClass * vox = node->Vox;
+	if (cancel) {
+		vox->State = 2;
+	}
+	if (type != NULL) {
+		*type = node->Type;
+	}
+	if (priority != NULL) {
+		*priority = node->Priority;
+	}
+	delete node;
+	return vox;
 }
 
 // FUNCTION: GAMEMD 0x00752370
@@ -157,19 +157,16 @@ void FUN_00752370(void)
 	VoxNode * node;
 	while ((node = (VoxNode *)DAT_00B1D3F0.FUN_004073C0()) != NULL) {
 		node->FUN_00407450();
-		node->Vox->State = 2;
-		delete node;
+		Release_Vox_Node(node, true);
 	}
 	while ((node = (VoxNode *)DAT_00B1D3C8.FUN_004073C0()) != NULL) {
 		node->FUN_00407450();
-		node->Vox->State = 2;
-		delete node;
+		Release_Vox_Node(node, true);
 	}
 	for (int i = 0; i < 4; i++) {
 		while ((node = (VoxNode *)DAT_00B1D450[i].FUN_004073C0()) != NULL) {
 			node->FUN_00407450();
-			node->Vox->State = 2;
-			delete node;
+			Release_Vox_Node(node, true);
 		}
 	}
 }
@@ -199,15 +196,14 @@ void VoxClass::PlayIndex(int index, int a, int b)
 				VoxNode * node;
 				while ((node = (VoxNode *)DAT_00B1D3C8.FUN_004073C0()) != NULL) {
 					node->FUN_00407450();
-					node->Vox->State = 2;
-					delete node;
+					Release_Vox_Node(node, true);
 				}
 				if (DAT_00B1D4C4) {
 					DAT_00B1D4C4->State = 2;
 					DAT_00B1D4C4 = NULL;
 				}
 				if (DAT_00B1D4CC) {
-					DAT_00B1D4CC->FUN_00407F40();
+					AudioStreamerStop(DAT_00B1D4CC);
 				}
 				FUN_00752370();
 				DAT_00B1D4D0 = 0;
@@ -216,7 +212,7 @@ void VoxClass::PlayIndex(int index, int a, int b)
 			if (!found || found->Type != a) {
 				FUN_00752590(vox, a, b);
 			}
-			FUN_00752760();
+			Speak_AI();
 		}
 	}
 }
@@ -299,6 +295,68 @@ void VoxClass::Play(char const * name, int a, int b)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00752760
+void Speak_AI(void)
+{
+	if (DAT_00A8ED64 || !FUN_00407000() || !DAT_00B1D4CC || AudioStreamerIsPlaying(DAT_00B1D4CC)) {
+		return;
+	}
+	if (FUN_004093B0() <= DAT_00B1D4D0 + AudioStreamerEndTimeStamp(DAT_00B1D4CC) || DAT_00B1D428) {
+		return;
+	}
+	if (DAT_00B1D4C4) {
+		DAT_00B1D4C4->State = 2;
+		DAT_00B1D4C4 = NULL;
+	}
+	int type = 0;
+	int priority = 0;
+	VoxNode * node = (VoxNode *)DAT_00B1D3C8.FUN_004073C0();
+	if (node) {
+		node->FUN_00407450();
+		if (DAT_00B1D4B8) {
+			delete DAT_00B1D4B8;
+			DAT_00B1D4B8 = NULL;
+		}
+	} else {
+		node = (VoxNode *)DAT_00B1D3F0.FUN_004073C0();
+		if (node) {
+			node->FUN_00407450();
+			if (DAT_00B1D4B8) {
+				delete DAT_00B1D4B8;
+				DAT_00B1D4B8 = NULL;
+			}
+		} else if (DAT_00B1D4B8) {
+			node = DAT_00B1D4B8;
+			DAT_00B1D4B8 = NULL;
+		} else {
+			for (int i = 3; i >= 0; --i) {
+				node = (VoxNode *)DAT_00B1D450[i].FUN_004073C0();
+				if (node) {
+					node->FUN_00407450();
+					break;
+				}
+			}
+		}
+	}
+	VoxClass * vox = NULL;
+	if (node) {
+		vox = Release_Vox_Node(node, false, &type, &priority);
+	}
+	if (vox) {
+		vox->State = 2;
+		char name[256];
+		strcpy(name, vox->GetFilename());
+		strcat(name, ".WAV");
+		if (AudioStreamerPlayWAV(DAT_00B1D4CC, name, 1)) {
+			DAT_00B1D4D0 = 500;
+			DAT_00B1D4C4 = vox;
+			DAT_00B1D3B8 = type;
+			DAT_00B1D3E0 = priority;
+			vox->State = 0;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x007529A0
 void __fastcall FUN_007529A0(bool clear)
 {
@@ -307,7 +365,7 @@ void __fastcall FUN_007529A0(bool clear)
 		DAT_00B1D4C4 = NULL;
 	}
 	if (DAT_00B1D4CC) {
-		DAT_00B1D4CC->FUN_00407F40();
+		AudioStreamerStop(DAT_00B1D4CC);
 	}
 	if (clear) {
 		FUN_00752370();
@@ -317,9 +375,9 @@ void __fastcall FUN_007529A0(bool clear)
 // FUNCTION: GAMEMD 0x007529E0
 int FUN_007529E0(void)
 {
-	FUN_00752760();
+	Speak_AI();
 	if (DAT_00B1D4CC) {
-		if (DAT_00B1D4CC->FUN_00408070()) {
+		if (AudioStreamerIsPlaying(DAT_00B1D4CC)) {
 			goto busy;
 		}
 		if (DAT_00B1D3C8.Prev != &DAT_00B1D3C8 || DAT_00B1D3F0.Prev != &DAT_00B1D3F0 || DAT_00B1D4B8) {
@@ -348,19 +406,18 @@ void VoxClass::SilenceIndex(int index)
 			if (node == DAT_00B1D4B8) {
 				DAT_00B1D4B8 = NULL;
 			}
-			node->Vox->State = 2;
-			delete node;
+			Release_Vox_Node(node, true);
 		}
 	}
 }
 
 extern char DAT_00889F64[];
-extern AudioStream * DAT_00B1D4D8;
+extern AudioStreamer * DAT_00B1D4D8;
 extern int DAT_00B1D480;
 int DAT_00846614 = 255;
 
 // FUNCTION: GAMEMD 0x00752AB0
-void __fastcall FUN_00752AB0(int volume)
+void __fastcall Set_Speech_Volume(int volume)
 {
 	DAT_00846614 = volume;
 	if (volume >= 255) {
@@ -372,14 +429,14 @@ void __fastcall FUN_00752AB0(int volume)
 int FUN_00752AD0(void)
 {
 	if (!DAT_00B1D4D8) {
-		DAT_00B1D4D8 = AudioGetDevice()->FUN_00407860(3000, 0);
+		DAT_00B1D4D8 = AudioStreamerCreate(AudioGetDevice(), 3000);
 		if (!DAT_00B1D4D8) {
 			return 0;
 		}
 	}
-	FUN_00408080(DAT_00B1D4D8, "Taunt Stream");
-	FUN_00407B40(DAT_00B1D4CC, AudioVoiceAttribs);
-	FUN_00407B50(DAT_00B1D4CC, AudioGroupAttribs2);
+	AudioStreamerSetName(DAT_00B1D4D8, "Taunt Stream");
+	AudioStreamerSetAttribs(DAT_00B1D4CC, AudioVoiceAttribs);
+	AudioStreamerSetFadeAttribs(DAT_00B1D4CC, AudioGroupAttribs2);
 	DAT_00B1D480 = 0;
 	return 1;
 }
@@ -388,8 +445,8 @@ int FUN_00752AD0(void)
 void Theme_Suspend(void)
 {
 	if (DAT_00B1D4D8) {
-		DAT_00B1D4D8->FUN_00407F40();
-		DAT_00B1D4D8->FUN_00407A90();
+		AudioStreamerStop(DAT_00B1D4D8);
+		AudioStreamerDestroy(DAT_00B1D4D8);
 		DAT_00B1D4D8 = NULL;
 	}
 }
@@ -435,7 +492,7 @@ int __fastcall FUN_00752B70(int taunt)
 			default:
 				return 0;
 			}
-			return FUN_00407B60(DAT_00B1D4D8, buffer, 0);
+			return AudioStreamerPlayWAV(DAT_00B1D4D8, buffer, 0);
 		}
 	}
 	return 0;
@@ -445,7 +502,7 @@ int __fastcall FUN_00752B70(int taunt)
 void FUN_00752CA0(void)
 {
 	if (DAT_00B1D4D8) {
-		DAT_00B1D4D8->FUN_00407F40();
+		AudioStreamerStop(DAT_00B1D4D8);
 	}
 }
 
@@ -553,7 +610,7 @@ void FUN_007531A0(void)
 		DAT_00B1D4C4 = NULL;
 	}
 	if (DAT_00B1D4CC) {
-		DAT_00B1D4CC->FUN_00407F40();
+		AudioStreamerStop(DAT_00B1D4CC);
 	}
 	FUN_00752370();
 	while (VoxArray.Count() > 0) {
@@ -649,7 +706,7 @@ HRESULT __fastcall FUN_007533F0(IStream * stream)
 		DAT_00B1D4C4 = NULL;
 	}
 	if (DAT_00B1D4CC) {
-		DAT_00B1D4CC->FUN_00407F40();
+		AudioStreamerStop(DAT_00B1D4CC);
 	}
 	FUN_00752370();
 	HRESULT hr = stream->Read(&tag, 4, NULL);
@@ -690,7 +747,7 @@ void Set_EVA_Index(int index = 0)
 void Theme_Resume(void)
 {
 	if (DAT_00B1D4D8) {
-		DAT_00B1D4D8->FUN_00407FB0();
+		AudioStreamerPause(DAT_00B1D4D8);
 	}
 }
 
@@ -698,7 +755,7 @@ void Theme_Resume(void)
 void FUN_00753510(void)
 {
 	if (DAT_00B1D4D8) {
-		DAT_00B1D4D8->FUN_00408000();
+		AudioStreamerResume(DAT_00B1D4D8);
 	}
 }
 
@@ -743,7 +800,7 @@ void Remove_Speech_Hold(void)
 int FUN_007535B0(void)
 {
 	if (DAT_00B1D4CC) {
-		DAT_00B1D4CC->FUN_00407FB0();
+		AudioStreamerPause(DAT_00B1D4CC);
 	}
 	int count = DAT_00B1D428 + 1;
 	DAT_00B1D428 = count;
@@ -758,7 +815,7 @@ void FUN_007535D0(void)
 		DAT_00B1D4C4 = NULL;
 	}
 	if (DAT_00B1D4CC) {
-		DAT_00B1D4CC->FUN_00407F40();
+		AudioStreamerStop(DAT_00B1D4CC);
 	}
 	FUN_00752370();
 	DAT_00B1D428 = 0;
@@ -769,7 +826,7 @@ void FUN_007535D0(void)
 void FUN_00753620(void)
 {
 	if (DAT_00B1D4CC) {
-		DAT_00B1D4CC->FUN_00408000();
+		AudioStreamerResume(DAT_00B1D4CC);
 	}
 	if (DAT_00B1D428 != 0) {
 		if (--DAT_00B1D428 < 0) {

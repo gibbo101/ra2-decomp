@@ -5,6 +5,7 @@
 
 #define NDEBUG
 #include "always.h"
+#include "firewall.h"
 #include "geometry.h"
 #include "netshare.h"
 #include "_rules.h"
@@ -50,6 +51,7 @@
 #include <stdarg.h>
 #include <wchar.h>
 #include "widewstring.h"
+#include "tiprequest.h"
 
 // SYNTHETIC: GAMEMD 0x005E2410 SYMBOL
 // _$E51
@@ -59,7 +61,6 @@ void FUN_0060B350(HWND button);
 void FUN_00607FD0(HWND dialog);
 int FUN_007759E0(HWND window, bool (*callback)(void), int a, int b, int c);
 namespace UI { void RegisterWindow(HWND window, int id); }
-namespace Game { extern HWND hWnd; extern HINSTANCE hInstance; extern int PlayerColor; }
 
 class GameModeOptionsClass { public: static int Instance; };
 MultiplayerGameMode * First_Game_Mode(void);
@@ -67,8 +68,8 @@ HWND FUN_00775B10(void);
 int FUN_00775B20(void);
 
 void __fastcall FUN_0077E430(char * buffer);
-void __fastcall FUN_005DBB60(char * buffer);
-unsigned int __fastcall FUN_005DAC00(wchar_t const * name);
+void __fastcall Net2EncodeGameopt(char * buffer);
+unsigned int __fastcall Compute_Name_CRC_W(wchar_t * name);
 int __fastcall FUN_0069B720(SessionClass * session);
 void FUN_007A2730(void);
 void FUN_007A2750(void);
@@ -77,7 +78,6 @@ void FUN_005E2340(void);
 void FUN_005E23A0(void);
 void __cdecl FUN_004068E0(char const * format, ...);
 
-rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id);
 
 // SYNTHETIC: GAMEMD 0x005E2430 SYMBOL
 // _$E2
@@ -415,7 +415,7 @@ int ODMessageBox(const wchar_t * text, int type, bool (*callback)(void), bool la
 		} else {
 			id = (type != 4) ? 0xfb : 0x126;
 		}
-		HWND dialog = WS_Create_Dialog(Game::hInstance, id, Game::hWnd, ODMessageBox_Proc, FALSE);
+		HWND dialog = WS_Create_Dialog(ProgramInstance, id, MainWindow, ODMessageBox_Proc, FALSE);
 		UI::RegisterWindow(dialog, id);
 		if (type == 0) {
 			HWND ok = GetDlgItem(dialog, 1);
@@ -511,17 +511,21 @@ MultiplayerGameMode * FUN_005E2F80(void)
 	return(mode);
 }
 
+static inline MultiplayerGameMode *Get_Selected_Game_Mode(HWND window)
+{
+	int selected = SendDlgItemMessage(window, 0x6eb, LB_GETCURSEL, 0, 0);
+	if (selected == -1) return NULL;
+	return (MultiplayerGameMode *)SendDlgItemMessage(window, 0x6eb, LB_GETITEMDATA, selected, 0);
+}
+
 // FUNCTION: GAMEMD 0x005E2FA0
 void FUN_005E2FA0(void)
 {
 	if (FUN_00775B20() == 0x6b) {
 		HWND dialog = FUN_00775B10();
-		int sel = SendDlgItemMessage(dialog, 0x6eb, LB_GETCURSEL, 0, 0);
-		if (sel != -1) {
-			MultiplayerGameMode * mode = (MultiplayerGameMode *)SendDlgItemMessage(dialog, 0x6eb, LB_GETITEMDATA, sel, 0);
-			if (mode != NULL) {
-				mode->vt_entry_94();
-			}
+		MultiplayerGameMode *mode = Get_Selected_Game_Mode(dialog);
+		if (mode != NULL) {
+			mode->vt_entry_94();
 		}
 	} else if (Session.MPGameMode != NULL) {
 		Session.MPGameMode->vt_entry_94();
@@ -537,8 +541,8 @@ void __fastcall DisplayGameopts(HWND window, BOOL initialize)
 
 	if (initialize) {
 		rc_ptr<WDTTerritory> handle;
-		if (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) {
-			handle = FUN_007B0390(Session.unknown_08);
+		if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
+			handle = WDT_Get_Territory(Session.WDTTerritory);
 		}
 		if (handle.Get() != NULL) {
 			EnableWindow(GetDlgItem(window, 0x544), FALSE);
@@ -673,7 +677,7 @@ void PumpGameopts(bool force, bool now)
 				FUN_0077E430(buffer);
 				SendPublicGameopts(buffer);
 			} else {
-				FUN_005DBB60(buffer);
+				Net2EncodeGameopt(buffer);
 				SendPublicGameopts(buffer);
 			}
 		}
@@ -743,8 +747,8 @@ void SendPublicGameopts(char const * options)
 		packet.Command = NET_PUB_GAMEOPT;
 		strcpy(packet.Name, Session.Handle);
 		strcpy(packet.Options.Buf, options);
-		packet.Options.Color = Game::PlayerColor;
-		packet.Options.NameCRC = FUN_005DAC00(Session.GameName);
+		packet.Options.Color = Session.PrefColor;
+		packet.Options.NameCRC = Compute_Name_CRC_W(Session.GameName);
 		for (int i = 1; i < Session.Players.Count(); i++) {
 			NodeNameType * node = Session.Players[i];
 			FUN_004068E0("Sending public game options to %s\n", FUN_007350C0(node->Name));
@@ -769,7 +773,7 @@ void SendPrivateGameopts(char const * player, char const * options)
 		strcpy(packet.Name, Session.Handle);
 		strcpy(packet.Options.Buf, options);
 		Session.GPacket.Options.Color = FUN_0069B720(&Session);
-		Session.GPacket.Options.NameCRC = FUN_005DAC00(Session.GameName);
+		Session.GPacket.Options.NameCRC = Compute_Name_CRC_W(Session.GameName);
 		for (int i = 1; i < Session.Players.Count(); i++) {
 			if (stricmp(FUN_007350C0(Session.Players[i]->Name), player) == 0) {
 				FUN_004068E0("Sending private game options to %ls\n", Session.Players[i]);
@@ -781,11 +785,9 @@ void SendPrivateGameopts(char const * player, char const * options)
 }
 
 extern bool DAT_00AC11C2;
-int __fastcall FUN_0077EBA0(Wstring const & who);
-void __fastcall FUN_0077E900(Wstring const & who, int status);
 int __fastcall FUN_005DBEC0(char * who);
 void __fastcall FUN_005DBE20(char * who, int status);
-HWND __fastcall FUN_00775940(int id);
+
 
 // FUNCTION: GAMEMD 0x005E39C0
 void FUN_005E39C0(char * name, int status)
@@ -818,7 +820,7 @@ void FUN_005E3AB0(void)
 {
 	int accept;
 	if (g_pChat != NULL) {
-		accept = FUN_0077EBA0(NULL);
+		accept = GetPlayerAccepted(NULL);
 	} else {
 		accept = FUN_005DBEC0(NULL);
 	}
@@ -826,7 +828,7 @@ void FUN_005E3AB0(void)
 	if (accept == 1) {
 		char buffer[64];
 		if (g_pChat != NULL) {
-			FUN_0077E900(NULL, 0);
+			SetPlayerAccepted(NULL, 0);
 		} else {
 			FUN_005DBE20(NULL, 0);
 		}
@@ -868,6 +870,44 @@ static inline void LBSelectText(HWND win, WideWstring & key, wchar_t * wide)
 }
 
 
+
+// FUNCTION: GAMEMD 0x005E5F10
+void LBSaveSelections(HWND win, Dictionary<WideWstring,bool> & lbdict)
+{
+	int count = ListBox_GetCount(win);
+	WideWstring key;
+	wchar_t wide[0x400];
+	char narrow[0x400];
+
+	if (count == 0) {
+		return;
+	}
+	int style = GetWindowLong(win, GWL_STYLE);
+	if (style & LBS_MULTIPLESEL) {
+		for (int i = 0; i < count; i++) {
+			if (ListBox_GetSel(win, i) != 0) {
+				if (SendMessage(win, 0x4cf, i, 0) != 0) {
+					SendMessage(win, 0x4b6, i, (LPARAM)wide);
+				} else {
+					SendMessage(win, 0x4b7, i, (LPARAM)narrow);
+					FUN_00735060(wide, narrow, -1);
+				}
+				key = wide;
+				bool value = true;
+				lbdict.add(key, value);
+			}
+		}
+	} else if (!(style & LBS_NOSEL)) {
+		int index = ListBox_GetCurSel(win);
+		if (index >= 0) {
+			wide[0] = 0;
+			LBGetText(win, index, wide, narrow);
+			key = wide;
+			bool value = true;
+			lbdict.add(key, value);
+		}
+	}
+}
 
 // FUNCTION: GAMEMD 0x005E6230
 void LBRestoreSelections(HWND win, Dictionary<WideWstring,bool> & lbdict)
@@ -989,8 +1029,8 @@ extern wchar_t DAT_00AC0EC8[];
 void __fastcall FUN_005E7BF0(int slot);
 void __fastcall FUN_005E74E0(HWND dialog);
 void FUN_0058BB30(void);
-bool FUN_0077F900(void);
-int CALLBACK FUN_005E6920(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+bool WOL_Wait_Callback(void);
+int CALLBACK Scenario_DlgProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void FUN_0072D120(void);
 void FUN_0072D170(void);
@@ -1004,8 +1044,22 @@ int FUN_005E66D0(void)
 bool FUN_005DAF20(void);
 bool FUN_005BB260(void);
 
+static inline void Save_Scenario_Name(void)
+{
+	HWND list = DAT_00AC0D40;
+	int sel = SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0);
+	if (sel != -1) {
+		MultiMission * title = (MultiMission *)SendDlgItemMessage(list, 0x553, LB_GETITEMDATA, sel, 0);
+		if (title != NULL) {
+			wcscpy(DAT_00AC0EC8, title->Description());
+			return;
+		}
+	}
+	DAT_00AC0EC8[0] = 0;
+}
+
 // FUNCTION: GAMEMD 0x005E66F0
-bool FUN_005E66F0(void)
+bool Scenario_Select_Callback(void)
 {
 	int index = SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0);
 	if (index != -1) {
@@ -1036,23 +1090,12 @@ bool FUN_005E66F0(void)
 			FUN_005E7BF0(DAT_00AC10E0);
 		}
 	}
-	HWND list = DAT_00AC0D40;
-	int sel = SendDlgItemMessage(DAT_00AC0D40, 0x553, LB_GETCURSEL, 0, 0);
-	if (sel != -1) {
-		wchar_t * title = (wchar_t *)SendDlgItemMessage(list, 0x553, 0x199, sel, 0);
-		if (title != NULL) {
-			wcscpy(DAT_00AC0EC8, title);
-		} else {
-			DAT_00AC0EC8[0] = 0;
-		}
-	} else {
-		DAT_00AC0EC8[0] = 0;
-	}
+	Save_Scenario_Name();
 	if (Session.Type == GAME_IPX) {
 		return(FUN_005DAF20());
 	}
 	if (Session.Type == GAME_INTERNET) {
-		return(FUN_0077F900());
+		return(WOL_Wait_Callback());
 	}
 	if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
 		return(FUN_005BB260());
@@ -1066,14 +1109,25 @@ int Scenario_Dialog(HWND top)
 {
 	FUN_0052FEC0(NULL, true);
 	FUN_0072D120();
-	DAT_00AC0D40 = WS_Create_Dialog(Game::hInstance, 0x6b, top, FUN_005E6920, FALSE);
+	DAT_00AC0D40 = WS_Create_Dialog(ProgramInstance, 0x6b, top, Scenario_DlgProc, FALSE);
 	UI::RegisterWindow(DAT_00AC0D40, 0x6b);
 	SendMessage(DAT_00AC0D40, 0x4a9, 0, 1);
 	ShowWindow(DAT_00AC0D40, SW_NORMAL);
-	int result = FUN_007759E0(DAT_00AC0D40, FUN_005E66F0, 0, 1, 1);
+	int result = FUN_007759E0(DAT_00AC0D40, Scenario_Select_Callback, 0, 1, 1);
 	FUN_0072D170();
 	return(result);
 }
+
+extern bool DAT_00AC11C8;
+extern bool DAT_00AC11C9;
+extern int DAT_008316FC;
+bool FUN_00608070(HWND dialog);
+namespace OwnerDraw { void __fastcall Paint(HWND window); }
+bool RunOpenAnimationIfNeeded(HWND dialog);
+void __fastcall FUN_0060AAA0(HWND dialog);
+void __fastcall FUN_005D6130(HWND list, int mode);
+
+bool FUN_005E7160(HWND dialog);
 
 // FUNCTION: GAMEMD 0x005E70D0
 int FUN_005E70D0(HWND dialog, MultiMission * map)
@@ -1091,6 +1145,169 @@ int FUN_005E70D0(HWND dialog, MultiMission * map)
 	SendDlgItemMessage(dialog, 0x553, LB_SETCURSEL, found, 0);
 	SendDlgItemMessage(dialog, 0x553, 0x197, found, 0);
 	return(found);
+}
+
+static inline int Select_Scenario_By_Name(HWND window, wchar_t const *name)
+{
+	if (name == NULL) {
+		return(-1);
+	}
+	int found = 0;
+	int count = SendDlgItemMessage(window, 0x553, LB_GETCOUNT, 0, 0);
+	for (int i = 0; i < count; i++) {
+		MultiMission *candidate = (MultiMission *)SendDlgItemMessage(window, 0x553, LB_GETITEMDATA, i, 0);
+		if (wcscmp(candidate->Description(), name) == 0) {
+			found = i;
+		}
+	}
+	SendDlgItemMessage(window, 0x553, LB_SETCURSEL, found, 0);
+	SendDlgItemMessage(window, 0x553, LB_SETTOPINDEX, found, 0);
+	return(found);
+}
+
+static inline void Select_Scenario_Index(HWND window, int index)
+{
+	if (index < Session.Scenarios.Count()) {
+		FUN_005E70D0(window, Session.Scenarios[index]);
+	}
+}
+
+static inline void Enable_Random_Scenario(HWND window, MultiplayerGameMode *mode)
+{
+	bool allowed = mode->IsAIAllowed();
+	HWND button = GetDlgItem(window, 0x583);
+	EnableWindow(button, allowed);
+}
+
+static inline void Populate_Scenario_List(HWND window, MultiplayerGameMode * mode)
+{
+	DynamicVectorClass<MultiMission const *> maps;
+	int count = Session.Scenarios.Count();
+	for (int i = 0; i < count; i++) {
+		MultiMission const * map = Session.Scenarios[i];
+		if (mode->FUN_005D63E0(map)) {
+			maps.Add(map);
+		}
+	}
+	HWND list = GetDlgItem(window, 0x553);
+	mode->DrawTeamDropdown(list, &maps, NULL);
+}
+
+// FUNCTION: GAMEMD 0x005E6920
+int CALLBACK Scenario_DlgProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+	case WM_DRAWITEM:
+		OwnerDraw::Draw_Item((LPDRAWITEMSTRUCT)lparam);
+		// Fall through: both messages have been handled.
+	case WM_ERASEBKGND:
+		return(TRUE);
+
+	case WM_PAINT:
+		OwnerDraw::Paint(window);
+		if (MultiplayerMapPreview) MultiplayerMapPreview->DrawStartPoints(window);
+		FUN_00607FD0(window);
+		ValidateRect(window, NULL);
+		break;
+
+	case WM_NCDESTROY:
+		On_WM_NCDESTROY(window);
+		break;
+
+	case WM_COMMAND:
+		switch (LOWORD(wparam)) {
+		case 0x5c0:
+			WS_Destroy_Dialog(window, 2);
+			break;
+		case 0x583: {
+			FUN_00608070(window);
+			ShowWindow(window, SW_HIDE);
+			int scenario = CreateRandomMap();
+			if (scenario != -1) {
+				MultiplayerGameMode *mode = Get_Selected_Game_Mode(window);
+				if (mode) {
+					Populate_Scenario_List(window, mode);
+				}
+				Select_Scenario_Index(window, scenario);
+				Set_Scenario_Info_From_Index(scenario);
+				if (!MultiplayerMapPreview->Get_Preview_Surface()) Update_Network_Dialog_Preview(window);
+				Session.Options.ScenarioIndex = DAT_00AC10E0;
+				Set_Scenario_Info_From_Index(DAT_00AC10E0);
+				bool accepted = FUN_005E7160(window);
+				FUN_0052FEC0(NULL, true);
+				if (accepted) break;
+			}
+			RunOpenAnimationIfNeeded(window);
+			ShowWindow(window, SW_SHOW);
+			break;
+		}
+		case 0x6c5:
+			FUN_005E7160(window);
+			break;
+		case 0x6eb:
+			if (!DAT_00AC11C8 && HIWORD(wparam) == LBN_SELCHANGE) {
+				int selected = SendDlgItemMessage(window, 0x6eb, LB_GETCURSEL, 0, 0);
+				if (selected != DAT_008316FC && selected != -1) {
+					DAT_008316FC = selected;
+					MultiplayerGameMode *mode = Get_Selected_Game_Mode(window);
+					if (mode) {
+						WideWstring error;
+						if (mode->vt_entry_0C(&error)) {
+							mode->vt_entry_10();
+							Populate_Scenario_List(window, mode);
+							Enable_Random_Scenario(window, mode);
+							Select_Scenario_By_Name(window, DAT_00AC0EC8);
+							Save_Scenario_Name();
+							DAT_00AC11C9 = false;
+						} else {
+							if (!DAT_00AC11C9) {
+								ODMessageBox(error.get(), 0, NULL, false);
+								DAT_00AC11C9 = true;
+							}
+							SendDlgItemMessage(window, 0x6eb, LB_SETCURSEL, 0, 0);
+						}
+					}
+				}
+			}
+			break;
+		}
+		break;
+
+	case 0x4ec:
+		FUN_0052FEC0(NULL, true);
+		FUN_0060AAA0(window);
+		break;
+
+	case 0x4e9: {
+		TooltipRequest * request = (TooltipRequest *)lparam;
+		int id = GetDlgCtrlID(request->Window);
+		request->Text = (wchar_t const *)NULL;
+		if (id == 0x6eb && request->Index != -1) {
+			MultiplayerGameMode * mode = (MultiplayerGameMode *)SendDlgItemMessage(window, id, LB_GETITEMDATA, request->Index, 0);
+			if (mode) request->Text = mode->CSFTooltip.text();
+		}
+		return(TRUE);
+	}
+
+	case OD_SUBCLASSED: {
+		DAT_00AC11C8 = true;
+		MultiplayerGameMode * mode = FUN_005E2F80();
+		HWND list = GetDlgItem(window, 0x6eb);
+		FUN_005D6130(list, mode->MPModeIndex);
+		if (mode) {
+			Populate_Scenario_List(window, mode);
+		}
+		Enable_Random_Scenario(window, mode);
+		if (Session.Options.ScenarioIndex != -1) {
+			Select_Scenario_Index(window, Session.Options.ScenarioIndex);
+		}
+		DAT_00AC10E0 = Session.Options.ScenarioIndex;
+		DAT_00AC0D30 = -1;
+		DAT_00AC11C8 = false;
+		break;
+	}
+	}
+	return(FALSE);
 }
 
 bool FUN_0048D1D0(void);
@@ -1196,13 +1413,13 @@ apply:
 	mode->UnfixAlliances();
 
 	FUN_007757E0(dialog, 1);
-	HWND window = FUN_00775940(0xc2);
+	HWND window = WS_Find_Dialog(0xc2);
 	if (window == NULL) {
-		window = FUN_00775940(0xc9);
+		window = WS_Find_Dialog(0xc9);
 		if (window == NULL) {
-			window = FUN_00775940(0xbc);
+			window = WS_Find_Dialog(0xbc);
 			if (window == NULL) {
-				window = FUN_00775940(0xbd);
+				window = WS_Find_Dialog(0xbd);
 			}
 		}
 	}
@@ -1240,14 +1457,13 @@ void PregameSetup(void)
 
 bool __fastcall FUN_006951F0(char const * name, unsigned int length, char const * digest, bool official, bool flag);
 void FUN_0058BB30(void);
-void * FUN_007931A0(void);
 
 static inline int Send_To_Host(void * packet, int size, int sent)
 {
 	if (Session.Type == GAME_IPX) {
 		sent = Ipx.Send_Global_Message(packet, size, 1, &Session.HostAddress);
 	} else {
-		void * owner = FUN_007931A0();
+		void * owner = Get_Channel_Host();
 		if (owner != NULL) {
 			sent = Ipx.Send_Global_Message_To_Name(packet, size, 1, FUN_00735120((char *)owner + 0x24));
 		}
@@ -1409,7 +1625,6 @@ void Receive_Random_Map_Preview(void)
 	Ipx.Set_Timing(30, -1, 600);
 }
 
-extern int DAT_0081C1D0;
 int __fastcall FUN_004790A0(int timeout);
 
 // FUNCTION: GAMEMD 0x005E7BF0
@@ -1420,7 +1635,7 @@ bool Set_Scenario_Info_From_Index(int index)
 		Session.ScenarioDigest[0] = '\0';
 		Session.ScenarioFileLength = 0;
 		Session.ScenarioIsOfficial = 0;
-		Session.unknown_8D4 = 0;
+		Session.ScenarioMaxPlayers = 0;
 		Session.Options.ScenarioDescription[0] = L'\0';
 		return(false);
 	}
@@ -1428,7 +1643,7 @@ bool Set_Scenario_Info_From_Index(int index)
 	bool unavailable = CCFileClass(Session.Scenarios[index]->Get_Filename()).Is_Available() == false;
 
 	if (unavailable) {
-		if (DAT_0081C1D0 != -2) {
+		if (CD::Get_Required_Disk() != -2) {
 			if (!Session.Scenarios[index]->Is_On_CD((DiskID)FUN_004790A0(60)) && !CD().Force_Available(Session.Scenarios[index]->On_Which_CD())) {
 				return(false);
 			}
@@ -1444,10 +1659,180 @@ bool Set_Scenario_Info_From_Index(int index)
 	strcpy(Session.ScenarioFileName, Session.Scenarios[index]->Get_Filename());
 	strcpy(Scen->ScenarioName, Session.ScenarioFileName);
 	Session.ScenarioIsOfficial = Session.Scenarios[index]->Get_Official();
-	Session.unknown_8D4 = FUN_005E64C0(index);
+	Session.ScenarioMaxPlayers = FUN_005E64C0(index);
 	Session.ScenarioFileLength = CCFileClass(Session.ScenarioFileName).Size();
 	Session.ScenarioFileLength = CCFileClass(Session.ScenarioFileName).Size();
 	return(true);
+}
+
+Point2D FUN_0058BB00(int index);
+
+// FUNCTION: GAMEMD 0x005E7EB0
+void __fastcall Send_Preview_To_Guests(MapPreviewClass * preview)
+{
+	CDTimerClass<SystemTimerClass> response_timer;
+	char suffix[64];
+	char options[256];
+	Cell cell;
+	GlobalPacketType packet;
+	GlobalPacketType response;
+	bool responses[MAX_PLAYERS];
+	int length;
+	unsigned short product_id;
+	int size;
+
+	if (preview != NULL && Session.Players.Count() > 1) {
+		if (Scen != NULL) {
+			sprintf(options, "%c%d,%d,%d,%d,%d", 'W',
+				Scen->Width, Scen->Height,
+				Scen->StartX, Scen->StartY,
+				Scen->NumberStartingPoints);
+
+			for (int i = 0; i < MAX_PLAYERS; i++) {
+				Point2D point = FUN_0058BB00(i);
+				if (Scen->Is_Valid_Waypoint((WAYPOINT)i)) {
+					cell = Scen->Get_Waypoint_Cell((WAYPOINT)i);
+				} else {
+					cell = CELL_NONE;
+				}
+				sprintf(suffix, ",%d,%d,%d,%d",
+					point.X, point.Y, cell.X, cell.Y);
+				strcat(options, suffix);
+			}
+			SendPublicGameopts(options);
+		}
+
+		if (Session.Type == GAME_INTERNET) {
+			if (FirewallHelper.Detected != 0
+				&& !(FirewallHelper.Detected & 1)) {
+			no_preview:
+				options[0] = 'Z';
+				options[1] = '3';
+				options[2] = 0;
+				FUN_004068E0(
+					"Sending public options string %s\n",
+					options);
+				g_pChat->RequestPublicGameOptions(options);
+				return;
+			}
+
+			int peer = 1;
+			if (peer < Session.Players.Count()) {
+				do {
+					int slot = Session.FUN_0069BC60(peer);
+					if (slot >= 0 && slot < MAX_PLAYERS) {
+						int flags = Session.PlayerFirewall[slot];
+						if (flags == 0 || (flags & 1)) {
+							if (Session.PlayerLocalAddress[slot].
+								FUN_0053EF30(
+									Session.Players[peer]->Address)) {
+								goto next_peer;
+							}
+							FUN_004068E0(
+								"Player %s has different local and external IPs - no preview download possible\n",
+								FUN_007350C0(
+									Session.Players[peer]->Name));
+						} else {
+							FUN_004068E0(
+								"Player %s has a NAT - no preview download possible\n",
+								FUN_007350C0(
+									Session.Players[peer]->Name));
+						}
+						goto no_preview;
+					}
+
+				next_peer:
+					peer++;
+				} while (peer < Session.Players.Count());
+			}
+		}
+
+		FUN_004068E0("Starting map preview upload\n");
+		memset(&packet, 0, sizeof(packet));
+		packet.Command = NET_PREVIEW_MODE;
+		strcpy(packet.Name, Session.Handle);
+		Ipx.Set_Timing(50, -1, 5000);
+		response_timer = TIMER_SECOND * 20;
+
+		for (int i = 1; i < Session.Players.Count(); i++) {
+			Ipx.Send_Global_Message_To_Name(
+				&packet, sizeof(packet), 1,
+				Session.Players[i]->Name);
+			Call_Back();
+		}
+
+		while (Ipx.Global_Num_Send() != 0 && response_timer) {
+			Call_Back();
+		}
+		if (!response_timer) return;
+
+		IPXAddressClass sender_address;
+		memset(responses, 0, sizeof(responses));
+		int num_responses = 0;
+		response_timer = TIMER_SECOND * 30;
+		FUN_004068E0(
+			"Waiting for %d players to signal ready to receive\n",
+			Session.Players.Count() - 1);
+
+		while (num_responses < Session.Players.Count() - 1
+			&& response_timer) {
+			Call_Back();
+			length = 455;
+			if (Ipx.Get_Global_Message(
+				&response, &length,
+				&sender_address, &product_id)) {
+				if (response.Command == NET_PREVIEW_ACK) {
+					for (int j = 1;
+						j < Session.Players.Count(); j++) {
+						if (sender_address.FUN_0053EF30(
+							Session.Players[j]->Address)) {
+							if (!responses[j]) {
+								responses[j] = true;
+								num_responses++;
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		if (num_responses == Session.Players.Count() - 1) {
+			FUN_004068E0("Creating low-res preview image\n");
+			size = 0;
+			unsigned * palette =
+				preview->Create_Paletted_Preview(64, size);
+			FUN_004068E0("Preview size is %d bytes\n", size);
+
+			unsigned * buffer = new unsigned[size];
+			BufferPipe bpipe(buffer, size * sizeof(unsigned));
+			LZOPipe lzopipe(LZOPipe::COMPRESS);
+			lzopipe.Put_To(&bpipe);
+			int comp_size = lzopipe.Put(palette, size);
+			comp_size += lzopipe.End();
+			delete [] palette;
+
+			FUN_004068E0(
+				"Compressed preview image is %d bytes\n",
+				comp_size);
+			RawFileClass file("Preview.bin");
+			if (file.Is_Available()) {
+				file.Delete();
+			}
+			file.Open(RawFileClass::WRITE);
+			file.Write(&size, sizeof(size));
+			file.Write(buffer, comp_size);
+			file.Close();
+			delete [] buffer;
+
+			FUN_004068E0(
+				"Calling Send_Remote_File to send the preview\n");
+			Send_Remote_File(
+				"Preview.bin", GAME_IPX, true, false);
+			Ipx.Set_Timing(
+				TIMER_SECOND / 2, -1, 10 * TIMER_SECOND);
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x005E8590
@@ -1457,7 +1842,7 @@ int CreateRandomMap(void)
 	if (Session.Type == GAME_IPX) {
 		result = Do_Random_Map_Dialog(FUN_005DAF20);
 	} else if (Session.Type == GAME_INTERNET) {
-		result = Do_Random_Map_Dialog(FUN_0077F900);
+		result = Do_Random_Map_Dialog(WOL_Wait_Callback);
 	} else if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
 		result = Do_Random_Map_Dialog(FUN_005BB260);
 	} else {
@@ -1663,7 +2048,7 @@ void FUN_005E8B60(void)
 	for (i = count; i < 8; i++) {
 		Session.Slots[i] = DAT_00AC11A0;
 	}
-	Session.unknown_2854 = -1;
+	Session.LocalSlot = -1;
 	FUN_0069B540(&Session.Options);
 	DAT_00AC0D44[0] = 0;
 	DAT_00AC0B94[0] = 0;
@@ -1732,7 +2117,7 @@ void __fastcall FUN_005E8D90(int slot, NodeNameType * name)
 // FUNCTION: GAMEMD 0x005E8DA0
 void __fastcall FUN_005E8DA0(int slot)
 {
-	Session.unknown_2854 = slot;
+	Session.LocalSlot = slot;
 	Session.Slots[slot] = Session.Players[0];
 }
 
@@ -1804,13 +2189,13 @@ void __fastcall FUN_005E8EA0(wchar_t * list)
 			}
 		}
 		if (node == DAT_00AC11B4 || (node != NULL && node != DAT_00AC119C && node != DAT_00AC11A0 && node != DAT_00AC11B0 && node != DAT_00AC11A4 && node != DAT_00AC11A8 && node != DAT_00AC11AC && node->Slot.SpectatorFlag == -1)) {
-			HWND dialog = FUN_00775940(0xc2);
+			HWND dialog = WS_Find_Dialog(0xc2);
 			if (dialog == NULL) {
-				dialog = FUN_00775940(0xc9);
+				dialog = WS_Find_Dialog(0xc9);
 				if (dialog == NULL) {
-					dialog = FUN_00775940(0xbc);
+					dialog = WS_Find_Dialog(0xbc);
 					if (dialog == NULL) {
-						dialog = FUN_00775940(0xbd);
+						dialog = WS_Find_Dialog(0xbd);
 					}
 				}
 			}
@@ -1843,13 +2228,13 @@ void __fastcall FUN_005E8EA0(wchar_t * list)
 				FUN_004E49A0(dialog, combo, 8);
 			}
 		} else {
-			HWND dialog = FUN_00775940(0xc2);
+			HWND dialog = WS_Find_Dialog(0xc2);
 			if (dialog == NULL) {
-				dialog = FUN_00775940(0xc9);
+				dialog = WS_Find_Dialog(0xc9);
 				if (dialog == NULL) {
-					dialog = FUN_00775940(0xbc);
+					dialog = WS_Find_Dialog(0xbc);
 					if (dialog == NULL) {
-						dialog = FUN_00775940(0xbd);
+						dialog = WS_Find_Dialog(0xbd);
 					}
 				}
 			}
@@ -2027,7 +2412,7 @@ int FUN_005E94D0(void)
 // FUNCTION: GAMEMD 0x005E9510
 bool FUN_005E9510(void)
 {
-	int count = (Session.MaxPlayers < Session.unknown_8D4) ? Session.MaxPlayers : Session.unknown_8D4;
+	int count = (Session.MaxPlayers < Session.ScenarioMaxPlayers) ? Session.MaxPlayers : Session.ScenarioMaxPlayers;
 	int i;
 
 	for (i = 0; i < count; i++) {
@@ -2071,12 +2456,12 @@ bool FUN_005E9580(void)
 // FUNCTION: GAMEMD 0x005E95E0
 bool FUN_005E95E0(void)
 {
-	int count = (Session.MaxPlayers < Session.unknown_8D4) ? Session.MaxPlayers : Session.unknown_8D4;
+	int count = (Session.MaxPlayers < Session.ScenarioMaxPlayers) ? Session.MaxPlayers : Session.ScenarioMaxPlayers;
 
 	int players = Session.Players.Count();
 
 	if (players - FUN_005E9580() > count) {
-		FUN_004068E0("Channel full - Session.ScenarioMaxPlayers = %d\n", Session.unknown_8D4);
+		FUN_004068E0("Channel full - Session.ScenarioMaxPlayers = %d\n", Session.ScenarioMaxPlayers);
 		return(true);
 	}
 	return(false);
@@ -2149,13 +2534,13 @@ NodeNameType * __fastcall FUN_005E9800(int kind)
 void FUN_005E9850(void)
 {
 	if (FUN_00775B20() != 0xbc) {
-		HWND window = FUN_00775940(0xc2);
+		HWND window = WS_Find_Dialog(0xc2);
 		if (!window) {
-			window = FUN_00775940(0xc9);
+			window = WS_Find_Dialog(0xc9);
 			if (!window) {
-				window = FUN_00775940(0xbc);
+				window = WS_Find_Dialog(0xbc);
 				if (!window) {
-					window = FUN_00775940(0xbd);
+					window = WS_Find_Dialog(0xbd);
 				}
 			}
 		}
@@ -2266,7 +2651,7 @@ void __fastcall FUN_005E9B60(HWND dialog, int combo)
 {
 	int country = FUN_004E4170(dialog, combo, -1);
 	int slot = FUN_004E3830(combo);
-	if (slot == Session.unknown_2854) {
+	if (slot == Session.LocalSlot) {
 		Session.FUN_0069B760(country, false);
 		if (Session.Players.Count()) {
 			Session.Players[0]->Set_Country(country);
@@ -2288,7 +2673,7 @@ void __fastcall FUN_005E9C00(HWND dialog, int combo)
 {
 	int color = FUN_004E4E20(dialog, combo, -1);
 	int slot = FUN_004E4230(combo);
-	if (slot == Session.unknown_2854) {
+	if (slot == Session.LocalSlot) {
 		FUN_004E4C20(dialog, combo);
 		if (FUN_005E96A0(color)) {
 			color = -2;
@@ -2307,7 +2692,7 @@ void __fastcall FUN_005E9CE0(HWND dialog, int combo)
 {
 	int start = FUN_004E5900(dialog, combo, -1);
 	int slot = FUN_004E4EC0(combo);
-	if (slot == Session.unknown_2854) {
+	if (slot == Session.LocalSlot) {
 		FUN_004E5700(dialog, combo);
 		if (FUN_005E9720(start)) {
 			start = -2;
@@ -2351,7 +2736,7 @@ void __fastcall FUN_005E9DB0(HWND dialog, int combo)
 {
 	int value = FUN_004E6030(dialog, combo, -1);
 	int slot = FUN_004E59A0(combo);
-	if (slot == Session.unknown_2854) {
+	if (slot == Session.LocalSlot) {
 		FUN_004E5ED0(dialog, combo, value);
 		if (Session.Players.Count()) {
 			Session.Players[0]->Set_Team(value);
@@ -2368,7 +2753,7 @@ void __fastcall FUN_005E9E00(HWND dialog)
 		int combo = FUN_004E5940(i);
 		int value = FUN_004E6030(dialog, combo, -1);
 		int slot = FUN_004E59A0(combo);
-		if (slot == Session.unknown_2854) {
+		if (slot == Session.LocalSlot) {
 			FUN_004E5ED0(dialog, combo, value);
 			if (Session.Players.Count()) {
 				Session.Players[0]->Set_Team(value);
@@ -2862,7 +3247,7 @@ void __fastcall FUN_005EBA00(HWND dialog)
 	int i = DAT_008316A4;
 	if (i >= 0) {
 		if (i == 0) {
-			i = Session.unknown_8D4;
+			i = Session.ScenarioMaxPlayers;
 		}
 		if (i < 8) {
 			int labelId;
@@ -3090,7 +3475,7 @@ void __fastcall FUN_005EC030(HWND dialog)
 	PumpGameopts(true, false);
 }
 
-void FUN_00785360(void);
+void Display_Users(void);
 
 // FUNCTION: GAMEMD 0x005EC290
 void __fastcall FUN_005EC290(HWND dialog, int start)
@@ -3108,7 +3493,7 @@ void __fastcall FUN_005EC290(HWND dialog, int start)
 	}
 	FUN_005EBC00(dialog, start);
 	if (g_pChat) {
-		FUN_00785360();
+		Display_Users();
 	} else {
 		FUN_005DAFD0();
 	}
@@ -3225,7 +3610,7 @@ void __fastcall FUN_004E50C0(HWND dialog, int id);
 void __fastcall FUN_004E5B60(HWND dialog, int id);
 void __fastcall FUN_005EE510(int arg);
 void FUN_0078F000(void);
-void __fastcall FUN_007A28B0(NodeNameType * node);
+void __fastcall FUN_007A28B0(wchar_t const * wide);
 void __fastcall FUN_005DB600(NodeNameType * node);
 void FUN_0077DB90(void);
 void FUN_005DAF30(void);
@@ -3629,21 +4014,21 @@ int __fastcall FUN_005EE100(Wstring const & name)
 	return(0);
 }
 
-extern CCINIClass DAT_008870C0;
+extern CCINIClass INI_RA2MD;
 namespace Game { extern int ObserverMode; }
 
 // FUNCTION: GAMEMD 0x005EE190
 void FUN_005EE190(void)
 {
-	Game::ObserverMode = DAT_008870C0.Get_Int("MultiPlayer", "ObserverMode", 0);
+	Game::ObserverMode = INI_RA2MD.Get_Int("MultiPlayer", "ObserverMode", 0);
 }
 
 // FUNCTION: GAMEMD 0x005EE1B0
 void FUN_005EE1B0(void)
 {
 	RawFileClass file("RA2MD.INI");
-	DAT_008870C0.Put_Int("MultiPlayer", "ObserverMode", Game::ObserverMode, 0);
-	DAT_008870C0.Save(file, false);
+	INI_RA2MD.Put_Int("MultiPlayer", "ObserverMode", Game::ObserverMode, 0);
+	INI_RA2MD.Save(file, false);
 }
 
 void __fastcall FUN_00603D30(HWND item, Surface * surface);
@@ -3683,7 +4068,7 @@ void __fastcall FUN_005EE200(HWND dialog)
 			if (Game::ObserverMode) {
 #line 6762 "D:\\ra2mdpost\\netshare.cpp"
 				text = StringTable::LoadString("GUI:Observe", NULL, __FILE__, __LINE__);
-			} else if (FUN_00775940(0x113) == dialog) {
+			} else if (WS_Find_Dialog(0x113) == dialog) {
 #line 6766 "D:\\ra2mdpost\\netshare.cpp"
 				text = StringTable::LoadString("GUI:JoinGame", NULL, __FILE__, __LINE__);
 			} else {
@@ -3702,15 +4087,15 @@ void __fastcall FUN_005EE350(HWND dialog)
 	if (dialog) {
 		FUN_005EE200(dialog);
 	}
-	HWND window = FUN_00775940(0x116);
+	HWND window = WS_Find_Dialog(0x116);
 	if (window) {
 		FUN_005EE200(window);
 	}
-	window = FUN_00775940(0x113);
+	window = WS_Find_Dialog(0x113);
 	if (window) {
 		FUN_005EE200(window);
 	}
-	window = FUN_00775940(0xbb);
+	window = WS_Find_Dialog(0xbb);
 	if (window) {
 		FUN_005EE200(window);
 	}
@@ -3732,13 +4117,13 @@ static inline bool Handle_Is_Game_Name(void)
 void FUN_005EE3A0(void)
 {
 	bool enabled = true;
-	HWND dialog = FUN_00775940(0xc2);
+	HWND dialog = WS_Find_Dialog(0xc2);
 	if (!dialog) {
-		dialog = FUN_00775940(0xc9);
+		dialog = WS_Find_Dialog(0xc9);
 		if (!dialog) {
-			dialog = FUN_00775940(0xbc);
+			dialog = WS_Find_Dialog(0xbc);
 			if (!dialog) {
-				dialog = FUN_00775940(0xbd);
+				dialog = WS_Find_Dialog(0xbd);
 				if (!dialog) {
 					return;
 				}
@@ -3764,7 +4149,7 @@ void FUN_005EE3A0(void)
 				} else if (slot == DAT_00AC119C || slot == DAT_00AC11A0) {
 					EnableWindow(item, 0);
 				} else {
-					if (i == Session.unknown_2854) {
+					if (i == Session.LocalSlot) {
 						if (enabled) {
 							EnableWindow(item, 1);
 						} else {
@@ -3785,13 +4170,13 @@ void FUN_005EE3A0(void)
 // FUNCTION: GAMEMD 0x005EE510
 void __fastcall FUN_005EE510(int arg)
 {
-	HWND dialog = FUN_00775940(0xc2);
+	HWND dialog = WS_Find_Dialog(0xc2);
 	if (!dialog) {
-		dialog = FUN_00775940(0xc9);
+		dialog = WS_Find_Dialog(0xc9);
 		if (!dialog) {
-			dialog = FUN_00775940(0xbc);
+			dialog = WS_Find_Dialog(0xbc);
 			if (!dialog) {
-				dialog = FUN_00775940(0xbd);
+				dialog = WS_Find_Dialog(0xbd);
 			}
 		}
 	}

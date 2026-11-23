@@ -20,83 +20,42 @@
 #include "globals.h"
 #include <string.h>
 #include <cmath>
-
-namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
-extern const double DAT_007E1708;
-extern const double DAT_007E1710;
-extern const double DAT_007E1718;
-extern const double DAT_007E1720;
-extern const double DAT_007E1728;
-extern const double DAT_007E1730;
-extern const double DAT_007E1738;
-extern const double DAT_007E1740;
-extern const double DAT_007EE0A0;
-extern const double DAT_007EE0A8;
-
-struct DatShorts { short X; short Y; DatShorts(short x, short y) : X(x), Y(y) {} };
-struct DatInts { int X; int Y; int Z; DatInts(int x, int y, int z) : X(x), Y(y), Z(z) {} };
+#include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x005BF5C0 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x005BF5E0 SYMBOL
 // _$E67
-double DAT_00ABF380 = fastmath::sqrt(pow(DAT_007E1710, DAT_007E1708) * 2);
-
 // SYNTHETIC: GAMEMD 0x005BF610 SYMBOL
 // _$E70
-double DAT_00ABF3E8 = DAT_00ABF380 / DAT_007EE0A0;
-
 // SYNTHETIC: GAMEMD 0x005BF630 SYMBOL
 // _$E73
-double DAT_00ABF3D0 = DAT_007E1718 / DAT_00ABF3E8;
-
 // SYNTHETIC: GAMEMD 0x005BF650 SYMBOL
 // _$E76
-double DAT_00ABF3C8 = DAT_007E1720 * DAT_007EE0A8;
-
 // SYNTHETIC: GAMEMD 0x005BF670 SYMBOL
 // _$E79
-double DAT_00ABF388 = DAT_007E1728 * DAT_007EE0A8;
-
 // SYNTHETIC: GAMEMD 0x005BF690 SYMBOL
 // _$E82
-double DAT_00ABF360 = DAT_007E1730 * DAT_007EE0A8;
-
 // SYNTHETIC: GAMEMD 0x005BF6B0 SYMBOL
 // _$E85
-int DAT_00ABF3F0 = (int)(DAT_007E1738 * (DAT_00ABF380 * fastmath::tan(DAT_00ABF360 - DAT_00ABF388)));
-
 // SYNTHETIC: GAMEMD 0x005BF6F0 SYMBOL
 // _$E88
-double DAT_00ABF3A8 = fastmath::atan(DAT_00ABF3F0 * DAT_007E1740);
-
 // SYNTHETIC: GAMEMD 0x005BF720 SYMBOL
 // _$E91
-double DAT_00ABF3C0 = fastmath::atan((DAT_00ABF3F0 * 2) / DAT_00ABF380);
-
 // SYNTHETIC: GAMEMD 0x005BF750 SYMBOL
 // _$E94
-int DAT_00ABF3E4 = (int)((DAT_00ABF3F0 * 4) + DAT_007E1738);
-
 // SYNTHETIC: GAMEMD 0x005BF780 SYMBOL
 // _$E97
-DatShorts DAT_00ABF378(0, 0);
-
 // SYNTHETIC: GAMEMD 0x005BF790 SYMBOL
 // _$E100
-DatInts DAT_00ABF3B0(0, 0, 0);
+// SYNTHETIC: GAMEMD 0x005BF7B0 SYMBOL
+// _$E103
 
 int MovieInt1 = 0;
 extern MovieHandle * DAT_00ABF3F8;
 namespace Game { bool __fastcall IsMoviePlaying(void); void __fastcall BlitMovie(void); }
 
 extern int FUN_00407000(void);
-
-struct DatInts3 { int X; int Y; int Z; DatInts3(int x, int y, int z) : Z(z), X(x), Y(y) {} };
-
-// SYNTHETIC: GAMEMD 0x005BF7B0 SYMBOL
-// _$E103
-DatInts3 DAT_00ABF3D8(0x80, 0x80, 0);
 
 // SYNTHETIC: GAMEMD 0x005BF7D0 SYMBOL
 // _$E108
@@ -744,7 +703,7 @@ bool MultiplayerBattle::vt_entry_08(void)
 }
 
 // FUNCTION: GAMEMD 0x005C0E50
-bool MultiplayerBattle::vt_entry_0C(unsigned a)
+bool MultiplayerBattle::vt_entry_0C(WideWstring * error)
 {
 	return(true);
 }
@@ -760,7 +719,7 @@ void MultiplayerBattle::vt_entry_24(void)
 }
 
 // FUNCTION: GAMEMD 0x005C0E80
-void MultiplayerBattle::vt_entry_38(unsigned a)
+void MultiplayerBattle::vt_entry_38(HWND dialog)
 {
 }
 

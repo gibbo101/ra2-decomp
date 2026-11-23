@@ -42,7 +42,7 @@
 extern FacingType Facing_Between_Points(Point2D const & pt1, Point2D const & pt2);
 extern ObjectClass * __fastcall Best_Selected_Object(Cell const * cell, ObjectClass const * target);
 extern BeaconManagerClass BeaconManager;
-extern bool __stdcall FUN_0063A5A0(int x, int y);
+extern bool __fastcall FUN_0063A5A0(Point2D point);
 extern bool __stdcall FUN_0063A8E0(Point2D point);
 extern void __stdcall FUN_0063AAC0(int x, int y);
 extern void __stdcall FUN_0063AB00(int x, int y);
@@ -480,7 +480,7 @@ void ScrollClass::Message_Handler(HWND hwnd, UINT & message, UINT & wParam, LONG
 			point.Y = pts.y - TacticalRect.Y;
 
 			if (Resolve_Point(point, cell, coord, object, fog, shadow)) {
-				if (!FUN_0063A5A0(point.X, point.Y) && IsMouseDown == false) {
+				if (!FUN_0063A5A0(point) && IsMouseDown == false) {
 					Map.Mouse_Left_Up(cell, shadow, object, What_Action(cell, object, true));
 					Map.Mouse_Left_Press(point);
 					SetCapture(MainWindow);
@@ -683,6 +683,16 @@ void ScrollClass::Scroll_Coast(Point2D const & point)
 			} else if (posy < 0) {
 				Map.Scroll_Map(FACING_N, disty, true);
 			}
+
+			MouseType const MOUSE_SCROLL_COASTING = (MouseType)61;
+			MouseType const MOUSE_SCROLL_COASTING_N = (MouseType)62;
+			MouseType const MOUSE_SCROLL_COASTING_NE = (MouseType)63;
+			MouseType const MOUSE_SCROLL_COASTING_E = (MouseType)64;
+			MouseType const MOUSE_SCROLL_COASTING_SE = (MouseType)65;
+			MouseType const MOUSE_SCROLL_COASTING_S = (MouseType)66;
+			MouseType const MOUSE_SCROLL_COASTING_SW = (MouseType)67;
+			MouseType const MOUSE_SCROLL_COASTING_W = (MouseType)68;
+			MouseType const MOUSE_SCROLL_COASTING_NW = (MouseType)69;
 
 			static MouseType _mouse[FACING_COUNT*2] = {
 				MOUSE_SCROLL_COASTING,

@@ -6,6 +6,9 @@
 #define NDEBUG
 #include "always.h"
 #include "ownrdraw.h"
+#include "draw.h"
+
+class SHPStruct;
 
 namespace OwnerDraw {
 	struct WinData {
@@ -21,24 +24,67 @@ namespace OwnerDraw {
 		int paintDisabled;
 		int toolTipsEnabled;
 
-		union {
-			struct {
-				wchar_t *text;
-				int hasText;
-				int asciiOnly;
-				WinNode *nodes;
-				int hasFocus;
-				WideWstring *editText;
-				int caretIndex;
-				int scrollStart;
-				int textLimit;
-				int caretBlink;
-				wchar_t *rejectChars;
-				int styleFlags;
-				unsigned char reserved58[0xC];
-				BitFont *font;
-			} Wide;
+		wchar_t *text;
+		int hasText;
+		int asciiOnly;
+		WinNode *nodes;
+		int hasFocus;
+		WideWstring *editText;
+		int caretIndex;
+		int scrollStart;
+		int textLimit;
+		int caretBlink;
+		wchar_t *rejectChars;
+		int styleFlags;
+		void *StaticMovieHandle;
+		int StaticLoopMovie;
+		void *StaticMovieAuxHandle;
+		BitFont *Font;
+		int ControlType;
+		int DialogID;
+		int StaticDrawMode;
+		ConvertClass *StaticShapeDrawer;
+		SHPStruct *StaticShape;
+		int StaticShapeFlags;
+		int StaticTextRevealCount;
+		int StaticTextRevealDelay;
+		int StaticTextRevealStep;
+		int StaticColorAdjust;
+		int StaticSoundIndex;
+		int StaticFrameCount;
+		int StaticCurrentFrame;
+		int StaticLastFrameTick;
+		int StaticFrameDelayMs;
+		HWND StaticFrameNotifyHwnd;
+		bool StaticAnimationRunning;
+		int StaticTextFlags;
+		int LayoutBand;
+		bool StaticFillBackground;
+		COLORREF StaticFillColor;
+		bool skipDraw;
+		bool HasOpenAnimation;
+		bool HasFadeAnimation;
+		bool Unknown_0BF;
+		int TooltipVariant;
+		bool ButtonTimerActive;
+		bool ButtonAlternateFrame;
+		int alpha;
+		bool UseItemColorOverrides;
+		bool disabled;
+		int ComboBoxMaxVisibleDropItems;
+		bool Unknown_0D4;
+		bool HasTopPanelAnimation;
+		bool HasButtonAnimation;
+		bool HasMainScreenAnimation;
+		bool FlagD8;
+		unsigned char skinned;
+		unsigned char variant;
+		bool Unknown_0DB;
+		int ExtraWidth;
+		SHPStruct *DialogBackground;
+		SHPStruct *DialogBackgroundEx;
 
+		union {
 			struct {
 				ArrayList<int> *rowColors;
 				ArrayList<int> *selStates;
@@ -48,13 +94,6 @@ namespace OwnerDraw {
 			} ListBox;
 
 			struct {
-				unsigned char reserved28[0x94];
-				bool skipDraw;
-				unsigned char reservedBD[0xB];
-				unsigned char alpha;
-				unsigned char reservedC9[4];
-				bool disabled;
-				unsigned char reservedCE[0x1A];
 				int result;
 				int dragging;
 				int range;
@@ -65,7 +104,6 @@ namespace OwnerDraw {
 			} ScrollBar;
 
 			struct {
-				unsigned char reserved28[0xC0];
 				int result;
 				int dragging;
 				int range;
@@ -78,12 +116,10 @@ namespace OwnerDraw {
 			} TrackBar;
 
 			struct {
-				int selIndex;
-				int reserved2C;
-				int reserved30;
+				int reservedE8[3];
 				HWND dropdown;
-				int reserved38[6];
-				COLORREF itemColors[50];
+				int reservedF8[6];
+				int itemColors[50];
 			} ComboBox;
 
 			struct {
@@ -96,19 +132,12 @@ namespace OwnerDraw {
 			} Button;
 
 			struct {
-				unsigned char reserved28[0xB1];
-				unsigned char skinned;
-				unsigned char variant;
-				unsigned char reservedDB[13];
 				int checkState;
 			} CheckBox;
 
 			struct {
-				unsigned char reserved28[0x1C];
-				int scrollStart;
-				unsigned char reserved48[0x80];
-				int alpha;
-				unsigned char reservedCC[0x24];
+				int reserved28;
+				int reserved2C;
 				int focusPending;
 				int focusEnabled;
 				int hadTabStop;
@@ -121,34 +150,14 @@ namespace OwnerDraw {
 			} ComboDrop;
 
 			struct {
-				unsigned char reserved28[0xC0];
 				int itemState;
 			} DrawItem;
 
 			struct {
-				unsigned char reserved28[0xC0];
 				int minimum;
 				int maximum;
 				int position;
 			} ProgressBar;
-
-			struct {
-				unsigned char reserved28[0x40];
-				int ControlType;
-				int DialogID;
-				unsigned char reserved70[0x40];
-				int LayoutBand;
-				unsigned char reservedB4[9];
-				bool HasOpenAnimation;
-				unsigned char reservedBE[0x16];
-				bool Unknown_0D4;
-				bool HasTopPanelAnimation;
-				bool HasButtonAnimation;
-				bool HasMainScreenAnimation;
-				bool FlagD8;
-				unsigned char reservedD9[3];
-				int ExtraWidth;
-			} Dialog;
 
 			unsigned char _size[0x100];
 		};
@@ -159,18 +168,17 @@ namespace OwnerDraw {
 		COLORREF textColor;
 		int field_138;
 		int animState;
-		unsigned char reserved[0xC0];
 
 		WinData(void);
 		WinData(WinData const & that);
 		~WinData(void)
 		{
 			Set_Text((wchar_t const *)0);
-			while (Wide.nodes) {
-				WinNode *node = Wide.nodes;
+			while (nodes != NULL) {
+				WinNode *node = nodes;
 				Remove_Node(node);
 			}
-			delete Wide.editText;
+			delete editText;
 		}
 		WinData & operator=(WinData const & that);
 
@@ -181,8 +189,8 @@ namespace OwnerDraw {
 		void Remove_Node(WinNode *node);
 		void Remove_All_Nodes(void)
 		{
-			while (Wide.nodes) {
-				Remove_Node(Wide.nodes);
+			while (nodes != NULL) {
+				Remove_Node(nodes);
 			}
 		}
 	};
@@ -241,7 +249,6 @@ char const * __fastcall GetTooltipStringLabel(HWND dialog, HWND control);
 extern wchar_t const DAT_00887734[];
 
 bool Is_Owner_Draw_Message(unsigned int msg);
-bool __fastcall FUN_0069BBE0(SessionClass *session);
 bool __fastcall FUN_00602AE0(unsigned int msg);
 
 void ODInitMasks(void);
@@ -252,7 +259,6 @@ int WINAPI ODUpdateWindowRect(HWND window, RECT *rect);
 
 BOOL CALLBACK ODAddWindowToList(HWND window, ArrayList<HWND> * list);
 
-namespace fastmath { double __cdecl sqrt(double x); double __cdecl tan(double x); double __cdecl atan(double x); }
 // SYNTHETIC: GAMEMD 0x00600340 SYMBOL
 // _$E57
 // SYNTHETIC: GAMEMD 0x00600370 SYMBOL
@@ -459,6 +465,21 @@ inline bool Is_Quick_Control_D(int id)
 		id == 0x711;
 }
 
+inline bool Has_Button_Animation(int type)
+{
+	return type == 0xbc || type == 0xbd || type == 0x102 || type == 0xc2 || type == 0xc9 || type == 0xbc6;
+}
+
+inline bool Has_Main_Screen_Animation(int type)
+{
+	return type == 0x103 || type == 0xbc7;
+}
+
+inline bool Has_Flag_D8(int type)
+{
+	return type == 0x108 || type == 0xbc6;
+}
+
 inline OwnerDraw::WinData *Get_Data(HWND window)
 {
 	OwnerDraw::WinData *data = NULL;
@@ -472,7 +493,7 @@ inline OwnerDraw::WinData *Get_Data(HWND window)
 int FUN_00600CA0(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *record = Get_Data(dialog);
-	int kind = record != 0 ? record->Dialog.DialogID : 0;
+	int kind = record != 0 ? record->DialogID : 0;
 	int id = GetDlgCtrlID(control);
 	bool general =
     (kind == 0x10c || kind == 0x94 || kind == 0xa3 || kind == 0x73 || kind == 0xd8 || kind == 0xbbb || kind == 0xf5 ||
@@ -603,7 +624,7 @@ int FUN_006015E0(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -780,7 +801,7 @@ int FUN_00601D20(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -912,7 +933,7 @@ int Typed_Char_Sound(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -961,18 +982,13 @@ inline bool Is_Flag_Control_A(int type, int id)
 
 inline bool Is_Flag_Control_B(int type, int id)
 {
-	return (type == 0xbc ||
-			type == 0xbd ||
-			type == 0x102 ||
-			type == 0xc2 ||
-			type == 0xc9 ||
-			type == 0xbc6) && (id == 0x6ec ||
+	return Has_Button_Animation(type) && (id == 0x6ec ||
 			id == 0x5a8);
 }
 
 inline bool Is_Flag_Control_C(int type, int id)
 {
-	return (type == 0x103 || type == 0xbc7) && (id == 0x6f3 ||
+	return Has_Main_Screen_Animation(type) && (id == 0x6f3 ||
 			id == 0x6f4 ||
 			id == 0x69f ||
 			id == 0x6f6 ||
@@ -1009,7 +1025,7 @@ inline bool Is_Flag_Control_C(int type, int id)
 
 inline bool Is_Flag_Control_D(int type, int id)
 {
-	return (type == 0x108 || type == 0xbc6) && (id == 0x6d2 ||
+	return Has_Flag_D8(type) && (id == 0x6d2 ||
 			id == 0x3ea ||
 			id == 0x69d ||
 			id == 0x69f ||
@@ -1073,7 +1089,7 @@ inline bool Is_Flag_Control_D(int type, int id)
 
 inline bool Is_Flag_Control_E(int type, int id)
 {
-	return Is_Owner_Draw_Message(type) && id == 0x695 && !FUN_0069BBE0(&Session);
+	return Is_Owner_Draw_Message(type) && id == 0x695 && !Session.FUN_0069BBE0();
 }
 
 // FUNCTION: GAMEMD 0x00602490
@@ -1139,7 +1155,7 @@ bool Is_Special_Control(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1240,7 +1256,7 @@ bool Is_Typed_Control(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1291,7 +1307,7 @@ inline OwnerDraw::WinData *Find_Data(HWND window)
 int Control_Sound_Slot(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = Find_Data(dialog);
-	int type = data ? data->Dialog.DialogID : 0;
+	int type = data ? data->DialogID : 0;
 	int id = GetDlgCtrlID(control);
 
 	if (Is_Sidebar_Button(type, id)) {
@@ -1312,7 +1328,7 @@ int Is_Typed_Control_Int(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1362,7 +1378,7 @@ int Control_Volume(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1420,26 +1436,26 @@ int Control_Volume(HWND dialog, HWND control)
 	return 0;
 }
 
-int FUN_0072E280(void);
-void FUN_0072E2A0(void);
-void FUN_0072DAC0(void);
-void FUN_0072DAD0(void);
-int FUN_0072D450(void);
-void FUN_0072CC80(void);
+ConvertClass *FUN_0072E280(void);
+ConvertClass *FUN_0072E2A0(void);
+ConvertClass *FUN_0072DAC0(void);
+ConvertClass *FUN_0072DAD0(void);
+ConvertClass *FUN_0072D450(void);
+ConvertClass *FUN_0072CC80(void);
 
 // FUNCTION: GAMEMD 0x006035F0
-void Play_Control_Sound(HWND dialog, HWND control)
+ConvertClass *Get_Static_Drawer(HWND dialog, HWND control)
 {
 	OwnerDraw::WinData *data = NULL;
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
 	int id = GetDlgCtrlID(control);
-	FUN_0072E280();
+	ConvertClass *drawer = FUN_0072E280();
 
 	if (type == 0x94 ||
 		type == 0xd8 ||
@@ -1472,17 +1488,15 @@ void Play_Control_Sound(HWND dialog, HWND control)
 		type == 0xbc6 ||
 		type == 0xbc7) {
 		if (id == 0x71c) {
-			FUN_0072E2A0();
+			drawer = FUN_0072E2A0();
 		}
 	}
 	if (type == 0x94) {
 		if (id == 0x6ea) {
-			FUN_0072DAC0();
-			return;
+			return FUN_0072DAC0();
 		}
 		if (id == 0x6ec) {
-			FUN_0072DAD0();
-			return;
+			return FUN_0072DAD0();
 		}
 	}
 	if (type == 0x103) {
@@ -1491,15 +1505,16 @@ void Play_Control_Sound(HWND dialog, HWND control)
 	if (type == 0xbc7) {
 typed:
 		if (id == 0x72b) {
-			FUN_0072D450();
+			return FUN_0072D450();
 		}
-		return;
+		return drawer;
 	}
 	if (type == 0xc4) {
 		if (id == 0x7a9) {
-			FUN_0072CC80();
+			return FUN_0072CC80();
 		}
 	}
+	return drawer;
 }
 
 int __fastcall FUN_004A38D0(int a, int b);
@@ -1516,7 +1531,7 @@ int FUN_00603810(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1531,7 +1546,7 @@ int FUN_00603870(HWND dialog, HWND control, int arg)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -1617,7 +1632,7 @@ void FUN_00603D30(HWND dialog, Surface *surface)
 	HWND key = dialog;
 
 	if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL) {
-		*(int *)((char *)data + 0x70) = 2;
+		data->StaticDrawMode = 2;
 		data->image = surface;
 		InvalidateRect(dialog, NULL, TRUE);
 	}
@@ -1653,7 +1668,7 @@ void FUN_00603E40(HWND dialog, int value)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		*(int *)((char *)data + 0xc0) = value;
+		data->TooltipVariant = value;
 	}
 }
 
@@ -1663,7 +1678,7 @@ int FUN_00603EA0(HWND dialog)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		return *(int *)((char *)data + 0xc0);
+		return data->TooltipVariant;
 	}
 	return -1;
 }
@@ -1712,12 +1727,12 @@ inline int Get_Dialog_Type(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		return data->Dialog.DialogID;
+		return data->DialogID;
 	}
 	return 0;
 }
 
-struct Game { static HINSTANCE hInstance; static bool __cdecl CallBack(void); static bool __fastcall MainLoop(void); static int ObserverMode; static int PCXInitialized; };
+struct Game { static int ObserverMode; static int PCXInitialized; };
 
 // FUNCTION: GAMEMD 0x006040B0
 char const * __fastcall OwnerDraw::GetTooltipStringLabel(HWND window, HWND control)
@@ -2703,7 +2718,7 @@ char const * __fastcall OwnerDraw::GetTooltipStringLabel(HWND window, HWND contr
 			return "STT:WOLMatchOutput";
 		}
 		if (id == 0x5c0) {
-			return (Session.Type == GAME_INTERNET && Session.unknown_0C == 3) ? "WOL:WDTMatchBack" : "STT:WOLMatchCancel";
+			return (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) ? "WOL:WDTMatchBack" : "STT:WOLMatchCancel";
 		}
 	}
 	else if (type == 0x114) {
@@ -3045,7 +3060,7 @@ void FUN_00606740(HWND dialog, bool value)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		*((char *)data + 0xbc) = value;
+		data->skipDraw = value;
 	}
 }
 
@@ -3055,7 +3070,7 @@ char FUN_006067A0(HWND dialog)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		return *((char *)data + 0xbc);
+		return data->skipDraw;
 	}
 	return false;
 }
@@ -3072,7 +3087,7 @@ inline bool Is_Plain_Control(HWND window)
 		HWND key = window;
 		OwnerDraw::WinData *data = NULL;
 		OwnerDraw::Dialogs.getPointer(key, &data);
-		if (data != NULL && data->Dialog.ControlType == 0) {
+		if (data != NULL && data->ControlType == 0) {
 			return true;
 		}
 	}
@@ -3114,23 +3129,255 @@ BOOL FUN_006071D0(HWND window)
 	return EnumChildWindows(window, FUN_00606800, 0);
 }
 
-void __fastcall DrawCampaignMenuTransition(HWND window, bool reverse);
+class SHPStruct;
+namespace OwnerDraw {
+	extern SHPStruct *SmallButtonAnimShape;
+	ConvertClass *GetSmallButtonAnimConvert(void);
+	void __fastcall DrawCampaignMenuTransition(HWND dialog, bool reverse);
+}
+namespace Drawing { extern int RenderWidth; }
+extern SHPStruct *DAT_00B0FAF8;
+extern SHPStruct *DAT_00B0F9DC;
+extern SHPStruct *DAT_00B0FAC0;
+extern SHPStruct *DAT_00B0FB00;
+extern SHPStruct *DAT_00B0FB34;
+extern int DAT_00B0FA20;
+extern Rect *DAT_00B0FC10;
+extern Rect *DAT_00B0FC14;
+extern Rect *DAT_00B0FC18;
+extern Rect *DAT_00B0FC1C;
+extern Rect *DAT_00B0FC20;
+Point2D __fastcall FUN_0072A9C0(Rect const *rect);
+void FUN_00406F70(void);
+int FUN_0060A230(HWND window);
+int FUN_0060A300(HWND window);
+extern Rect *DAT_00B0FC28;
+extern int DAT_007F5BE4;
+// A piece's slide phase at a step: -1 before it starts, -2 once its six frames are done.
+static inline int Slide_Phase(int delta)
+{
+	if (delta < 0) return -1;
+	if (delta >= 6) return -2;
+	return delta;
+}
+
+// Slides the frame pieces in sequence and then notifies the dialog.
+// FUNCTION: GAMEMD 0x006071E0
+void __fastcall OwnerDraw::DrawCampaignMenuTransition(HWND dialog, bool reverse)
+{
+	OwnerDraw::WinData *record = Get_Data(dialog);
+	bool animate_main_screen = record ? record->HasMainScreenAnimation : false;
+	record = Get_Data(dialog);
+	bool animate_buttons = record ? record->HasButtonAnimation : false;
+	record = Get_Data(dialog);
+	bool animate_top_panel = record ? record->HasTopPanelAnimation : false;
+
+	ConvertClass *drawer = FUN_0072E280();
+	ConvertClass *button_convert = OwnerDraw::GetSmallButtonAnimConvert();
+	ShapeSet const *top_background_shape = (ShapeSet const *)DAT_00B0FAF8;
+	ShapeSet const *button_shape = (ShapeSet const *)OwnerDraw::SmallButtonAnimShape;
+	ShapeSet const *button_panel_shape = (ShapeSet const *)DAT_00B0F9DC;
+	ShapeSet const *top_panel_shape = (ShapeSet const *)DAT_00B0FAC0;
+	ConvertClass *main_screen_convert = FUN_0072D450();
+	ShapeSet const *main_screen_shape = (ShapeSet const *)DAT_00B0FB00;
+	int count = DAT_00B0FA20;
+	Rect window = AlternateSurface->Get_Rect();
+	Rect top_background = *DAT_00B0FC20;
+	Rect button_panel = *DAT_00B0FC14;
+	Rect top_panel = *DAT_00B0FC18;
+	Rect button_row = *DAT_00B0FC10;
+	Rect main_screen = *DAT_00B0FC1C;
+
+	RECT client;
+	Get_Display_Rect(dialog, &client);
+	RECT screen;
+	GetWindowRect(dialog, &screen);
+	int dx = screen.left - client.left;
+	int dy = screen.top - client.top;
+
+	int x = button_row.X;
+	int y = button_row.Y;
+	int width = button_row.Width;
+	int height = button_row.Height * count;
+	if (animate_top_panel) {
+		x = top_panel.X;
+		width = top_panel.Width;
+		y = top_panel.Y;
+		height += button_row.Y;
+	}
+	Rect from(x, y, width, height);
+	Rect to = from;
+	to.X += dx;
+	to.Y += dy;
+	Rect main_source = main_screen;
+	Rect main_destination = main_source;
+	main_destination.X += dx;
+	main_destination.Y += dy;
+
+	int dir = reverse ? -1 : 1;
+	int button_frame = 5;
+	if (reverse) button_frame = 10;
+	int empty_row_frame = 11;
+	if (reverse) empty_row_frame = 16;
+	int button_panel_frame = 1;
+	if (reverse) button_panel_frame = 6;
+	int top_panel_frame = 0;
+	if (reverse) top_panel_frame = 5;
+	int main_screen_frame = 0;
+	if (reverse) main_screen_frame = 5;
+
+	int buttons = FUN_0060A230(dialog);
+	int last = count - 1;
+	int top = button_row.Y;
+	if (animate_buttons) top += button_row.Height;
+	bool any = FUN_0060A300(dialog);
+	if (!any) last++;
+
+	// One start step per piece: the button rows, then the button panel, top panel and main screen.
+	const int pieces = count + 3;
+	const int button_panel_index = pieces - 3;
+	const int top_panel_index = pieces - 2;
+	int *order = new int[pieces];
+	const int main_screen_index = pieces - 1;
+	int value = 1;
+	for (int i = 0; i < top_panel_index; i++) {
+		order[i] = value++;
+	}
+	order[main_screen_index] = 0;
+	order[top_panel_index] = value + 1;
+	order[button_panel_index] = 0;
+	int steps;
+	{
+		int last_start = 0;
+		for (int j = 0; j < pieces; ++j) {
+			if (last_start <= order[j]) last_start = order[j];
+		}
+		steps = last_start + 6;
+	}
+
+	for (int step = 0; step < steps; step++) {
+		if (animate_buttons) {
+			Point2D point = FUN_0072A9C0(&button_panel);
+			int phase = Slide_Phase(step - order[button_panel_index]);
+			if (phase == -1) {
+				Draw_Shape(*AlternateSurface, *drawer, button_panel_shape, reverse ? 6 : 0, point, window, SHAPE_WIN_REL);
+			} else if (phase == -2) {
+				if (!reverse) {
+					Draw_Shape(*AlternateSurface, *drawer, button_panel_shape, 6, point, window, SHAPE_WIN_REL);
+				}
+			}
+		}
+		if (animate_top_panel) {
+			Point2D point = FUN_0072A9C0(&top_panel);
+			int phase = Slide_Phase(step - order[top_panel_index]);
+			if (phase == -1) {
+				Draw_Shape(*AlternateSurface, *drawer, top_background_shape, !reverse, point, window, SHAPE_WIN_REL);
+			} else if (phase == -2) {
+				Draw_Shape(*AlternateSurface, *drawer, top_background_shape, reverse ? 1 : 0, point, window, SHAPE_WIN_REL);
+			} else {
+				point = FUN_0072A9C0(&top_background);
+				Draw_Shape(*AlternateSurface, *drawer, top_background_shape, 1, point, window, SHAPE_WIN_REL);
+				point = FUN_0072A9C0(&top_panel);
+				Draw_Shape(*AlternateSurface, *drawer, top_panel_shape, phase * dir + top_panel_frame, point, window, SHAPE_WIN_REL);
+			}
+		}
+		if (animate_buttons) {
+			Point2D point = FUN_0072A9C0(&button_panel);
+			int phase = Slide_Phase(step - order[button_panel_index]);
+			if (phase == -2) {
+				if (reverse) {
+					Draw_Shape(*AlternateSurface, *drawer, button_panel_shape, 0, point, window, SHAPE_WIN_REL);
+				}
+			} else {
+				Draw_Shape(*AlternateSurface, *drawer, button_panel_shape, phase * dir + button_panel_frame, point, window, SHAPE_WIN_REL);
+			}
+		}
+		int k;
+		for (k = 0; k < buttons; k++) {
+			Point2D point(button_row.X, k * button_row.Height + top);
+			int phase = Slide_Phase(step - order[k]);
+			if (phase == -1) {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, reverse ? 10 : 1, point, window, SHAPE_WIN_REL);
+			} else if (phase == -2) {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, reverse ? 1 : 10, point, window, SHAPE_WIN_REL);
+			} else {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, phase * dir + button_frame, point, window, SHAPE_WIN_REL);
+			}
+		}
+		for (k = buttons; k < last; k++) {
+			Point2D point(button_row.X, k * button_row.Height + top);
+			int phase = Slide_Phase(step - order[k]);
+			if (phase == -1) {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, reverse ? 10 : 0, point, window, SHAPE_WIN_REL);
+			} else if (phase == -2) {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, reverse ? 0 : 10, point, window, SHAPE_WIN_REL);
+			} else {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, phase * dir + empty_row_frame, point, window, SHAPE_WIN_REL);
+			}
+		}
+		if (any) {
+			Point2D point(button_row.X, DAT_00B0FC28->Y - button_row.Height);
+			int phase = Slide_Phase(step - order[count - 1]);
+			if (phase == -1) {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, reverse ? 10 : 1, point, window, SHAPE_WIN_REL);
+			} else if (phase == -2) {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, reverse ? 1 : 10, point, window, SHAPE_WIN_REL);
+			} else {
+				Draw_Shape(*AlternateSurface, *button_convert, button_shape, phase * dir + button_frame, point, window, SHAPE_WIN_REL);
+			}
+		}
+		if (animate_main_screen) {
+			Point2D point = FUN_0072A9C0(&main_screen);
+			int phase = Slide_Phase(step - order[main_screen_index]);
+			if (phase == -1) {
+				if (!reverse) {
+					if (Drawing::RenderWidth >= DAT_007F5BE4) point.X += 0x50;
+				}
+				Draw_Shape(*AlternateSurface, *main_screen_convert, (reverse ? (ShapeSet const *)DAT_00B0FB34 : main_screen_shape), 0, point, window, SHAPE_WIN_REL);
+			} else if (phase == -2) {
+				if (reverse) {
+					if (Drawing::RenderWidth >= DAT_007F5BE4) point.X += 0x50;
+				}
+				Draw_Shape(*AlternateSurface, *main_screen_convert, (reverse ? main_screen_shape : (ShapeSet const *)DAT_00B0FB34), 0, point, window, SHAPE_WIN_REL);
+			} else {
+				if (Drawing::RenderWidth >= DAT_007F5BE4) point.X += 0x50;
+				Draw_Shape(*AlternateSurface, *main_screen_convert, main_screen_shape, phase * dir + main_screen_frame, point, window, SHAPE_WIN_REL);
+			}
+		}
+		VisibleSurface->Lock();
+		AlternateSurface->Lock();
+		VisibleSurface->Blit_From(to, *AlternateSurface, from, false, true);
+		if (animate_main_screen) {
+			VisibleSurface->Blit_From(main_destination, *AlternateSurface, main_source, false, true);
+		}
+		AlternateSurface->Unlock();
+		VisibleSurface->Unlock();
+		FUN_00406F70();
+		Sleep(30);
+	}
+	delete [] order;
+	if (reverse) {
+		VocClass::PlayGlobal(Rule->ShellButtonSlideSound, 1.0f, 0x2000);
+		while (MouseCursor->Get_Mouse_State()) {
+			MouseCursor->Show_Mouse();
+		}
+		SendMessageA(dialog, 0x4ec, 0, 0);
+	} else {
+		SendMessageA(dialog, 0x4ed, 0, 0);
+	}
+}
 
 // FUNCTION: GAMEMD 0x00607FD0
 void FUN_00607FD0(HWND dialog)
 {
-	OwnerDraw::WinData *data = NULL;
-	HWND key = dialog;
-
-	if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL) {
-		if (*((char *)data + 0xbe)) {
-			HWND item = GetDlgItem(dialog, 0x71a);
-			if (item != NULL) {
-				SendMessage(item, 0x4e2, 0, 0);
-			}
-			DrawCampaignMenuTransition(dialog, false);
-			*((char *)data + 0xbe) = 0;
+	OwnerDraw::WinData *data = Find_Data(dialog);
+	if (data != NULL && data->HasFadeAnimation) {
+		HWND item = GetDlgItem(dialog, 0x71a);
+		if (item != NULL) {
+			SendMessage(item, 0x4e2, 0, 0);
 		}
+		OwnerDraw::DrawCampaignMenuTransition(dialog, false);
+		data->HasFadeAnimation = 0;
 	}
 }
 
@@ -3144,16 +3391,16 @@ BOOL CALLBACK InitCompactDialogControlsProc(HWND window, LPARAM lparam);
 }
 
 // FUNCTION: GAMEMD 0x00608070
-bool WS_Save_Dialog_Values(HWND dialog)
+bool FUN_00608070(HWND dialog)
 {
-	if (FUN_0069BBE0(&Session)) {
+	if (Session.FUN_0069BBE0()) {
 		return false;
 	}
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
-	bool armed = *((char *)data + 0xbd) && *(int *)((char *)data + 0xb0) == 1;
+	bool armed = data->HasOpenAnimation && data->LayoutBand == 1;
 	bool visible = IsWindowVisible(dialog) != 0;
 	if (!armed || !visible) {
 		return false;
@@ -3166,17 +3413,17 @@ bool WS_Save_Dialog_Values(HWND dialog)
 	if (data == NULL) {
 		return false;
 	}
-	*((char *)data + 0xbe) = 1;
+	data->HasFadeAnimation = 1;
 	InvalidateRect(dialog, NULL, FALSE);
 	DWORD start = GetTickCount();
 	do {
 		FUN_005D4D50();
 		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
-			Game::CallBack();
-		} else if (!FUN_0055CBF0() && Game::MainLoop()) {
+			Call_Back();
+		} else if (!FUN_0055CBF0() && Main_Loop()) {
 			break;
 		}
-		int done = *((char *)data + 0xbe) == 0;
+		int done = data->HasFadeAnimation == 0;
 		if ((int)(GetTickCount() - start) > 5000 || done) {
 			break;
 		}
@@ -3191,7 +3438,7 @@ bool RunOpenAnimationIfNeeded(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
 
-	if (FUN_0069BBE0(&Session)) {
+	if (Session.FUN_0069BBE0()) {
 		return false;
 	}
 	bool armed;
@@ -3200,7 +3447,7 @@ bool RunOpenAnimationIfNeeded(HWND dialog)
 		if (!OwnerDraw::Dialogs.getPointer(key, &data) || data == NULL) {
 			return false;
 		}
-		armed = *((char *)data + 0xbd) && *(int *)((char *)data + 0xb0) == 1;
+		armed = data->HasOpenAnimation && data->LayoutBand == 1;
 	}
 	bool visible = IsWindowVisible(dialog) != 0;
 	if (!armed || !visible) {
@@ -3210,7 +3457,7 @@ bool RunOpenAnimationIfNeeded(HWND dialog)
 	bool wasEnabled = IsWindowEnabled(dialog) != 0;
 	EnableWindow(dialog, FALSE);
 	EnumChildWindows(dialog, FUN_00606800, 1);
-	DrawCampaignMenuTransition(dialog, true);
+	OwnerDraw::DrawCampaignMenuTransition(dialog, true);
 	EnumChildWindows(dialog, FUN_00606800, 0);
 	EnableWindow(dialog, wasEnabled);
 	InvalidateRect(dialog, NULL, FALSE);
@@ -3223,7 +3470,7 @@ void FUN_00608380(HWND dialog)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		*((char *)data + 0xbd) = 1;
+		data->HasOpenAnimation = 1;
 	}
 }
 
@@ -3233,7 +3480,7 @@ void FUN_006083E0(HWND dialog)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		*((char *)data + 0xbd) = 0;
+		data->HasOpenAnimation = 0;
 	}
 }
 
@@ -3243,7 +3490,7 @@ void FUN_00608440(HWND dialog)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		*((char *)data + 0xd4) = 1;
+		data->Unknown_0D4 = 1;
 	}
 }
 
@@ -3253,7 +3500,7 @@ void FUN_006084A0(HWND dialog)
 	OwnerDraw::WinData *data = NULL;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		*((char *)data + 0xd4) = 0;
+		data->Unknown_0D4 = 0;
 	}
 }
 
@@ -3269,7 +3516,7 @@ inline int Get_Layout_Dialog_Type(HWND dialog)
 
 	OwnerDraw::Dialogs.getPointer(key, &data);
 	if (data != NULL) {
-		return *(int *)((char *)data + 0x6c);
+		return data->DialogID;
 	}
 	return 0;
 }
@@ -3487,7 +3734,7 @@ bool __fastcall FUN_00608CD0(HWND parent, HWND child)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(parent, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -3769,7 +4016,7 @@ bool FUN_006096A0(HWND parent, HWND child)
 		HWND key = child;
 		OwnerDraw::WinData *data = NULL;
 		OwnerDraw::Dialogs.getPointer(key, &data);
-		if (data != NULL && data->Dialog.ControlType == 0) {
+		if (data != NULL && data->ControlType == 0) {
 			return FUN_00608CD0(parent, child);
 		}
 	}
@@ -3783,7 +4030,7 @@ bool FUN_00609730(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -3828,13 +4075,8 @@ bool FUN_00609730(HWND dialog, HWND control)
 // FUNCTION: GAMEMD 0x00609AA0
 bool FUN_00609AA0(HWND parent, HWND child)
 {
-	OwnerDraw::WinData *data = NULL;
-
-	if ((GetWindowLong(child, GWL_STYLE) & 0xb) == 0xb) {
-		HWND key = child;
-		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
-			return FUN_00609730(parent, child);
-		}
+	if (Is_Plain_Control(child)) {
+		return FUN_00609730(parent, child);
 	}
 	return false;
 }
@@ -3842,14 +4084,8 @@ bool FUN_00609AA0(HWND parent, HWND child)
 // FUNCTION: GAMEMD 0x00609B30
 bool FUN_00609B30(HWND dialog, HWND control)
 {
-	OwnerDraw::WinData *data = NULL;
-	int type;
-
-	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
-	} else {
-		type = 0;
-	}
+	OwnerDraw::WinData *data = Find_Data(dialog);
+	int type = data ? data->DialogID : 0;
 	int id = GetDlgCtrlID(control);
 	if (Is_Owner_Draw_Message(type) && id == 0x695) {
 		return true;
@@ -3894,7 +4130,7 @@ bool FUN_00609E20(HWND dialog, HWND control)
 	int type;
 
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
+		type = data->DialogID;
 	} else {
 		type = 0;
 	}
@@ -3971,14 +4207,8 @@ bool FUN_00609E20(HWND dialog, HWND control)
 // FUNCTION: GAMEMD 0x0060A100
 bool FUN_0060A100(HWND dialog, HWND control)
 {
-	OwnerDraw::WinData *data = NULL;
-	int type;
-
-	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		type = *(int *)((char *)data + 0x6c);
-	} else {
-		type = 0;
-	}
+	OwnerDraw::WinData *data = Find_Data(dialog);
+	int type = data ? data->DialogID : 0;
 	int id = GetDlgCtrlID(control);
 	if (type == 0xe2) {
 		return id == 0x71d;
@@ -3997,7 +4227,7 @@ BOOL CALLBACK FUN_0060A180(HWND window, LPARAM lparam)
 
 	if ((GetWindowLong(window, GWL_STYLE) & 0xb) == 0xb) {
 		HWND key = window;
-		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
+		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && data->ControlType == 0) {
 			if (FUN_00608CD0(parent, window) && IsWindowVisible(window)) {
 				DAT_00AC1CAC++;
 			}
@@ -4022,7 +4252,7 @@ BOOL CALLBACK FUN_0060A250(HWND window, LPARAM lparam)
 
 	if ((GetWindowLong(window, GWL_STYLE) & 0xb) == 0xb) {
 		HWND key = window;
-		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && *(int *)((char *)data + 0x68) == 0) {
+		if (OwnerDraw::Dialogs.getPointer(key, &data) && data != NULL && data->ControlType == 0) {
 			if (FUN_00609730(parent, window) && IsWindowVisible(window)) {
 				DAT_00AC4894++;
 			}
@@ -4048,15 +4278,15 @@ BOOL CALLBACK ClassifyLayoutBand(HWND window, LPARAM lparam)
 	if (data != NULL) {
 		HWND parent = GetParent(window);
 		if (FUN_00609BC0(parent, window)) {
-			data->Dialog.LayoutBand = 1;
+			data->LayoutBand = 1;
 			return TRUE;
 		}
 		if (FUN_00609CF0(parent, window)) {
-			data->Dialog.LayoutBand = 2;
+			data->LayoutBand = 2;
 			return TRUE;
 		}
 		if (FUN_00609E20(parent, window)) {
-			data->Dialog.LayoutBand = 3;
+			data->LayoutBand = 3;
 		}
 	}
 	return TRUE;
@@ -4102,8 +4332,8 @@ BOOL CALLBACK InitCompactDialogControlsProc(HWND window, LPARAM lparam)
 	HWND parent = GetParent(window);
 	WinData *data = Find_Data(window);
 	if (data != NULL) {
-		data->Dialog.ExtraWidth = Control_Sound_Slot(parent, window);
-		data->Edit.alpha = FUN_00603AA0(parent, window);
+		data->ExtraWidth = Control_Sound_Slot(parent, window);
+		data->alpha = FUN_00603AA0(parent, window);
 	}
 	return TRUE;
 }
@@ -4118,16 +4348,6 @@ void __fastcall FUN_0060AF40(HWND dialog)
 extern int DAT_007F5BE4;
 extern int DAT_007F5BF0;
 
-inline int Centre_X(int span, bool compact)
-{
-	int offset = 0;
-	if (!compact) {
-		int half = (span - DAT_007F5BE4) / 2;
-		offset = (((span - DAT_007F5BE4) / 2) < 0) ? 0 : half;
-	}
-	return offset;
-}
-
 inline int Centre_Y(int span, bool compact)
 {
 	int offset = 0;
@@ -4139,15 +4359,25 @@ inline int Centre_Y(int span, bool compact)
 }
 
 // FUNCTION: GAMEMD 0x0060AF50
-void __fastcall FUN_0060AF50(HWND window, RECT *rect)
+void __fastcall FUN_0060AF50(HWND window, Rect *rect)
 {
 	HWND parent = GetParent(window);
-	bool compact = FUN_0069BBE0(&Session);
+	bool compact = Session.FUN_0069BBE0();
 	RECT frame;
 	GetWindowRect(parent, &frame);
-	int dx = Centre_X(frame.right - frame.left, compact);
-	int tmp0 = Centre_Y(frame.bottom - frame.top, compact);
-	MoveWindow(window, rect->left + dx, rect->top + tmp0, rect->right, rect->bottom, FALSE);
+	int span = frame.right - frame.left;
+	int dx = 0;
+	if (!compact) {
+		int hh = (span - DAT_007F5BE4) / 2;
+		dx = (((span - DAT_007F5BE4) / 2) < 0) ? 0 : hh;
+	}
+	int spanY = frame.bottom - frame.top;
+	int dy = 0;
+	if (!compact) {
+		int hv = (spanY - DAT_007F5BF0) / 2;
+		dy = (((spanY - DAT_007F5BF0) / 2) < 0) ? 0 : hv;
+	}
+	MoveWindow(window, rect->X + dx, rect->Y + dy, rect->Width, rect->Height, FALSE);
 	InvalidateRect(window, NULL, FALSE);
 }
 
@@ -4221,8 +4451,8 @@ void __fastcall FUN_0060B000(HWND window, Point2D const &size)
 static inline int Sidebar_Margin(HWND window, int width)
 {
 	OwnerDraw::WinData *data = Get_Data(window);
-	if (data && data->Dialog.ExtraWidth) {
-		return data->Dialog.ExtraWidth;
+	if (data && data->ExtraWidth) {
+		return data->ExtraWidth;
 	}
 	return (SidebarWidth - width) / 2;
 }
@@ -4298,7 +4528,7 @@ compact_button:
 void __fastcall FUN_0060B420(HWND window)
 {
 	HWND parent = GetParent(window);
-	bool compact = FUN_0069BBE0(&Session);
+	bool compact = Session.FUN_0069BBE0();
 	RECT client;
 	RECT own;
 	GetClientRect(parent, &client);
@@ -4320,7 +4550,7 @@ void __fastcall FUN_0060B420(HWND window)
 void __fastcall FUN_0060B550(HWND window)
 {
 	HWND parent = GetParent(window);
-	bool compact = FUN_0069BBE0(&Session);
+	bool compact = Session.FUN_0069BBE0();
 	RECT client;
 	RECT own;
 	GetClientRect(parent, &client);
@@ -4346,7 +4576,7 @@ void __fastcall FUN_0060B550(HWND window)
 void __fastcall FUN_0060B610(HWND window)
 {
 	HWND parent = GetParent(window);
-	bool compact = FUN_0069BBE0(&Session);
+	bool compact = Session.FUN_0069BBE0();
 	RECT client;
 	RECT own;
 	GetClientRect(parent, &client);
@@ -4367,7 +4597,6 @@ void __fastcall FUN_0060B610(HWND window)
 namespace OwnerDraw {
 extern HWND CurrentDialogHwnd;
 }
-BOOL CALLBACK FUN_0060C0C0(HWND window, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x0060B740
 void __fastcall FUN_0060B740(HWND window)
@@ -4384,7 +4613,7 @@ void __fastcall FUN_0060B740(HWND window)
 void __fastcall FUN_0060B7A0(HWND window)
 {
 	HWND parent = GetParent(window);
-	if (FUN_0069BBE0(&Session)) {
+	if (Session.FUN_0069BBE0()) {
 		RECT own;
 		RECT frame;
 		GetWindowRect(window, &own);
@@ -4422,8 +4651,8 @@ void __fastcall FUN_0060B7A0(HWND window)
 // FUNCTION: GAMEMD 0x0060B880
 bool __fastcall FUN_0060B880(HWND dialog, HWND control)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
-	int type = (data != NULL) ? *(int *)((char *)data + 0x6c) : 0;
+	OwnerDraw::WinData *data = Find_Data(dialog);
+	int type = data ? data->DialogID : 0;
 	GetDlgCtrlID(control);
 	if (type == 0xb7 || type == 0x2b4 || type == 0xbbb || type == 0xf5 || type == 0x2b5 || type == 0xb8 ||
 		type == 0xa3 || type == 0xb6 || type == 0x10c || type == 0x73 || type == 0xff || type == 0xea) {
@@ -4445,6 +4674,40 @@ extern int BlueShiftLeft;
 
 void __fastcall FUN_0060B950(HWND window);
 
+// FUNCTION: GAMEMD 0x0060C0C0
+BOOL CALLBACK FUN_0060C0C0(HWND window, LPARAM lparam)
+{
+	HWND parent = GetParent(window);
+	if (OwnerDraw::CurrentDialogHwnd == parent) {
+		Rect rect;
+		rect.X = 0;
+		rect.Y = 0;
+		rect.Width = 0;
+		rect.Height = 0;
+		if (FUN_00608500(parent, window, &rect)) {
+			FUN_0060AF50(window, &rect);
+		} else if (FUN_006096A0(parent, window)) {
+			FUN_0060B000(window, *(Point2D const *)lparam);
+		} else if (FUN_00608CD0(parent, window)) {
+			FUN_0060B1D0(window, *(Point2D const *)lparam);
+		} else if (FUN_00609AA0(parent, window)) {
+			FUN_0060B350(window);
+		} else if (FUN_00609730(parent, window)) {
+			FUN_0060B420(window);
+		} else if (FUN_00609B30(parent, window)) {
+			FUN_0060B550(window);
+		} else if (FUN_0060A100(parent, window)) {
+			FUN_0060B610(window);
+		} else if (FUN_0060B880(parent, window)) {
+			FUN_0060B7A0(window);
+		} else {
+			FUN_0060B740(window);
+		}
+		FUN_0060B950(window);
+	}
+	return TRUE;
+}
+
 namespace OwnerDraw {
 // FUNCTION: GAMEMD 0x0060C4A0
 // OwnerDraw::UpdateControlPosition
@@ -4457,11 +4720,11 @@ void __fastcall UpdateControlPosition(HWND dialog, LPARAM lparam)
 }
 
 // FUNCTION: GAMEMD 0x0060C4E0
-int __fastcall FUN_0060C4E0(HWND dialog)
+ConvertClass *__fastcall FUN_0060C4E0(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		return *(int *)((char *)data + 0x74);
+		return data->StaticShapeDrawer;
 	}
 	return 0;
 }
@@ -4475,7 +4738,7 @@ bool __fastcall TrySetDialogLayoutBand1(HWND dialog)
 	if (data == NULL) {
 		return false;
 	}
-	int type = data->Dialog.DialogID;
+	int type = data->DialogID;
 	bool match = type == 0x10c || type == 0x94 || type == 0xb6 || type == 0xa3 || type == 0x73 ||
 		type == 0xd8 || type == 0xbbb || type == 0xf5 || type == 0x105 || type == 0xd5 ||
 		type == 0xe2 || type == 0x2b5 || type == 0xb7 || type == 0x2b4 || type == 0x101 ||
@@ -4488,8 +4751,8 @@ bool __fastcall TrySetDialogLayoutBand1(HWND dialog)
 		type == 0x11d || type == 0x11c || type == 0x117 || type == 0x114 || type == 0xe6 ||
 		type == 0xf3 || type == 0xf4 || type == 0x2bc || type == 0x10e || type == 0xfb;
 	if (match) {
-		data->Dialog.LayoutBand = 1;
-		data->Dialog.HasOpenAnimation = true;
+		data->LayoutBand = 1;
+		data->HasOpenAnimation = true;
 	}
 	return match;
 }
@@ -4504,13 +4767,13 @@ bool __fastcall TrySetDialogLayoutBand2(HWND dialog)
 	if (data == NULL) {
 		return false;
 	}
-	int type = data->Dialog.DialogID;
+	int type = data->DialogID;
 	bool match = type == 0x10d || type == 0xd9 || type == 0xf0 || type == 0xce || type == 0x120 || type == 0x121 ||
 		type == 0x115 || type == 0xd3 || type == 0xcf || type == 0x11f || type == 0xc3 || type == 0x11b ||
 		type == 0xe1 || type == 0x11e || type == 0xc4 || type == 0x130 || type == 0xd0 || type == 0xfc ||
 		type == 0x126;
 	if (match) {
-		data->Dialog.LayoutBand = 2;
+		data->LayoutBand = 2;
 	}
 	return match;
 }
@@ -4521,27 +4784,20 @@ unsigned char __fastcall FUN_0060C8D0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		return *((unsigned char *)data + 0xd6);
+		return data->HasButtonAnimation;
 	}
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x0060C930
-unsigned char __fastcall FUN_0060C930(HWND dialog)
+bool __fastcall FUN_0060C930(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
-	int type = *(int *)((char *)data + 0x6c);
-	int v;
-	if (type == 0xbc || type == 0xbd || type == 0x102 || type == 0xc2 || type == 0xc9 || type == 0xbc6) {
-		v = 1;
-	} else {
-		v = 0;
-	}
-	*((unsigned char *)data + 214) = v;
-	return v;
+	data->HasButtonAnimation = Has_Button_Animation(data->DialogID);
+	return data->HasButtonAnimation;
 }
 
 // FUNCTION: GAMEMD 0x0060C9D0
@@ -4549,7 +4805,7 @@ void __fastcall FUN_0060C9D0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		*((unsigned char *)data + 0xd6) = 1;
+		data->HasButtonAnimation = 1;
 	}
 }
 
@@ -4558,7 +4814,7 @@ void __fastcall FUN_0060CA30(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		*((unsigned char *)data + 0xd6) = 0;
+		data->HasButtonAnimation = 0;
 	}
 }
 
@@ -4567,27 +4823,21 @@ unsigned char __fastcall FUN_0060CA90(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		return *((unsigned char *)data + 0xd5);
+		return data->HasTopPanelAnimation;
 	}
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x0060CAF0
-unsigned char __fastcall FUN_0060CAF0(HWND dialog)
+bool __fastcall FUN_0060CAF0(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
-	int type = *(int *)((char *)data + 0x6c);
-	int v;
-	if (type == 0xbc || type == 0xbd || type == 0x102 || type == 0xc2 || type == 0xc9 || type == 0xbc6 || type == 0x105 || type == 0x6b || type == 0x113) {
-		v = 1;
-	} else {
-		v = 0;
-	}
-	*((unsigned char *)data + 213) = v;
-	return v;
+	int type = data->DialogID;
+	data->HasTopPanelAnimation = (type == 0xbc || type == 0xbd || type == 0x102 || type == 0xc2 || type == 0xc9 || type == 0xbc6 || type == 0x105 || type == 0x6b || type == 0x113);
+	return data->HasTopPanelAnimation;
 }
 
 // FUNCTION: GAMEMD 0x0060CBA0
@@ -4595,7 +4845,7 @@ void __fastcall FUN_0060CBA0(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		*((unsigned char *)data + 0xd5) = 1;
+		data->HasTopPanelAnimation = 1;
 	}
 }
 
@@ -4604,7 +4854,7 @@ void __fastcall FUN_0060CC00(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		*((unsigned char *)data + 0xd5) = 0;
+		data->HasTopPanelAnimation = 0;
 	}
 }
 
@@ -4613,27 +4863,20 @@ unsigned char __fastcall FUN_0060CC60(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		return *((unsigned char *)data + 0xd7);
+		return data->HasMainScreenAnimation;
 	}
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x0060CCC0
-unsigned char __fastcall FUN_0060CCC0(HWND dialog)
+bool __fastcall FUN_0060CCC0(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
-	int type = *(int *)((char *)data + 0x6c);
-	int v;
-	if (type == 0x103 || type == 0xbc7) {
-		v = 1;
-	} else {
-		v = 0;
-	}
-	*((unsigned char *)data + 215) = v;
-	return v;
+	data->HasMainScreenAnimation = Has_Main_Screen_Animation(data->DialogID);
+	return data->HasMainScreenAnimation;
 }
 
 // FUNCTION: GAMEMD 0x0060CD50
@@ -4641,45 +4884,38 @@ unsigned char __fastcall FUN_0060CD50(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		return *((unsigned char *)data + 0xd8);
+		return data->FlagD8;
 	}
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x0060CDB0
-unsigned char __fastcall FUN_0060CDB0(HWND dialog)
+bool __fastcall FUN_0060CDB0(HWND dialog)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data == NULL) {
 		return false;
 	}
-	int type = *(int *)((char *)data + 0x6c);
-	int v;
-	if (type == 0x108 || type == 0xbc6) {
-		v = 1;
-	} else {
-		v = 0;
-	}
-	*((unsigned char *)data + 216) = v;
-	return v;
+	data->FlagD8 = Has_Flag_D8(data->DialogID);
+	return data->FlagD8;
 }
 
 // FUNCTION: GAMEMD 0x0060CE40
-int __fastcall FUN_0060CE40(HWND dialog)
+SHPStruct *__fastcall FUN_0060CE40(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		return *(int *)((char *)data + 0xe0);
+		return data->DialogBackground;
 	}
 	return 0;
 }
 
 // FUNCTION: GAMEMD 0x0060CEA0
-int __fastcall FUN_0060CEA0(HWND dialog)
+SHPStruct *__fastcall FUN_0060CEA0(HWND dialog)
 {
 	OwnerDraw::WinData *data = NULL;
 	if (OwnerDraw::Dialogs.getPointer(dialog, &data) && data != NULL) {
-		return *(int *)((char *)data + 0xe4);
+		return data->DialogBackgroundEx;
 	}
 	return 0;
 }
@@ -4714,7 +4950,7 @@ extern int DAT_00B0FAB8;
 extern int DAT_00B0FB0C;
 extern int DAT_00B0FB1C;
 extern int DAT_00B0FB2C;
-extern int DAT_00B0FB34;
+extern SHPStruct *DAT_00B0FB34;
 extern int DAT_00B0FB50;
 extern int DAT_00B0FB54;
 
@@ -4732,21 +4968,21 @@ void __fastcall FUN_0060CF00(HWND dialog)
 		*(int *)(p + 0xe0) = DAT_00B0FA6C;
 		*(int *)(p + 0xe4) = DAT_00B0FA6C;
 	} else if (type == 0x103) {
-		*(int *)(p + 0x74) = FUN_0072D450();
-		*(int *)(p + 0xe0) = DAT_00B0FB34;
-		*(int *)(p + 0xe4) = DAT_00B0FB34;
+		*(int *)(p + 0x74) = (int)FUN_0072D450();
+		*(int *)(p + 0xe0) = (int)DAT_00B0FB34;
+		*(int *)(p + 0xe4) = (int)DAT_00B0FB34;
 	} else if (type == 0x108) {
 		*(int *)(p + 0x74) = FUN_0072D820();
 		*(int *)(p + 0xe0) = DAT_00B0FB1C;
 		*(int *)(p + 0xe4) = DAT_00B0FB1C;
 	} else if (type == 0xbc6) {
-		*(int *)(p + 0x74) = FUN_0072D450();
-		*(int *)(p + 0xe0) = DAT_00B0FB34;
-		*(int *)(p + 0xe4) = DAT_00B0FB34;
+		*(int *)(p + 0x74) = (int)FUN_0072D450();
+		*(int *)(p + 0xe0) = (int)DAT_00B0FB34;
+		*(int *)(p + 0xe4) = (int)DAT_00B0FB34;
 	} else if (type == 0xbc7) {
-		*(int *)(p + 0x74) = FUN_0072D450();
-		*(int *)(p + 0xe0) = DAT_00B0FB34;
-		*(int *)(p + 0xe4) = DAT_00B0FB34;
+		*(int *)(p + 0x74) = (int)FUN_0072D450();
+		*(int *)(p + 0xe0) = (int)DAT_00B0FB34;
+		*(int *)(p + 0xe4) = (int)DAT_00B0FB34;
 	} else if (type == 0x6b) {
 		*(int *)(p + 0x74) = FUN_0072D210();
 		*(int *)(p + 0xe0) = DAT_00B0FB50;
@@ -4800,7 +5036,7 @@ void __fastcall FUN_0060CF00(HWND dialog)
 		*(int *)(p + 0xe0) = DAT_00B0FB50;
 		*(int *)(p + 0xe4) = DAT_00B0FB54;
 	} else {
-		*(int *)(p + 0x74) = FUN_0072E280();
+		*(int *)(p + 0x74) = (int)FUN_0072E280();
 		*(int *)(p + 0xe0) = DAT_00B0FB50;
 		*(int *)(p + 0xe4) = DAT_00B0FA04;
 	}
@@ -4809,9 +5045,9 @@ void __fastcall FUN_0060CF00(HWND dialog)
 // FUNCTION: GAMEMD 0x0060D2C0
 void __fastcall FUN_0060D2C0(HWND dialog, int id)
 {
-	OwnerDraw::WinData *data = Get_Data(dialog);
+	OwnerDraw::WinData *data = Find_Data(dialog);
 	if (data != NULL) {
-		*(int *)((char *)data + 0x6c) = id;
+		data->DialogID = id;
 	}
 }
 
@@ -4820,7 +5056,7 @@ int __fastcall FUN_0060D320(HWND dialog)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		return *(int *)((char *)data + 0x6c);
+		return data->DialogID;
 	}
 	return 0;
 }
@@ -4830,11 +5066,6 @@ namespace UI {
 	HWND __fastcall BeginDialog(int resource, DLGPROC proc, int param);
 	void __fastcall EndDialog(HWND window);
 }
-class InputManagerClass {
-	public:
-		void DoSomething(void);
-		static InputManagerClass * Instance;
-};
 
 // FUNCTION: GAMEMD 0x0060D380
 int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus)
@@ -4846,15 +5077,15 @@ int __fastcall FUN_0060D380(int resource, DLGPROC proc, bool focus)
 		SetWindowLong(dialog, 8, (LONG)&result);
 		ShowWindow(dialog, 1);
 		SetForegroundWindow(dialog);
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 		if (focus) {
 			FUN_0052B9B0(dialog);
 		}
 		while (result == 0) {
 			FUN_005D4D50();
 			if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
-				Game::CallBack();
-			} else if (!FUN_0055CBF0() && Game::MainLoop()) {
+				Call_Back();
+			} else if (!FUN_0055CBF0() && Main_Loop()) {
 				break;
 			}
 		}
@@ -4874,7 +5105,7 @@ void FUN_0060D440(void)
 }
 
 extern int DAT_00AC48CC;
-LRESULT CALLBACK FUN_0060D540(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+namespace OwnerDraw { LRESULT CALLBACK ComboDropWindowHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
 LRESULT CALLBACK FUN_0060D520(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 namespace UI { void RegisterComboDropAndNewEditClasses(void); }
 
@@ -4889,10 +5120,10 @@ void UI::RegisterComboDropAndNewEditClasses(void)
 	WNDCLASS wc;
 	memset(&wc, 0, sizeof(wc));
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = FUN_0060D540;
+	wc.lpfnWndProc = OwnerDraw::ComboDropWindowHandler;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hInstance = Game::hInstance;
+	wc.hInstance = ProgramInstance;
 	wc.hIcon = NULL;
 	wc.hCursor = NULL;
 	wc.hbrBackground = NULL;
@@ -4904,7 +5135,7 @@ void UI::RegisterComboDropAndNewEditClasses(void)
 	wc.lpfnWndProc = FUN_0060D520;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hInstance = Game::hInstance;
+	wc.hInstance = ProgramInstance;
 	wc.hIcon = NULL;
 	wc.hCursor = NULL;
 	wc.hbrBackground = NULL;
@@ -4944,7 +5175,7 @@ BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam)
 			if (style & WS_TABSTOP) {
 				flags = 0x40010110;
 			}
-			HWND list = CreateWindowEx(0, "ListBox", NULL, flags, x, y, rect.right - rect.left, rect.bottom - rect.top, parent, NULL, Game::hInstance, NULL);
+			HWND list = CreateWindowEx(0, "ListBox", NULL, flags, x, y, rect.right - rect.left, rect.bottom - rect.top, parent, NULL, ProgramInstance, NULL);
 			NewEditLink *link = new NewEditLink;
 			link->className = "NewEdit";
 			link->style = GetWindowLong(edit, GWL_STYLE);
@@ -4961,6 +5192,28 @@ BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam)
 	return TRUE;
 }
 
+namespace OwnerDraw {
+BOOL CALLBACK SetUserData2(HWND window, LPARAM lparam);
+BOOL CALLBACK InitializeCtrl(HWND window, LPARAM lparam);
+
+// FUNCTION: GAMEMD 0x0060F4B0
+// OwnerDraw::PrepareDialogChildControls
+bool __fastcall PrepareDialogChildControls(HWND dialog, int mode)
+{
+	UI::RegisterComboDropAndNewEditClasses();
+	CurrentDialogHwnd = dialog;
+	EnumChildWindows(dialog, SetUserData2, 1);
+	SetUserData2(dialog, 1);
+	EnumChildWindows(dialog, FUN_0060F320, 1);
+	EnumChildWindows(dialog, InitializeCtrl, mode);
+	InitializeCtrl(dialog, mode);
+	EnumChildWindows(dialog, SetUserData2, 0);
+	SetUserData2(dialog, 0);
+	return true;
+}
+}
+
+
 void __fastcall FUN_0053E3C0(HWND window);
 void ODCacheImages(void);
 namespace OwnerDraw {
@@ -4975,8 +5228,8 @@ LRESULT CALLBACK AutoRadioButtonHandler(HWND window, UINT message, WPARAM wparam
 LRESULT CALLBACK DefaultHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 // FUNCTION: GAMEMD 0x0060F760
-// OwnerDraw::SetNeedsControlImage
-BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam)
+// OwnerDraw::SetUserData2
+BOOL CALLBACK SetUserData2(HWND window, LPARAM lparam)
 {
 	WinData *data = NULL;
 	if (!Dialogs.getPointer(window, &data)) {
@@ -4990,8 +5243,8 @@ BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam)
 
 
 // FUNCTION: GAMEMD 0x0060F9A0
-// OwnerDraw::RegisterChildControlProc
-BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam)
+// OwnerDraw::InitializeCtrl
+BOOL CALLBACK InitializeCtrl(HWND window, LPARAM lparam)
 {
 	char class_name[128];
 	GetClassName(window, class_name, sizeof(class_name));
@@ -5076,9 +5329,9 @@ BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam)
 		Dialogs.getPointer(window, &data);
 	}
 	data->userData = lparam;
-	data->Dialog.ControlType = controlType;
+	data->ControlType = controlType;
 	if (link) {
-		data->Wide.styleFlags = link->style;
+		data->styleFlags = link->style;
 	}
 	WNDPROC proc = NULL;
 	DialogProcs.getValue(window, proc);
@@ -5090,22 +5343,21 @@ BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam)
 	} else {
 		data->Set_Text((wchar_t const *)NULL);
 	}
-	data->Wide.hasText = 0;
+	data->hasText = 0;
 	SendMessage(window, OD_SUBCLASSED, 0, 0);
 	return TRUE;
 }
 }
 
-extern DSurface * DAT_00887308;
 extern int DAT_00AC48D8;
-void __fastcall FUN_006219D0(Rect const & rect, Surface & surface, int xpos, int ypos);
+void __fastcall ODDrawBevelDarken(Rect const & rect, Surface & surface, int xpos, int ypos);
 namespace OwnerDraw {
 int __fastcall PrintTextFixedLength(unsigned color, BitFont * font, Rect const & rect, wchar_t const * text, int length, int x_alignment, int y_alignment, Surface * surface, int unknown);
 void DrawBeveledBorder(Surface & surface, Rect const & rect, int offset, int color);
 }
 
 void __fastcall FUN_0053E420(HWND window);
-BOOL CALLBACK FUN_00610570(HWND window, LPARAM lparam);
+BOOL CALLBACK ODRemoveFromDict(HWND window, LPARAM lparam);
 
 static inline char Remove_Entry(Dictionary<HWND, WNDPROC> & dict, HWND & window)
 {
@@ -5120,15 +5372,15 @@ static inline char Remove_Entry(Dictionary<HWND, OwnerDraw::WinData> & dict, HWN
 }
 
 // FUNCTION: GAMEMD 0x00610360
-BOOL __fastcall FUN_00610360(HWND window)
+BOOL __fastcall ODCleanupDicts(HWND window)
 {
-	EnumChildWindows(window, FUN_00610570, 0);
-	FUN_00610570(window, 0);
+	EnumChildWindows(window, ODRemoveFromDict, 0);
+	ODRemoveFromDict(window, 0);
 	return TRUE;
 }
 
 // FUNCTION: GAMEMD 0x00610570
-BOOL CALLBACK FUN_00610570(HWND window, LPARAM lparam)
+BOOL CALLBACK ODRemoveFromDict(HWND window, LPARAM lparam)
 {
 	Remove_Entry(OwnerDraw::DialogProcs, window);
 	Remove_Entry(OwnerDraw::Dialogs, window);
@@ -5154,7 +5406,7 @@ union ODColorBits {
 };
 
 // SYNTHETIC: GAMEMD 0x006107A0 SYMBOL
-// _$E120
+// _$E118
 OwnerDraw::Tooltip ODTooltip;
 
 // FUNCTION: GAMEMD 0x006107E0
@@ -5206,7 +5458,7 @@ bool OwnerDraw::DrawTooltip(bool save_background)
 		ODTooltip.background = backgd;
 
 		Rect drect(0, 0, ODTooltip.bounds.Width, ODTooltip.bounds.Height);
-		backgd->Blit_From(drect, *DAT_00887308, ODTooltip.bounds, false, true);
+		backgd->Blit_From(drect, *VisibleSurface, ODTooltip.bounds, false, true);
 	}
 
 	ODTooltip.isHidden = false;
@@ -5221,18 +5473,18 @@ bool OwnerDraw::DrawTooltip(bool save_background)
 		color = DSurface::Build_Hicolor_Pixel(c->red, c->green, c->blue);
 	}
 
-	DAT_00887308->Lock();
-	DAT_00887308->Fill_Rect(rect, color);
-	DAT_00887308->Unlock();
+	VisibleSurface->Lock();
+	VisibleSurface->Fill_Rect(rect, color);
+	VisibleSurface->Unlock();
 
-	FUN_006219D0(rect, *DAT_00887308, 8, 4);
+	ODDrawBevelDarken(rect, *VisibleSurface, 8, 4);
 
-	OwnerDraw::PrintTextFixedLength(OwnerDraw::PrimaryTextColor, 0, rect, ODTooltip.text, wcslen(ODTooltip.text), 1, 1, DAT_00887308, 0);
+	OwnerDraw::PrintTextFixedLength(OwnerDraw::PrimaryTextColor, 0, rect, ODTooltip.text, wcslen(ODTooltip.text), 1, 1, VisibleSurface, 0);
 	rect.X += 1;
 	rect.Y += 1;
 	rect.Width -= 2;
 	rect.Height -= 2;
-	OwnerDraw::DrawBeveledBorder(*DAT_00887308, rect, 1, -1);
+	OwnerDraw::DrawBeveledBorder(*VisibleSurface, rect, 1, -1);
 
 	return true;
 }
@@ -5255,7 +5507,7 @@ bool OwnerDraw::RestoreTooltipBackground(void)
 
 	Rect drect = ODTooltip.bounds;
 	Rect srect(0, 0, ODTooltip.bounds.Width, ODTooltip.bounds.Height);
-	DAT_00887308->Blit_From(drect, *ODTooltip.background, srect, false, true);
+	VisibleSurface->Blit_From(drect, *ODTooltip.background, srect, false, true);
 	ODTooltip.isHidden = true;
 	return true;
 }
@@ -5280,11 +5532,11 @@ bool OwnerDraw::End_Tooltip(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00612910 SYMBOL
-// _$E123
+// _$E121
 static ArrayList<HWND> ActiveWindows;
 
 // SYNTHETIC: GAMEMD 0x00612930 SYMBOL
-// _$E128
+// _$E126
 static Dictionary<OwnerDraw::CtrlMsgData, bool> ProcessedMessages(Hash_CtrlMsg);
 
 // FUNCTION: GAMEMD 0x00612A60
@@ -5312,14 +5564,13 @@ LRESULT CALLBACK OwnerDraw::SysListViewHandler(HWND window, UINT message, WPARAM
 	return CallWindowProc(original, window, message, wparam, lparam);
 }
 
-extern DSurface * DAT_00887310;
 namespace OwnerDraw {
 extern int CachedSurfaceCount;
 void __fastcall BlendGradientRect(Rect const & rect, Surface & surface, int color, int amount);
 void __fastcall CopyDimmedBackground(Rect const & rect, HWND hWnd, int alpha);
 }
 
-void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha);
+void __fastcall ODFillRectTrans(Rect * rect, Surface * surface, unsigned short color, int alpha);
 namespace OwnerDraw {
 int __fastcall DrawWideText(Surface * surface, wchar_t const * text, LTRBStruct * rect, BitFont * font, unsigned color, int style, int p5, int p6, int p7, int p8);
 }
@@ -5334,6 +5585,224 @@ void __fastcall FUN_00623880(Surface * surface, Rect * rect, wchar_t * text, int
 namespace OwnerDraw {
 void __fastcall DrawBeveledBorder(Surface & surface, Rect const & rect, int offset, int color);
 char * __fastcall WideToCharString(char * dest, wchar_t const * src, int count);
+}
+
+// FUNCTION: GAMEMD 0x006137D0
+// OwnerDraw::SysTabHandler
+LRESULT CALLBACK OwnerDraw::SysTabHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	static char string1[64];
+	static wchar_t string2[256];
+
+	LRESULT result = 0;
+	WNDPROC proc = NULL;
+	WinData * data = NULL;
+	Dialogs.getPointer(window, &data);
+	DialogProcs.getValue(window, proc);
+
+	if (message == WM_ERASEBKGND) {
+		return(1);
+	}
+
+	if (message == WM_NCPAINT) {
+		return(0);
+	}
+
+	if (message == OD_SUBCLASSED) {
+		RECT rect;
+		Get_Display_Rect(window, &rect);
+
+		Surface * surf = SurfaceCache.GetSurface("tab_tlu.pcx");
+		SendMessage(window, TCM_SETITEMSIZE, 0, MAKELPARAM(89, surf->Get_Height() - 1));
+
+	}
+
+	if (message == WM_PAINT) {
+		RECT winrect;
+		Get_Display_Rect(window, &winrect);
+
+		TabCtrl_GetItemCount(window);
+
+		RECT tabrect;
+		TabCtrl_GetItemRect(window, 0, &tabrect);
+		TabCtrl_GetItemRect(window, 0, &tabrect);
+
+		winrect.top += (tabrect.bottom - tabrect.top) + 3;
+		Rect dimrect;
+		dimrect.X = winrect.left;
+		dimrect.Y = winrect.top;
+		dimrect.Width = winrect.right - winrect.left;
+		dimrect.Height = winrect.bottom - winrect.top;
+
+		CopyDimmedBackground(dimrect, window, 0);
+		ValidateRect(window, NULL);
+
+		dimrect.X = winrect.left;
+		dimrect.Y = winrect.top;
+		dimrect.Width = winrect.right - winrect.left;
+		dimrect.Height = winrect.bottom - winrect.top;
+
+		Surface * image = SurfaceCache.GetSurface("tab_fml.pcx");
+		if (image) {
+			image->Get_Height();
+			int width = image->Get_Width();
+			SurfaceCache.Draw(Rect(Point2D(winrect.left, winrect.top), width, winrect.bottom - winrect.top), *AlternateSurface, *image, 0, 0);
+		}
+
+		image = SurfaceCache.GetSurface("tab_fmr.pcx");
+		if (image) {
+			image->Get_Height();
+			int width = image->Get_Width();
+			SurfaceCache.Draw(Rect(winrect.right - width, winrect.top, width, winrect.bottom - winrect.top), *AlternateSurface, *image, 0, 0);
+		}
+
+		image = SurfaceCache.GetSurface("tab_ftm.pcx");
+		if (image) {
+			int height = image->Get_Height();
+			image->Get_Width();
+			SurfaceCache.Draw(Rect(Point2D(winrect.left, winrect.top), winrect.right - winrect.left, height), *AlternateSurface, *image, 0, 0);
+		}
+
+		image = SurfaceCache.GetSurface("tab_fbm.pcx");
+		if (image) {
+			int height = image->Get_Height();
+			image->Get_Width();
+			SurfaceCache.Draw(Rect(winrect.left, winrect.bottom - height, winrect.right - winrect.left, height), *AlternateSurface, *image, 0, 0);
+		}
+
+		image = SurfaceCache.GetSurface("tab_ftl.pcx");
+		if (image) {
+			int height = image->Get_Height();
+			int width = image->Get_Width();
+			AlternateSurface->Blit_From(Rect(Point2D(winrect.left, winrect.top), width, height), *image, Rect(0, 0, width, height));
+		}
+
+		image = SurfaceCache.GetSurface("tab_ftr.pcx");
+		if (image) {
+			int height = image->Get_Height();
+			int width = image->Get_Width();
+			AlternateSurface->Blit_From(Rect(winrect.right - width, winrect.top, width, height), *image, Rect(0, 0, width, height));
+		}
+
+		image = SurfaceCache.GetSurface("tab_fbl.pcx");
+		if (image) {
+			int height = image->Get_Height();
+			int width = image->Get_Width();
+			AlternateSurface->Blit_From(Rect(winrect.left, winrect.bottom - height, width, height), *image, Rect(0, 0, width, height));
+		}
+
+		image = SurfaceCache.GetSurface("tab_fbr.pcx");
+		if (image) {
+			int height = image->Get_Height();
+			int width = image->Get_Width();
+			AlternateSurface->Blit_From(Rect(Point2D(winrect.right - width, winrect.bottom - height), width, height), *image, Rect(0, 0, width, height));
+		}
+
+		int current = TabCtrl_GetCurSel(window);
+		Get_Display_Rect(window, &winrect);
+		int itab = current + 1;
+
+		RECT itemrect;
+		while (true) {
+			int tab = itab;
+
+			if (TabCtrl_GetItemRect(window, tab, &itemrect)) {
+				TC_ITEM item;
+				memset(&item, 0, sizeof(item));
+				item.pszText = string1;
+				item.cchTextMax = sizeof(string1);
+				strcpy(string1, "Title");
+				item.mask = TCIF_TEXT;
+				TabCtrl_GetItem(window, tab, &item);
+
+				char state = 'd';
+				if (tab == current) {
+					state = 'u';
+				}
+
+				dimrect.X = winrect.left + (itemrect.left - MIN(itemrect.left, 6));
+				dimrect.Y = itemrect.top + winrect.top;
+				dimrect.Width = itemrect.right + (MIN(itemrect.left, 6) - itemrect.left);
+				dimrect.Height = itemrect.bottom - itemrect.top;
+
+				char fname[80];
+				Surface * tab_lu = SurfaceCache.GetSurface("tab_tlu.pcx");
+				sprintf(fname, "tab_tm%c.pcx", state);
+				image = SurfaceCache.GetSurface(fname);
+				if (image) {
+					int height = image->Get_Height();
+					image->Get_Width();
+					int width = dimrect.Width - 2 * tab_lu->Get_Width();
+					int draw_y = dimrect.Y;
+					int draw_x = dimrect.X + tab_lu->Get_Width();
+					SurfaceCache.Draw(Rect(draw_x, draw_y, width, height), *AlternateSurface, *image, 0, 0);
+				}
+
+				sprintf(fname, "tab_tl%c.pcx", state);
+				image = SurfaceCache.GetSurface(fname);
+				if (image) {
+					int height = image->Get_Height();
+					int width = image->Get_Width();
+					ODColorBits transparent;
+					transparent.v = RGB(255, 0, 255);
+					SurfaceCache.DrawTrans(Rect(Point2D(dimrect.X, dimrect.Y), width, height), *AlternateSurface, *image, DSurface::Build_Hicolor_Pixel(transparent.red, transparent.green, transparent.blue));
+				}
+
+				sprintf(fname, "tab_tr%c.pcx", state);
+				image = SurfaceCache.GetSurface(fname);
+				if (image) {
+					int height = image->Get_Height();
+					int width = image->Get_Width();
+					Rect trrect;
+					trrect.X = dimrect.X + dimrect.Width - width;
+					trrect.Y = dimrect.Y;
+					trrect.Width = width;
+					trrect.Height = height;
+					ODColorBits transparent;
+					transparent.v = RGB(255, 0, 255);
+					SurfaceCache.DrawTrans(trrect, *AlternateSurface, *image, DSurface::Build_Hicolor_Pixel(transparent.red, transparent.green, transparent.blue));
+				}
+
+				if (item.pszText) {
+					strcpy(string1, item.pszText);
+				}
+
+				LTRBStruct text_rect;
+				text_rect.Left = dimrect.X;
+				text_rect.Right = dimrect.X + dimrect.Width;
+				text_rect.Top = dimrect.Y + 6;
+				text_rect.Bottom = dimrect.Y + dimrect.Height;
+
+				COLORREF color = SelectedTabTextColor;
+				if (itab == current) {
+					color = PrimaryTextColor;
+				}
+				swprintf(string2, L"%hs", string1);
+				DrawWideText(AlternateSurface, string2, &text_rect, data->Font, color, 5, 0xc, 0, 0, 0);
+
+				ValidateRect(window, &itemrect);
+				if (itab == current) {
+					break;
+				}
+
+				itab++;
+			} else {
+				itab = 0;
+			}
+		}
+
+		ValidateRect(window, NULL);
+	} else if (proc) {
+		result = CallWindowProc(proc, window, message, wparam, lparam);
+	}
+	return(result);
+}
+
+static inline int Copy_Wide_Text(wchar_t *dest, wchar_t const *source, unsigned int capacity)
+{
+	wcsncpy(dest, source, capacity);
+	dest[capacity - 1] = 0;
+	return wcslen(dest);
 }
 
 // FUNCTION: GAMEMD 0x00614190
@@ -5405,9 +5874,7 @@ LRESULT CALLBACK OwnerDraw::EditHandler(HWND window, UINT message, WPARAM wparam
 			return(wcslen(wide));
 		}
 		if (message == WM_USER + 179) {
-			wcsncpy((wchar_t *)lparam, wide, wparam);
-			((wchar_t *)lparam)[wparam - 1] = 0;
-			return(wcslen((wchar_t *)lparam));
+			return Copy_Wide_Text((wchar_t *)lparam, wide, wparam);
 		}
 		OwnerDraw::WideToCharString((char *)lparam, wide, wparam);
 		((char *)lparam)[wparam - 1] = 0;
@@ -5416,8 +5883,8 @@ LRESULT CALLBACK OwnerDraw::EditHandler(HWND window, UINT message, WPARAM wparam
 
 	else if (message == WM_USER + 180 || message == WM_USER + 178) {
 		narrow[0] = 0;
-		if (data->Wide.text != NULL) {
-			WideCharToMultiByte(CP_ACP, 0, data->Wide.text, -1, narrow, sizeof(narrow), NULL, NULL);
+		if (data->text != NULL) {
+			WideCharToMultiByte(CP_ACP, 0, data->text, -1, narrow, sizeof(narrow), NULL, NULL);
 		}
 		return(CallWindowProc(proc, window, WM_SETTEXT, 0, (LPARAM)narrow));
 	}
@@ -5486,9 +5953,9 @@ LRESULT CALLBACK OwnerDraw::EditHandler(HWND window, UINT message, WPARAM wparam
 			draw_rect.Width = display_rect.right - display_rect.left + 1;
 			draw_rect.Height = display_rect.bottom - display_rect.top + 1;
 
-			OwnerDraw::CopyDimmedBackground(draw_rect, window, data->Edit.alpha);
+			OwnerDraw::CopyDimmedBackground(draw_rect, window, data->alpha);
 			if (!is_combo) {
-				OwnerDraw::DrawBeveledBorder(*DAT_00887310, draw_rect, 2, -1);
+				OwnerDraw::DrawBeveledBorder(*AlternateSurface, draw_rect, 2, -1);
 			}
 
 			static wchar_t _buffer[0x1400];
@@ -5502,7 +5969,7 @@ LRESULT CALLBACK OwnerDraw::EditHandler(HWND window, UINT message, WPARAM wparam
 			text_rect.Height = display_rect.bottom - display_rect.top + 1;
 
 			LONG text_style = GetWindowLong(window, GWL_STYLE);
-			FUN_00623880(DAT_00887310, &text_rect, _buffer, cursor, data->Wide.font, OwnerDraw::PrimaryTextColor, &data->Edit.scrollStart, data->Wide.hasFocus, (text_style & ES_PASSWORD) != 0, 0, 0);
+			FUN_00623880(AlternateSurface, &text_rect, _buffer, cursor, data->Font, OwnerDraw::PrimaryTextColor, &data->scrollStart, data->hasFocus, (text_style & ES_PASSWORD) != 0, 0, 0);
 
 			ValidateRect(window, NULL);
 		}
@@ -5573,6 +6040,216 @@ int __fastcall FUN_006149B0(HWND window, wchar_t *out, int size, int *cursor)
 	return wcslen(out);
 }
 
+extern int DAT_00AC48C8;
+namespace OwnerDraw { wchar_t ConvertIMECharToWide(WPARAM, LPARAM); }
+
+// FUNCTION: GAMEMD 0x00614B30
+LRESULT CALLBACK OwnerDraw::NewEditHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	WNDPROC proc = NULL;
+	int changed = 0;
+	int handled = 0;
+	if (message == WM_GETDLGCODE) {
+		return DLGC_WANTALLKEYS;
+	}
+	DialogProcs.getValue(window, proc);
+	WinData *data = NULL;
+	Dialogs.getPointer(window, &data);
+	HWND parent = GetParent(window);
+
+	if ((message == WM_KEYUP || message == WM_KEYDOWN) && wparam == VK_TAB) {
+		if (message == WM_KEYDOWN) {
+			bool shift = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+			SendMessage(parent, WM_USER + 219, shift, (LPARAM)window);
+		}
+		return 0;
+	}
+	if (message == OD_SUBCLASSED) {
+		RECT window_rect;
+		GetWindowRect(window, &window_rect);
+		RECT client_rect;
+		GetClientRect(window, &client_rect);
+		RECT parent_rect;
+		GetWindowRect(parent, &parent_rect);
+		SetWindowPos(window, NULL, window_rect.left - parent_rect.left + 1,
+		window_rect.top - parent_rect.top + 1, client_rect.right - 2,
+		client_rect.bottom - 2, SWP_SHOWWINDOW);
+		return 0;
+	} else if (message == EM_LIMITTEXT) {
+		data->textLimit = wparam;
+		if (wparam) {
+			data->editText->truncate(wparam);
+		}
+	} else if (message == WM_USER + 181 || message == WM_USER + 179 || message == WM_GETTEXTLENGTH) {
+		if (message == WM_GETTEXTLENGTH) {
+			return data->editText->length();
+		}
+		WideWstring *query_text = data->editText;
+		if (message == WM_USER + 179) {
+			wcsncpy((wchar_t *)lparam, query_text->get(), wparam);
+			((wchar_t *)lparam)[wparam - 1] = 0;
+			return wcslen((wchar_t *)lparam);
+		}
+		WideToCharString((char *)lparam, query_text->get(), wparam);
+		((char *)lparam)[wparam - 1] = 0;
+		return strlen((char *)lparam);
+	} else {
+		if (message == WM_USER + 180 || message == WM_USER + 178) {
+			data->editText->clear();
+			data->caretIndex = 0;
+			data->scrollStart = 0;
+			if (data->text != NULL) {
+				data->editText->set(data->text);
+			}
+			if (data->textLimit) {
+				data->editText->truncate((unsigned int)data->textLimit);
+			}
+			data->caretIndex = data->editText->length();
+		}
+		if (message == WM_KEYDOWN) {
+			if (wparam == VK_RETURN) {
+				SendMessage(parent, WM_USER + 218, 0, (LPARAM)window);
+				if (data->styleFlags & ES_MULTILINE) {
+					*data->editText += L"\r\n";
+					WPARAM command = (unsigned short)GetWindowLong(window, GWL_ID) | 0x5010000;
+					SendMessage(parent, WM_COMMAND, command, (LPARAM)window);
+				}
+				return 0;
+			}
+		} else if (message == WM_SETFOCUS) {
+			data->caretBlink = 0;
+			SetTimer(window, 0, 1000, NULL);
+		} else if (message == WM_KILLFOCUS) {
+			KillTimer(window, 0);
+		} else if (message == WM_TIMER) {
+			data->caretBlink ^= 1;
+			InvalidateRect(window, NULL, FALSE);
+		} else {
+			if (message == WM_PAINT || message == WM_ERASEBKGND) {
+				RECT display_rect;
+				Get_Display_Rect(window, &display_rect);
+				char paint_class[80];
+				GetClassName(parent, paint_class, sizeof(paint_class));
+				bool is_combo = strcmp(paint_class, "ComboBox") == 0;
+				RECT update_rect;
+				if (message == WM_PAINT && GetUpdateRect(window, &update_rect, FALSE)) {
+					update_rect.left += display_rect.left;
+					update_rect.right += display_rect.left;
+					update_rect.top += display_rect.top;
+					update_rect.bottom += display_rect.top;
+				}
+				Rect draw_rect;
+				draw_rect.X = display_rect.left;
+				draw_rect.Y = display_rect.top;
+				draw_rect.Width = display_rect.right - display_rect.left + 1;
+				draw_rect.Height = display_rect.bottom - display_rect.top + 1;
+				CopyDimmedBackground(draw_rect, window, data->alpha);
+				if (!is_combo) {
+					DrawBeveledBorder(*AlternateSurface, draw_rect, 2, -1);
+				}
+				display_rect.left += 2;
+				Rect text_rect;
+				text_rect.X = display_rect.left;
+				text_rect.Y = display_rect.top;
+				text_rect.Width = display_rect.right - display_rect.left + 1;
+				text_rect.Height = display_rect.bottom - display_rect.top + 1;
+				DAT_00AC48C8 = data->caretBlink;
+				FUN_00623880(AlternateSurface, &text_rect, data->editText->get(),
+				data->caretIndex, data->Font, PrimaryTextColor,
+				&data->scrollStart, data->hasFocus,
+				(data->styleFlags & ES_PASSWORD) != 0, 0, 0);
+				ValidateRect(window, NULL);
+			}
+			if (message == WM_CONTEXTMENU) {
+				return 1;
+			}
+			if (message == WM_MOUSEMOVE) {
+				return 1;
+			}
+		}
+		if (message == WM_KEYDOWN || message == WM_SETFOCUS || message == WM_KILLFOCUS ||
+		message == WM_KEYUP || message == WM_SYSKEYDOWN || message == WM_SYSKEYUP ||
+		message == WM_SYSCHAR || message == WM_SYSDEADCHAR || message == WM_LBUTTONDOWN) {
+			char class_name[32];
+			GetClassName(parent, class_name, sizeof(class_name));
+			if (strcmp(class_name, "ComboBox") == 0) {
+				InvalidateRect(parent, NULL, FALSE);
+			}
+			InvalidateRect(window, NULL, FALSE);
+		}
+		wchar_t ch = 0;
+		if (message == WM_CHAR) {
+			if (wparam > 31) {
+				ch = (wchar_t)wparam;
+			}
+		} else if (message == WM_KEYDOWN) {
+			switch (wparam) {
+			case VK_DELETE:
+				if (data->caretIndex < (int)data->editText->length()) {
+					data->editText->remove(data->caretIndex, 1);
+					changed = 1;
+				}
+				handled = 1;
+				break;
+			case VK_BACK:
+				if (data->caretIndex > 0) {
+					data->editText->remove(--data->caretIndex, 1);
+					changed = 1;
+				}
+				handled = 1;
+				break;
+			case VK_LEFT:
+				if (data->caretIndex > 0) {
+					--data->caretIndex;
+					return 0;
+				}
+				handled = 1;
+				break;
+			case VK_RIGHT:
+				if (data->caretIndex < (int)data->editText->length()) {
+					++data->caretIndex;
+					return 0;
+				}
+				handled = 1;
+				break;
+			case VK_END:
+				data->caretIndex = data->editText->length();
+				return 0;
+			case VK_HOME:
+				data->caretIndex = 0;
+				return 0;
+			default:
+				break;
+			}
+		} else if (message == WM_IME_CHAR) {
+			ch = ConvertIMECharToWide(wparam, lparam);
+			handled = 1;
+		} else if (message == WM_USER + 217) {
+			ch = (wchar_t)wparam;
+			handled = 1;
+		}
+		if (ch) {
+			if ((!data->rejectChars || !wcschr(data->rejectChars, ch)) &&
+			(!data->textLimit || (int)data->editText->length() < data->textLimit) &&
+			ch > 31 && (!data->asciiOnly || ch < 256)) {
+				data->editText->insert(ch, data->caretIndex++);
+				changed = 1;
+			}
+			handled = 1;
+		}
+		if (changed) {
+			int id = (unsigned short)GetWindowLong(window, GWL_ID);
+			SendMessage(parent, WM_COMMAND, id | (EN_CHANGE << 16), (LPARAM)window);
+			SendMessage(parent, WM_COMMAND, id | (EN_UPDATE << 16), (LPARAM)window);
+		}
+		if (handled) {
+			return 0;
+		}
+	}
+	return CallWindowProc(proc, window, message, wparam, lparam);
+}
+
+
 // FUNCTION: GAMEMD 0x006163A0
 // OwnerDraw::CheckBoxButtonHandler
 LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -5602,8 +6279,8 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 			drect.Height = 18;
 			int style = GetWindowLong(window, GWL_STYLE);
 			int state = data->CheckBox.checkState;
-			unsigned char skinned = data->CheckBox.skinned;
-			unsigned char variant = data->CheckBox.variant;
+			unsigned char skinned = data->skinned;
+			unsigned char variant = data->variant;
 			bool checked = state == 1;
 			char name[64];
 			if (skinned) {
@@ -5630,17 +6307,17 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 			Surface *image = SurfaceCache.GetSurface(name, NULL);
 			int image_height = image->Get_Height();
 			Rect srect(0, 0, image->Get_Width(), image_height);
-			DAT_00887310->Blit_From(drect, *image, srect, false, true);
+			AlternateSurface->Blit_From(drect, *image, srect, false, true);
 			if (style & WS_DISABLED) {
-				FUN_00621B80(&drect, DAT_00887310, 0, OwnerDraw::DisabledOverlayAlpha);
+				ODFillRectTrans(&drect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
 			}
 			trect.Left += 26;
-			if (data->Wide.text) {
+			if (data->text) {
 				int color = OwnerDraw::PrimaryTextColor;
 				if (style & WS_DISABLED) {
 					color = OwnerDraw::DisabledTextColor;
 				}
-				OwnerDraw::DrawWideText(DAT_00887310, data->Wide.text, (LTRBStruct *)&trect, data->Wide.font, color, 4, 0xc, 0, 0, 0);
+				OwnerDraw::DrawWideText(AlternateSurface, data->text, (LTRBStruct *)&trect, data->Font, color, 4, 0xc, 0, 0, 0);
 			}
 			ValidateRect(window, NULL);
 			return 0;
@@ -5677,8 +6354,8 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 
 	case WM_USER + 229: {
 		unsigned char value = lparam != 0;
-		unsigned char old = data->CheckBox.variant;
-		data->CheckBox.skinned = value;
+		unsigned char old = data->variant;
+		data->skinned = value;
 		if (old != value) {
 			InvalidateRect(window, NULL, FALSE);
 		}
@@ -5692,8 +6369,8 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 
 	case WM_USER + 230: {
 		unsigned char value = lparam != 0;
-		unsigned char old = data->CheckBox.variant;
-		data->CheckBox.variant = value;
+		unsigned char old = data->variant;
+		data->variant = value;
 		if (old != value) {
 			InvalidateRect(window, NULL, FALSE);
 		}
@@ -5701,7 +6378,7 @@ LRESULT CALLBACK OwnerDraw::CheckBoxButtonHandler(HWND window, UINT message, WPA
 	}
 
 	case WM_USER + 231:
-		return data->CheckBox.variant;
+		return data->variant;
 	}
 
 	WNDPROC proc = NULL;
@@ -5755,7 +6432,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			Rect dest(0, 0, crect.right + 1, crect.bottom + 1);
 			Rect src(drect.left, drect.top, crect.right + 1, crect.bottom + 1);
 
-			surface->Blit_From(dest, *DAT_00887310, src);
+			surface->Blit_From(dest, *AlternateSurface, src);
 		}
 
 		if (data->image != NULL) {
@@ -5767,7 +6444,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			Rect src = rect;
 			src.X = 0;
 			src.Y = 0;
-			DAT_00887310->Blit_From(rect, *image, src);
+			AlternateSurface->Blit_From(rect, *image, src);
 
 		} else {
 			char updown = 'u';
@@ -5797,7 +6474,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			if (data->cachedSurface != NULL) {
 				Rect cachesrc(0, 0, crect.right + 1, crect.bottom + 1);
 				Rect cachedest(drect.left, drect.top, crect.right + 1, crect.bottom + 1);
-				DAT_00887310->Blit_From(cachedest, *data->cachedSurface, cachesrc);
+				AlternateSurface->Blit_From(cachedest, *data->cachedSurface, cachesrc);
 				InvalidateRect(window, NULL, FALSE);
 			}
 
@@ -5820,7 +6497,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			sourcerect.X = 0;
 			destrect.Height = height;
 			sourcerect.Height = height;
-			DAT_00887310->Blit_From(destrect, *image, sourcerect);
+			AlternateSurface->Blit_From(destrect, *image, sourcerect);
 
 			sprintf(buffer, "b%c%c_mi%d.pcx", updown, 'e', height);
 			image = SurfaceCache.GetSurface(buffer);
@@ -5828,7 +6505,7 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			midrect.X += w;
 			midrect.Width -= margin;
 			midrect.Height = image->Get_Height();
-			SurfaceCache.Draw(midrect, *DAT_00887310, *image, 0, 0);
+			SurfaceCache.Draw(midrect, *AlternateSurface, *image, 0, 0);
 
 			sprintf(buffer, "b%c%c_ri%d.pcx", updown, 'e', height);
 			image = SurfaceCache.GetSurface(buffer);
@@ -5840,10 +6517,10 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 			sourcerect.Y = 0;
 			sourcerect.X = 0;
 			sourcerect.Width = destrect.Width;
-			DAT_00887310->Blit_From(destrect, *image, sourcerect);
+			AlternateSurface->Blit_From(destrect, *image, sourcerect);
 		}
 
-		if (data->image == NULL && data->Wide.text) {
+		if (data->image == NULL && data->text) {
 			RECT client;
 			GetClientRect(window, &client);
 
@@ -5856,11 +6533,11 @@ LRESULT CALLBACK OwnerDraw::AutoRadioButtonHandler(HWND window, UINT message, WP
 				text_rect.X += 2;
 				text_rect.Y += 4;
 			}
-			OwnerDraw::DrawWideText(DAT_00887310, data->Wide.text, (LTRBStruct *)&text_rect, data->Wide.font, color, 5, 0xc, 0, 0, 0);
+			OwnerDraw::DrawWideText(AlternateSurface, data->text, (LTRBStruct *)&text_rect, data->Font, color, 5, 0xc, 0, 0, 0);
 		}
 
 		if (style & WS_DISABLED) {
-			FUN_00621B80(&rect, DAT_00887310, 0, 128);
+			ODFillRectTrans(&rect, AlternateSurface, 0, 128);
 		}
 		ValidateRect(window, NULL);
 		return 0;
@@ -6036,7 +6713,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			return 0;
 
 		case WM_PAINT: {
-			if (data->ScrollBar.skipDraw) {
+			if (data->skipDraw) {
 				ValidateRect(window, NULL);
 				break;
 			}
@@ -6081,7 +6758,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 				int pixel_count = client_rect.right * client_rect.bottom;
 				unsigned short * pixels = (unsigned short *)background->Lock();
 				for (int i = 0; i < pixel_count; i++) {
-					pixels[i] = OD_Blend_Color(pixels[i], 0xFFFF, data->ScrollBar.alpha);
+					pixels[i] = OD_Blend_Color(pixels[i], 0xFFFF, data->alpha);
 				}
 				if (pixels != NULL) {
 					background->Unlock();
@@ -6089,14 +6766,14 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			}
 
 			if (parent_data != NULL && parent_data->cachedSurface != NULL) {
-				DAT_00887310->Blit_From(full_rect, *parent_data->cachedSurface, source_rect);
+				AlternateSurface->Blit_From(full_rect, *parent_data->cachedSurface, source_rect);
 			}
 
 			int color = ODColorToHiColor(OwnerDraw::DefaultBorderColor);
-			if (data->ScrollBar.disabled) {
+			if (data->disabled) {
 				color = ODColorToHiColor(OwnerDraw::AltBorderColor);
 			}
-			OwnerDraw::DrawBeveledBorder(*DAT_00887310, full_rect, 2, color);
+			OwnerDraw::DrawBeveledBorder(*AlternateSurface, full_rect, 2, color);
 
 			Rect grip_rect(display_rect.left, grip_top + display_rect.top, client_rect.right, grip_bottom - grip_top);
 			full_rect = grip_rect;
@@ -6105,7 +6782,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			src_rect.Y = grip_top;
 
 			Surface * grip_center;
-			if (data->ScrollBar.disabled) {
+			if (data->disabled) {
 				grip_center = SurfaceCache.GetSurface("gsbgripm.pcx", NULL);
 			} else {
 				grip_center = SurfaceCache.GetSurface("sbgripm.pcx", NULL);
@@ -6113,12 +6790,12 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			if (grip_center != NULL) {
 				grip_rect.Width = grip_center->Get_Width();
 			}
-			SurfaceCache.Draw(grip_rect, *DAT_00887310, *grip_center, 0, 0);
+			SurfaceCache.Draw(grip_rect, *AlternateSurface, *grip_center, 0, 0);
 
 			Rect grip_src(0, 0, grip_center->Get_Height(), grip_center->Get_Width());
 
 			Surface * grip_top_surf;
-			if (data->ScrollBar.disabled) {
+			if (data->disabled) {
 				grip_top_surf = SurfaceCache.GetSurface("gsbgript.pcx", NULL);
 			} else {
 				grip_top_surf = SurfaceCache.GetSurface("sbgript.pcx", NULL);
@@ -6126,10 +6803,10 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			if (grip_top_surf != NULL) {
 				full_rect.Height = grip_top_surf->Get_Height();
 			}
-			DAT_00887310->Blit_From(full_rect, *grip_top_surf, grip_src);
+			AlternateSurface->Blit_From(full_rect, *grip_top_surf, grip_src);
 
 			Surface * grip_bottom_surf;
-			if (data->ScrollBar.disabled) {
+			if (data->disabled) {
 				grip_bottom_surf = SurfaceCache.GetSurface("gsbgripb.pcx", NULL);
 			} else {
 				grip_bottom_surf = SurfaceCache.GetSurface("sbgripb.pcx", NULL);
@@ -6137,25 +6814,25 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			if (grip_bottom_surf != NULL) {
 				full_rect.Y = display_rect.top + grip_bottom - grip_bottom_surf->Get_Height();
 			}
-			DAT_00887310->Blit_From(full_rect, *grip_bottom_surf, grip_src);
+			AlternateSurface->Blit_From(full_rect, *grip_bottom_surf, grip_src);
 
 			Rect up_rect(display_rect.left, display_rect.top, client_rect.right, 22);
 			full_rect = up_rect;
 			src_rect = up_rect;
 			src_rect.X = 0;
 			src_rect.Y = 0;
-			DAT_00887310->Blit_From(full_rect, *data->cachedSurface, src_rect);
-			ODDrawEdgeGlows(*DAT_00887310, up_rect, up_pressed == 0, 2, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha);
-			ODDrawArrowBitmap(DAT_00887310, up_rect, 1, up_pressed, data->ScrollBar.disabled);
+			AlternateSurface->Blit_From(full_rect, *data->cachedSurface, src_rect);
+			ODDrawEdgeGlows(*AlternateSurface, up_rect, up_pressed == 0, 2, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha);
+			ODDrawArrowBitmap(AlternateSurface, up_rect, 1, up_pressed, data->disabled);
 
 			Rect down_rect(display_rect.left, display_rect.bottom - 22, client_rect.right, 22);
 			full_rect = down_rect;
 			src_rect = down_rect;
 			src_rect.X = 0;
 			src_rect.Y = client_rect.bottom - 22;
-			DAT_00887310->Blit_From(full_rect, *data->cachedSurface, src_rect);
-			ODDrawEdgeGlows(*DAT_00887310, down_rect, down_pressed == 0, 2, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha);
-			ODDrawArrowBitmap(DAT_00887310, down_rect, 0, down_pressed, data->ScrollBar.disabled);
+			AlternateSurface->Blit_From(full_rect, *data->cachedSurface, src_rect);
+			ODDrawEdgeGlows(*AlternateSurface, down_rect, down_pressed == 0, 2, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha, OwnerDraw::ScrollButtonBevelAlpha);
+			ODDrawArrowBitmap(AlternateSurface, down_rect, 0, down_pressed, data->disabled);
 
 			ValidateRect(window, NULL);
 			break;
@@ -6294,7 +6971,7 @@ LRESULT CALLBACK OwnerDraw::ScrollBarHandler(HWND window, UINT message, WPARAM w
 			break;
 
 		case WM_USER + 241:
-			data->ScrollBar.disabled = (lparam == 1);
+			data->disabled = (lparam == 1);
 			break;
 	}
 
@@ -6360,24 +7037,20 @@ LRESULT CALLBACK OwnerDraw::ProgressHandler(HWND window, UINT message, WPARAM wp
 				Surface *surf = new BSurface(rect.right - rect.left + 1, rect.bottom - rect.top + 1, 2);
 				data->cachedSurface = surf;
 				OwnerDraw::CachedSurfaceCount++;
-				surf->Blit_From(sourcerect, *DAT_00887310, destrect);
+				surf->Blit_From(sourcerect, *AlternateSurface, destrect);
 			}
 
-			DAT_00887310->Blit_From(destrect, *data->cachedSurface, sourcerect);
+			AlternateSurface->Blit_From(destrect, *data->cachedSurface, sourcerect);
 			int pos = (data->ProgressBar.position << 16) / (data->ProgressBar.maximum - data->ProgressBar.minimum);
 			int color = 0x000000FF;
 			color = ODColorToHiColor(color);
-			OwnerDraw::BlendGradientRect(destrect, *DAT_00887310, color, pos);
+			OwnerDraw::BlendGradientRect(destrect, *AlternateSurface, color, pos);
 			ValidateRect(window, NULL);
 			break;
 		}
 		}
 	}
 	return 0;
-}
-
-namespace OwnerDraw {
-LRESULT CALLBACK TrackBarHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 }
 
 // FUNCTION: GAMEMD 0x0061D950
@@ -6508,8 +7181,8 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 
 				Rect src_rect(0, 0, client_copy.right + 1, client_copy.bottom + 1);
 				Rect dst_rect(disp_copy.left, disp_copy.top, client_copy.right + 1, client_copy.bottom + 1);
-				surf->Blit_From(src_rect, *DAT_00887310, dst_rect);
-				FUN_00621B80(&src_rect, surf, 0, data->Edit.alpha);
+				surf->Blit_From(src_rect, *AlternateSurface, dst_rect);
+				ODFillRectTrans(&src_rect, surf, 0, data->alpha);
 			}
 
 			if (data->cachedSurface != NULL) {
@@ -6520,14 +7193,14 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 
 				Rect src_rect(0, 0, client_copy.right + 1, client_copy.bottom + 1);
 				Rect dst_rect(disp_copy.left, disp_copy.top, client_copy.right + 1, client_copy.bottom + 1);
-				DAT_00887310->Blit_From(dst_rect, *data->cachedSurface, src_rect);
+				AlternateSurface->Blit_From(dst_rect, *data->cachedSurface, src_rect);
 			}
 
 			if (show_numbers) {
 				{
 					Surface *center = SurfaceCache.GetSurface("trofm.pcx", NULL);
 					Rect center_rect(disp_rect.X + disp_rect.Width - number_width + 1, disp_rect.Y - 1, number_width, center->Get_Height());
-					SurfaceCache.Draw(center_rect, *DAT_00887310, *center, 0, 0);
+					SurfaceCache.Draw(center_rect, *AlternateSurface, *center, 0, 0);
 				}
 				{
 					Surface *left = SurfaceCache.GetSurface("trofl.pcx", NULL);
@@ -6535,7 +7208,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 					Rect left_src = left_dst;
 					left_src.Y = 0;
 					left_src.X = 0;
-					DAT_00887310->Blit_From(left_dst, *left, left_src);
+					AlternateSurface->Blit_From(left_dst, *left, left_src);
 				}
 				{
 					Surface *right = SurfaceCache.GetSurface("trofr.pcx", NULL);
@@ -6544,7 +7217,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 					right_src.Y = 0;
 					right_src.X = 0;
 
-					DAT_00887310->Blit_From(right_dst, *right, right_src);
+					AlternateSurface->Blit_From(right_dst, *right, right_src);
 				}
 			}
 
@@ -6555,11 +7228,11 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 			grip_src.Y = 0;
 			grip_src.Width = grip->Get_Width();
 			grip_src.Height = grip->Get_Height();
-			DAT_00887310->Blit_From(grip_rect, *grip, grip_src);
+			AlternateSurface->Blit_From(grip_rect, *grip, grip_src);
 
 			int disabled = style & WS_DISABLED;
 			if (disabled) {
-				FUN_00621B80(&grip_rect, DAT_00887310, 0, OwnerDraw::DisabledOverlayAlpha);
+				ODFillRectTrans(&grip_rect, AlternateSurface, 0, OwnerDraw::DisabledOverlayAlpha);
 			}
 
 			int frame_color = ODColorToHiColor(OwnerDraw::DefaultBorderColor);
@@ -6569,13 +7242,13 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 
 			Rect frame_rect = disp_rect;
 			frame_rect.Width = disp_rect.Width - number_width;
-			OwnerDraw::DrawBeveledBorder(*DAT_00887310, frame_rect, 2, frame_color);
+			OwnerDraw::DrawBeveledBorder(*AlternateSurface, frame_rect, 2, frame_color);
 
 			Rect number_rect = disp_rect;
 			int inset = (show_numbers != 0) + 1;
 			number_rect.X = inset - number_width + disp_rect.Width + disp_rect.X;
 			number_rect.Width = number_width - inset;
-			OwnerDraw::DrawBeveledBorder(*DAT_00887310, number_rect, 2, frame_color);
+			OwnerDraw::DrawBeveledBorder(*AlternateSurface, number_rect, 2, frame_color);
 
 			if (show_numbers) {
 				wchar_t buffer[32];
@@ -6590,7 +7263,7 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 
 				RECT text_rect = paint_rect;
 				text_rect.left = paint_rect.right - 49;
-				OwnerDraw::DrawWideText(DAT_00887310, buffer, (LTRBStruct *)&text_rect, data->Wide.font, text_color, 5, 0xc, 0, 0, 0);
+				OwnerDraw::DrawWideText(AlternateSurface, buffer, (LTRBStruct *)&text_rect, data->Font, text_color, 5, 0xc, 0, 0, 0);
 			}
 
 			ValidateRect(window, NULL);
@@ -6723,8 +7396,8 @@ LRESULT CALLBACK OwnerDraw::TrackBarHandler(HWND window, UINT message, WPARAM wp
 namespace UI {
 void __fastcall GetKeyboardKeyString(unsigned short key, wchar_t *buffer);
 }
-int __fastcall FUN_00620F60(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags);
-inline int Draw_Hotkey_Text0(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return FUN_00620F60(surface, text, rect, font, color, flags); }
+int __fastcall ODDrawTextBG(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags);
+inline int Draw_Hotkey_Text0(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return ODDrawTextBG(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text1(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text0(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text2(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text1(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text3(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text2(surface, text, rect, font, color, flags); }
@@ -6732,6 +7405,13 @@ inline int Draw_Hotkey_Text4(Surface *surface, wchar_t const *text, RECT *rect, 
 inline int Draw_Hotkey_Text5(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text4(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text6(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text5(surface, text, rect, font, color, flags); }
 inline int Draw_Hotkey_Text7(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags) { return Draw_Hotkey_Text6(surface, text, rect, font, color, flags); }
+
+static inline WNDPROC Find_Original_Proc(HWND &window)
+{
+	WNDPROC proc = NULL;
+	OwnerDraw::DialogProcs.getValue(window, proc);
+	return proc;
+}
 
 // FUNCTION: GAMEMD 0x0061E700
 LRESULT CALLBACK OwnerDraw::GroupBoxButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -6744,17 +7424,17 @@ LRESULT CALLBACK OwnerDraw::GroupBoxButtonHandler(HWND window, UINT message, WPA
 		WinData *data = Find_Data(window);
 
 		if (data != NULL) {
-			wchar_t const *text = data->Wide.text ? data->Wide.text : L"";
+			wchar_t const *text = data->text ? data->text : L"";
 
 			RECT area;
 			Get_Display_Rect(window, &area);
 
 			int width = area.right - area.left;
-			int middle_y = data->Wide.font->field_1C / 2 + area.top;
+			int middle_y = data->Font->field_1C / 2 + area.top;
 			int text_width;
 			int text_height;
 
-			data->Wide.font->GetTextDimension(text, &text_width, &text_height, width);
+			data->Font->GetTextDimension(text, &text_width, &text_height, width);
 
 			Rect caption(area.left + 10, area.top, width, area.bottom - area.top);
 
@@ -6815,8 +7495,7 @@ LRESULT CALLBACK OwnerDraw::GroupBoxButtonHandler(HWND window, UINT message, WPA
 		return 1;
 	}
 
-	WNDPROC proc = NULL;
-	DialogProcs.getValue(window, proc);
+	WNDPROC proc = Find_Original_Proc(window);
 	return CallWindowProc(proc, window, message, wparam, lparam);
 }
 
@@ -6836,21 +7515,21 @@ LRESULT CALLBACK OwnerDraw::HotkeyHandler(HWND window, UINT message, WPARAM wpar
 				Surface *surf = new BSurface(alt_rect.Width, alt_rect.Height, 2);
 				data->cachedSurface = surf;
 				OwnerDraw::CachedSurfaceCount++;
-				surf->Blit_From(win_rect, *DAT_00887310, alt_rect);
+				surf->Blit_From(win_rect, *AlternateSurface, alt_rect);
 			}
 			wchar_t text[64];
 			int key = SendMessage(window, 0x402, 0, 0);
 			UI::GetKeyboardKeyString(key, text);
 			if (data->cachedSurface != NULL) {
-				DAT_00887310->Blit_From(alt_rect, *data->cachedSurface, win_rect);
+				AlternateSurface->Blit_From(alt_rect, *data->cachedSurface, win_rect);
 			}
-			OwnerDraw::DrawBeveledBorder(*DAT_00887310, alt_rect, 2, -1);
+			OwnerDraw::DrawBeveledBorder(*AlternateSurface, alt_rect, 2, -1);
 			if (wcslen(text) > 0) {
 				rect.left += 4;
 				rect.top += 4;
 				rect.right -= 4;
 				rect.bottom -= 4;
-				Draw_Hotkey_Text7(DAT_00887310, text, &rect, data->Wide.font, OwnerDraw::PrimaryTextColor, DT_SINGLELINE | DT_VCENTER);
+				Draw_Hotkey_Text7(AlternateSurface, text, &rect, data->Font, OwnerDraw::PrimaryTextColor, DT_SINGLELINE | DT_VCENTER);
 			}
 			ValidateRect(window, NULL);
 		}
@@ -6910,8 +7589,9 @@ void __fastcall UI::GetKeyboardKeyString(unsigned short key, wchar_t *buffer)
 	}
 }
 
-ODComponentMasks ODMasks;
-unsigned short ODBComponentMask;
+unsigned short ODRComponentMask = 0;
+unsigned short ODGComponentMask = 0;
+unsigned short ODBComponentMask = 0;
 
 // FUNCTION: GAMEMD 0x0061F190
 void ODInitMasks(void)
@@ -7433,7 +8113,7 @@ inline unsigned Color_To_Pixel(unsigned color)
 }
 
 // FUNCTION: GAMEMD 0x00620F60
-int __fastcall FUN_00620F60(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags)
+int __fastcall ODDrawTextBG(Surface *surface, wchar_t const *text, RECT *rect, BitFont *font, unsigned color, int flags)
 {
 	unsigned pixel = Color_To_Pixel(color);
 	int x = rect->left;
@@ -7511,7 +8191,7 @@ int __fastcall OwnerDraw::PrintTextFixedLength(unsigned color, BitFont * font, R
 		return 0;
 	}
 	if (surface == NULL) {
-		surface = DAT_00887310;
+		surface = AlternateSurface;
 	}
 	int pixel = DSurface::Build_Hicolor_Pixel(GetRValue(color), GetGValue(color), GetBValue(color));
 	int x = rect.X;
@@ -7554,7 +8234,7 @@ int __fastcall OwnerDraw::PrintTextFixedLength(unsigned color, BitFont * font, R
 // FUNCTION: GAMEMD 0x006213A0
 void OwnerDraw::Draw_Item(LPDRAWITEMSTRUCT drawit)
 {
-	if (DAT_00887308 != NULL && DAT_00887310 != NULL) {
+	if (VisibleSurface != NULL && AlternateSurface != NULL) {
 		RECT rect1;
 		Get_Display_Rect(drawit->hwndItem, &rect1);
 		RECT rect2;
@@ -7620,7 +8300,7 @@ void __fastcall OwnerDraw::CopyDimmedBackground(Rect const & rect, HWND hWnd, in
 
 			surface->Blit_From(dstFull, *parentSurf, srcRel, false, true);
 		} else {
-			Surface * srcSurf = DAT_00887308;
+			Surface * srcSurf = VisibleSurface;
 
 			Rect srcAbs;
 			srcAbs.X = dispChild.left;
@@ -7649,7 +8329,7 @@ void __fastcall OwnerDraw::CopyDimmedBackground(Rect const & rect, HWND hWnd, in
 	src.X -= dispChild.left;
 	src.Y -= dispChild.top;
 
-	DAT_00887310->Blit_From(rect, *surface, src, false, true);
+	AlternateSurface->Blit_From(rect, *surface, src, false, true);
 }
 
 // FUNCTION: GAMEMD 0x006217E0
@@ -7693,7 +8373,7 @@ void __fastcall OwnerDraw::BlendGradientRect(Rect const & rect, Surface & surfac
 }
 
 // FUNCTION: GAMEMD 0x006219D0
-void __fastcall FUN_006219D0(Rect const &rect, Surface &surface, int xpos, int ypos)
+void __fastcall ODDrawBevelDarken(Rect const &rect, Surface &surface, int xpos, int ypos)
 {
 	unsigned short *surfptr = (unsigned short *)surface.Lock();
 
@@ -7734,7 +8414,7 @@ void __fastcall FUN_006219D0(Rect const &rect, Surface &surface, int xpos, int y
 }
 
 // FUNCTION: GAMEMD 0x00621B80
-void __fastcall FUN_00621B80(Rect * rect, Surface * surface, unsigned short color, int alpha)
+void __fastcall ODFillRectTrans(Rect * rect, Surface * surface, unsigned short color, int alpha)
 {
 	unsigned short * pixels = (unsigned short *)surface->Lock();
 	if (pixels) {
@@ -7780,7 +8460,6 @@ void ODDrawBitsStrand(Rect const & rect, Surface & surface)
 
 class ConvertClass;
 namespace OwnerDraw { void Paint(HWND window); }
-#include "draw.h"
 extern ShapeSet const * DAT_00B0FC80;
 extern ShapeSet const * DAT_00B0FC84;
 extern ShapeSet const * DAT_00B0FC88;
@@ -7788,7 +8467,7 @@ extern ShapeSet const * DAT_00B0FC8C;
 void __fastcall FUN_0072F540(Surface * surface, Rect * rect, int flag);
 bool FUN_0072E260(void);
 void __fastcall FUN_0072E450(Surface * surface, Rect * rect, bool flag);
-void __fastcall FUN_0072E730(Surface * surface, Rect * rect, int a, int b, int c);
+void __fastcall FUN_0072E730(Surface * surface, Rect const * area, ConvertClass * convert, SHPStruct * shape800, SHPStruct * shape);
 void __fastcall FUN_0072E8C0(Surface * surface, Rect * rect);
 void __fastcall FUN_0072E860(Surface * surface, Rect * rect);
 void __fastcall FUN_0072E920(Surface * surface, Rect * rect);
@@ -7826,22 +8505,22 @@ void __fastcall OwnerDraw::Paint(HWND window)
 			OwnerDraw::CachedSurfaceCount++;
 		}
 
-		int mode = entry->Dialog.LayoutBand;
+		int mode = entry->LayoutBand;
 		if (mode == 1) {
-			if (FUN_0069BBE0(&Session)) {
+			if (Session.FUN_0069BBE0()) {
 				FUN_0072F540(surf, &rFull, 0);
 			} else if (FUN_0072E260()) {
-				FUN_0072E450(surf, &rFull, !entry->Dialog.Unknown_0D4);
+				FUN_0072E450(surf, &rFull, !entry->Unknown_0D4);
 
-				int a = FUN_0060C4E0(window);
-				int b = FUN_0060CE40(window);
-				int c = FUN_0060CEA0(window);
+				ConvertClass *a = FUN_0060C4E0(window);
+				SHPStruct *b = FUN_0060CE40(window);
+				SHPStruct *c = FUN_0060CEA0(window);
 				FUN_0072E730(surf, &rFull, a, b, c);
 
-				if (entry->Dialog.HasTopPanelAnimation) {
+				if (entry->HasTopPanelAnimation) {
 					FUN_0072E8C0(surf, &rFull);
 				}
-				if (entry->Dialog.HasButtonAnimation) {
+				if (entry->HasButtonAnimation) {
 					FUN_0072E860(surf, &rFull);
 				}
 				if (FUN_0060CC60(window)) {
@@ -7852,11 +8531,11 @@ void __fastcall OwnerDraw::Paint(HWND window)
 			Rect dst = rFull;
 			dst.X = 0;
 			dst.Y = 0;
-			surf->Blit_From(dst, *DAT_00887310, rFull, false, true);
+			surf->Blit_From(dst, *AlternateSurface, rFull, false, true);
 
 			ShapeSet const * shape;
 			ConvertClass * palette;
-			if (FUN_0069BBE0(&Session)) {
+			if (Session.FUN_0069BBE0()) {
 				int theme = Scen->PlayerSideIndex;
 				if (theme == 0) {
 					shape = DAT_00B0FC84;
@@ -7899,7 +8578,7 @@ void __fastcall OwnerDraw::Paint(HWND window)
 			Rect srcOnXs = rFull;
 			srcOnXs.X -= rcDisp.left;
 			srcOnXs.Y -= rcDisp.top;
-			DAT_00887310->Blit_From(rFull, *surf, srcOnXs, false, true);
+			AlternateSurface->Blit_From(rFull, *surf, srcOnXs, false, true);
 		}
 	}
 }
@@ -7970,8 +8649,6 @@ extern DialogStackEntry DAT_00B72D28[];
 extern int DAT_00B72F50;
 extern HWND DAT_00B72F44;
 extern int DAT_00B72F48;
-extern HWND DAT_00B73550;
-extern HINSTANCE DAT_00B732F0;
 void __fastcall Add_Modeless_Dialog(HWND dialog);
 
 // FUNCTION: GAMEMD 0x00622650
@@ -7995,7 +8672,7 @@ HWND __fastcall UI::BeginDialog(int resource, DLGPROC proc, int param)
 	init.id = (unsigned short)resource;
 	init.param = param;
 
-	HWND dialog = CreateDialogIndirectParam(DAT_00B732F0, templ, DAT_00B73550, proc, (LPARAM)&init);
+	HWND dialog = CreateDialogIndirectParam(ProgramInstance, templ, MainWindow, proc, (LPARAM)&init);
 	if (dialog == NULL) {
 		DAT_00B72F50--;
 		return NULL;
@@ -8014,8 +8691,8 @@ HWND __fastcall UI::BeginDialog(int resource, DLGPROC proc, int param)
 // FUNCTION: GAMEMD 0x00622720
 void __fastcall UI::EndDialog(HWND window)
 {
-	InputManagerClass::Instance->DoSomething();
-	WS_Save_Dialog_Values(window);
+	Keyboard->Clear();
+	FUN_00608070(window);
 	DestroyWindow(window);
 
 	for (int index = 0; index < DAT_00B72F50; index++) {
@@ -8037,8 +8714,8 @@ void __fastcall UI::EndDialog(HWND window)
 				DAT_00B72F44 = NULL;
 				DAT_00B72F48 = 0;
 
-				SetForegroundWindow(DAT_00B73550);
-				SetFocus(DAT_00B73550);
+				SetForegroundWindow(MainWindow);
+				SetFocus(MainWindow);
 			}
 			break;
 		}
@@ -8054,14 +8731,133 @@ void OwnerDraw::Display_Dialog(HWND window)
 }
 
 namespace OwnerDraw {
-BOOL CALLBACK SetNeedsControlImage(HWND window, LPARAM lparam);
-BOOL CALLBACK RegisterChildControlProc(HWND window, LPARAM lparam);
+BOOL CALLBACK SetUserData2(HWND window, LPARAM lparam);
+BOOL CALLBACK InitializeCtrl(HWND window, LPARAM lparam);
 }
 BOOL CALLBACK FUN_0060F320(HWND edit, LPARAM lparam);
 void __fastcall FUN_0060CF00(HWND dialog);
 void __fastcall Resize_Dialogs(HWND window);
 void __fastcall Center_Window_Within_Window(HWND window);
 extern int DAT_007F5BE0;
+
+extern int DAT_007F5BEC;
+namespace UI { void __fastcall RegisterWindow(HWND window, int type); }
+
+// FUNCTION: GAMEMD 0x00622820
+// UI::RegisterWindow
+void __fastcall UI::RegisterWindow(HWND window, int type)
+{
+	OwnerDraw::PrepareDialogChildControls(window, 0);
+	Resize_Dialogs(window);
+	FUN_0060D2C0(window, type);
+	if (!Session.FUN_0069BBE0()) {
+		FUN_0060CF00(window);
+	}
+	FUN_0060CAF0(window);
+	FUN_0060C930(window);
+	FUN_0060CCC0(window);
+	FUN_0060CDB0(window);
+	FUN_0060AF40(window);
+	if (OwnerDraw::TrySetDialogLayoutBand1(window)) {
+		int layout[2] = { DAT_007F5BE0, DAT_007F5BEC };
+		OwnerDraw::UpdateControlPosition(window, (LPARAM)layout);
+	} else {
+		OwnerDraw::TrySetDialogLayoutBand2(window);
+	}
+	FUN_0060A5A0(window);
+	FUN_0060AA50(window);
+	Center_Window_Within_Window(window);
+}
+
+
+namespace UI { int __fastcall StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam); }
+
+// FUNCTION: GAMEMD 0x00622B50
+int __fastcall UI::StandardWndProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch (message) {
+		case WM_DESTROY:
+			Remove_Modeless_Dialog(window);
+			--_dialog_count;
+			SetFocus(MainWindow);
+			return 0;
+
+		case WM_DRAWITEM:
+			OwnerDraw::Draw_Item((LPDRAWITEMSTRUCT)lparam);
+			return 1;
+
+		case WM_PAINT: {
+			OwnerDraw::WinData *data = Get_Data(window);
+			if (data != NULL) {
+				if (data->skipDraw) {
+					ValidateRect(window, NULL);
+					return 1;
+				}
+				OwnerDraw::Paint(window);
+				FUN_00607FD0(window);
+				ValidateRect(window, NULL);
+			}
+			return 0;
+		}
+
+		case WM_ERASEBKGND:
+			return 1;
+
+		case WM_INITDIALOG:
+			++_dialog_count;
+			if (lparam != 0) {
+				UI::RegisterWindow(window, *(unsigned short *)lparam);
+			} else {
+				UI::RegisterWindow(window, 0);
+			}
+			SetFocus(window);
+			return 0;
+
+		case WM_CTLCOLORMSGBOX:
+		case WM_CTLCOLOREDIT:
+		case WM_CTLCOLORLISTBOX:
+		case WM_CTLCOLORBTN:
+		case WM_CTLCOLORDLG:
+		case WM_CTLCOLORSCROLLBAR:
+		case WM_CTLCOLORSTATIC:
+			return (int)GetStockObject(BLACK_BRUSH);
+
+		case WM_NCHITTEST: {
+			HWND tip = GetDlgItem(window, 0x695);
+			if (tip != NULL) {
+				int x = LOWORD(lparam);
+				int y = HIWORD(lparam);
+				RECT rect;
+				GetWindowRect(window, &rect);
+				POINT pt;
+				pt.x = x - rect.left;
+				pt.y = y - rect.top;
+				WideWstring text;
+				HWND child = ChildWindowFromPointEx(window, pt, CWP_SKIPINVISIBLE);
+				if (child != NULL) {
+					text = FUN_00603FC0(window, child, x, y);
+					if (wcscmp(text.get(), DAT_00887734) == 0) {
+						text = FUN_00603F60(window, child);
+						if (wcscmp(text.get(), DAT_00887734) == 0) {
+							text = FUN_00604060(window, child);
+						}
+					}
+				}
+				SendMessage(tip, 0x4b2, 0, (LPARAM)text.text());
+			}
+			return 0;
+		}
+
+		case 0x497:
+			SendMessage(window, 0x4a9, (WPARAM)window, 1);
+			return 0;
+
+		case 0x4ec:
+			FUN_0060AAA0(window);
+			return 0;
+	}
+	return 0;
+}
 
 namespace UI { bool Updated(void); }
 
@@ -8071,10 +8867,10 @@ bool UI::Updated(void)
 {
 	FUN_005D4D50();
 	if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
-		Game::CallBack();
+		Call_Back();
 		return false;
 	}
-	if (!FUN_0055CBF0() && Game::MainLoop()) {
+	if (!FUN_0055CBF0() && Main_Loop()) {
 		return true;
 	}
 	return false;
@@ -8168,12 +8964,12 @@ void OwnerDraw::Set_Custom_Message_Box_Text(HWND window, wchar_t const * text)
 OwnerDraw::WinData::WinData(void)
 {
 	memset(this, 0, sizeof(*this));
-	*(int *)((char *)this + 0x68) = 0xb;
-	*(BitFont **)((char *)this + 0x64) = BitFont::Instance;
-	Wide.editText = new WideWstring();
-	*(int *)((char *)this + 0x40) = 0;
-	*(int *)((char *)this + 0x5c) = 0;
-	*(int *)((char *)this + 0x90) = -1;
+	ControlType = 0xb;
+	Font = BitFont::Instance;
+	editText = new WideWstring();
+	caretIndex = 0;
+	StaticLoopMovie = 0;
+	StaticSoundIndex = -1;
 }
 
 // FUNCTION: GAMEMD 0x006233A0
@@ -8183,11 +8979,11 @@ OwnerDraw::WinData::WinData(void)
 OwnerDraw::WinNode * OwnerDraw::WinData::Add_Node(int length)
 {
 	WinNode * node = (WinNode *)operator new(length * 2 + 0x12);
-	if (node) {
+	if (node != NULL) {
 		node->text = (wchar_t *)(node + 1);
-		node->next = Wide.nodes;
+		node->next = nodes;
 		node->id = 0;
-		Wide.nodes = node;
+		nodes = node;
 	}
 	return node;
 }
@@ -8196,19 +8992,19 @@ OwnerDraw::WinNode * OwnerDraw::WinData::Add_Node(int length)
 void OwnerDraw::WinData::Remove_Node(WinNode * node)
 {
 	WinNode * prev = NULL;
-	WinNode * cur = Wide.nodes;
-	while (cur) {
+	WinNode * cur = nodes;
+	while (cur != NULL) {
 		if (node == cur) {
 			break;
 		}
 		prev = cur;
 		cur = cur->next;
 	}
-	if (cur) {
-		if (prev) {
+	if (cur != NULL) {
+		if (prev != NULL) {
 			prev->next = cur->next;
 		} else {
-			Wide.nodes = cur->next;
+			nodes = cur->next;
 		}
 		delete cur;
 	}
@@ -8217,10 +9013,10 @@ void OwnerDraw::WinData::Remove_Node(WinNode * node)
 // FUNCTION: GAMEMD 0x006234B0
 void OwnerDraw::WinData::Copy_Nodes(WinNode const * source)
 {
-	while (Wide.nodes) {
-		Remove_Node(Wide.nodes);
+	while (nodes != NULL) {
+		Remove_Node(nodes);
 	}
-	while (source) {
+	while (source != NULL) {
 		WinNode * node = Add_Node(wcslen(source->text));
 		node->data = source->data;
 		node->id = source->id;
@@ -8232,59 +9028,59 @@ void OwnerDraw::WinData::Copy_Nodes(WinNode const * source)
 // FUNCTION: GAMEMD 0x00623560
 void OwnerDraw::WinData::Set_Text(wchar_t const * str)
 {
-	if (Wide.text) {
-		operator delete(Wide.text);
-		Wide.text = NULL;
+	if (text != NULL) {
+		operator delete(text);
+		text = NULL;
 	}
-	if (str && *str) {
-		Wide.text = (wchar_t *)operator new(wcslen(str) * 2 + 2);
-		wcscpy(Wide.text, str);
+	if (str != NULL && *str != 0) {
+		text = (wchar_t *)operator new(wcslen(str) * 2 + 2);
+		wcscpy(text, str);
 	}
 }
 
 // FUNCTION: GAMEMD 0x006235B0
 void OwnerDraw::WinData::Set_Text(char const * str)
 {
-	if (Wide.text) {
-		operator delete(Wide.text);
-		Wide.text = NULL;
+	if (text != NULL) {
+		operator delete(text);
+		text = NULL;
 	}
-	if (str && *str) {
-		Wide.text = new wchar_t[strlen(str) + 1];
-		swprintf(Wide.text, L"%hs", str);
+	if (str != NULL && *str != 0) {
+		text = new wchar_t[strlen(str) + 1];
+		swprintf(text, L"%hs", str);
 	}
 }
 
 // FUNCTION: GAMEMD 0x00623610
 OwnerDraw::WinData & OwnerDraw::WinData::operator=(WinData const & that)
 {
-	WinNode * nodes = Wide.nodes;
-	wchar_t * text = Wide.text;
-	WideWstring * edit = Wide.editText;
+	WinNode * old_nodes = nodes;
+	wchar_t * old_text = text;
+	WideWstring * old_edit = editText;
 	if (this == &that) {
 		return *this;
 	}
 	memcpy(this, &that, sizeof(*this));
-	Wide.text = text;
-	Wide.editText = edit;
-	Wide.nodes = nodes;
-	Set_Text(that.Wide.text);
-	Copy_Nodes(that.Wide.nodes);
+	text = old_text;
+	editText = old_edit;
+	nodes = old_nodes;
+	Set_Text(that.text);
+	Copy_Nodes(that.nodes);
 	return *this;
 }
 
 // FUNCTION: GAMEMD 0x00623730
 OwnerDraw::WinData::WinData(WinData const & that)
 {
-	WinNode * nodes = Wide.nodes;
-	wchar_t * text = Wide.text;
-	WideWstring * edit = Wide.editText;
+	WinNode * old_nodes = nodes;
+	wchar_t * old_text = text;
+	WideWstring * old_edit = editText;
 	memcpy(this, &that, sizeof(*this));
-	Wide.editText = edit;
-	Wide.text = text;
-	Wide.nodes = nodes;
-	Set_Text(that.Wide.text);
-	Copy_Nodes(that.Wide.nodes);
+	editText = old_edit;
+	text = old_text;
+	nodes = old_nodes;
+	Set_Text(that.text);
+	Copy_Nodes(that.nodes);
 }
 
 // FUNCTION: GAMEMD 0x00623840
@@ -8473,11 +9269,11 @@ int __fastcall FUN_00623CD0(wchar_t const * text)
 		SetWindowLong(dialog, 8, (LONG)&result);
 		ShowWindow(dialog, 1);
 		SetForegroundWindow(dialog);
-		InputManagerClass::Instance->DoSomething();
+		Keyboard->Clear();
 		while (result < 0) {
 			FUN_005D4D50();
 			if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && !Session.NetOpen && !Session.Suspended) {
-				if (!FUN_0055CBF0() && Game::MainLoop()) {
+				if (!FUN_0055CBF0() && Main_Loop()) {
 					break;
 				}
 			}
@@ -8615,7 +9411,7 @@ void CALLBACK FUN_006240A0(HWND dialog, int unused)
 {
 	OwnerDraw::WinData *data = Get_Data(dialog);
 	if (data != NULL) {
-		*((char *)data + 0xd4) = 1;
+		data->Unknown_0D4 = 1;
 	}
 }
 
@@ -8636,7 +9432,7 @@ void OwnerDraw::SimpleDialogControl::F1(HWND window, int value)
 	Field4 = value;
 	OwnerDraw::WinData *data = Get_Data(window);
 	if (data != NULL) {
-		*((char *)data + 0xd4) = 1;
+		data->Unknown_0D4 = 1;
 	}
 	Field8 = true;
 }
@@ -8671,12 +9467,12 @@ int __fastcall Run_Dialog_Control(int resource, DLGPROC proc, OwnerDraw::DialogC
 	}
 	ShowWindow(dialog, SW_SHOWNORMAL);
 	SetForegroundWindow(dialog);
-	InputManagerClass::Instance->DoSomething();
+	Keyboard->Clear();
 	while (!control->F2() && !control->F4()) {
 		FUN_005D4D50();
 		if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH || Session.NetOpen || Session.Suspended) {
-			Game::CallBack();
-		} else if (!FUN_0055CBF0() && Game::MainLoop()) {
+			Call_Back();
+		} else if (!FUN_0055CBF0() && Main_Loop()) {
 			break;
 		}
 		Title_Screen_Restore(false);
@@ -8700,7 +9496,7 @@ bool __fastcall FUN_006242B0(HWND control)
 	if (strcmp(name, "ListBox") == 0) {
 		OwnerDraw::WinData *data = NULL;
 		if (OwnerDraw::Dialogs.getPointer(key, &data)) {
-			return data->Dialog.ControlType == 1;
+			return data->ControlType == 1;
 		}
 	}
 	if (strcmp(name, "ComboBox") == 0) {
@@ -8792,3 +9588,401 @@ template class ArrayList<HWND>;
 // SYNTHETIC: GAMEMD 0x00625560
 // ??_G?$DNode@PAUHWND__@@UWinData@OwnerDraw@@@@QAEPAXI@Z
 template class DNode<HWND, OwnerDraw::WinData>;
+
+extern HWND DAT_00AC48D0;
+namespace OwnerDraw {
+	extern HWND ComboDropActiveParentHwnd;
+	extern HWND ComboDropActiveDropHwnd;
+}
+void __fastcall FUN_0072A9E0(Rect *rect, int amount);
+// FUNCTION: GAMEMD 0x0060D540
+LRESULT CALLBACK OwnerDraw::ComboDropWindowHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	static HBRUSH solid_brush = CreateSolidBrush(0x306030);
+	RECT rect;
+	Get_Display_Rect(window, &rect);
+	RECT client;
+	GetClientRect(window, &client);
+	Rect fill;
+	RECT parent_rect;
+	memset(&parent_rect, 0, sizeof(parent_rect));
+	int scrollbar_width = 2 * OwnerDraw::ControlInsetPx + 18;
+	int need_scrollbar = -1;
+	int max_top = 0;
+	HWND parent = 0;
+	if (DAT_00AC48D0) {
+		parent = GetParent(DAT_00AC48D0);
+	}
+	OwnerDraw::WinData *parent_data = 0;
+	if (parent) {
+		OwnerDraw::Dialogs.getPointer(parent, &parent_data);
+		Get_Display_Rect(parent, &parent_rect);
+	}
+	OwnerDraw::ComboDropActiveParentHwnd = parent;
+	OwnerDraw::ComboDropActiveDropHwnd = window;
+	OwnerDraw::WinData *data = 0;
+	OwnerDraw::Dialogs.getPointer(window, &data);
+	if (data == 0) {
+		DebugString("ComboBox dropdown windata = NULL\n");
+	}
+	OwnerDraw::WinData *master = 0;
+	if (DAT_00AC48D0) {
+		OwnerDraw::Dialogs.getPointer(DAT_00AC48D0, &master);
+	}
+	if (message != 0x146 && message != 0x154 && message != 0x115) {
+		int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
+		int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
+		if (item_height <= 1) {
+			item_height = 1;
+		}
+		int content_height = item_count * item_height;
+		need_scrollbar = content_height > client.bottom - client.top;
+		int visible_items = (client.bottom - client.top) / item_height;
+		max_top = item_count - visible_items;
+		if (data) {
+			if ((unsigned int)data->attachedWindow > 1) {
+				SCROLLINFO info;
+				info.fMask = 5;
+				info.nMin = 0;
+				info.nMax = max_top;
+				info.nPos = data->ComboDrop.scrollTop;
+				info.cbSize = 0x1c;
+				SendMessageA(data->attachedWindow, 0xe9, 0, (LPARAM)&info);
+			}
+			if (data->attachedWindow) {
+				BringWindowToTop(data->attachedWindow);
+			}
+		}
+	}
+	switch (message) {
+	case 0x14:
+		return 0;
+	case 1: {
+		SetCapture(window);
+		DAT_00AC48D0 = *(HWND *)lparam;
+		char buffer[100];
+		sprintf(buffer, "Dropd=%p  Master=%p  Dlg=%p", window, DAT_00AC48D0, GetParent(DAT_00AC48D0));
+		DebugString(buffer);
+		SetTimer(window, 0, 20, 0);
+		return 0;
+	}
+	case 0x82:
+		OwnerDraw::ComboDropActiveDropHwnd = 0;
+		OwnerDraw::ComboDropActiveParentHwnd = 0;
+		ReleaseCapture();
+		KillTimer(window, 0);
+		break;
+	case 0x115: {
+		int top = SendMessageA(data->attachedWindow, 0xe1, 0, 0);
+		if (top != SendMessageA(window, 0x15b, 0, 0)) {
+			SendMessageA(window, 0x15c, top, 0);
+		}
+		break;
+	}
+	case 0x113: {
+		HWND capture = GetCapture();
+		if (capture == window) {
+			ReleaseCapture();
+			Sleep(0);
+			SetCapture(capture);
+		}
+		break;
+	}
+	case 0x15b:
+		if (data) {
+			return data->ComboDrop.scrollTop;
+		}
+		break;
+	case 0x200: {
+		int x = lparam & 0xffff;
+		int y = (unsigned int)lparam >> 16;
+		int index = SendMessageA(window, 0x4e8, 0, (y << 16) | x);
+		if (index != -1) {
+			if (data->ComboDrop.selection != index) {
+				InvalidateRect(window, 0, 0);
+			}
+			data->ComboDrop.selection = index;
+			HWND tip = GetDlgItem(parent, 0x695);
+			if (tip) {
+				WideWstring text;
+				text = FUN_00603F00(parent, DAT_00AC48D0, index);
+				if (wcscmp((wchar_t const *)text.get(), DAT_00887734)) {
+					SendMessageA(tip, 0x4b2, 0, (LPARAM)text.text());
+				} else {
+					text = FUN_00603F60(parent, DAT_00AC48D0);
+					if (wcscmp((wchar_t const *)text.get(), DAT_00887734)) {
+						SendMessageA(tip, 0x4b2, 0, (LPARAM)text.text());
+					}
+				}
+			}
+		}
+		return 0;
+	}
+	case 0x15c: {
+		int top = wparam;
+		int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
+		int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
+		if (!item_count || !item_height) {
+			break;
+		}
+		int visible = (client.bottom - client.top) / item_height;
+		if (top < 0) {
+			top = 0;
+		}
+		int limit = item_count - visible;
+		if (limit > 0) {
+			if (top > limit) {
+				top = limit;
+			}
+		} else {
+			top = 0;
+		}
+		if (top != data->ComboDrop.scrollTop) {
+			data->ComboDrop.scrollTop = top;
+			InvalidateRect(window, 0, 0);
+		}
+		return 0;
+	}
+	case 0x201:
+	case 0x203: {
+		int x = lparam & 0xffff;
+		int y = (unsigned int)lparam >> 16;
+		if (x > client.right && x < client.right + data->scrollBarWidth && y > 0 && y < client.bottom) {
+			SendMessageA(data->attachedWindow, message, wparam, lparam);
+			break;
+		}
+		VocClass::PlayGlobal(Rule->GUIComboCloseSound, 1.0f, 0x2000, 0);
+		if (x >= 0 && y >= 0 && x <= client.right && y <= client.bottom) {
+			int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
+			int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
+			int index = y / item_height;
+			if (data) {
+				index += data->ComboDrop.scrollTop;
+			}
+			int clamped = index < 0 ? 0 : index;
+			int max_index = item_count - 1;
+			if (max_index < clamped) {
+				clamped = max_index;
+			}
+			SendMessageA(DAT_00AC48D0, 0x14e, clamped, 0);
+			int id = GetWindowLongA(DAT_00AC48D0, -12);
+			if (need_scrollbar) {
+				DestroyWindow(data->attachedWindow);
+			}
+			ReleaseCapture();
+			SendMessageA(DAT_00AC48D0, 0x14f, 0, 0);
+			PostMessageA(parent, 0x111, (id & 0xffff) | 0x10000, (LPARAM)DAT_00AC48D0);
+			return 0;
+		}
+		if (need_scrollbar) {
+			DestroyWindow(data->attachedWindow);
+		}
+		ReleaseCapture();
+		SendMessageA(DAT_00AC48D0, 0x14f, 0, 0);
+		return 0;
+	}
+	case 0x4e8: {
+		int x = lparam & 0xffff;
+		int y = (unsigned int)lparam >> 16;
+		int result = -1;
+		if (x >= 0 && y >= 0 && x < client.right && y < client.bottom) {
+			int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
+			int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
+			int index = y / item_height + data->ComboDrop.scrollTop;
+			int clamped = index < 0 ? 0 : index;
+			int max_index = item_count - 1;
+			if (max_index < clamped) {
+				clamped = max_index;
+			}
+			result = clamped;
+		}
+		return result;
+	}
+	case 0x4ea:
+		return (LRESULT)DAT_00AC48D0;
+	case 0x7e8:
+		data->ComboDrop.selection = SendMessageA(DAT_00AC48D0, 0x147, 0, 0);
+		return 0;
+	case 0xf: {
+		BitFont *font = parent_data->Font;
+		int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
+		int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
+		int client_height = client.bottom - client.top;
+		Rect dest_rect(rect.left, rect.top, rect.right - rect.left, client_height);
+		int selected = data->ComboDrop.selection;
+		Rect src(dest_rect.Top_Left() - Point2D(parent_rect.left, parent_rect.top), client.right, client.bottom);
+		if (data->cachedSurface == 0) {
+			Rect dst(0, 0, client.right, client.bottom);
+			BSurface *surface = new BSurface(client.right, client.bottom, 2);
+			data->cachedSurface = surface;
+			OwnerDraw::CachedSurfaceCount++;
+			if (parent_data && parent_data->cachedSurface) {
+				surface->Blit_From(dst, *parent_data->cachedSurface, src, false, true);
+			}
+			int total = client.right * client.bottom;
+			unsigned short *pixels = (unsigned short *)surface->Lock();
+			for (int i = 0; i < total; i++) {
+				unsigned short pixel = pixels[i];
+				unsigned char alpha = data->alpha;
+				pixels[i] = OD_Blend_Color(pixel, 0, alpha);
+			}
+			surface->Unlock();
+		}
+		{
+			Rect from(0, 0, dest_rect.Width, dest_rect.Height);
+			AlternateSurface->Blit_From(dest_rect, *data->cachedSurface, from, false, true);
+		}
+		Rect frame(dest_rect);
+		int color = ODColorToHiColor(OwnerDraw::DefaultBorderColor);
+		if (master && master->disabled) {
+			color = ODColorToHiColor(OwnerDraw::AltBorderColor);
+		}
+		OwnerDraw::DrawBeveledBorder(*AlternateSurface, frame, 2, color);
+		if (need_scrollbar && data && data->attachedWindow) {
+			Rect outer(dest_rect);
+			outer.Width += scrollbar_width;
+			OwnerDraw::DrawBeveledBorder(*AlternateSurface, outer, 2, color);
+		}
+		int first = data->ComboDrop.scrollTop;
+		Rect row;
+		for (int index = first; index < item_count; index++) {
+			row.Set(rect.left, rect.top, rect.right - rect.left, item_height);
+			row.Y += (index - first) * item_height;
+			wchar_t text[128];
+			if ((index - first) * item_height + item_height > client_height) {
+				break;
+			} else {
+				HWND owner = DAT_00AC48D0;
+				WNDPROC proc = Find_Original_Proc(owner);
+				text[0] = 0;
+				int item = CallWindowProcA(proc, owner, 0x199, index, 0);
+				if (item == -1 || item == 0) {
+					item = CallWindowProcA(proc, owner, 0x150, index, 0);
+				}
+				if (item != -1 && item != 0) {
+					Copy_Wide_Text(text, ((OwnerDraw::WinNode *)item)->text, 0x80);
+				}
+			}
+			if (index == selected) {
+				fill.Set(row.X, row.Y, row.Width, row.Height);
+				int fill_color;
+				if (master ? master->disabled : false) {
+					fill_color = ODColorToHiColor(OwnerDraw::AltSelectionFillColor);
+				} else {
+					fill_color = ODColorToHiColor(OwnerDraw::ListSelectionFillColor);
+				}
+				AlternateSurface->Fill_Rect(fill, fill_color);
+			}
+			RECT text_rect;
+			text_rect.top = row.Y;
+			text_rect.left = row.X + 3;
+			text_rect.right = row.X + row.Width;
+			text_rect.bottom = row.Y + row.Height;
+			unsigned long text_color = OwnerDraw::PrimaryTextColor;
+			if (master && master->disabled) {
+				text_color = OwnerDraw::AltComboTextColor;
+			}
+			if (index < 50 && master && master->ComboBox.itemColors[index] >= 0) {
+				text_color = master->ComboBox.itemColors[index];
+				if (master->UseItemColorOverrides) {
+					Rect fill2;
+					fill2.Set(row.X, row.Y, row.Width, row.Height);
+					FUN_0072A9E0(&fill2, 2);
+					AlternateSurface->Fill_Rect(fill2, ODColorToHiColor(text_color));
+				}
+			}
+			int max_width = client.right - 20;
+			int length = wcslen(text);
+			int text_width = font->FUN_00433ED0(text, 0);
+			while (length && text_width > max_width) {
+				length--;
+				text[length] = 0;
+				wcscat(text, L"...");
+				text_width = font->FUN_00433ED0(text, 0);
+			}
+			OwnerDraw::DrawWideText(AlternateSurface, text, (LTRBStruct *)&text_rect, font, text_color, 4, 12, 0, 0, 0);
+		}
+		AlternateSurface->Lock();
+		VisibleSurface->Lock();
+		Rect screen(dest_rect);
+		RECT window_rect;
+		GetWindowRect(window, &window_rect);
+		screen.X += window_rect.left - rect.left;
+		screen.Y += window_rect.top - rect.top;
+		VisibleSurface->Blit_From(screen, *AlternateSurface, dest_rect, false, true);
+		VisibleSurface->Unlock();
+		AlternateSurface->Unlock();
+		ValidateRect(window, 0);
+		return 0;
+	}
+	case 2:
+		FUN_0053E420(window);
+		break;
+	}
+	if (need_scrollbar == 1) {
+		if (data && !data->attachedWindow) {
+			data->attachedWindow = (HWND)1;
+			GetWindowLongA(window, -12);
+			parent = GetParent(window);
+			RECT parent_display;
+			Get_Display_Rect(parent, &parent_display);
+			RECT drop_display;
+			Get_Display_Rect(window, &drop_display);
+			int left = drop_display.left - parent_display.left;
+			int top = drop_display.top - parent_display.top;
+			bool alternate = false;
+			int x = left - scrollbar_width + client.right;
+			int y = top + client.top;
+			int height = drop_display.bottom - drop_display.top;
+			if (master) {
+				alternate = master->disabled;
+			}
+			HWND scroll = CreateWindowExA(0, "Scrollbar", 0, 0x50010001, x, y, scrollbar_width, height, parent, 0,
+				ProgramInstance, 0);
+			data->attachedWindow = scroll;
+			data->scrollBarWidth = scrollbar_width;
+			OwnerDraw::InitializeCtrl(scroll, 0);
+			OwnerDraw::WinData *scroll_data = 0;
+			OwnerDraw::Dialogs.getPointer(data->attachedWindow, &scroll_data);
+			scroll_data->ownerWindow = window;
+			scroll_data->disabled = data->disabled;
+			SCROLLINFO info;
+			info.nMax = max_top;
+			info.fMask = 5;
+			info.nMin = 0;
+			info.nPos = data->ComboDrop.scrollTop;
+			info.cbSize = 0x1c;
+			SendMessageA(data->attachedWindow, 0xe9, 0, (LPARAM)&info);
+			SendMessageA(data->attachedWindow, 0x4f1, 0, alternate);
+			SetWindowPos(window, 0, 0, 0, drop_display.right - drop_display.left - scrollbar_width, drop_display.bottom - drop_display.top, 2);
+			ShowWindow(data->attachedWindow, 5);
+			BringWindowToTop(data->attachedWindow);
+			InvalidateRect(data->attachedWindow, 0, 0);
+			UpdateWindow(data->attachedWindow);
+			SendMessageA(data->attachedWindow, 0x4a9, (WPARAM)data->attachedWindow, 1);
+			SendMessageA(data->attachedWindow, 0x4d2, 0, 1);
+			RECT validate;
+			validate.left = left;
+			validate.top = top;
+			validate.right = left + client.right + 1;
+			validate.bottom = top + client.bottom + 1;
+			ValidateRect(parent, &validate);
+		}
+	} else if (need_scrollbar == 0 && data && data->attachedWindow && !data->paintDisabled) {
+		DestroyWindow(data->attachedWindow);
+		ODRemoveFromDict(data->attachedWindow, 0);
+		data->attachedWindow = 0;
+		data->scrollBarWidth = 0;
+		SetWindowPos(window, 0, 0, 0, client.right - client.left + scrollbar_width, client.bottom - client.top, 2);
+		parent = GetParent(window);
+		RECT validate_parent;
+		Get_Display_Rect(parent, &validate_parent);
+		RECT validate;
+		validate.left = rect.left - validate_parent.left;
+		validate.top = rect.top - validate_parent.top;
+		validate.right = validate.left + client.right + scrollbar_width;
+		validate.bottom = validate.top + client.bottom + 1;
+		ValidateRect(parent, &validate);
+	}
+	return DefWindowProcA(window, message, wparam, lparam);
+}

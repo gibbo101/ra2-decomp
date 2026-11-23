@@ -15,6 +15,9 @@
 #include "_rect.h"
 #include <math.h>
 
+// SYNTHETIC: GAMEMD 0x0072A690 SYMBOL
+// _$E41
+
 // SYNTHETIC: GAMEMD 0x0072A6B0 SYMBOL
 // _$E2
 // SYNTHETIC: GAMEMD 0x0072A6E0 SYMBOL
@@ -108,10 +111,9 @@ void __fastcall FUN_0072AA10(Rect * rect, int dx, int dy)
 	rect->Height -= dy * 2;
 }
 
-struct Drawing {
-	static int RenderWidth;
-	static int RenderHeight;
-};
+extern int VideoModeWidth;
+extern int VideoModeHeight;
+
 namespace OwnerDraw { extern SHPStruct * CloseButtonShape; }
 
 void * __fastcall FileSystem_LoadWholeFileEx(char const * name, bool & allocated);
@@ -129,7 +131,6 @@ void FUN_0072EB50(void);
 extern int DAT_00B0FA20;
 void FUN_0072B130(void);
 void FUN_0072B230(void);
-extern DSurface * DAT_00887310;
 #include "goptions.h"
 extern GameOptionsClass Options;
 namespace Unsorted { extern bool ArmageddonMode; }
@@ -273,7 +274,7 @@ void FUN_0072AA40(void)
 		FUN_0072ADE0(DAT_00844BE4, &DAT_00B0FBC8, &DAT_00B0FBCC);
 		FUN_0072ADE0(DAT_00844BE8, &DAT_00B0FBD0, &DAT_00B0FBD4);
 		FUN_0072ADE0(DAT_00844BEC, &DAT_00B0FBD8, &DAT_00B0FBDC);
-		FUN_0072EC70(Drawing::RenderWidth, Drawing::RenderHeight);
+		FUN_0072EC70(VideoModeWidth, VideoModeHeight);
 		DAT_00B0FBE0 = true;
 	}
 }
@@ -325,6 +326,25 @@ Rect __fastcall FUN_0072AD90(void)
 	r.Width -= 0xa8;
 	r.Height -= 0x20;
 	return r;
+}
+
+extern Surface * AlternateSurface;
+
+// FUNCTION: GAMEMD 0x0072ADE0
+void __fastcall FUN_0072ADE0(char const * name, PaletteClass ** palette, ConvertClass ** convert)
+{
+	CCFileClass file(name);
+	unsigned char const * data = (unsigned char const *)Load_Alloc_Data(file);
+	if (data) {
+		*palette = new PaletteClass;
+		for (int index = 0; index < PaletteClass::COLOR_COUNT; index++) {
+			int offset = index * 3;
+			RGBClass color(data[offset] << 2, data[offset + 1] << 2, data[offset + 2] << 2);
+			(**palette)[index] = color;
+		}
+		delete (void *)data;
+		*convert = new ConvertClass(**palette, **palette, *AlternateSurface, 1, false);
+	}
 }
 
 // FUNCTION: GAMEMD 0x0072AF10
@@ -761,7 +781,7 @@ extern char const * DAT_00844DC8;
 void FUN_0072B8E0(void)
 {
 	if (!DAT_00B0FD5D) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0FB54 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844DC4, DAT_00B0FD5C);
 		}
 		FUN_0072ADE0(DAT_00844DC8, &DAT_00B0FD60, &DAT_00B0FD64);
@@ -813,7 +833,7 @@ ConvertClass * FUN_0072B9D0(void)
 // FUNCTION: GAMEMD 0x0072B9E0
 void FUN_0072B9E0(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0FB54 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844DC4, DAT_00B0FD5C);
 	}
 }
@@ -861,7 +881,7 @@ extern char const * DAT_00844DC0;
 void FUN_0072BAC0(void)
 {
 	if (!DAT_00B0FD51) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0FB2C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844DBC, DAT_00B0FD50);
 		}
 		FUN_0072ADE0(DAT_00844DC0, &DAT_00B0FD54, &DAT_00B0FD58);
@@ -913,7 +933,7 @@ ConvertClass * FUN_0072BBB0(void)
 // FUNCTION: GAMEMD 0x0072BBC0
 void FUN_0072BBC0(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0FB2C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844DBC, DAT_00B0FD50);
 	}
 }
@@ -961,7 +981,7 @@ extern char const * DAT_00844DB8;
 void FUN_0072BCA0(void)
 {
 	if (!DAT_00B0FD45) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0FA98 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844DB4, DAT_00B0FD44);
 		}
 		FUN_0072ADE0(DAT_00844DB8, &DAT_00B0FD48, &DAT_00B0FD4C);
@@ -1013,7 +1033,7 @@ ConvertClass * FUN_0072BD90(void)
 // FUNCTION: GAMEMD 0x0072BDA0
 void FUN_0072BDA0(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0FA98 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844DB4, DAT_00B0FD44);
 	}
 }
@@ -1061,7 +1081,7 @@ extern char const * DAT_00844DB0;
 void FUN_0072BE80(void)
 {
 	if (!DAT_00B0FD39) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0FA9C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844DAC, DAT_00B0FD38);
 		}
 		FUN_0072ADE0(DAT_00844DB0, &DAT_00B0FD3C, &DAT_00B0FD40);
@@ -1113,7 +1133,7 @@ ConvertClass * FUN_0072BF70(void)
 // FUNCTION: GAMEMD 0x0072BF80
 void FUN_0072BF80(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0FA9C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844DAC, DAT_00B0FD38);
 	}
 }
@@ -1161,7 +1181,7 @@ extern char const * DAT_00844DA8;
 void FUN_0072C060(void)
 {
 	if (!DAT_00B0FD2D) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0FA4C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844DA4, DAT_00B0FD2C);
 		}
 		FUN_0072ADE0(DAT_00844DA8, &DAT_00B0FD30, &DAT_00B0FD34);
@@ -1213,7 +1233,7 @@ ConvertClass * FUN_0072C150(void)
 // FUNCTION: GAMEMD 0x0072C160
 void FUN_0072C160(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0FA4C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844DA4, DAT_00B0FD2C);
 	}
 }
@@ -1261,7 +1281,7 @@ extern char const * DAT_00844DA0;
 void FUN_0072C240(void)
 {
 	if (!DAT_00B0FD21) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0FA30 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D9C, DAT_00B0FD20);
 		}
 		FUN_0072ADE0(DAT_00844DA0, &DAT_00B0FD24, &DAT_00B0FD28);
@@ -1313,7 +1333,7 @@ ConvertClass * FUN_0072C330(void)
 // FUNCTION: GAMEMD 0x0072C340
 void FUN_0072C340(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0FA30 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D9C, DAT_00B0FD20);
 	}
 }
@@ -1361,7 +1381,7 @@ extern char const * DAT_00844D98;
 void FUN_0072C420(void)
 {
 	if (!DAT_00B0FD15) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0FA64 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D94, DAT_00B0FD14);
 		}
 		FUN_0072ADE0(DAT_00844D98, &DAT_00B0FD18, &DAT_00B0FD1C);
@@ -1413,7 +1433,7 @@ ConvertClass * FUN_0072C510(void)
 // FUNCTION: GAMEMD 0x0072C520
 void FUN_0072C520(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0FA64 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D94, DAT_00B0FD14);
 	}
 }
@@ -1461,7 +1481,7 @@ extern char const * DAT_00844D90;
 void FUN_0072C600(void)
 {
 	if (!DAT_00B0FD09) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0FB0C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D8C, DAT_00B0FD08);
 		}
 		FUN_0072ADE0(DAT_00844D90, &DAT_00B0FD0C, &DAT_00B0FD10);
@@ -1513,7 +1533,7 @@ ConvertClass * FUN_0072C6F0(void)
 // FUNCTION: GAMEMD 0x0072C700
 void FUN_0072C700(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0FB0C = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D8C, DAT_00B0FD08);
 	}
 }
@@ -1561,7 +1581,7 @@ extern char const * DAT_00844D88;
 void FUN_0072C7E0(void)
 {
 	if (!DAT_00B0FCFD) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0F9E8 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D84, DAT_00B0FCFC);
 		}
 		FUN_0072ADE0(DAT_00844D88, &DAT_00B0FD00, &DAT_00B0FD04);
@@ -1613,7 +1633,7 @@ ConvertClass * FUN_0072C8D0(void)
 // FUNCTION: GAMEMD 0x0072C8E0
 void FUN_0072C8E0(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0F9E8 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D84, DAT_00B0FCFC);
 	}
 }
@@ -1661,7 +1681,7 @@ extern char const * DAT_00844D80;
 void FUN_0072C9C0(void)
 {
 	if (!DAT_00B0FCF1) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0FA60 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D7C, DAT_00B0FCF0);
 		}
 		FUN_0072ADE0(DAT_00844D80, &DAT_00B0FCF4, &DAT_00B0FCF8);
@@ -1713,7 +1733,7 @@ ConvertClass * FUN_0072CAB0(void)
 // FUNCTION: GAMEMD 0x0072CAC0
 void FUN_0072CAC0(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0FA60 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D7C, DAT_00B0FCF0);
 	}
 }
@@ -1853,7 +1873,7 @@ extern char const * DAT_00844D78;
 void FUN_0072CD60(void)
 {
 	if (!DAT_00B0FCE5) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0FAAC = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D74, DAT_00B0FCE4);
 		}
 		FUN_0072ADE0(DAT_00844D78, &DAT_00B0FCE8, &DAT_00B0FCEC);
@@ -1905,7 +1925,7 @@ ConvertClass * FUN_0072CE50(void)
 // FUNCTION: GAMEMD 0x0072CE60
 void FUN_0072CE60(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0FAAC = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D74, DAT_00B0FCE4);
 	}
 }
@@ -1952,7 +1972,7 @@ extern char const * DAT_00844D70;
 void FUN_0072CF40(void)
 {
 	if (!DAT_00B0FCD9) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0FA18 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D6C, DAT_00B0FCD8);
 		}
 		FUN_0072ADE0(DAT_00844D70, &DAT_00B0FCDC, &DAT_00B0FCE0);
@@ -2004,7 +2024,7 @@ ConvertClass * FUN_0072D030(void)
 // FUNCTION: GAMEMD 0x0072D040
 void FUN_0072D040(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0FA18 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D6C, DAT_00B0FCD8);
 	}
 }
@@ -2051,7 +2071,7 @@ extern char const * DAT_00844D68;
 void FUN_0072D120(void)
 {
 	if (!DAT_00B0FCCE) {
-		if (Drawing::RenderWidth == 0x320) {
+		if (VideoModeWidth == 0x320) {
 			DAT_00B0FAB8 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D64, DAT_00B0FCCD);
 		}
 		FUN_0072ADE0(DAT_00844D68, &DAT_00B0FCD0, &DAT_00B0FCD4);
@@ -2103,7 +2123,7 @@ ConvertClass * FUN_0072D210(void)
 // FUNCTION: GAMEMD 0x0072D220
 void FUN_0072D220(void)
 {
-	if (Drawing::RenderWidth == 0x320) {
+	if (VideoModeWidth == 0x320) {
 		DAT_00B0FAB8 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844D64, DAT_00B0FCCD);
 	}
 }
@@ -2250,7 +2270,7 @@ ConvertClass * FUN_0072D450(void)
 void __fastcall FUN_0072D460(int index)
 {
 	if (index == 0) {
-		if (Drawing::RenderWidth == 0x280) {
+		if (VideoModeWidth == 0x280) {
 			DAT_00B0FB34 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844C58, DAT_00B0FC70);
 			DAT_00B0FB00 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844C60, DAT_00B0FC71);
 			DAT_00B0FB30 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844C68, DAT_00B0FC72);
@@ -2260,7 +2280,7 @@ void __fastcall FUN_0072D460(int index)
 			DAT_00B0FB30 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844C6C, DAT_00B0FC72);
 		}
 	} else if (index == 1) {
-		if (Drawing::RenderWidth == 0x280) {
+		if (VideoModeWidth == 0x280) {
 			DAT_00B0FB34 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844C70, DAT_00B0FC70);
 			DAT_00B0FB00 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844C78, DAT_00B0FC71);
 			DAT_00B0FB30 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844C80, DAT_00B0FC72);
@@ -2270,7 +2290,7 @@ void __fastcall FUN_0072D460(int index)
 			DAT_00B0FB30 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844C84, DAT_00B0FC72);
 		}
 	} else {
-		if (Drawing::RenderWidth == 0x280) {
+		if (VideoModeWidth == 0x280) {
 			DAT_00B0FB34 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844C88, DAT_00B0FC70);
 			DAT_00B0FB00 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844C90, DAT_00B0FC71);
 			DAT_00B0FB30 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844C98, DAT_00B0FC72);
@@ -2407,7 +2427,7 @@ ConvertClass * FUN_0072D820(void)
 void __fastcall FUN_0072D830(int index)
 {
 	if (index == 0) {
-		if (Drawing::RenderWidth == 0x280) {
+		if (VideoModeWidth == 0x280) {
 			DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(
 				DAT_00844CA0, DAT_00B0FC7D);
 			return;
@@ -2417,7 +2437,7 @@ void __fastcall FUN_0072D830(int index)
 			return;
 		}
 	} else if (index == 1) {
-		if (Drawing::RenderWidth == 0x280) {
+		if (VideoModeWidth == 0x280) {
 			DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(
 				DAT_00844CA8, DAT_00B0FC7D);
 			return;
@@ -2427,7 +2447,7 @@ void __fastcall FUN_0072D830(int index)
 			return;
 		}
 	} else {
-		if (Drawing::RenderWidth == 0x280) {
+		if (VideoModeWidth == 0x280) {
 			DAT_00B0FB1C = (SHPStruct *)FileSystem_LoadWholeFileEx(
 				DAT_00844CB0, DAT_00B0FC7D);
 			return;
@@ -2506,7 +2526,7 @@ void FUN_0072D960(void)
 // FUNCTION: GAMEMD 0x0072D9A0
 void FUN_0072D9A0(void)
 {
-	if (Drawing::RenderWidth == 0x280) {
+	if (VideoModeWidth == 0x280) {
 		DAT_00B0FB48 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CB8, DAT_00B0FCC8);
 		DAT_00B0FB10 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CC4, DAT_00B0FCCA);
 		DAT_00B0F9F8 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CC8, DAT_00B0FCCB);
@@ -2566,7 +2586,7 @@ ConvertClass * FUN_0072DAF0(void)
 // FUNCTION: GAMEMD 0x0072DB00
 void FUN_0072DB00(void)
 {
-	if (Drawing::RenderWidth == 0x280) {
+	if (VideoModeWidth == 0x280) {
 		DAT_00B0FB48 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CB8, DAT_00B0FCC8);
 		DAT_00B0FB10 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CC4, DAT_00B0FCCA);
 		DAT_00B0F9F8 = (SHPStruct *)FileSystem_LoadWholeFileEx(DAT_00844CC8, DAT_00B0FCCB);
@@ -2676,7 +2696,7 @@ void FUN_0072DDB0(void)
 		FUN_0072ADE0(DAT_00844BE4, &DAT_00B0FBC8, &DAT_00B0FBCC);
 		FUN_0072ADE0(DAT_00844BE8, &DAT_00B0FBD0, &DAT_00B0FBD4);
 		FUN_0072ADE0(DAT_00844BEC, &DAT_00B0FBD8, &DAT_00B0FBDC);
-		FUN_0072EC70(Drawing::RenderWidth, Drawing::RenderHeight);
+		FUN_0072EC70(VideoModeWidth, VideoModeHeight);
 		DAT_00B0FBE0 = true;
 	}
 }
@@ -2748,7 +2768,7 @@ void FUN_0072DFB0(void)
 		FUN_0072ADE0(DAT_00844BE4, &DAT_00B0FBC8, &DAT_00B0FBCC);
 		FUN_0072ADE0(DAT_00844BE8, &DAT_00B0FBD0, &DAT_00B0FBD4);
 		FUN_0072ADE0(DAT_00844BEC, &DAT_00B0FBD8, &DAT_00B0FBDC);
-		FUN_0072EC70(Drawing::RenderWidth, Drawing::RenderHeight);
+		FUN_0072EC70(VideoModeWidth, VideoModeHeight);
 		DAT_00B0FBE0 = true;
 	}
 }
@@ -2831,7 +2851,7 @@ static inline void Init_Shapes(void)
 		FUN_00534E50();
 		FUN_0072EB50();
 		FUN_0072EC30();
-		FUN_0072EC70(Drawing::RenderWidth, Drawing::RenderHeight);
+		FUN_0072EC70(VideoModeWidth, VideoModeHeight);
 		DAT_00B0FBE0 = true;
 	}
 }
@@ -2879,7 +2899,7 @@ void __fastcall FUN_0072E450(Surface * surface, Rect const * area, bool flag)
 	Draw_Shape(*surface, *FUN_0072E280(), (ShapeSet const *)DAT_00B0FA38, 0, pt, r, SHAPE_WIN_REL);
 	pt.X = DAT_00B0FC2C->X;
 	pt.Y = DAT_00B0FC2C->Y;
-	if (Drawing::RenderWidth == 0x280) {
+	if (VideoModeWidth == 0x280) {
 		Draw_Shape(*surface, *FUN_0072E280(), (ShapeSet const *)DAT_00B0FAE8, 0, pt, r, SHAPE_WIN_REL);
 	} else {
 		Draw_Shape(*surface, *FUN_0072E280(), (ShapeSet const *)DAT_00B0FA54, 0, pt, r, SHAPE_WIN_REL);
@@ -2899,7 +2919,7 @@ void __fastcall FUN_0072E730(Surface * surface, Rect const * area, ConvertClass 
 	}
 	pt.X = DAT_00B0FC1C->X;
 	pt.Y = DAT_00B0FC1C->Y;
-	if (Drawing::RenderWidth == 0x280) {
+	if (VideoModeWidth == 0x280) {
 		Draw_Shape(*surface, *convert, (ShapeSet const *)shape800, 0, pt, r, SHAPE_WIN_REL);
 	} else {
 		Draw_Shape(*surface, *convert, (ShapeSet const *)shape, 0, pt, r, SHAPE_WIN_REL);
@@ -3413,9 +3433,9 @@ void __fastcall FUN_0072F540(Surface * surface, Rect const * area, bool flag)
 	Point2D pt(0, 0);
 	pt.X = DAT_00B0FC30->X;
 	pt.Y = DAT_00B0FC30->Y;
-	if (Drawing::RenderWidth == 0x280) {
+	if (VideoModeWidth == 0x280) {
 		Draw_Shape(*surface, *FUN_0072F530(), (ShapeSet const *)DAT_00B0FAD4, 0, pt, *area, SHAPE_WIN_REL);
-	} else if (Drawing::RenderWidth == 0x320) {
+	} else if (VideoModeWidth == 0x320) {
 		Draw_Shape(*surface, *FUN_0072F530(), (ShapeSet const *)DAT_00B0FAC8, 0, pt, *area, SHAPE_WIN_REL);
 	} else {
 		Draw_Shape(*surface, *FUN_0072F530(), (ShapeSet const *)DAT_00B0FA50, 0, pt, *area, SHAPE_WIN_REL);
@@ -3867,7 +3887,7 @@ void __fastcall FUN_0072E920(Surface * surface, Rect const * clip)
 	int x = position->X;
 	pt.X = x;
 	pt.Y = position->Y;
-	if (Drawing::RenderWidth >= 800) {
+	if (VideoModeWidth >= 800) {
 		pt += Point2D(80, 0);
 	}
 	Draw_Shape(*surface, *DAT_00B0FBA8, (ShapeSet const *)DAT_00B0FB00, 0, pt, *clip, SHAPE_WIN_REL);
@@ -3876,7 +3896,7 @@ void __fastcall FUN_0072E920(Surface * surface, Rect const * clip)
 // FUNCTION: GAMEMD 0x0072E2D0
 void __fastcall FUN_0072E2D0(Surface * surface, Rect const * area)
 {
-	if (Drawing::RenderWidth >= 1024) {
+	if (VideoModeWidth >= 1024) {
 		int left = DAT_00B0FC1C->X;
 		int right = DAT_00B0FC20->X + DAT_00B0FC20->Width;
 		int top = DAT_00B0FC1C->Y;

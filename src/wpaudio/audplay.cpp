@@ -24,7 +24,8 @@
 #define STM_FAIL 0
 #define STM_EOF 2
 
-struct Game { static bool __cdecl CallBack(void); static bool IsReadingAudioFile; };
+void Call_Back(void);
+struct Game { static bool IsReadingAudioFile; };
 
 struct StmBlock
 {
@@ -588,7 +589,7 @@ void __fastcall AudioStreamerWaitForFade(AudioStreamer * as)
 	TimeStamp time_out = AudioGetTime() + as->channel->ChannelAttribs.VolumeLevel.duration;
 
 	while (AudioStreamerIsFading(as) && AudioGetTime() < time_out) {
-		Game::CallBack();
+		Call_Back();
 	}
 }
 

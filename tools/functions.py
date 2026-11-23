@@ -261,6 +261,23 @@ def assembly_bounds(obj, code: bytes, base: int, evidence: dict[int, str],
     return stops
 
 
+def library_boundaries(evidence, sizes):
+    """Discard padding-only splits inside known library bodies, preserving named entry points."""
+    starts = sorted(evidence)
+    stops = {}
+    for address, size in sizes.items():
+        if "L" not in evidence.get(address, ""):
+            continue
+        end = address + size
+        interior = starts[bisect.bisect_right(starts, address):bisect.bisect_left(starts, end)]
+        if not interior or any(set(evidence[a]) - {"P", "F"} for a in interior):
+            continue
+        for a in interior:
+            del evidence[a]
+        stops[address] = end
+    return stops
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("exe", nargs="?", type=Path, default=ROOT / "orig/gamemd.exe")
@@ -288,9 +305,13 @@ def main() -> None:
     yrpp = read_starts(ROOT / "data/symbols.csv")
     ghidra = read_starts(ROOT / "build/ghidra/functions.csv")
     library = {}
+    library_sizes = {}
     if (ROOT / "data/library.csv").exists():
         with (ROOT / "data/library.csv").open() as f:
-            library = {int(r["address"], 16): r["symbol"] for r in csv.DictReader(f)}
+            for row in csv.DictReader(f):
+                address = int(row["address"], 16)
+                library[address] = row["symbol"]
+                library_sizes[address] = int(row["size"])
 
     # A switch table stored in .text throws the sweep out of step until it happens to
     # resynchronise. An aligned start that other evidence names is taken as a boundary
@@ -437,7 +458,8 @@ def main() -> None:
             evidence[target] = "F"
             ordered.insert(i, target)
 
-    sources = sorted((ROOT / "src").rglob("*.asm"))
+    # Assembly rebuilt from the exe (src/ra2asm/) is no independent evidence of its bounds.
+    sources = sorted(p for p in (ROOT / "src").rglob("*.asm") if ROOT / "src/ra2asm" not in p.parents)
     stops = {}
     if sources and not args.no_asm:
         from check import assemble_source
@@ -453,7 +475,9 @@ def main() -> None:
                     raise SystemExit(f"Cannot assemble {src.name} for function discovery: {log}")
                 stops.update(assembly_bounds(CoffObject(obj.read_bytes()), code, base, evidence,
                                              iat, data_symbols))
-        ordered = sorted(evidence)
+
+    stops.update(library_boundaries(evidence, library_sizes))
+    ordered = sorted(evidence)
 
     with out.open("w", newline="") as f:
         w = csv.writer(f, lineterminator="\n")

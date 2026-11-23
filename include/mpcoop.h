@@ -37,7 +37,7 @@ class MPCooperative : public MultiplayerGameMode
 		virtual int vt_entry_28(void) override;
 		virtual int FirstValidMapIndex(void) override;
 		virtual bool vt_entry_58(int index, DynamicVectorClass<int> picks, char const * map, char const * name) override;
-		virtual void vt_entry_38(unsigned a) override;
+		virtual void vt_entry_38(HWND dialog) override;
 		virtual void DrawTeamDropdown(HWND hwnd, DynamicVectorClass<MultiMission const *> * maps, MultiMission const * map) override;
 		virtual void PopulateTeamDropdownForPlayer(HWND hwnd, int index) override;
 		virtual bool vt_entry_5C(unsigned a, unsigned b, unsigned c) override;
@@ -79,9 +79,9 @@ class MPCooperative : public MultiplayerGameMode
 		bool Field49;
 		int Field4C;
 		CampaignScoreClass * Field50;
-		int Field54;
+		int HostIndex;
 		DynamicVectorClass<NodeNameType *> Names;
-		int Field70;
+		int House;
 		char Pad74[0x9C - 0x74];
 		int Seed;
 		int TechLevel;
@@ -103,11 +103,11 @@ class MPCooperative : public MultiplayerGameMode
 		bool CrapEngineers;
 		int GameSpeed;
 		IPXAddressClass Addresses[8];
-		int Field124[8];
-		int Field144[8];
-		wchar_t Field164[22];
-		int Field190;
-		char Field194[16];
+		int PlayerFirewall[8];
+		int PlayerPortBase[8];
+		wchar_t MasterPlayerName[22];
+		int MasterPlayerID;
+		char PlayerPorts[16];
 		DynamicVectorClass<int> Lists[8];
 		DynamicVectorClass<int> Lists2[8];
 		DynamicVectorClass<CoopCampaignClass *> Campaigns;

@@ -578,10 +578,7 @@ void WWMouseClass::Process_Mouse(void)
 }
 
 // FUNCTION: GAMEMD 0x007BA2C0
-void __cdecl FUN_007BA2C0(void)
-{
-	Block_Mouse();
-}
+// ?Block_Mouse@@YIXXZ
 
 // FUNCTION: GAMEMD 0x007BA2F0
 void __cdecl FUN_007BA2F0(void)

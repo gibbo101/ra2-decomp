@@ -4,7 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
 #include "mpmanbattle.h"
 
 // FUNCTION: GAMEMD 0x005C6150

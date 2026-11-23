@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 
 #include "worlddom.h"
@@ -265,7 +266,7 @@ static inline void Load_Image(WorldDominationTour::FactionImage *& image, char c
 }
 
 // FUNCTION: GAMEMD 0x007AF970
-int FUN_007AF970(void)
+int Do_WDT_Faction_Choice_Menu(void)
 {
 	FUN_0052FEC0(NULL, true);
 	WorldDominationTour::FactionSelectDialogControl control;
@@ -300,25 +301,25 @@ int __fastcall WDT_Theater_Choice_Menu(int side)
 
 namespace Drawing { extern int RenderWidth; }
 int ODMessageBox(const wchar_t * text, int type, bool (*callback)(void), bool large);
-bool FUN_0077F900(void);
+bool WOL_Wait_Callback(void);
 bool Test_Display_Mode_Dialog(int width, int height);
-bool FUN_00797800(void);
+bool Request_WDT_Cycle(void);
 int FUN_0079FC40(void);
 void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before, bool fullscreen);
 extern int DAT_00B77F94;
 extern int DAT_00B77F98;
-extern int DAT_00B77DC4;
-rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0370(void);
-rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0380(void);
+extern int g_MaxPlayers;
+rc_ptr<WorldDominationTour::Campaign> * __cdecl WDT_Get_New_Campaign(void);
+rc_ptr<WorldDominationTour::Campaign> * __cdecl WDT_Get_Resumed_Campaign(void);
 
 // FUNCTION: GAMEMD 0x007AFB90
-int __fastcall FUN_007AFB90(bool first_time)
+int __fastcall WDT_Setup_Game(bool first_time)
 {
 	using namespace WorldDominationTour;
 
 	if (Drawing::RenderWidth > 640) {
 		WideWstring query(StringTable::LoadString("WOL:WDTResolutionQuery", NULL, "D:\\ra2mdpost\\WorldDom.cpp", 0x181));
-		if (ODMessageBox(query.get(), 4, FUN_0077F900, true) != 6) {
+		if (ODMessageBox(query.get(), 4, WOL_Wait_Callback, true) != 6) {
 			return 0;
 		}
 		if (!Test_Display_Mode_Dialog(640, 480)) {
@@ -348,7 +349,7 @@ int __fastcall FUN_007AFB90(bool first_time)
 		while (state != 0 && state != 6) {
 			switch (state) {
 				case 1: {
-					int side = FUN_007AF970();
+					int side = Do_WDT_Faction_Choice_Menu();
 					DAT_00B77F94 = side;
 					state = side ? 4 : 0;
 					break;
@@ -370,23 +371,23 @@ int __fastcall FUN_007AFB90(bool first_time)
 					break;
 
 				case 4:
-					if (!FUN_00797800()) {
+					if (!Request_WDT_Cycle()) {
 						state = 0;
 					} else {
-						rc_ptr<Campaign> campaign = *FUN_007B0370();
+						rc_ptr<Campaign> campaign = *WDT_Get_New_Campaign();
 						if (campaign.Get() == NULL) {
 							return 0;
 						}
 						campaign.Get()->Set_Faction(DAT_00B77F94);
 						if (campaign.Get()->Is_Different_Cycle()) {
-							rc_ptr<Campaign> rcampaign = *FUN_007B0380();
+							rc_ptr<Campaign> rcampaign = *WDT_Get_Resumed_Campaign();
 							if (rcampaign.Get() != NULL && !rcampaign.Get()->Is_Different_Cycle()) {
 								FUN_0076ECD0(&rcampaign, DAT_00B77F98);
 							}
 						}
 						Session.House = DAT_00B77F94 == 3;
 						if (FUN_0076ED10(&campaign, DAT_00B77F98)) {
-							DAT_00B77DC4 = 0;
+							g_MaxPlayers = 0;
 							RandomMapGen.SeedData.Fixup_WDT_Settings();
 							state = 5;
 						} else {
@@ -455,34 +456,33 @@ rc_ptr<WorldDominationTour::Campaign> DAT_00B77F68;
 // _$E114
 rc_ptr<WorldDominationTour::Campaign> DAT_00B77F78;
 
-extern Wstring DAT_00B73E40;
 rc_ptr<WorldDominationTour::CampaignProperties> __fastcall FUN_0076BE90(rc_ptr<WDTState> const & state);
 rc_ptr<WorldDominationTour::Campaign> __fastcall FUN_00764B30(Wstring const & name, rc_ptr<WorldDominationTour::CampaignProperties> const & props);
 
 // FUNCTION: GAMEMD 0x007B0210
-rc_ptr<WDTState> * __cdecl FUN_007B0210(void)
+rc_ptr<WDTState> * __cdecl WDT_Get_New_State(void)
 {
 	return &DAT_00B77F58;
 }
 
 // FUNCTION: GAMEMD 0x007B0220
-void __fastcall FUN_007B0220(rc_ptr<WDTState> const & state)
+void __fastcall WDT_Start_New_Campaign(rc_ptr<WDTState> const & state)
 {
 	DAT_00B77F58 = state;
-	DAT_00B77F68 = FUN_00764B30(DAT_00B73E40, FUN_0076BE90(state));
+	DAT_00B77F68 = FUN_00764B30(g_NickName, FUN_0076BE90(state));
 }
 
 // FUNCTION: GAMEMD 0x007B0290
-rc_ptr<WDTState> * __cdecl FUN_007B0290(void)
+rc_ptr<WDTState> * __cdecl WDT_Get_Resumed_State(void)
 {
 	return &DAT_00B77F70;
 }
 
 // FUNCTION: GAMEMD 0x007B02A0
-void __fastcall FUN_007B02A0(rc_ptr<WDTState> const & state)
+void __fastcall WDT_Resume_Campaign(rc_ptr<WDTState> const & state)
 {
 	DAT_00B77F70 = state;
-	DAT_00B77F78 = FUN_00764B30(DAT_00B73E40, FUN_0076BE90(state));
+	DAT_00B77F78 = FUN_00764B30(g_NickName, FUN_0076BE90(state));
 }
 
 char * DAT_00B77F54;
@@ -520,26 +520,26 @@ void __fastcall FUN_007B0350(char * state)
 }
 
 // FUNCTION: GAMEMD 0x007B0370
-rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0370(void)
+rc_ptr<WorldDominationTour::Campaign> * __cdecl WDT_Get_New_Campaign(void)
 {
 	return &DAT_00B77F68;
 }
 
 // FUNCTION: GAMEMD 0x007B0380
-rc_ptr<WorldDominationTour::Campaign> * __cdecl FUN_007B0380(void)
+rc_ptr<WorldDominationTour::Campaign> * __cdecl WDT_Get_Resumed_Campaign(void)
 {
 	return &DAT_00B77F78;
 }
 
 // FUNCTION: GAMEMD 0x007B0390
-rc_ptr<WDTTerritory> __fastcall FUN_007B0390(int id)
+rc_ptr<WDTTerritory> __fastcall WDT_Get_Territory(int id)
 {
-	WorldDominationTour::CONFLICT_ITER it = (*FUN_007B0370())->Get_Conflict_Iterator(id);
+	WorldDominationTour::CONFLICT_ITER it = (*WDT_Get_New_Campaign())->Get_Conflict_Iterator(id);
 	return(it ? (*it)->Territory : rc_ptr<WDTTerritory>());
 }
 
 // FUNCTION: GAMEMD 0x007B0430
-bool __cdecl FUN_007B0430(void)
+bool __cdecl WDT_Is_Allowed(void)
 {
 	return true;
 }

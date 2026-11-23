@@ -41,9 +41,7 @@
 #include "vector.h"
 #include "zbuffer.h"
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool as_shape);
-};
+#include "filesystem.h"
 
 // SYNTHETIC: GAMEMD 0x00543C40 SYMBOL
 // _$E41
@@ -1450,6 +1448,19 @@ void IsometricTileTypeClass::Detach(AbstractClass const * target, bool all)
 unsigned short IsometricTileTypeClass::Preview_Tile_Color(int tile, int level, bool use_high_color)
 {
 	return(PreviewTiles[tile][(use_high_color ? 1 : 0) + level * 2]);
+}
+
+// FUNCTION: GAMEMD 0x00549E50
+unsigned short * IsometricTileTypeClass::Preview_Tile(int tile, int level)
+{
+	unsigned short * preview;
+	if (ImageData != NULL) {
+		preview = PreviewTiles[tile];
+	} else {
+		Load_Tile_Image();
+		preview = PreviewTiles[tile];
+	}
+	return &preview[level * 2];
 }
 
 // FUNCTION: GAMEMD 0x00549E90

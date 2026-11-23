@@ -223,7 +223,7 @@ bool CaptureManagerClass::CaptureUnit(AbstractClass * target)
 	AnimClass * anim = new AnimClass(Rule->ControlledAnimationType, ring, 0, 1, (ShapeFlags_Type)0x600, 0, false);
 	techno->MindControlRingAnim = anim;
 	if (anim != NULL) {
-		anim->SetOwnerObject(techno);
+		anim->Attach_To(techno);
 		if (building != NULL) {
 			techno->MindControlRingAnim->ZAdjust = -1024;
 		}

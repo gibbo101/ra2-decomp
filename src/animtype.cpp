@@ -59,9 +59,7 @@
 extern char DAT_00889F64[];
 namespace Unsorted { extern bool ArmageddonMode; }
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-};
+#include "filesystem.h"
 
 void FUN_005F9710(char * name);
 void FUN_005F96B0(char * name, TheaterType theater);

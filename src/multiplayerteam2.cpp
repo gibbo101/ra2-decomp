@@ -17,7 +17,7 @@ FirewallHelperClass::FirewallHelperClass(void)
 	ReadDelta = 0;
 }
 
-FirewallHelperClass DAT_00ABFEC8;
+FirewallHelperClass FirewallHelper;
 
 #include "conquer.h"
 #include "globals.h"
@@ -29,7 +29,7 @@ FirewallHelperClass DAT_00ABFEC8;
 #include "session.h"
 #include "wspudp.h"
 
-extern CCINIClass DAT_008870C0;
+extern CCINIClass INI_RA2MD;
 extern WinsockInterfaceClass * PacketTransport;
 extern IPXManagerClass Ipx;
 void __cdecl FUN_004068E0(char const * format, ...);
@@ -89,9 +89,9 @@ void FirewallHelperClass::Save_Detected(void)
 		Detected = Detect(&detected);
 		if (detected) {
 			RawFileClass file("RA2MD.INI");
-			DAT_008870C0.Put_Int("MultiPlayer", "FirewallSettings", Detected, 0);
-			DAT_008870C0.Put_Int("MultiPlayer", "FirewallDelta", Delta, 0);
-			DAT_008870C0.Save(file, false);
+			INI_RA2MD.Put_Int("MultiPlayer", "FirewallSettings", Detected, 0);
+			INI_RA2MD.Put_Int("MultiPlayer", "FirewallDelta", Delta, 0);
+			INI_RA2MD.Save(file, false);
 		}
 	}
 }
@@ -187,16 +187,16 @@ unsigned short FirewallHelperClass::Find_Mangled_Port(int packet_id, int time)
 void FirewallHelperClass::Write_Settings(void)
 {
 	RawFileClass file("RA2MD.INI");
-	DAT_008870C0.Put_Int("MultiPlayer", "FirewallSettings", Detected, 0);
-	DAT_008870C0.Put_Int("MultiPlayer", "FirewallDelta", Delta, 0);
-	DAT_008870C0.Save(file, false);
+	INI_RA2MD.Put_Int("MultiPlayer", "FirewallSettings", Detected, 0);
+	INI_RA2MD.Put_Int("MultiPlayer", "FirewallDelta", Delta, 0);
+	INI_RA2MD.Save(file, false);
 }
 
 // FUNCTION: GAMEMD 0x005D93D0
 void FirewallHelperClass::Read_Settings(void)
 {
-	Settings = DAT_008870C0.Get_Int("MultiPlayer", "FirewallSettings", 0);
-	ReadDelta = DAT_008870C0.Get_Int("MultiPlayer", "FirewallDelta", 1);
+	Settings = INI_RA2MD.Get_Int("MultiPlayer", "FirewallSettings", 0);
+	ReadDelta = INI_RA2MD.Get_Int("MultiPlayer", "FirewallDelta", 1);
 }
 
 // FUNCTION: GAMEMD 0x005D9410
@@ -225,10 +225,10 @@ int FirewallHelperClass::Detect(bool * detected)
 	int delta;
 	bool looks_good;
 
-	if (Session.unknown_301C) {
+	if (Session.PortNumberOverride) {
 		behavior = 1;
-		FUN_004068E0("Source port %d specified by user\n", Session.unknown_301C);
-		if (Session.unknown_2F48) {
+		FUN_004068E0("Source port %d specified by user\n", Session.PortNumberOverride);
+		if (Session.SendDelay) {
 			behavior |= 8;
 			FUN_004068E0("Netgear bug specified by command line or SendDelay flag\n");
 		}
@@ -457,7 +457,7 @@ int FirewallHelperClass::Detect(bool * detected)
 	}
 
 	FUN_004068E0("Testing for Netgear bug\n");
-	if (DAT_00B77E18 == 2 || Session.unknown_2F48) {
+	if (DAT_00B77E18 == 2 || Session.SendDelay) {
 		behavior |= 8;
 		FUN_004068E0("Netgear bug specified by command line or SendDelay flag\n");
 	}

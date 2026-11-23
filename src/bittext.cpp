@@ -4,7 +4,6 @@
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
 #include "always.h"
-#include "geometry.h"
 #include "rect.h"
 #include "bitfont.h"
 #include "rgb.h"
@@ -104,7 +103,7 @@ void Destroy_Font(void)
 }
 
 // SYNTHETIC: GAMEMD 0x00434AB0 SYMBOL
-// _$E41
+// _$E2
 
 // FUNCTION: GAMEMD 0x00434AD0
 BitText::BitText(void)
