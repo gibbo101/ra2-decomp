@@ -6998,6 +6998,7 @@ address,name,result,size,source,symbol
 0x0053CB90,IonBlastClass::~IonBlastClass,MATCH,76,src/ionblast.cpp,??1IonBlastClass@@QAE@XZ
 0x0053CBE0,IonBlastClass::AI,MATCH,1837,src/ionblast.cpp,?AI@IonBlastClass@@QAEXXZ
 0x0053D310,IonBlastClass::Update_All,MATCH,32,src/ionblast.cpp,?Update_All@IonBlastClass@@SIXXZ
+0x0053D330,IonBlastClass::One_Time,MATCH,541,src/ionblast.cpp,?One_Time@IonBlastClass@@SIXXZ
 0x0053D550,IonBlastClass::Clear_All,MATCH,37,src/ionblast.cpp,?Clear_All@IonBlastClass@@SIXXZ
 0x0053D850,IonBlastClass::Draw_All,MATCH,136,src/ionblast.cpp,?Draw_All@IonBlastClass@@SIXXZ
 0x0053D8E0,Spiral_Index_To_Point,MATCH,113,src/ionblast.cpp,?Spiral_Index_To_Point@@YI?AVPoint2D@@H@Z
@@ -16528,6 +16529,7 @@ address,name,result,size,source,symbol
 0x007483B0,UnVQ2_4x4_Table,MATCH,916,src/unvqtblc.cpp,?UnVQ2_4x4_Table@@YAXPAE00KKK@Z
 0x00748750,UnVQ2_4x2_Table,MATCH,922,src/unvqtblc.cpp,?UnVQ2_4x2_Table@@YAXPAE00KKK@Z
 0x00748AF0,UnVQ1_4x4_Table,MATCH,312,src/unvqtblc.cpp,?UnVQ1_4x4_Table@@YAXPAE00KKK@Z
+0x00748C30,UnVQ1_4x2_Table,MATCH,923,src/unvqtblc.cpp,?UnVQ1_4x2_Table@@YAXPAE00KKK@Z
 0x00748FD0,UnitTrackerClass::UnitTrackerClass,MATCH,49,src/utracker.cpp,??0UnitTrackerClass@@QAE@XZ
 0x00749010,UnitTrackerClass::~UnitTrackerClass,MATCH,1,src/utracker.cpp,??1UnitTrackerClass@@QAE@XZ
 0x00749020,UnitTrackerClass::Increment_Unit_Total,MATCH,20,src/utracker.cpp,?Increment_Unit_Total@UnitTrackerClass@@QAEXH@Z
