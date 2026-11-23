@@ -10980,6 +10980,7 @@ address,name,result,size,source,symbol
 0x0062E5D0,ParticleSystemClass::Delete_Particle,MATCH,119,src/partsys.cpp,?Delete_Particle@ParticleSystemClass@@QAE_NH@Z
 0x0062E650,ParticleSystemClass::Clear_System,MATCH,117,src/partsys.cpp,?Clear_System@ParticleSystemClass@@QAEXXZ
 0x0062E6D0,ParticleSystemClass::Gas_AI,MATCH,366,src/partsys.cpp,?Gas_AI@ParticleSystemClass@@AAEXXZ
+0x0062ED40,ParticleSystemClass::Smoke_AI,MATCH,1255,src/partsys.cpp,?Smoke_AI@ParticleSystemClass@@AAEXXZ
 0x0062F230,ParticleSystemClass::Railgun_AI,MATCH,1904,src/partsys.cpp,?Railgun_AI@ParticleSystemClass@@AAEXXZ
 0x0062F9A0,ParticleSystemClass::Fire_AI,MATCH,951,src/partsys.cpp,?Fire_AI@ParticleSystemClass@@AAEXXZ
 0x0062FD60,ParticleSystemClass::AI,MATCH,248,src/partsys.cpp,?AI@ParticleSystemClass@@UAEXXZ
@@ -13434,6 +13435,7 @@ address,name,result,size,source,symbol
 0x006B9450,SurfaceCacheClass::SurfaceCacheClass,MATCH,137,src/srfcache.cpp,??0SurfaceCacheClass@@QAE@XZ
 0x006B94E0,SurfaceCache_Wstring_Hash,MATCH,68,src/srfcache.cpp,?SurfaceCache_Wstring_Hash@@YIIAAVWstring@@@Z
 0x006B9530,SurfaceCacheClass::~SurfaceCacheClass,MATCH,526,src/srfcache.cpp,??1SurfaceCacheClass@@QAE@XZ
+0x006B9740,SurfaceCacheClass::CacheBMP,MATCH,1460,src/srfcache.cpp,?CacheBMP@SurfaceCacheClass@@QAE_NPBDPAXHH@Z
 0x006B9D00,SurfaceCacheClass::CachePCX,MATCH,1046,src/srfcache.cpp,?CachePCX@SurfaceCacheClass@@QAE_NPBDHH@Z
 0x006BA120,SurfaceCacheClass::CachePalettedPCX,MATCH,17,src/srfcache.cpp,?CachePalettedPCX@SurfaceCacheClass@@QAE_NPBD@Z
 0x006BA140,SurfaceCacheClass::GetSurface,MATCH,213,src/srfcache.cpp,?GetSurface@SurfaceCacheClass@@QAEPAVSurface@@PBDPAX@Z

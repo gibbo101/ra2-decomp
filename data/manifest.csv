@@ -11334,6 +11334,7 @@ address,size,symbol,source,sha256
 0x0062E5D0,119,?Delete_Particle@ParticleSystemClass@@QAE_NH@Z,src/partsys.cpp,69d59a9de8c8427a0f6b0dd125297ba117cce7176a22a340e9720ba7382e4ba6
 0x0062E650,117,?Clear_System@ParticleSystemClass@@QAEXXZ,src/partsys.cpp,4e2e8b71c602251f992ec3f34a181a02cb1fdacc76d395d9dc8058721ed7f787
 0x0062E6D0,366,?Gas_AI@ParticleSystemClass@@AAEXXZ,src/partsys.cpp,038044e73115d120dfd2d31cb9d165cdba9610635fff10b979a2bba5d1c0ab7f
+0x0062ED40,1255,?Smoke_AI@ParticleSystemClass@@AAEXXZ,src/partsys.cpp,31af894e2767547ce1d11d562d85209b2784688f4b38169032dd352a87de7ac5
 0x0062F230,1904,?Railgun_AI@ParticleSystemClass@@AAEXXZ,src/partsys.cpp,c4dfb575a6357ad462f9c11c19089687523b25d7038b003a2df27fcd7fa6f3d8
 0x0062F9A0,951,?Fire_AI@ParticleSystemClass@@AAEXXZ,src/partsys.cpp,ac628eee20f121a7aa0605273f2fc0b6421743fcc932f3b4d70230f5a72c2edc
 0x0062FD60,248,?AI@ParticleSystemClass@@UAEXXZ,src/partsys.cpp,7188704fe66a558ffd83e07c40668254048783bed443b806d5169ecea882cd6f
@@ -13780,6 +13781,7 @@ address,size,symbol,source,sha256
 0x006B9450,137,??0SurfaceCacheClass@@QAE@XZ,src/srfcache.cpp,9089a5fece123d9b67cf2e44bc05a626295b8a7595cc62a92cf4b7225c5c8703
 0x006B94E0,68,?SurfaceCache_Wstring_Hash@@YIIAAVWstring@@@Z,src/srfcache.cpp,2fdc823e598e29794717ee92b1300961f74304eeb7bcf38eba82b228be39c030
 0x006B9530,526,??1SurfaceCacheClass@@QAE@XZ,src/srfcache.cpp,6605089f035a7528be0e34218c0d163f33324783165aa8fcadfc4787c672df73
+0x006B9740,1460,?CacheBMP@SurfaceCacheClass@@QAE_NPBDPAXHH@Z,src/srfcache.cpp,ce6b0a264bb46d1517cbe1655a888724bf17ac2a40ee6ab21acd642d59583b62
 0x006B9D00,1046,?CachePCX@SurfaceCacheClass@@QAE_NPBDHH@Z,src/srfcache.cpp,557f91ea885549039954d716204cb81521e7edb817326df8da5fef4d8b5dcee0
 0x006BA120,17,?CachePalettedPCX@SurfaceCacheClass@@QAE_NPBD@Z,src/srfcache.cpp,08e3d44586987c5716350f20d9691f14333d660e9d07b7ff987da55b7b7b1ab9
 0x006BA140,213,?GetSurface@SurfaceCacheClass@@QAEPAVSurface@@PBDPAX@Z,src/srfcache.cpp,35ae031f8ba978dd502d805c93348b56f72d3337290025091eff3fcbbb957d7e
@@ -14671,6 +14673,7 @@ address,size,symbol,source,sha256
 0x006D6D10,1232,?Draw_Overlays@Tactical@@QAEXABV?$TRect@H@@@Z,src/tactical.cpp,7f0919aaddac9a333758cd3bf4d7a673441a6c3e35f9c95e4b97e18a924cac0a
 0x006D71E0,894,?Draw_Shroud@Tactical@@QAEXABV?$TRect@H@@@Z,src/tactical.cpp,dd29f2e769a4e0466f72b0fa3c3ed3a94662fd6bde3d691aa24105b2560cd330
 0x006D7560,730,?Draw_Tiles@Tactical@@QAEXABV?$TRect@H@@0@Z,src/tactical.cpp,7e5d5c02e57fd74b3d30fa92c0a4348c897fb419e6e6b8ade437c1b041d79c0d
+0x006D7840,954,?Draw_Sparkles@Tactical@@QAEXABV?$TRect@H@@0@Z,src/tactical.cpp,478aebdd7933777c5e6c618cd994ac1a6710820243e01ce49aaf649211d371cd
 0x006D7C00,785,?Draw_Tile_Shadows@Tactical@@QAEXABV?$TRect@H@@0@Z,src/tactical.cpp,702083f4fd772c52038d163ebfeed80153938e79fa4c4fa5fd34454478aaf7dc
 0x006D8260,619,?Draw_Tile_Shadows@Tactical@@QAEXHABV?$TRect@H@@@Z,src/tactical.cpp,34375508b399b10ee780f622877d9e15566f8e72c91031a5de39d31e17eee5eb
 0x006D84D0,89,?Clamp_Pixel_To_Tactical@Tactical@@QAE?AVPoint2D@@ABV2@@Z,src/tactical.cpp,93aafd7b08818c49e13beefdbc4c741cf0b5eff339b279f5b9d1db005849330a
