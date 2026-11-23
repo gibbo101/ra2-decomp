@@ -16,7 +16,6 @@ Verdicts:
 | 0x004144B0 | AircraftClass::Draw_It | src/aircraft.cpp | unread `Cell cell = Get_Cell();` | FORCING, 78.6% (1345/1361) |
 | 0x0041B110 | AircraftClass::Read_INI | src/aircraft.cpp | dead `double fs` used as a conversion vehicle | FORCING, 99.2% as `(double)strength * ...`, 57.4% as `strength * ...` |
 | 0x00442230 | BuildingClass::Take_Damage | src/building.cpp | unread `int remaining = contacts.Count();` | FORCING, 80.5% (2617/2573) |
-| 0x004684E0 | BulletClass::Detach | src/bullet.cpp | unread `int tracked = Count() + Count() + Count();` | FORCING, 65.3% (393/392) |
 | 0x0047FDE0 | CellClass::Overlay_Shadow_Render_Rect | src/cell.cpp | unread `d0`, `d1 = point + point` | FORCING, 53.0% (384/404) |
 | 0x00480110 | CellClass::Overlay_Draw_Offset | src/cell.cpp | unread `doubled = offset + offset` | SIDE-EFFECT: Draw_Overlay_Shadow 25.6%, Draw_Overlay 77.0%, Overlay_Render_Rect 87.1%, Overlay_Shadow_Render_Rect 45.2% |
 | 0x00486A70 | CellClass::Fog_Cell | src/cell.cpp | bare `building->PositionCell;` | FORCING, 81.3% (360/375) |
@@ -45,5 +44,3 @@ Verdicts:
 | 0x00796B90 | Select_WDT_Location_Proc | src/wonline.cpp | `do SetWindowLong(...); while (0);` | FORCING, 98.1% (580/580) |
 | 0x00799080 | FUN_00799080 | src/wonline.cpp | `do SetWindowLong(...); while (0);` | FORCING, 97.7% (3142/3142) |
 | 0x007AF540 | FactionSelectDialogControl::Update_Hover | src/worlddom.cpp | `else if (false) { two: ... }` holding a goto label | FORCING, 62.7% (240/244) as a goto-free if/else |
-
-FORCING 24, SIDE-EFFECT 8.
