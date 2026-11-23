@@ -217,16 +217,18 @@ extern int DAT_00B0B500;
 void SidebarClass::FUN_006A5090(void)
 {
 	int side = Scen->PlayerSideIndex;
-	int span = SidebarRect.Y * 3 + side * 5 + SidebarRect.Y * 7 + side * 9 + SidebarRect.Y * 11 + side * 13;
 
 	if (side == 0) {
 		int y = SidebarRect.Y;
 		DAT_00B0B4E4 = 0x40;
 		DAT_00B0B4F0 = 0x1d;
 		DAT_00B0B4FC = 0x3f;
-		DAT_00B0B4E0 = y + 8;
-		DAT_00B0B4EC = DAT_00B0B4E0 + 0x1f;
-		DAT_00B0B4F8 = DAT_00B0B4EC + 0x1e;
+		int repair_y = y + 8;
+		DAT_00B0B4E0 = repair_y;
+		int tabs_y = DAT_00B0B4E0 + 0x1f;
+		DAT_00B0B4EC = tabs_y;
+		int cameos_y = DAT_00B0B4EC + 0x1e;
+		DAT_00B0B4F8 = cameos_y;
 	} else {
 		int y;
 		if (side == 1) {
@@ -235,10 +237,12 @@ void SidebarClass::FUN_006A5090(void)
 			y = SidebarRect.Y + 7;
 		}
 		DAT_00B0B4E0 = y;
-		DAT_00B0B4EC = y + 0x20;
+		int tabs_y = y + 0x20;
+		DAT_00B0B4EC = tabs_y;
 		DAT_00B0B4E4 = 0x34;
 		DAT_00B0B4F0 = 0x20;
-		DAT_00B0B4F8 = DAT_00B0B4EC + 0x1e;
+		int cameos_y = DAT_00B0B4EC + 0x1e;
+		DAT_00B0B4F8 = cameos_y;
 		DAT_00B0B4FC = 0x40;
 	}
 }
