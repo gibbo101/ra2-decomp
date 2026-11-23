@@ -3733,7 +3733,7 @@ int __fastcall Join_Lobby(bool flag);
 bool FUN_0077CF40(void);
 void __fastcall FUN_007A0EA0(char const * name, int ping);
 
-static inline void Focus_Chat_Input_After(unsigned int event);
+void __fastcall FUN_00792EC0(unsigned int mask);
 
 // FUNCTION: GAMEMD 0x00785740
 void __fastcall Handle_User_Leave(User *user)
@@ -3770,7 +3770,7 @@ void __fastcall Handle_User_Leave(User *user)
 		memset(g_UserInfo, 0, sizeof(g_UserInfo));
 		g_UserList.clear();
 		g_IsChannelCreator = 0;
-		Focus_Chat_Input_After(0x40);
+		FUN_00792EC0(0x40);
 		Session.Options.ScenarioDescription[0] = 0;
 		++Session.Suspended;
 		Session.ScenarioFileLength = 0;
@@ -4070,22 +4070,6 @@ bool SimpleWonlineDialogControl::F4(void)
 	return WOL_Wait_Callback();
 }
 
-static inline void Focus_Chat_Input_After(unsigned int event)
-{
-	HWND dialog = WS_Find_Dialog(0xC4);
-	if (dialog) {
-		g_ActiveWaitFlags &= ~event;
-		if (g_ActiveWaitFlags == 0) {
-			FUN_007757E0(dialog, 0);
-		}
-	}
-	HWND top = FUN_00775B10();
-	HWND input = GetDlgItem(top, 0x540);
-	if (input) {
-		SetFocus(input);
-	}
-}
-
 int __fastcall Run_Dialog_Control(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
 BOOL CALLBACK Select_WDT_Location_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 extern int g_LadderServerPort;
@@ -4182,28 +4166,28 @@ bool __fastcall FUN_007864C0(Server * server)
 	for (;;) {
 		int wait = Wait_For_Event();
 		if (wait == 0) {
-			Focus_Chat_Input_After(0xFFFFFFFF);
+			FUN_00792EC0(0xFFFFFFFF);
 			return false;
 		}
 		if (wait == 5) {
 			ODMessageBox(StringTable::LoadString("TXT_CANT_CONNECT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x25F3), 0, FUN_0077D710, 0);
-			Focus_Chat_Input_After(0xFFFFFFFF);
+			FUN_00792EC0(0xFFFFFFFF);
 			return false;
 		}
 		if (wait == 0x12) {
-			Focus_Chat_Input_After(0xFFFFFFFF);
+			FUN_00792EC0(0xFFFFFFFF);
 			return false;
 		}
 		if (tries-- < 0) {
 			ODMessageBox(StringTable::LoadString("TXT_CANT_CONNECT", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x25FA), 0, FUN_0077D710, 0);
-			Focus_Chat_Input_After(0xFFFFFFFF);
+			FUN_00792EC0(0xFFFFFFFF);
 			return false;
 		}
 		if (wait == 2) {
 			break;
 		}
 	}
-	Focus_Chat_Input_After(0xFFFFFFFF);
+	FUN_00792EC0(0xFFFFFFFF);
 	g_pChat->SetClientVersion(0x10010);
 	g_IgnoreNetStatus = 0;
 	Session.Read_MultiPlayer_Settings();
@@ -4242,16 +4226,16 @@ bool __fastcall FUN_007864C0(Server * server)
 	for (;;) {
 		int wait = Wait_For_Event();
 		if (wait == 0) {
-			Focus_Chat_Input_After(0xFFFFFFFF);
+			FUN_00792EC0(0xFFFFFFFF);
 			break;
 		}
 		if (wait == 5) {
 			ODMessageBox(StringTable::LoadString("TXT_WDT_NET_ERR", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x264F), 0, FUN_0077D710, 0);
-			Focus_Chat_Input_After(0xFFFFFFFF);
+			FUN_00792EC0(0xFFFFFFFF);
 			break;
 		}
 		if (wait == 0x12) {
-			Focus_Chat_Input_After(0xFFFFFFFF);
+			FUN_00792EC0(0xFFFFFFFF);
 			break;
 		}
 		if (wait == 0xE) {
@@ -4544,7 +4528,7 @@ int Login_WOL(void)
 			}
 		}
 	}
-	Focus_Chat_Input_After(0xFFFFFFFF);
+	FUN_00792EC0(0xFFFFFFFF);
 	if (!failed) {
 		FUN_00786EF0();
 	}
@@ -4710,7 +4694,7 @@ bool __fastcall Leave_Channel(int id, int flag)
 			WOL_Wait_Callback();
 			tries++;
 		}
-		Focus_Chat_Input_After(0x40);
+		FUN_00792EC0(0x40);
 	}
 	return g_ChannelCount == 0;
 }
@@ -4825,7 +4809,7 @@ void __fastcall NewLogin(HWND win)
 		}
 		ResetEvent(g_WaitEventHandles[wait]);
 	} while (wait != 0 && wait != 1);
-	Focus_Chat_Input_After(0xFFFFFFFF);
+	FUN_00792EC0(0xFFFFFFFF);
 	if (wait == 0) {
 		ShowWindow(win, SW_SHOW);
 		OwnerDraw::SetUserData2(win, 0);
@@ -15842,17 +15826,17 @@ bool __fastcall FUN_00789B60(void)
 	HRESULT result = g_pChat->RequestChannelCreate(&channel);
 	if (result == 0x800401F8) {
 		ODMessageBox(StringTable::LoadString("TXT_BAD_CHANKEY", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2E0D), 0, FUN_0077D710, false);
-		Focus_Chat_Input_After(0x80);
+		FUN_00792EC0(0x80);
 		return false;
 	}
 	if (result != 0) {
 		ODMessageBox(StringTable::LoadString("TXT_CANTCREATE_CHAN", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2E13), 0, FUN_0077D710, false);
-		Focus_Chat_Input_After(0x80);
+		FUN_00792EC0(0x80);
 		return false;
 	}
 	WideWstring title(StringTable::LoadString("GUI:CreatingChannel", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2E1B));
 	Show_Wait_Window(4, title, false);
-	Focus_Chat_Input_After(0x80);
+	FUN_00792EC0(0x80);
 	Show_Wait_Window(4, title, true);
 	int index = Player_Name_To_Index(g_NickName);
 	if (index < 0) return false;
