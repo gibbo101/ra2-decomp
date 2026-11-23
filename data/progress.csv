@@ -14324,6 +14324,7 @@ address,name,result,size,source,symbol
 0x006D6D10,Tactical::Draw_Overlays,MATCH,1232,src/tactical.cpp,?Draw_Overlays@Tactical@@QAEXABV?$TRect@H@@@Z
 0x006D71E0,Tactical::Draw_Shroud,MATCH,894,src/tactical.cpp,?Draw_Shroud@Tactical@@QAEXABV?$TRect@H@@@Z
 0x006D7560,Tactical::Draw_Tiles,MATCH,730,src/tactical.cpp,?Draw_Tiles@Tactical@@QAEXABV?$TRect@H@@0@Z
+0x006D7840,Tactical::Draw_Sparkles,MATCH,954,src/tactical.cpp,?Draw_Sparkles@Tactical@@QAEXABV?$TRect@H@@0@Z
 0x006D7C00,Tactical::Draw_Tile_Shadows,MATCH,785,src/tactical.cpp,?Draw_Tile_Shadows@Tactical@@QAEXABV?$TRect@H@@0@Z
 0x006D8260,Tactical::Draw_Tile_Shadows,MATCH,619,src/tactical.cpp,?Draw_Tile_Shadows@Tactical@@QAEXHABV?$TRect@H@@@Z
 0x006D84D0,Tactical::Clamp_Pixel_To_Tactical,MATCH,89,src/tactical.cpp,?Clamp_Pixel_To_Tactical@Tactical@@QAE?AVPoint2D@@ABV2@@Z
