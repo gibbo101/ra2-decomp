@@ -6598,6 +6598,7 @@ address,size,symbol,source,sha256
 0x0051AA10,42,?Detach@InfantryClass@@UAEXPBVAbstractClass@@_N@Z,src/infantry.cpp,212ba8dff57456ba69a2aba9c394779cd34c96a6d258607527da3f6a0fb659cc
 0x0051AA40,1953,?Assign_Destination@InfantryClass@@UAEXPAVAbstractClass@@_N@Z,src/infantry.cpp,96e71539cd6a3739cf5f527eab669412fcdc0382a643d4f5ef65cb5a638768ab
 0x0051B1F0,347,?Assign_Target@InfantryClass@@UAEXPAVAbstractClass@@@Z,src/infantry.cpp,29adabdcbb0fc67dd4f806d0d3d8ebf5ee825f27241eb5d20b91562e1fef84df
+0x0051B350,1881,?Tunnel_AI@InfantryClass@@QAEXXZ,src/infantry.cpp,5afd340a81ba7d91f66ee21207441279d717ab049d090664f3d8654c44d9040e
 0x0051BAB0,1239,?AI@InfantryClass@@UAEXXZ,src/infantry.cpp,dd76ae4e4e171d16be608751337383f7c832351cf8e6607ef624e7d0a1761819
 0x0051BF90,2323,?Can_Enter_Cell@InfantryClass@@UBE?AW4MoveType@@PBVCellClass@@W4FacingType@@H0_N@Z,src/infantry.cpp,ace3db9b5f9423affd3e97cb052bb2980957aec2e8ea334da9c26af54c118f1f
 0x0051C8B0,741,?Can_Fire@InfantryClass@@UBE?AW4FireErrorType@@PAVAbstractClass@@H_N@Z,src/infantry.cpp,691a2885635a27319be44b51354cfbd6f3762af588787caaeee4b2d676d85ba1

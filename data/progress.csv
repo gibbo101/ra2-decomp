@@ -6244,6 +6244,7 @@ address,name,result,size,source,symbol
 0x0051AA10,InfantryClass::Detach,MATCH,42,src/infantry.cpp,?Detach@InfantryClass@@UAEXPBVAbstractClass@@_N@Z
 0x0051AA40,InfantryClass::Assign_Destination,MATCH,1953,src/infantry.cpp,?Assign_Destination@InfantryClass@@UAEXPAVAbstractClass@@_N@Z
 0x0051B1F0,InfantryClass::Assign_Target,MATCH,347,src/infantry.cpp,?Assign_Target@InfantryClass@@UAEXPAVAbstractClass@@@Z
+0x0051B350,InfantryClass::Tunnel_AI,MATCH,1881,src/infantry.cpp,?Tunnel_AI@InfantryClass@@QAEXXZ
 0x0051BAB0,InfantryClass::AI,MATCH,1239,src/infantry.cpp,?AI@InfantryClass@@UAEXXZ
 0x0051BF90,InfantryClass::Can_Enter_Cell,MATCH,2323,src/infantry.cpp,?Can_Enter_Cell@InfantryClass@@UBE?AW4MoveType@@PBVCellClass@@W4FacingType@@H0_N@Z
 0x0051CBA0,InfantryClass::Enter_Idle_Mode,MATCH,524,src/infantry.cpp,?Enter_Idle_Mode@InfantryClass@@UAE_N_N0@Z

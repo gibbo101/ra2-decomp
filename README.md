@@ -12,7 +12,7 @@ over real objects or hard-coded addresses are rejected however well they score.
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
 **Status (23 November 2026):** 3.55 MB of the game's 3.82 MB of code matches byte for byte
-(93%), in 19,266 of its 19,353 functions (99%) + 6 reconstructed. Counting each unmatched
+(93%), in 19,267 of its 19,353 functions (99%) + 6 reconstructed. Counting each unmatched
 function at its best attempt so far, the fuzzy match is 98%. Each function is checked on
 its own, and `tools/exelink/` links the whole executable with every matched function at its
 original address: with the original's bytes for what isn't matched yet, the image is
@@ -107,7 +107,7 @@ out of history.
 - [RobinDigitalPro](https://github.com/RobinDigitalPro): shared matched source and names from
   their byte-matching rebuild of Red Alert 2 1.001
   ([RobinDigitalPro/ra2-decomp-help](https://github.com/RobinDigitalPro/ra2-decomp-help),
-  GPL-3.0-or-later), from which UnitClass::Tunnel_AI's coordinate forms are adapted.
+  GPL-3.0-or-later), from which both Tunnel_AI functions' coordinate forms are adapted.
 
 ## You need your own copy of the game
 
