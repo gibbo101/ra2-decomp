@@ -18499,6 +18499,7 @@ address,name,result,size,source,symbol
 0x007A5890,CChatEventSink::OnChannelJoin,MATCH,6216,src/wonline.cpp,?OnChannelJoin@CChatEventSink@@QAGJJPAUChannel@@PAUUser@@@Z
 0x007AC630,??_GCreateGameDialogControl@@UAEPAXI@Z,MATCH,52,src/wonline.cpp,??_GCreateGameDialogControl@@UAEPAXI@Z
 0x0077E430,Encode_Game_Options,MATCH,845,src/wonline.cpp,?Encode_Game_Options@@YIXPAD@Z
+0x007A2330,FUN_007A2330,MATCH,706,src/wonline.cpp,?FUN_007A2330@@YIXPAD@Z
 0x00535A60,??1CDFileClass@@UAE@XZ,MATCH,11,src/worlddom.cpp,??1CDFileClass@@UAE@XZ
 0x00535A70,??1CCFileClass@@UAE@XZ,MATCH,39,src/worlddom.cpp,??1CCFileClass@@UAE@XZ
 0x007AF090,_$E2,MATCH,23,src/worlddom.cpp,_$E2
