@@ -1212,6 +1212,24 @@ int MapClass::Overpass(bool flag)
 	return(value);
 }
 
+enum {
+	BRIDGE_MIDDLE_OK,
+	BRIDGE_MIDDLE_DAMAGED_1,
+	BRIDGE_MIDDLE_DAMAGED_2,
+	BRIDGE_MIDDLE_DAMAGED_3,
+	BRIDGE_MIDDLE_DESTROYED
+};
+
+static inline void Destroy_Bridge_At(Cell const & cell)
+{
+	Map[cell].Destroy_Bridge();
+}
+
+static inline Cell Adjacent_Cell_L(Cell const &cell, FacingType facing)
+{
+	return (AdjacentCell[(int)facing & 7] + cell);
+}
+
 // FUNCTION: GAMEMD 0x00568E40
 void MapClass::Repair_High_Bridge_Span(CellClass * cptr, FacingType dir, Rect * dirty)
 {
@@ -1333,20 +1351,11 @@ void MapClass::Repair_High_Bridge_Span(CellClass * cptr, FacingType dir, Rect * 
 		Point2D point;
 		TacticalMap->Coord_To_Pixel(coord, point);
 
-		int x1 = dirty->X;
-		int y1 = dirty->Y;
-		int minx = dirty->X;
-		if (dirty->X >= point.X) {
-			minx = point.X;
-		}
-		int miny = dirty->Y;
-		dirty->X = minx - 64;
-		if (y1 >= point.Y) {
-			miny = point.Y;
-		}
-		dirty->Y = miny - 64;
-		dirty->Width = abs(x1 - point.X) + 128;
-		dirty->Height = abs(y1 - point.Y) + 128;
+		Point2D start(dirty->X, dirty->Y);
+		dirty->X = min(start.X, point.X) - 64;
+		dirty->Y = min(start.Y, point.Y) - 64;
+		dirty->Width = abs(start.X - point.X) + 128;
+		dirty->Height = abs(start.Y - point.Y) + 128;
 	}
 
 	if (reset_zones) {
@@ -1356,13 +1365,6 @@ void MapClass::Repair_High_Bridge_Span(CellClass * cptr, FacingType dir, Rect * 
 	if (cells.Count() > 0) {
 		Recalc_Cells_In_List(cells);
 	}
-	int n0 = cells.Count();
-	int n1 = cells.Count();
-	int n2 = cells.Count();
-	int n3 = cells.Count();
-	int n4 = cells.Count();
-	int n5 = cells.Count();
-	int n6 = cells.Count();
 }
 
 // FUNCTION: GAMEMD 0x00569760
@@ -1486,20 +1488,11 @@ void MapClass::Repair_Train_Bridge_Span(CellClass * cptr, FacingType dir, Rect *
 		Point2D point;
 		TacticalMap->Coord_To_Pixel(coord, point);
 
-		int x1 = dirty->X;
-		int y1 = dirty->Y;
-		int minx = dirty->X;
-		if (dirty->X >= point.X) {
-			minx = point.X;
-		}
-		int miny = dirty->Y;
-		dirty->X = minx - 64;
-		if (y1 >= point.Y) {
-			miny = point.Y;
-		}
-		dirty->Y = miny - 64;
-		dirty->Width = abs(x1 - point.X) + 128;
-		dirty->Height = abs(y1 - point.Y) + 128;
+		Point2D start(dirty->X, dirty->Y);
+		dirty->X = min(start.X, point.X) - 64;
+		dirty->Y = min(start.Y, point.Y) - 64;
+		dirty->Width = abs(start.X - point.X) + 128;
+		dirty->Height = abs(start.Y - point.Y) + 128;
 	}
 
 	if (reset_zones) {
@@ -1509,13 +1502,6 @@ void MapClass::Repair_Train_Bridge_Span(CellClass * cptr, FacingType dir, Rect *
 	if (cells.Count() != 0) {
 		Recalc_Cells_In_List(cells);
 	}
-	int n0 = cells.Count();
-	int n1 = cells.Count();
-	int n2 = cells.Count();
-	int n3 = cells.Count();
-	int n4 = cells.Count();
-	int n5 = cells.Count();
-	int n6 = cells.Count();
 }
 
 // FUNCTION: GAMEMD 0x0056A080
@@ -2141,7 +2127,8 @@ ObjectClass * MapClass::Close_Object(Coord const & coord) const
 		Cell newcell = Cell(cell + _offsets[index]);
 		if (In_Radar(newcell)) {
 			for (ObjectClass * o = (*this)[newcell].Cell_Occupier(); o != NULL; o = o->Next) {
-				if (!(o->AbstractFlags & 1) || ((TechnoClass *)o)->IsOwnedByPlayer || ((TechnoClass *)o)->Cloak != CLOAKED) {
+				TechnoClass * t = As_Techno(o);
+				if (!t || t->IsOwnedByPlayer || t->Cloak != CLOAKED) {
 					int d=-1;
 					if (o->RTTI == RTTI_BUILDING) {
 						d = Distance(coord, (Coord)newcell);
@@ -2161,7 +2148,6 @@ ObjectClass * MapClass::Close_Object(Coord const & coord) const
 	if (object && distance > 0xB5) {
 		object = 0;
 	}
-	Cell unused = cell + _offsets[0];
 	return(object);
 }
 
@@ -2935,14 +2921,6 @@ bool MapClass::Base_Region(Cell const & cell, HousesType & house, ZoneType & zon
 	return(false);
 }
 
-enum {
-	BRIDGE_MIDDLE_OK,
-	BRIDGE_MIDDLE_DAMAGED_1,
-	BRIDGE_MIDDLE_DAMAGED_2,
-	BRIDGE_MIDDLE_DAMAGED_3,
-	BRIDGE_MIDDLE_DESTROYED
-};
-
 // FUNCTION: GAMEMD 0x0056E990
 void MapClass::Set_Bridge_End_State(Cell const & cell, bool damaged, bool recursive)
 {
@@ -3200,12 +3178,6 @@ void MapClass::Internal_Damage_Train_Bridge_NS_TopRight(Cell const & cell, Facin
 	}
 }
 
-
-static inline void Destroy_Bridge_At(Cell const & cell)
-{
-	Map[cell].Destroy_Bridge();
-}
-
 // FUNCTION: GAMEMD 0x0056F8B0
 void MapClass::Internal_Destroy_Train_Bridge_NS_BottomLeft(Cell const & cell, FacingType dir)
 {
@@ -3291,11 +3263,6 @@ void MapClass::Internal_Destroy_Train_Bridge_NS_TopRight(Cell const & cell, Faci
 	} else {
 		Set_Bridge_End_State(adjacent, true, false);
 	}
-}
-
-static inline Cell Adjacent_Cell_L(Cell const &cell, FacingType facing)
-{
-	return (AdjacentCell[(int)facing & 7] + cell);
 }
 
 // FUNCTION: GAMEMD 0x00570050
