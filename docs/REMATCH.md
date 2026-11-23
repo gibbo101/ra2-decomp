@@ -38,3 +38,5 @@ Verdicts:
 | 0x00796B90 | Select_WDT_Location_Proc | src/wonline.cpp | `do SetWindowLong(...); while (0);` | FORCING, 98.1% (580/580) |
 | 0x00799080 | FUN_00799080 | src/wonline.cpp | `do SetWindowLong(...); while (0);` | FORCING, 97.7% (3142/3142) |
 | 0x007AF540 | FactionSelectDialogControl::Update_Hover | src/worlddom.cpp | `else if (false) { two: ... }` holding a goto label | FORCING, 62.7% (240/244) as a goto-free if/else |
+
+FORCING 21, SIDE-EFFECT 4.
