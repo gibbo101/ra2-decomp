@@ -5798,6 +5798,280 @@ LRESULT CALLBACK OwnerDraw::SysTabHandler(HWND window, UINT message, WPARAM wpar
 	return(result);
 }
 
+namespace OwnerDraw {
+extern SHPStruct *CloseButtonShape;
+ConvertClass *GetSideButtonConvert(void);
+}
+ConvertClass *FUN_0072B050(void);
+extern RGBClass DAT_00B0F9FC;
+extern RGBClass DAT_00B0FB14;
+extern RGBClass DAT_00B0FB19;
+extern RGBClass DAT_00B0FA94;
+
+// FUNCTION: GAMEMD 0x00612B70
+LRESULT CALLBACK OwnerDraw::OwnerDrawButtonHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	WNDPROC original = NULL;
+	WNDPROC *found = NULL;
+	if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) {
+		original = *found;
+	}
+
+	RECT drect;
+	memset(&drect, 0, sizeof(drect));
+	Get_Display_Rect(window, &drect);
+
+	Rect origin;
+	origin.X = drect.left;
+	origin.Y = drect.top;
+	origin.Width = drect.right - drect.left;
+	origin.Height = drect.bottom - drect.top;
+
+	RECT crect;
+	memset(&crect, 0, sizeof(crect));
+	GetClientRect(window, &crect);
+
+	OwnerDraw::WinData *data = Find_Data(window);
+	if (data == NULL) {
+		return CallWindowProc(original, window, message, wparam, lparam);
+	}
+
+	int state = data->Button.state;
+	LONG style = GetWindowLong(window, GWL_STYLE);
+
+	switch (message) {
+	case WM_TIMER:
+		data->ButtonAlternateFrame = !data->ButtonAlternateFrame;
+		InvalidateRect(window, NULL, TRUE);
+		break;
+
+	case WM_USER + 220: {
+		OwnerDraw::Dialogs.getPointer(window, &data);
+		bool on = lparam == 1;
+		if (on && !data->ButtonTimerActive) {
+			data->ButtonTimerActive = true;
+			SetTimer(window, 0, 1000, NULL);
+		} else if (!on && data->ButtonTimerActive) {
+			data->ButtonTimerActive = false;
+			data->ButtonAlternateFrame = false;
+			KillTimer(window, 0);
+			InvalidateRect(window, NULL, TRUE);
+		}
+		break;
+	}
+
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONDBLCLK:
+		if (data->skipDraw) {
+			return 0;
+		}
+		VocClass::PlayGlobal(Rule->GUIMainButtonSound, 1.0f, 0x2000);
+		break;
+
+	case WM_ACTIVATE:
+	case WM_KILLFOCUS:
+	case WM_MOUSEACTIVATE:
+		return 0;
+
+	case WM_PAINT: {
+		if (data->skipDraw) {
+			ValidateRect(window, NULL);
+			return 0;
+		}
+
+		Rect rect = origin;
+		unsigned color = OwnerDraw::PrimaryTextColor;
+		Surface *image;
+
+		if (data->cachedSurface == NULL) {
+			Surface *surface = new BSurface(crect.right + 1, crect.bottom + 1, 2);
+			data->cachedSurface = surface;
+			OwnerDraw::CachedSurfaceCount++;
+
+			Rect dest(0, 0, crect.right + 1, crect.bottom + 1);
+			Rect src(drect.left, drect.top, crect.right + 1, crect.bottom + 1);
+
+			surface->Blit_From(dest, *AlternateSurface, src);
+		}
+
+		if (data->LayoutBand != 0) {
+			ConvertClass *convert = NULL;
+			ShapeSet const *shape = NULL;
+			int frame = 0;
+
+			if (data->LayoutBand == 1) {
+				convert = OwnerDraw::GetSmallButtonAnimConvert();
+				shape = (ShapeSet const *)OwnerDraw::SmallButtonAnimShape;
+				int f = 2;
+				if (state & 1) {
+					f = 4;
+				} else if (data->ButtonAlternateFrame) {
+					f = 3;
+				}
+				frame = f;
+			} else if (data->LayoutBand == 2) {
+				convert = OwnerDraw::GetSideButtonConvert();
+				shape = (ShapeSet const *)OwnerDraw::SideButtonShape;
+				int f = 0;
+				if (state & 1) {
+					f = 1;
+				} else if (data->ButtonAlternateFrame) {
+					f = 2;
+				}
+				frame = f;
+			} else if (data->LayoutBand == 3) {
+				convert = FUN_0072B050();
+				shape = (ShapeSet const *)OwnerDraw::CloseButtonShape;
+				int f = 0;
+				if (state & 1) {
+					f = 1;
+				} else if (data->ButtonAlternateFrame) {
+					f = 2;
+				}
+				frame = f;
+			}
+
+			if (style & WS_DISABLED) {
+				int pixel;
+				if (Session.FUN_0069BBE0()) {
+					int side = Scen->PlayerSideIndex;
+					if (side == 0) {
+						pixel = DSurface::Build_Hicolor_Pixel(DAT_00B0F9FC);
+					} else if (side == 1) {
+						pixel = DSurface::Build_Hicolor_Pixel(DAT_00B0FB14);
+					} else {
+						pixel = DSurface::Build_Hicolor_Pixel(DAT_00B0FB19);
+					}
+				} else {
+					pixel = DSurface::Build_Hicolor_Pixel(DAT_00B0FA94);
+				}
+				RGBClass rgb = DSurface::Deconstruct_Hicolor_Pixel(pixel);
+				color = PALETTERGB(rgb.Get_Red(), rgb.Get_Green(), rgb.Get_Blue());
+			}
+
+			Point2D point = FUN_0072A9C0(&rect);
+			Rect window_rect = AlternateSurface->Get_Rect();
+			if (convert && shape) {
+				Draw_Shape(*AlternateSurface, *convert, shape, frame, point, window_rect, SHAPE_WIN_REL);
+			}
+
+		} else if (data->image != NULL) {
+			image = data->image;
+			if ((state & 1) && data->altImage != NULL) {
+				image = data->altImage;
+			}
+
+			Rect src = rect;
+			src.X = 0;
+			src.Y = 0;
+			AlternateSurface->Blit_From(rect, *image, src);
+
+		} else {
+			static char _prev_state = 'u';
+
+			char updown = 'u';
+			if (state & 1) {
+				updown = 'd';
+			}
+			if (style & WS_DISABLED) {
+				updown = 'u';
+			} else if (updown == 'd' && _prev_state == 'u') {
+				VocClass::PlayGlobal(Rule->GenericClick, 1.0f, 0x2000);
+			}
+			_prev_state = updown;
+
+			int widths[2] = {7, 7};
+			int margins[2] = {10, 10};
+			int heights[2] = {24, 30};
+
+			int index = 0;
+			for (unsigned int i = 0; i < 2; i++) {
+				if (heights[i] > rect.Height && i != 0) {
+					break;
+				}
+				index = i;
+			}
+
+			int height = heights[index];
+			int w = widths[index];
+			int margin = margins[index];
+
+			if (data->cachedSurface != NULL) {
+				Rect cachesrc(0, 0, crect.right + 1, crect.bottom + 1);
+				Rect cachedest(drect.left, drect.top, crect.right + 1, crect.bottom + 1);
+				AlternateSurface->Blit_From(cachedest, *data->cachedSurface, cachesrc);
+				InvalidateRect(window, NULL, FALSE);
+			}
+
+			origin.Y += (rect.Height - height) / 2;
+			if (state & 1) {
+				origin.Y += 2;
+			}
+
+			Rect destrect;
+			Rect sourcerect;
+			char buffer[40];
+
+			sprintf(buffer, "b%c%c_li%d.pcx", updown, 'e', height);
+			image = SurfaceCache.GetSurface(buffer);
+			origin.Height = image->Get_Height();
+			destrect = origin;
+			destrect.Width = w;
+			sourcerect.Y = 0;
+			sourcerect.X = 0;
+			destrect.Height = height;
+			sourcerect.Width = w;
+			sourcerect.Height = height;
+			AlternateSurface->Blit_From(destrect, *image, sourcerect);
+
+			sprintf(buffer, "b%c%c_mi%d.pcx", updown, 'e', height);
+			image = SurfaceCache.GetSurface(buffer);
+			Rect midrect = origin;
+			midrect.X += w;
+			midrect.Width -= margin;
+			midrect.Height = image->Get_Height();
+			SurfaceCache.Draw(midrect, *AlternateSurface, *image, 0, 0);
+
+			sprintf(buffer, "b%c%c_ri%d.pcx", updown, 'e', height);
+			image = SurfaceCache.GetSurface(buffer);
+			destrect = origin;
+			destrect.X += origin.Width - margin;
+			destrect.Width = margin;
+			destrect.Height = image->Get_Height();
+			sourcerect.Height = destrect.Height;
+			sourcerect.Y = 0;
+			sourcerect.X = 0;
+			sourcerect.Width = destrect.Width;
+			AlternateSurface->Blit_From(destrect, *image, sourcerect);
+		}
+
+		if (data->image == NULL && data->text) {
+			RECT client;
+			GetClientRect(window, &client);
+
+			Rect text_rect(
+				origin.X,
+				origin.Y + 1,
+				origin.Width + origin.X - 2,
+				origin.Height + origin.Y);
+			if (state & 1) {
+				text_rect.X += 2;
+				text_rect.Y += 4;
+			}
+			OwnerDraw::DrawWideText(AlternateSurface, data->text, (LTRBStruct *)&text_rect, data->Font, color, 5, 0xc, 0, 0, 0);
+		}
+
+		if (data->LayoutBand == 0 && (style & WS_DISABLED)) {
+			ODFillRectTrans(&rect, AlternateSurface, 0, 128);
+		}
+		ValidateRect(window, NULL);
+		return 0;
+	}
+	}
+
+	return CallWindowProc(original, window, message, wparam, lparam);
+}
+
 static inline int Copy_Wide_Text(wchar_t *dest, wchar_t const *source, unsigned int capacity)
 {
 	wcsncpy(dest, source, capacity);
