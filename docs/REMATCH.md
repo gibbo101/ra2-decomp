@@ -34,7 +34,6 @@ Verdicts:
 | 0x006316E0 | PhoneEntryEdit::Dialog | src/phoneed.cpp | unread `int unused = RC + 1;` | SIDE-EFFECT: PhoneEdit::Add 63.9%, PhoneEdit::Edit 46.4% |
 | 0x0063F850 | PowerClass::Desired_Power_Height | src/power.cpp | unread `int unused = Count() + Count();` | SIDE-EFFECT: PowerClass::Update_Delay 11.4%, PowerClass::Desired_Levels 43.8% |
 | 0x00644F50 | ParticleTypeClass::Read_INI | src/ptype.cpp | unread `int unused = ParticleTypes.Count();` | FORCING, 74.1% (1251/1235) |
-| 0x006A5090 | SidebarClass::FUN_006A5090 | src/sidebar.cpp | unread `int span = ...` | SIDE-EFFECT: SidebarClass::Init_IO 53.0% |
 | 0x006CB920 | SuperClass::Discharged | src/super.cpp | unread `int chargeLeft = Control.Value();` | FORCING, 86.2% (915/895) |
 | 0x006D8B30 | Tactical::Update_Visible_Cells | src/tactical.cpp | trailing `do { } while (0);` | SIDE-EFFECT: Tactical::AI 67.9%, Set_View_Dimensions 27.1%, Set_Tactical_Position(Point2D) 41.1%, Set_Tactical_Position(Coord) 44.4%, Tactical::Load 49.0% |
 | 0x006F64A0 | TechnoClass::Draw_Health_Bar | src/techno.cpp | bare `HeightAGL;` | FORCING, 55.3% (1570/1568) |
@@ -45,5 +44,3 @@ Verdicts:
 | 0x00796B90 | Select_WDT_Location_Proc | src/wonline.cpp | `do SetWindowLong(...); while (0);` | FORCING, 98.1% (580/580) |
 | 0x00799080 | FUN_00799080 | src/wonline.cpp | `do SetWindowLong(...); while (0);` | FORCING, 97.7% (3142/3142) |
 | 0x007AF540 | FactionSelectDialogControl::Update_Hover | src/worlddom.cpp | `else if (false) { two: ... }` holding a goto label | FORCING, 62.7% (240/244) as a goto-free if/else |
-
-FORCING 24, SIDE-EFFECT 8.
