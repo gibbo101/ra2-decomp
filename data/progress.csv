@@ -10793,9 +10793,10 @@ address,name,result,size,source,symbol
 0x006261B0,PaletteClass::Partial_Adjust,MATCH,75,src/palette.cpp,?Partial_Adjust@PaletteClass@@QAEXHABV1@PAD@Z
 0x00626200,PaletteClass::Closest_Color,MATCH,69,src/palette.cpp,?Closest_Color@PaletteClass@@QBEHABVRGBClass@@@Z
 0x00626250,SchemeNode::SchemeNode,MATCH,54,src/palette.cpp,??0SchemeNode@@QAE@PBDPAV?$DynamicVectorClass@PAVColorScheme@@@@@Z
-0x00626290,SchemeNode::Release,MATCH,93,src/palette.cpp,?Release@SchemeNode@@QAEXXZ
+0x00626290,SchemeNode::~SchemeNode,MATCH,93,src/palette.cpp,??1SchemeNode@@QAE@XZ
 0x006262F0,SchemeNode::Replace,MATCH,119,src/palette.cpp,?Replace@SchemeNode@@QAEXPAV?$DynamicVectorClass@PAVColorScheme@@@@@Z
-0x00626370,SchemeNode::~SchemeNode,MATCH,93,src/palette.cpp,??1SchemeNode@@QAE@XZ
+0x00626370,SchemeNode::Release,MATCH,93,src/palette.cpp,?Release@SchemeNode@@QAEXXZ
+0x00628170,?Next@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAVHashString@@PAUHashIterator@@@Z,MATCH,128,src/palette.cpp,?Next@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAVHashString@@PAUHashIterator@@@Z
 0x00628110,?Find@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAPAVSchemeNode@@ABVHashString@@@Z,MATCH,96,src/palette.cpp,?Find@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAPAVSchemeNode@@ABVHashString@@@Z
 0x006263D0,ColorScheme::GeneratePalette,MATCH,650,src/palette.cpp,?GeneratePalette@ColorScheme@@SIPAV?$DynamicVectorClass@PAVColorScheme@@@@PBD@Z
 0x00626660,SchemeHash,MATCH,40,src/palette.cpp,?SchemeHash@@YIHPBD@Z
@@ -10827,7 +10828,6 @@ address,name,result,size,source,symbol
 0x00627F90,?Resize@?$DynamicVectorClass@PAVColorScheme@@@@UAE_NHPBQAVColorScheme@@@Z,MATCH,176,src/palette.cpp,?Resize@?$DynamicVectorClass@PAVColorScheme@@@@UAE_NHPBQAVColorScheme@@@Z
 0x00628040,?ID@?$DynamicVectorClass@PAVColorScheme@@@@UAEHABQAVColorScheme@@@Z,MATCH,38,src/palette.cpp,?ID@?$DynamicVectorClass@PAVColorScheme@@@@UAEHABQAVColorScheme@@@Z
 0x00628070,??0?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAE@HHP6IHABVHashString@@@Z@Z,MATCH,157,src/palette.cpp,??0?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAE@HHP6IHABVHashString@@@Z@Z
-0x00628170,?Next@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAVHashString@@PAUHashIterator@@@Z,MATCH,128,src/palette.cpp,?Next@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAVHashString@@PAUHashIterator@@@Z
 0x006281F0,??8?$VectorClass@VHSVClass@@@@UBE_NABV0@@Z,MATCH,77,src/palette.cpp,??8?$VectorClass@VHSVClass@@@@UBE_NABV0@@Z
 0x00628240,??0?$DynamicVectorClass@VHSVClass@@@@QAE@IPBVHSVClass@@@Z,MATCH,148,src/palette.cpp,??0?$DynamicVectorClass@VHSVClass@@@@QAE@IPBVHSVClass@@@Z
 0x006282E0,?Resize@?$VectorClass@VHSVClass@@@@UAE_NHPBVHSVClass@@@Z,MATCH,242,src/palette.cpp,?Resize@?$VectorClass@VHSVClass@@@@UAE_NHPBVHSVClass@@@Z
