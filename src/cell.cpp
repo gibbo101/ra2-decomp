@@ -3962,7 +3962,7 @@ void CellClass::Fog_Cell(void)
 						int rtti = occupier->What_Am_I();
 						if (rtti == RTTI_BUILDING) {
 							BuildingClass * building = (BuildingClass *)occupier;
-							building->PositionCell;
+							building->Get_Cell();
 							if (building->Should_Fog()) {
 								bool fade;
 								if (building->IsStrange() || building->TranslucencyLevel == 15) {
