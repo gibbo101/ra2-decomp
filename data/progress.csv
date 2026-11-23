@@ -17626,6 +17626,7 @@ address,name,result,size,source,symbol
 0x0076D180,WorldDominationTour::Selection::Handle_Click,MATCH,532,src/wdtsel.cpp,?Handle_Click@Selection@WorldDominationTour@@QAEXABVPoint2D@@AA_N@Z
 0x0076D3A0,WorldDominationTour::Selection::Select_Territory_At,MATCH,193,src/wdtsel.cpp,?Select_Territory_At@Selection@WorldDominationTour@@QAE_NABVPoint2D@@@Z
 0x0076D470,WorldDominationTour::Selection::Update_Hovered_Territory,MATCH,91,src/wdtsel.cpp,?Update_Hovered_Territory@Selection@WorldDominationTour@@QAEXABVPoint2D@@@Z
+0x0076D4D0,WorldDominationTour::Selection::Do_Target_Anim,MATCH,1531,src/wdtsel.cpp,?Do_Target_Anim@Selection@WorldDominationTour@@QAEXABV?$rc_ptr@VState@WorldDominationTour@@@@_N1@Z
 0x0076DAD0,WorldDominationTour::Selection::Select_Territory,MATCH,1012,src/wdtsel.cpp,?Select_Territory@Selection@WorldDominationTour@@QAE_NABV?$rc_ptr@VTerritory@WorldDominationTour@@@@@Z
 0x0076DED0,WorldDominationTour::Selection::Remove_Target_Anims,MATCH,115,src/wdtsel.cpp,?Remove_Target_Anims@Selection@WorldDominationTour@@QAEXXZ
 0x0076DF50,WorldDominationTour::Selection::Remove_Target_Anims2,MATCH,115,src/wdtsel.cpp,?Remove_Target_Anims2@Selection@WorldDominationTour@@QAEXXZ
