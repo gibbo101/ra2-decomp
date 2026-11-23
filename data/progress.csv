@@ -18145,8 +18145,9 @@ address,name,result,size,source,symbol
 0x0077D190,_$E307,MATCH,1,src/wonline.cpp,_$E307
 0x0077D1A0,_$E314,MATCH,22,src/wonline.cpp,_$E314
 0x0077D1C0,_$E312,MATCH,10,src/wonline.cpp,_$E312
-0x0077D1D0,FUN_007F7624_Class::FUN_007F7624_Class,MATCH,18,src/wonline.cpp,??0FUN_007F7624_Class@@QAE@XZ
-0x0077D1F0,FUN_007F7624_Class::~FUN_007F7624_Class,MATCH,11,src/wonline.cpp,??1FUN_007F7624_Class@@UAE@XZ
+0x0077D1D0,SimpleWonlineDialogControl::SimpleWonlineDialogControl,MATCH,18,src/wonline.cpp,??0SimpleWonlineDialogControl@@QAE@XZ
+0x0077D1F0,SimpleWonlineDialogControl::~SimpleWonlineDialogControl,MATCH,11,src/wonline.cpp,??1SimpleWonlineDialogControl@@UAE@XZ
+0x0077D200,SimpleWonlineDialogControl::F4,MATCH,5,src/wonline.cpp,?F4@SimpleWonlineDialogControl@@UAE_NXZ
 0x0077D210,FUN_0077D210,MATCH,34,src/wonline.cpp,?FUN_0077D210@@YIXPAD@Z
 0x0077D240,Player_Name_To_Index,MATCH,89,src/wonline.cpp,?Player_Name_To_Index@@YIHABVWstring@@@Z
 0x0077D2A0,FUN_0077D2A0,MATCH,63,src/wonline.cpp,?FUN_0077D2A0@@YI_NPAUUser@@@Z
@@ -18234,7 +18235,6 @@ address,name,result,size,source,symbol
 0x00786080,Shutdown_Chat,MATCH,496,src/wonline.cpp,?Shutdown_Chat@@YIXXZ
 0x00786270,Get_WDT_State_Silent,MATCH,278,src/wonline.cpp,?Get_WDT_State_Silent@@YI_NXZ
 0x00786390,FUN_00786390,MATCH,300,src/wonline.cpp,?FUN_00786390@@YIHXZ
-0x0077D200,SimpleWonlineDialogControl::F4,MATCH,5,src/wonline.cpp,?F4@SimpleWonlineDialogControl@@UAE_NXZ
 0x007864C0,FUN_007864C0,MATCH,2250,src/wonline.cpp,?FUN_007864C0@@YI_NPAUServer@@@Z
 0x00786D90,FUN_00786D90,MATCH,48,src/wonline.cpp,?FUN_00786D90@@YI_NXZ
 0x00786DC0,FUN_00786DC0,MATCH,164,src/wonline.cpp,?FUN_00786DC0@@YI_NAAVWstring@@@Z

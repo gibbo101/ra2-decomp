@@ -18365,8 +18365,8 @@ address,size,symbol,source,sha256
 0x0077D190,1,_$E307,src/wonline.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x0077D1A0,22,_$E314,src/wonline.cpp,cb7b03edace66df8c890b0e05ee2b43e383a180117a073238b86ee268bf904ef
 0x0077D1C0,10,_$E312,src/wonline.cpp,47b6440632316d22a28a861a5f7ed8b72c3ec6e1d4e23fb075f92ef430b8b4b2
-0x0077D1D0,18,??0FUN_007F7624_Class@@QAE@XZ,src/wonline.cpp,6e3c453beaa85d1d1f1569d72c241609497ce3f589de6c98d28cff81801607b0
-0x0077D1F0,11,??1FUN_007F7624_Class@@UAE@XZ,src/wonline.cpp,e84ee455d6a8ec21c2d9cdf8af73ad454ec0fa64363bc5ab9f59d65e08835e75
+0x0077D1D0,18,??0SimpleWonlineDialogControl@@QAE@XZ,src/wonline.cpp,6e3c453beaa85d1d1f1569d72c241609497ce3f589de6c98d28cff81801607b0
+0x0077D1F0,11,??1SimpleWonlineDialogControl@@UAE@XZ,src/wonline.cpp,e84ee455d6a8ec21c2d9cdf8af73ad454ec0fa64363bc5ab9f59d65e08835e75
 0x0077D200,5,?F4@SimpleWonlineDialogControl@@UAE_NXZ,src/wonline.cpp,8d8da9f78f6ebb44f98cc14f5267c5ed4de5de2338941ee900a46efcec2c4597
 0x0077D210,34,?FUN_0077D210@@YIXPAD@Z,src/wonline.cpp,19961f679490d6b1ddc2dd37632316773de2bf4c28bf22196b9985cc49af877d
 0x0077D240,89,?Player_Name_To_Index@@YIHABVWstring@@@Z,src/wonline.cpp,09b437cd0b2c10dc54cbc5ee2dff1cb18c940926a183e3551840ef0ed39fee65
