@@ -238,6 +238,113 @@ UnitClass::~UnitClass(void)
 	IsActive = false;
 }
 
+static inline DirType _Direction(ObjectClass const * from, Coord const & to)
+{
+	return(DirType().Direction(from->Center_Coord(), to));
+}
+
+// FUNCTION: GAMEMD 0x007359F0
+void UnitClass::Tunnel_AI(void)
+{
+	bool finished = Tubes[CurrentTube]->Dirs[CurrentTubeDir] == FACING_NONE;
+	if (!finished) {
+		int distance = Distance(LastTubeCoord);
+		TubeClass * tube = Tubes[CurrentTube];
+		Get_Coord();
+
+		DirType direction = _Direction(this, LastTubeCoord);
+		int speed = (int)(Class->MaxSpeed * 1.5);
+
+		int height_step;
+		{
+			Coord exit(tube->Get_Exit());
+			Coord enter(Cell(tube->Enter));
+			height_step = (Map.Get_Height_GL(exit) - Map.Get_Height_GL(enter)) / tube->Get_Count();
+		}
+
+		if (distance <= speed) {
+			CurrentTubeDir++;
+			FacingType tube_dir = tube->Dirs[CurrentTubeDir];
+			finished = tube_dir == FACING_NONE;
+			PositionCoord = LastTubeCoord;
+
+			if (!finished) {
+				Coord delta = Map[Adjacent_Cell(LastTubeCoord, tube_dir)].Cell_Coord() - Map[LastTubeCoord].Cell_Coord();
+				LastTubeCoord = LastTubeCoord + TPoint2D<int>(delta.X, delta.Y);
+				LastTubeCoord.Z += height_step;
+
+				DirType dir = _Direction(this, LastTubeCoord);
+				Coord new_coord = Move_Coord(PositionCoord, dir, speed - distance);
+				double divisor;
+				if (tube_dir % 2) {
+					divisor = CELL_LEPTON_H * M_SQRT2;
+				} else {
+					divisor = CELL_LEPTON_H;
+				}
+				new_coord.Z += (speed - distance) / divisor * height_step;
+				PositionCoord = new_coord;
+				return;
+			}
+		} else {
+			FacingType tube_dir = tube->Dirs[CurrentTubeDir];
+			Coord new_coord = Move_Coord(Get_Coord(), direction, speed);
+			double divisor;
+			if (tube_dir % 2) {
+				divisor = CELL_LEPTON_H * M_SQRT2;
+			} else {
+				divisor = CELL_LEPTON_H;
+			}
+			new_coord.Z += (speed) / divisor * height_step;
+			PositionCoord = new_coord;
+			return;
+		}
+	}
+
+	if (finished) {
+		CellClass * cellptr = &Map[Get_Coord()];
+		ObjectClass * occupier = cellptr->Cell_Occupier();
+
+		if (occupier != NULL) {
+			DynamicVectorClass<ObjectClass *> list;
+			while (occupier != NULL) {
+				list.Add(occupier);
+				occupier = occupier->Next;
+			}
+			for (int index = 0; index < list.Count(); index++) {
+				ObjectClass * object = list[index];
+				if (object->RTTI == RTTI_UNIT || object->RTTI == RTTI_INFANTRY) {
+					if (!((FootClass *)object)->Locomotion->Is_Moving()) {
+						Coord scatter_coord(0, 0, 0);
+						object->Scatter(scatter_coord, true, true);
+					}
+				}
+			}
+			Set_Speed(0);
+		} else {
+			TubeClass * tube = Tubes[CurrentTube];
+			Cell exit_cell = tube->Get_Exit();
+			Coord exit_coord(exit_cell, LastTubeCoord.Z);
+			PositionCoord = exit_coord;
+			CurrentTube = TUBE_NONE;
+
+			Mark(MARK_DOWN);
+
+			if (NavCom == cellptr) {
+				Scatter(Coord(0, 0, 0), true, true);
+			}
+
+			IsPlanningToLook = true;
+			Per_Cell_Process(PCP_END);
+			Set_Speed(1);
+
+			TubeClass * tube_here = Map[Get_Coord()].Get_Tunnel();
+			if (tube_here != NULL) {
+				PrimaryFacing.Set(DirType(DirType(tube_here->EnterDir).As_Int() - DirType(FACING_135).As_Int() - 1).Snap_To_8());
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x007360C0
 void UnitClass::AI(void)
 {
