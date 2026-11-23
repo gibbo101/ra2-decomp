@@ -2168,6 +2168,189 @@ ObjectClass * MapClass::Close_Object(Coord const & coord) const
 // SYNTHETIC: GAMEMD 0x0056C500 SYMBOL
 // _$E240
 
+extern int LastAdjacentZone;
+
+// Packs a pair of zone numbers into one key.
+static unsigned Zone_Pack32(int zone1, int zone2)
+{
+	return(zone2 | (zone1 << 16));
+}
+
+// Packs a pair of zone numbers into the index of its adjacency bucket.
+static unsigned Zone_Pack8(int zone1, int zone2)
+{
+	return(zone2 & 0xF | ((zone1 & 0xF) << 4));
+}
+
+// FUNCTION: GAMEMD 0x0056C510
+int MapClass::Zone_Reset(void)
+{
+	int i;
+	int j;
+	int k;
+	int bestzone = -1;
+	int bestspan = -1;
+
+	CellZoneStruct * end = &CellZones[CellZoneCount];
+
+	DynamicVectorClass<PassabilityType> vec;
+	vec.Set_Growth_Step(300);
+
+	ZoneAdjacency->Clear();
+
+	for (i = 0; i < MZONE_COUNT; i++) {
+		if (Zones[i] != NULL) {
+			delete Zones[i];
+			Zones[i] = NULL;
+		}
+	}
+
+	CellZoneStruct * czone = CellZones;
+	for (; czone < end; czone++) {
+		czone->ZoneID = 0;
+	}
+
+	int zone = 1;			// Starting zone number.
+
+	vec.Add(PASSABLE_OUTSIDE);
+
+	int skip = 0;
+	czone = CellZones;
+	while (czone < end) {
+		PassabilityType pass = (PassabilityType)czone->Passability;
+		if (pass != PASSABLE_OUTSIDE && czone->ZoneID == 0) {
+			LastAdjacentZone = 0;
+			int span = Zone_Span(czone, zone, skip);
+			if (span > bestspan) {
+				bestzone = (unsigned short)zone;
+				bestspan = span;
+			}
+			vec.Add(pass);
+			zone++;
+			czone += skip;
+		} else {
+			czone++;
+		}
+	}
+
+	ZoneCount = (unsigned short)zone;
+
+	for (i = ZoneConnections.Count() - 1; i >= 0; i--) {
+		if (!ZoneConnections[i].IsPassable) {
+			continue;
+		}
+		int from_zone = Get_Cell_Zone_ID(ZoneConnections[i].From);
+		int to_zone = Get_Cell_Zone_ID(ZoneConnections[i].To);
+		if (to_zone != from_zone) {
+			if (to_zone < from_zone) {
+				swap(to_zone, from_zone);
+			}
+			ZoneAdjacency->Add_Object(ZONE_PAIR_HASH_SET::ObjectType(from_zone, to_zone));
+		}
+	}
+
+	unsigned short * zone_degree = new unsigned short[ZoneCount];
+	for (i = 0; i < ZoneCount; i++) {
+		zone_degree[i] = 0;
+	}
+
+	for (i = 0; i < 256; i++) {
+		ZONE_PAIR_HASH_SET::BucketType & bucket = ZoneAdjacency->Buckets[i];
+		j = bucket.Count();
+		if (j > 0) {
+			ZONE_PAIR_HASH_SET::ObjectType * obj = &bucket[0];
+			do {
+				unsigned int value = obj->Value;
+				unsigned short zone1 = LOWORD(value);
+				unsigned short zone2 = HIWORD(value);
+				zone_degree[zone1]++;
+				zone_degree[zone2]++;
+				obj++;
+			} while (--j);
+		}
+	}
+
+	unsigned short ** zone_neighbors = new unsigned short *[ZoneCount];
+	for (i = 0; i < ZoneCount; i++) {
+		zone_neighbors[i] = new unsigned short[zone_degree[i]];
+	}
+
+	for (i = 0; i < ZoneCount; i++) {
+		zone_degree[i] = 0;
+	}
+
+	for (i = 0; i < 256; i++) {
+		ZONE_PAIR_HASH_SET::BucketType & bucket = ZoneAdjacency->Buckets[i];
+		if (bucket.Count() > 0) {
+			ZONE_PAIR_HASH_SET::ObjectType * obj = &bucket[0];
+			for (j = bucket.Count(); j > 0; j--) {
+				unsigned int value = obj->Value;
+				unsigned short zone1 = LOWORD(value);
+				unsigned short zone2 = HIWORD(value);
+				zone_neighbors[zone1][zone_degree[zone1]] = zone2;
+				zone_neighbors[zone2][zone_degree[zone2]] = zone1;
+				zone_degree[zone1]++;
+				zone_degree[zone2]++;
+				obj++;
+			}
+		}
+	}
+
+	unsigned char * zone_passability = new unsigned char[ZoneCount];
+	for (i = 0; i < ZoneCount; i++) {
+		zone_passability[i] = vec[i];
+	}
+
+	unsigned short * stack = new unsigned short[ZoneCount];
+
+	for (MZoneType mzone = MZONE_FIRST; mzone < MZONE_COUNT; mzone++) {
+		int next_movement_zone = 2;
+		int * table = MZonePassability[mzone];
+
+		unsigned short * nzone = new unsigned short[ZoneCount];
+		Zones[mzone] = nzone;
+
+		for (int n = 0; n < ZoneCount; n++) {
+			nzone[n] = table[zone_passability[n]] != TRAVERSAL_PASSABLE;
+		}
+
+		for (int zone_index = 0; zone_index < ZoneCount; zone_index++) {
+			if (nzone[zone_index] == 0) {
+				int stackcount = 1;
+				stack[0] = zone_index;
+				nzone[zone_index] = next_movement_zone;
+				int passable = table[zone_passability[zone_index]];
+				while (stackcount) {
+					int current = stack[--stackcount];
+					unsigned short * neighbors = zone_neighbors[current];
+					int degree = zone_degree[current];
+					for (k = degree - 1; k >= 0; k--) {
+						int neighbor = neighbors[k];
+						if (table[zone_passability[neighbor]] == passable && nzone[neighbor] == 0) {
+							stack[stackcount++] = neighbor;
+							nzone[neighbor] = next_movement_zone;
+						}
+					}
+				}
+				next_movement_zone++;
+			}
+		}
+
+		nzone[0] = -1;
+	}
+
+	for (i = 0 ; i < ZoneCount; i++) {
+		delete zone_neighbors[i];
+	}
+
+	delete [] zone_passability;
+	delete [] zone_neighbors;
+	delete [] zone_degree;
+	delete [] stack;
+
+	return(bestzone);
+}
+
 // FUNCTION: GAMEMD 0x0056CB80
 int SubzoneHash(unsigned int const & key)
 {
@@ -2202,8 +2385,6 @@ int MapClass::Get_Cell_Zone(Cell const * cell, MZoneType mzone, bool bridge)
 	return(Zones[mzone][Get_Cell_Zone_ID(*cell)]);
 }
 
-extern int LastAdjacentZone;
-
 // FUNCTION: GAMEMD 0x0056CB90
 int MapClass::Zone_Span(CellZoneStruct * data, int zone, int & skip)
 {
@@ -2225,9 +2406,9 @@ int MapClass::Zone_Span(CellZoneStruct * data, int zone, int & skip)
 
 	int begin_zone = begin->ZoneID;
 	if (begin_zone != 0 && (abs(begin->Height - cell_height) < 2 || nopass) && begin_zone != LastAdjacentZone && begin_zone != (unsigned short)zone) {
-		connection.Key = (unsigned short)zone | ((unsigned int)begin_zone << 16);
+		connection.Key = Zone_Pack32(begin_zone, (unsigned short)zone);
 		connection.Value = connection.Key;
-		ZoneAdjacency->Add_Object(((unsigned short)zone & 0xF) | ((begin_zone & 0xF) << 4), connection);
+		ZoneAdjacency->Add_Object(Zone_Pack8(begin_zone, (unsigned short)zone), connection);
 		LastAdjacentZone = begin_zone;
 	}
 
@@ -2242,9 +2423,9 @@ int MapClass::Zone_Span(CellZoneStruct * data, int zone, int & skip)
 
 	begin_zone = end->ZoneID;
 	if (begin_zone != 0 && (abs(end->Height - cell_height) < 2 || nopass) && begin_zone != LastAdjacentZone && begin_zone != (unsigned short)zone) {
-		connection.Key = (unsigned short)zone | ((unsigned int)begin_zone << 16);
+		connection.Key = Zone_Pack32(begin_zone, (unsigned short)zone);
 		connection.Value = connection.Key;
-		ZoneAdjacency->Add_Object(((unsigned short)zone & 0xF) | ((begin_zone & 0xF) << 4), connection);
+		ZoneAdjacency->Add_Object(Zone_Pack8(begin_zone, (unsigned short)zone), connection);
 		LastAdjacentZone = begin_zone;
 	}
 
@@ -2280,9 +2461,9 @@ int MapClass::Zone_Span(CellZoneStruct * data, int zone, int & skip)
 			}
 		} else {
 			if (zzone != (unsigned short)zone && zzone != LastAdjacentZone && (abs(fbegin->Height - adjacent->Height) < 2 || nopass)) {
-				connection.Key = (unsigned short)zone | ((unsigned int)zzone << 16);
+				connection.Key = Zone_Pack32(zzone, (unsigned short)zone);
 				connection.Value = connection.Key;
-				ZoneAdjacency->Add_Object(((unsigned short)zone & 0xF) | ((zzone & 0xF) << 4), connection);
+				ZoneAdjacency->Add_Object(Zone_Pack8(zzone, (unsigned short)zone), connection);
 				LastAdjacentZone = zzone;
 			}
 			fbegin++;
@@ -2306,9 +2487,9 @@ int MapClass::Zone_Span(CellZoneStruct * data, int zone, int & skip)
 			}
 		} else {
 			if (id != (unsigned short)zone && id != LastAdjacentZone && (abs(fbegin2->Height - adjacent->Height) < 2 || nopass)) {
-				connection.Key = (unsigned short)zone | ((unsigned int)id << 16);
+				connection.Key = Zone_Pack32(id, (unsigned short)zone);
 				connection.Value = connection.Key;
-				ZoneAdjacency->Add_Object(((unsigned short)zone & 0xF) | ((id & 0xF) << 4), connection);
+				ZoneAdjacency->Add_Object(Zone_Pack8(id, (unsigned short)zone), connection);
 				LastAdjacentZone = id;
 			}
 			fbegin2++;
@@ -8413,9 +8594,9 @@ void MapClass::Shutdown(void)
 	TiberiumClass::Deinit_Tiberium_Growth_System();
 }
 
-static inline CellSubzoneStruct *Cliff_Subzone(MapClass *map, Cell const &cell)
+static inline CellSubzoneStruct * Subzone_Of(MapClass * map, Cell const & cell)
 {
-	return &map->CellSubzones[map->Get_Cell_Zone_Index(cell)];
+	return(&map->CellSubzones[map->Get_Cell_Zone_Index(cell)]);
 }
 
 // FUNCTION: GAMEMD 0x00581140
@@ -8443,7 +8624,7 @@ void MapClass::Collapse_Cliff(CellClass *cptr)
 				Cell cell = point + Cell(x, y);
 				if (image->Fetch_Record_Pointer_Unsafe(x + y * ittype->Width) != NULL) {
 					if (In_Local_Radar(cell, true)) {
-						Cliff_Subzone(this, cell)->SubzoneID[SUBZONE_FINE] = 0;
+						Subzone_Of(this, cell)->SubzoneID[SUBZONE_FINE] = 0;
 						Map[cell].Recalc_Attributes();
 					}
 				}
@@ -8453,7 +8634,7 @@ void MapClass::Collapse_Cliff(CellClass *cptr)
 			for (x = 0; x < ittype->Width; x++) {
 				Cell cell = point + Cell(x, y);
 				if (image->Fetch_Record_Pointer_Unsafe(x + y * ittype->Width) != NULL) {
-					if (In_Local_Radar(cell, true) && Cliff_Subzone(this, cell)->SubzoneID[SUBZONE_FINE] == 0) {
+					if (In_Local_Radar(cell, true) && Subzone_Of(this, cell)->SubzoneID[SUBZONE_FINE] == 0) {
 						Update_Cell_Subzones(cell);
 					}
 				}
@@ -8534,7 +8715,7 @@ void MapClass::Collapse_Cliff(CellClass *cptr)
 				Cell cell = point + Cell(x, y);
 				if (image->Fetch_Record_Pointer_Unsafe(x + y * row_width) != NULL) {
 					if (In_Local_Radar(cell, true)) {
-						Cliff_Subzone(this, cell)->SubzoneID[SUBZONE_FINE] = 0;
+						Subzone_Of(this, cell)->SubzoneID[SUBZONE_FINE] = 0;
 						Map[cell].Recalc_Attributes();
 					}
 				}
@@ -8545,7 +8726,7 @@ void MapClass::Collapse_Cliff(CellClass *cptr)
 			for (x = 0; x < row_width; row_width = ittype->Width, x++) {
 				Cell cell = point + Cell(x, y);
 				if (image->Fetch_Record_Pointer_Unsafe(x + y * row_width) != NULL) {
-					if (In_Local_Radar(cell, true) && Cliff_Subzone(this, cell)->SubzoneID[SUBZONE_FINE] == 0) {
+					if (In_Local_Radar(cell, true) && Subzone_Of(this, cell)->SubzoneID[SUBZONE_FINE] == 0) {
 						Update_Cell_Subzones(cell);
 					}
 				}
@@ -8807,11 +8988,6 @@ Cell MapClass::Get_Zone_Connection_Destination(Cell const & cell, Cell const & r
 	}
 
 	return(cell);
-}
-
-static inline CellSubzoneStruct * Subzone_Of(MapClass * map, Cell const & cell)
-{
-	return(&map->CellSubzones[map->Get_Cell_Zone_Index(cell)]);
 }
 
 // FUNCTION: GAMEMD 0x005835D0
