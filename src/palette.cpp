@@ -120,6 +120,19 @@ SchemeNode::SchemeNode(char const * name, DynamicVectorClass<ColorScheme *> * sc
 }
 
 // FUNCTION: GAMEMD 0x00626290
+SchemeNode::~SchemeNode(void)
+{
+	Release();
+}
+
+// FUNCTION: GAMEMD 0x006262F0
+void SchemeNode::Replace(DynamicVectorClass<ColorScheme *> * schemes)
+{
+	Release();
+	Schemes = schemes;
+}
+
+// FUNCTION: GAMEMD 0x00626370
 void SchemeNode::Release(void)
 {
 	if (Schemes) {
@@ -129,40 +142,6 @@ void SchemeNode::Release(void)
 		}
 		delete Schemes;
 		Schemes = 0;
-	}
-}
-
-// FUNCTION: GAMEMD 0x006262F0
-void SchemeNode::Replace(DynamicVectorClass<ColorScheme *> * schemes)
-{
-	if (Schemes) {
-		int count = Schemes->Count();
-		for (int index = 0; index < count; index++) {
-			delete (*Schemes)[index];
-		}
-		delete Schemes;
-		Schemes = 0;
-	}
-	Schemes = schemes;
-}
-
-// FUNCTION: GAMEMD 0x00626370
-SchemeNode::~SchemeNode(void)
-{
-	if (Schemes) {
-		int count = Schemes->Count();
-		for (int index = 0; index < count; index++) {
-			delete (*Schemes)[index];
-		}
-		delete Schemes;
-		Schemes = 0;
-		count = 0;
-		count++;
-		if (count > 5) {
-			count = 1;
-		}
-		count = 0;
-		count++;
 	}
 }
 
@@ -206,11 +185,14 @@ inline SchemeLibrary * Library(void)
 typedef HashTableClass<HashString, SchemeNode *> SchemeTable;
 typedef HashObject<HashString, SchemeNode *> SchemeEntry;
 
-inline HashString * Next_Key(SchemeTable * table, HashIterator * it)
+// TEMPLATE: GAMEMD 0x00628170
+// ?Next@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAVHashString@@PAUHashIterator@@@Z
+template<>
+HashString * HashTableClass<HashString, SchemeNode *>::Next(HashIterator * it)
 {
 	if (!it->OutOfBuckets) {
-		while (it->BucketIndex < table->NumBuckets) {
-			DynamicVectorClass<SchemeEntry> & bucket = table->Buckets[it->BucketIndex];
+		while (it->BucketIndex < NumBuckets) {
+			DynamicVectorClass<SchemeEntry> & bucket = Buckets[it->BucketIndex];
 			while (it->InBucketIndex < bucket.Count()) {
 				SchemeEntry * object = &bucket[it->InBucketIndex];
 				it->InBucketIndex++;
@@ -267,7 +249,7 @@ int SchemeHash(char const * str)
 // FUNCTION: GAMEMD 0x00626690
 DynamicVectorClass<ColorScheme *> * __fastcall GetPaletteSchemesFromIterator(HashIterator * it)
 {
-	HashString * key = Next_Key(DAT_00AC48F0->Table, it);
+	HashString * key = DAT_00AC48F0->Table->Next(it);
 	if (key == 0) {
 		return(0);
 	}
@@ -319,7 +301,7 @@ class PaletteSchemeIterator
 
 	DynamicVectorClass<ColorScheme *> *Next()
 	{
-		HashString *key = Next_Key(DAT_00AC48F0->Table, &Position);
+		HashString *key = DAT_00AC48F0->Table->Next(&Position);
 		if (key == 0)
 			return 0;
 
@@ -330,15 +312,13 @@ class PaletteSchemeIterator
 		return (*node)->Schemes;
 	}
 
-  private:
 	HashIterator Position;
 };
 
 // FUNCTION: GAMEMD 0x00626DA0
 int __fastcall FUN_00626DA0(void)
 {
-	Library();
-
+	SchemeLibrary * library = Library();
 	PaletteSchemeIterator it;
 	int count = 0;
 	DynamicVectorClass<ColorScheme *> *schemes = it.Next();
@@ -377,15 +357,14 @@ SchemeLibrary::~SchemeLibrary(void)
 		delete Names;
 		delete Colors;
 
-		HashIterator it = {0, 0, false};
-		for (HashString * key = Next_Key(Table, &it); key != 0; key = Next_Key(Table, &it)) {
-			SchemeNode * node = *Table->Find(*key);
-			delete node;
+		PaletteSchemeIterator it;
+		HashString * key = Table->Next(&it.Position);
+		while (key != 0) {
+			SchemeNode ** node = Table->Find(*key);
+			delete *node;
+			key = Table->Next(&it.Position);
 		}
-		SchemeTable * table = Table;
-		for (int index = 0; index < table->NumBuckets; index++) {
-			table->Buckets[index].Clear();
-		}
+		Table->Clear();
 		delete Table;
 	}
 }
@@ -483,13 +462,11 @@ void SchemeLibrary::Replace(char const * name)
 void SchemeLibrary::Set_Mode(int mode)
 {
 	Mode = mode;
-	HashIterator it = {0, 0, false};
-	HashString * key = Next_Key(Table, &it);
+	PaletteSchemeIterator it;
+	HashString * key = Table->Next(&it.Position);
 	while (key != 0) {
-		HashString name(key->Str);
-		SchemeNode * node = *Table->Find(name);
-		node->Replace(Generate(key->Str));
-		key = Next_Key(Table, &it);
+		Replace(key->Str);
+		key = Table->Next(&it.Position);
 	}
 }
 
@@ -532,13 +509,6 @@ template class DynamicVectorClass<ColorScheme *>;
 
 
 
-// TEMPLATE: GAMEMD 0x00628170
-// ?Next@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAVHashString@@PAUHashIterator@@@Z
-template<>
-HashString * HashTableClass<HashString, SchemeNode *>::Next(HashIterator * it)
-{
-	return(Next_Key(this, it));
-}
 
 // TEMPLATE: GAMEMD 0x006281F0
 // ??8?$VectorClass@VHSVClass@@@@UBE_NABV0@@Z
