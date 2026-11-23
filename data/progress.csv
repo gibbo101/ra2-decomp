@@ -10665,6 +10665,7 @@ address,name,result,size,source,symbol
 0x00612930,_$E126,MATCH,291,src/ownrdraw.cpp,_$E126
 0x00612A60,OwnerDraw::SysListViewHandler,MATCH,264,src/ownrdraw.cpp,?SysListViewHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x006137D0,OwnerDraw::SysTabHandler,MATCH,2495,src/ownrdraw.cpp,?SysTabHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
+0x00612B70,OwnerDraw::OwnerDrawButtonHandler,MATCH,3168,src/ownrdraw.cpp,?OwnerDrawButtonHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x00614190,OwnerDraw::EditHandler,MATCH,2075,src/ownrdraw.cpp,?EditHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x006149B0,FUN_006149B0,MATCH,373,src/ownrdraw.cpp,?FUN_006149B0@@YIHPAUHWND__@@PAGHPAH@Z
 0x00614B30,OwnerDraw::NewEditHandler,MATCH,2215,src/ownrdraw.cpp,?NewEditHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
@@ -12469,6 +12470,7 @@ address,name,result,size,source,symbol
 0x00684240,Lock_Scenario_Input,MATCH,77,src/scenario.cpp,?Lock_Scenario_Input@@YIXXZ
 0x00684290,Unlock_Scenario_Input,MATCH,96,src/scenario.cpp,?Unlock_Scenario_Input@@YIXXZ
 0x006842F0,Toggle_Display_Mode,MATCH,126,src/scenario.cpp,?Toggle_Display_Mode@@YIX_N@Z
+0x00684370,Wait_For_Players_To_Load,MATCH,676,src/scenario.cpp,?Wait_For_Players_To_Load@@YI_NXZ
 0x00684620,Read_Scenario,MATCH,1549,src/scenario.cpp,?Read_Scenario@@YI_NPBD@Z
 0x00684C30,Fill_In_Data,MATCH,1255,src/scenario.cpp,?Fill_In_Data@@YIXXZ
 0x00685120,Post_Load_Game,MATCH,196,src/scenario.cpp,?Post_Load_Game@@YIXXZ
@@ -16364,6 +16366,7 @@ address,name,result,size,source,symbol
 0x00735390,FUN_00735390,MATCH,45,src/unit.cpp,?FUN_00735390@@YIXXZ
 0x007353C0,UnitClass::UnitClass,MATCH,960,src/unit.cpp,??0UnitClass@@QAE@PBVUnitTypeClass@@PAVHouseClass@@@Z
 0x00735780,UnitClass::~UnitClass,MATCH,622,src/unit.cpp,??1UnitClass@@UAE@XZ
+0x007359F0,UnitClass::Tunnel_AI,MATCH,1730,src/unit.cpp,?Tunnel_AI@UnitClass@@QAEXXZ
 0x007360C0,UnitClass::AI,MATCH,2249,src/unit.cpp,?AI@UnitClass@@UAEXXZ
 0x00736990,UnitClass::Rotation_AI,MATCH,639,src/unit.cpp,?Rotation_AI@UnitClass@@QAEXXZ
 0x00736C10,UnitClass::Edge_Of_World_AI,MATCH,129,src/unit.cpp,?Edge_Of_World_AI@UnitClass@@QAE_NXZ

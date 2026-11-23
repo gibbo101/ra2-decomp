@@ -346,6 +346,7 @@ address,name,source
 0x00610950,OwnerDraw::DrawTooltip,symbols.csv
 0x00610B50,OwnerDraw::RestoreTooltipBackground,symbols.csv
 0x00612A60,OwnerDraw::SysListViewHandler,symbols.csv
+0x00612B70,OwnerDraw::OwnerDrawButtonHandler,symbols.csv
 0x006137D0,OwnerDraw::SysTabHandler,symbols.csv
 0x00614190,OwnerDraw::EditHandler,symbols.csv
 0x00614B30,OwnerDraw::NewEditHandler,symbols.csv

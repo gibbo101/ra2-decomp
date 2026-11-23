@@ -11019,6 +11019,7 @@ address,size,symbol,source,sha256
 0x00612910,23,_$E121,src/ownrdraw.cpp,55c740ea4021d0aa084a33f8ef7d0966a23f4523ba6be0967fcd83458f81f7cb
 0x00612930,291,_$E126,src/ownrdraw.cpp,f7490cd45c35b5c094433dfa6fbb285d796c1557d46115f9a6e820cda9ac278b
 0x00612A60,264,?SysListViewHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,e2f19b5d457046cd2787620cf637c7b0c18c5447e5cfbbf2bf94d061c3c0556b
+0x00612B70,3168,?OwnerDrawButtonHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,4e60882ae2bc39d1653db7c1cfe3d5cf4de0898e953b2209cda0f97c07514b5b
 0x006137D0,2495,?SysTabHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,0050be94a638b4d57bda0a50ec3aca0d0f6ce4b903856b455e3cf6e9ad239277
 0x00614190,2075,?EditHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,42187c981b5ed89d5197015d3403dd5d2d93105f49d18b3375243342bbb02dad
 0x006149B0,373,?FUN_006149B0@@YIHPAUHWND__@@PAGHPAH@Z,src/ownrdraw.cpp,e2b34047bc6319ccbd0eb15c94a2ede64f0147463c195c10d822fa889207992a
@@ -12818,6 +12819,7 @@ address,size,symbol,source,sha256
 0x00684240,77,?Lock_Scenario_Input@@YIXXZ,src/scenario.cpp,41289b59fac4423a5c3b84607d0ca74fb019b7d3c7d09d58e33af976ea4e6634
 0x00684290,96,?Unlock_Scenario_Input@@YIXXZ,src/scenario.cpp,f5b911290cd6014d36be6bbf0de431ac02270ff8df9f3c4f702bd8424aa2e925
 0x006842F0,126,?Toggle_Display_Mode@@YIX_N@Z,src/scenario.cpp,4f24634fb3e0b1d7f718a669e04e5a62e6730ab50b25081ffdaeed6c5a467c4e
+0x00684370,676,?Wait_For_Players_To_Load@@YI_NXZ,src/scenario.cpp,69030b2c09f59537b4bab0040b64c4221306b26c398ddcc7e4247f269d998a87
 0x00684620,1549,?Read_Scenario@@YI_NPBD@Z,src/scenario.cpp,55ffae1b5778832e3cb44980cac66da0d53b667fb2acf4987aa7232c8628f749
 0x00684C30,1255,?Fill_In_Data@@YIXXZ,src/scenario.cpp,9bf450a43d745f4df99a462256ef730cb9d602987709522ebfee6ab45ad8de2b
 0x00685120,196,?Post_Load_Game@@YIXXZ,src/scenario.cpp,0cbfb2fc5fcecb537fb33a60b7f9f5589caf37be17a46ac0969836e8f2c100b0
@@ -16707,6 +16709,7 @@ address,size,symbol,source,sha256
 0x00735390,45,?FUN_00735390@@YIXXZ,src/unit.cpp,db44c8be45063aed07013e3e3c85a574ad92f61f11c14a8c5abbb10e7934c348
 0x007353C0,960,??0UnitClass@@QAE@PBVUnitTypeClass@@PAVHouseClass@@@Z,src/unit.cpp,c13821e76750c2a5777bb01ef75ffb22c23f057797ebfacfdb5f6161c7ac6eee
 0x00735780,622,??1UnitClass@@UAE@XZ,src/unit.cpp,49b3e0f38a5ed699a66d33450d4055624ccc2af1fe6261e4fee8d0e5e8644d9d
+0x007359F0,1730,?Tunnel_AI@UnitClass@@QAEXXZ,src/unit.cpp,3366fabc394273da2de00e16251ee5eeb87cdc179733e8f5ac1a8efb39270d68
 0x007360C0,2249,?AI@UnitClass@@UAEXXZ,src/unit.cpp,bfebdcec6d36beba68d30d684d9455cc9b7a7fe7fe437b0911e8b5578bd2bd0e
 0x00736990,639,?Rotation_AI@UnitClass@@QAEXXZ,src/unit.cpp,6522c99ed47d951dfcfb81d385987d672e8d2231f2da37da2a38fe96df57635b
 0x00736C10,129,?Edge_Of_World_AI@UnitClass@@QAE_NXZ,src/unit.cpp,1c1b3a56febadd713faa3c8dbe18ba8c02890091cc8e96cccb5a2a897f192d33
