@@ -137,8 +137,7 @@ void Selection::Init_Sounds(INIClass const & ini, Wstring const & section)
 void Selection::Init_Target(INIClass const & ini, Wstring const & section)
 {
 	Wstring buffer;
-	int faction = TourCampaign.Get()->PlayerFaction;
-	Wstring faction_name = *FUN_007AF2A0(faction);
+	Wstring faction_name = *FUN_007AF2A0(TourCampaign->Get_Faction());
 
 	bool found;
 	{
@@ -527,8 +526,7 @@ void Selection::Presentation(int index)
 
 	rc_ptr<State> previous_state = TourCampaign->CycleHistory->Get_State(previous_tick);
 	if (previous_state.Get() != NULL) {
-		int faction = TourCampaign->PlayerFaction;
-		int owned = previous_state->Count_Owned_Territories(faction);
+		int owned = previous_state->Count_Owned_Territories(TourCampaign->Get_Faction());
 		if (owned >= MegaWinningThreshold) {
 			VoicePlayer.Queue(0, OUTCOME_WIN, owned >= 30, true, 0);
 		} else if (owned <= MegaLosingThreshold) {
@@ -550,11 +548,9 @@ void Selection::Presentation(int index)
 bool Selection::Present_History(int tick_from, int tick_to)
 {
 	rc_ptr<State> before = TourCampaign->CycleHistory->Get_State(tick_from);
-	int faction = TourCampaign->PlayerFaction;
-	int old_count = before->Count_Owned_Territories(faction);
+	int old_count = before->Count_Owned_Territories(TourCampaign->Get_Faction());
 	rc_ptr<State> after = TourCampaign->CycleHistory->Get_State(tick_to);
-	faction = TourCampaign->PlayerFaction;
-	int new_count = after->Count_Owned_Territories(faction);
+	int new_count = after->Count_Owned_Territories(TourCampaign->Get_Faction());
 	int change = new_count - old_count;
 
 	int outcome;
