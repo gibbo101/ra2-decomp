@@ -257,7 +257,8 @@ DynamicVectorClass<ColorScheme *> * __fastcall GetPaletteSchemesFromIterator(Has
 	if (node == 0) {
 		return(0);
 	}
-	return((*node)->Schemes);
+	SchemeNode * entry = *node;
+	return(entry->Schemes);
 }
 
 // FUNCTION: GAMEMD 0x006269A0
@@ -309,7 +310,8 @@ class PaletteSchemeIterator
 		if (node == 0)
 			return 0;
 
-		return (*node)->Schemes;
+		SchemeNode *entry = *node;
+		return entry->Schemes;
 	}
 
 	HashIterator Position;
@@ -318,7 +320,7 @@ class PaletteSchemeIterator
 // FUNCTION: GAMEMD 0x00626DA0
 int __fastcall FUN_00626DA0(void)
 {
-	SchemeLibrary * library = Library();
+	Library();
 	PaletteSchemeIterator it;
 	int count = 0;
 	DynamicVectorClass<ColorScheme *> *schemes = it.Next();
