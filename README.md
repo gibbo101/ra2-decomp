@@ -107,7 +107,8 @@ out of history.
 - [RobinDigitalPro](https://github.com/RobinDigitalPro): shared matched source and names from
   their byte-matching rebuild of Red Alert 2 1.001
   ([RobinDigitalPro/ra2-decomp-help](https://github.com/RobinDigitalPro/ra2-decomp-help),
-  GPL-3.0-or-later), from which both Tunnel_AI functions' coordinate forms are adapted.
+  GPL-3.0-or-later), from which both Tunnel_AI functions' coordinate forms are adapted and
+  the rule that placed TechnoTypeClass's self-clearing member comes.
 
 ## You need your own copy of the game
 
