@@ -5473,3 +5473,5 @@ DirType UnitClass::Turret_Facing(void) const
 
 // TEMPLATE: GAMEMD 0x00746EA0
 // ?Is_Archive_Same@?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABE_NABH@Z
+// FUNCTION: GAMEMD 0x004D03D0
+// DirType::operator>=
