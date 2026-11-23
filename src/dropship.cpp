@@ -45,6 +45,9 @@
 
 void Draw_Cost(int cost, int maxcost, Surface & surface, Point2D const & drawpoint, wchar_t const * title, bool center, ConvertClass & drawer, Blitter const * blitter);
 void Draw_Unit_Info(Surface * surface, ConvertClass * drawer, TechnoTypeClass * techtype, bool allowed);
+BitFont * __fastcall FUN_004A60D0(int flags);
+
+static inline Point2D * Scratch(Point2D const & p) { return (Point2D *)&p; }
 
 // SYNTHETIC: GAMEMD 0x004B67A0 SYMBOL
 // _$E2
@@ -963,10 +966,6 @@ void __fastcall Dropship_Screen(void)
 
 	Show_Mouse();
 }
-
-BitFont * __fastcall FUN_004A60D0(int flags);
-
-static inline Point2D * Scratch(Point2D const & p) { return (Point2D *)&p; }
 
 // FUNCTION: GAMEMD 0x004B96A0
 void Draw_Cost(int cost, int maxcost, Surface & surface, Point2D const & drawpoint, wchar_t const * title, bool center, ConvertClass & drawer, Blitter const * blitter)

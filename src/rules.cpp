@@ -59,23 +59,10 @@ struct FileSystem {
 	static void const * LoadFile(char const * name, bool as_shape);
 };
 
-namespace Powerups {
-extern char const * Effects[19];
-extern int Weights[19];
-extern AnimType Anims[19];
-extern double Arguments[19];
-extern bool Naval[19];
-}
-void __fastcall FUN_006CFD20(int button, int slot);
-int __fastcall FUN_006CFCC0(char const * name);
-void __fastcall FUN_006CFDB0(int count);
 template<> void VectorClass<ColorScheme *>::Clear(void);
 void FUN_006269A0(void);
 void __fastcall FUN_00626AB0(char const * name, HSVClass & hsv);
 void Difficulty_Get(CCINIClass const & ini, DifficultyClass & diff, char const * section);
-extern unsigned int DAT_00B053B4;
-extern bool DAT_00B053B8;
-int FUN_005D5ED0(void);
 
 // SYNTHETIC: GAMEMD 0x00664B10 SYMBOL
 // _$E35
@@ -2245,6 +2232,14 @@ bool RulesClass::AI(CCINIClass const & ini)
 	return(false);
 }
 
+namespace Powerups {
+extern char const * Effects[19];
+extern int Weights[19];
+extern AnimType Anims[19];
+extern double Arguments[19];
+extern bool Naval[19];
+}
+
 // FUNCTION: GAMEMD 0x00673E80
 bool RulesClass::Powerups(CCINIClass const & ini)
 {
@@ -2379,6 +2374,9 @@ bool RulesClass::Do_Movies(CCINIClass const & ini)
 }
 
 extern int DAT_008427CC;
+void __fastcall FUN_006CFD20(int button, int slot);
+int __fastcall FUN_006CFCC0(char const * name);
+void __fastcall FUN_006CFDB0(int count);
 
 // FUNCTION: GAMEMD 0x00674650
 bool RulesClass::Read_AdvancedCommandBar(CCINIClass const & ini, bool multiplayer)
@@ -3169,6 +3167,9 @@ bool RulesClass::Objects(CCINIClass & ini)
 	return(true);
 }
 
+extern unsigned int DAT_00B053B4;
+extern bool DAT_00B053B8;
+
 // FUNCTION: GAMEMD 0x00679CC0
 int FUN_00679CC0(void)
 {
@@ -3182,6 +3183,8 @@ int FUN_00679CC0(void)
 	}
 	return DAT_00B053B4;
 }
+
+int FUN_005D5ED0(void);
 
 // FUNCTION: GAMEMD 0x00679D90
 int RulesClass::Get_Rule_Unique_ID(void)

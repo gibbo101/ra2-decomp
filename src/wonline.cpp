@@ -24,6 +24,8 @@
 #include "_rules.h"
 #include "gadget.h"
 #include "_xmouse.h"
+#include "coopcamp.h"
+#include "windlg.h"
 
 #include <windows.h>
 #undef LoadString
@@ -2786,7 +2788,6 @@ Surface * __fastcall FUN_00783B80(RankedUser * user)
 }
 
 #include "multiplayer.h"
-#include "coopcamp.h"
 
 void __fastcall FUN_005EA3E0(HWND dialog, bool flag);
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
@@ -5149,7 +5150,6 @@ bool __fastcall FUN_00789960(Channel * chan, bool extra)
 
 extern char DAT_00B76E28[];
 
-#include "windlg.h"
 
 class CreateGameDialogControl : public WonlineStringDialogControl
 {
