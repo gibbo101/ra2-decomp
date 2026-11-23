@@ -11261,7 +11261,7 @@ address,name,result,size,source,symbol
 0x00638B50,FUN_00638B50,MATCH,24,src/planmgr.cpp,?FUN_00638B50@@YI_ND@Z
 0x00638B70,FUN_00638B70,MATCH,167,src/planmgr.cpp,?FUN_00638B70@@YI_NPAVTechnoClass@@HVTargetClass@@@Z
 0x00638C20,FUN_00638C20,MATCH,24,src/planmgr.cpp,?FUN_00638C20@@YI_NH@Z
-0x00638C40,FUN_00638C40,MATCH,42,src/planmgr.cpp,?FUN_00638C40@@YI_NHVTargetClass@@@Z
+0x00638C40,FUN_00638C40,MATCH,42,src/planmgr.cpp,?FUN_00638C40@@YI_NHVxTargetClass@@@Z
 0x00638C70,FUN_00638C70,MATCH,98,src/planmgr.cpp,?FUN_00638C70@@YI_NPAVTechnoClass@@@Z
 0x00638CE0,FUN_00638CE0,MATCH,221,src/planmgr.cpp,?FUN_00638CE0@@YIHPAVTechnoClass@@ABVEventClass@@@Z
 0x00638DC0,FUN_00638DC0,MATCH,88,src/planmgr.cpp,?FUN_00638DC0@@YIXPAVPlanningNodeClass@@@Z
@@ -11269,7 +11269,7 @@ address,name,result,size,source,symbol
 0x00638E60,FUN_00638E60,MATCH,294,src/planmgr.cpp,?FUN_00638E60@@YIXXZ
 0x00639040,FUN_00639040,MATCH,229,src/planmgr.cpp,?FUN_00639040@@YI_NXZ
 0x00639130,FUN_00639130,MATCH,215,src/planmgr.cpp,?FUN_00639130@@YI_NXZ
-0x00639210,FUN_00639210,MATCH,187,src/planmgr.cpp,?FUN_00639210@@YIPAVPlanningNodeClass@@HHVCoord@@@Z
+0x00639210,FUN_00639210,MATCH,187,src/planmgr.cpp,?FUN_00639210@@YIPAVPlanningNodeClass@@HVCoord@@H@Z
 0x006392D0,FUN_006392D0,MATCH,207,src/planmgr.cpp,?FUN_006392D0@@YIPAVPlanningNodeClass@@VPoint2D@@@Z
 0x006393A0,FUN_006393A0,MATCH,207,src/planmgr.cpp,?FUN_006393A0@@YIPAVPlanningNodeClass@@VPoint2D@@@Z
 0x00639470,FUN_00639470,MATCH,105,src/planmgr.cpp,?FUN_00639470@@YIPAVPlanningNodeClass@@VCoord@@@Z
@@ -11290,7 +11290,7 @@ address,name,result,size,source,symbol
 0x0063A1B0,FUN_0063A1B0,MATCH,85,src/planmgr.cpp,?FUN_0063A1B0@@YIXH@Z
 0x0063A210,FUN_0063A210,MATCH,29,src/planmgr.cpp,?FUN_0063A210@@YIXPBD@Z
 0x0063A230,FUN_0063A230,MATCH,74,src/planmgr.cpp,?FUN_0063A230@@YIXPBD@Z
-0x0063A280,FUN_0063A280,MATCH,216,src/planmgr.cpp,?FUN_0063A280@@YIXPBD@Z
+0x0063A280,FUN_0063A280,MATCH,216,src/planmgr.cpp,?FUN_0063A280@@YIXABVEventClass@@@Z
 0x0063A360,FUN_0063A360,MATCH,221,src/planmgr.cpp,?FUN_0063A360@@YIXH@Z
 0x0063A440,FUN_0063A440,MATCH,91,src/planmgr.cpp,?FUN_0063A440@@YIHPAVPlanningTokenClass@@ABVEventClass@@@Z
 0x0063A4A0,FUN_0063A4A0,MATCH,7,src/planmgr.cpp,?FUN_0063A4A0@@YIXH@Z
@@ -11312,6 +11312,7 @@ address,name,result,size,source,symbol
 0x0063B2F0,FUN_0063B2F0,MATCH,608,src/planmgr.cpp,?FUN_0063B2F0@@YIXXZ
 0x0063BE10,FUN_0063BE10,MATCH,66,src/planmgr.cpp,?FUN_0063BE10@@YI_NPAVTechnoClass@@@Z
 0x0063BE60,Draw_Filled_Unit_Waypoints,MATCH,2085,src/planmgr.cpp,?Draw_Filled_Unit_Waypoints@@YIXPAVTechnoClass@@@Z
+0x0063B550,FUN_0063B550,MATCH,2239,src/planmgr.cpp,?FUN_0063B550@@YIXPAVTechnoClass@@@Z
 0x0063C690,FUN_0063C690,MATCH,994,src/planmgr.cpp,?FUN_0063C690@@YIXPAVPlanningNodeClass@@@Z
 0x0063CA80,FUN_0063CA80,MATCH,87,src/planmgr.cpp,?FUN_0063CA80@@YI?AVCoord@@ABVEventClass@@PAVTechnoClass@@@Z
 0x0063CAE0,FUN_0063CAE0,MATCH,852,src/planmgr.cpp,?FUN_0063CAE0@@YIXPAVPlanningNodeClass@@@Z
@@ -11392,6 +11393,7 @@ address,name,result,size,source,symbol
 0x00638F90,FUN_00638F90,MATCH,173,src/planmgr.cpp,?FUN_00638F90@@YIPAVPlanningNodeClass@@VPoint2D@@@Z
 0x0063AB60,FUN_0063AB60,MATCH,252,src/planmgr.cpp,?FUN_0063AB60@@YG_NHH@Z
 0x00637E00,FUN_00637E00,MATCH,786,src/planmgr.cpp,?FUN_00637E00@@YIXPAVEventClass@@@Z
+0x00638120,FUN_00638120,MATCH,1181,src/planmgr.cpp,?FUN_00638120@@YI_NPAVTechnoClass@@PAVEventClass@@@Z
 0x0063F080,Rasterize_Polygon,MATCH,602,src/polygon.cpp,?Rasterize_Polygon@@YIXABUPolygonShapeStruct@@AAUPolygonRasterStruct@@@Z
 0x0063F2E0,Rasterize_Line_Span,MATCH,439,src/polygon.cpp,?Rasterize_Line_Span@@YIXHHHHHHAAPAVPoint2D@@@Z
 0x0063F4A0,_$E41,MATCH,23,src/power.cpp,_$E41
