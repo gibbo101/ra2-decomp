@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 23 November 2026: 93% of game code by size matches (19,259 of 19,353 functions,
+Status, 23 November 2026: 93% of game code by size matches (19,260 of 19,353 functions,
 99%; 98% fuzzy), landed in batches module by module. `docs/rounds/` records each round.
 
 ## The goal

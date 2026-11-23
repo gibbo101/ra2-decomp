@@ -16413,6 +16413,7 @@ address,name,result,size,source,symbol
 0x007414A0,UnitClass::Tiberium_Load,MATCH,62,src/unit.cpp,?Tiberium_Load@UnitClass@@UBENXZ
 0x007414E0,UnitClass::Approach_Target,MATCH,435,src/unit.cpp,?Approach_Target@UnitClass@@UAEPAVAbstractClass@@_N@Z
 0x007416A0,UnitClass::Overrun_Square,MATCH,711,src/unit.cpp,?Overrun_Square@UnitClass@@UAEXABVCell@@_N@Z
+0x00741970,UnitClass::Assign_Destination,MATCH,6167,src/unit.cpp,?Assign_Destination@UnitClass@@UAEXPAVAbstractClass@@_N@Z
 0x00743190,UnitClass::Greatest_Threat,MATCH,214,src/unit.cpp,?Greatest_Threat@UnitClass@@UBEPAVAbstractClass@@W4ThreatType@@ABVCoord@@_N@Z
 0x00743270,UnitClass::Read_INI,MATCH,1127,src/unit.cpp,?Read_INI@UnitClass@@SIXAAVCCINIClass@@@Z
 0x007436E0,UnitClass::Write_INI,MATCH,459,src/unit.cpp,?Write_INI@UnitClass@@SIXAAVCCINIClass@@@Z

@@ -16755,6 +16755,7 @@ address,size,symbol,source,sha256
 0x007414A0,62,?Tiberium_Load@UnitClass@@UBENXZ,src/unit.cpp,555646dbb860172c580d68c58e1e84c418ff0bb8fb27b8c2202f81d78b8c337d
 0x007414E0,435,?Approach_Target@UnitClass@@UAEPAVAbstractClass@@_N@Z,src/unit.cpp,e865f861e8b0dd338cd01353776f6aeefe9c9b5e8f264b61fe68ec20f86f6056
 0x007416A0,711,?Overrun_Square@UnitClass@@UAEXABVCell@@_N@Z,src/unit.cpp,99eb42f86d315e8bfa34eda599ffd28cf74076565de240bc8c90282679f5efb1
+0x00741970,6167,?Assign_Destination@UnitClass@@UAEXPAVAbstractClass@@_N@Z,src/unit.cpp,874f5dbdda5ac47b6b6ba12a6a18ba36f998bb9a56c0c41e4acf1b3ff2d9a9ce
 0x00743190,214,?Greatest_Threat@UnitClass@@UBEPAVAbstractClass@@W4ThreatType@@ABVCoord@@_N@Z,src/unit.cpp,14ac1fa79ed0c3b58523f0fe5a27e61b080dfdf3e1f4ba6bb48e45f342151951
 0x00743270,1127,?Read_INI@UnitClass@@SIXAAVCCINIClass@@@Z,src/unit.cpp,171db63b87cec285dd6a764a5f4ef21f4367f45ffc11bcd2f6ad00508383275d
 0x007436E0,459,?Write_INI@UnitClass@@SIXAAVCCINIClass@@@Z,src/unit.cpp,f52f3800500dce56d05f3d6e3ceb63eb65dabe1a7778161cff3c4d2543f08ae0
