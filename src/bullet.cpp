@@ -250,10 +250,8 @@ static inline Coord Ballistic_Physics(TVelocity3D<double> & position, TVelocity3
 	if (!fell_through_bridge && !rose_through_bridge) {
 		if (position.Z >= height && position.Z - 150 < height) {
 			BuildingClass * building = cellptr->Cell_Building();
-			if (building == NULL && !cellptr->Has_Wall_Or_Gate(OVERLAY_NONE, FACING_NONE)) {
-				hit_obstacle = false;
-			} else {
-				hit_obstacle = true;
+			hit_obstacle = building != NULL || cellptr->Has_Wall_Or_Gate();
+			if (hit_obstacle) {
 				if (building != NULL) {
 					if (building == payback || building->Class->IsLaserFence && building->LaserFenceFrame >= 8) {
 						hit_obstacle = false;
@@ -275,6 +273,7 @@ static inline Coord Ballistic_Physics(TVelocity3D<double> & position, TVelocity3
 		}
 	}
 	if (do_bounce) {
+		bool contact = true;
 		if (payback == NULL) {
 			if (fell_through_bridge) {
 				position.Z = bridge_height;
@@ -302,13 +301,14 @@ static inline Coord Ballistic_Physics(TVelocity3D<double> & position, TVelocity3
 				bridge_height -= 20;
 				position.Z = bridge_height;
 			} else {
-				goto ballistic_position_done;
+				contact = false;
 			}
 		}
-		impact = IMPACT_NORMAL;
-		forced = true;
+		if (contact) {
+			impact = IMPACT_NORMAL;
+			forced = true;
+		}
 	}
-ballistic_position_done:
 	Coord result;
 	result.X = (int)position.X;
 	result.Y = (int)position.Y;
@@ -325,11 +325,11 @@ static inline void Set_Horizontal_Velocity(TVelocity3D<double> & velocity,
 	velocity.Y = y;
 }
 
-static inline void Capture_Initial_Velocity(TVelocity3D<double> & velocity,
-		TVelocity2D<double> const & horizontal, double vertical)
+static inline void Copy_Velocity(TVelocity2D<double> & planar, double & height,
+		TVelocity2D<double> const & direction, double vertical)
 {
-	velocity.TVelocity2D<double>::operator=(horizontal);
-	velocity.Z = vertical;
+	planar = direction;
+	height = vertical;
 }
 
 static inline double Flight_Speed(TVelocity3D<double> const & velocity)
@@ -487,7 +487,7 @@ void BulletClass::AI(void)
 		TVelocity3D<double> new_velocity;
 		TVelocity3D<double> const & previous = Velocity;
 		TVelocity3D<double> captured;
-		Capture_Initial_Velocity(captured, previous, previous.Z);
+		Copy_Velocity(captured, captured.Z, previous, previous.Z);
 		new_velocity = captured;
 		TVelocity3D<double> velocity;
 		Set_Horizontal_Velocity(velocity, captured.X, captured.Y);
@@ -579,8 +579,8 @@ void BulletClass::AI(void)
 				} else {
 					Set_Horizontal_Velocity(new_velocity, velocity.X, velocity.Y);
 					if (!Class->Vertical) {
-						TVelocity3D<double> updated_velocity = new_velocity;
-						updated_velocity.Z = velocity.Z;
+						TVelocity3D<double> updated_velocity;
+						Copy_Velocity(updated_velocity, updated_velocity.Z, new_velocity, velocity.Z);
 						Velocity = updated_velocity;
 					}
 					if (Velocity.Speed() < 10 && HeightAGL < 10) {
