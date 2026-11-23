@@ -1172,6 +1172,102 @@ deploy_fire:
 	unknown_bool_68E = false;
 }
 
+static inline double _Tube_Divisor(FacingType dir)
+{
+	return((dir % 2) ? CELL_LEPTON_H * M_SQRT2 : CELL_LEPTON_H);
+}
+
+static inline DirType _Direction(ObjectClass const * from, Coord const & to)
+{
+	return(DirType().Direction(from->Center_Coord(), to));
+}
+
+// FUNCTION: GAMEMD 0x0051B350
+void InfantryClass::Tunnel_AI(void)
+{
+	bool finished = Tubes[CurrentTube]->Dirs[CurrentTubeDir] == FACING_NONE;
+	if (!finished) {
+		int distance = Distance(LastTubeCoord);
+		TubeClass * tube = Tubes[CurrentTube];
+		DirType direction = _Direction(this, LastTubeCoord);
+		int speed = Class->MaxSpeed;
+
+		int height_step;
+		{
+			Coord exit(tube->Get_Exit());
+			Coord enter(Cell(tube->Enter));
+			int count = tube->Get_Count();
+			height_step = (Map.Get_Height_GL(exit) - Map.Get_Height_GL(enter)) / count;
+		}
+
+		if (distance <= speed) {
+			CurrentTubeDir++;
+			FacingType tube_dir = tube->Dirs[CurrentTubeDir];
+			finished = tube_dir == FACING_NONE;
+			PositionCoord = LastTubeCoord;
+
+			if (!finished) {
+				Coord delta = Map[Adjacent_Cell(LastTubeCoord, tube->Dirs[CurrentTubeDir])].Cell_Coord() - Map[LastTubeCoord].Cell_Coord();
+				LastTubeCoord = LastTubeCoord + TPoint2D<int>(delta.X, delta.Y);
+				LastTubeCoord.Z += height_step;
+
+				DirType dir = _Direction(this, LastTubeCoord);
+				Coord new_coord = Move_Coord(PositionCoord, dir, speed - distance);
+				double divisor = _Tube_Divisor(tube_dir);
+				new_coord.Z += (speed - distance) / divisor * height_step;
+				PositionCoord = new_coord;
+				return;
+			}
+		} else {
+			FacingType tube_dir = tube->Dirs[CurrentTubeDir];
+			Coord new_coord = Move_Coord(Get_Coord(), direction, speed);
+			double divisor = _Tube_Divisor(tube_dir);
+			new_coord.Z += speed / divisor * height_step;
+			PositionCoord = new_coord;
+			return;
+		}
+	}
+
+	if (finished) {
+		CellClass * cellptr = &Map[Get_Coord()];
+		ObjectClass * occupier = cellptr->Cell_Occupier();
+		if (Can_Enter_Cell(cellptr, FACING_NONE, 0) != MOVE_OK) {
+			DynamicVectorClass<ObjectClass *> list;
+			while (occupier != NULL) {
+				list.Add(occupier);
+				occupier = occupier->Next;
+			}
+			for (int index = 0; index < list.Count(); index++) {
+				ObjectClass * object = list[index];
+				if (object->RTTI == RTTI_UNIT || object->Is_Infantry()) {
+					if (!((FootClass *)object)->Locomotion->Is_Moving()) {
+						object->Scatter(Coord(0, 0, 0), true, true);
+					}
+				}
+			}
+			Set_Speed(0);
+		} else {
+			Coord spot = cellptr->Closest_Free_Spot(Get_Coord());
+			spot.Z = Map.Get_Height_GL(spot);
+			PositionCoord = spot;
+
+			Locomotion->Force_Immediate_Destination(COORD_NONE);
+			Locomotion->Stop_Movement_Animation();
+			Mark(MARK_DOWN);
+			Set_Occupy_Bit(Get_Coord());
+
+			if (NavCom == cellptr) {
+				Scatter(Coord(0, 0, 0), true, true);
+			} else {
+				Set_Speed(1);
+			}
+			CurrentTube = TUBE_NONE;
+			IsPlanningToLook = true;
+			Per_Cell_Process(PCP_END);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0051BAB0
 void InfantryClass::AI(void)
 {
