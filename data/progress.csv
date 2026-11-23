@@ -17606,6 +17606,7 @@ address,name,result,size,source,symbol
 0x0076C240,_$E61,MATCH,15,src/wdtsel.cpp,_$E61
 0x0076C250,_$E64,MATCH,18,src/wdtsel.cpp,_$E64
 0x0076C270,_$E67,MATCH,26,src/wdtsel.cpp,_$E67
+0x0076C290,WorldDominationTour::Selection::Selection,MATCH,1090,src/wdtsel.cpp,??0Selection@WorldDominationTour@@QAE@ABV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z
 0x0076C6E0,WorldDominationTour::Selection::~Selection,MATCH,646,src/wdtsel.cpp,??1Selection@WorldDominationTour@@UAE@XZ
 0x0076C970,WorldDominationTour::Selection::Init_Voices,MATCH,225,src/wdtsel.cpp,?Init_Voices@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z
 0x0076CA60,WorldDominationTour::Selection::Init_Sounds,MATCH,400,src/wdtsel.cpp,?Init_Sounds@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z

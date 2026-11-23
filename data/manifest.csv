@@ -17847,6 +17847,7 @@ address,size,symbol,source,sha256
 0x0076C240,15,_$E61,src/wdtsel.cpp,7ebabef2220cd0cca28f15225de94476e85b6e82981d7be89c305ddde12298ae
 0x0076C250,18,_$E64,src/wdtsel.cpp,eeb5a5078f3b71f772e99571565267bb4543e41292b5c0edbb9d0e5459287092
 0x0076C270,26,_$E67,src/wdtsel.cpp,d893a709787ce0e58b2679b2baccf346a41c144cfe8ee008b3a4f111a0ec717d
+0x0076C290,1090,??0Selection@WorldDominationTour@@QAE@ABV?$rc_ptr@VCampaign@WorldDominationTour@@@@H@Z,src/wdtsel.cpp,fb7e0901a8192ecaf167f9a011dd9fa7d161c7fcaafc609188003a789a8459e7
 0x0076C6E0,646,??1Selection@WorldDominationTour@@UAE@XZ,src/wdtsel.cpp,42e1a6d8cb547fd070a8457566bcaa335c445e41b2fb0ad52c71e3b833ac62cc
 0x0076C970,225,?Init_Voices@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z,src/wdtsel.cpp,b638e1ea3dcfd6256040dbfea31397accda43a058d693bada3d7c170c6358d8d
 0x0076CA60,400,?Init_Sounds@Selection@WorldDominationTour@@QAEXABVINIClass@@ABVWstring@@@Z,src/wdtsel.cpp,4c239a7a8cfb1eda44d002beb0c2701a7fc804f4d44d58363eed8c730ad8c1cf
