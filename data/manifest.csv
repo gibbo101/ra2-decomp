@@ -17216,6 +17216,7 @@ address,size,symbol,source,sha256
 0x00754BD0,1,_$E73,src/voxel.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x00754BE0,21,?Get_Isometric_View_Matrix@@YI?AVMatrix3D@@XZ,src/voxel.cpp,46d185efe5fa84bf625969b1abd469c7e73efa3c8d1c6f7ba3bd78d30caffa02
 0x00754C00,167,?Set_Voxel_Light_Angle@@YIXM@Z,src/voxel.cpp,a62d6a96cba4affb993a9056265474bd13819162e2b892748a0f735ca9ed7e6d
+0x00754CB0,3290,?Init_Voxel_Matrices@@YIXXZ,src/voxel.cpp,302392862682772d5141ab00add1d524b56c8590afb06919be6cab7de8b2206b
 0x00755990,26,?Get_Screen_Slope_Matrix@@YIXHAAVMatrix3D@@@Z,src/voxel.cpp,b09394bdfcc0955e27cf2f87b1e5001cee6954746fae072d3639c37b2b6b9d23
 0x007559B0,28,?Get_Slope_Matrix@@YI?AVMatrix3D@@H@Z,src/voxel.cpp,4643fc4f8b82e81bbf7ea0cdb82ca8f527072c77878bd3f13c060a2473415eb5
 0x007559D0,111,?Get_Screen_Slope_Transition_Matrix@@YIXHHAAVMatrix3D@@N@Z,src/voxel.cpp,d07375a003ec897f76794edf919d3cdf53fdf4c732d62cf9c63033be43e84201

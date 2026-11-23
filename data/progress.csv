@@ -16885,6 +16885,7 @@ address,name,result,size,source,symbol
 0x00754BD0,_$E73,MATCH,1,src/voxel.cpp,_$E73
 0x00754C00,Set_Voxel_Light_Angle,MATCH,167,src/voxel.cpp,?Set_Voxel_Light_Angle@@YIXM@Z
 0x00754BE0,Get_Isometric_View_Matrix,MATCH,21,src/voxel.cpp,?Get_Isometric_View_Matrix@@YI?AVMatrix3D@@XZ
+0x00754CB0,Init_Voxel_Matrices,MATCH,3290,src/voxel.cpp,?Init_Voxel_Matrices@@YIXXZ
 0x00755990,Get_Screen_Slope_Matrix,MATCH,26,src/voxel.cpp,?Get_Screen_Slope_Matrix@@YIXHAAVMatrix3D@@@Z
 0x007559B0,Get_Slope_Matrix,MATCH,28,src/voxel.cpp,?Get_Slope_Matrix@@YI?AVMatrix3D@@H@Z
 0x007559D0,Get_Screen_Slope_Transition_Matrix,MATCH,111,src/voxel.cpp,?Get_Screen_Slope_Transition_Matrix@@YIXHHAAVMatrix3D@@N@Z
