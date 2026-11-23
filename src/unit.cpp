@@ -3903,6 +3903,357 @@ void UnitClass::Overrun_Square(Cell const & cell, bool threaten)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00741970
+void UnitClass::Assign_Destination(AbstractClass * target, bool immediate)
+{
+	if (Class->BalloonHover && target == NULL && NavCom != NULL && TarCom != NULL) {
+		if (NavCom == TarCom
+			|| (Is_Target_Cell(NavCom) && As_Cell(NavCom)->Cell_Occupier() == TarCom)
+			|| GetTargetDirection(TarCom).Is_Complete_Turn(PrimaryFacing.Current(), DirType(0x4000))) {
+			if (Get_Mission() != MISSION_ATTACK) {
+				Set_Mission(MISSION_ATTACK);
+			}
+			return;
+		}
+	}
+
+	if (target == NavCom && !UnlimboingInfantry) return;
+	UnlimboingInfantry = false;
+
+	if (Deployed || Deploying || Undeploying) {
+		if (!Deployed || LocomotorSource == NULL) {
+			AbortMotion();
+			return;
+		}
+	}
+
+	if (HasAnyLink() && Class->Max_Passengers() > 0 && FUN_0065AD30(0)->RTTI == RTTI_INFANTRY && target != NULL && (target->AbstractFlags & 1) && !ContainsLink((TechnoClass *)target)) {
+		Transmit_Message(RADIO_OVER_OUT);
+	}
+
+	if (target != NULL && HasAnyLink() && Get_Mission() == MISSION_SLEEP && IsTethered && FUN_0065AD30(0)->RTTI == RTTI_AIRCRAFT) {
+		AircraftClass * a = (AircraftClass *)FUN_0065AD30(0);
+		if (a->Class->IsCarryall) {
+			a->Assign_Destination(NULL);
+			Transmit_Message(RADIO_UNTETHER);
+			Transmit_Message(RADIO_OVER_OUT);
+		}
+	}
+
+	BuildingClass * b = As_Building(target);
+
+	if (Get_Mission() == MISSION_UNLOAD || MissionQueue == MISSION_UNLOAD) {
+		BuildingClass * dock = Map[Get_Cell() + AdjacentCell[FACING_W]].Cell_Building();
+		if (dock != NULL && Class->Harvester && dock->Anim_Active(BANIM_SPECIAL_ONE)) {
+			dock->End_Anim(BANIM_SPECIAL_ONE);
+		}
+	}
+
+	if (Get_Mission() == MISSION_ENTER || MissionQueue == MISSION_ENTER) {
+		if (!HasAnyLink()) {
+			TechnoClass * techno = Dynamic_Cast<TechnoClass *>(target);
+			if (techno != NULL && techno->RTTI == RTTI_UNIT) {
+				QueueUpToEnter = As_Unit(target);
+				ArchiveTarget = NULL;
+				target = NULL;
+			} else if (b != NULL && b->RTTI == RTTI_BUILDING && b->Class->UnitAbsorb) {
+				QueueUpToEnter = b;
+				ArchiveTarget = NULL;
+				target = NULL;
+			} else if (b != NULL && b->RTTI == RTTI_BUILDING) {
+				if (b->HasAnyLink()) {
+					if (!b->Class->Bunker) {
+						ArchiveTarget = target;
+					}
+					if (b->Class->Bunker) {
+						Transmit_Message(RADIO_OVER_OUT);
+						target = NULL;
+					}
+					if (b->Class->IsCanUnitRepair) {
+						if (Get_Health_Ratio() < Rule->ConditionGreen) {
+							QueueUpToEnter = b;
+							target = NULL;
+						} else {
+							Transmit_Message(RADIO_OVER_OUT);
+							target = NULL;
+						}
+					}
+				} else {
+					AbstractClass * oldnav = NavCom;
+					if (Transmit_Message(RADIO_DOCKING, b) != RADIO_ROGER) {
+						Transmit_Message(RADIO_OVER_OUT);
+						if (b->Class->IsCanUnitRepair) {
+							ArchiveTarget = target;
+						}
+					} else {
+						if (b->Class->IsDockUnload && NavCom != oldnav) {
+							target = NavCom;
+						}
+					}
+				}
+			} else if (target != NULL && (target->AbstractFlags & 1)) {
+				TechnoClass * whom = (TechnoClass *)target;
+				if (whom->HasAnyLink()) {
+					ArchiveTarget = target;
+				} else {
+					if (Transmit_Message(RADIO_HELLO, whom) == RADIO_ROGER) {
+						if (Transmit_Message(RADIO_DOCKING) != RADIO_ROGER) {
+							Transmit_Message(RADIO_OVER_OUT);
+						}
+					}
+				}
+			}
+		} else {
+			Path[0] = FACING_NONE;
+		}
+	} else {
+		Path[0] = FACING_NONE;
+	}
+
+	bool useplan = false;
+
+	if (target != NULL && Class->IsSubterranean && Locomotion->Is_Moving()) {
+		IPersistPtr persist(Locomotion);
+		CLSID clsid;
+		persist->GetClassID(&clsid);
+		if (clsid == LocomotionClass::CLSIDs::Drive) {
+			NavQueue.Add_Head(target);
+			RouteQueue.Clear();
+			CellClass * tcell = Get_Target_Cell_Ptr();
+			target = tcell;
+			immediate = false;
+			if (tcell != NULL && tcell->IsUnderBridge && !Is_Moving_Onto_Bridge()) {
+				Cell nearby = Map.Nearby_Location(tcell->CellID, SPEED_TRACK, Map.Get_Cell_Zone(&tcell->CellID, Class->MZone, false), Class->MZone, false, Point2D(1, 1), false, true, false, false);
+				if (nearby != CELL_NONE) {
+					target = &Map[nearby];
+				}
+			}
+		}
+	}
+
+	bool needsswap = false;
+
+	if (target != NULL) {
+		bool surface = false;
+
+		if (Class->IsSubterranean && immediate) {
+			bool isbridge = Is_Moving_Onto_Bridge();
+
+			Cell from = Destination_Coord().As_Cell();
+			bool canburrowfrom = Map[from].Can_Burrow_Here();
+
+			Cell to = target->Center_Coord().As_Cell();
+			CellClass * tocell = &Map[to];
+			bool isunderbridgeto = tocell->IsUnderBridge;
+			bool canburrowto = tocell->Can_Burrow_Here();
+			int height = Get_Height_AGL();
+
+			if (isbridge && isunderbridgeto) {
+				int z1 = Map.Zone_Connection_Index(from, 3, 0);
+				if (z1 == Map.Zone_Connection_Index(to, 3, 0) && z1 != -1) {
+					if (!Map.ZoneConnections[z1].IsPassable) {
+						Cell d1 = Map.Get_Zone_Connection_Destination(from, from);
+						Cell d2 = Map.Get_Zone_Connection_Destination(to, to);
+						if ((d1 - d2).Length() <= 2) {
+							needsswap = true;
+						}
+					} else {
+						needsswap = true;
+					}
+				}
+			}
+			if ((isbridge || isunderbridgeto) && !needsswap) {
+				useplan = true;
+			}
+
+			if (((!canburrowfrom && height >= 0) || !canburrowto) && !needsswap) {
+				useplan = true;
+			}
+		}
+
+		if (useplan) {
+			target = Plan_Route(target);
+			surface = true;
+		} else if (immediate) {
+			RouteQueue.Clear();
+			surface = true;
+		}
+
+		if (surface) {
+			if (Locomotion->Is_Surfacing()) {
+				RouteQueue.Add_Head(target);
+				target = &Map[Get_Coord()];
+			}
+		}
+	} else {
+		RouteQueue.Clear();
+	}
+
+	if (Class->Teleporter && !IsImmobilized && LocomotorSource == NULL && !IsAttackedByLocomotor) {
+		TechnoClass * contact = FUN_0065AD30(0);
+		IPersistPtr persist(Locomotion);
+		CLSID clsid;
+		persist->GetClassID(&clsid);
+		bool swap = true;
+		if (contact != NULL) {
+			if (contact->RTTI == RTTI_BUILDING) {
+				BuildingClass * dock = As_Building(contact);
+				CellClass * cell = As_Cell(target);
+				if (dock->Class->IsDockUnload && cell != NULL && cell->Cell_Unit(false) == NULL) {
+					swap = false;
+					if (clsid != LocomotionClass::CLSIDs::Teleport) {
+						IPiggybackPtr piggy(Locomotion);
+						if (piggy != NULL && piggy->Is_Piggybacking() && piggy->Is_Ok_To_End()) {
+							piggy->End_Piggyback(&Locomotion);
+						} else {
+							Locomotion->Stop_Moving();
+							Set_Mission(MISSION_NONE);
+							QueueMission(MISSION_ENTER, false);
+							unknown_bool_6AC = true;
+							UnlimboingInfantry = true;
+						}
+					}
+				}
+			}
+		}
+		if ((contact == NULL || swap == true) && clsid != LocomotionClass::CLSIDs::Drive) {
+			IPiggybackPtr piggy(Locomotion);
+			if (piggy != NULL && piggy->Is_Piggybacking() && piggy->Is_Ok_To_End()) {
+				piggy->End_Piggyback(&Locomotion);
+			}
+			ILocomotionPtr walk(LocomotionClass::CLSIDs::Drive);
+			walk->Link_To_Object(this);
+			piggy = IPiggybackPtr(walk);
+			if (piggy != NULL) {
+				piggy->Begin_Piggyback(Locomotion);
+				Locomotion = walk;
+			}
+		}
+	}
+
+	if (target != NULL && !Locomotion->Is_Moving()) {
+		IPersistPtr persist(Locomotion);
+		CLSID clsid;
+		persist->GetClassID(&clsid);
+		if (clsid == LocomotionClass::CLSIDs::Tunnel && Get_Height_AGL() == 0) {
+			Coord tc = target->Center_Coord();
+			int gl = Map.Get_Height_GL(tc);
+			if (tc.Z < gl) tc.Z = gl;
+
+			bool doswap = needsswap;
+			if (!doswap) {
+				bool canburrow = !Is_Moving_Onto_Bridge()
+					&& !Map[target->Center_Coord()].IsUnderBridge
+					&& Map[Destination_Coord()].Can_Burrow_Here()
+					&& Map[target->Center_Coord()].Can_Burrow_Here();
+				if (canburrow) {
+					if (!AStarAttempt(&Get_Target_Cell(), &target->Center_Coord().As_Cell())) {
+						doswap = true;
+					}
+				} else {
+					doswap = true;
+				}
+			}
+
+			if (doswap) {
+				IPiggybackPtr piggy(Locomotion);
+				if (piggy != NULL && piggy->Is_Piggybacking()) {
+					piggy->End_Piggyback(&Locomotion);
+				}
+				ILocomotionPtr walk(LocomotionClass::CLSIDs::Drive);
+				walk->Link_To_Object(this);
+				piggy = IPiggybackPtr(walk);
+				if (piggy != NULL) {
+					piggy->Begin_Piggyback(Locomotion);
+					Locomotion = walk;
+					Locomotion->Force_New_Slope(Map[Get_Coord()].Ramp);
+				}
+			}
+		}
+	}
+
+	if (b != NULL) {
+		if (b->Class->IsCanUnitRepair) {
+			if (b->HasAnyLink() && b->FUN_0065AD30(0) != this) {
+				ArchiveTarget = target;
+			} else {
+				if (Transmit_Message(RADIO_HELLO, b) == RADIO_ROGER) {
+					if (Transmit_Message(RADIO_DOCKING) == RADIO_ROGER) {
+						BASECLASS::Assign_Destination(target, immediate);
+						Path[0] = FACING_NONE;
+						return;
+					}
+					Transmit_Message(RADIO_OVER_OUT);
+					target = NULL;
+				}
+			}
+		}
+		if (b->Class->Bunker) {
+			if (!b->HasAnyLink() || b->FUN_0065AD30(0) == this) {
+				if (Transmit_Message(RADIO_HELLO, b) == RADIO_ROGER) {
+					if (Transmit_Message(RADIO_DOCKING) == RADIO_ROGER) {
+						BASECLASS::Assign_Destination(target, immediate);
+						Path[0] = FACING_NONE;
+						return;
+					}
+					Transmit_Message(RADIO_OVER_OUT);
+					target = NULL;
+				}
+			}
+		}
+	}
+
+	BuildingClass * wf = (BuildingClass *)FUN_0065AD30(0);
+	if (Is_Target_Building(wf) && wf->Class->IsWeaponsFactory && CurrentMission != MISSION_ENTER) {
+		if (LocomotorSource == NULL) {
+			Cell exitcell = wf->Get_Coord().As_Cell() + Cell(4, 1);
+			if (target != &Map[exitcell]) {
+				NavQueue.Clear();
+				RouteQueue.Clear();
+				if (target != NULL) {
+					Queue_Navigation_List(target);
+				}
+				return;
+			}
+		} else {
+			Transmit_Message(RADIO_OVER_OUT);
+		}
+	}
+
+	if (b != NULL && Class->Dock.Count() > 0 && Class->Dock.Is_In_List(b->Class) && RTTI == RTTI_UNIT && (Class->Harvester || Class->Weeder) && Get_Mission() != MISSION_UNLOAD) {
+		if (FUN_0065AD30(0) != b && !b->HasAnyLink() && Transmit_Message(RADIO_HELLO, b) == RADIO_ROGER && Get_Mission() != MISSION_ENTER && Get_Mission() != MISSION_HARVEST) {
+			QueueMission(MISSION_ENTER, false);
+			target = NULL;
+		} else {
+			if (Is_Target_Building(target) && FUN_0065AD30(0) != target) {
+				Cell nearby = Map.Nearby_Location(b->Get_Coord().As_Cell(), SPEED_WHEEL, Map.Get_Cell_Zone(&b->Get_Coord().As_Cell(), Class->MZone, false), Class->MZone, false, Point2D(1, 1), false, true, false, false);
+				if (nearby != CELL_NONE) {
+					target = &Map[nearby];
+				} else {
+					target = NULL;
+				}
+			}
+		}
+	}
+
+	if (!Locomotion->Is_Powered() && !House->IonSensitivesShouldBeOffline()) {
+		CellClass * cellptr = Get_Cell_Ptr();
+		if (!cellptr->IsUnderBridge) {
+			ObjectClass * occupier = cellptr->Cell_Occupier();
+			while (occupier != NULL) {
+				if (occupier != this && occupier->RTTI == RTTI_BUILDING && (((BuildingClass *)occupier)->Class->IsCanUnitRepair || ((BuildingClass *)occupier)->Class->Bunker)) {
+					Locomotion->Power_On();
+					break;
+				}
+				occupier = occupier->Next;
+			}
+		}
+	}
+
+	BASECLASS::Assign_Destination(target, immediate);
+}
+
+
 // FUNCTION: GAMEMD 0x00743190
 AbstractClass * UnitClass::Greatest_Threat(ThreatType threat, Coord const & coord, bool onlyenemy) const
 {
