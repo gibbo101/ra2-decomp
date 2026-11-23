@@ -2510,10 +2510,15 @@ int MapClass::Get_Cell_Subzone_Index(Cell const & cell)
 	return(cell.X + cell.Y * (PlayRect.Height + PlayRect.Width + 1));
 }
 
+static inline CellZoneStruct * Zone_Of(MapClass * map, Cell const & cell)
+{
+	return(&map->CellZones[map->Get_Cell_Zone_Index(cell)]);
+}
+
 // FUNCTION: GAMEMD 0x0056D460
 void MapClass::ResetZones(Cell const & cell)
 {
-	CellZoneStruct * cell_data = &CellZones[Get_Cell_Zone_Index(cell)];
+	CellZoneStruct * cell_data = Zone_Of(this, cell);
 
 	int stride = Map.PlayRect.Width + Map.PlayRect.Height + 1;
 	int offsets[FACING_COUNT] = {
@@ -2563,7 +2568,7 @@ void MapClass::ResetZones(Cell const & cell)
 // FUNCTION: GAMEMD 0x0056D5A0
 void MapClass::Update_Cell_Zone_Constructively(Cell const & cell)
 {
-	CellZoneStruct * cell_data = &CellZones[Get_Cell_Zone_Index(cell)];
+	CellZoneStruct * cell_data = Zone_Of(this, cell);
 	int passability = cell_data->Passability;
 
 	int stride = Map.PlayRect.Width + Map.PlayRect.Height + 1;
@@ -9341,6 +9346,148 @@ bool MapClass::Build_Reachable_Subzones(CellClass *cptr, int layer, DynamicVecto
 		}
 	}
 	return false;
+}
+
+// FUNCTION: GAMEMD 0x00584550
+void MapClass::Update_Cell_Subzones(Cell const & cell)
+{
+	if (In_Local_Radar(cell, true)) {
+
+		int y;
+		int x;
+		for (int subzone = SUBZONE_COUNT-1; subzone >= 0; subzone--) {
+
+			int size = 1 << (subzone + 1);
+			Rect bounds = Rect(Point2D(cell.X - cell.X % size, cell.Y - cell.Y % size), size, size);
+
+			DynamicVectorClass<unsigned short> collected;
+			SUBZONE_CONNECTION_HASH_SET * set = SubzoneConnectionHashTable[subzone];
+			set->Clear();
+
+			DynamicVectorClass<SubzoneTrackingStruct> * track = &SubzoneTracking[subzone];
+
+			for (y = bounds.Y; y < bounds.Y + bounds.Height; y++) {
+				for (x = bounds.X; x < bounds.Width + bounds.X; x++) {
+					CellSubzoneStruct * subptr = Subzone_Of(this, Cell(x, y));
+					unsigned short subid = subptr->SubzoneID[subzone];
+					if (subid != 0) {
+						int found;
+						for (found = collected.Count() - 1; found >= 0; found--) {
+							if (collected[found] == subid) {
+								break;
+							}
+						}
+						if (found == -1) {
+							collected.Add(subid);
+						}
+					}
+					subptr->SubzoneID[subzone] = 0;
+					subptr->ZoneID = Zone_Of(this, Cell(x, y))->ZoneID;
+				}
+			}
+
+			for (y = collected.Count() - 1; y >= 0; y--) {
+				unsigned short subid = collected[y];
+				SubzoneTrackingStruct * entry = &SubzoneTracking[subzone][subid];
+				for (x = entry->Connections.Count() - 1; x >= 0; x--) {
+					SubzoneTrackingStruct * neighbor = &SubzoneTracking[subzone][entry->Connections[x].SubzoneID];
+					int j;
+					for (j = neighbor->Connections.Count() - 1; j >= 0; j--) {
+						if (neighbor->Connections[j].SubzoneID == subid) {
+							neighbor->Connections.Delete_Index(j);
+							break;
+						}
+					}
+				}
+				entry->Connections.Clear();
+			}
+
+			int entry_count = SubzoneTrackingEntryCount[subzone];
+			for (y = bounds.Y; y < bounds.Y + bounds.Height; y++) {
+				for (x = bounds.X; x < bounds.Width + bounds.X; x++) {
+
+					if (In_Local_Radar(Cell(x, y), true)) {
+
+						CellSubzoneStruct * subptr = Subzone_Of(this, Cell(x, y));
+						int passability = Zone_Of(this, Cell(x, y))->Passability;
+						if (passability != PASSABLE_OUTSIDE && subptr->SubzoneID[subzone] == 0) {
+
+							Cell seed(x, y);
+							Subzone_Span(subptr, subzone, entry_count, bounds, seed);
+
+							track->Add(SubzoneTrackingStruct());
+
+							SubzoneTrackingStruct * added = &(*track)[entry_count];
+							int parent;
+							if (subzone == SUBZONE_COUNT-1) {
+								parent = 0;
+							} else {
+								parent = subptr->SubzoneID[subzone + 1];
+							}
+							added->ParentSubzoneID = (unsigned short)parent;
+							added->Passability = (PassabilityType)passability;
+							added->Connections.Set_Growth_Step(16);
+							added->ThreatRegion = Cell_Region(Cell(x, y));
+
+							entry_count++;
+							if (entry_count == 0) {
+								Reset_All_Subzones();
+								return;
+							}
+						}
+					}
+				}
+			}
+			SubzoneTrackingEntryCount[subzone] = entry_count;
+
+			for (int connection_index = ZoneConnections.Count() - 1; connection_index >= 0; connection_index--) {
+				ZoneConnectionClass & connection = ZoneConnections[connection_index];
+				if (bounds.Is_Point_Within(Point2D(connection.From.X, connection.From.Y))
+					|| bounds.Is_Point_Within(Point2D(connection.To.X, connection.To.Y))) {
+					if (connection.IsPassable) {
+						Register_Zone_Connection_Entries(connection, subzone);
+					}
+				}
+			}
+
+			for (int bucket_index = 0; bucket_index < 256; bucket_index++) {
+				SUBZONE_CONNECTION_HASH_SET::BucketType & bucket = set->Buckets[bucket_index];
+				if (bucket.Count() > 0) {
+					SUBZONE_CONNECTION_HASH_SET::ObjectType * object = &bucket[0];
+					for (int index = bucket.Count(); index > 0; index--) {
+						unsigned packed = object->Value.SubzoneID;
+						WORD low = LOWORD(packed);
+						WORD high = HIWORD(packed);
+						bool costly = object->Value.IsCrossBlock;
+
+						SubzoneConnectionStruct conn(high);
+						conn.IsCrossBlock = costly;
+						(*track)[low].Connections.Add(conn);
+
+						SubzoneConnectionStruct conn2(low);
+						conn2.IsCrossBlock = costly;
+						(*track)[high].Connections.Add(conn2);
+
+						object++;
+					}
+				}
+			}
+		}
+
+		Rect block(cell.X - cell.X % 8, cell.Y - cell.Y % 8, 8, 8);
+		for (y = block.Y; y < block.Y + block.Height; y++) {
+			for (x = block.X; x < block.Width + block.X; x++) {
+				Cell probe(x, y);
+				if (In_Local_Radar(probe, true)) {
+					CellSubzoneStruct * subptr = Subzone_Of(this, Cell(x, y));
+					for (int level = 0; level < SUBZONE_COUNT-1; level++) {
+						SubzoneTracking[level][subptr->SubzoneID[level]].ParentSubzoneID = subptr->SubzoneID[level + 1];
+					}
+				}
+			}
+		}
+		Search.Reset();
+	}
 }
 
 // FUNCTION: GAMEMD 0x00584E50
