@@ -445,10 +445,10 @@ extern Wstring g_NickName;
 bool __fastcall FUN_0077D4C0(User * user)
 {
 	if (DAT_00B76AF0 || DAT_00B73AD0) {
-		if (WS_Find_Dialog(0x113)) {
+		HWND dialog = WS_Find_Dialog(0x113);
+		if (dialog) {
 			int index = Player_Name_To_Index(g_NickName);
 			User * host = NULL;
-			int count = g_UserList.length();
 			if (index >= 0) {
 				g_UserList.getPointer(&host, index);
 				if (DAT_00B76AF0) {
@@ -458,8 +458,7 @@ bool __fastcall FUN_0077D4C0(User * user)
 						return FUN_0077D3F0(user);
 					}
 					return FUN_0077D3F0(user);
-				}
-				if (DAT_00B73AD0) {
+				} else if (DAT_00B73AD0) {
 					if (FUN_0077D490(host, user))
 						return true;
 				}
@@ -14090,6 +14089,9 @@ HRESULT CDownloadEventSink::OnQueryResume(void)
 extern bool DAT_00AC11C2;
 extern int DAT_007EEF30, DAT_007EEF34, DAT_007EEF38, DAT_007EEF44;
 extern wchar_t DAT_0084B224[], DAT_0084B94C[], DAT_0084B9B0[];
+extern char DAT_0084AD30[];
+extern char DAT_0084AD00[];
+extern char DAT_0084ACE0[];
 void __fastcall FUN_005E74E0(HWND window);
 wchar_t *__fastcall FUN_0078F200(wchar_t const *name);
 #include "tiprequest.h"
@@ -15317,9 +15319,6 @@ BOOL CALLBACK WOL_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 	return FALSE;
 }
 
-extern char DAT_0084AD30[];
-extern char DAT_0084AD00[];
-extern char DAT_0084ACE0[];
 void FUN_0072CF40(void);
 int __fastcall FUN_005E9240(NodeNameType *node);
 void FUN_005E2FA0(void);
