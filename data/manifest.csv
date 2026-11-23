@@ -2890,6 +2890,7 @@ address,size,symbol,source,sha256
 0x00485390,199,?Get_Vein_Frame@CellClass@@QBEHXZ,src/cell.cpp,aec268cdbfe0056f26446b5206199c21f695f78b89f07dc68b2b0dcfd023a3f8
 0x00485460,296,?Can_Place_Veins@CellClass@@QAE_NXZ,src/cell.cpp,8ecc41ba78238227d48320b468bee514a0d23c9349612a25951ba11c43447282
 0x00485590,1372,?Redraw_Veins@CellClass@@QAEXXZ,src/cell.cpp,5d46b779a163a7706d6172f5fae583673b32c6151bdad2d68639dd2a05b0405d
+0x00485AF0,2191,?Place_Veins@CellClass@@QAEXXZ,src/cell.cpp,76ad96fa21bc5ad75203725f7f421d16eba500ef710f05ac9ff38156092d4e64
 0x00486380,20,?Is_Tile_Clear@CellClass@@QBE_NXZ,src/cell.cpp,6a5ff61ff05bc165bb6fc8a5b321b1c1e64f3d7bd58b3c5f46bca2213aa68c1a
 0x004863A0,43,?Is_Tile_Ramp@CellClass@@QBE_NXZ,src/cell.cpp,d11839faa602ed21ead900f5a6c5d442c3933761e1b191e46d048ea4f63e9a82
 0x004863D0,477,?Is_Tile_Cliff@CellClass@@QBE_NXZ,src/cell.cpp,c0d04705b50f41d91d83d335865354f19359c5b5367f94393baa6be9f4bfaab6

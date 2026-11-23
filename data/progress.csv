@@ -2527,6 +2527,7 @@ address,name,result,size,source,symbol
 0x00485390,CellClass::Get_Vein_Frame,MATCH,199,src/cell.cpp,?Get_Vein_Frame@CellClass@@QBEHXZ
 0x00485460,CellClass::Can_Place_Veins,MATCH,296,src/cell.cpp,?Can_Place_Veins@CellClass@@QAE_NXZ
 0x00485590,CellClass::Redraw_Veins,MATCH,1372,src/cell.cpp,?Redraw_Veins@CellClass@@QAEXXZ
+0x00485AF0,CellClass::Place_Veins,MATCH,2191,src/cell.cpp,?Place_Veins@CellClass@@QAEXXZ
 0x00486380,CellClass::Is_Tile_Clear,MATCH,20,src/cell.cpp,?Is_Tile_Clear@CellClass@@QBE_NXZ
 0x004863A0,CellClass::Is_Tile_Ramp,MATCH,43,src/cell.cpp,?Is_Tile_Ramp@CellClass@@QBE_NXZ
 0x004863D0,CellClass::Is_Tile_Cliff,MATCH,477,src/cell.cpp,?Is_Tile_Cliff@CellClass@@QBE_NXZ
