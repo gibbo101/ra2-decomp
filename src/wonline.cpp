@@ -3706,23 +3706,11 @@ int __fastcall Startup_Chat(HINSTANCE instance)
 	return 1;
 }
 
-static inline void Close_Logout_Wait(unsigned int event)
+static inline void Close_Page_Dialog(void)
 {
 	HWND window = WS_Find_Dialog(0x11E);
 	if (window) {
 		FUN_007757E0(window, 0);
-	}
-	window = WS_Find_Dialog(0xC4);
-	if (window) {
-		g_ActiveWaitFlags &= ~event;
-		if (g_ActiveWaitFlags == 0) {
-			FUN_007757E0(window, 0);
-		}
-	}
-	HWND top = FUN_00775B10();
-	HWND input = GetDlgItem(top, 0x540);
-	if (input) {
-		SetFocus(input);
 	}
 }
 
@@ -3944,9 +3932,9 @@ void Logout_WOnline(void)
 				}
 			}
 		}
-		Close_Logout_Wait(0x20);
+		Close_Page_Dialog();
+		FUN_00792EC0(0x20);
 	}
-	int budget = g_UserList.length();
 }
 
 extern char DAT_00B77E75;
@@ -3959,10 +3947,7 @@ void Shutdown_Chat(void)
 		delete MultiplayerMapPreview;
 		MultiplayerMapPreview = NULL;
 	}
-	HWND window = WS_Find_Dialog(0x11E);
-	if (window) {
-		FUN_007757E0(window, 0);
-	}
+	Close_Page_Dialog();
 	if (DAT_00B77E75) {
 		FUN_005E8A20();
 		if (g_pChat) {
@@ -7823,8 +7808,10 @@ void __fastcall FUN_006223C0(HWND window);
 // FUNCTION: GAMEMD 0x00796B90
 BOOL CALLBACK Select_WDT_Location_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
-	if (message == WM_INITDIALOG && lparam) {
-		do SetWindowLong(window, 8, ((int *)lparam)[1]); while (0);
+	if (message == WM_INITDIALOG) {
+		if (lparam) {
+			SetWindowLong(window, 8, ((int *)lparam)[1]);
+		}
 	}
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
 	if (rc) {
@@ -8851,8 +8838,10 @@ void FUN_004E43C0(void);
 // FUNCTION: GAMEMD 0x00799080
 BOOL CALLBACK FUN_00799080(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
-	if (message == WM_INITDIALOG && lparam) {
-		do SetWindowLong(window, 8, ((int *)lparam)[1]); while (0);
+	if (message == WM_INITDIALOG) {
+		if (lparam) {
+			SetWindowLong(window, 8, ((int *)lparam)[1]);
+		}
 	}
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
 	if (rc) {
