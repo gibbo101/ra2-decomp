@@ -2417,39 +2417,29 @@ void FUN_005312A0(void)
 	if (font) {
 		textpt.X = bounds.Width - font->FUN_00433ED0(text, 0) - 10;
 	}
-	{
-		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
-	}
+	Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 
 	text = StringTable::LoadString("GUI:WWBrand", NULL, "D:\\ra2mdpost\\Init.CPP", 0x134D);
 	if (font) {
 		textpt.X = bounds.Width - font->FUN_00433ED0(text, 0) - 10;
 		textpt.Y = textpt.Y + font->field_1C + 3;
 	}
-	{
-		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
-	}
+	Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 
 	text = StringTable::LoadString("GUI:LoadingEx", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1357);
 	textpt.X = 10;
 	textpt.Y = 10;
-	{
-		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
-	}
+	Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 
 	text = StringTable::LoadString("GUI:TradeMarkTop", NULL, "D:\\ra2mdpost\\Init.CPP", 0x135E);
 	textpt.X = 10;
 	textpt.Y = bounds.Height - 40;
-	{
-		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
-	}
+	Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 
 	text = StringTable::LoadString("GUI:TradeMarkBottom", NULL, "D:\\ra2mdpost\\Init.CPP", 0x1365);
 	textpt.X = 10;
 	textpt.Y = textpt.Y + font->field_1C + 3;
-	{
-		Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
-	}
+	Fancy_Text_Print_Wide(text, HiddenSurface, &bounds, &textpt, 0xFFFF, 0, (TextPrintType)0x16);
 
 	Update_Visible_Surface(true, HiddenSurface);
 	DAT_00A8F788 = AudioGetTime() + 5000;

@@ -9320,32 +9320,26 @@ void MapClass::Unregister_Subzone_Connection(ZoneConnectionClass * connection)
 	int sidx1;
 	int sidx2;
 	for (int i = 0; i < ARRAY_SIZE(SubzoneTracking); i++) {
-		{
-			sidx1 = Subzone_Of(this, from)->SubzoneID[i];
-			sidx2 = Subzone_Of(this, to)->SubzoneID[i];
+		sidx1 = Subzone_Of(this, from)->SubzoneID[i];
+		sidx2 = Subzone_Of(this, to)->SubzoneID[i];
 
-			SubzoneTracking[i][sidx1].Connections.Delete(SubzoneConnectionStruct(sidx2));
+		SubzoneTracking[i][sidx1].Connections.Delete(SubzoneConnectionStruct(sidx2));
 
-			SubzoneTracking[i][sidx2].Connections.Delete(SubzoneConnectionStruct(sidx1));
-		}
+		SubzoneTracking[i][sidx2].Connections.Delete(SubzoneConnectionStruct(sidx1));
 
-		{
-			sidx1 = Subzone_Of(this, from_adj1)->SubzoneID[i];
-			sidx2 = Subzone_Of(this, to_adj1)->SubzoneID[i];
+		sidx1 = Subzone_Of(this, from_adj1)->SubzoneID[i];
+		sidx2 = Subzone_Of(this, to_adj1)->SubzoneID[i];
 
-			SubzoneTracking[i][sidx1].Connections.Delete(SubzoneConnectionStruct(sidx2));
+		SubzoneTracking[i][sidx1].Connections.Delete(SubzoneConnectionStruct(sidx2));
 
-			SubzoneTracking[i][sidx2].Connections.Delete(SubzoneConnectionStruct(sidx1));
-		}
+		SubzoneTracking[i][sidx2].Connections.Delete(SubzoneConnectionStruct(sidx1));
 
-		{
-			sidx1 = Subzone_Of(this, from_adj2)->SubzoneID[i];
-			sidx2 = Subzone_Of(this, to_adj2)->SubzoneID[i];
+		sidx1 = Subzone_Of(this, from_adj2)->SubzoneID[i];
+		sidx2 = Subzone_Of(this, to_adj2)->SubzoneID[i];
 
-			SubzoneTracking[i][sidx1].Connections.Delete(SubzoneConnectionStruct(sidx2));
+		SubzoneTracking[i][sidx1].Connections.Delete(SubzoneConnectionStruct(sidx2));
 
-			SubzoneTracking[i][sidx2].Connections.Delete(SubzoneConnectionStruct(sidx1));
-		}
+		SubzoneTracking[i][sidx2].Connections.Delete(SubzoneConnectionStruct(sidx1));
 	}
 }
 
@@ -9378,32 +9372,26 @@ void MapClass::Register_Subzone_Connection(ZoneConnectionClass * connection)
 	int sidx1;
 	int sidx2;
 	for (int i = 0; i < ARRAY_SIZE(SubzoneTracking); i++) {
-		{
-			sidx1 = Subzone_Of(this, from)->SubzoneID[i];
-			sidx2 = Subzone_Of(this, to)->SubzoneID[i];
+		sidx1 = Subzone_Of(this, from)->SubzoneID[i];
+		sidx2 = Subzone_Of(this, to)->SubzoneID[i];
 
-			SubzoneTracking[i][sidx1].Connections.Add(SubzoneConnectionStruct(sidx2));
+		SubzoneTracking[i][sidx1].Connections.Add(SubzoneConnectionStruct(sidx2));
 
-			SubzoneTracking[i][sidx2].Connections.Add(SubzoneConnectionStruct(sidx1));
-		}
+		SubzoneTracking[i][sidx2].Connections.Add(SubzoneConnectionStruct(sidx1));
 
-		{
-			sidx1 = Subzone_Of(this, from_adj1)->SubzoneID[i];
-			sidx2 = Subzone_Of(this, to_adj1)->SubzoneID[i];
+		sidx1 = Subzone_Of(this, from_adj1)->SubzoneID[i];
+		sidx2 = Subzone_Of(this, to_adj1)->SubzoneID[i];
 
-			SubzoneTracking[i][sidx1].Connections.Add(SubzoneConnectionStruct(sidx2));
+		SubzoneTracking[i][sidx1].Connections.Add(SubzoneConnectionStruct(sidx2));
 
-			SubzoneTracking[i][sidx2].Connections.Add(SubzoneConnectionStruct(sidx1));
-		}
+		SubzoneTracking[i][sidx2].Connections.Add(SubzoneConnectionStruct(sidx1));
 
-		{
-			sidx1 = Subzone_Of(this, from_adj2)->SubzoneID[i];
-			sidx2 = Subzone_Of(this, to_adj2)->SubzoneID[i];
+		sidx1 = Subzone_Of(this, from_adj2)->SubzoneID[i];
+		sidx2 = Subzone_Of(this, to_adj2)->SubzoneID[i];
 
-			SubzoneTracking[i][sidx1].Connections.Add(SubzoneConnectionStruct(sidx2));
+		SubzoneTracking[i][sidx1].Connections.Add(SubzoneConnectionStruct(sidx2));
 
-			SubzoneTracking[i][sidx2].Connections.Add(SubzoneConnectionStruct(sidx1));
-		}
+		SubzoneTracking[i][sidx2].Connections.Add(SubzoneConnectionStruct(sidx1));
 	}
 }
 

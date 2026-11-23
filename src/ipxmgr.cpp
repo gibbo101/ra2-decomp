@@ -595,14 +595,16 @@ int IPXManagerClass::Send_Private_Message(void *buf, int buflen, int ack_req,
 	if (conn_id == CONNECTION_NONE) {
 		if (Session.Type == GAME_INTERNET && Session.ViaPacketRouter) {
 			if (MulticastChannel->Queue->Num_Send() >= MulticastChannel->Queue->Max_Send()) {
-				{ SendOverflows++; return 0; }
+				SendOverflows++;
+				return 0;
 			}
 			return MulticastChannel->Send_Packet(buf, buflen, ack_req, 0xff);
 		}
 
 		for (i = 0; i < NumConnections; i++) {
 			if (Connection[i]->Queue->Num_Send() == Connection[i]->Queue->Max_Send()) {
-				{ SendOverflows++; return 0; }
+				SendOverflows++;
+				return 0;
 			}
 		}
 
@@ -614,10 +616,12 @@ int IPXManagerClass::Send_Private_Message(void *buf, int buflen, int ack_req,
 
 	connect_idx = Connection_Index(conn_id);
 	if (connect_idx == CONNECTION_NONE) {
-		{ SendOverflows++; return 0; }
+		SendOverflows++;
+		return 0;
 	}
 	if (Connection[connect_idx]->Queue->Num_Send() == Connection[connect_idx]->Queue->Max_Send()) {
-		{ SendOverflows++; return 0; }
+		SendOverflows++;
+		return 0;
 	}
 	Connection[connect_idx]->Send_Packet(buf, buflen, ack_req, 0);
 	return 1;

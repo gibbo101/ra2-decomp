@@ -9530,14 +9530,13 @@ void __fastcall FUN_00779C90(Wstring const & value);
 BOOL CALLBACK FUN_0079AE00(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	if (message == WM_INITDIALOG && lparam) {
-		do SetWindowLong(window, 8, ((int *)lparam)[1]); while (0);
+		SetWindowLong(window, 8, ((int *)lparam)[1]);
 	}
 	int rc = UI::StandardWndProc(window, message, wparam, lparam);
 	if (rc) {
 		return rc;
 	}
 	SimpleWonlineDialogControl * control = (SimpleWonlineDialogControl *)GetWindowLong(window, 8);
-	wchar_t buffer[128];
 	switch (message) {
 		case WM_ERASEBKGND:
 			return TRUE;
