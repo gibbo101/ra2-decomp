@@ -65,6 +65,71 @@ using namespace WorldDominationTour;
 // _$E67
 
 #include "bitfont.h"
+#include "dsurface.h"
+#undef LoadString
+#include "stringtable.h"
+
+namespace OwnerDraw { extern int PrimaryTextColor; }
+
+static WideWstring Load_Selection_Text(char const * label, int source_line)
+{
+	return(WideWstring(StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\WDTSel.cpp", source_line)));
+}
+
+// FUNCTION: GAMEMD 0x0076C290
+// WorldDominationTour::Selection::Selection
+Selection::Selection(rc_ptr<Campaign> const & campaign, int theater) :
+	MSEngine(),
+	TourCampaign(campaign),
+	SelectedConflict(),
+	VoicePlayer(campaign->Get_Faction()),
+	Brokeout(false),
+	LastPoint(-1, -1),
+	StartTick(campaign->Properties->Get_Current_Tick()),
+	LastHoverZone(-1),
+	WorldMap(FUN_00767FB0(campaign->Properties->Get_Map_ID(), theater, campaign->Get_Faction())),
+	HoveredTerritoryID(-1),
+	MousedTerritory(),
+	TargetDrawer(NULL),
+	ZoomingTarget(NULL),
+	ThrobbingTarget(NULL),
+	ThrobbingTargetDividingFrame(32),
+	TextAnim(NULL),
+	TooltipAnim(NULL),
+	Font(new MSFont(false)),
+	CurrentState(FUN_0076F500()),
+	ThemeName((char const *)NULL)
+{
+	int pixel = DSurface::Build_Hicolor_Pixel(GetRValue(OwnerDraw::PrimaryTextColor), GetGValue(OwnerDraw::PrimaryTextColor), GetBValue(OwnerDraw::PrimaryTextColor));
+	TextColor = BitFont::Instance->SetColor(pixel);
+
+	Add_Animation(VoicePlayer.FUN_00771800());
+
+	CCFileClass file("WDTMAPMD.INI");
+	INIClass ini;
+	ini.Load(file, false);
+
+	Init_Voices(ini, "VoiceOvers");
+	Init_Sounds(ini, "SOUNDS");
+
+	Wstring layout;
+	ini.Get_String("LAYOUTS", Wstring_FromInt(campaign->Properties->Get_Layout()), "", layout);
+	Init_Target(ini, layout);
+
+	WorldMap->FUN_007681E0(ini, this, campaign->Is_Different(theater));
+
+	WideWstring play_text = Load_Selection_Text("GUI:PlayWDT", 0x9d);
+	MSBitPrintAnim * play = new MSBitPrintAnim(play_text, WorldMap->TitleRect, true);
+	play->Set_Flag(true);
+	Add_Animation(play);
+
+	WideWstring back_text = Load_Selection_Text("TXT_BACK", 0xa4);
+	MSBitPrintAnim * back = new MSBitPrintAnim(back_text, WorldMap->BackTextRect, true);
+	back->Set_Flag(true);
+	Add_Animation(back);
+
+	Start();
+}
 
 // FUNCTION: GAMEMD 0x0076C6E0
 // WorldDominationTour::Selection::~Selection
@@ -254,14 +319,7 @@ void Selection::Update_Hovered_Territory(Point2D const & point)
 	}
 }
 
-#undef LoadString
-#include "stringtable.h"
 WideWstring __fastcall FUN_007B8090(wchar_t const * prefix, WideWstring const & text);
-
-static WideWstring Load_Selection_Text(char const * label, int source_line)
-{
-	return(WideWstring(StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\WDTSel.cpp", source_line)));
-}
 
 // FUNCTION: GAMEMD 0x0076DAD0
 // WorldDominationTour::Selection::Select_Territory
