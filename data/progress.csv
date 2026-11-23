@@ -7980,6 +7980,7 @@ address,name,result,size,source,symbol
 0x0056C200,FUN_0056C200,MATCH,6,src/map.cpp,?FUN_0056C200@@YIHXZ
 0x0056C210,MapClass::Close_Object,MATCH,744,src/map.cpp,?Close_Object@MapClass@@QBEPAVObjectClass@@ABVCoord@@@Z
 0x0056C500,_$E240,MATCH,1,src/map.cpp,_$E240
+0x0056C510,MapClass::Zone_Reset,MATCH,1646,src/map.cpp,?Zone_Reset@MapClass@@QAEHXZ
 0x0056CB80,SubzoneHash,MATCH,16,src/map.cpp,?SubzoneHash@@YIHABI@Z
 0x0056D230,MapClass::Get_Cell_Zone,MATCH,362,src/map.cpp,?Get_Cell_Zone@MapClass@@QAEHPBVCell@@W4MZoneType@@_N@Z
 0x0056CB90,MapClass::Zone_Span,MATCH,1386,src/map.cpp,?Zone_Span@MapClass@@QAEHPAUCellZoneStruct@@HAAH@Z
