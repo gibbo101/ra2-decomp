@@ -9023,6 +9023,7 @@ address,size,symbol,source,sha256
 0x005B0120,78,?Stop_Moving@MechLocomotionClass@@UAGXXZ,src/mech.cpp,ed6129f5335ebd2c97304662af28b57a9be9bd2cb8414be6cc41d11debd48d76
 0x005B0170,34,?Do_Turn@MechLocomotionClass@@UAGXUDirStruct@@@Z,src/mech.cpp,800e0d8baf857b7086420962857e043fbb892e94bcc41103170c8575f0042d5c
 0x005B01A0,32,?Force_Immediate_Destination@MechLocomotionClass@@UAGXUCoordStruct@@@Z,src/mech.cpp,54e81d6e4dcbb722f6f64e5f1bf3756d81d415b9d9c7496ce8b95a4495647819
+0x005B01C0,5602,?Movement_AI@MechLocomotionClass@@AAEX_N@Z,src/mech.cpp,b2fb0f892c30b814ea70df2832ae952b66e23d065c33dc7ddf4d31d025954758
 0x005B17B0,425,?Mark_Head_To@MechLocomotionClass@@AAE_NABVCoord@@@Z,src/mech.cpp,69e7dfc47815015566d8dca035b1f8b1cbf85ab48fcc12a3db379d4b9dd80b71
 0x005B1960,56,?GetClassID@MechLocomotionClass@@UAGJPAU_GUID@@@Z,src/mech.cpp,77d514a2677e373151f905eb9b954d2ce64b70dced2cc77d0e1bd1464cc885c0
 0x005B19A0,41,?Load@MechLocomotionClass@@UAGJPAUIStream@@@Z,src/mech.cpp,52bffb652faa7b7e6be9efed1cc453f94fff769a03c4c87b8cf9cf67415914a1

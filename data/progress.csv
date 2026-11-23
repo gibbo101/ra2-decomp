@@ -8668,6 +8668,7 @@ address,name,result,size,source,symbol
 0x005B0120,MechLocomotionClass::Stop_Moving,MATCH,78,src/mech.cpp,?Stop_Moving@MechLocomotionClass@@UAGXXZ
 0x005B0170,MechLocomotionClass::Do_Turn,MATCH,34,src/mech.cpp,?Do_Turn@MechLocomotionClass@@UAGXUDirStruct@@@Z
 0x005B01A0,MechLocomotionClass::Force_Immediate_Destination,MATCH,32,src/mech.cpp,?Force_Immediate_Destination@MechLocomotionClass@@UAGXUCoordStruct@@@Z
+0x005B01C0,MechLocomotionClass::Movement_AI,MATCH,5602,src/mech.cpp,?Movement_AI@MechLocomotionClass@@AAEX_N@Z
 0x005B17B0,MechLocomotionClass::Mark_Head_To,MATCH,425,src/mech.cpp,?Mark_Head_To@MechLocomotionClass@@AAE_NABVCoord@@@Z
 0x005B1960,MechLocomotionClass::GetClassID,MATCH,56,src/mech.cpp,?GetClassID@MechLocomotionClass@@UAGJPAU_GUID@@@Z
 0x005B19A0,MechLocomotionClass::Load,MATCH,41,src/mech.cpp,?Load@MechLocomotionClass@@UAGJPAUIStream@@@Z
