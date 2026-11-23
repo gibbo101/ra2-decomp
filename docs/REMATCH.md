@@ -25,9 +25,5 @@ Verdicts:
 | 0x006CB920 | SuperClass::Discharged | src/super.cpp | unread `int chargeLeft = Control.Value();` | FORCING, 86.2% (915/895) |
 | 0x00743270 | UnitClass::Read_INI | src/unit.cpp | dead `double fs` used as a conversion vehicle | FORCING, 99.4% as `(double)strength * ...`, 77.3% as `strength * ...` |
 | 0x0077D4C0 | FUN_0077D4C0 | src/wonline.cpp | unread `int count = g_UserList.length();` | SIDE-EFFECT: 11 functions, from 13.6% to 76.1% (FUN_00781480, FUN_007A8DA0, FUN_007A8ED0, FUN_007A8FC0, FUN_007A9110, FUN_007A9200, FUN_007A9550, FUN_007AAFB0, FUN_007AB0A0, FUN_007AB170, FUN_007AB260) |
-| 0x00785EA0 | Logout_WOnline | src/wonline.cpp | unread `int budget = g_UserList.length();` | FORCING, 45.7% (620/471) |
-| 0x00796960 | Poke_The_Host | src/wonline.cpp | unused `IPXAddressClass address;` | FORCING, 48.8% (432/441) |
-| 0x00796B90 | Select_WDT_Location_Proc | src/wonline.cpp | `do SetWindowLong(...); while (0);` | FORCING, 98.1% (580/580) |
-| 0x00799080 | FUN_00799080 | src/wonline.cpp | `do SetWindowLong(...); while (0);` | FORCING, 97.7% (3142/3142) |
 
-FORCING 15, SIDE-EFFECT 1.
+FORCING 11, SIDE-EFFECT 1.
