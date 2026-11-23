@@ -5800,9 +5800,9 @@ LRESULT CALLBACK OwnerDraw::SysTabHandler(HWND window, UINT message, WPARAM wpar
 
 static inline int Copy_Wide_Text(wchar_t *dest, wchar_t const *source, unsigned int capacity)
 {
-    wcsncpy(dest, source, capacity);
-    dest[capacity - 1] = 0;
-    return wcslen(dest);
+	wcsncpy(dest, source, capacity);
+	dest[capacity - 1] = 0;
+	return wcslen(dest);
 }
 
 // FUNCTION: GAMEMD 0x00614190
@@ -7408,9 +7408,9 @@ inline int Draw_Hotkey_Text7(Surface *surface, wchar_t const *text, RECT *rect, 
 
 static inline WNDPROC Find_Original_Proc(HWND &window)
 {
-    WNDPROC proc = NULL;
-    OwnerDraw::DialogProcs.getValue(window, proc);
-    return proc;
+	WNDPROC proc = NULL;
+	OwnerDraw::DialogProcs.getValue(window, proc);
+	return proc;
 }
 
 // FUNCTION: GAMEMD 0x0061E700
@@ -9591,398 +9591,398 @@ template class DNode<HWND, OwnerDraw::WinData>;
 
 extern HWND DAT_00AC48D0;
 namespace OwnerDraw {
-    extern HWND ComboDropActiveParentHwnd;
-    extern HWND ComboDropActiveDropHwnd;
+	extern HWND ComboDropActiveParentHwnd;
+	extern HWND ComboDropActiveDropHwnd;
 }
 void __fastcall FUN_0072A9E0(Rect *rect, int amount);
 // FUNCTION: GAMEMD 0x0060D540
 LRESULT CALLBACK OwnerDraw::ComboDropWindowHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
-    static HBRUSH solid_brush = CreateSolidBrush(0x306030);
-    RECT rect;
-    Get_Display_Rect(window, &rect);
-    RECT client;
-    GetClientRect(window, &client);
-    Rect fill;
-    RECT parent_rect;
-    memset(&parent_rect, 0, sizeof(parent_rect));
-    int scrollbar_width = 2 * OwnerDraw::ControlInsetPx + 18;
-    int need_scrollbar = -1;
-    int max_top = 0;
-    HWND parent = 0;
-    if (DAT_00AC48D0) {
-        parent = GetParent(DAT_00AC48D0);
-    }
-    OwnerDraw::WinData *parent_data = 0;
-    if (parent) {
-        OwnerDraw::Dialogs.getPointer(parent, &parent_data);
-        Get_Display_Rect(parent, &parent_rect);
-    }
-    OwnerDraw::ComboDropActiveParentHwnd = parent;
-    OwnerDraw::ComboDropActiveDropHwnd = window;
-    OwnerDraw::WinData *data = 0;
-    OwnerDraw::Dialogs.getPointer(window, &data);
-    if (data == 0) {
-        DebugString("ComboBox dropdown windata = NULL\n");
-    }
-    OwnerDraw::WinData *master = 0;
-    if (DAT_00AC48D0) {
-        OwnerDraw::Dialogs.getPointer(DAT_00AC48D0, &master);
-    }
-    if (message != 0x146 && message != 0x154 && message != 0x115) {
-        int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
-        int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
-        if (item_height <= 1) {
-            item_height = 1;
-        }
-        int content_height = item_count * item_height;
-        need_scrollbar = content_height > client.bottom - client.top;
-        int visible_items = (client.bottom - client.top) / item_height;
-        max_top = item_count - visible_items;
-        if (data) {
-            if ((unsigned int)data->attachedWindow > 1) {
-                SCROLLINFO info;
-                info.fMask = 5;
-                info.nMin = 0;
-                info.nMax = max_top;
-                info.nPos = data->ComboDrop.scrollTop;
-                info.cbSize = 0x1c;
-                SendMessageA(data->attachedWindow, 0xe9, 0, (LPARAM)&info);
-            }
-            if (data->attachedWindow) {
-                BringWindowToTop(data->attachedWindow);
-            }
-        }
-    }
-    switch (message) {
-    case 0x14:
-        return 0;
-    case 1: {
-        SetCapture(window);
-        DAT_00AC48D0 = *(HWND *)lparam;
-        char buffer[100];
-        sprintf(buffer, "Dropd=%p  Master=%p  Dlg=%p", window, DAT_00AC48D0, GetParent(DAT_00AC48D0));
-        DebugString(buffer);
-        SetTimer(window, 0, 20, 0);
-        return 0;
-    }
-    case 0x82:
-        OwnerDraw::ComboDropActiveDropHwnd = 0;
-        OwnerDraw::ComboDropActiveParentHwnd = 0;
-        ReleaseCapture();
-        KillTimer(window, 0);
-        break;
-    case 0x115: {
-        int top = SendMessageA(data->attachedWindow, 0xe1, 0, 0);
-        if (top != SendMessageA(window, 0x15b, 0, 0)) {
-            SendMessageA(window, 0x15c, top, 0);
-        }
-        break;
-    }
-    case 0x113: {
-        HWND capture = GetCapture();
-        if (capture == window) {
-            ReleaseCapture();
-            Sleep(0);
-            SetCapture(capture);
-        }
-        break;
-    }
-    case 0x15b:
-        if (data) {
-            return data->ComboDrop.scrollTop;
-        }
-        break;
-    case 0x200: {
-        int x = lparam & 0xffff;
-        int y = (unsigned int)lparam >> 16;
-        int index = SendMessageA(window, 0x4e8, 0, (y << 16) | x);
-        if (index != -1) {
-            if (data->ComboDrop.selection != index) {
-                InvalidateRect(window, 0, 0);
-            }
-            data->ComboDrop.selection = index;
-            HWND tip = GetDlgItem(parent, 0x695);
-            if (tip) {
-                WideWstring text;
-                text = FUN_00603F00(parent, DAT_00AC48D0, index);
-                if (wcscmp((wchar_t const *)text.get(), DAT_00887734)) {
-                    SendMessageA(tip, 0x4b2, 0, (LPARAM)text.text());
-                } else {
-                    text = FUN_00603F60(parent, DAT_00AC48D0);
-                    if (wcscmp((wchar_t const *)text.get(), DAT_00887734)) {
-                        SendMessageA(tip, 0x4b2, 0, (LPARAM)text.text());
-                    }
-                }
-            }
-        }
-        return 0;
-    }
-    case 0x15c: {
-        int top = wparam;
-        int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
-        int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
-        if (!item_count || !item_height) {
-            break;
-        }
-        int visible = (client.bottom - client.top) / item_height;
-        if (top < 0) {
-            top = 0;
-        }
-        int limit = item_count - visible;
-        if (limit > 0) {
-            if (top > limit) {
-                top = limit;
-            }
-        } else {
-            top = 0;
-        }
-        if (top != data->ComboDrop.scrollTop) {
-            data->ComboDrop.scrollTop = top;
-            InvalidateRect(window, 0, 0);
-        }
-        return 0;
-    }
-    case 0x201:
-    case 0x203: {
-        int x = lparam & 0xffff;
-        int y = (unsigned int)lparam >> 16;
-        if (x > client.right && x < client.right + data->scrollBarWidth && y > 0 && y < client.bottom) {
-            SendMessageA(data->attachedWindow, message, wparam, lparam);
-            break;
-        }
-        VocClass::PlayGlobal(Rule->GUIComboCloseSound, 1.0f, 0x2000, 0);
-        if (x >= 0 && y >= 0 && x <= client.right && y <= client.bottom) {
-            int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
-            int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
-            int index = y / item_height;
-            if (data) {
-                index += data->ComboDrop.scrollTop;
-            }
-            int clamped = index < 0 ? 0 : index;
-            int max_index = item_count - 1;
-            if (max_index < clamped) {
-                clamped = max_index;
-            }
-            SendMessageA(DAT_00AC48D0, 0x14e, clamped, 0);
-            int id = GetWindowLongA(DAT_00AC48D0, -12);
-            if (need_scrollbar) {
-                DestroyWindow(data->attachedWindow);
-            }
-            ReleaseCapture();
-            SendMessageA(DAT_00AC48D0, 0x14f, 0, 0);
-            PostMessageA(parent, 0x111, (id & 0xffff) | 0x10000, (LPARAM)DAT_00AC48D0);
-            return 0;
-        }
-        if (need_scrollbar) {
-            DestroyWindow(data->attachedWindow);
-        }
-        ReleaseCapture();
-        SendMessageA(DAT_00AC48D0, 0x14f, 0, 0);
-        return 0;
-    }
-    case 0x4e8: {
-        int x = lparam & 0xffff;
-        int y = (unsigned int)lparam >> 16;
-        int result = -1;
-        if (x >= 0 && y >= 0 && x < client.right && y < client.bottom) {
-            int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
-            int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
-            int index = y / item_height + data->ComboDrop.scrollTop;
-            int clamped = index < 0 ? 0 : index;
-            int max_index = item_count - 1;
-            if (max_index < clamped) {
-                clamped = max_index;
-            }
-            result = clamped;
-        }
-        return result;
-    }
-    case 0x4ea:
-        return (LRESULT)DAT_00AC48D0;
-    case 0x7e8:
-        data->ComboDrop.selection = SendMessageA(DAT_00AC48D0, 0x147, 0, 0);
-        return 0;
-    case 0xf: {
-        BitFont *font = parent_data->Font;
-        int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
-        int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
-        int client_height = client.bottom - client.top;
-        Rect dest_rect(rect.left, rect.top, rect.right - rect.left, client_height);
-        int selected = data->ComboDrop.selection;
-        Rect src(dest_rect.Top_Left() - Point2D(parent_rect.left, parent_rect.top), client.right, client.bottom);
-        if (data->cachedSurface == 0) {
-            Rect dst(0, 0, client.right, client.bottom);
-            BSurface *surface = new BSurface(client.right, client.bottom, 2);
-            data->cachedSurface = surface;
-            OwnerDraw::CachedSurfaceCount++;
-            if (parent_data && parent_data->cachedSurface) {
-                surface->Blit_From(dst, *parent_data->cachedSurface, src, false, true);
-            }
-            int total = client.right * client.bottom;
-            unsigned short *pixels = (unsigned short *)surface->Lock();
-            for (int i = 0; i < total; i++) {
-                unsigned short pixel = pixels[i];
-                unsigned char alpha = data->alpha;
-                pixels[i] = OD_Blend_Color(pixel, 0, alpha);
-            }
-            surface->Unlock();
-        }
-        {
-            Rect from(0, 0, dest_rect.Width, dest_rect.Height);
-            AlternateSurface->Blit_From(dest_rect, *data->cachedSurface, from, false, true);
-        }
-        Rect frame(dest_rect);
-        int color = ODColorToHiColor(OwnerDraw::DefaultBorderColor);
-        if (master && master->disabled) {
-            color = ODColorToHiColor(OwnerDraw::AltBorderColor);
-        }
-        OwnerDraw::DrawBeveledBorder(*AlternateSurface, frame, 2, color);
-        if (need_scrollbar && data && data->attachedWindow) {
-            Rect outer(dest_rect);
-            outer.Width += scrollbar_width;
-            OwnerDraw::DrawBeveledBorder(*AlternateSurface, outer, 2, color);
-        }
-        int first = data->ComboDrop.scrollTop;
-        Rect row;
-        for (int index = first; index < item_count; index++) {
-            row.Set(rect.left, rect.top, rect.right - rect.left, item_height);
-            row.Y += (index - first) * item_height;
-            wchar_t text[128];
-            if ((index - first) * item_height + item_height > client_height) {
-                break;
-            } else {
-                HWND owner = DAT_00AC48D0;
-                WNDPROC proc = Find_Original_Proc(owner);
-                text[0] = 0;
-                int item = CallWindowProcA(proc, owner, 0x199, index, 0);
-                if (item == -1 || item == 0) {
-                    item = CallWindowProcA(proc, owner, 0x150, index, 0);
-                }
-                if (item != -1 && item != 0) {
-                    Copy_Wide_Text(text, ((OwnerDraw::WinNode *)item)->text, 0x80);
-                }
-            }
-            if (index == selected) {
-                fill.Set(row.X, row.Y, row.Width, row.Height);
-                int fill_color;
-                if (master ? master->disabled : false) {
-                    fill_color = ODColorToHiColor(OwnerDraw::AltSelectionFillColor);
-                } else {
-                    fill_color = ODColorToHiColor(OwnerDraw::ListSelectionFillColor);
-                }
-                AlternateSurface->Fill_Rect(fill, fill_color);
-            }
-            RECT text_rect;
-            text_rect.top = row.Y;
-            text_rect.left = row.X + 3;
-            text_rect.right = row.X + row.Width;
-            text_rect.bottom = row.Y + row.Height;
-            unsigned long text_color = OwnerDraw::PrimaryTextColor;
-            if (master && master->disabled) {
-                text_color = OwnerDraw::AltComboTextColor;
-            }
-            if (index < 50 && master && master->ComboBox.itemColors[index] >= 0) {
-                text_color = master->ComboBox.itemColors[index];
-                if (master->UseItemColorOverrides) {
-                    Rect fill2;
-                    fill2.Set(row.X, row.Y, row.Width, row.Height);
-                    FUN_0072A9E0(&fill2, 2);
-                    AlternateSurface->Fill_Rect(fill2, ODColorToHiColor(text_color));
-                }
-            }
-            int max_width = client.right - 20;
-            int length = wcslen(text);
-            int text_width = font->FUN_00433ED0(text, 0);
-            while (length && text_width > max_width) {
-                length--;
-                text[length] = 0;
-                wcscat(text, L"...");
-                text_width = font->FUN_00433ED0(text, 0);
-            }
-            OwnerDraw::DrawWideText(AlternateSurface, text, (LTRBStruct *)&text_rect, font, text_color, 4, 12, 0, 0, 0);
-        }
-        AlternateSurface->Lock();
-        VisibleSurface->Lock();
-        Rect screen(dest_rect);
-        RECT window_rect;
-        GetWindowRect(window, &window_rect);
-        screen.X += window_rect.left - rect.left;
-        screen.Y += window_rect.top - rect.top;
-        VisibleSurface->Blit_From(screen, *AlternateSurface, dest_rect, false, true);
-        VisibleSurface->Unlock();
-        AlternateSurface->Unlock();
-        ValidateRect(window, 0);
-        return 0;
-    }
-    case 2:
-        FUN_0053E420(window);
-        break;
-    }
-    if (need_scrollbar == 1) {
-        if (data && !data->attachedWindow) {
-            data->attachedWindow = (HWND)1;
-            GetWindowLongA(window, -12);
-            parent = GetParent(window);
-            RECT parent_display;
-            Get_Display_Rect(parent, &parent_display);
-            RECT drop_display;
-            Get_Display_Rect(window, &drop_display);
-            int left = drop_display.left - parent_display.left;
-            int top = drop_display.top - parent_display.top;
-            bool alternate = false;
-            int x = left - scrollbar_width + client.right;
-            int y = top + client.top;
-            int height = drop_display.bottom - drop_display.top;
-            if (master) {
-                alternate = master->disabled;
-            }
-            HWND scroll = CreateWindowExA(0, "Scrollbar", 0, 0x50010001, x, y, scrollbar_width, height, parent, 0,
-                ProgramInstance, 0);
-            data->attachedWindow = scroll;
-            data->scrollBarWidth = scrollbar_width;
-            OwnerDraw::InitializeCtrl(scroll, 0);
-            OwnerDraw::WinData *scroll_data = 0;
-            OwnerDraw::Dialogs.getPointer(data->attachedWindow, &scroll_data);
-            scroll_data->ownerWindow = window;
-            scroll_data->disabled = data->disabled;
-            SCROLLINFO info;
-            info.nMax = max_top;
-            info.fMask = 5;
-            info.nMin = 0;
-            info.nPos = data->ComboDrop.scrollTop;
-            info.cbSize = 0x1c;
-            SendMessageA(data->attachedWindow, 0xe9, 0, (LPARAM)&info);
-            SendMessageA(data->attachedWindow, 0x4f1, 0, alternate);
-            SetWindowPos(window, 0, 0, 0, drop_display.right - drop_display.left - scrollbar_width, drop_display.bottom - drop_display.top, 2);
-            ShowWindow(data->attachedWindow, 5);
-            BringWindowToTop(data->attachedWindow);
-            InvalidateRect(data->attachedWindow, 0, 0);
-            UpdateWindow(data->attachedWindow);
-            SendMessageA(data->attachedWindow, 0x4a9, (WPARAM)data->attachedWindow, 1);
-            SendMessageA(data->attachedWindow, 0x4d2, 0, 1);
-            RECT validate;
-            validate.left = left;
-            validate.top = top;
-            validate.right = left + client.right + 1;
-            validate.bottom = top + client.bottom + 1;
-            ValidateRect(parent, &validate);
-        }
-    } else if (need_scrollbar == 0 && data && data->attachedWindow && !data->paintDisabled) {
-        DestroyWindow(data->attachedWindow);
-        ODRemoveFromDict(data->attachedWindow, 0);
-        data->attachedWindow = 0;
-        data->scrollBarWidth = 0;
-        SetWindowPos(window, 0, 0, 0, client.right - client.left + scrollbar_width, client.bottom - client.top, 2);
-        parent = GetParent(window);
-        RECT validate_parent;
-        Get_Display_Rect(parent, &validate_parent);
-        RECT validate;
-        validate.left = rect.left - validate_parent.left;
-        validate.top = rect.top - validate_parent.top;
-        validate.right = validate.left + client.right + scrollbar_width;
-        validate.bottom = validate.top + client.bottom + 1;
-        ValidateRect(parent, &validate);
-    }
-    return DefWindowProcA(window, message, wparam, lparam);
+	static HBRUSH solid_brush = CreateSolidBrush(0x306030);
+	RECT rect;
+	Get_Display_Rect(window, &rect);
+	RECT client;
+	GetClientRect(window, &client);
+	Rect fill;
+	RECT parent_rect;
+	memset(&parent_rect, 0, sizeof(parent_rect));
+	int scrollbar_width = 2 * OwnerDraw::ControlInsetPx + 18;
+	int need_scrollbar = -1;
+	int max_top = 0;
+	HWND parent = 0;
+	if (DAT_00AC48D0) {
+		parent = GetParent(DAT_00AC48D0);
+	}
+	OwnerDraw::WinData *parent_data = 0;
+	if (parent) {
+		OwnerDraw::Dialogs.getPointer(parent, &parent_data);
+		Get_Display_Rect(parent, &parent_rect);
+	}
+	OwnerDraw::ComboDropActiveParentHwnd = parent;
+	OwnerDraw::ComboDropActiveDropHwnd = window;
+	OwnerDraw::WinData *data = 0;
+	OwnerDraw::Dialogs.getPointer(window, &data);
+	if (data == 0) {
+		DebugString("ComboBox dropdown windata = NULL\n");
+	}
+	OwnerDraw::WinData *master = 0;
+	if (DAT_00AC48D0) {
+		OwnerDraw::Dialogs.getPointer(DAT_00AC48D0, &master);
+	}
+	if (message != 0x146 && message != 0x154 && message != 0x115) {
+		int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
+		int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
+		if (item_height <= 1) {
+			item_height = 1;
+		}
+		int content_height = item_count * item_height;
+		need_scrollbar = content_height > client.bottom - client.top;
+		int visible_items = (client.bottom - client.top) / item_height;
+		max_top = item_count - visible_items;
+		if (data) {
+			if ((unsigned int)data->attachedWindow > 1) {
+				SCROLLINFO info;
+				info.fMask = 5;
+				info.nMin = 0;
+				info.nMax = max_top;
+				info.nPos = data->ComboDrop.scrollTop;
+				info.cbSize = 0x1c;
+				SendMessageA(data->attachedWindow, 0xe9, 0, (LPARAM)&info);
+			}
+			if (data->attachedWindow) {
+				BringWindowToTop(data->attachedWindow);
+			}
+		}
+	}
+	switch (message) {
+	case 0x14:
+		return 0;
+	case 1: {
+		SetCapture(window);
+		DAT_00AC48D0 = *(HWND *)lparam;
+		char buffer[100];
+		sprintf(buffer, "Dropd=%p  Master=%p  Dlg=%p", window, DAT_00AC48D0, GetParent(DAT_00AC48D0));
+		DebugString(buffer);
+		SetTimer(window, 0, 20, 0);
+		return 0;
+	}
+	case 0x82:
+		OwnerDraw::ComboDropActiveDropHwnd = 0;
+		OwnerDraw::ComboDropActiveParentHwnd = 0;
+		ReleaseCapture();
+		KillTimer(window, 0);
+		break;
+	case 0x115: {
+		int top = SendMessageA(data->attachedWindow, 0xe1, 0, 0);
+		if (top != SendMessageA(window, 0x15b, 0, 0)) {
+			SendMessageA(window, 0x15c, top, 0);
+		}
+		break;
+	}
+	case 0x113: {
+		HWND capture = GetCapture();
+		if (capture == window) {
+			ReleaseCapture();
+			Sleep(0);
+			SetCapture(capture);
+		}
+		break;
+	}
+	case 0x15b:
+		if (data) {
+			return data->ComboDrop.scrollTop;
+		}
+		break;
+	case 0x200: {
+		int x = lparam & 0xffff;
+		int y = (unsigned int)lparam >> 16;
+		int index = SendMessageA(window, 0x4e8, 0, (y << 16) | x);
+		if (index != -1) {
+			if (data->ComboDrop.selection != index) {
+				InvalidateRect(window, 0, 0);
+			}
+			data->ComboDrop.selection = index;
+			HWND tip = GetDlgItem(parent, 0x695);
+			if (tip) {
+				WideWstring text;
+				text = FUN_00603F00(parent, DAT_00AC48D0, index);
+				if (wcscmp((wchar_t const *)text.get(), DAT_00887734)) {
+					SendMessageA(tip, 0x4b2, 0, (LPARAM)text.text());
+				} else {
+					text = FUN_00603F60(parent, DAT_00AC48D0);
+					if (wcscmp((wchar_t const *)text.get(), DAT_00887734)) {
+						SendMessageA(tip, 0x4b2, 0, (LPARAM)text.text());
+					}
+				}
+			}
+		}
+		return 0;
+	}
+	case 0x15c: {
+		int top = wparam;
+		int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
+		int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
+		if (!item_count || !item_height) {
+			break;
+		}
+		int visible = (client.bottom - client.top) / item_height;
+		if (top < 0) {
+			top = 0;
+		}
+		int limit = item_count - visible;
+		if (limit > 0) {
+			if (top > limit) {
+				top = limit;
+			}
+		} else {
+			top = 0;
+		}
+		if (top != data->ComboDrop.scrollTop) {
+			data->ComboDrop.scrollTop = top;
+			InvalidateRect(window, 0, 0);
+		}
+		return 0;
+	}
+	case 0x201:
+	case 0x203: {
+		int x = lparam & 0xffff;
+		int y = (unsigned int)lparam >> 16;
+		if (x > client.right && x < client.right + data->scrollBarWidth && y > 0 && y < client.bottom) {
+			SendMessageA(data->attachedWindow, message, wparam, lparam);
+			break;
+		}
+		VocClass::PlayGlobal(Rule->GUIComboCloseSound, 1.0f, 0x2000, 0);
+		if (x >= 0 && y >= 0 && x <= client.right && y <= client.bottom) {
+			int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
+			int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
+			int index = y / item_height;
+			if (data) {
+				index += data->ComboDrop.scrollTop;
+			}
+			int clamped = index < 0 ? 0 : index;
+			int max_index = item_count - 1;
+			if (max_index < clamped) {
+				clamped = max_index;
+			}
+			SendMessageA(DAT_00AC48D0, 0x14e, clamped, 0);
+			int id = GetWindowLongA(DAT_00AC48D0, -12);
+			if (need_scrollbar) {
+				DestroyWindow(data->attachedWindow);
+			}
+			ReleaseCapture();
+			SendMessageA(DAT_00AC48D0, 0x14f, 0, 0);
+			PostMessageA(parent, 0x111, (id & 0xffff) | 0x10000, (LPARAM)DAT_00AC48D0);
+			return 0;
+		}
+		if (need_scrollbar) {
+			DestroyWindow(data->attachedWindow);
+		}
+		ReleaseCapture();
+		SendMessageA(DAT_00AC48D0, 0x14f, 0, 0);
+		return 0;
+	}
+	case 0x4e8: {
+		int x = lparam & 0xffff;
+		int y = (unsigned int)lparam >> 16;
+		int result = -1;
+		if (x >= 0 && y >= 0 && x < client.right && y < client.bottom) {
+			int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
+			int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
+			int index = y / item_height + data->ComboDrop.scrollTop;
+			int clamped = index < 0 ? 0 : index;
+			int max_index = item_count - 1;
+			if (max_index < clamped) {
+				clamped = max_index;
+			}
+			result = clamped;
+		}
+		return result;
+	}
+	case 0x4ea:
+		return (LRESULT)DAT_00AC48D0;
+	case 0x7e8:
+		data->ComboDrop.selection = SendMessageA(DAT_00AC48D0, 0x147, 0, 0);
+		return 0;
+	case 0xf: {
+		BitFont *font = parent_data->Font;
+		int item_count = SendMessageA(DAT_00AC48D0, 0x146, 0, 0);
+		int item_height = SendMessageA(DAT_00AC48D0, 0x154, 0, 0);
+		int client_height = client.bottom - client.top;
+		Rect dest_rect(rect.left, rect.top, rect.right - rect.left, client_height);
+		int selected = data->ComboDrop.selection;
+		Rect src(dest_rect.Top_Left() - Point2D(parent_rect.left, parent_rect.top), client.right, client.bottom);
+		if (data->cachedSurface == 0) {
+			Rect dst(0, 0, client.right, client.bottom);
+			BSurface *surface = new BSurface(client.right, client.bottom, 2);
+			data->cachedSurface = surface;
+			OwnerDraw::CachedSurfaceCount++;
+			if (parent_data && parent_data->cachedSurface) {
+				surface->Blit_From(dst, *parent_data->cachedSurface, src, false, true);
+			}
+			int total = client.right * client.bottom;
+			unsigned short *pixels = (unsigned short *)surface->Lock();
+			for (int i = 0; i < total; i++) {
+				unsigned short pixel = pixels[i];
+				unsigned char alpha = data->alpha;
+				pixels[i] = OD_Blend_Color(pixel, 0, alpha);
+			}
+			surface->Unlock();
+		}
+		{
+			Rect from(0, 0, dest_rect.Width, dest_rect.Height);
+			AlternateSurface->Blit_From(dest_rect, *data->cachedSurface, from, false, true);
+		}
+		Rect frame(dest_rect);
+		int color = ODColorToHiColor(OwnerDraw::DefaultBorderColor);
+		if (master && master->disabled) {
+			color = ODColorToHiColor(OwnerDraw::AltBorderColor);
+		}
+		OwnerDraw::DrawBeveledBorder(*AlternateSurface, frame, 2, color);
+		if (need_scrollbar && data && data->attachedWindow) {
+			Rect outer(dest_rect);
+			outer.Width += scrollbar_width;
+			OwnerDraw::DrawBeveledBorder(*AlternateSurface, outer, 2, color);
+		}
+		int first = data->ComboDrop.scrollTop;
+		Rect row;
+		for (int index = first; index < item_count; index++) {
+			row.Set(rect.left, rect.top, rect.right - rect.left, item_height);
+			row.Y += (index - first) * item_height;
+			wchar_t text[128];
+			if ((index - first) * item_height + item_height > client_height) {
+				break;
+			} else {
+				HWND owner = DAT_00AC48D0;
+				WNDPROC proc = Find_Original_Proc(owner);
+				text[0] = 0;
+				int item = CallWindowProcA(proc, owner, 0x199, index, 0);
+				if (item == -1 || item == 0) {
+					item = CallWindowProcA(proc, owner, 0x150, index, 0);
+				}
+				if (item != -1 && item != 0) {
+					Copy_Wide_Text(text, ((OwnerDraw::WinNode *)item)->text, 0x80);
+				}
+			}
+			if (index == selected) {
+				fill.Set(row.X, row.Y, row.Width, row.Height);
+				int fill_color;
+				if (master ? master->disabled : false) {
+					fill_color = ODColorToHiColor(OwnerDraw::AltSelectionFillColor);
+				} else {
+					fill_color = ODColorToHiColor(OwnerDraw::ListSelectionFillColor);
+				}
+				AlternateSurface->Fill_Rect(fill, fill_color);
+			}
+			RECT text_rect;
+			text_rect.top = row.Y;
+			text_rect.left = row.X + 3;
+			text_rect.right = row.X + row.Width;
+			text_rect.bottom = row.Y + row.Height;
+			unsigned long text_color = OwnerDraw::PrimaryTextColor;
+			if (master && master->disabled) {
+				text_color = OwnerDraw::AltComboTextColor;
+			}
+			if (index < 50 && master && master->ComboBox.itemColors[index] >= 0) {
+				text_color = master->ComboBox.itemColors[index];
+				if (master->UseItemColorOverrides) {
+					Rect fill2;
+					fill2.Set(row.X, row.Y, row.Width, row.Height);
+					FUN_0072A9E0(&fill2, 2);
+					AlternateSurface->Fill_Rect(fill2, ODColorToHiColor(text_color));
+				}
+			}
+			int max_width = client.right - 20;
+			int length = wcslen(text);
+			int text_width = font->FUN_00433ED0(text, 0);
+			while (length && text_width > max_width) {
+				length--;
+				text[length] = 0;
+				wcscat(text, L"...");
+				text_width = font->FUN_00433ED0(text, 0);
+			}
+			OwnerDraw::DrawWideText(AlternateSurface, text, (LTRBStruct *)&text_rect, font, text_color, 4, 12, 0, 0, 0);
+		}
+		AlternateSurface->Lock();
+		VisibleSurface->Lock();
+		Rect screen(dest_rect);
+		RECT window_rect;
+		GetWindowRect(window, &window_rect);
+		screen.X += window_rect.left - rect.left;
+		screen.Y += window_rect.top - rect.top;
+		VisibleSurface->Blit_From(screen, *AlternateSurface, dest_rect, false, true);
+		VisibleSurface->Unlock();
+		AlternateSurface->Unlock();
+		ValidateRect(window, 0);
+		return 0;
+	}
+	case 2:
+		FUN_0053E420(window);
+		break;
+	}
+	if (need_scrollbar == 1) {
+		if (data && !data->attachedWindow) {
+			data->attachedWindow = (HWND)1;
+			GetWindowLongA(window, -12);
+			parent = GetParent(window);
+			RECT parent_display;
+			Get_Display_Rect(parent, &parent_display);
+			RECT drop_display;
+			Get_Display_Rect(window, &drop_display);
+			int left = drop_display.left - parent_display.left;
+			int top = drop_display.top - parent_display.top;
+			bool alternate = false;
+			int x = left - scrollbar_width + client.right;
+			int y = top + client.top;
+			int height = drop_display.bottom - drop_display.top;
+			if (master) {
+				alternate = master->disabled;
+			}
+			HWND scroll = CreateWindowExA(0, "Scrollbar", 0, 0x50010001, x, y, scrollbar_width, height, parent, 0,
+				ProgramInstance, 0);
+			data->attachedWindow = scroll;
+			data->scrollBarWidth = scrollbar_width;
+			OwnerDraw::InitializeCtrl(scroll, 0);
+			OwnerDraw::WinData *scroll_data = 0;
+			OwnerDraw::Dialogs.getPointer(data->attachedWindow, &scroll_data);
+			scroll_data->ownerWindow = window;
+			scroll_data->disabled = data->disabled;
+			SCROLLINFO info;
+			info.nMax = max_top;
+			info.fMask = 5;
+			info.nMin = 0;
+			info.nPos = data->ComboDrop.scrollTop;
+			info.cbSize = 0x1c;
+			SendMessageA(data->attachedWindow, 0xe9, 0, (LPARAM)&info);
+			SendMessageA(data->attachedWindow, 0x4f1, 0, alternate);
+			SetWindowPos(window, 0, 0, 0, drop_display.right - drop_display.left - scrollbar_width, drop_display.bottom - drop_display.top, 2);
+			ShowWindow(data->attachedWindow, 5);
+			BringWindowToTop(data->attachedWindow);
+			InvalidateRect(data->attachedWindow, 0, 0);
+			UpdateWindow(data->attachedWindow);
+			SendMessageA(data->attachedWindow, 0x4a9, (WPARAM)data->attachedWindow, 1);
+			SendMessageA(data->attachedWindow, 0x4d2, 0, 1);
+			RECT validate;
+			validate.left = left;
+			validate.top = top;
+			validate.right = left + client.right + 1;
+			validate.bottom = top + client.bottom + 1;
+			ValidateRect(parent, &validate);
+		}
+	} else if (need_scrollbar == 0 && data && data->attachedWindow && !data->paintDisabled) {
+		DestroyWindow(data->attachedWindow);
+		ODRemoveFromDict(data->attachedWindow, 0);
+		data->attachedWindow = 0;
+		data->scrollBarWidth = 0;
+		SetWindowPos(window, 0, 0, 0, client.right - client.left + scrollbar_width, client.bottom - client.top, 2);
+		parent = GetParent(window);
+		RECT validate_parent;
+		Get_Display_Rect(parent, &validate_parent);
+		RECT validate;
+		validate.left = rect.left - validate_parent.left;
+		validate.top = rect.top - validate_parent.top;
+		validate.right = validate.left + client.right + scrollbar_width;
+		validate.bottom = validate.top + client.bottom + 1;
+		ValidateRect(parent, &validate);
+	}
+	return DefWindowProcA(window, message, wparam, lparam);
 }
