@@ -4141,6 +4141,7 @@ address,size,symbol,source,sha256
 0x004B0DA0,71,?Stop_Driver@DriveLocomotionClass@@QAE_NXZ,src/drive.cpp,fe65f5796df9fb35b2f8c2dadac7927a149fc4b7924ed7af7e2491ab8d7e6105
 0x004B0DF0,242,?Start_Driver@DriveLocomotionClass@@QAE_NABVCoord@@@Z,src/drive.cpp,993fb047886030b0c86d171677ce69b2125f2356658ce96b6ea33df787a0dcc3
 0x004B0EF0,34,?Do_Turn@DriveLocomotionClass@@UAGXUDirStruct@@@Z,src/drive.cpp,10a6521d43b87e784164c886c82b87b6b6309726372ed325225e6b285a44f3e5
+0x004B0F20,5892,?While_Moving@DriveLocomotionClass@@AAE_N_N@Z,src/drive.cpp,ca8c6c98f8aa26cdbcdce654d4bd2309277225e979cb9743335fb2086fe01626
 0x004B2630,8503,?Start_Of_Move@DriveLocomotionClass@@AAE_NAA_N_N1@Z,src/drive.cpp,11e321ff23751671400cae05e8745cfc305c989a547a0299d2a1dbbe7d73eeb5
 0x004B4770,1,?Lay_Track@DriveLocomotionClass@@AAEXXZ,src/drive.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x004B4780,124,?Smooth_Turn@DriveLocomotionClass@@AAE?AVPoint2D@@ABV2@AAW4Dir256@@@Z,src/drive.cpp,1b2ace712e698fb207049abf7f5cf4b277c38cd5ab5866d0b0b2bee6c923b8a9

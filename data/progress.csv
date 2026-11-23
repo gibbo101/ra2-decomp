@@ -3788,6 +3788,7 @@ address,name,result,size,source,symbol
 0x004B0DF0,DriveLocomotionClass::Start_Driver,MATCH,242,src/drive.cpp,?Start_Driver@DriveLocomotionClass@@QAE_NABVCoord@@@Z
 0x004B0EF0,DriveLocomotionClass::Do_Turn,MATCH,34,src/drive.cpp,?Do_Turn@DriveLocomotionClass@@UAGXUDirStruct@@@Z
 0x004B2630,DriveLocomotionClass::Start_Of_Move,MATCH,8503,src/drive.cpp,?Start_Of_Move@DriveLocomotionClass@@AAE_NAA_N_N1@Z
+0x004B0F20,DriveLocomotionClass::While_Moving,MATCH,5892,src/drive.cpp,?While_Moving@DriveLocomotionClass@@AAE_N_N@Z
 0x004B4820,DriveLocomotionClass::In_Which_Layer,MATCH,8,src/drive.cpp,?In_Which_Layer@DriveLocomotionClass@@UAG?AW4LayerType@@XZ
 0x004B4830,DriveLocomotionClass::GetClassID,MATCH,56,src/drive.cpp,?GetClassID@DriveLocomotionClass@@UAGJPAU_GUID@@@Z
 0x004B4770,DriveLocomotionClass::Lay_Track,MATCH,1,src/drive.cpp,?Lay_Track@DriveLocomotionClass@@AAEXXZ
