@@ -4796,6 +4796,7 @@ address,size,symbol,source,sha256
 0x004D02B0,215,?Is_Locked_To_Straight_Flight@FlyLocomotionClass@@QAE_NXZ,src/fly.cpp,bbab70ac4c9a79cd386b2ffba28d33ddb6bb5876f10bfe1772ffbac1d37f69b6
 0x004D0390,6,?Fetch_Object_Size@FlyLocomotionClass@@UBEHXZ,src/fly.cpp,ac8cd0e1ee6cb471173e25794fc3a6bb367c8911e26558695fdf344e7e55004d
 0x004D03A0,43,??_GFlyLocomotionClass@@UAEPAXI@Z,src/fly.cpp,7908f1e94f5becd030c947044e7bd1e50c373d92572662aecaca23d68dca9ac2
+0x004D03D0,36,??PDirType@@QBE_NABV0@@Z,src/unit.cpp,db55d32069031981f61a0c7c56d688f0f88a7b125beef9184dbc69c0c7a90aaa
 0x004D0400,34,??8?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@@@QAE_NH@Z,src/fly.cpp,1e3659ec98e34f2bd3117902e12e62452a6fe8e65b7373a15c4de0a8b0c7d2d0
 0x004D0430,13,?_Release@?$_com_ptr_t@V?$_com_IIID@UIFlyControl@@$1?_GUID_820f501c_4f39_11d2_9b70_00104b972fe8@@3U__s_GUID@@A@@@@AAEXXZ,src/fly.cpp,75d77bd0a3a4afb5d4a2bf6084d52171f3e5b72dcc4a78108c73cb70fde0c354
 0x004D0440,74,??0?$VectorClass@PAVObjectClass@@@@QAE@HPBQAVObjectClass@@@Z,src/fly.cpp,8f9604d32d0f6105c83d202ec1edbab28617ebdfd3d8ea5dedd9fd620e7a0f81

@@ -12,7 +12,7 @@ over real objects or hard-coded addresses are rejected however well they score.
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
 **Status (23 November 2026):** 3.55 MB of the game's 3.82 MB of code matches byte for byte
-(93%), in 19,262 of its 19,353 functions (99%) + 6 reconstructed. Counting each unmatched
+(93%), in 19,263 of its 19,353 functions (99%) + 6 reconstructed. Counting each unmatched
 function at its best attempt so far, the fuzzy match is 98%. Each function is checked on
 its own, and `tools/exelink/` links the whole executable with every matched function at its
 original address: with the original's bytes for what isn't matched yet, the image is

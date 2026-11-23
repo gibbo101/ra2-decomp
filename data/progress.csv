@@ -16465,6 +16465,7 @@ address,name,result,size,source,symbol
 0x00746E30,UnitClass::Turret_Facing,MATCH,73,src/unit.cpp,?Turret_Facing@UnitClass@@UBE?AVDirType@@XZ
 0x00746E80,??_GUnitClass@@UAEPAXI@Z,MATCH,30,src/unit.cpp,??_GUnitClass@@UAEPAXI@Z
 0x00746EA0,?Is_Archive_Same@?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABE_NABH@Z,MATCH,27,src/unit.cpp,?Is_Archive_Same@?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABE_NABH@Z
+0x004D03D0,DirType::operator>=,MATCH,36,src/unit.cpp,??PDirType@@QBE_NABV0@@Z
 0x00746EC0,_$E41,MATCH,23,src/unittype.cpp,_$E41
 0x00746EE0,_$E2,MATCH,40,src/unittype.cpp,_$E2
 0x00746F10,_$E5,MATCH,19,src/unittype.cpp,_$E5
