@@ -7995,6 +7995,7 @@ address,name,result,size,source,symbol
 0x0056D430,MapClass::Get_Cell_Subzone_Index,MATCH,35,src/map.cpp,?Get_Cell_Subzone_Index@MapClass@@QAEHABVCell@@@Z
 0x0056D460,MapClass::ResetZones,MATCH,315,src/map.cpp,?ResetZones@MapClass@@QAEXABVCell@@@Z
 0x0056D5A0,MapClass::Update_Cell_Zone_Constructively,MATCH,306,src/map.cpp,?Update_Cell_Zone_Constructively@MapClass@@QAEXABVCell@@@Z
+0x0056D6E0,MapClass::Compute_Zone_Connections,MATCH,804,src/map.cpp,?Compute_Zone_Connections@MapClass@@QAEXXZ
 0x0056DA10,MapClass::Zone_Connection_Index,MATCH,196,src/map.cpp,?Zone_Connection_Index@MapClass@@QAEHABVCell@@HH@Z
 0x0056DAE0,MapClass::Unregister_Subzone_Connections,MATCH,139,src/map.cpp,?Unregister_Subzone_Connections@MapClass@@QAE_NABVCell@@@Z
 0x0056DB70,MapClass::Register_Subzone_Connections,MATCH,172,src/map.cpp,?Register_Subzone_Connections@MapClass@@QAE_NABVCell@@@Z

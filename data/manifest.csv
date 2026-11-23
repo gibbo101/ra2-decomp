@@ -8351,6 +8351,7 @@ address,size,symbol,source,sha256
 0x0056D430,35,?Get_Cell_Subzone_Index@MapClass@@QAEHABVCell@@@Z,src/map.cpp,f9115256dd47c60ab69fc1a1c47d0665a54cd82cfd6765a95c876ffc310682d4
 0x0056D460,315,?ResetZones@MapClass@@QAEXABVCell@@@Z,src/map.cpp,863ba93fb0544745c3ef5cf0a26c7183181b30b97c03f13d4caaafcd4930f7d9
 0x0056D5A0,306,?Update_Cell_Zone_Constructively@MapClass@@QAEXABVCell@@@Z,src/map.cpp,c44f02716f0c3eca1468d069cc588608b94f4ea217dceb0edd9e090bd68d886a
+0x0056D6E0,804,?Compute_Zone_Connections@MapClass@@QAEXXZ,src/map.cpp,12c8a62f1bc0bba36baa4991be9fe2a5f163011ed173a98013f18224782233c1
 0x0056DA10,196,?Zone_Connection_Index@MapClass@@QAEHABVCell@@HH@Z,src/map.cpp,49c4f3401a7e83b7c73ca8c24ccbbe0d42630cdb7cc9ec95fb4ba17fd44f78fe
 0x0056DAE0,139,?Unregister_Subzone_Connections@MapClass@@QAE_NABVCell@@@Z,src/map.cpp,785d6ff16dc305a8e9edd976c41b6a12c85e80af55b5b692534f8a014fbadf06
 0x0056DB70,172,?Register_Subzone_Connections@MapClass@@QAE_NABVCell@@@Z,src/map.cpp,2511946d95f6c228ca1fa259282bb32f0469bcefdf300e3e5529505651843438
