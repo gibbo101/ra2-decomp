@@ -2610,6 +2610,92 @@ void MapClass::Update_Cell_Zone_Constructively(Cell const & cell)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0056D6E0
+void MapClass::Compute_Zone_Connections(void)
+{
+	static int _bridge_subtiles1[] = {
+		7, 7, -1, 7, 7, -1, 4, 4,
+		4, 4,  4, 2, 2,  2, 2, 2
+	};
+	static FacingType _facings[] = {
+		FACING_E, FACING_E, FACING_NONE, FACING_S, FACING_S, FACING_NONE, FACING_E, FACING_E,
+		FACING_E, FACING_E,    FACING_E, FACING_S, FACING_S,    FACING_S, FACING_S, FACING_S
+	};
+	static int _bridge_subtiles2[] = {
+		-1, -1, 4, -1, -1, 2, 4, 4,
+		 4,  4, 4,  2,  2, 2, 2, 2
+	};
+
+	ZoneConnections.Clear();
+	Reset_Iterator();
+	CellClass * cptr = Iterate();
+
+	while (cptr != NULL) {
+
+		if (!cptr->Is_Tile_Bridge() && !cptr->Is_Tile_Train_Bridge()) {
+
+			if (cptr->Has_Tunnel()) {
+				if ((cptr->Adjacent_Cell(FACING_E).Has_Tunnel() && cptr->Adjacent_Cell(FACING_W).Has_Tunnel()) ||
+					(cptr->Adjacent_Cell(FACING_S).Has_Tunnel() && cptr->Adjacent_Cell(FACING_N).Has_Tunnel())) {
+
+					if (Map_Cell_Index(cptr->CellID) < Map_Cell_Index(cptr->Get_Tunnel()->Get_Exit())) {
+						Cell exit = cptr->Get_Tunnel()->Get_Exit();
+						ZoneConnectionClass con;
+						con.From = cptr->CellID;
+						con.To = exit;
+						con.IsPassable = true;
+						con.Type = 1;
+						ZoneConnections.Add(con);
+					}
+				}
+			}
+
+		} else {
+
+			int faceindex;
+			if (cptr->Is_Tile_Bridge()) {
+				faceindex = cptr->ITType - IsometricTileTypeClass::BridgeSet;
+			} else {
+				faceindex = cptr->ITType - IsometricTileTypeClass::TrainBridgeSet;
+			}
+
+			if (_bridge_subtiles1[faceindex] == cptr->SubTile) {
+
+				bool crossed = false;
+				FacingType facing = _facings[faceindex];
+				bool passable = true;
+
+				CellClass * bptr = &cptr->Adjacent_Cell(facing);
+				while (In_Radar(bptr->CellID) && !crossed) {
+					int index = -1;
+					if (bptr->Is_Tile_Bridge()) {
+						index = bptr->ITType - IsometricTileTypeClass::BridgeSet;
+					} else if (bptr->Is_Tile_Train_Bridge()) {
+						index = bptr->ITType - IsometricTileTypeClass::TrainBridgeSet;
+					} else if (!bptr->IsUnderBridge) {
+						passable = false;
+					}
+					if (index != -1 && _bridge_subtiles2[index] == bptr->SubTile) {
+						crossed = true;
+					}
+					bptr = &bptr->Adjacent_Cell(facing);
+				}
+
+				if (crossed) {
+					ZoneConnectionClass con;
+					con.To = bptr->Adjacent_Cell(Facing_Sub(facing, FACING_180)).CellID;
+					con.From = cptr->CellID;
+					con.IsPassable = passable;
+					con.Type = 0;
+					ZoneConnections.Add(con);
+				}
+			}
+		}
+
+		cptr = Iterate();
+	}
+}
+
 // FUNCTION: GAMEMD 0x0056DA10
 int MapClass::Zone_Connection_Index(Cell const & cell, int maxdist, int index)
 {
