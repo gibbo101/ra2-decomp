@@ -16,7 +16,7 @@ from people are just as welcome and go through the same checker and rules (`CONT
 function at its best attempt so far, the fuzzy match is 98%. Each function is checked on
 its own, and `tools/exelink/` links the whole executable with every matched function at its
 original address: with the original's bytes for what isn't matched yet, the image is
-identical to retail 1.001 in every section, and 87% of its code comes from source.
+identical to retail 1.001 in every section, and 91% of its code comes from source.
 `docs/PLAN.md` has the method, and `docs/rounds/` records every batch. Live progress,
 updated on every push:
 https://bytematch.dev/gibbo101/ra2-decomp
