@@ -124,7 +124,6 @@
 // SYNTHETIC: GAMEMD 0x00646C70 SYMBOL
 // _$E55
 
-extern unsigned long DAT_00AC5210[8];
 extern unsigned int DAT_00B04474[256];
 void Add_CRC(unsigned int *crc, unsigned int val);
 HWND FUN_00775B10(void);
@@ -2749,7 +2748,7 @@ struct SyncLayerRecord {
 	int TypeID;
 	char TypeName[0x17];
 	unsigned char TypeNameEnd;
-	unsigned char Owner;
+	signed char Owner;
 	unsigned char Gap21[3];
 	short RTTI;
 	unsigned char Gap26[2];
@@ -2776,6 +2775,305 @@ struct SyncFrameLog {
 #pragma pack(pop)
 
 extern SyncFrameLog DAT_00AC6660[256];
+
+namespace Game { extern bool EnableMPSyncDebug; }
+extern int DAT_00AFA26C;
+
+// FUNCTION: GAMEMD 0x00650A90
+void __fastcall FUN_00650A90(int index)
+{
+	if (!Game::EnableMPSyncDebug) {
+		DAT_00AFA26C = Scen->RandomNumber();
+		return;
+	}
+
+	SyncFrameLog *state = &DAT_00AC6660[index];
+	state->CRC = DAT_00AC51FC;
+	state->Random = Scen->RandomNumber();
+	state->Frame = ::Frame;
+
+	int i, j;
+	AbstractClass *target;
+	int id;
+	char const *name;
+	for (i = 0; i < 8; i++) {
+		SyncHouseRecord *sh = &state->Houses[i];
+		sh->ID = -1;
+		if (i < Houses.Count()) {
+			sh->Name[0] = 0;
+			for (j = 0; j < Session.Players.Count(); j++) {
+				if (Session.Players[j]->Player.ID == i) {
+					strncpy(sh->Name, FUN_007350C0(Session.Players[j]->Name), sizeof(sh->Name));
+				}
+			}
+			if (sh->Name[0] == 0 && (_stricmp(Houses[i]->Class->IniName, "Neutral") == 0 ||
+									 _stricmp(Houses[i]->Class->IniName, "Special") == 0)) {
+				strcpy(sh->Name, Houses[i]->Class->IniName);
+			}
+			sh->IsHuman = Houses[i]->IsHuman;
+			sh->ColorEnd = 0;
+			strncpy(sh->Color, ColorSchemes[Houses[i]->Scheme]->Name, sizeof(sh->Color));
+			sh->ID = i;
+			sh->TypeNameEnd = 0;
+			strncpy(sh->TypeName, HouseTypes[Houses[i]->Class->HeapID]->IniName, sizeof(sh->TypeName));
+		}
+	}
+
+	int objects = Infantry.Count() + Units.Count() + Aircraft.Count() + Buildings.Count();
+	int layered = Logic.Count();
+	for (i = 0; i < LAYER_COUNT; i++) {
+		layered += Map.Layer[i].Count();
+	}
+	if (!state->Buffer) {
+		state->Buffer = new char[state->BufferSize];
+	}
+	int size = objects * sizeof(SyncObjectRecord) + layered * sizeof(SyncLayerRecord);
+	if (size + 0x400 > state->BufferSize) {
+		delete[] (char *)state->Buffer;
+		state->BufferSize = (size + 0xFFFF) & 0xFFFF0000;
+		DebugString("Adjusted allocation of log %d to %dKb\n", index, state->BufferSize >> 10);
+		state->Buffer = new char[state->BufferSize];
+	}
+
+	SyncObjectRecord *obj = (SyncObjectRecord *)state->Buffer;
+	int count;
+	state->Objects = obj;
+
+	state->InfantryCount = Infantry.Count();
+	for (count = 0; count < Infantry.Count(); count++) {
+		InfantryClass *infp = Infantry[count];
+		obj->Coord = infp->PositionCoord.As_Int();
+		obj->Facing = infp->PrimaryFacing.Current().As_Dir256();
+		obj->Mission = infp->Get_Mission();
+		obj->TypeID = infp->Class->HeapID;
+		obj->Speed = infp->Speed * 256.0;
+		obj->Owner = infp->House->HeapID;
+		obj->TypeNameEnd = 0;
+		strncpy(obj->TypeName, infp->Class->IniName, sizeof(obj->TypeName));
+		target = infp->NavCom;
+		id = 0;
+		if (target) {
+			if (target->Is_Techno()) {
+				id = target->Fetch_Heap_ID();
+			} else if (target->RTTI == RTTI_CELL) {
+				id = ((CellClass *)target)->CellID.Y << 16 | ((CellClass *)target)->CellID.X;
+			}
+			name = Name_From_RTTI((RTTIType)target->RTTI);
+			obj->NavComNameEnd = 0;
+			obj->NavComIndex = id;
+			strncpy(obj->NavComName, name, sizeof(obj->NavComName));
+		} else {
+			obj->NavComIndex = 0;
+			obj->NavComName[0] = 0;
+		}
+		target = infp->TarCom;
+		id = 0;
+		if (target) {
+			if (target->Is_Techno()) {
+				id = target->Fetch_Heap_ID();
+			} else if (target->RTTI == RTTI_CELL) {
+				id = ((CellClass *)target)->CellID.Y << 16 | ((CellClass *)target)->CellID.X;
+			}
+			name = Name_From_RTTI((RTTIType)target->RTTI);
+			obj->TarComNameEnd = 0;
+			obj->TarComIndex = id;
+			strncpy(obj->TarComName, name, sizeof(obj->TarComName));
+		} else {
+			obj->TarComIndex = 0;
+			obj->TarComName[0] = 0;
+		}
+		obj++;
+	}
+
+	state->UnitCount = Units.Count();
+	for (i = 0; i < Units.Count(); i++) {
+		UnitClass *unitp = Units[i];
+		obj->Coord = unitp->PositionCoord.As_Int();
+		obj->Facing = unitp->PrimaryFacing.Current().As_Dir256();
+		obj->Facing2 = unitp->SecondaryFacing.Current().As_Dir256();
+		obj->Mission = unitp->Get_Mission();
+		obj->TypeID = unitp->Class->HeapID;
+		obj->Speed = unitp->Speed * 256.0;
+		obj->Owner = unitp->House->HeapID;
+		obj->TrackNumber = unitp->Locomotion->Get_Track_Number();
+		obj->TrackIndex = unitp->Locomotion->Get_Track_Index();
+		obj->SpeedAccum = unitp->Locomotion->Get_Speed_Accum();
+		obj->TypeNameEnd = 0;
+		strncpy(obj->TypeName, unitp->Class->IniName, sizeof(obj->TypeName));
+		target = unitp->NavCom;
+		id = 0;
+		if (target) {
+			if (target->Is_Techno()) {
+				id = target->Fetch_Heap_ID();
+			} else if (target->RTTI == RTTI_CELL) {
+				id = ((CellClass *)target)->CellID.Y << 16 | ((CellClass *)target)->CellID.X;
+			}
+			name = Name_From_RTTI((RTTIType)target->RTTI);
+			obj->NavComNameEnd = 0;
+			obj->NavComIndex = id;
+			strncpy(obj->NavComName, name, sizeof(obj->NavComName));
+		} else {
+			obj->NavComIndex = 0;
+			obj->NavComName[0] = 0;
+		}
+		target = unitp->TarCom;
+		id = 0;
+		if (target) {
+			if (target->Is_Techno()) {
+				id = target->Fetch_Heap_ID();
+			} else if (target->RTTI == RTTI_CELL) {
+				id = ((CellClass *)target)->CellID.Y << 16 | ((CellClass *)target)->CellID.X;
+			}
+			name = Name_From_RTTI((RTTIType)target->RTTI);
+			obj->TarComNameEnd = 0;
+			obj->TarComIndex = id;
+			strncpy(obj->TarComName, name, sizeof(obj->TarComName));
+		} else {
+			obj->TarComIndex = 0;
+			obj->TarComName[0] = 0;
+		}
+		obj++;
+		count++;
+	}
+
+	state->AircraftCount = Aircraft.Count();
+	for (i = 0; i < Aircraft.Count(); i++) {
+		AircraftClass *aircraftp = Aircraft[i];
+		obj->Coord = aircraftp->PositionCoord.As_Int();
+		obj->Facing = aircraftp->PrimaryFacing.Current().As_Dir256();
+		obj->Mission = aircraftp->Get_Mission();
+		obj->TypeID = aircraftp->Class->HeapID;
+		obj->Speed = aircraftp->Speed * 256.0;
+		obj->Owner = aircraftp->House->HeapID;
+		obj->TypeNameEnd = 0;
+		strncpy(obj->TypeName, aircraftp->Class->IniName, sizeof(obj->TypeName));
+		target = aircraftp->NavCom;
+		id = 0;
+		if (target) {
+			if (target->Is_Techno()) {
+				id = target->Fetch_Heap_ID();
+			} else if (target->RTTI == RTTI_CELL) {
+				id = ((CellClass *)target)->CellID.Y << 16 | ((CellClass *)target)->CellID.X;
+			}
+			name = Name_From_RTTI((RTTIType)target->RTTI);
+			obj->NavComNameEnd = 0;
+			obj->NavComIndex = id;
+			strncpy(obj->NavComName, name, sizeof(obj->NavComName));
+		} else {
+			obj->NavComIndex = 0;
+			obj->NavComName[0] = 0;
+		}
+		target = aircraftp->TarCom;
+		id = 0;
+		if (target) {
+			if (target->Is_Techno()) {
+				id = target->Fetch_Heap_ID();
+			} else if (target->RTTI == RTTI_CELL) {
+				id = ((CellClass *)target)->CellID.Y << 16 | ((CellClass *)target)->CellID.X;
+			}
+			name = Name_From_RTTI((RTTIType)target->RTTI);
+			obj->TarComNameEnd = 0;
+			obj->TarComIndex = id;
+			strncpy(obj->TarComName, name, sizeof(obj->TarComName));
+		} else {
+			obj->TarComIndex = 0;
+			obj->TarComName[0] = 0;
+		}
+		obj++;
+		count++;
+	}
+
+	state->BuildingCount = Buildings.Count();
+	for (i = 0; i < Buildings.Count(); i++) {
+		BuildingClass *bldgp = Buildings[i];
+		obj->Coord = bldgp->PositionCoord.As_Int();
+		obj->Facing = bldgp->PrimaryFacing.Current().As_Dir256();
+		obj->Mission = bldgp->Get_Mission();
+		obj->TypeID = bldgp->Class->HeapID;
+		obj->Owner = bldgp->House->HeapID;
+		obj->NavComIndex = 0;
+		obj->NavComName[0] = 0;
+		obj->TypeNameEnd = 0;
+		strncpy(obj->TypeName, bldgp->Class->IniName, sizeof(obj->TypeName));
+		target = bldgp->TarCom;
+		id = 0;
+		if (target) {
+			if (target->Is_Techno()) {
+				id = target->Fetch_Heap_ID();
+			} else if (target->RTTI == RTTI_CELL) {
+				id = ((CellClass *)target)->CellID.Y << 16 | ((CellClass *)target)->CellID.X;
+			}
+			name = Name_From_RTTI((RTTIType)target->RTTI);
+			obj->TarComNameEnd = 0;
+			obj->TarComIndex = id;
+			strncpy(obj->TarComName, name, sizeof(obj->TarComName));
+		} else {
+			obj->TarComIndex = 0;
+			obj->TarComName[0] = 0;
+		}
+		obj++;
+		count++;
+	}
+	state->Total = count;
+
+	SyncLayerRecord *obj_layer = (SyncLayerRecord *)obj;
+	for (i = 0; i < LAYER_COUNT; i++) {
+		state->LayerObjects[i] = obj_layer;
+		for (count = j = 0; j < Map.Layer[i].Count(); j++) {
+			ObjectClass *objp = Map.Layer[i][j];
+			if (objp->RTTI == RTTI_ANIM && objp->Fetch_ID() == -2) {
+				continue;
+			}
+			obj_layer->Coord = objp->PositionCoord.As_Int();
+			obj_layer->RTTI = objp->RTTI;
+			if (objp->RTTI != RTTI_WAVE && objp->RTTI != RTTI_LIGHT) {
+				obj_layer->TypeID = objp->Class_Of()->Fetch_Heap_ID();
+				obj_layer->TypeNameEnd = 0;
+				strncpy(obj_layer->TypeName, objp->Class_Of()->IniName, sizeof(obj_layer->TypeName));
+			} else {
+				obj_layer->TypeID = -1;
+				obj_layer->TypeName[0] = 0;
+			}
+			HouseClass *owner = objp->Owner_HouseClass();
+			if (owner) {
+				obj_layer->Owner = owner->HeapID;
+			} else {
+				obj_layer->Owner = -1;
+			}
+			obj_layer++;
+			count++;
+		}
+		state->LayerCount[i] = count;
+	}
+
+	state->LogicObjects = obj_layer;
+	count = 0;
+	for (i = 0; i < Logic.Count(); i++) {
+		ObjectClass *objp = Logic[i];
+		if (objp->RTTI == RTTI_ANIM && objp->Fetch_ID() == -2) {
+			continue;
+		}
+		obj_layer->Coord = objp->PositionCoord.As_Int();
+		obj_layer->RTTI = objp->RTTI;
+		if (objp->RTTI != RTTI_WAVE && objp->RTTI != RTTI_LIGHT) {
+			obj_layer->TypeID = objp->Class_Of()->Fetch_Heap_ID();
+			obj_layer->TypeNameEnd = 0;
+			strncpy(obj_layer->TypeName, objp->Class_Of()->IniName, sizeof(obj_layer->TypeName));
+		} else {
+			obj_layer->TypeID = -1;
+			obj_layer->TypeName[0] = 0;
+		}
+		HouseClass *owner = objp->Owner_HouseClass();
+		if (owner) {
+			obj_layer->Owner = owner->HeapID;
+		} else {
+			obj_layer->Owner = -1;
+		}
+		obj_layer++;
+		count++;
+	}
+	state->LogicCount = count;
+}
 
 // FUNCTION: GAMEMD 0x006516F0
 void __fastcall FUN_006516F0(int slot, EventClass *ev)
@@ -2940,8 +3238,8 @@ void __fastcall FUN_006516F0(int slot, EventClass *ev)
 			} else {
 				fprintf(fp, "%s\t(Type:%d) ", Name_From_RTTI((RTTIType)rec->RTTI), 0);
 			}
-			if (rec->Owner != 0xff) {
-				fprintf(fp, "Owner: %s\n", log->Houses[(signed char)rec->Owner].Name);
+			if (rec->Owner != -1) {
+				fprintf(fp, "Owner: %s\n", log->Houses[rec->Owner].Name);
 			} else {
 				fprintf(fp, "Owner: None\n");
 			}
@@ -2957,8 +3255,8 @@ void __fastcall FUN_006516F0(int slot, EventClass *ev)
 		} else {
 			fprintf(fp, "%s\t(Type:%d) ", Name_From_RTTI((RTTIType)rec->RTTI), 0);
 		}
-		if (rec->Owner != 0xff) {
-			fprintf(fp, "Owner: %s\n", log->Houses[(signed char)rec->Owner].Name);
+		if (rec->Owner != -1) {
+			fprintf(fp, "Owner: %s\n", log->Houses[rec->Owner].Name);
 		} else {
 			fprintf(fp, "Owner: None\n");
 		}
@@ -3158,6 +3456,7 @@ struct PacketTiming {
 int __fastcall FUN_0064BDD0(void * buf, int bufsize);
 static int Extract_Uncompressed_Events(void * buf, int bufsize);
 static int Breakup_Receive_Packet(void * buf, int bufsize);
+extern unsigned long DAT_00AC5210[8];
 
 // FUNCTION: GAMEMD 0x0064A0C0
 int __fastcall Process_Receive_Packet(ConnManClass * net, char * multi_packet_buf, int id, int packetlen,

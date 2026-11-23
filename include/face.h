@@ -154,7 +154,7 @@ class DirType
 		const DirType & operator *= (int rvalue) { Facing *= rvalue; return *this; }
 		const DirType & operator /= (int rvalue) { Facing /= rvalue; return *this; }
 
-		bool operator >= (DirType const & rvalue) const {return abs(Facing) >= abs(rvalue.Facing); }
+		bool operator >= (DirType const & rvalue) const {return abs(As_Int()) >= abs(rvalue.As_Int()); }
 
 		bool Is_Complete_Turn(DirType const & towards, DirType const & by)
 		{
