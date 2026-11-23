@@ -6177,6 +6177,7 @@ address,name,result,size,source,symbol
 0x00513D20,HoverLocomotionClass::Gravity_AI,MATCH,529,src/hover.cpp,?Gravity_AI@HoverLocomotionClass@@AAEXXZ
 0x00513F40,HoverLocomotionClass::Draw_Matrix,MATCH,851,src/hover.cpp,?Draw_Matrix@HoverLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z
 0x005142A0,HoverLocomotionClass::Shadow_Matrix,MATCH,103,src/hover.cpp,?Shadow_Matrix@HoverLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z
+0x00514310,HoverLocomotionClass::Process,MATCH,2321,src/hover.cpp,?Process@HoverLocomotionClass@@UAGEXZ
 0x00514C30,HoverLocomotionClass::Is_Moving,MATCH,75,src/hover.cpp,?Is_Moving@HoverLocomotionClass@@UAGEXZ
 0x00514C80,HoverLocomotionClass::Is_Moving_Now,MATCH,46,src/hover.cpp,?Is_Moving_Now@HoverLocomotionClass@@UAGEXZ
 0x00514CB0,HoverLocomotionClass::Destination,MATCH,92,src/hover.cpp,?Destination@HoverLocomotionClass@@UAG?AUCoordStruct@@XZ
