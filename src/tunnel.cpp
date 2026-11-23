@@ -262,7 +262,7 @@ void TunnelLocomotionClass::ProcessPreDigIn(void)
 // FUNCTION: GAMEMD 0x00729370
 void TunnelLocomotionClass::ProcessDiggingIn(void)
 {
-	if (DigTimer.Progress() == 1.0) {
+	if (DigTimer.Has_Completed()) {
 		LinkedTo->Set_Speed(1.0);
 		State = STATE_DUG_IN;
 		VocClass::PlayAt(Rule->DigSound, LinkedTo->PositionCoord, NULL);
@@ -274,7 +274,7 @@ void TunnelLocomotionClass::ProcessDiggingIn(void)
 // FUNCTION: GAMEMD 0x00729480
 void TunnelLocomotionClass::ProcessDugOut(void)
 {
-	if (DigTimer.Progress() == 1.0) {
+	if (DigTimer.Has_Completed()) {
 		State = STATE_IDLE;
 		LinkedTo->AbortMotion();
 	}
@@ -379,7 +379,7 @@ void TunnelLocomotionClass::ProcessPreDigOut(void)
 // FUNCTION: GAMEMD 0x00729AA0
 void TunnelLocomotionClass::ProcessDiggingOut(void)
 {
-	if (DigTimer.Progress() == 1.0) {
+	if (DigTimer.Has_Completed()) {
 		LinkedTo->Per_Cell_Process(PCP_END);
 		if (LinkedTo->IsActive && !LinkedTo->IsInLimbo && !LinkedTo->IsFalling) {
 			Stop_Moving();
