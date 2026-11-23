@@ -19,6 +19,7 @@
 #include "globals.h"
 #include "house.h"
 #include "inline.h"
+#include "movepoint.h"
 #include "map.h"
 #include "noinit.h"
 #include "rules.h"
@@ -337,9 +338,9 @@ void TunnelLocomotionClass::ProcessDigging(void)
 	} else {
 		Point2D delta(DestinationCoord.X - coord.X, DestinationCoord.Y - coord.Y);
 		DirType dir = DirType(fastmath::atan2((double)-delta.Y, (double)delta.X));
-		Point2D point(coord.X, coord.Y);
-		double radians = dir.As_Radian();
-		coord = Coord((int)(point.X + fastmath::cos(radians) * 19), (int)(point.Y - fastmath::sin(radians) * 19), coord.Z);
+		int z = coord.Z;
+		Point2D next = Move_Point(Point2D(coord.X, coord.Y), dir, 19);
+		coord = Coord(next, z);
 	}
 	LinkedTo->PositionCoord = coord;
 }
