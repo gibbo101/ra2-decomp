@@ -167,7 +167,7 @@ static inline void Load_History(INIClass & ini)
 void WorldDominationTour::Campaign::Write_INI(int index)
 {
 	CycleID = Properties->Get_Cycle_ID();
-	PreviousTicks[index] = Get_Current_Tick();
+	PreviousTicks[index] = Properties->Get_Current_Tick();
 	INIClass ini;
 	Load_History(ini);
 	Wstring key = Wstring("LastDay") + WDT_Country_Name(index);

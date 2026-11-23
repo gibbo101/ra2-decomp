@@ -65,6 +65,71 @@ using namespace WorldDominationTour;
 // _$E67
 
 #include "bitfont.h"
+#include "dsurface.h"
+#undef LoadString
+#include "stringtable.h"
+
+namespace OwnerDraw { extern int PrimaryTextColor; }
+
+static WideWstring Load_Selection_Text(char const * label, int source_line)
+{
+	return(WideWstring(StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\WDTSel.cpp", source_line)));
+}
+
+// FUNCTION: GAMEMD 0x0076C290
+// WorldDominationTour::Selection::Selection
+Selection::Selection(rc_ptr<Campaign> const & campaign, int theater) :
+	MSEngine(),
+	TourCampaign(campaign),
+	SelectedConflict(),
+	VoicePlayer(campaign->Get_Faction()),
+	Brokeout(false),
+	LastPoint(-1, -1),
+	StartTick(campaign->Properties->Get_Current_Tick()),
+	LastHoverZone(-1),
+	WorldMap(FUN_00767FB0(campaign->Properties->Get_Map_ID(), theater, campaign->Get_Faction())),
+	HoveredTerritoryID(-1),
+	MousedTerritory(),
+	TargetDrawer(NULL),
+	ZoomingTarget(NULL),
+	ThrobbingTarget(NULL),
+	ThrobbingTargetDividingFrame(32),
+	TextAnim(NULL),
+	TooltipAnim(NULL),
+	Font(new MSFont(false)),
+	CurrentState(FUN_0076F500()),
+	ThemeName((char const *)NULL)
+{
+	int pixel = DSurface::Build_Hicolor_Pixel(GetRValue(OwnerDraw::PrimaryTextColor), GetGValue(OwnerDraw::PrimaryTextColor), GetBValue(OwnerDraw::PrimaryTextColor));
+	TextColor = BitFont::Instance->SetColor(pixel);
+
+	Add_Animation(VoicePlayer.FUN_00771800());
+
+	CCFileClass file("WDTMAPMD.INI");
+	INIClass ini;
+	ini.Load(file, false);
+
+	Init_Voices(ini, "VoiceOvers");
+	Init_Sounds(ini, "SOUNDS");
+
+	Wstring layout;
+	ini.Get_String("LAYOUTS", Wstring_FromInt(campaign->Properties->Get_Layout()), "", layout);
+	Init_Target(ini, layout);
+
+	WorldMap->FUN_007681E0(ini, this, campaign->Is_Different(theater));
+
+	WideWstring play_text = Load_Selection_Text("GUI:PlayWDT", 0x9d);
+	MSBitPrintAnim * play = new MSBitPrintAnim(play_text, WorldMap->TitleRect, true);
+	play->Set_Flag(true);
+	Add_Animation(play);
+
+	WideWstring back_text = Load_Selection_Text("TXT_BACK", 0xa4);
+	MSBitPrintAnim * back = new MSBitPrintAnim(back_text, WorldMap->BackTextRect, true);
+	back->Set_Flag(true);
+	Add_Animation(back);
+
+	Start();
+}
 
 // FUNCTION: GAMEMD 0x0076C6E0
 // WorldDominationTour::Selection::~Selection
@@ -137,8 +202,7 @@ void Selection::Init_Sounds(INIClass const & ini, Wstring const & section)
 void Selection::Init_Target(INIClass const & ini, Wstring const & section)
 {
 	Wstring buffer;
-	int faction = TourCampaign.Get()->PlayerFaction;
-	Wstring faction_name = *FUN_007AF2A0(faction);
+	Wstring faction_name = *FUN_007AF2A0(TourCampaign->Get_Faction());
 
 	bool found;
 	{
@@ -214,6 +278,36 @@ rc_ptr<Territory> Selection::Pick_Territory(void)
 	return(selected ? MousedTerritory : rc_ptr<Territory>());
 }
 
+// FUNCTION: GAMEMD 0x0076D180
+// WorldDominationTour::Selection::Handle_Click
+void Selection::Handle_Click(Point2D const & point, bool & selected)
+{
+	int zone = WorldMap->FUN_00769440(point) ? 2 : 1;
+	switch (zone) {
+		case 1:
+			WorldMap->FUN_007693A0(this, false);
+			selected = Select_Territory_At(point);
+			if (selected) {
+				Play_SFX("ConflictSelected");
+			}
+			break;
+
+		case 2:
+			WorldMap->FUN_007693A0(this, true);
+			On_Cancel_Enter();
+			break;
+	}
+}
+
+// FUNCTION: GAMEMD 0x0076D3A0
+// WorldDominationTour::Selection::Select_Territory_At
+bool Selection::Select_Territory_At(Point2D const & point)
+{
+	Update_Hovered_Territory(point);
+	rc_ptr<Territory> territory = HoveredTerritoryID >= 0 ? WorldMap->FUN_0076F000(HoveredTerritoryID) : rc_ptr<Territory>();
+	return(Select_Territory(territory));
+}
+
 // FUNCTION: GAMEMD 0x0076D470
 // WorldDominationTour::Selection::Update_Hovered_Territory
 void Selection::Update_Hovered_Territory(Point2D const & point)
@@ -225,14 +319,7 @@ void Selection::Update_Hovered_Territory(Point2D const & point)
 	}
 }
 
-#undef LoadString
-#include "stringtable.h"
 WideWstring __fastcall FUN_007B8090(wchar_t const * prefix, WideWstring const & text);
-
-static WideWstring Load_Selection_Text(char const * label, int source_line)
-{
-	return(WideWstring(StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\WDTSel.cpp", source_line)));
-}
 
 // FUNCTION: GAMEMD 0x0076DAD0
 // WorldDominationTour::Selection::Select_Territory
@@ -497,8 +584,7 @@ void Selection::Presentation(int index)
 
 	rc_ptr<State> previous_state = TourCampaign->CycleHistory->Get_State(previous_tick);
 	if (previous_state.Get() != NULL) {
-		int faction = TourCampaign->PlayerFaction;
-		int owned = previous_state->Count_Owned_Territories(faction);
+		int owned = previous_state->Count_Owned_Territories(TourCampaign->Get_Faction());
 		if (owned >= MegaWinningThreshold) {
 			VoicePlayer.Queue(0, OUTCOME_WIN, owned >= 30, true, 0);
 		} else if (owned <= MegaLosingThreshold) {
@@ -520,11 +606,9 @@ void Selection::Presentation(int index)
 bool Selection::Present_History(int tick_from, int tick_to)
 {
 	rc_ptr<State> before = TourCampaign->CycleHistory->Get_State(tick_from);
-	int faction = TourCampaign->PlayerFaction;
-	int old_count = before->Count_Owned_Territories(faction);
+	int old_count = before->Count_Owned_Territories(TourCampaign->Get_Faction());
 	rc_ptr<State> after = TourCampaign->CycleHistory->Get_State(tick_to);
-	faction = TourCampaign->PlayerFaction;
-	int new_count = after->Count_Owned_Territories(faction);
+	int new_count = after->Count_Owned_Territories(TourCampaign->Get_Faction());
 	int change = new_count - old_count;
 
 	int outcome;

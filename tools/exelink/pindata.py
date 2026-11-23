@@ -321,6 +321,8 @@ def retarget_object(path, data, plan):
                 continue
             if section > 0 and _comdat(data, section):
                 va = plan.get("comdat", {}).get(name)
+                if va is None:
+                    va = plan["global"].get(name)
             elif name in plan["global"]:
                 va = plan["global"][name]
             elif name not in plan.get("rejected", ()):

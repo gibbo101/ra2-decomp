@@ -295,7 +295,6 @@ namespace WorldDominationTour
 		public:
 			Campaign(Wstring const & name, rc_ptr<CampaignProperties> const & props);
 			virtual ~Campaign(void);
-			int Get_Current_Tick(void) { return(Properties.Get()->Get_Current_Tick()); }
 			bool Is_Different_Cycle(void);
 			bool Is_Different(int index);
 			int Get_Previous_Tick(int index);
@@ -303,6 +302,7 @@ namespace WorldDominationTour
 			void Reset_INI(void);
 			CONFLICT_ITER Get_Conflict_Iterator(int index);
 			void Set_Faction(int faction);
+			int Get_Faction(void) const { return(PlayerFaction); }
 
 		public:
 			rc_ptr<CampaignProperties> Properties;
@@ -810,7 +810,7 @@ namespace WorldDominationTour
 			int StartTick;
 			int LastHoverZone;
 			rc_ptr<Map> WorldMap;
-			int HoveredTerritoryID;
+			unsigned int HoveredTerritoryID;
 			rc_ptr<Territory> MousedTerritory;
 			ConvertClass * TargetDrawer;
 			MSAnimEntry * ZoomingTarget;

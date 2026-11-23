@@ -548,8 +548,9 @@ Rect __fastcall FUN_00634510(Point2D center, int size)
 // FUNCTION: GAMEMD 0x00634550
 bool PlanningNodeClass::Lead_At(Coord coord)
 {
-	Coord c = FUN_00633BC0(*PlanningMembers[0]->Packet);
-	return c.X == coord.X && c.Y == coord.Y && c.Z == coord.Z;
+	Coord c;
+	c = Lead_Coord();
+	return c == coord;
 }
 
 // FUNCTION: GAMEMD 0x006345A0
@@ -1638,19 +1639,6 @@ bool __fastcall FUN_00637AA0(void)
 
 bool __fastcall FUN_00638C70(TechnoClass * techno);
 
-static inline void Commit_Unit_Orders(TechnoClass * techno)
-{
-	PlanningTokenClass * token = techno->FUN_00705D20();
-	if (token != NULL) {
-		bool started = token->Has_Started();
-		token->FUN_00636CE0();
-		bool permitted = FUN_00638C70(techno);
-		if (!started && permitted) {
-			techno->TryNextPlanningTokenNode();
-		}
-	}
-}
-
 // FUNCTION: GAMEMD 0x00637AB0
 void __fastcall Commit_Plans(int house)
 {
@@ -1658,7 +1646,15 @@ void __fastcall Commit_Plans(int house)
 	for (int i = 0; i < count; i++) {
 		TechnoClass * techno = Technos[i];
 		if (house == FUN_006339B0(techno)) {
-			Commit_Unit_Orders(techno);
+			PlanningTokenClass * token = techno->FUN_00705D20();
+			if (token != NULL) {
+				bool started = token->Has_Started();
+				token->FUN_00636CE0();
+				bool permitted = FUN_00638C70(techno);
+				if (!started && permitted) {
+					techno->TryNextPlanningTokenNode();
+				}
+			}
 		}
 	}
 }
@@ -1710,7 +1706,7 @@ bool TechnoClass::TryNextPlanningTokenNode(void)
 		QueueMission(MISSION_WAIT, true);
 		EventClass popped = token->Pop_Front();
 		FUN_006375B0(popped);
-		token->F1C = true;
+		token->Set_F1C();
 		return true;
 	}
 	return false;
@@ -1799,7 +1795,7 @@ bool __fastcall FUN_00638C20(int mission)
 }
 
 // FUNCTION: GAMEMD 0x00638C40
-bool __fastcall FUN_00638C40(int mission, TargetClass target)
+bool __fastcall FUN_00638C40(int mission, xTargetClass target)
 {
 	if (mission == 1 || mission == 0xb) {
 		if ((RTTIType)target == RTTI_CELL) {
@@ -1849,19 +1845,6 @@ static inline EventClass Last_Planning_Event(PlanningTokenClass * token)
 	return token->Event_At(token->Node_Count() - 1);
 }
 
-static inline int Previous_Order_Status(PlanningTokenClass * token)
-{
-	EventClass previous = Last_Planning_Event(token);
-	int mission = previous.Data.MegaMission.Mission;
-	if (FUN_00638C20(mission)) {
-		return 1;
-	}
-	if (Mission_Fits(mission, Planning_Target(previous.Data.MegaMission.Target))) {
-		return 2;
-	}
-	return -1;
-}
-
 // FUNCTION: GAMEMD 0x00638CE0
 int __fastcall FUN_00638CE0(TechnoClass * techno, EventClass const & event)
 {
@@ -1875,7 +1858,14 @@ int __fastcall FUN_00638CE0(TechnoClass * techno, EventClass const & event)
 	}
 	PlanningTokenClass * token = techno->FUN_00705D20();
 	if (token != NULL && token->Node_Count() > 0) {
-		return Previous_Order_Status(token);
+		EventClass previous = Last_Planning_Event(token);
+		int last = previous.Data.MegaMission.Mission;
+		if (FUN_00638C20(last)) {
+			return 1;
+		}
+		if (Mission_Fits(last, Planning_Target(previous.Data.MegaMission.Target))) {
+			return 2;
+		}
 	}
 	return -1;
 }
@@ -2026,15 +2016,14 @@ bool __fastcall FUN_00639130(void)
 }
 
 // FUNCTION: GAMEMD 0x00639210
-PlanningNodeClass * __fastcall FUN_00639210(int house, int id, Coord coord)
+PlanningNodeClass * __fastcall FUN_00639210(int house, Coord coord, int id)
 {
 	int count = PlanningNodeClass::Unknown1.Count();
 	for (int i = 0; i < count; i++) {
 		PlanningNodeClass * node = PlanningNodeClass::Unknown1[i];
-		Coord at = FUN_00633BC0(*node->PlanningMembers[0]->Packet);
-		if (at.X == coord.X && at.Y == coord.Y && at.Z == coord.Z) {
-			if (id == -1 || id == node->Id) {
-				int owner = FUN_006339B0(node->PlanningMembers[0]->Owner);
+		if (node->Lead_At(coord)) {
+			if (id == -1 || id == node->Get_Id()) {
+				int owner = FUN_006339B0(node->Member_Owner(0));
 				if (house == -1 || house == owner) {
 					return node;
 				}
@@ -2099,7 +2088,8 @@ void __fastcall FUN_00639800(TechnoClass * techno, PlanningNodeClass * node);
 extern bool DAT_00AC4CD0;
 void __fastcall FUN_00639CB0(TechnoClass * techno);
 
-static inline void Close_Loop(TechnoClass * techno, PlanningNodeClass * node)
+// FUNCTION: GAMEMD 0x00639740
+inline void __fastcall FUN_00639740(TechnoClass * techno, PlanningNodeClass * node)
 {
 	PlanningTokenClass * token = techno->FUN_00705D20();
 	int index = token->Node_Index(node);
@@ -2120,12 +2110,6 @@ static inline void Close_Loop(TechnoClass * techno, PlanningNodeClass * node)
 		FUN_00639CB0(techno);
 	}
 	node->Update_Active();
-}
-
-// FUNCTION: GAMEMD 0x00639740
-void __fastcall FUN_00639740(TechnoClass * techno, PlanningNodeClass * node)
-{
-	Close_Loop(techno, node);
 }
 
 
@@ -2400,13 +2384,13 @@ void __fastcall FUN_0063A230(char const * name)
 }
 
 // FUNCTION: GAMEMD 0x0063A280
-void __fastcall FUN_0063A280(char const * type)
+void __fastcall FUN_0063A280(EventClass const & event)
 {
-	if (*type == 9) {
+	if (event.Type == EventClass::DEPLOY) {
 		FUN_0063A230("MSG:PlanningModeNoDeploy");
-	} else if (*type == 6) {
+	} else if (event.Type == EventClass::IDLE) {
 		FUN_0063A230("MSG:PlanningModeNoStop");
-	} else if (*type == 7) {
+	} else if (event.Type == EventClass::SCATTER) {
 		FUN_0063A230("MSG:PlanningModeNoScatter");
 	}
 }
@@ -2431,10 +2415,13 @@ int __fastcall FUN_0063A440(PlanningTokenClass * token, EventClass const & event
 	if (FUN_00638C20(mission)) {
 		return 0;
 	}
-	if (Mission_Fits(mission, target)) {
+	if (FUN_00638C40(mission, target)) {
 		return 0;
 	}
-	return token->Node_Count() == 15 ? 2 : -1;
+	if (token->Node_Count() == 15) {
+		return 2;
+	}
+	return -1;
 }
 
 // FUNCTION: GAMEMD 0x0063A4A0
@@ -2898,8 +2885,77 @@ void __fastcall Draw_Filled_Unit_Waypoints(TechnoClass * techno)
 	if (frame != -1) FUN_0063D630(source, target, path_color, fill, frame);
 }
 
+int __fastcall FUN_0063D0F0(TechnoClass * techno);
+void __fastcall FUN_0063D400(Point2D p, int color);
+int __fastcall FUN_0063D500(TechnoClass * techno);
 void __fastcall FUN_0063D560(Point2D a, Point2D b, int color);
 void __fastcall FUN_0063D910(Point2D p1, Point2D p2, int width, int color);
+
+// FUNCTION: GAMEMD 0x0063B550
+void __fastcall FUN_0063B550(TechnoClass * techno)
+{
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	Coord origin = techno->As_Coord();
+	Point2D center = FUN_006339E0(origin);
+	Point2D source;
+	source.X = center.X;
+	source.Y = center.Y;
+	int color = FUN_0063D0F0(techno);
+	bool has_nodes = Has_Planned_Nodes(token);
+	bool draw_action = Should_Draw_Active_Action(techno, has_nodes);
+	int width = 4;
+	if (token && token->Owner_Is_Mission()) {
+		EventClass packet(token->Popped);
+		Coord coord = FUN_0063CA80(packet, techno);
+		Point2D target = FUN_006339E0(coord);
+		FUN_0063D400(center, color);
+		FUN_0063D910(center, target, 3, color);
+		int frame = FUN_0063D540(packet);
+		if (frame != -1) FUN_0063D560(center, target, color);
+		FUN_0063D400(target, color);
+		return;
+	}
+
+	if (draw_action) {
+		bool mega_mission = techno->HaveMegaMission();
+		bool attack_move = techno->HaveAttackMoveTarget();
+		Coord coord = techno->GetAttackCoordinates();
+		Point2D action = FUN_006339E0(coord);
+		if (techno->IsInLimbo) {
+			FUN_0063D400(action, color);
+			return;
+		}
+		FUN_0063D400(center, color);
+		FUN_0063D910(center, action, 3, color);
+		int frame = (mega_mission && !attack_move) ? FUN_0063D520(techno) : FUN_0063D500(techno);
+		if (frame != -1) FUN_0063D560(center, action, color);
+		FUN_0063D400(action, color);
+		if (attack_move) {
+			Coord attack_coord = techno->GetAttackMoveCoords();
+			Point2D dest = FUN_006339E0(attack_coord);
+			FUN_0063D910(action, dest, 3, color);
+			frame = FUN_0063D520(techno);
+			if (frame != -1) FUN_0063D560(action, dest, color);
+			FUN_0063D400(dest, color);
+			return;
+		}
+		if (!has_nodes) return;
+		source = action;
+		width = 3;
+	} else if (!has_nodes) {
+		return;
+	}
+
+	PlanningNodeClass * node = token->Node_At(0);
+	Point2D target = node->Lead_Pixel();
+	PlanningBranchClass * branch = node->Branch_Of(techno);
+	if (branch) target = FUN_0063D210(&branch->Event, techno);
+	FUN_0063D400(source, color);
+	FUN_0063D910(source, target, width, color);
+	if (branch) FUN_0063D400(target, color);
+	int frame = Planned_Waypoint_Frame(node->Get_Event_For(techno));
+	if (frame != -1) FUN_0063D560(source, target, color);
+}
 
 // FUNCTION: GAMEMD 0x0063C690
 void __fastcall FUN_0063C690(PlanningNodeClass * node)
@@ -3131,13 +3187,14 @@ int __fastcall FUN_0063D540(EventClass const & event)
 // FUNCTION: GAMEMD 0x0063D560
 void __fastcall FUN_0063D560(Point2D a, Point2D b, int color)
 {
-	if (Distance(a, b) >= 0x25) {
-		int x = (a.X + b.X) / 2 - 10;
-		int y = (a.Y + b.Y) / 2 - 10;
-		Rect clip = Get_Title_Screen_Area();
-		Rect rect(x, y, 0x15, 0x15);
-		DSurface::Composite->Draw_Rect(clip, rect, color);
+	if (Distance(a, b) < 0x25) {
+		return;
 	}
+	int x = (a.X + b.X) / 2 - 10;
+	int y = (a.Y + b.Y) / 2 - 10;
+	Rect clip = Get_Title_Screen_Area();
+	Rect rect(x, y, 0x15, 0x15);
+	DSurface::Composite->Draw_Rect(clip, rect, color);
 }
 
 // FUNCTION: GAMEMD 0x0063D810
@@ -3483,6 +3540,112 @@ bool __stdcall FUN_0063AB60(int x, int y)
 		Map.Set_Default_Mouse(MOUSE_NORMAL, false);
 	} else {
 		Map.Set_Default_Mouse(MOUSE_NORMAL, true);
+	}
+	return true;
+}
+
+bool __fastcall FUN_00638120(TechnoClass * techno, EventClass * event);
+
+// FUNCTION: GAMEMD 0x00637E00
+void __fastcall FUN_00637E00(EventClass * event)
+{
+	if (event->Type == EventClass::PLAN_COMMIT) {
+		Commit_Plans(event->ID);
+	} else if (event->Type == EventClass::PLAN_CONNECT) {
+		TechnoClass * techno = event->Data.NavCom.Whom.As_Techno();
+		if (techno) {
+			AbstractClass * object = event->Data.NavCom.Where.As_Abstract();
+			if (object) {
+				Coord coord = object->As_Coord();
+				PlanningNodeClass * node = FUN_00639210(event->ID, coord, -1);
+				if (node) {
+					FUN_006395B0(techno, node);
+				}
+			}
+		}
+	} else if (event->Type == EventClass::PLAN_NODE_DELETE) {
+		AbstractClass * object = event->Data.Target.Whom.As_Abstract();
+		if (object) {
+			Coord coord = object->As_Coord();
+			int house = event->ID;
+			PlanningNodeClass * node = FUN_00639210(house, coord, -1);
+			if (node) {
+				TechnoClass * owner = node->Member_Owner(0);
+				int index = node->Index_In(owner);
+				PlanningTokenClass * token = owner->FUN_00705D20();
+				PlanningNodeClass * next = token->Node_At(index + 1);
+				FUN_00639BC0(node);
+				if (next && house == PlayerPtr->HeapID) {
+					FUN_0063B080(next);
+				}
+			}
+		}
+	} else {
+		TechnoClass * techno = event->Data.Target.Whom.As_Techno();
+		FUN_00638120(techno, event);
+	}
+}
+
+// FUNCTION: GAMEMD 0x00638120
+bool __fastcall FUN_00638120(TechnoClass * techno, EventClass * event)
+{
+	if (techno == NULL) return false;
+	bool mine = event->ID == PlayerPtr->HeapID;
+	Coord where = FUN_00633BC0(*event);
+	if (where == Coord(-1, -1, -1)) return false;
+	PlanningNodeClass * node = FUN_00639210(event->ID, where, event->Frame);
+	if (node && node->Has_Member(techno)) return true;
+	int status = FUN_00638CE0(techno, *event);
+	if (status != -1) {
+		if (mine) {
+			if (status == 0) {
+				FUN_0063A280(*event);
+			} else if (status == 1) {
+				FUN_0063A230("MSG:PostTerminatingCommand");
+			} else if (status == 2) {
+				FUN_0063A230("MSG:PostContinualCommand");
+			}
+		}
+		return false;
+	}
+	PlanningTokenClass * token = techno->FUN_00705D20();
+	if (!token) {
+		token = FUN_00638A80(techno);
+	}
+	if (mine) {
+		int refusal = FUN_0063A440(token, *event);
+		if (refusal != -1) {
+			FUN_0063A4A0(refusal);
+		}
+	}
+	if (token->Loop_Start_Valid()) {
+		if (mine) {
+			FUN_0063A230("MSG:PostLoop");
+		}
+		return false;
+	}
+	int count = token->Node_Count();
+	if (count == 0) {
+		PlanningTokenClass::Technos.Add(techno);
+		FUN_00639F60(event->ID);
+	} else if (count == 16) {
+		if (mine) {
+			FUN_0063A230("MSG:NodeMaximum");
+		}
+		return false;
+	}
+	if (!node) {
+		node = new PlanningNodeClass(event->Frame);
+		PlanningNodeClass::Unknown1.Add(node);
+	}
+	PlanningNodeClass * last = token->Last_Node();
+	if (last) {
+		FUN_00639A50(node, last, *event);
+	} else {
+		node->Add_Member(techno, event);
+	}
+	if (mine) {
+		VocClass::PlayGlobal(Rule->AddPlanningModeCommandSound, 1.0f, 0x2000);
 	}
 	return true;
 }

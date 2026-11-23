@@ -117,3 +117,8 @@ effect, so it can be fixed in a separate build later.
   the cap divides speed by itself at 0x00439B87 before scaling Velocity.
   For finite speed the factor is 1, so this cap does not reduce velocity
   to the configured maximum.
+
+- **World Domination Tour selection (0x0076D3A0).** Select_Territory_At tests the hovered
+  territory id with `>= 0` before looking it up, but the id is unsigned, so the test is
+  always true and the "none" id is looked up too. The lookup finds nothing, so there is no
+  visible effect.

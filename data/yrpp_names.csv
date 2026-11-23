@@ -340,11 +340,15 @@ address,name,source
 0x0060C540,OwnerDraw::TrySetDialogLayoutBand1,symbols.csv
 0x0060C7D0,OwnerDraw::TrySetDialogLayoutBand2,symbols.csv
 0x0060D450,UI::RegisterComboDropAndNewEditClasses,symbols.csv
+0x0060D540,OwnerDraw::ComboDropWindowHandler,symbols.csv
+0x0060F4B0,OwnerDraw::PrepareDialogChildControls,symbols.csv
 0x0060F9A0,OwnerDraw::RegisterChildControlProc,names.csv
 0x00610950,OwnerDraw::DrawTooltip,symbols.csv
 0x00610B50,OwnerDraw::RestoreTooltipBackground,symbols.csv
 0x00612A60,OwnerDraw::SysListViewHandler,symbols.csv
+0x006137D0,OwnerDraw::SysTabHandler,symbols.csv
 0x00614190,OwnerDraw::EditHandler,symbols.csv
+0x00614B30,OwnerDraw::NewEditHandler,symbols.csv
 0x006163A0,OwnerDraw::CheckBoxButtonHandler,symbols.csv
 0x00616980,OwnerDraw::AutoRadioButtonHandler,symbols.csv
 0x0061C690,OwnerDraw::ScrollBarHandler,symbols.csv
@@ -575,6 +579,7 @@ address,name,source
 0x007468C0,UnitClass::UpdateDisguise,symbols.csv
 0x007470D0,UnitTypeClass::UnitTypeClass,symbols.csv
 0x00748FD0,UnitTrackerClass::UnitTrackerClass,symbols.csv
+0x007493B0,VoxelAnimClass::VoxelAnimClass,symbols.csv
 0x0074AD80,VoxelAnimTypeClass::VoxelAnimTypeClass,symbols.csv
 0x0074C5B0,VeinholeMonsterClass::VeinholeMonsterClass,symbols.csv
 0x0074C9F0,VeinholeMonsterClass::~VeinholeMonsterClass,symbols.csv

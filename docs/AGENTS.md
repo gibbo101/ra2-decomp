@@ -139,10 +139,18 @@ Each entry: what the diff showed, then the source change that fixed it.
 - Write the whole body, every repeated block included, before tuning registers.
 - `FUN_`/`DAT_` names are not checked against their address, so a MATCH can still have
   two globals swapped. Read the reference lines (`+0x.. NAME: original 0x..`).
+- A partial score masks relocated addresses, so a near miss can hide wrong globals behind
+  identical bytes: compare relocation targets before trusting a high score (0x006A9540 had
+  eleven country-flag globals in the wrong cases at 97.6%).
 - Inlined code often has an out-of-line copy or a twin elsewhere; match that first.
 - check.py prints at most 400 diff lines: a variant whose later hunks vanish may only have
   hit the cap. Confirm a gain with the score, not the shorter diff.
   VoxelAnimClass::VoxelAnimClass (0x007493B0) has AnimClass's bounce code.
+- When a near miss's score stays flat, measure before rewriting: `tools/flipsweep.py SRC
+  ADDR --kind local|store|call|expr|stmt --at PLACE` adds 0..K copies of one diagnostic
+  statement and prints the count at which the differing lines change (`--kind2` sweeps two
+  counts as a grid); `tools/inlinebudget.py ADDR` lists each call the exe and ours inline
+  differently and how many inline sites or budget units flip it.
 
 ### Declarations
 - A callee returning a class by value takes a hidden buffer: a virtual pushes only the
@@ -195,6 +203,13 @@ Each entry: what the diff showed, then the source change that fixed it.
 - A sum used once stays inline in its expression; a local for it reschedules the code.
 - A field stored twice, or stored through a register: VC6's aliasing of writes through
   casts, e.g. `(Point2D &)rect = ...; ((Point2D *)&rect)[1] = ...;` (0x006D2DE0).
+- VC6 will not move a store to an address-taken named local above an earlier pointer load,
+  but stores to a temporary built in a call's arguments move freely. A point stored earlier
+  than any named form allows is an argument temporary (`&Point2D(x, 2)`), and code between
+  those stores and the call's pushes is an inline call among its arguments (0x004A2370).
+- The line argument of a `LoadString` or other `__LINE__`-carrying call places its code: a
+  line before the function's start means a helper defined above it, which is evidence for
+  that helper (0x004A2370's Format_Time).
 
 ### Branches and returns
 - `return strcmp(a, b) == 0;` gives `sete`; the branching form is
@@ -327,12 +342,13 @@ Each entry: what the diff showed, then the source change that fixed it.
   `Cell_Find_Object`) is the inline budget: call the wrapper, as TibSun does.
 - A callee the original inlines that lives in the same module is defined in that file
   (`Do_AnimTypes`, `Read_X`); define it there and VC6 inlines it.
-- VC6's inline budget, measured with probe files: a function may grow by about 2.4 units
-  per statement of its own code (before inlining), with a floor of about 90; an
-  expansion costs about its body size plus 2. Calls expand one nesting level at a time:
-  direct calls in source order, then the calls inside those bodies from the end of the
-  function backwards, then the next level. A call that does not fit stays a call;
-  later, smaller ones still inline.
+- VC6's inline budget, measured (0x00598960): size counts expression-tree nodes, so spelling
+  matters (`if (p) p();` costs more than `p && p();`). The pool is max(166, 2 x own size + 5)
+  units; an expansion costs its body plus 2, a one-statement body nothing. A plain function
+  auto-inlines only up to 27 units; one declared `inline` has no cap. Calls expand in source
+  order, depth first, and a call's nested expansions may spend at most (pool left - its cost)
+  / N, N being the inline-candidate sites from it to the end of its body. Inline getter reads
+  count as sites; extern, virtual and over-cap calls do not.
 - So code written out in the caller raises the budget, and code moved into an inline
   helper lowers it and spends it. A nested call the exe keeps out of line while every
   outer call inlines means the original spent more at that depth, later in the source
@@ -352,6 +368,13 @@ Each entry: what the diff showed, then the source change that fixed it.
   that closed our near misses were this (0x00585F40, 0x006ABD30, 0x00659FF0). Only locals
   that could live in a register count: a named reference, or a local whose address is
   taken (passed by `const &`), changes nothing (0x00506EF0).
+- A tie can also count inline getter reads: in 0x0073E5E0 the x87 load order followed named
+  locals plus `__declspec` property reads together, so `localprobe` read flat until four
+  property reads became direct field reads. Sweep both before calling a tie final.
+- A scheduling tie inside one block can follow how many instructions the block holds before
+  scheduling: k one-instruction stores at its start (diagnostic only) show the k the original
+  had. An explicit `(float)` cast of a double expression, or a float built in two named steps,
+  adds one that is gone after scheduling (0x007493B0).
 - Before writing a helper, grep src/ for its body already inlined in a matched sibling,
   and factor it into a `static inline` both call (the sibling must still match): a helper
   needs two real callers. A function "waiting on its caller" is not blocked: put the
@@ -457,10 +480,15 @@ Each entry: what the diff showed, then the source change that fixed it.
   each branch and keep one `return(action);` after the if/else, as TibSun writes it.
 - Never chain inline wrappers to run out VC6's inline depth (Find_Data0..7): only helpers
   the original plausibly had are source, so such a match is banked, not landed.
+- A member reached through a named nested struct, or by cast and offset, costs the inliner
+  one node more than a direct member; members of an anonymous union or a nameless struct
+  cost the same as direct ones. When the exe inlines a callee that ours keeps out of line by
+  a few nodes, check the struct against YRpp's flat layout before respelling code (WinData,
+  0x0060F4B0). An NDEBUG `assert` costs one node, `!= NULL` one.
 - The reverse, when inlined tails merge into the wrong arm's copy: end each arm with its
   own `return;`, which moves the shared copy to the last arm (ZBuffer::Pan).
-- VC6 spends the inline budget from the end of a function backwards, and every inlined call
-  costs the same: write the accessor calls the original made (planmgr's Get_Count, Set_Event).
+- Every later inline site divides an earlier call's nested budget equally, whatever its size:
+  write the accessor calls the original made (planmgr's Get_Count, Set_Event).
 - VC6 gives its inline budget to the latest call in the source first. Code placed after a
   call reduces that call's budget; code before it doesn't, and plain statements cost
   nothing. Case bodies in a switch are laid out group by group (each run of case values VC6

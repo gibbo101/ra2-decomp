@@ -117,7 +117,13 @@
 // SYNTHETIC: GAMEMD 0x0043B130 SYMBOL
 // _$E41
 
-class Reestablish;
+class Reestablish
+{
+public:
+	Reestablish(TechnoClass * contact, bool tethered) : Contact(contact), WasTethered(tethered) {}
+	TechnoClass * Contact;
+	bool WasTethered;
+};
 extern Point2D DAT_0089C848;
 extern Cell DAT_0089C818;
 extern int __fastcall FUN_0050C170(char const * name);
@@ -3327,6 +3333,254 @@ bool BuildingClass::Toggle_Primary(void)
 	Mark(MARK_CHANGE);
 	return(IsLeader);
 }
+
+// FUNCTION: GAMEMD 0x00448260
+bool BuildingClass::Captured(HouseClass * newowner, bool announce)
+{
+	if (newowner != House) {
+		if (AttachedBomb != NULL && !Class->CanBeOccupied) {
+			AttachedBomb->Disarm();
+		}
+		if (Class->IsCloakGenerator) {
+			newowner->HasCloakGenerator = true;
+		}
+		if (House->Class->IsMultiplayPassive) {
+			int startup_cash = Class->ProduceCashStartup;
+			if (startup_cash) {
+				newowner->Refund_Money(startup_cash);
+				CashProductionTimer = Class->ProduceCashDelay;
+			}
+		}
+		if (SpiedBy & (1 << newowner->Class->House)) {
+			SpiedBy -= (1 << newowner->Class->House);
+			if (Class->IsRadar) {
+				Update_Radar_Spied();
+			}
+		}
+		IsLeader = false;
+		if (Class->IsLaserFencePost) {
+			Update_Laser_Fence_Connections(0);
+		}
+		if (House->Is_Player_Control() || newowner->Is_Player_Control()) {
+			if (!newowner->Class->IsMultiplayPassive && announce) {
+				if (Class->NeedsEngineer) {
+					if (House != newowner) {
+						if (House->Is_Player_Control()) {
+							VoxClass::Play("EVA_TechBuildingLost", -1, -1);
+						}
+						if (newowner->Is_Player_Control()) {
+							if (newowner->Is_Player_Control()) {
+								int capture_event = Class->CaptureEvaEvent;
+								if (capture_event != -1) {
+									VoxClass::PlayIndex(capture_event, -1, -1);
+								}
+							}
+						}
+					}
+				} else if (RadarEventClass::Create(RADAREVENT_BUILDING_CAPTURED, Get_Cell())) {
+					VoxClass::Play("EVA_BuildingCaptured", -1, -1);
+				}
+			}
+			Map.PowerClass::IsToRedraw = true;
+			Map.Flag_To_Redraw(GS_REDRAW_DIRTY);
+		}
+		IsToDisplay = true;
+		HasEngineer = true;
+		if (Class->NeedsEngineer) {
+			EnableStuff();
+		}
+		if (Session.Type == GAME_INTERNET && !Techno_Type_Class()->DontScore) {
+			newowner->CapturedBuildings.Increment_Unit_Total(Class->HeapID);
+		}
+
+		DynamicVectorClass<Reestablish *> reestablish;
+		for (int index = 0; index < RadioLinks.Length(); index++) {
+			TechnoClass * contact = FUN_0065AD30(index);
+			if (contact != NULL) {
+				bool captured = false;
+				bool was_tethered = false;
+				if (!(contact->AbstractFlags & 4)) {
+					contact = NULL;
+				} else if (Transmit_Message(RADIO_NEED_TO_MOVE, contact) == RADIO_ROGER &&
+					(Class->IsWeaponsFactory || ::Distance(contact->Center_Coord(), Docking_Coord(contact)) < CELL_LEPTON / 4)) {
+					was_tethered = contact->IsTethered;
+					contact->Captured(newowner);
+					captured = true;
+				}
+				if (!captured) {
+					Transmit_Message(RADIO_RUN_AWAY, contact);
+					Transmit_Message(RADIO_OVER_OUT, contact);
+				} else {
+					Reestablish * record = new Reestablish(contact, was_tethered);
+					reestablish.Add(record);
+				}
+			}
+		}
+
+		if (Factory != NULL) {
+			Factory->Abandon();
+			delete Factory;
+			Factory = NULL;
+		}
+		House->Active_Remove(this);
+		HouseClass * oldowner = House;
+		TargetClass tocap = this;
+		IsCaptured = true;
+		if (Rule->BuildConst.Is_In_List(Class)) {
+			oldowner->ConYards.Delete(this);
+		}
+		if (Class->IsCanUnitRepair) {
+			oldowner->UnitRepairStations.Delete(this);
+		}
+		if (Class->Grinding) {
+			oldowner->Grinders.Delete(this);
+		}
+		if (Class->UnitAbsorb || Class->InfantryAbsorb) {
+			oldowner->Absorbers.Delete(this);
+		}
+		if (Class->Bunker) {
+			oldowner->Bunkers.Delete(this);
+		}
+		if (Class->CanBeOccupied && Class->Level > -1) {
+			oldowner->Occupiables.Delete(this);
+		}
+		if (Class->Cloning) {
+			oldowner->CloningVats.Delete(this);
+		}
+		if (Class->SecretLab) {
+			oldowner->SecretLabs.Delete(this);
+		}
+		if (Class->PsychicDetectionRadius > 0) {
+			oldowner->PsychicDetectionBuildings.Delete(this);
+		}
+		if (Class->FactoryPlant) {
+			oldowner->FactoryPlants.Delete(this);
+			oldowner->CalculateCostMultipliers();
+		}
+		oldowner->Buildings.Delete(this);
+		if (Class->OrePurifier) {
+			oldowner->NumOrePurifiers--;
+		}
+		if (Class->InfantryGainSelfHeal && ActuallyPlacedOnMap) {
+			House->InfantrySelfHeal -= Class->InfantryGainSelfHeal;
+			if (House->InfantrySelfHeal < 0) House->InfantrySelfHeal = 0;
+		}
+		if (Class->UnitsGainSelfHeal && ActuallyPlacedOnMap) {
+			House->UnitsSelfHeal -= Class->UnitsGainSelfHeal;
+			if (House->UnitsSelfHeal < 0) House->UnitsSelfHeal = 0;
+		}
+		if (Class->IsHelipad) {
+			oldowner->AirportDocks -= Class->NumberOfDocks;
+		}
+		if (Class->IsCloakGenerator) {
+			Disable_Cloak_Generator();
+			CurrentCloakRadius = 1;
+			Cloaking_AI(true);
+		}
+		if (Class->GapGenerator) {
+			DestroyGap();
+		}
+		vt_entry_48C(false, false, false, NULL);
+		BASECLASS::Captured(newowner);
+		if (Class->IsCloakGenerator && IsPowerOnline()) {
+			Enable_Cloak_Generator();
+		}
+		if (Class->GapGenerator && IsPowerOnline()) {
+			CreateGap();
+		}
+		FUN_00448070(false);
+		oldowner->ToCapture = this;
+		oldowner->Recalc_Center();
+		House->Recalc_Center();
+		if (House->ToCapture == this) {
+			House->ToCapture = NULL;
+		}
+		if (oldowner->Is_Player_Control() && Class->IsConstructionYard) {
+			Map.PendingObjectPtr = NULL;
+			Map.PendingObject = NULL;
+			Map.PendingHouse = HOUSE_NONE;
+			Map.SetActiveFoundation(NULL);
+		}
+		House->Active_Add(this);
+		IsRepairing = false;
+		Grand_Opening(true);
+		if (Class->IsLaserFencePost) {
+			Init_Laser_Fence();
+			Init_Laser_Fence_Frame();
+		}
+		if (House->Is_Player_Control()) {
+			UpdateSight(false, false, false, NULL, 0);
+			Map.Flag_To_Redraw(GS_REDRAW_TACTICAL);
+		}
+		if (SpiedBy & (1 << newowner->Class->House)) {
+			SpiedBy &= ~(1 << newowner->Class->House);
+		}
+		Update_Anim_Appearance();
+		if (Rule->BuildConst.Is_In_List(Class)) {
+			newowner->ConYards.Add(this);
+		}
+		if (Class->IsCanUnitRepair) {
+			newowner->UnitRepairStations.Add(this);
+		}
+		if (Class->Grinding) {
+			newowner->Grinders.Add(this);
+		}
+		if (Class->UnitAbsorb || Class->InfantryAbsorb) {
+			newowner->Absorbers.Add(this);
+		}
+		if (Class->Bunker) {
+			newowner->Bunkers.Add(this);
+		}
+		if (Class->CanBeOccupied && Class->Level > -1) {
+			newowner->Occupiables.Add(this);
+		}
+		if (Class->Cloning) {
+			newowner->CloningVats.Add(this);
+		}
+		if (Class->SecretLab) {
+			newowner->SecretLabs.Add(this);
+		}
+		if (Class->PsychicDetectionRadius > 0) {
+			newowner->PsychicDetectionBuildings.Add(this);
+		}
+		if (Class->FactoryPlant) {
+			newowner->FactoryPlants.Add(this);
+			newowner->CalculateCostMultipliers();
+		}
+		newowner->Buildings.Add(this);
+		if (Class->OrePurifier) {
+			House->NumOrePurifiers++;
+		}
+		if (Class->InfantryGainSelfHeal) {
+			House->InfantrySelfHeal += Class->InfantryGainSelfHeal;
+		}
+		if (Class->UnitsGainSelfHeal) {
+			House->UnitsSelfHeal += Class->UnitsGainSelfHeal;
+		}
+		if (Class->IsHelipad) {
+			House->AirportDocks += Class->NumberOfDocks;
+		}
+		if (Class->ToBuild != RTTI_NONE) {
+			oldowner->Update_Factories(Class->ToBuild, Class->Naval, 0);
+			newowner->Update_Factories(Class->ToBuild, Class->Naval, 0);
+		}
+		for (int i = 0; i < reestablish.Count(); i++) {
+			Transmit_Message(RADIO_HELLO, reestablish[i]->Contact);
+			if (reestablish[i]->WasTethered) {
+				IsTethered = true;
+				reestablish[i]->Contact->IsTethered = true;
+			}
+		}
+		if (Session.Type != GAME_NORMAL && !newowner->FUN_0050B730() && InitialOwner != newowner && !InitialOwner->Class->IsMultiplayPassive) {
+			Sell_All_Upgrades();
+		}
+		oldowner->Production_Status_Changed();
+		newowner->Production_Status_Changed();
+		return(true);
+	}
+	return(false);
+}
+
 
 // FUNCTION: GAMEMD 0x00449410
 int BuildingClass::Sort_Y(void) const
