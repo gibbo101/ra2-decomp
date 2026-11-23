@@ -16,8 +16,6 @@ Verdicts:
 | 0x004144B0 | AircraftClass::Draw_It | src/aircraft.cpp | unread `Cell cell = Get_Cell();` | FORCING, 78.6% (1345/1361) |
 | 0x0041B110 | AircraftClass::Read_INI | src/aircraft.cpp | dead `double fs` used as a conversion vehicle | FORCING, 99.2% as `(double)strength * ...`, 57.4% as `strength * ...` |
 | 0x00442230 | BuildingClass::Take_Damage | src/building.cpp | unread `int remaining = contacts.Count();` | FORCING, 80.5% (2617/2573) |
-| 0x0047FDE0 | CellClass::Overlay_Shadow_Render_Rect | src/cell.cpp | unread `d0`, `d1 = point + point` | FORCING, 53.0% (384/404) |
-| 0x00480110 | CellClass::Overlay_Draw_Offset | src/cell.cpp | unread `doubled = offset + offset` | SIDE-EFFECT: Draw_Overlay_Shadow 25.6%, Draw_Overlay 77.0%, Overlay_Render_Rect 87.1%, Overlay_Shadow_Render_Rect 45.2% |
 | 0x00486A70 | CellClass::Fog_Cell | src/cell.cpp | bare `building->PositionCell;` | FORCING, 81.3% (360/375) |
 | 0x004CD600 | FlyLocomotionClass::Movement_AI | src/fly.cpp | discarded `Map[newcoord];` | FORCING, 80.1% (3739/3754) |
 | 0x00511850 | HouseTypeClass::Read_INI | src/houstype.cpp | `char & p = Prefix; p = prefix[0];` alias for one store | FORCING, 99.7% (2325/2325) |

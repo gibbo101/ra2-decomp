@@ -1668,9 +1668,9 @@ Rect CellClass::Overlay_Shadow_Render_Rect(void) const
 		}
 	}
 
-	Point2D d0 = point + point;
-	Point2D d1 = point + point;
-	return(image->GetFrameBounds(shadowframe) + (point - Point2D(image->Width / 2, image->Height / 2)));
+	Point2D canvas_size(image->Width, image->Height);
+	Point2D canvas_center = canvas_size / 2;
+	return(image->GetFrameBounds(shadowframe) + (point - canvas_center));
 }
 
 // FUNCTION: GAMEMD 0x0047FF80
@@ -1724,9 +1724,10 @@ Point2D CellClass::Overlay_Draw_Offset(void) const
 	} else if (Overlay == 0xEF) {
 		offset.Y -= 15;
 	}
-	offset.Y += DSurface::ViewBounds.Y - 15 * Height;
+	int height_offset = 15 * Height;
+	int view_y = DSurface::ViewBounds.Y;
+	offset.Y += view_y - height_offset;
 	offset += Point2D(30, 15);
-	Point2D doubled = offset + offset;
 	return(offset);
 }
 
