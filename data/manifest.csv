@@ -15440,6 +15440,7 @@ address,size,symbol,source,sha256
 0x00705D70,138,?GetRemapColour@TechnoClass@@UBEPAVLightConvertClass@@XZ,src/techno.cpp,16be3474024d8ccf6f1897d6b26f0850b25366241e3ddd49d27605967de9dd0d
 0x00706640,1420,?Draw_Voxel@TechnoClass@@UBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@HGW4ShapeFlags_Type@@@Z,src/techno.cpp,902d4eb11e8f52e01b3ecc252b48143c612afc4f0d7f0f17cd81e0e839117ea7
 0x00706BD0,766,?Techno_Draw_Voxel_Shadow@TechnoClass@@QBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@_NPAVSurface@@HH@Z,src/techno.cpp,20f960ab6ead903c6ee83d9c29936db85773480c76ed734dcec18ffa7573d92b
+0x00706ED0,938,?Techno_Render_Voxel_Object@TechnoClass@@QBE?AUSurfaceRegion@@ABUVoxelDataStruct@@ABVMatrix3D@@ABVPoint2D@@ABV?$TRect@H@@HW4ShapeFlags_Type@@HG@Z,src/techno.cpp,6d9badd35f693c12d97e03b69fa6392035c408d54fe82c45292e5266c3b9409b
 0x00707280,502,?Techno_Render_Voxel_Shadow@TechnoClass@@QBE?AUSurfaceRegion@@ABUVoxelDataStruct@@ABVMatrix3D@@ABVPoint2D@@ABV?$TRect@H@@HW4ShapeFlags_Type@@_NPAVSurface@@HH@Z,src/techno.cpp,c76231cfa61d5c9af1c2855645ab254b01f3b4fd6d70016bb3c628d32d9defda
 0x00707480,718,?Techno_Blit_Voxel@TechnoClass@@QBEXABUEntry@StaticBufferClass@@ABVPoint2D@@ABV?$TRect@H@@W4ShapeFlags_Type@@HG@Z,src/techno.cpp,244116b6119fb2fafdad804b4e05747bf491d32a1acc79bb8577d66cc159fa8a
 0x00707750,98,?Calculate_Sinking_Offset@TechnoClass@@QAEXFH@Z,src/techno.cpp,b656fd67ec2a3b85d397923d970c849662fea7ffdb3e471c959057405f3b3d3f

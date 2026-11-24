@@ -15098,6 +15098,7 @@ address,name,result,size,source,symbol
 0x00705D70,TechnoClass::GetRemapColour,MATCH,138,src/techno.cpp,?GetRemapColour@TechnoClass@@UBEPAVLightConvertClass@@XZ
 0x00706640,TechnoClass::Draw_Voxel,MATCH,1420,src/techno.cpp,?Draw_Voxel@TechnoClass@@UBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@HGW4ShapeFlags_Type@@@Z
 0x00706BD0,TechnoClass::Techno_Draw_Voxel_Shadow,MATCH,766,src/techno.cpp,?Techno_Draw_Voxel_Shadow@TechnoClass@@QBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@_NPAVSurface@@HH@Z
+0x00706ED0,TechnoClass::Techno_Render_Voxel_Object,MATCH,938,src/techno.cpp,?Techno_Render_Voxel_Object@TechnoClass@@QBE?AUSurfaceRegion@@ABUVoxelDataStruct@@ABVMatrix3D@@ABVPoint2D@@ABV?$TRect@H@@HW4ShapeFlags_Type@@HG@Z
 0x00707280,TechnoClass::Techno_Render_Voxel_Shadow,MATCH,502,src/techno.cpp,?Techno_Render_Voxel_Shadow@TechnoClass@@QBE?AUSurfaceRegion@@ABUVoxelDataStruct@@ABVMatrix3D@@ABVPoint2D@@ABV?$TRect@H@@HW4ShapeFlags_Type@@_NPAVSurface@@HH@Z
 0x00707480,TechnoClass::Techno_Blit_Voxel,MATCH,718,src/techno.cpp,?Techno_Blit_Voxel@TechnoClass@@QBEXABUEntry@StaticBufferClass@@ABVPoint2D@@ABV?$TRect@H@@W4ShapeFlags_Type@@HG@Z
 0x00707750,TechnoClass::Calculate_Sinking_Offset,MATCH,98,src/techno.cpp,?Calculate_Sinking_Offset@TechnoClass@@QAEXFH@Z
