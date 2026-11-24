@@ -14330,6 +14330,7 @@ address,size,symbol,source,sha256
 0x006C6B80,374,?Queue_Packet@@YIXPAXH@Z,src/stats.cpp,7be511cc8e00f09bf2c7a8551b5d359e8ae0f4d89c5581ddccd4ae735649484c
 0x006C6D00,220,?Queue_Pop@@YIXXZ,src/stats.cpp,c0deb546d9c3674d241dca5e6c59fe661ffeb3044f3555a934937395d3f96ced
 0x006C6DE0,367,?Queue_Send@@YIXXZ,src/stats.cpp,291361d7e5b6d890262328ff4211945ee94cc78e5e1e4e62afa1e6ddb5b4527a
+0x006C6F50,6259,?Send_Statistics_Packet@@YIX_N@Z,src/stats.cpp,0f79f6bea1673dafae2ff4736660d23db4b40b3a5197bf2bd08dad1087cf1aa0
 0x006C87D0,27,?Get_Unit_Count@@YIHPAHH@Z,src/stats.cpp,81a6b7ed09b7e0c5bde85e05c5e424f7caa846fa518c769fa3119f606783cd2f
 0x006C87F0,37,?Register_Game_Start_Time@@YIXXZ,src/stats.cpp,df2fb4bf76954cd89ffaeb4c82ca34842cf90ee8a2d2ec6e16943053a37c31e8
 0x006C8820,31,?Register_Game_End_Time@@YIXXZ,src/stats.cpp,4e7da0c1b1f1de8ee44f5f45adf0a846c3dd7fd3acc9e8d69351dae5e599011f
