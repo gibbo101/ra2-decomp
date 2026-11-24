@@ -11034,6 +11034,7 @@ address,size,symbol,source,sha256
 0x00614190,2075,?EditHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,42187c981b5ed89d5197015d3403dd5d2d93105f49d18b3375243342bbb02dad
 0x006149B0,373,?FUN_006149B0@@YIHPAUHWND__@@PAGHPAH@Z,src/ownrdraw.cpp,e2b34047bc6319ccbd0eb15c94a2ede64f0147463c195c10d822fa889207992a
 0x00614B30,2215,?NewEditHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,a86298d7df63ff2d542e26f4a71e93002340744d0d630a63b117e2a3bc7be5f3
+0x006153E0,4032,?StaticHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,9ee38c79e356e23cda3ac3bb670ce02672f9dccd1e77a58ac5dad226b5df69e6
 0x006163A0,1497,?CheckBoxButtonHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,4eb6e5d48e8483565ae963d1b0069ba9083d7819657a216ab99b342b492c1bc8
 0x00616980,2254,?AutoRadioButtonHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,e2ba7d94596698855f8e5b76ea9370a2c06dcc157fd6720d350f90da8fb59c8f
 0x0061C690,4148,?ScrollBarHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z,src/ownrdraw.cpp,d8f88190eaa587b3b2df1b288ea456f14aaa9b29b7086e5383ad5904359f544d

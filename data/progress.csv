@@ -10779,6 +10779,7 @@ address,name,result,size,source,symbol
 0x00625990,?growVector@?$ArrayList@PAUHWND__@@@@AAEDXZ,MATCH,143,src/ownrdraw.cpp,?growVector@?$ArrayList@PAUHWND__@@@@AAEDXZ
 0x00625560,??_G?$DNode@PAUHWND__@@UWinData@OwnerDraw@@@@QAEPAXI@Z,MATCH,138,src/ownrdraw.cpp,??_G?$DNode@PAUHWND__@@UWinData@OwnerDraw@@@@QAEPAXI@Z
 0x0060D540,OwnerDraw::ComboDropWindowHandler,MATCH,7636,src/ownrdraw.cpp,?ComboDropWindowHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
+0x006153E0,OwnerDraw::StaticHandler,MATCH,4032,src/ownrdraw.cpp,?StaticHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x00625AB0,PacketClass::~PacketClass,MATCH,41,src/packet.cpp,??1PacketClass@@QAE@XZ
 0x00625AE0,PacketClass::Add_Field,MATCH,16,src/packet.cpp,?Add_Field@PacketClass@@QAEXPAVFieldClass@@@Z
 0x00625AF0,PacketClass::PacketClass,MATCH,270,src/packet.cpp,??0PacketClass@@QAE@PAD@Z
