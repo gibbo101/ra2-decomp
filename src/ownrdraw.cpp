@@ -9993,6 +9993,39 @@ LRESULT CALLBACK OwnerDraw::ComboDropWindowHandler(HWND window, UINT message, WP
 	return DefWindowProcA(window, message, wparam, lparam);
 }
 
+static inline void Stop_Static_Movie(OwnerDraw::WinData *data, HWND window)
+{
+	if (data->StaticMovieHandle != NULL) {
+		delete data->StaticMovieHandle;
+		data->StaticMovieHandle = NULL;
+	}
+	KillTimer(window, 101);
+	if (data->StaticMovieAuxHandle != NULL) {
+		delete data->StaticMovieAuxHandle;
+		data->StaticMovieAuxHandle = NULL;
+	}
+}
+
+static inline void Play_Static_Movie(OwnerDraw::WinData *data, HWND window, char const *movieName)
+{
+	Stop_Static_Movie(data, window);
+	RECT drect;
+	Get_Display_Rect(window, &drect);
+	data->StaticMovieHandle = OwnerDraw_InitMovieHandle(movieName, AlternateSurface, NULL);
+	if (data->StaticMovieHandle != NULL) {
+		data->StaticMovieHandle->SetPosition(drect.left, drect.top);
+		MovieHandle *movie = data->StaticMovieHandle;
+		MoveWindow(window, drect.left, drect.top, movie->Width, movie->Height, FALSE);
+		SetTimer(window, 101, 34, NULL);
+	} else {
+		KillTimer(window, 101);
+		if (data->StaticMovieAuxHandle != NULL) {
+			delete data->StaticMovieAuxHandle;
+			data->StaticMovieAuxHandle = NULL;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x006153E0
 // OwnerDraw::StaticHandler
 LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
@@ -10242,74 +10275,17 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 	case WM_USER + 223:
 		if ((int)wparam >= 0 && (int)wparam < DAT_00ABF390.Count()) {
 			char const *movieName = DAT_00ABF390[(int)wparam];
-			HWND const movieWindow = window;
-			if (data->StaticMovieHandle != NULL) {
-				delete data->StaticMovieHandle;
-				data->StaticMovieHandle = NULL;
-			}
-			KillTimer(movieWindow, 101);
-			if (data->StaticMovieAuxHandle != NULL) {
-				delete data->StaticMovieAuxHandle;
-				data->StaticMovieAuxHandle = NULL;
-			}
-			RECT drect;
-			Get_Display_Rect(movieWindow, &drect);
-			data->StaticMovieHandle = OwnerDraw_InitMovieHandle(movieName, AlternateSurface, NULL);
-			if (data->StaticMovieHandle != NULL) {
-				data->StaticMovieHandle->SetPosition(drect.left, drect.top);
-				MovieHandle *movie = data->StaticMovieHandle;
-				MoveWindow(movieWindow, drect.left, drect.top, movie->Width, movie->Height, FALSE);
-				SetTimer(movieWindow, 101, 34, NULL);
-			} else {
-				KillTimer(movieWindow, 101);
-				if (data->StaticMovieAuxHandle != NULL) {
-					delete data->StaticMovieAuxHandle;
-					data->StaticMovieAuxHandle = NULL;
-				}
-			}
+			Play_Static_Movie(data, window, movieName);
 		}
 		break;
 
 	case WM_USER + 228: {
-		HWND const movieWindow = window;
-		if (data->StaticMovieHandle != NULL) {
-			delete data->StaticMovieHandle;
-			data->StaticMovieHandle = NULL;
-		}
-		KillTimer(movieWindow, 101);
-		if (data->StaticMovieAuxHandle != NULL) {
-			delete data->StaticMovieAuxHandle;
-			data->StaticMovieAuxHandle = NULL;
-		}
-		RECT drect;
-		Get_Display_Rect(movieWindow, &drect);
-		data->StaticMovieHandle = OwnerDraw_InitMovieHandle((char const *)lparam, AlternateSurface, NULL);
-		if (data->StaticMovieHandle != NULL) {
-			data->StaticMovieHandle->SetPosition(drect.left, drect.top);
-			MovieHandle *movie = data->StaticMovieHandle;
-			MoveWindow(movieWindow, drect.left, drect.top, movie->Width, movie->Height, FALSE);
-			SetTimer(movieWindow, 101, 34, NULL);
-		} else {
-			KillTimer(movieWindow, 101);
-			if (data->StaticMovieAuxHandle != NULL) {
-				delete data->StaticMovieAuxHandle;
-				data->StaticMovieAuxHandle = NULL;
-			}
-		}
+		Play_Static_Movie(data, window, (char const *)lparam);
 		break;
 	}
 
 	case WM_USER + 226: {
-		HWND const movieWindow = window;
-		if (data->StaticMovieHandle != NULL) {
-			delete data->StaticMovieHandle;
-			data->StaticMovieHandle = NULL;
-		}
-		KillTimer(movieWindow, 101);
-		if (data->StaticMovieAuxHandle != NULL) {
-			delete data->StaticMovieAuxHandle;
-			data->StaticMovieAuxHandle = NULL;
-		}
+		Stop_Static_Movie(data, window);
 		break;
 	}
 
@@ -10346,16 +10322,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 						data->StaticMovieHandle->SeekToFrame(1);
 						FUN_004068E0("Looping movie\n");
 					} else {
-						HWND const movieWindow = window;
-						if (data->StaticMovieHandle != NULL) {
-							delete data->StaticMovieHandle;
-							data->StaticMovieHandle = NULL;
-						}
-						KillTimer(movieWindow, 101);
-						if (data->StaticMovieAuxHandle != NULL) {
-							delete data->StaticMovieAuxHandle;
-							data->StaticMovieAuxHandle = NULL;
-						}
+						Stop_Static_Movie(data, window);
 					}
 				}
 			}
