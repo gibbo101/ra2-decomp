@@ -106,7 +106,8 @@ out of history.
   Red Alert 2 1.006 ([mischa85/RedAlert2](https://github.com/mischa85/RedAlert2), GPL-3.0).
 - [RobinDigitalPro](https://github.com/RobinDigitalPro): shared matched source and names from
   their byte-matching rebuild of Red Alert 2 1.001
-  ([RobinDigitalPro/ra2-decomp-help](https://github.com/RobinDigitalPro/ra2-decomp-help),
+  ([RobinDigitalPro/ra2-1001-decomp](https://github.com/RobinDigitalPro/ra2-1001-decomp) and
+  [RobinDigitalPro/ra2-decomp-help](https://github.com/RobinDigitalPro/ra2-decomp-help),
   GPL-3.0-or-later), from which both Tunnel_AI functions' coordinate forms are adapted and
   the rule that placed TechnoTypeClass's self-clearing member comes.
 
