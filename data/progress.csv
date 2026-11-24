@@ -8118,6 +8118,7 @@ address,name,result,size,source,symbol
 0x00583C60,MapClass::Find_Water_Cells_Around,MATCH,974,src/map.cpp,?Find_Water_Cells_Around@MapClass@@QAEXPBVCell@@HHW4MZoneType@@HPAV?$DynamicVectorClass@VCell@@@@HH@Z
 0x00584030,MapClass::Is_Area_Shore_Or_Water,MATCH,144,src/map.cpp,?Is_Area_Shore_Or_Water@MapClass@@QAE_NABV?$TRect@H@@@Z
 0x005840C0,MapClass::Build_Reachable_Subzones,MATCH,1163,src/map.cpp,?Build_Reachable_Subzones@MapClass@@QAE_NPAVCellClass@@HAAV?$DynamicVectorClass@G@@PBVFootClass@@@Z
+0x00584550,MapClass::Update_Cell_Subzones,MATCH,2290,src/map.cpp,?Update_Cell_Subzones@MapClass@@QAEXABVCell@@@Z
 0x00584E50,MapClass::Unregister_Subzone_Connection,MATCH,863,src/map.cpp,?Unregister_Subzone_Connection@MapClass@@QAEXPAUZoneConnectionClass@@@Z
 0x005851B0,MapClass::Register_Subzone_Connection,MATCH,993,src/map.cpp,?Register_Subzone_Connection@MapClass@@QAEXPAUZoneConnectionClass@@@Z
 0x005855A0,MapClass::Initialize_Wall_Ownership,MATCH,270,src/map.cpp,?Initialize_Wall_Ownership@MapClass@@QAEXXZ

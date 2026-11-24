@@ -8474,6 +8474,7 @@ address,size,symbol,source,sha256
 0x00583C60,974,?Find_Water_Cells_Around@MapClass@@QAEXPBVCell@@HHW4MZoneType@@HPAV?$DynamicVectorClass@VCell@@@@HH@Z,src/map.cpp,14a4f3987b9d4c092fac52ad3f061d7da81463aeb4a8bd28028bd3f4685ee1c3
 0x00584030,144,?Is_Area_Shore_Or_Water@MapClass@@QAE_NABV?$TRect@H@@@Z,src/map.cpp,b00250061f303ccfc17a8faa2dba6fd60628293ab22ea7f5cb9e436450730426
 0x005840C0,1163,?Build_Reachable_Subzones@MapClass@@QAE_NPAVCellClass@@HAAV?$DynamicVectorClass@G@@PBVFootClass@@@Z,src/map.cpp,59a434db82222f8fd46b3e6b73d095a3842c52f78174fe46d085aebfdd8ee66d
+0x00584550,2290,?Update_Cell_Subzones@MapClass@@QAEXABVCell@@@Z,src/map.cpp,0ecba95d4063d077881cbae4da713de39db8035b9216beca7d9753b70e4a3fb0
 0x00584E50,863,?Unregister_Subzone_Connection@MapClass@@QAEXPAUZoneConnectionClass@@@Z,src/map.cpp,665a892aaec0805afa46de842342b4a218759ab50ff20bffa2e8d6b45a3d1131
 0x005851B0,993,?Register_Subzone_Connection@MapClass@@QAEXPAUZoneConnectionClass@@@Z,src/map.cpp,b11962d3557005b5f8c2522eb28439aa6aafda9bdf90725c622c6ba1f18e165a
 0x005855A0,270,?Initialize_Wall_Ownership@MapClass@@QAEXXZ,src/map.cpp,2fc3ba88bd00e89d7af220a719c85023c46870c61dc59a572d747761f3a4cc98
