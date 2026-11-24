@@ -30,6 +30,7 @@
 #include "special.h"
 #include "wonline.h"
 #include "stringtable.h"
+#include "narrow.h"
 #include "cctooltip.h"
 #include "multiplayer.h"
 #include "xstraw.h"
@@ -1690,9 +1691,7 @@ int SessionClass::FUN_0069BCC0(char const * name)
 int SessionClass::FUN_0069BD00(int slot)
 {
 	for (int i = 0; i < Session.Players.Count(); i++) {
-		NodeNameType * node = Session.Slots[slot];
-		char * a = FUN_007350C0(Session.Players[i]->Name);
-		if (stricmp(a, FUN_007350C0(node->Name)) == 0) {
+		if (stricmp(Narrow_Text(Session.Players[i]->Name), Narrow_Text(Session.Slots[slot]->Name)) == 0) {
 			return i;
 		}
 	}
@@ -1722,9 +1721,7 @@ void SessionClass::FUN_0069BD60(void)
 		int slot = FUN_0069BC60(player);
 		if (slot >= 0 && slot < MAX_PLAYERS) {
 			Players[player]->Address.Set_Port(PlayerPortBase[slot]);
-			char * name = FUN_007350C0(Players[player]->Name);
-			char const * address = Players[player]->Address.As_String(NULL);
-			FUN_004068E0("Allocated port for player %s - %s\n", name, address);
+			FUN_004068E0("Allocated port for player %s - %s\n", Narrow_Text(Players[player]->Name), Players[player]->Address.As_String(NULL));
 		}
 	}
 
@@ -1781,14 +1778,12 @@ void SessionClass::FUN_0069BD60(void)
 							"Two player behand the same NAT but they are using different port bases anyway\n");
 					}
 
-					char * name = FUN_007350C0(ordered[i]->Name);
-					if (stricmp(name, g_NickName.get()) == 0) {
+					if (stricmp(Narrow_Text(ordered[i]->Name), g_NickName.get()) == 0) {
 						Copy_Player_Name(
 							unknown_2E28[local_count++], ordered[j]->Name);
 					}
 
-					name = FUN_007350C0(ordered[j]->Name);
-					if (stricmp(name, g_NickName.get()) == 0) {
+					if (stricmp(Narrow_Text(ordered[j]->Name), g_NickName.get()) == 0) {
 						Copy_Player_Name(
 							unknown_2E28[local_count++], ordered[i]->Name);
 					}
@@ -1821,20 +1816,15 @@ void SessionClass::FUN_0069BD60(void)
 				FUN_007350C0(Players[i]->Name));
 
 			for (int j = 0; j < MAX_PLAYERS; j++) {
-				NodeNameType * node = Slots[j];
-				char * name = FUN_007350C0(Players[i]->Name);
-				char * peer_name = FUN_007350C0(node->Name);
-
-				if (stricmp(name, peer_name) == 0) {
+				if (stricmp(Narrow_Text(Players[i]->Name), Narrow_Text(Slots[j]->Name)) == 0) {
 					NetNodeType local_node;
 					PlayerLocalAddress[j].Get_Node(local_node);
 					Players[i]->Address.Set_Address(
 						NULL, local_node, Players[i]->Address.Get_Port());
 
-					name = FUN_007350C0(Players[i]->Name);
 					FUN_004068E0(
 						"Talking to NAT player %s on IP address %s\n",
-						name,
+						Narrow_Text(Players[i]->Name),
 						Players[i]->Address.As_String(NULL));
 				}
 			}

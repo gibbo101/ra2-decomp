@@ -59,16 +59,19 @@ remain visible. --score also compares instructions with stack displacements mask
 --summary adds a completion record after all targets have been checked.
 """
 
+import contextlib
 import csv
 import difflib
 from functools import cached_property
 import hashlib
+import io
 import os
 import re
 import shutil
 import struct
 import subprocess
 import sys
+import traceback
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -916,16 +919,36 @@ def main() -> None:
         k = argv.index("--overlay")
         overlay = Path(argv[k + 1]).resolve()
         del argv[k:k + 2]
-    src = Path(argv[0])
-    only = {int(a, 16) for a in argv[1:]}
+    raise SystemExit(run(Path(argv[0]), {int(a, 16) for a in argv[1:]}, overlay, score, summary))
+
+
+def run(src: Path, only=(), overlay: Path | None = None, score=False, summary=False,
+        orig: Original | None = None, names=None, out: Path | None = None) -> int:
+    """Check `src` (only the `only` addresses, if any) as the command line does, printing the
+    same; `orig` and `names` can be loaded once for many runs, `out` is the object's path."""
     targets = [(a, n) for a, n in annotations(src) if not only or a in only]
     if not targets:
         raise SystemExit(f"{src}: no annotated functions to check")
-    objpath, log = compile_source(src, overlay)
+    objpath, log = compile_source(src, overlay, out=out)
     if objpath is None:
         print(log)
-        raise SystemExit(1)
-    raise SystemExit(report(src, objpath.read_bytes(), Original(), known_names(), targets, score, summary))
+        return 1
+    return report(src, objpath.read_bytes(), Original() if orig is None else orig,
+                  known_names() if names is None else names, targets, score, summary)
+
+
+def output(src: Path, only=(), overlay: Path | None = None, orig: Original | None = None, names=None,
+           out: Path | None = None) -> str:
+    """What `run` prints, captured; a run that stops early gives what it printed before."""
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        try:
+            run(src, only, overlay, orig=orig, names=names, out=out)
+        except SystemExit:
+            pass
+        except Exception:
+            traceback.print_exc()
+    return buf.getvalue()
 
 
 def mark_asm_object_starts(src, obj):

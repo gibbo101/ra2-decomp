@@ -461,9 +461,6 @@ bool __fastcall Bits_Read(BitCursor * cursor)
 		cursor->Bit = 0;
 		cursor->Ptr++;
 	}
-	int mask = 1 << cursor->Bit;
-	int v = *cursor->Ptr;
-	unsigned char r = ((*cursor->Ptr & (1 << cursor->Bit)) > 0);
 	if ((*cursor->Ptr & (1 << cursor->Bit)) > 0) return 1;
 	return 0;
 }

@@ -1261,6 +1261,120 @@ void TechnoClass::Draw_Pre_Render(Point2D const & point, Rect const & cliprect) 
 	}
 }
 
+// FUNCTION: GAMEMD 0x006F64A0
+void TechnoClass::Draw_Health_Bar(Point2D const & xpoint, Rect const & cliprect, bool sensed_underground) const
+{
+	if (RTTI == RTTI_BUILDING) {
+		Get_Height_AGL();
+
+		Point3D dim = TClass->Lepton_Dimensions();
+		Coord coord = dim - dim / 2;
+		coord.Z = dim.Z;
+		coord.X = -coord.X;
+
+		Point2D p0 = TacticalMap->Coord_To_Pixel_Absolute(coord);
+		coord.X = -coord.X;
+		coord.Y = -coord.Y;
+		coord.X = -coord.X;
+		Point2D p1 = TacticalMap->Coord_To_Pixel_Absolute(coord);
+		coord.Z = 0;
+		coord.Y = -coord.Y;
+		Point2D p2 = TacticalMap->Coord_To_Pixel_Absolute(coord);
+		coord.X = -coord.X;
+		coord.Y = -coord.Y;
+		coord.X = -coord.X;
+
+		int barlen = (p0.Y - p1.Y) / 2;
+
+		int n = (int)(HealthRatio * barlen);
+		if (n <= 1) {
+			n = 1;
+		}
+		if (n >= barlen) {
+			n = barlen;
+		}
+
+		int condcolor = 1;
+		if (Is_Yellow_HP()) {
+			condcolor = 2;
+		} else if (Is_Red_HP()) {
+			condcolor = 4;
+		}
+
+		Point2D bar(4 * barlen, 2 - 2 * barlen);
+
+		int index;
+
+		for (index = 0; index < n; index++) {
+			Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)ObjectTypeClass::PipShapes, condcolor, xpoint + p0 + bar + Point2D(3, 2) - Point2D(4 * index, -2 * index), cliprect, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_CENTER));
+		}
+
+		for (index = n; index < barlen; index++) {
+			Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)ObjectTypeClass::PipShapes, 0, xpoint + p0 + bar + Point2D(3, 2) - Point2D(4 * index, -2 * index), cliprect, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_CENTER));
+		}
+
+		bool showpips = false;
+		if (House->Is_Ally(PlayerPtr) || (SpiedBy & (1 << PlayerPtr->Class->House))) {
+			showpips = true;
+		}
+		if (this != NULL && RTTI == RTTI_BUILDING) {
+			BuildingClass const * building = (RTTI == RTTI_BUILDING) ? (BuildingClass const *)this : NULL;
+			if (building->Class->CanBeOccupied) {
+				showpips = true;
+			}
+		}
+		if (TClass->PipsDrawForAll || showpips) {
+			Draw_Pips(xpoint + p2, xpoint, cliprect);
+		}
+
+	} else {
+		Point2D offset;
+		int health_bar_count;
+
+		if (RTTI == RTTI_INFANTRY) {
+			if (IsSelected) {
+				Point2D adjust(11, TClass->PixelSelectionBracketDelta - 25);
+				Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)ObjectTypeClass::SelectShapes, 1, xpoint + adjust, cliprect, ShapeFlags_Type(SHAPE_ALPHA|SHAPE_WIN_REL|SHAPE_CENTER));
+			}
+			offset = Point2D(-5, -24);
+			offset.Y += TClass->PixelSelectionBracketDelta;
+			health_bar_count = 8;
+		} else {
+			if (IsSelected) {
+				Point2D adjust(1, TClass->PixelSelectionBracketDelta - 26);
+				Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)ObjectTypeClass::SelectShapes, 0, xpoint + adjust, cliprect, ShapeFlags_Type(SHAPE_ALPHA|SHAPE_WIN_REL|SHAPE_CENTER));
+			}
+			offset = Point2D(-15, -25);
+			offset.Y += TClass->PixelSelectionBracketDelta;
+			health_bar_count = 17;
+		}
+
+		int n = (int)(HealthRatio * health_bar_count);
+		if (n <= 1) {
+			n = 1;
+		}
+		if (n >= health_bar_count) {
+			n = health_bar_count;
+		}
+
+		int shapenum = 16;
+		if (HealthRatio <= Rule->ConditionYellow) {
+			shapenum = 17;
+		}
+		if (HealthRatio <= Rule->ConditionRed) {
+			shapenum = 18;
+		}
+
+		for (int index = 0; index < n; index++) {
+			Draw_Shape(*LogicalSurface, *NormalDrawer, (ShapeSet const *)ObjectTypeClass::PipShapes, shapenum, xpoint + offset + Point2D(2 * index, 0), cliprect, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_CENTER));
+		}
+
+		if (House->Is_Ally(PlayerPtr) || (SpiedBy & (1 << PlayerPtr->Class->House))) {
+			Draw_Pips(xpoint + Point2D(-10, 10), xpoint, cliprect);
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x006F6AC0
 bool TechnoClass::Limbo(void)
 {

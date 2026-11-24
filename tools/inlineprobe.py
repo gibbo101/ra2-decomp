@@ -13,11 +13,13 @@ is a diagnostic: it never lands; find natural source that spends the same.
 """
 import argparse
 import re
-import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import check  # noqa: E402
+
+ROOT = check.ROOT
 OUT = ROOT / "build/inlineprobe"
 MARKER = re.compile(r"^\s*//\s*(?:FUNCTION|TEMPLATE|SYNTHETIC|LIBRARY):\s*GAMEMD\s+(0x[0-9A-Fa-f]+)")
 
@@ -86,9 +88,9 @@ def insertion(lines, span, where):
     return c
 
 
-def check(path, addr):
-    out = subprocess.run(["uv", "run", "tools/check.py", str(path.relative_to(ROOT)), f"0x{addr:08X}"],
-                         capture_output=True, text=True, cwd=ROOT).stdout
+def checked(path, addr, orig, names):
+    """The checker's result for the probe copy at `path`; `orig` and `names` load once per run."""
+    out = check.output(path, {addr}, orig=orig, names=names, out=path.with_suffix(".obj"))
     head = next((l for l in out.splitlines() if l.startswith("0x")), "")
     m = re.search(r": (MATCH|[0-9.]+%) \((\d+)/(\d+)", head)
     calls = sum(1 for l in out.splitlines() if l[:1] in "+-" and not l.startswith(("+++", "---")) and "call" in l)
@@ -118,18 +120,20 @@ def main():
         places = {k: v for k, v in places.items() if k in only or k.split(":")[0] in only}
     OUT.mkdir(parents=True, exist_ok=True)
     probe = OUT / src.name
+    orig, names = check.Original(), check.known_names()
     probe.write_text("\n".join(lines))
-    print(f"baseline: {' '.join(map(str, check(probe, addr)))} call lines differ")
+    print(f"baseline: {' '.join(map(str, checked(probe, addr, orig, names)))} call lines differ")
     for label, (span, where) in places.items():
         row = []
         for n in [int(x) for x in a.n.split(",")]:
             at = insertion(lines, span, where)
             calls = [f"\tint inline_probe_{k} = Inline_Probe_({k});" for k in range(n)]
             probe.write_text("\n".join(lines[:at] + calls + lines[at:]))
-            score, size, diff = check(probe, addr)
+            score, size, diff = checked(probe, addr, orig, names)
             row.append(f"n={n}: {score} {size} calls~{diff}")
             print(f"{label:28} " + " | ".join(row[-1:]), flush=True)
     probe.unlink(missing_ok=True)
+    probe.with_suffix(".obj").unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

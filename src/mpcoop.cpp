@@ -1344,10 +1344,6 @@ bool MPCooperative::FUN_005C3EC0(void)
 	if (Session.Players.Count() == 2) {
 		Current->FUN_0049B760(Session.Players[0]->Name, Session.Players[1]->Name);
 	}
-	if (0) {
-		Current->FUN_0049B720();
-		Current->FUN_0049B720();
-	}
 	return(Current ? true : false);
 }
 

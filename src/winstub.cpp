@@ -660,10 +660,8 @@ void __fastcall Load_Title_Screen(char const * name, Surface * surface, PaletteC
 		int y = 0;
 		int width = load_buffer->Get_Width();
 		int height = load_buffer->Get_Height();
-		Point2D origin;
 		if (surface->Get_Width() > WideScreenThreshold) {
 			Rect area = Get_Title_Screen_Area();
-			origin = Point2D(area.X, area.Y);
 			x = (area.Width - width) / 2;
 			y = (area.Height - height) / 2;
 		}

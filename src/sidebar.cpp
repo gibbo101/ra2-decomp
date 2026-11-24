@@ -217,16 +217,18 @@ extern int DAT_00B0B500;
 void SidebarClass::FUN_006A5090(void)
 {
 	int side = Scen->PlayerSideIndex;
-	int span = SidebarRect.Y * 3 + side * 5 + SidebarRect.Y * 7 + side * 9 + SidebarRect.Y * 11 + side * 13;
 
 	if (side == 0) {
 		int y = SidebarRect.Y;
 		DAT_00B0B4E4 = 0x40;
 		DAT_00B0B4F0 = 0x1d;
 		DAT_00B0B4FC = 0x3f;
-		DAT_00B0B4E0 = y + 8;
-		DAT_00B0B4EC = DAT_00B0B4E0 + 0x1f;
-		DAT_00B0B4F8 = DAT_00B0B4EC + 0x1e;
+		int repair_y = y + 8;
+		DAT_00B0B4E0 = repair_y;
+		int tabs_y = DAT_00B0B4E0 + 0x1f;
+		DAT_00B0B4EC = tabs_y;
+		int cameos_y = DAT_00B0B4EC + 0x1e;
+		DAT_00B0B4F8 = cameos_y;
 	} else {
 		int y;
 		if (side == 1) {
@@ -235,10 +237,12 @@ void SidebarClass::FUN_006A5090(void)
 			y = SidebarRect.Y + 7;
 		}
 		DAT_00B0B4E0 = y;
-		DAT_00B0B4EC = y + 0x20;
+		int tabs_y = y + 0x20;
+		DAT_00B0B4EC = tabs_y;
 		DAT_00B0B4E4 = 0x34;
 		DAT_00B0B4F0 = 0x20;
-		DAT_00B0B4F8 = DAT_00B0B4EC + 0x1e;
+		int cameos_y = DAT_00B0B4EC + 0x1e;
+		DAT_00B0B4F8 = cameos_y;
 		DAT_00B0B4FC = 0x40;
 	}
 }
@@ -733,25 +737,11 @@ bool SidebarClass::AddCameo(RTTIType type, int id)
 
 extern int DAT_00884CF8;
 
-static inline int Visible_Cameos(void)
-{
-	int side = Scen->PlayerSideIndex;
-	int reserved;
-	if (side == 0) {
-		reserved = 0x1a;
-	} else if (side == 1) {
-		reserved = 0x12;
-	} else {
-		reserved = 0x12;
-	}
-	return (SidebarRect.Y + SidebarRect.Height - DAT_00B0B4F8 - reserved - 7) / 50 * 2;
-}
-
 // FUNCTION: GAMEMD 0x006A6610
 void SidebarClass::UpdateScrollButtons(void)
 {
 	if (PlayerPtr != DAT_00AC1198) {
-		int visible = Visible_Cameos();
+		int visible = GetVisibleCameoCount();
 		if (Column[ActiveTabIndex].BuildableCount > visible) {
 			if (!FUN_004E1470(&Upgrade)) {
 				Upgrade.Enable();
@@ -768,7 +758,7 @@ void SidebarClass::UpdateScrollButtons(void)
 			}
 		}
 	} else {
-		int visible = Visible_Cameos();
+		int visible = GetVisibleCameoCount();
 		if (DAT_00884CF8 * 4 > visible) {
 			if (!FUN_004E1470(&Upgrade)) {
 				Upgrade.Enable();
@@ -984,7 +974,7 @@ void SidebarClass::FUN_006A74A0(int tab)
 	TabButtons[tab].Turn_On();
 	StripClass & current = Column[ActiveTabIndex];
 	current.AllowedToDraw = true;
-	int count = Max_Visible_Cameos() * 2;
+	int count = Max_Visible() * 2;
 	for (int added = 0; added < count; added++) {
 		StripClass::SelectButton[current.ID * 60 + added].Zap();
 		Map.Add_A_Button(StripClass::SelectButton[current.ID * 60 + added]);
@@ -1096,7 +1086,7 @@ bool SidebarClass::Activate(int control)
 			TabButtons[ActiveTabIndex].Turn_On();
 			StripClass & current = Column[ActiveTabIndex];
 			current.AllowedToDraw = true;
-			int count = Max_Visible_Cameos() * 2;
+			int count = Max_Visible() * 2;
 			for (int added = 0; added < count; added++) {
 				StripClass::SelectButton[current.ID * 60 + added].Zap();
 				Map.Add_A_Button(StripClass::SelectButton[current.ID * 60 + added]);
@@ -1199,26 +1189,12 @@ void SidebarClass::StripClass::Init_Clear(void)
 	}
 }
 
-static inline int Strip_Rows(void)
-{
-	int side = Scen->PlayerSideIndex;
-	int reserved;
-	if (side == 0) {
-		reserved = 0x1a;
-	} else if (side == 1) {
-		reserved = 0x12;
-	} else {
-		reserved = 0x12;
-	}
-	return (SidebarRect.Y - DAT_00B0B4F8 - reserved + SidebarRect.Height - 7) / 50;
-}
-
 // FUNCTION: GAMEMD 0x006A8220
 void SidebarClass::StripClass::Init_IO(int id)
 {
 	ID = id;
 
-	int rows = Strip_Rows();
+	int rows = Map.Max_Visible();
 	for (int row = 0; row < rows; row++) {
 		for (int col = 0; col < 2; col++) {
 			int slot = row * 2 + col;
@@ -1389,7 +1365,7 @@ bool SidebarClass::StripClass::Scroll(bool up, int amount)
 		}
 		Scroller -= amount;
 	} else {
-		int rows = Strip_Rows();
+		int rows = Map.Max_Visible();
 		if (PlayerPtr == DAT_00AC1198) {
 			if (TopIndex + rows / 2 >= DAT_00884CF8) {
 				return false;
@@ -1411,7 +1387,7 @@ bool SidebarClass::StripClass::Scroll(bool up)
 // FUNCTION: GAMEMD 0x006A89E0
 bool SidebarClass::StripClass::Page(bool up)
 {
-	int amount = Strip_Rows();
+	int amount = Map.Max_Visible();
 	if (PlayerPtr == DAT_00AC1198) {
 		amount = 1;
 	}
