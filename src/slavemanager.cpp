@@ -235,7 +235,7 @@ void SlaveManagerClass::FUN_006AF6C0(void)
 				break;
 			}
 			case 5: {
-				int remaining = node->RespawnTimer.Value();
+				int remaining = node->RespawnTimer();
 				if (remaining == 0) {
 					slave->Strength = slave->Class->MaxStrength;
 					slave->EstimatedHealth = slave->Class->MaxStrength;
@@ -244,7 +244,7 @@ void SlaveManagerClass::FUN_006AF6C0(void)
 				break;
 			}
 			case 6: {
-				int remaining = node->RespawnTimer.Value();
+				int remaining = node->RespawnTimer();
 				if (remaining == 0) {
 					CreateSlave(node);
 				}

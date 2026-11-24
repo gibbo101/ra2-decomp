@@ -200,21 +200,15 @@ boolean ShipLocomotionClass::Is_Ok_To_End(void)
 	return(false);
 }
 
-static inline void Copy_Ramp_Matrix(Matrix3D & output, Matrix3D const & input)
-{
-	memcpy(&output, &input, sizeof(output));
-}
-
 // FUNCTION: GAMEMD 0x0069F0C0
 Matrix3D ShipLocomotionClass::Get_Slope_Matrix(void) const
 {
-	Matrix3D mtx;
-	mtx.Make_Identity();
+	Matrix3D mtx(true);
 
-	if (RampTimer.Progress() < 1.0) {
-		Copy_Ramp_Matrix(mtx, ::Get_Slope_Transition_Matrix(PreviousRamp, CurrentRamp, Get_Slope_Ratio()));
+	if (!RampTimer.Has_Completed2()) {
+		mtx = ::Get_Slope_Transition_Matrix(PreviousRamp, CurrentRamp, Get_Slope_Ratio());
 	} else if (CurrentRamp) {
-		Copy_Ramp_Matrix(mtx, ::Get_Slope_Matrix(CurrentRamp));
+		mtx = ::Get_Slope_Matrix(CurrentRamp);
 	}
 
 	return(mtx);
@@ -326,7 +320,8 @@ void STDMETHODCALLTYPE ShipLocomotionClass::Stop_Moving(void)
 // FUNCTION: GAMEMD 0x0069F5E0
 BOOL ShipLocomotionClass::Is_Angled(void) const
 {
-	if (Get_Slope_Ratio() == 1.0) {
+	float percent = Get_Slope_Ratio();
+	if (percent == 1.0) {
 		if ((float)fabs(LinkedTo->AngleRotatedSideways) < 0.005 && (float)fabs(LinkedTo->AngleRotatedForwards) < 0.005) {
 			return(true);
 		}
@@ -334,7 +329,6 @@ BOOL ShipLocomotionClass::Is_Angled(void) const
 	return(false);
 }
 
-// FUNCTION: GAMEMD 0x0069F670
 Matrix3DStruct STDMETHODCALLTYPE ShipLocomotionClass::Draw_Matrix(int *key)
 {
 	Matrix3DStruct m;

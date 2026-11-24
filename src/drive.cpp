@@ -204,21 +204,15 @@ boolean DriveLocomotionClass::Is_Ok_To_End(void)
 	return(false);
 }
 
-static inline void Copy_Ramp_Matrix(Matrix3D & output, Matrix3D const & input)
-{
-	memcpy(&output, &input, sizeof(output));
-}
-
 // FUNCTION: GAMEMD 0x004AF9B0
 Matrix3D DriveLocomotionClass::Get_Slope_Matrix(void) const
 {
-	Matrix3D mtx;
-	mtx.Make_Identity();
+	Matrix3D mtx(true);
 
-	if (RampTimer.Progress() < 1.0) {
-		Copy_Ramp_Matrix(mtx, ::Get_Slope_Transition_Matrix(PreviousRamp, CurrentRamp, Get_Slope_Ratio()));
+	if (!RampTimer.Has_Completed2()) {
+		mtx = ::Get_Slope_Transition_Matrix(PreviousRamp, CurrentRamp, Get_Slope_Ratio());
 	} else if (CurrentRamp) {
-		Copy_Ramp_Matrix(mtx, ::Get_Slope_Matrix(CurrentRamp));
+		mtx = ::Get_Slope_Matrix(CurrentRamp);
 	}
 
 	return(mtx);
@@ -328,7 +322,8 @@ void STDMETHODCALLTYPE DriveLocomotionClass::Stop_Moving(void)
 // FUNCTION: GAMEMD 0x004AFED0
 BOOL DriveLocomotionClass::Is_Angled(void) const
 {
-	if (Get_Slope_Ratio() == 1.0) {
+	float percent = Get_Slope_Ratio();
+	if (percent == 1.0) {
 		if ((float)fabs(LinkedTo->AngleRotatedSideways) < 0.005 && (float)fabs(LinkedTo->AngleRotatedForwards) < 0.005) {
 			return(true);
 		}
@@ -336,7 +331,6 @@ BOOL DriveLocomotionClass::Is_Angled(void) const
 	return(false);
 }
 
-// FUNCTION: GAMEMD 0x004AFF60
 Matrix3DStruct STDMETHODCALLTYPE DriveLocomotionClass::Draw_Matrix(int *key)
 {
 	Matrix3DStruct m;
@@ -1720,7 +1714,7 @@ template class _com_ptr_t<_com_IIID<IPersist, &__uuidof(IPersist)> >;
 template class _com_ptr_t<_com_IIID<IPersistStream, &__uuidof(IPersistStream)> >;
 
 // TEMPLATE: GAMEMD 0x004B4D70
-// ?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
+// ??R?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
 template class CDTimerClass<FrameTimerClass>;
 
 // FUNCTION: GAMEMD 0x004B4D90
