@@ -12,6 +12,7 @@
 #include "_map.h"
 #include "cell.h"
 #include "missile.h"
+#include "trajhelp.h"
 
 template class TVelocity3D<double>;
 
@@ -53,22 +54,6 @@ static inline double Projectile_Speed(TVelocity3D<double> const & velocity)
 	return(fastmath::sqrt((velocity.X * velocity.X) + (velocity.Y * velocity.Y) + (velocity.Z * velocity.Z)));
 }
 
-static inline double Vertical_Speed(TVelocity3D<double> const & velocity)
-{
-	return(velocity.Z);
-}
-
-// Keep the displacement used for coordinate updates separate from the direction used for steering.
-class Projectile_Displacement : public TVelocity2D<double>
-{
-public:
-	explicit Projectile_Displacement(TVelocity3D<double> const & velocity)
-		: TVelocity2D<double>(velocity), Z(Vertical_Speed(velocity))
-	{
-	}
-	double Z;
-};
-
 // FUNCTION: GAMEMD 0x005B20F0
 int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const & target_coord, DirType const & rot, bool aircraft, bool airburst, bool veryhigh, bool level)
 {
@@ -76,14 +61,16 @@ int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const
 		DirType pitch = velocity.Get_Pitch();
 		pitch.Turn(DirType(DIR_NE), rot);
 		velocity.Set_Pitch(pitch);
-		Projectile_Displacement const frame_velocity(velocity);
+		TVelocity3D<double> const frame_velocity(velocity);
 		coord = coord + Point3D(frame_velocity.X, frame_velocity.Y, frame_velocity.Z);
 		return(Projectile_Speed(velocity));
 	} else {
-		Projectile_Displacement const frame_velocity(velocity);
+		TVelocity3D<double> frame_velocity;
+		TVelocity2D<double> planar_velocity(velocity);
+		frame_velocity.Set(planar_velocity.X, planar_velocity.Y, velocity.Z);
 		coord = coord + Point3D(frame_velocity.X, frame_velocity.Y, frame_velocity.Z);
 		int target_distance = coord.Distance_To(target_coord);
-		int horizontal_distance = Point2D(coord).Distance_To(Point2D(target_coord));
+		int horizontal_distance = TrajectoryHelper::Horizontal_Range(coord, target_coord);
 
 		Coord delta = target_coord - coord;
 
@@ -98,7 +85,7 @@ int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const
 		DirType desired_pitch = velocity.Get_Pitch();
 
 		if (!aircraft && (airburst || horizontal_distance > ((veryhigh ? 6 : 3) * CELL_LEPTON)) && rot.As_Dir256() > 1) {
-			Projectile_Displacement const lookahead_velocity(velocity);
+			TVelocity3D<double> const lookahead_velocity(velocity);
 			Coord lookahead_coord = coord + Point3D(lookahead_velocity.X, lookahead_velocity.Y, lookahead_velocity.Z) * 6;
 
 			int terrain_height = Map.Get_Height_GL(lookahead_coord);
