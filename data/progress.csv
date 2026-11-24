@@ -14117,6 +14117,7 @@ address,name,result,size,source,symbol
 0x006CC2A0,SuperClass::Is_Powered,MATCH,10,src/super.cpp,?Is_Powered@SuperClass@@QBE_NXZ
 0x006CC2B0,SuperClass::NameReadiness,MATCH,163,src/super.cpp,?NameReadiness@SuperClass@@QBEPBGXZ
 0x006CC360,SuperClass::CanFire,MATCH,36,src/super.cpp,?CanFire@SuperClass@@QBEDXZ
+0x006CC390,SuperClass::Launch,MATCH,6884,src/super.cpp,?Launch@SuperClass@@QAEXABVCell@@_N@Z
 0x006CDE80,FUN_006CDE80,MATCH,3,src/super.cpp,?FUN_006CDE80@@YGXHH@Z
 0x006CDE90,SuperClass::ShouldDrawProgress,MATCH,27,src/super.cpp,?ShouldDrawProgress@SuperClass@@QBE_NXZ
 0x006CDEB0,SuperClass::GetClassID,MATCH,56,src/super.cpp,?GetClassID@SuperClass@@UAGJPAU_GUID@@@Z

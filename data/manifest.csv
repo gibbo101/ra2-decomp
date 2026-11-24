@@ -14463,6 +14463,7 @@ address,size,symbol,source,sha256
 0x006CC2A0,10,?Is_Powered@SuperClass@@QBE_NXZ,src/super.cpp,779c3172f87aeccbb495c4e4b7b95fc35f65654de386715a31d7a3436bf0629f
 0x006CC2B0,163,?NameReadiness@SuperClass@@QBEPBGXZ,src/super.cpp,197f2ee4295a021e274bc737aa0efd9ab56c6cfc7256da9931be8c19c12ecaa6
 0x006CC360,36,?CanFire@SuperClass@@QBEDXZ,src/super.cpp,6661d150879b39303ee5bc22fea6c6e686190761197a3ce3a673b9b0760da043
+0x006CC390,6884,?Launch@SuperClass@@QAEXABVCell@@_N@Z,src/super.cpp,8e6d2b7e293ac5e567a128a62398a41dc3449969da00dba9355e5f5624b8f5ba
 0x006CDE80,3,?FUN_006CDE80@@YGXHH@Z,src/super.cpp,1d10894625976bca9d8906f3ecf1e766b94e9219ec3bf1c30e02feea5e18e45a
 0x006CDE90,27,?ShouldDrawProgress@SuperClass@@QBE_NXZ,src/super.cpp,b3c8f173b5c4e5818915dcbee194cf986903a7cf0459c62281273a55775bf3c0
 0x006CDEB0,56,?GetClassID@SuperClass@@UAGJPAU_GUID@@@Z,src/super.cpp,96972516b9df10b8d79c981d6a26c8be2e0c7d58e3808e548f9fb84e33ea33e4
