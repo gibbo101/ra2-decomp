@@ -204,117 +204,11 @@ bool BulletClass::Mark(MarkType mark)
 }
 
 #include "revent.h"
+#include "voxel.h"
 
 void FUN_0053AB70(void);
-Matrix3D Get_Slope_Matrix(int ramp);
 
 static inline int Coord_Dist(Coord const & a, Coord const & b);
-
-static inline void Reflect_Local_Velocity(Vector3 & vec, Matrix3D & inverse, double elasticity, double x, double y, double z)
-{
-	vec.Vector3::Vector3(x, -y, z);
-	vec = inverse.Rotate_Vector(vec);
-	vec *= elasticity;
-	vec.Z = -vec.Z;
-}
-
-static inline void Advance_Ballistic_Position(TVelocity3D<double> & position, TVelocity3D<double> const & velocity, Coord & output)
-{
-	position += velocity;
-	output.Coord::Coord(position.X, position.Y, position.Z);
-}
-
-static inline Coord Ballistic_Physics(TVelocity3D<double> & position, TVelocity3D<double> & velocity, double gravity, TechnoClass * payback, double elasticity, ImpactType & impact, bool & forced)
-{
-	velocity.Z -= gravity;
-	Coord old_coord(position.X, position.Y, position.Z);
-	Coord new_coord;
-	Advance_Ballistic_Position(position, velocity, new_coord);
-	int height = Map.Get_Height_GL(new_coord);
-	int bridge_height = height + BRIDGE_LEPTON_HEIGHT;
-	CellClass * cellptr = &Map[new_coord];
-	bool rose_through_bridge;
-	bool fell_through_bridge;
-	fell_through_bridge = false;
-	rose_through_bridge = false;
-	if (cellptr->IsUnderBridge || Map[old_coord].IsUnderBridge) {
-		if (new_coord.Z >= bridge_height) {
-			if (old_coord.Z < bridge_height) {
-				rose_through_bridge = true;
-			}
-		} else if (old_coord.Z >= bridge_height) {
-			fell_through_bridge = true;
-		}
-	}
-	bool hit_obstacle = false;
-	if (!fell_through_bridge && !rose_through_bridge) {
-		if (position.Z >= height && position.Z - 150 < height) {
-			BuildingClass * building = cellptr->Cell_Building();
-			hit_obstacle = building != NULL || cellptr->Has_Wall_Or_Gate();
-			if (hit_obstacle) {
-				if (building != NULL) {
-					if (building == payback || building->Class->IsLaserFence && building->LaserFenceFrame >= 8) {
-						hit_obstacle = false;
-					}
-					if (building->IsStrange()) {
-						hit_obstacle = false;
-					}
-					if (payback != NULL && payback->House->Is_Ally(building)) {
-						hit_obstacle = false;
-					}
-				}
-			}
-		}
-	}
-	bool do_bounce = true;
-	if (position.Z >= height) {
-		if (!fell_through_bridge && !rose_through_bridge && !hit_obstacle) {
-			do_bounce = false;
-		}
-	}
-	if (do_bounce) {
-		bool contact = true;
-		if (payback == NULL) {
-			if (fell_through_bridge) {
-				position.Z = bridge_height;
-			} else if (rose_through_bridge) {
-				bridge_height -= 20;
-				position.Z = bridge_height;
-			} else {
-				bridge_height = height - 100;
-				if (bridge_height < position.Z) {
-					position.Z = height;
-				}
-			}
-			Matrix3D slope_matrix;
-			Matrix3D slope_matrix_inv = Matrix3D::Orthogonal_Inverse(slope_matrix = Get_Slope_Matrix(TacticalMap->Get_Cell_Ramp(new_coord)));
-			Vector3 vec;
-			Reflect_Local_Velocity(vec, slope_matrix_inv, elasticity, velocity.X, velocity.Y, velocity.Z);
-			vec = slope_matrix.Rotate_Vector(vec);
-			velocity.X = vec.X;
-			velocity.Y = -vec.Y;
-			velocity.Z = vec.Z;
-		} else {
-			if (fell_through_bridge) {
-				position.Z = bridge_height;
-			} else if (rose_through_bridge) {
-				bridge_height -= 20;
-				position.Z = bridge_height;
-			} else {
-				contact = false;
-			}
-		}
-		if (contact) {
-			impact = IMPACT_NORMAL;
-			forced = true;
-		}
-	}
-	Coord result;
-	result.X = (int)position.X;
-	result.Y = (int)position.Y;
-	result.Z = (int)position.Z;
-	return(result);
-}
 
 static inline void Set_Horizontal_Velocity(TVelocity3D<double> & velocity,
 		double const & x, double const & y)
@@ -323,19 +217,11 @@ static inline void Set_Horizontal_Velocity(TVelocity3D<double> & velocity,
 	velocity.Y = y;
 }
 
-static inline void Copy_Velocity(TVelocity2D<double> & planar, double & height,
-		TVelocity2D<double> const & direction, double vertical)
-{
-	planar = direction;
-	height = vertical;
-}
-
 static inline double Flight_Speed(TVelocity3D<double> const & velocity)
 {
 	return(fastmath::sqrt((velocity.X * velocity.X) + (velocity.Y * velocity.Y) + (velocity.Z * velocity.Z)));
 }
 
-// FUNCTION: GAMEMD 0x004666E0
 void BulletClass::AI(void)
 {
 	static const int _limit = 4 * TICKS_PER_SECOND;
@@ -484,8 +370,7 @@ void BulletClass::AI(void)
 	} else {
 		TVelocity3D<double> new_velocity;
 		TVelocity3D<double> const & previous = Velocity;
-		TVelocity3D<double> captured;
-		Copy_Velocity(captured, captured.Z, previous, previous.Z);
+		TVelocity3D<double> captured(previous);
 		new_velocity = captured;
 		TVelocity3D<double> velocity;
 		Set_Horizontal_Velocity(velocity, captured.X, captured.Y);
@@ -539,7 +424,92 @@ void BulletClass::AI(void)
 		} else {
 			TechnoClass * payback = Payback;
 			double elasticity = Class->Elasticity;
-			coord = Ballistic_Physics(position, velocity, gravity, payback, elasticity, impact, forced);
+			velocity.Z -= gravity;
+			Coord old_coord(position.X, position.Y, position.Z);
+			position += velocity;
+			Coord new_coord(position.X, position.Y, position.Z);
+			int height = Map.Get_Height_GL(new_coord);
+			int bridge_height = height + BRIDGE_LEPTON_HEIGHT;
+			CellClass * cellptr = &Map[new_coord];
+			bool rose_through_bridge;
+			bool fell_through_bridge;
+			fell_through_bridge = false;
+			rose_through_bridge = false;
+			if (cellptr->IsUnderBridge || Map[old_coord].IsUnderBridge) {
+				if (new_coord.Z >= bridge_height) {
+					if (old_coord.Z < bridge_height) {
+						rose_through_bridge = true;
+					}
+				} else if (old_coord.Z >= bridge_height) {
+					fell_through_bridge = true;
+				}
+			}
+			bool hit_obstacle = false;
+			if (!fell_through_bridge && !rose_through_bridge) {
+				if (position.Z >= height && position.Z - 150 < height) {
+					BuildingClass * building = cellptr->Cell_Building();
+					hit_obstacle = building != NULL || cellptr->Has_Wall_Or_Gate();
+					if (hit_obstacle) {
+						if (building != NULL) {
+							if (building == payback || building->Class->IsLaserFence && building->LaserFenceFrame >= 8) {
+								hit_obstacle = false;
+							}
+							if (building->IsStrange()) {
+								hit_obstacle = false;
+							}
+							if (payback != NULL && payback->House->Is_Ally(building)) {
+								hit_obstacle = false;
+							}
+						}
+					}
+				}
+			}
+			bool do_bounce = true;
+			if (position.Z >= height) {
+				if (!fell_through_bridge && !rose_through_bridge && !hit_obstacle) {
+					do_bounce = false;
+				}
+			}
+			if (do_bounce) {
+				bool contact = true;
+				if (payback == NULL) {
+					if (fell_through_bridge) {
+						position.Z = bridge_height;
+					} else if (rose_through_bridge) {
+						bridge_height -= 20;
+						position.Z = bridge_height;
+					} else {
+						bridge_height = height - 100;
+						if (bridge_height < position.Z) {
+							position.Z = height;
+						}
+					}
+					Matrix3D slope_matrix;
+					Matrix3D slope_matrix_inv = Matrix3D::Orthogonal_Inverse(slope_matrix = Get_Slope_Matrix(TacticalMap->Get_Cell_Ramp(new_coord)));
+					Vector3 vec(velocity.X, -velocity.Y, velocity.Z);
+					vec = slope_matrix_inv.Rotate_Vector(vec);
+					vec *= elasticity;
+					vec.Z = -vec.Z;
+					vec = slope_matrix.Rotate_Vector(vec);
+					velocity.X = vec.X;
+					velocity.Y = -vec.Y;
+					velocity.Z = vec.Z;
+				} else {
+					if (fell_through_bridge) {
+						position.Z = bridge_height;
+					} else if (rose_through_bridge) {
+						bridge_height -= 20;
+						position.Z = bridge_height;
+					} else {
+						contact = false;
+					}
+				}
+				if (contact) {
+					impact = IMPACT_NORMAL;
+					forced = true;
+				}
+			}
+			coord = Coord(position.X, position.Y, position.Z);
 		}
 
 		Cell cell = coord.As_Cell();
@@ -577,8 +547,8 @@ void BulletClass::AI(void)
 				} else {
 					Set_Horizontal_Velocity(new_velocity, velocity.X, velocity.Y);
 					if (!Class->Vertical) {
-						TVelocity3D<double> updated_velocity;
-						Copy_Velocity(updated_velocity, updated_velocity.Z, new_velocity, velocity.Z);
+						TVelocity3D<double> updated_velocity(new_velocity);
+						updated_velocity.Z = velocity.Z;
 						Velocity = updated_velocity;
 					}
 					if (Velocity.Speed() < 10 && HeightAGL < 10) {
