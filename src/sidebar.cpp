@@ -1012,6 +1012,78 @@ void SidebarClass::FUN_006A7760(int tab)
 	TabButtons[tab].StopFlashing();
 }
 
+// FUNCTION: GAMEMD 0x006A7780
+void SidebarClass::AI(KeyNumType & input, Point2D const & xy)
+{
+	Point2D relative = xy - Point2D(SidebarRect.Top_Left().X, 0);
+	if (!Unsorted::ArmageddonMode) {
+		Activate(1);
+		for (int index = 0; index < STRIPS; index++) {
+			Column[index].AI(input, relative);
+		}
+	}
+	if (IsSidebarActive) {
+		if (unknown_5398 == 1) {
+			int frame = ++unknown_5394;
+			if (frame > ((ShapeSet const *)DAT_00B0B478)->Get_Count()) {
+				unknown_5398 = 0;
+				unknown_5394 = 0;
+			}
+		} else if (unknown_5398 == -1) {
+			int frame = --unknown_5394;
+			if (frame < 0) {
+				unknown_5398 = 0;
+				unknown_5394 = 0;
+			}
+		}
+		FUN_006A6290(PlayerPtr->CurBuildings > 0);
+		if (input == (102 | KN_BUTTON)) {
+			VocClass::PlayGlobal(Rule->GUIMainButtonSound, 1.0f, 0x2000, NULL);
+			Sell_Mode_Control(-1);
+		} else if (input == (101 | KN_BUTTON)) {
+			VocClass::PlayGlobal(Rule->GUIMainButtonSound, 1.0f, 0x2000, NULL);
+			Repair_Mode_Control(-1);
+		} else if (input < (203 | KN_BUTTON) || input >= (207 | KN_BUTTON)) {
+			int key = input & ~KN_UNK;
+			ShapeButtonClass & page_down = Upgrade;
+			ShapeButtonClass & page_up = Waypoint;
+			if (key == (page_down.ID | KN_BUTTON)) {
+				page_down.IsPressed = false;
+				bool paged = Column[ActiveTabIndex].Page(false);
+				if (!paged) {
+					VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000, NULL);
+				} else {
+					VocClass::PlayGlobal(Rule->GUITabSound, 1.0f, 0x2000, NULL);
+				}
+			} else if (key == (page_up.ID | KN_BUTTON)) {
+				page_up.IsPressed = false;
+				bool paged = Column[ActiveTabIndex].Page(true);
+				if (!paged) {
+					VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000, NULL);
+				} else {
+					VocClass::PlayGlobal(Rule->GUITabSound, 1.0f, 0x2000, NULL);
+				}
+			}
+		} else {
+			SetTab(input - (203 | KN_BUTTON));
+			VocClass::PlayGlobal(Rule->GUITabSound, 1.0f, 0x2000, NULL);
+		}
+		bool redraw = false;
+		for (int index = 0; index < STRIPS; index++) {
+			if (TabButtons[index].AI()) redraw = true;
+		}
+		if (redraw) {
+			IsToRedraw = true;
+			IsToBlitSidebar = true;
+			Map.IsForceCompleteRedraw = true;
+			Flag_To_Redraw();
+		}
+	}
+	if (!IsSellMode && Power.IsOn) Power.Turn_Off();
+	if (!IsRepairMode && Repair.IsOn) Repair.Turn_Off();
+	BASECLASS::AI(input, xy);
+}
+
 // FUNCTION: GAMEMD 0x006A7D20
 void SidebarClass::Recalc(void)
 {
