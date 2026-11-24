@@ -7377,7 +7377,6 @@ void HouseClass::AI_Takeover(void)
 	}
 }
 
-// FUNCTION: GAMEMD 0x0050AF10
 void HouseClass::Update_Present_Super_Weapons(void)
 {
 	if (GameActive) {
@@ -7442,11 +7441,13 @@ void HouseClass::Update_Present_Super_Weapons(void)
 				int tab = SidebarClass::GetObjectTabIdx(
 					RTTI_SUPERWEAPON, id, false);
 
-				if (present && IsDefeated) {
-					present = false;
-				}
-				if (present && !enabled && SuperWeapon[s]->Is_Powered() &&
-					SuperWeapon[s]->SetOnHold(true)) {
+				if (present && !IsDefeated) {
+					bool held = !enabled && SuperWeapon[s]->Is_Powered() &&
+						SuperWeapon[s]->SetOnHold(true);
+					bool resumed = enabled && SuperWeapon[s]->SetOnHold(false);
+					if (!held && !resumed) {
+						continue;
+					}
 					if (player) {
 						if (CurrentSWType == s) {
 							CurrentSWType = -1;
@@ -7454,15 +7455,7 @@ void HouseClass::Update_Present_Super_Weapons(void)
 						Map.RepaintSidebar(tab);
 					}
 					Production_Status_Changed();
-				} else if (present && enabled && SuperWeapon[s]->SetOnHold(false)) {
-					if (player) {
-						if (CurrentSWType == s) {
-							CurrentSWType = -1;
-						}
-						Map.RepaintSidebar(tab);
-					}
-					Production_Status_Changed();
-				} else if (!present && SuperWeapon[s]->Lose() && PlayerPtr != NULL) {
+				} else if (SuperWeapon[s]->Lose() && PlayerPtr != NULL) {
 					if (player) {
 						if (CurrentSWType == s) {
 							CurrentSWType = -1;
