@@ -59,16 +59,6 @@ struct FileSystem {
 	static void const * LoadFile(char const * name, bool as_shape);
 };
 
-namespace Powerups {
-extern char const * Effects[19];
-extern int Weights[19];
-extern AnimType Anims[19];
-extern double Arguments[19];
-extern bool Naval[19];
-}
-void __fastcall FUN_006CFD20(int button, int slot);
-int __fastcall FUN_006CFCC0(char const * name);
-void __fastcall FUN_006CFDB0(int count);
 template<> void VectorClass<ColorScheme *>::Clear(void);
 void FUN_006269A0(void);
 void __fastcall FUN_00626AB0(char const * name, HSVClass & hsv);
@@ -2245,6 +2235,14 @@ bool RulesClass::AI(CCINIClass const & ini)
 	return(false);
 }
 
+namespace Powerups {
+extern char const * Effects[19];
+extern int Weights[19];
+extern AnimType Anims[19];
+extern double Arguments[19];
+extern bool Naval[19];
+}
+
 // FUNCTION: GAMEMD 0x00673E80
 bool RulesClass::Powerups(CCINIClass const & ini)
 {
@@ -2379,6 +2377,9 @@ bool RulesClass::Do_Movies(CCINIClass const & ini)
 }
 
 extern int DAT_008427CC;
+void __fastcall FUN_006CFD20(int button, int slot);
+int __fastcall FUN_006CFCC0(char const * name);
+void __fastcall FUN_006CFDB0(int count);
 
 // FUNCTION: GAMEMD 0x00674650
 bool RulesClass::Read_AdvancedCommandBar(CCINIClass const & ini, bool multiplayer)

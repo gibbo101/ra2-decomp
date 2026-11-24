@@ -15,7 +15,6 @@
 #include "_logic.h"
 #include "_map.h"
 #include "_mixfile.h"
-#include "_mono.h"
 #include "_palette.h"
 #include "_pk.h"
 #include "_rand.h"

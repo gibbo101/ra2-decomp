@@ -56,6 +56,13 @@ struct TurretAnimControl : public TurretControl
 	bool UnknownBool;
 };
 
+// One word that its own constructor clears; it has no NoInitClass constructor.
+struct UnusedField
+{
+	UnusedField(void) : Value(0) {}
+	int Value;
+};
+
 class TechnoTypeClass : public ObjectTypeClass
 {
 		typedef ObjectTypeClass BASECLASS;
@@ -116,7 +123,7 @@ class TechnoTypeClass : public ObjectTypeClass
 
 		CategoryType Category;
 
-		int Unused2;
+		UnusedField Unused2;
 
 		double DeployTime;
 

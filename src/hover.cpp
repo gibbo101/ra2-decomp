@@ -18,6 +18,7 @@
 #include "house.h"
 #include "infantry.h"
 #include "inline.h"
+#include "movepoint.h"
 #include "ion.h"
 #include "overtype.h"
 #include "rules.h"
@@ -186,6 +187,151 @@ Matrix3DStruct STDMETHODCALLTYPE HoverLocomotionClass::Shadow_Matrix(int *key)
 		*key = -1;
 	}
 	return(BASECLASS::Shadow_Matrix(key));
+}
+
+static inline DirType Facing_To(Coord const & from, Coord const & to)
+{
+	return(DirType().Direction(from, to));
+}
+
+// FUNCTION: GAMEMD 0x00514310
+boolean STDMETHODCALLTYPE HoverLocomotionClass::Process(void)
+{
+	if (Is_Moving() && Is_Moving1()) {
+		Motion_AI();
+		if (!LinkedTo->IsActive) {
+			return(false);
+		}
+
+		int height = LinkedTo->Get_Height();
+		int speed = (int)(LinkedTo->Current_Speed() * Acceleration);
+		DirType direction = Facing_To(LinkedTo->Center_Coord(), HeadToCoord);
+
+		if (speed == 0 && Facing.Current().Is_Complete_Turn(direction, 0)) {
+			Start();
+			speed = (int)(LinkedTo->Current_Speed() * Acceleration);
+		}
+
+		Point2D delta = LinkedTo->Get_Coord();
+		delta = delta - HeadToCoord;
+		if (speed >= delta.Length()) {
+			LinkedTo->IsOccupyingCell = true;
+			LinkedTo->IsToPathAroundBlockage = false;
+			WasPushed = false;
+
+			Start_Of_Move(0);
+
+			if (LinkedTo->Path[0] == FACING_NONE && DestinationCoord == COORD_NONE) {
+				HeadToCoord = COORD_NONE;
+			}
+
+			TechnoClass * contact = LinkedTo->Contact_With_Whom();
+			Cell cell = CELL_NONE;
+			if (contact != NULL) {
+				cell = Cell(contact->Destination_Coord(LinkedTo));
+			}
+			bool arrived = LinkedTo->Get_Cell() == cell;
+
+			MoveType ok = MOVE_OK;
+			if (DestinationCoord != COORD_NONE || arrived) {
+				ok = While_Moving(true);
+				if (!LinkedTo->IsActive || LinkedTo->IsInLimbo || LinkedTo->IsFalling) {
+					return(MOVE_NO);
+				}
+				if (ok == MOVE_OK && HeadToCoord == COORD_NONE) {
+					LinkedTo->Set_Occupy_Bit(LinkedTo->Get_Coord());
+					LinkedTo->Per_Cell_Process(PCP_END);
+					if (!LinkedTo->IsActive || LinkedTo->IsInLimbo || LinkedTo->IsFalling) {
+						return(false);
+					}
+				}
+			}
+			if (ok == MOVE_NO) {
+				if (LinkedTo->CurrentTube >= 0) {
+					return(false);
+				}
+				Stop();
+			} else if (ok != MOVE_OK) {
+				Stop_Driver();
+				speed = 0;
+			}
+		}
+
+		if (speed > 0) {
+			Coord coord = LinkedTo->Get_Coord();
+
+			if (LinkedTo->Occupies_Cells() && HeadToCoord != COORD_NONE) {
+				LinkedTo->Clear_Occupy_Bit(LinkedTo->Get_Coord());
+				LinkedTo->IsOccupyingCell = false;
+				LinkedTo->IsToPathAroundBlockage = false;
+			}
+
+			Point2D position(coord.X, coord.Y);
+			Point2D next = Move_Point(position, Facing.Current(), speed);
+			coord.X = next.X;
+			coord.Y = next.Y;
+			if (coord.As_Cell() != LinkedTo->Get_Coord().As_Cell()) {
+				LinkedTo->Mark(MARK_UP);
+				LinkedTo->Set_Coord(coord);
+				LinkedTo->Set_Height(height);
+				CellClass * cellptr = &Map[coord];
+				if (!LinkedTo->IsOnBridge && cellptr->IsUnderBridge && LinkedTo->Get_Height_AGL() >= BRIDGE_LEPTON_HEIGHT) {
+					LinkedTo->IsOnBridge = true;
+				}
+				if (LinkedTo->IsOnBridge == true && !cellptr->IsUnderBridge) {
+					LinkedTo->IsOnBridge = false;
+				}
+				LinkedTo->Mark(MARK_DOWN);
+			} else {
+				bool wasdown = LinkedTo->IsDown;
+				LinkedTo->IsDown = false;
+				LinkedTo->Set_Coord(coord);
+				LinkedTo->Set_Height(height);
+				LinkedTo->IsDown = wasdown;
+			}
+		}
+	}
+
+	if (Is_Moving_Now() && (Frame % 10) == 0) {
+		if (!LinkedTo->IsOnBridge && LinkedTo->Get_Cell_Ptr()->Land_Type() == LAND_WATER) {
+			if (Rule->Wake != NULL) {
+				new AnimClass(Rule->Wake, LinkedTo->Get_Coord(), 0, 1, ShapeFlags_Type(0x600), 0);
+			}
+		}
+	}
+
+	Gravity_AI();
+
+	if (WasShoved) {
+		if (Is_Powered()) {
+			DirType dir = LinkedTo->PrimaryFacing.Current();
+			LinkedTo->PrimaryFacing.Set(dir + DirType(Dir256(ShoveAccum)));
+			int delta = abs(ShoveAccum);
+			if (delta >= 1) {
+				delta = 1;
+			}
+			if (ShoveAccum < 0) {
+				ShoveAccum += delta;
+			} else {
+				ShoveAccum -= delta;
+			}
+			if (ShoveAccum == 0) {
+				WasShoved = false;
+			}
+		} else {
+			WasShoved = false;
+		}
+		if (!WasShoved) {
+			Map[LinkedTo->Get_Coord()].Trigger_Veins();
+			if (Map[LinkedTo->Get_Coord()].Land_Type() == LAND_WATER) {
+				if (LinkedTo->Get_Coord().Z < Map.Get_Height_GL(LinkedTo->Get_Coord()) + LEVEL_LEPTON_H) {
+					LinkedTo->Fall_From_Height();
+				}
+			}
+		}
+	}
+
+	return(Is_Moving());
 }
 
 // FUNCTION: GAMEMD 0x00514C30
@@ -454,11 +600,6 @@ void HoverLocomotionClass::Stop_Driver(void)
 		LinkedTo->Clear_Occupy_Bit(HeadToCoord);
 		HeadToCoord = COORD_NONE;
 	}
-}
-
-static inline DirType Facing_To(Coord const & from, Coord const & to)
-{
-	return(DirType().Direction(from, to));
 }
 
 // FUNCTION: GAMEMD 0x00515ED0

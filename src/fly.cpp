@@ -815,6 +815,137 @@ bool FlyLocomotionClass::Process_Landing(void)
 	return(has_landed);
 }
 
+static inline int _Distance(FootClass * object, Coord const & to)
+{
+	Point2D diff = Point2D(object->Center_Coord()) - Point2D(to);
+	return(diff.Length());
+}
+
+static inline DirType _Direction(FootClass * object, Coord const & to)
+{
+	return(DirType().Direction(object->Center_Coord(), to));
+}
+
+// FUNCTION: GAMEMD 0x004CEFB0
+int FlyLocomotionClass::Nearing_Target(bool stage_approach, CoordStruct coord)
+{
+	LinkedTo->Get_Cell();
+
+	IFlyControlPtr flyctrl(LinkedTo);
+
+	if (flyctrl != NULL && LinkedTo->TarCom != NULL && LinkedTo->Ammo && flyctrl->Is_Strafe()) {
+		stage_approach = false;
+	}
+
+	if (LinkedTo != NULL && LinkedTo->Fetch_RTTI() == RTTI_AIRCRAFT && As_Aircraft(LinkedTo)->Class->IsFlyBy) {
+		stage_approach = false;
+	}
+
+	Coord aim;
+	aim = coord;
+	BuildingClass * building = Map[Coord(coord).As_Cell()].Cell_Building();
+	if (building != NULL && !LinkedTo->TClass->IsHunterSeeker) {
+		if (!LinkedTo->ContainsLink(building)) {
+			FootClass * foot = LinkedTo;
+			if (foot != NULL && foot->Fetch_RTTI() == RTTI_AIRCRAFT) {
+				AbstractClass * lz = ((AircraftClass *)foot)->New_LZ(building);
+				if (lz == NULL) {
+					aim = COORD_NONE;
+				} else {
+					aim = lz->Center_Coord();
+				}
+			}
+		} else {
+			aim = building->Docking_Coord(LinkedTo);
+		}
+	}
+
+	LinkedTo->Get_Height();
+
+	int dist = _Distance(LinkedTo, aim);
+
+	if (flyctrl == NULL || !flyctrl->Is_Locked()) {
+		DirType dir = _Direction(LinkedTo, coord);
+
+		if (flyctrl == NULL || !flyctrl->Is_Strafe() ||
+			_Distance(LinkedTo, coord) > CELL_LEPTON * 3 ||
+			dir.Is_Complete_Turn(LinkedTo->PrimaryFacing.Current(), DIR_STEP_8)) {
+			LinkedTo->PrimaryFacing.Set_Desired(_Direction(LinkedTo, coord));
+		}
+	}
+
+	if (dist < CELL_LEPTON && stage_approach && !LinkedTo->TClass->IsHunterSeeker) {
+
+		if (LinkedTo->TarCom != NULL && LinkedTo->Ammo &&
+			(flyctrl == NULL || !flyctrl->Is_Strafe())) {
+
+			if (flyctrl == NULL || !flyctrl->Is_Locked()) {
+				LinkedTo->SecondaryFacing.Set_Desired(LinkedTo->GetTargetDirection(LinkedTo->TarCom));
+			}
+
+		} else {
+			DirType land(DIR_N);
+			if (flyctrl != NULL) {
+				land = DirType(Facing_Dir(FacingType(flyctrl->Landing_Direction())));
+			}
+			if (flyctrl == NULL || !flyctrl->Is_Locked()) {
+				LinkedTo->SecondaryFacing.Set_Desired(land);
+			}
+		}
+
+	} else {
+		if (flyctrl == NULL || !flyctrl->Is_Locked()) {
+			LinkedTo->SecondaryFacing.Set_Desired(DirType(Direction(LinkedTo->Center_Coord(), coord)));
+		}
+	}
+
+	if (IsElevating && dist < CELL_LEPTON * 3) {
+		FlightLevel = DestinationCoord.Z - Map.Get_Height_GL(DestinationCoord);
+	} else {
+		if (LinkedTo->TClass->IsDropship) {
+			if (dist < LinkedTo->TClass->SlowdownDistance) {
+				float frac = (float)(dist / LinkedTo->TClass->SlowdownDistance);
+				TechnoTypeClass const * ttype = LinkedTo->TClass;
+				FlightLevel = (int)((1.0f - frac) * (LinkedTo->TClass->GetFlightLevel() / 3) + ttype->GetFlightLevel() * frac);
+			} else {
+				FlightLevel = LinkedTo->TClass->GetFlightLevel();
+			}
+		} else {
+			FlightLevel = LinkedTo->TClass->GetFlightLevel();
+		}
+	}
+
+	if (!LinkedTo->TClass->IsHunterSeeker) {
+		if (Needs_To_Land()) {
+			if (dist < CELL_LEPTON / 2) {
+				if (stage_approach) {
+					TargetSpeed = 0.0;
+				}
+				if (!IsElevating && CurrentSpeed < 0.05) {
+					Land();
+				}
+			} else if (dist < CELL_LEPTON * 2) {
+				if (stage_approach) {
+					TargetSpeed = 0.5;
+				}
+			} else if (dist < CELL_LEPTON * 3) {
+				if (stage_approach) {
+					TargetSpeed = 0.75;
+				}
+			}
+		}
+	}
+
+	if (LinkedTo->IsSelected && !LinkedTo->House->Is_Player_Control()) {
+		if (Map.Is_Shrouded(LinkedTo->Get_Coord()) ||
+			(Scen->Special.IsFogOfWar && Map.Is_Fogged(LinkedTo->Get_Coord()))) {
+			LinkedTo->Unselect();
+		}
+	}
+
+	return(dist);
+}
+
 // FUNCTION: GAMEMD 0x004CF610
 Matrix3DStruct STDMETHODCALLTYPE FlyLocomotionClass::Draw_Matrix(int * key)
 {

@@ -24,6 +24,10 @@
 #include "_rules.h"
 #include "gadget.h"
 #include "_xmouse.h"
+#include "coopcamp.h"
+#include "windlg.h"
+#include "tiprequest.h"
+#include "wolopt.h"
 
 #include <windows.h>
 #undef LoadString
@@ -301,38 +305,31 @@ CDTimerClass<SystemTimerClass> DAT_00B76478;
 // FUNCTION: GAMEMD 0x0077D1C0
 WideWstring DAT_00B76230;
 
-class FUN_007EF720_Class {
-public:
-	virtual ~FUN_007EF720_Class(void) {}
-};
-
-class FUN_007EF738_Class : public FUN_007EF720_Class {
-public:
-	FUN_007EF738_Class(void);
-	virtual ~FUN_007EF738_Class(void);
-	int A;
-	char B;
-	bool FUN_006241C0(void);
-	int FUN_006241D0(void);
-};
-
-class FUN_007F7624_Class : public FUN_007EF738_Class {
-public:
-	FUN_007F7624_Class(void);
-	virtual ~FUN_007F7624_Class(void);
+class SimpleWonlineDialogControl : public OwnerDraw::SimpleDialogControl
+{
+	public:
+		SimpleWonlineDialogControl(void);
+		virtual ~SimpleWonlineDialogControl(void);
+		virtual bool F4(void);
 };
 
 // FUNCTION: GAMEMD 0x0077D1D0
-FUN_007F7624_Class::FUN_007F7624_Class(void)
+SimpleWonlineDialogControl::SimpleWonlineDialogControl(void)
 {
 }
 
 // FUNCTION: GAMEMD 0x0077D1F0
-FUN_007F7624_Class::~FUN_007F7624_Class(void)
+SimpleWonlineDialogControl::~SimpleWonlineDialogControl(void)
 {
 }
 
 bool WOL_Wait_Callback(void);
+
+// FUNCTION: GAMEMD 0x0077D200
+bool SimpleWonlineDialogControl::F4(void)
+{
+	return WOL_Wait_Callback();
+}
 
 // FUNCTION: GAMEMD 0x0077D210
 void __fastcall FUN_0077D210(char * text)
@@ -443,10 +440,10 @@ extern Wstring g_NickName;
 bool __fastcall FUN_0077D4C0(User * user)
 {
 	if (DAT_00B76AF0 || DAT_00B73AD0) {
-		if (WS_Find_Dialog(0x113)) {
+		HWND dialog = WS_Find_Dialog(0x113);
+		if (dialog) {
 			int index = Player_Name_To_Index(g_NickName);
 			User * host = NULL;
-			int count = g_UserList.length();
 			if (index >= 0) {
 				g_UserList.getPointer(&host, index);
 				if (DAT_00B76AF0) {
@@ -456,8 +453,7 @@ bool __fastcall FUN_0077D4C0(User * user)
 						return FUN_0077D3F0(user);
 					}
 					return FUN_0077D3F0(user);
-				}
-				if (DAT_00B73AD0) {
+				} else if (DAT_00B73AD0) {
 					if (FUN_0077D490(host, user))
 						return true;
 				}
@@ -2786,7 +2782,6 @@ Surface * __fastcall FUN_00783B80(RankedUser * user)
 }
 
 #include "multiplayer.h"
-#include "coopcamp.h"
 
 void __fastcall FUN_005EA3E0(HWND dialog, bool flag);
 void __fastcall FUN_00735060(wchar_t * dest, char const * source, int limit);
@@ -4042,24 +4037,10 @@ int FUN_00786390(void)
 	return Startup_Chat(ProgramInstance);
 }
 
-class SimpleWonlineDialogControl : public OwnerDraw::SimpleDialogControl
-{
-	public:
-		virtual ~SimpleWonlineDialogControl(void) {}
-		virtual bool F4(void);
-};
-
-// FUNCTION: GAMEMD 0x0077D200
-bool SimpleWonlineDialogControl::F4(void)
-{
-	return WOL_Wait_Callback();
-}
-
 int __fastcall Run_Dialog_Control(int id, DLGPROC proc, OwnerDraw::DialogControl * control);
 BOOL CALLBACK Select_WDT_Location_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 extern int g_LadderServerPort;
 extern char g_LadderServerHost[];
-#include "wolopt.h"
 void __fastcall FUN_00779F10(Wstring const & value);
 bool g_PlaintextPassword = true;
 
@@ -4076,8 +4057,8 @@ static inline Wstring Strip_Server_Prefix(Server * server)
 
 static inline int Pick_Locale(void)
 {
-	FUN_007F7624_Class dialog;
-	int result = Run_Dialog_Control(0xFE, Select_WDT_Location_Proc, (OwnerDraw::DialogControl *)&dialog);
+	SimpleWonlineDialogControl dialog;
+	int result = Run_Dialog_Control(0xFE, Select_WDT_Location_Proc, &dialog);
 	if (result < 0) {
 		return 0;
 	}
@@ -5019,7 +5000,6 @@ Wstring __fastcall FUN_00789630(Server * server)
 	return name;
 }
 
-#include "wolopt.h"
 
 void __fastcall FUN_00623840(HWND hwnd);
 
@@ -5149,7 +5129,6 @@ bool __fastcall FUN_00789960(Channel * chan, bool extra)
 
 extern char DAT_00B76E28[];
 
-#include "windlg.h"
 
 class CreateGameDialogControl : public WonlineStringDialogControl
 {
@@ -9159,8 +9138,8 @@ int FUN_00799D30(void)
 			g_pNetUtil->RequestHighscore(g_LadderServerHost, g_LadderServerPort, g_NickName.get(), g_GameSKU & 0xFFFF00);
 		}
 		FUN_0072C9C0();
-		FUN_007F7624_Class control;
-		Run_Dialog_Control(0x114, FUN_00799080, (OwnerDraw::DialogControl *)&control);
+		SimpleWonlineDialogControl control;
+		Run_Dialog_Control(0x114, FUN_00799080, &control);
 		FUN_0072CA10();
 		return Session.WOLWelcomeChoice != 0;
 	}
@@ -11359,8 +11338,8 @@ void FUN_007A2970(void)
 	char busy = g_ConnectionLost;
 	DAT_00B77DC1 = 0;
 	if (!busy && FUN_00779940() && FUN_0079C520(&DAT_00B76AC4)) {
-		FUN_007F7624_Class control;
-		Run_Dialog_Control(0x122, FUN_007A29E0, (OwnerDraw::DialogControl *)&control);
+		SimpleWonlineDialogControl control;
+		Run_Dialog_Control(0x122, FUN_007A29E0, &control);
 	}
 }
 
@@ -11923,7 +11902,7 @@ long __stdcall FUN_007A4C10(void * sink, long result, Update * updates)
 		i++;
 		swprintf(status, StringTable::LoadString("TXT_DOWNLOADING_X_OF_Y", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x1596), i, count);
 		WideWstring text(status);
-		FUN_007F7624_Class control;
+		SimpleWonlineDialogControl control;
 		HWND dialog = UI::BeginDialog(0xD3, WOL_Download_Dialog_Proc, 0);
 		HWND title = GetDlgItem(dialog, 0x5C7);
 		SendMessage(title, 0x4B2, 0, (LPARAM)text.text());
@@ -14090,9 +14069,11 @@ HRESULT CDownloadEventSink::OnQueryResume(void)
 extern bool DAT_00AC11C2;
 extern int DAT_007EEF30, DAT_007EEF34, DAT_007EEF38, DAT_007EEF44;
 extern wchar_t DAT_0084B224[], DAT_0084B94C[], DAT_0084B9B0[];
+extern char DAT_0084AD30[];
+extern char DAT_0084AD00[];
+extern char DAT_0084ACE0[];
 void __fastcall FUN_005E74E0(HWND window);
 wchar_t *__fastcall FUN_0078F200(wchar_t const *name);
-#include "tiprequest.h"
 int __fastcall FUN_004E3830(int id);
 wchar_t const *__fastcall FUN_004E38A0(int side);
 void __fastcall FUN_004E3B90(HWND dialog);
@@ -15317,9 +15298,6 @@ BOOL CALLBACK WOL_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 	return FALSE;
 }
 
-extern char DAT_0084AD30[];
-extern char DAT_0084AD00[];
-extern char DAT_0084ACE0[];
 void FUN_0072CF40(void);
 int __fastcall FUN_005E9240(NodeNameType *node);
 void FUN_005E2FA0(void);

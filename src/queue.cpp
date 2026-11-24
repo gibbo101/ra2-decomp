@@ -31,6 +31,7 @@
 #include "conquer.h"
 #include "crc.h"
 #include "dbgprint.h"
+#include "debugpage.h"
 #include "dsurface.h"
 #include "empulse.h"
 #include "factory.h"
@@ -89,6 +90,7 @@
 #include "warhead.h"
 #include "waypoint.h"
 #include "weapon.h"
+#include "windlg.h"
 #include "winstub.h"
 #include "wolapi/wolapi.h"
 #include "wsproto.h"
@@ -486,7 +488,6 @@ enum RetcodeType {
 
 void __fastcall Send_FrameSync(ConnManClass *net, int cmd_count);
 
-#include "debugpage.h"
 DebugPage * __fastcall FUN_005BC450(int index);
 void __cdecl FUN_005BD1F0(DebugPage * page, char const * format, ...);
 extern int DAT_00B04874;
@@ -920,6 +921,8 @@ extern int SentFrameSyncCount;
 
 int __fastcall Send_Packets(ConnManClass *net, char *multi_packet_buf, int multi_packet_max, int max_ahead, int my_sent);
 int __fastcall Process_Receive_Packet(ConnManClass *net, char *multi_packet_buf, int id, int packetlen, FrameSyncStruct *their, BasicTimerClass<SystemTimerClass> *timer);
+static int Breakup_Receive_Packet(void * buf, int bufsize);
+extern unsigned long DAT_00AC5210[8];
 RetcodeType __fastcall Process_Serial_Packet(char *multi_packet_buf, int first_time);
 
 // FUNCTION: GAMEMD 0x00648350
@@ -3455,8 +3458,6 @@ struct PacketTiming {
 
 int __fastcall FUN_0064BDD0(void * buf, int bufsize);
 static int Extract_Uncompressed_Events(void * buf, int bufsize);
-static int Breakup_Receive_Packet(void * buf, int bufsize);
-extern unsigned long DAT_00AC5210[8];
 
 // FUNCTION: GAMEMD 0x0064A0C0
 int __fastcall Process_Receive_Packet(ConnManClass * net, char * multi_packet_buf, int id, int packetlen,
@@ -3795,7 +3796,6 @@ int __fastcall Add_Compressed_Events(void * buf, int bufsize, int frame_delay, i
 }
 
 #include "_surface.h"
-#include "windlg.h"
 #include "win.h"
 
 extern int DAT_00B04468;

@@ -316,8 +316,6 @@ static inline Coord Ballistic_Physics(TVelocity3D<double> & position, TVelocity3
 	return(result);
 }
 
-static inline int Distance_To_Target(Coord const &one, Coord const &two) { return Coord(one - two).Length(); }
-
 static inline void Set_Horizontal_Velocity(TVelocity3D<double> & velocity,
 		double const & x, double const & y)
 {
@@ -455,7 +453,7 @@ void BulletClass::AI(void)
 			forced = true;
 			impact = IMPACT_NORMAL;
 		}
-		int delta = Distance_To_Target(old_coord, target_coord) - Distance_To_Target(coord, target_coord);
+		int delta = Coord_Dist(old_coord, target_coord) - Coord_Dist(coord, target_coord);
 		if (!IsLaunching) {
 			if (ClosureSamples < _limit) {
 				ClosureSamples++;
@@ -625,7 +623,7 @@ void BulletClass::AI(void)
 						Coord target_coord = TarCom->As_Coord();
 						int midpoint_height = (midpoint.Z + target_coord.Z) / 2;
 						midpoint.Z = midpoint_height;
-						int target_distance = Coord_Dist(midpoint, target_coord);
+						int target_distance = midpoint.Distance_To(target_coord);
 						if (collided) {
 							target_distance /= 3;
 						}
@@ -876,8 +874,7 @@ bool BulletClass::Is_Forced_To_Explode(Coord & coord) const
 
 static inline int Coord_Dist(Coord const & a, Coord const & b)
 {
-	Coord c = a - b;
-	return(c.Length());
+	return(Coord(a - b).Length());
 }
 
 // FUNCTION: GAMEMD 0x00468D80

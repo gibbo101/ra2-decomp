@@ -18,8 +18,6 @@ Verdicts:
 | 0x0056A080 | MapClass::Repair_All_High_Bridges | src/map.cpp | unread `bool valid = Is_Valid(cell);` | FORCING, 73.1% (1091/1081) |
 | 0x00585930 | MapClass::Mark_Fill_Area | src/map.cpp | unread `legal`, `legal2 = In_Radar(...)` | FORCING, 70.2% (1062/969) |
 | 0x005A3AE0 | MapGeneratorClass::Generate_Vegetation | src/mapgen.cpp | unread `CellData & data = Get_Cell_Data(cell);` | FORCING, 91.3% (1953/1951) |
-| 0x00626DA0 | FUN_00626DA0 | src/palette.cpp | unread `SchemeLibrary * library = Library();` (the RA2 1.001 reconstruction has the same local) | FORCING, 91.6% (590/592) as `Library();` |
 | 0x00743270 | UnitClass::Read_INI | src/unit.cpp | dead `double fs` used as a conversion vehicle | FORCING, 99.4% as `(double)strength * ...`, 77.3% as `strength * ...` |
-| 0x0077D4C0 | FUN_0077D4C0 | src/wonline.cpp | unread `int count = g_UserList.length();` | SIDE-EFFECT: 11 functions, from 13.6% to 76.1% (FUN_00781480, FUN_007A8DA0, FUN_007A8ED0, FUN_007A8FC0, FUN_007A9110, FUN_007A9200, FUN_007A9550, FUN_007AAFB0, FUN_007AB0A0, FUN_007AB170, FUN_007AB260) |
 
-FORCING 7, SIDE-EFFECT 1.
+FORCING 6, SIDE-EFFECT 0.
