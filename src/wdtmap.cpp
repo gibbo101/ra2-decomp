@@ -19,6 +19,7 @@
 #include "ccfile.h"
 #include "_surface.h"
 #include "gscreen.h"
+#include "vcursor.h"
 #include "wdtnet.h"
 
 using namespace WorldDominationTour;
@@ -468,7 +469,7 @@ typedef VectorCursor<Rect, RECT_LIST> RECT_ITER;
 
 inline RECT_ITER Rect_Cursor(RECT_LIST & list)
 {
-	return RECT_ITER(list);
+	return(Cursor_Of(list));
 }
 
 inline void Rewind(RECT_ITER & it, RECT_LIST & list)

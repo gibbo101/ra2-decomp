@@ -1061,6 +1061,7 @@ address,name,result,size,source,symbol
 0x00429760,_$E115,MATCH,26,src/astar.cpp,_$E115
 0x00429780,Follow_Path,MATCH,167,src/astar.cpp,?Follow_Path@@YI?AVCell@@ABV1@HPBW4FacingType@@@Z
 0x00429830,AStarClass::Get_Movement_Cost,MATCH,607,src/astar.cpp,?Get_Movement_Cost@AStarClass@@AAENPAPAVCellClass@@0_NW4MoveType@@PAVFootClass@@@Z
+0x00429A90,AStarClass::Find_Path_Regular,MATCH,2509,src/astar.cpp,?Find_Path_Regular@AStarClass@@AAEPAUPathStruct@@ABVCell@@0PAVFootClass@@PAW4FacingType@@H_N@Z
 0x0042A460,AStarClass::Create_Node,MATCH,327,src/astar.cpp,?Create_Node@AStarClass@@AAEPAURegularOpenNode@1@PAU21@PAPAVCellClass@@ABVCell@@M@Z
 0x0042A5B0,AStarClass::Clear,MATCH,222,src/astar.cpp,?Clear@AStarClass@@QAEXXZ
 0x0042A690,AStarClass::Is_Visited,MATCH,50,src/astar.cpp,?Is_Visited@AStarClass@@AAE_NH_NH@Z
@@ -2527,6 +2528,7 @@ address,name,result,size,source,symbol
 0x00485390,CellClass::Get_Vein_Frame,MATCH,199,src/cell.cpp,?Get_Vein_Frame@CellClass@@QBEHXZ
 0x00485460,CellClass::Can_Place_Veins,MATCH,296,src/cell.cpp,?Can_Place_Veins@CellClass@@QAE_NXZ
 0x00485590,CellClass::Redraw_Veins,MATCH,1372,src/cell.cpp,?Redraw_Veins@CellClass@@QAEXXZ
+0x00485AF0,CellClass::Place_Veins,MATCH,2191,src/cell.cpp,?Place_Veins@CellClass@@QAEXXZ
 0x00486380,CellClass::Is_Tile_Clear,MATCH,20,src/cell.cpp,?Is_Tile_Clear@CellClass@@QBE_NXZ
 0x004863A0,CellClass::Is_Tile_Ramp,MATCH,43,src/cell.cpp,?Is_Tile_Ramp@CellClass@@QBE_NXZ
 0x004863D0,CellClass::Is_Tile_Cliff,MATCH,477,src/cell.cpp,?Is_Tile_Cliff@CellClass@@QBE_NXZ
@@ -4419,6 +4421,7 @@ address,name,result,size,source,symbol
 0x004CE5A0,FlyLocomotionClass::Rotation_AI,MATCH,210,src/fly.cpp,?Rotation_AI@FlyLocomotionClass@@QAEXXZ
 0x004CE680,FlyLocomotionClass::Process_Take_Off,MATCH,438,src/fly.cpp,?Process_Take_Off@FlyLocomotionClass@@QAE_NXZ
 0x004CE840,FlyLocomotionClass::Process_Landing,MATCH,1898,src/fly.cpp,?Process_Landing@FlyLocomotionClass@@QAE_NXZ
+0x004CEFB0,FlyLocomotionClass::Nearing_Target,MATCH,1628,src/fly.cpp,?Nearing_Target@FlyLocomotionClass@@QAEH_NUCoordStruct@@@Z
 0x004CF610,FlyLocomotionClass::Draw_Matrix,MATCH,530,src/fly.cpp,?Draw_Matrix@FlyLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z
 0x004CF830,FlyLocomotionClass::Draw_Point,MATCH,262,src/fly.cpp,?Draw_Point@FlyLocomotionClass@@UAG?AUPoint2DStruct@@XZ
 0x004CF940,FlyLocomotionClass::Shadow_Point,MATCH,16,src/fly.cpp,?Shadow_Point@FlyLocomotionClass@@UAG?AUPoint2DStruct@@XZ
@@ -6176,6 +6179,7 @@ address,name,result,size,source,symbol
 0x00513D20,HoverLocomotionClass::Gravity_AI,MATCH,529,src/hover.cpp,?Gravity_AI@HoverLocomotionClass@@AAEXXZ
 0x00513F40,HoverLocomotionClass::Draw_Matrix,MATCH,851,src/hover.cpp,?Draw_Matrix@HoverLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z
 0x005142A0,HoverLocomotionClass::Shadow_Matrix,MATCH,103,src/hover.cpp,?Shadow_Matrix@HoverLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z
+0x00514310,HoverLocomotionClass::Process,MATCH,2321,src/hover.cpp,?Process@HoverLocomotionClass@@UAGEXZ
 0x00514C30,HoverLocomotionClass::Is_Moving,MATCH,75,src/hover.cpp,?Is_Moving@HoverLocomotionClass@@UAGEXZ
 0x00514C80,HoverLocomotionClass::Is_Moving_Now,MATCH,46,src/hover.cpp,?Is_Moving_Now@HoverLocomotionClass@@UAGEXZ
 0x00514CB0,HoverLocomotionClass::Destination,MATCH,92,src/hover.cpp,?Destination@HoverLocomotionClass@@UAG?AUCoordStruct@@XZ
@@ -6995,6 +6999,7 @@ address,name,result,size,source,symbol
 0x0053CB90,IonBlastClass::~IonBlastClass,MATCH,76,src/ionblast.cpp,??1IonBlastClass@@QAE@XZ
 0x0053CBE0,IonBlastClass::AI,MATCH,1837,src/ionblast.cpp,?AI@IonBlastClass@@QAEXXZ
 0x0053D310,IonBlastClass::Update_All,MATCH,32,src/ionblast.cpp,?Update_All@IonBlastClass@@SIXXZ
+0x0053D330,IonBlastClass::One_Time,MATCH,541,src/ionblast.cpp,?One_Time@IonBlastClass@@SIXXZ
 0x0053D550,IonBlastClass::Clear_All,MATCH,37,src/ionblast.cpp,?Clear_All@IonBlastClass@@SIXXZ
 0x0053D850,IonBlastClass::Draw_All,MATCH,136,src/ionblast.cpp,?Draw_All@IonBlastClass@@SIXXZ
 0x0053D8E0,Spiral_Index_To_Point,MATCH,113,src/ionblast.cpp,?Spiral_Index_To_Point@@YI?AVPoint2D@@H@Z
@@ -7990,6 +7995,7 @@ address,name,result,size,source,symbol
 0x0056D430,MapClass::Get_Cell_Subzone_Index,MATCH,35,src/map.cpp,?Get_Cell_Subzone_Index@MapClass@@QAEHABVCell@@@Z
 0x0056D460,MapClass::ResetZones,MATCH,315,src/map.cpp,?ResetZones@MapClass@@QAEXABVCell@@@Z
 0x0056D5A0,MapClass::Update_Cell_Zone_Constructively,MATCH,306,src/map.cpp,?Update_Cell_Zone_Constructively@MapClass@@QAEXABVCell@@@Z
+0x0056D6E0,MapClass::Compute_Zone_Connections,MATCH,804,src/map.cpp,?Compute_Zone_Connections@MapClass@@QAEXXZ
 0x0056DA10,MapClass::Zone_Connection_Index,MATCH,196,src/map.cpp,?Zone_Connection_Index@MapClass@@QAEHABVCell@@HH@Z
 0x0056DAE0,MapClass::Unregister_Subzone_Connections,MATCH,139,src/map.cpp,?Unregister_Subzone_Connections@MapClass@@QAE_NABVCell@@@Z
 0x0056DB70,MapClass::Register_Subzone_Connections,MATCH,172,src/map.cpp,?Register_Subzone_Connections@MapClass@@QAE_NABVCell@@@Z
@@ -8112,6 +8118,7 @@ address,name,result,size,source,symbol
 0x00583C60,MapClass::Find_Water_Cells_Around,MATCH,974,src/map.cpp,?Find_Water_Cells_Around@MapClass@@QAEXPBVCell@@HHW4MZoneType@@HPAV?$DynamicVectorClass@VCell@@@@HH@Z
 0x00584030,MapClass::Is_Area_Shore_Or_Water,MATCH,144,src/map.cpp,?Is_Area_Shore_Or_Water@MapClass@@QAE_NABV?$TRect@H@@@Z
 0x005840C0,MapClass::Build_Reachable_Subzones,MATCH,1163,src/map.cpp,?Build_Reachable_Subzones@MapClass@@QAE_NPAVCellClass@@HAAV?$DynamicVectorClass@G@@PBVFootClass@@@Z
+0x00584550,MapClass::Update_Cell_Subzones,MATCH,2290,src/map.cpp,?Update_Cell_Subzones@MapClass@@QAEXABVCell@@@Z
 0x00584E50,MapClass::Unregister_Subzone_Connection,MATCH,863,src/map.cpp,?Unregister_Subzone_Connection@MapClass@@QAEXPAUZoneConnectionClass@@@Z
 0x005851B0,MapClass::Register_Subzone_Connection,MATCH,993,src/map.cpp,?Register_Subzone_Connection@MapClass@@QAEXPAUZoneConnectionClass@@@Z
 0x005855A0,MapClass::Initialize_Wall_Ownership,MATCH,270,src/map.cpp,?Initialize_Wall_Ownership@MapClass@@QAEXXZ
@@ -8663,6 +8670,7 @@ address,name,result,size,source,symbol
 0x005B0120,MechLocomotionClass::Stop_Moving,MATCH,78,src/mech.cpp,?Stop_Moving@MechLocomotionClass@@UAGXXZ
 0x005B0170,MechLocomotionClass::Do_Turn,MATCH,34,src/mech.cpp,?Do_Turn@MechLocomotionClass@@UAGXUDirStruct@@@Z
 0x005B01A0,MechLocomotionClass::Force_Immediate_Destination,MATCH,32,src/mech.cpp,?Force_Immediate_Destination@MechLocomotionClass@@UAGXUCoordStruct@@@Z
+0x005B01C0,MechLocomotionClass::Movement_AI,MATCH,5602,src/mech.cpp,?Movement_AI@MechLocomotionClass@@AAEX_N@Z
 0x005B17B0,MechLocomotionClass::Mark_Head_To,MATCH,425,src/mech.cpp,?Mark_Head_To@MechLocomotionClass@@AAE_NABVCoord@@@Z
 0x005B1960,MechLocomotionClass::GetClassID,MATCH,56,src/mech.cpp,?GetClassID@MechLocomotionClass@@UAGJPAU_GUID@@@Z
 0x005B19A0,MechLocomotionClass::Load,MATCH,41,src/mech.cpp,?Load@MechLocomotionClass@@UAGJPAUIStream@@@Z
@@ -10793,9 +10801,10 @@ address,name,result,size,source,symbol
 0x006261B0,PaletteClass::Partial_Adjust,MATCH,75,src/palette.cpp,?Partial_Adjust@PaletteClass@@QAEXHABV1@PAD@Z
 0x00626200,PaletteClass::Closest_Color,MATCH,69,src/palette.cpp,?Closest_Color@PaletteClass@@QBEHABVRGBClass@@@Z
 0x00626250,SchemeNode::SchemeNode,MATCH,54,src/palette.cpp,??0SchemeNode@@QAE@PBDPAV?$DynamicVectorClass@PAVColorScheme@@@@@Z
-0x00626290,SchemeNode::Release,MATCH,93,src/palette.cpp,?Release@SchemeNode@@QAEXXZ
+0x00626290,SchemeNode::~SchemeNode,MATCH,93,src/palette.cpp,??1SchemeNode@@QAE@XZ
 0x006262F0,SchemeNode::Replace,MATCH,119,src/palette.cpp,?Replace@SchemeNode@@QAEXPAV?$DynamicVectorClass@PAVColorScheme@@@@@Z
-0x00626370,SchemeNode::~SchemeNode,MATCH,93,src/palette.cpp,??1SchemeNode@@QAE@XZ
+0x00626370,SchemeNode::Release,MATCH,93,src/palette.cpp,?Release@SchemeNode@@QAEXXZ
+0x00628170,?Next@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAVHashString@@PAUHashIterator@@@Z,MATCH,128,src/palette.cpp,?Next@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAVHashString@@PAUHashIterator@@@Z
 0x00628110,?Find@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAPAVSchemeNode@@ABVHashString@@@Z,MATCH,96,src/palette.cpp,?Find@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAPAVSchemeNode@@ABVHashString@@@Z
 0x006263D0,ColorScheme::GeneratePalette,MATCH,650,src/palette.cpp,?GeneratePalette@ColorScheme@@SIPAV?$DynamicVectorClass@PAVColorScheme@@@@PBD@Z
 0x00626660,SchemeHash,MATCH,40,src/palette.cpp,?SchemeHash@@YIHPBD@Z
@@ -10827,7 +10836,6 @@ address,name,result,size,source,symbol
 0x00627F90,?Resize@?$DynamicVectorClass@PAVColorScheme@@@@UAE_NHPBQAVColorScheme@@@Z,MATCH,176,src/palette.cpp,?Resize@?$DynamicVectorClass@PAVColorScheme@@@@UAE_NHPBQAVColorScheme@@@Z
 0x00628040,?ID@?$DynamicVectorClass@PAVColorScheme@@@@UAEHABQAVColorScheme@@@Z,MATCH,38,src/palette.cpp,?ID@?$DynamicVectorClass@PAVColorScheme@@@@UAEHABQAVColorScheme@@@Z
 0x00628070,??0?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAE@HHP6IHABVHashString@@@Z@Z,MATCH,157,src/palette.cpp,??0?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAE@HHP6IHABVHashString@@@Z@Z
-0x00628170,?Next@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAVHashString@@PAUHashIterator@@@Z,MATCH,128,src/palette.cpp,?Next@?$HashTableClass@VHashString@@PAVSchemeNode@@@@QAEPAVHashString@@PAUHashIterator@@@Z
 0x006281F0,??8?$VectorClass@VHSVClass@@@@UBE_NABV0@@Z,MATCH,77,src/palette.cpp,??8?$VectorClass@VHSVClass@@@@UBE_NABV0@@Z
 0x00628240,??0?$DynamicVectorClass@VHSVClass@@@@QAE@IPBVHSVClass@@@Z,MATCH,148,src/palette.cpp,??0?$DynamicVectorClass@VHSVClass@@@@QAE@IPBVHSVClass@@@Z
 0x006282E0,?Resize@?$VectorClass@VHSVClass@@@@UAE_NHPBVHSVClass@@@Z,MATCH,242,src/palette.cpp,?Resize@?$VectorClass@VHSVClass@@@@UAE_NHPBVHSVClass@@@Z
@@ -10973,6 +10981,7 @@ address,name,result,size,source,symbol
 0x0062E5D0,ParticleSystemClass::Delete_Particle,MATCH,119,src/partsys.cpp,?Delete_Particle@ParticleSystemClass@@QAE_NH@Z
 0x0062E650,ParticleSystemClass::Clear_System,MATCH,117,src/partsys.cpp,?Clear_System@ParticleSystemClass@@QAEXXZ
 0x0062E6D0,ParticleSystemClass::Gas_AI,MATCH,366,src/partsys.cpp,?Gas_AI@ParticleSystemClass@@AAEXXZ
+0x0062ED40,ParticleSystemClass::Smoke_AI,MATCH,1255,src/partsys.cpp,?Smoke_AI@ParticleSystemClass@@AAEXXZ
 0x0062F230,ParticleSystemClass::Railgun_AI,MATCH,1904,src/partsys.cpp,?Railgun_AI@ParticleSystemClass@@AAEXXZ
 0x0062F9A0,ParticleSystemClass::Fire_AI,MATCH,951,src/partsys.cpp,?Fire_AI@ParticleSystemClass@@AAEXXZ
 0x0062FD60,ParticleSystemClass::AI,MATCH,248,src/partsys.cpp,?AI@ParticleSystemClass@@UAEXXZ
@@ -13427,6 +13436,7 @@ address,name,result,size,source,symbol
 0x006B9450,SurfaceCacheClass::SurfaceCacheClass,MATCH,137,src/srfcache.cpp,??0SurfaceCacheClass@@QAE@XZ
 0x006B94E0,SurfaceCache_Wstring_Hash,MATCH,68,src/srfcache.cpp,?SurfaceCache_Wstring_Hash@@YIIAAVWstring@@@Z
 0x006B9530,SurfaceCacheClass::~SurfaceCacheClass,MATCH,526,src/srfcache.cpp,??1SurfaceCacheClass@@QAE@XZ
+0x006B9740,SurfaceCacheClass::CacheBMP,MATCH,1460,src/srfcache.cpp,?CacheBMP@SurfaceCacheClass@@QAE_NPBDPAXHH@Z
 0x006B9D00,SurfaceCacheClass::CachePCX,MATCH,1046,src/srfcache.cpp,?CachePCX@SurfaceCacheClass@@QAE_NPBDHH@Z
 0x006BA120,SurfaceCacheClass::CachePalettedPCX,MATCH,17,src/srfcache.cpp,?CachePalettedPCX@SurfaceCacheClass@@QAE_NPBD@Z
 0x006BA140,SurfaceCacheClass::GetSurface,MATCH,213,src/srfcache.cpp,?GetSurface@SurfaceCacheClass@@QAEPAVSurface@@PBDPAX@Z
@@ -14107,6 +14117,7 @@ address,name,result,size,source,symbol
 0x006CC2A0,SuperClass::Is_Powered,MATCH,10,src/super.cpp,?Is_Powered@SuperClass@@QBE_NXZ
 0x006CC2B0,SuperClass::NameReadiness,MATCH,163,src/super.cpp,?NameReadiness@SuperClass@@QBEPBGXZ
 0x006CC360,SuperClass::CanFire,MATCH,36,src/super.cpp,?CanFire@SuperClass@@QBEDXZ
+0x006CC390,SuperClass::Launch,MATCH,6884,src/super.cpp,?Launch@SuperClass@@QAEXABVCell@@_N@Z
 0x006CDE80,FUN_006CDE80,MATCH,3,src/super.cpp,?FUN_006CDE80@@YGXHH@Z
 0x006CDE90,SuperClass::ShouldDrawProgress,MATCH,27,src/super.cpp,?ShouldDrawProgress@SuperClass@@QBE_NXZ
 0x006CDEB0,SuperClass::GetClassID,MATCH,56,src/super.cpp,?GetClassID@SuperClass@@UAGJPAU_GUID@@@Z
@@ -14317,6 +14328,7 @@ address,name,result,size,source,symbol
 0x006D6D10,Tactical::Draw_Overlays,MATCH,1232,src/tactical.cpp,?Draw_Overlays@Tactical@@QAEXABV?$TRect@H@@@Z
 0x006D71E0,Tactical::Draw_Shroud,MATCH,894,src/tactical.cpp,?Draw_Shroud@Tactical@@QAEXABV?$TRect@H@@@Z
 0x006D7560,Tactical::Draw_Tiles,MATCH,730,src/tactical.cpp,?Draw_Tiles@Tactical@@QAEXABV?$TRect@H@@0@Z
+0x006D7840,Tactical::Draw_Sparkles,MATCH,954,src/tactical.cpp,?Draw_Sparkles@Tactical@@QAEXABV?$TRect@H@@0@Z
 0x006D7C00,Tactical::Draw_Tile_Shadows,MATCH,785,src/tactical.cpp,?Draw_Tile_Shadows@Tactical@@QAEXABV?$TRect@H@@0@Z
 0x006D8260,Tactical::Draw_Tile_Shadows,MATCH,619,src/tactical.cpp,?Draw_Tile_Shadows@Tactical@@QAEXHABV?$TRect@H@@@Z
 0x006D84D0,Tactical::Clamp_Pixel_To_Tactical,MATCH,89,src/tactical.cpp,?Clamp_Pixel_To_Tactical@Tactical@@QAE?AVPoint2D@@ABV2@@Z
@@ -15277,6 +15289,7 @@ address,name,result,size,source,symbol
 0x00710A90,_$E35,MATCH,18,src/techtype.cpp,_$E35
 0x00710AB0,_$E38,MATCH,26,src/techtype.cpp,_$E38
 0x00710AD0,_$E41,MATCH,23,src/techtype.cpp,_$E41
+0x00710AF0,TechnoTypeClass::TechnoTypeClass,MATCH,3406,src/techtype.cpp,??0TechnoTypeClass@@QAE@PBDW4SpeedType@@@Z
 0x00711840,TechnoTypeClass::TechnoTypeClass,MATCH,663,src/techtype.cpp,??0TechnoTypeClass@@QAE@ABVNoInitClass@@@Z
 0x00711AE0,TechnoTypeClass::~TechnoTypeClass,MATCH,916,src/techtype.cpp,??1TechnoTypeClass@@UAE@XZ
 0x00711E80,TechnoTypeClass::CanUseWaypoint,MATCH,3,src/techtype.cpp,?CanUseWaypoint@TechnoTypeClass@@UBE_NXZ
@@ -16524,6 +16537,7 @@ address,name,result,size,source,symbol
 0x007483B0,UnVQ2_4x4_Table,MATCH,916,src/unvqtblc.cpp,?UnVQ2_4x4_Table@@YAXPAE00KKK@Z
 0x00748750,UnVQ2_4x2_Table,MATCH,922,src/unvqtblc.cpp,?UnVQ2_4x2_Table@@YAXPAE00KKK@Z
 0x00748AF0,UnVQ1_4x4_Table,MATCH,312,src/unvqtblc.cpp,?UnVQ1_4x4_Table@@YAXPAE00KKK@Z
+0x00748C30,UnVQ1_4x2_Table,MATCH,923,src/unvqtblc.cpp,?UnVQ1_4x2_Table@@YAXPAE00KKK@Z
 0x00748FD0,UnitTrackerClass::UnitTrackerClass,MATCH,49,src/utracker.cpp,??0UnitTrackerClass@@QAE@XZ
 0x00749010,UnitTrackerClass::~UnitTrackerClass,MATCH,1,src/utracker.cpp,??1UnitTrackerClass@@QAE@XZ
 0x00749020,UnitTrackerClass::Increment_Unit_Total,MATCH,20,src/utracker.cpp,?Increment_Unit_Total@UnitTrackerClass@@QAEXH@Z
@@ -16882,6 +16896,7 @@ address,name,result,size,source,symbol
 0x00754BD0,_$E73,MATCH,1,src/voxel.cpp,_$E73
 0x00754C00,Set_Voxel_Light_Angle,MATCH,167,src/voxel.cpp,?Set_Voxel_Light_Angle@@YIXM@Z
 0x00754BE0,Get_Isometric_View_Matrix,MATCH,21,src/voxel.cpp,?Get_Isometric_View_Matrix@@YI?AVMatrix3D@@XZ
+0x00754CB0,Init_Voxel_Matrices,MATCH,3290,src/voxel.cpp,?Init_Voxel_Matrices@@YIXXZ
 0x00755990,Get_Screen_Slope_Matrix,MATCH,26,src/voxel.cpp,?Get_Screen_Slope_Matrix@@YIXHAAVMatrix3D@@@Z
 0x007559B0,Get_Slope_Matrix,MATCH,28,src/voxel.cpp,?Get_Slope_Matrix@@YI?AVMatrix3D@@H@Z
 0x007559D0,Get_Screen_Slope_Transition_Matrix,MATCH,111,src/voxel.cpp,?Get_Screen_Slope_Transition_Matrix@@YIXHHAAVMatrix3D@@N@Z
@@ -17623,6 +17638,7 @@ address,name,result,size,source,symbol
 0x0076D180,WorldDominationTour::Selection::Handle_Click,MATCH,532,src/wdtsel.cpp,?Handle_Click@Selection@WorldDominationTour@@QAEXABVPoint2D@@AA_N@Z
 0x0076D3A0,WorldDominationTour::Selection::Select_Territory_At,MATCH,193,src/wdtsel.cpp,?Select_Territory_At@Selection@WorldDominationTour@@QAE_NABVPoint2D@@@Z
 0x0076D470,WorldDominationTour::Selection::Update_Hovered_Territory,MATCH,91,src/wdtsel.cpp,?Update_Hovered_Territory@Selection@WorldDominationTour@@QAEXABVPoint2D@@@Z
+0x0076D4D0,WorldDominationTour::Selection::Do_Target_Anim,MATCH,1531,src/wdtsel.cpp,?Do_Target_Anim@Selection@WorldDominationTour@@QAEXABV?$rc_ptr@VState@WorldDominationTour@@@@_N1@Z
 0x0076DAD0,WorldDominationTour::Selection::Select_Territory,MATCH,1012,src/wdtsel.cpp,?Select_Territory@Selection@WorldDominationTour@@QAE_NABV?$rc_ptr@VTerritory@WorldDominationTour@@@@@Z
 0x0076DED0,WorldDominationTour::Selection::Remove_Target_Anims,MATCH,115,src/wdtsel.cpp,?Remove_Target_Anims@Selection@WorldDominationTour@@QAEXXZ
 0x0076DF50,WorldDominationTour::Selection::Remove_Target_Anims2,MATCH,115,src/wdtsel.cpp,?Remove_Target_Anims2@Selection@WorldDominationTour@@QAEXXZ
@@ -18143,8 +18159,9 @@ address,name,result,size,source,symbol
 0x0077D190,_$E307,MATCH,1,src/wonline.cpp,_$E307
 0x0077D1A0,_$E314,MATCH,22,src/wonline.cpp,_$E314
 0x0077D1C0,_$E312,MATCH,10,src/wonline.cpp,_$E312
-0x0077D1D0,FUN_007F7624_Class::FUN_007F7624_Class,MATCH,18,src/wonline.cpp,??0FUN_007F7624_Class@@QAE@XZ
-0x0077D1F0,FUN_007F7624_Class::~FUN_007F7624_Class,MATCH,11,src/wonline.cpp,??1FUN_007F7624_Class@@UAE@XZ
+0x0077D1D0,SimpleWonlineDialogControl::SimpleWonlineDialogControl,MATCH,18,src/wonline.cpp,??0SimpleWonlineDialogControl@@QAE@XZ
+0x0077D1F0,SimpleWonlineDialogControl::~SimpleWonlineDialogControl,MATCH,11,src/wonline.cpp,??1SimpleWonlineDialogControl@@UAE@XZ
+0x0077D200,SimpleWonlineDialogControl::F4,MATCH,5,src/wonline.cpp,?F4@SimpleWonlineDialogControl@@UAE_NXZ
 0x0077D210,FUN_0077D210,MATCH,34,src/wonline.cpp,?FUN_0077D210@@YIXPAD@Z
 0x0077D240,Player_Name_To_Index,MATCH,89,src/wonline.cpp,?Player_Name_To_Index@@YIHABVWstring@@@Z
 0x0077D2A0,FUN_0077D2A0,MATCH,63,src/wonline.cpp,?FUN_0077D2A0@@YI_NPAUUser@@@Z
@@ -18232,7 +18249,6 @@ address,name,result,size,source,symbol
 0x00786080,Shutdown_Chat,MATCH,496,src/wonline.cpp,?Shutdown_Chat@@YIXXZ
 0x00786270,Get_WDT_State_Silent,MATCH,278,src/wonline.cpp,?Get_WDT_State_Silent@@YI_NXZ
 0x00786390,FUN_00786390,MATCH,300,src/wonline.cpp,?FUN_00786390@@YIHXZ
-0x0077D200,SimpleWonlineDialogControl::F4,MATCH,5,src/wonline.cpp,?F4@SimpleWonlineDialogControl@@UAE_NXZ
 0x007864C0,FUN_007864C0,MATCH,2250,src/wonline.cpp,?FUN_007864C0@@YI_NPAUServer@@@Z
 0x00786D90,FUN_00786D90,MATCH,48,src/wonline.cpp,?FUN_00786D90@@YI_NXZ
 0x00786DC0,FUN_00786DC0,MATCH,164,src/wonline.cpp,?FUN_00786DC0@@YI_NAAVWstring@@@Z

@@ -200,6 +200,11 @@ boolean ShipLocomotionClass::Is_Ok_To_End(void)
 	return(false);
 }
 
+static inline void Copy_Ramp_Matrix(Matrix3D & output, Matrix3D const & input)
+{
+	memcpy(&output, &input, sizeof(output));
+}
+
 // FUNCTION: GAMEMD 0x0069F0C0
 Matrix3D ShipLocomotionClass::Get_Slope_Matrix(void) const
 {
@@ -207,9 +212,9 @@ Matrix3D ShipLocomotionClass::Get_Slope_Matrix(void) const
 	mtx.Make_Identity();
 
 	if (RampTimer.Progress() < 1.0) {
-		mtx = ::Get_Slope_Transition_Matrix(PreviousRamp, CurrentRamp, Get_Slope_Ratio());
+		Copy_Ramp_Matrix(mtx, ::Get_Slope_Transition_Matrix(PreviousRamp, CurrentRamp, Get_Slope_Ratio()));
 	} else if (CurrentRamp) {
-		mtx = ::Get_Slope_Matrix(CurrentRamp);
+		Copy_Ramp_Matrix(mtx, ::Get_Slope_Matrix(CurrentRamp));
 	}
 
 	return(mtx);

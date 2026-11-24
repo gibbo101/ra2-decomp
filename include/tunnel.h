@@ -50,6 +50,7 @@ class TunnelLocomotionClass : public LocomotionClass
 		void ProcessDugOut(void);
 
 	private:
+		void Finish_Emergence(void);
 
 		enum {
 			STATE_IDLE,

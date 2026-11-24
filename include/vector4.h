@@ -7,7 +7,6 @@
 class Vector4
 {
 	public:
-		Vector4 & operator = (const Vector4 & v) { X = v.X; Y = v.Y; Z = v.Z; W = v.W; return(*this); }
 
 		void Set(float x, float y, float z, float w) { X = x; Y = y; Z = z; W = w; }
 

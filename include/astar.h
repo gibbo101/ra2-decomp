@@ -68,12 +68,12 @@ class AStarClass
 				MovementCost = 0;
 			}
 
-			bool operator==(const RegularOpenNode & other) const { return((double)Score == (double)other.Score); }
-			bool operator!=(const RegularOpenNode & other) const { return((double)Score != (double)other.Score); }
-			bool operator<(const RegularOpenNode & other) const { return((double)Score < (double)other.Score); }
-			bool operator>(const RegularOpenNode & other) const { return((double)Score > (double)other.Score); }
-			bool operator<=(const RegularOpenNode & other) const { return((double)Score <= (double)other.Score); }
-			bool operator>=(const RegularOpenNode & other) const { return((double)Score >= (double)other.Score); }
+			bool operator==(const RegularOpenNode & other) const { double score = Score; return(score == (double)other.Score); }
+			bool operator!=(const RegularOpenNode & other) const { double score = Score; return(score != (double)other.Score); }
+			bool operator<(const RegularOpenNode & other) const { double score = Score; return(score < (double)other.Score); }
+			bool operator>(const RegularOpenNode & other) const { double score = Score; return(score > (double)other.Score); }
+			bool operator<=(const RegularOpenNode & other) const { double score = Score; return(score <= (double)other.Score); }
+			bool operator>=(const RegularOpenNode & other) const { double score = Score; return(score >= (double)other.Score); }
 		};
 
 		struct RegularNodePool {

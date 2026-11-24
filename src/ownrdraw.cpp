@@ -4657,12 +4657,6 @@ bool __fastcall FUN_0060B880(HWND dialog, HWND control)
 namespace Drawing {
 extern int RenderWidth;
 extern int RenderHeight;
-extern unsigned char RedShiftRight;
-extern unsigned char GreenShiftRight;
-extern unsigned char BlueShiftRight;
-extern int RedShiftLeft;
-extern int GreenShiftLeft;
-extern int BlueShiftLeft;
 }
 
 void __fastcall FUN_0060B950(HWND window);
@@ -8330,6 +8324,15 @@ void DrawBeveledBorder(Surface & surf, Rect const & rect, int offset, int color)
 		}
 	}
 }
+}
+
+namespace Drawing {
+extern unsigned char RedShiftRight;
+extern unsigned char GreenShiftRight;
+extern unsigned char BlueShiftRight;
+extern int RedShiftLeft;
+extern int GreenShiftLeft;
+extern int BlueShiftLeft;
 }
 
 // FUNCTION: GAMEMD 0x00620CD0

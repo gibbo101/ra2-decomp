@@ -596,16 +596,7 @@ inline CDTimerClass<T>::operator int(void) const
 template<class T>
 inline int CDTimerClass<T>::operator () (void) const
 {
-	int remain = DelayTime;
-	if (Started != -1) {
-		int value = BASECLASS::Value();
-		if (value < remain) {
-			return(remain - value);
-		} else {
-			return(0);
-		}
-	}
-	return(remain);
+	return(Value());
 }
 
 
@@ -732,7 +723,7 @@ inline ProgressTimerClass<T>::ProgressTimerClass(int set) :
 template<class T>
 inline int ProgressTimerClass<T>::Time_Spent(void) const
 {
-	return(TotalTime - BASECLASS::Value());
+	return(TotalTime - (*this)());
 }
 
 
@@ -746,10 +737,7 @@ inline double ProgressTimerClass<T>::Progress(void) const
 template<class T>
 inline bool ProgressTimerClass<T>::Has_Completed(void) const
 {
-	if (TotalTime == 0) {
-		return(true);
-	}
-	return((double)Time_Spent() / (double)TotalTime == 1.0);
+	return(Progress() == 1.0);
 }
 
 template<class T>
