@@ -8142,6 +8142,7 @@ address,name,result,size,source,symbol
 0x00586E50,MapClass::Clip_To_Map,MATCH,361,src/map.cpp,?Clip_To_Map@MapClass@@QAE?AVCell@@ABV2@@Z
 0x00586FC0,MapClass::Closest_Passable_Cell,MATCH,438,src/map.cpp,?Closest_Passable_Cell@MapClass@@QAE?AVCell@@ABV2@0@Z
 0x00587180,MapClass::Damage_Bridge,MATCH,655,src/map.cpp,?Damage_Bridge@MapClass@@QAE_NABVCell@@@Z
+0x00587410,MapClass::Can_Repair_Bridge,MATCH,2109,src/map.cpp,?Can_Repair_Bridge@MapClass@@QAE_NABVCell@@@Z
 0x00587C50,MapClass::Check_Map_Integrity,MATCH,1097,src/map.cpp,?Check_Map_Integrity@MapClass@@QAE_NXZ
 0x005880A0,MapClass::Firestorm_On_Path,MATCH,1217,src/map.cpp,?Firestorm_On_Path@MapClass@@QAE?AVCoord@@ABV2@0PAVHouseClass@@@Z
 0x00588570,MapClass::Place_Firestorm_Wall,MATCH,478,src/map.cpp,?Place_Firestorm_Wall@MapClass@@QAEXABVCell@@PAVHouseClass@@PAVBuildingTypeClass@@@Z

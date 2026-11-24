@@ -8498,6 +8498,7 @@ address,size,symbol,source,sha256
 0x00586E50,361,?Clip_To_Map@MapClass@@QAE?AVCell@@ABV2@@Z,src/map.cpp,9a6756ba88fc7ea84c2abe059da02f9c5302df98a442b574daf5501d1a2943b4
 0x00586FC0,438,?Closest_Passable_Cell@MapClass@@QAE?AVCell@@ABV2@0@Z,src/map.cpp,ca6ad2054f4e07a2efb5cde784a596346cf5e62f40a231f044cb7f6060d17b11
 0x00587180,655,?Damage_Bridge@MapClass@@QAE_NABVCell@@@Z,src/map.cpp,f4cc9cf5f49aacc8772abde817475c355019427da6000959e31a7505f801d881
+0x00587410,2109,?Can_Repair_Bridge@MapClass@@QAE_NABVCell@@@Z,src/map.cpp,23b69eb1f4f6b940121f7b2e93670a2a3495f3868033f6fc31167e79c47d2e07
 0x00587C50,1097,?Check_Map_Integrity@MapClass@@QAE_NXZ,src/map.cpp,23a68b7156e321d5d41b6576d4b858fc0eeef4025f42be5f48944a9972876a27
 0x005880A0,1217,?Firestorm_On_Path@MapClass@@QAE?AVCoord@@ABV2@0PAVHouseClass@@@Z,src/map.cpp,fe4134155c497a8b8f9cfc63d1f2b43c961b0725821b319a4996b30ba0de78c8
 0x00588570,478,?Place_Firestorm_Wall@MapClass@@QAEXABVCell@@PAVHouseClass@@PAVBuildingTypeClass@@@Z,src/map.cpp,c378597ab351ee8c3b2cada6fd22a09f79e3422e9d184cd8262fa4e24bfe0d3e
