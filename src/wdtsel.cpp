@@ -25,6 +25,7 @@
 #include "geometry.h"
 #include "theme.h"
 #include "vector.h"
+#include "vcursor.h"
 #include "wdtnet.h"
 #include "worlddom.h"
 
@@ -320,6 +321,76 @@ void Selection::Update_Hovered_Territory(Point2D const & point)
 }
 
 WideWstring __fastcall FUN_007B8090(wchar_t const * prefix, WideWstring const & text);
+
+// FUNCTION: GAMEMD 0x0076D4D0
+// WorldDominationTour::Selection::Do_Target_Anim
+void Selection::Do_Target_Anim(rc_ptr<State> const & state, bool show_targets, bool silent)
+{
+	Remove_Target_Anims();
+
+	MS_ANIM_LIST zoom_anims;
+	MS_ANIM_LIST throb_anims;
+
+	for (TERR_ITER it = Cursor_Of(WorldMap->Territories); it; it++) {
+		rc_ptr<Territory> const & territory = it.Cur_Ref();
+		int id = territory->ID;
+		State * previous = CurrentState.operator->();
+		int old_state = previous->Get_Territory_State(id);
+		State * incoming = state.operator->();
+		int new_state = incoming->Get_Territory_State(id);
+
+		if (new_state != old_state) {
+			Check_For_Breakout();
+			it->Set_Owner_State(new_state, this, !Brokeout || silent);
+		}
+
+		if (!show_targets || new_state != 1) {
+			continue;
+		}
+		Point2D target(WorldMap->Origin + it->Target);
+
+		if (ZoomingTarget != NULL) {
+			CCFileClass file(ZoomingTarget->Get_Filename());
+			if (file.Is_Available()) {
+				MSFadeAnim * fade = new MSFadeAnim(ZoomingTarget->Get_Filename(), target.X, target.Y, TargetDrawer, 3, SHAPE_CENTER, &Anims);
+				zoom_anims.Add(fade);
+			}
+		}
+
+		CCFileClass file(ThrobbingTarget->Get_Filename());
+		if (file.Is_Available()) {
+			MSShapeAnim * shape = new MSShapeAnim(ThrobbingTarget->Get_Filename(), target.X, target.Y, TargetDrawer, 5, true, SHAPE_CENTER);
+			shape->Set_Stop_Frame(ThrobbingTargetDividingFrame - 1);
+			shape->Set_Start_Frame(0);
+			shape->Set_Frame(0);
+			it->Set_Target_Anim(shape);
+			throb_anims.Add(shape);
+		}
+	}
+
+	MS_ANIM_ITER zoom_iter(zoom_anims);
+	for (MS_ANIM_ITER throb_iter(throb_anims); throb_iter; throb_iter++) {
+		Check_For_Breakout();
+
+		if (zoom_iter) {
+			if (Brokeout) {
+				MSAnim * anim = zoom_iter.Cur();
+				if (anim != NULL) {
+					delete anim;
+				}
+			} else {
+				Play_SFX("TargetZoom");
+				Add_Animation(zoom_iter.Cur());
+				Wait_For_Anim(zoom_iter.Cur(), 300000);
+			}
+			zoom_iter++;
+		}
+
+		Add_Animation(throb_iter.Cur());
+	}
+
+	CurrentState = state;
+}
 
 // FUNCTION: GAMEMD 0x0076DAD0
 // WorldDominationTour::Selection::Select_Territory

@@ -68,27 +68,6 @@ extern void __fastcall FUN_0053E3C0(HWND);
 extern int DAT_00ABF128;
 extern int DAT_00ABF110;
 extern BOOL CALLBACK FUN_005BC6E0(HWND, UINT, WPARAM, LPARAM);
-extern AudioController DAT_00ABF198;
-extern AudioController * DAT_00ABF224;
-extern int DAT_00ABF220;
-extern int DAT_00ABF228;
-extern int DAT_00ABF22C;
-extern int DAT_00ABF21C;
-extern int DAT_00B1D4B0;
-extern DebugPage * DAT_00ABF17C;
-extern DebugPage * DAT_00ABF180;
-extern DebugPage * DAT_00ABF184;
-extern void __fastcall FUN_005BCC90(DebugPage * page);
-extern void __fastcall FUN_00752480(int index, int a, int b);
-struct AudioStreamer;
-struct AudioDevice;
-extern AudioDevice * AudioGetDevice(void);
-extern AudioStreamer * __fastcall AudioStreamerCreate(AudioDevice * dev, unsigned __int64 buffering);
-extern void __fastcall AudioStreamerDestroy(AudioStreamer * as);
-extern int __fastcall AudioStreamerPlayWAV(AudioStreamer * as, const char * filename, int flag);
-extern void __fastcall AudioStreamerStop(AudioStreamer * as);
-extern void Audio_Stop_All(void);
-extern AudioStreamer * DAT_00ABF114[5];
 
 // SYNTHETIC: GAMEMD 0x005BC140 SYMBOL
 // _$E35
@@ -257,6 +236,28 @@ void FUN_005BC530(void)
 	SetFocus(DAT_00ABF234);
 	ReleaseDC(DAT_00ABF240, dc);
 }
+
+extern AudioController DAT_00ABF198;
+extern AudioController * DAT_00ABF224;
+extern int DAT_00ABF220;
+extern int DAT_00ABF228;
+extern int DAT_00ABF22C;
+extern int DAT_00ABF21C;
+extern int DAT_00B1D4B0;
+extern DebugPage * DAT_00ABF17C;
+extern DebugPage * DAT_00ABF180;
+extern DebugPage * DAT_00ABF184;
+extern void __fastcall FUN_005BCC90(DebugPage * page);
+extern void __fastcall FUN_00752480(int index, int a, int b);
+struct AudioStreamer;
+struct AudioDevice;
+extern AudioDevice * AudioGetDevice(void);
+extern AudioStreamer * __fastcall AudioStreamerCreate(AudioDevice * dev, unsigned __int64 buffering);
+extern void __fastcall AudioStreamerDestroy(AudioStreamer * as);
+extern int __fastcall AudioStreamerPlayWAV(AudioStreamer * as, const char * filename, int flag);
+extern void __fastcall AudioStreamerStop(AudioStreamer * as);
+extern void Audio_Stop_All(void);
+extern AudioStreamer * DAT_00ABF114[5];
 
 // FUNCTION: GAMEMD 0x005BC6E0
 BOOL CALLBACK FUN_005BC6E0(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)

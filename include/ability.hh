@@ -44,7 +44,9 @@ struct AbilityFlagsType {
 		AbilityFlagsType()
 		{
 			/// Init all flags to false.
-			memset(AbilitiesFlag, 0, sizeof(AbilitiesFlag));
+			for (int type = ABILITY_FIRST; type < ABILITY_COUNT; type++) {
+				AbilitiesFlag[type] = false;
+			}
 		}
 
 		AbilityFlagsType(NoInitClass const & x) {}

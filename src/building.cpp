@@ -2130,7 +2130,7 @@ ResultType BuildingClass::Take_Damage(int & damage, int distance, WarheadTypeCla
 					}
 					for (i = 0; i < contacts.Count(); i++) {
 						TechnoClass * tech = contacts[i];
-						if (Center_Coord().Distance_To(tech->Center_Coord()) >= CELL_LEPTON && !Class->IsHelipad) {
+						if (Distance_To(tech) >= CELL_LEPTON && !Class->IsHelipad) {
 							Transmit_Message(RADIO_RUN_AWAY, tech);
 							tech->QueueUpToEnter = NULL;
 						} else {
@@ -2228,7 +2228,6 @@ ResultType BuildingClass::Take_Damage(int & damage, int distance, WarheadTypeCla
 			IsToDisplay = true;
 			Set_Anim_Damage_State(HealthRatio <= Rule->ConditionYellow);
 		}
-		int remaining = contacts.Count();
 	}
 
 	return(res);

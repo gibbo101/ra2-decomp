@@ -16,8 +16,8 @@ the function make none at all; each kind counts with a weight:
 The outcome for a given weighted count is fixed but follows no pattern, and the map
 changes at some #include boundaries. A change that keeps the net weight before a
 function at zero leaves it as it was; for any other, this sweeps unused declarations
-of one kind into SRC (or --into a header) and prints the result at each count. The
-file is edited in place, so the compiler sees its usual path, and restored afterwards.
+of one kind into a copy of SRC (or of the --into header) in build/declprobe/ and prints
+the result at each count; the tracked files are never written.
 
 kind: var (extern int), def (int), func (function declaration), sfunc (static function
       declaration), type (struct forward declaration), tdef (typedef), inl (inline
@@ -29,10 +29,15 @@ pos:  head (line 1), before (above the function's marker), after (above the next
 import argparse
 import hashlib
 import re
-import subprocess
+import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import check  # noqa: E402
+
+ROOT = check.ROOT
+OUT = ROOT / "build/declprobe"
+PROBE_NAME = re.compile(r"\bprobe(?:\d+|Struct)\b")
 MARKER = re.compile(r"^\s*//\s*(?:FUNCTION|TEMPLATE|SYNTHETIC|LIBRARY):\s*GAMEMD\s+(0x[0-9A-Fa-f]+)")
 FORMS = {"var": "extern int {};", "def": "int {};", "func": "void {}(void);",
          "sfunc": "static void {}(void);", "type": "struct {};", "tdef": "typedef int {};",
@@ -77,6 +82,14 @@ def outcome(stdout: str) -> str:
     return m.group(1) + ("" if m.group(1) == "MATCH" else " " + hashlib.md5(body.encode()).hexdigest()[:6])
 
 
+def header_dir(path: Path) -> Path:
+    """The directory of `path`, a header under include/, relative to include/."""
+    include = (ROOT / "include").resolve()
+    if include not in path.resolve().parents:
+        raise SystemExit(f"{path}: --into takes a header under include/")
+    return path.resolve().parent.relative_to(include)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("src")
@@ -86,19 +99,29 @@ def main() -> None:
     ap.add_argument("--counts", default="0,1,2,3")
     ap.add_argument("--into", help="insert into this file (a header) instead of SRC; use --pos head or line:N")
     a = ap.parse_args()
+    src = ROOT / a.src
     path = ROOT / (a.into or a.src)
     original = path.read_text(errors="replace")
+    if PROBE_NAME.search(original):
+        raise SystemExit(f"{path} already holds probe declarations: restore it before probing")
     lines = original.split("\n")
     addr = int(a.addr, 16)
     at = position(lines, addr, a.pos)
+    # A probe header sits in an overlay, whose headers the compiler finds ahead of include/'s.
+    overlay = OUT / "hdr" if a.into else None
+    probe = overlay / header_dir(path) / path.name if a.into else OUT / src.name
+    compiled = src if a.into else probe
+    obj = OUT / (src.stem + ".obj")
+    probe.parent.mkdir(parents=True, exist_ok=True)
+    orig, names = check.Original(), check.known_names()
     try:
         for n in [int(c) for c in a.counts.split(",")]:
-            path.write_text("\n".join(lines[:at] + decls(a.kind, n) + lines[at:]))
-            proc = subprocess.run(["uv", "run", "tools/check.py", a.src, a.addr],
-                                  capture_output=True, text=True, cwd=ROOT)
-            print(f"{a.kind} x{n}\t{outcome(proc.stdout)}", flush=True)
+            probe.write_text("\n".join(lines[:at] + decls(a.kind, n) + lines[at:]))
+            out = check.output(compiled, {addr}, overlay, orig, names, obj)
+            print(f"{a.kind} x{n}\t{outcome(out)}", flush=True)
     finally:
-        path.write_text(original)
+        probe.unlink(missing_ok=True)
+        obj.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

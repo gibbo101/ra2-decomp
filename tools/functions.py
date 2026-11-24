@@ -262,7 +262,7 @@ def assembly_bounds(obj, code: bytes, base: int, evidence: dict[int, str],
 
 
 def library_boundaries(evidence, sizes):
-    """Discard padding-only splits inside known library bodies, preserving named entry points."""
+    """Discard splits inside known library bodies, preserving the bodies' own library entry points."""
     starts = sorted(evidence)
     stops = {}
     for address, size in sizes.items():
@@ -270,7 +270,7 @@ def library_boundaries(evidence, sizes):
             continue
         end = address + size
         interior = starts[bisect.bisect_right(starts, address):bisect.bisect_left(starts, end)]
-        if not interior or any(set(evidence[a]) - {"P", "F"} for a in interior):
+        if not interior or any(a in sizes for a in interior):
             continue
         for a in interior:
             del evidence[a]

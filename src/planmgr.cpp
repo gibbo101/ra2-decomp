@@ -33,6 +33,9 @@
 
 void __fastcall FUN_0063C690(PlanningNodeClass * node);
 void __fastcall FUN_0063CAE0(PlanningNodeClass * node);
+static inline PlanningNodeClass * Hover_Node_At(Point2D point);
+PlanningNodeClass * __fastcall FUN_0063AD40(void);
+void __fastcall FUN_0063AD30(PlanningNodeClass * node);
 
 extern double __cdecl FUN_004CAC40(double);
 extern Rect __fastcall Get_Title_Screen_Area(void);
@@ -2442,10 +2445,6 @@ void __fastcall FUN_0063A4B0(int kind)
 		FUN_0063A230("MSG:NodeMaximum");
 	}
 }
-
-static inline PlanningNodeClass * Hover_Node_At(Point2D point);
-PlanningNodeClass * __fastcall FUN_0063AD40(void);
-void __fastcall FUN_0063AD30(PlanningNodeClass * node);
 
 // FUNCTION: GAMEMD 0x0063A5A0
 bool __fastcall FUN_0063A5A0(Point2D xy)

@@ -11,8 +11,8 @@ over real objects or hard-coded addresses are rejected however well they score.
 `docs/AGENTS.md` holds the rules the agents follow and every lesson learned. Pull requests
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
-**Status (23 November 2026):** 3.55 MB of the game's 3.82 MB of code matches byte for byte
-(93%), in 19,261 of its 19,353 functions (99%) + 6 reconstructed. Counting each unmatched
+**Status (24 November 2026):** 3.58 MB of the game's 3.82 MB of code matches byte for byte
+(95%), in 19,291 of its 19,353 functions (99%) + 6 reconstructed. Counting each unmatched
 function at its best attempt so far, the fuzzy match is 98%. Each function is checked on
 its own, and `tools/exelink/` links the whole executable with every matched function at its
 original address: with the original's bytes for what isn't matched yet, the image is
@@ -94,7 +94,7 @@ out of history.
   assembly into the build with MASM; and added the checker's completion checks and
   function-map callbacks.
 - [meastes](https://github.com/meastes): matched functions in the map, VQA loading,
-  static-sound saving, Techno line drawing and the conflict-territory lookup, ported from their matching decompilation
+  static-sound saving, Techno line drawing, the conflict-territory lookup and unit destination assignment, ported from their matching decompilation
   of Red Alert 2 ([meastes/redalert2-decomp](https://github.com/meastes/redalert2-decomp),
   GPL-3.0-or-later).
 - [r-melvin](https://github.com/r-melvin): wrote `tools/exelink/`, the whole-executable
@@ -104,6 +104,11 @@ out of history.
 - [mischa85](https://github.com/mischa85): named 102 functions and globals in audio, Bink,
   the bit font, dialogs, the radar and the window stub from their byte-for-byte rebuild of
   Red Alert 2 1.006 ([mischa85/RedAlert2](https://github.com/mischa85/RedAlert2), GPL-3.0).
+- [RobinDigitalPro](https://github.com/RobinDigitalPro): shared matched source and names from
+  their byte-matching rebuild of Red Alert 2 1.001
+  ([RobinDigitalPro/ra2-decomp-help](https://github.com/RobinDigitalPro/ra2-decomp-help),
+  GPL-3.0-or-later), from which both Tunnel_AI functions' coordinate forms are adapted and
+  the rule that placed TechnoTypeClass's self-clearing member comes.
 
 ## You need your own copy of the game
 

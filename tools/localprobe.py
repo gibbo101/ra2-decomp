@@ -12,11 +12,13 @@ probe never lands; find natural source that changes the count the same way.
 """
 import argparse
 import re
-import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import check  # noqa: E402
+
+ROOT = check.ROOT
 OUT = ROOT / "build/localprobe"
 MARKER = re.compile(r"^\s*//\s*(?:FUNCTION|TEMPLATE|SYNTHETIC|LIBRARY):\s*GAMEMD\s+(0x[0-9A-Fa-f]+)")
 
@@ -32,9 +34,9 @@ def body_start(lines, addr):
     raise SystemExit(f"no marker for 0x{addr:08X}")
 
 
-def check(path, addr):
-    out = subprocess.run(["uv", "run", "tools/check.py", str(path.relative_to(ROOT)), f"0x{addr:08X}"],
-                         capture_output=True, text=True, cwd=ROOT).stdout
+def checked(path, addr, orig, names):
+    """The checker's result for the probe copy at `path`; `orig` and `names` load once per run."""
+    out = check.output(path, {addr}, orig=orig, names=names, out=path.with_suffix(".obj"))
     head = next((l for l in out.splitlines() if l.startswith("0x")), "")
     m = re.search(r": (MATCH|[0-9.]+%) \((\d+)/(\d+)", head)
     return f"{m.group(1)} {m.group(2)}/{m.group(3)}" if m else "build failed"
@@ -52,11 +54,13 @@ def main():
     at = body_start(lines, addr)
     OUT.mkdir(parents=True, exist_ok=True)
     probe = OUT / src.name
+    orig, names = check.Original(), check.known_names()
     for n in range(a.max + 1):
         extra = [f"\tint local_probe_{k} = {k};" for k in range(n)]
         probe.write_text("\n".join(lines[:at] + extra + lines[at:]))
-        print(f"+{n:2} locals: {check(probe, addr)}", flush=True)
+        print(f"+{n:2} locals: {checked(probe, addr, orig, names)}", flush=True)
     probe.unlink(missing_ok=True)
+    probe.with_suffix(".obj").unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

@@ -270,7 +270,7 @@ void BulletClass::Draw_It(Point2D const & point, Rect const & cliprect) const
 // FUNCTION: GAMEMD 0x00468430
 void BulletClass::LoseTarget(void)
 {
-	Cell cell = TarCom->Center_Coord().As_Cell();
+	Cell cell = TarCom->Center_Coord();
 	if (!ScenarioInit && !TarCom->In_Air() && cell != DAT_0089DDF0) {
 		TarCom = &Map[cell];
 	} else {
@@ -302,7 +302,6 @@ void BulletClass::Detach(AbstractClass const * target, bool all)
 	if (all && target->Fetch_RTTI() == RTTI_BULLET) {
 		BulletClass * bullet = (BulletClass *)target;
 		if (bullet->Class->Scalable) {
-			int tracked = ScalableBullets.Count() + ScalableBullets.Count() + ScalableBullets.Count();
 			for (int i = 0; i < ScalableBullets.Count(); i++) {
 				if (bullet == ScalableBullets[i]) {
 					ScalableBullets.Delete(bullet);

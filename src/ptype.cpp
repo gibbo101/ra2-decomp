@@ -114,9 +114,7 @@ bool ParticleTypeClass::Read_INI(CCINIClass & ini)
 		MaxEC = ini.Get_Int(IniName, "MaxEC", MaxEC);
 
 		Damage = ini.Get_Int(IniName, "Damage", Damage);
-		WarheadTypeClass * oldwarhead = Warhead;
-		char whname[128];
-		Warhead = ini.Get_String(IniName, "Warhead", DAT_00889F64, whname, sizeof(whname)) ? WarheadTypeClass::Find_Or_Make(whname) : oldwarhead;
+		Warhead = TGet_Class(ini, IniName, "Warhead", Warhead);
 
 		StartFrame = ini.Get_Int(IniName, "StartFrame", StartFrame);
 		NumLoopFrames = ini.Get_Int(IniName, "NumLoopFrames", NumLoopFrames);
@@ -161,7 +159,6 @@ bool ParticleTypeClass::Read_INI(CCINIClass & ini)
 		ini.Get_String(IniName, "BehavesLike", NULL, buffer, sizeof(buffer));
 		BehavesLike = Particle_Behavior_From_Name(buffer);
 
-		int unused = ParticleTypes.Count();
 		return(true);
 	}
 	return(false);

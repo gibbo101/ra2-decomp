@@ -448,7 +448,6 @@ void PhoneEdit::Delete(void)
 // FUNCTION: GAMEMD 0x006316E0
 bool PhoneEntryEdit::Dialog(PhoneEntryClass *phone)
 {
-	int unused = RC + 1;
 	if (phone == NULL) {
 		return(false);
 	}
@@ -473,7 +472,8 @@ bool PhoneEntryEdit::Dialog(PhoneEntryClass *phone)
 		OwnerDraw::End_Dialog(_Dialog);
 	}
 
-	return(RC == 1 ? true : false);
+	const int result = RC;
+	return(result == IDOK ? true : false);
 }
 
 // FUNCTION: GAMEMD 0x00631760

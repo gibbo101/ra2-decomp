@@ -1818,9 +1818,7 @@ BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 			ShowWindow(window, SW_SHOW);
 			FUN_005E2F60(window);
 			FUN_005ED370(window);
-			{
-				FUN_004E4FC0(Net2_Spot_Limit(FUN_005E6520(Session.Options.ScenarioIndex)));
-			}
+			FUN_004E4FC0(Net2_Spot_Limit(FUN_005E6520(Session.Options.ScenarioIndex)));
 			FUN_004E5310(window);
 			FUN_004E5D60(window);
 			FUN_005EE6A0(window);
@@ -1904,9 +1902,7 @@ BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 		FUN_005E2EF0(window, Session.MPGameMode);
 		FUN_005E2F60(window);
 		FUN_005ED370(window);
-		{
-			FUN_004E4FC0(Net2_Spot_Limit(FUN_005E6520(Session.Options.ScenarioIndex)));
-		}
+		FUN_004E4FC0(Net2_Spot_Limit(FUN_005E6520(Session.Options.ScenarioIndex)));
 		FUN_004E5310(window);
 		FUN_005DF180(window, OD_SUBCLASSED, wparam, lparam);
 		Net2DisplayGameList();

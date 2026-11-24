@@ -134,7 +134,6 @@ void PowerClass::Flash_Power(void)
 int PowerClass::Desired_Power_Height(void)
 {
 	int max_pips = Max_Power_Height();
-	int unused = PlayerPtr->Buildings.Count() + PlayerPtr->Buildings.Count();
 	int drain = 0;
 	int power = 0;
 
@@ -144,9 +143,12 @@ int PowerClass::Desired_Power_Height(void)
 		power += bptr->Class->Power;
 	}
 
-	int empty_pips = (400.0 / ((drain + power) + 400.0) * max_pips);
+	const int total_power = drain + power;
+	const double empty_fraction = 400.0 / (total_power + 400.0);
+	int empty_pips = empty_fraction * max_pips;
 	empty_pips = MAX(empty_pips, 0);
-	empty_pips = MIN(empty_pips, max_pips - 1);
+	const int max_empty_pips = max_pips - 1;
+	empty_pips = MIN(empty_pips, max_empty_pips);
 
 	return(max_pips - empty_pips);
 }
