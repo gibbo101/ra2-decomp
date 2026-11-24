@@ -5679,6 +5679,76 @@ void TechnoClass::Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, in
 }
 
 
+// FUNCTION: GAMEMD 0x00706ED0
+SurfaceRegion TechnoClass::Techno_Render_Voxel_Object(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & xcliprect, int frame, ShapeFlags_Type flags, int brightness, unsigned short tint) const
+{
+	Matrix3D mtx = matrix;
+	Matrix3D mtx2 = matrix;
+
+	if (Techno_Type_Class()->UseBuffer) {
+		VoxelDrawSystem::EnableZBuffer = 1;
+	}
+
+	VoxelLibrary * voxlib = voxeldata.VoxLib;
+	MotionLibrary * motlib = voxeldata.MotLib;
+
+	VoxelDrawSystem::Precalculate_Light(voxlib, 0, 0, mtx2, VoxelCameraMatrix, VoxelLightSource, 3.0f);
+	VoxelDrawSystem::Reset();
+
+	for (unsigned layer = 0; layer < voxlib->Get_Layer_Count(); layer++) {
+		if (motlib != NULL) {
+			Matrix3D mtx3 = motlib->Get_Layer_Matrix(layer, frame);
+			mtx = mtx2 * mtx3;
+		}
+		VoxelDrawSystem::Prep_For_Object(voxlib, layer, 0, VoxelCameraMatrix * mtx);
+	}
+
+	SurfaceRegion region = VoxelDrawSystem::Render();
+
+	if (IsBeingWarpedOut() || IsWarpingIn()) {
+		if (this != NULL && RTTI == RTTI_BUILDING && As_Building((TechnoClass *)this)->Class->DoubleThick) {
+			flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT75);
+		} else {
+			flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT50);
+		}
+	}
+
+	if (House->Is_Player_Control() && IsDisguised()) {
+		flags = ShapeFlags_Type(GetDisguiseFlags(flags));
+	}
+
+	Rect cliprect = xcliprect;
+
+	if (LogicalSurface != EightBitSurface) {
+		if (SinkingYOffset > 0) {
+			cliprect = Intersect(cliprect, Rect(0, 0, TacticalRect.Width, SinkingYOffset - TacticalMap->TacPixelY));
+		} else if (IsSinking) {
+			((TechnoClass *)this)->SinkingYOffset = TacticalMap->TacPixelY + point.Y + region.Point.Y + region.Bounds.Height;
+		}
+	}
+
+	flags = ShapeFlags_Type(flags & ~SHAPE_REMAP);
+	ConvertClass * converter = NULL;
+	if (RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette) {
+		converter = EightBitDrawer;
+	} else {
+		converter = GetRemapColour();
+	}
+
+	int predoffset = 0;
+	if (flags & SHAPE_PREDATOR) {
+		predoffset = Get_Predator_Offset();
+	}
+
+	Blit_Block(*LogicalSurface, *converter, *VoxelDrawSystem::Get_Surface(), region.Bounds, region.Point + point, cliprect, NULL, converter->Blitter_From_Flags(flags), Get_Z_Adjust(), Get_Z_Gradient(), brightness, tint, predoffset);
+
+	if (Techno_Type_Class()->UseBuffer) {
+		VoxelDrawSystem::EnableZBuffer = 0;
+	}
+
+	return(region);
+}
+
 // FUNCTION: GAMEMD 0x00707280
 SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int layer_index, ShapeFlags_Type flags, bool cached, Surface * surface, int shadow_x, int shadow_y) const
 {
