@@ -9989,24 +9989,7 @@ LRESULT CALLBACK OwnerDraw::ComboDropWindowHandler(HWND window, UINT message, WP
 
 
 void __fastcall FUN_00735060(wchar_t *dest, char const *source, int count);
-void __fastcall WideToCharString(char *dest, wchar_t const *source, int count);
 char * __fastcall FUN_007350C0(wchar_t const *source);
-
-inline int Get_List_Item_Text(HWND window, int const &index, wchar_t *text, int size)
-{
-    WNDPROC proc = NULL;
-    WNDPROC *found = NULL;
-    if (OwnerDraw::DialogProcs.getPointer(window, &found) && found) proc = *found;
-    text[0] = 0;
-    int item = CallWindowProc(proc, window, LB_GETITEMDATA, index, 0);
-    if (item == -1 || item == 0) item = CallWindowProc(proc, window, CB_GETITEMDATA, index, 0);
-    if (item != -1 && item != 0) {
-        wcsncpy(text, ((OwnerDraw::WinNode *)item)->text, size);
-        text[size - 1] = 0;
-        return wcslen(text);
-    }
-    return 0;
-}
 
 // TEMPLATE: GAMEMD 0x006248A0
 // ?shrinkVector@?$ArrayList@UCellData@OwnerDraw@@@@AAEDXZ
@@ -10554,7 +10537,7 @@ LRESULT CALLBACK OwnerDraw::ListBoxHandler(HWND window, UINT message, WPARAM wpa
 					result = wcslen(node->text);
 					if (message != LB_GETTEXTLEN) {
 						if (wide_messages) wcscpy((wchar_t *)lparam, node->text);
-						else ::WideToCharString((char *)lparam, node->text, -1);
+						else WideToCharString((char *)lparam, node->text, -1);
 					}
 				}
 			}
@@ -10638,7 +10621,11 @@ LRESULT CALLBACK OwnerDraw::ListBoxHandler(HWND window, UINT message, WPARAM wpa
 					if (client_rect.top + item_rect.bottom > client_rect.bottom) {
 						break;
 					}
-					Get_List_Item_Text(window, index, string, 512);
+					string[0] = 0;
+					LRESULT item = CallWindowProc(original_proc, window, LB_GETITEMDATA, index, 0);
+					if (item != LB_ERR && item != 0) {
+						Copy_Wide_Text(string, ((WinNode *)item)->text, 512);
+					}
 					ArrayList<ColumnData> *columns = data->ListBox.columns;
 					if (columns != NULL) {
 						if (SendMessage(window, LB_GETSEL, index, 0) > 0) {
@@ -10669,7 +10656,11 @@ LRESULT CALLBACK OwnerDraw::ListBoxHandler(HWND window, UINT message, WPARAM wpa
 								if (cell->type == CellData::TEXT) {
 									wcscpy(string, cell->string.get());
 								} else if (cell->type == CellData::PRIMARY) {
-									Get_List_Item_Text(window, index, string, 512);
+									string[0] = 0;
+									LRESULT item = CallWindowProc(original_proc, window, LB_GETITEMDATA, index, 0);
+									if (item != LB_ERR && item != 0) {
+										Copy_Wide_Text(string, ((WinNode *)item)->text, 512);
+									}
 								}
 								COLORREF text_color = cell->color;
 								if (text_color == -1) {
