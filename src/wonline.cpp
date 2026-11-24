@@ -1644,6 +1644,8 @@ WideWstring __fastcall FUN_00780A00(int locale)
 WideWstring __fastcall FUN_007B8090(wchar_t const * prefix, WideWstring const & text);
 WideWstring __fastcall FUN_007B7DD0(int value);
 
+static inline wchar_t const * Load_Unranked_Label(int line);
+
 // FUNCTION: GAMEMD 0x00780A90
 WideWstring __fastcall FUN_00780A90(User * user)
 {
@@ -1655,7 +1657,7 @@ WideWstring __fastcall FUN_00780A90(User * user)
 	if (g_ActiveLadder && g_ActiveLadder->getValue(name, ladder)) {
 		text += WideWstring(StringTable::LoadString("TXT_RANK", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xB79)) + WideWstring(L" ") + FUN_007B7DD0(ladder.rung);
 	} else {
-		text += StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0xB7B);
+		text += Load_Unranked_Label(0xB7B);
 	}
 	Wstring login((char *)user->squadname);
 	if (login.length() == 0) {
@@ -2515,6 +2517,8 @@ int __cdecl FUN_007831A0(UserRank const * a, UserRank const * b)
 	return strcmpi((char *)first.name, (char *)second.name);
 }
 
+static inline void Set_Ladder_Key(Wstring & key, char const * player_name);
+
 // FUNCTION: GAMEMD 0x00783270
 void __fastcall FUN_00783270(bool ascending)
 {
@@ -2533,8 +2537,7 @@ void __fastcall FUN_00783270(bool ascending)
 		Wstring name;
 		Ladder info;
 		memset(&info, 0, sizeof(info));
-		name.set((char *)temp.name);
-		name.toLower();
+		Set_Ladder_Key(name, (char *)temp.name);
 		if (g_ActiveLadder && g_ActiveLadder->getValue(name, info)) {
 			sorted[i].Key = info.rung;
 		}
@@ -2858,7 +2861,7 @@ void __fastcall Draw_Player_List(int keep_selection, bool flag)
 			int row = SendDlgItemMessage(win, 0x53E, 0x4CC, (WPARAM)-1, (LPARAM)info);
 
 			thecell.type = OwnerDraw::CellData::TEXT;
-			thecell.hint.set(StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x104A));
+			thecell.hint.set(Load_Unranked_Label(0x104A));
 			FUN_00735060(info, (char *)user.name, -1);
 			thecell.string.set(info);
 
@@ -3029,7 +3032,7 @@ void __fastcall Draw_Player_List(int keep_selection, bool flag)
 
 			thecell.type = OwnerDraw::CellData::PRIMARY;
 			thecell.color = PlayerColorTable[g_UserInfo[slot_index].Color];
-			thecell.hint.set(StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x114C));
+			thecell.hint.set(Load_Unranked_Label(0x114C));
 			if (g_ActiveLadder->getValue(ladder_name, ladder)) {
 				swprintf(rank_string, L"%s %d", StringTable::LoadString("TXT_RANK", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x114F), ladder.rung);
 				thecell.hint.set(rank_string);
@@ -14073,6 +14076,7 @@ extern char DAT_0084AD30[];
 extern char DAT_0084AD00[];
 extern char DAT_0084ACE0[];
 void __fastcall FUN_005E74E0(HWND window);
+
 wchar_t *__fastcall FUN_0078F200(wchar_t const *name);
 int __fastcall FUN_004E3830(int id);
 wchar_t const *__fastcall FUN_004E38A0(int side);
@@ -15945,15 +15949,25 @@ void __fastcall FUN_007A2330(char * options) {
 	}
 }
 
-extern wchar_t DAT_00B76238[];
+static inline wchar_t const * Load_Unranked_Label(int line)
+{
+	return(StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", line));
+}
 
+static inline void Set_Ladder_Key(Wstring & key, char const * player_name)
+{
+	key.set(player_name);
+	key.toLower();
+}
+
+extern wchar_t DAT_00B76238[];
+// FUNCTION: GAMEMD 0x0078F200
 wchar_t * __fastcall FUN_0078F200(wchar_t const * name)
 {
 	Wstring player_name;
 	Ladder player_ladder;
 	memset(&player_ladder, 0, sizeof(player_ladder));
-	player_name.set(FUN_007350C0(name));
-	player_name.toLower();
+	Set_Ladder_Key(player_name, FUN_007350C0(name));
 	bool player_found = g_ActiveLadder && g_ActiveLadder->getValue(player_name, player_ladder);
 	Ladder squad_ladder;
 	memset(&squad_ladder, 0, sizeof(squad_ladder));
@@ -15967,8 +15981,7 @@ wchar_t * __fastcall FUN_0078F200(wchar_t const * name)
 	bool squad_found = false;
 	if (strlen((char *)user.squadname) != 0) {
 		has_squad = true;
-		squad_abbreviation.set((char *)user.squadabbrev);
-		squad_abbreviation.toLower();
+		Set_Ladder_Key(squad_abbreviation, (char *)user.squadabbrev);
 		if (g_BattleClansLadderDict.getValue(squad_abbreviation, squad_ladder)) squad_found = true;
 	}
 	if (player_found) {
@@ -15990,16 +16003,17 @@ wchar_t * __fastcall FUN_0078F200(wchar_t const * name)
 		if (has_squad) {
 			if (squad_found) {
 				wchar_t * squad_name = FUN_00735120((char *)user.squadname);
+				unsigned int squad_rank = squad_ladder.rung;
 				swprintf(DAT_00B76238, StringTable::LoadString("TXT_PLAYER_TOOLTIP_UNR_C_CR", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D6A),
-					StringTable::LoadString("TXT_UNRANKED", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D6A), squad_name, squad_ladder.rung);
+					Load_Unranked_Label(0x3D6A), squad_name, squad_rank);
 			} else {
 				wchar_t * squad_name = FUN_00735120((char *)user.squadname);
 				swprintf(DAT_00B76238, StringTable::LoadString("TXT_PLAYER_TOOLTIP_UNR_C_CUNR", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D6E),
-					StringTable::LoadString("TXT_UNRANKED", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D6E), squad_name);
+					Load_Unranked_Label(0x3D6E), squad_name);
 			}
 		} else {
 			swprintf(DAT_00B76238, StringTable::LoadString("TXT_PLAYER_TOOLTIP_UNR_NOC", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D72),
-				StringTable::LoadString("TXT_UNRANKED", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D72));
+				Load_Unranked_Label(0x3D72));
 		}
 	}
 	return DAT_00B76238;
