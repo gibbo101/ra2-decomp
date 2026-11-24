@@ -111,6 +111,7 @@
 #include "bench.hh"
 #include <stddef.h>
 #include "stringtable.h"
+#include "narrow.h"
 
 // SYNTHETIC: GAMEMD 0x00683070 SYMBOL
 // _$E2
@@ -603,6 +604,68 @@ void Toggle_Display_Mode(bool ingame)
 			Change_Display_Mode(Options.ShellWidth, Options.ShellHeight);
 		}
 	}
+}
+
+// FUNCTION: GAMEMD 0x00684370
+bool Wait_For_Players_To_Load(void)
+{
+	if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) {
+		return(true);
+	}
+
+	CDTimerClass<SystemTimerClass> wait_timeout;
+	CDTimerClass<SystemTimerClass> timer = TIMER_SECOND * 5;
+
+	wait_timeout = 60 * TIMER_SECOND;
+	double last_progress = Progress.Get_Current_Progress();
+
+	for (;;) {
+		Keyboard->Check();
+		Call_Back();
+
+		if (Session.Type == GAME_MODEM && SerialPort) {
+			int modemstatus = SerialPort->Get_Modem_Status();
+			if ((modemstatus & WinModemClass::CD_SET) == 0) {
+				DebugString("Carrier Detect is false. Aborting load wait\n");
+				return(false);
+			}
+		}
+
+		if (wait_timeout <= 0) {
+			int loader = 1;
+			for (int i = 1; i < Session.Players.Count(); i++) {
+				if (Progress.Get_Current_Progress(loader) < 0.999) {
+					DebugString("Player %s failed to make it into the game. Dropping %s\n", Narrow_Text(Session.Players[i]->Name), Narrow_Text(Session.Players[i]->Name));
+					int id = Session.Players[i]->Player.ID;
+					Destroy_Connection(id, 1);
+					if (Session.Am_I_Master(Houses[id])) {
+						Session.MasterPlayerID = -1;
+						memset(Session.MasterPlayerName, 0, sizeof(Session.MasterPlayerName));
+					}
+					i--;
+				}
+				loader++;
+			}
+			return(false);
+		}
+
+		double current_progress = Progress.Get_Current_Progress();
+		if (current_progress >= 0.9995) {
+			Session.Update_Progress(100 + (Scen->IsRandom ? 100 : 0));
+			break;
+		}
+
+		if (current_progress != last_progress) {
+			wait_timeout = 120 * TIMER_SECOND;
+			last_progress = current_progress;
+		}
+
+		if (timer <= 0) {
+			timer = TIMER_SECOND;
+			Session.Update_Progress(100 + (Scen->IsRandom ? 100 : 0));
+		}
+	}
+	return(true);
 }
 
 void __fastcall FUN_0071DCA0(TheaterType theater);

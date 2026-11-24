@@ -1668,9 +1668,9 @@ Rect CellClass::Overlay_Shadow_Render_Rect(void) const
 		}
 	}
 
-	Point2D d0 = point + point;
-	Point2D d1 = point + point;
-	return(image->GetFrameBounds(shadowframe) + (point - Point2D(image->Width / 2, image->Height / 2)));
+	Point2D canvas_size(image->Width, image->Height);
+	Point2D canvas_center = canvas_size / 2;
+	return(image->GetFrameBounds(shadowframe) + (point - canvas_center));
 }
 
 // FUNCTION: GAMEMD 0x0047FF80
@@ -1724,9 +1724,10 @@ Point2D CellClass::Overlay_Draw_Offset(void) const
 	} else if (Overlay == 0xEF) {
 		offset.Y -= 15;
 	}
-	offset.Y += DSurface::ViewBounds.Y - 15 * Height;
+	int height_offset = 15 * Height;
+	int view_y = DSurface::ViewBounds.Y;
+	offset.Y += view_y - height_offset;
 	offset += Point2D(30, 15);
-	Point2D doubled = offset + offset;
 	return(offset);
 }
 
@@ -1985,6 +1986,42 @@ Coord CellClass::Cell_Coord(void) const
 	Coord coord(Fetch_CellID());
 	coord.Z = Get_Height();
 	return(coord);
+}
+
+// FUNCTION: GAMEMD 0x00480A80
+int CellClass::Reduce_Tiberium(int levels)
+{
+	int reducer = 0;
+	Rect dirty = Union(Overlay_Render_Rect(), Overlay_Shadow_Render_Rect());
+	dirty.Y -= TacticalRect.Y;
+
+	TiberiumType tibtype = Tiberium_Type_Here();
+
+	if (levels > 0 && tibtype != TIBERIUM_NONE) {
+		TiberiumClass * tiberium = Tiberiums[tibtype];
+		if (OverlayData == OVERLAYDATA_TIBERIUM_MAX) {
+			tiberium->Queue_Growth(CellID);
+		}
+		if (OverlayData+1 > levels) {
+			OverlayData -= levels;
+			reducer = levels;
+		} else {
+			reducer = OverlayData;
+			Overlay = OVERLAY_NONE;
+			OverlayData = 0;
+			Recalc_Attributes();
+			Map.Flag_Background_Update(CellID);
+			tiberium->Clear_Spread_State(CellID);
+			for (int facing = FACING_FIRST; facing < FACING_COUNT; facing++) {
+				Cell adjacent = ::Adjacent_Cell(CellID, (FacingType)facing);
+				if (Map.In_Radar(adjacent) && !tiberium->SpreadState[Map_Cell_Index(adjacent)]) {
+					tiberium->Queue_Spread(adjacent);
+				}
+			}
+		}
+		TacticalMap->Register_Dirty_Area(dirty);
+	}
+	return(reducer);
 }
 
 // FUNCTION: GAMEMD 0x00480CB0
@@ -3610,6 +3647,66 @@ void CellClass::Redraw_Veins(void)
 	Recalc_Attributes();
 }
 
+// FUNCTION: GAMEMD 0x00485AF0
+void CellClass::Place_Veins(void)
+{
+	Rect rect(0, 0, 0, 0);
+
+	if (Can_Place_Veins()) {
+
+		rect = Union(rect, Union(Overlay_Render_Rect(), Overlay_Shadow_Render_Rect()));
+
+		Map.Radar_Background(CellID);
+		Overlay = OVERLAY_VEINS;
+
+		if (Ramp == RAMP_NONE) {
+			OverlayData = abs(Scen->RandomNumber()) % 3 + OVERLAYDATA_FIRST_SOLID_VEIN;
+
+			for (int dir = FACING_N; dir < FACING_COUNT; dir += FACING_90) {
+				CellClass & adjacent = Adjacent_Cell(FacingType(dir));
+
+				if (adjacent.Overlay == OVERLAY_VEINS && adjacent.OverlayData >= OVERLAYDATA_FIRST_SOLID_VEIN) {
+					continue;
+				}
+				if (adjacent.Overlay != OVERLAY_VEINS && adjacent.Overlay != OVERLAY_NONE && OverlayTypes[adjacent.Overlay]->IsVeins) {
+					continue;
+				}
+
+				if (adjacent.Ramp == RAMP_NONE) {
+					int frame = adjacent.Get_Vein_Frame();
+					if (adjacent.Overlay == OVERLAY_NONE || (frame <= 15 && adjacent.OverlayData / 3 != frame)) {
+						Rect adjrect(0, 0, 0, 0);
+						adjrect = Union(adjrect, Union(adjacent.Overlay_Render_Rect(), adjacent.Overlay_Shadow_Render_Rect()));
+						adjacent.Overlay = OVERLAY_VEINS;
+						adjacent.OverlayData = 3 * frame + abs(Scen->RandomNumber % 3);
+						adjacent.Recalc_Attributes();
+						Point2D origin = TacticalRect.TopLeft;
+						adjrect = Union(adjrect, Union(adjacent.Overlay_Render_Rect(), adjacent.Overlay_Shadow_Render_Rect())) - origin;
+						TacticalMap->Register_Dirty_Area(adjrect);
+					}
+				} else {
+					Rect adjrect(0, 0, 0, 0);
+					adjrect = Union(adjrect, Union(adjacent.Overlay_Render_Rect(), adjacent.Overlay_Shadow_Render_Rect()));
+					adjacent.Overlay = OVERLAY_VEINS;
+					adjacent.OverlayData = 2 * adjacent.Ramp + (abs(Scen->RandomNumber()) & 1) + OVERLAYDATA_FIRST_RAMP_VEIN;
+					adjrect = Union(adjrect, Union(adjacent.Overlay_Render_Rect(), adjacent.Overlay_Shadow_Render_Rect())) - TacticalRect.TopLeft;
+					TacticalMap->Register_Dirty_Area(adjrect);
+				}
+
+				Map.Radar_Background(adjacent.CellID);
+			}
+
+			Trigger_Veins();
+		} else {
+			OverlayData = 2 * Ramp + (abs(Scen->RandomNumber()) & 1) + OVERLAYDATA_FIRST_RAMP_VEIN;
+		}
+
+		rect = Union(rect, Union(Overlay_Render_Rect(), Overlay_Shadow_Render_Rect())) - TacticalRect.TopLeft;
+		TacticalMap->Register_Dirty_Area(rect);
+		Recalc_Attributes();
+	}
+}
+
 #define IS_SET_VALID(setname) (IsometricTileTypeClass::setname != ISOTILE_INVALID)
 #define IS_TILE_IN_SET(setname, setsize) (ITType >= IsometricTileTypeClass::setname && ITType < IsometricTileTypeClass::setname + setsize)
 #define IS_TILE_IN_VALID_SET(setname, setsize) (IS_SET_VALID(setname) && IS_TILE_IN_SET(setname, setsize))
@@ -3925,7 +4022,7 @@ void CellClass::Fog_Cell(void)
 						int rtti = occupier->What_Am_I();
 						if (rtti == RTTI_BUILDING) {
 							BuildingClass * building = (BuildingClass *)occupier;
-							building->PositionCell;
+							building->Get_Cell();
 							if (building->Should_Fog()) {
 								bool fade;
 								if (building->IsStrange() || building->TranslucencyLevel == 15) {

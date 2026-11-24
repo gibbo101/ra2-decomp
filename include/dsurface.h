@@ -145,7 +145,7 @@ inline int DSurface::Build_Hicolor_Pixel(int red, int green, int blue)
 
 inline int DSurface::Build_Hicolor_Pixel(RGBClass const & rgb)
 {
-	return(((rgb.Get_Red() >> RedLeft) << RedRight) | ((rgb.Get_Green() >> GreenLeft) << GreenRight) | ((rgb.Get_Blue() >> BlueLeft) << BlueRight));
+	return(Build_Hicolor_Pixel(rgb.Get_Red(), rgb.Get_Green(), rgb.Get_Blue()));
 }
 
 inline RGBClass DSurface::Deconstruct_Hicolor_Pixel(unsigned short color)
