@@ -10960,6 +10960,7 @@ address,name,result,size,source,symbol
 0x0062D990,ParticleClass::Class_Of,MATCH,7,src/particle.cpp,?Class_Of@ParticleClass@@UBEPBVObjectTypeClass@@XZ
 0x0062D9A0,??_GParticleClass@@UAEPAXI@Z,MATCH,158,src/particle.cpp,??_GParticleClass@@UAEPAXI@Z
 0x0062BD50,ParticleClass::Gas_Behavior_AI,MATCH,1615,src/particle.cpp,?Gas_Behavior_AI@ParticleClass@@QAEXXZ
+0x0062C6E0,ParticleClass::Spark_Behavior_AI,MATCH,1072,src/particle.cpp,?Spark_Behavior_AI@ParticleClass@@QAEXXZ
 0x0062DA40,_$E2,MATCH,40,src/partsys.cpp,_$E2
 0x0062DA70,_$E5,MATCH,19,src/partsys.cpp,_$E5
 0x0062DA90,_$E8,MATCH,19,src/partsys.cpp,_$E8

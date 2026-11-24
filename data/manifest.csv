@@ -11294,6 +11294,7 @@ address,size,symbol,source,sha256
 0x0062BD50,1615,?Gas_Behavior_AI@ParticleClass@@QAEXXZ,src/particle.cpp,0101e01b4da7a6836a23b4e4681219d5e2bf99ac6789a8ccafd27accf15d2d09
 0x0062C3A0,401,?Railgun_Behavior_AI@ParticleClass@@QAEXXZ,src/particle.cpp,43ab01ae8b257d2bee394a3e2ee815820279ecd398323401c9e8e021dafd98bf
 0x0062C540,405,?Smoke_Behavior_AI@ParticleClass@@QAEXXZ,src/particle.cpp,ad2110cfd5ac4ec92a4f4ab1fa8b258640efe1ac638834f29d7dcb5dad7651af
+0x0062C6E0,1072,?Spark_Behavior_AI@ParticleClass@@QAEXXZ,src/particle.cpp,daf60e688a627a4fd0419d0cde6906247d00ad0c0ce6a2060fe47fff91a05e06
 0x0062CB10,805,?Fire_Behavior_AI@ParticleClass@@QAEXXZ,src/particle.cpp,69a720ebb0d95937a85d8be42f9ea0484a8c1b6a083592ecb797f4ab0ab5aa56
 0x0062CE40,116,?Behavior_AI@ParticleClass@@QAEXXZ,src/particle.cpp,1ced73f086f338c6e5e785e4d59b2009adfd9ef7bba39fc27cbd4322ba0ed40b
 0x0062CEC0,981,?Draw_It@ParticleClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/particle.cpp,a76ecefa73d8f705480bcb7f887c0d0a7a0c14c1a9284a1c06d5a844d70cfa91
