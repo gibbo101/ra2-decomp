@@ -11590,6 +11590,7 @@ address,name,result,size,source,symbol
 0x00645D00,Quaternion::operator[],MATCH,10,src/quat.cpp,??AQuaternion@@QAEAAMH@Z
 0x00645D10,Quaternion::operator[],MATCH,10,src/quat.cpp,??AQuaternion@@QBE?BMH@Z
 0x00645D20,Quaternion::operator=,MATCH,59,src/quat.cpp,??4Quaternion@@QAE?AV0@ABV0@@Z
+0x00645D60,Quaternion::Make_Closest,MATCH,358,src/quat.cpp,?Make_Closest@Quaternion@@QAEAAV1@ABV1@@Z
 0x00645ED0,operator*,MATCH,367,src/quat.cpp,??D@YI?AVQuaternion@@ABV0@0@Z
 0x00646040,operator/,MATCH,122,src/quat.cpp,??K@YI?AVQuaternion@@ABV0@0@Z
 0x006460C0,Inverse,MATCH,69,src/quat.cpp,?Inverse@@YI?AVQuaternion@@ABV1@@Z
