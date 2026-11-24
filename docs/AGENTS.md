@@ -337,6 +337,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   function, or mirrors a TibSun or YRpp helper. Single-use helpers, forwarders and dummy
   locals that exist to shift inlining or allocation are forcing: their match is banked, not
   landed.
+- A helper YR inlines is source when game.exe or ts-game.exe holds its body out of line
+  with callers (tools/crossexe.py, `--extern` for static helpers); that is its evidence.
 - Source forms, as ruled: a goto to an exit several paths share, a scoped block that sets
   when a temporary's destructor runs, a helper that factors code repeated inside one
   function, and a named bool where the plain `if` does not match.
