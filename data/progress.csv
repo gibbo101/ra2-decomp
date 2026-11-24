@@ -10982,6 +10982,7 @@ address,name,result,size,source,symbol
 0x0062E5D0,ParticleSystemClass::Delete_Particle,MATCH,119,src/partsys.cpp,?Delete_Particle@ParticleSystemClass@@QAE_NH@Z
 0x0062E650,ParticleSystemClass::Clear_System,MATCH,117,src/partsys.cpp,?Clear_System@ParticleSystemClass@@QAEXXZ
 0x0062E6D0,ParticleSystemClass::Gas_AI,MATCH,366,src/partsys.cpp,?Gas_AI@ParticleSystemClass@@AAEXXZ
+0x0062E840,ParticleSystemClass::Spark_AI,MATCH,1277,src/partsys.cpp,?Spark_AI@ParticleSystemClass@@AAEXXZ
 0x0062ED40,ParticleSystemClass::Smoke_AI,MATCH,1255,src/partsys.cpp,?Smoke_AI@ParticleSystemClass@@AAEXXZ
 0x0062F230,ParticleSystemClass::Railgun_AI,MATCH,1904,src/partsys.cpp,?Railgun_AI@ParticleSystemClass@@AAEXXZ
 0x0062F9A0,ParticleSystemClass::Fire_AI,MATCH,951,src/partsys.cpp,?Fire_AI@ParticleSystemClass@@AAEXXZ
@@ -12954,6 +12955,7 @@ address,name,result,size,source,symbol
 0x006A0470,ShipLocomotionClass::Stop_Driver,MATCH,71,src/ship.cpp,?Stop_Driver@ShipLocomotionClass@@QAE_NXZ
 0x006A04C0,ShipLocomotionClass::Start_Driver,MATCH,242,src/ship.cpp,?Start_Driver@ShipLocomotionClass@@QAE_NABVCoord@@@Z
 0x006A05C0,ShipLocomotionClass::Do_Turn,MATCH,34,src/ship.cpp,?Do_Turn@ShipLocomotionClass@@UAGXUDirStruct@@@Z
+0x006A05F0,ShipLocomotionClass::While_Moving,MATCH,5768,src/ship.cpp,?While_Moving@ShipLocomotionClass@@AAE_N_N@Z
 0x006A1C80,ShipLocomotionClass::Start_Of_Move,MATCH,8470,src/ship.cpp,?Start_Of_Move@ShipLocomotionClass@@AAE_NAA_N_N1@Z
 0x006A3DA0,ShipLocomotionClass::Lay_Track,MATCH,1,src/ship.cpp,?Lay_Track@ShipLocomotionClass@@AAEXXZ
 0x006A3DB0,ShipLocomotionClass::Smooth_Turn,MATCH,124,src/ship.cpp,?Smooth_Turn@ShipLocomotionClass@@AAE?AVPoint2D@@ABV2@AAW4Dir256@@@Z

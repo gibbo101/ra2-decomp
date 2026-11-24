@@ -11336,6 +11336,7 @@ address,size,symbol,source,sha256
 0x0062E5D0,119,?Delete_Particle@ParticleSystemClass@@QAE_NH@Z,src/partsys.cpp,69d59a9de8c8427a0f6b0dd125297ba117cce7176a22a340e9720ba7382e4ba6
 0x0062E650,117,?Clear_System@ParticleSystemClass@@QAEXXZ,src/partsys.cpp,4e2e8b71c602251f992ec3f34a181a02cb1fdacc76d395d9dc8058721ed7f787
 0x0062E6D0,366,?Gas_AI@ParticleSystemClass@@AAEXXZ,src/partsys.cpp,038044e73115d120dfd2d31cb9d165cdba9610635fff10b979a2bba5d1c0ab7f
+0x0062E840,1277,?Spark_AI@ParticleSystemClass@@AAEXXZ,src/partsys.cpp,d8052a7daa34ad8d5a50a0662caa93b47d85f6bcff0a70a4533252ab2a6998f3
 0x0062ED40,1255,?Smoke_AI@ParticleSystemClass@@AAEXXZ,src/partsys.cpp,31af894e2767547ce1d11d562d85209b2784688f4b38169032dd352a87de7ac5
 0x0062F230,1904,?Railgun_AI@ParticleSystemClass@@AAEXXZ,src/partsys.cpp,c4dfb575a6357ad462f9c11c19089687523b25d7038b003a2df27fcd7fa6f3d8
 0x0062F9A0,951,?Fire_AI@ParticleSystemClass@@AAEXXZ,src/partsys.cpp,ac628eee20f121a7aa0605273f2fc0b6421743fcc932f3b4d70230f5a72c2edc
@@ -13303,6 +13304,7 @@ address,size,symbol,source,sha256
 0x006A0470,71,?Stop_Driver@ShipLocomotionClass@@QAE_NXZ,src/ship.cpp,5afc11e193c519ad0f32b652b53e23b74c44b5e48807f0306cf47b916c9ab511
 0x006A04C0,242,?Start_Driver@ShipLocomotionClass@@QAE_NABVCoord@@@Z,src/ship.cpp,fcc80b9a7f8b6d579b5d3cd2892c868b572c3332cd5e470f508fc05c9e64652d
 0x006A05C0,34,?Do_Turn@ShipLocomotionClass@@UAGXUDirStruct@@@Z,src/ship.cpp,06efd3b5db11a143d1113f81eb7dbcb9d52bfd494f9b9f3ad494642a9773f98f
+0x006A05F0,5768,?While_Moving@ShipLocomotionClass@@AAE_N_N@Z,src/ship.cpp,eaaf1930ae98db64cb9f1f0c240d698511a6c7f9904ef8dcd27f8d9f60c50928
 0x006A1C80,8470,?Start_Of_Move@ShipLocomotionClass@@AAE_NAA_N_N1@Z,src/ship.cpp,8974ec297bc0863d8f6228b18fe9850ba02beb7dbfddaae005540c3ac38ae409
 0x006A3DA0,1,?Lay_Track@ShipLocomotionClass@@AAEXXZ,src/ship.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x006A3DB0,124,?Smooth_Turn@ShipLocomotionClass@@AAE?AVPoint2D@@ABV2@AAW4Dir256@@@Z,src/ship.cpp,6a9a35df52cb0d15d8c9c91a52aebe5fb1c7ca39898352f6a65a44f502c7fca1
