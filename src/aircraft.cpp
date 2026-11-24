@@ -48,7 +48,6 @@
 #include "tracker.h"
 #include "unit.h"
 #include "geometry.h"
-#include "trajhelp.h"
 #include "waypoint.h"
 #include "weapon.h"
 #include "cast.h"
@@ -2976,9 +2975,9 @@ AbstractClass * AircraftClass::Good_Fire_Location(AbstractClass * target) const
 				if (Map.In_Local_Radar(newcell) && (Session.Type != GAME_NORMAL || IsALoaner || Map[newcell].IsVisible) && Cell_Seems_Ok(newcell, true)) {
 					int dist;
 					if (altcoord != COORD_NONE) {
-						dist = TrajectoryHelper::Horizontal_Range(newcoord, altcoord);
+						dist = Point2D(newcoord).Distance_To(Point2D(altcoord));
 					} else {
-						dist = TrajectoryHelper::Horizontal_Range(Center_Coord(), newcoord);
+						dist = Point2D(Center_Coord()).Distance_To(Point2D(newcoord));
 					}
 					if (bestval == -1 || dist < bestval) {
 						best2val = bestval;

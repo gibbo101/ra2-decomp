@@ -12,7 +12,6 @@
 #include "_map.h"
 #include "cell.h"
 #include "missile.h"
-#include "trajhelp.h"
 
 template class TVelocity3D<double>;
 
@@ -49,28 +48,20 @@ template class TVelocity3D<double>;
 // TEMPLATE: GAMEMD 0x005B2A30
 // ?Set_Pitch@?$TVelocity3D@N@@QAEXABVDirType@@@Z
 
-static inline double Projectile_Speed(TVelocity3D<double> const & velocity)
-{
-	return(fastmath::sqrt((velocity.X * velocity.X) + (velocity.Y * velocity.Y) + (velocity.Z * velocity.Z)));
-}
-
-// FUNCTION: GAMEMD 0x005B20F0
 int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const & target_coord, DirType const & rot, bool aircraft, bool airburst, bool veryhigh, bool level)
 {
 	if (target_coord == COORD_NONE) {
 		DirType pitch = velocity.Get_Pitch();
 		pitch.Turn(DirType(DIR_NE), rot);
 		velocity.Set_Pitch(pitch);
-		TVelocity3D<double> const frame_velocity(velocity);
+		TVelocity3D<double> frame_velocity(velocity);
 		coord = coord + Point3D(frame_velocity.X, frame_velocity.Y, frame_velocity.Z);
-		return(Projectile_Speed(velocity));
+		return(velocity.Speed());
 	} else {
-		TVelocity3D<double> frame_velocity;
-		TVelocity2D<double> planar_velocity(velocity);
-		frame_velocity.Set(planar_velocity.X, planar_velocity.Y, velocity.Z);
+		TVelocity3D<double> frame_velocity(velocity);
 		coord = coord + Point3D(frame_velocity.X, frame_velocity.Y, frame_velocity.Z);
 		int target_distance = coord.Distance_To(target_coord);
-		int horizontal_distance = TrajectoryHelper::Horizontal_Range(coord, target_coord);
+		int horizontal_distance = Point2D(coord).Distance_To(Point2D(target_coord));
 
 		Coord delta = target_coord - coord;
 
@@ -85,7 +76,7 @@ int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const
 		DirType desired_pitch = velocity.Get_Pitch();
 
 		if (!aircraft && (airburst || horizontal_distance > ((veryhigh ? 6 : 3) * CELL_LEPTON)) && rot.As_Dir256() > 1) {
-			TVelocity3D<double> const lookahead_velocity(velocity);
+			TVelocity3D<double> lookahead_velocity(velocity);
 			Coord lookahead_coord = coord + Point3D(lookahead_velocity.X, lookahead_velocity.Y, lookahead_velocity.Z) * 6;
 
 			int terrain_height = Map.Get_Height_GL(lookahead_coord);
