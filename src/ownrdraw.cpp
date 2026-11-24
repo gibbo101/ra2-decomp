@@ -7,9 +7,14 @@
 #include "always.h"
 #include "ownrdraw.h"
 #include "draw.h"
+#include "movies.h"
+#include "shapeset.h"
 
 class SHPStruct;
-class MovieHandle;
+
+extern DynamicVectorClass<char const *> DAT_00ABF390;
+MovieHandle *__fastcall OwnerDraw_InitMovieHandle(char const *, Surface *, Rect *);
+void __cdecl FUN_004068E0(char const *, ...);
 
 namespace OwnerDraw {
 	struct WinData {
@@ -9988,25 +9993,17 @@ LRESULT CALLBACK OwnerDraw::ComboDropWindowHandler(HWND window, UINT message, WP
 	return DefWindowProcA(window, message, wparam, lparam);
 }
 
-#include "movies.h"
-#include "shapeset.h"
-
-extern DynamicVectorClass<char const *> DAT_00ABF390;
-MovieHandle *__fastcall OwnerDraw_InitMovieHandle(char const *, Surface *, Rect *);
-void __cdecl FUN_004068E0(char const *, ...);
-
 // FUNCTION: GAMEMD 0x006153E0
 // OwnerDraw::StaticHandler
 LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	WinData *data = Find_Data(window);
-	HWND movieWindow;
 	RECT text_rect;
 	if (data == NULL) {
 		return 0;
 	}
 	switch (message) {
-	case WM_DESTROY:
+	case WM_DESTROY: {
 		if (data->cachedSurface != NULL) {
 			delete data->cachedSurface;
 			data->cachedSurface = NULL;
@@ -10022,7 +10019,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 		} else if (data->StaticDrawMode == 4) {
 			KillTimer(window, 0);
 		}
-		movieWindow = window;
+		HWND const movieWindow = window;
 		if (data->StaticMovieHandle != NULL) {
 			delete data->StaticMovieHandle;
 			data->StaticMovieHandle = NULL;
@@ -10032,6 +10029,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 			delete data->StaticMovieAuxHandle;
 			data->StaticMovieAuxHandle = NULL;
 		}
+	}
 	default:
 		goto call_original;
 	case WM_PAINT: {
@@ -10244,7 +10242,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 	case WM_USER + 223:
 		if ((int)wparam >= 0 && (int)wparam < DAT_00ABF390.Count()) {
 			char const *movieName = DAT_00ABF390[(int)wparam];
-			movieWindow = window;
+			HWND const movieWindow = window;
 			if (data->StaticMovieHandle != NULL) {
 				delete data->StaticMovieHandle;
 				data->StaticMovieHandle = NULL;
@@ -10273,7 +10271,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 		break;
 
 	case WM_USER + 228: {
-		movieWindow = window;
+		HWND const movieWindow = window;
 		if (data->StaticMovieHandle != NULL) {
 			delete data->StaticMovieHandle;
 			data->StaticMovieHandle = NULL;
@@ -10301,8 +10299,8 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 		break;
 	}
 
-	case WM_USER + 226:
-		movieWindow = window;
+	case WM_USER + 226: {
+		HWND const movieWindow = window;
 		if (data->StaticMovieHandle != NULL) {
 			delete data->StaticMovieHandle;
 			data->StaticMovieHandle = NULL;
@@ -10313,6 +10311,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 			data->StaticMovieAuxHandle = NULL;
 		}
 		break;
+	}
 
 	case WM_USER + 240:
 		if (data->StaticMovieHandle != NULL) {
@@ -10347,7 +10346,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 						data->StaticMovieHandle->SeekToFrame(1);
 						FUN_004068E0("Looping movie\n");
 					} else {
-						movieWindow = window;
+						HWND const movieWindow = window;
 						if (data->StaticMovieHandle != NULL) {
 							delete data->StaticMovieHandle;
 							data->StaticMovieHandle = NULL;
