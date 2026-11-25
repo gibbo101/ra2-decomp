@@ -620,9 +620,90 @@ double MapRegionClass::Get_Angle_Score(const Cell & cell1, const Cell & cell2, d
 }
 
 static inline bool In_Zone_Map_Bounds(Cell const & cell);
+static inline Cell Offset_Cell(Cell const & cell, int dx, int dy);
 
+// FUNCTION: GAMEMD 0x0058C800
+MapRegionClass * MapRegionClass::Create_Region_From_Cell(CellClass * cptr)
+{
+	int i;
+	int region_id = MapRegionClass::TotalCount;
 
+	DynamicVectorClass<Cell> cells;
+	cells.Set_Growth_Step(50000);
+	cells.Add(cptr->Fetch_CellID());
 
+	bool has_water = cptr->Is_Tile_With_Water() || cptr->Is_Tile_Clear_To_Green_LAT();
+	int cell_height = cptr->Height;
+	int processed_count = 0;
+
+	int pending = cells.Count();
+	while (pending) {
+		Cell cell = cells[pending - 1];
+		cells.Delete_Index(pending - 1);
+
+		CellData::Set_Spread(cell, region_id);
+		CellData::Set_Region(cell, region_id);
+
+		for (i = 0; i < FACING_COUNT; i++) {
+			Cell ncell = Adjacent_Cell(cell, (FacingType)i);
+			CellData & ndata = MapRegionClass::Get_Cell_Data(ncell);
+			if (My_In_Radar(ncell) && ndata.RegionID == -1 && ndata.SpreadID != region_id) {
+				ndata.SpreadID = region_id;
+				if (Map[ncell].Height == cell_height) {
+					int n_has_water = Map[ncell].Is_Tile_With_Water() || Map[ncell].Is_Tile_Clear_To_Green_LAT();
+					if (!(has_water ^ n_has_water)) {
+						cells.Add(ncell);
+					}
+				}
+			}
+		}
+
+		processed_count++;
+		pending = cells.Count();
+	}
+
+	if (processed_count < 75 && !has_water) {
+		bool reset_done = false;
+
+		if (region_id == 0) {
+			DynamicVectorClass<Cell> * region_cells = RandomMapGen.Build_Region_Border_Cell_List(0);
+			Cell region_cell = (*region_cells)[Pick_Random_UInt(0, region_cells->Count() - 1)];
+
+			for (i = 0; i < FACING_COUNT; i++) {
+				Cell ncell = Adjacent_Cell(region_cell, (FacingType)i);
+				if (My_In_Radar(ncell) && Map[ncell].Height != Map[region_cell].Height && !Map[ncell].Is_Tile_With_Water()) {
+					RandomMapGen.Clear_Region_Cells(0, -1, Map[ncell].Height, ISOTILE_CLEAR);
+
+					reset_done = true;
+					break;
+				}
+			}
+
+			delete region_cells;
+		} else {
+			Cell side_cell = Offset_Cell(cptr->Fetch_CellID(), -1, 0);
+			if (!My_In_Radar(side_cell)) {
+				side_cell = Offset_Cell(cptr->Fetch_CellID(), 0, -1);
+			}
+
+			if (In_Zone_Map_Bounds(side_cell)) {
+				RandomMapGen.Clear_Region_Cells(region_id, CellData::Get_Region(side_cell), Map[side_cell].Height, ISOTILE_CLEAR);
+
+				reset_done = true;
+			}
+		}
+
+		if (reset_done) {
+			return(NULL);
+		}
+	}
+
+	MapRegionClass * region = new MapRegionClass(cptr->Fetch_CellID());
+	region->CellHeight = cell_height;
+	region->ContainsWater = has_water;
+	region->Recount_Cells();
+	return(region);
+}
 
 // FUNCTION: GAMEMD 0x0058CE90
 void MapRegionClass::Destroy_Cell_Regions(void)
@@ -1902,6 +1983,11 @@ MapRegionClass * MapRegionClass::From_ID(int id)
 		}
 	}
 	return(NULL);
+}
+
+static inline Cell Offset_Cell(Cell const & cell, int dx, int dy)
+{
+	return Cell(cell.X + dx, cell.Y + dy);
 }
 
 static inline bool In_Zone_Map_Bounds(Cell const & cell)
