@@ -625,6 +625,49 @@ static bool RegisterClasses(void)
 	return(failed);
 }
 
+static void Read_Setup_Options(RawFileClass *config_file)
+{
+	INI_RA2MD.ReadCCFile(*config_file, false, false);
+	Game::bVideoBackBuffer = INI_RA2MD.Get_Bool("Video", "VideoBackBuffer", true);
+	Debug_IngameModeChange = INI_RA2MD.Get_Bool("Video", "AllowModeToggle", false);
+	Options.ScreenWidth = INI_RA2MD.Get_Int("Video", "ScreenWidth", Options.ScreenWidth);
+	Options.ScreenHeight = INI_RA2MD.Get_Int("Video", "ScreenHeight", Options.ScreenHeight);
+	int socket = INI_RA2MD.Get_Int("Network", "Socket", 0);
+	if (socket > 0) {
+		socket += 0x4000;
+		if (socket >= 0x4000 && socket < 0x8000) {
+			Ipx.Set_Socket(socket);
+		}
+	}
+	char netbuf[INIClass::MAX_LINE_LENGTH];
+	memset(netbuf, 0, sizeof(netbuf));
+	char *netptr = netbuf;
+	bool found = INI_RA2MD.Get_String("Network", "DestNet", 0, netbuf, sizeof(netbuf)) != 0;
+	if (found && netptr != NULL && strlen(netbuf)) {
+		NetNumType net;
+		NetNodeType node;
+		int i = 0;
+		char *p = strtok(netbuf, ".");
+		int x;
+		while (p) {
+			sscanf(p, "%x", &x);
+			if (i < 4) {
+				net[i] = (char)x;
+			} else {
+				node[i - 4] = (char)x;
+			}
+			i++;
+			p = strtok(NULL, ".");
+		}
+		if (i >= 4) {
+			Session.IsBridge = 1;
+			memset(node, 0xff, 6);
+			Session.BridgeNet = IPXAddressClass(net, node, 0);
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x006BB9A0
 int CALLBACK WinMain(HINSTANCE instance, HINSTANCE, char *command_line, int command_show)
 {
 	int argc;
@@ -751,44 +794,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE, char *command_line, int comm
 	if (Parse_Command_Line(argc, argv)) {
 		HRESULT result;
 		RawFileClass *cfile = new RawFileClass("RA2MD.INI");
-		INI_RA2MD.ReadCCFile(*cfile, false, false);
-		Game::bVideoBackBuffer = INI_RA2MD.Get_Bool("Video", "VideoBackBuffer", true);
-		Debug_IngameModeChange = INI_RA2MD.Get_Bool("Video", "AllowModeToggle", false);
-		Options.ScreenWidth = INI_RA2MD.Get_Int("Video", "ScreenWidth", Options.ScreenWidth);
-		Options.ScreenHeight = INI_RA2MD.Get_Int("Video", "ScreenHeight", Options.ScreenHeight);
-		int socket = INI_RA2MD.Get_Int("Network", "Socket", 0);
-		if (socket > 0) {
-			socket += 0x4000;
-			if (socket >= 0x4000 && socket < 0x8000) {
-				Ipx.Set_Socket(socket);
-			}
-		}
-		char netbuf[INIClass::MAX_LINE_LENGTH];
-		memset(netbuf, 0, sizeof(netbuf));
-		char *netptr = netbuf;
-		bool found = INI_RA2MD.Get_String("Network", "DestNet", 0, netptr, sizeof(netbuf)) != 0;
-		if (found && netptr && strlen(netptr)) {
-			NetNumType net;
-			NetNodeType node;
-			int i = 0;
-			char *p = strtok(netptr, ".");
-			int x;
-			while (p) {
-				sscanf(p, "%x", &x);
-				if (i < 4) {
-					net[i] = (char)x;
-				} else {
-					node[i - 4] = (char)x;
-				}
-				i++;
-				p = strtok(NULL, ".");
-			}
-			if (i >= 4) {
-				Session.IsBridge = 1;
-				memset(node, 0xff, 6);
-				Session.BridgeNet = IPXAddressClass(net, node, 0);
-			}
-		}
+		Read_Setup_Options(cfile);
 		Keyboard = new KeyboardClass();
 		if (Disk_Space_Available() < INIT_FREE_DISK_SPACE) {
 			swprintf(buffer, START_TEXT("TXT_CRITICALLY_LOW", 0x78b), INIT_FREE_DISK_SPACE / (1024 * 1024));
@@ -893,12 +899,8 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE, char *command_line, int comm
 				FUN_0053E550("session.ipb");
 			}
 		}
-		int bpp;
-		{
-			DSurface *primary_surface = DSurface::Create_Primary();
-			VisibleSurface = primary_surface;
-			bpp = primary_surface->Bytes_Per_Pixel();
-		}
+		VisibleSurface = DSurface::Create_Primary();
+		int bpp = VisibleSurface->Bytes_Per_Pixel();
 		HicolorFlag = bpp == 2;
 		if (!HicolorFlag) {
 			FUN_00734FE0(MainWindow, START_TEXT("TXT_INVALIDMODE", 0x8c5), START_TEXT("TXT_SHORT_TITLE", 0x8c5), MB_ICONEXCLAMATION);
@@ -936,24 +938,23 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE, char *command_line, int comm
 		} else {
 			Game::bDirect3DIsUseable = false;
 		}
-		{
-			Allocate_Surfaces(VisibleRect,
-				Rect(0, 0, VisibleRect.Width - SidebarWidth, VisibleRect.Height),
-				Rect(0, 0, VisibleRect.Width - SidebarWidth, VisibleRect.Height),
-				Rect(0, 0, SidebarWidth, VisibleRect.Height), false);
-			if (DirectDrawWrap::DoSmth && (result = FUN_004C16A0()) != DD_OK) {
-				FUN_004C19B0();
-				DirectDrawWrap::DoSmth = false;
-				Game::bDirect3DIsUseable = false;
-			}
-			LogicalSurface = HiddenSurface;
-			Update_Visible_Surface(true, HiddenSurface);
-			ZBuffer *depth_buffer = DepthBuffer = new ZBuffer(Rect(TacticalRect.X, TacticalRect.Y, 480, 480 - TacticalRect.Y));
-			depth_buffer->Set_Scroll(ZBUFFER_MAX);
+		Allocate_Surfaces(VisibleRect,
+			Rect(0, 0, VisibleRect.Width - SidebarWidth, VisibleRect.Height),
+			Rect(0, 0, VisibleRect.Width - SidebarWidth, VisibleRect.Height),
+			Rect(0, 0, SidebarWidth, VisibleRect.Height), false);
+		if (DirectDrawWrap::DoSmth && (result = FUN_004C16A0()) != DD_OK) {
+			FUN_004C19B0();
+			DirectDrawWrap::DoSmth = false;
+			Game::bDirect3DIsUseable = false;
 		}
+		LogicalSurface = HiddenSurface;
+		Update_Visible_Surface(true, HiddenSurface);
+		ZBuffer *zbuf = DepthBuffer = new ZBuffer(Rect(TacticalRect.X, TacticalRect.Y, 480, 480 - TacticalRect.Y));
+		zbuf->Set_Scroll(ZBUFFER_MAX);
 		AlphaBuffer = new ABuffer(Rect(TacticalRect.X, TacticalRect.Y, 480, 480 - TacticalRect.Y));
-		MouseCursor = new WWMouseClass(static_cast<DSurface *>(VisibleSurface), MainWindow);
-		Hide_Mouse();
+		WWMouseClass *mouse = new WWMouseClass(static_cast<DSurface *>(VisibleSurface), MainWindow);
+		MouseCursor = mouse;
+		mouse->Hide_Mouse();
 		CDFileClass::Set_CD_Drive(CDList.Get_First_CD_Drive());
 		FUN_005355D0();
 		Special.IsFromInstall = INI_RA2MD.Get_Bool("Intro", "Play", true);
