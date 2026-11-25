@@ -2901,14 +2901,16 @@ static inline void Update_Country_Combos(HWND dialog)
 	}
 }
 
-static inline void Build_Country_String(char * buffer)
+static inline bool Country_List_Changed(void)
 {
-	buffer[0] = '\0';
+	strcpy(DAT_00AC0EA4, DAT_00AC0B10);
+	DAT_00AC0B10[0] = '\0';
 	for (int i = 0; i < 8; i++) {
 		char text[4];
 		sprintf(text, "%d,", FUN_005EA920(i));
-		strcat(buffer, text);
+		strcat(DAT_00AC0B10, text);
 	}
+	return(strcmp(DAT_00AC0EA4, DAT_00AC0B10) != 0);
 }
 
 // FUNCTION: GAMEMD 0x005EA3E0
@@ -2943,9 +2945,7 @@ void __fastcall FUN_005EA3E0(HWND dialog, bool full)
 		}
 	}
 	Update_Country_Flags(dialog);
-	strcpy(DAT_00AC0EA4, DAT_00AC0B10);
-	Build_Country_String(DAT_00AC0B10);
-	if (strcmp(DAT_00AC0EA4, DAT_00AC0B10) != 0) {
+	if (Country_List_Changed()) {
 		Update_Country_Combos(dialog);
 	}
 	strcpy(DAT_00AC0AC8, DAT_00AC0AEC);
