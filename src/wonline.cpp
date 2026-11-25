@@ -1003,6 +1003,12 @@ void FUN_005E9850(void);
 void FUN_0072CF90(void);
 void __fastcall FUN_005E9340(char const * name);
 
+static inline Wstring Narrow_Text(wchar_t const * text)
+{
+	WideWstring wide(text);
+	return FUN_007B7F90(wide);
+}
+
 // FUNCTION: GAMEMD 0x0077E900
 void __fastcall SetPlayerAccepted(Wstring const & who, int status)
 {
@@ -1020,7 +1026,7 @@ void __fastcall SetPlayerAccepted(Wstring const & who, int status)
 	Wstring lower = ((Wstring const &)name).toLower();
 	int i;
 	for (i = 0; i < Session.Players.Count(); i++) {
-		Wstring slot_name = FUN_007B7F90(Session.Players[i]->Name);
+		Wstring slot_name = Narrow_Text(Session.Players[i]->Name);
 		if (((Wstring const &)slot_name).toLower() == lower) {
 			break;
 		}
@@ -1066,7 +1072,7 @@ int __fastcall GetPlayerAccepted(Wstring const & who)
 	}
 	int found = -1;
 	for (int i = 0; i < Session.Players.Count(); i++) {
-		Wstring slot_name = FUN_007B7F90(Session.Players[i]->Name);
+		Wstring slot_name = Narrow_Text(Session.Players[i]->Name);
 		if (((Wstring const &)slot_name).toLower() == lower) {
 			found = i;
 		}
@@ -1099,7 +1105,7 @@ int __fastcall Assign_House_And_Color(Wstring const & who, int country, int colo
 	int index = -1;
 	Wstring lower = who.toLower();
 	for (int j = 0; j < 8; j++) {
-		Wstring slot_name = FUN_007B7F90(Session.Slots[j]->Name);
+		Wstring slot_name = Narrow_Text(Session.Slots[j]->Name);
 		if (lower == ((Wstring const &)slot_name).toLower()) {
 			index = j;
 			break;
@@ -4502,6 +4508,204 @@ int Login_WOL(void)
 	return result;
 }
 
+extern char g_WDTSoundsInited;
+extern char DAT_0084A210;
+void Init_WDT_Sounds(void);
+void Play_WDT_Sound(ArrayList<Wstring> list);
+void FUN_0079D4E0(void);
+bool FUN_0052F3F0(void);
+void __fastcall Set_Wait_Dialog_Text(wchar_t const * text);
+void __fastcall FUN_00792EC0(unsigned int mask);
+void FUN_0072CD60(void);
+void FUN_0072CDB0(void);
+BOOL CALLBACK FUN_0078AC10(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+
+static inline void Reset_Wait_Event_At(int index)
+{
+	ResetEvent(g_WaitEventHandles[index]);
+}
+
+static inline bool Is_WDT_Session(void)
+{
+	return Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3;
+}
+
+// FUNCTION: GAMEMD 0x00787770
+int __fastcall Join_WOL_Lobby(HWND win, bool flag)
+{
+	int retval = 0;
+
+	if (DAT_00B77DC1 && Is_WDT_Session() && Session.Winner != -1 && Session.Winner < 8) {
+		Wstring name = Narrow_Text(Session.Score[Session.Winner].Name);
+		if (strnicmp(name.get(), Session.Handle, sizeof(Session.Handle)) == 0) {
+			if (Session.House == 0) {
+				Play_WDT_Sound(g_WDT_GDIWinEmphasisSounds);
+			} else if (Session.House == 1) {
+				Play_WDT_Sound(g_WDT_NodWinEmphasisSounds);
+			}
+		} else if (Session.House == 0) {
+			Play_WDT_Sound(g_WDT_GDILoseEmphasisSounds);
+		}
+	}
+
+	DAT_00B77DC1 = 0;
+	g_GameStarted = 0;
+	if (Is_WDT_Session()) {
+		g_pChat->RequestSetTeam(Session.House);
+		if (!g_WDTSoundsInited) {
+			Init_WDT_Sounds();
+		}
+	}
+	FUN_0052F3F0();
+
+	if (g_ConnectionLost) {
+		int result = Login_WOL();
+		if (result != 1) {
+			return result;
+		}
+	}
+
+	FUN_00798340();
+
+	if (win == 0) {
+		FUN_0052FEC0(NULL, true);
+		FUN_0072CD60();
+		win = UI::BeginDialog(0x113, FUN_0078AC10, 0);
+		if (g_MessageOfTheDay.length() > 0) {
+			char * motd = new char[g_MessageOfTheDay.length() + 1];
+			if (motd) {
+				strcpy(motd, g_MessageOfTheDay.get());
+				char * token = strtok(motd, "\n");
+				while (token) {
+					WideWstring line = FUN_007B7ED0(token);
+					PMessagePrintf(DAT_007EEF28, line.get());
+					token = strtok(NULL, "\n");
+				}
+				PMessagePrintf(DAT_007EEF28, L"\n");
+				g_MessageOfTheDay.clear();
+				delete [] motd;
+			}
+		}
+		Show_Wait_Window(0x10, StringTable::LoadString("GUI:LoginComplete", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x2894), 0);
+	}
+
+	g_SquadInfoRequests++;
+	g_RequestingOwnSquadInfo = 1;
+	g_pChat->RequestSquadInfo(0);
+
+	FUN_0079D4E0();
+
+	DAT_0084A1BC = 0x29;
+	Set_Wait_Dialog_Text(StringTable::LoadString("TXT_REQ_CHANLIST", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x28A8));
+	if (!FUN_0077F520(true)) {
+		goto cleanup;
+	}
+	Set_Wait_Dialog_Text(StringTable::LoadString("TXT_JOINLOB", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x28AF));
+	{
+		int lobby = Join_Lobby(DAT_0084A210 && !flag);
+		DAT_0084A210 = 1;
+		if (lobby == -1) {
+			goto cleanup;
+		}
+	}
+
+	DWORD idx;
+	while ((idx = WaitForMultipleObjects(18, g_WaitEventHandles, FALSE, 100)) == WAIT_TIMEOUT) {
+		WOL_Wait_Callback();
+	}
+	Reset_Wait_Event_At(idx);
+	if (idx == 0 || idx == 5) {
+		goto logout;
+	}
+
+	g_JoinLobbyNow = 0;
+	PostMessageA(win, 0x593, 0, 0);
+	FUN_00792EC0(0xFFFFFFFF);
+	SetFocus(MainWindow);
+	ShowWindow(win, SW_SHOWNORMAL);
+	SetFocus(win);
+	SetFocus(GetDlgItem(win, 0x540));
+	DAT_00B77DBC = 0;
+	DAT_00B77DB8 = time(0);
+
+	while (true) {
+		while ((idx = WaitForMultipleObjects(18, g_WaitEventHandles, FALSE, 20)) == WAIT_TIMEOUT) {
+			WOL_Wait_Callback();
+			if (g_JoinLobbyNow) {
+				EnableWindow(GetDlgItem(win, 0x53D), FALSE);
+				EnableWindow(GetDlgItem(win, 0x6EE), FALSE);
+				EnableWindow(GetDlgItem(win, 0x62D), FALSE);
+				EnableWindow(GetDlgItem(win, 0x62B), FALSE);
+				EnableWindow(GetDlgItem(win, 0x689), FALSE);
+				EnableWindow(GetDlgItem(win, 0x688), FALSE);
+				EnableWindow(GetDlgItem(win, 0x7A3), FALSE);
+				EnableWindow(GetDlgItem(win, 0x7A6), FALSE);
+				EnableWindow(GetDlgItem(win, 0x61F), FALSE);
+				EnableWindow(GetDlgItem(win, 0x5C2), FALSE);
+				EnableWindow(GetDlgItem(win, 0x686), FALSE);
+				if (Join_Lobby(false) == -1) {
+					EnableWindow(GetDlgItem(win, 0x686), TRUE);
+					SetEvent(g_WaitEventHandles[5]);
+				} else {
+					PostMessageA(win, 0x593, 0, 0);
+				}
+				g_JoinLobbyNow = 0;
+			}
+		}
+		Reset_Wait_Event_At(idx);
+		if (idx == 0) {
+			goto cleanup;
+		}
+		if (idx != 6) {
+			if (idx == 15) {
+				retval = 2;
+				break;
+			}
+			if (idx == 5) {
+				goto cleanup;
+			}
+			if (idx == 7) {
+				goto started;
+			}
+		} else {
+			break;
+		}
+	}
+	g_LastErrorMessage[0] = 0;
+
+logout:
+	WS_Destroy_Dialog(win, 0);
+	WOL_Wait_Callback();
+	win = 0;
+	if (g_pChat) {
+		g_pChat->RequestChannelLeave();
+	}
+
+cleanup:
+	FUN_00792EC0(0xFFFFFFFF);
+	ODMessageBox(g_LastErrorMessage, 0, FUN_0077D710, 0);
+	if (win) {
+		WS_Destroy_Dialog(win, 0);
+	}
+	while (WS_Destroy_Dialog(NULL, 0)) {
+	}
+	FUN_0072CDB0();
+	if (retval == 1) {
+		DAT_00B77DC1 = 1;
+	}
+	if (Is_WDT_Session()) {
+		g_WDTTeams.clear();
+	}
+	return retval;
+
+started:
+	retval = 1;
+	g_pChat->RequestChannelLeave();
+	g_GameStartRequested = 0;
+	g_LastErrorMessage[0] = 0;
+	goto cleanup;
+}
+
 
 #include "_mixfile.h"
 #include "_pk.h"
@@ -4757,7 +4961,7 @@ void __fastcall NewLogin(HWND win)
 	day = 0;
 	year = 0;
 	for (int i = 0; i < 18; i++) {
-		ResetEvent(g_WaitEventHandles[i]);
+		Reset_Wait_Event_At(i);
 	}
 	memset(nick, 0, sizeof(nick));
 	memset(pass, 0, sizeof(pass));
@@ -4773,7 +4977,7 @@ void __fastcall NewLogin(HWND win)
 			WOL_Wait_Callback();
 			wait = WaitForMultipleObjects(18, g_WaitEventHandles, FALSE, 100);
 		}
-		ResetEvent(g_WaitEventHandles[wait]);
+		Reset_Wait_Event_At(wait);
 	} while (wait != 0 && wait != 1);
 	FUN_00792EC0(0xFFFFFFFF);
 	if (wait == 0) {
@@ -8154,7 +8358,7 @@ int __fastcall FUN_00797640(int sku)
 		while ((index = WaitForMultipleObjects(18, g_WaitEventHandles, FALSE, 50)) == WAIT_TIMEOUT) {
 			WOL_Wait_Callback();
 		}
-		ResetEvent(g_WaitEventHandles[index]);
+		Reset_Wait_Event_At(index);
 		if (index == 0) {
 			result = 1;
 			break;
@@ -8237,7 +8441,7 @@ bool Request_WDT_Cycle(void)
 		return false;
 	}
 	for (int i = 0; i < 18; i++) {
-		ResetEvent(g_WaitEventHandles[i]);
+		Reset_Wait_Event_At(i);
 	}
 	long result = g_pNetUtil->RequestWDTState(g_WDTHost, g_WDTPort, 3);
 	FUN_004068E0("WDTHost is %s, port is %d\n", g_WDTHost, g_WDTPort);
@@ -8262,7 +8466,7 @@ bool Request_WDT_Cycle(void)
 			WOL_Wait_Callback();
 			index = WaitForMultipleObjects(18, g_WaitEventHandles, FALSE, 100);
 		}
-		ResetEvent(g_WaitEventHandles[index]);
+		Reset_Wait_Event_At(index);
 		if (index == 0) {
 			Close_Wait_Dialog();
 			return false;
@@ -8294,7 +8498,7 @@ failed:
 			WOL_Wait_Callback();
 			index = WaitForMultipleObjects(18, g_WaitEventHandles, FALSE, 100);
 		}
-		ResetEvent(g_WaitEventHandles[index]);
+		Reset_Wait_Event_At(index);
 		if (index == 0) {
 			Close_Wait_Dialog();
 			return false;
@@ -8401,7 +8605,7 @@ int __fastcall FUN_007982D0(int seconds, int count)
 		}
 		WOL_Wait_Callback();
 	}
-	ResetEvent(g_WaitEventHandles[index]);
+	Reset_Wait_Event_At(index);
 	return index;
 }
 
@@ -8409,7 +8613,7 @@ int __fastcall FUN_007982D0(int seconds, int count)
 void FUN_00798340(void)
 {
 	for (int i = 0; i < 18; i++) {
-		ResetEvent(g_WaitEventHandles[i]);
+		Reset_Wait_Event_At(i);
 	}
 }
 
@@ -10688,7 +10892,7 @@ int FUN_0079FC40(void)
 		while ((index = WaitForMultipleObjects(18, g_WaitEventHandles, FALSE, 20)) == WAIT_TIMEOUT) {
 			WOL_Wait_Callback();
 		}
-		ResetEvent(g_WaitEventHandles[index]);
+		Reset_Wait_Event_At(index);
 		if (index == 0 || index == 6) {
 			goto cleanup;
 		}
