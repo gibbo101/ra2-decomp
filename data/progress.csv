@@ -3781,6 +3781,7 @@ address,name,result,size,source,symbol
 0x004AFD40,DriveLocomotionClass::Move_To,MATCH,181,src/drive.cpp,?Move_To@DriveLocomotionClass@@UAGXUCoordStruct@@@Z
 0x004AFE00,DriveLocomotionClass::Stop_Moving,MATCH,200,src/drive.cpp,?Stop_Moving@DriveLocomotionClass@@UAGXXZ
 0x004AFED0,DriveLocomotionClass::Is_Angled,MATCH,142,src/drive.cpp,?Is_Angled@DriveLocomotionClass@@QBEHXZ
+0x004AFF60,DriveLocomotionClass::Draw_Matrix,MATCH,1189,src/drive.cpp,?Draw_Matrix@DriveLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z
 0x004B0410,DriveLocomotionClass::Shadow_Matrix,MATCH,178,src/drive.cpp,?Shadow_Matrix@DriveLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z
 0x004B04D0,DriveLocomotionClass::Unlimbo,MATCH,37,src/drive.cpp,?Unlimbo@DriveLocomotionClass@@UAGXXZ
 0x004B0DA0,DriveLocomotionClass::Stop_Driver,MATCH,71,src/drive.cpp,?Stop_Driver@DriveLocomotionClass@@QAE_NXZ
@@ -3821,7 +3822,7 @@ address,name,result,size,source,symbol
 0x004B4D00,??_GDriveLocomotionClass@@UAEPAXI@Z,MATCH,65,src/drive.cpp,??_GDriveLocomotionClass@@UAEPAXI@Z
 0x004B4D50,?_Release@?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ,MATCH,13,src/drive.cpp,?_Release@?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
 0x004B4D60,?_Release@?$_com_ptr_t@V?$_com_IIID@UIPersistStream@@$1?_GUID_00000109_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ,MATCH,13,src/drive.cpp,?_Release@?$_com_ptr_t@V?$_com_IIID@UIPersistStream@@$1?_GUID_00000109_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ
-0x004B4D70,?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ,MATCH,28,src/drive.cpp,?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
+0x004B4D70,??R?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ,MATCH,28,src/drive.cpp,??R?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
 0x004B4D90,DriveLocomotionClass::QueryInterface,MATCH,10,src/drive.cpp,?QueryInterface@DriveLocomotionClass@@W3AGJABU_GUID@@PAPAX@Z
 0x004B4DA0,DriveLocomotionClass::AddRef,MATCH,10,src/drive.cpp,?AddRef@DriveLocomotionClass@@W3AGKXZ
 0x004B4DB0,DriveLocomotionClass::Release,MATCH,10,src/drive.cpp,?Release@DriveLocomotionClass@@W3AGKXZ
@@ -12958,6 +12959,7 @@ address,name,result,size,source,symbol
 0x0069F450,ShipLocomotionClass::Move_To,MATCH,181,src/ship.cpp,?Move_To@ShipLocomotionClass@@UAGXUCoordStruct@@@Z
 0x0069F510,ShipLocomotionClass::Stop_Moving,MATCH,200,src/ship.cpp,?Stop_Moving@ShipLocomotionClass@@UAGXXZ
 0x0069F5E0,ShipLocomotionClass::Is_Angled,MATCH,142,src/ship.cpp,?Is_Angled@ShipLocomotionClass@@QBEHXZ
+0x0069F670,ShipLocomotionClass::Draw_Matrix,MATCH,1189,src/ship.cpp,?Draw_Matrix@ShipLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z
 0x0069FB20,ShipLocomotionClass::Shadow_Matrix,MATCH,178,src/ship.cpp,?Shadow_Matrix@ShipLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z
 0x0069FBE0,ShipLocomotionClass::Unlimbo,MATCH,37,src/ship.cpp,?Unlimbo@ShipLocomotionClass@@UAGXXZ
 0x0069FC10,ShipLocomotionClass::Process,MATCH,1411,src/ship.cpp,?Process@ShipLocomotionClass@@UAGEXZ

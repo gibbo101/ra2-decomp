@@ -4136,6 +4136,7 @@ address,size,symbol,source,sha256
 0x004AFD40,181,?Move_To@DriveLocomotionClass@@UAGXUCoordStruct@@@Z,src/drive.cpp,db67c0a617a4876427c2b64c8d11b6aaf13b3553cbc668d4093731c0d3d5d35e
 0x004AFE00,200,?Stop_Moving@DriveLocomotionClass@@UAGXXZ,src/drive.cpp,be3abae9e5753e17f8a0118fd0d28be241d23a0c2aa287fc1789232300ef6657
 0x004AFED0,142,?Is_Angled@DriveLocomotionClass@@QBEHXZ,src/drive.cpp,63bab2fac025ec8658188e88918f421244612f02b52ce4ad756a8b3b2c49df25
+0x004AFF60,1189,?Draw_Matrix@DriveLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z,src/drive.cpp,506cd0619b22332667d2b00e41d586987da071d88b2f7575c3a258e3d599a3cf
 0x004B0410,178,?Shadow_Matrix@DriveLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z,src/drive.cpp,35b54937e689fb98727f24fce5d367be55012908a24fcf4d4e5559c8d4d48bc3
 0x004B04D0,37,?Unlimbo@DriveLocomotionClass@@UAGXXZ,src/drive.cpp,c6e6e7f9a5808bce7b939680ca48e03b363d80744aad0be8e8864bb4f97af809
 0x004B0500,1486,?Process@DriveLocomotionClass@@UAGEXZ,src/drive.cpp,96f92f8b114ba3ef19b21ccdd41cdd8fffaa260c2540753f7b211626e7d916d8
@@ -4176,7 +4177,7 @@ address,size,symbol,source,sha256
 0x004B4D00,65,??_GDriveLocomotionClass@@UAEPAXI@Z,src/drive.cpp,d97e158bac8880d3602f4d9934b9a94396707a4e4e66bcb099edd3aa86a31501
 0x004B4D50,13,?_Release@?$_com_ptr_t@V?$_com_IIID@UIPersist@@$1?_GUID_0000010c_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ,src/drive.cpp,75d77bd0a3a4afb5d4a2bf6084d52171f3e5b72dcc4a78108c73cb70fde0c354
 0x004B4D60,13,?_Release@?$_com_ptr_t@V?$_com_IIID@UIPersistStream@@$1?_GUID_00000109_0000_0000_c000_000000000046@@3U__s_GUID@@A@@@@AAEXXZ,src/drive.cpp,75d77bd0a3a4afb5d4a2bf6084d52171f3e5b72dcc4a78108c73cb70fde0c354
-0x004B4D70,28,?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ,src/drive.cpp,0d6bbab6d46c5d2e42a121ca5affaf202300d59984e21c1237a33c18c1f9b6e9
+0x004B4D70,28,??R?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ,src/drive.cpp,0d6bbab6d46c5d2e42a121ca5affaf202300d59984e21c1237a33c18c1f9b6e9
 0x004B4D90,10,?QueryInterface@DriveLocomotionClass@@W3AGJABU_GUID@@PAPAX@Z,src/drive.cpp,cc651489ae8678240008eb373ff4d7349d29eef4382f4f51f78824e46831d7e6
 0x004B4DA0,10,?AddRef@DriveLocomotionClass@@W3AGKXZ,src/drive.cpp,56213c1214a69a8ef6b065a01cf9303894bd9fe3da954ca92b6101136b52607a
 0x004B4DB0,10,?Release@DriveLocomotionClass@@W3AGKXZ,src/drive.cpp,56213c1214a69a8ef6b065a01cf9303894bd9fe3da954ca92b6101136b52607a
@@ -13307,6 +13308,7 @@ address,size,symbol,source,sha256
 0x0069F450,181,?Move_To@ShipLocomotionClass@@UAGXUCoordStruct@@@Z,src/ship.cpp,859847f3b0c9ed7772c2e2f2cf622b61df9257170f9880b3c5f891d159c63274
 0x0069F510,200,?Stop_Moving@ShipLocomotionClass@@UAGXXZ,src/ship.cpp,36caa2cf9830709e0b241577519b88c1a0310837e5226bf725de873c1f0f7091
 0x0069F5E0,142,?Is_Angled@ShipLocomotionClass@@QBEHXZ,src/ship.cpp,63bab2fac025ec8658188e88918f421244612f02b52ce4ad756a8b3b2c49df25
+0x0069F670,1189,?Draw_Matrix@ShipLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z,src/ship.cpp,f0f113976fa6800d7c4fb20f4bebc7c4da640312f44ebb0b90300c068f3fc400
 0x0069FB20,178,?Shadow_Matrix@ShipLocomotionClass@@UAG?AUMatrix3DStruct@@PAH@Z,src/ship.cpp,1f90f836ce9ce36abfed3c7e31ea8edbadf5ed49d8fa684c8d5b76bfa2f3be56
 0x0069FBE0,37,?Unlimbo@ShipLocomotionClass@@UAGXXZ,src/ship.cpp,c6e6e7f9a5808bce7b939680ca48e03b363d80744aad0be8e8864bb4f97af809
 0x0069FC10,1411,?Process@ShipLocomotionClass@@UAGEXZ,src/ship.cpp,69d090675ef5bf46a9116ff0e46a04ae5a9e9bc7c8f20a1ae5c86a74e6c5907a
