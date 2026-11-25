@@ -18281,6 +18281,7 @@ address,name,result,size,source,symbol
 0x0078A6B0,FUN_0078A6B0,MATCH,574,src/wonline.cpp,?FUN_0078A6B0@@YIHPAG@Z
 0x0078A8F0,FUN_0078A8F0,MATCH,764,src/wonline.cpp,?FUN_0078A8F0@@YIHPAG@Z
 0x0078ABF0,FUN_0078ABF0,MATCH,18,src/wonline.cpp,?FUN_0078ABF0@@YIX_NPBG@Z
+0x0078AC10,WOL_Main_Dialog_Proc,MATCH,9478,src/wonline.cpp,?WOL_Main_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x0078D120,WOL_Find_Page_Dialog_Proc,MATCH,2313,src/wonline.cpp,?WOL_Find_Page_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x0078DA30,WOL_Download_Dialog_Proc,MATCH,306,src/wonline.cpp,?WOL_Download_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x0078DB70,WOL_New_Game_Dialog_Proc,MATCH,1213,src/wonline.cpp,?WOL_New_Game_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
