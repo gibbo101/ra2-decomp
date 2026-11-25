@@ -11652,6 +11652,7 @@ address,name,result,size,source,symbol
 0x0064B4D0,FUN_0064B4D0,MATCH,397,src/queue.cpp,?FUN_0064B4D0@@YI_NPAEPAHPAUMegaMissionData@EventData@EventClass@@PAVxTargetClass@@_N@Z
 0x0064C380,Execute_DoList,MATCH,2474,src/queue.cpp,?Execute_DoList@@YIHHW4HousesType@@PAVConnManClass@@PAV?$CDTimerClass@VFrameTimerClass@@@@PAUFrameSyncStruct@@@Z
 0x0064CD30,FUN_0064CD30,MATCH,106,src/queue.cpp,?FUN_0064CD30@@YIXHHVxTargetClass@@PAV1@@Z
+0x0064CDA0,FUN_0064CDA0,MATCH,3048,src/queue.cpp,?FUN_0064CDA0@@YIXHH@Z
 0x0064D990,Clean_DoList,MATCH,73,src/queue.cpp,?Clean_DoList@@YIXPAVConnManClass@@@Z
 0x0064D9E0,Queue_Record,MATCH,205,src/queue.cpp,?Queue_Record@@YIXXZ
 0x0064DAB0,Compute_Game_CRC,MATCH,973,src/queue.cpp,?Compute_Game_CRC@@YIXXZ
@@ -15103,6 +15104,7 @@ address,name,result,size,source,symbol
 0x00705D50,TechnoClass::IsNotWarpingIn,MATCH,14,src/techno.cpp,?IsNotWarpingIn@TechnoClass@@UBE_NXZ
 0x00705D60,TechnoClass::FUN_00705D60,MATCH,5,src/techno.cpp,?FUN_00705D60@TechnoClass@@QAE_NXZ
 0x00705D70,TechnoClass::GetRemapColour,MATCH,138,src/techno.cpp,?GetRemapColour@TechnoClass@@UBEPAVLightConvertClass@@XZ
+0x00705E00,TechnoClass::Techno_Draw_Object,MATCH,2100,src/techno.cpp,?Techno_Draw_Object@TechnoClass@@QBEXPBVShapeSet@@HABVPoint2D@@ABV?$TRect@H@@W4Dir256@@HHW4ZGradientType@@_NHG0HV3@W4ShapeFlags_Type@@@Z
 0x00706640,TechnoClass::Draw_Voxel,MATCH,1420,src/techno.cpp,?Draw_Voxel@TechnoClass@@UBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@HGW4ShapeFlags_Type@@@Z
 0x00706BD0,TechnoClass::Techno_Draw_Voxel_Shadow,MATCH,766,src/techno.cpp,?Techno_Draw_Voxel_Shadow@TechnoClass@@QBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@_NPAVSurface@@HH@Z
 0x00706ED0,TechnoClass::Techno_Render_Voxel_Object,MATCH,938,src/techno.cpp,?Techno_Render_Voxel_Object@TechnoClass@@QBE?AUSurfaceRegion@@ABUVoxelDataStruct@@ABVMatrix3D@@ABVPoint2D@@ABV?$TRect@H@@HW4ShapeFlags_Type@@HG@Z

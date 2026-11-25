@@ -12011,6 +12011,7 @@ address,size,symbol,source,sha256
 0x0064B660,1896,?Add_Compressed_Events@@YIHPAXHHHHPAH@Z,src/queue.cpp,3bddde33f33fd83107206995eb4df6b33c534c086a9eb37b7a2bf28c8f2a744a
 0x0064C380,2474,?Execute_DoList@@YIHHW4HousesType@@PAVConnManClass@@PAV?$CDTimerClass@VFrameTimerClass@@@@PAUFrameSyncStruct@@@Z,src/queue.cpp,8a976638b37ff76a92de963277f2784d7312ee5e2e66c2518779f2ca653b5622
 0x0064CD30,106,?FUN_0064CD30@@YIXHHVxTargetClass@@PAV1@@Z,src/queue.cpp,5980151ad740b692bad4955c77ca952eacd9f91b942d38111438e3e84d6d7bd0
+0x0064CDA0,3048,?FUN_0064CDA0@@YIXHH@Z,src/queue.cpp,0313eab9c1f1690f11cbcfac73950fcf28f410891b6853455c2457d1cc7dbfe8
 0x0064D990,73,?Clean_DoList@@YIXPAVConnManClass@@@Z,src/queue.cpp,4a29ac52bdeb7003bdcea2113c8f5ea7efef448babd90fce8754a6c8b9be7126
 0x0064D9E0,205,?Queue_Record@@YIXXZ,src/queue.cpp,fbf7674c87261329b1558b3792621fc34621079f2ef32eeca899ea9455fcc8b8
 0x0064DAB0,973,?Compute_Game_CRC@@YIXXZ,src/queue.cpp,f925002b9edd974aea308a050a35f2a760261b7216bc493d2d24fcd64152093c
@@ -15445,6 +15446,7 @@ address,size,symbol,source,sha256
 0x00705D50,14,?IsNotWarpingIn@TechnoClass@@UBE_NXZ,src/techno.cpp,cad2a84a279f9fa70375da12a56b6456b69f73dd80a7c888eb309e68faf316d5
 0x00705D60,5,?FUN_00705D60@TechnoClass@@QAE_NXZ,src/techno.cpp,2d2c154014206c5df3437d437797e694229862f8589c1d5d4ef67934e6828673
 0x00705D70,138,?GetRemapColour@TechnoClass@@UBEPAVLightConvertClass@@XZ,src/techno.cpp,16be3474024d8ccf6f1897d6b26f0850b25366241e3ddd49d27605967de9dd0d
+0x00705E00,2100,?Techno_Draw_Object@TechnoClass@@QBEXPBVShapeSet@@HABVPoint2D@@ABV?$TRect@H@@W4Dir256@@HHW4ZGradientType@@_NHG0HV3@W4ShapeFlags_Type@@@Z,src/techno.cpp,3d4a4fcd289afd0dfa6a4d2b80abaf403f1d1cde62db6cb97a5af081173a61a1
 0x00706640,1420,?Draw_Voxel@TechnoClass@@UBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@HGW4ShapeFlags_Type@@@Z,src/techno.cpp,902d4eb11e8f52e01b3ecc252b48143c612afc4f0d7f0f17cd81e0e839117ea7
 0x00706BD0,766,?Techno_Draw_Voxel_Shadow@TechnoClass@@QBEXABUVoxelDataStruct@@HHPAV?$IndexClass@HPAUEntry@StaticBufferClass@@@@ABV?$TRect@H@@ABVPoint2D@@ABVMatrix3D@@_NPAVSurface@@HH@Z,src/techno.cpp,20f960ab6ead903c6ee83d9c29936db85773480c76ed734dcec18ffa7573d92b
 0x00706ED0,938,?Techno_Render_Voxel_Object@TechnoClass@@QBE?AUSurfaceRegion@@ABUVoxelDataStruct@@ABVMatrix3D@@ABVPoint2D@@ABV?$TRect@H@@HW4ShapeFlags_Type@@HG@Z,src/techno.cpp,6d9badd35f693c12d97e03b69fa6392035c408d54fe82c45292e5266c3b9409b

@@ -26,6 +26,12 @@ effect, so it can be fixed in a separate build later.
   animation's frame counter. That counter is 10, so the game reads past the table
   instead of comparing with the current entry.
 
+- **Spread_Units_Around_Cell (0x0064CDA0).** When the straight-line cell is blocked,
+  the search measures the walk to the fallback cell and is meant to reject it when the
+  walk is more than three cells over the distance. The rejection clears a flag that is
+  still clear there, so the walk result at 0x0064D650 is ignored and the fallback cell is
+  always used.
+
 - **Wonline guest-game dialog (0x00791B10).** The page and reply command paths
   allocate their temporary text buffers with array new and release them with scalar
   delete, preserving the original allocation/deallocation mismatch.
