@@ -6142,6 +6142,7 @@ address,size,symbol,source,sha256
 0x005018C0,342,?Adjust_Drain@HouseClass@@QAEXH@Z,src/house.cpp,53a2ffa3eb85cff87aecbf8bbefcae39a92addd45ae44a6707f4b7d3989da928
 0x00501A20,120,?Update_Spied_Power_Plants@HouseClass@@QAEXXZ,src/house.cpp,2a9e641795c119ed0feaf2c614aa32da902169bea1663879153b73901127ebc5
 0x00501AA0,27,?Find_Cell_In_Zone@HouseClass@@QBE?AVCell@@PBVTechnoClass@@W4ZoneType@@@Z,src/house.cpp,5bf9bf5dfaf20b7649abd2ef603908a9927af1cacee9ac8c1825a516b73ef6f0
+0x00501AC0,1596,?Random_Cell_In_Zone@HouseClass@@QBE?AVCell@@W4ZoneType@@@Z,src/house.cpp,60ef984c9056af7be8bfe18fce936cca0011ebb093aaa592b020feba366f8fae
 0x00502100,33,?Make_Ally@HouseClass@@QAEXPAVObjectClass@@_N@Z,src/house.cpp,49f490fa1a593cb82d036190628d7db2248a8a376bbe6eb81121828646d21950
 0x00502130,33,?Make_Enemy@HouseClass@@QAEXPAVObjectClass@@_N@Z,src/house.cpp,3914459d13daf4dbdc883b0ea07c93f4eb0ecde28035af2537090074a243ee46
 0x00502160,294,?Place_Waypoint@HouseClass@@QAEXABVCoord@@@Z,src/house.cpp,313d847df28a4944575bf14943e399ae00c1014e186f5652002df5724e5163b8

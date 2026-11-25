@@ -5786,6 +5786,7 @@ address,name,result,size,source,symbol
 0x005018C0,HouseClass::Adjust_Drain,MATCH,342,src/house.cpp,?Adjust_Drain@HouseClass@@QAEXH@Z
 0x00501A20,HouseClass::Update_Spied_Power_Plants,MATCH,120,src/house.cpp,?Update_Spied_Power_Plants@HouseClass@@QAEXXZ
 0x00501AA0,HouseClass::Find_Cell_In_Zone,MATCH,27,src/house.cpp,?Find_Cell_In_Zone@HouseClass@@QBE?AVCell@@PBVTechnoClass@@W4ZoneType@@@Z
+0x00501AC0,HouseClass::Random_Cell_In_Zone,MATCH,1596,src/house.cpp,?Random_Cell_In_Zone@HouseClass@@QBE?AVCell@@W4ZoneType@@@Z
 0x00502100,HouseClass::Make_Ally,MATCH,33,src/house.cpp,?Make_Ally@HouseClass@@QAEXPAVObjectClass@@_N@Z
 0x00502130,HouseClass::Make_Enemy,MATCH,33,src/house.cpp,?Make_Enemy@HouseClass@@QAEXPAVObjectClass@@_N@Z
 0x00502160,HouseClass::Place_Waypoint,MATCH,294,src/house.cpp,?Place_Waypoint@HouseClass@@QAEXABVCoord@@@Z
