@@ -331,6 +331,57 @@ BOOL DriveLocomotionClass::Is_Angled(void) const
 	return(false);
 }
 
+Matrix3DStruct STDMETHODCALLTYPE DriveLocomotionClass::Draw_Matrix(int *key)
+{
+	Matrix3DStruct m;
+
+	if (!Is_Angled()) {
+		Matrix3D m1, m2;
+		m1.Make_Identity();
+		m2.Make_Identity();
+
+		float val = LinkedTo->Techno_Type_Class()->VoxelCenterY;
+		float val2 = LinkedTo->Techno_Type_Class()->VoxelCenterX;
+
+		float fcos = fastmath::cos(LinkedTo->AngleRotatedForwards);
+		float fsin = fastmath::sin(LinkedTo->AngleRotatedForwards);
+
+		float scos = fastmath::cos(LinkedTo->AngleRotatedSideways);
+		float ssin = fastmath::sin(LinkedTo->AngleRotatedSideways);
+
+		int num = fabs(ssin) * val + fabs(fsin) * val2;
+
+		int x_shift = (int)(val2 - (float)(int)(fcos * val2));
+		int x_offset = x_shift;
+		int y_offset = (int)(val - (float)(int)(scos * val));
+		if (LinkedTo->AngleRotatedForwards < 0.0f) {
+			x_offset = -x_shift;
+		}
+		if (LinkedTo->AngleRotatedSideways > 0.0f) {
+			y_offset = -y_offset;
+		}
+
+		m1.Translate_Z(num);
+		m2.Translate_X(x_offset);
+		m2.Translate_Y(y_offset);
+		m2.Rotate_X(LinkedTo->AngleRotatedSideways);
+		m2.Rotate_Y(LinkedTo->AngleRotatedForwards);
+
+		if (key) {
+			*key = -1;
+		}
+
+		m = (Matrix3DStruct &)(((m1 * Get_Slope_Matrix()) * BASECLASS::Draw_Matrix(key)) * m2);
+	} else {
+		if (key != NULL && *key != -1) {
+			*key = *key << 6;
+			*key += CurrentRamp;
+		}
+
+		m = (Matrix3DStruct &)(Get_Slope_Matrix() * BASECLASS::Draw_Matrix(key));
+	}
+	return(m);
+}
 // FUNCTION: GAMEMD 0x004B0410
 Matrix3DStruct STDMETHODCALLTYPE DriveLocomotionClass::Shadow_Matrix(int *key)
 {
@@ -1663,7 +1714,7 @@ template class _com_ptr_t<_com_IIID<IPersist, &__uuidof(IPersist)> >;
 template class _com_ptr_t<_com_IIID<IPersistStream, &__uuidof(IPersistStream)> >;
 
 // TEMPLATE: GAMEMD 0x004B4D70
-// ?Value@?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
+// ??R?$CDTimerClass@VFrameTimerClass@@@@QBEHXZ
 template class CDTimerClass<FrameTimerClass>;
 
 // FUNCTION: GAMEMD 0x004B4D90
