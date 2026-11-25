@@ -8314,6 +8314,7 @@ address,name,result,size,source,symbol
 0x0058C5A0,MapRegionClass::Pick_Random_Clear_Cell_In_Zone,MATCH,277,src/mapgen.cpp,?Pick_Random_Clear_Cell_In_Zone@MapRegionClass@@SI?AVCell@@HH@Z
 0x0058C6C0,MapRegionClass::CellData::Reset_Spreads,MATCH,37,src/mapgen.cpp,?Reset_Spreads@CellData@MapRegionClass@@SIX_N@Z
 0x0058C6F0,MapRegionClass::Get_Angle_Score,MATCH,271,src/mapgen.cpp,?Get_Angle_Score@MapRegionClass@@QAENABVCell@@0N@Z
+0x0058C800,MapRegionClass::Create_Region_From_Cell,MATCH,1678,src/mapgen.cpp,?Create_Region_From_Cell@MapRegionClass@@SIPAV1@PAVCellClass@@@Z
 0x0058CE90,MapRegionClass::Destroy_Cell_Regions,MATCH,243,src/mapgen.cpp,?Destroy_Cell_Regions@MapRegionClass@@SIXXZ
 0x0058CF90,MapRegionClass::Create_Water_Regions,MATCH,121,src/mapgen.cpp,?Create_Water_Regions@MapRegionClass@@SIXXZ
 0x0058D010,MapRegionClass::Create_Land_Regions,MATCH,82,src/mapgen.cpp,?Create_Land_Regions@MapRegionClass@@SIX_N@Z

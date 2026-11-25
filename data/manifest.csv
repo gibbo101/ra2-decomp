@@ -8684,6 +8684,7 @@ address,size,symbol,source,sha256
 0x0058C5A0,277,?Pick_Random_Clear_Cell_In_Zone@MapRegionClass@@SI?AVCell@@HH@Z,src/mapgen.cpp,701946af52a2b141d61748a720f8f31454b471040f9bad04fd9004f5e4289054
 0x0058C6C0,37,?Reset_Spreads@CellData@MapRegionClass@@SIX_N@Z,src/mapgen.cpp,17e02250aa687db57ff215c2020e7cf01b0a4cac71088aa3971bf3c57be93a13
 0x0058C6F0,271,?Get_Angle_Score@MapRegionClass@@QAENABVCell@@0N@Z,src/mapgen.cpp,2e0a21ca6d128e626afbc4b599e33189e1db09b75c7a1bc8bfd5e3850e4d903f
+0x0058C800,1678,?Create_Region_From_Cell@MapRegionClass@@SIPAV1@PAVCellClass@@@Z,src/mapgen.cpp,503f0494fc8bbe88b44c3e09bf3750a85c9ae71bf0340537cba4a2865ec606b6
 0x0058CE90,243,?Destroy_Cell_Regions@MapRegionClass@@SIXXZ,src/mapgen.cpp,ad185a902c9084e74a230678d4c777c1911980ac18b83622cf3c9f9f4fb386ed
 0x0058CF90,121,?Create_Water_Regions@MapRegionClass@@SIXXZ,src/mapgen.cpp,277981eddf3623af8502114279adc6260111c6b7a7f4566e90c9155305d2c565
 0x0058D010,82,?Create_Land_Regions@MapRegionClass@@SIX_N@Z,src/mapgen.cpp,df0e5cea705c0936f461a06d6a0e7067966d3c4171ef0dc6d8554d6c3e88dfbb
