@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 #include "geometry.h"
 #include "queue.h"
@@ -17,10 +18,12 @@
 #include "_warhead.h"
 #include "_weapon.h"
 #include "_xmouse.h"
+#include "_astar.h"
 #include "aircraft.h"
 #include "airctype.h"
 #include "anim.h"
 #include "animtype.h"
+#include "astar.h"
 #include "blight.h"
 #include "building.h"
 #include "builtype.h"
@@ -43,6 +46,7 @@
 #include "incdec.h"
 #include "infantry.h"
 #include "infatype.h"
+#include "internet.h"
 #include "ipxmgr.h"
 #include "keyboard.h"
 #include "language\language.h"
@@ -1945,6 +1949,116 @@ void __fastcall FUN_0064CD30(int start, int count, xTargetClass whom, xTargetCla
 		if (whom == MegaMissionList[i].Data.MegaMission.Whom) {
 			MegaMissionList[i].Data.MegaMission.Destination = *destination;
 			return;
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0064CDA0
+void __fastcall FUN_0064CDA0(int start, int count)
+{
+	if (!MegaMissionList[start].Data.MegaMission.Destination.Is_Valid() || MegaMissionList[start].Data.MegaMission.Destination != RTTI_CELL) return;
+
+	CellClass * cellptr = MegaMissionList[start].Data.MegaMission.Destination.As_Cell();
+	if (cellptr == NULL || cellptr == &InvalidCell) return;
+
+	Cell cell = cellptr->CellID;
+	if (cell == CELL_NONE) return;
+
+	DynamicVectorClass<ObjectClass *> movers;
+	for (int i = start; i < start + count; i++) {
+		TechnoClass * techno = MegaMissionList[i].Data.MegaMission.Whom.As_Techno();
+		if (techno != NULL && techno->Is_Foot() && ((FootClass *)techno)->CurrentTube < 0) {
+			movers.Add(techno);
+		}
+	}
+
+	if (movers.Count() > 0) {
+		Coord center = Vector_Center(movers);
+		ObjectClass * anchor = Vector_Closest_Object(movers, center);
+
+		IndexClass<int, ObjectClass *> index;
+		for (int j = 0; j < movers.Count(); j++) {
+			index.Add_Index(movers[j]->Distance(anchor->PositionCoord) * 1000 + j, movers[j]);
+		}
+		movers.Clear();
+
+		DynamicVectorClass<Cell> cells;
+		DynamicVectorClass<bool> taken;
+		for (int k = 0; k < index.Count(); k++) {
+			movers.Add(index.Fetch_By_Position(k));
+			cells.Add(cell);
+			taken.Add(false);
+		}
+
+		Cell anchorcell = anchor->Get_Cell();
+		for (int n = 0; n < movers.Count(); n++) {
+			FootClass * mover = (FootClass *)movers[n];
+			Cell newcell = cell;
+			if (n == 0) {
+				Map[cell].IsToGrowVeins = true;
+				taken[0] = true;
+			} else if (!taken[n]) {
+				Cell lastgood = cell;
+				Cell destcell = mover->Destination_Coord().As_Cell();
+				int height = Map[cell].IsUnderBridge * BRIDGE_CELL_HEIGHT + Map[cell].Height;
+				TPoint3D<float> pos(cell.X + 0.5, cell.Y + 0.5, 0);
+				TPoint3D<float> dir(destcell.X - anchorcell.X, destcell.Y - anchorcell.Y, 0);
+				dir = dir.Normalize();
+				int tries = 0;
+				bool blocked = false;
+				int maxdist = 0;
+				TechnoTypeClass const * ttype = mover->Techno_Type_Class();
+				int zone = Map.Get_Cell_Zone(&cell, ttype->MZone, true);
+				bool found = false;
+				Cell trycell;
+				for (; tries < 6; tries++) {
+					pos = pos + dir;
+					trycell = Cell((int)pos.X, (int)pos.Y);
+					CellClass * cptr = &Map[trycell];
+					if (!Map.In_Local_Radar(trycell, true)) break;
+					int tryzone = Map.Get_Cell_Zone(&trycell, ttype->MZone, cptr->IsUnderBridge);
+					MoveType move = mover->Can_Enter_Cell(cptr, FACING_NONE, height, NULL, true);
+					if (tryzone == zone) {
+						if (cptr->IsToGrowVeins) {
+							lastgood = trycell;
+							continue;
+						}
+						if (cptr->IsUnderBridge && abs(height - cptr->Height - BRIDGE_CELL_HEIGHT) > 2) break;
+						if (!cptr->IsUnderBridge && abs(height - cptr->Height) > 2) break;
+						if (move < MOVE_FRIENDLY_DESTROYABLE || move == MOVE_TEMP) {
+							if (blocked) {
+								int diff1 = abs(trycell.X - cell.X);
+								int diff2 = abs(trycell.Y - cell.Y);
+								if (diff1 > diff2) diff2 = diff1;
+								maxdist = diff2 + 3;
+								diff2 = Search.Test_Cell_Walk(trycell, cell, mover, Map[trycell].IsUnderBridge, Map[cell].IsUnderBridge, MZONE_NONE);
+								if (diff2 > maxdist) found = false;
+								break;
+							}
+							found = true;
+							break;
+						}
+					}
+					blocked = true;
+				}
+				newcell = !found ? lastgood : Cell((int)pos.X, (int)pos.Y);
+				cells[n] = newcell;
+				TargetClass dest(&Map[newcell]);
+				FUN_0064CD30(start, count, TargetClass(mover), &dest);
+				Map[newcell].IsToGrowVeins = true;
+				taken[n] = true;
+			}
+			for (int scan = n + 1; scan < movers.Count(); scan++) {
+				if (!taken[scan] && mover->Get_Cell() == movers[scan]->Get_Cell()) {
+					TargetClass dest(&Map[newcell]);
+					FUN_0064CD30(start, count, TargetClass(movers[scan]), &dest);
+					taken[scan] = true;
+				}
+			}
+		}
+
+		for (int q = 0; q < cells.Count(); q++) {
+			Map[cells[q]].IsToGrowVeins = false;
 		}
 	}
 }

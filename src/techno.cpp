@@ -5549,6 +5549,190 @@ LightConvertClass * TechnoClass::GetRemapColour(void) const
 	return(ColorSchemes[index]->Converter);
 }
 
+#include "msanim.h"
+
+// FUNCTION: GAMEMD 0x00705E00
+void TechnoClass::Techno_Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & xdrawpoint, Rect const & rect, Dir256 rotation, int scale, int xzadjust, ZGradientType zgrad, bool zwrite, int brightness, unsigned short tint, ShapeSet const * zshapefile, int zshapenum, Point2D zoff, ShapeFlags_Type negflags) const
+{
+	if (shapefile != NULL) {
+		bool shadow = DrawShapeShadows;
+		VisualType visual = Visual_Character();
+
+		ShapeFlags_Type flags = SHAPE_NORMAL;
+		if (negflags == SHAPE_NORMAL) {
+			switch (visual) {
+				case VISUAL_RIPPLE:
+					{
+						int stage = CloakingDevice.Fetch_Stage();
+						if (stage == 0) {
+							flags = SHAPE_TRANSLUCENT25;
+						} else if (stage == 1) {
+							flags = SHAPE_TRANSLUCENT50;
+						} else {
+							flags = SHAPE_TRANSLUCENT50;
+						}
+					}
+					break;
+
+				case VISUAL_INDISTINCT:
+					flags = SHAPE_TRANSLUCENT25;
+					break;
+
+				case VISUAL_DARKEN:
+				case VISUAL_SHADOWY:
+					flags = SHAPE_TRANSLUCENT50;
+					break;
+
+				case VISUAL_HIDDEN:
+					return;
+			}
+		}
+
+		if (IsBeingWarpedOut() || IsWarpingIn()) {
+			if (this != NULL && RTTI == RTTI_BUILDING && As_Building((TechnoClass *)this)->Class->DoubleThick) {
+				flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT75);
+			} else {
+				flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT50);
+			}
+		}
+
+		ConvertClass * converter;
+		if (RTTI == RTTI_BUILDING && ((BuildingClass *)this)->Class->IsTerrainPalette) {
+			CellClass * cptr = &Map[Center_Coord().As_Cell()];
+			converter = cptr->Drawer;
+			if (converter == NULL) {
+				cptr->Init_Drawer();
+				converter = cptr->Drawer;
+				if (converter == NULL) return;
+			}
+			brightness = cptr->TileBrightness;
+		} else {
+			if (RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette) {
+				converter = EightBitDrawer;
+			} else {
+				converter = GetRemapColour();
+			}
+		}
+
+		Point2D drawpoint = xdrawpoint;
+		int zadjust = xzadjust;
+
+		switch ((RTTIType)RTTI) {
+			case RTTI_UNIT:
+				if (((UnitClass *)this)->Class->SmallVisceroid || ((UnitClass *)this)->Class->LargeVisceroid) {
+					shadow = false;
+				}
+				// A unit takes the infantry height adjustment as well.
+
+			case RTTI_INFANTRY:
+				if (HeightAGL == 0) {
+					zadjust += Get_Z_Adjust();
+				} else {
+					zadjust -= TacticalMap->Z_Lepton_To_Pixel(Get_Height());
+					shadow = false;
+				}
+				break;
+
+			case RTTI_AIRCRAFT:
+				drawpoint.Y -= TacticalMap->Z_Lepton_To_Pixel(Get_Height());
+				zadjust -= TacticalMap->Z_Lepton_To_Pixel(Get_Height());
+				break;
+		}
+
+		if (Techno_Type_Class()->NoShadow) {
+			shadow = false;
+		}
+
+		if (!IsClearlyVisibleTo(PlayerPtr)) {
+			if (GetDisguise(true)->Fetch_RTTI() != RTTI_OVERLAYTYPE && GetDisguise(true)->Fetch_RTTI() != RTTI_TERRAINTYPE) {
+				converter = ColorSchemes[GetDisguiseHouse(true)->Scheme]->Converter;
+			} else {
+				CellClass * cptr = Get_Cell_Ptr();
+				converter = cptr->Drawer;
+				if (converter == NULL) {
+					cptr->Init_Drawer();
+					converter = cptr->Drawer;
+				}
+				brightness = cptr->TileBrightness;
+			}
+			if (converter == NULL) {
+				converter = ColorSchemes[PlayerPtr->Scheme]->Converter;
+			}
+		}
+
+		if (zgrad != ZGRAD_NONE) flags = ShapeFlags_Type(flags|SHAPE_ZGRAD);
+		if (zwrite) flags = ShapeFlags_Type(flags|SHAPE_ZWRITE);
+		flags = ShapeFlags_Type(flags|SHAPE_ALPHA);
+
+		if (RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette) {
+			flags = ShapeFlags_Type(flags|SHAPE_NOTRANS);
+			shadow = false;
+		}
+
+		flags = ShapeFlags_Type(flags & ~negflags);
+
+		if (RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette) {
+			Rect shaperect = ((SHPStruct const *)shapefile)->GetFrameBounds(shapenum);
+			Rect drawrect;
+			drawrect.X = drawpoint.X + shaperect.X - shapefile->Get_Width() / 2;
+			drawrect.Y = drawpoint.Y + shaperect.Y - shapefile->Get_Height() / 2;
+			drawrect.Width = shaperect.Width;
+			drawrect.Height = shaperect.Height;
+			UnitCompositeDirtyRect = Union(UnitCompositeDirtyRect, drawrect);
+		}
+
+		if (House->Is_Player_Control() && IsDisguised()) {
+			flags = ShapeFlags_Type(GetDisguiseFlags(flags));
+		}
+
+		brightness = Apparent_Brightness(brightness);
+
+		if (IsIronCurtained()) {
+			brightness = GetEffectTintIntensity(brightness);
+		} else if (this != NULL && RTTI == RTTI_BUILDING && Airstrike != NULL && Airstrike->Target == As_Building((TechnoClass *)this)) {
+			brightness = GetEffectTintIntensity(brightness);
+		}
+
+		if (Map[Center_Coord().As_Cell()].Is_Shrouded()) {
+			tint = 0;
+		}
+
+		switch (visual) {
+			case VISUAL_NORMAL:
+				Draw_Shape(*LogicalSurface, *converter, shapefile, shapenum, drawpoint, rect, ShapeFlags_Type(flags|SHAPE_CENTER|SHAPE_WIN_REL), NULL, zadjust - 2, zgrad, brightness, tint, zshapefile, zshapenum, zoff);
+				if (shadow) {
+					zadjust = -2 - TacticalMap->Z_Lepton_To_Pixel(Get_Height());
+					if (IsInTransport) {
+						drawpoint.Y -= 14;
+					}
+					Draw_Shape(*LogicalSurface, *converter, shapefile, shapenum + shapefile->Get_Count() / 2, drawpoint, rect, ShapeFlags_Type((flags & ~SHAPE_TRANSLUCENT75)|SHAPE_DARKEN|SHAPE_CENTER|SHAPE_WIN_REL), NULL, zadjust - 2);
+				}
+				break;
+
+			case VISUAL_INDISTINCT:
+				Draw_Shape(*LogicalSurface, *converter, shapefile, shapenum, drawpoint, rect, ShapeFlags_Type(flags|SHAPE_CENTER|SHAPE_WIN_REL), NULL, zadjust - 2, zgrad, brightness, tint, zshapefile, zshapenum, zoff);
+				if (shadow) {
+					zadjust = -2 - TacticalMap->Z_Lepton_To_Pixel(Get_Height());
+					flags = ShapeFlags_Type(flags & ~SHAPE_TRANSLUCENT75);
+					if (IsInTransport) {
+						drawpoint.Y -= 14;
+					}
+					Draw_Shape(*LogicalSurface, *converter, shapefile, shapenum + shapefile->Get_Count() / 2, drawpoint, rect, ShapeFlags_Type(flags|SHAPE_DARKEN|SHAPE_CENTER|SHAPE_WIN_REL), NULL, zadjust - 2);
+				}
+				break;
+
+			case VISUAL_DARKEN:
+			case VISUAL_RIPPLE:
+				Draw_Shape(*LogicalSurface, *converter, shapefile, shapenum, drawpoint, rect, ShapeFlags_Type(flags|SHAPE_CENTER|SHAPE_WIN_REL), NULL, zadjust - 2, zgrad, brightness, tint, zshapefile, zshapenum, zoff);
+				break;
+
+			case VISUAL_SHADOWY:
+				Draw_Shape(*LogicalSurface, *converter, shapefile, shapenum, drawpoint, rect, ShapeFlags_Type(flags|SHAPE_CENTER|SHAPE_WIN_REL), NULL, zadjust - 2, zgrad, brightness, tint, zshapefile, zshapenum, zoff);
+				break;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00706640
 void TechnoClass::Draw_Voxel(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & xcliprect, Point2D const & point, Matrix3D const & matrix, int brightness, unsigned short tint, ShapeFlags_Type negflags) const
 {
@@ -5678,6 +5862,76 @@ void TechnoClass::Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, in
 	}
 }
 
+
+// FUNCTION: GAMEMD 0x00706ED0
+SurfaceRegion TechnoClass::Techno_Render_Voxel_Object(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & xcliprect, int frame, ShapeFlags_Type flags, int brightness, unsigned short tint) const
+{
+	Matrix3D mtx = matrix;
+	Matrix3D mtx2 = matrix;
+
+	if (Techno_Type_Class()->UseBuffer) {
+		VoxelDrawSystem::EnableZBuffer = 1;
+	}
+
+	VoxelLibrary * voxlib = voxeldata.VoxLib;
+	MotionLibrary * motlib = voxeldata.MotLib;
+
+	VoxelDrawSystem::Precalculate_Light(voxlib, 0, 0, mtx2, VoxelCameraMatrix, VoxelLightSource, 3.0f);
+	VoxelDrawSystem::Reset();
+
+	for (unsigned layer = 0; layer < voxlib->Get_Layer_Count(); layer++) {
+		if (motlib != NULL) {
+			Matrix3D mtx3 = motlib->Get_Layer_Matrix(layer, frame);
+			mtx = mtx2 * mtx3;
+		}
+		VoxelDrawSystem::Prep_For_Object(voxlib, layer, 0, VoxelCameraMatrix * mtx);
+	}
+
+	SurfaceRegion region = VoxelDrawSystem::Render();
+
+	if (IsBeingWarpedOut() || IsWarpingIn()) {
+		if (this != NULL && RTTI == RTTI_BUILDING && As_Building((TechnoClass *)this)->Class->DoubleThick) {
+			flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT75);
+		} else {
+			flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT50);
+		}
+	}
+
+	if (House->Is_Player_Control() && IsDisguised()) {
+		flags = ShapeFlags_Type(GetDisguiseFlags(flags));
+	}
+
+	Rect cliprect = xcliprect;
+
+	if (LogicalSurface != EightBitSurface) {
+		if (SinkingYOffset > 0) {
+			cliprect = Intersect(cliprect, Rect(0, 0, TacticalRect.Width, SinkingYOffset - TacticalMap->TacPixelY));
+		} else if (IsSinking) {
+			((TechnoClass *)this)->SinkingYOffset = TacticalMap->TacPixelY + point.Y + region.Point.Y + region.Bounds.Height;
+		}
+	}
+
+	flags = ShapeFlags_Type(flags & ~SHAPE_REMAP);
+	ConvertClass * converter = NULL;
+	if (RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette) {
+		converter = EightBitDrawer;
+	} else {
+		converter = GetRemapColour();
+	}
+
+	int predoffset = 0;
+	if (flags & SHAPE_PREDATOR) {
+		predoffset = Get_Predator_Offset();
+	}
+
+	Blit_Block(*LogicalSurface, *converter, *VoxelDrawSystem::Get_Surface(), region.Bounds, region.Point + point, cliprect, NULL, converter->Blitter_From_Flags(flags), Get_Z_Adjust(), Get_Z_Gradient(), brightness, tint, predoffset);
+
+	if (Techno_Type_Class()->UseBuffer) {
+		VoxelDrawSystem::EnableZBuffer = 0;
+	}
+
+	return(region);
+}
 
 // FUNCTION: GAMEMD 0x00707280
 SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int layer_index, ShapeFlags_Type flags, bool cached, Surface * surface, int shadow_x, int shadow_y) const

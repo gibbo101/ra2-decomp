@@ -1015,7 +1015,8 @@ void SidebarClass::FUN_006A7760(int tab)
 // FUNCTION: GAMEMD 0x006A7780
 void SidebarClass::AI(KeyNumType & input, Point2D const & xy)
 {
-	Point2D relative = xy - Point2D(SidebarRect.Top_Left().X, 0);
+	Point2D const sidebar_origin(SidebarRect.X, SidebarRect.Y);
+	Point2D relative = xy - Point2D(sidebar_origin.X, 0);
 	if (!Unsorted::ArmageddonMode) {
 		Activate(1);
 		for (int index = 0; index < STRIPS; index++) {
@@ -1045,18 +1046,16 @@ void SidebarClass::AI(KeyNumType & input, Point2D const & xy)
 			Repair_Mode_Control(-1);
 		} else if (input < (203 | KN_BUTTON) || input >= (207 | KN_BUTTON)) {
 			int key = input & ~KN_UNK;
-			ShapeButtonClass & page_down = Upgrade;
-			ShapeButtonClass & page_up = Waypoint;
-			if (key == (page_down.ID | KN_BUTTON)) {
-				page_down.IsPressed = false;
+			if (key == (Upgrade.ID | KN_BUTTON)) {
+				Upgrade.IsPressed = false;
 				bool paged = Column[ActiveTabIndex].Page(false);
 				if (!paged) {
 					VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000, NULL);
 				} else {
 					VocClass::PlayGlobal(Rule->GUITabSound, 1.0f, 0x2000, NULL);
 				}
-			} else if (key == (page_up.ID | KN_BUTTON)) {
-				page_up.IsPressed = false;
+			} else if (key == (Waypoint.ID | KN_BUTTON)) {
+				Waypoint.IsPressed = false;
 				bool paged = Column[ActiveTabIndex].Page(true);
 				if (!paged) {
 					VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000, NULL);

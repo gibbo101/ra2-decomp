@@ -290,6 +290,93 @@ void ParticleSystemClass::Gas_AI(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0062E840
+void ParticleSystemClass::Spark_AI(void)
+{
+	if (SparkSpawnFrames > 0) {
+
+		if (SparkSpawnFrames == 1 || Random_Double(0.0, 1.0) <= Class->SpawnSparkPercentage) {
+
+			int random = Scen->RandomNumber();
+			int count = Class->ParticleCap / 2 + abs(random) % (Class->ParticleCap / 2);
+
+			ParticleTypeClass * held = ParticleTypes[Class->HoldsWhat];
+
+			Random2Class & rng = Scen->RandomNumber;
+			int rand_a = rng();
+			int rand_b = Scen->RandomNumber();
+
+			Vector3 spark;
+			float zvel = (float)(rng() % held->ZVelocityRange);
+			spark.X = (float)(rand_b % held->XVelocity);
+			spark.Y = (float)(rand_a % held->YVelocity);
+			spark.Z = zvel;
+
+			while (count > 0) {
+				ParticleClass * particle = Spawn_Held_Particle(PositionCoord, PositionCoord);
+
+				ParticleTypeClass const * ptype = particle->Class;
+				Vector3 & dir = particle->MovementDirection;
+
+				particle->MovementDirection.X = (float)(Scen->RandomNumber % ptype->XVelocity);
+				particle->MovementDirection.Y = (float)(Scen->RandomNumber % ptype->YVelocity);
+				particle->MovementDirection.Z = (float)(ptype->MinZVelocity + abs(Scen->RandomNumber) % ptype->ZVelocityRange);
+
+				float speed = dir.Length();
+				if (IsRandomSparkDirection) {
+					dir = Vector3(spark.X + dir.X, spark.Y + dir.Y, spark.Z + dir.Z);
+				} else {
+					TPoint3D<float> const & spawndir = Class->SpawnDirection;
+					dir = Vector3(spawndir.X + dir.X, spawndir.Y + dir.Y, spawndir.Z + dir.Z);
+				}
+				dir = Normalize(dir);
+				dir = speed * dir;
+
+				count--;
+			}
+
+			if (Options.DetailLevel == 2) {
+				if (SparkSpawnFrames == Class->SparkSpawnFrames && Class->LightSize > 0 && !Class->OneFrameLight) {
+					new SpotLightClass(PositionCoord, Class->LightSize);
+				}
+			}
+		}
+
+		SparkSpawnFrames--;
+		if (SparkSpawnFrames <= 0) {
+			IsMarkedForDeletion = true;
+		}
+
+		double chance = Random_Double(0.0, 1.0);
+		if (chance < 0.3) {
+			int radius;
+			if (SparkRadius - 3 <= 17) {
+				radius = 17;
+			} else {
+				radius = SparkRadius - 3;
+			}
+			SparkRadius = radius;
+		} else if (chance < 0.6) {
+			int radius = SparkRadius + 3;
+			if (radius >= 41) {
+				radius = 41;
+			}
+			SparkRadius = radius;
+		}
+	}
+
+	for (int i = 0; i < SystemParticles.Count(); i++) {
+		SystemParticles[i]->Behavior_AI();
+	}
+
+	for (int j = SystemParticles.Count() - 1; j >= 0; j--) {
+		ParticleClass * particle = SystemParticles[j];
+		if (particle->IsToDie) {
+			particle->Delete_Me();
+		}
+	}
+}
+
 #include "cast.h"
 
 static inline bool Is_Object(AbstractClass const * a)
