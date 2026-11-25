@@ -13425,6 +13425,7 @@ address,size,symbol,source,sha256
 0x006A7590,342,?SetTab@SidebarClass@@QAEXH@Z,src/sidebar.cpp,6ae7efd3a88577847cd183677ed31371e3606d2f93202cfbe6cedf553a271672
 0x006A76F0,103,?FUN_006A76F0@SidebarClass@@QAEXH@Z,src/sidebar.cpp,a50f073e674c7530e6f31c217d851c1e23d57313bb50f108a8b7a76ae96545df
 0x006A7760,24,?FUN_006A7760@SidebarClass@@QAEXH@Z,src/sidebar.cpp,83373420e25d43a0cc2942f6a344111629dea94e161cb367dc551ea9c485fdb2
+0x006A7780,1428,?AI@SidebarClass@@UAEXAAW4KeyNumType@@ABVPoint2D@@@Z,src/sidebar.cpp,5be274d8fa848f118dc58cd4c7cef98ab8b096c921a4ff8ad8e1928ad5f1cb9f
 0x006A7D20,79,?Recalc@SidebarClass@@QAEXXZ,src/sidebar.cpp,13a0fe27e26b06375af7624fb7f4b132a90250f9401531d09b03f6a488052a94
 0x006A7D70,783,?Activate@SidebarClass@@UAE_NH@Z,src/sidebar.cpp,04b5d4b8f3d0f6ae32fb94948c5852b2101efce2f3203b1b9f0a3f4389d1abe3
 0x006A8080,9,?FUN_006A8080@SidebarClass@@SIHH@Z,src/sidebar.cpp,633f9440f295fa7b5d270c50c0769cba83195917daca13f0871ade3764b15a81

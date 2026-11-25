@@ -13074,6 +13074,7 @@ address,name,result,size,source,symbol
 0x006A7590,SidebarClass::SetTab,MATCH,342,src/sidebar.cpp,?SetTab@SidebarClass@@QAEXH@Z
 0x006A76F0,SidebarClass::FUN_006A76F0,MATCH,103,src/sidebar.cpp,?FUN_006A76F0@SidebarClass@@QAEXH@Z
 0x006A7760,SidebarClass::FUN_006A7760,MATCH,24,src/sidebar.cpp,?FUN_006A7760@SidebarClass@@QAEXH@Z
+0x006A7780,SidebarClass::AI,MATCH,1428,src/sidebar.cpp,?AI@SidebarClass@@UAEXAAW4KeyNumType@@ABVPoint2D@@@Z
 0x006A7D20,SidebarClass::Recalc,MATCH,79,src/sidebar.cpp,?Recalc@SidebarClass@@QAEXXZ
 0x006A7D70,SidebarClass::Activate,MATCH,783,src/sidebar.cpp,?Activate@SidebarClass@@UAE_NH@Z
 0x006A8080,SidebarClass::FUN_006A8080,MATCH,9,src/sidebar.cpp,?FUN_006A8080@SidebarClass@@SIHH@Z
