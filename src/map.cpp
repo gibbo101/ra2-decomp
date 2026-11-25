@@ -1504,6 +1504,12 @@ void MapClass::Repair_Train_Bridge_Span(CellClass * cptr, FacingType dir, Rect *
 	}
 }
 
+static inline bool Is_Severely_Damaged_Bridge_Middle(int tile, int intact_tile)
+{
+	return(tile == intact_tile + BRIDGE_MIDDLE_DAMAGED_3 ||
+	       tile == intact_tile + BRIDGE_MIDDLE_DESTROYED);
+}
+
 // FUNCTION: GAMEMD 0x0056A080
 void MapClass::Repair_All_High_Bridges(void)
 {
@@ -1514,7 +1520,6 @@ void MapClass::Repair_All_High_Bridges(void)
 			if (!Is_Valid(cell)) {
 				continue;
 			}
-			bool valid = Is_Valid(cell);
 			CellClass * cptr = &Map[cell];
 
 			int bridgetile = cptr->ITType - IsometricTileTypeClass::BridgeSet + 1;
@@ -1523,9 +1528,13 @@ void MapClass::Repair_All_High_Bridges(void)
 				Repair_High_Bridge_Span(cptr, FACING_E);
 			}
 
-			if ((bridgetile == IsometricTileTypeClass::BridgeMiddle1 || bridgetile == IsometricTileTypeClass::BridgeMiddle1 + 3 || bridgetile == IsometricTileTypeClass::BridgeMiddle1 + 4 || bridgetile == IsometricTileTypeClass::BridgeMiddle1 + 1 || bridgetile == IsometricTileTypeClass::BridgeMiddle1 + 2) && cptr->SubTile == 5) {
+			if ((bridgetile == IsometricTileTypeClass::BridgeMiddle1 ||
+			     Is_Severely_Damaged_Bridge_Middle(bridgetile, IsometricTileTypeClass::BridgeMiddle1) ||
+			     bridgetile == IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_1 ||
+			     bridgetile == IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DAMAGED_2) &&
+			    cptr->SubTile == 5) {
 
-				if (bridgetile == IsometricTileTypeClass::BridgeMiddle1 + 4) {
+				if (bridgetile == IsometricTileTypeClass::BridgeMiddle1 + BRIDGE_MIDDLE_DESTROYED) {
 					Set_Bridge_Middle_State(cell, IsometricTileType(IsometricTileTypeClass::BridgeMiddle1 + IsometricTileTypeClass::BridgeSet - 1), ISOTILE_INVALID, -1, false);
 
 					Cell base = Adjacent_Cell(cell, FACING_W);
@@ -1541,9 +1550,13 @@ void MapClass::Repair_All_High_Bridges(void)
 				Repair_High_Bridge_Span(cptr, FACING_S);
 			}
 
-			if ((bridgetile == IsometricTileTypeClass::BridgeMiddle2 || bridgetile == IsometricTileTypeClass::BridgeMiddle2 + 3 || bridgetile == IsometricTileTypeClass::BridgeMiddle2 + 4 || bridgetile == IsometricTileTypeClass::BridgeMiddle2 + 2 || bridgetile == IsometricTileTypeClass::BridgeMiddle2 + 1) && cptr->SubTile == 7) {
+			if ((bridgetile == IsometricTileTypeClass::BridgeMiddle2 ||
+			     Is_Severely_Damaged_Bridge_Middle(bridgetile, IsometricTileTypeClass::BridgeMiddle2) ||
+			     bridgetile == IsometricTileTypeClass::BridgeMiddle2 + BRIDGE_MIDDLE_DAMAGED_2 ||
+			     bridgetile == IsometricTileTypeClass::BridgeMiddle2 + BRIDGE_MIDDLE_DAMAGED_1) &&
+			    cptr->SubTile == 7) {
 
-				if (bridgetile == IsometricTileTypeClass::BridgeMiddle2 + 4) {
+				if (bridgetile == IsometricTileTypeClass::BridgeMiddle2 + BRIDGE_MIDDLE_DESTROYED) {
 					Set_Bridge_Middle_State(cell, IsometricTileType(IsometricTileTypeClass::BridgeMiddle2 + IsometricTileTypeClass::BridgeSet - 1), ISOTILE_INVALID, -1, false);
 
 					Cell base = Adjacent_Cell(cell, FACING_N);

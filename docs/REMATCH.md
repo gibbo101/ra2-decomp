@@ -15,7 +15,6 @@ Verdicts:
 |---|---|---|---|---|
 | 0x0041B110 | AircraftClass::Read_INI | src/aircraft.cpp | dead `double fs` used as a conversion vehicle | FORCING, 99.2% as `(double)strength * ...`, 57.4% as `strength * ...` |
 | 0x00511850 | HouseTypeClass::Read_INI | src/houstype.cpp | `char & p = Prefix; p = prefix[0];` alias for one store | FORCING, 99.7% (2325/2325) |
-| 0x0056A080 | MapClass::Repair_All_High_Bridges | src/map.cpp | unread `bool valid = Is_Valid(cell);` | FORCING, 73.1% (1091/1081) |
 | 0x00743270 | UnitClass::Read_INI | src/unit.cpp | dead `double fs` used as a conversion vehicle | FORCING, 99.4% as `(double)strength * ...`, 77.3% as `strength * ...` |
 
-FORCING 4, SIDE-EFFECT 0.
+FORCING 3, SIDE-EFFECT 0.
