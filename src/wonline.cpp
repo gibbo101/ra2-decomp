@@ -7084,6 +7084,73 @@ void FUN_0078F000(void)
 	}
 }
 
+extern wchar_t DAT_00B76238[];
+
+static inline wchar_t * Wide_Squad_Name(User const & user)
+{
+	return FUN_00735120((char const *)user.squadname);
+}
+
+// FUNCTION: GAMEMD 0x0078F200
+wchar_t * __fastcall FUN_0078F200(wchar_t const * name)
+{
+	Wstring player_name;
+	Ladder player_ladder;
+	memset(&player_ladder, 0, sizeof(player_ladder));
+	player_name.set(FUN_007350C0(name));
+	player_name.toLower();
+	bool player_found = g_ActiveLadder && g_ActiveLadder->getValue(player_name, player_ladder);
+	Ladder squad_ladder;
+	memset(&squad_ladder, 0, sizeof(squad_ladder));
+	Wstring squad_abbreviation;
+	User user;
+	for (int index = 0; index < g_UserList.length(); ++index) {
+		g_UserList.get(user, index);
+		if (strcmp((char *)user.name, FUN_007350C0(name)) == 0) break;
+	}
+	bool has_squad = false;
+	bool squad_found = false;
+	if (strlen((char *)user.squadname) != 0) {
+		has_squad = true;
+		squad_abbreviation.set((char *)user.squadabbrev);
+		squad_abbreviation.toLower();
+		if (g_BattleClansLadderDict.getValue(squad_abbreviation, squad_ladder)) squad_found = true;
+	}
+	if (player_found) {
+		if (has_squad) {
+			if (squad_found) {
+				wchar_t * squad_name = Wide_Squad_Name(user);
+				swprintf(DAT_00B76238, StringTable::LoadString("TXT_PLAYER_TOOLTIP_R_C_CR", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D5C),
+					StringTable::LoadString("TXT_RANK", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D5C), player_ladder.rung, squad_name, squad_ladder.rung);
+			} else {
+				wchar_t * squad_name = Wide_Squad_Name(user);
+				swprintf(DAT_00B76238, StringTable::LoadString("TXT_PLAYER_TOOLTIP_R_C_CUNR", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D60),
+					StringTable::LoadString("TXT_RANK", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D60), player_ladder.rung, squad_name);
+			}
+		} else {
+			swprintf(DAT_00B76238, StringTable::LoadString("TXT_PLAYER_TOOLTIP_R_NOC", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D64),
+				StringTable::LoadString("TXT_RANK", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D64), player_ladder.rung);
+		}
+	} else {
+		if (has_squad) {
+			if (squad_found) {
+				wchar_t * squad_name = Wide_Squad_Name(user);
+				unsigned int squad_rank = squad_ladder.rung;
+				swprintf(DAT_00B76238, StringTable::LoadString("TXT_PLAYER_TOOLTIP_UNR_C_CR", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D6A),
+					StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D6A), squad_name, squad_rank);
+			} else {
+				wchar_t * squad_name = Wide_Squad_Name(user);
+				swprintf(DAT_00B76238, StringTable::LoadString("TXT_PLAYER_TOOLTIP_UNR_C_CUNR", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D6E),
+					StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D6E), squad_name);
+			}
+		} else {
+			swprintf(DAT_00B76238, StringTable::LoadString("TXT_PLAYER_TOOLTIP_UNR_NOC", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D72),
+				StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D72));
+		}
+	}
+	return DAT_00B76238;
+}
+
 // FUNCTION: GAMEMD 0x0078F5C0
 wchar_t * __fastcall FUN_0078F5C0(wchar_t const * name)
 {
