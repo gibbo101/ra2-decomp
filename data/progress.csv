@@ -13488,6 +13488,7 @@ address,name,result,size,source,symbol
 0x006BB760,UnregisterServer,MATCH,378,src/startup.cpp,?UnregisterServer@@YIJXZ
 0x006BB8E0,DirectDrawWrap::DisposeOfStuff,MATCH,175,src/startup.cpp,?DisposeOfStuff@DirectDrawWrap@@YIXXZ
 0x006BB990,Top_Level_Exception_Filter,MATCH,11,src/startup.cpp,?Top_Level_Exception_Filter@@YIJPAU_EXCEPTION_POINTERS@@@Z
+0x006BB9A0,WinMain,MATCH,10261,src/startup.cpp,_WinMain@16
 0x006BE1C0,Prog_End,MATCH,2697,src/startup.cpp,?Prog_End@@YAXXZ
 0x006BEC50,Exit_Process,MATCH,6,src/startup.cpp,?Exit_Process@@YIXH@Z
 0x006BEC60,Emergency_Exit,MATCH,239,src/startup.cpp,?Emergency_Exit@@YIXXZ

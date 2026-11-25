@@ -13834,6 +13834,7 @@ address,size,symbol,source,sha256
 0x006BB760,378,?UnregisterServer@@YIJXZ,src/startup.cpp,06c8fa180e073756274d4462b80d1d38936ba087584052af9889711124e605a3
 0x006BB8E0,175,?DisposeOfStuff@DirectDrawWrap@@YIXXZ,src/startup.cpp,2c7e01be520c52ddd8b6039e380af82716af03f6490499ea622f74ad70dd78fe
 0x006BB990,11,?Top_Level_Exception_Filter@@YIJPAU_EXCEPTION_POINTERS@@@Z,src/startup.cpp,c20142c8e5760229e0c2f6a0ffc60e85a2af9ffb075b6cb04970614f73b35d50
+0x006BB9A0,10261,_WinMain@16,src/startup.cpp,5aa50fe545f49fe3468dbf79a13f98fdbe55217bd59d432450256f988097b508
 0x006BE1C0,2697,?Prog_End@@YAXXZ,src/startup.cpp,9c83f1a890b69c41c1aedb74c5fb1589f6e885ce298a5340e804401010759144
 0x006BEC50,6,?Exit_Process@@YIXH@Z,src/startup.cpp,a040948bcf4bee2e8941134c863aded54eab32f0b8ce0c6eea5130a1629bb5f8
 0x006BEC60,239,?Emergency_Exit@@YIXXZ,src/startup.cpp,fdae52c7ace364b80d180b3e055aa295dea6a2e09db65e7f598828c443901caa
