@@ -7449,6 +7449,98 @@ void HouseClass::AI_Takeover(void)
 	}
 }
 
+void HouseClass::Update_Present_Super_Weapons(void)
+{
+	if (GameActive) {
+		bool player = PlayerPtr == this;
+
+		for (int s = 0; s < SuperWeapon.Count(); s++) {
+			if (SuperWeapon[s]->Is_Present() &&
+				((SuperWeapon[s]->NeedsBuilding &&
+					!SuperWeapon[s]->Is_One_Time()) || IsDefeated)) {
+				bool present = false;
+				bool enabled = false;
+
+				if (!IsDefeated) {
+					for (int j = 0; j < ::Buildings.Count(); j++) {
+						BuildingClass *b = ::Buildings[j];
+
+						if (!b->IsInLimbo && b->IsActive &&
+							b->House->Fetch_ID() == Fetch_ID()) {
+							for (int k = 0; k < 3; k++) {
+								BuildingTypeClass const *upgrade =
+									b->Upgrades[k];
+
+								if (upgrade != NULL &&
+									(upgrade->SuperWeapon == s ||
+										upgrade->SuperWeapon2 == s)) {
+									present = true;
+
+									if (!enabled) {
+										enabled = b->IsOn;
+									}
+								}
+							}
+
+							if (b->FirstActiveSWIdx() == s ||
+								b->SecondActiveSWIdx() == s) {
+								present = true;
+
+								if (enabled) {
+									break;
+								}
+
+								enabled = b->IsOn;
+							}
+
+							if (enabled && present) {
+								break;
+							}
+						}
+					}
+				}
+
+				if (SuperWeapon[s]->Class->DisableableFromShell &&
+					!Unsorted::SWAllowed) {
+					present = false;
+				}
+
+				if (Power_Fraction() < 1.0) {
+					enabled = false;
+				}
+
+				int id = SuperWeapon[s]->Class->Fetch_Heap_ID();
+				int tab = SidebarClass::GetObjectTabIdx(
+					RTTI_SUPERWEAPON, id, false);
+
+				if (present && !IsDefeated) {
+					bool held = !enabled && SuperWeapon[s]->Is_Powered() &&
+						SuperWeapon[s]->SetOnHold(true);
+					bool resumed = enabled && SuperWeapon[s]->SetOnHold(false);
+					if (!held && !resumed) {
+						continue;
+					}
+					if (player) {
+						if (CurrentSWType == s) {
+							CurrentSWType = -1;
+						}
+						Map.RepaintSidebar(tab);
+					}
+					Production_Status_Changed();
+				} else if (SuperWeapon[s]->Lose() && PlayerPtr != NULL) {
+					if (player) {
+						if (CurrentSWType == s) {
+							CurrentSWType = -1;
+						}
+						Map.RepaintSidebar(tab);
+					}
+					Production_Status_Changed();
+				}
+			}
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x0050B1D0
 void HouseClass::AISupers(void)
 {
