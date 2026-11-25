@@ -2424,6 +2424,7 @@ address,size,symbol,source,sha256
 0x0046DCC0,166,?FUN_0046DCC0@@YIXPAUHWND__@@_N@Z,src/campscor.cpp,784db791da8fe2c44ae97c1e6114b6bb468ce27ba72bb186f174405aa297758d
 0x0046DD70,165,?FUN_0046DD70@@YIXPAUHWND__@@_N@Z,src/campscor.cpp,0ab44d285b1049027a0c45e3e59650fcfe31669f44ca36e0cbf140dc1421af2c
 0x0046DE20,423,?FUN_0046DE20@@YIXPAUHWND__@@H@Z,src/campscor.cpp,118ae789be06ffff9220dbdb2bad9af9f1dd6e490477fba00ad70c8233eb43ac
+0x0046DFD0,5648,?FUN_0046DFD0@@YGHPAUHWND__@@IIJ@Z,src/campscor.cpp,dd79730a0d1c27d6f954ea1b9e731965d34850be56eb81c2b67a9ab83fb575fc
 0x0046F5E0,28,?FUN_0046F5E0@@YIHH@Z,src/campscor.cpp,856e2e27f010435ad57a230b574419a05b085a25a288e0f763a53d56c7ab1719
 0x0046F600,205,?FUN_0046F600@@YIXPAUHWND__@@@Z,src/campscor.cpp,a2126c9b88593f020a772fe717f3ec5d436f80954d955a8c8c21845dc0f6215a
 0x0046F6D0,317,?FUN_0046F6D0@@YIXPAUHWND__@@@Z,src/campscor.cpp,51442fa4897d815cbc0f2da2472c012eea57ffa45f0707c852c7b6a9e07fc619
@@ -10352,6 +10353,7 @@ address,size,symbol,source,sha256
 0x005E3850,367,?SendPrivateGameopts@@YIXPBD0@Z,src/netshare.cpp,7757c3d754d3b82cb00e0613291fe881b375b8b5b28bc14a46efbbf1f5edb658
 0x005E39C0,231,?FUN_005E39C0@@YIXPADH@Z,src/netshare.cpp,0efb3c58ef8673e0c44b4c4318089d2262e43bd622e8f262878db12613e037c3
 0x005E3AB0,603,?FUN_005E3AB0@@YIXXZ,src/netshare.cpp,7fd9ff221130ab5d4890e4cc0ddf4854f7109526728c2e6187583123f2d1166b
+0x005E3D10,8702,?DecodePubGameopt@@YI_NPAD0@Z,src/netshare.cpp,d2e4d5ccd9c512d2f5ba7f28a721693208b0713685cf6b25cae21aeae471e9d8
 0x005E5F10,793,?LBSaveSelections@@YIXPAUHWND__@@AAV?$Dictionary@VWideWstring@@_N@@@Z,src/netshare.cpp,537a6c23b5bf89b25c7291dea7cdcdc4121fbb432c91bc243c2ba150447feb83
 0x005E6230,516,?LBRestoreSelections@@YIXPAUHWND__@@AAV?$Dictionary@VWideWstring@@_N@@@Z,src/netshare.cpp,6f01219bee91ccc87a48a5b96b0ca9135c18f9142fe5b82661b4ac2a1575d264
 0x005E6440,45,?FUN_005E6440@@YIHXZ,src/netshare.cpp,9df1fa0f807951f819f8dbb05427148e8d713da0f91ab2282b1a93be49b376cc
@@ -13444,6 +13446,7 @@ address,size,symbol,source,sha256
 0x006A93F0,177,?AddButtons@StripClass@SidebarClass@@QAEXXZ,src/sidebar.cpp,85603fd253c42e182744e38f766a6fcf5d518f4923e8f5a40e158a44dcbc4ed3
 0x006A94B0,58,?RemoveButtons@StripClass@SidebarClass@@QAEXXZ,src/sidebar.cpp,e2639b9c84b0d32493d1740f022da9e0fe67dd0a40eae516d6fb8d497d3b91af
 0x006A94F0,67,?FUN_006A94F0@StripClass@SidebarClass@@QAEHH@Z,src/sidebar.cpp,1a3b456fb35a475caa1b034e11f08dd3c0174c109251112d152bae118d83287d
+0x006A9540,4280,?Draw_It@StripClass@SidebarClass@@QAEX_N@Z,src/sidebar.cpp,660d9c78a9440112e96bb250b1908bd02b477f6d9a4761e6f3e82775d49dc519
 0x006AA600,1711,?Recalc@StripClass@SidebarClass@@QAE_NXZ,src/sidebar.cpp,3899df5a5fadcfde47954009c9433ed66363f824cbc6dde4ed4c91d410794410
 0x006AACB0,46,??0SelectClass@StripClass@SidebarClass@@QAE@XZ,src/sidebar.cpp,abefda376ec63ad4d073d1afa6a9b3ebb56eb8b7736d7286d824a220d377dc6b
 0x006AACE0,17,?Set_Owner@SelectClass@StripClass@SidebarClass@@QAEXAAV23@H@Z,src/sidebar.cpp,550bceb2e65371c6e1be887eda84f377a281773a437674cc1daa42a99065922c
@@ -15403,7 +15406,8 @@ address,size,symbol,source,sha256
 0x006FD800,501,?CreateRadBeams@TechnoClass@@QAEXH@Z,src/techno.cpp,6ad594c97cb3d9afe3b3a0b1a863d75d55a84851749d5ee3e40d83eda3cc9a1a
 0x006FDA00,376,?Barrel_Pitch@TechnoClass@@UBE?AVDirType@@PAVAbstractClass@@@Z,src/techno.cpp,da7511eb31f2bfa3d5371d1df63af5fa15a39dadfc5f743d9b29764ccea01486
 0x006FDB80,450,?Estimate_Damage@TechnoClass@@QBEHPAV1@PBVWeaponTypeClass@@@Z,src/techno.cpp,e309940c4b3518168f4aa6373c25a6c34e70992f5ae7473af134dc3ad4b5e7e2
-0x006FF950,1,?FUN_006FF950@TechnoClass@@QAEXXZ,src/techno.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x006FDD50,7167,?Fire_At@TechnoClass@@UAEPAVBulletClass@@PAVAbstractClass@@H@Z,src/techno.cpp,57cb87d118e89dbb3222eb3bccfda8efb0600a0ea73fa1cc5935cecbb4f185ff
+0x006FF950,1,_$E290,src/techno.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x006FF960,638,?Draw_Target_Laser@TechnoClass@@QBEXXZ,src/techno.cpp,2b841983b4d826d8e6045899c571f68152499cc3cc2b0b27e6b5b5e84315fe30
 0x006FFBE0,538,?Player_Assign_Mission@TechnoClass@@UAE_NW4MissionType@@PAVAbstractClass@@11@Z,src/techno.cpp,7ad5ca382fcb2085cdb4a9beb521e5e2669947713cda08091f91ae4860c45eb0
 0x006FFE00,183,?ClickedEvent@TechnoClass@@UAE_NH@Z,src/techno.cpp,3fa03b638e201206d45a00019b74908f581ae9fe7a4f1e501c7a0fd032fdf27b

@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 25 November 2026: 93% of game code by size matches (19,300 of 19,353 functions,
+Status, 25 November 2026: 93% of game code by size matches (19,304 of 19,353 functions,
 99%; 98% fuzzy), landed in batches module by module. `docs/rounds/` records each round;
 `docs/REMATCH.md` lists matched functions that still need a natural form.
 
@@ -663,6 +663,9 @@ effort (one model, one prompt cache, often fewer retries).
 
 ## Open questions
 
+- A naming pass after the match: give the 1,717 matched functions with placeholder or
+  address names (FUN_, sub_ and similar) real names from YRpp, TibSun, the other RA2 trees
+  and RTTI.
 - Does `game.exe` (RA2 without YR) share enough to be worth matching too, or is YR the
   only target?
 - What fraction of YR functions have a TS counterpart? First measure in the spike (see

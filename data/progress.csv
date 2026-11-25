@@ -2061,6 +2061,7 @@ address,name,result,size,source,symbol
 0x0046DCC0,FUN_0046DCC0,MATCH,166,src/campscor.cpp,?FUN_0046DCC0@@YIXPAUHWND__@@_N@Z
 0x0046DD70,FUN_0046DD70,MATCH,165,src/campscor.cpp,?FUN_0046DD70@@YIXPAUHWND__@@_N@Z
 0x0046DE20,FUN_0046DE20,MATCH,423,src/campscor.cpp,?FUN_0046DE20@@YIXPAUHWND__@@H@Z
+0x0046DFD0,FUN_0046DFD0,MATCH,5648,src/campscor.cpp,?FUN_0046DFD0@@YGHPAUHWND__@@IIJ@Z
 0x0046F5E0,FUN_0046F5E0,MATCH,28,src/campscor.cpp,?FUN_0046F5E0@@YIHH@Z
 0x0046F600,FUN_0046F600,MATCH,205,src/campscor.cpp,?FUN_0046F600@@YIXPAUHWND__@@@Z
 0x0046F6D0,FUN_0046F6D0,MATCH,317,src/campscor.cpp,?FUN_0046F6D0@@YIXPAUHWND__@@@Z
@@ -9996,6 +9997,7 @@ address,name,result,size,source,symbol
 0x005E3850,SendPrivateGameopts,MATCH,367,src/netshare.cpp,?SendPrivateGameopts@@YIXPBD0@Z
 0x005E39C0,FUN_005E39C0,MATCH,231,src/netshare.cpp,?FUN_005E39C0@@YIXPADH@Z
 0x005E3AB0,FUN_005E3AB0,MATCH,603,src/netshare.cpp,?FUN_005E3AB0@@YIXXZ
+0x005E3D10,DecodePubGameopt,MATCH,8702,src/netshare.cpp,?DecodePubGameopt@@YI_NPAD0@Z
 0x005E5F10,LBSaveSelections,MATCH,793,src/netshare.cpp,?LBSaveSelections@@YIXPAUHWND__@@AAV?$Dictionary@VWideWstring@@_N@@@Z
 0x005E6230,LBRestoreSelections,MATCH,516,src/netshare.cpp,?LBRestoreSelections@@YIXPAUHWND__@@AAV?$Dictionary@VWideWstring@@_N@@@Z
 0x005E6440,FUN_005E6440,MATCH,45,src/netshare.cpp,?FUN_005E6440@@YIHXZ
@@ -13092,6 +13094,7 @@ address,name,result,size,source,symbol
 0x006A93F0,SidebarClass::StripClass::AddButtons,MATCH,177,src/sidebar.cpp,?AddButtons@StripClass@SidebarClass@@QAEXXZ
 0x006A94B0,SidebarClass::StripClass::RemoveButtons,MATCH,58,src/sidebar.cpp,?RemoveButtons@StripClass@SidebarClass@@QAEXXZ
 0x006A94F0,SidebarClass::StripClass::FUN_006A94F0,MATCH,67,src/sidebar.cpp,?FUN_006A94F0@StripClass@SidebarClass@@QAEHH@Z
+0x006A9540,SidebarClass::StripClass::Draw_It,MATCH,4280,src/sidebar.cpp,?Draw_It@StripClass@SidebarClass@@QAEX_N@Z
 0x006AACE0,SidebarClass::StripClass::SelectClass::Set_Owner,MATCH,17,src/sidebar.cpp,?Set_Owner@SelectClass@StripClass@SidebarClass@@QAEXAAV23@H@Z
 0x006AA600,SidebarClass::StripClass::Recalc,MATCH,1711,src/sidebar.cpp,?Recalc@StripClass@SidebarClass@@QAE_NXZ
 0x006AAD00,SidebarClass::StripClass::SelectClass::Action,MATCH,3207,src/sidebar.cpp,?Action@SelectClass@StripClass@SidebarClass@@MAEHIAAW4KeyNumType@@H@Z
@@ -15060,7 +15063,8 @@ address,name,result,size,source,symbol
 0x006FD800,TechnoClass::CreateRadBeams,MATCH,501,src/techno.cpp,?CreateRadBeams@TechnoClass@@QAEXH@Z
 0x006FDA00,TechnoClass::Barrel_Pitch,MATCH,376,src/techno.cpp,?Barrel_Pitch@TechnoClass@@UBE?AVDirType@@PAVAbstractClass@@@Z
 0x006FDB80,TechnoClass::Estimate_Damage,MATCH,450,src/techno.cpp,?Estimate_Damage@TechnoClass@@QBEHPAV1@PBVWeaponTypeClass@@@Z
-0x006FF950,TechnoClass::FUN_006FF950,MATCH,1,src/techno.cpp,?FUN_006FF950@TechnoClass@@QAEXXZ
+0x006FDD50,TechnoClass::Fire_At,MATCH,7167,src/techno.cpp,?Fire_At@TechnoClass@@UAEPAVBulletClass@@PAVAbstractClass@@H@Z
+0x006FF950,_$E290,MATCH,1,src/techno.cpp,_$E290
 0x006FF960,TechnoClass::Draw_Target_Laser,MATCH,638,src/techno.cpp,?Draw_Target_Laser@TechnoClass@@QBEXXZ
 0x006FFBE0,TechnoClass::Player_Assign_Mission,MATCH,538,src/techno.cpp,?Player_Assign_Mission@TechnoClass@@UAE_NW4MissionType@@PAVAbstractClass@@11@Z
 0x006FFE00,TechnoClass::ClickedEvent,MATCH,183,src/techno.cpp,?ClickedEvent@TechnoClass@@UAE_NH@Z
