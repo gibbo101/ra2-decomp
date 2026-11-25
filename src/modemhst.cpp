@@ -281,8 +281,7 @@ BOOL CALLBACK Modem_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam, L
 			break;
 
 		case WM_PAINT:
-			if (MultiplayerMapPreview != NULL)
-				MultiplayerMapPreview->DrawStartPoints(window);
+			Draw_Preview_Start_Points(window);
 			ValidateRect(window, NULL);
 			break;
 	}

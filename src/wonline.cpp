@@ -16193,7 +16193,7 @@ BOOL CALLBACK WOL_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam, LP
 	case WM_PAINT:
 		OwnerDraw::Paint(window);
 		FUN_00607FD0(window);
-		if (MultiplayerMapPreview) MultiplayerMapPreview->DrawStartPoints(window);
+		Draw_Preview_Start_Points(window);
 		if (Progress.Has_Dialog()) Progress.Display_Progress();
 		ValidateRect(window, NULL);
 		return FALSE;

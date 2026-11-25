@@ -17,7 +17,6 @@ int ODMessageBox(const char *text, int type, bool (*callback)(void), bool large 
 int CALLBACK ODMessageBox_Proc(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
 bool Set_Scenario_Info_From_Index(int index);
-void PregameSetup(void);
 void Update_Network_Dialog_Preview(HWND win);
 void Receive_Random_Map_Preview(void);
 void __fastcall Send_Preview_To_Guests(MapPreviewClass * preview);
@@ -52,7 +51,6 @@ void LBSaveSelections(HWND win, Dictionary<WideWstring,bool> & lbdict);
 void LBRestoreSelections(HWND win, Dictionary<WideWstring,bool> & lbdict);
 
 char * CalcRandomMapDigest(void);
-int CreateRandomMap(void);
 
 extern COLORREF PlayerColorTable[MAX_PLAYERS];
 
@@ -67,6 +65,8 @@ extern const COLORREF ColorMe;
 extern const COLORREF ColorNoJoin;
 
 extern MapPreviewClass *MultiplayerMapPreview;
+
+inline void Draw_Preview_Start_Points(HWND window) { if (MultiplayerMapPreview) { MultiplayerMapPreview->DrawStartPoints(window); } }
 
 extern bool IsRandomMap;
 

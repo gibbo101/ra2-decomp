@@ -713,6 +713,7 @@ bool __fastcall FUN_005E93F0(NodeNameType * slot);
 bool __fastcall FUN_005E9440(NodeNameType * slot);
 bool __fastcall FUN_005E9470(NodeNameType * slot);
 void FUN_005DAF30(void);
+void PregameSetup(void);
 
 // True unless every player shares one team and the game mode forbids that.
 static inline bool Net2_Teams_Allowed(MultiplayerGameMode * mode)
@@ -1712,9 +1713,7 @@ BOOL CALLBACK MPlayer_Host_Dialog_Proc(HWND window, UINT message, WPARAM wparam,
 
 	case WM_PAINT:
 		OwnerDraw::Paint(window);
-		if (MultiplayerMapPreview) {
-			MultiplayerMapPreview->DrawStartPoints(window);
-		}
+		Draw_Preview_Start_Points(window);
 		if (Progress.Has_Dialog()) {
 			Progress.Display_Progress();
 		}
@@ -3017,9 +3016,7 @@ BOOL CALLBACK MPlayer_Guest_Dialog_Proc(HWND window, UINT message, WPARAM wparam
 
 	case WM_PAINT:
 		OwnerDraw::Paint(window);
-		if (MultiplayerMapPreview) {
-			MultiplayerMapPreview->DrawStartPoints(window);
-		}
+		Draw_Preview_Start_Points(window);
 		if (Progress.Has_Dialog()) {
 			Progress.Display_Progress();
 		}
