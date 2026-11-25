@@ -9160,13 +9160,11 @@ void MapClass::Register_Subzone_Zone_Connections(int subzone)
 
 extern FacingType DAT_0082A944[];
 
-// Zone-record construction adapted from RobinDigitalPro's Red Alert 2 1.001 reconstruction.
 static inline void Set_Zone_Record(SUBZONE_CONNECTION_HASH_SET::ObjectType & record, unsigned int key)
 {
-	SubzoneConnectionStruct value(key);
 	record.Key = key;
-	record.Value.SubzoneID = value.SubzoneID;
-	record.Value.IsCrossBlock = value.IsCrossBlock;
+	record.Value.SubzoneID = key;
+	record.Value.IsCrossBlock = false;
 }
 
 // FUNCTION: GAMEMD 0x00582D70
