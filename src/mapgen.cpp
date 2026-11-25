@@ -5915,6 +5915,14 @@ void MapGeneratorClass::Seed_Arctic_Vegetation(void)
 	}
 }
 
+static inline void Fixup_Vegetation_LAT(CellClass * cell)
+{
+	while (cell != NULL) {
+		cell->Fixup_LAT();
+		cell = Map.Iterate();
+	}
+}
+
 // FUNCTION: GAMEMD 0x005A3AE0
 void MapGeneratorClass::Generate_Vegetation(void)
 {
@@ -5950,11 +5958,7 @@ void MapGeneratorClass::Generate_Vegetation(void)
 	}
 
 	Map.Reset_Iterator();
-	cptr = Map.Iterate();
-	while (cptr != NULL) {
-		cptr->Fixup_LAT();
-		cptr = Map.Iterate();
-	}
+	Fixup_Vegetation_LAT(Map.Iterate());
 
 	int tree_count = (int)((SeedData.Width * 0.1 + 0.7) * (SeedData.Vegetation * 0.01) * MaxTrees);
 	for (int tries = 0; tree_count > 0 && tries < 100; tries++) {
@@ -5968,7 +5972,6 @@ void MapGeneratorClass::Generate_Vegetation(void)
 	for (tries = 0; tries < overlay_count * 5 && placed < overlay_count; tries++) {
 		Cell cell = MapRegionClass::Pick_Random_Map_Cell();
 		CellClass * cellptr = &Map[cell];
-		MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(cell);
 		if (cellptr->Overlay == OVERLAY_NONE) {
 			if (cellptr->Is_Tile_Clear_To_Sand_LAT()) {
 				cellptr->Overlay = OverlayType(Pick_Random_UInt(0, 4) + OVERLAY_SAND_ROCK_01);
@@ -6008,11 +6011,7 @@ void MapGeneratorClass::Generate_Arctic_Vegetation(void)
 	}
 
 	Map.Reset_Iterator();
-	cptr = Map.Iterate();
-	while (cptr != NULL) {
-		cptr->Fixup_LAT();
-		cptr = Map.Iterate();
-	}
+	Fixup_Vegetation_LAT(Map.Iterate());
 
 	int tree_count = (int)((SeedData.Width * 0.1 + 0.7) * (SeedData.Vegetation * 0.01) * MaxTrees);
 	for (int tries = 0; tree_count > 0 && tries < 100; tries++) {
