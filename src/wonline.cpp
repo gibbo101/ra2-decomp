@@ -7135,9 +7135,8 @@ wchar_t * __fastcall FUN_0078F200(wchar_t const * name)
 		if (has_squad) {
 			if (squad_found) {
 				wchar_t * squad_name = Wide_Squad_Name(user);
-				unsigned int squad_rank = squad_ladder.rung;
 				swprintf(DAT_00B76238, StringTable::LoadString("TXT_PLAYER_TOOLTIP_UNR_C_CR", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D6A),
-					StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D6A), squad_name, squad_rank);
+					StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\wonline.cpp", 0x3D6A), squad_name, squad_ladder.rung);
 			} else {
 				wchar_t * squad_name = Wide_Squad_Name(user);
 				swprintf(DAT_00B76238, StringTable::LoadString("TXT_PLAYER_TOOLTIP_UNR_C_CUNR", 0, "D:\\ra2mdpost\\wonline.cpp", 0x3D6E),
