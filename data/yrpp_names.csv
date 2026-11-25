@@ -350,6 +350,7 @@ address,name,source
 0x006137D0,OwnerDraw::SysTabHandler,symbols.csv
 0x00614190,OwnerDraw::EditHandler,symbols.csv
 0x00614B30,OwnerDraw::NewEditHandler,symbols.csv
+0x006153E0,OwnerDraw::StaticHandler,symbols.csv
 0x006163A0,OwnerDraw::CheckBoxButtonHandler,symbols.csv
 0x00616980,OwnerDraw::AutoRadioButtonHandler,symbols.csv
 0x0061C690,OwnerDraw::ScrollBarHandler,symbols.csv
@@ -483,6 +484,7 @@ address,name,source
 0x006CC290,SuperClass::ResetRechargeTime,symbols.csv
 0x006CC2B0,SuperClass::NameReadiness,symbols.csv
 0x006CC360,SuperClass::CanFire,symbols.csv
+0x006CC390,SuperClass::Launch,symbols.csv
 0x006CDE90,SuperClass::ShouldDrawProgress,symbols.csv
 0x006CE0B0,SuperClass::Reset,symbols.csv
 0x006CE1A0,SuperClass::ShouldFlashTab,symbols.csv
@@ -536,6 +538,7 @@ address,name,source
 0x007104F0,FootClass::UpdatePassengerCoords,symbols.csv
 0x00710550,TechnoClass::SetTargetForPassengers,symbols.csv
 0x007105E0,TechnoClass::IsMindControlled,symbols.csv
+0x00710AF0,TechnoTypeClass::TechnoTypeClass,symbols.csv
 0x007177C0,TechnoTypeClass::GetWeapon,symbols.csv
 0x007177E0,TechnoTypeClass::GetEliteWeapon,symbols.csv
 0x007178C0,TechnoTypeClass::GetParticleSysOffset,symbols.csv

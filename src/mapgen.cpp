@@ -139,8 +139,8 @@ extern int DAT_00ABDFD0;
 extern int DAT_00ABDFD4;
 extern int DAT_00ABEC90;
 extern int DAT_00ABECD0;
-extern Cell DAT_00ABE304[8];
-extern Point2D DAT_00ABE328[8];
+Cell DAT_00ABE304[8];
+Point2D DAT_00ABE328[8];
 extern char const * DAT_0082B034[5];
 extern char const * DAT_0082B048[4];
 extern char const * DAT_0082B060[4];
@@ -162,6 +162,9 @@ extern int DAT_0082B080[];
 extern int DAT_0082B094[];
 extern int * DAT_00ABE260;
 extern int * DAT_00ABE27C;
+extern double const DAT_007ED720;
+extern double const DAT_007ED728;
+extern double const DAT_007ED730;
 
 // SYNTHETIC: GAMEMD 0x0058B740 SYMBOL
 // _$E186
@@ -171,16 +174,10 @@ extern int * DAT_00ABE27C;
 // _$E189
 // SYNTHETIC: GAMEMD 0x0058B780 SYMBOL
 // _$E192
-
-// FUNCTION: GAMEMD 0x0058B7B0
-void FUN_0058B7B0(void)
-{
-}
-
-// FUNCTION: GAMEMD 0x0058B7C0
-void FUN_0058B7C0(void)
-{
-}
+// SYNTHETIC: GAMEMD 0x0058B7B0 SYMBOL
+// _$E195
+// SYNTHETIC: GAMEMD 0x0058B7C0 SYMBOL
+// _$E198
 
 // FUNCTION: GAMEMD 0x0058B7D0
 int FUN_0058B7D0(void)
@@ -311,9 +308,9 @@ void FUN_0058BC20(void)
 DynamicVectorClass<MapRegionClass *> MapRegionClass::MapRegions;
 
 // SYNTHETIC: GAMEMD 0x0058BC30 SYMBOL
-// _$E198
+// _$E204
 // SYNTHETIC: GAMEMD 0x0058BC70 SYMBOL
-// _$E195
+// _$E201
 
 // FUNCTION: GAMEMD 0x0058BCD0
 bool FUN_0058BCD0(int value)
@@ -623,9 +620,90 @@ double MapRegionClass::Get_Angle_Score(const Cell & cell1, const Cell & cell2, d
 }
 
 static inline bool In_Zone_Map_Bounds(Cell const & cell);
+static inline Cell Offset_Cell(Cell const & cell, int dx, int dy);
 
+// FUNCTION: GAMEMD 0x0058C800
+MapRegionClass * MapRegionClass::Create_Region_From_Cell(CellClass * cptr)
+{
+	int i;
+	int region_id = MapRegionClass::TotalCount;
 
+	DynamicVectorClass<Cell> cells;
+	cells.Set_Growth_Step(50000);
+	cells.Add(cptr->Fetch_CellID());
 
+	bool has_water = cptr->Is_Tile_With_Water() || cptr->Is_Tile_Clear_To_Green_LAT();
+	int cell_height = cptr->Height;
+	int processed_count = 0;
+
+	int pending = cells.Count();
+	while (pending) {
+		Cell cell = cells[pending - 1];
+		cells.Delete_Index(pending - 1);
+
+		CellData::Set_Spread(cell, region_id);
+		CellData::Set_Region(cell, region_id);
+
+		for (i = 0; i < FACING_COUNT; i++) {
+			Cell ncell = Adjacent_Cell(cell, (FacingType)i);
+			CellData & ndata = MapRegionClass::Get_Cell_Data(ncell);
+			if (My_In_Radar(ncell) && ndata.RegionID == -1 && ndata.SpreadID != region_id) {
+				ndata.SpreadID = region_id;
+				if (Map[ncell].Height == cell_height) {
+					int n_has_water = Map[ncell].Is_Tile_With_Water() || Map[ncell].Is_Tile_Clear_To_Green_LAT();
+					if (!(has_water ^ n_has_water)) {
+						cells.Add(ncell);
+					}
+				}
+			}
+		}
+
+		processed_count++;
+		pending = cells.Count();
+	}
+
+	if (processed_count < 75 && !has_water) {
+		bool reset_done = false;
+
+		if (region_id == 0) {
+			DynamicVectorClass<Cell> * region_cells = RandomMapGen.Build_Region_Border_Cell_List(0);
+			Cell region_cell = (*region_cells)[Pick_Random_UInt(0, region_cells->Count() - 1)];
+
+			for (i = 0; i < FACING_COUNT; i++) {
+				Cell ncell = Adjacent_Cell(region_cell, (FacingType)i);
+				if (My_In_Radar(ncell) && Map[ncell].Height != Map[region_cell].Height && !Map[ncell].Is_Tile_With_Water()) {
+					RandomMapGen.Clear_Region_Cells(0, -1, Map[ncell].Height, ISOTILE_CLEAR);
+
+					reset_done = true;
+					break;
+				}
+			}
+
+			delete region_cells;
+		} else {
+			Cell side_cell = Offset_Cell(cptr->Fetch_CellID(), -1, 0);
+			if (!My_In_Radar(side_cell)) {
+				side_cell = Offset_Cell(cptr->Fetch_CellID(), 0, -1);
+			}
+
+			if (In_Zone_Map_Bounds(side_cell)) {
+				RandomMapGen.Clear_Region_Cells(region_id, CellData::Get_Region(side_cell), Map[side_cell].Height, ISOTILE_CLEAR);
+
+				reset_done = true;
+			}
+		}
+
+		if (reset_done) {
+			return(NULL);
+		}
+	}
+
+	MapRegionClass * region = new MapRegionClass(cptr->Fetch_CellID());
+	region->CellHeight = cell_height;
+	region->ContainsWater = has_water;
+	region->Recount_Cells();
+	return(region);
+}
 
 // FUNCTION: GAMEMD 0x0058CE90
 void MapRegionClass::Destroy_Cell_Regions(void)
@@ -1905,6 +1983,11 @@ MapRegionClass * MapRegionClass::From_ID(int id)
 		}
 	}
 	return(NULL);
+}
+
+static inline Cell Offset_Cell(Cell const & cell, int dx, int dy)
+{
+	return Cell(cell.X + dx, cell.Y + dy);
 }
 
 static inline bool In_Zone_Map_Bounds(Cell const & cell)
@@ -7280,11 +7363,11 @@ DirtRoadTile::~DirtRoadTile(void)
 }
 
 // SYNTHETIC: GAMEMD 0x005A9C20 SYMBOL
-// _$E209
+// _$E215
 // SYNTHETIC: GAMEMD 0x005A9C40 SYMBOL
-// _$E206
+// _$E212
 // SYNTHETIC: GAMEMD 0x005AC190 SYMBOL
-// _$E207
+// _$E213
 DirtRoadTile DirtRoadTiles[] = {
 	/* 0 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(2, 0), FACING_NE)),
 	/* 1 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E)),
@@ -7623,33 +7706,33 @@ template class VectorClass<double>;
 #include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0058B530 SYMBOL
-// _$E212
-// SYNTHETIC: GAMEMD 0x0058B560 SYMBOL
-// _$E215
-// SYNTHETIC: GAMEMD 0x0058B580 SYMBOL
 // _$E218
-// SYNTHETIC: GAMEMD 0x0058B5A0 SYMBOL
+// SYNTHETIC: GAMEMD 0x0058B560 SYMBOL
 // _$E221
-// SYNTHETIC: GAMEMD 0x0058B5C0 SYMBOL
+// SYNTHETIC: GAMEMD 0x0058B580 SYMBOL
 // _$E224
-// SYNTHETIC: GAMEMD 0x0058B5E0 SYMBOL
+// SYNTHETIC: GAMEMD 0x0058B5A0 SYMBOL
 // _$E227
-// SYNTHETIC: GAMEMD 0x0058B600 SYMBOL
+// SYNTHETIC: GAMEMD 0x0058B5C0 SYMBOL
 // _$E230
-// SYNTHETIC: GAMEMD 0x0058B640 SYMBOL
+// SYNTHETIC: GAMEMD 0x0058B5E0 SYMBOL
 // _$E233
-// SYNTHETIC: GAMEMD 0x0058B670 SYMBOL
+// SYNTHETIC: GAMEMD 0x0058B600 SYMBOL
 // _$E236
-// SYNTHETIC: GAMEMD 0x0058B6A0 SYMBOL
+// SYNTHETIC: GAMEMD 0x0058B640 SYMBOL
 // _$E239
-// SYNTHETIC: GAMEMD 0x0058B6D0 SYMBOL
+// SYNTHETIC: GAMEMD 0x0058B670 SYMBOL
 // _$E242
-// SYNTHETIC: GAMEMD 0x0058B6E0 SYMBOL
+// SYNTHETIC: GAMEMD 0x0058B6A0 SYMBOL
 // _$E245
-// SYNTHETIC: GAMEMD 0x0058B700 SYMBOL
+// SYNTHETIC: GAMEMD 0x0058B6D0 SYMBOL
 // _$E248
-// SYNTHETIC: GAMEMD 0x0058B720 SYMBOL
+// SYNTHETIC: GAMEMD 0x0058B6E0 SYMBOL
 // _$E251
+// SYNTHETIC: GAMEMD 0x0058B700 SYMBOL
+// _$E254
+// SYNTHETIC: GAMEMD 0x0058B720 SYMBOL
+// _$E257
 const Rect RECT_NONE_2(0, 0, 0, 0);
 
 // FUNCTION: GAMEMD 0x005A78D0
@@ -7693,10 +7776,6 @@ void MapGeneratorClass::Generate_Urban_Pavement(DynamicVectorClass<Cell> & cells
 		}
 	}
 }
-
-extern double const DAT_007ED720;
-extern double const DAT_007ED728;
-extern double const DAT_007ED730;
 
 // FUNCTION: GAMEMD 0x0059AFA0
 void MapGeneratorClass::Seed_Land_Type1(void)

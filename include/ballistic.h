@@ -53,13 +53,11 @@ inline bool Ballistic_Move(Vector3 & position, Vector3 & velocity, double gravit
 				hit_obstacle = false;
 			} else {
 				hit_obstacle = true;
-				if (building != NULL) {
-					if (building->Class->IsLaserFence && building->LaserFenceFrame >= 8) {
-						hit_obstacle = false;
-					}
-					if (building->IsStrange()) {
-						hit_obstacle = false;
-					}
+				if (building != NULL && building->Class->IsLaserFence && building->LaserFenceFrame >= 8) {
+					hit_obstacle = false;
+				}
+				if (building != NULL && building->IsStrange()) {
+					hit_obstacle = false;
 				}
 			}
 
