@@ -4449,6 +4449,78 @@ Cell HouseClass::Find_Cell_In_Zone(TechnoClass const * techno, ZoneType zone) co
 	return(Cell(0, 0));
 }
 
+// Clears and sets dir's quadrant bits, then turns it back one 45-degree facing in place,
+// keeping its position within the facing.
+static DirType const & Rotate_Back(DirType & dir, int clear, int set)
+{
+	dir.Raw &= ~clear;
+	dir.Raw |= set;
+	DirType sector(dir);
+	sector.Snap_To_8();
+	dir.Raw = (dir.Raw & ~0xE000) | ((sector.As_Int() - 1) & 0xE000);
+	return(dir);
+}
+
+// FUNCTION: GAMEMD 0x00501AC0
+Cell HouseClass::Random_Cell_In_Zone(ZoneType zone) const
+{
+	Coord coord = COORD_NONE;
+	int maxdist = 0;
+
+	int radius = MAX(3 * CELL_LEPTON, MIN(Radius, 8 * CELL_LEPTON));
+	maxdist = radius*2;
+
+	switch (zone) {
+		case ZONE_CORE:
+			coord = Coord_Scatter(FUN_0050DF30(), Random_Pick(0, radius), true);
+			break;
+
+		case ZONE_NORTH: {
+			int distance = Random_Pick(radius, maxdist);
+			DirType dir(Scen->RandomNumber);
+			coord = Move_Coord(FUN_0050DF30(), Rotate_Back(dir, DIR_W << 8, 0), distance);
+			break;
+		}
+
+		case ZONE_EAST: {
+			int distance = Random_Pick(radius, maxdist);
+			DirType dir(Scen->RandomNumber);
+			coord = Move_Coord(FUN_0050DF30(), Rotate_Back(dir, DIR_S << 8, DIR_E << 8), distance);
+			break;
+		}
+
+		case ZONE_SOUTH: {
+			int distance = Random_Pick(radius, maxdist);
+			DirType dir(Scen->RandomNumber);
+			coord = Move_Coord(FUN_0050DF30(), Rotate_Back(dir, DIR_E << 8, DIR_S << 8), distance);
+			break;
+		}
+
+		case ZONE_WEST: {
+			int distance = Random_Pick(radius, maxdist);
+			DirType dir(Scen->RandomNumber);
+			coord = Move_Coord(FUN_0050DF30(), Rotate_Back(dir, 0, DIR_W << 8), distance);
+			break;
+		}
+	}
+
+	Cell cell;
+	if (coord == COORD_NONE) {
+		if (zone == ZONE_CORE) {
+			cell = Get_Base_Center();
+		} else {
+			cell = Random_Cell_In_Zone(ZONE_CORE);
+		}
+	} else {
+		cell = coord.As_Cell();
+	}
+
+	if (!Map.In_Local_Radar(cell)) {
+		cell = Map.Clip_To_Map(cell);
+	}
+	return(cell);
+}
+
 // FUNCTION: GAMEMD 0x00502100
 void HouseClass::Make_Ally(ObjectClass * object, bool announce)
 {
