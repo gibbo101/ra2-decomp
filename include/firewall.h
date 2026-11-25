@@ -24,6 +24,11 @@ public:
 	int Rank_A(int flags);
 	int Rank_B(int flags);
 	unsigned short Get_Next_Mangled_Source_Port(unsigned short source_port);
+	unsigned short Get_Raw_Firewall_Behavior(void) {return((unsigned short)Detected);}
+	bool Is_NAT(void) { if (Detected == 0 || (Detected & 1) != 0) { return(false); } return(true); }
+	bool Is_NAT(int behavior) { if (behavior == 0 || (behavior & 1) != 0) { return(false); } return(true); }
+	bool Is_Netgear(int behavior) { if ((behavior & 8) != 0) { return(true); } return(false); }
+	bool Is_Netgear(void) { if ((Detected & 8) != 0) { return(true); } return(false); }
 
 	int Detected;
 	int Settings;

@@ -7711,6 +7711,197 @@ void __fastcall FUN_00793CD0(int slot)
 	Session.KeepAliveCount++;
 }
 
+// FUNCTION: GAMEMD 0x00793D20
+unsigned char __fastcall FUN_00793D20(int partner, int tag, int retries)
+{
+	CDTimerClass<SystemTimerClass> timeout;
+	CDTimerClass<SystemTimerClass> resend_timer;
+	bool mangling = true;
+	int packet_len = 0;
+	IPXAddressClass address;
+	int peek_packet = 0;
+	bool gotit = false;
+	FUN_004068E0("Start_Talking_To player %d, retries = %d\n", partner, retries);
+
+	int session_players_index = -1;
+	for (int i = 0; i < Session.Players.Count(); i++) {
+		const wchar_t * slot_name = Session.Slots[partner]->Name;
+		char * player_name = FUN_007350C0(Session.Players[i]->Name);
+		if (stricmp(player_name, FUN_007350C0(slot_name)) == 0) {
+			session_players_index = i;
+		}
+	}
+	if (session_players_index == -1) {
+		FUN_00793B30(0, NULL);
+		FUN_004068E0("session_players_index == %d, returning false from Start_Talking_To.\n", session_players_index);
+		return false;
+	}
+
+	for (int n = 0; n < MAX_PLAYERS && Session.unknown_2E28[n][0]; n++) {
+		if (stricmp(Session.unknown_2E28[n], FUN_007350C0(Session.Slots[partner]->Name)) == 0) {
+			FUN_004068E0("Behind the same NAT, mangling == false\n");
+			mangling = false;
+			break;
+		}
+	}
+
+	int their_firewall = Session.PlayerFirewall[partner];
+	if (mangling && !FirewallHelper.Is_NAT(their_firewall) && !FirewallHelper.Is_NAT(FirewallHelper.Get_Raw_Firewall_Behavior())) {
+		FUN_004068E0("Both have crap firewalls, or modems, or somesuch. mangling = false\n");
+		mangling = false;
+	}
+
+	int trying = 0;
+	unsigned short last_send_port = 0;
+	unsigned short my_mangled_port = 0;
+	GlobalPacketType packet;
+	GlobalPacketType receive_packet;
+	unsigned short product_id;
+
+	do {
+		FUN_004068E0("Sending keep alive packets\n");
+		FUN_00793BB0();
+
+		if (!mangling) {
+			unsigned short port = Session.PlayerPorts[session_players_index];
+			FUN_004068E0("Easy mangling, Session.OtherPlayersMangledPorts[%d] = %d\n", partner, port);
+			Session.unknown_2E18[partner] = port;
+		} else {
+			int behavior = FirewallHelper.Get_Raw_Firewall_Behavior();
+			unsigned short mangled_port = 0;
+
+			FUN_004068E0("Raw firewall behavior is %d\n", behavior);
+			if ((behavior & 0x40) == 0) {
+				FUN_004068E0("No destination port delta - looking for earlier connections at the same address\n");
+				for (int r = 0; r < Session.KeepAliveCount; r++) {
+					int slot = Session.KeepAliveSlots[r];
+					IPXAddressClass old_address = Session.Slots[slot]->Address;
+					if (old_address.FUN_0053EF30(Session.Slots[partner]->Address)) {
+						mangled_port = Session.unknown_2F4C[slot];
+						FUN_004068E0("Found old connection port number to use - port number %d\n", mangled_port);
+					}
+				}
+			}
+
+			if (mangled_port == 0) {
+				FUN_004068E0("Work out what my port will be.\n");
+				for (int p = 0; p < Session.Players.Count(); p++) {
+					const wchar_t * player_name = Session.Players[p]->Name;
+					char * name = FUN_007350C0(player_name);
+					if (stricmp(name, g_NickName.get()) == 0) {
+						unsigned short base_port = Session.PlayerPorts[p];
+						FUN_004068E0("My default port = %d\n", base_port);
+						mangled_port = FirewallHelper.Get_Next_Mangled_Source_Port(base_port);
+						FUN_004068E0("My mangled port = %d\n", mangled_port);
+						break;
+					}
+				}
+			}
+
+			FUN_00793A70(FUN_007350C0(Session.Slots[partner]->Name), mangled_port);
+			my_mangled_port = mangled_port;
+		}
+
+		timeout = CDTimerClass<SystemTimerClass>(360);
+		if (trying > 0) {
+			timeout = CDTimerClass<SystemTimerClass>(240);
+		}
+		while (timeout.Value() != 0 && ((mangling == true && Session.unknown_2E18[partner] == last_send_port) || (mangling == false && Session.unknown_2E18[partner] == 0))) {
+			WOL_Wait_Callback();
+		}
+
+		last_send_port = Session.unknown_2E18[partner];
+		if (last_send_port != 0) {
+			FUN_004068E0("Session.OtherPlayersMangledPorts[%d] != 0\n", partner);
+			Session.PlayerPorts[session_players_index] = Session.unknown_2E18[partner];
+			Session.Players[session_players_index]->Address.Set_Port(Session.unknown_2E18[partner]);
+			Session.Slots[partner]->Address.Set_Port(Session.unknown_2E18[partner]);
+
+			memset(&packet, 0, 0x2F);
+			packet.Command = NET_PORT_PROBE;
+			strcpy(packet.Name, g_NickName.get());
+
+			if (FirewallHelper.Is_Netgear() && !FirewallHelper.Is_Netgear(Session.PlayerFirewall[partner])) {
+				FUN_004068E0("Doing the netgear sleep thing\n");
+				CDTimerClass<SystemTimerClass> netgear_timer(240);
+				while (netgear_timer.Value() != 0) {
+					WOL_Wait_Callback();
+				}
+			}
+
+			const wchar_t * slot_name = Session.Slots[partner]->Name;
+			char * name = FUN_007350C0(slot_name);
+			FUN_004068E0("Sending NET_PORT_PROBE packet to %s at port %d\n", name, Session.PlayerPorts[session_players_index]);
+			timeout = CDTimerClass<SystemTimerClass>(360);
+			resend_timer = CDTimerClass<SystemTimerClass>(0);
+
+			do {
+				if (resend_timer == 0) {
+					FUN_004068E0("Sending NET_PORT_PROBE packet to player %S\n", Session.Slots[partner]->Name);
+					Ipx.Send_Global_Message_To_Name(&packet, 0x2F, 0, Session.Slots[partner]->Name);
+					resend_timer = CDTimerClass<SystemTimerClass>(30);
+				}
+				WOL_Wait_Callback();
+
+				if (!gotit) {
+					if (peek_packet >= Ipx.Global_Num_Receive()) {
+						peek_packet = 0;
+					}
+					if (Ipx.Global_Channel_Op(peek_packet, (int)&receive_packet, (int)&packet_len, (int)&address, (int)&product_id, 0) && product_id == 0xaa04) {
+						if (receive_packet.Command == NET_PING || receive_packet.Command == NET_PORT_PROBE) {
+							if (receive_packet.Command == NET_PORT_PROBE) {
+								FUN_004068E0("Got NET_PORT_PROBE packet\n");
+								if (Session.Players[session_players_index]->Address.FUN_0053EF30(address)) {
+									if (stricmp(FUN_007350C0(Session.Slots[partner]->Name), receive_packet.Name) == 0) {
+										FUN_004068E0("Got NET_PORT_PROBE packet from %s\n", receive_packet.Name);
+										FUN_00793B30(11, receive_packet.Name);
+										FUN_007931F0(session_players_index);
+										FUN_00793CD0(partner);
+										gotit = true;
+										Session.unknown_2F4C[partner] = my_mangled_port;
+									}
+								}
+							}
+							Ipx.Global_Channel_Op_3C(peek_packet);
+						}
+					}
+				}
+
+				if (gotit && Session.ConnectionResults[tag] == 11) {
+					FUN_004068E0("Got connection result - my packet must have got through\n");
+					break;
+				}
+
+				int result = Session.ConnectionResults[tag];
+				if (result >= 1 && result < 11) {
+					int their_try = result - 1;
+					if (their_try > trying) {
+						FUN_004068E0("Other player is trying again - their_try = %d\n", their_try);
+						trying = their_try - 1;
+						break;
+					}
+				}
+				peek_packet++;
+			} while (timeout.Value() != 0);
+		}
+
+		if (gotit && Session.ConnectionResults[tag] == 11) {
+			FUN_004068E0("gotit && Session.ConnectionResults[completion_index] == CONNRESULT_CONNECTED\n");
+			break;
+		}
+		if (trying >= retries) {
+			FUN_004068E0("trying >= retries\n");
+			break;
+		}
+		trying++;
+		FUN_00793B30(trying + 1, FUN_007350C0(Session.Slots[partner]->Name));
+		FUN_004068E0("Trying again - trying = %d\n", trying);
+	} while (true);
+
+	return gotit;
+}
+
+
 #include "wspudp.h"
 
 static inline bool Is_Local_Host(void)
