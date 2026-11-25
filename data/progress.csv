@@ -10789,6 +10789,11 @@ address,name,result,size,source,symbol
 0x00625560,??_G?$DNode@PAUHWND__@@UWinData@OwnerDraw@@@@QAEPAXI@Z,MATCH,138,src/ownrdraw.cpp,??_G?$DNode@PAUHWND__@@UWinData@OwnerDraw@@@@QAEPAXI@Z
 0x0060D540,OwnerDraw::ComboDropWindowHandler,MATCH,7636,src/ownrdraw.cpp,?ComboDropWindowHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
 0x006153E0,OwnerDraw::StaticHandler,MATCH,4032,src/ownrdraw.cpp,?StaticHandler@OwnerDraw@@YGJPAUHWND__@@IIJ@Z
+0x006248A0,?shrinkVector@?$ArrayList@UCellData@OwnerDraw@@@@AAEDXZ,MATCH,136,src/ownrdraw.cpp,?shrinkVector@?$ArrayList@UCellData@OwnerDraw@@@@AAEDXZ
+0x00624460,??1CellData@OwnerDraw@@QAE@XZ,MATCH,21,src/ownrdraw.cpp,??1CellData@OwnerDraw@@QAE@XZ
+0x006244E0,?clear@?$ArrayList@UCellData@OwnerDraw@@@@QAEXXZ,MATCH,68,src/ownrdraw.cpp,?clear@?$ArrayList@UCellData@OwnerDraw@@@@QAEXXZ
+0x006254D0,?shrinkVector@?$ArrayList@UColumnData@OwnerDraw@@@@AAEDXZ,MATCH,136,src/ownrdraw.cpp,?shrinkVector@?$ArrayList@UColumnData@OwnerDraw@@@@AAEDXZ
+0x00625A20,?growVector@?$ArrayList@UColumnData@OwnerDraw@@@@AAEDXZ,MATCH,135,src/ownrdraw.cpp,?growVector@?$ArrayList@UColumnData@OwnerDraw@@@@AAEDXZ
 0x00625AB0,PacketClass::~PacketClass,MATCH,41,src/packet.cpp,??1PacketClass@@QAE@XZ
 0x00625AE0,PacketClass::Add_Field,MATCH,16,src/packet.cpp,?Add_Field@PacketClass@@QAEXPAVFieldClass@@@Z
 0x00625AF0,PacketClass::PacketClass,MATCH,270,src/packet.cpp,??0PacketClass@@QAE@PAD@Z
