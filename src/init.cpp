@@ -4652,7 +4652,7 @@ extern MFCD * DAT_00884E10;
 extern MFCD * DAT_00884E20;
 extern MFCD * DAT_00884E1C;
 void const * __fastcall FUN_005B40B0(char const * name, bool flag);
-void __fastcall FUN_006267A0(TheaterType theater);
+void __fastcall Set_Scheme_Table_Theater(TheaterType theater);
 void __fastcall FUN_00717840(void);
 
 // FUNCTION: GAMEMD 0x005349C0
@@ -4759,7 +4759,7 @@ void __fastcall Init_Theater(TheaterType theater)
 			Call_Back();
 		}
 
-		FUN_006267A0(theater);
+		Set_Scheme_Table_Theater(theater);
 		FUN_00717840();
 		Session.Update_Progress(25);
 	}

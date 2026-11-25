@@ -11179,6 +11179,7 @@ address,size,symbol,source,sha256
 0x006263D0,650,?GeneratePalette@ColorScheme@@SIPAV?$DynamicVectorClass@PAVColorScheme@@@@PBD@Z,src/palette.cpp,b23055d2aae8a1d8d224e7139f971790bb941a2a7a26fa1b0730431fd5270314
 0x00626660,40,?SchemeHash@@YIHPBD@Z,src/palette.cpp,e3f4222ab51830f4074a6802f25daec54512ed13726e3acda400cef4c4e5ddb3
 0x00626690,257,?GetPaletteSchemesFromIterator@@YIPAV?$DynamicVectorClass@PAVColorScheme@@@@PAUHashIterator@@@Z,src/palette.cpp,ea4192c2cf82594c34e1af0143300a66d0d9395580fc5f2cee2a1962f65971f3
+0x006267A0,504,?Set_Scheme_Table_Theater@@YIXW4TheaterType@@@Z,src/palette.cpp,09d3910fd17c9ecfd5c3fcff5b60840d96e5a7fb92085e0ee131289457a2fcb0
 0x006269A0,268,?SchemeLibrary_Free@@YIXXZ,src/palette.cpp,7893769befebd8c55c9203b3de386e2919d86862af2105a66bb8b704b040ed3b
 0x00626AB0,430,?SchemeLibrary_Add@@YIXPBDABVHSVClass@@@Z,src/palette.cpp,630fa8202e6e100dcd6e9eac875fc42937fac1eaf360c61b5099298be0dc5576
 0x00626C60,311,?SchemeLibrary_Count@@YIHXZ,src/palette.cpp,e1e1f97956380d098714599c56b902ae678020c35b39ddbecdc1ddd7cee37b73

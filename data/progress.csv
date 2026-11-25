@@ -10827,6 +10827,7 @@ address,name,result,size,source,symbol
 0x006263D0,ColorScheme::GeneratePalette,MATCH,650,src/palette.cpp,?GeneratePalette@ColorScheme@@SIPAV?$DynamicVectorClass@PAVColorScheme@@@@PBD@Z
 0x00626660,SchemeHash,MATCH,40,src/palette.cpp,?SchemeHash@@YIHPBD@Z
 0x00626690,GetPaletteSchemesFromIterator,MATCH,257,src/palette.cpp,?GetPaletteSchemesFromIterator@@YIPAV?$DynamicVectorClass@PAVColorScheme@@@@PAUHashIterator@@@Z
+0x006267A0,Set_Scheme_Table_Theater,MATCH,504,src/palette.cpp,?Set_Scheme_Table_Theater@@YIXW4TheaterType@@@Z
 0x006269A0,SchemeLibrary_Free,MATCH,268,src/palette.cpp,?SchemeLibrary_Free@@YIXXZ
 0x00626AB0,SchemeLibrary_Add,MATCH,430,src/palette.cpp,?SchemeLibrary_Add@@YIXPBDABVHSVClass@@@Z
 0x00626C60,SchemeLibrary_Count,MATCH,311,src/palette.cpp,?SchemeLibrary_Count@@YIHXZ

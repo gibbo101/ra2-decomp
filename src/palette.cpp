@@ -261,6 +261,15 @@ DynamicVectorClass<ColorScheme *> * __fastcall GetPaletteSchemesFromIterator(Has
 	return(entry->Schemes);
 }
 
+// FUNCTION: GAMEMD 0x006267A0
+void __fastcall Set_Scheme_Table_Theater(TheaterType theater)
+{
+	Library();
+	if (DAT_00AC48F0->Mode != theater) {
+		DAT_00AC48F0->Set_Mode(theater);
+	}
+}
+
 // FUNCTION: GAMEMD 0x006269A0
 void SchemeLibrary_Free(void)
 {
@@ -456,8 +465,9 @@ void SchemeLibrary::Add(char const *name)
 void SchemeLibrary::Replace(char const * name)
 {
 	HashString key(name);
-	SchemeNode * node = *Table->Find(key);
-	node->Replace(Generate(name));
+	SchemeNode ** node = Table->Find(key);
+	SchemeNode * entry = *node;
+	entry->Replace(Generate(name));
 }
 
 // FUNCTION: GAMEMD 0x00627B20
