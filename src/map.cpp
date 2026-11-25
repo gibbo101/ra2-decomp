@@ -9974,16 +9974,20 @@ bool MapClass::Rebuild_Shores_At(Cell const & origin)
 	return(expanded);
 }
 
+static inline void Init_Fill_Cells(DynamicVectorClass<Cell> & cells, int growth)
+{
+	cells.DynamicVectorClass<Cell>::Clear();
+	cells.Set_Growth_Step(growth);
+}
+
 // FUNCTION: GAMEMD 0x00585930
 void MapClass::Mark_Fill_Area(Cell const & origin, bool on_water)
 {
 	DynamicVectorClass<Cell> region_cells;
-	region_cells.Clear();
-	region_cells.Set_Growth_Step(100);
+	Init_Fill_Cells(region_cells, 100);
 
 	DynamicVectorClass<Cell> frontier_cells;
-	frontier_cells.Clear();
-	frontier_cells.Set_Growth_Step(1000);
+	Init_Fill_Cells(frontier_cells, 1000);
 
 	for (int i = MapCellStride * MapCellStride - 1; i >= 0; i--) {
 		MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(i);
@@ -10012,8 +10016,6 @@ void MapClass::Mark_Fill_Area(Cell const & origin, bool on_water)
 				if (!data.InFillArea) {
 					if (on_water && adjptr->Is_Tile_With_Water() || !on_water && adjptr->Height == height && adjptr->Is_Tile_Clear()) {
 						frontier_cells.Add(adjacent);
-						bool legal = In_Radar(adjacent);
-						bool legal2 = In_Radar(cell);
 						region_cells.Add(adjacent);
 						data.InFillArea = true;
 					}
@@ -10026,14 +10028,9 @@ void MapClass::Mark_Fill_Area(Cell const & origin, bool on_water)
 		Cell cell = region_cells[j];
 		for (int y = cell.Y - 1; y < cell.Y + 2; y++) {
 			for (int x = cell.X - 1; x < cell.X + 2; x++) {
-				Cell influence;
-				influence.X = x;
-				influence.Y = y;
+				Cell influence(x, y);
 				if (In_Radar(influence)) {
-					Cell c;
-					c.X = x;
-					c.Y = y;
-					MapRegionClass::Get_Cell_Data(c).InFillReach = true;
+					MapRegionClass::Get_Cell_Data(Cell(x, y)).InFillReach = true;
 				}
 			}
 		}
