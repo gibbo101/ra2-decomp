@@ -8469,6 +8469,7 @@ address,size,symbol,source,sha256
 0x00581F90,1290,?Reset_Subzone@MapClass@@QAEXH@Z,src/map.cpp,3ba405242cb4d6d49abe70dc2fee3193b39139e58542ab0f6c8645326784c9c4
 0x005824A0,2184,?Subzone_Span@MapClass@@QAEHPAUCellSubzoneStruct@@HHABV?$TRect@H@@ABVCell@@@Z,src/map.cpp,b2958236db73d943fbf83a4c6c038b4199cbbc78d98375e0b1f7347181d6159c
 0x00582D30,62,?Register_Subzone_Zone_Connections@MapClass@@QAEXH@Z,src/map.cpp,65d4de7faf3c37b2d9d1a7e789f9f6cb3e899744c582f5f8990e8b73bf4ebaf8
+0x00582D70,1028,?Register_Zone_Connection_Entries@MapClass@@QAEXAAUZoneConnectionClass@@H@Z,src/map.cpp,2eac9d06dd143cec7abedbd55a3d9469548f321590f98c729ab487b815ffef47
 0x00583180,620,?Get_Bridge_Zone_Connection_Cell@MapClass@@QAE?AVCell@@PAVCellClass@@_N@Z,src/map.cpp,74ea11bbe2eae91befaec85f3e81fe3a20910f8292dab4e84d704619ed4c70a0
 0x005833F0,476,?Get_Zone_Connection_Destination@MapClass@@QAE?AVCell@@ABV2@0@Z,src/map.cpp,a1ebbf9e79732e5c8d4c66c5f90cb46a69e2567a7f8e83e42240d45c2d803470
 0x005835D0,581,?Find_Bridge_Span_End_Cell@MapClass@@QAE?AVCell@@ABV2@0@Z,src/map.cpp,9ea39b4df35aaf627a941a4184cac639f08c04eb2af4ce6711740f087e1a9903
