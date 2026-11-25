@@ -46,7 +46,6 @@
 #include "teamtype.h"
 #include "terrtype.h"
 #include "tiberium.h"
-#include "trim.h"
 #include "unittype.h"
 #include "vanimtype.h"
 #include "vector.h"
@@ -2242,6 +2241,8 @@ extern AnimType Anims[19];
 extern double Arguments[19];
 extern bool Naval[19];
 }
+
+#include "trim.h"
 
 // FUNCTION: GAMEMD 0x00673E80
 bool RulesClass::Powerups(CCINIClass const & ini)

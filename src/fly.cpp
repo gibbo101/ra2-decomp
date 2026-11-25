@@ -1079,7 +1079,7 @@ Matrix3DStruct STDMETHODCALLTYPE FlyLocomotionClass::Shadow_Matrix(int * key)
 	Matrix3D matrix = Get_Slope_Matrix(ramp);
 	matrix.Rotate_Z(LinkedTo->SecondaryFacing.Current().As_Radian32());
 
-	if (key != NULL && *key != -1) {
+	if (Is_Cache_Key(key)) {
 		*key = 32 * (ramp + (*key << 6));
 		*key |= LinkedTo->SecondaryFacing.Current().As_Dir32();
 	}

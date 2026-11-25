@@ -396,7 +396,7 @@ Matrix3DStruct STDMETHODCALLTYPE TunnelLocomotionClass::Draw_Matrix(int * key)
 	if (State == STATE_IDLE) {
 		int ramp = Map[(Coord const &)(LinkedTo->PositionCoord)].Ramp;
 		Matrix3D mtx;
-		if (key != NULL && *key != -1) {
+		if (Is_Cache_Key(key)) {
 			*key = ramp + (*key << 6);
 		}
 		mtx.Make_Identity();
@@ -445,7 +445,7 @@ Matrix3DStruct STDMETHODCALLTYPE TunnelLocomotionClass::Draw_Matrix(int * key)
 			break;
 	}
 	Matrix3D mtx = BASECLASS::Draw_Matrix(key);
-	if (key != NULL && *key != -1) {
+	if (Is_Cache_Key(key)) {
 		*key = *key << 8;
 		*key |= (int(theta * 32.0) & 64-1);
 	}

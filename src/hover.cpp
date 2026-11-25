@@ -171,7 +171,7 @@ Matrix3DStruct STDMETHODCALLTYPE HoverLocomotionClass::Draw_Matrix(int *key)
 		int ramp = Map[(Coord const &)(LinkedTo->PositionCoord)].Ramp;
 		Matrix3D mtx = Get_Slope_Matrix(ramp);
 		mtx.Rotate_Z(LinkedTo->PrimaryFacing.Current().As_Radian32());
-		if (key != NULL && *key != -1) {
+		if (Is_Cache_Key(key)) {
 			*key = 32 * (ramp + (*key << 6));
 			*key |= LinkedTo->PrimaryFacing.Current().As_Dir32();
 		}

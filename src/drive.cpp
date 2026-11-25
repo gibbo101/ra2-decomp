@@ -209,7 +209,7 @@ Matrix3D DriveLocomotionClass::Get_Slope_Matrix(void) const
 {
 	Matrix3D mtx(true);
 
-	if (!RampTimer.Has_Completed2()) {
+	if (RampTimer.Progress() < 1.0) {
 		mtx = ::Get_Slope_Transition_Matrix(PreviousRamp, CurrentRamp, Get_Slope_Ratio());
 	} else if (CurrentRamp) {
 		mtx = ::Get_Slope_Matrix(CurrentRamp);
@@ -331,6 +331,7 @@ BOOL DriveLocomotionClass::Is_Angled(void) const
 	return(false);
 }
 
+// FUNCTION: GAMEMD 0x004AFF60
 Matrix3DStruct STDMETHODCALLTYPE DriveLocomotionClass::Draw_Matrix(int *key)
 {
 	Matrix3DStruct m;
@@ -373,7 +374,7 @@ Matrix3DStruct STDMETHODCALLTYPE DriveLocomotionClass::Draw_Matrix(int *key)
 
 		m = (Matrix3DStruct &)(((m1 * Get_Slope_Matrix()) * BASECLASS::Draw_Matrix(key)) * m2);
 	} else {
-		if (key != NULL && *key != -1) {
+		if (Is_Cache_Key(key)) {
 			*key = *key << 6;
 			*key += CurrentRamp;
 		}
