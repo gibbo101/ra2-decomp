@@ -6212,6 +6212,7 @@ address,size,symbol,source,sha256
 0x0050A350,318,?FUN_0050A350@HouseClass@@QAEXPAVSuperClass@@@Z,src/house.cpp,26719add5f2a1d061e871cc7442b5a78e6766775246d350d610eb8f95522f43a
 0x0050A490,290,?Invalidate_Base_Node_Position@HouseClass@@QAEXPAVBuildingClass@@@Z,src/house.cpp,ad5034777e87b962db5853da90f11be401f64f582c6a3fa007b6f27a70236a2e
 0x0050A5C0,2375,?AI_Takeover@HouseClass@@QAEXXZ,src/house.cpp,44b8614d32f5409c508a36ad063c01f8a0e1250b63c0c8676c101914b2b39fa6
+0x0050AF10,699,?Update_Present_Super_Weapons@HouseClass@@QAEXXZ,src/house.cpp,b68a1c8730f1aa7f77b3089e4df739c48cc89a73d54499031f2e29eccff73e97
 0x0050B1D0,415,?AISupers@HouseClass@@QAEXXZ,src/house.cpp,cb16a49c3f0989a8546de2468c0a102e07685dc0fec00366bb4cd2cb2412a68b
 0x0050B370,882,?FUN_0050B370@HouseClass@@QAE_NPBVTechnoTypeClass@@@Z,src/house.cpp,bb23148bb1179d37d598ddd6635d74e609133970a30469e96d17adee6feacdc3
 0x0050B6F0,52,?Is_Player_Control@HouseClass@@QBE_NXZ,src/house.cpp,c7ecb44d4693d3aec49b314238feff7755dd001f1d47d164e5836ba73e153988
