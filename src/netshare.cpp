@@ -3598,26 +3598,21 @@ void __fastcall FUN_00603D30(HWND item, Surface * surface);
 int __fastcall FUN_005EAAD0(int index);
 int __fastcall FUN_005EA8E0(int index);
 
-static inline void Refresh_Slot_Icons(HWND dialog)
+// FUNCTION: GAMEMD 0x005EA2A0
+void __fastcall FUN_005EA2A0(HWND dialog)
 {
 	for (int i = 0; i < 8; i++) {
 		int item_id = FUN_005EAAD0(i);
 		HWND item = GetDlgItem(dialog, item_id);
 		Surface * surface = NULL;
 		NodeNameType * node = Session.Slots[i];
-		if (FUN_005E93F0(node) && wcscmp(node->Name, Session.GameName) == 0) {
+		if (FUN_005E93F0(node) && !wcscmp(node->Name, Session.GameName)) {
 			surface = SurfaceCache.GetSurface(DAT_008316CC, NULL);
 		} else if (FUN_005EA8E0(i) == 1) {
 			surface = SurfaceCache.GetSurface(DAT_008316D0, NULL);
 		}
 		FUN_00603D30(item, surface);
 	}
-}
-
-// FUNCTION: GAMEMD 0x005EA2A0
-void __fastcall FUN_005EA2A0(HWND dialog)
-{
-	Refresh_Slot_Icons(dialog);
 }
 
 int __fastcall FUN_004E37D0(int index);
@@ -3641,16 +3636,14 @@ static inline void Update_Country_Combos(HWND dialog)
 	}
 }
 
-static inline bool Country_List_Changed(void)
+static inline void Build_Country_String(char * buffer)
 {
-	strcpy(DAT_00AC0EA4, DAT_00AC0B10);
-	DAT_00AC0B10[0] = '\0';
+	buffer[0] = '\0';
 	for (int i = 0; i < 8; i++) {
 		char text[4];
 		sprintf(text, "%d,", FUN_005EA920(i));
-		strcat(DAT_00AC0B10, text);
+		strcat(buffer, text);
 	}
-	return(strcmp(DAT_00AC0EA4, DAT_00AC0B10) != 0);
 }
 
 // FUNCTION: GAMEMD 0x005EA3E0
@@ -3663,7 +3656,7 @@ void __fastcall FUN_005EA3E0(HWND dialog, bool full)
 		FUN_005EAEE0(dialog);
 		FUN_005EADA0(dialog);
 		FUN_005EAE40(dialog);
-		Refresh_Slot_Icons(dialog);
+		FUN_005EA2A0(dialog);
 		if (Session.Type == GAME_INTERNET) {
 			FUN_007A0E50();
 		}
@@ -3675,7 +3668,7 @@ void __fastcall FUN_005EA3E0(HWND dialog, bool full)
 	if (Session.MPGameMode) {
 		Session.MPGameMode->vt_entry_78(dialog);
 	}
-	Refresh_Slot_Icons(dialog);
+	FUN_005EA2A0(dialog);
 	wcscpy(DAT_00AC0D44, DAT_00AC0B94);
 	FUN_005E8DC0(DAT_00AC0B94);
 	if (wcscmp(DAT_00AC0D44, DAT_00AC0B94) != 0) {
@@ -3685,7 +3678,9 @@ void __fastcall FUN_005EA3E0(HWND dialog, bool full)
 		}
 	}
 	Update_Country_Flags(dialog);
-	if (Country_List_Changed()) {
+	strcpy(DAT_00AC0EA4, DAT_00AC0B10);
+	Build_Country_String(DAT_00AC0B10);
+	if (strcmp(DAT_00AC0EA4, DAT_00AC0B10) != 0) {
 		Update_Country_Combos(dialog);
 	}
 	strcpy(DAT_00AC0AC8, DAT_00AC0AEC);
