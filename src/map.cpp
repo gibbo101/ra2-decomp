@@ -9158,6 +9158,95 @@ void MapClass::Register_Subzone_Zone_Connections(int subzone)
 	}
 }
 
+extern FacingType DAT_0082A944[];
+
+// Zone-record construction adapted from RobinDigitalPro's Red Alert 2 1.001 reconstruction.
+static inline void Set_Zone_Record(SUBZONE_CONNECTION_HASH_SET::ObjectType & record, unsigned int key)
+{
+	SubzoneConnectionStruct value(key);
+	record.Key = key;
+	record.Value.SubzoneID = value.SubzoneID;
+	record.Value.IsCrossBlock = value.IsCrossBlock;
+}
+
+// FUNCTION: GAMEMD 0x00582D70
+void MapClass::Register_Zone_Connection_Entries(
+	ZoneConnectionClass & connection, int index)
+{
+	SUBZONE_CONNECTION_HASH_SET::ObjectType connstr;
+	SUBZONE_CONNECTION_HASH_SET * set = SubzoneConnectionHashTable[index];
+
+	Cell from = connection.From;
+	Cell to = connection.To;
+
+	Cell enter1;
+	Cell enter2;
+	Cell newcell1;
+	Cell newcell2;
+
+	CellClass * cell1ptr = &Map[from];
+
+	if (!cell1ptr->Is_Tile_Bridge() &&
+		!cell1ptr->Is_Tile_Train_Bridge()) {
+		FacingType enter_dir = cell1ptr->Get_Tunnel()->EnterDir;
+		enter1 = Adjacent_Cell(from, (FacingType)(enter_dir + FACING_90));
+		enter2 = from + AdjacentCell[(enter_dir - FACING_90) & 7];
+
+		CellClass * enterptr1 = &Map[enter1];
+		TubeClass * tube1 = enterptr1->Get_Tunnel();
+		CellClass * enterptr2 = &Map[enter2];
+		TubeClass * tube2 = enterptr2->Get_Tunnel();
+
+		if (tube1 == NULL || tube2 == NULL) {
+			return;
+		}
+
+		int count1 = tube1->Count;
+		newcell1 = Follow_Path(enter1, count1, tube1->Dirs);
+		int count2 = tube2->Count;
+		newcell2 = Follow_Path(enter2, count2, tube2->Dirs);
+	} else {
+		int tile_offset;
+		if (cell1ptr->Is_Tile_Bridge()) {
+			tile_offset = cell1ptr->ITType - IsometricTileTypeClass::BridgeSet;
+		} else {
+			tile_offset = cell1ptr->ITType - IsometricTileTypeClass::TrainBridgeSet;
+		}
+		FacingType dir = DAT_0082A944[tile_offset];
+		enter1 = Adjacent_Cell(from, dir);
+		enter2 = Adjacent_Cell(from, (FacingType)(dir - FACING_180));
+		newcell1 = Adjacent_Cell(to, dir);
+		newcell2 = Adjacent_Cell(to, (FacingType)(dir - FACING_180));
+	}
+
+	{
+		int from_zone = CellSubzones[Get_Cell_Zone_Index(from)].SubzoneID[index];
+		int to_zone = CellSubzones[Get_Cell_Zone_Index(to)].SubzoneID[index];
+
+		int value = Zone_Pack32(from_zone, to_zone);
+		Set_Zone_Record(connstr, value);
+		set->Add_Object(Zone_Pack8(from_zone, to_zone), connstr);
+	}
+
+	{
+		int from_zone = CellSubzones[Get_Cell_Zone_Index(enter1)].SubzoneID[index];
+		int to_zone = CellSubzones[Get_Cell_Zone_Index(newcell1)].SubzoneID[index];
+
+		int value = Zone_Pack32(from_zone, to_zone);
+		Set_Zone_Record(connstr, value);
+		set->Add_Object(Zone_Pack8(from_zone, to_zone), connstr);
+	}
+
+	{
+		int from_zone = CellSubzones[Get_Cell_Zone_Index(enter2)].SubzoneID[index];
+		int to_zone = CellSubzones[Get_Cell_Zone_Index(newcell2)].SubzoneID[index];
+
+		int value = Zone_Pack32(from_zone, to_zone);
+		Set_Zone_Record(connstr, value);
+		set->Add_Object(Zone_Pack8(from_zone, to_zone), connstr);
+	}
+}
+
 // FUNCTION: GAMEMD 0x00583180
 Cell MapClass::Get_Bridge_Zone_Connection_Cell(CellClass * cptr, bool isbridge)
 {
@@ -9437,8 +9526,6 @@ bool MapClass::Is_Area_Shore_Or_Water(Rect const & rect)
 	}
 	return(true);
 }
-
-extern FacingType DAT_0082A944[];
 
 static inline unsigned short Cell_Subzone(MapClass *map, Cell const &cell, int layer)
 {
