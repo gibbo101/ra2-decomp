@@ -40,6 +40,7 @@
 #include "infantry.h"
 #include "infatype.h"
 #include "inline.h"
+#include "inistrength.h"
 #include "ion.h"
 #include "ipiggy.h"
 #include "isotype.h"
@@ -4471,8 +4472,7 @@ void UnitClass::Read_INI(CCINIClass & ini)
 					}
 
 					if (unit->Unlimbo(coord, dir)) {
-						double fs;
-						unit->Strength = (fs = strength) * unit->Class->MaxStrength / 256.0;
+						unit->Strength = Scenario_Health_Ratio(strength) * unit->Class->MaxStrength;
 						if (unit->Strength > unit->Class->MaxStrength - 3) unit->Strength = unit->Class->MaxStrength;
 						if (unit->Strength == 0) unit->Strength = 1;
 						unit->EstimatedHealth = unit->Strength;

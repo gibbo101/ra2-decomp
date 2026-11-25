@@ -29,6 +29,7 @@
 #include "infantry.h"
 #include "infatype.h"
 #include "inline.h"
+#include "inistrength.h"
 #include "ion.h"
 #include "map.h"
 #include "mono.h"
@@ -2341,8 +2342,7 @@ void AircraftClass::Read_INI(CCINIClass & ini)
 					}
 
 					if (air->Unlimbo(coord, dir)) {
-						double fs;
-						air->Strength = (fs = strength) * air->Class->MaxStrength / 256.0;
+						air->Strength = Scenario_Health_Ratio(strength) * air->Class->MaxStrength;
 						if (air->Strength > air->Class->MaxStrength - 3) air->Strength = air->Class->MaxStrength;
 						if (air->Strength == 0) air->Strength = 1;
 						air->EstimatedHealth = air->Strength;
