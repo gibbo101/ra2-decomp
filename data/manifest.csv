@@ -18487,6 +18487,7 @@ address,size,symbol,source,sha256
 0x00786E70,117,?FUN_00786E70@@YIHAAVWstring@@@Z,src/wonline.cpp,6fdc417c1d5efa8de5cbcb4b6fc974f4e73d66e1eaca5bd251071dca8a8f8be3
 0x00786EF0,276,?FUN_00786EF0@@YI_NXZ,src/wonline.cpp,909e7038d36e2c5bafd652a3920191af1ca05a9ecb7f41e411df97b14b49e984
 0x00787010,1882,?Login_WOL@@YIHXZ,src/wonline.cpp,124b79b838e9a9d948d598b52e5a749f84933fbba145e46a05fdf3cbaa9aeeb8
+0x00787770,2568,?Join_WOL_Lobby@@YIHPAUHWND__@@_N@Z,src/wonline.cpp,36062737301f59f04145ddd20a2c6bdcdb51ea8efde8eab33d5feeb38326379f
 0x00788180,1412,?Pick_Lobby@@YIH_N@Z,src/wonline.cpp,d464d1511287ba6402fa95ef4e1fd962d29fb3cc27db5d6a27a996950b931229
 0x00788710,237,?Leave_Channel@@YI_NHH@Z,src/wonline.cpp,98bf9f6a753613c87c8d3b728424344ff9f77b439e1163f207c4e21b99e46fd1
 0x00788800,552,?FUN_00788800@@YIJPAUChannel@@AAVWstring@@VWideWstring@@@Z,src/wonline.cpp,a0ab8c3fccc87052d9f19e1bb4c3fe96ba3cf23f77b09a679244d1ecfc11b7eb

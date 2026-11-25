@@ -12,7 +12,7 @@ over real objects or hard-coded addresses are rejected however well they score.
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
 **Status (25 November 2026):** 3.58 MB of the game's 3.82 MB of code matches byte for byte
-(95%), in 19,296 of its 19,353 functions (99%) + 6 reconstructed. Counting each unmatched
+(95%), in 19,297 of its 19,353 functions (99%) + 6 reconstructed. Counting each unmatched
 function at its best attempt so far, the fuzzy match is 98%. Each function is checked on
 its own, and `tools/exelink/` links the whole executable with every matched function at its
 original address: with the original's bytes for what isn't matched yet, the image is
@@ -95,7 +95,8 @@ out of history.
   function-map callbacks.
 - [meastes](https://github.com/meastes): matched functions in the map, VQA loading,
   static-sound saving, Techno line drawing, the conflict-territory lookup, unit destination assignment and the random map's
-  region seeding (Create_Region_From_Cell's side cells), ported from their matching decompilation
+  region seeding (Create_Region_From_Cell's side cells) and the lobby join's narrow-text
+  helper, ported from their matching decompilation
   of Red Alert 2 ([meastes/redalert2-decomp](https://github.com/meastes/redalert2-decomp),
   GPL-3.0-or-later).
 - [r-melvin](https://github.com/r-melvin): wrote `tools/exelink/`, the whole-executable
@@ -109,7 +110,8 @@ out of history.
   their byte-matching rebuild of Red Alert 2 1.001
   ([RobinDigitalPro/ra2-1001-decomp](https://github.com/RobinDigitalPro/ra2-1001-decomp) and
   [RobinDigitalPro/ra2-decomp-help](https://github.com/RobinDigitalPro/ra2-decomp-help),
-  GPL-3.0-or-later), from which both Tunnel_AI functions' coordinate forms are adapted and
+  GPL-3.0-or-later), from which both Tunnel_AI functions' coordinate forms and the lobby join's wait-event
+  reset are adapted and
   the rule that placed TechnoTypeClass's self-clearing member comes.
 
 ## You need your own copy of the game
