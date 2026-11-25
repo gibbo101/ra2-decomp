@@ -4,6 +4,10 @@ The source reproduces the game as shipped, bugs included, so these stay until th
 decompilation is finished. Each entry gives the address, what the original does, and its
 effect, so it can be fixed in a separate build later.
 
+- **Ballistic_Move speed clamp (`include/ballistic.h`, inlined into BounceClass::AI, the particle
+  behaviours and BulletClass::AI).** When a moving object is faster than its maximum, the clamp
+  scales its velocity by its own speed divided by itself, so the speed is never limited.
+
 - **BulletClass::Unlimbo (0x00468670).** An invisible projectile with no
   Firestorm intercept checks for a trajectory obstacle. If it finds one, it
   sets its position to the obstacle’s center at 0x00468966. Both paths then

@@ -2289,6 +2289,7 @@ address,size,symbol,source,sha256
 0x00466660,69,?Occupy_List@BulletClass@@UBEPBVCell@@_N@Z,src/bullet.cpp,df8f11b1f7f435d781949d4ae7b7586fcd15e0e40d6122ec8070a088c86ee723
 0x004666B0,1,_$E171,src/bullet.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x004666C0,18,?Mark@BulletClass@@UAE_NW4MarkType@@@Z,src/bullet.cpp,d820a0de43fa2aca8f561398fd10fd275f92132d67a17d617ca1562f2c2fa8b3
+0x004666E0,6422,?AI@BulletClass@@UAEXXZ,src/bullet.cpp,d35ba6cc262005d9dfadc2a319c955960d04d8064718caaf62f83cd81753cc05
 0x00468000,137,?Shape_Number@BulletClass@@UBEHXZ,src/bullet.cpp,f808d9543b06100f768d03fc2840f43536552abf4dbfbfe906c1dd1fe2eff4d2
 0x00468090,923,?Draw_It@BulletClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z,src/bullet.cpp,17b49ce3fb58a75b200b3265aa40be9b9335c24d7bd9b23b245bd64b5162afe4
 0x00468430,164,?LoseTarget@BulletClass@@QAEXXZ,src/bullet.cpp,dbb6316f1a19e6dcee6a124fbca860f6ed55cd7ca9f0b65696aac030d42a320d

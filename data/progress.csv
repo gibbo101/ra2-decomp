@@ -1926,6 +1926,7 @@ address,name,result,size,source,symbol
 0x00466660,BulletClass::Occupy_List,MATCH,69,src/bullet.cpp,?Occupy_List@BulletClass@@UBEPBVCell@@_N@Z
 0x004666B0,_$E171,MATCH,1,src/bullet.cpp,_$E171
 0x004666C0,BulletClass::Mark,MATCH,18,src/bullet.cpp,?Mark@BulletClass@@UAE_NW4MarkType@@@Z
+0x004666E0,BulletClass::AI,MATCH,6422,src/bullet.cpp,?AI@BulletClass@@UAEXXZ
 0x00468000,BulletClass::Shape_Number,MATCH,137,src/bullet.cpp,?Shape_Number@BulletClass@@UBEHXZ
 0x00468090,BulletClass::Draw_It,MATCH,923,src/bullet.cpp,?Draw_It@BulletClass@@UBEXABVPoint2D@@ABV?$TRect@H@@@Z
 0x00468430,BulletClass::LoseTarget,MATCH,164,src/bullet.cpp,?LoseTarget@BulletClass@@QAEXXZ
