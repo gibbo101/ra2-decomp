@@ -3978,7 +3978,7 @@ address,name,result,size,source,symbol
 0x004BA550,_$E32,MATCH,15,src/dsurface.cpp,_$E32
 0x004BA560,_$E35,MATCH,18,src/dsurface.cpp,_$E35
 0x004BA580,_$E38,MATCH,26,src/dsurface.cpp,_$E38
-0x004BA5A0,DSurface::DSurface,MATCH,257,src/dsurface.cpp,??0DSurface@@QAE@HH_N0@Z
+0x004BA5A0,DSurface::DSurface,MATCH,257,src/dsurface.cpp,??0DSurface@@QAE@HHE_N@Z
 0x004BA6B0,DSurface::~DSurface,MATCH,98,src/dsurface.cpp,??1DSurface@@UAE@XZ
 0x004BA720,DSurface::DSurface,MATCH,74,src/dsurface.cpp,??0DSurface@@QAE@XZ
 0x004BA770,DSurface::Create_Primary,MATCH,1257,src/dsurface.cpp,?Create_Primary@DSurface@@SIPAV1@PAPAV1@@Z
@@ -6560,6 +6560,7 @@ address,name,result,size,source,symbol
 0x00532150,Init_Commands,MATCH,7118,src/init.cpp,?Init_Commands@@YIXXZ
 0x00533D20,Init_Hotkeys,MATCH,549,src/init.cpp,?Init_Hotkeys@@YI_NXZ
 0x00533F50,Execute_Command,MATCH,116,src/init.cpp,?Execute_Command@@YIXPBD@Z
+0x00533FD0,Allocate_Surfaces,MATCH,1137,src/init.cpp,?Allocate_Surfaces@@YI_NABV?$TRect@H@@000_N@Z
 0x00534450,Delete_All_Objects,MATCH,1378,src/init.cpp,?Delete_All_Objects@@YIXXZ
 0x005349C0,Init_Theater,MATCH,1042,src/init.cpp,?Init_Theater@@YIXW4TheaterType@@@Z
 0x00534DE0,FUN_00534DE0,MATCH,107,src/init.cpp,?FUN_00534DE0@@YI_NXZ

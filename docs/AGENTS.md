@@ -151,6 +151,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   statement and prints the count at which the differing lines change (`--kind2` sweeps two
   counts as a grid); `tools/inlinebudget.py ADDR` lists each call the exe and ours inline
   differently and how many inline sites or budget units flip it.
+- Run check.py and inlinebudget.py one at a time in a worktree: both write to
+  `build/inlinebudget/`, and two at once fail with FileNotFoundError.
 
 ### Declarations
 - A callee returning a class by value takes a hidden buffer: a virtual pushes only the
@@ -291,6 +293,11 @@ Each entry: what the diff showed, then the source change that fixed it.
 - Loading a stack parameter is not a reference for the ranking, only its uses are; in a tie
   a compiler temporary loses to a named local (Is_Same_Cell_Zone). RTM's C2 8168 compiles
   the register-tie near misses byte for byte as SP3 does, so the code generator is not the cause.
+- VC6 has no cap on register candidates (200 locals or inline temps leave a weak local in its
+  register). A candidate that loses its register gets its stack home after every pre-existing
+  stack local, so a home in the first slot means the original kept that local in memory from
+  the start. Taking its address in a call, even in a dead branch, does that, but makes every
+  use reload after each call.
 
 ### Stack frame
 - Locals are laid out by size, not declaration order. To fix two objects' order, make

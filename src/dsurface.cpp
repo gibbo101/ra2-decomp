@@ -75,7 +75,7 @@ unsigned short DSurface::EighthbrightMask = 0;
 // _$E38
 
 // FUNCTION: GAMEMD 0x004BA5A0
-DSurface::DSurface(int width, int height, bool system_memory, bool device_3d) :
+DSurface::DSurface(int width, int height, unsigned char system_memory, bool device_3d) :
 	BASECLASS(width, height),
 	BytesPerPixel(0),
 	LockPtr(NULL),

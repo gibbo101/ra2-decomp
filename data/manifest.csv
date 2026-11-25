@@ -4333,7 +4333,7 @@ address,size,symbol,source,sha256
 0x004BA550,15,_$E32,src/dsurface.cpp,75ae89b0ceda7ac66e5b97f6341d582d6dbeaef20a4a54fce71e2bcf07435893
 0x004BA560,18,_$E35,src/dsurface.cpp,0701624f321cafeb42ae6327790d29cc084c66d57e3470e9e8e78e27b480ac32
 0x004BA580,26,_$E38,src/dsurface.cpp,1a524996e133d748b290d844b7d7009aab119763e521fdb23283c7f62c8c9b62
-0x004BA5A0,257,??0DSurface@@QAE@HH_N0@Z,src/dsurface.cpp,3defa271425a60046b9b5c0512d2f40c22fa0a7b48c79bc9dfd31cc3cf2520f2
+0x004BA5A0,257,??0DSurface@@QAE@HHE_N@Z,src/dsurface.cpp,3defa271425a60046b9b5c0512d2f40c22fa0a7b48c79bc9dfd31cc3cf2520f2
 0x004BA6B0,98,??1DSurface@@UAE@XZ,src/dsurface.cpp,7573622ecf06a0ea386a122a4e5df90829301dfd03f49c654385cffa8dfad61f
 0x004BA720,74,??0DSurface@@QAE@XZ,src/dsurface.cpp,efd706bce6e76cecc6b9438e58ba9281fd609ab14ff7bbbc6b564d9d7c823ccf
 0x004BA770,1257,?Create_Primary@DSurface@@SIPAV1@PAPAV1@@Z,src/dsurface.cpp,506d9e44f47e7a74a915246c6c5279bbf089066b2a674783f22b0e24fcc93c67
@@ -6915,6 +6915,7 @@ address,size,symbol,source,sha256
 0x00532150,7118,?Init_Commands@@YIXXZ,src/init.cpp,5cb84a4dc4dccf6a83801df80a070c29690fc5a8958caafb7b11f57e428c5071
 0x00533D20,549,?Init_Hotkeys@@YI_NXZ,src/init.cpp,4bb971275c0817e4cffa9011801925b00b5ed3f13149714af7a2933275e182ac
 0x00533F50,116,?Execute_Command@@YIXPBD@Z,src/init.cpp,66108946cc049839c0e27a15d0b6c5603b6fcc01fcc17c7cb8b86d837b85e877
+0x00533FD0,1137,?Allocate_Surfaces@@YI_NABV?$TRect@H@@000_N@Z,src/init.cpp,692481546f27235991c2492937af79d62748b729bef9ea0fe43b89a1e7fafa7e
 0x00534450,1378,?Delete_All_Objects@@YIXXZ,src/init.cpp,7876a52ea08695cb56eca70d42e2a771987ef2565d14671adef33cdddad822ac
 0x005349C0,1042,?Init_Theater@@YIXW4TheaterType@@@Z,src/init.cpp,68de0c2b9de7bab294a8d5e2c533b81b570f201479aa08c50efefbd73d558d91
 0x00534DE0,107,?FUN_00534DE0@@YI_NXZ,src/init.cpp,f7038a8bf956bde8f15da472a95192d95cc032a9522afa2230e75532b0020809
