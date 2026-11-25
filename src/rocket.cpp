@@ -124,11 +124,233 @@ double RocketLocomotionClass::Pitch_To_Target(void)
 {
 	Coord pos = LinkedTo->PositionCoord;
 	Coord diff = MovingDestination - pos;
-	double flat = fastmath::sqrt((double)(diff.X * diff.X + diff.Y * diff.Y));
+	int dx = diff.X;
+	int dy = diff.Y;
+	int dz = diff.Z;
+	double flat = fastmath::sqrt((double)(dx * dx + dy * dy));
 	if (flat > 0.0) {
-		return(fastmath::atan((double)diff.Z / flat));
+		double pitch = fastmath::atan((double)dz / flat);
+		return(pitch);
 	}
 	return(-1.5707963267948966);
+}
+
+static char const * DAT_008399AC = "V3TAKOFF";
+static char const * DAT_008399B0 = "V3TRAIL";
+
+static inline int _Planar_Distance(ObjectClass const * object, Coord const & to)
+{
+	int distance = Point2D(object->Center_Coord()).Distance_To(Point2D(to));
+	return(distance);
+}
+
+inline DirType ObjectClass::Direction(Coord const & coord) const
+{
+	return(::Direction(Center_Coord(), coord));
+}
+
+// FUNCTION: GAMEMD 0x006622C0
+boolean STDMETHODCALLTYPE RocketLocomotionClass::Process(void)
+{
+	bool detonated = false;
+	bool exploded = false;
+	AircraftTypeClass const * type = ((AircraftClass *)LinkedTo)->Class;
+	RocketStruct const * data;
+	if (type == Rule->V3Rocket.Type) {
+		data = &Rule->V3Rocket;
+	} else if (type == Rule->CMisl.Type) {
+		data = &Rule->CMisl;
+	} else {
+		data = &Rule->DMisl;
+	}
+
+	switch (MissionState) {
+		case 1: {
+			CurrentSpeed = 0.0;
+			TechnoClass * spawner = LinkedTo->SpawnOwner;
+			IsElite = spawner != NULL && spawner->Veterancy.Is_Elite();
+			if (data->Type == Rule->CMisl.Type) {
+				if (TrailerTimer == 0) {
+					new AnimClass(AnimTypes[AnimTypeClass::From_Name(DAT_008399AC)], LinkedTo->PositionCoord, 2, 1, ShapeFlags_Type(0x600), -10, false);
+					TrailerTimer = 24;
+				}
+				if (Unknown50) {
+					LinkedTo->Mark(MARK_UP);
+					Unknown50 = false;
+					Map.Submit(LinkedTo);
+					LinkedTo->Mark(MARK_DOWN);
+				}
+			} else {
+				Unknown50 = true;
+			}
+			if (MissionTimer.Progress() == 1.0) {
+				MissionState = (data->Type == Rule->CMisl.Type) ? 6 : 2;
+				MissionTimer = data->TiltFrames;
+			}
+			break;
+		}
+
+		case 6: {
+			TechnoClass * spawner = LinkedTo->SpawnOwner;
+			IsElite = spawner != NULL && spawner->Veterancy.Is_Elite();
+			if (TrailerTimer == 0) {
+				new AnimClass(AnimTypes[AnimTypeClass::From_Name(DAT_008399AC)], LinkedTo->PositionCoord, 2, 1, ShapeFlags_Type(0x600), -10, false);
+				TrailerTimer = 24;
+			}
+			Coord coord = LinkedTo->PositionCoord;
+			if (MissionTimer.Progress() == 1.0) {
+				float final = data->PitchFinal * 1.5707963267948966;
+				CurrentPitch = final;
+				if (LinkedTo->GetLastFlightMapCoords() == CELL_NONE) {
+					VocClass::PlayAt(LinkedTo->TClass->AuxSound1, LinkedTo->PositionCoord, NULL);
+					AircraftTracker.Add(LinkedTo);
+				}
+				TrailerTimer = 0;
+				MissionState = 3;
+			} else {
+				coord = coord + Coord(0, 0, data->RaiseRate);
+				if (Map.In_Radar(coord.As_Cell())) {
+					LinkedTo->Set_Coord(coord);
+				}
+			}
+			break;
+		}
+
+		case 2: {
+			CurrentSpeed = 0.0;
+			TechnoClass * spawner = LinkedTo->SpawnOwner;
+			IsElite = spawner != NULL && spawner->Veterancy.Is_Elite();
+			if (MissionTimer.Progress() == 1.0) {
+				float final = data->PitchFinal * 1.5707963267948966;
+				CurrentPitch = final;
+				MissionState = 3;
+				if (LinkedTo->GetLastFlightMapCoords() == CELL_NONE) {
+					AircraftTracker.Add(LinkedTo);
+				}
+				new AnimClass(AnimTypes[AnimTypeClass::From_Name(DAT_008399AC)], LinkedTo->PositionCoord, 2, 1, ShapeFlags_Type(0x600), -10, false);
+				VocClass::PlayAt(LinkedTo->TClass->AuxSound1, LinkedTo->PositionCoord, NULL);
+			} else {
+				float initial = data->PitchInitial * 1.5707963267948966;
+				float final = data->PitchFinal * 1.5707963267948966;
+				CurrentPitch = (final - initial) * MissionTimer.Progress() + initial;
+			}
+			break;
+		}
+
+		case 3: {
+			if (!Unknown50) {
+				LinkedTo->Mark(MARK_UP);
+				Unknown50 = true;
+				Map.Submit(LinkedTo);
+				LinkedTo->Mark(MARK_DOWN);
+			}
+			CurrentSpeed += data->Acceleration;
+			if (CurrentSpeed > LinkedTo->TClass->MaxSpeed) {
+				CurrentSpeed = LinkedTo->TClass->MaxSpeed;
+			}
+			int altitude = LinkedTo->Get_Height_AGL();
+			if (altitude >= data->Altitude) {
+				MissionState = 4;
+				int dist = _Planar_Distance(LinkedTo, MovingDestination);
+				Unknown58 = dist;
+			}
+			break;
+		}
+
+		case 4: {
+			int altitude = LinkedTo->Get_Height_AGL();
+			if (altitude <= 0) {
+				Detonate();
+				detonated = true;
+				break;
+			}
+			CurrentSpeed += data->Acceleration;
+			if (CurrentSpeed > LinkedTo->TClass->MaxSpeed) {
+				CurrentSpeed = LinkedTo->TClass->MaxSpeed;
+			}
+			if (data->LazyCurve && Unknown58 != 0) {
+				exploded = Reached_Target(data);
+				if (exploded) {
+					break;
+				}
+				int dist = _Planar_Distance(LinkedTo, MovingDestination);
+				double ratio = (double)dist / Unknown58;
+				double inverse = 1.0 - ratio;
+				CurrentPitch = Pitch_To_Target() * inverse + data->PitchFinal * ratio * 1.5707963267948966;
+			} else {
+				if (CurrentPitch > 0.0f) {
+					CurrentPitch -= data->TurnRate;
+					if (CurrentPitch < 0.0f) {
+						CurrentPitch = 0;
+					}
+				}
+				Coord dest = MovingDestination;
+				Coord coord = LinkedTo->PositionCoord;
+				int height = coord.Z - dest.Z;
+				dest.Z = LinkedTo->PositionCoord.Z;
+				int distance = LinkedTo->Distance(dest);
+				if (distance <= height) {
+					MissionState = 5;
+				}
+			}
+			LinkedTo->PrimaryFacing.Set_Desired(LinkedTo->Direction(MovingDestination));
+			break;
+		}
+
+		case 5:
+			exploded = Reached_Target(data);
+			if (!exploded) {
+				double target = Pitch_To_Target();
+				double delta = target - CurrentPitch;
+				float step = delta;
+				if (step < 0.0) {
+					step = -step;
+				}
+				if (step > data->TurnRate) {
+					if (delta < 0.0) {
+						CurrentPitch -= data->TurnRate;
+					} else {
+						float rate = data->TurnRate;
+						CurrentPitch += rate;
+					}
+				} else {
+					CurrentPitch += delta;
+				}
+			}
+			break;
+
+	}
+
+	if (detonated) {
+		return(false);
+	}
+	if (exploded) {
+		return(false);
+	}
+
+	if (Is_Moving_Now()) {
+		if (TrailerTimer == 0) {
+			new AnimClass(AnimTypes[AnimTypeClass::From_Name(DAT_008399B0)], LinkedTo->PositionCoord, 0, 1, ShapeFlags_Type(0x600), 0, false);
+			TrailerTimer = 3;
+		}
+	}
+
+	if (CurrentSpeed > 0.0) {
+		int speed = (int)CurrentSpeed;
+		Coord coord = Position_At(speed);
+		if (Map.In_Radar(coord.As_Cell())) {
+			LinkedTo->Set_Coord(coord);
+		}
+		Cell cell = LinkedTo->Get_Cell();
+		if (cell != LinkedTo->LastFlightMapCoords && LinkedTo->IsActive) {
+			AircraftTracker.Update(LinkedTo, LinkedTo->LastFlightMapCoords, cell);
+		}
+		if (LinkedTo->Strength <= 0) {
+			Detonate();
+		}
+	}
+
+	return(Is_Moving());
 }
 
 // FUNCTION: GAMEMD 0x00663030

@@ -12143,6 +12143,7 @@ address,name,result,size,source,symbol
 0x00661FE0,RocketLocomotionClass::Position_At,MATCH,261,src/rocket.cpp,?Position_At@RocketLocomotionClass@@AAE?AVCoord@@H@Z
 0x006620F0,RocketLocomotionClass::Reached_Target,MATCH,321,src/rocket.cpp,?Reached_Target@RocketLocomotionClass@@AAE_NPBURocketStruct@@@Z
 0x00662240,RocketLocomotionClass::Pitch_To_Target,MATCH,127,src/rocket.cpp,?Pitch_To_Target@RocketLocomotionClass@@AAENXZ
+0x006622C0,RocketLocomotionClass::Process,MATCH,3432,src/rocket.cpp,?Process@RocketLocomotionClass@@UAGEXZ
 0x00663030,RocketLocomotionClass::Detonate,MATCH,688,src/rocket.cpp,?Detonate@RocketLocomotionClass@@AAEXXZ
 0x006632E0,RocketLocomotionClass::Move_To,MATCH,218,src/rocket.cpp,?Move_To@RocketLocomotionClass@@UAGXUCoordStruct@@@Z
 0x006633C0,RocketLocomotionClass::Stop_Moving,MATCH,3,src/rocket.cpp,?Stop_Moving@RocketLocomotionClass@@UAGXXZ

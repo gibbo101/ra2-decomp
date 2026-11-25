@@ -3835,7 +3835,7 @@ FireErrorType UnitClass::Can_Fire(AbstractClass * target, int which, bool check_
 				turret = PrimaryFacing.Current();
 			}
 			DirType rot = (weapon->Bullet->ROT ? DIR_STEP_16 : DIR_STEP_32);
-			if (rot < (turret - Direction(target))) {
+			if (rot < (turret - GetTargetDirection(target))) {
 				return(FIRE_FACING);
 			}
 		}

@@ -12,7 +12,7 @@ over real objects or hard-coded addresses are rejected however well they score.
 from people are just as welcome and go through the same checker and rules (`CONTRIBUTING.md`).
 
 **Status (25 November 2026):** 3.58 MB of the game's 3.82 MB of code matches byte for byte
-(95%), in 19,319 of its 19,353 functions (99%) + 6 reconstructed. Counting each unmatched
+(95%), in 19,320 of its 19,353 functions (99%) + 6 reconstructed. Counting each unmatched
 function at its best attempt so far, the fuzzy match is 98%. Each function is checked on
 its own, and `tools/exelink/` links the whole executable with every matched function at its
 original address: with the original's bytes for what isn't matched yet, the image is
@@ -111,7 +111,8 @@ out of history.
   ([RobinDigitalPro/ra2-1001-decomp](https://github.com/RobinDigitalPro/ra2-1001-decomp) and
   [RobinDigitalPro/ra2-decomp-help](https://github.com/RobinDigitalPro/ra2-decomp-help),
   GPL-3.0-or-later), from which both Tunnel_AI functions' coordinate forms, the lobby join's wait-event
-  reset, Fire_At's turret facing and DSurface's unsigned char memory flag are adapted and
+  reset, Fire_At's turret facing, DSurface's unsigned char memory flag and the rocket
+  locomotor's named turn rate, coordinate, spawner and exploded/step values are adapted and
   the rule that placed TechnoTypeClass's self-clearing member comes.
 
 ## You need your own copy of the game

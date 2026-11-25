@@ -175,7 +175,7 @@ class ObjectClass : public AbstractClass
 		int Relative_Distance(AbstractClass const * target) const;
 		int Relative_Distance(Coord const & coord) const;
 
-		DirType Direction(AbstractClass const * object) const;
+		DirType Direction(Coord const & coord) const;
 
 		virtual bool Limbo(void);
 		virtual bool Unlimbo(Coord const & , Dir256 facing = DIR_N);

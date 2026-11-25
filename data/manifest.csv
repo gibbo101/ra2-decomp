@@ -12492,6 +12492,7 @@ address,size,symbol,source,sha256
 0x00661FE0,261,?Position_At@RocketLocomotionClass@@AAE?AVCoord@@H@Z,src/rocket.cpp,d6a1a94feaa65a192e487b2df70f478886ef7149084caea97f90423e278e78d9
 0x006620F0,321,?Reached_Target@RocketLocomotionClass@@AAE_NPBURocketStruct@@@Z,src/rocket.cpp,b7a85bdddee280a3569c03d4f70a161059fd3eef435c1e43c5666a0645892143
 0x00662240,127,?Pitch_To_Target@RocketLocomotionClass@@AAENXZ,src/rocket.cpp,a6cf7f37f93ceb0dfd43bf03cedc8c91f679e2fffdb0edccf562810652b724b9
+0x006622C0,3432,?Process@RocketLocomotionClass@@UAGEXZ,src/rocket.cpp,ea68ef7720854787e2ddfec6070491d27846a68ac141ac741b22252aea88de9d
 0x00663030,688,?Detonate@RocketLocomotionClass@@AAEXXZ,src/rocket.cpp,7c311f63cf2b11f6b6fd459a6b76129b9f1786dd06ce0e5b5079aa74dabebe25
 0x006632E0,218,?Move_To@RocketLocomotionClass@@UAGXUCoordStruct@@@Z,src/rocket.cpp,095b1541710a5176b174e0fd8c6830c89409345ce3bf5ea059e23e935fafc958
 0x006633C0,3,?Stop_Moving@RocketLocomotionClass@@UAGXXZ,src/rocket.cpp,e598d0c3ba86d917b177d7adde0556aa99bc355543c57aee0a3e50b684dd7e99
