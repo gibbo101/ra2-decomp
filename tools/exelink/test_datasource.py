@@ -58,7 +58,7 @@ class Fixture(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def run_candidates(self, obj, addresses, names=None, aliases=None):
+    def run_candidates(self, obj, addresses, names=None, aliases=None, search=()):
         path = self.dir / "a.obj"
         path.write_bytes(obj)
 
@@ -66,7 +66,7 @@ class Fixture(unittest.TestCase):
             return addresses.get(symbol["name"])
 
         return datasource.candidates(path, parse_coff(path), obj, address_of,
-                                     datasource.Resolver(names or {}, aliases=aliases), self.retail, self.regions)
+                                     datasource.Resolver(names or {}, aliases=aliases), self.retail, self.regions, search)
 
 
 class CandidateTests(Fixture):
@@ -88,6 +88,32 @@ class CandidateTests(Fixture):
         obj = build([(".rdata", COMDAT | RDATA_FLAGS, bytes(4), [])], [("__real@4", 0, 1, 2, None)])
         accepted, rejected = self.run_candidates(obj, {})
         self.assertEqual((accepted, rejected[0]["why"], rejected[0]["kind"]), ([], "no retail address", "float"))
+
+    def test_string_pointer_uses_its_retail_slot_to_disambiguate_equal_literals(self):
+        table = DATA + 0x100
+        target = RDATA + 0x140
+        string = "??_C@_label"
+        literal = b"Ready\0"
+        self.retail.patch(target, literal)
+        self.retail.patch(target + 0x10, literal)
+        obj = build([
+            (".data", 0xC0300040, struct.pack("<I", 1), [(0, 1, coffgen.REL_DIR32)]),
+            (".rdata", COMDAT | RDATA_FLAGS, literal, []),
+        ], [("_labels", 0, 1, 2, None), (string, 0, 2, 2, None)])
+        self.retail.patch(table, struct.pack("<I", target + 1))
+        accepted, _ = self.run_candidates(obj, {"_labels": table})
+        self.assertEqual(accepted, [])
+        accepted, _ = self.run_candidates(obj, {"_labels": table}, search=("string",))
+        self.assertEqual([p["relocs"] for p in accepted],
+                         [[(0, pindata.pin_name(string, target), coffgen.REL_DIR32)]])
+
+        # Byte evidence at the slot must agree and cannot override a known target.
+        accepted, _ = self.run_candidates(obj, {"_labels": table}, {string: target + 0x10}, search=("string",))
+        self.assertEqual(accepted, [])
+        self.retail.patch(target, b"Other\0")
+        accepted, rejected = self.run_candidates(obj, {"_labels": table}, search=("string",))
+        self.assertFalse(any(p["names"] == ["_labels"] for p in accepted))
+        self.assertTrue(any(r["name"] == "_labels" and "has no known address" in r["why"] for r in rejected))
 
     def test_plain_section_symbols_end_where_the_next_begins(self):
         body = self.literal(DATA + 0x100, 8)
