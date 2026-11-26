@@ -410,6 +410,7 @@ address,size,symbol,library,object
 0x007CACC0,249,?FindMITargetTypeInstance@@YAPBU_s_RTTIBaseClassDescriptor@@PAXPBU_s_RTTICompleteObjectLocator@@PAUTypeDescriptor@@H2@Z,LIBCMT.LIB,rtti.obj
 0x007CADB9,312,?FindVITargetTypeInstance@@YAPBU_s_RTTIBaseClassDescriptor@@PAXPBU_s_RTTICompleteObjectLocator@@PAUTypeDescriptor@@H2@Z,LIBCMT.LIB,rtti.obj
 0x007CAEF1,35,?PMDtoOffset@@YAHPAXABUPMD@@@Z,LIBCMT.LIB,rtti.obj
+0x007CAF30,6,_strchr,LIBCMT.LIB,strchr.obj
 0x007CAF36,182,___from_strstr_to_strchr,LIBCMT.LIB,strchr.obj
 0x007CAFEC,8,__tolower,LIBCMT.LIB,tolower.obj
 0x007CAFF4,111,_tolower,LIBCMT.LIB,tolower.obj

@@ -172,7 +172,8 @@ class DirType
 				return(true);
 			}
 
-			if ((towards - *this).Facing < 0) {
+			DirType diff(towards - *this);
+			if (diff.Facing < 0) {
 				*this -= by;
 			} else {
 				*this += by;

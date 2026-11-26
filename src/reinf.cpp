@@ -15,8 +15,11 @@
 #include "globals.h"
 #include "airstrike.h"
 #include "house.h"
+#include "ilocos.h"
+#include "incdec.h"
 #include "infatype.h"
 #include "infantry.h"
+#include "inline.h"
 #include "scenario.h"
 #include "script.h"
 #include "taskforc.h"
@@ -321,10 +324,6 @@ transporter:
 	}
 	return transport;
 }
-
-#include "ilocos.h"
-#include "incdec.h"
-#include "inline.h"
 
 // Can every object in the chain travel by tunnel?
 inline bool _Can_Burrow(FootClass * object)

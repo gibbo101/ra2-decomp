@@ -290,6 +290,177 @@ void ParticleSystemClass::Gas_AI(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x0062E840
+void ParticleSystemClass::Spark_AI(void)
+{
+	if (SparkSpawnFrames > 0) {
+
+		if (SparkSpawnFrames == 1 || Random_Double(0.0, 1.0) <= Class->SpawnSparkPercentage) {
+
+			int random = Scen->RandomNumber();
+			int count = Class->ParticleCap / 2 + abs(random) % (Class->ParticleCap / 2);
+
+			ParticleTypeClass * held = ParticleTypes[Class->HoldsWhat];
+
+			Random2Class & rng = Scen->RandomNumber;
+			int rand_a = rng();
+			int rand_b = Scen->RandomNumber();
+
+			Vector3 spark;
+			float zvel = (float)(rng() % held->ZVelocityRange);
+			spark.X = (float)(rand_b % held->XVelocity);
+			spark.Y = (float)(rand_a % held->YVelocity);
+			spark.Z = zvel;
+
+			while (count > 0) {
+				ParticleClass * particle = Spawn_Held_Particle(PositionCoord, PositionCoord);
+
+				ParticleTypeClass const * ptype = particle->Class;
+				Vector3 & dir = particle->MovementDirection;
+
+				particle->MovementDirection.X = (float)(Scen->RandomNumber % ptype->XVelocity);
+				particle->MovementDirection.Y = (float)(Scen->RandomNumber % ptype->YVelocity);
+				particle->MovementDirection.Z = (float)(ptype->MinZVelocity + abs(Scen->RandomNumber) % ptype->ZVelocityRange);
+
+				float speed = dir.Length();
+				if (IsRandomSparkDirection) {
+					dir = Vector3(spark.X + dir.X, spark.Y + dir.Y, spark.Z + dir.Z);
+				} else {
+					TPoint3D<float> const & spawndir = Class->SpawnDirection;
+					dir = Vector3(spawndir.X + dir.X, spawndir.Y + dir.Y, spawndir.Z + dir.Z);
+				}
+				dir = Normalize(dir);
+				dir = speed * dir;
+
+				count--;
+			}
+
+			if (Options.DetailLevel == 2) {
+				if (SparkSpawnFrames == Class->SparkSpawnFrames && Class->LightSize > 0 && !Class->OneFrameLight) {
+					new SpotLightClass(PositionCoord, Class->LightSize);
+				}
+			}
+		}
+
+		SparkSpawnFrames--;
+		if (SparkSpawnFrames <= 0) {
+			IsMarkedForDeletion = true;
+		}
+
+		double chance = Random_Double(0.0, 1.0);
+		if (chance < 0.3) {
+			int radius;
+			if (SparkRadius - 3 <= 17) {
+				radius = 17;
+			} else {
+				radius = SparkRadius - 3;
+			}
+			SparkRadius = radius;
+		} else if (chance < 0.6) {
+			int radius = SparkRadius + 3;
+			if (radius >= 41) {
+				radius = 41;
+			}
+			SparkRadius = radius;
+		}
+	}
+
+	for (int i = 0; i < SystemParticles.Count(); i++) {
+		SystemParticles[i]->Behavior_AI();
+	}
+
+	for (int j = SystemParticles.Count() - 1; j >= 0; j--) {
+		ParticleClass * particle = SystemParticles[j];
+		if (particle->IsToDie) {
+			particle->Delete_Me();
+		}
+	}
+}
+
+#include "cast.h"
+
+static inline bool Is_Object(AbstractClass const * a)
+{
+	if (a == NULL) return(false);
+	unsigned char flag = (a->AbstractFlags >> 1) & 1;
+	return(flag != 0);
+}
+
+// FUNCTION: GAMEMD 0x0062ED40
+void ParticleSystemClass::Smoke_AI(void)
+{
+	int i;
+
+	if (Is_Object(Source) && Source->What_Am_I() != RTTI_BUILDING) {
+		Set_Coord(Source->Center_Coord() + CoordOffset);
+	}
+
+	for (i = 0; i < SystemParticles.Count(); i++) {
+		SystemParticles[i]->Behavior_AI();
+	}
+
+	for (i = SystemParticles.Count() - 1; i >= 0; i--) {
+		ParticleClass *spart = SystemParticles[i];
+		if (spart->IsToDie) {
+			if (spart->Class->NextParticle != PARTICLE_NONE) {
+				Coord coord = spart->Get_Coord();
+				int xrand = Scen->RandomNumber % (spart->Class->Radius >> 3);
+				if (xrand <= 0) {
+					xrand = xrand - (spart->Class->Radius >> 3);
+				} else {
+					xrand = (spart->Class->Radius >> 3) + xrand;
+				}
+				int yrand = Scen->RandomNumber % (spart->Class->Radius >> 3);
+				if (yrand <= 0) {
+					yrand = yrand - (spart->Class->Radius >> 3);
+				} else {
+					yrand = (spart->Class->Radius >> 3) + yrand;
+				}
+				ParticleTypeClass *next = ParticleTypes[spart->Class->NextParticle];
+				Point2D offset(xrand, yrand);
+				ParticleClass *npart = Spawn_Particle(next, coord + offset);
+				if (npart != NULL) {
+					npart->Speed = spart->Speed;
+					npart->Translucency = spart->Translucency + (Scen->RandomNumber % 6 != 0 ? 25 : 0);
+				}
+				ParticleClass *ppart = Spawn_Particle(next, coord - offset);
+				if (ppart != NULL) {
+					ppart->Speed = spart->Speed;
+					ppart->Translucency = spart->Translucency + (Scen->RandomNumber % 6 != 0 ? 25 : 0);
+				}
+			}
+			spart->Delete_Me();
+		} else {
+			spart->Motion_AI();
+		}
+	}
+
+	if (!IsMarkedForDeletion && IsActive && (Frame % (int)SpawnFrames) == 0) {
+		FootClass *foot = As_Foot(Source);
+		if (foot == NULL || foot->CurrentTube < 0) {
+			Coord scoord = Get_Coord() + Coord(Scen->RandomNumber % (Class->SpawnRadius + 1), Scen->RandomNumber % (Class->SpawnRadius + 1), 10);
+			if (Class->HoldsWhat != PARTICLE_NONE) {
+				ParticleClass *npart = new ParticleClass(ParticleTypes[Class->HoldsWhat], scoord, SpawnCoord, this);
+				if (npart != NULL) {
+					SystemParticles.Add(npart);
+					if (SpawnFrames > Class->SpawnTranslucencyCutoff) {
+						npart->Translucency += 25;
+					}
+					npart->Speed = npart->Speed - (SpawnFrames - Class->SpawnFrames) * 0.35f;
+					if (npart->Speed < 2.0) {
+						npart->Speed = 2.0f;
+					}
+				}
+			}
+		}
+	}
+
+	SpawnFrames = Class->Slowdown + SpawnFrames;
+	if (SpawnFrames > Class->SpawnCutoff) {
+		IsMarkedForDeletion = true;
+	}
+}
+
 namespace Unsorted { extern int CurrentFrame; }
 extern short SineTable[];
 

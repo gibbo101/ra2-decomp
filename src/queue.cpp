@@ -3,6 +3,7 @@
 // Copyright 2025 Electronic Arts Inc.; 2026 OpenTS contributors
 // Derived from Electronic Arts source code; EA's GPL Section 7 terms apply (COPYING.md).
 
+#define NDEBUG
 #include "always.h"
 #include "geometry.h"
 #include "queue.h"
@@ -17,10 +18,12 @@
 #include "_warhead.h"
 #include "_weapon.h"
 #include "_xmouse.h"
+#include "_astar.h"
 #include "aircraft.h"
 #include "airctype.h"
 #include "anim.h"
 #include "animtype.h"
+#include "astar.h"
 #include "blight.h"
 #include "building.h"
 #include "builtype.h"
@@ -31,6 +34,7 @@
 #include "conquer.h"
 #include "crc.h"
 #include "dbgprint.h"
+#include "debugpage.h"
 #include "dsurface.h"
 #include "empulse.h"
 #include "factory.h"
@@ -42,6 +46,7 @@
 #include "incdec.h"
 #include "infantry.h"
 #include "infatype.h"
+#include "internet.h"
 #include "ipxmgr.h"
 #include "keyboard.h"
 #include "language\language.h"
@@ -89,6 +94,7 @@
 #include "warhead.h"
 #include "waypoint.h"
 #include "weapon.h"
+#include "windlg.h"
 #include "winstub.h"
 #include "wolapi/wolapi.h"
 #include "wsproto.h"
@@ -128,6 +134,19 @@ extern unsigned int DAT_00B04474[256];
 void Add_CRC(unsigned int *crc, unsigned int val);
 HWND FUN_00775B10(void);
 extern int DAT_00B779C4;
+int __fastcall FUN_005422D0(IPXManagerClass *ipx);
+int __fastcall FUN_0064BDD0(void * buf, int bufsize);
+static int Extract_Uncompressed_Events(void * buf, int bufsize);
+char const * __fastcall FUN_005B3950(int mission);
+extern int DAT_00B04468;
+extern bool DAT_00B04470;
+extern bool DAT_00B04894;
+extern HWND DAT_00AC6658;
+extern int DAT_00B04898;
+extern long DAT_00AFA418;
+extern wchar_t const DAT_00887734[];
+extern wchar_t const DAT_0082083C[];
+extern RGBClass DAT_00A8EAE4;
 
 struct QueueRecord {
 	char Data[0x2ec];
@@ -486,7 +505,6 @@ enum RetcodeType {
 
 void __fastcall Send_FrameSync(ConnManClass *net, int cmd_count);
 
-#include "debugpage.h"
 DebugPage * __fastcall FUN_005BC450(int index);
 void __cdecl FUN_005BD1F0(DebugPage * page, char const * format, ...);
 extern int DAT_00B04874;
@@ -920,6 +938,8 @@ extern int SentFrameSyncCount;
 
 int __fastcall Send_Packets(ConnManClass *net, char *multi_packet_buf, int multi_packet_max, int max_ahead, int my_sent);
 int __fastcall Process_Receive_Packet(ConnManClass *net, char *multi_packet_buf, int id, int packetlen, FrameSyncStruct *their, BasicTimerClass<SystemTimerClass> *timer);
+static int Breakup_Receive_Packet(void * buf, int bufsize);
+extern unsigned long DAT_00AC5210[8];
 RetcodeType __fastcall Process_Serial_Packet(char *multi_packet_buf, int first_time);
 
 // FUNCTION: GAMEMD 0x00648350
@@ -1942,6 +1962,116 @@ void __fastcall FUN_0064CD30(int start, int count, xTargetClass whom, xTargetCla
 		if (whom == MegaMissionList[i].Data.MegaMission.Whom) {
 			MegaMissionList[i].Data.MegaMission.Destination = *destination;
 			return;
+		}
+	}
+}
+
+// FUNCTION: GAMEMD 0x0064CDA0
+void __fastcall FUN_0064CDA0(int start, int count)
+{
+	if (!MegaMissionList[start].Data.MegaMission.Destination.Is_Valid() || MegaMissionList[start].Data.MegaMission.Destination != RTTI_CELL) return;
+
+	CellClass * cellptr = MegaMissionList[start].Data.MegaMission.Destination.As_Cell();
+	if (cellptr == NULL || cellptr == &InvalidCell) return;
+
+	Cell cell = cellptr->CellID;
+	if (cell == CELL_NONE) return;
+
+	DynamicVectorClass<ObjectClass *> movers;
+	for (int i = start; i < start + count; i++) {
+		TechnoClass * techno = MegaMissionList[i].Data.MegaMission.Whom.As_Techno();
+		if (techno != NULL && techno->Is_Foot() && ((FootClass *)techno)->CurrentTube < 0) {
+			movers.Add(techno);
+		}
+	}
+
+	if (movers.Count() > 0) {
+		Coord center = Vector_Center(movers);
+		ObjectClass * anchor = Vector_Closest_Object(movers, center);
+
+		IndexClass<int, ObjectClass *> index;
+		for (int j = 0; j < movers.Count(); j++) {
+			index.Add_Index(movers[j]->Distance(anchor->PositionCoord) * 1000 + j, movers[j]);
+		}
+		movers.Clear();
+
+		DynamicVectorClass<Cell> cells;
+		DynamicVectorClass<bool> taken;
+		for (int k = 0; k < index.Count(); k++) {
+			movers.Add(index.Fetch_By_Position(k));
+			cells.Add(cell);
+			taken.Add(false);
+		}
+
+		Cell anchorcell = anchor->Get_Cell();
+		for (int n = 0; n < movers.Count(); n++) {
+			FootClass * mover = (FootClass *)movers[n];
+			Cell newcell = cell;
+			if (n == 0) {
+				Map[cell].IsToGrowVeins = true;
+				taken[0] = true;
+			} else if (!taken[n]) {
+				Cell lastgood = cell;
+				Cell destcell = mover->Destination_Coord().As_Cell();
+				int height = Map[cell].IsUnderBridge * BRIDGE_CELL_HEIGHT + Map[cell].Height;
+				TPoint3D<float> pos(cell.X + 0.5, cell.Y + 0.5, 0);
+				TPoint3D<float> dir(destcell.X - anchorcell.X, destcell.Y - anchorcell.Y, 0);
+				dir = dir.Normalize();
+				int tries = 0;
+				bool blocked = false;
+				int maxdist = 0;
+				TechnoTypeClass const * ttype = mover->Techno_Type_Class();
+				int zone = Map.Get_Cell_Zone(&cell, ttype->MZone, true);
+				bool found = false;
+				Cell trycell;
+				for (; tries < 6; tries++) {
+					pos = pos + dir;
+					trycell = Cell((int)pos.X, (int)pos.Y);
+					CellClass * cptr = &Map[trycell];
+					if (!Map.In_Local_Radar(trycell, true)) break;
+					int tryzone = Map.Get_Cell_Zone(&trycell, ttype->MZone, cptr->IsUnderBridge);
+					MoveType move = mover->Can_Enter_Cell(cptr, FACING_NONE, height, NULL, true);
+					if (tryzone == zone) {
+						if (cptr->IsToGrowVeins) {
+							lastgood = trycell;
+							continue;
+						}
+						if (cptr->IsUnderBridge && abs(height - cptr->Height - BRIDGE_CELL_HEIGHT) > 2) break;
+						if (!cptr->IsUnderBridge && abs(height - cptr->Height) > 2) break;
+						if (move < MOVE_FRIENDLY_DESTROYABLE || move == MOVE_TEMP) {
+							if (blocked) {
+								int diff1 = abs(trycell.X - cell.X);
+								int diff2 = abs(trycell.Y - cell.Y);
+								if (diff1 > diff2) diff2 = diff1;
+								maxdist = diff2 + 3;
+								diff2 = Search.Test_Cell_Walk(trycell, cell, mover, Map[trycell].IsUnderBridge, Map[cell].IsUnderBridge, MZONE_NONE);
+								if (diff2 > maxdist) found = false;
+								break;
+							}
+							found = true;
+							break;
+						}
+					}
+					blocked = true;
+				}
+				newcell = !found ? lastgood : Cell((int)pos.X, (int)pos.Y);
+				cells[n] = newcell;
+				TargetClass dest(&Map[newcell]);
+				FUN_0064CD30(start, count, TargetClass(mover), &dest);
+				Map[newcell].IsToGrowVeins = true;
+				taken[n] = true;
+			}
+			for (int scan = n + 1; scan < movers.Count(); scan++) {
+				if (!taken[scan] && mover->Get_Cell() == movers[scan]->Get_Cell()) {
+					TargetClass dest(&Map[newcell]);
+					FUN_0064CD30(start, count, TargetClass(movers[scan]), &dest);
+					taken[scan] = true;
+				}
+			}
+		}
+
+		for (int q = 0; q < cells.Count(); q++) {
+			Map[cells[q]].IsToGrowVeins = false;
 		}
 	}
 }
@@ -3387,7 +3517,6 @@ void __fastcall FUN_00652230(EventClass *event)
 }
 
 #include "ownertalk.h"
-int __fastcall FUN_005422D0(IPXManagerClass *ipx);
 
 // FUNCTION: GAMEMD 0x006523A0
 void FUN_006523A0(void)
@@ -3452,11 +3581,6 @@ struct PacketTiming {
 	unsigned short : 16;
 };
 #pragma pack(pop)
-
-int __fastcall FUN_0064BDD0(void * buf, int bufsize);
-static int Extract_Uncompressed_Events(void * buf, int bufsize);
-static int Breakup_Receive_Packet(void * buf, int bufsize);
-extern unsigned long DAT_00AC5210[8];
 
 // FUNCTION: GAMEMD 0x0064A0C0
 int __fastcall Process_Receive_Packet(ConnManClass * net, char * multi_packet_buf, int id, int packetlen,
@@ -3617,8 +3741,6 @@ static int Extract_Uncompressed_Events(void * buf, int bufsize)
 	}
 	return count;
 }
-
-char const * __fastcall FUN_005B3950(int mission);
 
 // FUNCTION: GAMEMD 0x0064B660
 int __fastcall Add_Compressed_Events(void * buf, int bufsize, int frame_delay, int size, int cap, int * added)
@@ -3795,17 +3917,8 @@ int __fastcall Add_Compressed_Events(void * buf, int bufsize, int frame_delay, i
 }
 
 #include "_surface.h"
-#include "windlg.h"
 #include "win.h"
 
-extern int DAT_00B04468;
-extern bool DAT_00B04470;
-extern bool DAT_00B04894;
-extern HWND DAT_00AC6658;
-extern int DAT_00B04898;
-extern long DAT_00AFA418;
-extern wchar_t const DAT_00887734[];
-extern wchar_t const DAT_0082083C[];
 namespace UI { void __fastcall RegisterWindow(HWND window, int id); }
 
 #define WAIT_TEXT(label, line) StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\Queue.CPP", line)
@@ -4257,8 +4370,6 @@ RetcodeType __fastcall Wait_For_Players(int first_time, ConnManClass *net, int r
 }
 
 #undef WAIT_TEXT
-
-extern RGBClass DAT_00A8EAE4;
 
 static int Connection_Index(int player)
 {

@@ -84,7 +84,7 @@ Matrix3DStruct STDMETHODCALLTYPE LocomotionClass::Draw_Matrix(int *key)
 
 	draw_matrix.Rotate_Z(LinkedTo->PrimaryFacing.Current().As_Radian32());
 
-	if (key && *key != -1) {
+	if (Is_Cache_Key(key)) {
 		*key *= 32;
 		*key |= LinkedTo->PrimaryFacing.Current().As_Dir32();
 	}
@@ -99,7 +99,7 @@ Matrix3DStruct STDMETHODCALLTYPE LocomotionClass::Shadow_Matrix(int *key)
 	Matrix3D draw_matrix(Get_Slope_Matrix(ramp));
 	draw_matrix.Rotate_Z(LinkedTo->PrimaryFacing.Current().As_Radian32());
 
-	if (key && *key != -1) {
+	if (Is_Cache_Key(key)) {
 		*key = 32 * (ramp + (*key << 6));
 		*key |= LinkedTo->PrimaryFacing.Current().As_Dir32();
 	}

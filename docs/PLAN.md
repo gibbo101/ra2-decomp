@@ -1,6 +1,6 @@
 # Red Alert 2: a matching decompilation of Yuri's Revenge
 
-Status, 23 November 2026: 93% of game code by size matches (19,267 of 19,353 functions,
+Status, 26 November 2026: 93% of game code by size matches (19,326 of 19,353 functions,
 99%; 98% fuzzy), landed in batches module by module. `docs/rounds/` records each round;
 `docs/REMATCH.md` lists matched functions that still need a natural form.
 
@@ -284,6 +284,10 @@ counted about 24,900 functions and 954 classes in `gamemd.exe`, including librar
 - [mischa85/RedAlert2](https://github.com/mischa85/RedAlert2): a byte-for-byte rebuild of
   base Red Alert 2 1.006; GPL-3.0. Its matches name YR functions that compile from the
   same source, with the RA2 address and instruction similarity recorded in data/names.csv.
+- [RobinDigitalPro/ra2-1001-decomp](https://github.com/RobinDigitalPro/ra2-1001-decomp): a
+  matching reconstruction of base Red Alert 2 1.001 under VC6, with 17,779 functions
+  byte-identical (list in `metadata/level2_functions.json`); GPL-3.0-or-later. Its
+  matches are twins of many YR functions, so their source shape is evidence for ours.
 - [redalert2-recomp](https://github.com/sp00nznet/redalert2-recomp): static
   recompilation of `gamemd.exe` to 5.8M lines of machine-lifted C. Playable (menus,
   skirmish, both campaigns), D3D11 presenter, 2× voxel units. Windows only. The lifted C
@@ -659,6 +663,9 @@ effort (one model, one prompt cache, often fewer retries).
 
 ## Open questions
 
+- A naming pass after the match: give the 1,717 matched functions with placeholder or
+  address names (FUN_, sub_ and similar) real names from YRpp, TibSun, the other RA2 trees
+  and RTTI.
 - Does `game.exe` (RA2 without YR) share enough to be worth matching too, or is YR the
   only target?
 - What fraction of YR functions have a TS counterpart? First measure in the spike (see

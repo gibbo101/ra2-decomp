@@ -132,6 +132,53 @@ SideType FUN_006A46D0(char const * name);
 AudioEvent * __fastcall FUN_00750D40(Coord const & coord, AudioController * controller);
 #include "temporal.h"
 
+static inline bool Is_Cell(AbstractClass const * target)
+{
+	if (target == NULL) return(false);
+	RTTIType rtti = target->RTTI;
+	return(rtti == RTTI_CELL);
+}
+
+// FUNCTION: GAMEMD 0x0043B150
+bool __fastcall FUN_0043B150(TechnoClass * techno)
+{
+	HouseClass * owner = techno->House;
+	if (PlayerPtr->Is_Ally(owner)) return false;
+	int count = PlayerPtr->PsychicDetectionBuildings.Count();
+	for (int i = 0; i < count; i++) {
+		BuildingClass * building = PlayerPtr->PsychicDetectionBuildings[i];
+		if (building->IsPowerOnline()) {
+			AbstractClass * target = techno->TarCom;
+			if (As_Techno(target) != NULL) {
+				bool in_range = building->FUN_004528A0(As_Techno(target));
+				if (in_range) return in_range;
+			} else if (Is_Cell(target)) {
+				bool in_range = building->FUN_00452940((CellClass *)target);
+				if (in_range) return in_range;
+			}
+			if (techno->Is_Foot()) {
+				FootClass * foot = (FootClass *)techno;
+				AbstractClass * destination;
+				if (foot->RouteQueue.Count() == 0) {
+					destination = foot->NavCom;
+				} else {
+					destination = foot->RouteQueue[foot->RouteQueue.Count() - 1];
+				}
+				if (destination != NULL) {
+					if (Is_Cell(destination)) {
+						bool in_range = building->FUN_00452940((CellClass *)destination);
+						if (in_range) return in_range;
+					} else if (destination->AbstractFlags & 1) {
+						bool in_range = building->FUN_004528A0(destination);
+						if (in_range) return in_range;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
 
 // FUNCTION: GAMEMD 0x0043B4C0
 bool __fastcall FUN_0043B4C0(HouseClass * house, CellClass * cell)
@@ -2130,7 +2177,7 @@ ResultType BuildingClass::Take_Damage(int & damage, int distance, WarheadTypeCla
 					}
 					for (i = 0; i < contacts.Count(); i++) {
 						TechnoClass * tech = contacts[i];
-						if (Center_Coord().Distance_To(tech->Center_Coord()) >= CELL_LEPTON && !Class->IsHelipad) {
+						if (Distance_To(tech) >= CELL_LEPTON && !Class->IsHelipad) {
 							Transmit_Message(RADIO_RUN_AWAY, tech);
 							tech->QueueUpToEnter = NULL;
 						} else {
@@ -2228,7 +2275,6 @@ ResultType BuildingClass::Take_Damage(int & damage, int distance, WarheadTypeCla
 			IsToDisplay = true;
 			Set_Anim_Damage_State(HealthRatio <= Rule->ConditionYellow);
 		}
-		int remaining = contacts.Count();
 	}
 
 	return(res);
@@ -6548,7 +6594,8 @@ bool BuildingClass::FUN_004528A0(AbstractClass const * target)
 {
 	Coord a = Center_Coord();
 	Coord b = target->Center_Coord();
-	return(a.Distance_To(b) <= Class->PsychicDetectionRadius << 8);
+	int distance = Coord(a - b).Length();
+	return(distance <= Class->PsychicDetectionRadius << 8);
 }
 
 // FUNCTION: GAMEMD 0x00452940
@@ -6556,7 +6603,8 @@ bool BuildingClass::FUN_00452940(CellClass const * cell)
 {
 	Coord a = Center_Coord();
 	Coord b = cell->Cell_Coord();
-	return(a.Distance_To(b) <= Class->PsychicDetectionRadius << 8);
+	int distance = Coord(a - b).Length();
+	return(distance <= Class->PsychicDetectionRadius << 8);
 }
 
 // FUNCTION: GAMEMD 0x004529E0

@@ -151,6 +151,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   statement and prints the count at which the differing lines change (`--kind2` sweeps two
   counts as a grid); `tools/inlinebudget.py ADDR` lists each call the exe and ours inline
   differently and how many inline sites or budget units flip it.
+- Run check.py and inlinebudget.py one at a time in a worktree: both write to
+  `build/inlinebudget/`, and two at once fail with FileNotFoundError.
 
 ### Declarations
 - A callee returning a class by value takes a hidden buffer: a virtual pushes only the
@@ -169,6 +171,10 @@ Each entry: what the diff showed, then the source change that fixed it.
   near 0xA8B238): declare the object, with real offsets, as a static member.
 - `#undef LoadString` after `<windows.h>`. Include `<stddef.h>` and `"always.h"` before
   `stringtable.h` so `wchar_t` is defined.
+- A header change with exe evidence that flips matched functions by declaration weight:
+  keep it and rematch each victim by moving existing declarations or includes beside their
+  users or into their group (TechnoTypeClass's rules constructor, eight victims; the WOL
+  dialog control, five). A victim that breaks under several good changes is the fragile one.
 
 ### Evaluation order
 - Arguments are evaluated right to left. To call a nested callee first (GetDlgItem, an
@@ -284,6 +290,14 @@ Each entry: what the diff showed, then the source change that fixed it.
   parameter's live copy: write TibSun's named temporaries for the later calls before the
   test (`int buildnum = Build_Number(); int crc = GetINIHash();`). Rewording the expression
   that differed did not help (0x0079BA60).
+- Loading a stack parameter is not a reference for the ranking, only its uses are; in a tie
+  a compiler temporary loses to a named local (Is_Same_Cell_Zone). RTM's C2 8168 compiles
+  the register-tie near misses byte for byte as SP3 does, so the code generator is not the cause.
+- VC6 has no cap on register candidates (200 locals or inline temps leave a weak local in its
+  register). A candidate that loses its register gets its stack home after every pre-existing
+  stack local, so a home in the first slot means the original kept that local in memory from
+  the start. Taking its address in a call, even in a dead branch, does that, but makes every
+  use reload after each call.
 
 ### Stack frame
 - Locals are laid out by size, not declaration order. To fix two objects' order, make
@@ -330,6 +344,8 @@ Each entry: what the diff showed, then the source change that fixed it.
   function, or mirrors a TibSun or YRpp helper. Single-use helpers, forwarders and dummy
   locals that exist to shift inlining or allocation are forcing: their match is banked, not
   landed.
+- A helper YR inlines is source when game.exe or ts-game.exe holds its body out of line
+  with callers (tools/crossexe.py, `--extern` for static helpers); that is its evidence.
 - Source forms, as ruled: a goto to an exit several paths share, a scoped block that sets
   when a temporary's destructor runs, a helper that factors code repeated inside one
   function, and a named bool where the plain `if` does not match.
@@ -402,6 +418,16 @@ Each entry: what the diff showed, then the source change that fixed it.
   function under its own marker and call it; VC6 inlines it where the original does (0x00610570).
 - A function matched with a callee's body written out cannot be inlined into its own
   callers: call the callee (FUN_006A6820 calls SetTab, which StripClass::Recalc inlines).
+- A callee inlined or called the opposite way to the exe, next to code that duplicates a
+  real function's body: the source holds a hand-expanded copy; call the function
+  (Discharged's StopPreclickAnim, Logout_WOnline's FUN_00792EC0, the scheme table's Release).
+- A few inline sites short inside one function: a file-local helper holding TibSun's own
+  expression for code the function repeats at two sites supplies them, and an equal-code
+  spelling from YR's matched siblings supplies the last (Nearing_Target's `_Distance` and
+  `DirType(Facing_Dir(FacingType(x)))`).
+- inlinebudget counts calls, not where they sit: a probe that evens the count can move a
+  call into another inlined copy of the same callee (Generate_Random_Map's Clear); check
+  the bytes, not the count.
 
 ### Constructs
 - `(x & 2) >> 1` that the exe computes as `and eax,2; shr eax,1`: write
@@ -504,6 +530,12 @@ Each entry: what the diff showed, then the source change that fixed it.
   CSV regenerated; never edit the CSV by hand.
   A score where every byte matches up to a `ret` and only a short tail after it differs is
   that case: the next function hides in this one's extent (saveload's Get_Player_Name).
+- `tools/functions.py` reads Ghidra's starts from build/ghidra/functions.csv, which is
+  gitignored; in a checkout without it, every row silently loses its G evidence. Copy it in
+  before regenerating.
+- A source file listed in data/assembly_anchors.csv is pinned by its sha256; when it changes,
+  refresh that row's source_sha256 or functions.py stops with "Assembly-anchor source or hash
+  differs".
 - A run of about 13 small initialisers per file (CELL_LEPTON_DIAG through COORD_NONE)
   is `include/geometry.h`'s per-file constants: include it where the exe's `_$E` numbers
   put it (usually right after `always.h`; after `wdtnet.h` in wdtconflict and wdtstate),
@@ -672,6 +704,12 @@ Each entry: what the diff showed, then the source change that fixed it.
   0x0040D300 is BasicTimerClass<FrameTimerClass>'s, not StageClass's.
 - One new constructor in velocity.h (`TVelocity3D(Coord const &)`) flips Print_CRCs
   (0x0064DEA0) in queue.cpp through bullet.h: run a full checkall after any velocity.h change.
+- One initialiser too many in a long constructor with identical stores: that member is a
+  class whose own inline constructor clears it, and the exe's NoInit constructor zeroing it
+  outright is the marker (TechnoTypeClass at 0x3C0).
+- Placeholder classes split along one vtable: the exe's vtable shows which slots a class
+  overrides, and one class with those overrides replaces them (SimpleWonlineDialogControl,
+  vtable 0x7F7624 = SimpleDialogControl's with F4 overridden).
 
 ## Known dead ends
 

@@ -81,7 +81,7 @@ class CellClass : public AbstractClass
 
 		FootClass * Jumpjet;
 
-	private:
+	public:
 
 		ObjectClass * OccupierPtr;
 		ObjectClass * BridgeOccupierPtr;

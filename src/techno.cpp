@@ -1265,7 +1265,7 @@ void TechnoClass::Draw_Pre_Render(Point2D const & point, Rect const & cliprect) 
 void TechnoClass::Draw_Health_Bar(Point2D const & xpoint, Rect const & cliprect, bool sensed_underground) const
 {
 	if (RTTI == RTTI_BUILDING) {
-		HeightAGL;
+		Get_Height_AGL();
 
 		Point3D dim = TClass->Lepton_Dimensions();
 		Coord coord = dim - dim / 2;
@@ -3524,10 +3524,444 @@ int TechnoClass::Estimate_Damage(TechnoClass * target, WeaponTypeClass const * w
 	return(damage);
 }
 
-// FUNCTION: GAMEMD 0x006FF950
-void TechnoClass::FUN_006FF950(void)
+#include "disklaser.h"
+
+// FUNCTION: GAMEMD 0x006FDD50
+BulletClass * TechnoClass::Fire_At(AbstractClass * target, int which)
 {
+	WeaponTypeClass * weapon = Get_Class_Weapon_Data(which)->Weapon;
+	if (weapon == NULL) {
+		return(NULL);
+	}
+
+	ObjectClass * object = target == NULL ? NULL : ((target->AbstractFlags & 2) ? (ObjectClass *)target : NULL);
+	BulletTypeClass const * btype = weapon->Bullet;
+
+	if (Debug_Map || target == NULL) {
+		return(NULL);
+	}
+
+	if (object != NULL && object->IsInLimbo) {
+		return(NULL);
+	}
+
+	if (weapon->Suicide) {
+		int damage = Techno_Type_Class()->MaxStrength;
+		Take_Damage(damage, 0, Rule->C4Warhead, NULL, true);
+		return(NULL);
+	}
+
+	if ((weapon->UseFireParticles && ParticleSystems[0] != NULL)
+		|| (weapon->IsRailgun && ParticleSystems[4] != NULL)
+		|| (weapon->UseSparkParticles && ParticleSystems[1] != NULL)
+		|| (weapon->IsSonic && Wave != NULL)) {
+
+		return(NULL);
+	}
+
+	if (weapon->Spawner) {
+		SpawnManager->SetTarget(target);
+		if ((!IsOwnedByPlayer && !IsDiscoveredByPlayer) || ((Map.Is_Shrouded(Center_Coord()) || Map.IsLocationFogged(Center_Coord())) && (Fetch_RTTI() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
+			if (object != NULL) {
+				HouseClass * owner = object->Owner_HouseClass();
+				if (owner != NULL && owner->Is_Player_Control() && weapon->RevealOnFire) {
+					Map.RevealArea1(&Center_Coord(), 3, owner, false, false, false, true, false);
+				}
+				Map.RevealArea3(Center_Coord(), 0, 4, 0);
+				return(NULL);
+			}
+		}
+		return(NULL);
+	}
+
+	if (weapon->DrainWeapon) {
+		if (!(target->AbstractFlags & 1)) {
+			return(NULL);
+		}
+		if (!((TechnoClass *)target)->Techno_Type_Class()->Drainable) {
+			return(NULL);
+		}
+		FUN_0070FD70((BuildingClass *)target);
+		Assign_Target(NULL);
+		return(NULL);
+	}
+
+	static Coord _spray_offsets[8] = {
+		Coord(256, 0, 0),
+		Coord(180, 180, 0),
+		Coord(0, 256, 0),
+		Coord(-180, 180, 0),
+		Coord(-256, 0, 0),
+		Coord(-180, -180, 0),
+		Coord(0, -256, 0),
+		Coord(180, -180, 0)
+	};
+
+	Coord target_coord;
+	if (Techno_Type_Class()->SprayAttack) {
+		int step = 8 / weapon->Burst;
+		if (BurstIndex == 0) {
+			SprayOffsetIndex = Scen->RandomNumber(0, 7);
+		} else {
+			SprayOffsetIndex = (SprayOffsetIndex + step) % 8;
+		}
+		Coord coord = Position;
+		target_coord = coord + _spray_offsets[SprayOffsetIndex];
+	} else if (weapon->AreaFire) {
+		CellClass * cell = &Map[Cell(Center_Coord())];
+		target_coord = cell->Center_Coord();
+		target = &Map[target_coord];
+	} else if (object != NULL) {
+		target_coord = object->Target_Coord();
+	} else {
+		target_coord = target->As_Coord();
+	}
+
+	if (Techno_Type_Class()->SprayAttack) {
+		target = &Map[target_coord];
+	}
+
+	Coord fire_coord = Fire_Coord(which, Coord(0, 0, 0));
+
+	DirType dir;
+	if (btype->ROT != 0 || btype->IsDropping) {
+		dir = Fire_Direction();
+		if (btype->IsDropping) {
+			fire_coord = Center_Coord();
+		}
+	} else {
+		dir = ::Direction(fire_coord, target_coord);
+	}
+
+	int firepower = weapon->Attack;
+	if (weapon->IsSonic || weapon->UseFireParticles) {
+		firepower = 0;
+	}
+	if (firepower > 0) {
+		firepower = (int)(House->FirepowerBias * FirepowerBias * weapon->Attack);
+		if (Has_Ability(ABILITY_FIREPOWER)) {
+			firepower = (int)(firepower * Rule->VeteranCombat);
+		}
+	}
+	if (CanOccupyFire()) {
+		firepower = (int)(firepower * Rule->OccupyDamageMultiplier);
+	}
+	if (BunkerLinkedItem != NULL && Fetch_RTTI() != RTTI_BUILDING) {
+		firepower = (int)(firepower * Rule->BunkerDamageMultiplier);
+	}
+	if (InOpenToppedTransport) {
+		firepower = (int)(firepower * Rule->OpenToppedDamageMultiplier);
+	}
+
+	if (weapon->DiskLaser) {
+		DiskLaserClass * disk = new DiskLaserClass;
+		if (disk != NULL) {
+			BurstIndex++;
+			ChargeTurretDelay = Rearm_Delay(which);
+			Arm = ChargeTurretDelay;
+			BurstIndex %= weapon->Burst;
+			disk->Fire(this, (TechnoClass *)target, weapon, firepower);
+			return(NULL);
+		}
+	}
+
+	Point2D offset = Point2D(target_coord) - Point2D(fire_coord);
+	int max_speed = weapon->Get_Speed(fastmath::sqrt(offset.X * offset.X + offset.Y * offset.Y));
+	BulletClass * bullet = Create_Bullet(weapon->Bullet, target, this, firepower, weapon->WarheadPtr, max_speed, weapon->IsBright);
+	TVelocity3D<double> velocity;
+
+	if (bullet != NULL) {
+		bullet->Set_Weapon_Type(weapon);
+		bullet->Limbo();
+
+		if (Is_Foot() && ((FootClass *)this)->Locomotion->Is_Moving() && !Techno_Type_Class()->JumpJet) {
+			bullet->IsInaccurate = true;
+		}
+
+		if (!bullet->IsInaccurate && !btype->IsInaccurate) {
+			TechnoClass * tarcom = As_Techno(TarCom);
+			WeaponTypeClass * bweapon = bullet->Get_Weapon_Type();
+			if (tarcom != NULL && bweapon != NULL) {
+				tarcom->EstimatedHealth -= Estimate_Damage(tarcom, bweapon);
+			}
+		}
+
+		Coord displacement = Predict_Target_Coord() - fire_coord;
+
+		if (btype->IsInaccurate && btype->IsArcing) {
+			if (btype->FlakScatter && !btype->IsInvisible) {
+				TPoint3D<float> delta = TPoint3D<float>(displacement.X, displacement.Y, displacement.Z);
+				float distance = delta.Length();
+				int scatter = Random_Pick(0, Rule->BallisticScatter);
+				scatter *= (int)distance;
+				scatter /= Weapon_Range(which);
+				double scatter_angle = Random_Double(0.0, M_PI * 2.0);
+				displacement = Move_Coord(displacement, DirType(scatter_angle), scatter);
+			} else {
+				int spread = Scen->RandomNumber(Rule->BallisticScatter / 2, Rule->BallisticScatter);
+				double scatter_angle = Random_Double(0.0, M_PI * 2.0);
+				displacement = Move_Coord(displacement, DirType(scatter_angle), spread);
+			}
+		}
+
+		if (btype->ROT != 0 || btype->IsDropping) {
+			dir = Fire_Direction();
+			if (btype->IsDropping) {
+				fire_coord = Center_Coord();
+			}
+		} else {
+			dir = fastmath::atan2((double)-displacement.Y, (double)displacement.X);
+		}
+
+		if (max_speed > displacement.Length() / 2) {
+			max_speed = displacement.Length() / 2;
+		}
+
+		int segments = Techno_Type_Class()->RadialFireSegments;
+		if (weapon->Bullet->ROT > 0 || weapon->Bullet->Vertical) {
+			if (segments == 0) {
+				max_speed = 1;
+			}
+			bullet->MaxSpeed = weapon->MaxSpeed;
+		}
+
+		velocity.Set(0.0, 0.0, 0.0);
+		velocity.Nonzero_Check();
+		velocity *= max_speed / velocity.Speed();
+		if (segments > 0) {
+			double angle = M_PI / segments * unknown_43C - M_PI / 2;
+			DirType facing = PrimaryFacing.Current();
+			velocity.Set_Yaw(DirType(facing.As_Radian() + angle));
+			unknown_43C++;
+			if (unknown_43C >= segments) {
+				unknown_43C = 0;
+			}
+		} else {
+			velocity.Set_Yaw(dir);
+		}
+
+		DirType pitch(0x3FFF);
+		bool valid_arc = true;
+		if (bullet->Class->IsArcing) {
+			double gravity = Rule->Gravity;
+			if (bullet->Class->IsFloater) {
+				gravity = Get_Floater_Gravity();
+			}
+
+			int planar = Point2D(displacement).Length();
+			valid_arc = Calculate_Projectile_Pitch(Should_Use_High_Arc(which), max_speed, planar, displacement.Z, gravity, pitch);
+		} else if (bullet->Class->IsVoxel) {
+			if (target->Center_Coord().Z < Center_Coord().Z) {
+				pitch = DirType(DIR_S);
+			} else {
+				pitch = DirType(DIR_E);
+			}
+		} else {
+			int abs_z = abs(displacement.Z);
+			if (abs_z > 200) {
+				double y = 20.0;
+				BuildingClass * building = As_Building(TarCom);
+				if (building != NULL) {
+					Coord turret_coord = Turret_Coord(which);
+					displacement.Z = 200 * building->Class->ZHeight - turret_coord.Z;
+					abs_z = abs(displacement.Z);
+					if ((double)abs_z < y) {
+						y = 0.0;
+					}
+				}
+
+				double planar = Point2D(displacement).Length();
+				if (planar < 0.05) {
+					planar = 0.05;
+				}
+				double angle = fastmath::atan2f((double)abs_z - y, planar);
+				if (displacement.Z < 0) {
+					angle = -angle;
+				}
+				pitch = angle;
+			}
+		}
+
+		velocity.Set_Pitch(pitch);
+
+		if (valid_arc) {
+			if (!bullet->Unlimbo(fire_coord, velocity)) {
+				bullet->Release();
+				bullet = NULL;
+			} else {
+
+				if (CanOccupyFire() && As_Building(this) != NULL) {
+					BuildingClass * building = As_Building(this);
+					building->FiringOccupantIndex++;
+					building->FiringOccupantIndex %= building->GetOccupantCount();
+				}
+
+				if (bullet->Class->IsInvisible && object != NULL && object->IsOnBridge) {
+					bullet->IsOnBridge = true;
+				}
+
+				if (Is_Turret_Equipped() && Techno_Type_Class()->TurretRecoil) {
+					TurretRecoil.Fire();
+					BarrelRecoil.Fire();
+				}
+
+				if (weapon->UseFireParticles && ParticleSystems[0] == NULL) {
+					ParticleSystems[0] = new ParticleSystemClass(weapon->AttachedParticleSystem, fire_coord, target, this);
+				}
+				if (weapon->UseSparkParticles && ParticleSystems[1] == NULL) {
+					ParticleSystems[1] = new ParticleSystemClass(weapon->AttachedParticleSystem, fire_coord, target, this);
+				}
+				if (weapon->IsRailgun && ParticleSystems[4] == NULL) {
+					Coord end = Railgun_Beam_Damage(fire_coord, target, weapon);
+					ParticleSystems[4] = new ParticleSystemClass(weapon->AttachedParticleSystem, fire_coord, NULL, this, end);
+				}
+
+				BurstIndex++;
+				int arm = Rearm_Delay(which);
+				if (Berzerk) {
+					arm /= 2;
+				}
+				ChargeTurretDelay = arm;
+				Arm = arm;
+				BurstIndex %= weapon->Burst;
+
+				AnimTypeClass const * a = NULL;
+				if (weapon->Anim.Count() == 8) {
+					a = weapon->Anim[(Fire_Direction().As_Dir8() + FACING_NE) % FACING_COUNT];
+				} else if (weapon->Anim.Count() > 0) {
+					a = weapon->Anim[0];
+				}
+				if (CanOccupyFire()) {
+					a = weapon->OccupantAnim;
+				}
+				if (a == NULL && InOpenToppedTransport && weapon->OpenToppedAnim != NULL) {
+					a = weapon->OpenToppedAnim;
+				}
+
+				if (weapon->Sound.Count() > 0 && !Techno_Type_Class()->IsGattling) {
+					VocClass::PlayAt(weapon->Sound.Pick(SoundRandomSeed), fire_coord);
+				}
+
+				if (a != NULL) {
+					AnimClass * anim = new AnimClass(a, fire_coord);
+					if (Fetch_RTTI() == RTTI_BUILDING) {
+						int zadjust = (fire_coord - Render_Coord()).Y / -4;
+						anim->ZAdjust = min(zadjust, 0);
+						if (GetOccupantCount() > 0) {
+							anim->ZAdjust = -200;
+						}
+					}
+					if (anim != NULL && Fetch_RTTI() != RTTI_BUILDING) {
+						anim->Attach_To(this);
+					}
+				}
+
+				if (weapon->IsSonic) {
+					Wave = new WaveClass(target_coord, fire_coord, this, WAVE_SONIC, (TechnoClass *)target);
+				}
+
+				if (Techno_Type_Class()->IsTargetLaser && House->Is_Player_Control()) {
+					TargetingLaserTimer = TICKS_PER_SECOND;
+				}
+
+				if (weapon->IsLaser) {
+					if (Fetch_RTTI() == RTTI_BUILDING) {
+						WeaponTypeClass * turret_weapon = GetTurretWeapon()->Weapon;
+						LaserDrawClass * laser = CreateLaser(target, which, turret_weapon, COORD_NONE);
+						if (laser != NULL && ((BuildingClass *)this)->Class == Rule->PrismType) {
+							laser->Thickness = 3;
+							if (((BuildingClass *)this)->SupportingPrisms > 0) {
+								laser->IsSupported = true;
+								laser->Thickness = 5;
+							}
+						}
+					} else {
+						LaserDrawClass * laser = CreateLaser(target, which, weapon, COORD_NONE);
+						if (laser != NULL && weapon->IsHouseColor) {
+							laser->Thickness = 2;
+						}
+					}
+				} else if (weapon->IsElectricBolt) {
+					FireEBolt((ObjectClass *)target);
+				} else if (weapon->IsRadBeam) {
+					if (weapon->WarheadPtr != NULL && weapon->WarheadPtr->Temporal) {
+						CreateRadBeam((ObjectClass *)target, 1);
+					} else {
+						CreateRadBeam((ObjectClass *)target, 0);
+					}
+				} else if (weapon->IsRadEruption) {
+					CreateRadBeams(weapon->WarheadPtr->SpreadFactor);
+				} else if (weapon->IsMagBeam) {
+					if (Wave == NULL || (As_Building(target) == NULL && Wave == NULL)) {
+						Wave = new WaveClass(target_coord, fire_coord, this, WaveType(3), (TechnoClass *)target);
+					}
+				}
+
+				Reduce_Ammunition();
+				Mark(MARK_CHANGE);
+
+				if ((!IsOwnedByPlayer && !IsDiscoveredByPlayer) || ((Map.Is_Shrouded(Center_Coord()) || Map.IsLocationFogged(Center_Coord())) && (Fetch_RTTI() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
+					ObjectClass * obj = As_Object(target);
+					if (obj != NULL) {
+						HouseClass * tgt_owner = obj->Owner_HouseClass();
+						if (tgt_owner != NULL && tgt_owner->Is_Player_Control() && weapon->RevealOnFire) {
+							Map.RevealArea1(&Center_Coord(), 3, tgt_owner, false, false, false, true, false);
+							Map.RevealArea3(Center_Coord(), 0, 4, 0);
+						}
+					}
+				}
+			}
+		} else {
+			bullet->Release();
+			bullet = NULL;
+		}
+	}
+
+	if (bullet != NULL) {
+		LastFireBulletFrame = Frame;
+	}
+
+	if (weapon->LimboLaunch) {
+		if (Techno_Type_Class()->ReselectIfLimboed && IsSelected && Owner_HouseClass()->Is_Player_Control() && target->Fetch_RTTI() == RTTI_INFANTRY) {
+			ShouldBeReselectOnUnlimbo = true;
+		}
+		if (Techno_Type_Class()->RejoinTeamIfLimboed && As_Foot(this) != NULL && As_Foot(this)->Team != NULL && target->Fetch_RTTI() == RTTI_INFANTRY) {
+			OldTeam = As_Foot(this)->Team;
+		}
+		Limbo();
+		if (weapon->WarheadPtr->Parasite) {
+			FootClass * foot = As_Foot(target);
+			if (foot != NULL) {
+				foot->LastBeParasitedStartFrame = Frame + 20;
+			}
+			bullet->Limbo();
+			bullet->Construct(weapon->Bullet, target, this, firepower, weapon->WarheadPtr, weapon->MaxSpeed, weapon->IsBright);
+			bullet->Unlimbo(fire_coord, velocity);
+		}
+	}
+
+	if (Techno_Type_Class()->DistributedFire) {
+		if (CurrentMission != MISSION_ATTACK || Fetch_RTTI() == RTTI_BUILDING) {
+			AttackedTargets.Add(target);
+			Assign_Target(NULL);
+		}
+	}
+
+	if (weapon->FireOnce) {
+		FootClass * foot = As_Foot(this);
+		if (foot != NULL && foot->Team != NULL) {
+			foot->Team->Assign_Mission_Target(NULL);
+			foot->Team->IsNextMission = true;
+		}
+		Assign_Target(NULL);
+	}
+
+	return(bullet);
 }
+
+
+// SYNTHETIC: GAMEMD 0x006FF950 SYMBOL
+// _$E290
 
 static inline Rect Target_Laser_Rect(Point2D const & point)
 {
@@ -5549,6 +5983,190 @@ LightConvertClass * TechnoClass::GetRemapColour(void) const
 	return(ColorSchemes[index]->Converter);
 }
 
+#include "msanim.h"
+
+// FUNCTION: GAMEMD 0x00705E00
+void TechnoClass::Techno_Draw_Object(ShapeSet const * shapefile, int shapenum, Point2D const & xdrawpoint, Rect const & rect, Dir256 rotation, int scale, int xzadjust, ZGradientType zgrad, bool zwrite, int brightness, unsigned short tint, ShapeSet const * zshapefile, int zshapenum, Point2D zoff, ShapeFlags_Type negflags) const
+{
+	if (shapefile != NULL) {
+		bool shadow = DrawShapeShadows;
+		VisualType visual = Visual_Character();
+
+		ShapeFlags_Type flags = SHAPE_NORMAL;
+		if (negflags == SHAPE_NORMAL) {
+			switch (visual) {
+				case VISUAL_RIPPLE:
+					{
+						int stage = CloakingDevice.Fetch_Stage();
+						if (stage == 0) {
+							flags = SHAPE_TRANSLUCENT25;
+						} else if (stage == 1) {
+							flags = SHAPE_TRANSLUCENT50;
+						} else {
+							flags = SHAPE_TRANSLUCENT50;
+						}
+					}
+					break;
+
+				case VISUAL_INDISTINCT:
+					flags = SHAPE_TRANSLUCENT25;
+					break;
+
+				case VISUAL_DARKEN:
+				case VISUAL_SHADOWY:
+					flags = SHAPE_TRANSLUCENT50;
+					break;
+
+				case VISUAL_HIDDEN:
+					return;
+			}
+		}
+
+		if (IsBeingWarpedOut() || IsWarpingIn()) {
+			if (this != NULL && RTTI == RTTI_BUILDING && As_Building((TechnoClass *)this)->Class->DoubleThick) {
+				flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT75);
+			} else {
+				flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT50);
+			}
+		}
+
+		ConvertClass * converter;
+		if (RTTI == RTTI_BUILDING && ((BuildingClass *)this)->Class->IsTerrainPalette) {
+			CellClass * cptr = &Map[Center_Coord().As_Cell()];
+			converter = cptr->Drawer;
+			if (converter == NULL) {
+				cptr->Init_Drawer();
+				converter = cptr->Drawer;
+				if (converter == NULL) return;
+			}
+			brightness = cptr->TileBrightness;
+		} else {
+			if (RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette) {
+				converter = EightBitDrawer;
+			} else {
+				converter = GetRemapColour();
+			}
+		}
+
+		Point2D drawpoint = xdrawpoint;
+		int zadjust = xzadjust;
+
+		switch ((RTTIType)RTTI) {
+			case RTTI_UNIT:
+				if (((UnitClass *)this)->Class->SmallVisceroid || ((UnitClass *)this)->Class->LargeVisceroid) {
+					shadow = false;
+				}
+				// A unit takes the infantry height adjustment as well.
+
+			case RTTI_INFANTRY:
+				if (HeightAGL == 0) {
+					zadjust += Get_Z_Adjust();
+				} else {
+					zadjust -= TacticalMap->Z_Lepton_To_Pixel(Get_Height());
+					shadow = false;
+				}
+				break;
+
+			case RTTI_AIRCRAFT:
+				drawpoint.Y -= TacticalMap->Z_Lepton_To_Pixel(Get_Height());
+				zadjust -= TacticalMap->Z_Lepton_To_Pixel(Get_Height());
+				break;
+		}
+
+		if (Techno_Type_Class()->NoShadow) {
+			shadow = false;
+		}
+
+		if (!IsClearlyVisibleTo(PlayerPtr)) {
+			if (GetDisguise(true)->Fetch_RTTI() != RTTI_OVERLAYTYPE && GetDisguise(true)->Fetch_RTTI() != RTTI_TERRAINTYPE) {
+				converter = ColorSchemes[GetDisguiseHouse(true)->Scheme]->Converter;
+			} else {
+				CellClass * cptr = Get_Cell_Ptr();
+				converter = cptr->Drawer;
+				if (converter == NULL) {
+					cptr->Init_Drawer();
+					converter = cptr->Drawer;
+				}
+				brightness = cptr->TileBrightness;
+			}
+			if (converter == NULL) {
+				converter = ColorSchemes[PlayerPtr->Scheme]->Converter;
+			}
+		}
+
+		if (zgrad != ZGRAD_NONE) flags = ShapeFlags_Type(flags|SHAPE_ZGRAD);
+		if (zwrite) flags = ShapeFlags_Type(flags|SHAPE_ZWRITE);
+		flags = ShapeFlags_Type(flags|SHAPE_ALPHA);
+
+		if (RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette) {
+			flags = ShapeFlags_Type(flags|SHAPE_NOTRANS);
+			shadow = false;
+		}
+
+		flags = ShapeFlags_Type(flags & ~negflags);
+
+		if (RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette) {
+			Rect shaperect = ((SHPStruct const *)shapefile)->GetFrameBounds(shapenum);
+			Rect drawrect;
+			drawrect.X = drawpoint.X + shaperect.X - shapefile->Get_Width() / 2;
+			drawrect.Y = drawpoint.Y + shaperect.Y - shapefile->Get_Height() / 2;
+			drawrect.Width = shaperect.Width;
+			drawrect.Height = shaperect.Height;
+			UnitCompositeDirtyRect = Union(UnitCompositeDirtyRect, drawrect);
+		}
+
+		if (House->Is_Player_Control() && IsDisguised()) {
+			flags = ShapeFlags_Type(GetDisguiseFlags(flags));
+		}
+
+		brightness = Apparent_Brightness(brightness);
+
+		if (IsIronCurtained()) {
+			brightness = GetEffectTintIntensity(brightness);
+		} else if (this != NULL && RTTI == RTTI_BUILDING && Airstrike != NULL && Airstrike->Target == As_Building((TechnoClass *)this)) {
+			brightness = GetEffectTintIntensity(brightness);
+		}
+
+		if (Map[Center_Coord().As_Cell()].Is_Shrouded()) {
+			tint = 0;
+		}
+
+		switch (visual) {
+			case VISUAL_NORMAL:
+				Draw_Shape(*LogicalSurface, *converter, shapefile, shapenum, drawpoint, rect, ShapeFlags_Type(flags|SHAPE_CENTER|SHAPE_WIN_REL), NULL, zadjust - 2, zgrad, brightness, tint, zshapefile, zshapenum, zoff);
+				if (shadow) {
+					zadjust = -2 - TacticalMap->Z_Lepton_To_Pixel(Get_Height());
+					if (IsInTransport) {
+						drawpoint.Y -= 14;
+					}
+					Draw_Shape(*LogicalSurface, *converter, shapefile, shapenum + shapefile->Get_Count() / 2, drawpoint, rect, ShapeFlags_Type((flags & ~SHAPE_TRANSLUCENT75)|SHAPE_DARKEN|SHAPE_CENTER|SHAPE_WIN_REL), NULL, zadjust - 2);
+				}
+				break;
+
+			case VISUAL_INDISTINCT:
+				Draw_Shape(*LogicalSurface, *converter, shapefile, shapenum, drawpoint, rect, ShapeFlags_Type(flags|SHAPE_CENTER|SHAPE_WIN_REL), NULL, zadjust - 2, zgrad, brightness, tint, zshapefile, zshapenum, zoff);
+				if (shadow) {
+					zadjust = -2 - TacticalMap->Z_Lepton_To_Pixel(Get_Height());
+					flags = ShapeFlags_Type(flags & ~SHAPE_TRANSLUCENT75);
+					if (IsInTransport) {
+						drawpoint.Y -= 14;
+					}
+					Draw_Shape(*LogicalSurface, *converter, shapefile, shapenum + shapefile->Get_Count() / 2, drawpoint, rect, ShapeFlags_Type(flags|SHAPE_DARKEN|SHAPE_CENTER|SHAPE_WIN_REL), NULL, zadjust - 2);
+				}
+				break;
+
+			case VISUAL_DARKEN:
+			case VISUAL_RIPPLE:
+				Draw_Shape(*LogicalSurface, *converter, shapefile, shapenum, drawpoint, rect, ShapeFlags_Type(flags|SHAPE_CENTER|SHAPE_WIN_REL), NULL, zadjust - 2, zgrad, brightness, tint, zshapefile, zshapenum, zoff);
+				break;
+
+			case VISUAL_SHADOWY:
+				Draw_Shape(*LogicalSurface, *converter, shapefile, shapenum, drawpoint, rect, ShapeFlags_Type(flags|SHAPE_CENTER|SHAPE_WIN_REL), NULL, zadjust - 2, zgrad, brightness, tint, zshapefile, zshapenum, zoff);
+				break;
+		}
+	}
+}
+
 // FUNCTION: GAMEMD 0x00706640
 void TechnoClass::Draw_Voxel(VoxelDataStruct const & voxeldata, int frame, int key, VoxelIndexClass * cache, Rect const & xcliprect, Point2D const & point, Matrix3D const & matrix, int brightness, unsigned short tint, ShapeFlags_Type negflags) const
 {
@@ -5678,6 +6296,76 @@ void TechnoClass::Techno_Draw_Voxel_Shadow(VoxelDataStruct const & voxeldata, in
 	}
 }
 
+
+// FUNCTION: GAMEMD 0x00706ED0
+SurfaceRegion TechnoClass::Techno_Render_Voxel_Object(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & xcliprect, int frame, ShapeFlags_Type flags, int brightness, unsigned short tint) const
+{
+	Matrix3D mtx = matrix;
+	Matrix3D mtx2 = matrix;
+
+	if (Techno_Type_Class()->UseBuffer) {
+		VoxelDrawSystem::EnableZBuffer = 1;
+	}
+
+	VoxelLibrary * voxlib = voxeldata.VoxLib;
+	MotionLibrary * motlib = voxeldata.MotLib;
+
+	VoxelDrawSystem::Precalculate_Light(voxlib, 0, 0, mtx2, VoxelCameraMatrix, VoxelLightSource, 3.0f);
+	VoxelDrawSystem::Reset();
+
+	for (unsigned layer = 0; layer < voxlib->Get_Layer_Count(); layer++) {
+		if (motlib != NULL) {
+			Matrix3D mtx3 = motlib->Get_Layer_Matrix(layer, frame);
+			mtx = mtx2 * mtx3;
+		}
+		VoxelDrawSystem::Prep_For_Object(voxlib, layer, 0, VoxelCameraMatrix * mtx);
+	}
+
+	SurfaceRegion region = VoxelDrawSystem::Render();
+
+	if (IsBeingWarpedOut() || IsWarpingIn()) {
+		if (this != NULL && RTTI == RTTI_BUILDING && As_Building((TechnoClass *)this)->Class->DoubleThick) {
+			flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT75);
+		} else {
+			flags = ShapeFlags_Type(flags|SHAPE_TRANSLUCENT50);
+		}
+	}
+
+	if (House->Is_Player_Control() && IsDisguised()) {
+		flags = ShapeFlags_Type(GetDisguiseFlags(flags));
+	}
+
+	Rect cliprect = xcliprect;
+
+	if (LogicalSurface != EightBitSurface) {
+		if (SinkingYOffset > 0) {
+			cliprect = Intersect(cliprect, Rect(0, 0, TacticalRect.Width, SinkingYOffset - TacticalMap->TacPixelY));
+		} else if (IsSinking) {
+			((TechnoClass *)this)->SinkingYOffset = TacticalMap->TacPixelY + point.Y + region.Point.Y + region.Bounds.Height;
+		}
+	}
+
+	flags = ShapeFlags_Type(flags & ~SHAPE_REMAP);
+	ConvertClass * converter = NULL;
+	if (RTTI == RTTI_UNIT && ((UnitClass const *)this)->TerrainPalette) {
+		converter = EightBitDrawer;
+	} else {
+		converter = GetRemapColour();
+	}
+
+	int predoffset = 0;
+	if (flags & SHAPE_PREDATOR) {
+		predoffset = Get_Predator_Offset();
+	}
+
+	Blit_Block(*LogicalSurface, *converter, *VoxelDrawSystem::Get_Surface(), region.Bounds, region.Point + point, cliprect, NULL, converter->Blitter_From_Flags(flags), Get_Z_Adjust(), Get_Z_Gradient(), brightness, tint, predoffset);
+
+	if (Techno_Type_Class()->UseBuffer) {
+		VoxelDrawSystem::EnableZBuffer = 0;
+	}
+
+	return(region);
+}
 
 // FUNCTION: GAMEMD 0x00707280
 SurfaceRegion TechnoClass::Techno_Render_Voxel_Shadow(VoxelDataStruct const & voxeldata, Matrix3D const & matrix, Point2D const & point, Rect const & cliprect, int layer_index, ShapeFlags_Type flags, bool cached, Surface * surface, int shadow_x, int shadow_y) const

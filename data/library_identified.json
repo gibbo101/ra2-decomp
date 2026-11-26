@@ -1024,6 +1024,22 @@
           "object": "wcstol.obj"
         }
       ]
+    },
+    {
+      "address": "0x007CAF30",
+      "symbol": "_strchr",
+      "library": "LIBCMT.LIB",
+      "object": "strchr.obj",
+      "size": 6,
+      "kind": "incoming",
+      "anchors": [
+        {
+          "address": "0x007DC378",
+          "symbol": "__mbschr",
+          "library": "LIBCMT.LIB",
+          "object": "mbschr.obj"
+        }
+      ]
     }
   ],
   "blocks": {

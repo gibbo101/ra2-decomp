@@ -93,6 +93,8 @@ class LocomotionClass : public IPersistStream, public ILocomotion
 
 		HRESULT STDMETHODCALLTYPE Load(IStream * stream) const;
 
+		static bool Is_Cache_Key(int const * key) {return(key != NULL && *key != -1);}
+
 	protected:
 
 		FootClass *Owner;

@@ -205,7 +205,7 @@ Matrix3D ShipLocomotionClass::Get_Slope_Matrix(void) const
 {
 	Matrix3D mtx(true);
 
-	if (!RampTimer.Has_Completed2()) {
+	if (RampTimer.Progress() < 1.0) {
 		mtx = ::Get_Slope_Transition_Matrix(PreviousRamp, CurrentRamp, Get_Slope_Ratio());
 	} else if (CurrentRamp) {
 		mtx = ::Get_Slope_Matrix(CurrentRamp);
@@ -232,6 +232,8 @@ void ShipLocomotionClass::Set_Slope(int ramp)
 }
 
 static const double _deaccel = 0.3f;
+static const double _sinking = 0.1f;
+static const double _sinking_scale = 0.0015f;
 
 // FUNCTION: GAMEMD 0x0069F250
 void STDMETHODCALLTYPE ShipLocomotionClass::Force_New_Slope(int ramp)
@@ -329,6 +331,58 @@ BOOL ShipLocomotionClass::Is_Angled(void) const
 	return(false);
 }
 
+// FUNCTION: GAMEMD 0x0069F670
+Matrix3DStruct STDMETHODCALLTYPE ShipLocomotionClass::Draw_Matrix(int *key)
+{
+	Matrix3DStruct m;
+
+	if (!Is_Angled()) {
+		Matrix3D m1, m2;
+		m1.Make_Identity();
+		m2.Make_Identity();
+
+		float val = LinkedTo->Techno_Type_Class()->VoxelCenterY;
+		float val2 = LinkedTo->Techno_Type_Class()->VoxelCenterX;
+
+		float fcos = fastmath::cos(LinkedTo->AngleRotatedForwards);
+		float fsin = fastmath::sin(LinkedTo->AngleRotatedForwards);
+
+		float scos = fastmath::cos(LinkedTo->AngleRotatedSideways);
+		float ssin = fastmath::sin(LinkedTo->AngleRotatedSideways);
+
+		int num = fabs(ssin) * val + fabs(fsin) * val2;
+
+		int x_shift = (int)(val2 - (float)(int)(fcos * val2));
+		int x_offset = x_shift;
+		int y_offset = (int)(val - (float)(int)(scos * val));
+		if (LinkedTo->AngleRotatedForwards < 0.0f) {
+			x_offset = -x_shift;
+		}
+		if (LinkedTo->AngleRotatedSideways > 0.0f) {
+			y_offset = -y_offset;
+		}
+
+		m1.Translate_Z(num);
+		m2.Translate_X(x_offset);
+		m2.Translate_Y(y_offset);
+		m2.Rotate_X(LinkedTo->AngleRotatedSideways);
+		m2.Rotate_Y(LinkedTo->AngleRotatedForwards);
+
+		if (key) {
+			*key = -1;
+		}
+
+		m = (Matrix3DStruct &)(((m1 * Get_Slope_Matrix()) * BASECLASS::Draw_Matrix(key)) * m2);
+	} else {
+		if (Is_Cache_Key(key)) {
+			*key = *key << 6;
+			*key += CurrentRamp;
+		}
+
+		m = (Matrix3DStruct &)(Get_Slope_Matrix() * BASECLASS::Draw_Matrix(key));
+	}
+	return(m);
+}
 // FUNCTION: GAMEMD 0x0069FB20
 Matrix3DStruct STDMETHODCALLTYPE ShipLocomotionClass::Shadow_Matrix(int *key)
 {
@@ -510,6 +564,400 @@ bool ShipLocomotionClass::Start_Driver(Coord const & headto)
 void STDMETHODCALLTYPE ShipLocomotionClass::Do_Turn(DirStruct coord)
 {
 	LinkedTo->PrimaryFacing.Set_Desired(coord);
+}
+
+// FUNCTION: GAMEMD 0x006A05F0
+bool ShipLocomotionClass::While_Moving(bool just_started)
+{
+	if ((!IsDriving || TrackNumber == -1) && LinkedTo->Path[0] != FACING_COUNT || (IsRotating && !LinkedTo->TClass->IsTurretEquipped)) {
+		SpeedAccum = 0;
+		return(false);
+	}
+	if (LinkedTo->TClass->IsAccelerates) {
+		bool not_passive = LinkedTo->RTTI != RTTI_UNIT || !((UnitClass *)LinkedTo)->Class->Passive;
+		if (TrackNumber < BACKUP_INTO_REFINERY && not_passive) {
+			Coord dest_coord = DestinationCoord;
+			dest_coord.Z = Map.Get_Height_GL(dest_coord) + (Map[dest_coord].IsUnderBridge ? BRIDGE_LEPTON_HEIGHT : 0);
+			int distance = (LinkedTo->PositionCoord - dest_coord).Length();
+
+			bool forced_speed = false;
+			double speed = LinkedTo->Speed;
+
+			TechnoTypeClass const * tclass = LinkedTo->TClass;
+
+			if (distance < tclass->SlowdownDistance) {
+				forced_speed = true;
+				speed = MAX(_deaccel, speed - tclass->MaxSpeed * tclass->DeaccelerationFactor);
+			} else if (LinkedTo->IsSinking) {
+				speed = MAX(_sinking, speed - tclass->MaxSpeed * _sinking_scale);
+				forced_speed = true;
+			}
+
+			if (LinkedTo->IsCrushing) {
+				TargetSpeed = MIN(TargetSpeed, 0.2);
+				LinkedTo->Set_Speed(TargetSpeed);
+			} else if (forced_speed) {
+				LinkedTo->Set_Speed(speed);
+			} else if (LinkedTo->Speed < TargetSpeed) {
+				LinkedTo->Set_Speed(MIN(TargetSpeed, LinkedTo->Speed + tclass->AccelerationFactor));
+			} else if (LinkedTo->Speed > TargetSpeed) {
+				LinkedTo->Set_Speed(MAX(TargetSpeed, LinkedTo->Speed - tclass->MaxSpeed * tclass->DeaccelerationFactor));
+			}
+
+			if (LinkedTo->RTTI == RTTI_UNIT) {
+				UnitClass * unit = (UnitClass *)LinkedTo;
+				UnitClass * following = unit->FollowingMe;
+				if (following != NULL) {
+					do {
+						following->Set_Speed(LinkedTo->Speed);
+						following = following->FollowingMe;
+					} while (following && following != following->FollowingMe);
+				}
+			}
+		}
+	} else {
+		LinkedTo->Set_Speed(TargetSpeed);
+	}
+
+	int maxspeed = LinkedTo->Current_Speed();
+
+	int actual;
+	actual = SpeedAccum + (just_started ? 0 : maxspeed);
+
+	FacingType nextface;
+	nextface = LinkedTo->Path[0];
+
+	if (nextface == FACING_COUNT && TrackNumber == -1) {
+		LinkedTo->Mark(MARK_UP);
+		Stop_Driver();
+
+		TubeType tubenum = (TubeType)LinkedTo->Get_Cell_Ptr()->Tube;
+		if (tubenum >= TUBE_FIRST && tubenum < Tubes.Count()) {
+			TubeClass * tube = Tubes[tubenum];
+			Cell c = tube->Exit;
+			HeadToCoord = c.As_Coord();
+			memcpy((char*)&LinkedTo->Path, (char*)&LinkedTo->Path[1], sizeof(LinkedTo->Path[0]) * (CONQUER_PATH_MAX-1));
+			LinkedTo->Path[CONQUER_PATH_MAX-1] = FACING_NONE;
+			LinkedTo->CurrentTube = tubenum;
+			LinkedTo->CurrentTubeDir = FACING_FIRST;
+			Cell entry = tube->Enter;
+			LinkedTo->LastTubeCoord = Map[Adjacent_Cell(entry, tube->Dirs[0])].Cell_Coord();
+
+			int current_height = Map.Get_Height_GL(LinkedTo->PositionCoord);
+			Cell exit = tube->Exit;
+			int count = tube->Count;
+			LinkedTo->LastTubeCoord.Z = current_height + (Map.Get_Height_GL(exit) - current_height) / count;
+			IsDriving = true;
+			TrackNumber = -1;
+		} else {
+			LinkedTo->Path[0] = FACING_NONE;
+			TrackNumber = -1;
+			HeadToCoord = COORD_NONE;
+			Stop_Driver();
+		}
+		return(false);
+	}
+
+	if (actual > ((PIXEL_LEPTON_W + PIXEL_LEPTON_H) / 2)) {
+		TurnTrackType	const * track;
+		TrackType		const	* ptr;
+		int				tracknum;
+		bool				adj;
+
+		track = &TrackControl[TrackNumber];
+		if (IsOnShortTrack) {
+			tracknum = track->StartTrack;
+		} else {
+			tracknum = track->Track;
+		}
+		ptr = RawTracks[tracknum-1].Track;
+
+		if (nextface < FACING_NONE || nextface > FACING_COUNT) {
+			LinkedTo->Path[0] = FACING_NONE;
+			return(false);
+		}
+
+		adj = false;
+		if (nextface != FACING_COUNT && nextface != FACING_NONE && DirType(track->Facing).As_Dir8() != nextface) {
+			adj = true;
+		}
+
+		while (actual > (PIXEL_LEPTON_W + PIXEL_LEPTON_H) / 2) {
+			Point2D	offset;
+			Dir256	dir;
+
+			actual -= (PIXEL_LEPTON_W + PIXEL_LEPTON_H) / 2;
+
+			offset = ptr[TrackIndex].Offset;
+			if (offset != Point2D(0, 0) || !TrackIndex) {
+				if (LinkedTo->Occupies_Cells()) {
+					LinkedTo->Clear_Occupy_Bit(LinkedTo->PositionCoord);
+					LinkedTo->IsOccupyingCell = false;
+					LinkedTo->IsToPathAroundBlockage = false;
+				}
+
+				Cell oldcell;
+				if (!TrackIndex) {
+					oldcell = LinkedTo->PositionCell;
+				} else {
+					dir = ptr[TrackIndex - 1].Facing;
+					Point2D prevoffset = ptr[TrackIndex - 1].Offset;
+					oldcell = Coord(Smooth_Turn(prevoffset, dir), 0).As_Cell();
+				}
+
+				dir = ptr[TrackIndex].Facing;
+				Coord newcoord = Coord(Smooth_Turn(offset, dir), 0);
+				Cell step_cell = newcoord.As_Cell();
+				Cell current_cell = LinkedTo->PositionCoord.As_Cell();
+				Cell newcell = step_cell;
+
+				if (step_cell != current_cell) {
+					LinkedTo->Mark(MARK_UP);
+					LinkedTo->PositionCoord = newcoord;
+					CellClass * oldcellptr = &Map[oldcell];
+					CellClass * newcellptr = &Map[newcell];
+					if (newcellptr->Height == oldcellptr->Height - BRIDGE_CELL_HEIGHT && newcellptr->IsUnderBridge) {
+						LinkedTo->IsOnBridge = true;
+					}
+					if (!newcellptr->IsUnderBridge && oldcellptr->IsUnderBridge) {
+						LinkedTo->IsOnBridge = false;
+					}
+					if (LinkedTo->TClass->IsTrain) {
+						UnitClass * unit = (UnitClass *)LinkedTo;
+						if (!unit->IsFollowing) {
+							bool is_bridge = LinkedTo->IsOnBridge || (LinkedTo->PositionCoord.Z >= (Map.Get_Height_GL(LinkedTo->PositionCoord) + BRIDGE_LEPTON_HEIGHT));
+							ObjectClass * occupier = is_bridge ? Map[newcell].Cell_Bridge_Occupier() : Map[newcell].Cell_Occupier();
+							while (occupier != NULL) {
+								ObjectClass * next = occupier->Next;
+								if (!occupier->IsCrushable(LinkedTo)) {
+									int strength = 10000;
+									occupier->Take_Damage(strength, 0, Rule->C4Warhead, NULL, true, true);
+									strength = 20;
+									unit->Take_Damage(strength, 0, Rule->C4Warhead, NULL, true, false);
+								}
+								occupier = next;
+							}
+						}
+					}
+					if (!LinkedTo->IsActive) return(false);
+					LinkedTo->Mark(MARK_DOWN);
+
+					if (newcellptr->Overlay != OVERLAY_NONE) {
+						OverlayTypeClass * otype = OverlayTypes[newcellptr->Overlay];
+						if (IsRocking && (LinkedTo->TClass->IsCrusher || LinkedTo->Has_Ability(ABILITY_CRUSHER)) && otype->HeapID == OVERLAY_SANDBAG_WALL) {
+							LinkedTo->IsCrushing = true;
+							if (LinkedTo->TClass->IsTiltsWhenCrushes) {
+								LinkedTo->RockingForwardsPerFrame = -0.02f;
+							}
+						}
+					}
+				} else {
+					bool down = LinkedTo->IsDown;
+					LinkedTo->IsDown = false;
+					LinkedTo->PositionCoord = newcoord;
+					LinkedTo->IsDown = down;
+				}
+
+				if (!LinkedTo->IsActive) {
+					return(false);
+				}
+
+				bool down = LinkedTo->IsDown;
+				LinkedTo->IsDown = false;
+				LinkedTo->HeightAGL = 0;
+				LinkedTo->IsDown = down;
+
+				LinkedTo->PrimaryFacing.Set(dir);
+
+				if (TrackIndex && RawTracks[tracknum-1].Cell == TrackIndex) {
+					LinkedTo->Clear_Occupy_Bit(LinkedTo->PositionCoord);
+				}
+
+				if (nextface != FACING_COUNT && nextface != FACING_NONE && adj && RawTracks[tracknum-1].Jump == TrackIndex && TrackIndex) {
+					TurnTrackType const * newtrack;
+					int	tnum;
+
+					tnum = (int)(DirType(track->Facing).As_Dir8() * FACING_COUNT) + (int)nextface;
+					newtrack = &TrackControl[tnum];
+					if (newtrack->Track && RawTracks[newtrack->Track-1].Entry) {
+						double oldspeed = LinkedTo->Speed;
+
+						Coord c = Adjacent_Cell(HeadToCoord, nextface);
+
+						switch (LinkedTo->Can_Enter_Cell(&Map[c.As_Cell()], nextface, LinkedTo->Get_Cell_Height())) {
+							case MOVE_OK:
+							case MOVE_MOVING_BLOCK:
+								if (LinkedTo->RTTI == RTTI_UNIT && !((UnitClass *)LinkedTo)->Class->Passive) break;
+								IsOnShortTrack = false;
+								TrackNumber = tnum;
+								track = newtrack;
+
+								tracknum = track->Track;
+								TrackIndex = RawTracks[tracknum-1].Entry-1;
+								ptr = RawTracks[tracknum-1].Track;
+								adj = false;
+
+								Stop_Driver();
+								IsDriving = true;
+								LinkedTo->Per_Cell_Process(PCP_END);
+								IsDriving = false;
+								if (!LinkedTo->IsActive || LinkedTo->IsInLimbo || LinkedTo->IsFalling) return(false);
+								if (Start_Driver(c)) {
+									LinkedTo->Set_Speed(oldspeed);
+									memcpy((char*)&LinkedTo->Path, (char*)&LinkedTo->Path[1], sizeof(LinkedTo->Path[0]) * (CONQUER_PATH_MAX-1));
+									LinkedTo->Path[CONQUER_PATH_MAX-1] = FACING_NONE;
+								}
+								break;
+
+							case MOVE_CLOAK:
+								Map[c].Shimmer();
+								break;
+
+							case MOVE_CLOSED_GATE: {
+									Cell gate = c.As_Cell();
+									Map.Try_Open_Gate(LinkedTo, gate);
+								}
+								break;
+
+							case MOVE_TEMP: {
+									bool bridge;
+									if (!Map[c].IsUnderBridge || abs(LinkedTo->PositionCoord.Z / LEVEL_LEPTON_H - Map[c].Height) <= 2) {
+										bridge = false;
+									} else {
+										bridge = true;
+									}
+									Map[HeadToCoord].Incoming(COORD_NONE, true, true, bridge);
+								}
+								break;
+						}
+					}
+				}
+				TrackIndex++;
+
+			} else {
+				Coord dc = HeadToCoord - LinkedTo->PositionCoord;
+				int d = abs(dc.X) + abs(dc.Y);
+				actual += (int)((1.0 - (double)d / 11.0) * 7.0);
+				LinkedTo->IsOccupyingCell = true;
+				LinkedTo->IsToPathAroundBlockage = false;
+
+				Cell poscell = LinkedTo->PositionCoord.As_Cell();
+				if (poscell != HeadToCoord.As_Cell()) {
+
+					LinkedTo->Mark(MARK_UP);
+					LinkedTo->PositionCoord = HeadToCoord;
+					LinkedTo->HeightAGL = 0;
+					LinkedTo->Mark(MARK_DOWN);
+				} else {
+					bool down = LinkedTo->IsDown;
+					LinkedTo->IsDown = false;
+					LinkedTo->PositionCoord = HeadToCoord;
+					LinkedTo->HeightAGL = 0;
+					LinkedTo->IsDown = down;
+				}
+
+				Stop_Driver();
+				TrackNumber = -1;
+				TrackIndex = NULL;
+
+				bool arrived = false;
+				AbstractClass * target = LinkedTo->NavCom;
+				if (target != NULL && LinkedTo->PositionCell == target->Destination_Coord(LinkedTo).As_Cell()) {
+					if (abs(LinkedTo->Destination_Coord(LinkedTo).Z - DestinationCoord.Z) < 2 * LEVEL_LEPTON_H) {
+						arrived = true;
+						DestinationCoord = COORD_NONE;
+						Stop_Driver();
+						IsDriving = false;
+					}
+				}
+
+				LinkedTo->Per_Cell_Process(PCP_END);
+				if (!LinkedTo->IsActive || LinkedTo->IsInLimbo || LinkedTo->IsFalling) return(true);
+
+				if (arrived) {
+					LinkedTo->AbortMotion();
+					LinkedTo->Path[0] = FACING_NONE;
+					if (LinkedTo->Mission == MISSION_MOVE && LinkedTo->Enter_Idle_Mode()) {
+						return(true);
+					}
+				}
+
+				if (LinkedTo->Is_Docked_For_Repair()) {
+					return(true);
+				}
+
+				if (!LinkedTo->IsActive) return(false);
+
+				break;
+			}
+		}
+	}
+
+	SpeedAccum = actual;
+
+	if (actual > 0 && TrackNumber > -1) {
+		TurnTrackType	const * track;
+		TrackType		const	* ptr;
+		int				tracknum;
+
+		track = &TrackControl[TrackNumber];
+		if (IsOnShortTrack) {
+			tracknum = track->StartTrack;
+		} else {
+			tracknum = track->Track;
+		}
+		ptr = RawTracks[tracknum-1].Track;
+
+		Dir256	dir;
+		Point2D offset = ptr[TrackIndex].Offset;
+		if (offset != Point2D(0, 0) || !TrackIndex) {
+
+			Coord oldcoord = LinkedTo->PositionCoord;
+
+			dir = ptr[TrackIndex].Facing;
+			Coord movement(Smooth_Turn(offset, dir) - LinkedTo->PositionCoord, 0);
+			Coord stepcoord = movement + LinkedTo->PositionCoord;
+			CellClass * stepcellptr = &Map[stepcoord];
+
+			Coord partial(0, 0, 0);
+			movement = Lerp(partial, movement, SpeedAccum / 7.0);
+			Coord partialcoord = oldcoord + movement;
+
+			CellClass * oldcellptr = &Map[oldcoord];
+			CellClass * partialcellptr = &Map[partialcoord];
+
+			Coord coord = LinkedTo->PositionCoord;
+
+			if (partialcellptr != stepcellptr && partialcellptr != oldcellptr) {
+				if (SpeedAccum > 3) {
+					coord = stepcoord;
+				}
+			} else {
+				coord = partialcoord;
+			}
+
+			CellClass * newcellptr = &Map[Coord(coord)];
+
+			if (coord.As_Cell() != LinkedTo->PositionCoord.As_Cell()) {
+				LinkedTo->Mark(MARK_UP);
+				LinkedTo->PositionCoord = coord;
+				if (newcellptr->Height == oldcellptr->Height - BRIDGE_CELL_HEIGHT && newcellptr->IsUnderBridge) {
+					LinkedTo->IsOnBridge = true;
+				}
+				if (!newcellptr->IsUnderBridge && oldcellptr->IsUnderBridge) {
+					LinkedTo->IsOnBridge = false;
+				}
+				LinkedTo->Mark(MARK_DOWN);
+			} else {
+				bool down = LinkedTo->IsDown;
+				LinkedTo->IsDown = false;
+				LinkedTo->PositionCoord = coord;
+				LinkedTo->IsDown = down;
+			}
+		}
+	}
+
+	return(false);
 }
 
 // FUNCTION: GAMEMD 0x006A1C80

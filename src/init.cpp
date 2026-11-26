@@ -15,7 +15,6 @@
 #include "_logic.h"
 #include "_map.h"
 #include "_mixfile.h"
-#include "_mono.h"
 #include "_palette.h"
 #include "_pk.h"
 #include "_rand.h"
@@ -198,14 +197,14 @@ void __fastcall FUN_0052FEC0(Surface * surface, bool flag);
 void __fastcall FUN_0046CE10(CCINIClass * ini);
 void Play_Movie(char const * name, ThemeType theme, bool clrscrn_after, bool stretch, bool clrscrn_before, bool fullscreen);
 #include "audtimer.h"
-struct Game {
-	static bool __cdecl CallBack(void);
-	static int Seed;
-	static unsigned char RecordingFlag;
-	static HWND hWnd;
-	static HINSTANCE hInstance;
-	static int ObserverMode;
-};
+namespace Game {
+	bool __cdecl CallBack(void);
+	extern int Seed;
+	extern unsigned char RecordingFlag;
+	extern HWND hWnd;
+	extern HINSTANCE hInstance;
+	extern int ObserverMode;
+}
 
 bool FUN_0052CB50(void);
 void Init_Random(void);
@@ -4344,6 +4343,118 @@ void Execute_Command(char const * name)
 	}
 }
 
+namespace Game { extern bool bVideoBackBuffer; }
+
+static inline int System_Memory_Flag(bool system_memory)
+{
+	if (system_memory) {
+		return(1);
+	}
+	return(0);
+}
+
+// FUNCTION: GAMEMD 0x00533FD0
+bool Allocate_Surfaces(const Rect & hidden_rect, const Rect & composite_rect, const Rect & tile_rect, const Rect & sidebar_rect, bool hidden_first)
+{
+	DebugString("Allocating new surfaces\n");
+
+	if (AlternateSurface != NULL) {
+		DebugString("Deleting AlternateSurface\n");
+		delete AlternateSurface;
+		AlternateSurface = NULL;
+	}
+
+	if (HiddenSurface != NULL) {
+		DebugString("Deleting HiddenSurface\n");
+		delete HiddenSurface;
+		HiddenSurface = NULL;
+	}
+
+	if (CompositeSurface != NULL) {
+		DebugString("Deleting CompositeSurface\n");
+		delete CompositeSurface;
+		CompositeSurface = NULL;
+	}
+
+	if (TileSurface != NULL) {
+		DebugString("Deleting TileSurface\n");
+		delete TileSurface;
+		TileSurface = NULL;
+	}
+
+	if (SidebarSurface != NULL) {
+		DebugString("Deleting SidebarSurface\n");
+		delete SidebarSurface;
+		SidebarSurface = NULL;
+	}
+
+	bool tile_in_system = !Game::bVideoBackBuffer;
+	bool sidebar_in_system = !Options.AllowVRAMSidebar;
+
+	if (hidden_first && hidden_rect.Is_Valid()) {
+		HiddenSurface = new DSurface(hidden_rect.Width, hidden_rect.Height, false, false);
+		HiddenSurface->Fill(0);
+
+		DebugString("HiddenSurface (%dx%d) %s\n", hidden_rect.Width, hidden_rect.Height,
+					((DSurface *)HiddenSurface)->In_Video_Ram() ? "VRAM" : "SYSTEM MEMORY");
+	}
+
+	if (composite_rect.Is_Valid()) {
+		CompositeSurface = new DSurface(composite_rect.Width, composite_rect.Height, System_Memory_Flag(tile_in_system), true);
+		CompositeSurface->Fill(0);
+
+		DebugString("CompositeSurface (%dx%d) %s ENABLE_3D\n", composite_rect.Width, composite_rect.Height,
+					((DSurface *)CompositeSurface)->In_Video_Ram() ? "VRAM" : "SYSTEM MEMORY");
+	}
+
+	if (tile_rect.Is_Valid()) {
+		TileSurface = new DSurface(tile_rect.Width, tile_rect.Height, System_Memory_Flag(tile_in_system), true);
+		TileSurface->Fill(0);
+
+		DebugString("TileSurface (%dx%d) %s ENABLE_3D\n", tile_rect.Width, tile_rect.Height,
+					((DSurface *)TileSurface)->In_Video_Ram() ? "VRAM" : "SYSTEM MEMORY");
+	}
+
+	if ((CompositeSurface != NULL) && (TileSurface != NULL)) {
+		bool is_composite_surf_in_vram = ((DSurface *)CompositeSurface)->In_Video_Ram();
+		bool is_tile_surf_in_vram = ((DSurface *)TileSurface)->In_Video_Ram();
+
+		if (is_composite_surf_in_vram ^ is_tile_surf_in_vram) {
+			delete CompositeSurface;
+			delete TileSurface;
+			DebugString("Moving TileSurface and CompositeSurface into system memory\n");
+			CompositeSurface = new DSurface(composite_rect.Width, composite_rect.Height, true, true);
+			TileSurface = new DSurface(tile_rect.Width, tile_rect.Height, true, true);
+		}
+	}
+
+	if (sidebar_rect.Is_Valid()) {
+		SidebarSurface = new DSurface(sidebar_rect.Width, sidebar_rect.Height, System_Memory_Flag(sidebar_in_system), false);
+		SidebarSurface->Fill(0);
+
+		DebugString("SidebarSurface (%dx%d) %s\n", sidebar_rect.Width, sidebar_rect.Height,
+					((DSurface *)SidebarSurface)->In_Video_Ram() ? "VRAM" : "SYSTEM MEMORY");
+	}
+
+	if (!hidden_first && hidden_rect.Is_Valid()) {
+		HiddenSurface = new DSurface(hidden_rect.Width, hidden_rect.Height, false, false);
+		HiddenSurface->Fill(0);
+
+		DebugString("HiddenSurface (%dx%d) %s\n", hidden_rect.Width, hidden_rect.Height,
+					((DSurface *)HiddenSurface)->In_Video_Ram() ? "VRAM" : "SYSTEM MEMORY");
+	}
+
+	if (hidden_rect.Is_Valid()) {
+		AlternateSurface = new DSurface(hidden_rect.Width, hidden_rect.Height, true, false);
+		AlternateSurface->Fill(0);
+
+		DebugString("AlternateSurface (%dx%d) %s\n", hidden_rect.Width, hidden_rect.Height,
+					((DSurface *)AlternateSurface)->In_Video_Ram() ? "VRAM" : "SYSTEM MEMORY");
+	}
+
+	return(true);
+}
+
 void __fastcall FUN_0069E210(void);
 void __fastcall FUN_004C29E0(void);
 void __fastcall FUN_00550000(void);
@@ -4541,7 +4652,7 @@ extern MFCD * DAT_00884E10;
 extern MFCD * DAT_00884E20;
 extern MFCD * DAT_00884E1C;
 void const * __fastcall FUN_005B40B0(char const * name, bool flag);
-void __fastcall FUN_006267A0(TheaterType theater);
+void __fastcall Set_Scheme_Table_Theater(TheaterType theater);
 void __fastcall FUN_00717840(void);
 
 // FUNCTION: GAMEMD 0x005349C0
@@ -4648,7 +4759,7 @@ void __fastcall Init_Theater(TheaterType theater)
 			Call_Back();
 		}
 
-		FUN_006267A0(theater);
+		Set_Scheme_Table_Theater(theater);
 		FUN_00717840();
 		Session.Update_Progress(25);
 	}

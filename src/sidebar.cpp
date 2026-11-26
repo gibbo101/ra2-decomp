@@ -217,16 +217,18 @@ extern int DAT_00B0B500;
 void SidebarClass::FUN_006A5090(void)
 {
 	int side = Scen->PlayerSideIndex;
-	int span = SidebarRect.Y * 3 + side * 5 + SidebarRect.Y * 7 + side * 9 + SidebarRect.Y * 11 + side * 13;
 
 	if (side == 0) {
 		int y = SidebarRect.Y;
 		DAT_00B0B4E4 = 0x40;
 		DAT_00B0B4F0 = 0x1d;
 		DAT_00B0B4FC = 0x3f;
-		DAT_00B0B4E0 = y + 8;
-		DAT_00B0B4EC = DAT_00B0B4E0 + 0x1f;
-		DAT_00B0B4F8 = DAT_00B0B4EC + 0x1e;
+		int repair_y = y + 8;
+		DAT_00B0B4E0 = repair_y;
+		int tabs_y = DAT_00B0B4E0 + 0x1f;
+		DAT_00B0B4EC = tabs_y;
+		int cameos_y = DAT_00B0B4EC + 0x1e;
+		DAT_00B0B4F8 = cameos_y;
 	} else {
 		int y;
 		if (side == 1) {
@@ -235,10 +237,12 @@ void SidebarClass::FUN_006A5090(void)
 			y = SidebarRect.Y + 7;
 		}
 		DAT_00B0B4E0 = y;
-		DAT_00B0B4EC = y + 0x20;
+		int tabs_y = y + 0x20;
+		DAT_00B0B4EC = tabs_y;
 		DAT_00B0B4E4 = 0x34;
 		DAT_00B0B4F0 = 0x20;
-		DAT_00B0B4F8 = DAT_00B0B4EC + 0x1e;
+		int cameos_y = DAT_00B0B4EC + 0x1e;
+		DAT_00B0B4F8 = cameos_y;
 		DAT_00B0B4FC = 0x40;
 	}
 }
@@ -1008,6 +1012,77 @@ void SidebarClass::FUN_006A7760(int tab)
 	TabButtons[tab].StopFlashing();
 }
 
+// FUNCTION: GAMEMD 0x006A7780
+void SidebarClass::AI(KeyNumType & input, Point2D const & xy)
+{
+	Point2D const sidebar_origin(SidebarRect.X, SidebarRect.Y);
+	Point2D relative = xy - Point2D(sidebar_origin.X, 0);
+	if (!Unsorted::ArmageddonMode) {
+		Activate(1);
+		for (int index = 0; index < STRIPS; index++) {
+			Column[index].AI(input, relative);
+		}
+	}
+	if (IsSidebarActive) {
+		if (unknown_5398 == 1) {
+			int frame = ++unknown_5394;
+			if (frame > ((ShapeSet const *)DAT_00B0B478)->Get_Count()) {
+				unknown_5398 = 0;
+				unknown_5394 = 0;
+			}
+		} else if (unknown_5398 == -1) {
+			int frame = --unknown_5394;
+			if (frame < 0) {
+				unknown_5398 = 0;
+				unknown_5394 = 0;
+			}
+		}
+		FUN_006A6290(PlayerPtr->CurBuildings > 0);
+		if (input == (102 | KN_BUTTON)) {
+			VocClass::PlayGlobal(Rule->GUIMainButtonSound, 1.0f, 0x2000, NULL);
+			Sell_Mode_Control(-1);
+		} else if (input == (101 | KN_BUTTON)) {
+			VocClass::PlayGlobal(Rule->GUIMainButtonSound, 1.0f, 0x2000, NULL);
+			Repair_Mode_Control(-1);
+		} else if (input < (203 | KN_BUTTON) || input >= (207 | KN_BUTTON)) {
+			int key = input & ~KN_UNK;
+			if (key == (Upgrade.ID | KN_BUTTON)) {
+				Upgrade.IsPressed = false;
+				bool paged = Column[ActiveTabIndex].Page(false);
+				if (!paged) {
+					VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000, NULL);
+				} else {
+					VocClass::PlayGlobal(Rule->GUITabSound, 1.0f, 0x2000, NULL);
+				}
+			} else if (key == (Waypoint.ID | KN_BUTTON)) {
+				Waypoint.IsPressed = false;
+				bool paged = Column[ActiveTabIndex].Page(true);
+				if (!paged) {
+					VocClass::PlayGlobal(Rule->ScoldSound, 1.0f, 0x2000, NULL);
+				} else {
+					VocClass::PlayGlobal(Rule->GUITabSound, 1.0f, 0x2000, NULL);
+				}
+			}
+		} else {
+			SetTab(input - (203 | KN_BUTTON));
+			VocClass::PlayGlobal(Rule->GUITabSound, 1.0f, 0x2000, NULL);
+		}
+		bool redraw = false;
+		for (int index = 0; index < STRIPS; index++) {
+			if (TabButtons[index].AI()) redraw = true;
+		}
+		if (redraw) {
+			IsToRedraw = true;
+			IsToBlitSidebar = true;
+			Map.IsForceCompleteRedraw = true;
+			Flag_To_Redraw();
+		}
+	}
+	if (!IsSellMode && Power.IsOn) Power.Turn_Off();
+	if (!IsRepairMode && Repair.IsOn) Repair.Turn_Off();
+	BASECLASS::AI(input, xy);
+}
+
 // FUNCTION: GAMEMD 0x006A7D20
 void SidebarClass::Recalc(void)
 {
@@ -1646,6 +1721,344 @@ int SidebarClass::StripClass::FUN_006A94F0(int index)
 		}
 	}
 	return progress;
+}
+
+extern RGBClass DAT_00B0FA1C;
+extern wchar_t DAT_00B078B0[];
+ConvertClass * FUN_0072F4D0(void);
+void __fastcall Print_Cameo_Text(wchar_t const * text, Point2D const & point, Rect const & window, int width);
+void __fastcall ODFillRectTrans(Rect * rect, Surface * surface, unsigned short color, int alpha);
+
+// FUNCTION: GAMEMD 0x006A9540
+void SidebarClass::StripClass::Draw_It(bool complete)
+{
+	if (AllowedToDraw) {
+		if (IsToRedraw || complete) {
+			IsToRedraw = false;
+			IsToBlitSidebar = true;
+			Rect cliprect;
+			cliprect.X = 0;
+			cliprect.Y = 0;
+			cliprect.Width = SidebarSurface->Get_Width();
+			cliprect.Height = SidebarSurface->Get_Height();
+
+			bool inproduction = false;
+			int scan = 0;
+			if (PlayerPtr == DAT_00AC1198) {
+				scan = BuildableCount;
+			}
+			for (; scan < BuildableCount; scan++) {
+				if (Buildables[scan].unknown_10 == 1 || Buildables[scan].unknown_10 == 2) {
+					inproduction = true;
+					break;
+				}
+			}
+
+			int rows = Map.Max_Visible() + (IsScrolling ? 1 : 0);
+			int columns = 2;
+			int row = 0;
+
+			if (PlayerPtr == DAT_00AC1198) {
+				row = rows;
+			}
+			for (; row < rows; row++) {
+				for (int col = 0; col < columns; col++) {
+					bool redraw = complete;
+					int stage = 0;
+					ShapeSet const * shapefile = NULL;
+					FactoryClass * factory = NULL;
+					wchar_t const * state = NULL;
+					int index = (row + TopIndex) * columns + col;
+					bool production = false;
+					bool completed = false;
+					bool darken = false;
+					int x = X + SidebarClass::FUN_006A8080(col) - SidebarRect.X;
+					int y = Y + SidebarClass::FUN_006A8090(row);
+					bool hover = false;
+					SelectClass & button = SelectButton[ID * 60 + row * columns + col];
+
+					if (IsScrolling) {
+						y -= DAT_00B0B500 - Slid;
+					}
+
+					wchar_t const * name = NULL;
+					TechnoTypeClass const * obj = NULL;
+
+					if (index < BuildableCount) {
+						hover = button.FUN_006ABA20();
+
+						if (Buildables[index].BuildableType != RTTI_SPECIAL) {
+							obj = Fetch_Techno_Type(Buildables[index].BuildableType, Buildables[index].BuildableID);
+							if (obj != NULL) {
+								name = obj->UIName;
+
+								bool isbusy = false;
+								if (obj->Fetch_RTTI() == RTTI_BUILDINGTYPE && inproduction) {
+									isbusy = true;
+								} else if (obj->Who_Can_Build_Me(true, true, true, PlayerPtr) == NULL) {
+									isbusy = true;
+								} else {
+									TechnoTypeClass const * type = Fetch_Techno_Type(Buildables[index].BuildableType, Buildables[index].BuildableID);
+									production = PlayerPtr->Can_Build(type, false, false) == -1;
+									bool limited = PlayerPtr->FUN_0050B370(type);
+									if (production || limited) {
+										isbusy = true;
+									}
+								}
+
+								shapefile = (ShapeSet const *)obj->Get_Cameo_Data();
+								factory = Buildables[index].Factory;
+								if (factory != NULL) {
+									production = true;
+									completed = factory->Has_Completed();
+									if (completed) {
+										state = StringTable::LoadString("TXT_READY", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 3411);
+									} else {
+										redraw = true;
+									}
+									stage = FUN_006A94F0(index);
+									darken = false;
+								} else {
+									darken = isbusy;
+									production = false;
+									switch (Buildables[index].unknown_10) {
+										case 1:
+											redraw = true;
+											production = true;
+											stage = FUN_006A94F0(index);
+											darken = false;
+											break;
+
+										case 3:
+											production = true;
+											completed = true;
+											darken = false;
+											break;
+
+										case 2:
+											production = true;
+											completed = false;
+											darken = true;
+											stage = FUN_006A94F0(index);
+											break;
+
+										case 0:
+											if (!complete) {
+												continue;
+											}
+											break;
+									}
+								}
+							} else {
+								darken = false;
+							}
+						} else {
+							SuperWeaponType spc = SuperWeaponType(Buildables[index].BuildableID);
+							name = SuperWeaponTypes[spc]->UIName;
+							shapefile = Get_Special_Cameo(spc);
+
+							production = true;
+							completed = PlayerPtr->SuperWeapon[spc]->ShouldDrawProgress() == false;
+							state = PlayerPtr->SuperWeapon[spc]->NameReadiness();
+							stage = PlayerPtr->SuperWeapon[spc]->Anim_Stage();
+							darken = false;
+							redraw = true;
+						}
+					} else {
+						production = false;
+					}
+
+					Rect rect(0, 0, x + 60, y + 48);
+					if (!redraw) {
+						continue;
+					}
+
+					if (shapefile != NULL) {
+						Draw_Shape(*SidebarSurface, *CameoDrawer, shapefile, 0, Point2D(x, y), rect, SHAPE_WIN_REL);
+					}
+
+					if (hover) {
+						Rect box(x, y, 60, 48);
+						RGBClass color = DAT_00B0FA1C;
+						int pixel = DSurface::Build_Hicolor_Pixel(color.Get_Red(), color.Get_Green(), color.Get_Blue());
+						SidebarSurface->Draw_Rect(rect, box, pixel);
+					}
+
+					if (darken) {
+						Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)FileSystem::DARKEN_SHP, 0, Point2D(x, y), rect, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_DARKEN));
+					}
+
+					if (Buildables[index].FlashEndFrame > Frame && Frame % 16 > 8) {
+						Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)FileSystem::DARKEN_SHP, 0, Point2D(x, y), rect, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_TRANSLUCENT50));
+					}
+
+					if (name != NULL) {
+						Print_Cameo_Text(name, Point2D(x, y + 36), cliprect, 60);
+					}
+
+					int color = DSurface::Build_Hicolor_Pixel(DAT_00B0FA1C);
+					bool hasqueuecount = false;
+					if (obj != NULL) {
+						FactoryClass * builder = PlayerPtr->Fetch_Factory(obj->Fetch_RTTI(), obj->Naval, 0);
+						if (builder != NULL) {
+							int total = builder->Total(obj);
+							if (total > 1 || total > 0 && !builder->Is_Currently_Producing(obj)) {
+								wchar_t buffer[256];
+								swprintf(buffer, L"%d", total);
+								TextPrintType style = TextPrintType(0x242);
+								Point2D pt(x + 60, y + 1);
+								Rect box = Drawing_GetTextDimensions(buffer, pt, style, 2, 1);
+								ODFillRectTrans(&box, SidebarSurface, 0, 0xaf);
+								Fancy_Text_Print_Wide(L"%d", SidebarSurface, &cliprect, &pt, color, 0, style, total);
+								hasqueuecount = true;
+							}
+						}
+					}
+
+					if (production) {
+						if (state != NULL) {
+							TextPrintType style = TextPrintType(0x142);
+							Point2D pt(x + 30, y + 1);
+							Rect box = Drawing_GetTextDimensions(state, pt, style, 2, 1);
+							ODFillRectTrans(&box, SidebarSurface, 0, 0xaf);
+							Fancy_Text_Print_Wide(state, SidebarSurface, &cliprect, &pt, color, 0, style);
+						}
+
+						if (!completed) {
+							Draw_Shape(*SidebarSurface, *SidebarDrawer, (ShapeSet const *)FileSystem::GCLOCK2_SHP, stage + 1, Point2D(x, y), rect, ShapeFlags_Type(SHAPE_WIN_REL|SHAPE_TRANSLUCENT50));
+
+							if (factory && !factory->Is_Building() || Buildables[index].unknown_10 == 2) {
+								wchar_t const * hold = StringTable::LoadString("TXT_HOLD", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 3636);
+								if (hasqueuecount) {
+									TextPrintType style = TextPrintType(0x42);
+									Point2D pt(x + 2, y + 1);
+									Rect box = Drawing_GetTextDimensions(hold, pt, style, 2, 1);
+									ODFillRectTrans(&box, SidebarSurface, 0, 0xaf);
+									Fancy_Text_Print_Wide(hold, SidebarSurface, &cliprect, &pt, color, 0, style);
+								} else {
+									TextPrintType style = TextPrintType(0x142);
+									Point2D pt(x + 30, y + 1);
+									Rect box = Drawing_GetTextDimensions(hold, pt, style, 2, 1);
+									ODFillRectTrans(&box, SidebarSurface, 0, 0xaf);
+									Fancy_Text_Print_Wide(hold, SidebarSurface, &cliprect, &pt, color, 0, style);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (PlayerPtr == DAT_00AC1198) {
+				int count = rows / 2;
+				for (row = 0; row < count; row++) {
+					int index = row + TopIndex;
+					int x = X - SidebarRect.X;
+					int y = Y + SidebarClass::FUN_006A8090(row * 2);
+					if (index >= Map.DiplomacyNumHouses) {
+						break;
+					}
+					HouseClass * house = Map.DiplomacyHouses[index];
+					if (house == NULL) {
+						break;
+					}
+
+					if (house->Class != NULL) {
+						ShapeSet const * logo = NULL;
+						switch (house->Class->Side) {
+							case 0:
+								logo = (ShapeSet const *)DAT_00B0B490;
+								break;
+							case 1:
+								logo = (ShapeSet const *)DAT_00B0B494;
+								break;
+							case 2:
+								logo = (ShapeSet const *)DAT_00B0B498;
+								break;
+						}
+						if (logo != NULL) {
+							Rect rect(0, 0, x + logo->Get_Width(), y + logo->Get_Height());
+							Draw_Shape(*SidebarSurface, *DAT_0087F6D0, logo, 0, Point2D(x, y), rect, SHAPE_WIN_REL);
+						}
+					}
+
+					if (house->Class != NULL) {
+						ShapeSet const * flag = NULL;
+						int country = house->Class->House;
+						switch (country) {
+							case -2: flag = (ShapeSet const *)DAT_00B0B49C; break;
+							case 0: flag = (ShapeSet const *)DAT_00B0B4A4; break;
+							case 1: flag = (ShapeSet const *)DAT_00B0B4A8; break;
+							case 2: flag = (ShapeSet const *)DAT_00B0B4AC; break;
+							case 3: flag = (ShapeSet const *)DAT_00B0B4B0; break;
+							case 4: flag = (ShapeSet const *)DAT_00B0B4B4; break;
+							case 5: flag = (ShapeSet const *)DAT_00B0B4B8; break;
+							case 6: flag = (ShapeSet const *)DAT_00B0B4BC; break;
+							case 7: flag = (ShapeSet const *)DAT_00B0B4C0; break;
+							case 8: flag = (ShapeSet const *)DAT_00B0B4C4; break;
+							case -3: flag = (ShapeSet const *)DAT_00B0B4A0; break;
+							case 9: flag = (ShapeSet const *)DAT_00B0B4C8; break;
+						}
+						if (flag != NULL) {
+							if (country == 9) {
+								ConvertClass * drawer = FUN_0072F4D0();
+								Rect rect(0, 0, x + flag->Get_Width() + 70, y + flag->Get_Height() + 70);
+								Draw_Shape(*SidebarSurface, *drawer, flag, 0, Point2D(x + 70, y + 70), rect, SHAPE_WIN_REL);
+							} else {
+								Rect rect(0, 0, x + flag->Get_Width() + 70, y + flag->Get_Height() + 70);
+								Draw_Shape(*SidebarSurface, *DAT_0087F6D0, flag, 0, Point2D(x + 70, y + 70), rect, SHAPE_WIN_REL);
+							}
+						}
+					}
+
+					wchar_t text[64];
+					wchar_t rank[20];
+					wchar_t kills[20];
+					wchar_t owned[20];
+					wchar_t money[20];
+
+					wcscpy(DAT_00B078B0, house->UIName);
+					if (Session.Type == GAME_INTERNET) {
+						_itow(Map.DiplomacyRung[index], rank, 10);
+					}
+					_itow(Map.DiplomacyKills[index], kills, 10);
+					_itow(Map.DiplomacyOwned[index], owned, 10);
+					_itow(Map.DiplomacyCredits[index], money, 10);
+					ColorScheme * scheme = Map.DiplomacyColors[index];
+
+					if (IsScrolling) {
+						y -= DAT_00B0B500 - Slid;
+					}
+
+					Point2D pt(x + 8, y + 4);
+					Fancy_Text_Print_Wide(DAT_00B078B0, SidebarSurface, &cliprect, &pt, scheme, 0, TextPrintType(0x42));
+
+					if (Session.Type == GAME_INTERNET) {
+						pt.Y += 17;
+						if (Map.DiplomacyRung[index] < 1) {
+							wcscpy(text, StringTable::LoadString("TXT_UNRANKED", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 3781));
+						} else {
+							swprintf(text, StringTable::LoadString("GUI:ObsRank", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 3785), rank);
+						}
+						Fancy_Text_Print_Wide(text, SidebarSurface, &cliprect, &pt, scheme, 0, TextPrintType(0x42));
+					}
+
+					pt.Y += 17;
+					swprintf(text, StringTable::LoadString("GUI:ObsKills", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 3807), kills);
+					Fancy_Text_Print_Wide(text, SidebarSurface, &cliprect, &pt, scheme, 0, TextPrintType(0x42));
+
+					pt.Y += 17;
+					swprintf(text, StringTable::LoadString("GUI:ObsUnits", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 3822), owned);
+					Fancy_Text_Print_Wide(text, SidebarSurface, &cliprect, &pt, scheme, 0, TextPrintType(0x42));
+
+					pt.Y += 17;
+					swprintf(text, StringTable::LoadString("GUI:ObsCredits", NULL, "D:\\ra2mdpost\\Sidebar.CPP", 3835), money);
+					Fancy_Text_Print_Wide(text, SidebarSurface, &cliprect, &pt, scheme, 0, TextPrintType(0x42));
+				}
+			}
+
+			LastSlid = Slid;
+		}
+	}
 }
 
 // FUNCTION: GAMEMD 0x006AACE0

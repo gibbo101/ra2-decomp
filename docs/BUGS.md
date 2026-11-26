@@ -4,6 +4,10 @@ The source reproduces the game as shipped, bugs included, so these stay until th
 decompilation is finished. Each entry gives the address, what the original does, and its
 effect, so it can be fixed in a separate build later.
 
+- **Ballistic_Move speed clamp (`include/ballistic.h`, inlined into BounceClass::AI, the particle
+  behaviours and BulletClass::AI).** When a moving object is faster than its maximum, the clamp
+  scales its velocity by its own speed divided by itself, so the speed is never limited.
+
 - **BulletClass::Unlimbo (0x00468670).** An invisible projectile with no
   Firestorm intercept checks for a trajectory obstacle. If it finds one, it
   sets its position to the obstacle’s center at 0x00468966. Both paths then
@@ -25,6 +29,12 @@ effect, so it can be fixed in a separate build later.
   mission score, the comparison indexes the nine-entry table with the preceding wipe
   animation's frame counter. That counter is 10, so the game reads past the table
   instead of comparing with the current entry.
+
+- **Spread_Units_Around_Cell (0x0064CDA0).** When the straight-line cell is blocked,
+  the search measures the walk to the fallback cell and is meant to reject it when the
+  walk is more than three cells over the distance. The rejection clears a flag that is
+  still clear there, so the walk result at 0x0064D650 is ignored and the fallback cell is
+  always used.
 
 - **Wonline guest-game dialog (0x00791B10).** The page and reply command paths
   allocate their temporary text buffers with array new and release them with scalar

@@ -70,8 +70,8 @@ class TVelocity3D : public TVelocity2D<T>
 		TVelocity3D(const TVelocity3D & velocity) : BASECLASS(velocity), Z(velocity.Z) {}
 		TVelocity3D(Dir256 pitch, Dir256 yaw, T magnitude);
 		TVelocity3D(DirType const & yaw, DirType const & pitch, T magnitude);
-		TVelocity3D(double angle, T magnitude);
 		TVelocity3D(T x, T y, T z) : BASECLASS(x, y), Z(z) {}
+		TVelocity3D(BASECLASS const & planar, T z);
 
 		void Set(T x, T y, T z)
 		{
@@ -83,6 +83,8 @@ class TVelocity3D : public TVelocity2D<T>
 		T Horizontal_Speed(void) const { return(fastmath::sqrt(X * X + Y * Y)); }
 
 		T Speed(void) const { return(fastmath::sqrt(X * X + Y * Y + Z * Z)); }
+
+		T Magnitude(void) const { return(fastmath::sqrt((X * X) + (Y * Y) + (Z * Z))); }
 
 		void Set_Pitch(DirType const & pitch)
 		{
@@ -147,6 +149,11 @@ class TVelocity3D : public TVelocity2D<T>
 };
 
 template <typename T>
+TVelocity3D<T>::TVelocity3D(BASECLASS const & planar, T z) : BASECLASS(planar), Z(z)
+{
+}
+
+template <typename T>
 TVelocity3D<T>::TVelocity3D(Dir256 pitch, Dir256 yaw, T magnitude)
 	: BASECLASS(
 		TVelocity2D<T>(
@@ -166,10 +173,3 @@ TVelocity3D<T>::TVelocity3D(DirType const & yaw, DirType const & pitch, T magnit
 {
 }
 
-template <typename T>
-TVelocity3D<T>::TVelocity3D(double angle, T magnitude)
-{
-	X = magnitude * fastmath::cos(angle);
-	Y = -(magnitude * fastmath::sin(angle));
-	Z = 0;
-}

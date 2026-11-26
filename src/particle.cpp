@@ -696,3 +696,26 @@ void ParticleClass::Gas_Behavior_AI(void)
 		StateAI = 0;
 	}
 }
+
+// FUNCTION: GAMEMD 0x0062C6E0
+void ParticleClass::Spark_Behavior_AI(void)
+{
+	Coord coord = PositionCoord;
+	MovementDirection.Z -= Rule->Gravity;
+	Vector3 velocity(MovementDirection.X, MovementDirection.Y, MovementDirection.Z);
+	Vector3 position(coord.X, coord.Y, coord.Z);
+	if (Ballistic_Move(position, velocity, Rule->Gravity, 1.0, 0.0)) {
+		IsToDie = true;
+	}
+
+	Set_Coord(Coord(position.X, position.Y, position.Z));
+	ColorAccum += Class->ColorSpeed + Random_Double(0.0, 0.05);
+	if (ColorAccum > 1.0) {
+		if (ColorIndex < Class->ColorList.Count() - 2) {
+			ColorIndex++;
+			ColorAccum = 0;
+		} else {
+			ColorAccum = 1.0;
+		}
+	}
+}

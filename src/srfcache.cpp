@@ -74,6 +74,94 @@ SurfaceCacheClass::~SurfaceCacheClass(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x006B9740
+bool SurfaceCacheClass::CacheBMP(char const * name, void * bitmap, int bytes, int bpp)
+{
+	unsigned char *bitmap_palette_data;
+	unsigned char *bitmap_data;
+	BITMAPFILEHEADER filehead;
+	BITMAPINFO *bitmap_info_header;
+	int bitmap_width;
+	int surface_width;
+	BSurface *surface;
+	unsigned short *surface_data;
+	BITMAPINFOHEADER header;
+	SurfaceCacheEntry new_entry;
+
+	bitmap_palette_data = (unsigned char *)bitmap;
+	filehead = *(BITMAPFILEHEADER *)bitmap_palette_data;
+	bitmap_palette_data += sizeof(BITMAPFILEHEADER);
+	header = *(BITMAPINFOHEADER *)bitmap_palette_data;
+	bitmap_palette_data += sizeof(BITMAPINFOHEADER);
+
+	bitmap_info_header = (BITMAPINFO *)operator new(4 * (1 << header.biBitCount) + sizeof(BITMAPINFOHEADER));
+	bitmap_info_header->bmiHeader.biSize = header.biSize;
+	bitmap_info_header->bmiHeader.biWidth = header.biWidth;
+	bitmap_info_header->bmiHeader.biHeight = header.biHeight;
+	bitmap_info_header->bmiHeader.biPlanes = header.biPlanes;
+	bitmap_info_header->bmiHeader.biBitCount = header.biBitCount;
+	bitmap_info_header->bmiHeader.biCompression = header.biCompression;
+	bitmap_info_header->bmiHeader.biSizeImage = header.biSizeImage;
+	bitmap_info_header->bmiHeader.biXPelsPerMeter = header.biXPelsPerMeter;
+	bitmap_info_header->bmiHeader.biYPelsPerMeter = header.biYPelsPerMeter;
+	bitmap_info_header->bmiHeader.biClrUsed = header.biClrUsed;
+	bitmap_info_header->bmiHeader.biClrImportant = header.biClrImportant;
+	memcpy(bitmap_info_header->bmiColors, bitmap_palette_data, header.biClrUsed * sizeof(RGBQUAD));
+	bitmap_palette_data += header.biClrUsed * sizeof(RGBQUAD);
+
+	unsigned short pal16[256];
+	unsigned char *p = (unsigned char *)bitmap_info_header->bmiColors;
+	for (int i = 0; i < 256; i++) {
+		int blue = *p++;
+		int green = *p++;
+		pal16[i] = ((*p >> DSurface::RedLeft) << DSurface::RedRight) | ((green >> DSurface::GreenLeft) << DSurface::GreenRight) | ((blue >> DSurface::BlueLeft) << DSurface::BlueRight);
+		p += 2;
+	}
+
+	bitmap_data = (unsigned char *)operator new(filehead.bfSize - filehead.bfOffBits);
+	memcpy(bitmap_data, bitmap_palette_data, filehead.bfSize - filehead.bfOffBits);
+
+	int width = header.biWidth;
+	int height = header.biHeight;
+	surface = new BSurface(width, height, bpp);
+	surface_data = (unsigned short *)surface->Lock();
+	surface_width = surface->Stride() / 2;
+	bitmap_width = width - (width & 3) + 4;
+
+	for (int y = 0; y < height; y++) {
+		int source_row = (height - 1 - y) * bitmap_width;
+		for (int x = 0; x < width; x++) {
+			if (bpp == 2) {
+				surface_data[y * surface_width + x] = pal16[bitmap_data[source_row + x]];
+			} else {
+				surface_data[y * surface_width + x] = bitmap_data[source_row + x];
+			}
+		}
+	}
+
+	if (bpp == 1) {
+		memcpy(new_entry.palette, bitmap_info_header->bmiColors, sizeof(new_entry.palette));
+	}
+	new_entry.surf = surface;
+
+	surface->Unlock();
+	operator delete(bitmap_info_header);
+	operator delete(bitmap_data);
+
+	Wstring key(name);
+	key.toLower();
+
+	SurfaceCacheEntry old_entry;
+	if (getValue(key, old_entry)) {
+		remove(key);
+		delete old_entry.surf;
+	}
+
+	add(key, new_entry);
+
+	return(true);
+}
+
 template<> char Dictionary<Wstring, SurfaceCacheEntry>::remove(Wstring &key)
 {
 	SurfaceCacheEntry value;
