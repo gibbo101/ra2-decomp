@@ -11,8 +11,9 @@ order, with its relocations kept. Anything else stays retail fill and is reporte
 
 A definition's retail address comes from, in order: the pin derived from matched code
 (pindata.py), the symbol bindings. Its compiled contents must equal the bytes at that address
-outside relocation sites, and every relocation must name a symbol whose own address is known
-and equals `retail dword - compiled addend` (a pin, a placed function, a stub, a library symbol).
+outside relocation sites. Every relocation must resolve to `retail dword - compiled addend`.
+When searching for literals, a relocation to a string defined in the same object can also
+be verified by comparing that string's bytes at the address stored in the retail slot.
 
 Kinds: string (??_C@), float (__real@), vtable (??_7), rtti (??_R), initialiser (.CRT$XCU
 entries), global (everything else). Uninitialised definitions (.bss) are zero by construction:
@@ -98,6 +99,25 @@ class Resolver:
             if name in table:
                 return table[name]
         return None
+
+
+def matches_referenced_string(data, sections, symbols, final, idx, name, va, retail, regions):
+    """Verify a local COFF string definition at the address read from a retail pointer slot."""
+    symbol = symbols.get(idx)
+    if not name.startswith("??_C@") or symbol is None or symbol["name"] != name:
+        return False
+    secno = symbol["section"]
+    section = sections.get(secno)
+    if section is None or section["uninitialized"] or symbol["value"] != 0:
+        return False
+    flags, = struct.unpack_from("<I", data, 20 + 40 * (secno - 1) + 36)
+    size = section["raw_size"]
+    if not flags & SCN_COMDAT or not size or regions.locate(va, size) != "file":
+        return False
+    if section_relocs(final, secno):
+        return False
+    start = section["raw_ptr"]
+    return bytes(data[start:start + size]) == retail.fill(va, size)
 
 
 def candidates(path, parsed, final, address_of, resolver, retail, regions, search=()):
@@ -197,15 +217,19 @@ def candidates(path, parsed, final, address_of, resolver, retail, regions, searc
                 lo = off - start
                 addend, = struct.unpack_from("<I", body, lo)
                 got, = struct.unpack_from("<I", want, lo)
+                target = (got - addend) & 0xFFFFFFFF
                 known = resolver.address(tname)
-                same = resolver.alias(tname, (got - addend) & 0xFFFFFFFF)
+                same = resolver.alias(tname, target)
                 if same:   # the slot names the instance at its own retail address, not the one the name links to
-                    tname, known = same, (got - addend) & 0xFFFFFFFF
+                    tname, known = same, target
+                if known is None and "string" in search and matches_referenced_string(
+                        data, sections, symbols, final, symidx, tname, target, retail, regions):
+                    known = target
                 if known is None:
                     bad = f"relocation target {tname} has no known address"
                     break
                 if (known + addend) & 0xFFFFFFFF != got:
-                    bad = f"relocation target {tname} is at 0x{known:X}, retail's field says 0x{(got - addend) & 0xFFFFFFFF:X}"
+                    bad = f"relocation target {tname} is at 0x{known:X}, retail's field says 0x{target:X}"
                     break
                 ours[lo:lo + 4] = want[lo:lo + 4] = bytes(4)
                 if pin_address(tname) is None and (regions.locate(known, 1) is not None
