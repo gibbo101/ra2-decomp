@@ -1,10 +1,4 @@
-// 99.7% (5374/5374) with no header change: the tube shift is a file-local two-statement inline (Shift_Tube), which leaves both TPoint2D<short>::operator+= calls out of line as nested calls; 91.5% (5376/5374) with the two += written directly in the loop. Single-use helper, so banked: the Tiberian Sun exe (orig/ts-game.exe) 0x0051050D-0x00510535 inlines Enter += and calls Exit +=, which VC6 SP3 gives only for two nested calls in one inlined body. Left: occupy-loop cx/dx operand order; it flips to MATCH with any dead expression of 13+ distinct terms anywhere in the function (11+ before the tube loop), written out or inlined, so it follows the count of distinct expressions the optimiser sees, not the inline budget or the local count. Splice before 0x00567110; 0x00588C40 and 0x00588C10 MATCH beside it.
-static inline void Shift_Tube(TubeClass * tube, Cell const & offset)
-{
-	tube->Enter += offset;
-	tube->Exit += offset;
-}
-
+// 99.7% raw, 99.6% normalised (5374/5374) with overlay 0x00565C10_coord.h (coord.h plus Cell::operator+= forwarding to BASECLASS::operator+=, point.h's TPoint3D idiom) and a named tube pointer in the tube loop; no single-caller helper. The forwarder in include/coord.h fails checkall (8 weight-sensitive functions flip: 0x005A6510 0x005BC530 0x0061D950 0x00640A40 0x0064DEA0 0x0066D530 0x007A3100 0x007A5890). Same occupy-loop cx/dx tie as 0x00565C10_tube.cpp and 0x00565C10_shift_tube.cpp. Splice before 0x00567110.
 // FUNCTION: GAMEMD 0x00565C10
 void MapClass::Set_Map_Dimensions(Rect const & rect, bool reset_cells, int cell_height, bool refresh_map)
 {
@@ -137,7 +131,9 @@ void MapClass::Set_Map_Dimensions(Rect const & rect, bool reset_cells, int cell_
 		}
 
 		for (i = 0; i < Tubes.Count(); i++) {
-			Shift_Tube(Tubes[i], offset);
+			TubeClass *tube = Tubes[i];
+			tube->Enter += offset;
+			tube->Exit += offset;
 		}
 
 		Coord coord = Coord(offset, 0) - Coord(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0);

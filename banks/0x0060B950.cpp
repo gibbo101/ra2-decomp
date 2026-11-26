@@ -1,4 +1,5 @@
-// best 99.8% (1895/1895 bytes), no overlay, re-scored 22 Nov: only the w/old_w compare before MoveWindow differs (ours cmp ecx,eax, exe cmp eax,ecx); with `w != old_w` it is 99.3% (loads swapped). Replace the FUN_0060B950 forward declaration in src/ownrdraw.cpp with this. Is_Dialog_Type_B in the subset branch compiles to the exe's three compares (VC6 drops the members the failed A list already ruled out).
+// 0x0060B950 99.8% (1895/1895), no overlay, re-scored 23 Nov on main: only the w/old_w compare before MoveWindow differs (exe mov eax,[w]; mov ecx,[old_w]; cmp eax,ecx; ours cmp ecx,eax). Replace the FUN_0060B950 forward declaration in src/ownrdraw.cpp with this.
+// Measured 23 Nov: the exe pair appears when the first block that jumps to the y compare (the first Session call block) has no call, or a call sits in the last type arm; 550 natural spellings and declaration styles gave neither. 0x00602AE0 matches as bool with return (a || b ...), which retires the FUN_00602AE0 alias once its callers keep it out of line.
 inline bool Is_Dialog_Type_A(int type)
 {
 	return type == 0x10c ||
@@ -34,17 +35,9 @@ inline bool Is_Dialog_Type_A(int type)
 		type == 0x103;
 }
 
-inline bool Is_Dialog_Type_B(int type)
+inline bool Has_Top_Panel_Animation(int type)
 {
-	return type == 0xbc ||
-		type == 0xbd ||
-		type == 0x102 ||
-		type == 0xc2 ||
-		type == 0xc9 ||
-		type == 0xbc6 ||
-		type == 0x105 ||
-		type == 0x6b ||
-		type == 0x113;
+	return type == 0xbc || type == 0xbd || type == 0x102 || type == 0xc2 || type == 0xc9 || type == 0xbc6 || type == 0x105 || type == 0x6b || type == 0x113;
 }
 
 extern int DAT_007F5BEC;
@@ -70,7 +63,7 @@ void __fastcall FUN_0060B950(HWND window)
 
 	if (Is_Flag_Control_A(type, id)) {
 		if (Is_Dialog_Type_A(type)) {
-			if (Is_Dialog_Type_B(type)) {
+			if (Has_Top_Panel_Animation(type)) {
 				if (!Session.FUN_0069BBE0()) {
 					y++;
 				}
@@ -81,7 +74,7 @@ void __fastcall FUN_0060B950(HWND window)
 				}
 			}
 		} else if (Is_Owner_Draw_Subset_Message(type)) {
-			if (!Is_Dialog_Type_B(type)) {
+			if (!Has_Top_Panel_Animation(type)) {
 				y += 2;
 			}
 		}

@@ -1,9 +1,4 @@
-// best 78.6% raw (6743/6759 bytes), no overlay; needs #include "airctype.h" (placed just above the function, or after temporal.h) and _$E298 renumbered to _$E300. Register tie in the aircraft edge block: the dword reload of edge.Y is CSEd between diff and the if-branch temporary, taking a callee-saved register so the zero leaves ebx. Writing the Random_Pick tail in both branches reproduces the exe's merged call and in-place adds (75.8%, same CSE).
-static inline Cell Center_Cell(AbstractClass const * object)
-{
-	return(object->Center_Coord().As_Cell());
-}
-
+// best 99.8% raw (6759/6759 bytes), no overlay; the Fable stop partial unchanged (needs #include "airctype.h" after temporal.h, renumbering _$E298 to _$E300; splice before 0x004456D0). Left: add ecx,edx at 0x00444E42. MATCHes only with an extra direct, X-only reference to AdjacentCell[FACING_SW].X anywhere in the function (dead local or unreachable `cell.X += AdjacentCell[FACING_SW].X;` after the Scatter return); no natural source found.
 // FUNCTION: GAMEMD 0x00443C60
 int BuildingClass::Exit_Object(TechnoClass * base, Cell preferred)
 {
@@ -37,30 +32,31 @@ int BuildingClass::Exit_Object(TechnoClass * base, Cell preferred)
 				diff = Center_Coord().As_Cell() - edge;
 
 				if (diff.X - diff.Y > Map.LocalRect.Width) {
-					edge = Cell(edge.X - 1, edge.Y) + Cell(Map.LocalRect.Width, -Map.LocalRect.Width);
+					edge = edge - Cell(1, 0) + Cell(Map.LocalRect.Width, -Map.LocalRect.Width);
+					cell = edge;
+					int random = Random_Pick(0, Map.LocalRect.Height);
+					cell += Cell(random, random);
 				} else {
 					edge = Cell(edge.X - 1, edge.Y);
+					cell = edge;
+					int random = Random_Pick(0, Map.LocalRect.Height);
+					cell += Cell(random, random);
 				}
 
-				cell = edge;
-				int random = Random_Pick(0, Map.LocalRect.Height);
-				cell += Cell(random, random);
 
 				ScenarioInit++;
 				if (air->Unlimbo(Coord(cell, 0), DIR_N)) {
 					if (ArchiveTarget != NULL) {
 						air->Assign_Destination(ArchiveTarget);
-						air->Set_Mission(MISSION_MOVE);
 					} else {
 						Cell nearby = air->Nearby_Location(this);
 						if (nearby != CELL_NONE) {
 							air->Assign_Destination(&Map[nearby]);
-							air->Set_Mission(MISSION_MOVE);
 						} else {
 							air->Assign_Destination(NULL);
-							air->Set_Mission(MISSION_MOVE);
 						}
 					}
+					air->Set_Mission(MISSION_MOVE);
 					ScenarioInit--;
 					return(2);
 				}
@@ -124,18 +120,18 @@ int BuildingClass::Exit_Object(TechnoClass * base, Cell preferred)
 							QueueMission(MISSION_UNLOAD, false);
 						}
 
-						Cell cell = Center_Cell(this);
+						Cell cell = Target_Cell(this);
 
 						if (ArchiveTarget != NULL) {
 							DirType dir;
-							FacingType facing = Dir_Facing(dir.Direction(Get_Cell(), Center_Cell(ArchiveTarget)));
+							FacingType facing = Dir_Facing(dir.Direction(Get_Cell(), Target_Cell(ArchiveTarget)));
 							while (Map[cell].Cell_Building() == this) {
 								cell = Adjacent_Cell(cell, facing);
 							}
 						}
 
 						if (ArchiveTarget == NULL || Map[cell].Land_Type() != LAND_WATER || Map[cell].Cell_Techno() != NULL || !Map.In_Local_Radar(cell)) {
-							cell = Map.Nearby_Location(Center_Cell(this), base->Techno_Type_Class()->Speed);
+							cell = Map.Nearby_Location(Target_Cell(this), base->Techno_Type_Class()->Speed);
 						}
 
 						if (!base->Unlimbo(Map[cell].Center_Coord(), DIR_E)) {
@@ -186,7 +182,6 @@ int BuildingClass::Exit_Object(TechnoClass * base, Cell preferred)
 				} else if (Class->ToBuild == RTTI_INFANTRYTYPE || Class->IsHospital || Class->IsArmory || Class->Cloning) {
 
 					base->Assign_Archive_Target(ArchiveTarget);
-					Coord exitcoord;
 
 					cell = Find_Exit_Cell(base, CELL_NONE);
 					if (cell == CELL_NONE) {
@@ -220,7 +215,7 @@ int BuildingClass::Exit_Object(TechnoClass * base, Cell preferred)
 						to.Y += 1;
 					}
 
-					exitcoord = Coord(to, 0);
+					Coord exitcoord = to.As_Coord();
 					if (Class->IsGDIBarracks) {
 						if (cell.X == x + 1 && cell.Y == y + 2) {
 							exitcoord = exitcoord + Class->ExitCoordinate;
@@ -287,7 +282,7 @@ int BuildingClass::Exit_Object(TechnoClass * base, Cell preferred)
 						to.Y += 1;
 					}
 
-					exitcoord = Coord(to, 0);
+					exitcoord = to.As_Coord();
 					if (Class->IsGDIBarracks) {
 						if (cell.X == x + 1 && cell.Y == y + 2) {
 							exitcoord = exitcoord + Class->ExitCoordinate;
@@ -477,4 +472,3 @@ int BuildingClass::Exit_Object(TechnoClass * base, Cell preferred)
 
 	return(0);
 }
-
