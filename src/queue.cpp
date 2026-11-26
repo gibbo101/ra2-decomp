@@ -134,6 +134,19 @@ extern unsigned int DAT_00B04474[256];
 void Add_CRC(unsigned int *crc, unsigned int val);
 HWND FUN_00775B10(void);
 extern int DAT_00B779C4;
+int __fastcall FUN_005422D0(IPXManagerClass *ipx);
+int __fastcall FUN_0064BDD0(void * buf, int bufsize);
+static int Extract_Uncompressed_Events(void * buf, int bufsize);
+char const * __fastcall FUN_005B3950(int mission);
+extern int DAT_00B04468;
+extern bool DAT_00B04470;
+extern bool DAT_00B04894;
+extern HWND DAT_00AC6658;
+extern int DAT_00B04898;
+extern long DAT_00AFA418;
+extern wchar_t const DAT_00887734[];
+extern wchar_t const DAT_0082083C[];
+extern RGBClass DAT_00A8EAE4;
 
 struct QueueRecord {
 	char Data[0x2ec];
@@ -3504,7 +3517,6 @@ void __fastcall FUN_00652230(EventClass *event)
 }
 
 #include "ownertalk.h"
-int __fastcall FUN_005422D0(IPXManagerClass *ipx);
 
 // FUNCTION: GAMEMD 0x006523A0
 void FUN_006523A0(void)
@@ -3569,9 +3581,6 @@ struct PacketTiming {
 	unsigned short : 16;
 };
 #pragma pack(pop)
-
-int __fastcall FUN_0064BDD0(void * buf, int bufsize);
-static int Extract_Uncompressed_Events(void * buf, int bufsize);
 
 // FUNCTION: GAMEMD 0x0064A0C0
 int __fastcall Process_Receive_Packet(ConnManClass * net, char * multi_packet_buf, int id, int packetlen,
@@ -3732,8 +3741,6 @@ static int Extract_Uncompressed_Events(void * buf, int bufsize)
 	}
 	return count;
 }
-
-char const * __fastcall FUN_005B3950(int mission);
 
 // FUNCTION: GAMEMD 0x0064B660
 int __fastcall Add_Compressed_Events(void * buf, int bufsize, int frame_delay, int size, int cap, int * added)
@@ -3912,14 +3919,6 @@ int __fastcall Add_Compressed_Events(void * buf, int bufsize, int frame_delay, i
 #include "_surface.h"
 #include "win.h"
 
-extern int DAT_00B04468;
-extern bool DAT_00B04470;
-extern bool DAT_00B04894;
-extern HWND DAT_00AC6658;
-extern int DAT_00B04898;
-extern long DAT_00AFA418;
-extern wchar_t const DAT_00887734[];
-extern wchar_t const DAT_0082083C[];
 namespace UI { void __fastcall RegisterWindow(HWND window, int id); }
 
 #define WAIT_TEXT(label, line) StringTable::LoadString(label, NULL, "D:\\ra2mdpost\\Queue.CPP", line)
@@ -4371,8 +4370,6 @@ RetcodeType __fastcall Wait_For_Players(int first_time, ConnManClass *net, int r
 }
 
 #undef WAIT_TEXT
-
-extern RGBClass DAT_00A8EAE4;
 
 static int Connection_Index(int player)
 {

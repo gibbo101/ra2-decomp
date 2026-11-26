@@ -84,6 +84,8 @@ class TVelocity3D : public TVelocity2D<T>
 
 		T Speed(void) const { return(fastmath::sqrt(X * X + Y * Y + Z * Z)); }
 
+		T Magnitude(void) const { return(fastmath::sqrt((X * X) + (Y * Y) + (Z * Z))); }
+
 		void Set_Pitch(DirType const & pitch)
 		{
 			double current_pitch = Get_Pitch().As_Radian();

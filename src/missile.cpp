@@ -48,18 +48,18 @@ template class TVelocity3D<double>;
 // TEMPLATE: GAMEMD 0x005B2A30
 // ?Set_Pitch@?$TVelocity3D@N@@QAEXABVDirType@@@Z
 
+// FUNCTION: GAMEMD 0x005B20F0
 int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const & target_coord, DirType const & rot, bool aircraft, bool airburst, bool veryhigh, bool level)
 {
-	DirType desired_pitch;
 	if (target_coord == COORD_NONE) {
-		desired_pitch = velocity.Get_Pitch();
-		desired_pitch.Turn(DirType(DIR_NE), rot);
-		velocity.Set_Pitch(desired_pitch);
+		DirType pitch = velocity.Get_Pitch();
+		pitch.Turn(DirType(DIR_NE), rot);
+		velocity.Set_Pitch(pitch);
 		TVelocity3D<double> frame_velocity(velocity);
 		coord = coord + Point3D(frame_velocity.X, frame_velocity.Y, frame_velocity.Z);
-		return(velocity.Speed());
+		return(velocity.Magnitude());
 	} else {
-		TVelocity3D<double> frame_velocity(velocity);
+		TVelocity3D<double> frame_velocity(velocity, velocity.Z);
 		coord = coord + Point3D(frame_velocity.X, frame_velocity.Y, frame_velocity.Z);
 		int target_distance = coord.Distance_To(target_coord);
 		int horizontal_distance = Point2D(coord).Distance_To(Point2D(target_coord));
@@ -67,13 +67,14 @@ int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const
 		Coord delta = target_coord - coord;
 
 		TVelocity3D<double> target_direction;
-		target_direction = TVelocity3D<double>(delta.X, delta.Y, delta.Z);
+		TVelocity3D<double> dir = TVelocity3D<double>(delta.X, delta.Y, delta.Z);
+		target_direction = dir;
 
 		DirType desired_yaw = velocity.Get_Yaw();
 		desired_yaw.Turn(target_direction.Get_Yaw(), rot);
 		velocity.Set_Yaw(desired_yaw);
 
-		desired_pitch = velocity.Get_Pitch();
+		DirType desired_pitch = velocity.Get_Pitch();
 
 		if (!aircraft && (airburst || horizontal_distance > ((veryhigh ? 6 : 3) * CELL_LEPTON)) && rot.As_Dir256() > 1) {
 			TVelocity3D<double> lookahead_velocity(velocity);
@@ -85,11 +86,7 @@ int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const
 			}
 
 			int cell_distance = target_distance / CELL_LEPTON;
-			if (airburst || veryhigh) {
-				cell_distance = 10;
-			} else if (cell_distance >= 5) {
-				cell_distance = 5;
-			}
+			cell_distance = (airburst || veryhigh) ? 10 : min(cell_distance, 5);
 
 			if (!level) {
 				int height_delta = coord.Z - LEVEL_LEPTON_H * cell_distance - terrain_height;
@@ -113,11 +110,7 @@ int Projectile_Motion(Coord & coord, TVelocity3D<double> & velocity, Coord const
 
 		velocity.Set_Pitch(desired_pitch);
 
-		if (airburst) {
-			delta.Z = 0;
-		} else {
-			delta.Z /= 4;
-		}
+		delta.Z = airburst ? 0 : delta.Z / 4;
 
 		return(delta.Length());
 	}

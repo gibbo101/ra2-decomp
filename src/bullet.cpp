@@ -317,11 +317,6 @@ static inline void Set_Horizontal_Velocity(TVelocity3D<double> & velocity,
 	velocity.Y = y;
 }
 
-static inline double Flight_Speed(TVelocity3D<double> const & velocity)
-{
-	return(fastmath::sqrt((velocity.X * velocity.X) + (velocity.Y * velocity.Y) + (velocity.Z * velocity.Z)));
-}
-
 // FUNCTION: GAMEMD 0x004666E0
 void BulletClass::AI(void)
 {
@@ -374,7 +369,7 @@ void BulletClass::AI(void)
 	ImpactType impact = IMPACT_NONE;
 	if (Class->ROT > 0) {
 		int max_speed = MaxSpeed;
-		double speed = Flight_Speed(Velocity);
+		double speed = Velocity.Magnitude();
 		if (Class->CourseLockDuration == 0) {
 			if (MaxSpeed >= 40 || speed + 0.5 >= max_speed) {
 				IsLaunching = false;
@@ -426,7 +421,7 @@ void BulletClass::AI(void)
 		CellClass * cellptr = &Map[coord];
 		TVelocity3D<double> new_velocity = velocity;
 		Velocity = new_velocity;
-		double half_speed = Flight_Speed(Velocity) * 0.5;
+		double half_speed = Velocity.Magnitude() * 0.5;
 		if (distance <= half_speed || HeightAGL <= 0) {
 			forced = true;
 			impact = IMPACT_NORMAL;
