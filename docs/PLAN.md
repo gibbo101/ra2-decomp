@@ -350,7 +350,10 @@ never paste their headers verbatim.
      `LIB.EXE` and `MSPDB60.DLL` stay at the base disc's 8168. The setup script installs
      the whole SP3 set, as SP3's installer would have on Westwood's machines. On a probe
      the 8168 and 8472 front ends emit identical objects; if a function ever differs
-     between them, that is the place to test.
+     between them, that is the place to test. They also give identical objects and inline
+     decisions for the five functions stuck on inline budget (Load_Settings,
+     Generate_Random_Map, Closest_Free_Spot, DefaultHandler, ListBoxHandler), so the front
+     end is ruled out there.
    - The same package holds two other `C2.DLL` builds for other editions (`msse.dll`
      11.99.8447, `intro.dll` 11.98.8447); not ours. Linker 6.00.8447 matches the Rich
      header's product-4 entry.
