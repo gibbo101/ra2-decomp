@@ -7894,6 +7894,7 @@ address,size,symbol,source,sha256
 0x00552BE0,166,?Text_Origin@LoadProgressManager@@QAE?AVPoint2D@@XZ,src/ldprgmgr.cpp,6abb8cc10c2d7b84259aab729ece1258dcfaa7eb32528175b26fe8836f41118a
 0x00552C90,39,?FUN_00552C90@LoadProgressManager@@QAEHXZ,src/ldprgmgr.cpp,0375001d66a0809f4075280948c38edcb455ae34822dc4a3b50b9f23d7034a64
 0x00552CC0,159,?Load_Mixes@LoadProgressManager@@QAEXXZ,src/ldprgmgr.cpp,f5dd3dfbcf9a76b1f1974df8d3a5a43f1398122bd81a2de9b19322a06797b006
+0x00552D60,5010,?Draw@LoadProgressManager@@QAEXXZ,src/ldprgmgr.cpp,92934a0215596e45101efb07d1bed5ac8ae4ab458da4aba0c3385fca6fc64527
 0x00554100,66,?FUN_00554100@@YIXPAV?$TRect@H@@@Z,src/ldprgmgr.cpp,c5e26e5d532b38aa403b3bf217bba552d35800e6facc613bc42de3721d64c416
 0x00554150,108,?FUN_00554150@@YI?AV?$TRect@H@@XZ,src/ldprgmgr.cpp,6c27e568f3f049c605422bca6d223c267dc9f41d7f36ea24b7139ae0028c2023
 0x005541C0,177,?FUN_005541C0@@YIXPBGPAVSurface@@VPoint2D@@HE_N@Z,src/ldprgmgr.cpp,3409f62fbb2546feec6044601867ca85c40ee9de2a40ef316edf75dc9505bc68
@@ -9077,6 +9078,7 @@ address,size,symbol,source,sha256
 0x005B20A0,15,_$E32,src/missile.cpp,414d0eae355ac2a01d7722da452fb83af2ba66d1c9fe88cf0fc07e2057594d1c
 0x005B20B0,18,_$E35,src/missile.cpp,7852b3801e3dfbe7c5c62d3b30971ac3f162b50b3eebc6c07cdfe66db4cd85ec
 0x005B20D0,26,_$E38,src/missile.cpp,e8b96b38c6a11c27d362f681f354580b540a8a96f8fcb8be01d92aea8f55f81b
+0x005B20F0,2101,?Projectile_Motion@@YIHAAVCoord@@AAV?$TVelocity3D@N@@ABV1@ABVDirType@@_N444@Z,src/missile.cpp,2ec719683f8dcc449b39e5f40b017e25655fc1e35864994cc15e5120b372d7f4
 0x005B2930,28,??HDirType@@QBE?AV0@ABV0@@Z,src/missile.cpp,c1a4fd093b1806335a858af96a646502d7bce5d6c7c54b4e815f87274fb0bc62
 0x005B2950,28,??GDirType@@QBE?AV0@ABV0@@Z,src/missile.cpp,1d298be86314b120d0eccae79b431460abf62d4a3ad3ef1e11c7bf9f07764d7b
 0x005B2970,26,??KDirType@@QBE?AV0@H@Z,src/missile.cpp,7b7670ff5f6710bff787b714b9e32ac5f0ce95a866ec1ac120702a35728e934e
