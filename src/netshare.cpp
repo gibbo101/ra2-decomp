@@ -52,6 +52,7 @@
 #include <wchar.h>
 #include "widewstring.h"
 #include "tiprequest.h"
+#include "swap.h"
 
 // SYNTHETIC: GAMEMD 0x005E2410 SYMBOL
 // _$E51
@@ -3135,14 +3136,10 @@ int __fastcall FUN_005E94A0(NodeNameType * slot)
 // FUNCTION: GAMEMD 0x005E94D0
 int FUN_005E94D0(void)
 {
-	NodeNameType * ai0 = DAT_00AC11A4;
-	NodeNameType * ai1 = DAT_00AC11A8;
-	NodeNameType * ai2 = DAT_00AC11AC;
 	int count = 0;
 
 	for (int i = 0; i < 8; i++) {
-		NodeNameType * slot = Session.Slots[i];
-		if (slot && (slot == ai0 || slot == ai1 || slot == ai2)) {
+		if (FUN_005E9440(Session.Slots[i])) {
 			count++;
 		}
 	}
@@ -4454,6 +4451,134 @@ static inline void Select_Node_Item(HWND dialog, int id, NodeNameType * node)
 		}
 	}
 	ShowWindow(item, SW_SHOW);
+}
+
+// FUNCTION: GAMEMD 0x005EC9F0
+void __fastcall FUN_005EC9F0(HWND dialog, int id, NodeNameType * node, int mode)
+{
+	NodeNameType * wanted = node;
+	int slot = FUN_005E9950(id);
+	NodeNameType * old = Session.Slots[slot];
+
+	if (FUN_005E9440(wanted) && slot != DAT_008316A4) {
+		if (Game::ObserverMode || (DAT_008316A4 > 0 && (Session.Slots[DAT_008316A4]->Slot.SpectatorFlag == -1 || Session.Slots[DAT_008316A4] == DAT_00AC11B4))) {
+#line 6150 "D:\\ra2mdpost\\netshare.cpp"
+			PMessagePrintf(-1, StringTable::LoadString("TXT_NO_AI_WITH_OBSERVER", NULL, __FILE__, __LINE__));
+			swap(node, old);
+			if (FUN_005E9440(node)) {
+				node = DAT_00AC11A0;
+			}
+			FUN_005E9AA0(dialog, id, (int)node);
+		}
+	} else if (wanted == DAT_00AC11B4) {
+		bool booted = false;
+		for (int i = 0; i < 8; i++) {
+			if (i != slot && FUN_005E9440(Session.Slots[i])) {
+				int other = FUN_005E98F0(i);
+				FUN_005E9AA0(dialog, other, (int)DAT_00AC11A0);
+				FUN_005EC9F0(dialog, other, DAT_00AC11A0, 0);
+				booted = true;
+			}
+		}
+		if (booted) {
+#line 6179 "D:\\ra2mdpost\\netshare.cpp"
+			PMessagePrintf(-1, StringTable::LoadString("TXT_OBSERVER_BOOTED_AI", NULL, __FILE__, __LINE__));
+		}
+	}
+
+	if (wanted == old) {
+		return;
+	}
+	Session.Slots[slot] = wanted;
+
+	if (mode == 1 || mode == 2) {
+		if (!FUN_005E93F0(wanted) && FUN_005E93F0(old)) {
+			if (g_pChat) {
+				FUN_007A28B0(old->Name);
+			} else {
+				FUN_005DB600(old);
+			}
+		}
+		if (g_pChat) {
+			FUN_0077DB90();
+		} else {
+			FUN_005DAF30();
+		}
+	}
+
+	bool is_ai = FUN_005E9440(wanted);
+	bool was_ai = FUN_005E9440(old);
+	bool is_observer = (wanted == DAT_00AC11B4 || (FUN_005E93F0(wanted) && wanted->Slot.SpectatorFlag == -1));
+	bool was_observer = (old == DAT_00AC11B4 || (FUN_005E93F0(old) && old->Slot.SpectatorFlag == -1));
+
+	if (is_observer) {
+		int country = FUN_004E37D0(slot);
+		FUN_004E3B00(dialog, country);
+		SendMessage(GetDlgItem(dialog, FUN_005E98F0(slot)), 0x4f1, 0, 1);
+		int color = FUN_004E41D0(slot);
+		FUN_004E4770(dialog, color);
+		FUN_004E49A0(dialog, color, 8);
+		int start = FUN_004E4E60(slot);
+		FUN_004E5260(dialog, start);
+		int team = FUN_004E5940(slot);
+		FUN_004E5260(dialog, team);
+		FUN_005E9E70(dialog, slot, false);
+		Session.Options.AISlots.Difficulties[slot] = -1;
+		Session.Options.AISlots.Countries[slot] = -1;
+		Session.Options.AISlots.Colors[slot] = -1;
+	} else if (was_observer) {
+		int country = FUN_004E37D0(slot);
+		FUN_004E3A00(dialog, country);
+		SendMessage(GetDlgItem(dialog, FUN_005E98F0(slot)), 0x4f1, 0, 0);
+		int color = FUN_004E41D0(slot);
+		FUN_004E4770(dialog, color);
+		FUN_004E49A0(dialog, color, -2);
+		int start = FUN_004E4E60(slot);
+		FUN_004E50C0(dialog, start);
+		int team = FUN_004E5940(slot);
+		FUN_004E5B60(dialog, team);
+		FUN_005E9E70(dialog, slot, false);
+		Session.Options.AISlots.Difficulties[slot] = -1;
+		Session.Options.AISlots.Countries[slot] = -1;
+		Session.Options.AISlots.Colors[slot] = -1;
+		Session.Options.AISlots.Starts[slot] = -1;
+		Session.Options.AISlots.Allies[slot] = -1;
+	}
+
+	if (is_ai) {
+		FUN_005E9E70(dialog, slot, true);
+		Session.Options.AISlots.Difficulties[slot] = FUN_005E94A0(wanted);
+		Session.Options.AISlots.Countries[slot] = -2;
+		Session.Options.AISlots.Colors[slot] = -2;
+		Session.Options.AISlots.Starts[slot] = -2;
+		Session.Options.AISlots.Allies[slot] = Session.MPGameMode->vt_entry_30();
+	} else if (was_ai) {
+		FUN_005E9E70(dialog, slot, false);
+		Session.Options.AISlots.Difficulties[slot] = -1;
+		Session.Options.AISlots.Countries[slot] = -1;
+		Session.Options.AISlots.Colors[slot] = -1;
+		Session.Options.AISlots.Starts[slot] = -1;
+		Session.Options.AISlots.Allies[slot] = -1;
+	}
+
+	if (g_pChat) {
+		FUN_0078F000();
+	}
+	FUN_005EE510(slot);
+
+	bool ai_changed = (is_ai || was_ai);
+	bool observer_changed = (is_observer || was_observer);
+	if (ai_changed || observer_changed) {
+		Session.Options.AIPlayers = FUN_005E94D0();
+		if (mode == 2) {
+			if (g_pChat) {
+				Display_Users();
+			} else {
+				FUN_005DAFD0();
+			}
+			PumpGameopts(true, false);
+		}
+	}
 }
 
 static inline void Select_Slot_Node(HWND dialog, int id, int kind)
