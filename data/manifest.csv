@@ -1882,6 +1882,7 @@ address,size,symbol,source,sha256
 0x0043B0F0,18,_$E35,src/building.cpp,4fd67b65f51fe35e4a9b549cd3f2437cf6d9cbd0905786f96eee5bc53199c2fc
 0x0043B110,26,_$E38,src/building.cpp,4523c6f3cc832417b6888c89a183738d1840fd07fbd77a3145953784a925c65b
 0x0043B130,23,_$E41,src/building.cpp,b8388aa12c795b4579b1674539ac226c9bc0e4eb6ebf8545dc1d68e9f6d80ba2
+0x0043B150,865,?FUN_0043B150@@YI_NPAVTechnoClass@@@Z,src/building.cpp,ece91a339414e1b728e65ebe0d654591972935efdd4bf24cd602a578ee1b8179
 0x0043B4C0,276,?FUN_0043B4C0@@YI_NPAVHouseClass@@PAVCellClass@@@Z,src/building.cpp,89a6211cb74c4c54cf4294bbf24ee087e6ad00c2af13c33673718e602439dfd1
 0x0043B5E0,147,?PsiWarn@HouseClass@@SIPAVAnimClass@@PAV1@PAVCellClass@@PAVBulletClass@@PBD@Z,src/building.cpp,5217e5fded202011728d4765b19a5cb70a50d1516b7f919a355b9e0d5fd58ecb
 0x0043B680,192,??0BuildingClass@@QAE@ABVNoInitClass@@@Z,src/building.cpp,8f58b64856eec3c072427fb8ab6e485d992183494ffbd97b6d8cdc92a628379a

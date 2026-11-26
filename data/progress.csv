@@ -1520,6 +1520,7 @@ address,name,result,size,source,symbol
 0x0043B0F0,_$E35,MATCH,18,src/building.cpp,_$E35
 0x0043B110,_$E38,MATCH,26,src/building.cpp,_$E38
 0x0043B130,_$E41,MATCH,23,src/building.cpp,_$E41
+0x0043B150,FUN_0043B150,MATCH,865,src/building.cpp,?FUN_0043B150@@YI_NPAVTechnoClass@@@Z
 0x0043B4C0,FUN_0043B4C0,MATCH,276,src/building.cpp,?FUN_0043B4C0@@YI_NPAVHouseClass@@PAVCellClass@@@Z
 0x0043B5E0,HouseClass::PsiWarn,MATCH,147,src/building.cpp,?PsiWarn@HouseClass@@SIPAVAnimClass@@PAV1@PAVCellClass@@PAVBulletClass@@PBD@Z
 0x0043B680,BuildingClass::BuildingClass,MATCH,192,src/building.cpp,??0BuildingClass@@QAE@ABVNoInitClass@@@Z
