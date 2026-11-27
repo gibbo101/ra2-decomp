@@ -58,7 +58,7 @@ class Fixture(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def run_candidates(self, obj, addresses, names=None, aliases=None, search=()):
+    def run_candidates(self, obj, addresses, names=None, aliases=None, search=(), slot_aliases=None):
         path = self.dir / "a.obj"
         path.write_bytes(obj)
 
@@ -66,7 +66,8 @@ class Fixture(unittest.TestCase):
             return addresses.get(symbol["name"])
 
         return datasource.candidates(path, parse_coff(path), obj, address_of,
-                                     datasource.Resolver(names or {}, aliases=aliases), self.retail, self.regions, search)
+                                     datasource.Resolver(names or {}, aliases=aliases, slot_aliases=slot_aliases),
+                                     self.retail, self.regions, search)
 
 
 class CandidateTests(Fixture):
@@ -171,6 +172,28 @@ class CandidateTests(Fixture):
         self.assertIn("is at 0x401240", rej[0]["why"])
         acc, rej = self.run_candidates(obj, {"??_7A@@6B@": RDATA + 0x140}, {})
         self.assertIn("has no known address", rej[0]["why"])
+
+    def test_vtable_slot_alias_requires_exact_slot_and_retail_target(self):
+        table, unresolved, provider = "??_7A@@6B@", "?f@A@@UAEXXZ", "_zero"
+        address = RDATA + 0x140
+        self.retail.patch(address, bytes(4) + struct.pack("<I", 0x401230))
+        obj = build([(".rdata", COMDAT | RDATA_FLAGS, bytes(8), [(4, 1, coffgen.REL_DIR32)])],
+                    [(table, 4, 1, 2, None), (unresolved, 0, 0, 2, None)])
+        addresses = {table: address + 4}
+        names = {provider: 0x401230}
+        aliases = {(table, 0, unresolved): provider}
+        acc, rej = self.run_candidates(obj, addresses, names, slot_aliases=aliases)
+        self.assertEqual([c["relocs"] for c in acc], [[(4, "_zero@pin00401230", coffgen.REL_DIR32)]])
+        self.assertEqual(rej, [])
+
+        acc, rej = self.run_candidates(obj, addresses, names, slot_aliases={(table, 4, unresolved): provider})
+        self.assertEqual(acc, [])
+        self.assertIn("has no known address", rej[0]["why"])
+
+        self.retail.patch(address + 4, struct.pack("<I", 0x401240))
+        acc, rej = self.run_candidates(obj, addresses, names, slot_aliases=aliases)
+        self.assertEqual(acc, [])
+        self.assertIn("is at 0x401230", rej[0]["why"])
 
     def test_a_data_target_becomes_a_pin(self):
         self.retail.patch(RDATA + 0x140, struct.pack("<I", RDATA + 0x200))
