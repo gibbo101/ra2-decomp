@@ -1552,6 +1552,7 @@ address,name,result,size,source,symbol
 0x004436F0,BuildingClass::Active_Click_With,MATCH,361,src/building.cpp,?Active_Click_With@BuildingClass@@UAE_NW4ActionType@@ABVCell@@1_N@Z
 0x00443860,BuildingClass::Assign_Rally_Point,MATCH,806,src/building.cpp,?Assign_Rally_Point@BuildingClass@@QAEXABVCell@@_N@Z
 0x00443B90,BuildingClass::Assign_Target,MATCH,207,src/building.cpp,?Assign_Target@BuildingClass@@UAEXPAVAbstractClass@@@Z
+0x00443C60,BuildingClass::Exit_Object,MATCH,6759,src/building.cpp,?Exit_Object@BuildingClass@@UAEHPAVTechnoClass@@VCell@@@Z
 0x004456D0,BuildingClass::Update_Buildables,MATCH,426,src/building.cpp,?Update_Buildables@BuildingClass@@UAEXXZ
 0x00445880,BuildingClass::Limbo,MATCH,1478,src/building.cpp,?Limbo@BuildingClass@@UAE_NXZ
 0x00445E50,BuildingClass::Turret_Facing,MATCH,171,src/building.cpp,?Turret_Facing@BuildingClass@@UBE?AVDirType@@XZ
@@ -1691,7 +1692,7 @@ address,name,result,size,source,symbol
 0x00456640,BuildingClass::Plot_On_Radar,MATCH,102,src/building.cpp,?Plot_On_Radar@BuildingClass@@UBEXXZ
 0x004566B0,BuildingClass::GetRadialIndicatorRange,MATCH,159,src/building.cpp,?GetRadialIndicatorRange@BuildingClass@@QBEHXZ
 0x00456750,BuildingClass::Draw_Radial_Indicator,MATCH,538,src/building.cpp,?Draw_Radial_Indicator@BuildingClass@@UAEXK@Z
-0x00456970,_$E298,MATCH,1,src/building.cpp,_$E298
+0x00456970,_$E300,MATCH,1,src/building.cpp,_$E300
 0x00456980,DrawRadialIndicator,MATCH,1148,src/building.cpp,?DrawRadialIndicator@@YIXVCoord@@VRGBClass@@M_N222@Z
 0x00456E00,BuildingClass::Clicked_As_Target,MATCH,384,src/building.cpp,?Clicked_As_Target@BuildingClass@@UAEXH@Z
 0x00456F80,BuildingClass::Apparent_Brightness,MATCH,40,src/building.cpp,?Apparent_Brightness@BuildingClass@@UBEHH@Z

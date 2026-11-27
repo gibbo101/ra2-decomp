@@ -1914,6 +1914,7 @@ address,size,symbol,source,sha256
 0x004436F0,361,?Active_Click_With@BuildingClass@@UAE_NW4ActionType@@ABVCell@@1_N@Z,src/building.cpp,69ce502e20d7c0b188f05ad397bd2d65f5fffe6cefb325e9b97c39bfd0b3fe16
 0x00443860,806,?Assign_Rally_Point@BuildingClass@@QAEXABVCell@@_N@Z,src/building.cpp,0d64cfa5eb40873ebe111c883100b8f84547bf7dd78d44ba802390e9f797abc9
 0x00443B90,207,?Assign_Target@BuildingClass@@UAEXPAVAbstractClass@@@Z,src/building.cpp,3d03047b9e202c43000ae57beb3574307507ab7c92d9497c539201314c89b90e
+0x00443C60,6759,?Exit_Object@BuildingClass@@UAEHPAVTechnoClass@@VCell@@@Z,src/building.cpp,d916052b0baae6f8df7c7f4a18655d7fc8c1d628fd98ef956886d111e65c00f5
 0x004456D0,426,?Update_Buildables@BuildingClass@@UAEXXZ,src/building.cpp,4c3d16688dcda770028053860cb79dc8bc55c2366d15ea1106ad05030262237d
 0x00445880,1478,?Limbo@BuildingClass@@UAE_NXZ,src/building.cpp,66babc7d11b191691713bf536a290181672c39629b1e3b3e804deb401b7642cf
 0x00445E50,171,?Turret_Facing@BuildingClass@@UBE?AVDirType@@XZ,src/building.cpp,a7f5612b3fda1c32ffd6f20d42d2f295e515f970adfc993faf85bab104d3f442
@@ -2054,7 +2055,7 @@ address,size,symbol,source,sha256
 0x00456640,102,?Plot_On_Radar@BuildingClass@@UBEXXZ,src/building.cpp,666d494b46a569918c797c355a248eeaf3857e344e6a6457c1ea6edf70e1f61e
 0x004566B0,159,?GetRadialIndicatorRange@BuildingClass@@QBEHXZ,src/building.cpp,60fcd42f5252a7899ab5a714664881fffdf11f542cd7017909e05556322e7e7a
 0x00456750,538,?Draw_Radial_Indicator@BuildingClass@@UAEXK@Z,src/building.cpp,b75fb77ebc63b411f4e1233a6ded85fe356e109fb796f9fc4492c5ad669af427
-0x00456970,1,_$E298,src/building.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
+0x00456970,1,_$E300,src/building.cpp,ae3f4619b0413d70d3004b9131c3752153074e45725be13b9a148978895e359e
 0x00456980,1148,?DrawRadialIndicator@@YIXVCoord@@VRGBClass@@M_N222@Z,src/building.cpp,57ee5cdc7c2558d0c93bb1bba087ac782b47822e687a2a319e264c995041287b
 0x00456E00,384,?Clicked_As_Target@BuildingClass@@UAEXH@Z,src/building.cpp,199d1d2200e9ebba71590b334348ca08ddd410f30c0eb5e58e990c680feb1a5e
 0x00456F80,40,?Apparent_Brightness@BuildingClass@@UBEHH@Z,src/building.cpp,8eccfbb4ff6f01791dcc9f21f92982af70b855ed2cd7c3604fc6a34aed5b16f4
