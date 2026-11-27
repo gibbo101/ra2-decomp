@@ -1000,3 +1000,4 @@ address,name,symbol,evidence
 0x0085D0A4,tan_tab,_tan_tab,Matching fastmath.cpp code references this address and the archived table matches all 16400 bytes
 0x008610B4,atan_tab,_atan_tab,Matching fastmath.cpp code references this address and the archived table matches all 16392 bytes
 0x008650BC,sqrt_tab,_sqrt_tab,Matching fastmath.cpp code references this address and the archived table matches all 65544 bytes
+0x0089A304,AStarFacingToOffset,?AStarFacingToOffset@@3PAHA,Matched AStarClass::Update_Map_Dimensions (0x0042AC00) stores all eight facing offsets at 0x0089A304 through 0x0089A320 in facing order.

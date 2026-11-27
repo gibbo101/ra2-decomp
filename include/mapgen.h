@@ -131,7 +131,7 @@ public:
 		bool Grow(int rings);
 		bool Claim_Expandable_Cells(void);
 		bool Split_Region(void);
-		void Increase_Height(char cell_height);
+		void Increase_Height(int cell_height);
 		void Mark_Interior_Cells(void);
 		double Get_Angle_Score(const Cell & cell1, const Cell & cell2, double ref_angle);
 		DynamicVectorClass<Cell> *Pick_Spread_Cells(DynamicVectorClass<Cell> &cells);
