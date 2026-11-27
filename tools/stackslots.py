@@ -140,7 +140,9 @@ def fingerprint(obj):
 def diagnose(src, address, overlay, baseline):
     orig = check.Original()
     base = CoffObject(baseline)
-    with tempfile.TemporaryDirectory(dir=check.ROOT / "build") as tmp:
+    build = check.ROOT / "build"
+    build.mkdir(exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=build) as tmp:
         listing = Path(tmp) / "source.asm"
         obj, log = check.compile_source(src, overlay, out=Path(tmp) / "source.obj",
                                         extra=("/FAc", "/Fa" + check.winpath(listing)))

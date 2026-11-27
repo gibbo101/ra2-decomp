@@ -1,3 +1,5 @@
+from pathlib import Path
+import tempfile
 import unittest
 from unittest import mock
 
@@ -21,7 +23,9 @@ class StackTests(unittest.TestCase):
 
     def test_listing_reads_no_source_files(self):
         # A source-annotated listing opens every file a #line names, which src/ cannot provide.
-        with mock.patch.object(stackslots.check, "Original"), \
+        with tempfile.TemporaryDirectory() as checkout, \
+                mock.patch.object(stackslots.check, "ROOT", Path(checkout)), \
+                mock.patch.object(stackslots.check, "Original"), \
                 mock.patch.object(stackslots, "CoffObject"), \
                 mock.patch.object(stackslots.check, "compile_source", return_value=(None, "stop")) as compile_source:
             with self.assertRaises(ValueError):
