@@ -143,7 +143,7 @@ def diagnose(src, address, overlay, baseline):
     with tempfile.TemporaryDirectory(dir=check.ROOT / "build") as tmp:
         listing = Path(tmp) / "source.asm"
         obj, log = check.compile_source(src, overlay, out=Path(tmp) / "source.obj",
-                                        extra=("/FAcs", "/Fa" + check.winpath(listing)))
+                                        extra=("/FAc", "/Fa" + check.winpath(listing)))
         if not obj:
             raise ValueError(log)
         if fingerprint(base) != fingerprint(CoffObject(obj.read_bytes())):
