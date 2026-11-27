@@ -21,6 +21,7 @@ bytes and relocation targets equal retail's.
 import struct
 
 PREFIXES = ("??_R0", "??_R1", "??_R2", "??_R3", "??_R4")
+TYPE_INFO_VTABLE = "??_7type_info@@6B@"
 
 
 def encode_number(n):
@@ -95,12 +96,19 @@ class RttiNames:
 
     def _class(self, mangled, info):
         c = core(mangled)
-        self._add(type_descriptor_name(mangled), int(info["type_descriptor_va"], 16))
+        descriptor = int(info["type_descriptor_va"], 16)
+        self._add(type_descriptor_name(mangled), descriptor)
         for loc in info["locators"]:
             col = int(loc["locator_va"], 16)
             self.locators.add(col)
             if loc["cd_offset"] == 0 and loc["base_offset"] == 0:
                 self._add("??_R4" + c + "6B@", col)
+                if mangled == ".?AVtype_info@@" and "vtable_va" in loc:
+                    # The descriptor points to type_info's own primary vtable,
+                    # whose preceding slot points back to the locator.
+                    vt = int(loc["vtable_va"], 16)
+                    if self._dword(descriptor) == vt and self._dword(vt - 4) == col:
+                        self._add(TYPE_INFO_VTABLE, vt)
             chd = int(loc["class_hierarchy_va"], 16)
             self._add("??_R3" + c + "8", chd)
             count, bca = struct.unpack("<II", self.retail.fill(chd + 8, 8))
@@ -118,7 +126,7 @@ class RttiNames:
 
     def address(self, name):
         """Retail VA of an RTTI symbol, or None."""
-        if not name.startswith(PREFIXES):
+        if not name.startswith(PREFIXES) and name != TYPE_INFO_VTABLE:
             return None
         if name.startswith("??_R4"):
             vt = self.vtables.get("??_7" + name[5:])
