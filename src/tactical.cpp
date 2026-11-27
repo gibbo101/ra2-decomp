@@ -1637,6 +1637,102 @@ static inline void Set_Ground_Position(Coord & coord, Point2D const & point)
 	coord.Z = 0;
 }
 
+// FUNCTION: GAMEMD 0x006D7F20
+void Tactical::Draw_Tiles(Cell const & cell, Rect const &)
+{
+	CellClass * basecell = &Map[cell];
+
+	Point2D screen;
+	Coord coord = Coord_Whole(Tile_Center(cell));
+	Coord_To_Pixel(coord, screen);
+	if (basecell->Height < 2) {
+		Point2D pixel;
+		pixel.X = screen.X - ISO_TILE_PIXEL_W / 2;
+		pixel.Y = screen.Y;
+		basecell->Draw_It(pixel, TacticalRect, 0);
+	}
+
+	int x = cell.X;
+	int y = cell.Y;
+	// Scan three cells across each diagonal of the redraw area.
+	for (int row = 0; row < 12; ++row) {
+		int level = row * 2;
+		for (int col = 0; col < 3; col++) {
+			int cx = x + ((col + 1) >> 1);
+			int cy = y - (col >> 1) + 1;
+			if (Map.In_Radar(Cell(cx, cy))) {
+				CellClass * cellptr = &Map[Cell(cx, cy)];
+				bool draw = false;
+				int height;
+				if (col != 1) {
+					height = cellptr->Height;
+					if (height == level + 1) {
+						draw = true;
+					}
+				} else {
+					height = cellptr->Height;
+					if (height > level && height < level + 4) {
+						draw = true;
+					}
+				}
+
+				if (cellptr->Elevation > 0 && draw == false) {
+					int diff = height - level;
+					if (col != 1) {
+						if (diff < 0 && cellptr->Elevation + diff >= 0) {
+							draw = true;
+						}
+					} else if (diff + 1 <= 0) {
+						if (cellptr->Elevation + diff + 1 > 0) {
+							draw = true;
+						}
+					}
+				}
+
+				// A level tile can still overlap the redraw area through its extra graphics.
+				if (height == level && !draw) {
+					int subtile = cellptr->SubTile;
+					int ittype = cellptr->ITType;
+					if (ittype == ISOTILE_NONE || ittype == ISOTILE_NONE_LEGACY) {
+						continue;
+					}
+					IsometricTileTypeClass * type = IsometricTileTypes[ittype];
+					if (type == NULL) {
+						continue;
+					}
+					IsoTileSet const * set = (IsoTileSet const *)type->Get_Image_Data();
+					if (set == NULL) {
+						continue;
+					}
+					if (subtile >= set->Tile_Count() - 1) {
+						subtile = set->Tile_Count() - 1;
+					}
+					IsoTileRecord const * record = set->Fetch_Record_Pointer_Unsafe(subtile);
+					if (record == NULL) {
+						continue;
+					}
+					if (!record->IsHasExtraData) {
+						continue;
+					}
+					draw = true;
+				}
+				if (!draw) {
+					continue;
+				}
+
+				Cell above(cx, cy);
+				coord = Coord_Whole(Coord(above));
+				Point2D screen;
+				Coord_To_Pixel(coord, screen);
+				Point2D pixel = screen - Point2D(ISO_TILE_PIXEL_W / 2, 0);
+				Map[above].Draw_It(pixel, TacticalRect, 0);
+			}
+		}
+		x++;
+		y++;
+	}
+}
+
 // FUNCTION: GAMEMD 0x006D8260
 void Tactical::Draw_Tile_Shadows(int, Rect const & area)
 {
