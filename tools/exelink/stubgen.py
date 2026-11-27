@@ -688,6 +688,10 @@ def plan(objdir, library_names, out, extra_unresolved=(), manifest=None, extents
             vtable_vas.update({n: va for n, va in table.items() if n.startswith("??_7")})
         rtti_json = json.loads((paths.RTTI_CLASSES).read_text())
         rtti = rttimap.RttiNames(retail, rtti_json["classes"], vtable_vas, rtti_json["type_descriptors_without_locator"])
+        # Game vtables use the game's shared pure virtual target. Resolve that
+        # relocation to the matched provider rather than the CRT implementation.
+        purecall = hx(rtti_json.get("purecall_va", "0"))
+        game_aliases = {"__purecall": purecall} if purecall in provider else {}
         init_slots = datasource.initialiser_slots(retail)
         init_sections = [0, 0, 0]   # sections with a placed entry, and of those the ones in consecutive slots
         resolver = datasource.Resolver(
@@ -695,7 +699,7 @@ def plan(objdir, library_names, out, extra_unresolved=(), manifest=None, extents
             pin_plan["global"], call_names,
             {name: va for va, name in (tail_plan["names_at"].items() if tail_plan else ())},
             {name: va for name, va in (tail_plan["thunks"] if tail_plan else ())},
-            {name: va for name, (va, _) in bindings.items()}, rtti,
+            {name: va for name, (va, _) in bindings.items()}, rtti, game_aliases,
             aliases={(r["symbol"], int(r["addr"], 16)): provider[int(r["addr"], 16)] for r in reused
                      if int(r["addr"], 16) in provider})
     # M2 data pinning: project definitions of bound globals become absolute symbols at
