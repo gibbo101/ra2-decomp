@@ -19139,6 +19139,7 @@ address,size,symbol,source,sha256
 0x007BAB60,5,?Draw_Depth_Glow_Line@XSurface@@UAE_NABV?$TRect@H@@ABVPoint2D@@1HHH_N@Z,src/xsurface.cpp,173fde34282f7249a1b2c07f559f5e4e1cd127a54336653ab21390c293cbe9f2
 0x007BAB70,5,?Draw_Depth_Antialiased_Line@XSurface@@UAE_NABV?$TRect@H@@ABVPoint2D@@1AAVRGBClass@@HH_N333M@Z,src/xsurface.cpp,c17bcef51e3f382028c97c47e0f02cd48011b90b704179d080f68a49b2867804
 0x007BAB80,5,?DrawRGBMultiplyingLine@XSurface@@UAE_NABV?$TRect@H@@ABVPoint2D@@1ABVRGBClass@@MHH@Z,src/xsurface.cpp,173fde34282f7249a1b2c07f559f5e4e1cd127a54336653ab21390c293cbe9f2
+0x007BAB90,511,?Plot_Line@XSurface@@UAE_NABV?$TRect@H@@AAVPoint2D@@1P6IXABV3@@Z@Z,src/xsurface.cpp,cd830b78ad688b47862123a3104001d2eeaea0edeec1a70a10ffbad9e83e6e43
 0x007BAD90,43,?Draw_Rect@XSurface@@UAE_NABV?$TRect@H@@H@Z,src/xsurface.cpp,0c17f209f3589a0155ccaf04dafcde057b86db3ec94dcd8022ac1f2fc879543c
 0x007BADC0,158,?Draw_Rect@XSurface@@UAE_NABV?$TRect@H@@0H@Z,src/xsurface.cpp,6b8b2c8f71ab2ebfb712d54c4c9946bed383a71fa88b60948b4eb5a998fca374
 0x007BAE60,80,?Get_Pixel@XSurface@@UBEHABVPoint2D@@@Z,src/xsurface.cpp,60c25325a4ae7d55c8d6fcb9c1cbf916f098884af9425f5d79b4033ed67a5e33

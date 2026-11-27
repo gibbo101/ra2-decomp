@@ -19281,6 +19281,7 @@ address,name,result,size,source,symbol
 0x007BAB60,XSurface::Draw_Depth_Glow_Line,MATCH,5,src/xsurface.cpp,?Draw_Depth_Glow_Line@XSurface@@UAE_NABV?$TRect@H@@ABVPoint2D@@1HHH_N@Z
 0x007BAB70,XSurface::Draw_Depth_Antialiased_Line,MATCH,5,src/xsurface.cpp,?Draw_Depth_Antialiased_Line@XSurface@@UAE_NABV?$TRect@H@@ABVPoint2D@@1AAVRGBClass@@HH_N333M@Z
 0x007BAB80,XSurface::DrawRGBMultiplyingLine,MATCH,5,src/xsurface.cpp,?DrawRGBMultiplyingLine@XSurface@@UAE_NABV?$TRect@H@@ABVPoint2D@@1ABVRGBClass@@MHH@Z
+0x007BAB90,XSurface::Plot_Line,MATCH,511,src/xsurface.cpp,?Plot_Line@XSurface@@UAE_NABV?$TRect@H@@AAVPoint2D@@1P6IXABV3@@Z@Z
 0x007BAD90,XSurface::Draw_Rect,MATCH,43,src/xsurface.cpp,?Draw_Rect@XSurface@@UAE_NABV?$TRect@H@@H@Z
 0x007BADC0,XSurface::Draw_Rect,MATCH,158,src/xsurface.cpp,?Draw_Rect@XSurface@@UAE_NABV?$TRect@H@@0H@Z
 0x007BAE60,XSurface::Get_Pixel,MATCH,80,src/xsurface.cpp,?Get_Pixel@XSurface@@UBEHABVPoint2D@@@Z
