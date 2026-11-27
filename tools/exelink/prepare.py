@@ -9,7 +9,7 @@ Writes, under build/exelink/ (ignored by git):
   inputs/match_manifest.json   data/manifest.csv as manifest rows (all matched), and the rows
                                data/progress.csv records as RECONSTRUCTED, which link from source too
   inputs/symbol_bindings.json  decorated symbol -> address from data/names.csv
-  inputs/rtti_classes.json     the exe's RTTI graph: type descriptors, locators, vtables
+  inputs/rtti_classes.json     the exe's RTTI graph and its shared pure virtual target
   inputs/crt_tail_layout.json  the library tail of .text (tail_layout.py over the toolchain's LIB)
   inputs/function_extents.json data/functions.csv as slots: size, the gap to the next
                                function and what fills it; engine functions are the ones
@@ -32,6 +32,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent))
 import paths  # noqa: E402
+from check import Original  # noqa: E402
 from exebuild import build_of, restore  # noqa: E402
 
 DATA = paths.ROOT / "data"
@@ -205,7 +206,9 @@ def main(argv=None):
     manifest = manifest_rows(args.progress)
     write_json(paths.MANIFEST, manifest)
     write_json(paths.BINDINGS, bindings())
-    write_json(paths.RTTI_CLASSES, rtti_classes(image))
+    rtti = rtti_classes(image)
+    rtti["purecall_va"] = f"0x{Original(args.exe).rtti().purecall:08X}"
+    write_json(paths.RTTI_CLASSES, rtti)
     import tail_layout
     hints = tail_layout.call_hints(args.objdir) if args.objdir else None
     layout = tail_layout.build(paths.LIBDIR, hints)
