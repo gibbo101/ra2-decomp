@@ -1654,7 +1654,7 @@ void Tactical::Draw_Tiles(Cell const & cell, Rect const &)
 
 	int x = cell.X;
 	int y = cell.Y;
-	/* Scan three cells across each diagonal of the redraw area. */
+	// Scan three cells across each diagonal of the redraw area.
 	for (int row = 0; row < 12; ++row) {
 		int level = row * 2;
 		for (int col = 0; col < 3; col++) {
@@ -1689,7 +1689,7 @@ void Tactical::Draw_Tiles(Cell const & cell, Rect const &)
 					}
 				}
 
-				/* A level tile can still overlap the redraw area through its extra graphics. */
+				// A level tile can still overlap the redraw area through its extra graphics.
 				if (height == level && !draw) {
 					int subtile = cellptr->SubTile;
 					int ittype = cellptr->ITType;
@@ -1714,13 +1714,12 @@ void Tactical::Draw_Tiles(Cell const & cell, Rect const &)
 					if (!record->IsHasExtraData) {
 						continue;
 					}
-					goto draw_tile;
+					draw = true;
 				}
 				if (!draw) {
 					continue;
 				}
 
-			draw_tile:
 				Cell above(cx, cy);
 				coord = Coord_Whole(Coord(above));
 				Point2D screen;
