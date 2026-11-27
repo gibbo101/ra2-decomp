@@ -320,6 +320,80 @@ bool XSurface::DrawRGBMultiplyingLine(Rect const & cliprect, Point2D const & sta
 	return(false);
 }
 
+// FUNCTION: GAMEMD 0x007BAB90
+bool XSurface::Plot_Line(Rect const & xcliprect, Point2D & startpoint, Point2D & endpoint, void(*drawer_callback)(Point2D const &))
+{
+	Rect cliprect = Intersect(xcliprect, Get_Rect());
+
+	Point2D start = Bias_To(startpoint, cliprect);
+	Point2D end = Bias_To(endpoint, cliprect);
+
+	if (!Clip_Line_To_Rect(start, end, cliprect)) return(false);
+
+	if (start.X > end.X) {
+		swap(start, end);
+	}
+
+	if (start.Y == end.Y) {
+		int x = end.X - start.X;
+		for (int i = 0; i <= x; i++) {
+			drawer_callback(Point2D(start.X + i, end.Y));
+		}
+	} else if (start.X == end.X) {
+		int dy = abs(start.Y - end.Y);
+		int y = end.Y;
+		if (start.Y <= end.Y) {
+			y = start.Y;
+		}
+		for (int i = 0; i <= dy; i++) {
+			drawer_callback(Point2D(start.X, y + i));
+		}
+	} else {
+		int dx = end.X - start.X;
+		int dy = end.Y - start.Y;
+		int y = start.Y;
+		int x = start.X;
+		int pitch = 1;
+		if (dy < 0) {
+			pitch = -pitch;
+		}
+
+		dy = abs(dy);
+		int dx2 = 2 * dx;
+		int span = dx;
+		dx = 2 * dy;
+		int dy2 = dx;
+		int x2 = end.X;
+
+		if (span > dy) {
+			dx -= span;
+			for (int i = x; i <= x2; i++) {
+				drawer_callback(Point2D(i, y));
+				if (dx > 0) {
+					dx -= dx2;
+					y += pitch;
+				}
+				dx += dy2;
+			}
+		} else {
+			dx = dx2 - dy;
+			for (int i = 0; i <= dy; i++) {
+				drawer_callback(Point2D(x, y));
+				if (dx > 0) {
+					x++;
+					dx -= dy2;
+				}
+				dx += dx2;
+				y += pitch;
+			}
+		}
+	}
+
+	Unlock();
+
+	return(true);
+}
+
 // FUNCTION: GAMEMD 0x007BAD90
 bool XSurface::Draw_Rect(Rect const & crect, int color)
 {
