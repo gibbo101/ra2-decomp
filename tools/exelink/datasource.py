@@ -80,9 +80,10 @@ def relocs_in(final, secno, start, end):
 class Resolver:
     """Where each name will be in the linked image: pin names carry it, the rest comes from the plan."""
 
-    def __init__(self, *tables, aliases=None):
+    def __init__(self, *tables, aliases=None, slot_aliases=None):
         self.tables = tables
         self.aliases = aliases or {}   # (name, VA) -> the name that is defined at VA for a name with several addresses
+        self.slot_aliases = slot_aliases or {}
 
     def alias(self, name, va):
         """A name the project defines at several retail addresses (a scalar deleting destructor that several
@@ -222,6 +223,10 @@ def candidates(path, parsed, final, address_of, resolver, retail, regions, searc
                 same = resolver.alias(tname, target)
                 if same:   # the slot names the instance at its own retail address, not the one the name links to
                     tname, known = same, target
+                if known is None and kind == "vtable":
+                    slot = off - members[0][0]
+                    tname = resolver.slot_aliases.get((name, slot, tname), tname)
+                    known = resolver.address(tname)
                 if known is None and "string" in search and matches_referenced_string(
                         data, sections, symbols, final, symidx, tname, target, retail, regions):
                     known = target

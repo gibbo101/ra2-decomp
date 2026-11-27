@@ -37,6 +37,7 @@ M2 (both optional, both read only names, addresses and sizes at link time):
 
 import argparse
 import bisect
+import csv
 import json
 import re
 import struct
@@ -692,6 +693,11 @@ def plan(objdir, library_names, out, extra_unresolved=(), manifest=None, extents
         # relocation to the matched provider rather than the CRT implementation.
         purecall = hx(rtti_json.get("purecall_va", "0"))
         game_aliases = {"__purecall": purecall} if purecall in provider else {}
+        # Only source-placed code providers can supply a vtable slot alias.
+        providers = set(provider.values())
+        with (ROOT / "data/vtable_slot_aliases.csv").open(newline="", encoding="utf-8") as f:
+            slot_aliases = {(row["vtable"], hx(row["offset"]), row["symbol"]): row["provider"]
+                            for row in csv.DictReader(f) if row["provider"] in providers}
         init_slots = datasource.initialiser_slots(retail)
         init_sections = [0, 0, 0]   # sections with a placed entry, and of those the ones in consecutive slots
         resolver = datasource.Resolver(
@@ -701,7 +707,8 @@ def plan(objdir, library_names, out, extra_unresolved=(), manifest=None, extents
             {name: va for name, va in (tail_plan["thunks"] if tail_plan else ())},
             {name: va for name, (va, _) in bindings.items()}, rtti, game_aliases,
             aliases={(r["symbol"], int(r["addr"], 16)): provider[int(r["addr"], 16)] for r in reused
-                     if int(r["addr"], 16) in provider})
+                     if int(r["addr"], 16) in provider},
+            slot_aliases=slot_aliases)
     # M2 data pinning: project definitions of bound globals become absolute symbols at
     # their retail addresses, so code references the retail storage directly.
     pin_map = {name: va for name, (va, _) in bindings.items() if section_of(va) in (".rdata", ".data")} \

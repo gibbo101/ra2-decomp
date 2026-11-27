@@ -58,6 +58,11 @@ uv run tools/exelink/link.py --hybrid --source-data --search-literals
   each module kept its own copy of, a const that a header defines with external linkage) is
   pinned per object. A name whose sites disagree is pinned site by site. No external symbol
   table is needed or read.
+- A row in `data/vtable_slot_aliases.csv` can resolve an otherwise unknown
+  vtable target to an existing matched body. Its offset is in bytes from the
+  first virtual slot. The alias applies only to the named vtable, offset and
+  symbol, and the source-data link still checks the target address against the
+  original before placing the table.
 - **The linker resolves everything.** There is no `/FORCE`. A name no placed code explains
   gets a stub, and `link_report.json` lists every one.
 
