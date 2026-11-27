@@ -106,6 +106,26 @@ class NamesTest(unittest.TestCase):
         r = self.names({"??_7Derived@@6BOther@@@": BASE + 0x308})   # slot before it holds 0x401000
         self.assertIsNone(r.address("??_R4Derived@@6BOther@@@"))
 
+    def test_type_info_descriptor_and_locator_must_agree_on_vtable(self):
+        im = image()
+        descriptor, col, vtable = BASE + 0x280, BASE + 0x240, BASE + 0x324
+        im.put(descriptor, vtable, 0)
+        im.string(descriptor + 8, ".?AVtype_info@@")
+        im.put(col, 0, 0, 0, descriptor, 0)
+        im.put(vtable - 4, col, 0x401000)
+        classes = {".?AVtype_info@@": {
+            "type_descriptor_va": hex(descriptor),
+            "locators": [{"locator_va": hex(col), "base_offset": 0, "cd_offset": 0,
+                          "vtable_va": hex(vtable), "class_hierarchy_va": hex(BASE)}],
+        }}
+        for pointer, backlink, expected in (
+                (vtable, col, vtable), (vtable + 4, col, None), (vtable, col + 4, None)):
+            with self.subTest(pointer=pointer, backlink=backlink):
+                im.put(descriptor, pointer)
+                im.put(vtable - 4, backlink)
+                names = rttimap.RttiNames(im, classes)
+                self.assertEqual(names.address("??_7type_info@@6B@"), expected)
+
     def test_other_symbols_and_unknown_classes(self):
         r = self.names()
         self.assertIsNone(r.address("??_7Derived@@6B@"))
