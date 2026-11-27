@@ -14712,6 +14712,7 @@ address,size,symbol,source,sha256
 0x006D7560,730,?Draw_Tiles@Tactical@@QAEXABV?$TRect@H@@0@Z,src/tactical.cpp,7e5d5c02e57fd74b3d30fa92c0a4348c897fb419e6e6b8ade437c1b041d79c0d
 0x006D7840,954,?Draw_Sparkles@Tactical@@QAEXABV?$TRect@H@@0@Z,src/tactical.cpp,478aebdd7933777c5e6c618cd994ac1a6710820243e01ce49aaf649211d371cd
 0x006D7C00,785,?Draw_Tile_Shadows@Tactical@@QAEXABV?$TRect@H@@0@Z,src/tactical.cpp,702083f4fd772c52038d163ebfeed80153938e79fa4c4fa5fd34454478aaf7dc
+0x006D7F20,824,?Draw_Tiles@Tactical@@QAEXABVCell@@ABV?$TRect@H@@@Z,src/tactical.cpp,fa18741c26135522f8ffcd7184daaffef91115fcff16cb4d4228afb83ba34f0c
 0x006D8260,619,?Draw_Tile_Shadows@Tactical@@QAEXHABV?$TRect@H@@@Z,src/tactical.cpp,34375508b399b10ee780f622877d9e15566f8e72c91031a5de39d31e17eee5eb
 0x006D84D0,89,?Clamp_Pixel_To_Tactical@Tactical@@QAE?AVPoint2D@@ABV2@@Z,src/tactical.cpp,93aafd7b08818c49e13beefdbc4c741cf0b5eff339b279f5b9d1db005849330a
 0x006D8530,254,?Scroll_Map@Tactical@@QAEXW4FacingType@@H@Z,src/tactical.cpp,c2ac53dc2af5befa3aeef1144c83659c7a297f9052e131dd3f03146191640687
