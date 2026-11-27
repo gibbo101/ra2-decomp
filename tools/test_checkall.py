@@ -122,6 +122,19 @@ sys.exit(case['exit'])
         self.child(self.match("0x00401010", "Second") + self.complete(1), name="second.asm")
         self.assertEqual(self.run_gate(record=True)[0], 0)
 
+    def test_data_only_assembly_is_left_to_the_linker(self):
+        assembly_data = self.root / "src/asmdata"
+        assembly_data.mkdir()
+        data = assembly_data / "tables.asm"
+        try:
+            data.write_text(".data\n")
+            self.child(self.baseline() + self.complete(2), name="code.asm")
+            code, output = self.run_gate()
+            self.assertEqual(code, 0, output)
+        finally:
+            data.unlink(missing_ok=True)
+            assembly_data.rmdir()
+
     def test_new_partial_is_allowed_and_recorded(self):
         partial = "0x00401020 Third: 82.1% (3/4 bytes) _Third\n"
         self.child(self.baseline() + partial + self.complete(3, 1), exit_code=1)

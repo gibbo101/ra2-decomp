@@ -995,3 +995,8 @@ address,name,symbol,evidence
 0x00B07DF8,SidebarClass::Power,,Static initializer 0x006A4C60 constructs this control and 0x006A4C80 destroys it.
 0x00B0B3A0,SidebarClass::Repair,,Static initializer 0x006A4CA0 constructs this control and 0x006A4CC0 destroys it.
 0x00B07E80,SidebarClass::StripClass::SelectButton,,Array initializer 0x006A4DC0 uses this base and the matching destructor 0x006A4E10 uses the same base.
+0x0084F084,sin_tab,_sin_tab,Matching fastmath.cpp code references this address and the archived table matches all 40976 bytes
+0x00859094,asin_tab,_asin_tab,Matching fastmath.cpp code references this address and the archived table matches all 16400 bytes
+0x0085D0A4,tan_tab,_tan_tab,Matching fastmath.cpp code references this address and the archived table matches all 16400 bytes
+0x008610B4,atan_tab,_atan_tab,Matching fastmath.cpp code references this address and the archived table matches all 16392 bytes
+0x008650BC,sqrt_tab,_sqrt_tab,Matching fastmath.cpp code references this address and the archived table matches all 65544 bytes

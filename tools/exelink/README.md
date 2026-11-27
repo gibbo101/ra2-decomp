@@ -34,6 +34,9 @@ uv run tools/exelink/link.py --hybrid --source-data --search-literals
   in its own COMDAT so `/ORDER` can place it; it changes how code is packaged, not the code.
   Archived `.asm` objects get `comdatize.py`, which marks their `.text` a COMDAT keyed on the
   routine at offset 0.
+- `src/asmdata/` contains archived data-only assembly objects. The function checker skips them.
+  The source-data link checks their compiled data against the original at the addresses
+  recorded in `data/names.csv`.
 - Everything written goes under `build/exelink/` and contains bytes of the original: never
   commit it. `link.py` refuses an `--out` outside it.
 
