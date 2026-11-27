@@ -384,6 +384,16 @@ Each entry: what the diff showed, then the source change that fixed it.
   that closed our near misses were this (0x00585F40, 0x006ABD30, 0x00659FF0). Only locals
   that could live in a register count: a named reference, or a local whose address is
   taken (passed by `const &`), changes nothing (0x00506EF0).
+- A tie can follow the function's total count of counted symbols: named initialised locals,
+  class temporaries (`DirType()` counts like a named `DirType dir`), inline by-value
+  parameters (a wrapper taking a `DirType` counts 2), and an explicit conversion copied into
+  a named local (`Cell ncell = Cell(cell + *list);`, where an implicit conversion or one
+  inside an argument adds nothing). Probe both ways: a dead `int probe = 0;` is +1, and
+  writing a single-use local inline or a by-value wrapper as the sibling's member form is
+  -1 or -2. Exit_Object (0x00443C60) matched at net -1. If +1 and +2 leave the code
+  byte-identical, the tie is not count-driven (0x0060B950, 0x00617250, 0x0064BDD0,
+  0x00610CA0, 0x004BC750). Confirm with a plain check.py: a gauge's own extern
+  declarations shift its count by about 2.
 - A tie can also count inline getter reads: in 0x0073E5E0 the x87 load order followed named
   locals plus `__declspec` property reads together, so `localprobe` read flat until four
   property reads became direct field reads. Sweep both before calling a tie final.
