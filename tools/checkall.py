@@ -158,7 +158,10 @@ def main(run_source=run_checker, validate=None) -> None:
         with PROGRESS.open() as f:
             before = {r["address"]: r["result"] for r in csv.DictReader(f) if r["result"] in KEPT}
     before.update(baseline_matches(sys.argv[1:]))
-    sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext))
+    # Data-only archive objects are checked by exelink's source-data comparison.
+    asm_data = ROOT / "src/asmdata"
+    sources = sorted(f for ext in ("*.cpp", "*.asm") for f in (ROOT / "src").rglob(ext)
+                     if ext != "*.asm" or asm_data not in f.parents)
     refs = ReferenceBaseline(ROOT, record)
     rows, broken, warnings = check_sources(sources, before, refs, run_source)
     seen = {r[0] for r in rows}
