@@ -416,6 +416,9 @@ address,name,symbol,evidence
 0x0088731C,CompositeSurface,,YRpp Surface.h Composite; TibSun _surface.h CompositeSurface; CCToolTip::Draw 0x00478E30
 0x00A9FA9C,DAT_00A9FA9C_Surface,?DAT_00A9FA9C_Surface@@3PAVDSurface@@A,Matched setup 0x0053BAF0 stores its newly constructed DSurface here; matched teardown 0x0053BB80 deletes and clears the same pointer
 0x00B0B518,SidebarClass::IsToBlitSidebar,,"Matched Blit_Sidebar 0x006A70E0 reads at 0x006A7143, clears at 0x006A7166 and sets at 0x006A723A; TibSun sidebar.cpp static flag"
+0x008A0DE8,DSurface::HalfbrightMask,?HalfbrightMask@DSurface@@1GA,DSurface::Create_Primary at 0x004BA770 stores the mask for RGB 127 at +0x354. DSurface::Blend_Pixel reads it at +0x35.
+0x008A0DEA,DSurface::QuarterbrightMask,?QuarterbrightMask@DSurface@@1GA,DSurface::Create_Primary at 0x004BA770 stores the mask for RGB 63 at +0x392. DSurface::Blend_Pixel reads it at +0x1E and +0x5B.
+0x008A0DEC,DSurface::EighthbrightMask,?EighthbrightMask@DSurface@@1GA,DSurface::Create_Primary at 0x004BA770 stores the mask for RGB 31 at +0x3CB. The address agrees with YRpp Drawing.h.
 0x00AC48B8,ODRComponentMask,?ODRComponentMask@@3GA,YRpp OwnerDraw.h ColorShiftRed; TibSun ownrdraw.h declares it; existing matched ODInitMasks 0x0061F190 confirms the reference
 0x00AC48BA,ODGComponentMask,?ODGComponentMask@@3GA,YRpp OwnerDraw.h ColorShiftGreen; TibSun ownrdraw.h declares it; existing matched ODInitMasks 0x0061F190 confirms the reference
 0x00AC48BC,ODBComponentMask,?ODBComponentMask@@3GA,YRpp OwnerDraw.h ColorShiftBlue; existing matched ODInitMasks 0x0061F190 +0x4A/+0x62/+0x71
