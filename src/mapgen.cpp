@@ -773,7 +773,8 @@ int MapRegionClass::CellData::Get_Region(Cell const &cell)
 	if (RMGCellData == NULL) {
 		return(-1);
 	}
-	return(MapRegionClass::Get_Cell_Data(cell).RegionID);
+	CellData & data = MapRegionClass::Get_Cell_Data(cell);
+	return(data.RegionID);
 }
 
 // FUNCTION: GAMEMD 0x0058D0D0
@@ -898,6 +899,254 @@ void MapRegionClass::Increase_Height(char cell_height)
 		}
 		cptr = Map.Iterate();
 	}
+}
+
+static inline void Delete_Cell_Search(CellNode * nodes, PriorityQueueClass<CellNode> * queue)
+{
+	delete[] nodes;
+	delete queue;
+}
+
+// FUNCTION: GAMEMD 0x0058D620
+bool MapRegionClass::Split_Region(void)
+{
+	int i;
+	int j;
+	MapRegionClass * region;
+
+	if (Unsplittable) {
+		return(false);
+	}
+
+	DynamicVectorClass<Cell> const & source_cells = Cells;
+	CellNode * nodes = new CellNode[(2 * CellCount) + 10];
+	PriorityQueueClass<CellNode> * queue = new PriorityQueueClass<CellNode>((2 * CellCount) + 10);
+	queue->Clear();
+
+	CellData::Reset_Spreads(false);
+
+	int spread_count = 0;
+	for (i = Cells.Count() - 1; i >= 0; i--) {
+		MapRegionClass::Get_Cell_Data(source_cells[i]).RegionID = -2;
+	}
+
+	unsigned int target_count = Pick_Random_UInt(CellCount / 8, CellCount / 3);
+	unsigned int seed_index = Pick_Random_UInt(0, source_cells.Count() - 1);
+
+	int node_count = 1;
+	Cell seed = source_cells[seed_index];
+	nodes[0].Element = seed;
+	nodes[0].Score = 0.0f;
+	MapRegionClass::Get_Cell_Data(seed).SpreadID = -3;
+	queue->Insert(nodes[0]);
+
+	CellNode * node = queue->Extract_Min();
+	double dist = (unsigned int)RMGRandom() * (DEG_TO_RAD(360) / UINT_MAX);
+
+	while (node != NULL) {
+		if (spread_count >= (int)target_count) {
+			break;
+		}
+
+		CellData::Set_Region(node->Element, -3);
+
+		int cell_index = node->Element.X + MapCellStride * node->Element.Y;
+		CellNode * newnode = &nodes[node_count];
+
+		for (j = FACING_FIRST; j < FACING_COUNT; j += FACING_90) {
+			Cell ncell = Adjacent_Cell(node->Element, (FacingType)j);
+			if (My_In_Radar(ncell)) {
+				if (CellData::Get_Region(ncell) == -2 && CellData::Get_Spread(ncell) != -3 && Map[ncell].Is_Tile_Clear()) {
+					newnode->Element = ncell;
+					newnode->Score = Get_Angle_Score(seed, ncell, dist);
+					MapRegionClass::Get_Cell_Data(cell_index + AStarFacingToOffset[j]).SpreadID = -3;
+					node_count++;
+					queue->Insert(*newnode++);
+				}
+			}
+		}
+
+		spread_count++;
+		dist += Sample_Normal(0, DEG_TO_RAD(22.5));
+		node = queue->Extract_Min();
+	}
+
+	CellData::Reset_Spreads(false);
+
+	CellNode * remaining = queue->Extract_Min();
+	DynamicVectorClass<Cell> ncells;
+
+	while (remaining != NULL) {
+		Cell c = remaining->Element;
+		MapRegionClass::Get_Cell_Data(c).RegionID = -3;
+		remaining = queue->Extract_Min();
+	}
+
+	Delete_Cell_Search(nodes, queue);
+
+	DynamicVectorClass<MapRegionClass *> new_regions;
+	for (i = source_cells.Count() - 1; i >= 0; i--) {
+		Cell cell = source_cells[i];
+		int cell_index = cell.X + MapCellStride * cell.Y;
+		if (MapRegionClass::Get_Cell_Data(cell_index).RegionID < -1) {
+			int old_id = MapRegionClass::Get_Cell_Data(cell_index).RegionID;
+
+			MapRegionClass * new_region = new MapRegionClass(cell);
+			new_region->Cells.Add(cell);
+			new_region->CellCount++;
+			new_regions.Add(new_region);
+			MapRegionClass::Get_Cell_Data(cell_index).RegionID = new_region->ID;
+
+			DynamicVectorClass<Cell> open;
+			open.Set_Growth_Step(100000);
+			open.Add(cell);
+
+			while (open.Count() != 0) {
+				int index = open.Count() - 1;
+				Cell c = open[index];
+				open.Delete_Index(index);
+
+				for (j = 0; j < FACING_COUNT; j++) {
+					Cell ncell = Adjacent_Cell(c, (FacingType)j);
+					if (My_In_Radar(ncell)) {
+						CellData & ndata = MapRegionClass::Get_Cell_Data(ncell);
+						if (ndata.RegionID == old_id) {
+							new_region->Cells.Add(ncell);
+							new_region->CellCount++;
+							ndata.RegionID = new_region->ID;
+							open.Add(ncell);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	for (i = new_regions.Count() - 1; i >= 0; i--) {
+		region = new_regions[i];
+		if (region->Discardable) {
+			continue;
+		}
+
+		DynamicVectorClass<Cell> * cells = region->Build_Border_Cell_List2();
+		bool * adjacent = new bool[MapRegionClass::TotalCount];
+		for (j = 0; j < MapRegionClass::TotalCount; j++) {
+			adjacent[j] = false;
+		}
+
+		for (j = cells->Count() - 1; j >= 0; j--) {
+			Cell c = (*cells)[j];
+			for (int m = 0; m < FACING_COUNT; m++) {
+				Cell ncell = Adjacent_Cell(c, (FacingType)m);
+				if (My_In_Radar(ncell)) {
+					int id = MapRegionClass::Get_Cell_Data(ncell).RegionID;
+					if (id >= 0 && id != region->ID) {
+						adjacent[id] = true;
+					}
+				}
+			}
+		}
+
+		delete cells;
+
+		MapRegionClass * merge_target = NULL;
+		int merge_height = -1;
+		int max_count = -1;
+		int min_height = -1;
+		int max_height = -1;
+
+		for (j = 0; j < MapRegionClass::TotalCount; j++) {
+			if (adjacent[j]) {
+				MapRegionClass * other = MapRegionClass::From_ID(j);
+
+				if (!other->Discardable) {
+					if (other->CellCount > max_count && !other->ContainsWater) {
+						max_count = other->CellCount;
+						merge_target = other;
+						merge_height = other->CellHeight;
+					}
+
+					if (min_height == -1) {
+						min_height = other->CellHeight;
+						max_height = other->CellHeight;
+					} else {
+						if (other->CellHeight > max_height) {
+							max_height = other->CellHeight;
+						}
+						if (other->CellHeight < min_height) {
+							min_height = other->CellHeight;
+						}
+					}
+				}
+			}
+		}
+
+		DynamicVectorClass<int> heights;
+		int diff = max_height - min_height;
+		if (diff != 0) {
+			if (diff != 4) {
+				if (diff == 8) {
+					heights.Add((max_height + min_height) / 2);
+				}
+			} else {
+				heights.Add(max_height);
+				heights.Add(min_height);
+			}
+		} else {
+			if (min_height >= 4) {
+				heights.Add(min_height - 4);
+			}
+			if (max_height <= 7) {
+				heights.Add(max_height + 4);
+			}
+		}
+
+		if (FUN_0058BD20(RandomMapGen.SeedData.MapType)) {
+			for (j = heights.Count() - 1; j >= 0; j--) {
+				if (heights[j] == 0) {
+					heights.Delete_Index(j);
+				}
+			}
+		}
+
+		delete[] adjacent;
+
+		if (region->CellCount > 100) {
+			int old_height = region->CellHeight;
+			unsigned int max_index = (unsigned int)heights.Count() - 1;
+			unsigned int index = Pick_Random_UInt(0, max_index);
+
+			region->CellHeight = heights[index];
+			int height_diff = region->CellHeight - old_height;
+			region->Increase_Height(height_diff);
+			continue;
+		}
+		if (merge_target != NULL) {
+			int old_height = region->CellHeight;
+			region->CellHeight = merge_height;
+			int height_diff = region->CellHeight - old_height;
+			region->Increase_Height(height_diff);
+
+			for (j = region->Cells.Count() - 1; j >= 0; j--) {
+				Cell c = region->Cells[j];
+				merge_target->Cells.Add(c);
+				merge_target->CellCount++;
+				MapRegionClass::Get_Cell_Data(c).RegionID = merge_target->ID;
+			}
+
+			region->Discardable = true;
+		}
+	}
+
+	for (i = MapRegionClass::MapRegions.Count() - 1; i >= 0; i--) {
+		region = MapRegionClass::MapRegions[i];
+		if (region != this && region->Discardable) {
+			delete MapRegionClass::MapRegions[i];
+		}
+	}
+
+	SplitCount++;
+	return(true);
 }
 
 // FUNCTION: GAMEMD 0x0058E5D0
@@ -5045,7 +5294,7 @@ DynamicVectorClass<Cell> *MapGeneratorClass::Build_Region_Border_Cell_List(int i
 		Cell cell = RMGCellData[i].CellID;
 		if (cell != Cell(0, 0) && MapRegionClass::CellData::Get_Region(cell) == id) {
 			bool add = false;
-			for (FacingType facing = FACING_FIRST; facing < FACING_COUNT; facing++) {
+			for (FacingType facing = FACING_FIRST; facing < FACING_COUNT; ++facing) {
 				Cell ncell = Adjacent_Cell(cell, facing);
 				if (My_In_Radar(ncell)) {
 					if (MapRegionClass::CellData::Get_Region(ncell) != id) {
@@ -5063,8 +5312,6 @@ DynamicVectorClass<Cell> *MapGeneratorClass::Build_Region_Border_Cell_List(int i
 
 	return(cells);
 }
-
-static inline void Delete_Forest_Search(CellNode * nodes, PriorityQueueClass<CellNode> * queue);
 
 // FUNCTION: GAMEMD 0x005A08D0
 bool MapGeneratorClass::Grow_Water_Region(int region_id, float spread_scale, Rect const & bounds, Cell const & origin, bool claim_frontier)
@@ -5097,7 +5344,8 @@ bool MapGeneratorClass::Grow_Water_Region(int region_id, float spread_scale, Rec
 		if (bounds.Is_Point_Within(Point2D(seed.X, seed.Y))) {
 
 			nodes[marker_index].Element = seed;
-			nodes[marker_index].Score = Get_Angle_Score(origin, seed, angle);
+			double score = Get_Angle_Score(origin, seed, angle);
+			nodes[marker_index].Score = score;
 			queue->Insert(nodes[marker_index++]);
 		}
 	}
@@ -5107,8 +5355,12 @@ bool MapGeneratorClass::Grow_Water_Region(int region_id, float spread_scale, Rec
 	double scale = log((double)seed_count);
 	scale = max(1.0, scale);
 
-	int spread_count = (int)(1.0f / ((float)(1.0 / scale) * spread_scale) * 0.5f);
-	spread_count += Pick_Random_UInt(0, spread_count / 2);
+	float inverse_scale = (float)(1.0 / scale);
+	float scaled_density = inverse_scale * spread_scale;
+	int spread_count = (int)(1.0f / scaled_density * 0.5f);
+	unsigned int max_extra = spread_count / 2;
+	unsigned int extra_count = Pick_Random_UInt(0, max_extra);
+	spread_count += extra_count;
 
 	CellNode * node = queue->Extract_Min();
 
@@ -5131,7 +5383,8 @@ bool MapGeneratorClass::Grow_Water_Region(int region_id, float spread_scale, Rec
 					bounds.Is_Point_Within(Point2D(newcell.X, newcell.Y)) &&
 					Map[newcell].Is_Tile_Clear()) {
 					nodes[marker_index].Element = newcell;
-					nodes[marker_index].Score = Get_Angle_Score(origin, newcell, angle);
+					double score = Get_Angle_Score(origin, newcell, angle);
+					nodes[marker_index].Score = score;
 					Set_Cell_Data_Spread(newcell, region_id);
 					queue->Insert(nodes[marker_index++]);
 				} else {
@@ -5143,7 +5396,8 @@ bool MapGeneratorClass::Grow_Water_Region(int region_id, float spread_scale, Rec
 		}
 
 		spread_step++;
-		angle += Sample_Normal(0, M_PI_4);
+		double angle_step = Sample_Normal(0, M_PI_4);
+		angle += angle_step;
 		node = queue->Extract_Min();
 	}
 
@@ -5159,7 +5413,8 @@ bool MapGeneratorClass::Grow_Water_Region(int region_id, float spread_scale, Rec
 		}
 	}
 
-	Delete_Forest_Search(nodes, queue);
+	delete[] nodes;
+	delete queue;
 
 	return(result_flag);
 }
@@ -6003,12 +6258,6 @@ void MapGeneratorClass::Generate_Arctic_Vegetation(void)
 	}
 }
 
-static inline void Delete_Forest_Search(CellNode * nodes, PriorityQueueClass<CellNode> * queue)
-{
-	delete[] nodes;
-	delete queue;
-}
-
 // FUNCTION: GAMEMD 0x005A45E0
 int MapGeneratorClass::Place_Forest(CellClass const * cellptr, int count, double density)
 {
@@ -6062,7 +6311,7 @@ int MapGeneratorClass::Place_Forest(CellClass const * cellptr, int count, double
 		node = queue->Extract_Min();
 	}
 
-	Delete_Forest_Search(nodes, queue);
+	Delete_Cell_Search(nodes, queue);
 	return i;
 }
 
@@ -7345,11 +7594,11 @@ DirtRoadTile::~DirtRoadTile(void)
 }
 
 // SYNTHETIC: GAMEMD 0x005A9C20 SYMBOL
-// _$E215
+// _$E216
 // SYNTHETIC: GAMEMD 0x005A9C40 SYMBOL
-// _$E212
-// SYNTHETIC: GAMEMD 0x005AC190 SYMBOL
 // _$E213
+// SYNTHETIC: GAMEMD 0x005AC190 SYMBOL
+// _$E214
 DirtRoadTile DirtRoadTiles[] = {
 	/* 0 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(2, 0), FACING_NE)),
 	/* 1 */ DirtRoadTile(DirtRoadLink(Cell(0, 0), FACING_N), DirtRoadLink(Cell(1, 0), FACING_E)),
@@ -7688,33 +7937,33 @@ template class VectorClass<double>;
 #include "geometry.h"
 
 // SYNTHETIC: GAMEMD 0x0058B530 SYMBOL
-// _$E218
+// _$E219
 // SYNTHETIC: GAMEMD 0x0058B560 SYMBOL
-// _$E221
+// _$E222
 // SYNTHETIC: GAMEMD 0x0058B580 SYMBOL
-// _$E224
+// _$E225
 // SYNTHETIC: GAMEMD 0x0058B5A0 SYMBOL
-// _$E227
+// _$E228
 // SYNTHETIC: GAMEMD 0x0058B5C0 SYMBOL
-// _$E230
+// _$E231
 // SYNTHETIC: GAMEMD 0x0058B5E0 SYMBOL
-// _$E233
+// _$E234
 // SYNTHETIC: GAMEMD 0x0058B600 SYMBOL
-// _$E236
+// _$E237
 // SYNTHETIC: GAMEMD 0x0058B640 SYMBOL
-// _$E239
+// _$E240
 // SYNTHETIC: GAMEMD 0x0058B670 SYMBOL
-// _$E242
+// _$E243
 // SYNTHETIC: GAMEMD 0x0058B6A0 SYMBOL
-// _$E245
+// _$E246
 // SYNTHETIC: GAMEMD 0x0058B6D0 SYMBOL
-// _$E248
+// _$E249
 // SYNTHETIC: GAMEMD 0x0058B6E0 SYMBOL
-// _$E251
+// _$E252
 // SYNTHETIC: GAMEMD 0x0058B700 SYMBOL
-// _$E254
+// _$E255
 // SYNTHETIC: GAMEMD 0x0058B720 SYMBOL
-// _$E257
+// _$E258
 const Rect RECT_NONE_2(0, 0, 0, 0);
 
 // FUNCTION: GAMEMD 0x005A78D0
@@ -8742,7 +8991,7 @@ int MapGeneratorClass::FUN_0059BBC0(int size, Rect const & bounds, Point2D const
 		Map[node->Element].ITType = ISOTILE_CLEAR;
 		int facing = FACING_FIRST;
 		for (; facing < FACING_COUNT; facing += FACING_90) {
-			Cell adjacent = node->Element + AdjacentCell[facing & 7];
+			Cell adjacent = AdjacentCell[facing & 7] + node->Element;
 			if (My_In_Radar(adjacent)) {
 				MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(adjacent);
 				if (data.RegionID == 0 && data.SpreadID != WorkingRegionID &&
