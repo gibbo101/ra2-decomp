@@ -4,4 +4,5 @@
 
 struct FileSystem {
 	static void const * LoadFile(char const * name, bool as_shape);
+	static void * LoadWholeFileEx(char const * name, bool & allocated);
 };
