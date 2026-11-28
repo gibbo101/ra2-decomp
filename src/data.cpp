@@ -9,6 +9,7 @@
 #include "data.h"
 #include "abuffer.h"
 #include "ccfile.h"
+#include "filesystem.h"
 #include "wstring.h"
 #include "zbuffer.h"
 #include <new.h>
@@ -31,10 +32,6 @@ extern Texture3D * DAT_008A0E04;
 extern Texture3D * DAT_008A0E08;
 extern Texture3D * DAT_008A0E0C;
 
-struct FileSystem {
-	static void const * LoadFile(char const * name, bool flag);
-	static void * LoadWholeFileEx(char const * name, bool & allocated);
-};
 void * __fastcall FUN_004A3970(Wstring const & name, bool * loaded);
 
 // FUNCTION: GAMEMD 0x004A3270

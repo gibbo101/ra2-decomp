@@ -7,6 +7,7 @@
 #include "always.h"
 #include "ownrdraw.h"
 #include "draw.h"
+#include "filesystem.h"
 #include "movies.h"
 #include "shapeset.h"
 
@@ -50,7 +51,7 @@ namespace OwnerDraw {
 		int DialogID;
 		int StaticDrawMode;
 		ConvertClass *StaticShapeDrawer;
-		ShapeSet *StaticShape;
+		SHPStruct *StaticShape;
 		bool StaticOwnsShape;
 		int StaticTextRevealCount;
 		int StaticTextRevealDelay;
@@ -1523,12 +1524,11 @@ typed:
 	return drawer;
 }
 
-int __fastcall FUN_004A38D0(int a, int b);
-extern int DAT_00833674;
-extern int DAT_00B0FB48;
-extern int DAT_00B0FB10;
-extern int DAT_00B0FB30;
-extern int DAT_00B0FAD0;
+extern char const *DAT_00833674;
+extern SHPStruct *DAT_00B0FB48;
+extern SHPStruct *DAT_00B0FB10;
+extern SHPStruct *DAT_00B0FB30;
+extern SHPStruct *DAT_00B0FAD0;
 
 // FUNCTION: GAMEMD 0x00603810
 int FUN_00603810(HWND dialog, HWND control)
@@ -1540,7 +1540,7 @@ int FUN_00603810(HWND dialog, HWND control)
 }
 
 // FUNCTION: GAMEMD 0x00603870
-int FUN_00603870(HWND dialog, HWND control, int arg)
+SHPStruct *FUN_00603870(HWND dialog, HWND control, bool &allocated)
 {
 	OwnerDraw::WinData *data = NULL;
 	int type;
@@ -1583,7 +1583,7 @@ int FUN_00603870(HWND dialog, HWND control, int arg)
 		type == 0xbc6 ||
 		type == 0xbc7) {
 		if (id == 0x71c) {
-			return FUN_004A38D0(DAT_00833674, arg);
+			return (SHPStruct *)FileSystem::LoadWholeFileEx(DAT_00833674, allocated);
 		}
 	}
 	if (type == 0x94) {
@@ -1610,7 +1610,7 @@ typed:
 		}
 	}
 done:
-	return 0;
+	return NULL;
 }
 
 namespace OwnerDraw {
@@ -10312,7 +10312,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 			data->cachedSurface = NULL;
 		}
 		if (data->StaticOwnsShape) {
-			delete data->StaticShape;
+			delete [] (char *)data->StaticShape;
 			data->StaticShape = NULL;
 		}
 		if (data->StaticDrawMode == 1) {
@@ -10427,7 +10427,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 							SurfaceCache.DrawTrans(rect, *AlternateSurface, *image, DSurface::Build_Hicolor_Pixel(255, 0, 255));
 						}
 					} else if (shape || animated) {
-						ShapeSet *shapes = data->StaticShape;
+						SHPStruct const *shapes = data->StaticShape;
 						if (shapes != NULL) {
 							ConvertClass *drawer = data->StaticShapeDrawer;
 							int height = shapes->Get_Height();
@@ -10444,7 +10444,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 							Point2D point(rect.X, rect.Y);
 							Rect bounds = AlternateSurface->Get_Rect();
 							int frame = data->StaticCurrentFrame;
-							Draw_Shape(*AlternateSurface, *drawer, shapes, frame, point, bounds, SHAPE_WIN_REL);
+							Draw_Shape(*AlternateSurface, *drawer, (ShapeSet const *)shapes, frame, point, bounds, SHAPE_WIN_REL);
 							if (animated && data->StaticAnimationRunning) {
 								if (++frame >= data->StaticFrameCount) {
 									frame = 0;
