@@ -8313,6 +8313,7 @@ address,size,symbol,source,sha256
 0x00565AA0,94,?Alloc_Cells@MapClass@@UAEXXZ,src/map.cpp,81ebfb337d36437296efaeb1a66aa1f52e2ec83b8412cbe5de93a17e94c111a9
 0x00565B00,179,?Free_Cells@MapClass@@UAEXXZ,src/map.cpp,0a30299af1f431a37fdccc014dbcb7476273cd073ef4d164ca590a6584b2ae13
 0x00565BC0,67,?Init_Cells@MapClass@@UAEXXZ,src/map.cpp,02fad36918be6e278171951ccbd07708b25a6f931a60ab06b6a31fdd923b61f1
+0x00565C10,5374,?Set_Map_Dimensions@MapClass@@UAEXABV?$TRect@H@@_NH1@Z,src/map.cpp,4128123ff5a8780e99c1e7f2d5e09289ef86a3daa074b18166f3e720354664db
 0x00567110,281,?Fresh_Map@MapClass@@QAEXXZ,src/map.cpp,4e1787963a67bd5911a7cde8c6b0039d538606b04a6a173c3efcbcf3d3aba8fb
 0x00567230,315,?Set_Local_Dimensions@MapClass@@UAEXABV?$TRect@H@@@Z,src/map.cpp,ac50091b5159f18f88c867e03f85e99a79f8573fba52cd2872a4047db4857b1e
 0x00567370,45,?RevealArea0@MapClass@@QAEXHHPAVCoord@@HPAVHouseClass@@_N222@Z,src/map.cpp,1e83735a72141aef2ee60d0b72525fe4627e52dd614e2f342e2397ae67484b56
@@ -8768,6 +8769,7 @@ address,size,symbol,source,sha256
 0x005980C0,155,??RNormalDistribution@@QAENXZ,src/mapgen.cpp,7291e9dd75d46e803456ffb7b8fbf5abf98af495f3760b837b50bb2227563a7d
 0x00598160,21,?Sample_Normal@@YINNN@Z,src/mapgen.cpp,8e7595860c9e507508cae45ef54900e2d644bed55ec644f69dd0bb2d336c7ec9
 0x00598180,111,?Sample_Truncated_Normal@@YINNNNN@Z,src/mapgen.cpp,def4046a82016c46372759e5cf397043e467402e9c02d60a4fbd5fb97a65c135
+0x00598960,3018,?Generate_Random_Map@MapGeneratorClass@@QAEX_NPAUHWND__@@@Z,src/mapgen.cpp,e336eefc165318751e81c0053f7da4406cfbfd274f7c476cf6784d857feb9cab
 0x00599530,276,?Cleanup@MapGeneratorClass@@QAEXXZ,src/mapgen.cpp,3c9699b9004ad04e11eddf0e8ed8bae3f82b34a4e5efa16abaa322781619e71b
 0x00599650,4124,?Init_Map@MapGeneratorClass@@QAEX_N@Z,src/mapgen.cpp,bb2dd84a06ec04cc3481f0140f9cb16260615cf6f343901903555ca461b14741
 0x0059A670,69,?Update_Progress@MapGeneratorClass@@QAEXH@Z,src/mapgen.cpp,9f869388889f5a9014d03996cc4b2c653d20b9fdab300f76a07d4257aa41c40f
@@ -12030,6 +12032,7 @@ address,size,symbol,source,sha256
 0x0064B410,187,?Handle_Timeout@@YIHPAVConnManClass@@PAUFrameSyncStruct@@@Z,src/queue.cpp,7087c46634f85ab0b3f8b379f3629d4130556ec385471d0e8dd7fc3ab5203208
 0x0064B4D0,397,?FUN_0064B4D0@@YI_NPAEPAHPAUMegaMissionData@EventData@EventClass@@PAVxTargetClass@@_N@Z,src/queue.cpp,a3c3ca2c26dab88333378982086f2399ce54f277996eea27cb60768f76826dd9
 0x0064B660,1896,?Add_Compressed_Events@@YIHPAXHHHHPAH@Z,src/queue.cpp,3bddde33f33fd83107206995eb4df6b33c534c086a9eb37b7a2bf28c8f2a744a
+0x0064BDD0,1455,?Extract_Compressed_Events@@YIHPAXH@Z,src/queue.cpp,a44999c0cec83c3d35b712ef83479fe7d15a38b3f3377afb5d694fc187447eda
 0x0064C380,2474,?Execute_DoList@@YIHHW4HousesType@@PAVConnManClass@@PAV?$CDTimerClass@VFrameTimerClass@@@@PAUFrameSyncStruct@@@Z,src/queue.cpp,8a976638b37ff76a92de963277f2784d7312ee5e2e66c2518779f2ca653b5622
 0x0064CD30,106,?FUN_0064CD30@@YIXHHVxTargetClass@@PAV1@@Z,src/queue.cpp,5980151ad740b692bad4955c77ca952eacd9f91b942d38111438e3e84d6d7bd0
 0x0064CDA0,3048,?FUN_0064CDA0@@YIXHH@Z,src/queue.cpp,0313eab9c1f1690f11cbcfac73950fcf28f410891b6853455c2457d1cc7dbfe8
@@ -17411,6 +17414,7 @@ address,size,symbol,source,sha256
 0x0075ADA0,95,?Stop_Moving@WalkLocomotionClass@@UAGXXZ,src/walk.cpp,0c8ed3c9e362dc62e6345c8c35c5f50230e6a769cf80cb7ec12699911c6fac59
 0x0075AE00,34,?Do_Turn@WalkLocomotionClass@@UAGXUDirStruct@@@Z,src/walk.cpp,7abdcec58d579ace6cc6adb0a380630506b57002ea31405d5f8f28c80b9c918b
 0x0075AE30,131,?Force_Immediate_Destination@WalkLocomotionClass@@UAGXUCoordStruct@@@Z,src/walk.cpp,3a33bf96b76a48d4e821ebfd7b7f67d0e228232f0dd655607631b3a18f5fdbe9
+0x0075AEC0,4988,?Movement_AI@WalkLocomotionClass@@QAEX_N@Z,src/walk.cpp,aa641f43756f0143e6b64650879022d19fb16d368a211ebedfd97678b1b957bf
 0x0075C240,1019,?Mark_Head_To@WalkLocomotionClass@@QAE_NABVCoord@@@Z,src/walk.cpp,f99fa7fbec6b01401824812f1cb9c0385dd4fc033f97c03f903ebdd1ccd5b944
 0x0075C640,56,?GetClassID@WalkLocomotionClass@@UAGJPAU_GUID@@@Z,src/walk.cpp,fa4f5b5f7728132636194858c8b12d89c6dfe7d228646b8d6fa29b51c51a3159
 0x0075C680,127,?Load@WalkLocomotionClass@@UAGJPAUIStream@@@Z,src/walk.cpp,7abf1901f7dfcf2d31c7f1c8d58641c2b62b8bd747d863d417a68d1157b348a7
@@ -18136,7 +18140,7 @@ address,size,symbol,source,sha256
 0x00773D40,231,?OnRegisterLogin@WebBrowser@@UAGJPBG0@Z,src/webbrowser.cpp,06ea440265173d9f0e0c2a470017900806d233181abe96887fa003f3dbe4e26c
 0x00773E30,81,?Web_Page_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z,src/webbrowser.cpp,ed4ff32da04e3f18c8b76c031d579c1c78fd4df0efe0775819ff51c62777fd49
 0x00773E90,478,?Do_Web_Page_Dialog@@YIXPBD@Z,src/webbrowser.cpp,f33a5849b2b688d86b5f667c56a275d676f7fce41e4b5edde88847c86832150b
-0x00774070,35,?Is_Web_Browser_Visible@@YIHXZ,src/webbrowser.cpp,de8d3a0ef019a1a90880188373aea64be8ad4e1c68fa91f7f4b9a536863a87d4
+0x00774070,35,?Is_Web_Browser_Visible@@YI_NXZ,src/webbrowser.cpp,de8d3a0ef019a1a90880188373aea64be8ad4e1c68fa91f7f4b9a536863a87d4
 0x007740A0,96,??_GWebBrowser@@UAEPAXI@Z,src/webbrowser.cpp,2dc29eb1d36c8c80e0af9178130eb618e83c801148f3dda2ad7fdbaaf301cef1
 0x00774100,23,_$E2,src/wincomm.cpp,b9ac9e0bf95466778235c00f4f0edd3c05b6c0751c54b4a0d9371fb0af0e10ca
 0x00774120,74,??0WinModemClass@@QAE@XZ,src/wincomm.cpp,65d6ed62785d93d120ada275884a768daf1823ca133023d94f436d43ada4d323
