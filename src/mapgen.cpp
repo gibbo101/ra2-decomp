@@ -3373,6 +3373,22 @@ inline double Sample_Truncated_Normal_Inline(double mean, double scale, double l
 
 bool Generate_Starting_Points(void);
 
+static inline void Show_Progress_Control(HWND dialog, int show)
+{
+	HWND control = GetDlgItem(dialog, 0x638);
+	if (control) ShowWindow(control, show);
+}
+
+static inline void Initialize_Map_Progress(HWND dialog)
+{
+	Progress.Initialize(100.0, 1, dialog);
+	Progress.Set_Graphic_Data("PROGBAR2.SHP", NULL, 0);
+	Progress.Set_Layout(Point2D(-1, -1), NULL, false, true);
+	Progress.Display_Progress();
+	Show_Progress_Control(dialog, SW_SHOW);
+}
+
+// FUNCTION: GAMEMD 0x00598960
 void MapGeneratorClass::Generate_Random_Map(bool full_init, HWND dialog)
 {
 	int index;
@@ -3385,12 +3401,7 @@ void MapGeneratorClass::Generate_Random_Map(bool full_init, HWND dialog)
 
 	bool showProgress = !Scen->IsReadingScenario;
 	if (showProgress) {
-		Progress.Initialize(100.0, 1, dialog);
-		Progress.Set_Graphic_Data("PROGBAR2.SHP", NULL, 0);
-		Progress.Set_Layout(Point2D(-1, -1), NULL, false, true);
-		Progress.Display_Progress(Point2D(-1, -1));
-		HWND control = GetDlgItem(dialog, 0x638);
-		if (control) ShowWindow(control, SW_SHOW);
+		Initialize_Map_Progress(dialog);
 	}
 	if (RMGCallback) RMGCallback();
 	DebugString("RMG: Init random map\n");
@@ -3438,13 +3449,7 @@ void MapGeneratorClass::Generate_Random_Map(bool full_init, HWND dialog)
 	Update_Progress(65);
 	if (RMGCallback) RMGCallback();
 	DebugString("RMG: Making regions\n");
-	if (SeedData.MapType == 4 || SeedData.MapType == 3) {
-		MapRegionClass::Make_Ice_Regions();
-		MapRegionClass::Make_Regions();
-		Fixup_Cliff_Corners();
-		Map.Build_All_Cliffs(0, -1);
-		Fixup_Cliff_Edges();
-	}
+	Make_Regions();
 	Update_Progress(70);
 	if (RMGCallback) RMGCallback();
 	if (full_init) {
@@ -3552,26 +3557,11 @@ void MapGeneratorClass::Generate_Random_Map(bool full_init, HWND dialog)
 	TiberiumClass::Init_Tiberium_Growth_System();
 	TiberiumClass::Init_Tiberium_Spread_System();
 	DebugString("RMG: Cleanup\n");
-	SeededWaterAmount = 0;
-	WorkingRegionID = 0;
-	if (RMGCellData != NULL) {
-		delete [] RMGCellData;
-		RMGCellData = NULL;
-	}
-	for (index = MapRegionClass::MapRegions.Count() - 1; index >= 0; --index) {
-		MapRegionClass *region = MapRegionClass::MapRegions[index];
-		if (region) delete region;
-	}
-	MapRegionClass::TotalCount = 0;
-	Map.Overpass(true);
-	DebugString("RMG: Compute Radar Image\n");
-	Map.Set_Local_Dimensions(Map.LocalRect);
-	Map.Compute_Radar_Image();
+	Cleanup();
 	Update_Progress(100);
 	DebugString("RMG: Done\n");
 	if (showProgress) {
-		HWND control = GetDlgItem(dialog, 0x638);
-		if (control) ShowWindow(control, SW_HIDE);
+		Show_Progress_Control(dialog, SW_HIDE);
 		Update_Progress(0);
 		Progress.Clear_Dialog();
 	}
@@ -3588,14 +3578,7 @@ void MapGeneratorClass::Cleanup(void)
 		RMGCellData = NULL;
 	}
 
-	for (int i = MapRegionClass::MapRegions.Count() - 1; i >= 0; i--) {
-		MapRegionClass * region = MapRegionClass::MapRegions[i];
-		if (region != NULL) {
-			delete region;
-		}
-	}
-
-	MapRegionClass::TotalCount = 0;
+	MapRegionClass::Destroy_Cell_Regions();
 	Map.Overpass(true);
 	DebugString("RMG: Compute Radar Image\n");
 	Map.Set_Local_Dimensions(Map.LocalRect);
