@@ -7,6 +7,7 @@
 #include "always.h"
 #include "ownrdraw.h"
 #include "draw.h"
+#include "filesystem.h"
 #include "movies.h"
 #include "shapeset.h"
 
@@ -1523,12 +1524,11 @@ typed:
 	return drawer;
 }
 
-int __fastcall FUN_004A38D0(int a, int b);
-extern int DAT_00833674;
-extern int DAT_00B0FB48;
-extern int DAT_00B0FB10;
-extern int DAT_00B0FB30;
-extern int DAT_00B0FAD0;
+extern char const *DAT_00833674;
+extern SHPStruct *DAT_00B0FB48;
+extern SHPStruct *DAT_00B0FB10;
+extern SHPStruct *DAT_00B0FB30;
+extern SHPStruct *DAT_00B0FAD0;
 
 // FUNCTION: GAMEMD 0x00603810
 int FUN_00603810(HWND dialog, HWND control)
@@ -1540,7 +1540,7 @@ int FUN_00603810(HWND dialog, HWND control)
 }
 
 // FUNCTION: GAMEMD 0x00603870
-int FUN_00603870(HWND dialog, HWND control, int arg)
+SHPStruct *FUN_00603870(HWND dialog, HWND control, bool &allocated)
 {
 	OwnerDraw::WinData *data = NULL;
 	int type;
@@ -1583,7 +1583,7 @@ int FUN_00603870(HWND dialog, HWND control, int arg)
 		type == 0xbc6 ||
 		type == 0xbc7) {
 		if (id == 0x71c) {
-			return FUN_004A38D0(DAT_00833674, arg);
+			return (SHPStruct *)FileSystem::LoadWholeFileEx(DAT_00833674, allocated);
 		}
 	}
 	if (type == 0x94) {
@@ -1610,7 +1610,7 @@ typed:
 		}
 	}
 done:
-	return 0;
+	return NULL;
 }
 
 namespace OwnerDraw {
