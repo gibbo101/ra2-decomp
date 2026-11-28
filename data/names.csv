@@ -1,6 +1,7 @@
 address,name,symbol,evidence
 0x00A83D10,Theme,,0x006EDEF0 TeamClass::TMission_PLAY_MUSIC matched with TibSun source
 0x00886080,CCPalette,?CCPalette@@3VPaletteClass@@A,CCPalette static initializer 0x0040D8A0 in _palette.cpp constructs the PaletteClass at this address
+0x0089E9F0,StoppingCoordAbs,?StoppingCoordAbs@@3QBVCoord@@B,Initializer 0x0048E480 writes all five infantry stopping coordinates. InfantryClass::Read_INI indexes the same array at +0x1B2 and +0x1B9.
 0x00B05584,StillUpdating,?StillUpdating@@3_NA,Animate_Score_Objs at 0x00690360 clears this byte and ScorePrintClass::Update at 0x00690D60 sets it
 0x00A9FFC8,BlastSurfaces,?BlastSurfaces@@3PAPAVBSurface@@A,Existing matched IonBlastClass::Clear_All at 0x0053D550 deletes and clears the 80 BSurface pointers at this base; relocations at +0x2 and +0x1D.
 0x00A9FAE8,SpiralIndexToSurfaceLUT,?SpiralIndexToSurfaceLUT@@3PAHA,"Existing matched Calculate_Index_To_Surface_LUT at 0x0053D9F0 initializes this 289-entry int array; references at +0x5, +0x1E and +0x40."
