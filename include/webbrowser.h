@@ -111,3 +111,4 @@ class WebBrowser : public IWOLBrowserEvent
 };
 
 WebBrowser * __fastcall Create_Web_Browser(HWND window, RECT *rect);
+bool __fastcall Is_Web_Browser_Visible(void);

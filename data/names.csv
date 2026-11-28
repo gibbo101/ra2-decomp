@@ -220,6 +220,7 @@ address,name,symbol,evidence
 0x00B077BC,SHPCacheIndex,,0x0069E210 zeroes it with the cache
 0x0083F870,SHPReferenceCount,,0x0069E430 copies it into Index (+0x14) then increments it; .data initial value 1
 0x007C8D20,stricmp,,"CRT stricmp, called by the wonline functions"
+0x00774070,Is_Web_Browser_Visible,?Is_Web_Browser_Visible@@YI_NXZ,Windows_Procedure at 0x00777750 calls the matched predicate and tests AL. OwnerDraw::DefaultHandler at 0x0061261A calls the same target and tests AL.
 0x00775700,WS_Create_Dialog,,"windlg WS_Create_Dialog (TibSun windlg.h), called by wonline"
 0x00887628,PacketTransport,,YRpp WinsockInterfaceClass::Instance (UDPInterfaceClass); wonline and ipxgconn Send_To use it
 0x0053F0E0,IPXAddressClass::As_String,,called by wonline; not yet defined in src/ipxaddr.cpp

@@ -26,6 +26,7 @@
 #include "pcx.h"
 #include "resource.h"
 #include "theme.h"
+#include "webbrowser.h"
 #include "win.h"
 #include "windlg.h"
 #include "winfix.h"
@@ -143,7 +144,6 @@ void Focus_Restore(void)
 }
 
 namespace Game { bool __fastcall IsMoviePlaying(void); void __fastcall BlitMovie(void); }
-bool FUN_00774070(void);
 #ifndef WM_MOUSEWHEEL
 #define WM_MOUSEWHEEL (WM_MOUSELAST+1)
 #endif
@@ -201,7 +201,7 @@ LRESULT CALLBACK Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lP
 							Game::BlitMovie();
 							ValidateRect(hwnd, NULL);
 							break;
-						} else if (!FUN_00774070()) {
+						} else if (!Is_Web_Browser_Visible()) {
 							Update_Visible_Surface(DAT_00887640->Is_Captured(), HiddenSurface);
 						}
 					}
