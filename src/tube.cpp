@@ -84,6 +84,10 @@ TubeClass::~TubeClass(void)
 	Tubes.Delete(this);
 }
 
+inline TubeClass::TubeClass(NoInitClass const & x)
+{
+}
+
 // FUNCTION: GAMEMD 0x007281A0
 HRESULT STDMETHODCALLTYPE TubeClass::Load(IStream * stream)
 {

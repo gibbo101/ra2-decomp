@@ -418,15 +418,16 @@ void MapClass::Init_Cells(void)
 	}
 }
 
+// FUNCTION: GAMEMD 0x00565C10
 void MapClass::Set_Map_Dimensions(Rect const & rect, bool reset_cells, int cell_height, bool refresh_map)
 {
 	int i = 0;
 
 	int w = PlayRect.Width;
-	int h = 2 * Map.PlayRect.Height + 8;
 	CellClass *cptr;
 	CellClass *cells = NULL;
 	CellClass *cells_base = NULL;
+	int h = 2 * Map.PlayRect.Height + 8;
 
 	Cell cell(CELL_NONE);
 
@@ -450,7 +451,7 @@ void MapClass::Set_Map_Dimensions(Rect const & rect, bool reset_cells, int cell_
 		cells_base = cells;
 		Reset_Iterator();
 		cptr = Iterate();
-		cell = cptr->Fetch_CellID();
+		cell = cptr->CellID;
 		while (cptr != NULL) {
 			cells[cellcount] = *cptr;
 			cells[cellcount].BridgeDeckCell = NULL;
@@ -482,13 +483,12 @@ void MapClass::Set_Map_Dimensions(Rect const & rect, bool reset_cells, int cell_
 			Cell cell(x, y);
 			if (In_Radar(cell)) {
 				int idx = (MAP_CELL_H * y) + x;
-				CellClass *c = Array[idx];
-				if (c == NULL) {
+				if (Array[idx] == NULL) {
 					CellClass *cc = new CellClass;
 					cc->Set_CellID(cell);
 					Array[idx] = cc;
 				} else {
-					c = new(c) CellClass;
+					CellClass *c = new(Array[idx]) CellClass;
 					c->Set_CellID(cell);
 				}
 				Array[idx]->Height = cell_height;
@@ -499,26 +499,22 @@ void MapClass::Set_Map_Dimensions(Rect const & rect, bool reset_cells, int cell_
 	bool freshcalled = false;
 	if (!reset_cells) {
 		Reset_Iterator();
-		Cell icell = Iterate()->CellID;
-		Cell cellpos = Cell(rect.Y + rect.X, rect.Y - rect.X);
-		cell = (icell - cell) - cellpos;
+		Cell icell = Iterate()->Fetch_CellID();
+		Cell offset = Cell((icell - cell) - Cell(rect.Y + rect.X, rect.Y - rect.X));
 
-		cells = cells_base;
-		while (cellcount > 0) {
-			cptr = cells;
-			Cell scell = cptr->CellID;
-			Cell shifted = scell + cell;
+		for (int j = 0; j < cellcount; j++) {
+			CellClass & saved = cells_base[j];
+			Cell scell = saved.Fetch_CellID();
+			Cell shifted = Cell(scell + offset);
 
 			CellClass *c = &(*this)[shifted];
 
-			Cell dcell = c->CellID;
+			Cell dcell = c->Fetch_CellID();
 			if (c != NULL) {
-				*c = *cptr;
+				*c = saved;
 				c->Set_CellID(dcell);
 			}
 
-			cellcount--;
-			cells++;
 		}
 
 		Reset_Iterator();
@@ -548,30 +544,30 @@ void MapClass::Set_Map_Dimensions(Rect const & rect, bool reset_cells, int cell_
 
 		for (i = 0; i < WAYPT_COUNT; i++) {
 			if (Scen->Is_Valid_Waypoint(i)) {
-				Scen->Set_Waypoint(i, Scen->Get_Waypoint_Cell(i) + cell);
+				Scen->Set_Waypoint(i, Scen->Get_Waypoint_Cell(i) + offset);
 			}
 		}
 
 		for (i = 0; i < Tubes.Count(); i++) {
-			Tubes[i]->Enter += cell;
-			Tubes[i]->Exit += cell;
+			TubeClass *tube = Tubes[i];
+			tube->Shift(offset);
 		}
 
-		Coord coord = Coord(cell, 0) - Coord(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0);
+		Coord coord = Coord(offset, 0) - Coord(CELL_LEPTON_W / 2, CELL_LEPTON_H / 2, 0);
 
 		for (i = 0; i < Objects.Count(); i++) {
 			ObjectClass *obj = Objects[i];
 			if (obj->RTTI != RTTI_ANIM) {
-				obj->Set_Coord(coord + obj->Get_Coord());
+				obj->Set_Coord(obj->Get_Coord() + coord);
 			}
 		}
 
 		for (i = Houses.Count() - 1; i >= 0; i--) {
-			Houses[i]->FUN_0050D250(cell);
+			Houses[i]->FUN_0050D250(offset);
 		}
 
-		for (i = 0; i < Anims.Count(); i++) {
-			AnimClass *anim = Anims[i];
+		for (i = 0; i < AnimClass::Array.Count(); i++) {
+			AnimClass *anim = AnimClass::Array[i];
 			if (anim->OwnerObject == NULL) {
 				anim->Set_Coord(coord + anim->Get_Coord());
 			}
@@ -614,10 +610,10 @@ void MapClass::Set_Map_Dimensions(Rect const & rect, bool reset_cells, int cell_
 		while (cptr != NULL) {
 			if (cptr->IsBridgeDeck && cptr->BridgeDeckCell == NULL) {
 				FacingType facing = cptr->IsBridgeEastWest ? FACING_N : FACING_E;
-				if (cptr->Overlay == OVERLAY_BRIDGE1 || cptr->Overlay == OVERLAY_BRIDGE2) {
-					cptr->Set_Under_Bridge(facing);
-				} else {
+				if (!cptr->Is_Overlay_Bridge()) {
 					cptr->Set_Under_Rail_Bridge(facing);
+				} else {
+					cptr->Set_Under_Bridge(facing);
 				}
 			}
 			cptr = Iterate();
@@ -641,7 +637,7 @@ void MapClass::Set_Map_Dimensions(Rect const & rect, bool reset_cells, int cell_
 	}
 
 	new(&InvalidCell) CellClass;
-	delete (void *)cells_base;
+	operator delete(cells);
 }
 
 // FUNCTION: GAMEMD 0x00567110
