@@ -7957,6 +7957,7 @@ address,name,result,size,source,symbol
 0x00565AA0,MapClass::Alloc_Cells,MATCH,94,src/map.cpp,?Alloc_Cells@MapClass@@UAEXXZ
 0x00565B00,MapClass::Free_Cells,MATCH,179,src/map.cpp,?Free_Cells@MapClass@@UAEXXZ
 0x00565BC0,MapClass::Init_Cells,MATCH,67,src/map.cpp,?Init_Cells@MapClass@@UAEXXZ
+0x00565C10,MapClass::Set_Map_Dimensions,MATCH,5374,src/map.cpp,?Set_Map_Dimensions@MapClass@@UAEXABV?$TRect@H@@_NH1@Z
 0x00567110,MapClass::Fresh_Map,MATCH,281,src/map.cpp,?Fresh_Map@MapClass@@QAEXXZ
 0x00567230,MapClass::Set_Local_Dimensions,MATCH,315,src/map.cpp,?Set_Local_Dimensions@MapClass@@UAEXABV?$TRect@H@@@Z
 0x00567370,MapClass::RevealArea0,MATCH,45,src/map.cpp,?RevealArea0@MapClass@@QAEXHHPAVCoord@@HPAVHouseClass@@_N222@Z
@@ -8392,6 +8393,7 @@ address,name,result,size,source,symbol
 0x005980C0,NormalDistribution::operator(),MATCH,155,src/mapgen.cpp,??RNormalDistribution@@QAENXZ
 0x00598160,Sample_Normal,MATCH,21,src/mapgen.cpp,?Sample_Normal@@YINNN@Z
 0x00598180,Sample_Truncated_Normal,MATCH,111,src/mapgen.cpp,?Sample_Truncated_Normal@@YINNNNN@Z
+0x00598960,MapGeneratorClass::Generate_Random_Map,MATCH,3018,src/mapgen.cpp,?Generate_Random_Map@MapGeneratorClass@@QAEX_NPAUHWND__@@@Z
 0x00599530,MapGeneratorClass::Cleanup,MATCH,276,src/mapgen.cpp,?Cleanup@MapGeneratorClass@@QAEXXZ
 0x00599650,MapGeneratorClass::Init_Map,MATCH,4124,src/mapgen.cpp,?Init_Map@MapGeneratorClass@@QAEX_N@Z
 0x0059A670,MapGeneratorClass::Update_Progress,MATCH,69,src/mapgen.cpp,?Update_Progress@MapGeneratorClass@@QAEXH@Z
@@ -11693,6 +11695,7 @@ address,name,result,size,source,symbol
 0x00652630,?search_compfunc@?$IndexClass@HPAVObjectClass@@@@CAHPBX0@Z,MATCH,34,src/queue.cpp,?search_compfunc@?$IndexClass@HPAVObjectClass@@@@CAHPBX0@Z
 0x0064A0C0,Process_Receive_Packet,MATCH,1377,src/queue.cpp,?Process_Receive_Packet@@YIHPAVConnManClass@@PADHHPAUFrameSyncStruct@@PAV?$BasicTimerClass@VSystemTimerClass@@@@@Z
 0x0064B660,Add_Compressed_Events,MATCH,1896,src/queue.cpp,?Add_Compressed_Events@@YIHPAXHHHHPAH@Z
+0x0064BDD0,Extract_Compressed_Events,MATCH,1455,src/queue.cpp,?Extract_Compressed_Events@@YIHPAXH@Z
 0x00648710,Wait_For_Players,MATCH,5519,src/queue.cpp,?Wait_For_Players@@YI?AW4RetcodeType@@HPAVConnManClass@@HHHPADHPAUFrameSyncStruct@@@Z
 0x0064A7B0,Draw_Sync_Bars,MATCH,741,src/queue.cpp,?Draw_Sync_Bars@@YIXPAUHWND__@@@Z
 0x0047EFE0,?Draw_Shroud_Or_Fog_Shape@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@H@Z,RECONSTRUCTED,621,src/ra2asm/cell.asm,?Draw_Shroud_Or_Fog_Shape@CellClass@@QAEXABVPoint2D@@ABV?$TRect@H@@H@Z
@@ -17170,6 +17173,7 @@ address,name,result,size,source,symbol
 0x0075ADA0,WalkLocomotionClass::Stop_Moving,MATCH,95,src/walk.cpp,?Stop_Moving@WalkLocomotionClass@@UAGXXZ
 0x0075AE00,WalkLocomotionClass::Do_Turn,MATCH,34,src/walk.cpp,?Do_Turn@WalkLocomotionClass@@UAGXUDirStruct@@@Z
 0x0075AE30,WalkLocomotionClass::Force_Immediate_Destination,MATCH,131,src/walk.cpp,?Force_Immediate_Destination@WalkLocomotionClass@@UAGXUCoordStruct@@@Z
+0x0075AEC0,WalkLocomotionClass::Movement_AI,MATCH,4988,src/walk.cpp,?Movement_AI@WalkLocomotionClass@@QAEX_N@Z
 0x0075C240,WalkLocomotionClass::Mark_Head_To,MATCH,1019,src/walk.cpp,?Mark_Head_To@WalkLocomotionClass@@QAE_NABVCoord@@@Z
 0x0075C640,WalkLocomotionClass::GetClassID,MATCH,56,src/walk.cpp,?GetClassID@WalkLocomotionClass@@UAGJPAU_GUID@@@Z
 0x0075C680,WalkLocomotionClass::Load,MATCH,127,src/walk.cpp,?Load@WalkLocomotionClass@@UAGJPAUIStream@@@Z
@@ -17895,7 +17899,7 @@ address,name,result,size,source,symbol
 0x00773D40,WebBrowser::OnRegisterLogin,MATCH,231,src/webbrowser.cpp,?OnRegisterLogin@WebBrowser@@UAGJPBG0@Z
 0x00773E30,Web_Page_Dialog_Proc,MATCH,81,src/webbrowser.cpp,?Web_Page_Dialog_Proc@@YGHPAUHWND__@@IIJ@Z
 0x00773E90,Do_Web_Page_Dialog,MATCH,478,src/webbrowser.cpp,?Do_Web_Page_Dialog@@YIXPBD@Z
-0x00774070,Is_Web_Browser_Visible,MATCH,35,src/webbrowser.cpp,?Is_Web_Browser_Visible@@YIHXZ
+0x00774070,Is_Web_Browser_Visible,MATCH,35,src/webbrowser.cpp,?Is_Web_Browser_Visible@@YI_NXZ
 0x007740A0,??_GWebBrowser@@UAEPAXI@Z,MATCH,96,src/webbrowser.cpp,??_GWebBrowser@@UAEPAXI@Z
 0x007DE200,_Adjust_Color_565,MATCH,826,src/winasm.asm,_Adjust_Color_565
 0x007DE53A,_Adjust_Color_555,MATCH,832,src/winasm.asm,_Adjust_Color_555
