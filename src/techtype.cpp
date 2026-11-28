@@ -635,8 +635,8 @@ bool TechnoTypeClass::Read_INI(CCINIClass & ini)
 		WalkRate = ini.Get_Int(Name(), "WalkRate", WalkRate);
 		IdleRate = ini.Get_Int(IniName, "IdleRate", IdleRate);
 		IsMoveToShroud = ini.Get_Bool(Name(), "MoveToShroud", IsMoveToShroud);
-		IsTrain = ini.Get_Bool(IniName, "IsTrain", IsTrain);
-		IsDoubleOwned = ini.Get_Bool(IniName, "DoubleOwned", IsDoubleOwned);
+		IsTrain = ini.Get_Bool(Name(), "IsTrain", IsTrain);
+		IsDoubleOwned = ini.Get_Bool(Name(), "DoubleOwned", IsDoubleOwned);
 		ThreatRange = ini.Get_Lepton(IniName, "GuardRange", ThreatRange);
 		IsExploding = ini.Get_Bool(IniName, "Explodes", IsExploding);
 		DeathWeapon = TGet_Class(ini, IniName, "DeathWeapon", DeathWeapon);

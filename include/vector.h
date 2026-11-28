@@ -201,6 +201,7 @@ class DynamicVectorClass : public VectorClass<T>
 
 		DynamicVectorClass(unsigned size=0, T const * array=0);
 		DynamicVectorClass(NoInitClass const & x) : BASECLASS(x) {}
+		DynamicVectorClass & operator=(DynamicVectorClass const & that);
 
 		bool operator== (const DynamicVectorClass &src)	{ return false; }
 		bool operator!= (const DynamicVectorClass &src)	{ return true; }
@@ -251,6 +252,15 @@ DynamicVectorClass<T>::DynamicVectorClass(unsigned size, T const * array)
 {
 	GrowthStep = 10;
 	ActiveCount = 0;
+}
+
+template<class T>
+inline DynamicVectorClass<T> & DynamicVectorClass<T>::operator=(DynamicVectorClass<T> const & that)
+{
+	BASECLASS::operator=(that);
+	ActiveCount = that.ActiveCount;
+	GrowthStep = that.GrowthStep;
+	return(*this);
 }
 
 template<class T>
