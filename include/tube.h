@@ -23,7 +23,7 @@ class TubeClass : public AbstractClass
 	public:
 		TubeClass(Cell const &cell = CELL_NONE, FacingType dir = FACING_N);
 
-		TubeClass(NoInitClass const & x) {};
+		TubeClass(NoInitClass const & x);
 
 		virtual ~TubeClass(void) override;
 
@@ -40,6 +40,8 @@ class TubeClass : public AbstractClass
 
 		Cell Get_Exit(void) const;
 		int Get_Count(void) const;
+
+		void Shift(Cell const & offset);
 
 
 	public:
@@ -65,4 +67,10 @@ inline Cell TubeClass::Get_Exit(void) const
 inline int TubeClass::Get_Count(void) const
 {
 	return(Count);
+}
+
+inline void TubeClass::Shift(Cell const & offset)
+{
+	Enter += offset;
+	Exit += offset;
 }

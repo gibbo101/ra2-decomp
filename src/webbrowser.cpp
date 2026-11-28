@@ -420,13 +420,10 @@ void __fastcall Do_Web_Page_Dialog(const char *page)
 }
 
 // FUNCTION: GAMEMD 0x00774070
-int __fastcall Is_Web_Browser_Visible(void)
+bool __fastcall Is_Web_Browser_Visible(void)
 {
 	WebBrowser *browser = DAT_00B72D0C;
-	if (browser && browser->Browser && browser->Visible) {
-		return 1;
-	}
-	return 0;
+	return browser && browser->Browser && browser->Visible;
 }
 
 // SYNTHETIC: GAMEMD 0x007740A0

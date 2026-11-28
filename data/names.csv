@@ -1,6 +1,7 @@
 address,name,symbol,evidence
 0x00A83D10,Theme,,0x006EDEF0 TeamClass::TMission_PLAY_MUSIC matched with TibSun source
 0x00886080,CCPalette,?CCPalette@@3VPaletteClass@@A,CCPalette static initializer 0x0040D8A0 in _palette.cpp constructs the PaletteClass at this address
+0x0089E9F0,StoppingCoordAbs,?StoppingCoordAbs@@3QBVCoord@@B,Initializer 0x0048E480 writes all five infantry stopping coordinates. InfantryClass::Read_INI indexes the same array at +0x1B2 and +0x1B9.
 0x00B05584,StillUpdating,?StillUpdating@@3_NA,Animate_Score_Objs at 0x00690360 clears this byte and ScorePrintClass::Update at 0x00690D60 sets it
 0x00A9FFC8,BlastSurfaces,?BlastSurfaces@@3PAPAVBSurface@@A,Existing matched IonBlastClass::Clear_All at 0x0053D550 deletes and clears the 80 BSurface pointers at this base; relocations at +0x2 and +0x1D.
 0x00A9FAE8,SpiralIndexToSurfaceLUT,?SpiralIndexToSurfaceLUT@@3PAHA,"Existing matched Calculate_Index_To_Surface_LUT at 0x0053D9F0 initializes this 289-entry int array; references at +0x5, +0x1E and +0x40."
@@ -220,6 +221,7 @@ address,name,symbol,evidence
 0x00B077BC,SHPCacheIndex,,0x0069E210 zeroes it with the cache
 0x0083F870,SHPReferenceCount,,0x0069E430 copies it into Index (+0x14) then increments it; .data initial value 1
 0x007C8D20,stricmp,,"CRT stricmp, called by the wonline functions"
+0x00774070,Is_Web_Browser_Visible,?Is_Web_Browser_Visible@@YI_NXZ,Windows_Procedure at 0x00777750 calls the matched predicate and tests AL. OwnerDraw::DefaultHandler at 0x0061261A calls the same target and tests AL.
 0x00775700,WS_Create_Dialog,,"windlg WS_Create_Dialog (TibSun windlg.h), called by wonline"
 0x00887628,PacketTransport,,YRpp WinsockInterfaceClass::Instance (UDPInterfaceClass); wonline and ipxgconn Send_To use it
 0x0053F0E0,IPXAddressClass::As_String,,called by wonline; not yet defined in src/ipxaddr.cpp
@@ -414,6 +416,9 @@ address,name,symbol,evidence
 0x0088731C,CompositeSurface,,YRpp Surface.h Composite; TibSun _surface.h CompositeSurface; CCToolTip::Draw 0x00478E30
 0x00A9FA9C,DAT_00A9FA9C_Surface,?DAT_00A9FA9C_Surface@@3PAVDSurface@@A,Matched setup 0x0053BAF0 stores its newly constructed DSurface here; matched teardown 0x0053BB80 deletes and clears the same pointer
 0x00B0B518,SidebarClass::IsToBlitSidebar,,"Matched Blit_Sidebar 0x006A70E0 reads at 0x006A7143, clears at 0x006A7166 and sets at 0x006A723A; TibSun sidebar.cpp static flag"
+0x008A0DE8,DSurface::HalfbrightMask,?HalfbrightMask@DSurface@@1GA,DSurface::Create_Primary at 0x004BA770 stores the mask for RGB 127 at +0x354. DSurface::Blend_Pixel reads it at +0x35.
+0x008A0DEA,DSurface::QuarterbrightMask,?QuarterbrightMask@DSurface@@1GA,DSurface::Create_Primary at 0x004BA770 stores the mask for RGB 63 at +0x392. DSurface::Blend_Pixel reads it at +0x1E and +0x5B.
+0x008A0DEC,DSurface::EighthbrightMask,?EighthbrightMask@DSurface@@1GA,DSurface::Create_Primary at 0x004BA770 stores the mask for RGB 31 at +0x3CB. The address agrees with YRpp Drawing.h.
 0x00AC48B8,ODRComponentMask,?ODRComponentMask@@3GA,YRpp OwnerDraw.h ColorShiftRed; TibSun ownrdraw.h declares it; existing matched ODInitMasks 0x0061F190 confirms the reference
 0x00AC48BA,ODGComponentMask,?ODGComponentMask@@3GA,YRpp OwnerDraw.h ColorShiftGreen; TibSun ownrdraw.h declares it; existing matched ODInitMasks 0x0061F190 confirms the reference
 0x00AC48BC,ODBComponentMask,?ODBComponentMask@@3GA,YRpp OwnerDraw.h ColorShiftBlue; existing matched ODInitMasks 0x0061F190 +0x4A/+0x62/+0x71
@@ -1001,3 +1006,5 @@ address,name,symbol,evidence
 0x008610B4,atan_tab,_atan_tab,Matching fastmath.cpp code references this address and the archived table matches all 16392 bytes
 0x008650BC,sqrt_tab,_sqrt_tab,Matching fastmath.cpp code references this address and the archived table matches all 65544 bytes
 0x0089A304,AStarFacingToOffset,?AStarFacingToOffset@@3PAHA,Matched AStarClass::Update_Map_Dimensions (0x0042AC00) stores all eight facing offsets at 0x0089A304 through 0x0089A320 in facing order.
+0x008872FC,TileSurface,?TileSurface@@3PAVSurface@@A,Allocate_Surfaces at 0x00533FD0 allocates the tile surface and Tactical::Blit_Tiles at 0x006D5F30 reads it at +0x8.
+0x00843108,TechnoClass::ActionLines,?ActionLines@TechnoClass@@2_NA,TechnoClass::Set_Action_Lines at 0x0070D180 writes its bool argument to this byte at +0x2.
