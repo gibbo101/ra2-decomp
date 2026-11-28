@@ -773,7 +773,8 @@ int MapRegionClass::CellData::Get_Region(Cell const &cell)
 	if (RMGCellData == NULL) {
 		return(-1);
 	}
-	return(RMGCellData[cell.X + cell.Y * (int)MapCellStride].RegionID);
+	CellData & data = MapRegionClass::Get_Cell_Data(cell);
+	return(data.RegionID);
 }
 
 // FUNCTION: GAMEMD 0x0058D0D0
@@ -887,7 +888,7 @@ DynamicVectorClass<Cell> *MapRegionClass::Build_Border_Cell_List(void)
 }
 
 // FUNCTION: GAMEMD 0x0058D5A0
-void MapRegionClass::Increase_Height(int cell_height)
+void MapRegionClass::Increase_Height(char cell_height)
 {
 	Map.Reset_Iterator();
 	CellClass *cptr = Map.Iterate();
@@ -5293,7 +5294,7 @@ DynamicVectorClass<Cell> *MapGeneratorClass::Build_Region_Border_Cell_List(int i
 		Cell cell = RMGCellData[i].CellID;
 		if (cell != Cell(0, 0) && MapRegionClass::CellData::Get_Region(cell) == id) {
 			bool add = false;
-			for (FacingType facing = FACING_FIRST; facing < FACING_COUNT; facing++) {
+			for (FacingType facing = FACING_FIRST; facing < FACING_COUNT; ++facing) {
 				Cell ncell = Adjacent_Cell(cell, facing);
 				if (My_In_Radar(ncell)) {
 					if (MapRegionClass::CellData::Get_Region(ncell) != id) {
@@ -5343,7 +5344,8 @@ bool MapGeneratorClass::Grow_Water_Region(int region_id, float spread_scale, Rec
 		if (bounds.Is_Point_Within(Point2D(seed.X, seed.Y))) {
 
 			nodes[marker_index].Element = seed;
-			nodes[marker_index].Score = Get_Angle_Score(origin, seed, angle);
+			double score = Get_Angle_Score(origin, seed, angle);
+			nodes[marker_index].Score = score;
 			queue->Insert(nodes[marker_index++]);
 		}
 	}
@@ -5353,8 +5355,12 @@ bool MapGeneratorClass::Grow_Water_Region(int region_id, float spread_scale, Rec
 	double scale = log((double)seed_count);
 	scale = max(1.0, scale);
 
-	int spread_count = (int)(1.0f / ((float)(1.0 / scale) * spread_scale) * 0.5f);
-	spread_count += Pick_Random_UInt(0, spread_count / 2);
+	float inverse_scale = (float)(1.0 / scale);
+	float scaled_density = inverse_scale * spread_scale;
+	int spread_count = (int)(1.0f / scaled_density * 0.5f);
+	unsigned int max_extra = spread_count / 2;
+	unsigned int extra_count = Pick_Random_UInt(0, max_extra);
+	spread_count += extra_count;
 
 	CellNode * node = queue->Extract_Min();
 
@@ -5374,11 +5380,11 @@ bool MapGeneratorClass::Grow_Water_Region(int region_id, float spread_scale, Rec
 			if (My_In_Radar(newcell)) {
 				if (MapRegionClass::CellData::Get_Region(newcell) == 0 &&
 					MapRegionClass::Get_Cell_Data(newcell).SpreadID != region_id &&
-					newcell.X >= bounds.X && newcell.X < bounds.X + bounds.Width &&
-					newcell.Y >= bounds.Y && newcell.Y < bounds.Y + bounds.Height &&
+					bounds.Is_Point_Within(Point2D(newcell.X, newcell.Y)) &&
 					Map[newcell].Is_Tile_Clear()) {
 					nodes[marker_index].Element = newcell;
-					nodes[marker_index].Score = Get_Angle_Score(origin, newcell, angle);
+					double score = Get_Angle_Score(origin, newcell, angle);
+					nodes[marker_index].Score = score;
 					Set_Cell_Data_Spread(newcell, region_id);
 					queue->Insert(nodes[marker_index++]);
 				} else {
@@ -5390,7 +5396,8 @@ bool MapGeneratorClass::Grow_Water_Region(int region_id, float spread_scale, Rec
 		}
 
 		spread_step++;
-		angle += Sample_Normal(0, M_PI_4);
+		double angle_step = Sample_Normal(0, M_PI_4);
+		angle += angle_step;
 		node = queue->Extract_Min();
 	}
 
@@ -8984,7 +8991,7 @@ int MapGeneratorClass::FUN_0059BBC0(int size, Rect const & bounds, Point2D const
 		Map[node->Element].ITType = ISOTILE_CLEAR;
 		int facing = FACING_FIRST;
 		for (; facing < FACING_COUNT; facing += FACING_90) {
-			Cell adjacent = node->Element + AdjacentCell[facing & 7];
+			Cell adjacent = AdjacentCell[facing & 7] + node->Element;
 			if (My_In_Radar(adjacent)) {
 				MapRegionClass::CellData & data = MapRegionClass::Get_Cell_Data(adjacent);
 				if (data.RegionID == 0 && data.SpreadID != WorkingRegionID &&
