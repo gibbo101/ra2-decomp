@@ -7337,15 +7337,15 @@ void __fastcall Set_Wait_Dialog_Text(wchar_t const * text)
 void __fastcall FUN_00792EC0(unsigned int mask)
 {
 	HWND dialog = WS_Find_Dialog(0xC4);
-	bool dialog_open = dialog != NULL;
-	bool no_pending_waits = dialog_open && (g_ActiveWaitFlags &= ~mask) == 0;
-	if (no_pending_waits) {
-		FUN_007757E0(dialog, 0);
+	if (dialog) {
+		g_ActiveWaitFlags &= ~mask;
+		if (g_ActiveWaitFlags == 0) {
+			FUN_007757E0(dialog, 0);
+		}
 	}
 	HWND top = FUN_00775B10();
-	HWND input;
-	bool input_available = (input = GetDlgItem(top, 0x540)) != NULL;
-	if (input_available) {
+	HWND input = GetDlgItem(top, 0x540);
+	if (input) {
 		SetFocus(input);
 	}
 }
@@ -11705,13 +11705,13 @@ int FUN_0079F140(bool first_time)
 	DAT_00B76608.clear();
 
 	while (true) {
-		DWORD index;
 		FUN_0072C060();
 		SimpleWonlineDialogControl control;
 		FUN_00798340();
 		HWND dialog = UI::BeginDialog(0x116, FUN_0079E520, (int)&control);
 		OwnerDraw::Display_Dialog(dialog);
 		while (!control.F2()) {
+			DWORD index;
 			while ((index = WaitForMultipleObjects(18, g_WaitEventHandles, FALSE, 100)) == WAIT_TIMEOUT && !control.F2()) {
 				WOL_Wait_Callback();
 			}
@@ -11745,6 +11745,7 @@ int FUN_0079F140(bool first_time)
 				} else {
 					g_JoinLobbyNow = 0;
 					do {
+						DWORD index;
 						do {
 							index = WaitForMultipleObjects(18, g_WaitEventHandles, FALSE, 20);
 							if (index == WAIT_TIMEOUT) {
@@ -11835,6 +11836,7 @@ int FUN_0079F140(bool first_time)
 								g_JoinLobbyNow = 0;
 								int timeout = 500;
 								while (true) {
+									DWORD index;
 									while ((index = WaitForMultipleObjects(18, g_WaitEventHandles, FALSE, 20)) == WAIT_TIMEOUT && !g_JoinLobbyNow) {
 										WOL_Wait_Callback();
 									}
@@ -17192,7 +17194,6 @@ HRESULT __stdcall CChatEventSink::OnChannelJoin(HRESULT result, Channel *channel
 // SYNTHETIC: GAMEMD 0x007AC630
 // ??_GCreateGameDialogControl@@UAEPAXI@Z
 
-// FUNCTION: GAMEMD 0x00789B60
 bool __fastcall FUN_00789B60(void)
 {
 	Wstring password;
@@ -17251,9 +17252,9 @@ bool __fastcall FUN_00789B60(void)
 	WOLOptionsClass options;
 	rc_ptr<PlayerProfile> profile;
 	if (options.Is_Bit1_Clear()) profile = FUN_00778A20(&g_NickName);
-	else profile = DAT_00B75E48.Get();
+	else profile = DAT_00B75E48;
 	if (profile.Get()) {
-		Session.FUN_0069B760(profile->Country, false);
+		Session.FUN_0069B760(profile.Get()->Country, false);
 		Session.FUN_0069B7E0(profile.Get()->Field20, false);
 	}
 	Session.Start = -1;
