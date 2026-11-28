@@ -1000,3 +1000,5 @@ address,name,symbol,evidence
 0x0085D0A4,tan_tab,_tan_tab,Matching fastmath.cpp code references this address and the archived table matches all 16400 bytes
 0x008610B4,atan_tab,_atan_tab,Matching fastmath.cpp code references this address and the archived table matches all 16392 bytes
 0x008650BC,sqrt_tab,_sqrt_tab,Matching fastmath.cpp code references this address and the archived table matches all 65544 bytes
+0x008872FC,TileSurface,?TileSurface@@3PAVSurface@@A,Allocate_Surfaces at 0x00533FD0 allocates the tile surface and Tactical::Blit_Tiles at 0x006D5F30 reads it at +0x8.
+0x00843108,TechnoClass::ActionLines,?ActionLines@TechnoClass@@2_NA,TechnoClass::Set_Action_Lines at 0x0070D180 writes its bool argument to this byte at +0x2.
