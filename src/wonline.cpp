@@ -17222,11 +17222,11 @@ bool __fastcall FUN_00789B60(void)
 	Encode_Channel_ExInfo(user_options);
 	user_options[40] = 0;
 	strcpy((char *)channel.exInfo, user_options);
-	if (Session.Type == GAME_INTERNET && Session.WOLWelcomeChoice == 3) {
+	if (Is_WDT_Session()) {
 		channel.tournament = 1;
 		channel.reserved |= 0x1000;
 	} else if (Is_Internal_Session()) {
-		if (Session.WOLWelcomeChoice == 2) channel.tournament = 0;
+		if (FUN_0077CF60()) channel.tournament = 0;
 		else channel.tournament = 1;
 		channel.reserved |= 0x800;
 	} else {
@@ -17295,19 +17295,7 @@ bool __fastcall FUN_00789B60(void)
 	if (index < 0) return false;
 	User * user = NULL;
 	g_UserList.getPointer(&user, index);
-	{
-		NetNumType net;
-		NetNodeType node;
-		memset(net, 0, sizeof(net));
-		memset(node, 0, sizeof(node));
-		unsigned int ip_addr = ntohl(user->ipaddr);
-		node[3] = ip_addr & 0xFF;
-		node[2] = (ip_addr >> 8) & 0xFF;
-		node[1] = (ip_addr >> 16) & 0xFF;
-		node[0] = (ip_addr >> 24) & 0xFF;
-		IPXAddressClass address(net, node, 0);
-		who->Address = address;
-	}
+	who->Address = FUN_0077D720(user);
 	if (!Is_Internal_Session()) {
 		HWND window = WS_Top_Window();
 		if (window) {
