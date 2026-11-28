@@ -54,13 +54,11 @@ class CCINIClass;
 class xTargetClass
 {
 	friend class CCINIClass;
-	protected:
+	public:
 
 		int ID;
 
 		unsigned char RTTI;
-
-	public:
 
 		operator RTTIType (void) const {return(RTTIType(RTTI));}
 
