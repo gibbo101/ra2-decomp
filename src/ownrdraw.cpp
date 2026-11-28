@@ -51,7 +51,7 @@ namespace OwnerDraw {
 		int DialogID;
 		int StaticDrawMode;
 		ConvertClass *StaticShapeDrawer;
-		ShapeSet *StaticShape;
+		SHPStruct *StaticShape;
 		bool StaticOwnsShape;
 		int StaticTextRevealCount;
 		int StaticTextRevealDelay;
@@ -10312,7 +10312,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 			data->cachedSurface = NULL;
 		}
 		if (data->StaticOwnsShape) {
-			delete data->StaticShape;
+			delete [] (char *)data->StaticShape;
 			data->StaticShape = NULL;
 		}
 		if (data->StaticDrawMode == 1) {
@@ -10427,7 +10427,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 							SurfaceCache.DrawTrans(rect, *AlternateSurface, *image, DSurface::Build_Hicolor_Pixel(255, 0, 255));
 						}
 					} else if (shape || animated) {
-						ShapeSet *shapes = data->StaticShape;
+						SHPStruct const *shapes = data->StaticShape;
 						if (shapes != NULL) {
 							ConvertClass *drawer = data->StaticShapeDrawer;
 							int height = shapes->Get_Height();
@@ -10444,7 +10444,7 @@ LRESULT CALLBACK OwnerDraw::StaticHandler(HWND window, UINT message, WPARAM wpar
 							Point2D point(rect.X, rect.Y);
 							Rect bounds = AlternateSurface->Get_Rect();
 							int frame = data->StaticCurrentFrame;
-							Draw_Shape(*AlternateSurface, *drawer, shapes, frame, point, bounds, SHAPE_WIN_REL);
+							Draw_Shape(*AlternateSurface, *drawer, (ShapeSet const *)shapes, frame, point, bounds, SHAPE_WIN_REL);
 							if (animated && data->StaticAnimationRunning) {
 								if (++frame >= data->StaticFrameCount) {
 									frame = 0;
