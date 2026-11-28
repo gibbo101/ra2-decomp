@@ -2637,7 +2637,8 @@ void SidebarClass::Reposition_Sidebar(void)
 	Background.Set_Position(SidebarRect.X + 16, TacticalRect.Y);
 	Background.Flag_To_Redraw();
 	int x = 0;
-	int y = RadarButton.Y + RadarButton.Height;
+	int radar_y = RadarButton.Y;
+	int y = radar_y + RadarButton.Height;
 	if (Options.IsSidebarOnRight) {
 		Background.Set_Position(TacticalRect.X + TacticalRect.Width, y);
 	} else {

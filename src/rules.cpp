@@ -1463,10 +1463,7 @@ bool RulesClass::General(CCINIClass const & ini)
 		DamageFireTypes = TGet_TypeList<AnimTypeClass>(ini, GENERAL, "DamageFireTypes", DamageFireTypes);
 		OreTwinkle = TGet_Class(ini, GENERAL, "OreTwinkle", OreTwinkle);
 		BarrelExplode = TGet_Class(ini, GENERAL, "BarrelExplode", BarrelExplode);
-		{
-			TypeList<VoxelAnimTypeClass const *> const & parsed = TGet_TypeList<VoxelAnimTypeClass>(ini, GENERAL, "BarrelDebris", BarrelDebris);
-			BarrelDebris = parsed;
-		}
+		BarrelDebris = TGet_TypeList<VoxelAnimTypeClass>(ini, GENERAL, "BarrelDebris", BarrelDebris);
 		BarrelParticle = TGet_Class(ini, GENERAL, "BarrelParticle", BarrelParticle);
 		NukeTakeOff = TGet_Class(ini, GENERAL, "NukeTakeOff", NukeTakeOff);
 		Wake = TGet_Class(ini, GENERAL, "Wake", Wake);
@@ -1518,10 +1515,7 @@ bool RulesClass::General(CCINIClass const & ini)
 		SelfHealUnitFrames = ini.Get_Int(GENERAL, "SelfHealUnitFrames", SelfHealUnitFrames);
 		SelfHealUnitAmount = ini.Get_Int(GENERAL, "SelfHealUnitAmount", SelfHealUnitAmount);
 
-		{
-			TypeList<int> const & current = PrerequisitePower;
-			PrerequisitePower = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisitePower", current);
-		}
+		PrerequisitePower = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisitePower", PrerequisitePower);
 		PrerequisiteFactory = ini.Get_BuildingType_List(ini, GENERAL, "PrerequisiteFactory", PrerequisiteFactory);
 		{
 			TypeList<int> const & current = PrerequisiteBarracks;

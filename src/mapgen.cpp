@@ -3577,6 +3577,49 @@ void MapGeneratorClass::Generate_Random_Map(bool full_init, HWND dialog)
 	}
 }
 
+#include "findmake.h"
+// FUNCTION: GAMEMD 0x005981F0
+void MapGeneratorClass::Load_Settings(void)
+{
+	static char const * section = "General";
+	CCFileClass file("RMGMD.INI");
+	CCINIClass * ini = new CCINIClass;
+	ini->Reset();
+	ini->ReadCCFile(file, false, false);
+
+	TypeList<int> * level_lights = &RMGLevelLightSettings;
+	level_lights->Clear();
+	TypeList<int> * vegetation_minimums = &RMGVegetationMinimums;
+	vegetation_minimums->Clear();
+	TypeList<int> * vegetation_maximums = &RMGVegetationMaximums;
+	vegetation_maximums->Clear();
+	TemperateOrePatchLamps.Clear();
+	SnowOrePatchLamps.Clear();
+	TemperateAmbientLight.Clear();
+	SnowAmbientLight.Clear();
+
+	RMGMinimumTiberium = ini->Get_Int(section, "RMGMinimumTiberium", RMGMinimumTiberium);
+	RMGMaximumTiberium = ini->Get_Int(section, "RMGMaximumTiberium", RMGMaximumTiberium);
+	*level_lights = ini->Get_IntList(section, "RMGLevelLightSettings", *level_lights);
+	*vegetation_minimums = ini->Get_IntList(section, "RMGVegetationMinimums", *vegetation_minimums);
+	*vegetation_maximums = ini->Get_IntList(section, "RMGVegetationMaximums", *vegetation_maximums);
+	TemperateAmbientLight = ini->Get_IntList(section, "TemperateAmbientLight", TemperateAmbientLight);
+	SnowAmbientLight = ini->Get_IntList(section, "SnowAmbientLight", SnowAmbientLight);
+	TemperateAmbientRed = ini->Get_IntList(section, "TemperateAmbientRed", TemperateAmbientRed);
+	TemperateAmbientGreen = ini->Get_IntList(section, "TemperateAmbientGreen", TemperateAmbientGreen);
+	TemperateAmbientBlue = ini->Get_IntList(section, "TemperateAmbientBlue", TemperateAmbientBlue);
+	SnowAmbientRed = ini->Get_IntList(section, "SnowAmbientRed", SnowAmbientRed);
+	SnowAmbientGreen = ini->Get_IntList(section, "SnowAmbientGreen", SnowAmbientGreen);
+	SnowAmbientBlue = ini->Get_IntList(section, "SnowAmbientBlue", SnowAmbientBlue);
+	int trees = ini->Get_Int(section, "MaxTrees", MaxTrees);
+	MaxTrees = trees;
+	TemperateOrePatchLamps = TGet_TypeList<BuildingTypeClass>(*ini, section, "TemperateOrePatchLamps", TemperateOrePatchLamps);
+	SnowOrePatchLamps = TGet_TypeList<BuildingTypeClass>(*ini, section, "SnowOrePatchLamps", SnowOrePatchLamps);
+
+	delete ini;
+	file.Close();
+}
+
 // FUNCTION: GAMEMD 0x00599530
 void MapGeneratorClass::Cleanup(void)
 {
